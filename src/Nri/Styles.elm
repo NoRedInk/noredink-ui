@@ -35,6 +35,7 @@ type alias Styles id class msg =
     , class : List class -> Attribute msg
     , classList : List ( class, Bool ) -> Attribute msg
     , div : class -> List (Html msg) -> Html msg
+    , span : class -> List (Html msg) -> Html msg
     }
 
 
@@ -82,6 +83,7 @@ stylesWithExtraStylesheets namespace extras snippets =
     , class = class
     , classList = classList
     , div = \cl -> Html.div [ class [ cl ] ]
+    , span = \cl -> Html.span [ class [ cl ] ]
     }
 
 
