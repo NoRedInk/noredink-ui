@@ -7,6 +7,7 @@
         "src"
     ],
     "exposed-modules": [
+        "Nri.Button",
         "Nri.Styles",
         "Nri.Text"
     ],
