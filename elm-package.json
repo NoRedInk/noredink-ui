@@ -10,7 +10,8 @@
         "Nri.BannerAlert",
         "Nri.Button",
         "Nri.Styles",
-        "Nri.Text"
+        "Nri.Text",
+        "Nri.TextInput"
     ],
     "dependencies": {
         "NoRedInk/nri-elm-css": "5.0.0 <= v < 6.0.0",
