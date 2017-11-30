@@ -7,7 +7,6 @@
         "src"
     ],
     "exposed-modules": [
-        "Nri.Alert",
         "Nri.BannerAlert",
         "Nri.Button",
         "Nri.Styles",
