@@ -312,6 +312,31 @@ styles =
                     ]
                 ]
 
+        styleStyle style config =
+            Css.class (ColorsStyle style)
+                [ color config.text
+                , backgroundColor config.background
+                , borderColor config.border
+                , borderStyle solid
+                , textAlign center
+                , fontStyle config.fontStyle
+                , Css.hover
+                    [ color config.text
+                    , backgroundColor config.hover
+                    , if config.border == config.background then
+                        borderColor config.hover
+                      else
+                        Css.batch []
+                    , Css.disabled
+                        [ backgroundColor config.background
+                        , borderColor config.border
+                        ]
+                    ]
+                , Css.visited
+                    [ color config.text
+                    ]
+                ]
+
         newStyleStyle style config =
             Css.class (ColorsStyle style)
                 [ color config.text
@@ -414,11 +439,39 @@ styles =
                     ]
                 ]
             ]
+        , styleStyle InactiveColors
+            { background = Nri.Colors.gray75
+            , hover = Nri.Colors.gray75
+            , text = Nri.Colors.white
+            , border = Nri.Colors.gray75
+            , fontStyle = normal
+            }
+        , styleStyle LoadingColors
+            { background = Nri.Colors.frost
+            , hover = Nri.Colors.frost
+            , text = Nri.Colors.gray45
+            , border = Nri.Colors.frost
+            , fontStyle = normal
+            }
+        , styleStyle SuccessColors
+            { background = Nri.Colors.green
+            , hover = Nri.Colors.green
+            , text = Nri.Colors.white
+            , border = Nri.Colors.green
+            , fontStyle = normal
+            }
         , newStyleStyle DangerColors
             { background = Nri.Colors.red
             , hover = hex "c00039" -- TODO: use Nri.Colors.redDarkened20Percent
             , text = Nri.Colors.white
             , border = Nothing
             , shadow = Nri.Colors.redDark
+            }
+        , styleStyle ErrorColors
+            { background = Nri.Colors.purple
+            , hover = Nri.Colors.purpleDark
+            , text = Nri.Colors.white
+            , border = Nri.Colors.purple
+            , fontStyle = normal
             }
         ]
