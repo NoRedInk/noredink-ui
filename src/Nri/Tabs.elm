@@ -43,6 +43,7 @@ import Json.Decode
 import List.Zipper exposing (Zipper(..))
 import Nri.Colors
 import Nri.Colors.Extra
+import Nri.Fonts
 import Nri.Styles
 import View.Extra
 
@@ -270,6 +271,7 @@ styles =
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Nri.Colors.navy
+            , Nri.Fonts.baseFont
             ]
         , Css.class Title
             [ Css.flexGrow (Css.int 2)
@@ -316,11 +318,13 @@ styles =
             , Css.display Css.inlineBlock
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             , Css.position Css.relative
+            , Css.textDecoration Css.none
             ]
         , Css.class TabClickableLink
             [ Css.color Nri.Colors.navy
             , Css.display Css.inlineBlock
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
+            , Css.textDecoration Css.none
             ]
         ]
 
