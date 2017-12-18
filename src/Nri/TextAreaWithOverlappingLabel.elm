@@ -16,6 +16,7 @@ import Html.Events exposing (onInput)
 import Nri.Accessibility exposing (invisibleText)
 import Nri.Colors exposing (..)
 import Nri.Colors.Extra exposing (withAlpha)
+import Nri.Stylers
 import Nri.Styles
 
 
@@ -82,24 +83,25 @@ styles =
             ]
         , Css.class Label
             [ backgroundColor Nri.Colors.white
-            , left (px 15)
-            , top (px -15)
-            , padding (px 5)
-            , fontSize (px 12)
+            , left (px 10)
+            , top (px -7)
+            , padding2 (px 2) (px 5)
             , position absolute
-            , color Nri.Colors.gray45
+            , Nri.Stylers.makeFont (Css.px 11) Nri.Colors.gray45
+            , border3 (px 1) solid Nri.Colors.gray75
+            , borderRadius (px 3)
             ]
         , Css.class TextArea
             [ boxShadow5 inset zero (px 1) (px 1) (withAlpha 0.2 gray20)
             , position relative
-            , color Nri.Colors.gray20
+            , resize vertical
+            , Nri.Stylers.makeFont (Css.px 13) Nri.Colors.gray20
             , border3 (px 1) solid Nri.Colors.gray75
             , borderRadius (px 8)
-            , padding (px 8)
+            , padding2 (px 12) (px 15)
             , Css.height (px 100)
             , Css.width (pct 100)
             , Css.property "transition" "all 0.1s ease"
-            , fontSize (px 14)
             , focus
                 [ borderColor Nri.Colors.turquoise -- TODO: swap for new styleguide color
                 , outline none
