@@ -12,6 +12,8 @@
         "Nri.Button",
         "Nri.Divider",
         "Nri.Modal",
+        "Nri.Outline",
+        "Nri.Palette",
         "Nri.Styles",
         "Nri.Tabs",
         "Nri.Text",
