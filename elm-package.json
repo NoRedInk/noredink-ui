@@ -13,6 +13,7 @@
         "Nri.Divider",
         "Nri.Modal",
         "Nri.Outline",
+        "Nri.Outline.Types",
         "Nri.Palette",
         "Nri.Styles",
         "Nri.Tabs",
