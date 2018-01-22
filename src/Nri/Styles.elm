@@ -1,11 +1,11 @@
-module Nri.Styles exposing (Keyframe, Styles, keyframes, styles, stylesWithExtraStylesheets, toString)
+module Nri.Styles exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithExtraStylesheets, stylesWithAssets, toString)
 
 {-| Simplifies using elm-css in modules that expose views
 
 
 ## Creating namespaces stylesheets
 
-@docs Styles, styles, stylesWithExtraStylesheets
+@docs Styles, StylesWithAssets, styles, stylesWithExtraStylesheets, stylesWithAssets
 
 
 ## Helpers for CSS
@@ -27,10 +27,16 @@ import Html.CssHelpers
 
   - `css`: The resulting stylesheets to add to `Nri.Css.Site`
   - `id`, `class`, `classList`: The Html.Attribute helper functions
-
 -}
 type alias Styles id class msg =
-    { css : List Css.Stylesheet
+    StylesWithAssets id class msg ()
+
+
+{-| Styles that depend on assets, for instance because they use a background
+image somewhere.
+-}
+type alias StylesWithAssets id class msg assets =
+    { css : assets -> List Css.Stylesheet
     , id : id -> Attribute msg
     , class : List class -> Attribute msg
     , classList : List ( class, Bool ) -> Attribute msg
@@ -78,13 +84,38 @@ stylesWithExtraStylesheets namespace extras snippets =
                 |> Css.Namespace.namespace namespace
                 |> Css.stylesheet
     in
-    { css = stylesheet :: extras
-    , id = id
-    , class = class
-    , classList = classList
-    , div = \cl -> Html.div [ class [ cl ] ]
-    , span = \cl -> Html.span [ class [ cl ] ]
-    }
+        { css = \assets -> stylesheet :: extras
+        , id = id
+        , class = class
+        , classList = classList
+        , div = \cl -> Html.div [ class [ cl ] ]
+        , span = \cl -> Html.span [ class [ cl ] ]
+        }
+
+
+{-| Use this if your styles depend on asset files
+-}
+stylesWithAssets :
+    String
+    -> (assets -> List Css.Snippet)
+    -> StylesWithAssets id class msg assets
+stylesWithAssets namespace snippets =
+    let
+        { id, class, classList } =
+            Html.CssHelpers.withNamespace namespace
+
+        stylesheet assets =
+            snippets assets
+                |> Css.Namespace.namespace namespace
+                |> Css.stylesheet
+    in
+        { css = \assets -> [ stylesheet assets ]
+        , id = id
+        , class = class
+        , classList = classList
+        , div = \cl -> Html.div [ class [ cl ] ]
+        , span = \cl -> Html.span [ class [ cl ] ]
+        }
 
 
 {-| A CSS keyframe animation that will have vendor prefixes automatically added.
@@ -110,10 +141,10 @@ keyframes name stops =
                 ++ String.join "\n" (List.map stop stops)
                 ++ "\n}\n"
     in
-    [ "-webkit-", "-moz-", "" ]
-        |> List.map x
-        |> String.join ""
-        |> CompiledKeyframe
+        [ "-webkit-", "-moz-", "" ]
+            |> List.map x
+            |> String.join ""
+            |> CompiledKeyframe
 
 
 {-| Turn a [`Keyframe`](#Keyframe) into a string that can be included in a CSS stylesheet.
