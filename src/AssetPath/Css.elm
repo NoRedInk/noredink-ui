@@ -14,4 +14,4 @@ import AssetPath exposing (Asset)
 -}
 url : Asset -> String
 url asset =
-    "url(" ++ (AssetPath.url asset) ++ ")"
+    "url(" ++ AssetPath.url asset ++ ")"

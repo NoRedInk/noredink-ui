@@ -14,7 +14,9 @@ module Nri.Checkbox
         , viewWithLabel
         )
 
-{-| @docs Model, Theme, ColorTheme
+{-|
+
+@docs Model, Theme, ColorTheme
 
 @docs view, viewWithLabel, viewAttention, disabled
 @docs IsSelected
@@ -27,11 +29,11 @@ module Nri.Checkbox
 
 -}
 
-import AssetPath.Css
 import Accessibility exposing (..)
 import Accessibility.Aria exposing (controls)
 import Accessibility.Widget as Widget
 import AssetPath exposing (Asset(..))
+import AssetPath.Css
 import Css exposing (..)
 import Css.Elements
 import Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
@@ -54,6 +56,7 @@ import Nri.Styles
       - Just True == Checked (rendered checkmark)
       - Just False == Not Checked (rendered blank)
       - Nothing == Indeterminate (rendered dash)
+
 -}
 type alias Model msg =
     { identifier : String
@@ -105,58 +108,58 @@ customView modifierClasses showLabels model =
                         [ SquareClass, PremiumClass ]
                 ]
     in
-        Html.span
-            [ styles.class containerClasses
-            , Attributes.id <| model.identifier ++ "-container"
-            , -- This is necessary to prevent event propagation.
-              -- See https://github.com/elm-lang/html/issues/96
-              Attributes.map (always model.noOpMsg) <|
-                Events.onWithOptions "click"
-                    { defaultOptions | stopPropagation = True }
-                    (Json.Decode.succeed "stop click propagation")
+    Html.span
+        [ styles.class containerClasses
+        , Attributes.id <| model.identifier ++ "-container"
+        , -- This is necessary to prevent event propagation.
+          -- See https://github.com/elm-lang/html/issues/96
+          Attributes.map (always model.noOpMsg) <|
+            Events.onWithOptions "click"
+                { defaultOptions | stopPropagation = True }
+                (Json.Decode.succeed "stop click propagation")
+        ]
+        [ checkbox model.identifier
+            model.isChecked
+            [ Widget.label model.label
+            , styles.class [ Checkbox ]
+            , Events.onCheck model.setterMsg
+            , Attributes.id model.identifier
+            , Attributes.disabled model.disabled
             ]
-            [ checkbox model.identifier
-                model.isChecked
-                [ Widget.label model.label
-                , styles.class [ Checkbox ]
-                , Events.onCheck model.setterMsg
-                , Attributes.id model.identifier
-                , Attributes.disabled model.disabled
-                ]
-            , Html.label
-                [ Attributes.for model.identifier
-                , getLabelClass model.isChecked
-                , controls model.identifier
-                , Widget.disabled model.disabled
-                , Widget.checked model.isChecked
-                , if not model.disabled then
-                    Attributes.tabindex 0
-                  else
-                    Attributes.none
-                , if not model.disabled then
-                    Html.Extra.onKeyUp
-                        { defaultOptions | preventDefault = True }
-                        (\keyCode ->
-                            -- 32 is the space bar, 13 is enter
-                            if (keyCode == 32 || keyCode == 13) && not model.disabled then
-                                Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
-                            else
-                                Nothing
-                        )
-                  else
-                    Attributes.none
-                ]
-                [ span
-                    [ styles.class
-                        (if showLabels then
-                            []
-                         else
-                            [ LabelText ]
-                        )
-                    ]
-                    [ Html.text model.label ]
-                ]
+        , Html.label
+            [ Attributes.for model.identifier
+            , getLabelClass model.isChecked
+            , controls model.identifier
+            , Widget.disabled model.disabled
+            , Widget.checked model.isChecked
+            , if not model.disabled then
+                Attributes.tabindex 0
+              else
+                Attributes.none
+            , if not model.disabled then
+                Html.Extra.onKeyUp
+                    { defaultOptions | preventDefault = True }
+                    (\keyCode ->
+                        -- 32 is the space bar, 13 is enter
+                        if (keyCode == 32 || keyCode == 13) && not model.disabled then
+                            Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
+                        else
+                            Nothing
+                    )
+              else
+                Attributes.none
             ]
+            [ span
+                [ styles.class
+                    (if showLabels then
+                        []
+                     else
+                        [ LabelText ]
+                    )
+                ]
+                [ Html.text model.label ]
+            ]
+        ]
 
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
@@ -209,6 +212,7 @@ type IsSelected
   - `onChange`: A message for when the user toggles the checkbox
   - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
     If you get this message, you should show an `Nri.Premium.Model.view`
+
 -}
 type alias PremiumConfig msg =
     { label : String
@@ -269,20 +273,20 @@ premium config =
             else
                 Square Default
     in
-        customView modifierClasses
-            True
-            { identifier = config.id
-            , label = config.label
-            , setterMsg =
-                if isLocked then
-                    \_ -> config.onLockedClick
-                else
-                    config.onChange
-            , isChecked = isChecked
-            , disabled = config.disabled
-            , theme = theme
-            , noOpMsg = config.noOpMsg
-            }
+    customView modifierClasses
+        True
+        { identifier = config.id
+        , label = config.label
+        , setterMsg =
+            if isLocked then
+                \_ -> config.onLockedClick
+            else
+                config.onChange
+        , isChecked = isChecked
+        , disabled = config.disabled
+        , theme = theme
+        , noOpMsg = config.noOpMsg
+        }
 
 
 {-| -}

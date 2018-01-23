@@ -1,4 +1,4 @@
-module Nri.Styles exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithExtraStylesheets, stylesWithAssets, toString)
+module Nri.Styles exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithAssets, stylesWithExtraStylesheets, toString)
 
 {-| Simplifies using elm-css in modules that expose views
 
@@ -27,6 +27,7 @@ import Html.CssHelpers
 
   - `css`: The resulting stylesheets to add to `Nri.Css.Site`
   - `id`, `class`, `classList`: The Html.Attribute helper functions
+
 -}
 type alias Styles id class msg =
     StylesWithAssets id class msg ()
@@ -84,13 +85,13 @@ stylesWithExtraStylesheets namespace extras snippets =
                 |> Css.Namespace.namespace namespace
                 |> Css.stylesheet
     in
-        { css = \assets -> stylesheet :: extras
-        , id = id
-        , class = class
-        , classList = classList
-        , div = \cl -> Html.div [ class [ cl ] ]
-        , span = \cl -> Html.span [ class [ cl ] ]
-        }
+    { css = \assets -> stylesheet :: extras
+    , id = id
+    , class = class
+    , classList = classList
+    , div = \cl -> Html.div [ class [ cl ] ]
+    , span = \cl -> Html.span [ class [ cl ] ]
+    }
 
 
 {-| Use this if your styles depend on asset files
@@ -109,13 +110,13 @@ stylesWithAssets namespace snippets =
                 |> Css.Namespace.namespace namespace
                 |> Css.stylesheet
     in
-        { css = \assets -> [ stylesheet assets ]
-        , id = id
-        , class = class
-        , classList = classList
-        , div = \cl -> Html.div [ class [ cl ] ]
-        , span = \cl -> Html.span [ class [ cl ] ]
-        }
+    { css = \assets -> [ stylesheet assets ]
+    , id = id
+    , class = class
+    , classList = classList
+    , div = \cl -> Html.div [ class [ cl ] ]
+    , span = \cl -> Html.span [ class [ cl ] ]
+    }
 
 
 {-| A CSS keyframe animation that will have vendor prefixes automatically added.
@@ -141,10 +142,10 @@ keyframes name stops =
                 ++ String.join "\n" (List.map stop stops)
                 ++ "\n}\n"
     in
-        [ "-webkit-", "-moz-", "" ]
-            |> List.map x
-            |> String.join ""
-            |> CompiledKeyframe
+    [ "-webkit-", "-moz-", "" ]
+        |> List.map x
+        |> String.join ""
+        |> CompiledKeyframe
 
 
 {-| Turn a [`Keyframe`](#Keyframe) into a string that can be included in a CSS stylesheet.

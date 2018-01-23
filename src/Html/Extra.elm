@@ -111,27 +111,27 @@ oxfordifyWithHtml pre post items =
         final centrals =
             [ textSpan pre ] ++ centrals ++ [ textSpan post ]
     in
-        case items of
-            [] ->
-                []
+    case items of
+        [] ->
+            []
 
-            [ single ] ->
-                final [ single ]
+        [ single ] ->
+            final [ single ]
 
-            [ first, second ] ->
-                final [ first, textSpan " and ", second ]
+        [ first, second ] ->
+            final [ first, textSpan " and ", second ]
 
-            many ->
-                let
-                    beforeAnd =
-                        List.take (List.length many - 1) many
+        many ->
+            let
+                beforeAnd =
+                    List.take (List.length many - 1) many
 
-                    afterAnd =
-                        List.drop (List.length many - 1) many
-                            |> List.head
-                            |> Maybe.withDefault (textSpan "")
-                in
-                    final (List.intersperse (textSpan ", ") beforeAnd ++ [ textSpan ", and ", afterAnd ])
+                afterAnd =
+                    List.drop (List.length many - 1) many
+                        |> List.head
+                        |> Maybe.withDefault (textSpan "")
+            in
+            final (List.intersperse (textSpan ", ") beforeAnd ++ [ textSpan ", and ", afterAnd ])
 
 
 {-| Workaround for `Html.text "&nbsp;"` not working in elm.

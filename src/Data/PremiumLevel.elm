@@ -1,6 +1,9 @@
 module Data.PremiumLevel exposing (PremiumLevel(..), allowedFor, highest, lowest)
 
-{-| @docs PremiumLevel, allowedFor, highest, lowest
+{-|
+
+@docs PremiumLevel, allowedFor, highest, lowest
+
 -}
 
 
