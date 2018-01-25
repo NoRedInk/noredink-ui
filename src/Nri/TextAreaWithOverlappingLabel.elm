@@ -77,6 +77,7 @@ styles =
     Nri.Styles.styles "Nri-Textarea-"
         [ Css.class Container
             [ position relative
+            , paddingTop (px 7)
             ]
         , Css.class InvisibleLabel
             [ Nri.Accessibility.invisibleText
@@ -84,7 +85,7 @@ styles =
         , Css.class Label
             [ backgroundColor Nri.Colors.white
             , left (px 10)
-            , top (px -7)
+            , top (px 0)
             , padding2 (px 2) (px 5)
             , position absolute
             , Nri.Stylers.makeFont (Css.px 11) Nri.Colors.gray45
