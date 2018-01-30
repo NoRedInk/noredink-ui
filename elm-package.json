@@ -1,39 +1,39 @@
 {
-    "version": "4.1.1",
-    "summary": "Doodads we use at NRI",
-    "repository": "https://github.com/NoRedInk/elm-doodad.git",
-    "license": "BSD3",
-    "source-directories": [
-        "src"
-    ],
-    "exposed-modules": [
-        "AssetPath",
-        "Nri.Alert",
-        "Nri.BannerAlert",
-        "Nri.Button",
-        "Nri.Checkbox",
-        "Nri.Divider",
-        "Nri.Effects",
-        "Nri.Modal",
-        "Nri.Outline",
-        "Nri.Palette",
-        "Nri.Styles",
-        "Nri.Tabs",
-        "Nri.Text",
-        "Nri.TextAreaWithOverlappingLabel",
-        "Nri.TextInput"
-    ],
-    "dependencies": {
-        "NoRedInk/nri-elm-css": "5.0.0 <= v <= 5.0.0",
-        "NoRedInk/view-extra": "2.0.0 <= v < 3.0.0",
-        "elm-lang/core": "5.1.1 <= v < 6.0.0",
-        "elm-lang/html": "2.0.0 <= v < 3.0.0",
-        "pablohirafuji/elm-markdown": "2.0.4 <= v < 3.0.0",
-        "rtfeldman/elm-css": "11.2.0 <= v < 12.0.0",
-        "rtfeldman/elm-css-helpers": "2.1.0 <= v < 3.0.0",
-        "rtfeldman/elm-css-util": "1.0.2 <= v < 2.0.0",
-        "tesk9/accessible-html": "3.0.0 <= v < 4.0.0",
-        "wernerdegroot/listzipper": "3.0.0 <= v < 4.0.0"
-    },
-    "elm-version": "0.18.0 <= v < 0.19.0"
+  "version": "4.1.1",
+  "summary": "Doodads we use at NRI",
+  "repository": "https://github.com/NoRedInk/elm-doodad.git",
+  "license": "BSD3",
+  "source-directories": [
+    "src"
+  ],
+  "exposed-modules": [
+    "Nri.Ui.AssetPath",
+    "Nri.Ui.Alert",
+    "Nri.Ui.BannerAlert",
+    "Nri.Ui.Button",
+    "Nri.Ui.Checkbox",
+    "Nri.Ui.Divider",
+    "Nri.Ui.Effects",
+    "Nri.Ui.Modal",
+    "Nri.Ui.Outline",
+    "Nri.Ui.Palette",
+    "Nri.Ui.Styles",
+    "Nri.Ui.Tabs",
+    "Nri.Ui.Text",
+    "Nri.Ui.TextAreaWithOverlappingLabel",
+    "Nri.Ui.TextInput"
+  ],
+  "dependencies": {
+    "NoRedInk/nri-elm-css": "5.0.0 <= v <= 5.0.0",
+    "NoRedInk/view-extra": "2.0.0 <= v < 3.0.0",
+    "elm-lang/core": "5.1.1 <= v < 6.0.0",
+    "elm-lang/html": "2.0.0 <= v < 3.0.0",
+    "pablohirafuji/elm-markdown": "2.0.4 <= v < 3.0.0",
+    "rtfeldman/elm-css": "11.2.0 <= v < 12.0.0",
+    "rtfeldman/elm-css-helpers": "2.1.0 <= v < 3.0.0",
+    "rtfeldman/elm-css-util": "1.0.2 <= v < 2.0.0",
+    "tesk9/accessible-html": "3.0.0 <= v < 4.0.0",
+    "wernerdegroot/listzipper": "3.0.0 <= v < 4.0.0"
+  },
+  "elm-version": "0.18.0 <= v < 0.19.0"
 }

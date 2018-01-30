@@ -1,4 +1,4 @@
-module Nri.Styles exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithAssets, stylesWithExtraStylesheets, toString)
+module Nri.Ui.Styles exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithAssets, stylesWithExtraStylesheets, toString)
 
 {-| Simplifies using elm-css in modules that expose views
 
@@ -25,7 +25,7 @@ import Html.CssHelpers
 
 {-|
 
-  - `css`: The resulting stylesheets to add to `Nri.Css.Site`
+  - `css`: The resulting stylesheets to add to `Nri.Ui.Css.Site`
   - `id`, `class`, `classList`: The Html.Attribute helper functions
 
 -}
@@ -50,7 +50,7 @@ type alias StylesWithAssets id class msg assets =
 This will help you make sure you don't mismatch the namespace you're using.
 
     { css, class } =
-        Nri.Styles.styles "Nri-MyWidget-"
+        Nri.Ui.Styles.styles "Nri-MyWidget-"
             [ Css.class Container
                 [ backgroundColor Nri.Colors.ochre ]
             ]

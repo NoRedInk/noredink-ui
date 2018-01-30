@@ -1,4 +1,4 @@
-module Nri.Outline exposing (NodeConfig, NodeLayout, config, html, node, segment, styles)
+module Nri.Ui.Outline exposing (NodeConfig, NodeLayout, config, html, node, segment, styles)
 
 {-| A module for rendering outline layouts.
 
@@ -15,10 +15,10 @@ module Nri.Outline exposing (NodeConfig, NodeLayout, config, html, node, segment
 import Css exposing (Stylesheet)
 import Html exposing (Attribute, Html)
 import Nri.Colors
-import Nri.Effects
-import Nri.Palette exposing (Palette)
 import Nri.Stylers
-import Nri.Styles exposing (Styles)
+import Nri.Ui.Effects
+import Nri.Ui.Palette exposing (Palette)
+import Nri.Ui.Styles exposing (Styles)
 
 
 {-| A wrapper for a node rendered into Html. This type exists to prevent us
@@ -152,7 +152,7 @@ labelHeight =
 -}
 styles : Styles a Style b
 styles =
-    Nri.Styles.styles "Outline" <|
+    Nri.Ui.Styles.styles "Outline" <|
         [ Css.class Segment
             [ Css.position Css.relative
             , Css.zIndex (Css.int 0)
@@ -195,10 +195,10 @@ styles =
             -- the outline structure.
             , Css.descendants
                 (colorStyles
-                    [ Nri.Palette.cornflower
-                    , Nri.Palette.aqua
-                    , Nri.Palette.turquoise
-                    , Nri.Palette.green
+                    [ Nri.Ui.Palette.cornflower
+                    , Nri.Ui.Palette.aqua
+                    , Nri.Ui.Palette.turquoise
+                    , Nri.Ui.Palette.green
                     ]
                 )
             ]
@@ -237,7 +237,7 @@ styles =
         , Css.class SelectedNode
             [ Css.children
                 [ Css.class Contents
-                    [ Css.batch Nri.Effects.selectionShadow
+                    [ Css.batch Nri.Ui.Effects.selectionShadow
                     ]
                 ]
             ]

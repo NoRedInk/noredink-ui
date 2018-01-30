@@ -1,4 +1,4 @@
-module Data.PremiumLevel exposing (PremiumLevel(..), allowedFor, highest, lowest)
+module Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..), allowedFor, highest, lowest)
 
 {-|
 

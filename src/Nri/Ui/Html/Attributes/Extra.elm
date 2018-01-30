@@ -1,4 +1,4 @@
-module Html.Attributes.Extra exposing (includeIf, none)
+module Nri.Ui.Html.Attributes.Extra exposing (includeIf, none)
 
 {-| Extras for working with Html.Attributes
 

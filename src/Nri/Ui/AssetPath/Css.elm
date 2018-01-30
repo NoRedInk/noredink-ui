@@ -1,4 +1,4 @@
-module AssetPath.Css exposing (url)
+module Nri.Ui.AssetPath.Css exposing (url)
 
 {-| Helper for constructing commonly-used CSS functions
 that reference assets.
@@ -7,7 +7,7 @@ that reference assets.
 
 -}
 
-import AssetPath exposing (Asset)
+import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 
 
 {-| Given an `Asset`, wrap its URL in a call to `url()`.

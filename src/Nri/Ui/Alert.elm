@@ -1,4 +1,4 @@
-module Nri.Alert
+module Nri.Ui.Alert
     exposing
         ( Model
         , error
@@ -27,7 +27,7 @@ import Css.Elements
 import Html exposing (Html)
 import Markdown
 import Nri.Colors
-import Nri.Styles
+import Nri.Ui.Styles
 
 
 {-| -}
@@ -89,9 +89,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.Styles Never CssClasses msg
 styles =
-    Nri.Styles.styles "Nri-Alert-"
+    Nri.Ui.Styles.styles "Nri-Alert-"
         [ Css.class Alert
             [ Css.displayFlex
             , Css.fontSize (Css.px 13)

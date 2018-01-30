@@ -1,4 +1,4 @@
-module Nri.BannerAlert
+module Nri.Ui.BannerAlert
     exposing
         ( error
         , neutral
@@ -21,7 +21,7 @@ import Css.Elements
 import Html exposing (Html)
 import Nri.Colors
 import Nri.Fonts
-import Nri.Styles
+import Nri.Ui.Styles
 
 
 {-| A banner to show error alerts
@@ -68,9 +68,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Styles.Styles Never CssClasses b
+styles : Nri.Ui.Styles.Styles Never CssClasses b
 styles =
-    Nri.Styles.styles "Nri-BannerAlert-"
+    Nri.Ui.Styles.styles "Nri-BannerAlert-"
         [ Css.class AlertMessage
             [ Css.fontSize (Css.px 20)
             , Css.fontWeight (Css.int 700)

@@ -1,4 +1,4 @@
-module AssetPath exposing (Asset(Asset), url)
+module Nri.Ui.AssetPath exposing (Asset(Asset), url)
 
 {-| Helpers for dealing with assets.
 

@@ -1,4 +1,4 @@
-module Nri.Text
+module Nri.Ui.Text
     exposing
         ( caption
         , captionClassString
@@ -43,7 +43,7 @@ import Css.Helpers exposing (identifierToString)
 import Html exposing (..)
 import Nri.Colors exposing (..)
 import Nri.Stylers exposing (makeFont)
-import Nri.Styles
+import Nri.Ui.Styles
 
 
 {-| This is a Page Heading.
@@ -156,9 +156,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.Styles Never CssClasses msg
 styles =
-    Nri.Styles.styles namespace
+    Nri.Ui.Styles.styles namespace
         [ Css.class Heading
             [ makeFont (px 30) navy
             , lineHeight (px 40.5)

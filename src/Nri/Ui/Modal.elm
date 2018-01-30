@@ -1,4 +1,4 @@
-module Nri.Modal
+module Nri.Ui.Modal
     exposing
         ( Model
         , info
@@ -24,7 +24,7 @@ import Html.Events exposing (onClick)
 import Nri.Colors
 import Nri.Colors.Extra
 import Nri.Stylers
-import Nri.Styles
+import Nri.Ui.Styles
 import View.Extra exposing (viewIf, viewJust)
 
 
@@ -39,7 +39,7 @@ type ModalType
   - `visibleTitle`: If `False`, the title will still be used for screen readers
   - `content`: This will be placed in a `width:100%` div in the main area of the modal
   - `footerContent`: The optional items here will be stacked below the main content area and center-aligned.
-    Commonly you will either give a list of Nri.Buttons,
+    Commonly you will either give a list of Nri.Ui.Buttons,
     or an empty list.
 
 -}
@@ -167,9 +167,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Styles.Styles Never CssClasses b
+styles : Nri.Ui.Styles.Styles Never CssClasses b
 styles =
-    Nri.Styles.styles "Nri-BannerAlert-"
+    Nri.Ui.Styles.styles "Nri-BannerAlert-"
         [ Css.class BackdropContainer
             [ Css.height (Css.vh 100)
             , Css.left Css.zero

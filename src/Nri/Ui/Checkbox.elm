@@ -1,4 +1,4 @@
-module Nri.Checkbox
+module Nri.Ui.Checkbox
     exposing
         ( ColorTheme(..)
         , IsSelected(..)
@@ -32,22 +32,22 @@ module Nri.Checkbox
 import Accessibility exposing (..)
 import Accessibility.Aria exposing (controls)
 import Accessibility.Widget as Widget
-import AssetPath exposing (Asset(..))
-import AssetPath.Css
 import Css exposing (..)
 import Css.Elements
-import Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Html
 import Html.Attributes as Attributes
-import Html.Attributes.Extra as Attributes
 import Html.Events as Events exposing (defaultOptions)
-import Html.Extra exposing (onEnter, onKeyUp)
 import Json.Decode
 import Json.Encode
 import Nri.Accessibility as Accessibility
 import Nri.Colors as Colors
 import Nri.Stylers
-import Nri.Styles
+import Nri.Ui.AssetPath exposing (Asset(..))
+import Nri.Ui.AssetPath.Css
+import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Html.Attributes.Extra as Attributes
+import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
+import Nri.Ui.Styles
 
 
 {-|
@@ -137,7 +137,7 @@ customView modifierClasses showLabels model =
               else
                 Attributes.none
             , if not model.disabled then
-                Html.Extra.onKeyUp
+                Nri.Ui.Html.Extra.onKeyUp
                     { defaultOptions | preventDefault = True }
                     (\keyCode ->
                         -- 32 is the space bar, 13 is enter
@@ -211,7 +211,7 @@ type IsSelected
 
   - `onChange`: A message for when the user toggles the checkbox
   - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Premium.Model.view`
+    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
 
 -}
 type alias PremiumConfig msg =
@@ -566,7 +566,7 @@ hiddenLabelText =
 
 backgroundImage : Assets r -> CheckboxImage -> Css.Style
 backgroundImage assets checkboxImage =
-    property "background-image" (AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
+    property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
 
 
 checkboxAssetPath : Assets r -> CheckboxImage -> Asset
@@ -601,9 +601,9 @@ checkboxAssetPath assets checkboxImage =
 
 
 {-| -}
-keyframeCss : Nri.Styles.Keyframe
+keyframeCss : Nri.Ui.Styles.Keyframe
 keyframeCss =
-    Nri.Styles.keyframes "pulsate"
+    Nri.Ui.Styles.keyframes "pulsate"
         [ ( "0%", "transform: scale(1, 1);" )
         , ( "50%", "transform: scale(1.2);" )
         , ( "100%", "transform: scale(1, 1);" )
@@ -611,7 +611,7 @@ keyframeCss =
 
 
 {-| -}
-styles : Nri.Styles.StylesWithAssets Never CssClasses msg (Assets r)
+styles : Nri.Ui.Styles.StylesWithAssets Never CssClasses msg (Assets r)
 styles =
     (\assets ->
         [ mainSnippet
@@ -628,7 +628,7 @@ styles =
         ]
             |> List.concat
     )
-        |> Nri.Styles.stylesWithAssets "checkbox-"
+        |> Nri.Ui.Styles.stylesWithAssets "checkbox-"
 
 
 {-| The assets used in this module.

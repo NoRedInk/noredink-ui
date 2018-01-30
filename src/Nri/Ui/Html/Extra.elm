@@ -1,4 +1,4 @@
-module Html.Extra exposing (..)
+module Nri.Ui.Html.Extra exposing (..)
 
 {-| For all utils involving HTML.
 
