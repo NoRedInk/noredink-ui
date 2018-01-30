@@ -1,4 +1,4 @@
-module Nri.Ui.Checkbox
+module Nri.Ui.Checkbox.V1
     exposing
         ( ColorTheme(..)
         , IsSelected(..)
@@ -47,7 +47,7 @@ import Nri.Ui.AssetPath.Css
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Html.Attributes.Extra as Attributes
 import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 
 
 {-|
@@ -601,9 +601,9 @@ checkboxAssetPath assets checkboxImage =
 
 
 {-| -}
-keyframeCss : Nri.Ui.Styles.Keyframe
+keyframeCss : Nri.Ui.Styles.V1.Keyframe
 keyframeCss =
-    Nri.Ui.Styles.keyframes "pulsate"
+    Nri.Ui.Styles.V1.keyframes "pulsate"
         [ ( "0%", "transform: scale(1, 1);" )
         , ( "50%", "transform: scale(1.2);" )
         , ( "100%", "transform: scale(1, 1);" )
@@ -611,7 +611,7 @@ keyframeCss =
 
 
 {-| -}
-styles : Nri.Ui.Styles.StylesWithAssets Never CssClasses msg (Assets r)
+styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
 styles =
     (\assets ->
         [ mainSnippet
@@ -628,7 +628,7 @@ styles =
         ]
             |> List.concat
     )
-        |> Nri.Ui.Styles.stylesWithAssets "checkbox-"
+        |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
 
 
 {-| The assets used in this module.

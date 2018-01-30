@@ -1,4 +1,4 @@
-module Nri.Ui.Button
+module Nri.Ui.Button.V1
     exposing
         ( ButtonContent
         , ButtonSize(..)
@@ -45,7 +45,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Colors
 import Nri.Fonts
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 
 
 {-| Sizes for buttons that have button classes
@@ -249,7 +249,7 @@ linearGradient ( top, bottom ) =
 
 {-| Required CSS styles for `Nri.Ui.Button`.
 -}
-styles : Nri.Ui.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     let
         newSizeStyle size config =
@@ -367,7 +367,7 @@ styles =
                     ]
                 ]
     in
-    Nri.Ui.Styles.styles "Nri-Button-"
+    Nri.Ui.Styles.V1.styles "Nri-Button-"
         [ Css.class Button
             [ cursor pointer
             , display inlineBlock

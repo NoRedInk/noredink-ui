@@ -1,4 +1,4 @@
-module Nri.Ui.Palette exposing (..)
+module Nri.Ui.Palette.V1 exposing (..)
 
 {-| Predefined color palettes for use in configurable components
 

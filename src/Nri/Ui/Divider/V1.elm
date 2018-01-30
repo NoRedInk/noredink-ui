@@ -1,4 +1,4 @@
-module Nri.Ui.Divider exposing (styles, view)
+module Nri.Ui.Divider.V1 exposing (styles, view)
 
 {-| <https://staging.noredink.com/style_guide#ui/src/Nri/Divider.elm>
 
@@ -9,7 +9,7 @@ module Nri.Ui.Divider exposing (styles, view)
 import Css exposing (..)
 import Html exposing (..)
 import Nri.Colors as Colors
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 
 
 type alias Config =
@@ -36,9 +36,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.styles "Nri-Divider-"
+    Nri.Ui.Styles.V1.styles "Nri-Divider-"
         [ Css.class Container
             [ Css.width (pct 100)
             , Css.displayFlex

@@ -1,4 +1,4 @@
-module Nri.Ui.TextInput
+module Nri.Ui.TextInput.V1
     exposing
         ( InputType
         , Model
@@ -32,7 +32,7 @@ import Html.Events exposing (onInput)
 import Nri.Accessibility
 import Nri.Colors exposing (..)
 import Nri.Stylers
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 import Regex
 
 
@@ -129,7 +129,7 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     let
         inputStyle =
@@ -156,7 +156,7 @@ styles =
             , Css.marginTop (px 9)
             ]
     in
-    Nri.Ui.Styles.styles "Nri-TextInput-"
+    Nri.Ui.Styles.V1.styles "Nri-TextInput-"
         [ Css.selector "input[type=text]"
             [ Css.withClass Input inputStyle ]
         , Css.selector "input[type=number]"

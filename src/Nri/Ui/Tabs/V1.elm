@@ -1,4 +1,4 @@
-module Nri.Ui.Tabs
+module Nri.Ui.Tabs.V1
     exposing
         ( Alignment(..)
         , Config
@@ -44,7 +44,7 @@ import List.Zipper exposing (Zipper(..))
 import Nri.Colors
 import Nri.Colors.Extra
 import Nri.Fonts
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 import View.Extra
 
 
@@ -262,9 +262,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.styles "Nri-Tabs-"
+    Nri.Ui.Styles.V1.styles "Nri-Tabs-"
         [ Css.class Container
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd

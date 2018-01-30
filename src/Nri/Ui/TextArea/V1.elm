@@ -1,4 +1,4 @@
-module Nri.Ui.TextAreaWithOverlappingLabel exposing (styles, view)
+module Nri.Ui.TextArea.V1 exposing (styles, view)
 
 {-|
 
@@ -17,7 +17,7 @@ import Nri.Accessibility exposing (invisibleText)
 import Nri.Colors exposing (..)
 import Nri.Colors.Extra exposing (withAlpha)
 import Nri.Stylers
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 
 
 type alias Model msg =
@@ -72,9 +72,9 @@ type CssClass
 
 
 {-| -}
-styles : Nri.Ui.Styles.Styles Never CssClass msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
-    Nri.Ui.Styles.styles "Nri-Textarea-"
+    Nri.Ui.Styles.V1.styles "Nri-Textarea-"
         [ Css.class Container
             [ position relative
             , paddingTop (px 7)

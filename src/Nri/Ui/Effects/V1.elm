@@ -1,4 +1,4 @@
-module Nri.Ui.Effects exposing (selectionShadow)
+module Nri.Ui.Effects.V1 exposing (selectionShadow)
 
 {-| Css mixins reused across Nri modules.
 

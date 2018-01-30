@@ -1,4 +1,4 @@
-module Nri.Ui.Modal
+module Nri.Ui.Modal.V1
     exposing
         ( Model
         , info
@@ -24,7 +24,7 @@ import Html.Events exposing (onClick)
 import Nri.Colors
 import Nri.Colors.Extra
 import Nri.Stylers
-import Nri.Ui.Styles
+import Nri.Ui.Styles.V1
 import View.Extra exposing (viewIf, viewJust)
 
 
@@ -167,9 +167,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.Styles Never CssClasses b
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
-    Nri.Ui.Styles.styles "Nri-BannerAlert-"
+    Nri.Ui.Styles.V1.styles "Nri-BannerAlert-"
         [ Css.class BackdropContainer
             [ Css.height (Css.vh 100)
             , Css.left Css.zero
