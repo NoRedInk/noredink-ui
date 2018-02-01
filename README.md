@@ -1,2 +1,3 @@
-# elm-doodad
-Doodads we use
+# noredink-ui
+
+UI widgets we use.
