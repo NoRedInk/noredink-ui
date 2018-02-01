@@ -70,7 +70,7 @@ type CssClasses
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-BannerAlert-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
         [ Css.class AlertMessage
             [ Css.fontSize (Css.px 20)
             , Css.fontWeight (Css.int 700)

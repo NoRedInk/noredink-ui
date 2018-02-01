@@ -38,7 +38,7 @@ type CssClasses
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Divider-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Divider-"
         [ Css.class Container
             [ Css.width (pct 100)
             , Css.displayFlex

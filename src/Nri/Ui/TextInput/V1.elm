@@ -95,7 +95,7 @@ view_ : CssClasses -> Model value msg -> Html msg
 view_ labelClass model =
     let
         idValue =
-            "Nri-TextInput-" ++ dashify model.label
+            "Nri-Ui-TextInput-" ++ dashify model.label
 
         (InputType inputType) =
             model.type_
@@ -156,7 +156,7 @@ styles =
             , Css.marginTop (px 9)
             ]
     in
-    Nri.Ui.Styles.V1.styles "Nri-TextInput-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-TextInput-"
         [ Css.selector "input[type=text]"
             [ Css.withClass Input inputStyle ]
         , Css.selector "input[type=number]"

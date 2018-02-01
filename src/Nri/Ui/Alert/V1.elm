@@ -91,7 +91,7 @@ type CssClasses
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Alert-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Alert-"
         [ Css.class Alert
             [ Css.displayFlex
             , Css.fontSize (Css.px 13)

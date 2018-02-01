@@ -264,7 +264,7 @@ type CssClasses
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Tabs-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Tabs-"
         [ Css.class Container
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd

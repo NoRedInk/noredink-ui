@@ -50,7 +50,7 @@ type alias StylesWithAssets id class msg assets =
 This will help you make sure you don't mismatch the namespace you're using.
 
     { css, class } =
-        Nri.Ui.Styles.styles "Nri-MyWidget-"
+        Nri.Ui.Styles.styles "Nri-Ui-MyWidget-"
             [ Css.class Container
                 [ backgroundColor Nri.Colors.ochre ]
             ]

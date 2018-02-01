@@ -141,7 +141,7 @@ classString classes =
 
 namespace : String
 namespace =
-    "Nri-Text-"
+    "Nri-Ui-Text-"
 
 
 type CssClasses

@@ -74,7 +74,7 @@ type CssClass
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Textarea-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Textarea-"
         [ Css.class Container
             [ position relative
             , paddingTop (px 7)

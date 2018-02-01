@@ -169,7 +169,7 @@ type CssClasses
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-BannerAlert-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
         [ Css.class BackdropContainer
             [ Css.height (Css.vh 100)
             , Css.left Css.zero

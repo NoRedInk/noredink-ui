@@ -367,7 +367,7 @@ styles =
                     ]
                 ]
     in
-    Nri.Ui.Styles.V1.styles "Nri-Button-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Button-"
         [ Css.class Button
             [ cursor pointer
             , display inlineBlock
