@@ -9,6 +9,7 @@ module Nri.Ui.Text.V1
         , smallBody
         , smallBodyClassString
         , smallBodyGray
+        , smallHeading
         , styles
         , subHeading
         , tagline
@@ -22,6 +23,7 @@ module Nri.Ui.Text.V1
 @docs smallBody
 @docs smallBodyGray
 @docs subHeading
+@docs smallHeading
 @docs tagline
 
 Text class strings:
@@ -65,6 +67,13 @@ tagline content =
 subHeading : List (Html msg) -> Html msg
 subHeading content =
     h3 [ class [ SubHeading, Text ] ] content
+
+
+{-| This is a small Page Heading.
+-}
+smallHeading : List (Html msg) -> Html msg
+smallHeading content =
+    h4 [ class [ SmallHeading, Text ] ] content
 
 
 {-| This is some medium body copy.
@@ -149,6 +158,7 @@ type CssClasses
     | Heading
     | Tagline
     | SubHeading
+    | SmallHeading
     | MediumBody
     | SmallBody
     | SmallBodyGray
@@ -176,6 +186,12 @@ styles =
             , lineHeight (px 27)
             , fontWeight (int 700)
             , margin4 (px 20) (px 0) (px 10) (px 0)
+            ]
+        , Css.class SmallHeading
+            [ makeFont (px 16) gray20
+            , lineHeight (px 23)
+            , fontWeight (int 700)
+            , margin zero
             ]
         , Css.class MediumBody
             [ makeFont (px 18) gray20
