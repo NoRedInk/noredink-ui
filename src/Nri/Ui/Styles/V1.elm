@@ -80,12 +80,12 @@ stylesWithExtraStylesheets namespace extras snippets =
         { id, class, classList } =
             Html.CssHelpers.withNamespace namespace
 
-        stylesheet =
+        sheet =
             snippets
                 |> Css.Namespace.namespace namespace
                 |> Css.stylesheet
     in
-    { css = \assets -> stylesheet :: extras
+    { css = \assets -> sheet :: extras
     , id = id
     , class = class
     , classList = classList
@@ -105,12 +105,12 @@ stylesWithAssets namespace snippets =
         { id, class, classList } =
             Html.CssHelpers.withNamespace namespace
 
-        stylesheet assets =
+        sheet assets =
             snippets assets
                 |> Css.Namespace.namespace namespace
                 |> Css.stylesheet
     in
-    { css = \assets -> [ stylesheet assets ]
+    { css = \assets -> [ sheet assets ]
     , id = id
     , class = class
     , classList = classList
