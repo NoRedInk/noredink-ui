@@ -12,9 +12,9 @@ module Nri.Ui.Outline.V1 exposing (NodeConfig, NodeLayout, config, html, node, s
 
 -}
 
+import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css exposing (Stylesheet)
 import Html exposing (Attribute, Html)
 import Nri.Colors
 import Nri.Stylers
@@ -170,7 +170,7 @@ styles =
             , Css.display Css.block
 
             -- This selects all nodes on a level but the first.
-            , Css.generalSiblings
+            , Css.Foreign.generalSiblings
                 [ Css.Foreign.class Node
                     -- Add some spacing between nodes of the same level.
                     [ Css.marginTop (Css.px 20)
