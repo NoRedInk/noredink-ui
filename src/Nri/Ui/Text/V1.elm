@@ -40,10 +40,10 @@ Modifying strings to display nicely:
 
 -}
 
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Css exposing (..)
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Css.Helpers exposing (identifierToString)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (..)
 import Nri.Colors exposing (..)
 import Nri.Stylers exposing (makeFont)

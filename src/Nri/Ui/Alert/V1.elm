@@ -22,10 +22,9 @@ module Nri.Ui.Alert.V1
 -}
 
 import Accessibility
+import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css 
-import Css.Foreign
 import Html exposing (Html)
 import Markdown
 import Nri.Colors

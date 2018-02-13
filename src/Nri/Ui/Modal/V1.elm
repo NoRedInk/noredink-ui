@@ -15,10 +15,9 @@ module Nri.Ui.Modal.V1
 
 -}
 
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css
+import Css.Foreign exposing (Snippet, body, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css 
-import Css.Foreign exposing (body)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.CssHelpers exposing (..)

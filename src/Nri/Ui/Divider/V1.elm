@@ -6,9 +6,9 @@ module Nri.Ui.Divider.V1 exposing (styles, view)
 
 -}
 
+import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css exposing (..)
 import Html exposing (..)
 import Nri.Colors as Colors
 import Nri.Ui.Styles.V1

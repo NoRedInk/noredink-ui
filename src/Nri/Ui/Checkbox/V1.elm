@@ -32,10 +32,9 @@ module Nri.Ui.Checkbox.V1
 import Accessibility exposing (..)
 import Accessibility.Aria exposing (controls)
 import Accessibility.Widget as Widget
+import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css exposing (..)
-import Css.Foreign
 import Html
 import Html.Attributes as Attributes
 import Html.Events as Events exposing (defaultOptions)

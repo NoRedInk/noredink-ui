@@ -35,9 +35,9 @@ import Accessibility.Aria
 import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
+import Css exposing (Style)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Css exposing (Style)
 import Html exposing (Attribute, Html)
 import Html.Attributes
 import Html.Events
