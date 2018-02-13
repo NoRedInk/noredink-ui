@@ -22,8 +22,10 @@ module Nri.Ui.Alert.V1
 -}
 
 import Accessibility
-import Css
-import Css.Elements
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import Css 
+import Css.Foreign
 import Html exposing (Html)
 import Markdown
 import Nri.Colors
@@ -92,7 +94,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Alert-"
-        [ Css.class Alert
+        [ Css.Foreign.class Alert
             [ Css.displayFlex
             , Css.fontSize (Css.px 13)
             , Css.lineHeight (Css.num 1.2)
@@ -100,10 +102,10 @@ styles =
             , Css.overflow Css.hidden
             , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
             , Css.position Css.relative
-            , Css.children
-                [ Css.Elements.div
-                    [ Css.children
-                        [ Css.Elements.p
+            , Css.Foreign.children
+                [ Css.Foreign.div
+                    [ Css.Foreign.children
+                        [ Css.Foreign.p
                             [ Css.margin Css.zero
                             ]
                         ]
@@ -121,25 +123,25 @@ styles =
                 , Css.width (Css.px 25)
                 ]
             ]
-        , Css.class Error
+        , Css.Foreign.class Error
             [ Css.color Nri.Colors.purple
             , Css.after
                 [ Css.backgroundColor Nri.Colors.purple
                 ]
             ]
-        , Css.class Success
+        , Css.Foreign.class Success
             [ Css.color Nri.Colors.greenDarkest
             , Css.after
                 [ Css.backgroundColor Nri.Colors.green
                 ]
             ]
-        , Css.class Tip
+        , Css.Foreign.class Tip
             [ Css.color Nri.Colors.navy
             , Css.after
                 [ Css.backgroundColor Nri.Colors.white
                 ]
             ]
-        , Css.class Warning
+        , Css.Foreign.class Warning
             [ Css.color Nri.Colors.red
             , Css.after
                 [ Css.backgroundColor Nri.Colors.red

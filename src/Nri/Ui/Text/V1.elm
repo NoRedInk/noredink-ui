@@ -40,6 +40,8 @@ Modifying strings to display nicely:
 
 -}
 
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Css exposing (..)
 import Css.Helpers exposing (identifierToString)
 import Html exposing (..)
@@ -169,55 +171,55 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles namespace
-        [ Css.class Heading
+        [ Css.Foreign.class Heading
             [ makeFont (px 30) navy
             , lineHeight (px 40.5)
             , fontWeight (int 700)
             , margin zero
             ]
-        , Css.class Tagline
+        , Css.Foreign.class Tagline
             [ makeFont (px 20) gray45
             , lineHeight (px 27)
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)
             ]
-        , Css.class SubHeading
+        , Css.Foreign.class SubHeading
             [ makeFont (px 20) navy
             , lineHeight (px 27)
             , fontWeight (int 700)
             , margin4 (px 20) (px 0) (px 10) (px 0)
             ]
-        , Css.class SmallHeading
+        , Css.Foreign.class SmallHeading
             [ makeFont (px 16) gray20
             , lineHeight (px 23)
             , fontWeight (int 700)
             , margin zero
             ]
-        , Css.class MediumBody
+        , Css.Foreign.class MediumBody
             [ makeFont (px 18) gray20
             , lineHeight (px 27)
             , fontWeight (int 400)
             , margin4 (px 10) (px 0) (px 0) (px 0)
             ]
-        , Css.class SmallBody
+        , Css.Foreign.class SmallBody
             [ makeFont (px 15) gray20
             , lineHeight (px 23)
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
-        , Css.class SmallBodyGray
+        , Css.Foreign.class SmallBodyGray
             [ makeFont (px 15) gray45
             , lineHeight (px 23)
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
-        , Css.class Caption
+        , Css.Foreign.class Caption
             [ makeFont (px 13) gray45
             , lineHeight (px 18)
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)
             ]
-        , Css.class Text
+        , Css.Foreign.class Text
             [ padding zero
             , textAlign left
             , firstChild

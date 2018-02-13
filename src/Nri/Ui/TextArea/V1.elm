@@ -9,6 +9,8 @@ module Nri.Ui.TextArea.V1 exposing (styles, view)
 
 -}
 
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Css exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -75,14 +77,14 @@ type CssClass
 styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Textarea-"
-        [ Css.class Container
+        [ Css.Foreign.class Container
             [ position relative
             , paddingTop (px 7)
             ]
-        , Css.class InvisibleLabel
+        , Css.Foreign.class InvisibleLabel
             [ Nri.Accessibility.invisibleText
             ]
-        , Css.class Label
+        , Css.Foreign.class Label
             [ backgroundColor Nri.Colors.white
             , left (px 10)
             , top (px 0)
@@ -92,7 +94,7 @@ styles =
             , border3 (px 1) solid Nri.Colors.gray75
             , borderRadius (px 3)
             ]
-        , Css.class TextArea
+        , Css.Foreign.class TextArea
             [ boxShadow5 inset zero (px 1) (px 1) (withAlpha 0.2 gray20)
             , position relative
             , resize vertical
@@ -107,7 +109,7 @@ styles =
                 [ borderColor Nri.Colors.turquoise -- TODO: swap for new styleguide color
                 , outline none
                 ]
-            , Css.withClass IsInError
+            , Css.Foreign.withClass IsInError
                 [ borderColor purple
                 ]
             ]

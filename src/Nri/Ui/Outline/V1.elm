@@ -12,6 +12,8 @@ module Nri.Ui.Outline.V1 exposing (NodeConfig, NodeLayout, config, html, node, s
 
 -}
 
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Css exposing (Stylesheet)
 import Html exposing (Attribute, Html)
 import Nri.Colors
@@ -153,7 +155,7 @@ labelHeight =
 styles : Styles a Style b
 styles =
     Nri.Ui.Styles.V1.styles "Outline" <|
-        [ Css.class Segment
+        [ Css.Foreign.class Segment
             [ Css.position Css.relative
             , Css.zIndex (Css.int 0)
 
@@ -161,7 +163,7 @@ styles =
             -- top level nodes.
             , Css.overflow Css.auto
             ]
-        , Css.class Node
+        , Css.Foreign.class Node
             -- The node's relative positioning allows the connecting line to
             -- point upward relative from the node's bounding box.
             [ Css.position Css.relative
@@ -169,7 +171,7 @@ styles =
 
             -- This selects all nodes on a level but the first.
             , Css.generalSiblings
-                [ Css.class Node
+                [ Css.Foreign.class Node
                     -- Add some spacing between nodes of the same level.
                     [ Css.marginTop (Css.px 20)
                     , Css.before
@@ -181,9 +183,9 @@ styles =
                 ]
 
             -- Child nodes have a connecting line and are indented.
-            , Css.descendants nestedNodeStyles
+            , Css.Foreign.descendants nestedNodeStyles
             ]
-        , Css.class InnerNode
+        , Css.Foreign.class InnerNode
             [ Css.overflow Css.auto
 
             -- The position and zIndex create a new stacking context. Connecting
@@ -193,7 +195,7 @@ styles =
 
             -- Recursively assign color styles to the different nested levels of
             -- the outline structure.
-            , Css.descendants
+            , Css.Foreign.descendants
                 (colorStyles
                     [ Nri.Ui.Palette.V1.cornflower
                     , Nri.Ui.Palette.V1.aqua
@@ -202,12 +204,12 @@ styles =
                     ]
                 )
             ]
-        , Css.class GhostedNode
+        , Css.Foreign.class GhostedNode
             [ Css.opacity (Css.num 0.5)
             , Css.zIndex (Css.int -1)
             , Css.position Css.relative
             ]
-        , Css.class Label
+        , Css.Foreign.class Label
             [ Css.border2 (Css.px 1) Css.solid
             , Css.padding2 Css.zero (Css.px 15)
             , Css.fontSize (Css.px 15)
@@ -222,7 +224,7 @@ styles =
             , Nri.Stylers.makeFont (Css.px 15) Nri.Colors.gray20
             , Css.fontWeight Css.bold
             ]
-        , Css.class Contents
+        , Css.Foreign.class Contents
             [ Css.borderRadius (Css.px 8)
             , Css.marginTop (Css.px (labelHeight / 2))
             , Css.marginLeft (Css.px (labelHeight / 2))
@@ -234,9 +236,9 @@ styles =
             , Css.marginRight (Css.px 5)
             , Css.marginBottom (Css.px 5)
             ]
-        , Css.class SelectedNode
-            [ Css.children
-                [ Css.class Contents
+        , Css.Foreign.class SelectedNode
+            [ Css.Foreign.children
+                [ Css.Foreign.class Contents
                     [ Css.batch Nri.Ui.Effects.V1.selectionShadow
                     ]
                 ]
@@ -245,9 +247,9 @@ styles =
             ++ curvedConnectingLineStyles
 
 
-nestedNodeStyles : List Css.Snippet
+nestedNodeStyles : List Snippet
 nestedNodeStyles =
-    [ Css.class Node
+    [ Css.Foreign.class Node
         [ Css.marginTop (Css.px 20)
         , Css.before
             -- Draw the connect line. It is like an antenna pointing
@@ -257,14 +259,14 @@ nestedNodeStyles =
             , Css.borderBottom2 (Css.px 1) Css.solid
             , Css.batch lineStyles
             ]
-        , Css.children
+        , Css.Foreign.children
             -- Indent this node relative to the parent.
-            [ Css.class InnerNode
+            [ Css.Foreign.class InnerNode
                 [ Css.marginLeft (Css.px 50)
                 ]
             ]
         ]
-    , Css.class CustomHtml
+    , Css.Foreign.class CustomHtml
         [ Css.marginLeft (Css.px 50)
         ]
     ]
@@ -273,7 +275,7 @@ nestedNodeStyles =
 {-| The last node is sometimes connected by a curving line to its parent.
 Whether this curve should appear or not depends on the level of the node.
 -}
-curvedConnectingLineStyles : List Css.Snippet
+curvedConnectingLineStyles : List Snippet
 curvedConnectingLineStyles =
     -- 1. Root level nodes are connected with one another using straight lines,
     --    so they are never curved.
@@ -298,10 +300,10 @@ curvedConnectingLineStyles =
     --         │
     --         ╰─ Child Node 3
     --
-    [ Css.class Node
+    [ Css.Foreign.class Node
         [ Css.lastOfType
-            [ Css.descendants
-                [ Css.class Node
+            [ Css.Foreign.descendants
+                [ Css.Foreign.class Node
                     [ Css.lastOfType
                         [ Css.before
                             [ Css.borderRadius (Css.px 8)
@@ -327,11 +329,11 @@ curvedConnectingLineStyles =
     --         │
     --         ╰─ Child Node 2
     --
-    , Css.class Node
-        [ Css.descendants
-            [ Css.class Node
-                [ Css.descendants
-                    [ Css.class Node
+    , Css.Foreign.class Node
+        [ Css.Foreign.descendants
+            [ Css.Foreign.class Node
+                [ Css.Foreign.descendants
+                    [ Css.Foreign.class Node
                         [ Css.lastOfType
                             [ Css.before
                                 [ Css.borderRadius (Css.px 8)
@@ -345,20 +347,20 @@ curvedConnectingLineStyles =
     ]
 
 
-colorStyles : List Palette -> List Css.Snippet
+colorStyles : List Palette -> List Snippet
 colorStyles palettes =
     case palettes of
         [] ->
             []
 
         palette :: rest ->
-            [ Css.class InnerNode
-                [ Css.descendants (colorStyles rest)
+            [ Css.Foreign.class InnerNode
+                [ Css.Foreign.descendants (colorStyles rest)
                 ]
-            , Css.class Contents
+            , Css.Foreign.class Contents
                 [ Css.backgroundColor palette.background
                 ]
-            , Css.class Label
+            , Css.Foreign.class Label
                 [ Css.color palette.primary
                 , Css.borderColor palette.border
                 ]

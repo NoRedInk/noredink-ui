@@ -38,8 +38,10 @@ There will generally be a `*Button` and `*Link` version of each button style.
 -}
 
 import Accessibility exposing (..)
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Css exposing (..)
-import Css.Elements
+import Css.Foreign
 import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -253,7 +255,7 @@ styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     let
         newSizeStyle size config =
-            Css.class (SizeStyle size)
+            Css.Foreign.class (SizeStyle size)
                 [ fontSize (px config.fontSize)
                 , borderRadius (px 8)
                 , Css.height (px config.height)
@@ -261,15 +263,15 @@ styles =
                 , padding2 zero (px config.sidePadding)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
-                , Css.descendants
-                    [ Css.Elements.img
+                , Css.Foreign.descendants
+                    [ Css.Foreign.img
                         [ Css.height (px config.imageHeight)
                         , marginRight (px <| config.imageHeight / 6)
                         , position relative
                         , bottom (px 2)
                         , verticalAlign middle
                         ]
-                    , Css.Elements.svg
+                    , Css.Foreign.svg
                         [ Css.height (px config.imageHeight) |> important
                         , Css.width (px config.imageHeight) |> important
                         , marginRight (px <| config.imageHeight / 6)
@@ -277,7 +279,7 @@ styles =
                         , bottom (px 2)
                         , verticalAlign middle
                         ]
-                    , Css.Elements.svg
+                    , Css.Foreign.svg
                         [ Css.important <| Css.height (px config.imageHeight)
                         , Css.important <| Css.width auto
                         , maxWidth (px (config.imageHeight * 1.25))
@@ -289,18 +291,18 @@ styles =
                     ]
 
                 -- Borderless buttons get bigger icons
-                , Css.withClass (ColorsStyle BorderlessColors)
-                    [ Css.descendants
-                        [ Css.Elements.img
+                , Css.Foreign.withClass (ColorsStyle BorderlessColors)
+                    [ Css.Foreign.descendants
+                        [ Css.Foreign.img
                             [ Css.height (px (config.imageHeight * 1.6))
                             , marginRight (px (config.imageHeight * 1.6 / 6))
                             ]
-                        , Css.Elements.svg
+                        , Css.Foreign.svg
                             [ Css.height (px (config.imageHeight * 1.6)) |> important
                             , Css.width (px (config.imageHeight * 1.6)) |> important
                             , marginRight (px (config.imageHeight * 1.6 / 6))
                             ]
-                        , Css.Elements.svg
+                        , Css.Foreign.svg
                             [ Css.important <| Css.height (px (config.imageHeight * 1.6))
                             , Css.important <| Css.width auto
                             , maxWidth (px (config.imageHeight * 1.25))
@@ -313,7 +315,7 @@ styles =
                 ]
 
         styleStyle style config =
-            Css.class (ColorsStyle style)
+            Css.Foreign.class (ColorsStyle style)
                 [ color config.text
                 , backgroundColor config.background
                 , borderColor config.border
@@ -338,7 +340,7 @@ styles =
                 ]
 
         newStyleStyle style config =
-            Css.class (ColorsStyle style)
+            Css.Foreign.class (ColorsStyle style)
                 [ color config.text
                 , backgroundColor config.background
                 , fontWeight (int 700)
@@ -368,7 +370,7 @@ styles =
                 ]
     in
     Nri.Ui.Styles.V1.styles "Nri-Ui-Button-"
-        [ Css.class Button
+        [ Css.Foreign.class Button
             [ cursor pointer
             , display inlineBlock
             , -- Specifying the font can and should go away after bootstrap is removed from application.css
@@ -431,7 +433,7 @@ styles =
             , border = Nothing
             , shadow = transparent
             }
-        , Css.class (ColorsStyle BorderlessColors)
+        , Css.Foreign.class (ColorsStyle BorderlessColors)
             [ Css.hover
                 [ textDecoration underline
                 , Css.disabled
