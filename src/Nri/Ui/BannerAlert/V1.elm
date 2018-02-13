@@ -17,7 +17,8 @@ module Nri.Ui.BannerAlert.V1
 
 import Accessibility
 import Css
-import Css.Elements
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Html)
 import Nri.Colors
 import Nri.Fonts
@@ -71,35 +72,35 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
-        [ Css.class AlertMessage
+        [ Css.Foreign.class AlertMessage
             [ Css.fontSize (Css.px 20)
             , Css.fontWeight (Css.int 700)
             , Css.lineHeight (Css.px 25)
             , Css.maxWidth (Css.px 600)
             , Nri.Fonts.baseFont
             ]
-        , Css.class Banner
+        , Css.Foreign.class Banner
             [ Css.alignItems Css.center
             , Css.displayFlex
             , Css.justifyContent Css.center
             , Css.padding (Css.px 20)
             , Css.width (Css.pct 100)
-            , Css.children
-                [ Css.Elements.button
+            , Css.Foreign.children
+                [ Css.Foreign.button
                     [ Css.position Css.absolute
                     , Css.right (Css.px 15)
                     ]
                 ]
             ]
-        , Css.class Error
+        , Css.Foreign.class Error
             [ Css.backgroundColor Nri.Colors.purpleLight
             , Css.color Nri.Colors.purpleDark
             ]
-        , Css.class Neutral
+        , Css.Foreign.class Neutral
             [ Css.backgroundColor Nri.Colors.frost
             , Css.color Nri.Colors.navy
             ]
-        , Css.class Success
+        , Css.Foreign.class Success
             [ Css.backgroundColor Nri.Colors.greenLightest
             , Css.color Nri.Colors.greenDarkest
             ]

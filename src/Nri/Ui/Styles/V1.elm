@@ -18,7 +18,9 @@ module Nri.Ui.Styles.V1 exposing (Keyframe, Styles, StylesWithAssets, keyframes,
 -}
 
 import Css
-import Css.Namespace
+import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Css.Namespace
 import Html exposing (Attribute, Html)
 import Html.CssHelpers
 
@@ -37,7 +39,7 @@ type alias Styles id class msg =
 image somewhere.
 -}
 type alias StylesWithAssets id class msg assets =
-    { css : assets -> List Css.Stylesheet
+    { css : assets -> List Stylesheet
     , id : id -> Attribute msg
     , class : List class -> Attribute msg
     , classList : List ( class, Bool ) -> Attribute msg
@@ -51,41 +53,41 @@ This will help you make sure you don't mismatch the namespace you're using.
 
     { css, class } =
         Nri.Ui.Styles.styles "Nri-Ui-MyWidget-"
-            [ Css.class Container
+            [ Css.Foreign.class Container
                 [ backgroundColor Nri.Colors.ochre ]
             ]
 
 -}
 styles :
     String
-    -> List Css.Snippet
+    -> List Snippet
     -> Styles id class msg
 styles namespace snippets =
     stylesWithExtraStylesheets namespace [] snippets
 
 
 {-| Use this instead of [`styles`](#styles) if you need to
-include Css.Stylesheets from external packages,
+include Stylesheets from external packages,
 or if you need to add styles without a namespace.
 Remember, all stylesheets given here will be included
 on all pages of the site.
 -}
 stylesWithExtraStylesheets :
     String
-    -> List Css.Stylesheet
-    -> List Css.Snippet
+    -> List Stylesheet
+    -> List Snippet
     -> Styles id class msg
 stylesWithExtraStylesheets namespace extras snippets =
     let
         { id, class, classList } =
             Html.CssHelpers.withNamespace namespace
 
-        stylesheet =
+        sheet =
             snippets
-                |> Css.Namespace.namespace namespace
-                |> Css.stylesheet
+                |> DEPRECATED.Css.Namespace.namespace namespace
+                |> stylesheet
     in
-    { css = \assets -> stylesheet :: extras
+    { css = \assets -> sheet :: extras
     , id = id
     , class = class
     , classList = classList
@@ -98,19 +100,19 @@ stylesWithExtraStylesheets namespace extras snippets =
 -}
 stylesWithAssets :
     String
-    -> (assets -> List Css.Snippet)
+    -> (assets -> List Snippet)
     -> StylesWithAssets id class msg assets
 stylesWithAssets namespace snippets =
     let
         { id, class, classList } =
             Html.CssHelpers.withNamespace namespace
 
-        stylesheet assets =
+        sheet assets =
             snippets assets
-                |> Css.Namespace.namespace namespace
-                |> Css.stylesheet
+                |> DEPRECATED.Css.Namespace.namespace namespace
+                |> stylesheet
     in
-    { css = \assets -> [ stylesheet assets ]
+    { css = \assets -> [ sheet assets ]
     , id = id
     , class = class
     , classList = classList
