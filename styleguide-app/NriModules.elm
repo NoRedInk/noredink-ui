@@ -6,6 +6,7 @@ import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
+import Nri.Ui.Text.V1 as Text
 import String.Extra
 
 
@@ -82,4 +83,5 @@ styles =
         [ -- NOTE: these will go away as the modules' styles are integrated with Nri.Css.Site.elm
           [ ModuleExample.styles
           ]
+        , (Text.styles |> .css) ()
         ]
