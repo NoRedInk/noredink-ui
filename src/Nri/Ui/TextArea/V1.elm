@@ -2,6 +2,7 @@ module Nri.Ui.TextArea.V1
     exposing
         ( Model
         , generateId
+        , styles
         , view
         , writing
         )
@@ -11,14 +12,15 @@ module Nri.Ui.TextArea.V1
 
 ## The Nri styleguide-specified textarea with overlapping label
 
-@docs view, writing, Model, generateId
+@docs view, writing, Model, generateId, styles
 
 -}
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import Nri.Ui.InputStyles exposing (CssClasses(..), styles)
+import Nri.Ui.InputStyles exposing (CssClasses(..))
+import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
@@ -115,4 +117,10 @@ view_ textAreaStyle model =
 {-| -}
 generateId : String -> String
 generateId labelText =
-    "nri-text-area-" ++ (dashify <| removePunctuation labelText)
+    "nri-ui-text-area-" ++ (dashify <| removePunctuation labelText)
+
+
+{-| -}
+styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Nri.Ui.InputStyles.Assets r)
+styles =
+    Nri.Ui.InputStyles.styles

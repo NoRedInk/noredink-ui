@@ -1,4 +1,4 @@
-module Nri.Ui.InputStyles exposing (CssClasses(..), styles)
+module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), styles)
 
 {-|
 
