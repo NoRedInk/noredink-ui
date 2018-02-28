@@ -1,11 +1,14 @@
 module Nri.Ui.Text.Quiz.V1
     exposing
         ( footnote
+        , styles
         )
 
 {-| Text types for quizzes:
 
 @docs footnote
+
+@docs styles
 
 -}
 
