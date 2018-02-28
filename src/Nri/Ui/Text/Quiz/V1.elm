@@ -65,34 +65,3 @@ makeQuizFont size fontColor =
 
 { class } =
     styles
-
-
-{-| Eliminate widows (single words on their own line caused by
-wrapping) by inserting a non-breaking space if there are at least two
-words.
--}
-noWidow : String -> String
-noWidow inputs =
-    let
-        -- this value is a unicode non-breaking space since Elm
-        -- doesn't support named character entities
-        nbsp =
-            " "
-
-        words =
-            String.split " " inputs
-
-        insertPoint =
-            List.length words - 1
-    in
-    words
-        |> List.indexedMap
-            (\i word ->
-                if i == 0 then
-                    word
-                else if i == insertPoint && insertPoint > 0 then
-                    nbsp ++ word
-                else
-                    " " ++ word
-            )
-        |> String.join ""
