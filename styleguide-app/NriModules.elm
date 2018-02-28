@@ -1,7 +1,8 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, subscriptions, update)
 
-import Css exposing (..)
+import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import Examples.TextArea as TextAreaExample
 import Examples.Text as TextExample
 import Examples.Text.Quiz as TextQuizExample
 import Html exposing (Html, img)
@@ -10,20 +11,24 @@ import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.Text.Quiz.V1 as TextQuiz
 import Nri.Ui.Text.V1 as Text
+import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
 
 
 type alias ModuleStates =
-    {}
+    { textAreaExampleState : TextAreaExample.State
+    }
 
 
 init : ModuleStates
 init =
-    {}
+    { textAreaExampleState = TextAreaExample.init
+    }
 
 
 type Msg
     = ShowItWorked String String
+    | TextAreaExampleMsg TextAreaExample.Msg
     | NoOp
 
 
@@ -35,7 +40,16 @@ update msg moduleStates =
                 _ =
                     Debug.log group message
             in
-            ( moduleStates, Cmd.none )
+                ( moduleStates, Cmd.none )
+
+        TextAreaExampleMsg msg ->
+            let
+                ( textAreaExampleState, cmd ) =
+                    TextAreaExample.update msg moduleStates.textAreaExampleState
+            in
+                ( { moduleStates | textAreaExampleState = textAreaExampleState }
+                , Cmd.map TextAreaExampleMsg cmd
+                )
 
         NoOp ->
             ( moduleStates, Cmd.none )
@@ -63,6 +77,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ TextExample.example
     , TextQuizExample.example
+    , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     ]
 
 
@@ -89,4 +104,20 @@ styles =
           ]
         , (Text.styles |> .css) ()
         , (TextQuiz.styles |> .css) ()
+        , (TextArea.styles |> .css) assets
         ]
+
+
+type alias Assets =
+    { iconCalendar_svg : Asset
+    , icons_searchGray_svg : Asset
+    , icons_xBlue_svg : Asset
+    }
+
+
+assets : Assets
+assets =
+    { iconCalendar_svg = Asset ""
+    , icons_searchGray_svg = Asset ""
+    , icons_xBlue_svg = Asset ""
+    }
