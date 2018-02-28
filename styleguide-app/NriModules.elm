@@ -1,11 +1,14 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, subscriptions, update)
 
 import Css exposing (..)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Text as TextExample
+import Examples.Text.Quiz as TextQuizExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
+import Nri.Ui.Text.Quiz.V1 as TextQuiz
 import Nri.Ui.Text.V1 as Text
 import String.Extra
 
@@ -59,6 +62,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ TextExample.example
+    , TextQuizExample.example
     ]
 
 
@@ -84,4 +88,5 @@ styles =
           [ ModuleExample.styles
           ]
         , (Text.styles |> .css) ()
+        , (TextQuiz.styles |> .css) ()
         ]

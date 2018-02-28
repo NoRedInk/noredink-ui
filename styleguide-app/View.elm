@@ -1,7 +1,9 @@
 module View exposing (view)
 
 import Css exposing (..)
-import Css.Namespace
+import Css.Foreign exposing (Snippet)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Css.Namespace
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import Html.CssHelpers
@@ -113,6 +115,7 @@ navigation route =
                 :: List.map
                     navLink
                     [ Text
+                    , TextQuiz
                     , Colors
                     , Layout
                     , Inputs
@@ -139,44 +142,44 @@ type Classes
     | NavLink
 
 
-layoutFixer : List Css.Snippet
+layoutFixer : List Snippet
 layoutFixer =
     -- TODO: remove when universal header seizes power
-    [ Css.selector "#header-menu"
+    [ Css.Foreign.selector "#header-menu"
         [ Css.property "float" "none"
         ]
-    , Css.selector "#page-container"
+    , Css.Foreign.selector "#page-container"
         [ maxWidth (px 1400)
         ]
-    , Css.selector ".anonymous .log-in-button"
+    , Css.Foreign.selector ".anonymous .log-in-button"
         [ Css.property "float" "none"
         , right zero
         , top zero
         ]
-    , Css.selector ".l-inline-blocks"
+    , Css.Foreign.selector ".l-inline-blocks"
         [ textAlign right
         ]
-    , Css.everything
+    , Css.Foreign.everything
         [ Fonts.baseFont
         ]
     ]
 
 
-styles : Css.Stylesheet
+styles : Stylesheet
 styles =
-    (Css.stylesheet << Css.Namespace.namespace "Page-StyleGuide-") <|
+    (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-") <|
         List.concat
-            [ [ Css.class Section
+            [ [ Css.Foreign.class Section
                     [ margin2 (px 40) zero
                     ]
-              , Css.class StyleGuideLayout
+              , Css.Foreign.class StyleGuideLayout
                     [ displayFlex
                     , alignItems flexStart
                     ]
-              , Css.class StyleGuideContent
+              , Css.Foreign.class StyleGuideContent
                     [ flexGrow (int 1)
                     ]
-              , Css.class CategoryMenu
+              , Css.Foreign.class CategoryMenu
                     [ flexBasis (px 300)
                     , backgroundColor Colors.gray92
                     , marginRight (px 40)
@@ -185,20 +188,20 @@ styles =
                     , top (px 150)
                     , flexShrink zero
                     ]
-              , Css.class CategoryLinks
+              , Css.Foreign.class CategoryLinks
                     [ margin4 zero zero (px 40) zero
-                    , Css.children
-                        [ Css.selector "li"
+                    , Css.Foreign.children
+                        [ Css.Foreign.selector "li"
                             [ margin2 (px 10) zero
                             ]
                         ]
                     ]
-              , Css.class NavLink
+              , Css.Foreign.class NavLink
                     [ backgroundColor transparent
                     , borderStyle none
                     , color Colors.azure
                     ]
-              , Css.class ActiveCategory
+              , Css.Foreign.class ActiveCategory
                     [ color Colors.navy
                     ]
               ]
@@ -214,7 +217,7 @@ attachElmCssStyles : Html msg
 attachElmCssStyles =
     Html.CssHelpers.style <|
         .css <|
-            Css.compile <|
+            compile <|
                 List.concat
                     [ [ styles ]
                     , NriModules.styles
