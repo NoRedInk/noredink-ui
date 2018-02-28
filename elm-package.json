@@ -7,8 +7,8 @@
         "src"
     ],
     "exposed-modules": [
-        "Nri.Ui.AssetPath",
         "Nri.Ui.Alert.V1",
+        "Nri.Ui.AssetPath",
         "Nri.Ui.BannerAlert.V1",
         "Nri.Ui.Button.V1",
         "Nri.Ui.Checkbox.V1",
