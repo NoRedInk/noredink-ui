@@ -115,7 +115,7 @@ navigation route =
                 :: List.map
                     navLink
                     [ Text
-                    , TextQuiz
+                    , TextWriting
                     , Colors
                     , Layout
                     , Inputs

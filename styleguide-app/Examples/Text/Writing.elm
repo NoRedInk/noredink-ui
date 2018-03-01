@@ -1,19 +1,19 @@
-module Examples.Text.Quiz exposing (example)
+module Examples.Text.Writing exposing (example)
 
 {- \
    @docs example
 -}
 
-import Html
+import Html.Styled exposing (text, toUnstyled)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Text.Quiz.V1 as TextQuiz
+import Nri.Ui.Text.Writing.V1 as TextWriting
 
 
 {-| -}
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Text.Quiz.V1.elm"
-    , category = TextQuiz
+    { filename = "Nri.Ui.Text.Writing.V1.elm"
+    , category = TextWriting
     , content =
         let
             longerBody =
@@ -23,6 +23,7 @@ example =
                     how long the assignment will take.
                 """
         in
-        [ TextQuiz.footnote [ Html.text <| "This is a footnote. " ++ longerBody ]
+        [ TextWriting.footnote [ text <| "This is a footnote. " ++ longerBody ]
+            |> toUnstyled
         ]
     }

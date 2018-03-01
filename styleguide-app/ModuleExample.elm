@@ -46,7 +46,7 @@ type Category
     | NotesToDeveloper
     | Colors
     | Text
-    | TextQuiz
+    | TextWriting
     | DynamicSymbols
     | Pages
     | QuestionTypes
@@ -90,8 +90,8 @@ categoryFromString string =
         "Text" ->
             Ok Text
 
-        "TextQuiz" ->
-            Ok TextQuiz
+        "TextWriting" ->
+            Ok TextWriting
 
         "DynamicSymbols" ->
             Ok DynamicSymbols
@@ -142,8 +142,8 @@ categoryForDisplay category =
         Text ->
             "Text"
 
-        TextQuiz ->
-            "TextQuiz"
+        TextWriting ->
+            "TextWriting"
 
         DynamicSymbols ->
             "Dynamic Symbols"
