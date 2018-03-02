@@ -1,5 +1,5 @@
 {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
@@ -19,7 +19,7 @@
         "Nri.Ui.Palette.V1",
         "Nri.Ui.Styles.V1",
         "Nri.Ui.Tabs.V1",
-        "Nri.Ui.Text.Quiz.V1",
+        "Nri.Ui.Text.Writing.V1",
         "Nri.Ui.Text.V1",
         "Nri.Ui.TextArea.V1",
         "Nri.Ui.TextInput.V1"

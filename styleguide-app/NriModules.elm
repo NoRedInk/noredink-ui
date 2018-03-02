@@ -4,12 +4,11 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.TextArea as TextAreaExample
 import Examples.Text as TextExample
-import Examples.Text.Quiz as TextQuizExample
+import Examples.Text.Writing as TextWritingExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
-import Nri.Ui.Text.Quiz.V1 as TextQuiz
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
@@ -76,7 +75,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ TextExample.example
-    , TextQuizExample.example
+    , TextWritingExample.example
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     ]
 
@@ -103,7 +102,6 @@ styles =
           [ ModuleExample.styles
           ]
         , (Text.styles |> .css) ()
-        , (TextQuiz.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
 
