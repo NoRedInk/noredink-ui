@@ -1,7 +1,9 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, subscriptions, update)
 
 import Css exposing (..)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Text as TextExample
+import Examples.Text.Writing as TextWritingExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -59,6 +61,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ TextExample.example
+    , TextWritingExample.example
     ]
 
 

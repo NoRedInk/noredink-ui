@@ -10,7 +10,9 @@ module ModuleExample
         )
 
 import Css exposing (..)
-import Css.Namespace
+import Css.Foreign exposing (Snippet)
+import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Css.Namespace
 import Html exposing (Html, img)
 import Html.Attributes
 import Html.CssHelpers
@@ -44,6 +46,7 @@ type Category
     | NotesToDeveloper
     | Colors
     | Text
+    | TextWriting
     | DynamicSymbols
     | Pages
     | QuestionTypes
@@ -86,6 +89,9 @@ categoryFromString string =
 
         "Text" ->
             Ok Text
+
+        "TextWriting" ->
+            Ok TextWriting
 
         "DynamicSymbols" ->
             Ok DynamicSymbols
@@ -136,6 +142,9 @@ categoryForDisplay category =
         Text ->
             "Text"
 
+        TextWriting ->
+            "TextWriting"
+
         DynamicSymbols ->
             "Dynamic Symbols"
 
@@ -174,22 +183,22 @@ type Classes
     | ModuleBody
 
 
-viewStyles : List Css.Snippet
+viewStyles : List Snippet
 viewStyles =
-    [ Css.class ModuleHeader
+    [ Css.Foreign.class ModuleHeader
         [ display block
         , backgroundColor glacier
         , padding (px 20)
         , marginTop (px 20)
         ]
-    , Css.class ModuleImporting
+    , Css.Foreign.class ModuleImporting
         [ display block
         , padding (px 20)
         , margin2 (px 20) zero
         ]
-    , Css.class ModuleBody
+    , Css.Foreign.class ModuleBody
         [ padding2 (px 20) zero ]
-    , Css.class ModuleName
+    , Css.Foreign.class ModuleName
         [ color gray20
         , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
         , fontSize (px 20)
@@ -197,12 +206,12 @@ viewStyles =
     ]
 
 
-styles : Css.Stylesheet
+styles : Stylesheet
 styles =
     List.concat
         [ viewStyles
         ]
-        |> (Css.stylesheet << Css.Namespace.namespace "Page-StyleGuide-ModuleExample-")
+        |> (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-ModuleExample-")
 
 
 { id, class, classList } =
