@@ -50,6 +50,7 @@ import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Nri.Colors exposing (..)
+import Nri.Fonts exposing (quizFont)
 import Nri.Stylers exposing (makeFont)
 import Nri.Ui.Styles.V1
 
@@ -159,7 +160,12 @@ classString classes =
 ugMediumBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 ugMediumBody =
     Html.Styled.p
-        [ css []
+        [ css
+            [ quizFont
+            , fontSize (px 18)
+            , lineHeight (px 30)
+            , color gray20
+            ]
         ]
 
 
@@ -168,7 +174,12 @@ ugMediumBody =
 ugSmallBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 ugSmallBody =
     Html.Styled.p
-        [ css []
+        [ css
+            [ quizFont
+            , fontSize (px 16)
+            , lineHeight (px 25)
+            , color gray20
+            ]
         ]
 
 
