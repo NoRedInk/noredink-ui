@@ -29,6 +29,7 @@ example =
         [ Text.heading [ RootHtml.text "This is the main page heading." ]
         , Text.tagline [ RootHtml.text "This is a tagline" ]
         , Text.subHeading [ RootHtml.text "This is a subHeading" ]
+        , Text.smallHeading [ RootHtml.text "This is a smallHeading" ]
         , Text.mediumBody [ RootHtml.text <| "This is a mediumBody. " ++ longerBody ]
         , Html.toUnstyled (Text.ugMediumBody [ Html.text <| "This is an ugMediumBody." ])
         , Text.smallBody [ RootHtml.text <| "This is a smallBody. " ++ longerBody ]
