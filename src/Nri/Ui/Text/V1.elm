@@ -164,6 +164,7 @@ ugMediumBody =
             [ quizFont
             , fontSize (px 18)
             , lineHeight (px 30)
+            , whiteSpace preLine
             , color gray20
             , margin4 (px 10) (px 0) (px 0) (px 0)
             , firstChild [ margin zero ]
@@ -181,6 +182,7 @@ ugSmallBody =
             [ quizFont
             , fontSize (px 16)
             , lineHeight (px 25)
+            , whiteSpace preLine
             , color gray20
             , margin4 (px 7) (px 0) (px 0) (px 0)
             , firstChild [ margin zero ]
