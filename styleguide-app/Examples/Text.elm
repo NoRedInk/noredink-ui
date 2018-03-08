@@ -1,10 +1,13 @@
 module Examples.Text exposing (example)
 
-{- \
-   @docs example
+{-|
+
+@docs example
+
 -}
 
-import Html
+import Html as RootHtml
+import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Text.V1 as Text
 
@@ -23,12 +26,15 @@ example =
                     how long the assignment will take.
                 """
         in
-        [ Text.heading [ Html.text "This is the main page heading." ]
-        , Text.tagline [ Html.text "This is a tagline" ]
-        , Text.subHeading [ Html.text "This is a subHeading" ]
-        , Text.mediumBody [ Html.text <| "This is a mediumBody. " ++ longerBody ]
-        , Text.smallBody [ Html.text <| "This is a smallBody. " ++ longerBody ]
-        , Text.smallBodyGray [ Html.text <| "This is a smallBodyGray. " ++ longerBody ]
-        , Text.caption [ Html.text <| "This is a caption. " ++ longerBody ]
+        [ Text.heading [ RootHtml.text "This is the main page heading." ]
+        , Text.tagline [ RootHtml.text "This is a tagline" ]
+        , Text.subHeading [ RootHtml.text "This is a subHeading" ]
+        , Text.smallHeading [ RootHtml.text "This is a smallHeading" ]
+        , Text.mediumBody [ RootHtml.text <| "This is a mediumBody. " ++ longerBody ]
+        , Html.toUnstyled (Text.ugMediumBody [ Html.text <| "This is an ugMediumBody." ])
+        , Text.smallBody [ RootHtml.text <| "This is a smallBody. " ++ longerBody ]
+        , Text.smallBodyGray [ RootHtml.text <| "This is a smallBodyGray. " ++ longerBody ]
+        , Html.toUnstyled (Text.ugSmallBody [ Html.text <| "This is an ugSmallBody." ])
+        , Text.caption [ RootHtml.text <| "This is a caption. " ++ longerBody ]
         ]
     }

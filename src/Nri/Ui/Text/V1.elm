@@ -13,28 +13,31 @@ module Nri.Ui.Text.V1
         , styles
         , subHeading
         , tagline
+        , ugMediumBody
+        , ugSmallBody
         )
 
-{-| Text types:
-
-@docs caption
-@docs heading
-@docs mediumBody
-@docs smallBody
-@docs smallBodyGray
-@docs subHeading
-@docs smallHeading
-@docs tagline
-
-Text class strings:
-
-@docs captionClassString
-@docs mediumBodyClassString
-@docs smallBodyClassString
+{-|
 
 @docs styles
 
-Modifying strings to display nicely:
+
+## Semantic text types:
+
+@docs caption, heading, mediumBody, smallBody, smallBodyGray, subHeading, smallHeading, tagline
+
+
+## User-generated text styles:
+
+@docs ugMediumBody,ugSmallBody
+
+
+## Text class strings:
+
+@docs captionClassString, mediumBodyClassString, smallBodyClassString
+
+
+## Modifying strings to display nicely:
 
 @docs noWidow
 
@@ -43,9 +46,11 @@ Modifying strings to display nicely:
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Css.Helpers exposing (identifierToString)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (..)
+import Html.Styled
+import Html.Styled.Attributes exposing (css)
 import Nri.Colors exposing (..)
+import Nri.Fonts exposing (quizFont)
 import Nri.Stylers exposing (makeFont)
 import Nri.Ui.Styles.V1
 
@@ -148,6 +153,42 @@ captionClassString =
 classString : List CssClasses -> String
 classString classes =
     String.join " " (List.map (identifierToString namespace) classes)
+
+
+{-| User-generated text.
+-}
+ugMediumBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
+ugMediumBody =
+    Html.Styled.p
+        [ css
+            [ quizFont
+            , fontSize (px 18)
+            , lineHeight (px 30)
+            , whiteSpace preLine
+            , color gray20
+            , margin4 (px 10) (px 0) (px 0) (px 0)
+            , firstChild [ margin zero ]
+            , firstOfType [ margin zero ]
+            ]
+        ]
+
+
+{-| User-generated text.
+-}
+ugSmallBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
+ugSmallBody =
+    Html.Styled.p
+        [ css
+            [ quizFont
+            , fontSize (px 16)
+            , lineHeight (px 25)
+            , whiteSpace preLine
+            , color gray20
+            , margin4 (px 7) (px 0) (px 0) (px 0)
+            , firstChild [ margin zero ]
+            , firstOfType [ margin zero ]
+            ]
+        ]
 
 
 namespace : String
