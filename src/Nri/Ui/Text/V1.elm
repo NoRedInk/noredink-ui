@@ -165,6 +165,9 @@ ugMediumBody =
             , fontSize (px 18)
             , lineHeight (px 30)
             , color gray20
+            , margin4 (px 10) (px 0) (px 0) (px 0)
+            , firstChild [ margin zero ]
+            , firstOfType [ margin zero ]
             ]
         ]
 
@@ -179,6 +182,9 @@ ugSmallBody =
             , fontSize (px 16)
             , lineHeight (px 25)
             , color gray20
+            , margin4 (px 7) (px 0) (px 0) (px 0)
+            , firstChild [ margin zero ]
+            , firstOfType [ margin zero ]
             ]
         ]
 
