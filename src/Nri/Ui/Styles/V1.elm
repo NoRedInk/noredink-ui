@@ -17,7 +17,6 @@ module Nri.Ui.Styles.V1 exposing (Keyframe, Styles, StylesWithAssets, keyframes,
 
 -}
 
-import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import DEPRECATED.Css.Namespace
