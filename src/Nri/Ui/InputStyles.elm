@@ -28,6 +28,7 @@ type CssClasses
     | IsInError
       -- For textarea
     | Writing
+    | ContentCreation
       -- For date picker inputs
     | DatePickerContainer
     | TimePickerContainer
@@ -151,6 +152,15 @@ styles =
                             , color Nri.Colors.white
                             , borderColor Nri.Colors.purple
                             ]
+                        ]
+                    ]
+                ]
+            , class ContentCreation
+                [ descendants
+                    [ class Label
+                        [ border3 (px 1) solid Nri.Colors.gray75
+                        , borderRadius (px 4)
+                        , Nri.Stylers.makeFont (Css.px 11) Nri.Colors.gray45
                         ]
                     ]
                 ]

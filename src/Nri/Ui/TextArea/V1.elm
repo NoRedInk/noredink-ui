@@ -1,6 +1,7 @@
 module Nri.Ui.TextArea.V1
     exposing
         ( Model
+        , contentCreation
         , generateId
         , styles
         , view
@@ -12,7 +13,7 @@ module Nri.Ui.TextArea.V1
 
 ## The Nri styleguide-specified textarea with overlapping label
 
-@docs view, writing, Model, generateId, styles
+@docs view, writing, contentCreation, Model, generateId, styles
 
 -}
 
@@ -50,9 +51,17 @@ writing model =
     view_ WritingStyle model
 
 
+{-| Used for Content Creation
+-}
+contentCreation : Model msg -> Html msg
+contentCreation model =
+    view_ ContentCreationStyle model
+
+
 type TextAreaStyle
     = DefaultStyle
     | WritingStyle
+    | ContentCreationStyle
 
 
 {-| -}
@@ -61,6 +70,9 @@ view_ textAreaStyle model =
     let
         showWritingClass =
             textAreaStyle == WritingStyle
+
+        showContentCreationClass =
+            textAreaStyle == ContentCreationStyle
 
         sharedAttributes =
             [ onInput model.onInput
@@ -76,6 +88,7 @@ view_ textAreaStyle model =
             [ ( Container, True )
             , ( IsInError, model.isInError )
             , ( Writing, showWritingClass )
+            , ( ContentCreation, showContentCreationClass )
             ]
         ]
         [ if model.autoResize then
