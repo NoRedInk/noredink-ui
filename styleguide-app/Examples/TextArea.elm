@@ -6,10 +6,10 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 import Dict exposing (Dict)
 import Html
-import Nri.Ui.Checkbox.V1 as Checkbox
-import Nri.Ui.TextArea.V1 as TextArea
-import Nri.Ui.Text.V1 as Text
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Checkbox.V1 as Checkbox
+import Nri.Ui.Text.V1 as Text
+import Nri.Ui.TextArea.V1 as TextArea
 
 
 {-| -}
@@ -82,6 +82,16 @@ example parentMessage state =
             , onInput = InputGiven 2
             , isInError = state.isInError
             , label = "TextArea.writing"
+            , autoResize = state.autoResize
+            , placeholder = "Placeholder"
+            , showLabel = state.showLabel
+            }
+        , TextArea.contentCreation
+            { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
+            , autofocus = False
+            , onInput = InputGiven 3
+            , isInError = state.isInError
+            , label = "TextArea.contentCreation"
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
