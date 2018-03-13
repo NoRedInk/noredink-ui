@@ -161,6 +161,7 @@ styles =
                         [ border3 (px 1) solid Nri.Colors.gray75
                         , borderRadius (px 4)
                         , Nri.Stylers.makeFont (Css.px 11) Nri.Colors.gray45
+                        , padding2 (px 2) (px 5)
                         ]
                     ]
                 ]
