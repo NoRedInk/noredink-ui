@@ -8,7 +8,6 @@ module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), styles)
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
-import Nri.Accessibility
 import Nri.Colors exposing (..)
 import Nri.Fonts
 import Nri.Stylers
@@ -22,7 +21,6 @@ import Nri.Ui.Styles.V1 as Styles
 -}
 type CssClasses
     = Container
-    | InvisibleLabel
     | Label
     | Input
     | IsInError
@@ -105,9 +103,6 @@ styles =
                 ]
             , class Container
                 [ position relative
-                ]
-            , class InvisibleLabel
-                [ Nri.Accessibility.invisibleText
                 ]
             , class Label
                 [ backgroundColor Nri.Colors.white
