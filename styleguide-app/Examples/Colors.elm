@@ -73,22 +73,44 @@ viewColor : ( String, Css.Color, String ) -> Html.Html msg
 viewColor ( name, color, description ) =
     Html.div
         [ css
-            [ Css.width (Css.px 250)
-            , Css.displayFlex
-            , Css.display Css.inlineBlock -- TODO why flex & block?
-            , Css.height (Css.px 160)
-            , Css.textAlign Css.center
-            , Css.backgroundColor color
-            , Css.color Colors.gray20 -- TODO  font specific
+            [ -- Dimensions
+              Css.minWidth (Css.px 250)
+            , Css.maxWidth (Css.px 250)
+            , Css.minHeight (Css.px 160)
+            , Css.maxHeight (Css.px 160)
             , Css.margin (Css.px 4)
-            , Css.textShadow4 Css.zero Css.zero (Css.px 6) Colors.white -- TODO Font specific
-            , Css.borderRadius (Css.px 4)
             , Css.padding (Css.px 8)
-            , Css.fontSize (Css.px 20) -- TODO move fontsizes to avoid weird inheritance
+            , Css.borderRadius (Css.px 4)
+
+            -- Interior spacing
+            , Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.center
+
+            -- Colors
+            , Css.backgroundColor color
+            , Css.color Colors.gray20
+            , Css.textShadow4 Css.zero Css.zero (Css.px 6) Colors.white
             ]
         ]
-        [ Html.text name
-        , Html.div [ css [ Css.fontSize (Css.px 10) ] ] [ Html.text description ]
-        , Html.br [] []
-        , Html.text color.value
+        [ Html.div
+            [ css [ Css.fontSize (Css.px 20) ]
+            ]
+            [ Html.text name ]
+        , Html.div
+            [ css
+                [ Css.fontSize (Css.px 10)
+                , Css.flexGrow (Css.num 1)
+                , Css.textAlign Css.center
+                ]
+            ]
+            [ Html.text description ]
+        , Html.div
+            [ css
+                [ Css.fontSize (Css.px 20)
+                , Css.flexGrow (Css.num 2)
+                ]
+            ]
+            [ Html.text color.value ]
         ]
