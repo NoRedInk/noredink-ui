@@ -97,10 +97,7 @@ customView modifierClasses showLabels model =
                         [ UnlockableClass ]
 
                     Round hideLabelText ->
-                        if hideLabelText then
-                            [ RoundClass, HiddenLabelText ]
-                        else
-                            [ RoundClass ]
+                        [ RoundClass ]
 
                     Disabled ->
                         [ SquareClass, Opacified ]
@@ -331,7 +328,6 @@ type CssClasses
     | LockOnInsideClass
     | UnlockableClass
     | Label
-    | HiddenLabelText
     | LabelText
     | WithPulsing
     | Opacified
