@@ -2,11 +2,12 @@ module Nri.Ui.Fonts.V1
     exposing
         ( baseFont
         , quizFont
+        , ugFont
         )
 
 {-| Fonts for NoRedInk projects
 
-@docs baseFont, quizFont
+@docs baseFont, quizFont, ugFont
 
 -}
 
@@ -24,4 +25,11 @@ baseFont =
 -}
 quizFont : Style
 quizFont =
+    fontFamilies [ qt "Georgia", "serif" ]
+
+
+{-| Font for displaying user-generated content.
+-}
+ugFont : Style
+ugFont =
     fontFamilies [ qt "Georgia", "serif" ]

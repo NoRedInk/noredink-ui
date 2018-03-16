@@ -24,6 +24,9 @@ example =
         , Html.h3 [ css [ Fonts.quizFont ] ] [ Html.text "quizFont" ]
         , Html.p [ css [ Fonts.quizFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
+        , Html.h3 [ css [ Fonts.ugFont ] ] [ Html.text "ugFont" ]
+        , Html.p [ css [ Fonts.ugFont ] ]
+            [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
         ]
             |> List.map Html.toUnstyled
     }
