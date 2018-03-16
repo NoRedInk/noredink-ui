@@ -116,6 +116,7 @@ navigation route =
                     navLink
                     [ Text
                     , TextWriting
+                    , Fonts
                     , Colors
                     , Layout
                     , Inputs
