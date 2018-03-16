@@ -31,16 +31,15 @@ module Nri.Ui.Checkbox.V1
 
 import Accessibility exposing (..)
 import Accessibility.Aria exposing (controls)
+import Accessibility.Style
 import Accessibility.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html
 import Html.Attributes as Attributes
 import Html.Events as Events exposing (defaultOptions)
 import Json.Decode
 import Json.Encode
-import Nri.Accessibility as Accessibility
 import Nri.Colors as Colors
 import Nri.Stylers
 import Nri.Ui.AssetPath exposing (Asset(..))
@@ -96,7 +95,7 @@ customView modifierClasses showLabels model =
                     Unlockable ->
                         [ UnlockableClass ]
 
-                    Round hideLabelText ->
+                    Round ->
                         [ RoundClass ]
 
                     Disabled ->
@@ -148,13 +147,11 @@ customView modifierClasses showLabels model =
                 Attributes.none
             ]
             [ span
-                [ styles.class
-                    (if showLabels then
-                        []
-                     else
-                        [ LabelText ]
-                    )
-                ]
+                (if showLabels then
+                    []
+                 else
+                    [ Accessibility.Style.invisible ]
+                )
                 [ Html.text model.label ]
             ]
         ]
@@ -328,7 +325,6 @@ type CssClasses
     | LockOnInsideClass
     | UnlockableClass
     | Label
-    | LabelText
     | WithPulsing
     | Opacified
     | PremiumClass
@@ -349,7 +345,7 @@ type CheckboxImage
 {-| -}
 type Theme
     = Square ColorTheme
-    | Round Bool
+    | Round
     | Locked
     | LockOnInside
     | Unlockable
@@ -553,14 +549,6 @@ opacified =
     ]
 
 
-hiddenLabelText : List Snippet
-hiddenLabelText =
-    [ Css.Foreign.class LabelText
-        [ Accessibility.invisibleText
-        ]
-    ]
-
-
 backgroundImage : Assets r -> CheckboxImage -> Css.Style
 backgroundImage assets checkboxImage =
     property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
@@ -619,7 +607,6 @@ styles =
         , locked assets
         , lockOnInside assets
         , unlockable assets
-        , hiddenLabelText
         , opacified
         , premiumStyles assets
         ]
