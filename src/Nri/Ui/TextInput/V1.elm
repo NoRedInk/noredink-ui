@@ -83,17 +83,17 @@ number =
 {-| -}
 view : Model value msg -> Html msg
 view model =
-    view_ OverlappingLabel [] model
+    view_ [ styles.class [ OverlappingLabel ] ] model
 
 
 {-| -}
 withInvisibleLabel : Model value msg -> Html msg
 withInvisibleLabel model =
-    view_ InvisibleLabel [ Accessibility.Style.invisible ] model
+    view_ [ Accessibility.Style.invisible ] model
 
 
-view_ : CssClasses -> List (Html.Attribute msg) -> Model value msg -> Html msg
-view_ labelClass attributes model =
+view_ : List (Html.Attribute msg) -> Model value msg -> Html msg
+view_ attributes model =
     let
         idValue =
             "Nri-Ui-TextInput-" ++ dashify model.label
@@ -113,18 +113,13 @@ view_ labelClass attributes model =
             ]
             []
         , label
-            ([ for idValue
-             , styles.class [ labelClass ]
-             ]
-                ++ attributes
-            )
+            (for idValue :: attributes)
             [ Html.text model.label ]
         ]
 
 
 type CssClasses
-    = InvisibleLabel
-    | OverlappingLabel
+    = OverlappingLabel
     | Input
     | OverlappingLabelInput
     | IsInError
