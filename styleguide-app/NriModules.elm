@@ -1,6 +1,7 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, subscriptions, update)
 
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import Examples.Colors
 import Examples.Fonts
 import Examples.Text
 import Examples.Text.Writing
@@ -79,6 +80,7 @@ nriThemedModules model =
     , Examples.Text.Writing.example
     , Examples.Fonts.example
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
+    , Examples.Colors.example
     ]
 
 
