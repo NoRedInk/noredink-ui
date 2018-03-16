@@ -25,13 +25,12 @@ module Nri.Ui.TextInput.V1
 
 -}
 
+import Accessibility.Style
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import Nri.Accessibility
 import Nri.Colors exposing (..)
 import Nri.Stylers
 import Nri.Ui.Styles.V1
@@ -84,17 +83,17 @@ number =
 {-| -}
 view : Model value msg -> Html msg
 view model =
-    view_ OverlappingLabel model
+    view_ OverlappingLabel [] model
 
 
 {-| -}
 withInvisibleLabel : Model value msg -> Html msg
 withInvisibleLabel model =
-    view_ InvisibleLabel model
+    view_ InvisibleLabel [ Accessibility.Style.invisible ] model
 
 
-view_ : CssClasses -> Model value msg -> Html msg
-view_ labelClass model =
+view_ : CssClasses -> List (Html.Attribute msg) -> Model value msg -> Html msg
+view_ labelClass attributes model =
     let
         idValue =
             "Nri-Ui-TextInput-" ++ dashify model.label
@@ -114,9 +113,11 @@ view_ labelClass model =
             ]
             []
         , label
-            [ for idValue
-            , styles.class [ labelClass ]
-            ]
+            ([ for idValue
+             , styles.class [ labelClass ]
+             ]
+                ++ attributes
+            )
             [ Html.text model.label ]
         ]
 
@@ -163,9 +164,6 @@ styles =
             [ Css.Foreign.withClass Input inputStyle ]
         , Css.Foreign.selector "input[type=number]"
             [ Css.Foreign.withClass Input inputStyle ]
-        , Css.Foreign.class InvisibleLabel
-            [ Nri.Accessibility.invisibleText
-            ]
         , Css.Foreign.class OverlappingLabel
             [ Css.backgroundColor Nri.Colors.white
             , Css.left (Css.px 10)
