@@ -12,7 +12,7 @@ module Nri.Ui.Text.Writing.V1
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Nri.Colors exposing (..)
-import Nri.Fonts exposing (quizFont)
+import Nri.Ui.Fonts.V1 exposing (quizFont)
 
 
 {-| This is a little note or footnote.

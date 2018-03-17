@@ -45,7 +45,7 @@ import Json.Decode
 import List.Zipper exposing (Zipper(..))
 import Nri.Colors
 import Nri.Colors.Extra
-import Nri.Fonts
+import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 import View.Extra
 
@@ -273,7 +273,7 @@ styles =
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Nri.Colors.navy
-            , Nri.Fonts.baseFont
+            , Nri.Ui.Fonts.V1.baseFont
             ]
         , Css.Foreign.class Title
             [ Css.flexGrow (Css.int 2)

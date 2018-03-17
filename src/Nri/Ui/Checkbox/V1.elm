@@ -41,10 +41,10 @@ import Html.Events as Events exposing (defaultOptions)
 import Json.Decode
 import Json.Encode
 import Nri.Colors as Colors
-import Nri.Fonts as Fonts
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.Extra as Attributes
 import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
 import Nri.Ui.Styles.V1

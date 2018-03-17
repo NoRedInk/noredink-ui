@@ -24,7 +24,7 @@ import Html.CssHelpers exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Colors
 import Nri.Colors.Extra
-import Nri.Fonts as Fonts
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 import View.Extra exposing (viewIf, viewJust)
 

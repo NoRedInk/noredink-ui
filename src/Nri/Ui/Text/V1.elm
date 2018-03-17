@@ -50,7 +50,7 @@ import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Nri.Colors exposing (..)
-import Nri.Fonts as Fonts
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 
 

@@ -32,7 +32,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Nri.Colors exposing (..)
-import Nri.Fonts as Fonts
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 import Regex
 

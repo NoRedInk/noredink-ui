@@ -45,7 +45,7 @@ import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Colors
-import Nri.Fonts
+import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 
 
@@ -373,7 +373,7 @@ styles =
             [ cursor pointer
             , display inlineBlock
             , -- Specifying the font can and should go away after bootstrap is removed from application.css
-              Nri.Fonts.baseFont
+              Nri.Ui.Fonts.V1.baseFont
             , textOverflow ellipsis
             , overflow Css.hidden
             , textDecoration none

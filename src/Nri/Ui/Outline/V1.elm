@@ -16,8 +16,8 @@ import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (Attribute, Html)
 import Nri.Colors as Colors
-import Nri.Fonts as Fonts
 import Nri.Ui.Effects.V1
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Palette.V1 exposing (Palette)
 import Nri.Ui.Styles.V1 exposing (Styles)
 

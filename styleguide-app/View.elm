@@ -10,8 +10,8 @@ import Html.CssHelpers
 import Model exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay)
 import Nri.Colors as Colors
-import Nri.Fonts as Fonts
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
+import Nri.Ui.Fonts.V1 as Fonts
 import NriModules as NriModules exposing (nriThemedModules)
 import Routes as Routes exposing (Route)
 import Update exposing (..)

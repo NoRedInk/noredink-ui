@@ -9,10 +9,10 @@ module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), styles)
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Nri.Colors exposing (..)
-import Nri.Fonts
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.DatePickerConstants
+import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1 as Styles
 
 
@@ -66,7 +66,7 @@ styles =
                 [ color gray45
                 ]
             , fontSize (px 15)
-            , Nri.Fonts.baseFont
+            , Nri.Ui.Fonts.V1.baseFont
             , color gray20
 
             -- fix bootstrap
@@ -111,7 +111,7 @@ styles =
                 , top (px 0)
                 , padding2 zero (px 5)
                 , fontSize (px 12)
-                , Nri.Fonts.baseFont
+                , Nri.Ui.Fonts.V1.baseFont
                 , color navy
                 , position absolute
                 , fontWeight (int 600)
@@ -120,7 +120,7 @@ styles =
             , class Writing
                 [ descendants
                     [ class Input
-                        [ Nri.Fonts.quizFont
+                        [ Nri.Ui.Fonts.V1.quizFont
                         , fontSize (px 20)
                         , lineHeight (px 25)
                         , minHeight (px 150)
@@ -131,7 +131,7 @@ styles =
                         [ border3 (px 1) solid gray75
                         , borderRadius (px 4)
                         , fontSize (px 15)
-                        , Nri.Fonts.baseFont
+                        , Nri.Ui.Fonts.V1.baseFont
                         , color navy
                         ]
                     , selector focusedLabelSelector
@@ -161,7 +161,7 @@ styles =
                         [ border3 (px 1) solid gray75
                         , borderRadius (px 4)
                         , fontSize (Css.px 11)
-                        , Nri.Fonts.baseFont
+                        , Nri.Ui.Fonts.V1.baseFont
                         , color gray45
                         , padding2 (px 2) (px 5)
                         ]

@@ -21,7 +21,7 @@ import Css.Foreign exposing (Snippet, children, descendants, everything, selecto
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Html)
 import Nri.Colors
-import Nri.Fonts
+import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 
 
@@ -77,7 +77,7 @@ styles =
             , Css.fontWeight (Css.int 700)
             , Css.lineHeight (Css.px 25)
             , Css.maxWidth (Css.px 600)
-            , Nri.Fonts.baseFont
+            , Nri.Ui.Fonts.V1.baseFont
             ]
         , Css.Foreign.class Banner
             [ Css.alignItems Css.center
