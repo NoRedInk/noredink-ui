@@ -32,7 +32,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Nri.Colors exposing (..)
-import Nri.Stylers
+import Nri.Fonts as Fonts
 import Nri.Ui.Styles.V1
 import Regex
 
@@ -145,7 +145,9 @@ styles =
             , Css.pseudoClass "placeholder"
                 [ Css.color gray45
                 ]
-            , Nri.Stylers.makeFont (px 15) gray20
+            , Css.fontSize (px 15)
+            , Fonts.baseFont
+            , Css.color gray20
 
             -- fix bootstrap
             , Css.display inlineBlock
@@ -164,7 +166,9 @@ styles =
             , Css.left (Css.px 10)
             , Css.top (Css.px 0)
             , Css.padding2 zero (Css.px 5)
-            , Nri.Stylers.makeFont (Css.px 12) navy
+            , Css.fontSize (Css.px 12)
+            , Fonts.baseFont
+            , Css.color navy
             , Css.position Css.absolute
             , Css.fontWeight (int 600)
             ]
