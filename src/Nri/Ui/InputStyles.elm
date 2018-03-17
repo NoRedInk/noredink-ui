@@ -10,7 +10,6 @@ import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Nri.Colors exposing (..)
 import Nri.Fonts
-import Nri.Stylers
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.DatePickerConstants
@@ -66,7 +65,9 @@ styles =
             , pseudoClass "placeholder"
                 [ color gray45
                 ]
-            , Nri.Stylers.makeFont (px 15) gray20
+            , fontSize (px 15)
+            , Nri.Fonts.baseFont
+            , color gray20
 
             -- fix bootstrap
             , display inlineBlock
@@ -74,12 +75,12 @@ styles =
             , marginBottom zero
             , lineHeight (px 20)
             , marginTop (px 9)
-            , boxShadow6 inset zero (px 2) zero zero Nri.Colors.gray92
+            , boxShadow6 inset zero (px 2) zero zero gray92
             , property "transition" "all 0.4s ease"
             , focus
                 [ borderColor azure
                 , outline none
-                , boxShadow6 inset zero (px 2) zero zero Nri.Colors.glacier
+                , boxShadow6 inset zero (px 2) zero zero glacier
                 ]
             ]
     in
@@ -105,11 +106,13 @@ styles =
                 [ position relative
                 ]
             , class Label
-                [ backgroundColor Nri.Colors.white
+                [ backgroundColor white
                 , left (px 10)
                 , top (px 0)
                 , padding2 zero (px 5)
-                , Nri.Stylers.makeFont (px 12) navy
+                , fontSize (px 12)
+                , Nri.Fonts.baseFont
+                , color navy
                 , position absolute
                 , fontWeight (int 600)
                 , property "transition" "all 0.4s ease"
@@ -125,27 +128,29 @@ styles =
                         , paddingTop (px 20)
                         ]
                     , class Label
-                        [ border3 (px 1) solid Nri.Colors.gray75
+                        [ border3 (px 1) solid gray75
                         , borderRadius (px 4)
-                        , Nri.Stylers.makeFont (px 15) Nri.Colors.navy
+                        , fontSize (px 15)
+                        , Nri.Fonts.baseFont
+                        , color navy
                         ]
                     , selector focusedLabelSelector
-                        [ backgroundColor Nri.Colors.azure
-                        , color Nri.Colors.white
-                        , borderColor Nri.Colors.azure
+                        [ backgroundColor azure
+                        , color white
+                        , borderColor azure
                         ]
                     ]
                 , withClass IsInError
                     [ descendants
                         [ class Label
-                            [ color Nri.Colors.purple
-                            , backgroundColor Nri.Colors.white
-                            , borderColor Nri.Colors.purple
+                            [ color purple
+                            , backgroundColor white
+                            , borderColor purple
                             ]
                         , selector focusedLabelSelector
-                            [ backgroundColor Nri.Colors.purple
-                            , color Nri.Colors.white
-                            , borderColor Nri.Colors.purple
+                            [ backgroundColor purple
+                            , color white
+                            , borderColor purple
                             ]
                         ]
                     ]
@@ -153,9 +158,11 @@ styles =
             , class ContentCreation
                 [ descendants
                     [ class Label
-                        [ border3 (px 1) solid Nri.Colors.gray75
+                        [ border3 (px 1) solid gray75
                         , borderRadius (px 4)
-                        , Nri.Stylers.makeFont (Css.px 11) Nri.Colors.gray45
+                        , fontSize (Css.px 11)
+                        , Nri.Fonts.baseFont
+                        , color gray45
                         , padding2 (px 2) (px 5)
                         ]
                     ]
@@ -165,10 +172,10 @@ styles =
                     [ class Label [ color purple ]
                     , class Input
                         [ borderColor purple
-                        , boxShadow6 inset zero (px 2) zero zero Nri.Colors.purpleLight
+                        , boxShadow6 inset zero (px 2) zero zero purpleLight
                         , focus
                             [ borderColor purple
-                            , boxShadow6 inset zero (px 2) zero zero Nri.Colors.purpleLight
+                            , boxShadow6 inset zero (px 2) zero zero purpleLight
                             ]
                         ]
                     ]
@@ -203,7 +210,7 @@ styles =
                 , FlexBox.displayFlex
                 ]
             , selector Nri.Ui.DatePickerConstants.dialogTag
-                [ backgroundColor Nri.Colors.gray96
+                [ backgroundColor gray96
                 ]
             , selector Nri.Ui.DatePickerConstants.datePickerTag
                 [ property "min-width" "auto" ]
