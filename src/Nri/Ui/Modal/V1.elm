@@ -24,7 +24,7 @@ import Html.CssHelpers exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Colors
 import Nri.Colors.Extra
-import Nri.Stylers
+import Nri.Fonts as Fonts
 import Nri.Ui.Styles.V1
 import View.Extra exposing (viewIf, viewJust)
 
@@ -220,10 +220,14 @@ styles =
             , Css.margin4 Css.zero Css.zero (Css.px 40) Css.zero
             ]
         , Css.Foreign.class HeadingInfo
-            [ Nri.Stylers.makeFont (Css.px 20) Nri.Colors.navy
+            [ Css.fontSize (Css.px 20)
+            , Fonts.baseFont
+            , Css.color Nri.Colors.navy
             ]
         , Css.Foreign.class HeadingWarning
-            [ Nri.Stylers.makeFont (Css.px 20) Nri.Colors.red
+            [ Css.fontSize (Css.px 20)
+            , Fonts.baseFont
+            , Css.color Nri.Colors.red
             ]
         , Css.Foreign.class ModalContainer
             [ Css.alignItems Css.center
