@@ -31,7 +31,7 @@ import Css.Foreign exposing (Snippet, children, descendants, everything, selecto
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import Nri.Colors exposing (..)
+import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 import Regex
@@ -162,7 +162,7 @@ styles =
         , Css.Foreign.selector "input[type=number]"
             [ Css.Foreign.withClass Input inputStyle ]
         , Css.Foreign.class OverlappingLabel
-            [ Css.backgroundColor Nri.Colors.white
+            [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.left (Css.px 10)
             , Css.top (Css.px 0)
             , Css.padding2 zero (Css.px 5)

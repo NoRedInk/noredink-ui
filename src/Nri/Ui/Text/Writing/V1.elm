@@ -11,7 +11,7 @@ module Nri.Ui.Text.Writing.V1
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Nri.Colors exposing (..)
+import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (quizFont)
 
 

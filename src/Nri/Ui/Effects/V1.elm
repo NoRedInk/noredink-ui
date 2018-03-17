@@ -9,7 +9,7 @@ module Nri.Ui.Effects.V1 exposing (selectionShadow)
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Nri.Colors
+import Nri.Ui.Colors.V1
 
 
 {-| Draw a 2 px thick ochre border around the element to indicate it is
@@ -28,7 +28,7 @@ selectionShadow =
     -- shadows, a inner white shadow and an outer ochre one.
     -- Elm-css does not support multiple box shadows, so we build up that the
     -- CSS value manually.
-    [ Css.property "box-shadow" ("0 0 0 2px white, 0 0 0 4px " ++ colorToString Nri.Colors.ochre)
+    [ Css.property "box-shadow" ("0 0 0 2px white, 0 0 0 4px " ++ colorToString Nri.Ui.Colors.V1.ochre)
     ]
 
 

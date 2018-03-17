@@ -16,7 +16,7 @@ import DEPRECATED.Css.Namespace
 import Html exposing (Html, img)
 import Html.Attributes
 import Html.CssHelpers
-import Nri.Colors exposing (..)
+import Nri.Ui.Colors.V1 exposing (..)
 
 
 type alias ModuleExample msg =

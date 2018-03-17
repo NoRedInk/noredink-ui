@@ -43,8 +43,8 @@ import Html.Attributes
 import Html.Events
 import Json.Decode
 import List.Zipper exposing (Zipper(..))
-import Nri.Colors
-import Nri.Colors.Extra
+import Nri.Ui.Colors.Extra
+import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 import View.Extra
@@ -272,7 +272,7 @@ styles =
             , Css.alignItems Css.flexEnd
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Nri.Colors.navy
+            , Css.borderBottomColor Nri.Ui.Colors.V1.navy
             , Nri.Ui.Fonts.V1.baseFont
             ]
         , Css.Foreign.class Title
@@ -282,7 +282,7 @@ styles =
             , Css.margin Css.zero
             , Css.marginTop (Css.px 5)
             , Css.marginBottom (Css.px 10)
-            , Css.color Nri.Colors.navy
+            , Css.color Nri.Ui.Colors.V1.navy
             , Css.width (Css.px 430)
             ]
         , Css.Foreign.class (Tabs Left)
@@ -299,22 +299,22 @@ styles =
             ]
         , Css.Foreign.class (TabContainer False) <|
             [ stylesTab
-            , Css.backgroundColor Nri.Colors.frost
+            , Css.backgroundColor Nri.Ui.Colors.V1.frost
             , Css.backgroundImage <|
                 Css.linearGradient2 Css.toTop
-                    (Css.stop2 (Nri.Colors.Extra.withAlpha 0.25 Nri.Colors.azure) (Css.pct 0))
-                    (Css.stop2 (Nri.Colors.Extra.withAlpha 0 Nri.Colors.azure) (Css.pct 25))
-                    [ Css.stop2 (Nri.Colors.Extra.withAlpha 0 Nri.Colors.azure) (Css.pct 100) ]
+                    (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0.25 Nri.Ui.Colors.V1.azure) (Css.pct 0))
+                    (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 25))
+                    [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 100) ]
             ]
         , Css.Foreign.class (TabContainer True) <|
             [ stylesTab
-            , Css.backgroundColor Nri.Colors.white
+            , Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Nri.Colors.white
+            , Css.borderBottomColor Nri.Ui.Colors.V1.white
             ]
         , Css.Foreign.class TabContainerLink
-            [ Css.color Nri.Colors.navy
+            [ Css.color Nri.Ui.Colors.V1.navy
             , Css.hover [ Css.textDecoration Css.none ]
             , Css.focus [ Css.textDecoration Css.none ]
             , Css.display Css.inlineBlock
@@ -323,7 +323,7 @@ styles =
             , Css.textDecoration Css.none
             ]
         , Css.Foreign.class TabClickableLink
-            [ Css.color Nri.Colors.navy
+            [ Css.color Nri.Ui.Colors.V1.navy
             , Css.display Css.inlineBlock
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             , Css.textDecoration Css.none
@@ -349,7 +349,7 @@ stylesTab =
         [ Css.display Css.inlineBlock
         , Css.borderTopLeftRadius (Css.px 10)
         , Css.borderTopRightRadius (Css.px 10)
-        , Css.border3 (Css.px 1) Css.solid Nri.Colors.navy
+        , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.navy
         , Css.marginBottom (Css.px -1)
         , Css.marginLeft (Css.px 10)
         , Css.cursor Css.pointer

@@ -8,8 +8,8 @@ module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), styles)
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
-import Nri.Colors exposing (..)
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
+import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.DatePickerConstants
 import Nri.Ui.Fonts.V1

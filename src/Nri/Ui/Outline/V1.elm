@@ -15,7 +15,7 @@ module Nri.Ui.Outline.V1 exposing (NodeConfig, NodeLayout, config, html, node, s
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (Attribute, Html)
-import Nri.Colors as Colors
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Effects.V1
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Palette.V1 exposing (Palette)

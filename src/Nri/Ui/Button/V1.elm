@@ -44,7 +44,7 @@ import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Nri.Colors
+import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 
@@ -412,23 +412,23 @@ styles =
             , shadowHeight = 4
             }
         , newStyleStyle PrimaryColors
-            { background = Nri.Colors.azure
-            , hover = hex "0040ad" -- TODO: Add Nri.Colors.azureDarkened20Percent
-            , text = Nri.Colors.white
+            { background = Nri.Ui.Colors.V1.azure
+            , hover = hex "0040ad" -- TODO: Add Nri.Ui.Colors.V1.azureDarkened20Percent
+            , text = Nri.Ui.Colors.V1.white
             , border = Nothing
-            , shadow = Nri.Colors.azureDark
+            , shadow = Nri.Ui.Colors.V1.azureDark
             }
         , newStyleStyle SecondaryColors
-            { background = Nri.Colors.white
-            , hover = Nri.Colors.glacier
-            , text = Nri.Colors.azure
-            , border = Just Nri.Colors.azure
-            , shadow = Nri.Colors.azure
+            { background = Nri.Ui.Colors.V1.white
+            , hover = Nri.Ui.Colors.V1.glacier
+            , text = Nri.Ui.Colors.V1.azure
+            , border = Just Nri.Ui.Colors.V1.azure
+            , shadow = Nri.Ui.Colors.V1.azure
             }
         , newStyleStyle BorderlessColors
             { background = transparent
             , hover = transparent
-            , text = Nri.Colors.azure
+            , text = Nri.Ui.Colors.V1.azure
             , border = Nothing
             , shadow = transparent
             }
@@ -441,38 +441,38 @@ styles =
                 ]
             ]
         , styleStyle InactiveColors
-            { background = Nri.Colors.gray75
-            , hover = Nri.Colors.gray75
-            , text = Nri.Colors.white
-            , border = Nri.Colors.gray75
+            { background = Nri.Ui.Colors.V1.gray75
+            , hover = Nri.Ui.Colors.V1.gray75
+            , text = Nri.Ui.Colors.V1.white
+            , border = Nri.Ui.Colors.V1.gray75
             , fontStyle = normal
             }
         , styleStyle LoadingColors
-            { background = Nri.Colors.frost
-            , hover = Nri.Colors.frost
-            , text = Nri.Colors.gray45
-            , border = Nri.Colors.frost
+            { background = Nri.Ui.Colors.V1.frost
+            , hover = Nri.Ui.Colors.V1.frost
+            , text = Nri.Ui.Colors.V1.gray45
+            , border = Nri.Ui.Colors.V1.frost
             , fontStyle = normal
             }
         , styleStyle SuccessColors
-            { background = Nri.Colors.green
-            , hover = Nri.Colors.green
-            , text = Nri.Colors.white
-            , border = Nri.Colors.green
+            { background = Nri.Ui.Colors.V1.green
+            , hover = Nri.Ui.Colors.V1.green
+            , text = Nri.Ui.Colors.V1.white
+            , border = Nri.Ui.Colors.V1.green
             , fontStyle = normal
             }
         , newStyleStyle DangerColors
-            { background = Nri.Colors.red
-            , hover = hex "c00039" -- TODO: use Nri.Colors.redDarkened20Percent
-            , text = Nri.Colors.white
+            { background = Nri.Ui.Colors.V1.red
+            , hover = hex "c00039" -- TODO: use Nri.Ui.Colors.V1.redDarkened20Percent
+            , text = Nri.Ui.Colors.V1.white
             , border = Nothing
-            , shadow = Nri.Colors.redDark
+            , shadow = Nri.Ui.Colors.V1.redDark
             }
         , styleStyle ErrorColors
-            { background = Nri.Colors.purple
-            , hover = Nri.Colors.purpleDark
-            , text = Nri.Colors.white
-            , border = Nri.Colors.purple
+            { background = Nri.Ui.Colors.V1.purple
+            , hover = Nri.Ui.Colors.V1.purpleDark
+            , text = Nri.Ui.Colors.V1.white
+            , border = Nri.Ui.Colors.V1.purple
             , fontStyle = normal
             }
         ]

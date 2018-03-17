@@ -40,9 +40,9 @@ import Html.Attributes as Attributes
 import Html.Events as Events exposing (defaultOptions)
 import Json.Decode
 import Json.Encode
-import Nri.Colors as Colors
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.Extra as Attributes
