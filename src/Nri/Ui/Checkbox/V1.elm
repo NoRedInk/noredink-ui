@@ -41,7 +41,7 @@ import Html.Events as Events exposing (defaultOptions)
 import Json.Decode
 import Json.Encode
 import Nri.Colors as Colors
-import Nri.Stylers
+import Nri.Fonts as Fonts
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
@@ -371,7 +371,9 @@ mainSnippet =
                 , verticalAlign middle
                 , minHeight (px 42) -- container height
                 , padding2 (px 13) zero
-                , Nri.Stylers.makeFont (px 16) Colors.gray20
+                , fontSize (px 16)
+                , Fonts.baseFont
+                , color Colors.gray20
                 , property "background-position" "left center"
                 , property "background-repeat" "no-repeat"
                 ]
