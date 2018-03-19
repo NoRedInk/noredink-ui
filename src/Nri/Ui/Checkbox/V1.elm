@@ -95,7 +95,7 @@ customView modifierClasses showLabels model =
                     Unlockable ->
                         [ UnlockableClass ]
 
-                    Round ->
+                    Round _ ->
                         [ RoundClass ]
 
                     Disabled ->
@@ -345,7 +345,7 @@ type CheckboxImage
 {-| -}
 type Theme
     = Square ColorTheme
-    | Round
+    | Round Bool
     | Locked
     | LockOnInside
     | Unlockable
