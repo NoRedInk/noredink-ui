@@ -7,7 +7,7 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 import Dict exposing (Dict)
 import Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V1 as Checkbox
+import Nri.Ui.Checkbox.V2 as Checkbox
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 
