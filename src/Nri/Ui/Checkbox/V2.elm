@@ -1,4 +1,4 @@
-module Nri.Ui.Checkbox.V1
+module Nri.Ui.Checkbox.V2
     exposing
         ( ColorTheme(..)
         , IsSelected(..)
@@ -95,7 +95,7 @@ customView modifierClasses showLabels model =
                     Unlockable ->
                         [ UnlockableClass ]
 
-                    Round _ ->
+                    Round ->
                         [ RoundClass ]
 
                     Disabled ->
@@ -345,7 +345,7 @@ type CheckboxImage
 {-| -}
 type Theme
     = Square ColorTheme
-    | Round Bool
+    | Round
     | Locked
     | LockOnInside
     | Unlockable

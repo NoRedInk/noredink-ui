@@ -20,8 +20,8 @@ import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Html)
-import Nri.Colors
-import Nri.Fonts
+import Nri.Ui.Colors.V1
+import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
 
 
@@ -77,7 +77,7 @@ styles =
             , Css.fontWeight (Css.int 700)
             , Css.lineHeight (Css.px 25)
             , Css.maxWidth (Css.px 600)
-            , Nri.Fonts.baseFont
+            , Nri.Ui.Fonts.V1.baseFont
             ]
         , Css.Foreign.class Banner
             [ Css.alignItems Css.center
@@ -93,15 +93,15 @@ styles =
                 ]
             ]
         , Css.Foreign.class Error
-            [ Css.backgroundColor Nri.Colors.purpleLight
-            , Css.color Nri.Colors.purpleDark
+            [ Css.backgroundColor Nri.Ui.Colors.V1.purpleLight
+            , Css.color Nri.Ui.Colors.V1.purpleDark
             ]
         , Css.Foreign.class Neutral
-            [ Css.backgroundColor Nri.Colors.frost
-            , Css.color Nri.Colors.navy
+            [ Css.backgroundColor Nri.Ui.Colors.V1.frost
+            , Css.color Nri.Ui.Colors.V1.navy
             ]
         , Css.Foreign.class Success
-            [ Css.backgroundColor Nri.Colors.greenLightest
-            , Css.color Nri.Colors.greenDarkest
+            [ Css.backgroundColor Nri.Ui.Colors.V1.greenLightest
+            , Css.color Nri.Ui.Colors.V1.greenDarkest
             ]
         ]

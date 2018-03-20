@@ -22,9 +22,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.CssHelpers exposing (..)
 import Html.Events exposing (onClick)
-import Nri.Colors
-import Nri.Colors.Extra
-import Nri.Stylers
+import Nri.Ui.Colors.Extra
+import Nri.Ui.Colors.V1
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 import View.Extra exposing (viewIf, viewJust)
 
@@ -181,10 +181,10 @@ styles =
             , Css.zIndex (Css.int 3)
             ]
         , Css.Foreign.class BackdropContainerWarning
-            [ Css.backgroundColor (Nri.Colors.Extra.withAlpha 0.9 Nri.Colors.gray20)
+            [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Nri.Ui.Colors.V1.gray20)
             ]
         , Css.Foreign.class BackdropContainerInfo
-            [ Css.backgroundColor (Nri.Colors.Extra.withAlpha 0.9 Nri.Colors.navy)
+            [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Nri.Ui.Colors.V1.navy)
             ]
         , Css.Foreign.class ClickCatcher
             [ Css.bottom Css.zero
@@ -220,17 +220,21 @@ styles =
             , Css.margin4 Css.zero Css.zero (Css.px 40) Css.zero
             ]
         , Css.Foreign.class HeadingInfo
-            [ Nri.Stylers.makeFont (Css.px 20) Nri.Colors.navy
+            [ Css.fontSize (Css.px 20)
+            , Fonts.baseFont
+            , Css.color Nri.Ui.Colors.V1.navy
             ]
         , Css.Foreign.class HeadingWarning
-            [ Nri.Stylers.makeFont (Css.px 20) Nri.Colors.red
+            [ Css.fontSize (Css.px 20)
+            , Fonts.baseFont
+            , Css.color Nri.Ui.Colors.V1.red
             ]
         , Css.Foreign.class ModalContainer
             [ Css.alignItems Css.center
             , Css.displayFlex
             , Css.flexDirection Css.column
             , Css.flexWrap Css.noWrap
-            , Css.backgroundColor Nri.Colors.white
+            , Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.borderRadius (Css.px 20)
             , Css.margin2 (Css.px 75) Css.auto
             , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 150))

@@ -49,9 +49,8 @@ import Css.Helpers exposing (identifierToString)
 import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
-import Nri.Colors exposing (..)
-import Nri.Fonts exposing (quizFont)
-import Nri.Stylers exposing (makeFont)
+import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 
 
@@ -161,7 +160,7 @@ ugMediumBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 ugMediumBody =
     Html.Styled.p
         [ css
-            [ quizFont
+            [ Fonts.quizFont
             , fontSize (px 18)
             , lineHeight (px 30)
             , whiteSpace preLine
@@ -179,7 +178,7 @@ ugSmallBody : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 ugSmallBody =
     Html.Styled.p
         [ css
-            [ quizFont
+            [ Fonts.quizFont
             , fontSize (px 16)
             , lineHeight (px 25)
             , whiteSpace preLine
@@ -213,49 +212,65 @@ styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles namespace
         [ Css.Foreign.class Heading
-            [ makeFont (px 30) navy
+            [ Fonts.baseFont
+            , fontSize (px 30)
+            , color navy
             , lineHeight (px 40.5)
             , fontWeight (int 700)
             , margin zero
             ]
         , Css.Foreign.class Tagline
-            [ makeFont (px 20) gray45
+            [ Fonts.baseFont
+            , fontSize (px 20)
+            , color gray45
             , lineHeight (px 27)
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)
             ]
         , Css.Foreign.class SubHeading
-            [ makeFont (px 20) navy
+            [ Fonts.baseFont
+            , fontSize (px 20)
+            , color navy
             , lineHeight (px 27)
             , fontWeight (int 700)
             , margin4 (px 20) (px 0) (px 10) (px 0)
             ]
         , Css.Foreign.class SmallHeading
-            [ makeFont (px 16) gray20
+            [ Fonts.baseFont
+            , fontSize (px 16)
+            , color gray20
             , lineHeight (px 23)
             , fontWeight (int 700)
             , margin zero
             ]
         , Css.Foreign.class MediumBody
-            [ makeFont (px 18) gray20
+            [ Fonts.baseFont
+            , fontSize (px 18)
+            , color gray20
             , lineHeight (px 27)
             , fontWeight (int 400)
             , margin4 (px 10) (px 0) (px 0) (px 0)
             ]
         , Css.Foreign.class SmallBody
-            [ makeFont (px 15) gray20
+            [ Fonts.baseFont
+            , fontSize (px 15)
+            , color gray20
             , lineHeight (px 23)
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
         , Css.Foreign.class SmallBodyGray
-            [ makeFont (px 15) gray45
+            [ Fonts.baseFont
+            , fontSize (px 15)
+            , color gray45
             , lineHeight (px 23)
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
         , Css.Foreign.class Caption
-            [ makeFont (px 13) gray45
+            [ Fonts.baseFont
+            , fontSize (px 13)
+            , color gray45
             , lineHeight (px 18)
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)

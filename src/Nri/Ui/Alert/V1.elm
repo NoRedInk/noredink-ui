@@ -27,7 +27,7 @@ import Css.Foreign exposing (Snippet, children, descendants, everything, selecto
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Html)
 import Markdown
-import Nri.Colors
+import Nri.Ui.Colors.V1
 import Nri.Ui.Styles.V1
 
 
@@ -123,27 +123,27 @@ styles =
                 ]
             ]
         , Css.Foreign.class Error
-            [ Css.color Nri.Colors.purple
+            [ Css.color Nri.Ui.Colors.V1.purple
             , Css.after
-                [ Css.backgroundColor Nri.Colors.purple
+                [ Css.backgroundColor Nri.Ui.Colors.V1.purple
                 ]
             ]
         , Css.Foreign.class Success
-            [ Css.color Nri.Colors.greenDarkest
+            [ Css.color Nri.Ui.Colors.V1.greenDarkest
             , Css.after
-                [ Css.backgroundColor Nri.Colors.green
+                [ Css.backgroundColor Nri.Ui.Colors.V1.green
                 ]
             ]
         , Css.Foreign.class Tip
-            [ Css.color Nri.Colors.navy
+            [ Css.color Nri.Ui.Colors.V1.navy
             , Css.after
-                [ Css.backgroundColor Nri.Colors.white
+                [ Css.backgroundColor Nri.Ui.Colors.V1.white
                 ]
             ]
         , Css.Foreign.class Warning
-            [ Css.color Nri.Colors.red
+            [ Css.color Nri.Ui.Colors.V1.red
             , Css.after
-                [ Css.backgroundColor Nri.Colors.red
+                [ Css.backgroundColor Nri.Ui.Colors.V1.red
                 ]
             ]
         ]

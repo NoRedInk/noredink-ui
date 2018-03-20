@@ -16,7 +16,7 @@ import DEPRECATED.Css.Namespace
 import Html exposing (Html, img)
 import Html.Attributes
 import Html.CssHelpers
-import Nri.Colors exposing (..)
+import Nri.Ui.Colors.V1 exposing (..)
 
 
 type alias ModuleExample msg =
@@ -47,6 +47,7 @@ type Category
     | Colors
     | Text
     | TextWriting
+    | Fonts
     | DynamicSymbols
     | Pages
     | QuestionTypes
@@ -92,6 +93,9 @@ categoryFromString string =
 
         "TextWriting" ->
             Ok TextWriting
+
+        "Fonts" ->
+            Ok Fonts
 
         "DynamicSymbols" ->
             Ok DynamicSymbols
@@ -144,6 +148,9 @@ categoryForDisplay category =
 
         TextWriting ->
             "TextWriting"
+
+        Fonts ->
+            "Fonts"
 
         DynamicSymbols ->
             "Dynamic Symbols"

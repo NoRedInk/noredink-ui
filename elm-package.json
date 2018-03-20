@@ -1,5 +1,5 @@
 {
-    "version": "3.1.1",
+    "version": "3.2.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
@@ -11,9 +11,13 @@
         "Nri.Ui.AssetPath",
         "Nri.Ui.BannerAlert.V1",
         "Nri.Ui.Button.V1",
+        "Nri.Ui.Colors.V1",
+        "Nri.Ui.Colors.Extra",
         "Nri.Ui.Checkbox.V1",
+        "Nri.Ui.Checkbox.V2",
         "Nri.Ui.Divider.V1",
         "Nri.Ui.Effects.V1",
+        "Nri.Ui.Fonts.V1",
         "Nri.Ui.Modal.V1",
         "Nri.Ui.Outline.V1",
         "Nri.Ui.Palette.V1",
@@ -25,7 +29,6 @@
         "Nri.Ui.TextInput.V1"
     ],
     "dependencies": {
-        "NoRedInk/nri-elm-css": "5.0.0 <= v < 6.0.0",
         "NoRedInk/view-extra": "2.0.0 <= v < 3.0.0",
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0",

@@ -14,11 +14,10 @@ module Nri.Ui.Outline.V1 exposing (NodeConfig, NodeLayout, config, html, node, s
 
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Attribute, Html)
-import Nri.Colors
-import Nri.Stylers
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Effects.V1
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Palette.V1 exposing (Palette)
 import Nri.Ui.Styles.V1 exposing (Styles)
 
@@ -216,12 +215,14 @@ styles =
             , Css.borderRadius (Css.px labelHeight)
             , Css.lineHeight (Css.px (labelHeight - 3))
             , Css.height (Css.px labelHeight)
-            , Css.backgroundColor Nri.Colors.white
+            , Css.backgroundColor Colors.white
             , Css.position Css.absolute
             , Css.boxSizing Css.borderBox
             , Css.top Css.zero
             , Css.left Css.zero
-            , Nri.Stylers.makeFont (Css.px 15) Nri.Colors.gray20
+            , Css.fontSize (Css.px 15)
+            , Fonts.baseFont
+            , Css.color Colors.gray20
             , Css.fontWeight Css.bold
             ]
         , Css.Foreign.class Contents
@@ -370,7 +371,7 @@ colorStyles palettes =
 lineStyles : List Css.Style
 lineStyles =
     [ Css.display Css.block
-    , Css.borderColor Nri.Colors.gray75
+    , Css.borderColor Colors.gray75
     , Css.position Css.absolute
     , Css.width (Css.px 30)
     , Css.left (Css.px 30)

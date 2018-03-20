@@ -53,7 +53,7 @@ This will help you make sure you don't mismatch the namespace you're using.
     { css, class } =
         Nri.Ui.Styles.styles "Nri-Ui-MyWidget-"
             [ Css.Foreign.class Container
-                [ backgroundColor Nri.Colors.ochre ]
+                [ backgroundColor Nri.Ui.Colors.V1.ochre ]
             ]
 
 -}

@@ -25,15 +25,14 @@ module Nri.Ui.TextInput.V1
 
 -}
 
+import Accessibility.Style
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import Nri.Accessibility
-import Nri.Colors exposing (..)
-import Nri.Stylers
+import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
 import Regex
 
@@ -84,17 +83,17 @@ number =
 {-| -}
 view : Model value msg -> Html msg
 view model =
-    view_ OverlappingLabel model
+    view_ [ styles.class [ OverlappingLabel ] ] model
 
 
 {-| -}
 withInvisibleLabel : Model value msg -> Html msg
 withInvisibleLabel model =
-    view_ InvisibleLabel model
+    view_ [ Accessibility.Style.invisible ] model
 
 
-view_ : CssClasses -> Model value msg -> Html msg
-view_ labelClass model =
+view_ : List (Html.Attribute msg) -> Model value msg -> Html msg
+view_ attributes model =
     let
         idValue =
             "Nri-Ui-TextInput-" ++ dashify model.label
@@ -114,16 +113,13 @@ view_ labelClass model =
             ]
             []
         , label
-            [ for idValue
-            , styles.class [ labelClass ]
-            ]
+            (for idValue :: attributes)
             [ Html.text model.label ]
         ]
 
 
 type CssClasses
-    = InvisibleLabel
-    | OverlappingLabel
+    = OverlappingLabel
     | Input
     | OverlappingLabelInput
     | IsInError
@@ -149,7 +145,9 @@ styles =
             , Css.pseudoClass "placeholder"
                 [ Css.color gray45
                 ]
-            , Nri.Stylers.makeFont (px 15) gray20
+            , Css.fontSize (px 15)
+            , Fonts.baseFont
+            , Css.color gray20
 
             -- fix bootstrap
             , Css.display inlineBlock
@@ -163,15 +161,14 @@ styles =
             [ Css.Foreign.withClass Input inputStyle ]
         , Css.Foreign.selector "input[type=number]"
             [ Css.Foreign.withClass Input inputStyle ]
-        , Css.Foreign.class InvisibleLabel
-            [ Nri.Accessibility.invisibleText
-            ]
         , Css.Foreign.class OverlappingLabel
-            [ Css.backgroundColor Nri.Colors.white
+            [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.left (Css.px 10)
             , Css.top (Css.px 0)
             , Css.padding2 zero (Css.px 5)
-            , Nri.Stylers.makeFont (Css.px 12) navy
+            , Css.fontSize (Css.px 12)
+            , Fonts.baseFont
+            , Css.color navy
             , Css.position Css.absolute
             , Css.fontWeight (int 600)
             ]

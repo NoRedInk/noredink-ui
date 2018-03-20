@@ -17,6 +17,7 @@ module Nri.Ui.TextArea.V1
 
 -}
 
+import Accessibility.Style
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
@@ -116,14 +117,19 @@ view_ textAreaStyle model =
           else
             Html.textarea sharedAttributes
                 [ Html.text model.value ]
-        , Html.label
-            [ for (generateId model.label)
-            , styles.classList
-                [ ( InvisibleLabel, not model.showLabel )
-                , ( Label, True )
+        , if not model.showLabel then
+            Html.label
+                [ for (generateId model.label)
+                , styles.class [ Label ]
+                , Accessibility.Style.invisible
                 ]
-            ]
-            [ Html.text model.label ]
+                [ Html.text model.label ]
+          else
+            Html.label
+                [ for (generateId model.label)
+                , styles.class [ Label ]
+                ]
+                [ Html.text model.label ]
         ]
 
 
