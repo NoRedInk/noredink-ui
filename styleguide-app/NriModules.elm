@@ -3,6 +3,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Colors
 import Examples.Fonts
+import Examples.SegmentedControl
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
@@ -11,24 +12,28 @@ import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
+import Nri.Ui.SegmentedControl.V1
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
 
 
 type alias ModuleStates =
-    { textAreaExampleState : TextAreaExample.State
+    { segmentedControlState : Examples.SegmentedControl.State
+    , textAreaExampleState : TextAreaExample.State
     }
 
 
 init : ModuleStates
 init =
-    { textAreaExampleState = TextAreaExample.init
+    { segmentedControlState = Examples.SegmentedControl.init
+    , textAreaExampleState = TextAreaExample.init
     }
 
 
 type Msg
-    = ShowItWorked String String
+    = SegmentedControlMsg Examples.SegmentedControl.Msg
+    | ShowItWorked String String
     | TextAreaExampleMsg TextAreaExample.Msg
     | NoOp
 
@@ -36,6 +41,15 @@ type Msg
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     case msg of
+        SegmentedControlMsg msg ->
+            let
+                ( segmentedControlState, cmd ) =
+                    Examples.SegmentedControl.update msg moduleStates.segmentedControlState
+            in
+            ( { moduleStates | segmentedControlState = segmentedControlState }
+            , Cmd.map SegmentedControlMsg cmd
+            )
+
         ShowItWorked group message ->
             let
                 _ =
@@ -76,7 +90,8 @@ container width children =
 
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
-    [ Examples.Text.example
+    [ Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
+    , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
@@ -105,6 +120,7 @@ styles =
         [ -- NOTE: these will go away as the modules' styles are integrated with Nri.Css.Site.elm
           [ ModuleExample.styles
           ]
+        , (Nri.Ui.SegmentedControl.V1.styles |> .css) ()
         , (Text.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
