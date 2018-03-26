@@ -91,6 +91,7 @@ styles =
             , border3 (px 1) solid Colors.azure
             , borderLeft (px 0)
             , borderBottom3 (px 3) solid Colors.azure
+            , boxSizing borderBox
             ]
         , Css.Foreign.class Focused
             [ color Colors.gray20
