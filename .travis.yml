@@ -31,6 +31,5 @@ script:
   # Check if all exposed modules compile.
   - elm-package diff
   - elm-format --validate src tests styleguide-app
-  # Uncomment this once we have tests in this repo.
-  # - elm test
+  - elm test
   - cd styleguide-app && elm-make Main.elm -- output=elm.js
