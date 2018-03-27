@@ -107,7 +107,8 @@ styles =
             , borderBottom3 (px 1) solid Colors.azure
             ]
         , Css.Foreign.class Unfocused
-            [ borderBottom3 (px 3) solid Colors.azure
+            [ backgroundColor Colors.white
+            , borderBottom3 (px 3) solid Colors.azure
             , color Colors.azure
             ]
         ]
