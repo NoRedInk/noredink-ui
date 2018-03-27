@@ -32,4 +32,4 @@ script:
   - elm-package diff
   - elm-format --validate src tests styleguide-app
   - elm test
-  - cd styleguide-app && elm-make Main.elm -- output=elm.js
+  - cd styleguide-app && elm-make Main.elm --yes --output=elm.js
