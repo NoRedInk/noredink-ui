@@ -33,3 +33,6 @@ script:
   - elm-format --validate src tests styleguide-app
   - elm test
   - cd styleguide-app && elm-make Main.elm --yes --output=elm.js
+
+notifications:
+  email: false
