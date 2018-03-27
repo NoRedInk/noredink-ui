@@ -34,7 +34,11 @@ Here, the bigButton function we've defined using styled button is identical to t
 
 You can pass more attributes to bigButton as usual (including other css attributes). They will be applied after the pre-applied styles.
 
+Note: normally `attributeMsg` will be the same as `msg`, but we need them to be different types for special cases when `fn` needs to do tricky things. For example, some elements from the Accessibility.Styled package use the following type signature:
+
+    div : List (Attribute Never) -> List (Html msg) -> Html msg
+
 -}
-styled : (List (Attribute msg) -> List (Html msg) -> Html msg) -> String -> List Style -> List (Attribute msg) -> List (Html msg) -> Html msg
+styled : (List (Attribute attributeMsg) -> List (Html msg) -> Html msg) -> String -> List Style -> List (Attribute attributeMsg) -> List (Html msg) -> Html msg
 styled fn description styles attrs children =
     fn (attribute "data-nri-description" description :: css styles :: attrs) children
