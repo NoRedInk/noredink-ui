@@ -12,7 +12,7 @@ import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
-import Nri.Ui.SegmentedControl.V1
+import Nri.Ui.SegmentedControl.V2
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
@@ -120,7 +120,7 @@ styles =
         [ -- NOTE: these will go away as the modules' styles are integrated with Nri.Css.Site.elm
           [ ModuleExample.styles
           ]
-        , (Nri.Ui.SegmentedControl.V1.styles |> .css) ()
+        , (Nri.Ui.SegmentedControl.V2.styles |> .css) ()
         , (Text.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
