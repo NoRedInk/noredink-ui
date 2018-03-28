@@ -1,13 +1,21 @@
 NPM_PREFIX=$(realpath node_modules)
 PATH:=${NPM_PREFIX}/.bin:${PATH}
 
-.PHONY: test
-test: setup styleguide-app/elm.js
+default: test format diff styleguide-app/elm.js
+
+.PHONY: diff
+diff: node_modules
 	elm-package diff
-	elm-format --validate src tests styleguide-app
-	elm-test
 
 .PHONY: test
+test: elm-stuff tests/elm-stuff node_modules
+	elm-test
+
+.PHONY: format
+format: node_modules
+	elm-format --validate src tests styleguide-app
+
+.PHONY: clean
 clean:
 	rm -rf node_modules styleguide-app/elm.js $(shell find . -type d -name 'elm-stuff')
 
