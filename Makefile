@@ -18,7 +18,7 @@ clean:
 	rm -rf node_modules styleguide-app/elm.js $(shell find . -type d -name 'elm-stuff')
 
 styleguide-app/elm.js: styleguide-app/elm-stuff styleguide-app/**/*.elm
-	cd styleguide-app; elm-make Main.elm --output=elm.js
+	cd styleguide-app; elm-make Main.elm --output=$(@F)
 
 # plumbing
 
