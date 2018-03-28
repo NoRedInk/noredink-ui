@@ -26,10 +26,10 @@ elm-stuff: package.json node_modules
 	${NPM_PREFIX}/.bin/elm-package install --yes
 	touch -m $@
 
-tests/elm-stuff: tests/elm-package.json
+tests/elm-stuff: tests/elm-package.json node_modules
 	cd tests; ../${NPM_PREFIX}/.bin/elm-package install --yes
 	touch -m $@
 
-styleguide-app/elm-stuff: styleguide-app/elm-package.json
+styleguide-app/elm-stuff: styleguide-app/elm-package.json node_modules
 	cd styleguide-app; ../${NPM_PREFIX}/.bin/elm-package install --yes
 	touch -m $@
