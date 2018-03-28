@@ -6,6 +6,7 @@ node_js:
 
 cache:
   directories:
+    - node_modules
     - elm-stuff/build-artifacts
     - elm-stuff/packages
     - tests/elm-stuff/build-artifacts
@@ -27,7 +28,7 @@ before_install:
     fi
 
 install:
-  - travis_retry $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make setup
+  - travis_retry $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make -B setup
 
 script:
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make ci
