@@ -1,4 +1,4 @@
-NPM_PREFIX=$(realpath node_modules)
+NPM_PREFIX=$(realpath .)/node_modules
 PATH:=${NPM_PREFIX}/.bin:${PATH}
 
 .PHONY: test
