@@ -22,7 +22,6 @@ styleguide-app/elm.js: styleguide-app/elm-stuff styleguide-app/**/*.elm
 
 # plumbing
 
-
 node_modules: package.json
 	npm install
 	touch -m $@
