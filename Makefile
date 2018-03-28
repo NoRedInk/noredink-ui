@@ -23,14 +23,17 @@ node_modules: package.json
 	npm install
 	touch -m $@
 
+.NOTPARALLEL: elm-stuff
 elm-stuff: package.json node_modules
 	elm-package install --yes
 	touch -m $@
 
+.NOTPARALLEL: tests/elm-stuff
 tests/elm-stuff: tests/elm-package.json node_modules
 	elm-package install --yes
 	touch -m $@
 
+.NOTPARALLEL: styleguide-app/elm-stuff
 styleguide-app/elm-stuff: styleguide-app/elm-package.json node_modules
 	cd styleguide-app; elm-package install --yes
 	touch -m $@
