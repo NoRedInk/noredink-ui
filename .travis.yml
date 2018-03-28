@@ -6,7 +6,9 @@ node_js:
 
 cache:
   directories:
+    - elm-stuff/build-artifacts
     - tests/elm-stuff/build-artifacts
+    - styleguide-app/build-artifacts
     - sysconfcpus
 
 before_install:
