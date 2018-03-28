@@ -1,0 +1,27 @@
+{
+  "name": "noredink-ui",
+  "version": "1.0.0",
+  "description": "UI widgets we use.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoRedInk/NoRedInk-ui.git"
+  },
+  "author": "",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/NoRedInk/NoRedInk-ui/issues"
+  },
+  "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
+  "dependencies": {
+    "elm": "^0.18.0",
+    "elm-format": "^0.7.0-exp",
+    "elm-test": "^0.18.12"
+  }
+}
