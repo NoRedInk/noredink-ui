@@ -14,7 +14,7 @@ import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
 import Nri.Ui.Icon.V1
-import Nri.Ui.SegmentedControl.V2
+import Nri.Ui.SegmentedControl.V3
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
@@ -93,7 +93,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Icon.example assets
-    , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
+    , Examples.SegmentedControl.example assets SegmentedControlMsg model.segmentedControlState
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
@@ -125,7 +125,7 @@ styles =
           ]
         , (Examples.Icon.styles |> .css) ()
         , (Nri.Ui.Icon.V1.styles |> .css) ()
-        , (Nri.Ui.SegmentedControl.V2.styles |> .css) ()
+        , (Nri.Ui.SegmentedControl.V3.styles |> .css) ()
         , (Text.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
