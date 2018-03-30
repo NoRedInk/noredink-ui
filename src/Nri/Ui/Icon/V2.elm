@@ -1,6 +1,7 @@
 module Nri.Ui.Icon.V2
     exposing
-        ( IconSize(..)
+        ( CssClasses
+        , IconSize(..)
         , IconType
         , activity
         , add
@@ -83,6 +84,7 @@ module Nri.Ui.Icon.V2
 @docs icon, decorativeIcon, link, linkExternal, button
 @docs IconType, IconSize
 @docs styles
+@docs CssClasses
 @docs activity
 @docs add
 @docs arrowDown
@@ -721,6 +723,8 @@ svgStyle =
         ]
 
 
+{-| Classes for styling
+-}
 type CssClasses
     = Disabled
     | Button

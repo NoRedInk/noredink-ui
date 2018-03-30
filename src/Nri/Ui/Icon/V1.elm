@@ -2,6 +2,7 @@ module Nri.Ui.Icon.V1
     exposing
         ( Assets
         , AssignmentType(..)
+        , CssClasses
         , IconSize(..)
         , IconType(..)
         , button
@@ -16,7 +17,7 @@ module Nri.Ui.Icon.V1
 
 @docs icon, decorativeIcon, link, linkExternal, button
 @docs IconType, AssignmentType, IconSize
-@docs styles
+@docs styles, CssClasses
 @docs Assets
 
 -}
@@ -538,6 +539,8 @@ svgStyle =
         ]
 
 
+{-| Classes for styling
+-}
 type CssClasses
     = Disabled
     | Button
