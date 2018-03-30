@@ -125,6 +125,7 @@ styles =
           [ ModuleExample.styles
           ]
         , (Examples.Icon.styles |> .css) ()
+        , (Examples.SegmentedControl.styles |> .css) ()
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Text.styles |> .css) ()

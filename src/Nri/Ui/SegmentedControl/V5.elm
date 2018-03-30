@@ -121,6 +121,8 @@ styles =
             , border3 (px 1) solid Colors.azure
             , borderLeft (px 0)
             , boxSizing borderBox
+            , FlexBox.flexGrow 1
+            , textAlign center
             ]
         , Css.Foreign.class IconContainer
             [ marginRight (px 10)
