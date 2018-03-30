@@ -7,8 +7,8 @@ test: elm-stuff tests/elm-stuff node_modules
 	elm-test
 
 .PHONY: diff
-diff: node_modules
-	elm-package diff
+diff: node_modules elm-stuff
+	if (elm-package diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
 
 .PHONY: format
 format: node_modules
