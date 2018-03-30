@@ -1,14 +1,30 @@
-module Examples.SegmentedControl exposing (Msg, State, example, init, update)
+module Examples.SegmentedControl
+    exposing
+        ( Msg
+        , State
+        , example
+        , init
+        , styles
+        , update
+        )
 
 {-|
 
-@docs Msg, State, example, init, update,
+@docs Msg
+@docs State
+@docs example
+@docs init
+@docs styles
+@docs update
 
 -}
 
+import Css
+import Css.Foreign
 import Html
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V4
+import Nri.Ui.SegmentedControl.V5
+import Nri.Ui.Styles.V1
 
 
 {-| -}
@@ -18,16 +34,17 @@ type Msg
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V4.Config Id Msg
+    Nri.Ui.SegmentedControl.V5.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V3.elm"
+    { filename = "Nri/Ui/SegmentedControl/V5.elm"
     , category = Behaviors
     , content =
-        [ Html.map parentMessage (Nri.Ui.SegmentedControl.V4.view state)
+        [ Html.map parentMessage
+            (styles.div Container [ Nri.Ui.SegmentedControl.V5.view state ])
         ]
     }
 
@@ -58,6 +75,21 @@ update msg state =
     case msg of
         Select id ->
             ( { state | selected = id }, Cmd.none )
+
+
+{-| -}
+styles : Nri.Ui.Styles.V1.Styles a b c
+styles =
+    Nri.Ui.Styles.V1.styles
+        "Examples-SegmentedControl-"
+        [ Css.Foreign.class Container
+            [ Css.width (Css.px 500)
+            ]
+        ]
+
+
+type Classes
+    = Container
 
 
 
