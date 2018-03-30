@@ -8,7 +8,7 @@ module Examples.SegmentedControl exposing (Msg, State, example, init, update)
 
 import Html
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V4
+import Nri.Ui.SegmentedControl.V5
 
 
 {-| -}
@@ -18,16 +18,16 @@ type Msg
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V4.Config Id Msg
+    Nri.Ui.SegmentedControl.V5.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V4.elm"
+    { filename = "Nri/Ui/SegmentedControl/V5.elm"
     , category = Behaviors
     , content =
-        [ Html.map parentMessage (Nri.Ui.SegmentedControl.V4.view state)
+        [ Html.map parentMessage (Nri.Ui.SegmentedControl.V5.view state)
         ]
     }
 
