@@ -24,7 +24,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V3.elm"
+    { filename = "Nri/Ui/SegmentedControl/V4.elm"
     , category = Behaviors
     , content =
         [ Html.map parentMessage (Nri.Ui.SegmentedControl.V4.view state)
