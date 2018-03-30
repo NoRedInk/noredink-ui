@@ -1,8 +1,8 @@
-module Nri.Ui.SegmentedControl.V4 exposing (Config, CssClasses, Icon, Option, styles, view)
+module Nri.Ui.SegmentedControl.V4 exposing (Config, CssClass, Icon, Option, styles, view)
 
 {-|
 
-@docs Config, Icon, Option, styles, view, CssClasses
+@docs Config, Icon, Option, styles, view, CssClass
 
 -}
 
@@ -77,7 +77,7 @@ viewIcon icon =
 
 {-| Classes for styling
 -}
-type CssClasses
+type CssClass
     = SegmentedControl
     | Tab
     | IconContainer
@@ -85,7 +85,7 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V3-"
         [ Css.Foreign.class SegmentedControl
