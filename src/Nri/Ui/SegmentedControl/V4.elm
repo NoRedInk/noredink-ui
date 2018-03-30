@@ -87,7 +87,7 @@ type CssClass
 {-| -}
 styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V3-"
+    Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V4-"
         [ Css.Foreign.class SegmentedControl
             [ FlexBox.displayFlex
             , cursor pointer
