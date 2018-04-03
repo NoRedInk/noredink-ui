@@ -74,6 +74,9 @@ type alias Assets =
     , writingcycle : String
     , x : String
     , xWhite_svg : Asset
+    , submitting : String
+    , rating : String
+    , revising : String
     }
 
 
@@ -148,4 +151,7 @@ assets =
     , writingcycle = ""
     , x = ""
     , xWhite_svg = Asset ""
+    , submitting = "submitting"
+    , rating = "rating"
+    , revising = "revising"
     }

@@ -150,6 +150,9 @@ assignmentTypeSvgIcons =
     , { alt = "WritingCycle", background = Light, icon = Icon.assignmentTypeWritingCycle assets }
     , { alt = "PeerReview", background = Light, icon = Icon.peerReview assets }
     , { alt = "QuickWrite", background = Light, icon = Icon.quickWrite assets }
+    , { alt = "submitting", background = Light, icon = Icon.submitting assets }
+    , { alt = "rating", background = Light, icon = Icon.rating assets }
+    , { alt = "revising", background = Light, icon = Icon.revising assets }
     ]
 
 

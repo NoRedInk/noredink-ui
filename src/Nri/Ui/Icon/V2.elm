@@ -64,6 +64,8 @@ module Nri.Ui.Icon.V2
         , personBlue
         , preview
         , quickWrite
+        , rating
+        , revising
         , seeMore
         , share
         , sort
@@ -71,6 +73,7 @@ module Nri.Ui.Icon.V2
         , speedometer
         , starred
         , styles
+        , submitting
         , thumbsUp
         , twitter
         , unarchive
@@ -153,6 +156,7 @@ module Nri.Ui.Icon.V2
 @docs writingAssignment
 @docs x
 @docs xSvg
+@docs submitting, rating, revising
 
 -}
 
@@ -705,6 +709,24 @@ x assets =
 xSvg : { r | x : String } -> IconType
 xSvg assets =
     SvgIcon assets.x
+
+
+{-| -}
+submitting : { r | submitting : String } -> IconType
+submitting assets =
+    SvgIcon assets.submitting
+
+
+{-| -}
+rating : { r | rating : String } -> IconType
+rating assets =
+    SvgIcon assets.rating
+
+
+{-| -}
+revising : { r | revising : String } -> IconType
+revising assets =
+    SvgIcon assets.revising
 
 
 {-| Inlining SVG styles because styles.class doesn't work on SVG elements.
