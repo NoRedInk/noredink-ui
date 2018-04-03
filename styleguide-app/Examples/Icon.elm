@@ -97,9 +97,7 @@ imageIcons =
     , { icon = Icon.logo assets, background = Light, alt = "Logo" }
     , { icon = Icon.notStarred assets, background = Light, alt = "NotStarred" }
     , { icon = Icon.okay assets, background = Dark, alt = "Okay" }
-    , { icon = Icon.peerReview assets, background = Light, alt = "PeerReview" }
     , { icon = Icon.personBlue assets, background = Light, alt = "PersonBlue" }
-    , { icon = Icon.quickWrite assets, background = Light, alt = "QuickWrite" }
     , { icon = Icon.starred assets, background = Light, alt = "Starred" }
     , { icon = Icon.thumbsUp assets, background = Dark, alt = "ThumbsUp" }
     , { icon = Icon.twitter assets, background = Light, alt = "Twitter" }
@@ -150,6 +148,8 @@ assignmentTypeSvgIcons =
     , { alt = "Practice", background = Light, icon = Icon.assignmentTypePractice assets }
     , { alt = "Quiz", background = Light, icon = Icon.assignmentTypeQuiz assets }
     , { alt = "WritingCycle", background = Light, icon = Icon.assignmentTypeWritingCycle assets }
+    , { alt = "PeerReview", background = Light, icon = Icon.peerReview assets }
+    , { alt = "QuickWrite", background = Light, icon = Icon.quickWrite assets }
     ]
 
 
