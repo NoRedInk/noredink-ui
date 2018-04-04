@@ -61,6 +61,7 @@ type alias Assets =
     , quiz : String
     , seemore : String
     , share : String
+    , skip : String
     , smallCheckmark_png : Asset
     , sort : String
     , sortArrow : String
@@ -138,6 +139,7 @@ assets =
     , quiz = ""
     , seemore = ""
     , share = ""
+    , skip = ""
     , smallCheckmark_png = Asset ""
     , sort = ""
     , sortArrow = ""
