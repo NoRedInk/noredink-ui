@@ -68,6 +68,7 @@ module Nri.Ui.Icon.V2
         , revising
         , seeMore
         , share
+        , skip
         , sort
         , sortArrow
         , speedometer
@@ -146,6 +147,7 @@ module Nri.Ui.Icon.V2
 @docs quickWrite
 @docs seeMore
 @docs share
+@docs skip
 @docs sort
 @docs sortArrow
 @docs speedometer
@@ -649,6 +651,12 @@ seeMore assets =
 share : { r | share : String } -> IconType
 share assets =
     SvgIcon assets.share
+
+
+{-| -}
+skip : { r | skip : String } -> IconType
+skip assets =
+    SvgIcon assets.skip
 
 
 {-| -}

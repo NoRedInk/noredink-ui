@@ -134,6 +134,7 @@ svgIcons =
     , { icon = Icon.preview assets, background = Light, alt = "Preview" }
     , { icon = Icon.seeMore assets, background = Light, alt = "See More" }
     , { icon = Icon.share assets, background = Light, alt = "Share" }
+    , { icon = Icon.skip assets, background = Light, alt = "Skip" }
     , { icon = Icon.sort assets, background = Light, alt = "Sort" }
     , { icon = Icon.sortArrow assets, background = Light, alt = "SortArrow" }
     , { icon = Icon.speedometer assets, background = Light, alt = "Speedometer" }
