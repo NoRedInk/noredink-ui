@@ -2,6 +2,7 @@ module Nri.Ui.Select.V1
     exposing
         ( Config
         , customView
+        , styles
         , view
         )
 
@@ -16,14 +17,19 @@ module Nri.Ui.Select.V1
 # Render
 
 @docs view, customView
+@docs styles
 
 -}
 
+import Css
+import Css.Foreign
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode exposing (Decoder, andThen, succeed)
+import Nri.Ui.Colors.V1
+import Nri.Ui.Styles.V1
 import Nri.Ui.Util
 
 
@@ -80,4 +86,25 @@ customView attributes config =
     in
     config.choices
         |> List.map viewChoice
-        |> Html.select (onSelectHandler :: attributes)
+        |> Html.select (styles.class [ Select ] :: onSelectHandler :: attributes)
+
+
+{-| -}
+type CssClasses
+    = Select
+
+
+{-| -}
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
+styles =
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Select-V1-"
+        [ Css.Foreign.class Select
+            [ Css.backgroundColor Nri.Ui.Colors.V1.white
+            , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75
+            , Css.borderRadius (Css.px 8)
+            , Css.color Nri.Ui.Colors.V1.gray20
+            , Css.cursor Css.pointer
+            , Css.fontSize (Css.px 15)
+            , Css.height (Css.px 45)
+            ]
+        ]
