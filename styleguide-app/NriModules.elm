@@ -6,6 +6,7 @@ import Examples.Colors
 import Examples.Fonts
 import Examples.Icon
 import Examples.SegmentedControl
+import Examples.Select
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
@@ -23,6 +24,7 @@ import String.Extra
 
 type alias ModuleStates =
     { segmentedControlState : Examples.SegmentedControl.State
+    , selectState : Examples.Select.State Examples.Select.Value
     , textAreaExampleState : TextAreaExample.State
     }
 
@@ -30,12 +32,14 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { segmentedControlState = Examples.SegmentedControl.init
+    , selectState = Examples.Select.init
     , textAreaExampleState = TextAreaExample.init
     }
 
 
 type Msg
     = SegmentedControlMsg Examples.SegmentedControl.Msg
+    | SelectMsg Examples.Select.Msg
     | ShowItWorked String String
     | TextAreaExampleMsg TextAreaExample.Msg
     | NoOp
@@ -51,6 +55,15 @@ update msg moduleStates =
             in
             ( { moduleStates | segmentedControlState = segmentedControlState }
             , Cmd.map SegmentedControlMsg cmd
+            )
+
+        SelectMsg msg ->
+            let
+                ( selectState, cmd ) =
+                    Examples.Select.update msg moduleStates.selectState
+            in
+            ( { moduleStates | selectState = selectState }
+            , Cmd.map SelectMsg cmd
             )
 
         ShowItWorked group message ->
@@ -95,6 +108,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Icon.example
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
+    , Examples.Select.example SelectMsg model.selectState
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
