@@ -15,6 +15,7 @@ import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
+import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Text.V1 as Text
@@ -140,6 +141,7 @@ styles =
           ]
         , (Examples.Icon.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
+        , (Nri.Ui.Dropdown.V1.styles |> .css) ()
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Text.styles |> .css) ()

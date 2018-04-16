@@ -1,24 +1,32 @@
 module Nri.Ui.Dropdown.V1
     exposing
-        ( ViewOptionEntry
+        ( CssClasses
+        , ViewOptionEntry
+        , styles
         , view
         , viewWithoutLabel
         )
 
 {-|
 
+@docs CssClasses
 @docs ViewOptionEntry
+@docs styles
 @docs view
 @docs viewWithoutLabel
 
 -}
 
 import Accessibility.Style exposing (invisible)
+import Css
+import Css.Foreign
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, targetValue)
 import Json.Decode
+import Nri.Ui.Colors.V1
+import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify)
 import String
 
@@ -110,7 +118,8 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
             )
             [ text defaultDisplayText ]
         , select
-            ([ id identifier
+            ([ styles.class [ Dropdown ]
+             , id identifier
              , {-
                   NOTE: form controls are also being styled on a global CSS that
                   sets a margin.
@@ -144,3 +153,24 @@ viewOption defaultDisplayText { isSelected, val, displayText } =
             , selected isSelected
             ]
             [ text displayText ]
+
+
+{-| -}
+type CssClasses
+    = Dropdown
+
+
+{-| -}
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
+styles =
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Dropdown-V1-"
+        [ Css.Foreign.class Dropdown
+            [ Css.backgroundColor Nri.Ui.Colors.V1.white
+            , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75
+            , Css.borderRadius (Css.px 8)
+            , Css.color Nri.Ui.Colors.V1.gray20
+            , Css.cursor Css.pointer
+            , Css.fontSize (Css.px 15)
+            , Css.height (Css.px 45)
+            ]
+        ]
