@@ -39,11 +39,7 @@ type alias Config a =
 -}
 niceId : String -> a -> String
 niceId prefix x =
-    x
-        |> toString
-        |> Nri.Ui.Util.removePunctuation
-        |> Nri.Ui.Util.dashify
-        |> (++) (prefix ++ "-")
+    prefix ++ "-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation (toString x))
 
 
 {-| A normal select dropdown
