@@ -3,6 +3,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 import Assets exposing (assets)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Colors
+import Examples.Dropdown
 import Examples.Fonts
 import Examples.Icon
 import Examples.SegmentedControl
@@ -14,6 +15,7 @@ import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
+import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Text.V1 as Text
@@ -22,20 +24,23 @@ import String.Extra
 
 
 type alias ModuleStates =
-    { segmentedControlState : Examples.SegmentedControl.State
+    { dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
+    , segmentedControlState : Examples.SegmentedControl.State
     , textAreaExampleState : TextAreaExample.State
     }
 
 
 init : ModuleStates
 init =
-    { segmentedControlState = Examples.SegmentedControl.init
+    { dropdownState = Examples.Dropdown.init
+    , segmentedControlState = Examples.SegmentedControl.init
     , textAreaExampleState = TextAreaExample.init
     }
 
 
 type Msg
-    = SegmentedControlMsg Examples.SegmentedControl.Msg
+    = DropdownMsg Examples.Dropdown.Msg
+    | SegmentedControlMsg Examples.SegmentedControl.Msg
     | ShowItWorked String String
     | TextAreaExampleMsg TextAreaExample.Msg
     | NoOp
@@ -44,6 +49,15 @@ type Msg
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     case msg of
+        DropdownMsg msg ->
+            let
+                ( dropdownState, cmd ) =
+                    Examples.Dropdown.update msg moduleStates.dropdownState
+            in
+            ( { moduleStates | dropdownState = dropdownState }
+            , Cmd.map DropdownMsg cmd
+            )
+
         SegmentedControlMsg msg ->
             let
                 ( segmentedControlState, cmd ) =
@@ -93,7 +107,8 @@ container width children =
 
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
-    [ Examples.Icon.example
+    [ Examples.Dropdown.example DropdownMsg model.dropdownState
+    , Examples.Icon.example
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Text.example
     , Examples.Text.Writing.example
@@ -126,6 +141,7 @@ styles =
           ]
         , (Examples.Icon.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
+        , (Nri.Ui.Dropdown.V1.styles |> .css) ()
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Text.styles |> .css) ()
