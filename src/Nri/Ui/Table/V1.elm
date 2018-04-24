@@ -20,7 +20,7 @@ module Nri.Ui.Table.V1
 
 @docs viewLoading, viewLoadingWithoutHeader
 
-@docs keyframes
+@docs keyframes, keyframeStyles
 
 -}
 
