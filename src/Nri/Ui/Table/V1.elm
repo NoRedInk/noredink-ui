@@ -2,6 +2,7 @@ module Nri.Ui.Table.V1
     exposing
         ( Column
         , custom
+        , keyframeStyles
         , keyframes
         , string
         , styles
@@ -234,31 +235,39 @@ styles =
 {-| -}
 keyframes : List Nri.Ui.Styles.V1.Keyframe
 keyframes =
-    [ Nri.Ui.Styles.V1.keyframes "Nri-Table-flash"
+    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-flash"
         [ ( "0%", "opacity: 0.6" )
         , ( "50%", "opacity: 0.2" )
         , ( "100%", "opacity: 0.6" )
         ]
-    , Nri.Ui.Styles.V1.keyframes "Nri-Table-fadein"
+    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-fadein"
         [ ( "from", "opacity: 0" )
         , ( "to", "opacity: 1" )
         ]
     ]
 
 
+{-| -}
+keyframeStyles : Html msg
+keyframeStyles =
+    Html.node "style"
+        []
+        (List.map (Html.text << Nri.Ui.Styles.V1.toString) keyframes)
+
+
 flashAnimation : List Css.Style
 flashAnimation =
-    [ property "-webkit-animation" "Nri-Table-flash 2s infinite"
-    , property "-moz-animation" "Nri-Table-flash 2s infinite"
-    , property "animation" "Nri-Table-flash 2s infinite"
+    [ property "-webkit-animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    , property "-moz-animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    , property "animation" "Nri-Ui-Table-V1-flash 2s infinite"
     , opacity (num 0.6)
     ]
 
 
 fadeInAnimation : List Css.Style
 fadeInAnimation =
-    [ property "-webkit-animation" "Nri-Table-fadein 0.4s 0.2s forwards"
-    , property "-moz-animation" "Nri-Table-fadein 0.4s 0.2s forwards"
-    , property "animation" "Nri-Table-fadein 0.4s 0.2s forwards"
+    [ property "-webkit-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    , property "-moz-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    , property "animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
     , opacity (num 0)
     ]

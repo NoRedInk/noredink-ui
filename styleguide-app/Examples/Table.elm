@@ -62,7 +62,8 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-        [ Html.h4 [] [ Html.text "With header" ]
+        [ Table.keyframeStyles
+        , Html.h4 [] [ Html.text "With header" ]
         , Table.view columns data
         , Html.h4 [] [ Html.text "Without header" ]
         , Table.viewWithoutHeader columns data
