@@ -8,6 +8,7 @@ import Examples.Fonts
 import Examples.Icon
 import Examples.SegmentedControl
 import Examples.Select
+import Examples.Table
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
@@ -15,11 +16,12 @@ import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
-import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
+import Nri.Ui.Button.V1 as Button
 import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Select.V2
+import Nri.Ui.Table.V1 as Table
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
@@ -29,6 +31,7 @@ type alias ModuleStates =
     { dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
+    , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
     }
 
@@ -38,6 +41,7 @@ init =
     { dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
+    , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
     }
 
@@ -47,6 +51,7 @@ type Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
     | ShowItWorked String String
+    | TableExampleMsg Examples.Table.Msg
     | TextAreaExampleMsg TextAreaExample.Msg
     | NoOp
 
@@ -88,6 +93,15 @@ update msg moduleStates =
             in
             ( moduleStates, Cmd.none )
 
+        TableExampleMsg msg ->
+            let
+                ( tableExampleState, cmd ) =
+                    Examples.Table.update msg moduleStates.tableExampleState
+            in
+            ( { moduleStates | tableExampleState = tableExampleState }
+            , Cmd.map TableExampleMsg cmd
+            )
+
         TextAreaExampleMsg msg ->
             let
                 ( textAreaExampleState, cmd ) =
@@ -128,6 +142,7 @@ nriThemedModules model =
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
+    , Examples.Table.example TableExampleMsg model.tableExampleState
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     , Examples.Colors.example
     ]
@@ -156,10 +171,12 @@ styles =
           ]
         , (Examples.Icon.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
+        , (Button.styles |> .css) ()
         , (Nri.Ui.Dropdown.V1.styles |> .css) ()
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Nri.Ui.Select.V2.styles |> .css) ()
+        , (Table.styles |> .css) ()
         , (Text.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
