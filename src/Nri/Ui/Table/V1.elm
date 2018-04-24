@@ -167,7 +167,7 @@ stylesLoadingColumn rowIndex colIndex width =
 
 table : List CssClasses -> List (Html msg) -> Html msg
 table classes =
-    Html.table [ styles.class classes ]
+    Html.table [ styles.class (Table :: classes) ]
 
 
 tableWithHeader : List CssClasses -> List (Column data msg) -> List (Html msg) -> Html msg
@@ -225,6 +225,9 @@ styles =
             flashAnimation
         , Css.Foreign.class LoadingTable
             fadeInAnimation
+        , Css.Foreign.class Table
+            [ borderCollapse collapse
+            ]
         ]
 
 
