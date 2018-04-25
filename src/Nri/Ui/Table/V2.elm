@@ -1,0 +1,279 @@
+module Nri.Ui.Table.V2
+    exposing
+        ( Column
+        , custom
+        , keyframeStyles
+        , keyframes
+        , string
+        , styles
+        , view
+        , viewLoading
+        , viewLoadingWithoutHeader
+        , viewWithoutHeader
+        )
+
+{-|
+
+@docs Column, custom, string, styles
+
+@docs view, viewWithoutHeader
+
+@docs viewLoading, viewLoadingWithoutHeader
+
+@docs keyframes, keyframeStyles
+
+-}
+
+import Css exposing (..)
+import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Html exposing (..)
+import Html.Attributes exposing (style)
+import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Fonts.V1 exposing (baseFont)
+import Nri.Ui.Styles.V1 exposing (styles)
+
+
+{-| Closed representation of how to render the header and cells of a column
+in the table
+-}
+type Column data msg
+    = Column (Html msg) (data -> Html msg) Style
+
+
+type alias WidthStyle =
+    List ( String, String )
+
+
+{-| A column that renders some aspect of a value as text
+-}
+string :
+    { header : String
+    , value : data -> String
+    , width : LengthOrAuto compatible
+    }
+    -> Column data msg
+string { header, value, width } =
+    Column (Html.text header) (value >> Html.text) (Css.width width)
+
+
+{-| A column that renders however you want it to
+-}
+custom :
+    { header : Html msg
+    , view : data -> Html msg
+    , width : LengthOrAuto compatible
+    }
+    -> Column data msg
+custom { header, view, width } =
+    Column header view (Css.width width)
+
+
+
+-- VIEW
+
+
+{-| Displays a table of data without a header row
+-}
+viewWithoutHeader : List (Column data msg) -> List data -> Html msg
+viewWithoutHeader columns data =
+    table [] <|
+        List.map (viewRow columns) data
+
+
+{-| Displays a table of data based on the provided column definitions
+-}
+view : List (Column data msg) -> List data -> Html msg
+view columns data =
+    tableWithHeader [] columns <|
+        List.map (viewRow columns) data
+
+
+viewHeaders : List (Column data msg) -> Html msg
+viewHeaders columns =
+    tr
+        [ styles.class [ Headers ] ]
+        (List.map viewRowHeader columns)
+
+
+viewRowHeader : Column data msg -> Html msg
+viewRowHeader (Column header _ width) =
+    th
+        [ styles.class [ Header ]
+        , style (asPairsDEPRECATED [ width ])
+        ]
+        [ header ]
+
+
+viewRow : List (Column data msg) -> data -> Html msg
+viewRow columns data =
+    tr
+        [ styles.class [ Row ] ]
+        (List.map (viewColumn data) columns)
+
+
+viewColumn : data -> Column data msg -> Html msg
+viewColumn data (Column _ renderer width) =
+    td
+        [ styles.class [ Cell ]
+        , style (asPairsDEPRECATED [ width ])
+        ]
+        [ renderer data ]
+
+
+
+-- VIEW LOADING
+
+
+{-| Display a table with the given columns but instead of data, show blocked
+out text with an interesting animation. This view lets the user know that
+data is on its way and what it will look like when it arrives.
+-}
+viewLoading : List (Column data msg) -> Html msg
+viewLoading columns =
+    tableWithHeader [ LoadingTable ] columns <|
+        List.map (viewLoadingRow columns) (List.range 0 8)
+
+
+{-| Display the loading table without a header row
+-}
+viewLoadingWithoutHeader : List (Column data msg) -> Html msg
+viewLoadingWithoutHeader columns =
+    table [ LoadingTable ] <|
+        List.map (viewLoadingRow columns) (List.range 0 8)
+
+
+viewLoadingRow : List (Column data msg) -> Int -> Html msg
+viewLoadingRow columns index =
+    tr
+        [ styles.class [ Row ] ]
+        (List.indexedMap (viewLoadingColumn index) columns)
+
+
+viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
+viewLoadingColumn rowIndex colIndex (Column _ _ width) =
+    td
+        [ styles.class [ Cell, LoadingCell ]
+        , style (stylesLoadingColumn rowIndex colIndex width)
+        ]
+        [ span [ styles.class [ LoadingContent ] ] [] ]
+
+
+stylesLoadingColumn : Int -> Int -> Style -> List ( String, String )
+stylesLoadingColumn rowIndex colIndex width =
+    asPairsDEPRECATED
+        [ width
+        , property "animation-delay" (toString (toFloat (rowIndex + colIndex) * 0.1) ++ "s")
+        ]
+
+
+
+-- HELP
+
+
+table : List CssClasses -> List (Html msg) -> Html msg
+table classes =
+    Html.table [ styles.class (Table :: classes) ]
+
+
+tableWithHeader : List CssClasses -> List (Column data msg) -> List (Html msg) -> Html msg
+tableWithHeader classes columns rows =
+    table classes (viewHeaders columns :: rows)
+
+
+
+-- STYLES
+
+
+type CssClasses
+    = Table
+    | LoadingTable
+    | Row
+    | Cell
+    | Headers
+    | Header
+    | LoadingContent
+    | LoadingCell
+
+
+{-| -}
+styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles =
+    Nri.Ui.Styles.V1.styles "Nri-Ui-Table-V1-"
+        [ Css.Foreign.class Headers
+            [ borderBottom3 (px 3) solid gray75
+            , height (px 45)
+            , fontSize (px 15)
+            ]
+        , Css.Foreign.class Header
+            [ padding4 (px 15) (px 12) (px 11) (px 12)
+            , textAlign left
+            , fontWeight bold
+            ]
+        , Css.Foreign.class Row
+            [ height (px 45)
+            , fontSize (px 14)
+            , color gray45
+            , pseudoClass "nth-child(odd)"
+                [ backgroundColor gray96 ]
+            ]
+        , Css.Foreign.class Cell
+            [ padding2 (px 14) (px 10)
+            ]
+        , Css.Foreign.class LoadingContent
+            [ width (pct 100)
+            , display inlineBlock
+            , height (Css.em 1)
+            , borderRadius (Css.em 1)
+            , backgroundColor gray75
+            ]
+        , Css.Foreign.class LoadingCell
+            flashAnimation
+        , Css.Foreign.class LoadingTable
+            fadeInAnimation
+        , Css.Foreign.class Table
+            [ borderCollapse collapse
+            , baseFont
+            , Css.width (Css.pct 100)
+            ]
+        ]
+
+
+{-| -}
+keyframes : List Nri.Ui.Styles.V1.Keyframe
+keyframes =
+    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-flash"
+        [ ( "0%", "opacity: 0.6" )
+        , ( "50%", "opacity: 0.2" )
+        , ( "100%", "opacity: 0.6" )
+        ]
+    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-fadein"
+        [ ( "from", "opacity: 0" )
+        , ( "to", "opacity: 1" )
+        ]
+    ]
+
+
+{-| -}
+keyframeStyles : Html msg
+keyframeStyles =
+    Html.node "style"
+        []
+        (List.map (Html.text << Nri.Ui.Styles.V1.toString) keyframes)
+
+
+flashAnimation : List Css.Style
+flashAnimation =
+    [ property "-webkit-animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    , property "-moz-animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    , property "animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    , opacity (num 0.6)
+    ]
+
+
+fadeInAnimation : List Css.Style
+fadeInAnimation =
+    [ property "-webkit-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    , property "-moz-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    , property "animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    , opacity (num 0)
+    ]

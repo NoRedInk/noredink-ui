@@ -21,7 +21,7 @@ import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Select.V2
-import Nri.Ui.Table.V1 as Table
+import Nri.Ui.Table.V2 as Table
 import Nri.Ui.Text.V1 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
