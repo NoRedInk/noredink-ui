@@ -67,21 +67,21 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-            [ Html.Styled.toUnstyled Table.keyframeStyles
-            , Html.h4 [] [ Html.text "With header" ]
-            , Table.view columns data
-                |> Html.Styled.toUnstyled
-            , Html.h4 [] [ Html.text "Without header" ]
-            , Table.viewWithoutHeader columns data
-                |> Html.Styled.toUnstyled
-            , Html.h4 [] [ Html.text "Loading" ]
-            , Table.viewLoading columns
-                |> Html.Styled.toUnstyled
-            , Html.h4 [] [ Html.text "Loading without header" ]
-            , Table.viewLoadingWithoutHeader columns
-                |> Html.Styled.toUnstyled
-            ]
-                |> List.map (Html.map parentMessage)
+        [ Html.Styled.toUnstyled Table.keyframeStyles
+        , Html.h4 [] [ Html.text "With header" ]
+        , Table.view columns data
+            |> Html.Styled.toUnstyled
+        , Html.h4 [] [ Html.text "Without header" ]
+        , Table.viewWithoutHeader columns data
+            |> Html.Styled.toUnstyled
+        , Html.h4 [] [ Html.text "Loading" ]
+        , Table.viewLoading columns
+            |> Html.Styled.toUnstyled
+        , Html.h4 [] [ Html.text "Loading without header" ]
+        , Table.viewLoadingWithoutHeader columns
+            |> Html.Styled.toUnstyled
+        ]
+            |> List.map (Html.map parentMessage)
     }
 
 

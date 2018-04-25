@@ -63,52 +63,52 @@ update msg moduleStates =
                 ( dropdownState, cmd ) =
                     Examples.Dropdown.update msg moduleStates.dropdownState
             in
-                ( { moduleStates | dropdownState = dropdownState }
-                , Cmd.map DropdownMsg cmd
-                )
+            ( { moduleStates | dropdownState = dropdownState }
+            , Cmd.map DropdownMsg cmd
+            )
 
         SegmentedControlMsg msg ->
             let
                 ( segmentedControlState, cmd ) =
                     Examples.SegmentedControl.update msg moduleStates.segmentedControlState
             in
-                ( { moduleStates | segmentedControlState = segmentedControlState }
-                , Cmd.map SegmentedControlMsg cmd
-                )
+            ( { moduleStates | segmentedControlState = segmentedControlState }
+            , Cmd.map SegmentedControlMsg cmd
+            )
 
         SelectMsg msg ->
             let
                 ( selectState, cmd ) =
                     Examples.Select.update msg moduleStates.selectState
             in
-                ( { moduleStates | selectState = selectState }
-                , Cmd.map SelectMsg cmd
-                )
+            ( { moduleStates | selectState = selectState }
+            , Cmd.map SelectMsg cmd
+            )
 
         ShowItWorked group message ->
             let
                 _ =
                     Debug.log group message
             in
-                ( moduleStates, Cmd.none )
+            ( moduleStates, Cmd.none )
 
         TableExampleMsg msg ->
             let
                 ( tableExampleState, cmd ) =
                     Examples.Table.update msg moduleStates.tableExampleState
             in
-                ( { moduleStates | tableExampleState = tableExampleState }
-                , Cmd.map TableExampleMsg cmd
-                )
+            ( { moduleStates | tableExampleState = tableExampleState }
+            , Cmd.map TableExampleMsg cmd
+            )
 
         TextAreaExampleMsg msg ->
             let
                 ( textAreaExampleState, cmd ) =
                     TextAreaExample.update msg moduleStates.textAreaExampleState
             in
-                ( { moduleStates | textAreaExampleState = textAreaExampleState }
-                , Cmd.map TextAreaExampleMsg cmd
-                )
+            ( { moduleStates | textAreaExampleState = textAreaExampleState }
+            , Cmd.map TextAreaExampleMsg cmd
+            )
 
         NoOp ->
             ( moduleStates, Cmd.none )
