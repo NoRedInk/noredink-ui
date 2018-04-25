@@ -5,7 +5,6 @@ module Nri.Ui.Table.V2
         , keyframeStyles
         , keyframes
         , string
-        , styles
         , view
         , viewLoading
         , viewLoadingWithoutHeader
@@ -14,7 +13,7 @@ module Nri.Ui.Table.V2
 
 {-|
 
-@docs Column, custom, string, styles
+@docs Column, custom, string
 
 @docs view, viewWithoutHeader
 
@@ -25,12 +24,11 @@ module Nri.Ui.Table.V2
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
-import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
-import Nri.Ui.Styles.V1 exposing (styles)
+import Nri.Ui.Styles.V1
 
 
 {-| Closed representation of how to render the header and cells of a column
@@ -91,15 +89,14 @@ view columns data =
 viewHeaders : List (Column data msg) -> Html msg
 viewHeaders columns =
     tr
-        [ styles.class [ Headers ] ]
+        [ css headersStyles ]
         (List.map viewRowHeader columns)
 
 
 viewRowHeader : Column data msg -> Html msg
 viewRowHeader (Column header _ width) =
     th
-        [ styles.class [ Header ]
-        , style (asPairsDEPRECATED [ width ])
+        [ css (width :: headerStyles)
         ]
         [ header ]
 
@@ -107,15 +104,14 @@ viewRowHeader (Column header _ width) =
 viewRow : List (Column data msg) -> data -> Html msg
 viewRow columns data =
     tr
-        [ styles.class [ Row ] ]
+        [ css rowStyles ]
         (List.map (viewColumn data) columns)
 
 
 viewColumn : data -> Column data msg -> Html msg
 viewColumn data (Column _ renderer width) =
     td
-        [ styles.class [ Cell ]
-        , style (asPairsDEPRECATED [ width ])
+        [ css (width :: cellStyles)
         ]
         [ renderer data ]
 
@@ -130,7 +126,7 @@ data is on its way and what it will look like when it arrives.
 -}
 viewLoading : List (Column data msg) -> Html msg
 viewLoading columns =
-    tableWithHeader [ LoadingTable ] columns <|
+    tableWithHeader loadingTableStyles columns <|
         List.map (viewLoadingRow columns) (List.range 0 8)
 
 
@@ -138,104 +134,108 @@ viewLoading columns =
 -}
 viewLoadingWithoutHeader : List (Column data msg) -> Html msg
 viewLoadingWithoutHeader columns =
-    table [ LoadingTable ] <|
+    table loadingTableStyles <|
         List.map (viewLoadingRow columns) (List.range 0 8)
 
 
 viewLoadingRow : List (Column data msg) -> Int -> Html msg
 viewLoadingRow columns index =
     tr
-        [ styles.class [ Row ] ]
+        [ css rowStyles ]
         (List.indexedMap (viewLoadingColumn index) columns)
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
 viewLoadingColumn rowIndex colIndex (Column _ _ width) =
     td
-        [ styles.class [ Cell, LoadingCell ]
-        , style (stylesLoadingColumn rowIndex colIndex width)
+        [ css (stylesLoadingColumn rowIndex colIndex width ++ cellStyles ++ loadingCellStyles)
         ]
-        [ span [ styles.class [ LoadingContent ] ] [] ]
+        [ span [ css loadingContentStyles ] [] ]
 
 
-stylesLoadingColumn : Int -> Int -> Style -> List ( String, String )
+stylesLoadingColumn : Int -> Int -> Style -> List Style
 stylesLoadingColumn rowIndex colIndex width =
-    asPairsDEPRECATED
-        [ width
-        , property "animation-delay" (toString (toFloat (rowIndex + colIndex) * 0.1) ++ "s")
-        ]
+    [ width
+    , property "animation-delay" (toString (toFloat (rowIndex + colIndex) * 0.1) ++ "s")
+    ]
 
 
 
 -- HELP
 
 
-table : List CssClasses -> List (Html msg) -> Html msg
-table classes =
-    Html.table [ styles.class (Table :: classes) ]
+table : List Style -> List (Html msg) -> Html msg
+table styles =
+    Html.table [ css (styles ++ tableStyles) ]
 
 
-tableWithHeader : List CssClasses -> List (Column data msg) -> List (Html msg) -> Html msg
-tableWithHeader classes columns rows =
-    table classes (viewHeaders columns :: rows)
+tableWithHeader : List Style -> List (Column data msg) -> List (Html msg) -> Html msg
+tableWithHeader styles columns rows =
+    table styles (viewHeaders columns :: rows)
 
 
 
 -- STYLES
 
 
-type CssClasses
-    = Table
-    | LoadingTable
-    | Row
-    | Cell
-    | Headers
-    | Header
-    | LoadingContent
-    | LoadingCell
+headersStyles : List Style
+headersStyles =
+    [ borderBottom3 (px 3) solid gray75
+    , height (px 45)
+    , fontSize (px 15)
+    ]
 
 
-{-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
-styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Table-V1-"
-        [ Css.Foreign.class Headers
-            [ borderBottom3 (px 3) solid gray75
-            , height (px 45)
-            , fontSize (px 15)
-            ]
-        , Css.Foreign.class Header
-            [ padding4 (px 15) (px 12) (px 11) (px 12)
-            , textAlign left
-            , fontWeight bold
-            ]
-        , Css.Foreign.class Row
-            [ height (px 45)
-            , fontSize (px 14)
-            , color gray45
-            , pseudoClass "nth-child(odd)"
-                [ backgroundColor gray96 ]
-            ]
-        , Css.Foreign.class Cell
-            [ padding2 (px 14) (px 10)
-            ]
-        , Css.Foreign.class LoadingContent
-            [ width (pct 100)
-            , display inlineBlock
-            , height (Css.em 1)
-            , borderRadius (Css.em 1)
-            , backgroundColor gray75
-            ]
-        , Css.Foreign.class LoadingCell
-            flashAnimation
-        , Css.Foreign.class LoadingTable
-            fadeInAnimation
-        , Css.Foreign.class Table
-            [ borderCollapse collapse
-            , baseFont
-            , Css.width (Css.pct 100)
-            ]
-        ]
+headerStyles : List Style
+headerStyles =
+    [ padding4 (px 15) (px 12) (px 11) (px 12)
+    , textAlign left
+    , fontWeight bold
+    ]
+
+
+rowStyles : List Style
+rowStyles =
+    [ height (px 45)
+    , fontSize (px 14)
+    , color gray45
+    , pseudoClass "nth-child(odd)"
+        [ backgroundColor gray96 ]
+    ]
+
+
+cellStyles : List Style
+cellStyles =
+    [ padding2 (px 14) (px 10)
+    ]
+
+
+loadingContentStyles : List Style
+loadingContentStyles =
+    [ width (pct 100)
+    , display inlineBlock
+    , height (Css.em 1)
+    , borderRadius (Css.em 1)
+    , backgroundColor gray75
+    ]
+
+
+loadingCellStyles : List Style
+loadingCellStyles =
+    flashAnimation
+
+
+loadingTableStyles : List Style
+loadingTableStyles =
+    fadeInAnimation
+
+
+tableStyles : List Style
+tableStyles =
+    [ borderCollapse collapse
+    , baseFont
+    , Css.width (Css.pct 100)
+    ]
 
 
 {-| -}

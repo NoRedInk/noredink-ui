@@ -6,6 +6,7 @@ module Examples.Table exposing (Msg, State, example, init, update)
 
 import Css exposing (..)
 import Html
+import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V1 as Button
 import Nri.Ui.Table.V2 as Table
@@ -40,7 +41,9 @@ example parentMessage state =
                     , width = calc (pct 50) minus (px 125)
                     }
                 , Table.custom
-                    { header = Html.text "Actions"
+                    { header =
+                        Html.text "Actions"
+                            |> Html.Styled.fromUnstyled
                     , width = px 250
                     , view =
                         \_ ->
@@ -52,6 +55,7 @@ example parentMessage state =
                                 { label = "Action"
                                 , state = Button.Enabled
                                 }
+                                |> Html.Styled.fromUnstyled
                     }
                 ]
 
@@ -63,15 +67,19 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-            [ Table.keyframeStyles
+            [ Html.Styled.toUnstyled Table.keyframeStyles
             , Html.h4 [] [ Html.text "With header" ]
             , Table.view columns data
+                |> Html.Styled.toUnstyled
             , Html.h4 [] [ Html.text "Without header" ]
             , Table.viewWithoutHeader columns data
+                |> Html.Styled.toUnstyled
             , Html.h4 [] [ Html.text "Loading" ]
             , Table.viewLoading columns
+                |> Html.Styled.toUnstyled
             , Html.h4 [] [ Html.text "Loading without header" ]
             , Table.viewLoadingWithoutHeader columns
+                |> Html.Styled.toUnstyled
             ]
                 |> List.map (Html.map parentMessage)
     }
