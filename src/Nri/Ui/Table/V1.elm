@@ -29,6 +29,7 @@ import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descend
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Fonts.V1 exposing (baseFont)
 import Nri.Ui.Styles.V1 exposing (styles)
 
 
@@ -203,6 +204,7 @@ styles =
         , Css.Foreign.class Header
             [ padding4 (px 15) (px 12) (px 11) (px 12)
             , textAlign left
+            , fontWeight bold
             ]
         , Css.Foreign.class Row
             [ height (px 45)
@@ -228,6 +230,7 @@ styles =
             fadeInAnimation
         , Css.Foreign.class Table
             [ borderCollapse collapse
+            , baseFont
             ]
         ]
 
