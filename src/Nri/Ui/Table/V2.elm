@@ -222,7 +222,9 @@ loadingContentStyles =
 
 loadingCellStyles : List Style
 loadingCellStyles =
-    flashAnimation
+    [ batch flashAnimation
+    , padding2 (px 14) (px 10)
+    ]
 
 
 loadingTableStyles : List Style
