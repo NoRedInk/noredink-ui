@@ -206,8 +206,7 @@ rowStyles =
 
 cellStyles : List Style
 cellStyles =
-    [ padding2 (px 14) (px 10)
-    ]
+    []
 
 
 loadingContentStyles : List Style
