@@ -43,6 +43,7 @@ module Nri.Ui.Icon.V2
         , gardening
         , gear
         , greenCheckMark
+        , guidedWrite
         , help
         , highFive
         , icon
@@ -127,6 +128,7 @@ module Nri.Ui.Icon.V2
 @docs gardening
 @docs gear
 @docs greenCheckMark
+@docs guidedWrite
 @docs help
 @docs highFive
 @docs key
@@ -531,6 +533,12 @@ gear assets =
 greenCheckMark : { r | smallCheckmark_png : Asset } -> IconType
 greenCheckMark assets =
     ImgIcon assets.smallCheckmark_png
+
+
+{-| -}
+guidedWrite : { r | icons_guidedWrite_svg : Asset } -> IconType
+guidedWrite assets =
+    ImgIcon assets.icons_guidedWrite_svg
 
 
 {-| -}
