@@ -206,7 +206,8 @@ rowStyles =
 
 cellStyles : List Style
 cellStyles =
-    []
+    [ verticalAlign middle
+    ]
 
 
 loadingContentStyles : List Style
