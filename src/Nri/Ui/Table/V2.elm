@@ -241,12 +241,12 @@ tableStyles =
 {-| -}
 keyframes : List Nri.Ui.Styles.V1.Keyframe
 keyframes =
-    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-flash"
+    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-flash"
         [ ( "0%", "opacity: 0.6" )
         , ( "50%", "opacity: 0.2" )
         , ( "100%", "opacity: 0.6" )
         ]
-    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-fadein"
+    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-fadein"
         [ ( "from", "opacity: 0" )
         , ( "to", "opacity: 1" )
         ]
@@ -263,17 +263,17 @@ keyframeStyles =
 
 flashAnimation : List Css.Style
 flashAnimation =
-    [ property "-webkit-animation" "Nri-Ui-Table-V1-flash 2s infinite"
-    , property "-moz-animation" "Nri-Ui-Table-V1-flash 2s infinite"
-    , property "animation" "Nri-Ui-Table-V1-flash 2s infinite"
+    [ property "-webkit-animation" "Nri-Ui-Table-V2-flash 2s infinite"
+    , property "-moz-animation" "Nri-Ui-Table-V2-flash 2s infinite"
+    , property "animation" "Nri-Ui-Table-V2-flash 2s infinite"
     , opacity (num 0.6)
     ]
 
 
 fadeInAnimation : List Css.Style
 fadeInAnimation =
-    [ property "-webkit-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
-    , property "-moz-animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
-    , property "animation" "Nri-Ui-Table-V1-fadein 0.4s 0.2s forwards"
+    [ property "-webkit-animation" "Nri-Ui-Table-V2-fadein 0.4s 0.2s forwards"
+    , property "-moz-animation" "Nri-Ui-Table-V2-fadein 0.4s 0.2s forwards"
+    , property "animation" "Nri-Ui-Table-V2-fadein 0.4s 0.2s forwards"
     , opacity (num 0)
     ]
