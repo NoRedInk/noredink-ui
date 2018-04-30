@@ -64,17 +64,17 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-            [ Table.keyframeStyles
-            , Html.h4 [] [ Html.text "With header" ]
-            , Table.view columns data
-            , Html.h4 [] [ Html.text "Without header" ]
-            , Table.viewWithoutHeader columns data
-            , Html.h4 [] [ Html.text "Loading" ]
-            , Table.viewLoading columns
-            , Html.h4 [] [ Html.text "Loading without header" ]
-            , Table.viewLoadingWithoutHeader columns
-            ]
-                |> List.map (Html.map parentMessage)
+        [ Table.keyframeStyles
+        , Html.h4 [] [ Html.text "With header" ]
+        , Table.view columns data
+        , Html.h4 [] [ Html.text "Without header" ]
+        , Table.viewWithoutHeader columns data
+        , Html.h4 [] [ Html.text "Loading" ]
+        , Table.viewLoading columns
+        , Html.h4 [] [ Html.text "Loading without header" ]
+        , Table.viewLoadingWithoutHeader columns
+        ]
+            |> List.map (Html.map parentMessage)
     }
 
 

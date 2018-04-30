@@ -4,10 +4,10 @@ module Examples.Button exposing (Msg, State, example, init, update)
    @docs Msg, State, example, init, update,
 -}
 
-import Nri.Ui.AssetPath exposing (Asset)
 import Debug.Control as Control exposing (Control)
 import Html exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
+import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V2 as Button
 import Nri.Ui.Icon.V2 as Icon
 
@@ -40,11 +40,11 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-        { filename = "Nri/Button.elm"
-        , category = Buttons
-        , content =
-            [ viewButtonExamples assets messages state ]
-        }
+    { filename = "Nri/Button.elm"
+    , category = Buttons
+    , content =
+        [ viewButtonExamples assets messages state ]
+    }
 
 
 {-| -}
@@ -114,15 +114,15 @@ viewButtonExamples assets messages (State control) =
         model =
             Control.currentValue control
     in
-        [ Control.view (State >> SetState >> messages.wrapper) control
-        , buttons assets messages sizes model
-        , toggleButtons messages
-        , Button.delete
-            { label = "Delete Something"
-            , onClick = messages.showItWorked "delete"
-            }
-        ]
-            |> div []
+    [ Control.view (State >> SetState >> messages.wrapper) control
+    , buttons assets messages sizes model
+    , toggleButtons messages
+    , Button.delete
+        { label = "Delete Something"
+        , onClick = messages.showItWorked "delete"
+        }
+    ]
+        |> div []
 
 
 sizes : List Button.ButtonSize
@@ -193,15 +193,15 @@ buttons assets messages sizes model =
                 |> List.singleton
                 |> td []
     in
-        List.concat
-            [ [ sizes
-                    |> List.map (\size -> th [] [ text <| toString size ])
-                    |> (\cells -> tr [] (th [] [] :: cells))
-              ]
-            , allStyles
-                |> List.map exampleRow
-            ]
-            |> table []
+    List.concat
+        [ [ sizes
+                |> List.map (\size -> th [] [ text <| toString size ])
+                |> (\cells -> tr [] (th [] [] :: cells))
+          ]
+        , allStyles
+            |> List.map exampleRow
+        ]
+        |> table []
 
 
 toggleButtons : ModuleMessages Msg parentMsg -> Html parentMsg
