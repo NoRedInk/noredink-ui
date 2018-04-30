@@ -475,7 +475,7 @@ linkWithMethod method =
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
 
-This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Button.button instead
+This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
 
 -}
 linkExternalWithTracking : msg -> LinkConfig -> Html msg
@@ -618,7 +618,7 @@ linearGradient ( top, bottom ) =
         ]
 
 
-{-| Required CSS styles for `Nri.Button`.
+{-| Required CSS styles for `Nri.Ui.Button.V2`.
 -}
 styles : Styles.StylesWithAssets Never CssClasses msg { r | icons_xBlue_svg : Asset }
 styles =
@@ -720,7 +720,7 @@ styles =
                     ]
                 ]
     in
-    Styles.stylesWithAssets "Nri-Button-" <|
+    Styles.stylesWithAssets "Nri-Ui-Button-V2-" <|
         \assets ->
             [ Css.Foreign.class Button
                 [ cursor pointer
