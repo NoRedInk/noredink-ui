@@ -162,6 +162,9 @@ viewContainer : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 viewContainer =
     Html.Styled.styled Html.Styled.div
         [ marginTop (px 80)
+        , displayFlex
+        , flexDirection column
+        , alignItems center
         ]
         []
 
