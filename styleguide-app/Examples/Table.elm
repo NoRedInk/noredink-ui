@@ -6,7 +6,7 @@ module Examples.Table exposing (Msg, State, example, init, update)
 
 import Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Button.V1 as Button
+import Nri.Ui.Button.V2 as Button
 import Nri.Ui.Table.V1 as Table
 
 
@@ -47,9 +47,11 @@ example parentMessage state =
                                 { size = Button.Small
                                 , style = Button.Primary
                                 , onClick = NoOp
+                                , width = Nothing
                                 }
                                 { label = "Action"
                                 , state = Button.Enabled
+                                , icon = Nothing
                                 }
                     }
                 ]
