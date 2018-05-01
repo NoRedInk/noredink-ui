@@ -630,11 +630,13 @@ styles =
                 , Css.height (px config.height)
                 , lineHeight (px config.lineHeight)
                 , padding2 zero (px config.sidePadding)
+                , boxSizing borderBox
                 , minWidth (px config.minWidth)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
                 , Css.Foreign.withClass ExplicitWidth
                     [ padding2 zero (px 4)
+                    , boxSizing borderBox
                     ]
                 , Css.Foreign.withClass IsLink
                     [ lineHeight (px config.height)
