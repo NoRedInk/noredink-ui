@@ -17,6 +17,7 @@ module Nri.Ui.Button.V2
         , linkExternalWithTracking
         , linkSpa
         , linkWithMethod
+        , linkWithTracking
         , styles
         , submit
         , toggleButton
@@ -49,7 +50,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## `<a>` Buttons
 
-@docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkExternalWithTracking
+@docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
 ## `<input>` Buttons
@@ -68,6 +69,7 @@ import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Styled
+import Json.Decode
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1
@@ -471,6 +473,20 @@ some url, and it's an HTTP request (Rails includes JS to make this use the given
 linkWithMethod : String -> LinkConfig -> Html msg
 linkWithMethod method =
     linkBase <| [ attribute "data-method" method ]
+
+
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
+This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
+-}
+linkWithTracking : msg -> LinkConfig -> Html msg
+linkWithTracking onTrack =
+    linkBase <|
+        [ Html.Events.onWithOptions "click"
+            { stopPropagation = False
+            , preventDefault = True
+            }
+            (Json.Decode.succeed onTrack)
+        ]
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
