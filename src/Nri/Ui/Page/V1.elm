@@ -185,8 +185,7 @@ viewContainer =
 viewButton : List (Html.Styled.Html msg) -> Html.Styled.Html msg
 viewButton children =
     Html.Styled.styled Html.Styled.div
-        [ margin2 zero auto
-        , marginTop (px 15)
+        [ marginTop (px 15)
         ]
         []
         [ Html.Styled.styled Html.Styled.div
