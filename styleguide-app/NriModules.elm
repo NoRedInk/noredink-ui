@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 
 import Assets exposing (assets)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import Examples.Button
 import Examples.Colors
 import Examples.Dropdown
 import Examples.Fonts
@@ -16,7 +17,7 @@ import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Navigation
-import Nri.Ui.Button.V1 as Button
+import Nri.Ui.Button.V2 as Button
 import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
@@ -27,7 +28,8 @@ import String.Extra
 
 
 type alias ModuleStates =
-    { dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
+    { buttonExampleState : Examples.Button.State
+    , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
     , tableExampleState : Examples.Table.State
@@ -37,7 +39,8 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { dropdownState = Examples.Dropdown.init
+    { buttonExampleState = Examples.Button.init assets
+    , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
@@ -46,7 +49,8 @@ init =
 
 
 type Msg
-    = DropdownMsg Examples.Dropdown.Msg
+    = ButtonExampleMsg Examples.Button.Msg
+    | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
     | ShowItWorked String String
@@ -58,6 +62,15 @@ type Msg
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     case msg of
+        ButtonExampleMsg msg ->
+            let
+                ( buttonExampleState, cmd ) =
+                    Examples.Button.update msg moduleStates.buttonExampleState
+            in
+            ( { moduleStates | buttonExampleState = buttonExampleState }
+            , Cmd.map ButtonExampleMsg cmd
+            )
+
         DropdownMsg msg ->
             let
                 ( dropdownState, cmd ) =
@@ -134,7 +147,8 @@ container width children =
 
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
-    [ Examples.Dropdown.example DropdownMsg model.dropdownState
+    [ Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
@@ -170,7 +184,7 @@ styles =
           ]
         , (Examples.Icon.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
-        , (Button.styles |> .css) ()
+        , (Button.styles |> .css) assets
         , (Nri.Ui.Dropdown.V1.styles |> .css) ()
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
