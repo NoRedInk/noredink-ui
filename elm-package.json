@@ -1,5 +1,5 @@
 {
-    "version": "4.10.0",
+    "version": "4.13.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
@@ -35,6 +35,7 @@
         "Nri.Ui.Select.V2",
         "Nri.Ui.Styles.V1",
         "Nri.Ui.Table.V1",
+        "Nri.Ui.Table.V2",
         "Nri.Ui.Tabs.V1",
         "Nri.Ui.Text.Writing.V1",
         "Nri.Ui.Text.V1",
@@ -48,7 +49,7 @@
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "elm-lang/svg": "2.0.0 <= v < 3.0.0",
         "pablohirafuji/elm-markdown": "2.0.4 <= v < 3.0.0",
-        "rtfeldman/elm-css": "13.1.1 <= v < 14.0.0",
+        "rtfeldman/elm-css": "13.1.1 <= v < 15.0.0",
         "rtfeldman/elm-css-helpers": "2.1.0 <= v < 3.0.0",
         "rtfeldman/elm-css-util": "1.0.2 <= v < 2.0.0",
         "tesk9/accessible-html": "3.0.0 <= v < 4.0.0",

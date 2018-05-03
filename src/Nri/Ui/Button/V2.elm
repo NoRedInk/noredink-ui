@@ -17,6 +17,7 @@ module Nri.Ui.Button.V2
         , linkExternalWithTracking
         , linkSpa
         , linkWithMethod
+        , linkWithTracking
         , styles
         , submit
         , toggleButton
@@ -49,7 +50,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## `<a>` Buttons
 
-@docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkExternalWithTracking
+@docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
 ## `<input>` Buttons
@@ -68,6 +69,7 @@ import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Styled
+import Json.Decode
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1
@@ -473,6 +475,20 @@ linkWithMethod method =
     linkBase <| [ attribute "data-method" method ]
 
 
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
+This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
+-}
+linkWithTracking : msg -> LinkConfig -> Html msg
+linkWithTracking onTrack =
+    linkBase <|
+        [ Html.Events.onWithOptions "click"
+            { stopPropagation = False
+            , preventDefault = True
+            }
+            (Json.Decode.succeed onTrack)
+        ]
+
+
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
 
 This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
@@ -630,11 +646,13 @@ styles =
                 , Css.height (px config.height)
                 , lineHeight (px config.lineHeight)
                 , padding2 zero (px config.sidePadding)
+                , boxSizing borderBox
                 , minWidth (px config.minWidth)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
                 , Css.Foreign.withClass ExplicitWidth
                     [ padding2 zero (px 4)
+                    , boxSizing borderBox
                     ]
                 , Css.Foreign.withClass IsLink
                     [ lineHeight (px config.height)
