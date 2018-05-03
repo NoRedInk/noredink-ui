@@ -38,10 +38,6 @@ type Column data msg
     = Column (Html msg) (data -> Html msg) Style
 
 
-type alias WidthStyle =
-    List ( String, String )
-
-
 {-| A column that renders some aspect of a value as text
 -}
 string :
