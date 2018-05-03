@@ -11,7 +11,20 @@ module Nri.Ui.Table.V2
         , viewWithoutHeader
         )
 
-{-|
+{-| Upgrading from V1:
+
+  - All the `width` fields in column configurations now take an elm-css length
+    value rather than an Integer. Change `width = 100` to `width = px 100` to get
+    the same widths as before.
+  - Tables now by default take the full width of the container they are placed in.
+    If this is not what you want, wrap the table in an element with a fixed width.
+  - The table module now makes use of `Html.Styled` and no longer exposes a
+    separate `styles` value.
+    Check out the [elm-css](http://package.elm-lang.org/packages/rtfeldman/elm-css/14.0.0/Html-Styled)
+    documentation on Html.Styled to see how to work with it.
+  - The default cell padding has been removed and content is not vertically
+    centered in its cell. If you need to overwrite this, wrap your cells in
+    elements providing custom styling to the cell.
 
 @docs Column, custom, string
 
