@@ -31,6 +31,11 @@ example noOp =
             { link = noOp
             , name = "The Main Page"
             }
+        , Html.h4 [] [ Html.text "Page: No Permission" ]
+        , Page.noPermission
+            { link = noOp
+            , name = "The Main Page"
+            }
         ]
     }
 

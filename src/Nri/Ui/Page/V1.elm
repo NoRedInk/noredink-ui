@@ -1,8 +1,8 @@
-module Nri.Ui.Page.V1 exposing (Default, blocked, broken, notFound)
+module Nri.Ui.Page.V1 exposing (DefaultPage, blocked, broken, noPermission, notFound)
 
 {-| A styled NRI issue page!
 
-@docs Default, broken, blocked, notFound
+@docs DefaultPage, broken, blocked, notFound, noPermission
 
 -}
 
@@ -18,7 +18,7 @@ which will direct the user back to the main page of
 the SPA. Specify it's name and the message which will
 navigate to the page.
 -}
-type alias Default msg =
+type alias DefaultPage msg =
     { link : msg
     , name : String
     }
@@ -26,7 +26,7 @@ type alias Default msg =
 
 {-| For the not found page.
 -}
-notFound : Default msg -> Html.Html msg
+notFound : DefaultPage msg -> Html.Html msg
 notFound defaultPage =
     view
         { emoji = "\x1F914"
@@ -39,7 +39,7 @@ notFound defaultPage =
 
 {-| For HTTP errors and other broken states.
 -}
-broken : Default msg -> Html.Html msg
+broken : DefaultPage msg -> Html.Html msg
 broken defaultPage =
     view
         { emoji = "😵"
@@ -63,6 +63,19 @@ blocked details =
         }
 
 
+{-| For pages the user does not have access to.
+-}
+noPermission : DefaultPage msg -> Html.Html msg
+noPermission defaultPage =
+    view
+        { emoji = "\x1F910"
+        , title = "You do not have access to this page!"
+        , subtitle = "Talk to a site administrator if you believe you should have access to this page."
+        , defaultPage = Just defaultPage
+        , details = Nothing
+        }
+
+
 
 -- INTERNAL
 
@@ -71,7 +84,7 @@ type alias Config msg =
     { emoji : String
     , title : String
     , subtitle : String
-    , defaultPage : Maybe (Default msg)
+    , defaultPage : Maybe (DefaultPage msg)
     , details : Maybe String
     }
 
@@ -85,13 +98,13 @@ view config =
                 |> Html.Styled.fromUnstyled
             , Nri.Ui.Text.V1.tagline [ Html.text config.subtitle ]
                 |> Html.Styled.fromUnstyled
-            , viewCentered
+            , viewButton
                 [ viewExit config ]
-            , viewCentered
+            , viewButton
                 [ Button.linkExternal
                     { label = "Get help!"
                     , icon = Nothing
-                    , url = "https://noredink.zendesk.com/hc/en-us" -- TODO: What is the real support url?
+                    , url = "https://noredink.zendesk.com/hc/en-us"
                     , size = Button.Large
                     , style = Button.Secondary
                     , width = Just 260
@@ -100,7 +113,7 @@ view config =
                 ]
             , case config.details of
                 Just details ->
-                    viewCentered [ viewDetails details ]
+                    viewButton [ viewDetails details ]
 
                 Nothing ->
                     Html.Styled.text ""
@@ -169,8 +182,8 @@ viewContainer =
         []
 
 
-viewCentered : List (Html.Styled.Html msg) -> Html.Styled.Html msg
-viewCentered children =
+viewButton : List (Html.Styled.Html msg) -> Html.Styled.Html msg
+viewButton children =
     Html.Styled.styled Html.Styled.div
         [ margin2 zero auto
         , marginTop (px 15)
