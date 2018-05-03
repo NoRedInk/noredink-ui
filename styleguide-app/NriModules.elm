@@ -7,6 +7,7 @@ import Examples.Colors
 import Examples.Dropdown
 import Examples.Fonts
 import Examples.Icon
+import Examples.Page
 import Examples.SegmentedControl
 import Examples.Select
 import Examples.Table
@@ -150,6 +151,7 @@ nriThemedModules model =
     [ Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
+    , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
     , Examples.Text.example
@@ -183,6 +185,7 @@ styles =
           [ ModuleExample.styles
           ]
         , (Examples.Icon.styles |> .css) ()
+        , (Examples.Page.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
         , (Button.styles |> .css) assets
         , (Nri.Ui.Dropdown.V1.styles |> .css) ()
