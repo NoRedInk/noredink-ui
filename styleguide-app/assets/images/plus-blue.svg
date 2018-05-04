@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>icon/plus-blue</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Style-guide" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="UI-Icons" transform="translate(-225.000000, -108.000000)" fill="#146AFF">
+            <g id="Stacked-Group" transform="translate(50.000000, 50.000000)">
+                <g id="Stacked-Group-3" transform="translate(0.000000, 58.000000)">
+                    <g id="Group-3" transform="translate(175.000000, 0.000000)">
+                        <g id="icon/plus-blue">
+                            <path d="M3.8105802,7.57167235 C2.7298066,6.49089875 2.7298066,4.89135381 3.8105802,3.8105802 C4.89135381,2.7298066 6.49089875,2.7298066 7.57167235,3.8105802 L12.4135381,8.65244596 L17.2554039,3.8105802 C18.3361775,2.7298066 20.1302617,2.7298066 21.1894198,3.8105802 C22.2701934,4.89135381 22.2701934,6.685438 21.1894198,7.74459613 L16.347554,12.5864619 L21.1894198,17.4283276 C22.2701934,18.5091013 22.2701934,20.1086462 21.1894198,21.1894198 C20.1086462,22.2701934 18.5091013,22.2701934 17.4283276,21.1894198 L12.5864619,16.347554 L7.74459613,21.1894198 C6.66382253,22.2701934 4.86973834,22.2701934 3.8105802,21.1894198 C2.7298066,20.1086462 2.7298066,18.314562 3.8105802,17.2554039 L8.65244596,12.5864619 L3.8105802,7.57167235 Z" id="Shape" transform="translate(12.500000, 12.500000) rotate(45.000000) translate(-12.500000, -12.500000) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
