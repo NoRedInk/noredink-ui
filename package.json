@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "dependencies": {
-    "elm": "^0.18.0",
+    "elm": "0.18.0-exp5",
     "elm-format": "^0.7.0-exp",
     "elm-test": "^0.18.12"
   }
