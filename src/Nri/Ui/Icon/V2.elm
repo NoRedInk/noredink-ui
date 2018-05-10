@@ -1,6 +1,7 @@
 module Nri.Ui.Icon.V2
     exposing
         ( CssClasses
+        , IconLinkSpaModel
         , IconSize(..)
         , IconType
         , activity
@@ -53,6 +54,7 @@ module Nri.Ui.Icon.V2
         , lightBulb
         , link
         , linkExternal
+        , linkSpa
         , lock
         , lockDeprecated
         , logo
@@ -86,8 +88,8 @@ module Nri.Ui.Icon.V2
 
 {-|
 
-@docs icon, decorativeIcon, link, linkExternal, button
-@docs IconType, IconSize
+@docs icon, decorativeIcon, link, linkExternal, linkSpa, button
+@docs IconType, IconSize, IconLinkSpaModel
 @docs styles
 @docs CssClasses
 @docs activity
@@ -168,6 +170,8 @@ import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import EventExtras
+import Html
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Ui.AssetPath exposing (Asset(..))
@@ -184,6 +188,17 @@ type alias IconLinkModel =
     , icon : IconType
     , disabled : Bool
     , size : IconSize
+    }
+
+
+{-| -}
+type alias IconLinkSpaModel route =
+    { alt : String
+    , url : String
+    , icon : IconType
+    , disabled : Bool
+    , size : IconSize
+    , route : route
     }
 
 
@@ -225,7 +240,7 @@ Uses our default icon styles (25 x 25 px, azure)
 -}
 link : IconLinkModel -> Html msg
 link =
-    linkBase (Attr.target "_self")
+    linkBase [ Attr.target "_self" ]
 
 
 {-| Create an accessible icon button with an onClick handler
@@ -280,27 +295,45 @@ decorativeIcon iconType =
             decorativeImg [ Attr.src (Nri.Ui.AssetPath.url assetPath) ]
 
 
+{-| Use this link for routing within a single page app.
+
+This will make a normal <a> tag, but change the onClick behavior to avoid reloading the page.
+
+-}
+linkSpa : (route -> String) -> (route -> msg) -> IconLinkSpaModel route -> Html msg
+linkSpa toUrl toMsg config =
+    linkBase
+        [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
+        ]
+        { alt = config.alt
+        , url = toUrl config.route
+        , icon = config.icon
+        , disabled = config.disabled
+        , size = config.size
+        }
+
+
 {-| Create an icon that links to an external site
 Uses our default icon styles (25 x 25 px, azure)
 -}
 linkExternal : IconLinkModel -> Html msg
 linkExternal =
-    linkBase (Attr.target "_blank")
+    linkBase [ Attr.target "_blank" ]
 
 
-linkBase : Attribute Never -> IconLinkModel -> Html msg
-linkBase linkTarget model =
+linkBase : List (Attribute msg) -> IconLinkModel -> Html msg
+linkBase linkAttributes model =
     span
         []
-        [ a
-            (linkTarget :: linkAttributes model)
+        [ Html.a
+            (linkAttributes ++ defaultLinkAttributes model)
             [ icon { alt = model.alt, icon = model.icon }
             ]
         ]
 
 
-linkAttributes : IconLinkModel -> List (Attribute Never)
-linkAttributes model =
+defaultLinkAttributes : IconLinkModel -> List (Attribute msg)
+defaultLinkAttributes model =
     if model.disabled then
         [ styles.class [ Disabled, Link, iconSizeToCssClass model.size ] ]
     else
