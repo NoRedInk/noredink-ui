@@ -194,7 +194,6 @@ type alias IconLinkModel =
 {-| -}
 type alias IconLinkSpaModel route =
     { alt : String
-    , url : String
     , icon : IconType
     , disabled : Bool
     , size : IconSize
