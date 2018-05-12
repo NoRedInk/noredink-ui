@@ -11,6 +11,7 @@ module Nri.Ui.Button.V2
         , button
         , buttonDeprecated
         , copyToClipboard
+        , customButton
         , delete
         , link
         , linkExternal
@@ -178,6 +179,13 @@ This button will be Disabled if the button state is:
 -}
 button : ButtonConfig msg -> ButtonContent -> Html msg
 button config content =
+    customButton [] config content
+
+
+{-| Exactly the same as button but you can pass in a list of attributes
+-}
+customButton : List (Html.Attribute msg) -> ButtonConfig msg -> ButtonContent -> Html msg
+customButton attributes config content =
     let
         buttonStyle =
             case content.state of
@@ -220,12 +228,14 @@ button config content =
                     True
     in
     Html.button
-        [ buttonClass config.size config.width buttonStyle
-        , onClick config.onClick
-        , Html.Attributes.disabled disabled
-        , Html.Attributes.type_ "button"
-        , widthStyle config.width
-        ]
+        ([ buttonClass config.size config.width buttonStyle
+         , onClick config.onClick
+         , Html.Attributes.disabled disabled
+         , Html.Attributes.type_ "button"
+         , widthStyle config.width
+         ]
+            ++ attributes
+        )
         [ viewLabel content.icon content.label ]
 
 
