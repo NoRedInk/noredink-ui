@@ -18,6 +18,9 @@ format: node_modules
 clean:
 	rm -rf node_modules styleguide-app/elm.js $(shell find . -type d -name 'elm-stuff')
 
+documentation.json: node_modules
+	elm-make --docs $@
+
 styleguide-app/elm.js: styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; elm-make Main.elm --output=$(@F)
 
@@ -43,4 +46,4 @@ elm-stuff: elm-package.json node_modules
 setup: node_modules elm-stuff tests/elm-stuff styleguide-app/elm-stuff
 
 .PHONY: ci
-ci: test format diff styleguide-app/elm.js
+ci: test format documentation.json diff styleguide-app/elm.js
