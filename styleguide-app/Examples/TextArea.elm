@@ -1,14 +1,17 @@
 module Examples.TextArea exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update,
+
 -}
 
 import Dict exposing (Dict)
 import Html
+import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V2 as Checkbox
-import Nri.Ui.Text.V1 as Text
+import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 
 
@@ -36,7 +39,8 @@ example parentMessage state =
     { filename = "Nri/TextArea.elm"
     , category = Inputs
     , content =
-        [ Text.heading [ Html.text "Textarea controls" ]
+        [ Text.heading [ Html.Styled.text "Textarea controls" ]
+            |> Html.Styled.toUnstyled
         , Html.div []
             [ Checkbox.viewWithLabel
                 { identifier = "show-textarea-label"

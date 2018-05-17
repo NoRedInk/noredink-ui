@@ -23,7 +23,7 @@ import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Select.V2
-import Nri.Ui.Text.V1 as Text
+import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V1 as TextArea
 import String.Extra
 
@@ -192,6 +192,5 @@ styles =
         , (Nri.Ui.Icon.V2.styles |> .css) ()
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Nri.Ui.Select.V2.styles |> .css) ()
-        , (Text.styles |> .css) ()
         , (TextArea.styles |> .css) assets
         ]
