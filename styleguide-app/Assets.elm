@@ -51,6 +51,7 @@ type alias Assets =
     , level3Badge_png : Asset
     , lock : String
     , logoRedBlack_svg : Asset
+    , masteryBadge : String
     , newspaper : String
     , openClose : String
     , performance : String
@@ -129,6 +130,7 @@ assets =
     , level3Badge_png = Asset "assets/images/level-3-badge.png"
     , lock = "icon-lock"
     , logoRedBlack_svg = Asset "assets/images/logo-red-black.svg"
+    , masteryBadge = "icon-mastery-badge"
     , newspaper = "icon-newspaper"
     , openClose = "icon-open-close"
     , performance = "icon-performance"
