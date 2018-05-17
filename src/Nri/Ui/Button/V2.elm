@@ -46,7 +46,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## `<button>` Buttons
 
-@docs ButtonConfig, ButtonDeprecatedConfig, button, buttonDeprecated, delete, copyToClipboard, ToggleButtonConfig, toggleButton
+@docs ButtonConfig, ButtonDeprecatedConfig, button, buttonDeprecated, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
 
 
 ## `<a>` Buttons
