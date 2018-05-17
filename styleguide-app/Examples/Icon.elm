@@ -128,6 +128,7 @@ svgIcons =
     , { icon = Icon.key assets, background = Light, alt = "Key" }
     , { icon = Icon.leaderboard assets, background = Light, alt = "Leaderboard" }
     , { icon = Icon.lock assets, background = Light, alt = "Lock" }
+    , { icon = Icon.masteryBadge assets, background = Light, alt = "Mastery Badge" }
     , { icon = Icon.newspaper assets, background = Light, alt = "Newspaper" }
     , { icon = Icon.openClose assets, background = Light, alt = "OpenClose" }
     , { icon = Icon.performance assets, background = Light, alt = "Performance" }

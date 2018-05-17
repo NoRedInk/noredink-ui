@@ -58,6 +58,7 @@ module Nri.Ui.Icon.V2
         , lock
         , lockDeprecated
         , logo
+        , masteryBadge
         , newspaper
         , notStarred
         , okay
@@ -140,6 +141,7 @@ module Nri.Ui.Icon.V2
 @docs lock
 @docs lockDeprecated
 @docs logo
+@docs masteryBadge
 @docs newspaper
 @docs notStarred
 @docs okay
@@ -625,6 +627,12 @@ lockDeprecated assets =
 logo : { r | logoRedBlack_svg : Asset } -> IconType
 logo assets =
     ImgIcon assets.logoRedBlack_svg
+
+
+{-| -}
+masteryBadge : { r | masteryBadge : String } -> IconType
+masteryBadge assets =
+    SvgIcon assets.masteryBadge
 
 
 {-| -}

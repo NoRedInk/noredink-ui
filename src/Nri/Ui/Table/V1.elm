@@ -209,7 +209,7 @@ styles =
         , Css.Foreign.class Row
             [ height (px 45)
             , fontSize (px 14)
-            , color gray45
+            , color gray20
             , pseudoClass "nth-child(odd)"
                 [ backgroundColor gray96 ]
             ]
