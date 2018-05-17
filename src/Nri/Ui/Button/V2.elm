@@ -41,7 +41,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## Common configs
 
-@docs ButtonSize, ButtonStyle, ButtonState, ButtonContent
+@docs ButtonSize, ButtonStyle, ButtonState
 
 
 ## `<button>` Buttons
