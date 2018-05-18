@@ -23,12 +23,12 @@ explicitly using an elm-css length value.
 
 -}
 
-import Accessibility.Style
+import Accessibility.Styled.Style
 import Css exposing (LengthOrMinMaxDimension)
 import DEPRECATED.Css
-import Html exposing (Html)
-import Html.Attributes as Attributes
-import Html.Events as Events
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
 import Nri.Ui.InputStyles exposing (CssClasses(..))
 import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify, removePunctuation)
@@ -88,6 +88,7 @@ view_ textAreaStyle model =
             [ Events.onInput model.onInput
             , Attributes.id (generateId model.label)
             , styles.class [ Input ]
+                |> Attributes.fromUnstyled
             , Attributes.autofocus model.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
@@ -103,6 +104,7 @@ view_ textAreaStyle model =
             , ( Writing, showWritingClass )
             , ( ContentCreation, showContentCreationClass )
             ]
+            |> Attributes.fromUnstyled
         ]
         [ if model.autoResize then
             {- NOTES:
@@ -133,13 +135,15 @@ view_ textAreaStyle model =
             Html.label
                 [ Attributes.for (generateId model.label)
                 , styles.class [ Label ]
-                , Accessibility.Style.invisible
+                    |> Attributes.fromUnstyled
+                , Accessibility.Styled.Style.invisible
                 ]
                 [ Html.text model.label ]
           else
             Html.label
                 [ Attributes.for (generateId model.label)
                 , styles.class [ Label ]
+                    |> Attributes.fromUnstyled
                 ]
                 [ Html.text model.label ]
         ]
