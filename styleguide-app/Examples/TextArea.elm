@@ -6,13 +6,14 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 -}
 
+import Css
 import Dict exposing (Dict)
 import Html
 import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V2 as Checkbox
 import Nri.Ui.Text.V2 as Text
-import Nri.Ui.TextArea.V1 as TextArea
+import Nri.Ui.TextArea.V2 as TextArea
 
 
 {-| -}
@@ -79,6 +80,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
+            , minimumHeight = Css.px 100
             }
         , TextArea.writing
             { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
@@ -89,6 +91,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
+            , minimumHeight = Css.px 100
             }
         , TextArea.contentCreation
             { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
@@ -99,6 +102,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
+            , minimumHeight = Css.px 100
             }
         ]
             |> List.map (Html.map parentMessage)
