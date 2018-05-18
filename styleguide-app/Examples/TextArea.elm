@@ -82,6 +82,7 @@ example parentMessage state =
             , showLabel = state.showLabel
             , minimumHeight = Css.px 100
             }
+            |> Html.Styled.toUnstyled
         , TextArea.writing
             { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
             , autofocus = False
@@ -93,6 +94,7 @@ example parentMessage state =
             , showLabel = state.showLabel
             , minimumHeight = Css.px 100
             }
+            |> Html.Styled.toUnstyled
         , TextArea.contentCreation
             { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
             , autofocus = False
@@ -104,6 +106,7 @@ example parentMessage state =
             , showLabel = state.showLabel
             , minimumHeight = Css.px 100
             }
+            |> Html.Styled.toUnstyled
         ]
             |> List.map (Html.map parentMessage)
     }
