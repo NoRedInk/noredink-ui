@@ -26,9 +26,9 @@ explicitly using an elm-css length value.
 import Accessibility.Style
 import Css exposing (LengthOrMinMaxDimension)
 import DEPRECATED.Css
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html exposing (Html)
+import Html.Attributes as Attributes
+import Html.Events as Events
 import Nri.Ui.InputStyles exposing (CssClasses(..))
 import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify, removePunctuation)
@@ -85,18 +85,18 @@ view_ textAreaStyle model =
             textAreaStyle == ContentCreationStyle
 
         sharedAttributes =
-            [ onInput model.onInput
-            , Html.Attributes.id (generateId model.label)
+            [ Events.onInput model.onInput
+            , Attributes.id (generateId model.label)
             , styles.class [ Input ]
-            , autofocus model.autofocus
-            , placeholder model.placeholder
-            , attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
+            , Attributes.autofocus model.autofocus
+            , Attributes.placeholder model.placeholder
+            , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
 
             -- Html.Styled migration consideration:
-            , [ Css.minHeight model.minimumHeight ] |> DEPRECATED.Css.asPairs |> Html.Attributes.style
+            , [ Css.minHeight model.minimumHeight ] |> DEPRECATED.Css.asPairs |> Attributes.style
             ]
     in
-    div
+    Html.div
         [ styles.classList
             [ ( Container, True )
             , ( IsInError, model.isInError )
@@ -122,7 +122,7 @@ view_ textAreaStyle model =
                 (sharedAttributes
                     ++ [ -- setting the default value via a text node doesn't play well with the custom element,
                          -- but we'll be able to switch to the regular value property in 0.19 anyway
-                         defaultValue model.value
+                         Attributes.defaultValue model.value
                        ]
                 )
                 []
@@ -131,14 +131,14 @@ view_ textAreaStyle model =
                 [ Html.text model.value ]
         , if not model.showLabel then
             Html.label
-                [ for (generateId model.label)
+                [ Attributes.for (generateId model.label)
                 , styles.class [ Label ]
                 , Accessibility.Style.invisible
                 ]
                 [ Html.text model.label ]
           else
             Html.label
-                [ for (generateId model.label)
+                [ Attributes.for (generateId model.label)
                 , styles.class [ Label ]
                 ]
                 [ Html.text model.label ]
