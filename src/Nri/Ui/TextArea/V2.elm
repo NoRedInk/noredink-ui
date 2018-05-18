@@ -25,7 +25,6 @@ explicitly using an elm-css length value.
 
 import Accessibility.Styled.Style
 import Css exposing (LengthOrMinMaxDimension)
-import DEPRECATED.Css
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -94,7 +93,7 @@ view_ textAreaStyle model =
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
 
             -- Html.Styled migration consideration:
-            , [ Css.minHeight model.minimumHeight ] |> DEPRECATED.Css.asPairs |> Attributes.style
+            , Attributes.css [ Css.minHeight model.minimumHeight ]
             ]
     in
     Html.div
