@@ -13,8 +13,9 @@ module Nri.Ui.TextArea.V2
 
 ## Upgrading from V2
 
-The Model now takes a minimumHeight field, which needs to be specified
-explicitly using an elm-css length value.
+  - The Model now takes a minimumHeight field, which needs to be specified
+    explicitly using an elm-css length value.
+  - The view now returns `Html.Styled` rather than plain `Html`.
 
 
 ## The Nri styleguide-specified textarea with overlapping label
