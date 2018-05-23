@@ -92,8 +92,6 @@ view_ textAreaStyle model =
             , Attributes.autofocus model.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
-
-            -- Html.Styled migration consideration:
             , Attributes.css [ Css.minHeight model.minimumHeight ]
             ]
     in
