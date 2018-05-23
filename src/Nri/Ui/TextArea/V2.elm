@@ -18,6 +18,12 @@ module Nri.Ui.TextArea.V2
   - The view now returns `Html.Styled` rather than plain `Html`.
 
 
+### Known issues
+
+  - V2.writing ignores the minimumHeight field; it's fixed to 150px as
+    specified by the internal InputStyles module.
+
+
 ## The Nri styleguide-specified textarea with overlapping label
 
 @docs view, writing, contentCreation, Model, generateId, styles
