@@ -56,8 +56,9 @@ AutoresizeTextArea.prototype._resize = function() {
 
   this._textarea.style.overflowY = "hidden";
   this._textarea.style.minHeight = minHeight + "px";
+  this._textarea.style.transition = "none";
   if (this._textarea.scrollHeight > minHeight) {
-    this._textarea.style.height = "auto";
+    this._textarea.style.height = minHeight + "px";
     this._textarea.style.height = this._textarea.scrollHeight + "px";
   } else {
     this._textarea.style.height = minHeight + "px";
