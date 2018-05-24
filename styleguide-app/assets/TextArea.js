@@ -43,7 +43,7 @@ Object.defineProperties(AutoresizeTextArea.prototype, {
   }
 });
 
-AutoresizeTextArea.prototype._onInput = function() {
+AutoresizeTextArea.prototype._resize = function() {
   var minHeight = null;
   if (this._textarea.style.minHeight) {
     minHeight = parseInt(this._textarea.style.minHeight, 10);
@@ -59,7 +59,10 @@ AutoresizeTextArea.prototype._onInput = function() {
   } else {
     this._textarea.style.height = minHeight + "px";
   }
+};
 
+AutoresizeTextArea.prototype._onInput = function() {
+  this._resize();
   this.dispatchEvent(new Event("input"));
 };
 
@@ -91,6 +94,7 @@ AutoresizeTextArea.prototype.connectedCallback = function() {
   this._textarea.addEventListener("input", this._onInput);
   this._reflectAttributes();
   this.appendChild(this._textarea);
+  this._resize();
 };
 
 AutoresizeTextArea.prototype.disconnectedCallback = function() {
