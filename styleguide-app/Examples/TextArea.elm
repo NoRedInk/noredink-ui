@@ -77,10 +77,13 @@ example parentMessage state =
             , onInput = InputGiven 1
             , isInError = state.isInError
             , label = "TextArea.view"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.SingleLine
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         , TextArea.writing
@@ -89,10 +92,13 @@ example parentMessage state =
             , onInput = InputGiven 2
             , isInError = state.isInError
             , label = "TextArea.writing"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.DefaultHeight
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         , TextArea.contentCreation
@@ -101,10 +107,13 @@ example parentMessage state =
             , onInput = InputGiven 3
             , isInError = state.isInError
             , label = "TextArea.contentCreation"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.DefaultHeight
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         ]

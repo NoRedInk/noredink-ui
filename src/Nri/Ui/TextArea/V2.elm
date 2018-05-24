@@ -1,6 +1,7 @@
 module Nri.Ui.TextArea.V2
     exposing
-        ( MinimumHeight(..)
+        ( Height(..)
+        , HeightBehavior(..)
         , Model
         , contentCreation
         , generateId
@@ -14,18 +15,16 @@ module Nri.Ui.TextArea.V2
 
 ## Upgrading from V2
 
-  - The Model now takes a minimumHeight field, which needs to be specified
-    explicitly either as `DefaultHeight` or `SingleLine`.
-    This is most useful when used in conjunction with `autoResize = True`:
-    the textarea will shrink or expand to the specified height when it is
-    empty.
+  - The Model's autoResize field is now `height : HeightBehavior`, which can be
+    either `Fixed` or `AutoResize Height`. `Height` is either
+    `DefaultHeight` or `SingleLine` and controls the minimum height of the textarea.
 
   - The view now returns `Html.Styled` rather than plain `Html`.
 
 
 ## The Nri styleguide-specified textarea with overlapping label
 
-@docs view, writing, contentCreation, MinimumHeight, Model, generateId, styles
+@docs view, writing, contentCreation, Height, HeightBehavior, Model, generateId, styles
 
 -}
 
@@ -45,15 +44,23 @@ type alias Model msg =
     , autofocus : Bool
     , onInput : String -> msg
     , isInError : Bool
-    , autoResize : Bool
+    , height : HeightBehavior
     , placeholder : String
     , label : String
     , showLabel : Bool
-    , minimumHeight : MinimumHeight
     }
 
 
-type MinimumHeight
+{-| Control whether to auto-expand the height.
+-}
+type HeightBehavior
+    = Fixed
+    | AutoResize Height
+
+
+{-| For specifying the actual height.
+-}
+type Height
     = DefaultHeight
     | SingleLine
 
@@ -95,7 +102,18 @@ view_ textAreaStyle model =
             textAreaStyle == ContentCreationStyle
 
         minHeight =
-            calculateMinHeight textAreaStyle model.minimumHeight
+            case model.height of
+                Fixed ->
+                    []
+
+                AutoResize minimumHeight ->
+                    -- FIXME: Css.important is needed here because InputStyles's
+                    -- min-height rule has more specificity. It can go away once
+                    -- we've fully migrated to Html.Styled.
+                    [ calculateMinHeight textAreaStyle minimumHeight
+                        |> Css.minHeight
+                        |> Css.important
+                    ]
 
         sharedAttributes =
             [ Events.onInput model.onInput
@@ -106,12 +124,9 @@ view_ textAreaStyle model =
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
             , Attributes.css
-                -- FIXME: Css.important is needed here because InputStyles's
-                -- min-height rule has more specificity. It can go away once
-                -- we've fully migrated to Html.Styled.
-                [ Css.important (Css.minHeight minHeight)
-                , Css.boxSizing Css.borderBox
-                ]
+                (minHeight
+                    ++ [ Css.boxSizing Css.borderBox ]
+                )
             ]
     in
     Html.div
@@ -123,31 +138,33 @@ view_ textAreaStyle model =
             ]
             |> Attributes.fromUnstyled
         ]
-        [ if model.autoResize then
-            {- NOTES:
-               The autoresize-textarea element is implemented to pass information applied to itself to an internal
-               textarea element that it inserts into the DOM automatically. Maintaing this behavior may require some
-               changes on your part, as listed below.
+        [ case model.height of
+            AutoResize _ ->
+                {- NOTES:
+                   The autoresize-textarea element is implemented to pass information applied to itself to an internal
+                   textarea element that it inserts into the DOM automatically. Maintaing this behavior may require some
+                   changes on your part, as listed below.
 
-               - When adding an Html.Attribute that is a _property_, you must edit Nri/TextArea.js to ensure that a getter and setter
-                 are set up to properly reflect the property to the actual textarea element that autoresize-textarea creates
-               - When adding a new listener from Html.Events, you must edit Nri/TextArea.js to ensure that a listener is set up on
-                 the textarea that will trigger this event on the autoresize-textarea element itself. See AutoresizeTextArea.prototype._onInput
-                 and AutoresizeTextArea.prototype.connectedCallback for an example pertaining to the `input` event
-               - When adding a new Html.Attribute that is an _attribute_, you don't have to do anything. All attributes are
-                 automatically reflected onto the textarea element via AutoresizeTextArea.prototype.attributeChangedCallback
-            -}
-            Html.node "autoresize-textarea"
-                (sharedAttributes
-                    ++ [ -- setting the default value via a text node doesn't play well with the custom element,
-                         -- but we'll be able to switch to the regular value property in 0.19 anyway
-                         Attributes.defaultValue model.value
-                       ]
-                )
-                []
-          else
-            Html.textarea sharedAttributes
-                [ Html.text model.value ]
+                   - When adding an Html.Attribute that is a _property_, you must edit Nri/TextArea.js to ensure that a getter and setter
+                   are set up to properly reflect the property to the actual textarea element that autoresize-textarea creates
+                   - When adding a new listener from Html.Events, you must edit Nri/TextArea.js to ensure that a listener is set up on
+                   the textarea that will trigger this event on the autoresize-textarea element itself. See AutoresizeTextArea.prototype._onInput
+                   and AutoresizeTextArea.prototype.connectedCallback for an example pertaining to the `input` event
+                   - When adding a new Html.Attribute that is an _attribute_, you don't have to do anything. All attributes are
+                   automatically reflected onto the textarea element via AutoresizeTextArea.prototype.attributeChangedCallback
+                -}
+                Html.node "autoresize-textarea"
+                    (sharedAttributes
+                        ++ [ -- setting the default value via a text node doesn't play well with the custom element,
+                             -- but we'll be able to switch to the regular value property in 0.19 anyway
+                             Attributes.defaultValue model.value
+                           ]
+                    )
+                    []
+
+            Fixed ->
+                Html.textarea sharedAttributes
+                    [ Html.text model.value ]
         , if not model.showLabel then
             Html.label
                 [ Attributes.for (generateId model.label)
@@ -166,7 +183,7 @@ view_ textAreaStyle model =
         ]
 
 
-calculateMinHeight : TextAreaStyle -> MinimumHeight -> Css.Px
+calculateMinHeight : TextAreaStyle -> Height -> Css.Px
 calculateMinHeight textAreaStyle specifiedHeight =
     {- On including padding in this calculation:
 
