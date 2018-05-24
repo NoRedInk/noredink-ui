@@ -16,6 +16,10 @@ module Nri.Ui.TextArea.V2
 
   - The Model now takes a minimumHeight field, which needs to be specified
     explicitly either as `DefaultHeight` or `SingleLine`.
+    This is most useful when used in conjunction with `autoResize = True`:
+    the textarea will shrink or expand to the specified height when it is
+    empty.
+
   - The view now returns `Html.Styled` rather than plain `Html`.
 
 
