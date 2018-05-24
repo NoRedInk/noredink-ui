@@ -80,7 +80,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = Css.px 100
+            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         , TextArea.writing
@@ -92,7 +92,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = Css.px 100
+            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         , TextArea.contentCreation
@@ -104,7 +104,7 @@ example parentMessage state =
             , autoResize = state.autoResize
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
-            , minimumHeight = Css.px 100
+            , minimumHeight = TextArea.DefaultHeight
             }
             |> Html.Styled.toUnstyled
         ]

@@ -1,8 +1,13 @@
-module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), styles)
+module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingMinHeight, writingPadding, writingPaddingTop)
 
 {-|
 
 @docs styles, CssClasses
+
+
+## Shared hardcoded values
+
+@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
 
 -}
 
@@ -60,7 +65,7 @@ styles =
         inputStyle =
             [ border3 (px 1) solid gray75
             , borderRadius (px 8)
-            , padding2 (px 8) (px 14)
+            , padding2 inputPaddingVertical (px 14)
             , property "transition" "all 0.1s ease"
             , pseudoClass "placeholder"
                 [ color gray45
@@ -73,7 +78,7 @@ styles =
             , display inlineBlock
             , verticalAlign top
             , marginBottom zero
-            , lineHeight (px 20)
+            , lineHeight inputLineHeight
             , marginTop (px 9)
             , boxShadow6 inset zero (px 2) zero zero gray92
             , property "transition" "all 0.4s ease"
@@ -97,7 +102,7 @@ styles =
             , selector "textarea"
                 [ withClass Input
                     (inputStyle
-                        ++ [ height (px 100)
+                        ++ [ height textAreaHeight
                            , width (pct 100)
                            ]
                     )
@@ -122,10 +127,10 @@ styles =
                     [ class Input
                         [ Nri.Ui.Fonts.V1.quizFont
                         , fontSize (px 20)
-                        , lineHeight (px 25)
-                        , minHeight (px 150)
-                        , padding (px 15)
-                        , paddingTop (px 20)
+                        , lineHeight writingLineHeight
+                        , minHeight writingMinHeight
+                        , padding writingPadding
+                        , paddingTop writingPaddingTop
                         ]
                     , class Label
                         [ border3 (px 1) solid gray75
@@ -246,3 +251,38 @@ type alias Assets r =
         , icons_searchGray_svg : Asset
         , icons_xBlue_svg : Asset
     }
+
+
+inputPaddingVertical : Px
+inputPaddingVertical =
+    px 8
+
+
+inputLineHeight : Px
+inputLineHeight =
+    px 20
+
+
+textAreaHeight : Px
+textAreaHeight =
+    px 100
+
+
+writingLineHeight : Px
+writingLineHeight =
+    px 25
+
+
+writingPadding : Px
+writingPadding =
+    px 15
+
+
+writingPaddingTop : Px
+writingPaddingTop =
+    px 20
+
+
+writingMinHeight : Px
+writingMinHeight =
+    px 150

@@ -1,6 +1,7 @@
 module Nri.Ui.TextArea.V2
     exposing
-        ( Model
+        ( MinimumHeight(..)
+        , Model
         , contentCreation
         , generateId
         , styles
@@ -14,7 +15,7 @@ module Nri.Ui.TextArea.V2
 ## Upgrading from V2
 
   - The Model now takes a minimumHeight field, which needs to be specified
-    explicitly using an elm-css length value.
+    explicitly either as `DefaultHeight` or `SingleLine`.
   - The view now returns `Html.Styled` rather than plain `Html`.
 
 
@@ -26,22 +27,22 @@ module Nri.Ui.TextArea.V2
 
 ## The Nri styleguide-specified textarea with overlapping label
 
-@docs view, writing, contentCreation, Model, generateId, styles
+@docs view, writing, contentCreation, MinimumHeight, Model, generateId, styles
 
 -}
 
 import Accessibility.Styled.Style
-import Css exposing (LengthOrMinMaxDimension)
+import Css exposing ((|+|))
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Nri.Ui.InputStyles exposing (CssClasses(..))
+import Nri.Ui.InputStyles as InputStyles exposing (CssClasses(..))
 import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
 {-| -}
-type alias Model compatible msg =
+type alias Model msg =
     { value : String
     , autofocus : Bool
     , onInput : String -> msg
@@ -50,26 +51,31 @@ type alias Model compatible msg =
     , placeholder : String
     , label : String
     , showLabel : Bool
-    , minimumHeight : LengthOrMinMaxDimension compatible
+    , minimumHeight : MinimumHeight
     }
 
 
+type MinimumHeight
+    = DefaultHeight
+    | SingleLine
+
+
 {-| -}
-view : Model compatible msg -> Html msg
+view : Model msg -> Html msg
 view model =
     view_ DefaultStyle model
 
 
 {-| Used for Writing Cycles
 -}
-writing : Model compatible msg -> Html msg
+writing : Model msg -> Html msg
 writing model =
     view_ WritingStyle model
 
 
 {-| Used for Content Creation
 -}
-contentCreation : Model compatible msg -> Html msg
+contentCreation : Model msg -> Html msg
 contentCreation model =
     view_ ContentCreationStyle model
 
@@ -81,7 +87,7 @@ type TextAreaStyle
 
 
 {-| -}
-view_ : TextAreaStyle -> Model compatible msg -> Html msg
+view_ : TextAreaStyle -> Model msg -> Html msg
 view_ textAreaStyle model =
     let
         showWritingClass =
@@ -89,6 +95,9 @@ view_ textAreaStyle model =
 
         showContentCreationClass =
             textAreaStyle == ContentCreationStyle
+
+        minHeight =
+            calculateMinHeight textAreaStyle model.minimumHeight
 
         sharedAttributes =
             [ Events.onInput model.onInput
@@ -98,7 +107,10 @@ view_ textAreaStyle model =
             , Attributes.autofocus model.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
-            , Attributes.css [ Css.minHeight model.minimumHeight ]
+            , Attributes.css
+                [ Css.minHeight minHeight
+                , Css.boxSizing Css.borderBox
+                ]
             ]
     in
     Html.div
@@ -153,6 +165,55 @@ view_ textAreaStyle model =
         ]
 
 
+calculateMinHeight : TextAreaStyle -> MinimumHeight -> Css.Px
+calculateMinHeight textAreaStyle specifiedHeight =
+    {- On including padding in this calculation:
+
+       When the textarea is autoresized, TextArea.js updates the textarea's
+       height by taking its scrollHeight. Because scrollHeight's calculation
+       includes the element's padding no matter what [1], we need to set the
+       textarea's box-sizing to border-box in order to use the same measurement
+       for its height as scrollHeight.
+
+       So, min-height also needs to be specified in terms of padding + content
+       height.
+
+       [1] https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
+    -}
+    case specifiedHeight of
+        SingleLine ->
+            case textAreaStyle of
+                DefaultStyle ->
+                    singleLineHeight
+
+                WritingStyle ->
+                    writingSingleLineHeight
+
+                ContentCreationStyle ->
+                    singleLineHeight
+
+        DefaultHeight ->
+            case textAreaStyle of
+                DefaultStyle ->
+                    InputStyles.textAreaHeight
+
+                WritingStyle ->
+                    InputStyles.writingMinHeight
+
+                ContentCreationStyle ->
+                    InputStyles.textAreaHeight
+
+
+singleLineHeight : Css.Px
+singleLineHeight =
+    InputStyles.inputPaddingVertical |+| InputStyles.inputLineHeight |+| InputStyles.inputPaddingVertical
+
+
+writingSingleLineHeight : Css.Px
+writingSingleLineHeight =
+    InputStyles.writingPaddingTop |+| InputStyles.writingLineHeight |+| InputStyles.writingPadding
+
+
 {-| -}
 generateId : String -> String
 generateId labelText =
@@ -160,6 +221,6 @@ generateId labelText =
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Nri.Ui.InputStyles.Assets r)
+styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (InputStyles.Assets r)
 styles =
-    Nri.Ui.InputStyles.styles
+    InputStyles.styles
