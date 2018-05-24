@@ -19,12 +19,6 @@ module Nri.Ui.TextArea.V2
   - The view now returns `Html.Styled` rather than plain `Html`.
 
 
-### Known issues
-
-  - V2.writing ignores the minimumHeight field; it's fixed to 150px as
-    specified by the internal InputStyles module.
-
-
 ## The Nri styleguide-specified textarea with overlapping label
 
 @docs view, writing, contentCreation, MinimumHeight, Model, generateId, styles
@@ -108,7 +102,10 @@ view_ textAreaStyle model =
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
             , Attributes.css
-                [ Css.minHeight minHeight
+                -- FIXME: Css.important is needed here because InputStyles's
+                -- min-height rule has more specificity. It can go away once
+                -- we've fully migrated to Html.Styled.
+                [ Css.important (Css.minHeight minHeight)
                 , Css.boxSizing Css.borderBox
                 ]
             ]
