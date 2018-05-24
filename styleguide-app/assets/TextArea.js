@@ -48,6 +48,9 @@ AutoresizeTextArea.prototype._resize = function() {
   if (this._textarea.style.minHeight) {
     minHeight = parseInt(this._textarea.style.minHeight, 10);
   } else {
+    minHeight = parseInt(window.getComputedStyle(this._textarea).minHeight, 10);
+  }
+  if (minHeight === 0) {
     minHeight = parseInt(window.getComputedStyle(this._textarea).height, 10);
   }
 
