@@ -77,6 +77,7 @@ styles =
             , marginTop (px 9)
             , boxShadow6 inset zero (px 2) zero zero gray92
             , property "transition" "all 0.4s ease"
+            , boxSizing borderBox
             , focus
                 [ borderColor azure
                 , outline none
