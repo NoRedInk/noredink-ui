@@ -14,6 +14,7 @@ import Examples.Table
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
+import Examples.TextInput as TextInputExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -23,8 +24,8 @@ import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
 import Nri.Ui.Select.V2
-import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V1 as TextArea
+import Nri.Ui.TextInput.V1
 import String.Extra
 
 
@@ -35,6 +36,7 @@ type alias ModuleStates =
     , selectState : Examples.Select.State Examples.Select.Value
     , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
+    , textInputExampleState : TextInputExample.State
     }
 
 
@@ -46,6 +48,7 @@ init =
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
+    , textInputExampleState = TextInputExample.init
     }
 
 
@@ -57,6 +60,7 @@ type Msg
     | ShowItWorked String String
     | TableExampleMsg Examples.Table.Msg
     | TextAreaExampleMsg TextAreaExample.Msg
+    | TextInputExampleMsg TextInputExample.Msg
     | NoOp
 
 
@@ -124,6 +128,15 @@ update msg moduleStates =
             , Cmd.map TextAreaExampleMsg cmd
             )
 
+        TextInputExampleMsg msg ->
+            let
+                ( textInputExampleState, cmd ) =
+                    TextInputExample.update msg moduleStates.textInputExampleState
+            in
+            ( { moduleStates | textInputExampleState = textInputExampleState }
+            , Cmd.map TextInputExampleMsg cmd
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -159,6 +172,7 @@ nriThemedModules model =
     , Examples.Fonts.example
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
+    , TextInputExample.example TextInputExampleMsg model.textInputExampleState
     , Examples.Colors.example
     ]
 
@@ -193,4 +207,5 @@ styles =
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Nri.Ui.Select.V2.styles |> .css) ()
         , (TextArea.styles |> .css) assets
+        , (Nri.Ui.TextInput.V1.styles |> .css) ()
         ]
