@@ -124,9 +124,9 @@ styles =
                         [ Nri.Ui.Fonts.V1.quizFont
                         , fontSize (px 20)
                         , lineHeight (px 25)
-                        , minHeight (px 150)
                         , padding (px 15)
                         , paddingTop (px 20)
+                        , height auto
                         ]
                     , class Label
                         [ border3 (px 1) solid gray75
@@ -139,6 +139,9 @@ styles =
                         [ backgroundColor azure
                         , color white
                         , borderColor azure
+                        ]
+                    , selector "textarea"
+                        [ minHeight (px 150)
                         ]
                     ]
                 , withClass IsInError
