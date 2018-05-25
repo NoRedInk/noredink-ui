@@ -85,11 +85,33 @@ example parentMessage state =
             }
         , Html.h3 [] [ Html.text "Writing Style" ]
         , TextInput.writing
-            { label = "Criterion"
+            { label = "Writing!"
             , isInError = False
-            , placeholder = "For example, \"Something!!\""
-            , value = Maybe.withDefault "" <| Dict.get 2 state.textInputValues
-            , onInput = SetTextInput 2
+            , placeholder = "Writing is good for me and my family"
+            , value = Maybe.withDefault "" <| Dict.get 4 state.textInputValues
+            , onInput = SetTextInput 4
+            , autofocus = False
+            , type_ = TextInput.text
+            , showLabel = True
+            }
+        , Html.br [] []
+        , TextInput.writing
+            { label = "Writing with errors!"
+            , isInError = True
+            , placeholder = "Oopsie!"
+            , value = Maybe.withDefault "" <| Dict.get 5 state.textInputValues
+            , onInput = SetTextInput 5
+            , autofocus = False
+            , type_ = TextInput.text
+            , showLabel = True
+            }
+        , Html.br [] []
+        , TextInput.writing
+            { label = "Writing without labels!"
+            , isInError = False
+            , placeholder = "No label on this writing input!"
+            , value = Maybe.withDefault "" <| Dict.get 6 state.textInputValues
+            , onInput = SetTextInput 6
             , autofocus = False
             , type_ = TextInput.text
             , showLabel = False
