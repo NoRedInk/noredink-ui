@@ -23,8 +23,8 @@ type CssClasses
     | Label
     | Input
     | IsInError
-      -- For textarea
     | Writing
+      -- For textarea
     | ContentCreation
       -- For date picker inputs
     | DatePickerContainer
@@ -142,6 +142,9 @@ styles =
                         ]
                     , selector "textarea"
                         [ minHeight (px 150)
+                        ]
+                    , selector "input"
+                        [ textAlign center
                         ]
                     ]
                 , withClass IsInError
