@@ -207,5 +207,4 @@ styles =
         , (Nri.Ui.SegmentedControl.V5.styles |> .css) ()
         , (Nri.Ui.Select.V2.styles |> .css) ()
         , (TextArea.styles |> .css) assets
-        , (Nri.Ui.TextInput.V1.styles |> .css) ()
         ]

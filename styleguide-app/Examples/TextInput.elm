@@ -7,7 +7,7 @@ module Examples.TextInput exposing (Msg, State, example, init, update)
 import Dict exposing (Dict)
 import Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.TextInput.V1 as TextInput
+import Nri.Ui.TextInput.V2 as TextInput
 
 
 {-| -}
@@ -37,7 +37,9 @@ example parentMessage state =
             , onInput = SetTextInput 1
             , autofocus = False
             , type_ = TextInput.text
+            , showLabel = True
             }
+        , Html.br [] []
         , TextInput.view
             { label = "Points"
             , isInError = False
@@ -46,7 +48,9 @@ example parentMessage state =
             , onInput = SetNumberInput
             , autofocus = False
             , type_ = TextInput.number
+            , showLabel = True
             }
+        , Html.br [] []
         , TextInput.view
             { label = "Error"
             , isInError = True
@@ -55,9 +59,10 @@ example parentMessage state =
             , onInput = SetNumberInput
             , autofocus = False
             , type_ = TextInput.number
+            , showLabel = True
             }
         , Html.h3 [] [ Html.text "invisible label" ]
-        , TextInput.withInvisibleLabel
+        , TextInput.view
             { label = "Criterion"
             , isInError = False
             , placeholder = "For example, \"Something!!\""
@@ -65,9 +70,10 @@ example parentMessage state =
             , onInput = SetTextInput 2
             , autofocus = False
             , type_ = TextInput.text
+            , showLabel = False
             }
         , Html.br [] []
-        , TextInput.withInvisibleLabel
+        , TextInput.view
             { label = "Criterion"
             , placeholder = "Everything you type is wrong!"
             , value = Maybe.withDefault "" <| Dict.get 3 state.textInputValues
@@ -75,6 +81,18 @@ example parentMessage state =
             , isInError = True
             , autofocus = False
             , type_ = TextInput.text
+            , showLabel = False
+            }
+        , Html.h3 [] [ Html.text "Writing Style" ]
+        , TextInput.writing
+            { label = "Criterion"
+            , isInError = False
+            , placeholder = "For example, \"Something!!\""
+            , value = Maybe.withDefault "" <| Dict.get 2 state.textInputValues
+            , onInput = SetTextInput 2
+            , autofocus = False
+            , type_ = TextInput.text
+            , showLabel = False
             }
         ]
             |> List.map (Html.map parentMessage)
