@@ -26,7 +26,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.TextInput.V1"
+    { filename = "Nri.Ui.TextInput.V2"
     , category = Inputs
     , content =
         [ TextInput.view
