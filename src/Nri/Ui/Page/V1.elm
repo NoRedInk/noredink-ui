@@ -152,7 +152,7 @@ viewDetails : String -> Html.Styled.Html msg
 viewDetails detailsForEngineers =
     Html.Styled.div []
         [ Html.Styled.styled Html.Styled.details
-            [ margin (px 10) 
+            [ margin (px 10)
             , maxWidth (px 700)
             ]
             []
