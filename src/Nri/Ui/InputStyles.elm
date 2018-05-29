@@ -1,4 +1,4 @@
-module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingMinHeight, writingPadding, writingPaddingTop)
+module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop)
 
 {-|
 
@@ -7,7 +7,7 @@ module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inp
 
 ## Shared hardcoded values
 
-@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop
 
 -}
 
@@ -28,8 +28,8 @@ type CssClasses
     | Label
     | Input
     | IsInError
-      -- For textarea
     | Writing
+      -- For textarea
     | ContentCreation
       -- For date picker inputs
     | DatePickerContainer
@@ -82,6 +82,7 @@ styles =
             , marginTop (px 9)
             , boxShadow6 inset zero (px 2) zero zero gray92
             , property "transition" "all 0.4s ease"
+            , boxSizing borderBox
             , focus
                 [ borderColor azure
                 , outline none
@@ -128,9 +129,9 @@ styles =
                         [ Nri.Ui.Fonts.V1.quizFont
                         , fontSize (px 20)
                         , lineHeight writingLineHeight
-                        , minHeight writingMinHeight
                         , padding writingPadding
                         , paddingTop writingPaddingTop
+                        , height auto
                         ]
                     , class Label
                         [ border3 (px 1) solid gray75
@@ -143,6 +144,12 @@ styles =
                         [ backgroundColor azure
                         , color white
                         , borderColor azure
+                        ]
+                    , selector "textarea"
+                        [ minHeight (px 150)
+                        ]
+                    , selector "input"
+                        [ textAlign center
                         ]
                     ]
                 , withClass IsInError
@@ -281,8 +288,3 @@ writingPadding =
 writingPaddingTop : Px
 writingPaddingTop =
     px 20
-
-
-writingMinHeight : Px
-writingMinHeight =
-    px 150

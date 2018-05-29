@@ -14,6 +14,7 @@ import Examples.Table
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
+import Examples.TextInput as TextInputExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -35,6 +36,7 @@ type alias ModuleStates =
     , selectState : Examples.Select.State Examples.Select.Value
     , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
+    , textInputExampleState : TextInputExample.State
     }
 
 
@@ -46,6 +48,7 @@ init =
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
+    , textInputExampleState = TextInputExample.init
     }
 
 
@@ -57,6 +60,7 @@ type Msg
     | ShowItWorked String String
     | TableExampleMsg Examples.Table.Msg
     | TextAreaExampleMsg TextAreaExample.Msg
+    | TextInputExampleMsg TextInputExample.Msg
     | NoOp
 
 
@@ -124,6 +128,15 @@ update msg moduleStates =
             , Cmd.map TextAreaExampleMsg cmd
             )
 
+        TextInputExampleMsg msg ->
+            let
+                ( textInputExampleState, cmd ) =
+                    TextInputExample.update msg moduleStates.textInputExampleState
+            in
+            ( { moduleStates | textInputExampleState = textInputExampleState }
+            , Cmd.map TextInputExampleMsg cmd
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -159,6 +172,7 @@ nriThemedModules model =
     , Examples.Fonts.example
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
+    , TextInputExample.example TextInputExampleMsg model.textInputExampleState
     , Examples.Colors.example
     ]
 
