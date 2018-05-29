@@ -23,8 +23,8 @@ type CssClasses
     | Label
     | Input
     | IsInError
-      -- For textarea
     | Writing
+      -- For textarea
     | ContentCreation
       -- For date picker inputs
     | DatePickerContainer
@@ -77,6 +77,7 @@ styles =
             , marginTop (px 9)
             , boxShadow6 inset zero (px 2) zero zero gray92
             , property "transition" "all 0.4s ease"
+            , boxSizing borderBox
             , focus
                 [ borderColor azure
                 , outline none
@@ -123,9 +124,9 @@ styles =
                         [ Nri.Ui.Fonts.V1.quizFont
                         , fontSize (px 20)
                         , lineHeight (px 25)
-                        , minHeight (px 150)
                         , padding (px 15)
                         , paddingTop (px 20)
+                        , height auto
                         ]
                     , class Label
                         [ border3 (px 1) solid gray75
@@ -138,6 +139,12 @@ styles =
                         [ backgroundColor azure
                         , color white
                         , borderColor azure
+                        ]
+                    , selector "textarea"
+                        [ minHeight (px 150)
+                        ]
+                    , selector "input"
+                        [ textAlign center
                         ]
                     ]
                 , withClass IsInError
