@@ -1,4 +1,4 @@
-module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop)
+module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingMinHeight, writingPadding, writingPaddingTop)
 
 {-|
 
@@ -7,7 +7,7 @@ module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inp
 
 ## Shared hardcoded values
 
-@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop
+@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
 
 -}
 
@@ -146,7 +146,7 @@ styles =
                         , borderColor azure
                         ]
                     , selector "textarea"
-                        [ minHeight (px 150)
+                        [ minHeight writingMinHeight
                         ]
                     , selector "input"
                         [ textAlign center
@@ -288,3 +288,8 @@ writingPadding =
 writingPaddingTop : Px
 writingPaddingTop =
     px 20
+
+
+writingMinHeight : Px
+writingMinHeight =
+    px 150

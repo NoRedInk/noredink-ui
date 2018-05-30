@@ -211,7 +211,15 @@ calculateMinHeight textAreaStyle specifiedHeight =
                     singleLineHeight
 
         DefaultHeight ->
-            InputStyles.textAreaHeight
+            case textAreaStyle of
+                DefaultStyle ->
+                    InputStyles.textAreaHeight
+
+                WritingStyle ->
+                    InputStyles.writingMinHeight
+
+                ContentCreationStyle ->
+                    InputStyles.textAreaHeight
 
 
 singleLineHeight : Css.Px
