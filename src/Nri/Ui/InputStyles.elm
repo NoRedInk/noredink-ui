@@ -1,13 +1,13 @@
 module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingMinHeight, writingPadding, writingPaddingTop)
 
-{-|
+{-| InputStyles used by the TextInput and TextArea widgets.
 
 @docs styles, CssClasses
 
 
 ## Shared hardcoded values
 
-@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+@docs Assets, inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
 
 -}
 
@@ -252,6 +252,7 @@ styles =
             ]
 
 
+{-| -}
 type alias Assets r =
     { r
         | iconCalendar_svg : Asset
@@ -260,36 +261,43 @@ type alias Assets r =
     }
 
 
+{-| -}
 inputPaddingVertical : Px
 inputPaddingVertical =
     px 8
 
 
+{-| -}
 inputLineHeight : Px
 inputLineHeight =
     px 20
 
 
+{-| -}
 textAreaHeight : Px
 textAreaHeight =
     px 100
 
 
+{-| -}
 writingLineHeight : Px
 writingLineHeight =
     px 25
 
 
+{-| -}
 writingPadding : Px
 writingPadding =
     px 15
 
 
+{-| -}
 writingPaddingTop : Px
 writingPaddingTop =
     px 20
 
 
+{-| -}
 writingMinHeight : Px
 writingMinHeight =
     px 150
