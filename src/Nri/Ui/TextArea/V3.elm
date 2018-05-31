@@ -19,7 +19,7 @@ module Nri.Ui.TextArea.V3
 
 ## The Nri styleguide-specified textarea with overlapping label
 
-@docs view, writing, contentCreation, Height, HeightBehavior, Model, generateId, styles
+@docs view, writing, contentCreation, Height, HeightBehavior, Model, generateId
 
 -}
 
