@@ -6,13 +6,14 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 -}
 
+import Css
 import Dict exposing (Dict)
 import Html
 import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V2 as Checkbox
 import Nri.Ui.Text.V2 as Text
-import Nri.Ui.TextArea.V1 as TextArea
+import Nri.Ui.TextArea.V2 as TextArea
 
 
 {-| -}
@@ -76,30 +77,45 @@ example parentMessage state =
             , onInput = InputGiven 1
             , isInError = state.isInError
             , label = "TextArea.view"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.SingleLine
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
             }
+            |> Html.Styled.toUnstyled
         , TextArea.writing
             { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
             , autofocus = False
             , onInput = InputGiven 2
             , isInError = state.isInError
             , label = "TextArea.writing"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.DefaultHeight
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
             }
+            |> Html.Styled.toUnstyled
         , TextArea.contentCreation
             { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
             , autofocus = False
             , onInput = InputGiven 3
             , isInError = state.isInError
             , label = "TextArea.contentCreation"
-            , autoResize = state.autoResize
+            , height =
+                if state.autoResize then
+                    TextArea.AutoResize TextArea.DefaultHeight
+                else
+                    TextArea.Fixed
             , placeholder = "Placeholder"
             , showLabel = state.showLabel
             }
+            |> Html.Styled.toUnstyled
         ]
             |> List.map (Html.map parentMessage)
     }

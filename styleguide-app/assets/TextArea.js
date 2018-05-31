@@ -43,23 +43,30 @@ Object.defineProperties(AutoresizeTextArea.prototype, {
   }
 });
 
-AutoresizeTextArea.prototype._onInput = function() {
+AutoresizeTextArea.prototype._resize = function() {
   var minHeight = null;
   if (this._textarea.style.minHeight) {
     minHeight = parseInt(this._textarea.style.minHeight, 10);
   } else {
+    minHeight = parseInt(window.getComputedStyle(this._textarea).minHeight, 10);
+  }
+  if (minHeight === 0) {
     minHeight = parseInt(window.getComputedStyle(this._textarea).height, 10);
   }
 
   this._textarea.style.overflowY = "hidden";
   this._textarea.style.minHeight = minHeight + "px";
+  this._textarea.style.transition = "none";
   if (this._textarea.scrollHeight > minHeight) {
-    this._textarea.style.height = "auto";
+    this._textarea.style.height = minHeight + "px";
     this._textarea.style.height = this._textarea.scrollHeight + "px";
   } else {
     this._textarea.style.height = minHeight + "px";
   }
+};
 
+AutoresizeTextArea.prototype._onInput = function() {
+  this._resize();
   this.dispatchEvent(new Event("input"));
 };
 
@@ -91,6 +98,7 @@ AutoresizeTextArea.prototype.connectedCallback = function() {
   this._textarea.addEventListener("input", this._onInput);
   this._reflectAttributes();
   this.appendChild(this._textarea);
+  this._resize();
 };
 
 AutoresizeTextArea.prototype.disconnectedCallback = function() {
