@@ -183,12 +183,6 @@ input theme isInError =
                 ]
 
 
-
--- , selector "textarea"
---     [ minHeight writingMinHeight
---     ]
-
-
 {-| -}
 inputPaddingVertical : Px
 inputPaddingVertical =
