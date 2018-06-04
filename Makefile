@@ -21,7 +21,10 @@ clean:
 documentation.json: node_modules
 	elm-make --docs $@
 
-styleguide-app/elm.js: styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
+styleguide-app/assets/javascript.js: lib/index.js
+	npx browserify --entry lib/index.js --outfile styleguide-app/assets/javascript.js
+
+styleguide-app/elm.js: styleguide-app/assets/javascript.js styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; elm-make Main.elm --output=$(@F)
 
 # plumbing

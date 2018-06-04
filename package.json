@@ -1,8 +1,8 @@
 {
-  "name": "noredink-ui",
+  "name": "@noredink/ui",
   "version": "1.0.0",
   "description": "UI widgets we use.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "directories": {
     "test": "tests"
   },
@@ -20,8 +20,9 @@
   },
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "dependencies": {
-    "elm": "^0.18.0",
-    "elm-format": "^0.7.0-exp",
-    "elm-test": "^0.18.12"
+    "browserify": "16.2.2",
+    "elm": "0.18.0",
+    "elm-format": "0.7.0-exp",
+    "elm-test": "0.18.12"
   }
 }
