@@ -74,14 +74,14 @@ view model =
 -}
 writing : Model msg -> Html msg
 writing model =
-    view_ Writing2 model
+    view_ Writing model
 
 
 {-| Used for Content Creation
 -}
 contentCreation : Model msg -> Html msg
 contentCreation model =
-    view_ ContentCreation2 model
+    view_ ContentCreation model
 
 
 {-| -}
@@ -117,6 +117,7 @@ view_ theme model =
                 , Attributes.autofocus model.autofocus
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
+                , Attributes.class "override-sass-styles"
                 ]
                 [ Html.text model.value ]
             ]
@@ -157,10 +158,10 @@ calculateMinHeight textAreaStyle specifiedHeight =
                 Standard ->
                     singleLineHeight
 
-                Writing2 ->
+                Writing ->
                     writingSingleLineHeight
 
-                ContentCreation2 ->
+                ContentCreation ->
                     singleLineHeight
 
         DefaultHeight ->
@@ -168,10 +169,10 @@ calculateMinHeight textAreaStyle specifiedHeight =
                 Standard ->
                     InputStyles.textAreaHeight
 
-                Writing2 ->
+                Writing ->
                     InputStyles.writingMinHeight
 
-                ContentCreation2 ->
+                ContentCreation ->
                     InputStyles.textAreaHeight
 
 

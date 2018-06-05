@@ -82,7 +82,7 @@ view model =
 {-| -}
 writing : Model value msg -> Html msg
 writing model =
-    view_ InputStyles.Writing2 model
+    view_ InputStyles.Writing model
 
 
 view_ : Theme -> Model value msg -> Html msg
@@ -101,7 +101,7 @@ view_ theme model =
             [ Attributes.id idValue
             , css
                 [ InputStyles.input theme model.isInError
-                , if theme == InputStyles.Writing2 then
+                , if theme == InputStyles.Writing then
                     textAlign center
                   else
                     batch []
@@ -111,6 +111,7 @@ view_ theme model =
             , onInput (inputType.fromString >> model.onInput)
             , autofocus model.autofocus
             , type_ inputType.fieldType
+            , class "override-sass-styles"
             ]
             []
         , if model.showLabel then
