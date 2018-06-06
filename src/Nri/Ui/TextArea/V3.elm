@@ -114,6 +114,7 @@ view_ theme model =
                 ]
                 [ Events.onInput model.onInput
                 , Attributes.id (generateId model.label)
+                , Attributes.class "override-sass-styles"
                 , Attributes.autofocus model.autofocus
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859

@@ -95,7 +95,8 @@ label theme inError =
                 ]
 
 
-{-| -}
+{-| In order to use these styles in an input module, you will need to add the class "override-sass-styles". This is because sass styles in the monolith have higher precendence than the class styles here.
+-}
 input : Theme -> Bool -> Style
 input theme isInError =
     let
