@@ -24,7 +24,7 @@ module Nri.Ui.TextArea.V3
 -}
 
 import Accessibility.Styled.Style
-import Css exposing ((|+|))
+import Css exposing ((|+|), px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -95,6 +95,17 @@ view_ theme model =
 
                 Fixed ->
                     []
+
+        heightForStyle =
+            case theme of
+                Standard ->
+                    px 100
+
+                ContentCreation ->
+                    px 100
+
+                Writing ->
+                    px 150
     in
     Html.styled Html.div
         [ Css.position Css.relative ]
@@ -105,6 +116,7 @@ view_ theme model =
             [ Html.styled Html.textarea
                 [ InputStyles.input theme model.isInError
                 , Css.boxSizing Css.borderBox
+                , Css.height heightForStyle
                 , case model.height of
                     AutoResize minimumHeight ->
                         Css.minHeight (calculateMinHeight theme minimumHeight)

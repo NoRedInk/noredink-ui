@@ -146,7 +146,6 @@ input theme isInError =
                         , padding2 inputPaddingVertical (px 14)
                         , fontSize (px 15)
                         , Nri.Ui.Fonts.V1.baseFont
-                        , height (px 45)
                         ]
 
                 Writing ->
@@ -157,7 +156,6 @@ input theme isInError =
                         , lineHeight writingLineHeight
                         , padding writingPadding
                         , paddingTop writingPaddingTop
-                        , height auto
                         , focus
                             [ Css.Foreign.adjacentSiblings
                                 [ Css.Foreign.label
@@ -183,7 +181,6 @@ input theme isInError =
                         , padding2 inputPaddingVertical (px 14)
                         , fontSize (px 15)
                         , Nri.Ui.Fonts.V1.baseFont
-                        , height (px 45)
                         ]
             ]
         ]

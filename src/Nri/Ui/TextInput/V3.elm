@@ -21,7 +21,7 @@ module Nri.Ui.TextInput.V3
 -}
 
 import Accessibility.Styled.Style as Accessibility
-import Css exposing (batch, center, position, relative, textAlign)
+import Css exposing (batch, center, position, px, relative, textAlign)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
@@ -102,9 +102,12 @@ view_ theme model =
             , css
                 [ InputStyles.input theme model.isInError
                 , if theme == InputStyles.Writing then
-                    textAlign center
+                    batch
+                        [ textAlign center
+                        , Css.height Css.auto
+                        ]
                   else
-                    batch []
+                    Css.height (px 45)
                 ]
             , placeholder model.placeholder
             , defaultValue (inputType.toString model.value)
