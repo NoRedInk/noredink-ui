@@ -16,15 +16,15 @@ format: node_modules
 
 .PHONY: clean
 clean:
-	rm -rf node_modules styleguide-app/elm.js $(shell find . -type d -name 'elm-stuff')
+	rm -rf node_modules styleguide-app/elm.js styleguide-app/javascript.js $(shell find . -type d -name 'elm-stuff')
 
 documentation.json: node_modules
 	elm-make --docs $@
 
-styleguide-app/assets/javascript.js: lib/index.js
-	npx browserify --entry lib/index.js --outfile styleguide-app/assets/javascript.js
+styleguide-app/javascript.js: lib/index.js
+	npx browserify --entry lib/index.js --outfile styleguide-app/javascript.js
 
-styleguide-app/elm.js: styleguide-app/assets/javascript.js styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
+styleguide-app/elm.js: styleguide-app/javascript.js styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; elm-make Main.elm --output=$(@F)
 
 # plumbing
