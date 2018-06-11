@@ -21,7 +21,8 @@ module Nri.Ui.TextInput.V3
 -}
 
 import Accessibility.Styled.Style as Accessibility
-import Css exposing (batch, center, position, relative, textAlign)
+import Css exposing (batch, center, position, px, relative, textAlign)
+import Css.Foreign
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
@@ -82,7 +83,7 @@ view model =
 {-| -}
 writing : Model value msg -> Html msg
 writing model =
-    view_ InputStyles.Writing2 model
+    view_ InputStyles.Writing model
 
 
 view_ : Theme -> Model value msg -> Html msg
@@ -101,16 +102,22 @@ view_ theme model =
             [ Attributes.id idValue
             , css
                 [ InputStyles.input theme model.isInError
-                , if theme == InputStyles.Writing2 then
-                    textAlign center
+                , if theme == InputStyles.Writing then
+                    Css.Foreign.withClass "override-sass-styles"
+                        [ textAlign center
+                        , Css.height Css.auto
+                        ]
                   else
-                    batch []
+                    Css.Foreign.withClass "override-sass-styles"
+                        [ Css.height (px 45)
+                        ]
                 ]
             , placeholder model.placeholder
             , defaultValue (inputType.toString model.value)
             , onInput (inputType.fromString >> model.onInput)
             , autofocus model.autofocus
             , type_ inputType.fieldType
+            , class "override-sass-styles"
             ]
             []
         , if model.showLabel then

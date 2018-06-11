@@ -24,7 +24,7 @@ module Nri.Ui.TextArea.V3
 -}
 
 import Accessibility.Styled.Style
-import Css exposing ((|+|))
+import Css exposing ((|+|), px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -74,14 +74,14 @@ view model =
 -}
 writing : Model msg -> Html msg
 writing model =
-    view_ Writing2 model
+    view_ Writing model
 
 
 {-| Used for Content Creation
 -}
 contentCreation : Model msg -> Html msg
 contentCreation model =
-    view_ ContentCreation2 model
+    view_ ContentCreation model
 
 
 {-| -}
@@ -95,6 +95,17 @@ view_ theme model =
 
                 Fixed ->
                     []
+
+        heightForStyle =
+            case theme of
+                Standard ->
+                    InputStyles.textAreaHeight
+
+                ContentCreation ->
+                    InputStyles.textAreaHeight
+
+                Writing ->
+                    InputStyles.writingMinHeight
     in
     Html.styled Html.div
         [ Css.position Css.relative ]
@@ -110,13 +121,15 @@ view_ theme model =
                         Css.minHeight (calculateMinHeight theme minimumHeight)
 
                     Fixed ->
-                        Css.batch []
+                        Css.minHeight heightForStyle
                 ]
                 [ Events.onInput model.onInput
                 , Attributes.id (generateId model.label)
+                , Attributes.class "override-sass-styles"
                 , Attributes.autofocus model.autofocus
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
+                , Attributes.class "override-sass-styles"
                 ]
                 [ Html.text model.value ]
             ]
@@ -157,10 +170,10 @@ calculateMinHeight textAreaStyle specifiedHeight =
                 Standard ->
                     singleLineHeight
 
-                Writing2 ->
+                Writing ->
                     writingSingleLineHeight
 
-                ContentCreation2 ->
+                ContentCreation ->
                     singleLineHeight
 
         DefaultHeight ->
@@ -168,10 +181,10 @@ calculateMinHeight textAreaStyle specifiedHeight =
                 Standard ->
                     InputStyles.textAreaHeight
 
-                Writing2 ->
+                Writing ->
                     InputStyles.writingMinHeight
 
-                ContentCreation2 ->
+                ContentCreation ->
                     InputStyles.textAreaHeight
 
 

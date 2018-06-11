@@ -31,9 +31,9 @@ import Nri.Ui.Fonts.V1
 
 {-| -}
 type Theme
-    = ContentCreation2
+    = ContentCreation
     | Standard
-    | Writing2
+    | Writing
 
 
 {-| -}
@@ -65,7 +65,7 @@ label theme inError =
                     batch []
                 ]
 
-        ContentCreation2 ->
+        ContentCreation ->
             batch
                 [ sharedStyles
                 , border3 (px 1) solid gray75
@@ -76,7 +76,7 @@ label theme inError =
                 , padding2 (px 2) (px 5)
                 ]
 
-        Writing2 ->
+        Writing ->
             batch
                 [ sharedStyles
                 , padding2 zero (px 5)
@@ -95,7 +95,8 @@ label theme inError =
                 ]
 
 
-{-| -}
+{-| In order to use these styles in an input module, you will need to add the class "override-sass-styles". This is because sass styles in the monolith have higher precendence than the class styles here.
+-}
 input : Theme -> Bool -> Style
 input theme isInError =
     let
@@ -136,51 +137,53 @@ input theme isInError =
                     batch []
                 ]
     in
-    case theme of
-        Standard ->
-            batch
-                [ sharedStyles
-                , padding2 inputPaddingVertical (px 14)
-                , fontSize (px 15)
-                , Nri.Ui.Fonts.V1.baseFont
-                , height (px 45)
-                ]
+    batch
+        [ Css.Foreign.withClass "override-sass-styles"
+            [ case theme of
+                Standard ->
+                    batch
+                        [ sharedStyles
+                        , padding2 inputPaddingVertical (px 14)
+                        , fontSize (px 15)
+                        , Nri.Ui.Fonts.V1.baseFont
+                        ]
 
-        Writing2 ->
-            batch
-                [ sharedStyles
-                , Nri.Ui.Fonts.V1.quizFont
-                , fontSize (px 20)
-                , lineHeight writingLineHeight
-                , padding writingPadding
-                , paddingTop writingPaddingTop
-                , focus
-                    [ Css.Foreign.adjacentSiblings
-                        [ Css.Foreign.label
-                            [ backgroundColor azure
-                            , color white
-                            , borderColor azure
-                            , if isInError then
-                                batch
-                                    [ backgroundColor purple
+                Writing ->
+                    batch
+                        [ sharedStyles
+                        , Nri.Ui.Fonts.V1.quizFont
+                        , fontSize (px 20)
+                        , lineHeight writingLineHeight
+                        , padding writingPadding
+                        , paddingTop writingPaddingTop
+                        , focus
+                            [ Css.Foreign.adjacentSiblings
+                                [ Css.Foreign.label
+                                    [ backgroundColor azure
                                     , color white
-                                    , borderColor purple
+                                    , borderColor azure
+                                    , if isInError then
+                                        batch
+                                            [ backgroundColor purple
+                                            , color white
+                                            , borderColor purple
+                                            ]
+                                      else
+                                        batch []
                                     ]
-                              else
-                                batch []
+                                ]
                             ]
                         ]
-                    ]
-                ]
 
-        ContentCreation2 ->
-            batch
-                [ sharedStyles
-                , padding2 inputPaddingVertical (px 14)
-                , fontSize (px 15)
-                , Nri.Ui.Fonts.V1.baseFont
-                , height (px 45)
-                ]
+                ContentCreation ->
+                    batch
+                        [ sharedStyles
+                        , padding2 inputPaddingVertical (px 14)
+                        , fontSize (px 15)
+                        , Nri.Ui.Fonts.V1.baseFont
+                        ]
+            ]
+        ]
 
 
 {-| -}
