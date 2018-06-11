@@ -99,13 +99,13 @@ view_ theme model =
         heightForStyle =
             case theme of
                 Standard ->
-                    px 100
+                    InputStyles.textAreaHeight
 
                 ContentCreation ->
-                    px 100
+                    InputStyles.textAreaHeight
 
                 Writing ->
-                    px 150
+                    InputStyles.writingMinHeight
     in
     Html.styled Html.div
         [ Css.position Css.relative ]
@@ -116,13 +116,12 @@ view_ theme model =
             [ Html.styled Html.textarea
                 [ InputStyles.input theme model.isInError
                 , Css.boxSizing Css.borderBox
-                , Css.height heightForStyle
                 , case model.height of
                     AutoResize minimumHeight ->
                         Css.minHeight (calculateMinHeight theme minimumHeight)
 
                     Fixed ->
-                        Css.batch []
+                        Css.minHeight heightForStyle
                 ]
                 [ Events.onInput model.onInput
                 , Attributes.id (generateId model.label)
