@@ -71,6 +71,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Styled
 import Json.Decode
+import Markdown.Block
+import Markdown.Inline
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1
@@ -236,7 +238,7 @@ customButton attributes config content =
          ]
             ++ attributes
         )
-        [ viewLabel content.icon content.label ]
+        (viewLabel content.icon content.label)
 
 
 widthStyle : Maybe Int -> Html.Attribute msg
@@ -273,7 +275,7 @@ buttonDeprecated config =
         , Html.Attributes.disabled config.disabled
         , widthStyle
         ]
-        [ viewLabel config.icon config.label ]
+        (viewLabel config.icon config.label)
 
 
 
@@ -311,7 +313,7 @@ copyToClipboard assets config =
         , attribute "data-clipboard-text" config.copyText
         , widthStyle config.width
         ]
-        [ viewLabel maybeIcon config.buttonLabel ]
+        (viewLabel maybeIcon config.buttonLabel)
 
 
 
@@ -377,7 +379,7 @@ toggleButton config =
             , type_ "button"
             ]
         )
-        [ viewLabel Nothing config.label ]
+        (viewLabel Nothing config.label)
 
 
 
@@ -536,7 +538,7 @@ linkBase extraAttrs config =
             :: widthAttributes
             ++ extraAttrs
         )
-        [ viewLabel config.icon config.label ]
+        (viewLabel config.icon config.label)
 
 
 
@@ -595,17 +597,29 @@ buttonClass size width colorPalette =
             ]
 
 
-viewLabel : Maybe IconType -> String -> Html msg
+viewLabel : Maybe IconType -> String -> List (Html msg)
 viewLabel icn label =
     case icn of
         Nothing ->
-            Html.text label
+            renderMarkdown label
 
         Just iconType ->
-            span [ styles.class [ LabelIconAndText ] ]
-                [ decorativeIcon iconType
-                , Html.text label
-                ]
+            [ span [ styles.class [ LabelIconAndText ] ]
+                (decorativeIcon iconType
+                    :: renderMarkdown label
+                )
+            ]
+
+
+renderMarkdown : String -> List (Html msg)
+renderMarkdown markdown =
+    case Markdown.Block.parse Nothing markdown of
+        -- It seems to be always first wrapped in a `Paragraph` and never directly a `PlainInline`
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            List.map Markdown.Inline.toHtml inlines
+
+        _ ->
+            [ Html.text markdown ]
 
 
 
