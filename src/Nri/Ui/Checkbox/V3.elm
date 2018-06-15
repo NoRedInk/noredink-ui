@@ -6,30 +6,27 @@ module Nri.Ui.Checkbox.V3
         , PremiumConfig
         , Theme(..)
         , premium
-        , styles
         , view
         , viewWithLabel
         )
 
 {-|
 
-@docs Model, Theme, ColorTheme
+@docs Model, Theme, ColorTheme, IsSelected
 
 @docs view, viewWithLabel
 
 
 ## Premium
 
-@docs PremiumConfig, IsSelected, premium
+@docs PremiumConfig, premium
 
 -}
 
-import Accessibility exposing (checkbox, div, label, span, text)
 import Accessibility.Styled as Html
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
-import Accessibility.Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html as RootHtml
@@ -45,10 +42,8 @@ import Nri.Ui.AssetPath.Css
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.Extra as RootAttributes
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V2 as HtmlExtra
-import Nri.Ui.Styles.V1
 
 
 {-| -}
@@ -76,6 +71,7 @@ type IsSelected
     | PartiallySelected
 
 
+selectedToMaybe : IsSelected -> Maybe Bool
 selectedToMaybe selected =
     case selected of
         Selected ->
@@ -401,6 +397,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
 
+labelClass : IsSelected -> Html.Styled.Attribute msg
 labelClass isSelected =
     case isSelected of
         Selected ->
@@ -493,24 +490,6 @@ indeterminateAttr =
     RootAttributes.property "indeterminate" (Json.Encode.bool True)
 
 
-type CssClasses
-    = Container
-    | Checkbox
-    | Unchecked
-    | Checked
-    | Indeterminate
-    | SquareClass
-    | RoundClass
-    | GrayClass
-    | OrangeClass
-    | LockedClass
-    | LockOnInsideClass
-    | UnlockableClass
-    | Label
-    | Opacified
-    | PremiumClass
-
-
 {-| -}
 type Theme
     = Square ColorTheme
@@ -527,13 +506,6 @@ type ColorTheme
     = Default
     | Gray
     | Orange
-
-
-{-| -}
-styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
-styles =
-    (\assets -> [] |> List.concat)
-        |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
 
 
 
