@@ -53,23 +53,41 @@ import Nri.Ui.Html.V2 as HtmlExtra
 import Nri.Ui.Styles.V1
 
 
-{-|
-
-  - isChecked : Maybe Bool
-      - Just True == Checked (rendered checkmark)
-      - Just False == Not Checked (rendered blank)
-      - Nothing == Indeterminate (rendered dash)
-
--}
+{-| -}
 type alias Model msg =
     { identifier : String
     , label : String
     , setterMsg : Bool -> msg
-    , isChecked : Maybe Bool
+    , selected : IsSelected
     , disabled : Bool
     , theme : Theme
     , noOpMsg : msg
     }
+
+
+{-|
+
+    = Selected --  Checked (rendered with a checkmark)
+    | NotSelected -- Not Checked (rendered blank)
+    | PartiallySelected -- Indeterminate (rendered dash)
+
+-}
+type IsSelected
+    = Selected
+    | NotSelected
+    | PartiallySelected
+
+
+selectedToMaybe selected =
+    case selected of
+        Selected ->
+            Just True
+
+        NotSelected ->
+            Just False
+
+        PartiallySelected ->
+            Nothing
 
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
@@ -106,7 +124,7 @@ disabled identifier labelText =
             ]
         , label
             [ RootAttributes.for identifier
-            , getLabelClass (Just False)
+            , getLabelClass NotSelected
             ]
             [ RootHtml.text labelText
             ]
@@ -134,14 +152,6 @@ type alias PremiumConfig msg =
     }
 
 
-{-| This configurable is only used in the PremiumConfig.
--}
-type IsSelected
-    = Selected
-    | NotSelected
-    | PartiallySelected
-
-
 {-| A checkbox that should be used for premium content
 
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
@@ -155,17 +165,6 @@ premium assets config =
                 PremiumLevel.allowedFor
                     config.contentPremiumLevel
                     config.teacherPremiumLevel
-
-        isChecked =
-            case config.selected of
-                Selected ->
-                    Just True
-
-                NotSelected ->
-                    Just False
-
-                PartiallySelected ->
-                    Nothing
 
         modifierClasses =
             List.concat
@@ -196,7 +195,7 @@ premium assets config =
                 \_ -> config.onLockedClick
             else
                 config.onChange
-        , isChecked = isChecked
+        , selected = config.selected
         , disabled = config.disabled
         , theme = theme
         , noOpMsg = config.noOpMsg
@@ -230,14 +229,14 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , case model.isChecked of
-                            Just True ->
+                        , case model.selected of
+                            Selected ->
                                 backgroundImage assets CheckboxChecked
 
-                            Just False ->
+                            NotSelected ->
                                 backgroundImage assets CheckboxUnchecked
 
-                            Nothing ->
+                            PartiallySelected ->
                                 backgroundImage assets CheckboxCheckedPartially
                         , Css.batch <|
                             case colorTheme of
@@ -260,7 +259,7 @@ buildCheckbox assets modifierClasses model labelContent =
                                 Default ->
                                     []
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -275,7 +274,7 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -290,7 +289,7 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -305,7 +304,7 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -330,8 +329,8 @@ buildCheckbox assets modifierClasses model labelContent =
                             , borderRadius (pct 100)
                             ]
                         , Css.batch <|
-                            case model.isChecked of
-                                Just True ->
+                            case model.selected of
+                                Selected ->
                                     [ before
                                         [ backgroundColor Colors.green
                                         , border3 (px 2) solid Colors.green
@@ -341,14 +340,14 @@ buildCheckbox assets modifierClasses model labelContent =
                                         ]
                                     ]
 
-                                Just False ->
+                                NotSelected ->
                                     [ before
                                         [ border3 (px 2) solid Colors.blue
                                         , backgroundColor Colors.white
                                         ]
                                     ]
 
-                                Nothing ->
+                                PartiallySelected ->
                                     -- it's kinda weird that we have round "checkboxes"
                                     -- that can't be indeterminate that we nonetheless
                                     -- model as Maybes. what can you do.
@@ -363,7 +362,7 @@ buildCheckbox assets modifierClasses model labelContent =
                             else
                                 []
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -378,7 +377,7 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
@@ -393,26 +392,26 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ cursor pointer
                         , outline none
                         ]
-                , labelClasses = labelClass model.isChecked
+                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
 
-labelClass isChecked =
-    case isChecked of
-        Just True ->
+labelClass isSelected =
+    case isSelected of
+        Selected ->
             Attributes.classList
                 [ ( "checkbox-Label", True )
                 , ( "checkbox-Checked", True )
                 ]
 
-        Just False ->
+        NotSelected ->
             Attributes.classList
                 [ ( "checkbox-Label", True )
                 , ( "checkbox-Unchecked", True )
                 ]
 
-        Nothing ->
+        PartiallySelected ->
             Attributes.classList
                 [ ( "checkbox-Label", True )
                 , ( "checkbox-Indeterminate", True )
@@ -443,7 +442,7 @@ viewCheckbox model config =
                 (Json.Decode.succeed "stop click propagation")
         ]
         [ Html.checkbox model.identifier
-            model.isChecked
+            (selectedToMaybe model.selected)
             [ Widget.label model.label
             , Events.onCheck model.setterMsg
             , Attributes.id model.identifier
@@ -460,7 +459,7 @@ viewLabel model content class theme =
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
         , Widget.disabled model.disabled
-        , Widget.checked model.isChecked
+        , Widget.checked (selectedToMaybe model.selected)
         , if not model.disabled then
             Attributes.tabindex 0
           else
@@ -472,7 +471,7 @@ viewLabel model content class theme =
                 (\keyCode ->
                     -- 32 is the space bar, 13 is enter
                     if (keyCode == 32 || keyCode == 13) && not model.disabled then
-                        Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
+                        Just <| model.setterMsg (Maybe.map not (selectedToMaybe model.selected) |> Maybe.withDefault True)
                     else
                         Nothing
                 )
@@ -484,18 +483,18 @@ viewLabel model content class theme =
         [ content ]
 
 
-getLabelClass : Maybe Bool -> RootHtml.Attribute msg
+getLabelClass : IsSelected -> RootHtml.Attribute msg
 getLabelClass maybeChecked =
     styles.class
         [ Label
         , case maybeChecked of
-            Just True ->
+            Selected ->
                 Checked
 
-            Just False ->
+            NotSelected ->
                 Unchecked
 
-            Nothing ->
+            PartiallySelected ->
                 Indeterminate
         ]
 
