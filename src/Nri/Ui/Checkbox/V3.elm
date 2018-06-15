@@ -79,14 +79,14 @@ type alias Model msg =
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
 -}
-view : Model msg -> RootHtml.Html msg
+view : Model msg -> Html.Html msg
 view model =
     buildCheckbox [] False model
 
 
 {-| Shows a checkbox and its label text
 -}
-viewWithLabel : Model msg -> RootHtml.Html msg
+viewWithLabel : Model msg -> Html.Html msg
 viewWithLabel model =
     buildCheckbox [] True model
 
@@ -149,7 +149,7 @@ type IsSelected
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
 
 -}
-premium : PremiumConfig msg -> RootHtml.Html msg
+premium : PremiumConfig msg -> Html.Html msg
 premium config =
     let
         isLocked =
@@ -206,12 +206,12 @@ premium config =
 
 
 {-| -}
-viewAttention : Model msg -> RootHtml.Html msg
+viewAttention : Model msg -> Html.Html msg
 viewAttention model =
     buildCheckbox [ "WithPulsing" ] False model
 
 
-buildCheckbox : List String -> Bool -> Model msg -> RootHtml.Html msg
+buildCheckbox : List String -> Bool -> Model msg -> Html.Html msg
 buildCheckbox modifierClasses showLabels model =
     let
         containerClasses =

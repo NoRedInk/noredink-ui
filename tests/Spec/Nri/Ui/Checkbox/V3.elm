@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.Checkbox.V3 exposing (spec)
 
+import Html.Styled
 import Nri.Ui.Checkbox.V3 as Checkbox exposing (IsSelected(..))
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Test exposing (..)
@@ -20,6 +21,7 @@ premiumView config =
         , onLockedClick = ()
         , noOpMsg = ()
         }
+        |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
 
