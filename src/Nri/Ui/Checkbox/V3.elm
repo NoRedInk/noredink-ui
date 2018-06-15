@@ -6,7 +6,6 @@ module Nri.Ui.Checkbox.V3
         , PremiumConfig
         , Theme(..)
         , disabled
-        , keyframeCss
         , premium
         , styles
         , view
@@ -19,7 +18,6 @@ module Nri.Ui.Checkbox.V3
 @docs Model, Theme, ColorTheme
 
 @docs view, viewWithLabel, viewAttention, disabled
-@docs keyframeCss, styles
 
 
 ## Premium
@@ -251,7 +249,7 @@ buildCheckbox assets modifierClasses showLabels model =
                                     [ color Colors.ochre
                                     , displayFlex
                                     , alignItems center
-                                    , Css.after
+                                    , after
                                         [ property "content" "''"
                                         , width (px 26)
                                         , height (px 24)
@@ -315,13 +313,56 @@ buildCheckbox assets modifierClasses showLabels model =
             Round ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
+                , checkboxStyles = css [ cursor pointer ]
                 , labelStyles =
                     css
-                        [ cursor pointer
+                        [ if model.disabled then
+                            cursor auto
+                          else
+                            cursor pointer
                         , outline none
+                        , displayFlex
+                        , alignItems center
+                        , before
+                            [ property "content" "''"
+                            , width (px 24)
+                            , height (px 24)
+                            , marginRight (px 8)
+                            , borderRadius (pct 100)
+                            ]
+                        , Css.batch <|
+                            case model.isChecked of
+                                Just True ->
+                                    [ before
+                                        [ backgroundColor Colors.green
+                                        , border3 (px 2) solid Colors.green
+                                        , backgroundImage assets CheckWhite
+                                        , property "background-repeat" "no-repeat"
+                                        , property "background-position" "center center"
+                                        ]
+                                    ]
+
+                                Just False ->
+                                    [ before
+                                        [ border3 (px 2) solid Colors.blue
+                                        , backgroundColor Colors.white
+                                        ]
+                                    ]
+
+                                Nothing ->
+                                    -- it's kinda weird that we have round "checkboxes"
+                                    -- that can't be indeterminate that we nonetheless
+                                    -- model as Maybes. what can you do.
+                                    []
+                        , Css.batch <|
+                            --WOW super brittle let's not do this, tessa
+                            if modifierClasses == [ "WithPulsing" ] then
+                                [ property "-webkit-animation" "pulsate 1s infinite"
+                                , property "-moz-animation" "pulsate 1s infinite"
+                                , property "animation" "pulsate 1s infinite"
+                                ]
+                            else
+                                []
                         ]
                 , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
@@ -537,45 +578,6 @@ containerStyles =
     ]
 
 
-roundStyles assets =
-    [ children
-        [ Css.Foreign.label
-            [ displayFlex
-            , alignItems center
-            , property "cursor" "pointer"
-            ]
-        , selector "label::before"
-            [ property "content" "''"
-            , width (px 24)
-            , height (px 24)
-            , marginRight (px 8)
-            , borderRadius (pct 100)
-            ]
-        , selector ".checkbox-Unchecked::before"
-            [ border3 (px 2) solid Colors.blue
-            , backgroundColor Colors.white
-            ]
-        , selector ".checkbox-Checked::before"
-            [ backgroundColor Colors.green
-            , border3 (px 2) solid Colors.green
-            , backgroundImage assets CheckWhite
-            , property "background-repeat" "no-repeat"
-            , property "background-position" "center center"
-            ]
-        , selector ":disabled + label"
-            [ property "cursor" "auto"
-            ]
-        ]
-    ]
-
-
-withPulsingStyles =
-    [ property "-webkit-animation" "pulsate 1s infinite"
-    , property "-moz-animation" "pulsate 1s infinite"
-    , property "animation" "pulsate 1s infinite"
-    ]
-
-
 lockedStyles assets =
     [ descendants
         [ Css.Foreign.label
@@ -635,41 +637,27 @@ opacifiedStyles =
     [ descendants [ everything [ opacity (num 0.4) ] ] ]
 
 
-round : Assets r -> List Snippet
-round assets =
-    [ Css.Foreign.class RoundClass (roundStyles assets)
-    , Css.Foreign.class WithPulsing withPulsingStyles
-    ]
+{-| -}
+styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
+styles =
+    (\assets -> [] |> List.concat)
+        |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
 
 
-locked : Assets r -> List Snippet
-locked assets =
-    [ Css.Foreign.class LockedClass (lockedStyles assets)
-    ]
-
-
-lockOnInside : Assets r -> List Snippet
-lockOnInside assets =
-    [ Css.Foreign.class LockOnInsideClass (lockOnInsideStyles assets)
-    ]
-
-
-unlockable : Assets r -> List Snippet
-unlockable assets =
-    [ Css.Foreign.class UnlockableClass (unlockableStyles assets)
-    ]
-
-
-premiumForeign : Assets r -> List Snippet
-premiumForeign assets =
-    [ Css.Foreign.class PremiumClass (premiumStyles assets)
-    ]
-
-
-opacified : List Snippet
-opacified =
-    [ Css.Foreign.class Opacified opacifiedStyles
-    ]
+{-| The assets used in this module.
+-}
+type alias Assets r =
+    { r
+        | checkboxUnchecked_svg : Asset
+        , checkboxChecked_svg : Asset
+        , checkboxCheckedPartially_svg : Asset
+        , iconPremiumUnlocked_png : Asset
+        , iconCheck_png : Asset
+        , iconPremiumLocked_png : Asset
+        , checkboxLockOnInside_svg : Asset
+        , iconPremiumKey_png : Asset
+        , iconPremiumFlag_svg : Asset
+    }
 
 
 backgroundImage : Assets r -> CheckboxImage -> Css.Style
@@ -706,45 +694,3 @@ checkboxAssetPath assets checkboxImage =
 
         PremiumFlag ->
             assets.iconPremiumFlag_svg
-
-
-{-| -}
-keyframeCss : Nri.Ui.Styles.V1.Keyframe
-keyframeCss =
-    Nri.Ui.Styles.V1.keyframes "pulsate"
-        [ ( "0%", "transform: scale(1, 1);" )
-        , ( "50%", "transform: scale(1.2);" )
-        , ( "100%", "transform: scale(1, 1);" )
-        ]
-
-
-{-| -}
-styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
-styles =
-    (\assets ->
-        [ round assets
-        , locked assets
-        , lockOnInside assets
-        , unlockable assets
-        , opacified
-        , premiumForeign assets
-        ]
-            |> List.concat
-    )
-        |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
-
-
-{-| The assets used in this module.
--}
-type alias Assets r =
-    { r
-        | checkboxUnchecked_svg : Asset
-        , checkboxChecked_svg : Asset
-        , checkboxCheckedPartially_svg : Asset
-        , iconPremiumUnlocked_png : Asset
-        , iconCheck_png : Asset
-        , iconPremiumLocked_png : Asset
-        , checkboxLockOnInside_svg : Asset
-        , iconPremiumKey_png : Asset
-        , iconPremiumFlag_svg : Asset
-    }
