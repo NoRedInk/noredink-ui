@@ -29,18 +29,20 @@ module Nri.Ui.Checkbox.V3
 -}
 
 import Accessibility exposing (checkbox, div, label, span, text)
-import Accessibility.Aria exposing (controls)
+import Accessibility.Aria
 import Accessibility.Style
 import Accessibility.Styled as Html
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
-import Accessibility.Widget as Widget
+import Accessibility.Styled.Widget as Widget
+import Accessibility.Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html as RootHtml
 import Html.Attributes as RootAttributes
 import Html.Events as Events exposing (defaultOptions)
 import Html.Styled exposing (fromUnstyled, toUnstyled)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Json.Decode
 import Json.Encode
 import Nri.Ui.AssetPath exposing (Asset(..))
@@ -49,7 +51,9 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.Extra as RootAttributes
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
+import Nri.Ui.Html.V2 as HtmlExtra
 import Nri.Ui.Styles.V1
 
 
@@ -96,7 +100,7 @@ disabled identifier labelText =
         ]
         [ checkbox identifier
             (Just False)
-            [ Widget.label labelText
+            [ Accessibility.Widget.label labelText
             , styles.class [ Checkbox ]
             , RootAttributes.id identifier
             , RootAttributes.disabled True
@@ -254,37 +258,38 @@ buildCheckbox modifierClasses showLabels model =
         ]
         [ checkbox model.identifier
             model.isChecked
-            [ Widget.label model.label
+            [ Accessibility.Widget.label model.label
             , styles.class [ Checkbox ]
             , Events.onCheck model.setterMsg
             , RootAttributes.id model.identifier
             , RootAttributes.disabled model.disabled
             ]
-        , viewLabel model <|
-            Html.span
-                (if showLabels then
-                    []
-                 else
-                    [ Accessibility.Styled.Style.invisible ]
-                )
-                [ Html.text model.label ]
+        , Html.span
+            (if showLabels then
+                []
+             else
+                [ Accessibility.Styled.Style.invisible ]
+            )
+            [ Html.text model.label ]
+            |> viewLabel model
+            |> toUnstyled
         ]
 
 
-viewLabel : Model msg -> Html.Html msg -> RootHtml.Html msg
+viewLabel : Model msg -> Html.Html msg -> Html.Html msg
 viewLabel model content =
-    RootHtml.label
-        [ RootAttributes.for model.identifier
-        , getLabelClass model.isChecked
-        , controls model.identifier
+    Html.Styled.label
+        [ Attributes.for model.identifier
+        , Aria.controls model.identifier
         , Widget.disabled model.disabled
         , Widget.checked model.isChecked
         , if not model.disabled then
-            RootAttributes.tabindex 0
+            Attributes.tabindex 0
           else
-            RootAttributes.none
+            ExtraAttributes.none
         , if not model.disabled then
-            Nri.Ui.Html.Extra.onKeyUp
+            --TODO: the accessibility keyboard module might make this a tad more readable.
+            HtmlExtra.onKeyUp
                 { defaultOptions | preventDefault = True }
                 (\keyCode ->
                     -- 32 is the space bar, 13 is enter
@@ -294,10 +299,38 @@ viewLabel model content =
                         Nothing
                 )
           else
-            RootAttributes.none
+            ExtraAttributes.none
+        , labelClass model.isChecked
+        , css
+            [ cursor pointer
+            , outline none
+
+            --TODO These styles depend on the theme
+            --, case maybeChecked of
+            --    Just True ->
+            --        Checked
+            --    Just False ->
+            --        Unchecked
+            --    Nothing ->
+            --        Indeterminate
+            ]
         ]
-        [ content
-            |> Html.Styled.toUnstyled
+        [ content ]
+
+
+labelClass : Maybe Bool -> Html.Attribute msg
+labelClass maybeChecked =
+    Attributes.classList
+        [ ( "checkbox-Label", True )
+        , case maybeChecked of
+            Just True ->
+                ( "checkbox-Checked", True )
+
+            Just False ->
+                ( "checkbox-Unchecked", True )
+
+            Nothing ->
+                ( "checkbox-Indeterminate", True )
         ]
 
 
