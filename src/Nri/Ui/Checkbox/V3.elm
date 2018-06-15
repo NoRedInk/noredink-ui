@@ -76,14 +76,17 @@ type alias Model msg =
 -}
 view : Assets a -> Model msg -> Html.Html msg
 view assets model =
-    buildCheckbox assets [] False model
+    buildCheckbox assets [] model <|
+        Html.span [ Accessibility.Styled.Style.invisible ]
+            [ Html.text model.label ]
 
 
 {-| Shows a checkbox and its label text
 -}
 viewWithLabel : Assets a -> Model msg -> Html.Html msg
 viewWithLabel assets model =
-    buildCheckbox assets [] True model
+    buildCheckbox assets [] model <|
+        Html.span [] [ Html.text model.label ]
 
 
 {-| Show a disabled checkbox.
@@ -186,7 +189,6 @@ premium assets config =
     in
     buildCheckbox assets
         modifierClasses
-        True
         { identifier = config.id
         , label = config.label
         , setterMsg =
@@ -199,26 +201,23 @@ premium assets config =
         , theme = theme
         , noOpMsg = config.noOpMsg
         }
+    <|
+        Html.span [] [ Html.text config.label ]
 
 
 {-| -}
 viewAttention : Assets a -> Model msg -> Html.Html msg
 viewAttention assets model =
-    buildCheckbox assets [ "WithPulsing" ] False model
+    buildCheckbox assets [ "WithPulsing" ] model <|
+        Html.span [ Accessibility.Styled.Style.invisible ]
+            [ Html.text model.label ]
 
 
-buildCheckbox : Assets a -> List String -> Bool -> Model msg -> Html.Html msg
-buildCheckbox assets modifierClasses showLabels model =
+buildCheckbox : Assets a -> List String -> Model msg -> Html.Html msg -> Html.Html msg
+buildCheckbox assets modifierClasses model labelContent =
     let
         toClassList =
             List.map (\a -> ( "checkbox-" ++ a, True )) >> Attributes.classList
-
-        labelContent =
-            if showLabels then
-                Html.span [] [ Html.text model.label ]
-            else
-                Html.span [ Accessibility.Styled.Style.invisible ]
-                    [ Html.text model.label ]
     in
     viewCheckbox model <|
         case model.theme of
