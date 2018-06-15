@@ -214,7 +214,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Square colorTheme ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , checkboxStyles = css [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -257,9 +256,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Locked ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -272,9 +268,6 @@ buildCheckbox assets modifierClasses model labelContent =
             LockOnInside ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -287,9 +280,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Unlockable ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -302,7 +292,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Round ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
-                , checkboxStyles = css [ cursor pointer ]
                 , labelStyles =
                     css
                         [ if model.disabled then
@@ -351,9 +340,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Disabled ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -366,9 +352,6 @@ buildCheckbox assets modifierClasses model labelContent =
             Premium ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -405,7 +388,6 @@ viewCheckbox :
     ->
         { containerStyles : Html.Attribute msg
         , containerClasses : Html.Attribute msg
-        , checkboxStyles : Html.Attribute msg
         , labelStyles : Html.Attribute msg
         , labelClasses : Html.Attribute msg
         , labelContent : Html.Html msg
@@ -429,7 +411,6 @@ viewCheckbox model config =
             , Events.onCheck model.setterMsg
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
-            , config.checkboxStyles
             ]
         , viewLabel model config.labelContent config.labelClasses config.labelStyles
         ]
