@@ -29,8 +29,6 @@ module Nri.Ui.Checkbox.V3
 -}
 
 import Accessibility exposing (checkbox, div, label, span, text)
-import Accessibility.Aria
-import Accessibility.Style
 import Accessibility.Styled as Html
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
@@ -53,7 +51,6 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.Extra as RootAttributes
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
 import Nri.Ui.Html.V2 as HtmlExtra
 import Nri.Ui.Styles.V1
 
@@ -79,16 +76,16 @@ type alias Model msg =
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
 -}
-view : Model msg -> Html.Html msg
-view model =
-    buildCheckbox [] False model
+view : Assets a -> Model msg -> Html.Html msg
+view assets model =
+    buildCheckbox assets [] False model
 
 
 {-| Shows a checkbox and its label text
 -}
-viewWithLabel : Model msg -> Html.Html msg
-viewWithLabel model =
-    buildCheckbox [] True model
+viewWithLabel : Assets a -> Model msg -> Html.Html msg
+viewWithLabel assets model =
+    buildCheckbox assets [] True model
 
 
 {-| Show a disabled checkbox.
@@ -149,8 +146,8 @@ type IsSelected
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
 
 -}
-premium : PremiumConfig msg -> Html.Html msg
-premium config =
+premium : Assets a -> PremiumConfig msg -> Html.Html msg
+premium assets config =
     let
         isLocked =
             not <|
@@ -189,7 +186,8 @@ premium config =
             else
                 Square Default
     in
-    buildCheckbox modifierClasses
+    buildCheckbox assets
+        modifierClasses
         True
         { identifier = config.id
         , label = config.label
@@ -206,13 +204,13 @@ premium config =
 
 
 {-| -}
-viewAttention : Model msg -> Html.Html msg
-viewAttention model =
-    buildCheckbox [ "WithPulsing" ] False model
+viewAttention : Assets a -> Model msg -> Html.Html msg
+viewAttention assets model =
+    buildCheckbox assets [ "WithPulsing" ] False model
 
 
-buildCheckbox : List String -> Bool -> Model msg -> Html.Html msg
-buildCheckbox modifierClasses showLabels model =
+buildCheckbox : Assets a -> List String -> Bool -> Model msg -> Html.Html msg
+buildCheckbox assets modifierClasses showLabels model =
     let
         toClassList =
             List.map (\a -> ( "checkbox-" ++ a, True )) >> Attributes.classList
@@ -226,40 +224,38 @@ buildCheckbox modifierClasses showLabels model =
     in
     viewCheckbox model <|
         case model.theme of
-            Square Gray ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "GrayClass" ])
-                , checkboxStyles = css checkboxStyles
-                , labelStyles =
-                    css
-                        [ cursor pointer
-                        , outline none
-                        ]
-                , labelClasses = labelClass model.isChecked
-                , labelContent = labelContent
-                }
+            Square color ->
+                let
+                    colorClass =
+                        case color of
+                            Gray ->
+                                "GrayClass"
 
-            Square Orange ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "OrangeClass" ])
-                , checkboxStyles = css checkboxStyles
-                , labelStyles =
-                    css
-                        [ cursor pointer
-                        , outline none
-                        ]
-                , labelClasses = labelClass model.isChecked
-                , labelContent = labelContent
-                }
+                            Orange ->
+                                "OrangeClass"
 
-            Square Default ->
+                            Default ->
+                                ""
+                in
                 { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , checkboxStyles = css checkboxStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", colorClass ])
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
                         , outline none
+                        , paddingLeft (px (29 + 6)) -- checkbox width + padding
+                        , case model.isChecked of
+                            Just True ->
+                                backgroundImage assets CheckboxChecked
+
+                            Just False ->
+                                backgroundImage assets CheckboxUnchecked
+
+                            Nothing ->
+                                backgroundImage assets CheckboxCheckedPartially
                         ]
                 , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
@@ -268,7 +264,9 @@ buildCheckbox modifierClasses showLabels model =
             Locked ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -281,7 +279,9 @@ buildCheckbox modifierClasses showLabels model =
             LockOnInside ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -294,7 +294,9 @@ buildCheckbox modifierClasses showLabels model =
             Unlockable ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -307,7 +309,9 @@ buildCheckbox modifierClasses showLabels model =
             Round ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -320,7 +324,9 @@ buildCheckbox modifierClasses showLabels model =
             Disabled ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -333,7 +339,9 @@ buildCheckbox modifierClasses showLabels model =
             Premium ->
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
-                , checkboxStyles = css checkboxStyles
+                , checkboxStyles =
+                    css
+                        [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -365,6 +373,17 @@ labelClass isChecked =
                 ]
 
 
+viewCheckbox :
+    Model msg
+    ->
+        { containerStyles : Html.Attribute msg
+        , containerClasses : Html.Attribute msg
+        , checkboxStyles : Html.Attribute msg
+        , labelStyles : Html.Attribute msg
+        , labelClasses : Html.Attribute msg
+        , labelContent : Html.Html msg
+        }
+    -> Html.Html msg
 viewCheckbox model config =
     Html.Styled.span
         [ config.containerStyles
@@ -512,28 +531,6 @@ containerStyles =
     ]
 
 
-checkboxStyles =
-    [ cursor pointer ]
-
-
-labelStyles =
-    [ cursor pointer
-    , outline none
-    ]
-
-
-squareStyles assets =
-    [ children
-        [ Css.Foreign.label
-            [ paddingLeft (px (29 + 6)) -- checkbox width + padding
-            ]
-        , Css.Foreign.class Unchecked [ backgroundImage assets CheckboxUnchecked ]
-        , Css.Foreign.class Checked [ backgroundImage assets CheckboxChecked ]
-        , Css.Foreign.class Indeterminate [ backgroundImage assets CheckboxCheckedPartially ]
-        ]
-    ]
-
-
 grayStyles =
     [ children [ Css.Foreign.label [ color Colors.gray45 ] ] ]
 
@@ -654,20 +651,6 @@ opacifiedStyles =
     [ descendants [ everything [ opacity (num 0.4) ] ] ]
 
 
-mainSnippet : List Snippet
-mainSnippet =
-    [ Css.Foreign.class Container containerStyles
-    , Css.Foreign.class Checkbox checkboxStyles
-    , Css.Foreign.class Label labelStyles
-    ]
-
-
-square : Assets r -> List Snippet
-square assets =
-    [ Css.Foreign.class SquareClass (squareStyles assets)
-    ]
-
-
 gray : List Snippet
 gray =
     [ Css.Foreign.class GrayClass grayStyles
@@ -767,9 +750,7 @@ keyframeCss =
 styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
 styles =
     (\assets ->
-        [ mainSnippet
-        , square assets
-        , gray
+        [ gray
         , orange assets
         , round assets
         , locked assets
