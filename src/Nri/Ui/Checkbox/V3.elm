@@ -230,8 +230,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "GrayClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -239,8 +243,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "OrangeClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -248,8 +256,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -257,8 +269,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -266,8 +282,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -275,8 +295,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -284,8 +308,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -293,8 +321,12 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
 
@@ -302,10 +334,35 @@ buildCheckbox modifierClasses showLabels model =
                 { containerStyles = css containerStyles
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
                 , checkboxStyles = css checkboxStyles
-                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelStyles =
+                    css
+                        [ cursor pointer
+                        , outline none
+                        ]
+                , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
                 }
+
+
+labelClass isChecked =
+    case isChecked of
+        Just True ->
+            Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Checked", True )
+                ]
+
+        Just False ->
+            Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Unchecked", True )
+                ]
+
+        Nothing ->
+            Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Indeterminate", True )
+                ]
 
 
 viewCheckbox model config =
@@ -360,69 +417,6 @@ viewLabel model content class theme =
         , theme
         ]
         [ content ]
-
-
-labelClassAndTheme isChecked =
-    case isChecked of
-        Just True ->
-            ( Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Checked", True )
-                ]
-            , css
-                [ cursor pointer
-                , outline none
-
-                --TODO These styles depend on the theme
-                --, case maybeChecked of
-                --    Just True ->
-                --        Checked
-                --    Just False ->
-                --        Unchecked
-                --    Nothing ->
-                --        Indeterminate
-                ]
-            )
-
-        Just False ->
-            ( Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Unchecked", True )
-                ]
-            , css
-                [ cursor pointer
-                , outline none
-
-                --TODO These styles depend on the theme
-                --, case maybeChecked of
-                --    Just True ->
-                --        Checked
-                --    Just False ->
-                --        Unchecked
-                --    Nothing ->
-                --        Indeterminate
-                ]
-            )
-
-        Nothing ->
-            ( Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Indeterminate", True )
-                ]
-            , css
-                [ cursor pointer
-                , outline none
-
-                --TODO These styles depend on the theme
-                --, case maybeChecked of
-                --    Just True ->
-                --        Checked
-                --    Just False ->
-                --        Unchecked
-                --    Nothing ->
-                --        Indeterminate
-                ]
-            )
 
 
 getLabelClass : Maybe Bool -> RootHtml.Attribute msg
