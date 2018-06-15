@@ -344,6 +344,7 @@ buildCheckbox assets modifierClasses model labelContent =
                     css
                         [ cursor pointer
                         , outline none
+                        , opacity (num 0.4)
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -563,10 +564,6 @@ premiumStyles assets =
             ]
         ]
     ]
-
-
-opacifiedStyles =
-    [ descendants [ everything [ opacity (num 0.4) ] ] ]
 
 
 {-| -}
