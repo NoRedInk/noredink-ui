@@ -224,24 +224,10 @@ buildCheckbox assets modifierClasses showLabels model =
     in
     viewCheckbox model <|
         case model.theme of
-            Square color ->
-                let
-                    colorClass =
-                        case color of
-                            Gray ->
-                                "GrayClass"
-
-                            Orange ->
-                                "OrangeClass"
-
-                            Default ->
-                                ""
-                in
+            Square colorTheme ->
                 { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", colorClass ])
-                , checkboxStyles =
-                    css
-                        [ cursor pointer ]
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
+                , checkboxStyles = css [ cursor pointer ]
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -256,6 +242,26 @@ buildCheckbox assets modifierClasses showLabels model =
 
                             Nothing ->
                                 backgroundImage assets CheckboxCheckedPartially
+                        , Css.batch <|
+                            case colorTheme of
+                                Gray ->
+                                    [ color Colors.gray45 ]
+
+                                Orange ->
+                                    [ color Colors.ochre
+                                    , displayFlex
+                                    , alignItems center
+                                    , Css.after
+                                        [ property "content" "''"
+                                        , width (px 26)
+                                        , height (px 24)
+                                        , marginLeft (px 8)
+                                        , backgroundImage assets PremiumUnlocked
+                                        ]
+                                    ]
+
+                                Default ->
+                                    []
                         ]
                 , labelClasses = labelClass model.isChecked
                 , labelContent = labelContent
@@ -531,28 +537,6 @@ containerStyles =
     ]
 
 
-grayStyles =
-    [ children [ Css.Foreign.label [ color Colors.gray45 ] ] ]
-
-
-orangeStyles assets =
-    [ children
-        [ Css.Foreign.label
-            [ color Colors.ochre
-            , displayFlex
-            , alignItems center
-            ]
-        , selector "label::after"
-            [ property "content" "''"
-            , width (px 26)
-            , height (px 24)
-            , marginLeft (px 8)
-            , backgroundImage assets PremiumUnlocked
-            ]
-        ]
-    ]
-
-
 roundStyles assets =
     [ children
         [ Css.Foreign.label
@@ -651,18 +635,6 @@ opacifiedStyles =
     [ descendants [ everything [ opacity (num 0.4) ] ] ]
 
 
-gray : List Snippet
-gray =
-    [ Css.Foreign.class GrayClass grayStyles
-    ]
-
-
-orange : Assets r -> List Snippet
-orange assets =
-    [ Css.Foreign.class OrangeClass (orangeStyles assets)
-    ]
-
-
 round : Assets r -> List Snippet
 round assets =
     [ Css.Foreign.class RoundClass (roundStyles assets)
@@ -750,9 +722,7 @@ keyframeCss =
 styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
 styles =
     (\assets ->
-        [ gray
-        , orange assets
-        , round assets
+        [ round assets
         , locked assets
         , lockOnInside assets
         , unlockable assets
