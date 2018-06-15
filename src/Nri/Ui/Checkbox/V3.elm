@@ -37,6 +37,7 @@ import Css.Foreign exposing (Snippet, children, descendants, everything, selecto
 import Html as RootHtml
 import Html.Attributes as RootAttributes
 import Html.Events as Events exposing (defaultOptions)
+import Html.Styled.Attributes exposing (css)
 import Json.Decode
 import Json.Encode
 import Nri.Ui.AssetPath exposing (Asset(..))
@@ -360,194 +361,231 @@ type ColorTheme
     | Orange
 
 
-mainSnippet : List Snippet
-mainSnippet =
-    [ Css.Foreign.class Container
-        [ display block
-        , height inherit
-        , descendants
-            [ Css.Foreign.label
-                [ display inlineBlock
-                , verticalAlign middle
-                , minHeight (px 42) -- container height
-                , padding2 (px 13) zero
-                , fontSize (px 16)
-                , Fonts.baseFont
-                , color Colors.gray20
-                , property "background-position" "left center"
-                , property "background-repeat" "no-repeat"
-                ]
-            , Css.Foreign.input [ display none ]
-            , selector ":disabled + label"
-                [ cursor auto
-                ]
+containerStyles =
+    [ display block
+    , height inherit
+    , descendants
+        [ Css.Foreign.label
+            [ display inlineBlock
+            , verticalAlign middle
+            , minHeight (px 42) -- container height
+            , padding2 (px 13) zero
+            , fontSize (px 16)
+            , Fonts.baseFont
+            , color Colors.gray20
+            , property "background-position" "left center"
+            , property "background-repeat" "no-repeat"
+            ]
+        , Css.Foreign.input [ display none ]
+        , selector ":disabled + label"
+            [ cursor auto
             ]
         ]
-    , Css.Foreign.class Checkbox
-        [ cursor pointer ]
-    , Css.Foreign.class Label
-        [ cursor pointer
-        , outline none
+    ]
+
+
+checkboxStyles =
+    [ cursor pointer ]
+
+
+labelStyles =
+    [ cursor pointer
+    , outline none
+    ]
+
+
+squareStyles assets =
+    [ children
+        [ Css.Foreign.label
+            [ paddingLeft (px (29 + 6)) -- checkbox width + padding
+            ]
+        , Css.Foreign.class Unchecked [ backgroundImage assets CheckboxUnchecked ]
+        , Css.Foreign.class Checked [ backgroundImage assets CheckboxChecked ]
+        , Css.Foreign.class Indeterminate [ backgroundImage assets CheckboxCheckedPartially ]
         ]
+    ]
+
+
+grayStyles =
+    [ children [ Css.Foreign.label [ color Colors.gray45 ] ] ]
+
+
+orangeStyles assets =
+    [ children
+        [ Css.Foreign.label
+            [ color Colors.ochre
+            , displayFlex
+            , alignItems center
+            ]
+        , selector "label::after"
+            [ property "content" "''"
+            , width (px 26)
+            , height (px 24)
+            , marginLeft (px 8)
+            , backgroundImage assets PremiumUnlocked
+            ]
+        ]
+    ]
+
+
+roundStyles assets =
+    [ children
+        [ Css.Foreign.label
+            [ displayFlex
+            , alignItems center
+            , property "cursor" "pointer"
+            ]
+        , selector "label::before"
+            [ property "content" "''"
+            , width (px 24)
+            , height (px 24)
+            , marginRight (px 8)
+            , borderRadius (pct 100)
+            ]
+        , selector ".checkbox-Unchecked::before"
+            [ border3 (px 2) solid Colors.blue
+            , backgroundColor Colors.white
+            ]
+        , selector ".checkbox-Checked::before"
+            [ backgroundColor Colors.green
+            , border3 (px 2) solid Colors.green
+            , backgroundImage assets CheckWhite
+            , property "background-repeat" "no-repeat"
+            , property "background-position" "center center"
+            ]
+        , selector ":disabled + label"
+            [ property "cursor" "auto"
+            ]
+        ]
+    ]
+
+
+withPulsingStyles =
+    [ property "-webkit-animation" "pulsate 1s infinite"
+    , property "-moz-animation" "pulsate 1s infinite"
+    , property "animation" "pulsate 1s infinite"
+    ]
+
+
+lockedStyles assets =
+    [ descendants
+        [ Css.Foreign.label
+            [ paddingLeft (px (29 + 6)) -- checkbox width + padding
+            , backgroundImage assets PremiumLocked
+            , property "cursor" "auto"
+            ]
+        ]
+    ]
+
+
+lockOnInsideStyles assets =
+    [ descendants
+        [ Css.Foreign.label
+            [ paddingLeft (px 35)
+            , backgroundImage assets CheckboxLockOnInside
+            , backgroundSize (px 24)
+            , backgroundRepeat noRepeat
+            , property "cursor" "pointer"
+            ]
+        ]
+    ]
+
+
+unlockableStyles assets =
+    [ descendants
+        [ Css.Foreign.label
+            [ paddingLeft (px (29 + 6)) -- checkbox width + padding
+            , backgroundImage assets PremiumKey
+            , property "cursor" "auto"
+            ]
+        ]
+    ]
+
+
+premiumStyles assets =
+    [ children
+        [ Css.Foreign.label
+            [ displayFlex
+            , alignItems center
+            ]
+        , selector "label::after"
+            [ property "content" "''"
+            , display inlineBlock
+            , width (px 26)
+            , height (px 24)
+            , marginLeft (px 8)
+            , backgroundImage assets PremiumFlag
+            , backgroundRepeat noRepeat
+            , backgroundPosition Css.center
+            ]
+        ]
+    ]
+
+
+opacifiedStyles =
+    [ descendants [ everything [ opacity (num 0.4) ] ] ]
+
+
+mainSnippet : List Snippet
+mainSnippet =
+    [ Css.Foreign.class Container containerStyles
+    , Css.Foreign.class Checkbox checkboxStyles
+    , Css.Foreign.class Label labelStyles
     ]
 
 
 square : Assets r -> List Snippet
 square assets =
-    [ Css.Foreign.class SquareClass
-        [ children
-            [ Css.Foreign.label
-                [ paddingLeft (px (29 + 6)) -- checkbox width + padding
-                ]
-            , Css.Foreign.class Unchecked [ backgroundImage assets CheckboxUnchecked ]
-            , Css.Foreign.class Checked [ backgroundImage assets CheckboxChecked ]
-            , Css.Foreign.class Indeterminate [ backgroundImage assets CheckboxCheckedPartially ]
-            ]
-        ]
+    [ Css.Foreign.class SquareClass (squareStyles assets)
     ]
 
 
 gray : List Snippet
 gray =
-    [ Css.Foreign.class GrayClass
-        [ children
-            [ Css.Foreign.label [ color Colors.gray45 ] ]
-        ]
+    [ Css.Foreign.class GrayClass grayStyles
     ]
 
 
 orange : Assets r -> List Snippet
 orange assets =
-    [ Css.Foreign.class OrangeClass
-        [ children
-            [ Css.Foreign.label
-                [ color Colors.ochre
-                , displayFlex
-                , alignItems center
-                ]
-            , selector "label::after"
-                [ property "content" "''"
-                , width (px 26)
-                , height (px 24)
-                , marginLeft (px 8)
-                , backgroundImage assets PremiumUnlocked
-                ]
-            ]
-        ]
+    [ Css.Foreign.class OrangeClass (orangeStyles assets)
     ]
 
 
 round : Assets r -> List Snippet
 round assets =
-    [ Css.Foreign.class RoundClass
-        [ children
-            [ Css.Foreign.label
-                [ displayFlex
-                , alignItems center
-                , property "cursor" "pointer"
-                ]
-            , selector "label::before"
-                [ property "content" "''"
-                , width (px 24)
-                , height (px 24)
-                , marginRight (px 8)
-                , borderRadius (pct 100)
-                ]
-            , selector ".checkbox-Unchecked::before"
-                [ border3 (px 2) solid Colors.blue
-                , backgroundColor Colors.white
-                ]
-            , selector ".checkbox-Checked::before"
-                [ backgroundColor Colors.green
-                , border3 (px 2) solid Colors.green
-                , backgroundImage assets CheckWhite
-                , property "background-repeat" "no-repeat"
-                , property "background-position" "center center"
-                ]
-            , selector ":disabled + label"
-                [ property "cursor" "auto"
-                ]
-            ]
-        ]
-    , Css.Foreign.class WithPulsing
-        [ property "-webkit-animation" "pulsate 1s infinite"
-        , property "-moz-animation" "pulsate 1s infinite"
-        , property "animation" "pulsate 1s infinite"
-        ]
+    [ Css.Foreign.class RoundClass (roundStyles assets)
+    , Css.Foreign.class WithPulsing withPulsingStyles
     ]
 
 
 locked : Assets r -> List Snippet
 locked assets =
-    [ Css.Foreign.class LockedClass
-        [ descendants
-            [ Css.Foreign.label
-                [ paddingLeft (px (29 + 6)) -- checkbox width + padding
-                , backgroundImage assets PremiumLocked
-                , property "cursor" "auto"
-                ]
-            ]
-        ]
+    [ Css.Foreign.class LockedClass (lockedStyles assets)
     ]
 
 
 lockOnInside : Assets r -> List Snippet
 lockOnInside assets =
-    [ Css.Foreign.class LockOnInsideClass
-        [ descendants
-            [ Css.Foreign.label
-                [ paddingLeft (px 35)
-                , backgroundImage assets CheckboxLockOnInside
-                , backgroundSize (px 24)
-                , backgroundRepeat noRepeat
-                , property "cursor" "pointer"
-                ]
-            ]
-        ]
+    [ Css.Foreign.class LockOnInsideClass (lockOnInsideStyles assets)
     ]
 
 
 unlockable : Assets r -> List Snippet
 unlockable assets =
-    [ Css.Foreign.class UnlockableClass
-        [ descendants
-            [ Css.Foreign.label
-                [ paddingLeft (px (29 + 6)) -- checkbox width + padding
-                , backgroundImage assets PremiumKey
-                , property "cursor" "auto"
-                ]
-            ]
-        ]
+    [ Css.Foreign.class UnlockableClass (unlockableStyles assets)
     ]
 
 
-premiumStyles : Assets r -> List Snippet
-premiumStyles assets =
-    [ Css.Foreign.class PremiumClass
-        [ children
-            [ Css.Foreign.label
-                [ displayFlex
-                , alignItems center
-                ]
-            , selector "label::after"
-                [ property "content" "''"
-                , display inlineBlock
-                , width (px 26)
-                , height (px 24)
-                , marginLeft (px 8)
-                , backgroundImage assets PremiumFlag
-                , backgroundRepeat noRepeat
-                , backgroundPosition Css.center
-                ]
-            ]
-        ]
+premiumForeign : Assets r -> List Snippet
+premiumForeign assets =
+    [ Css.Foreign.class PremiumClass (premiumStyles assets)
     ]
 
 
 opacified : List Snippet
 opacified =
-    [ Css.Foreign.class Opacified
-        [ descendants [ everything [ opacity (num 0.4) ] ] ]
+    [ Css.Foreign.class Opacified opacifiedStyles
     ]
 
 
@@ -610,7 +648,7 @@ styles =
         , lockOnInside assets
         , unlockable assets
         , opacified
-        , premiumStyles assets
+        , premiumForeign assets
         ]
             |> List.concat
     )
