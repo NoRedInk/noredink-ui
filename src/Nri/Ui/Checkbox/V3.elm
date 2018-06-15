@@ -40,9 +40,10 @@ import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html as RootHtml
 import Html.Attributes as RootAttributes
-import Html.Events as Events exposing (defaultOptions)
+import Html.Events exposing (defaultOptions)
 import Html.Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Events as Events
 import Json.Decode
 import Json.Encode
 import Nri.Ui.AssetPath exposing (Asset(..))
@@ -171,11 +172,11 @@ premium config =
         modifierClasses =
             List.concat
                 [ if config.showFlagWhenLocked && config.contentPremiumLevel /= Free then
-                    [ PremiumClass ]
+                    [ "PremiumClass" ]
                   else
                     []
                 , if config.disabled then
-                    [ Opacified ]
+                    [ "Opacified" ]
                   else
                     []
                 ]
@@ -207,74 +208,76 @@ premium config =
 {-| -}
 viewAttention : Model msg -> RootHtml.Html msg
 viewAttention model =
-    buildCheckbox [ WithPulsing ] False model
+    buildCheckbox [ "WithPulsing" ] False model
 
 
-buildCheckbox : List CssClasses -> Bool -> Model msg -> RootHtml.Html msg
+buildCheckbox : List String -> Bool -> Model msg -> RootHtml.Html msg
 buildCheckbox modifierClasses showLabels model =
     let
         containerClasses =
-            List.concat
-                [ [ Container ]
-                , modifierClasses
-                , case model.theme of
-                    Square Gray ->
-                        [ SquareClass, GrayClass ]
+            List.map (\a -> ( "checkbox-" ++ a, True )) <|
+                List.concat
+                    [ modifierClasses
+                    , case model.theme of
+                        Square Gray ->
+                            [ "SquareClass", "GrayClass" ]
 
-                    Square Orange ->
-                        [ SquareClass, OrangeClass ]
+                        Square Orange ->
+                            [ "SquareClass", "OrangeClass" ]
 
-                    Square Default ->
-                        [ SquareClass ]
+                        Square Default ->
+                            [ "SquareClass" ]
 
-                    Locked ->
-                        [ LockedClass ]
+                        Locked ->
+                            [ "LockedClass" ]
 
-                    LockOnInside ->
-                        [ LockOnInsideClass ]
+                        LockOnInside ->
+                            [ "LockOnInsideClass" ]
 
-                    Unlockable ->
-                        [ UnlockableClass ]
+                        Unlockable ->
+                            [ "UnlockableClass" ]
 
-                    Round ->
-                        [ RoundClass ]
+                        Round ->
+                            [ "RoundClass" ]
 
-                    Disabled ->
-                        [ SquareClass, Opacified ]
+                        Disabled ->
+                            [ "SquareClass", "Opacified" ]
 
-                    Premium ->
-                        [ SquareClass, PremiumClass ]
-                ]
+                        Premium ->
+                            [ "SquareClass", "PremiumClass" ]
+                    ]
     in
-    RootHtml.span
-        [ styles.class containerClasses
-        , RootAttributes.id <| model.identifier ++ "-container"
+    Html.Styled.span
+        [ css containerStyles
+        , Attributes.classList containerClasses
+        , Attributes.id <| model.identifier ++ "-container"
         , -- This is necessary to prevent event propagation.
           -- See https://github.com/elm-lang/html/issues/96
-          RootAttributes.map (always model.noOpMsg) <|
+          Attributes.map (always model.noOpMsg) <|
             Events.onWithOptions "click"
                 { defaultOptions | stopPropagation = True }
                 (Json.Decode.succeed "stop click propagation")
         ]
-        [ checkbox model.identifier
+        [ Html.checkbox model.identifier
             model.isChecked
-            [ Accessibility.Widget.label model.label
-            , styles.class [ Checkbox ]
+            [ Widget.label model.label
             , Events.onCheck model.setterMsg
-            , RootAttributes.id model.identifier
-            , RootAttributes.disabled model.disabled
+            , Attributes.id model.identifier
+            , Attributes.disabled model.disabled
+
+            --TODO these styles should change with the theme too
+            , css checkboxStyles
             ]
         , if showLabels then
             viewLabel model
                 (Html.span [] [ Html.text model.label ])
                 (labelClassAndTheme model.isChecked)
-                |> toUnstyled
           else
             viewLabel model
                 (Html.span [ Accessibility.Styled.Style.invisible ] [ Html.text model.label ])
                 (labelClassAndTheme model.isChecked)
-                |> toUnstyled
         ]
+        |> toUnstyled
 
 
 viewLabel : Model msg -> Html.Html msg -> ( Html.Attribute msg, Html.Attribute msg ) -> Html.Html msg
