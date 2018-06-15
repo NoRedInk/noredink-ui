@@ -212,8 +212,7 @@ buildCheckbox assets modifierClasses model labelContent =
     viewCheckbox model <|
         case model.theme of
             Square colorTheme ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
                 , labelStyles =
                     css
                         [ backgroundRepeat noRepeat
@@ -266,8 +265,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Locked ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , labelStyles =
                     css
                         [ backgroundImage assets PremiumLocked
@@ -288,8 +286,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             LockOnInside ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
                     css
                         [ backgroundImage assets CheckboxLockOnInside
@@ -315,8 +312,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Unlockable ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
                 , labelStyles =
                     css
                         [ backgroundImage assets PremiumKey
@@ -341,8 +337,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Round ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
                 , labelStyles =
                     css
                         [ alignItems center
@@ -396,8 +391,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Disabled ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
                 , labelStyles =
                     css
                         [ cursor pointer
@@ -409,8 +403,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Premium ->
-                { containerStyles = css containerStyles
-                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
                 , labelStyles =
                     css
                         [ alignItems center
@@ -457,8 +450,7 @@ labelClass isSelected =
 viewCheckbox :
     Model msg
     ->
-        { containerStyles : Html.Attribute msg
-        , containerClasses : Html.Attribute msg
+        { containerClasses : Html.Attribute msg
         , labelStyles : Html.Attribute msg
         , labelClasses : Html.Attribute msg
         , labelContent : Html.Html msg
@@ -466,7 +458,11 @@ viewCheckbox :
     -> Html.Html msg
 viewCheckbox model config =
     Html.Styled.span
-        [ config.containerStyles
+        [ css
+            [ display block
+            , height inherit
+            , descendants [ Css.Foreign.input [ display none ] ]
+            ]
         , config.containerClasses
         , Attributes.id <| model.identifier ++ "-container"
         , -- This is necessary to prevent event propagation.
@@ -556,15 +552,6 @@ type ColorTheme
     = Default
     | Gray
     | Orange
-
-
-containerStyles =
-    [ display block
-    , height inherit
-    , descendants
-        [ Css.Foreign.input [ display none ]
-        ]
-    ]
 
 
 {-| -}
