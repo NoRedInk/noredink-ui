@@ -264,20 +264,21 @@ buildCheckbox modifierClasses showLabels model =
             , RootAttributes.id model.identifier
             , RootAttributes.disabled model.disabled
             ]
-        , Html.span
-            (if showLabels then
-                []
-             else
-                [ Accessibility.Styled.Style.invisible ]
-            )
-            [ Html.text model.label ]
-            |> viewLabel model
-            |> toUnstyled
+        , if showLabels then
+            viewLabel model
+                (Html.span [] [ Html.text model.label ])
+                (labelClassAndTheme model.isChecked)
+                |> toUnstyled
+          else
+            viewLabel model
+                (Html.span [ Accessibility.Styled.Style.invisible ] [ Html.text model.label ])
+                (labelClassAndTheme model.isChecked)
+                |> toUnstyled
         ]
 
 
-viewLabel : Model msg -> Html.Html msg -> Html.Html msg
-viewLabel model content =
+viewLabel : Model msg -> Html.Html msg -> ( Html.Attribute msg, Html.Attribute msg ) -> Html.Html msg
+viewLabel model content ( class, theme ) =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
@@ -300,38 +301,73 @@ viewLabel model content =
                 )
           else
             ExtraAttributes.none
-        , labelClass model.isChecked
-        , css
-            [ cursor pointer
-            , outline none
-
-            --TODO These styles depend on the theme
-            --, case maybeChecked of
-            --    Just True ->
-            --        Checked
-            --    Just False ->
-            --        Unchecked
-            --    Nothing ->
-            --        Indeterminate
-            ]
+        , class
+        , theme
         ]
         [ content ]
 
 
-labelClass : Maybe Bool -> Html.Attribute msg
-labelClass maybeChecked =
-    Attributes.classList
-        [ ( "checkbox-Label", True )
-        , case maybeChecked of
-            Just True ->
-                ( "checkbox-Checked", True )
+labelClassAndTheme isChecked =
+    case isChecked of
+        Just True ->
+            ( Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Checked", True )
+                ]
+            , css
+                [ cursor pointer
+                , outline none
 
-            Just False ->
-                ( "checkbox-Unchecked", True )
+                --TODO These styles depend on the theme
+                --, case maybeChecked of
+                --    Just True ->
+                --        Checked
+                --    Just False ->
+                --        Unchecked
+                --    Nothing ->
+                --        Indeterminate
+                ]
+            )
 
-            Nothing ->
-                ( "checkbox-Indeterminate", True )
-        ]
+        Just False ->
+            ( Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Unchecked", True )
+                ]
+            , css
+                [ cursor pointer
+                , outline none
+
+                --TODO These styles depend on the theme
+                --, case maybeChecked of
+                --    Just True ->
+                --        Checked
+                --    Just False ->
+                --        Unchecked
+                --    Nothing ->
+                --        Indeterminate
+                ]
+            )
+
+        Nothing ->
+            ( Attributes.classList
+                [ ( "checkbox-Label", True )
+                , ( "checkbox-Indeterminate", True )
+                ]
+            , css
+                [ cursor pointer
+                , outline none
+
+                --TODO These styles depend on the theme
+                --, case maybeChecked of
+                --    Just True ->
+                --        Checked
+                --    Just False ->
+                --        Unchecked
+                --    Nothing ->
+                --        Indeterminate
+                ]
+            )
 
 
 getLabelClass : Maybe Bool -> RootHtml.Attribute msg
