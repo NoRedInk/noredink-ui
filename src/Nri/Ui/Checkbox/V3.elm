@@ -9,7 +9,6 @@ module Nri.Ui.Checkbox.V3
         , premium
         , styles
         , view
-        , viewAttention
         , viewWithLabel
         )
 
@@ -17,7 +16,7 @@ module Nri.Ui.Checkbox.V3
 
 @docs Model, Theme, ColorTheme
 
-@docs view, viewWithLabel, viewAttention, disabled
+@docs view, viewWithLabel, disabled
 
 
 ## Premium
@@ -204,14 +203,6 @@ premium assets config =
         Html.span [] [ Html.text config.label ]
 
 
-{-| -}
-viewAttention : Assets a -> Model msg -> Html.Html msg
-viewAttention assets model =
-    buildCheckbox assets [ "WithPulsing" ] model <|
-        Html.span [ Accessibility.Styled.Style.invisible ]
-            [ Html.text model.label ]
-
-
 buildCheckbox : Assets a -> List String -> Model msg -> Html.Html msg -> Html.Html msg
 buildCheckbox assets modifierClasses model labelContent =
     let
@@ -352,15 +343,6 @@ buildCheckbox assets modifierClasses model labelContent =
                                     -- that can't be indeterminate that we nonetheless
                                     -- model as Maybes. what can you do.
                                     []
-                        , Css.batch <|
-                            --WOW super brittle let's not do this, tessa
-                            if modifierClasses == [ "WithPulsing" ] then
-                                [ property "-webkit-animation" "pulsate 1s infinite"
-                                , property "-moz-animation" "pulsate 1s infinite"
-                                , property "animation" "pulsate 1s infinite"
-                                ]
-                            else
-                                []
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -518,7 +500,6 @@ type CssClasses
     | LockOnInsideClass
     | UnlockableClass
     | Label
-    | WithPulsing
     | Opacified
     | PremiumClass
 
