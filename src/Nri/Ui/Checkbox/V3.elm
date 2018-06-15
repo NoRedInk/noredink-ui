@@ -216,9 +216,18 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
                 , labelStyles =
                     css
-                        [ cursor pointer
+                        [ backgroundRepeat noRepeat
+                        , color Colors.gray20
+                        , cursor pointer
+                        , Fonts.baseFont
+                        , fontSize (px 16)
+                        , minHeight (px 42) -- container height
                         , outline none
+                        , padding2 (px 13) zero
                         , paddingLeft (px (29 + 6)) -- checkbox width + padding
+                        , property "background-position" "left center"
+                        , verticalAlign middle
+                        , display inlineBlock
                         , case model.selected of
                             Selected ->
                                 backgroundImage assets CheckboxChecked
@@ -258,9 +267,18 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , labelStyles =
                     css
-                        [ outline none
+                        [ backgroundImage assets PremiumLocked
+                        , backgroundRepeat noRepeat
+                        , color Colors.gray20
+                        , display inlineBlock
+                        , Fonts.baseFont
+                        , fontSize (px 16)
+                        , minHeight (px 42) -- container height
+                        , outline none
+                        , padding2 (px 13) zero
                         , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , backgroundImage assets PremiumLocked
+                        , property "background-position" "left center"
+                        , verticalAlign middle
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -271,12 +289,20 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
                     css
-                        [ cursor pointer
-                        , outline none
-                        , paddingLeft (px 35)
-                        , backgroundImage assets CheckboxLockOnInside
-                        , backgroundSize (px 24)
+                        [ backgroundImage assets CheckboxLockOnInside
                         , backgroundRepeat noRepeat
+                        , backgroundSize (px 24)
+                        , color Colors.gray20
+                        , cursor pointer
+                        , Fonts.baseFont
+                        , fontSize (px 16)
+                        , minHeight (px 42) -- container height
+                        , outline none
+                        , padding2 (px 13) zero
+                        , paddingLeft (px 35)
+                        , property "background-position" "left center"
+                        , verticalAlign middle
+                        , display inlineBlock
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -287,9 +313,18 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
                 , labelStyles =
                     css
-                        [ outline none
+                        [ backgroundImage assets PremiumKey
+                        , backgroundRepeat noRepeat
+                        , color Colors.gray20
+                        , display inlineBlock
+                        , Fonts.baseFont
+                        , fontSize (px 16)
+                        , minHeight (px 42) -- container height
+                        , outline none
+                        , padding2 (px 13) zero
                         , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , backgroundImage assets PremiumKey
+                        , property "background-position" "left center"
+                        , verticalAlign middle
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -300,13 +335,20 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
                 , labelStyles =
                     css
-                        [ if model.disabled then
+                        [ alignItems center
+                        , backgroundRepeat noRepeat
+                        , color Colors.gray20
+                        , if model.disabled then
                             cursor auto
                           else
                             cursor pointer
-                        , outline none
                         , displayFlex
-                        , alignItems center
+                        , Fonts.baseFont
+                        , fontSize (px 16)
+                        , minHeight (px 42) -- container height
+                        , outline none
+                        , padding2 (px 13) zero
+                        , property "background-position" "left center"
                         , before
                             [ property "content" "''"
                             , width (px 24)
@@ -349,8 +391,8 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelStyles =
                     css
                         [ cursor pointer
-                        , outline none
                         , opacity (num 0.4)
+                        , outline none
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -361,10 +403,10 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
                 , labelStyles =
                     css
-                        [ cursor pointer
-                        , outline none
+                        [ alignItems center
+                        , cursor pointer
                         , displayFlex
-                        , alignItems center
+                        , outline none
                         , after
                             [ property "content" "''"
                             , display inlineBlock
@@ -510,18 +552,7 @@ containerStyles =
     [ display block
     , height inherit
     , descendants
-        [ Css.Foreign.label
-            [ display inlineBlock
-            , verticalAlign middle
-            , minHeight (px 42) -- container height
-            , padding2 (px 13) zero
-            , fontSize (px 16)
-            , Fonts.baseFont
-            , color Colors.gray20
-            , property "background-position" "left center"
-            , property "background-repeat" "no-repeat"
-            ]
-        , Css.Foreign.input [ display none ]
+        [ Css.Foreign.input [ display none ]
         , selector ":disabled + label"
             [ cursor auto
             ]
