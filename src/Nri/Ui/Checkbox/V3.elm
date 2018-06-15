@@ -19,13 +19,12 @@ module Nri.Ui.Checkbox.V3
 @docs Model, Theme, ColorTheme
 
 @docs view, viewWithLabel, viewAttention, disabled
-@docs IsSelected
 @docs keyframeCss, styles
 
 
 ## Premium
 
-@docs PremiumConfig, premium
+@docs PremiumConfig, IsSelected, premium
 
 -}
 
@@ -69,8 +68,142 @@ type alias Model msg =
     }
 
 
-customView : List CssClasses -> Bool -> Model msg -> Html msg
-customView modifierClasses showLabels model =
+{-| Shows a checkbox (the label is only used for accessibility hints)
+-}
+view : Model msg -> Html msg
+view model =
+    buildCheckbox [] False model
+
+
+{-| Shows a checkbox and its label text
+-}
+viewWithLabel : Model msg -> Html msg
+viewWithLabel model =
+    buildCheckbox [] True model
+
+
+{-| Show a disabled checkbox.
+-}
+disabled : String -> String -> Html msg
+disabled identifier labelText =
+    span
+        [ styles.class [ Container, SquareClass, Opacified ]
+        , Attributes.id <| identifier ++ "-container"
+        ]
+        [ checkbox identifier
+            (Just False)
+            [ Widget.label labelText
+            , styles.class [ Checkbox ]
+            , Attributes.id identifier
+            , Attributes.disabled True
+            ]
+        , label
+            [ Attributes.for identifier
+            , getLabelClass (Just False)
+            ]
+            [ Html.text labelText
+            ]
+        ]
+
+
+{-|
+
+  - `onChange`: A message for when the user toggles the checkbox
+  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
+    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
+
+-}
+type alias PremiumConfig msg =
+    { label : String
+    , id : String
+    , selected : IsSelected
+    , disabled : Bool
+    , teacherPremiumLevel : PremiumLevel
+    , contentPremiumLevel : PremiumLevel
+    , showFlagWhenLocked : Bool
+    , onChange : Bool -> msg
+    , onLockedClick : msg
+    , noOpMsg : msg
+    }
+
+
+{-| This configurable is only used in the PremiumConfig.
+-}
+type IsSelected
+    = Selected
+    | NotSelected
+    | PartiallySelected
+
+
+{-| A checkbox that should be used for premium content
+
+This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
+
+-}
+premium : PremiumConfig msg -> Html msg
+premium config =
+    let
+        isLocked =
+            not <|
+                PremiumLevel.allowedFor
+                    config.contentPremiumLevel
+                    config.teacherPremiumLevel
+
+        isChecked =
+            case config.selected of
+                Selected ->
+                    Just True
+
+                NotSelected ->
+                    Just False
+
+                PartiallySelected ->
+                    Nothing
+
+        modifierClasses =
+            List.concat
+                [ if config.showFlagWhenLocked && config.contentPremiumLevel /= Free then
+                    [ PremiumClass ]
+                  else
+                    []
+                , if config.disabled then
+                    [ Opacified ]
+                  else
+                    []
+                ]
+
+        theme =
+            if isLocked then
+                LockOnInside
+            else if config.contentPremiumLevel /= Free then
+                Premium
+            else
+                Square Default
+    in
+    buildCheckbox modifierClasses
+        True
+        { identifier = config.id
+        , label = config.label
+        , setterMsg =
+            if isLocked then
+                \_ -> config.onLockedClick
+            else
+                config.onChange
+        , isChecked = isChecked
+        , disabled = config.disabled
+        , theme = theme
+        , noOpMsg = config.noOpMsg
+        }
+
+
+{-| -}
+viewAttention : Model msg -> Html msg
+viewAttention model =
+    buildCheckbox [ WithPulsing ] False model
+
+
+buildCheckbox : List CssClasses -> Bool -> Model msg -> Html msg
+buildCheckbox modifierClasses showLabels model =
     let
         containerClasses =
             List.concat
@@ -155,139 +288,6 @@ customView modifierClasses showLabels model =
                 [ Html.text model.label ]
             ]
         ]
-
-
-{-| Shows a checkbox (the label is only used for accessibility hints)
--}
-view : Model msg -> Html msg
-view model =
-    customView [] False model
-
-
-{-| Shows a checkbox and its label text
--}
-viewWithLabel : Model msg -> Html msg
-viewWithLabel model =
-    customView [] True model
-
-
-{-| Show a disabled checkbox.
--}
-disabled : String -> String -> Html msg
-disabled identifier labelText =
-    span
-        [ styles.class [ Container, SquareClass, Opacified ]
-        , Attributes.id <| identifier ++ "-container"
-        ]
-        [ checkbox identifier
-            (Just False)
-            [ Widget.label labelText
-            , styles.class [ Checkbox ]
-            , Attributes.id identifier
-            , Attributes.disabled True
-            ]
-        , label
-            [ Attributes.for identifier
-            , getLabelClass (Just False)
-            ]
-            [ Html.text labelText
-            ]
-        ]
-
-
-{-| -}
-type IsSelected
-    = Selected
-    | NotSelected
-    | PartiallySelected
-
-
-{-|
-
-  - `onChange`: A message for when the user toggles the checkbox
-  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
-
--}
-type alias PremiumConfig msg =
-    { label : String
-    , id : String
-    , selected : IsSelected
-    , disabled : Bool
-    , teacherPremiumLevel : PremiumLevel
-    , contentPremiumLevel : PremiumLevel
-    , showFlagWhenLocked : Bool
-    , onChange : Bool -> msg
-    , onLockedClick : msg
-    , noOpMsg : msg
-    }
-
-
-{-| A checkbox that should be used for premium content
-
-This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
-
--}
-premium : PremiumConfig msg -> Html msg
-premium config =
-    let
-        isLocked =
-            not <|
-                PremiumLevel.allowedFor
-                    config.contentPremiumLevel
-                    config.teacherPremiumLevel
-
-        isChecked =
-            case config.selected of
-                Selected ->
-                    Just True
-
-                NotSelected ->
-                    Just False
-
-                PartiallySelected ->
-                    Nothing
-
-        modifierClasses =
-            List.concat
-                [ if config.showFlagWhenLocked && config.contentPremiumLevel /= Free then
-                    [ PremiumClass ]
-                  else
-                    []
-                , if config.disabled then
-                    [ Opacified ]
-                  else
-                    []
-                ]
-
-        theme =
-            if isLocked then
-                LockOnInside
-            else if config.contentPremiumLevel /= Free then
-                Premium
-            else
-                Square Default
-    in
-    customView modifierClasses
-        True
-        { identifier = config.id
-        , label = config.label
-        , setterMsg =
-            if isLocked then
-                \_ -> config.onLockedClick
-            else
-                config.onChange
-        , isChecked = isChecked
-        , disabled = config.disabled
-        , theme = theme
-        , noOpMsg = config.noOpMsg
-        }
-
-
-{-| -}
-viewAttention : Model msg -> Html msg
-viewAttention model =
-    customView [ WithPulsing ] False model
 
 
 getLabelClass : Maybe Bool -> Html.Attribute msg
