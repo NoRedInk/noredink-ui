@@ -5,7 +5,6 @@ module Nri.Ui.Checkbox.V3
         , Model
         , PremiumConfig
         , Theme(..)
-        , disabled
         , premium
         , styles
         , view
@@ -16,7 +15,7 @@ module Nri.Ui.Checkbox.V3
 
 @docs Model, Theme, ColorTheme
 
-@docs view, viewWithLabel, disabled
+@docs view, viewWithLabel
 
 
 ## Premium
@@ -104,30 +103,6 @@ viewWithLabel : Assets a -> Model msg -> Html.Html msg
 viewWithLabel assets model =
     buildCheckbox assets [] model <|
         Html.span [] [ Html.text model.label ]
-
-
-{-| Show a disabled checkbox.
--}
-disabled : String -> String -> RootHtml.Html msg
-disabled identifier labelText =
-    span
-        [ styles.class [ Container, SquareClass, Opacified ]
-        , RootAttributes.id <| identifier ++ "-container"
-        ]
-        [ checkbox identifier
-            (Just False)
-            [ Accessibility.Widget.label labelText
-            , styles.class [ Checkbox ]
-            , RootAttributes.id identifier
-            , RootAttributes.disabled True
-            ]
-        , label
-            [ RootAttributes.for identifier
-            , styles.class [ Label, Indeterminate ]
-            ]
-            [ RootHtml.text labelText
-            ]
-        ]
 
 
 {-|
