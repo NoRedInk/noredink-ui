@@ -247,9 +247,25 @@ buildCheckbox modifierClasses showLabels model =
                             [ "SquareClass", "PremiumClass" ]
                     ]
     in
+    viewCheckbox model
+        { containerStyles = css containerStyles
+        , containerClasses = Attributes.classList containerClasses
+        , checkboxStyles = css checkboxStyles
+        , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+        , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+        , labelContent =
+            if showLabels then
+                Html.span [] [ Html.text model.label ]
+            else
+                Html.span [ Accessibility.Styled.Style.invisible ]
+                    [ Html.text model.label ]
+        }
+
+
+viewCheckbox model config =
     Html.Styled.span
-        [ css containerStyles
-        , Attributes.classList containerClasses
+        [ config.containerStyles
+        , config.containerClasses
         , Attributes.id <| model.identifier ++ "-container"
         , -- This is necessary to prevent event propagation.
           -- See https://github.com/elm-lang/html/issues/96
@@ -264,24 +280,14 @@ buildCheckbox modifierClasses showLabels model =
             , Events.onCheck model.setterMsg
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
-
-            --TODO these styles should change with the theme too
-            , css checkboxStyles
+            , config.checkboxStyles
             ]
-        , if showLabels then
-            viewLabel model
-                (Html.span [] [ Html.text model.label ])
-                (labelClassAndTheme model.isChecked)
-          else
-            viewLabel model
-                (Html.span [ Accessibility.Styled.Style.invisible ] [ Html.text model.label ])
-                (labelClassAndTheme model.isChecked)
+        , viewLabel model config.labelContent config.labelClasses config.labelStyles
         ]
-        |> toUnstyled
 
 
-viewLabel : Model msg -> Html.Html msg -> ( Html.Attribute msg, Html.Attribute msg ) -> Html.Html msg
-viewLabel model content ( class, theme ) =
+viewLabel : Model msg -> Html.Html msg -> Html.Attribute msg -> Html.Attribute msg -> Html.Html msg
+viewLabel model content class theme =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
