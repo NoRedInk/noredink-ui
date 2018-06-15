@@ -123,7 +123,7 @@ disabled identifier labelText =
             ]
         , label
             [ RootAttributes.for identifier
-            , getLabelClass NotSelected
+            , styles.class [ Label, Indeterminate ]
             ]
             [ RootHtml.text labelText
             ]
@@ -463,22 +463,6 @@ viewLabel model content class theme =
         , theme
         ]
         [ content ]
-
-
-getLabelClass : IsSelected -> RootHtml.Attribute msg
-getLabelClass maybeChecked =
-    styles.class
-        [ Label
-        , case maybeChecked of
-            Selected ->
-                Checked
-
-            NotSelected ->
-                Unchecked
-
-            PartiallySelected ->
-                Indeterminate
-        ]
 
 
 indeterminateAttr : RootHtml.Attribute msg
