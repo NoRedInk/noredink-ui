@@ -214,52 +214,98 @@ viewAttention model =
 buildCheckbox : List String -> Bool -> Model msg -> Html.Html msg
 buildCheckbox modifierClasses showLabels model =
     let
-        containerClasses =
-            List.map (\a -> ( "checkbox-" ++ a, True )) <|
-                List.concat
-                    [ modifierClasses
-                    , case model.theme of
-                        Square Gray ->
-                            [ "SquareClass", "GrayClass" ]
+        toClassList =
+            List.map (\a -> ( "checkbox-" ++ a, True )) >> Attributes.classList
 
-                        Square Orange ->
-                            [ "SquareClass", "OrangeClass" ]
-
-                        Square Default ->
-                            [ "SquareClass" ]
-
-                        Locked ->
-                            [ "LockedClass" ]
-
-                        LockOnInside ->
-                            [ "LockOnInsideClass" ]
-
-                        Unlockable ->
-                            [ "UnlockableClass" ]
-
-                        Round ->
-                            [ "RoundClass" ]
-
-                        Disabled ->
-                            [ "SquareClass", "Opacified" ]
-
-                        Premium ->
-                            [ "SquareClass", "PremiumClass" ]
-                    ]
-    in
-    viewCheckbox model
-        { containerStyles = css containerStyles
-        , containerClasses = Attributes.classList containerClasses
-        , checkboxStyles = css checkboxStyles
-        , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
-        , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
-        , labelContent =
+        labelContent =
             if showLabels then
                 Html.span [] [ Html.text model.label ]
             else
                 Html.span [ Accessibility.Styled.Style.invisible ]
                     [ Html.text model.label ]
-        }
+    in
+    viewCheckbox model <|
+        case model.theme of
+            Square Gray ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "GrayClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Square Orange ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "OrangeClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Square Default ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Locked ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            LockOnInside ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Unlockable ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Round ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Disabled ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
+
+            Premium ->
+                { containerStyles = css containerStyles
+                , containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
+                , checkboxStyles = css checkboxStyles
+                , labelStyles = Tuple.first (labelClassAndTheme model.isChecked)
+                , labelClasses = Tuple.second (labelClassAndTheme model.isChecked)
+                , labelContent = labelContent
+                }
 
 
 viewCheckbox model config =
