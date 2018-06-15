@@ -28,15 +28,18 @@ module Nri.Ui.Checkbox.V3
 
 -}
 
-import Accessibility exposing (..)
+import Accessibility exposing (checkbox, div, label, span, text)
 import Accessibility.Aria exposing (controls)
 import Accessibility.Style
+import Accessibility.Styled as Html
+import Accessibility.Styled.Style
 import Accessibility.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html as RootHtml
 import Html.Attributes as RootAttributes
 import Html.Events as Events exposing (defaultOptions)
+import Html.Styled exposing (fromUnstyled, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Json.Decode
 import Json.Encode
@@ -71,21 +74,21 @@ type alias Model msg =
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
 -}
-view : Model msg -> Html msg
+view : Model msg -> RootHtml.Html msg
 view model =
     buildCheckbox [] False model
 
 
 {-| Shows a checkbox and its label text
 -}
-viewWithLabel : Model msg -> Html msg
+viewWithLabel : Model msg -> RootHtml.Html msg
 viewWithLabel model =
     buildCheckbox [] True model
 
 
 {-| Show a disabled checkbox.
 -}
-disabled : String -> String -> Html msg
+disabled : String -> String -> RootHtml.Html msg
 disabled identifier labelText =
     span
         [ styles.class [ Container, SquareClass, Opacified ]
@@ -141,7 +144,7 @@ type IsSelected
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
 
 -}
-premium : PremiumConfig msg -> Html msg
+premium : PremiumConfig msg -> RootHtml.Html msg
 premium config =
     let
         isLocked =
@@ -198,12 +201,12 @@ premium config =
 
 
 {-| -}
-viewAttention : Model msg -> Html msg
+viewAttention : Model msg -> RootHtml.Html msg
 viewAttention model =
     buildCheckbox [ WithPulsing ] False model
 
 
-buildCheckbox : List CssClasses -> Bool -> Model msg -> Html msg
+buildCheckbox : List CssClasses -> Bool -> Model msg -> RootHtml.Html msg
 buildCheckbox modifierClasses showLabels model =
     let
         containerClasses =
@@ -257,37 +260,44 @@ buildCheckbox modifierClasses showLabels model =
             , RootAttributes.id model.identifier
             , RootAttributes.disabled model.disabled
             ]
-        , RootHtml.label
-            [ RootAttributes.for model.identifier
-            , getLabelClass model.isChecked
-            , controls model.identifier
-            , Widget.disabled model.disabled
-            , Widget.checked model.isChecked
-            , if not model.disabled then
-                RootAttributes.tabindex 0
-              else
-                RootAttributes.none
-            , if not model.disabled then
-                Nri.Ui.Html.Extra.onKeyUp
-                    { defaultOptions | preventDefault = True }
-                    (\keyCode ->
-                        -- 32 is the space bar, 13 is enter
-                        if (keyCode == 32 || keyCode == 13) && not model.disabled then
-                            Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
-                        else
-                            Nothing
-                    )
-              else
-                RootAttributes.none
-            ]
-            [ span
+        , viewLabel model <|
+            Html.span
                 (if showLabels then
                     []
                  else
-                    [ Accessibility.Style.invisible ]
+                    [ Accessibility.Styled.Style.invisible ]
                 )
-                [ RootHtml.text model.label ]
-            ]
+                [ Html.text model.label ]
+        ]
+
+
+viewLabel : Model msg -> Html.Html msg -> RootHtml.Html msg
+viewLabel model content =
+    RootHtml.label
+        [ RootAttributes.for model.identifier
+        , getLabelClass model.isChecked
+        , controls model.identifier
+        , Widget.disabled model.disabled
+        , Widget.checked model.isChecked
+        , if not model.disabled then
+            RootAttributes.tabindex 0
+          else
+            RootAttributes.none
+        , if not model.disabled then
+            Nri.Ui.Html.Extra.onKeyUp
+                { defaultOptions | preventDefault = True }
+                (\keyCode ->
+                    -- 32 is the space bar, 13 is enter
+                    if (keyCode == 32 || keyCode == 13) && not model.disabled then
+                        Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
+                    else
+                        Nothing
+                )
+          else
+            RootAttributes.none
+        ]
+        [ content
+            |> Html.Styled.toUnstyled
         ]
 
 
