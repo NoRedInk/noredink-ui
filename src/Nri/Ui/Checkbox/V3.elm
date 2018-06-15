@@ -34,8 +34,8 @@ import Accessibility.Style
 import Accessibility.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import Html
-import Html.Attributes as Attributes
+import Html as RootHtml
+import Html.Attributes as RootAttributes
 import Html.Events as Events exposing (defaultOptions)
 import Json.Decode
 import Json.Encode
@@ -44,7 +44,7 @@ import Nri.Ui.AssetPath.Css
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.Extra as Attributes
+import Nri.Ui.Html.Attributes.Extra as RootAttributes
 import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
 import Nri.Ui.Styles.V1
 
@@ -88,20 +88,20 @@ disabled : String -> String -> Html msg
 disabled identifier labelText =
     span
         [ styles.class [ Container, SquareClass, Opacified ]
-        , Attributes.id <| identifier ++ "-container"
+        , RootAttributes.id <| identifier ++ "-container"
         ]
         [ checkbox identifier
             (Just False)
             [ Widget.label labelText
             , styles.class [ Checkbox ]
-            , Attributes.id identifier
-            , Attributes.disabled True
+            , RootAttributes.id identifier
+            , RootAttributes.disabled True
             ]
         , label
-            [ Attributes.for identifier
+            [ RootAttributes.for identifier
             , getLabelClass (Just False)
             ]
-            [ Html.text labelText
+            [ RootHtml.text labelText
             ]
         ]
 
@@ -238,12 +238,12 @@ buildCheckbox modifierClasses showLabels model =
                         [ SquareClass, PremiumClass ]
                 ]
     in
-    Html.span
+    RootHtml.span
         [ styles.class containerClasses
-        , Attributes.id <| model.identifier ++ "-container"
+        , RootAttributes.id <| model.identifier ++ "-container"
         , -- This is necessary to prevent event propagation.
           -- See https://github.com/elm-lang/html/issues/96
-          Attributes.map (always model.noOpMsg) <|
+          RootAttributes.map (always model.noOpMsg) <|
             Events.onWithOptions "click"
                 { defaultOptions | stopPropagation = True }
                 (Json.Decode.succeed "stop click propagation")
@@ -253,19 +253,19 @@ buildCheckbox modifierClasses showLabels model =
             [ Widget.label model.label
             , styles.class [ Checkbox ]
             , Events.onCheck model.setterMsg
-            , Attributes.id model.identifier
-            , Attributes.disabled model.disabled
+            , RootAttributes.id model.identifier
+            , RootAttributes.disabled model.disabled
             ]
-        , Html.label
-            [ Attributes.for model.identifier
+        , RootHtml.label
+            [ RootAttributes.for model.identifier
             , getLabelClass model.isChecked
             , controls model.identifier
             , Widget.disabled model.disabled
             , Widget.checked model.isChecked
             , if not model.disabled then
-                Attributes.tabindex 0
+                RootAttributes.tabindex 0
               else
-                Attributes.none
+                RootAttributes.none
             , if not model.disabled then
                 Nri.Ui.Html.Extra.onKeyUp
                     { defaultOptions | preventDefault = True }
@@ -277,7 +277,7 @@ buildCheckbox modifierClasses showLabels model =
                             Nothing
                     )
               else
-                Attributes.none
+                RootAttributes.none
             ]
             [ span
                 (if showLabels then
@@ -285,12 +285,12 @@ buildCheckbox modifierClasses showLabels model =
                  else
                     [ Accessibility.Style.invisible ]
                 )
-                [ Html.text model.label ]
+                [ RootHtml.text model.label ]
             ]
         ]
 
 
-getLabelClass : Maybe Bool -> Html.Attribute msg
+getLabelClass : Maybe Bool -> RootHtml.Attribute msg
 getLabelClass maybeChecked =
     styles.class
         [ Label
@@ -306,9 +306,9 @@ getLabelClass maybeChecked =
         ]
 
 
-indeterminateAttr : Html.Attribute msg
+indeterminateAttr : RootHtml.Attribute msg
 indeterminateAttr =
-    Attributes.property "indeterminate" (Json.Encode.bool True)
+    RootAttributes.property "indeterminate" (Json.Encode.bool True)
 
 
 type CssClasses
