@@ -10,7 +10,7 @@ import Dict exposing (Dict)
 import Html
 import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V2 as Checkbox
+import Nri.Ui.Checkbox.V3 as Checkbox
 import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V3 as TextArea
 
