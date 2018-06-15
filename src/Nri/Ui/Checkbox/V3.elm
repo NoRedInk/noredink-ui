@@ -258,8 +258,9 @@ buildCheckbox assets modifierClasses model labelContent =
                 , containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , labelStyles =
                     css
-                        [ cursor pointer
-                        , outline none
+                        [ outline none
+                        , paddingLeft (px (29 + 6)) -- checkbox width + padding
+                        , backgroundImage assets PremiumLocked
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -506,17 +507,6 @@ containerStyles =
         , Css.Foreign.input [ display none ]
         , selector ":disabled + label"
             [ cursor auto
-            ]
-        ]
-    ]
-
-
-lockedStyles assets =
-    [ descendants
-        [ Css.Foreign.label
-            [ paddingLeft (px (29 + 6)) -- checkbox width + padding
-            , backgroundImage assets PremiumLocked
-            , property "cursor" "auto"
             ]
         ]
     ]
