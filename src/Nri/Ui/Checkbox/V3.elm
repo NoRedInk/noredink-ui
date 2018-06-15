@@ -363,6 +363,18 @@ buildCheckbox assets modifierClasses model labelContent =
                     css
                         [ cursor pointer
                         , outline none
+                        , displayFlex
+                        , alignItems center
+                        , after
+                            [ property "content" "''"
+                            , display inlineBlock
+                            , width (px 26)
+                            , height (px 24)
+                            , marginLeft (px 8)
+                            , backgroundImage assets PremiumFlag
+                            , backgroundRepeat noRepeat
+                            , backgroundPosition Css.center
+                            ]
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -512,26 +524,6 @@ containerStyles =
         , Css.Foreign.input [ display none ]
         , selector ":disabled + label"
             [ cursor auto
-            ]
-        ]
-    ]
-
-
-premiumStyles assets =
-    [ children
-        [ Css.Foreign.label
-            [ displayFlex
-            , alignItems center
-            ]
-        , selector "label::after"
-            [ property "content" "''"
-            , display inlineBlock
-            , width (px 26)
-            , height (px 24)
-            , marginLeft (px 8)
-            , backgroundImage assets PremiumFlag
-            , backgroundRepeat noRepeat
-            , backgroundPosition Css.center
             ]
         ]
     ]
