@@ -273,6 +273,10 @@ buildCheckbox assets modifierClasses model labelContent =
                     css
                         [ cursor pointer
                         , outline none
+                        , paddingLeft (px 35)
+                        , backgroundImage assets CheckboxLockOnInside
+                        , backgroundSize (px 24)
+                        , backgroundRepeat noRepeat
                         ]
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -507,19 +511,6 @@ containerStyles =
         , Css.Foreign.input [ display none ]
         , selector ":disabled + label"
             [ cursor auto
-            ]
-        ]
-    ]
-
-
-lockOnInsideStyles assets =
-    [ descendants
-        [ Css.Foreign.label
-            [ paddingLeft (px 35)
-            , backgroundImage assets CheckboxLockOnInside
-            , backgroundSize (px 24)
-            , backgroundRepeat noRepeat
-            , property "cursor" "pointer"
             ]
         ]
     ]
