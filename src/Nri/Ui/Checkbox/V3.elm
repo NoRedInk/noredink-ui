@@ -469,18 +469,6 @@ type CssClasses
     | PremiumClass
 
 
-type CheckboxImage
-    = CheckboxUnchecked
-    | CheckboxChecked
-    | CheckboxCheckedPartially
-    | PremiumUnlocked
-    | PremiumFlag
-    | CheckWhite
-    | PremiumLocked
-    | PremiumKey
-    | CheckboxLockOnInside
-
-
 {-| -}
 type Theme
     = Square ColorTheme
@@ -588,6 +576,15 @@ styles =
         |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
 
 
+
+-- ICONS used instead of default browser implementations
+
+
+backgroundImage : Assets r -> CheckboxImage -> Css.Style
+backgroundImage assets checkboxImage =
+    property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
+
+
 {-| The assets used in this module.
 -}
 type alias Assets r =
@@ -604,9 +601,16 @@ type alias Assets r =
     }
 
 
-backgroundImage : Assets r -> CheckboxImage -> Css.Style
-backgroundImage assets checkboxImage =
-    property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
+type CheckboxImage
+    = CheckboxUnchecked
+    | CheckboxChecked
+    | CheckboxCheckedPartially
+    | PremiumUnlocked
+    | PremiumFlag
+    | CheckWhite
+    | PremiumLocked
+    | PremiumKey
+    | CheckboxLockOnInside
 
 
 checkboxAssetPath : Assets r -> CheckboxImage -> Asset
