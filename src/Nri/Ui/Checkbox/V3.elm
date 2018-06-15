@@ -218,7 +218,10 @@ buildCheckbox assets modifierClasses model labelContent =
                     css
                         [ backgroundRepeat noRepeat
                         , color Colors.gray20
-                        , cursor pointer
+                        , if model.disabled then
+                            cursor auto
+                          else
+                            cursor pointer
                         , Fonts.baseFont
                         , fontSize (px 16)
                         , minHeight (px 42) -- container height
@@ -293,7 +296,10 @@ buildCheckbox assets modifierClasses model labelContent =
                         , backgroundRepeat noRepeat
                         , backgroundSize (px 24)
                         , color Colors.gray20
-                        , cursor pointer
+                        , if model.disabled then
+                            cursor auto
+                          else
+                            cursor pointer
                         , Fonts.baseFont
                         , fontSize (px 16)
                         , minHeight (px 42) -- container height
@@ -316,6 +322,10 @@ buildCheckbox assets modifierClasses model labelContent =
                         [ backgroundImage assets PremiumKey
                         , backgroundRepeat noRepeat
                         , color Colors.gray20
+                        , if model.disabled then
+                            cursor auto
+                          else
+                            cursor pointer
                         , display inlineBlock
                         , Fonts.baseFont
                         , fontSize (px 16)
@@ -553,9 +563,6 @@ containerStyles =
     , height inherit
     , descendants
         [ Css.Foreign.input [ display none ]
-        , selector ":disabled + label"
-            [ cursor auto
-            ]
         ]
     ]
 
