@@ -118,6 +118,11 @@ view_ theme model =
             , autofocus model.autofocus
             , type_ inputType.fieldType
             , class "override-sass-styles"
+            , Attributes.attribute "aria-invalid" <|
+                if model.isInError then
+                    "true"
+                else
+                    "false"
             ]
             []
         , if model.showLabel then
