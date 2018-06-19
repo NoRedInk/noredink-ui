@@ -215,19 +215,6 @@ buildCheckbox assets modifierClasses model labelContent =
                                 Gray ->
                                     [ color Colors.gray45 ]
 
-                                Orange ->
-                                    [ color Colors.ochre
-                                    , displayFlex
-                                    , alignItems center
-                                    , after
-                                        [ property "content" "''"
-                                        , width (px 26)
-                                        , height (px 24)
-                                        , marginLeft (px 8)
-                                        , backgroundImage assets PremiumUnlocked
-                                        ]
-                                    ]
-
                                 Default ->
                                     []
                         ]
@@ -450,7 +437,6 @@ type Theme
 type ColorTheme
     = Default
     | Gray
-    | Orange
 
 
 
@@ -481,7 +467,6 @@ type CheckboxImage
     = CheckboxUnchecked
     | CheckboxChecked
     | CheckboxCheckedPartially
-    | PremiumUnlocked
     | PremiumFlag
     | PremiumLocked
     | PremiumKey
@@ -499,9 +484,6 @@ checkboxAssetPath assets checkboxImage =
 
         CheckboxCheckedPartially ->
             assets.checkboxCheckedPartially_svg
-
-        PremiumUnlocked ->
-            assets.iconPremiumUnlocked_png
 
         PremiumLocked ->
             assets.iconPremiumLocked_png
