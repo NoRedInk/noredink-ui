@@ -307,60 +307,6 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            Round ->
-                { containerClasses = toClassList (modifierClasses ++ [ "RoundClass" ])
-                , labelStyles =
-                    css
-                        [ alignItems center
-                        , backgroundRepeat noRepeat
-                        , color Colors.gray20
-                        , if model.disabled then
-                            cursor auto
-                          else
-                            cursor pointer
-                        , displayFlex
-                        , Fonts.baseFont
-                        , fontSize (px 16)
-                        , minHeight (px 42) -- container height
-                        , outline none
-                        , padding2 (px 13) zero
-                        , property "background-position" "left center"
-                        , before
-                            [ property "content" "''"
-                            , width (px 24)
-                            , height (px 24)
-                            , marginRight (px 8)
-                            , borderRadius (pct 100)
-                            ]
-                        , Css.batch <|
-                            case model.selected of
-                                Selected ->
-                                    [ before
-                                        [ backgroundColor Colors.green
-                                        , border3 (px 2) solid Colors.green
-                                        , backgroundImage assets CheckWhite
-                                        , property "background-repeat" "no-repeat"
-                                        , property "background-position" "center center"
-                                        ]
-                                    ]
-
-                                NotSelected ->
-                                    [ before
-                                        [ border3 (px 2) solid Colors.blue
-                                        , backgroundColor Colors.white
-                                        ]
-                                    ]
-
-                                PartiallySelected ->
-                                    -- it's kinda weird that we have round "checkboxes"
-                                    -- that can't be indeterminate that we nonetheless
-                                    -- model as Maybes. what can you do.
-                                    []
-                        ]
-                , labelClasses = labelClass model.selected
-                , labelContent = labelContent
-                }
-
             Disabled ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
                 , labelStyles =
@@ -493,7 +439,6 @@ indeterminateAttr =
 {-| -}
 type Theme
     = Square ColorTheme
-    | Round
     | Locked
     | LockOnInside
     | Unlockable
@@ -525,7 +470,6 @@ type alias Assets r =
         , checkboxChecked_svg : Asset
         , checkboxCheckedPartially_svg : Asset
         , iconPremiumUnlocked_png : Asset
-        , iconCheck_png : Asset
         , iconPremiumLocked_png : Asset
         , checkboxLockOnInside_svg : Asset
         , iconPremiumKey_png : Asset
@@ -539,7 +483,6 @@ type CheckboxImage
     | CheckboxCheckedPartially
     | PremiumUnlocked
     | PremiumFlag
-    | CheckWhite
     | PremiumLocked
     | PremiumKey
     | CheckboxLockOnInside
@@ -559,9 +502,6 @@ checkboxAssetPath assets checkboxImage =
 
         PremiumUnlocked ->
             assets.iconPremiumUnlocked_png
-
-        CheckWhite ->
-            assets.iconCheck_png
 
         PremiumLocked ->
             assets.iconPremiumLocked_png
