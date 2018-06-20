@@ -105,20 +105,31 @@ buildCheckbox assets modifierClasses model labelContent =
         case model.theme of
             Square ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , labelStyles = squareLabelStyles assets model
+                , labelStyles =
+                    squareLabelStyles model <|
+                        case model.selected of
+                            Selected ->
+                                assets.checkboxChecked_svg
+
+                            NotSelected ->
+                                assets.checkboxUnchecked_svg
+
+                            PartiallySelected ->
+                                assets.checkboxCheckedPartially_svg
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
             LockOnInside ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
-                , labelStyles = lockLabelStyles assets.checkboxLockOnInside_svg model
+                , labelStyles = lockLabelStyles model assets.checkboxLockOnInside_svg
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
 
-squareLabelStyles assets model =
+squareLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute msg
+squareLabelStyles model image =
     let
         baseStyles =
             [ -- Postioning
@@ -137,15 +148,7 @@ squareLabelStyles assets model =
             -- Icon
             , backgroundRepeat noRepeat
             , property "background-position" "left center"
-            , case model.selected of
-                Selected ->
-                    backgroundImage assets.checkboxChecked_svg
-
-                NotSelected ->
-                    backgroundImage assets.checkboxUnchecked_svg
-
-                PartiallySelected ->
-                    backgroundImage assets.checkboxCheckedPartially_svg
+            , backgroundImage image
             ]
     in
     css
@@ -156,7 +159,8 @@ squareLabelStyles assets model =
         )
 
 
-lockLabelStyles image model =
+lockLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute msg
+lockLabelStyles model image =
     let
         baseStyles =
             [ -- Positioning
