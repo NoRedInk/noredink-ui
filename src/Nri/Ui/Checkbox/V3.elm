@@ -63,7 +63,6 @@ type IsSelected
 type Theme
     = Square
     | LockOnInside
-    | Premium
 
 
 selectedToMaybe : IsSelected -> Maybe Bool
@@ -114,13 +113,6 @@ buildCheckbox assets modifierClasses model labelContent =
             LockOnInside ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles = lockLabelStyles assets.checkboxLockOnInside_svg model
-                , labelClasses = labelClass model.selected
-                , labelContent = labelContent
-                }
-
-            Premium ->
-                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , labelStyles = premiumLabelStyles assets.checkboxLockOnInside_svg model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -193,45 +185,6 @@ lockLabelStyles image model =
             [ cursor auto, opacity (num 0.4) ] ++ baseStyles
          else
             [ cursor pointer ] ++ baseStyles
-        )
-
-
-premiumLabelStyles :
-    Asset
-    -> { a | disabled : Bool }
-    -> Html.Styled.Attribute msg
-premiumLabelStyles image model =
-    let
-        baseStyles =
-            [ -- Positioning
-              alignItems center
-            , displayFlex
-
-            -- Focus & Hover
-            , cursor pointer
-            , outline none
-
-            -- Icon
-            , icon
-            ]
-
-        icon =
-            after
-                [ property "content" "''"
-                , display inlineBlock
-                , width (px 26)
-                , height (px 24)
-                , marginLeft (px 8)
-                , backgroundImage image
-                , backgroundRepeat noRepeat
-                , backgroundPosition Css.center
-                ]
-    in
-    css
-        (if model.disabled then
-            opacity (num 0.4) :: baseStyles
-         else
-            baseStyles
         )
 
 

@@ -49,14 +49,6 @@ premium assets config =
                 PremiumLevel.allowedFor
                     config.contentPremiumLevel
                     config.teacherPremiumLevel
-
-        theme =
-            if isLocked then
-                Checkbox.LockOnInside
-            else if config.contentPremiumLevel /= Free then
-                Checkbox.Premium
-            else
-                Checkbox.Square
     in
     Html.div
         [ css
@@ -74,7 +66,11 @@ premium assets config =
                     config.onChange
             , selected = config.selected
             , disabled = config.disabled
-            , theme = theme
+            , theme =
+                if isLocked then
+                    Checkbox.LockOnInside
+                else
+                    Checkbox.Square
             , noOpMsg = config.noOpMsg
             }
         , if
