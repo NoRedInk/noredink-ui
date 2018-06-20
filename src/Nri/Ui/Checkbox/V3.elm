@@ -167,8 +167,7 @@ positioning : Style
 positioning =
     batch
         [ display inlineBlock
-        , padding2 (px 13) zero
-        , paddingLeft (px (29 + 6)) -- checkbox width + padding
+        , padding4 (px 13) zero (px 13) (px 35)
         , verticalAlign middle
         ]
 
