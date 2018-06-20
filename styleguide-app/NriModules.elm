@@ -3,6 +3,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 import Assets exposing (assets)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Button
+import Examples.Checkbox
 import Examples.Colors
 import Examples.Dropdown
 import Examples.Fonts
@@ -31,6 +32,7 @@ import String.Extra
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
+    , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
@@ -43,6 +45,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
+    , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
@@ -54,6 +57,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
+    | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
@@ -72,70 +76,77 @@ update msg moduleStates =
                 ( buttonExampleState, cmd ) =
                     Examples.Button.update msg moduleStates.buttonExampleState
             in
-            ( { moduleStates | buttonExampleState = buttonExampleState }
-            , Cmd.map ButtonExampleMsg cmd
-            )
+                ( { moduleStates | buttonExampleState = buttonExampleState }
+                , Cmd.map ButtonExampleMsg cmd
+                )
+
+        CheckboxExampleMsg msg ->
+            let
+                ( checkboxExampleState, cmd ) =
+                    Examples.Checkbox.update msg moduleStates.checkboxExampleState
+            in
+                ( { moduleStates | checkboxExampleState = checkboxExampleState }, Cmd.map CheckboxExampleMsg cmd )
 
         DropdownMsg msg ->
             let
                 ( dropdownState, cmd ) =
                     Examples.Dropdown.update msg moduleStates.dropdownState
             in
-            ( { moduleStates | dropdownState = dropdownState }
-            , Cmd.map DropdownMsg cmd
-            )
+                ( { moduleStates | dropdownState = dropdownState }
+                , Cmd.map DropdownMsg cmd
+                )
 
         SegmentedControlMsg msg ->
             let
                 ( segmentedControlState, cmd ) =
                     Examples.SegmentedControl.update msg moduleStates.segmentedControlState
             in
-            ( { moduleStates | segmentedControlState = segmentedControlState }
-            , Cmd.map SegmentedControlMsg cmd
-            )
+                ( { moduleStates | segmentedControlState = segmentedControlState }
+                , Cmd.map SegmentedControlMsg cmd
+                )
 
         SelectMsg msg ->
             let
                 ( selectState, cmd ) =
                     Examples.Select.update msg moduleStates.selectState
             in
-            ( { moduleStates | selectState = selectState }
-            , Cmd.map SelectMsg cmd
-            )
+                ( { moduleStates | selectState = selectState }
+                , Cmd.map SelectMsg cmd
+                )
 
         ShowItWorked group message ->
             let
                 _ =
                     Debug.log group message
             in
-            ( moduleStates, Cmd.none )
+                ( moduleStates, Cmd.none )
 
         TableExampleMsg msg ->
             let
                 ( tableExampleState, cmd ) =
                     Examples.Table.update msg moduleStates.tableExampleState
             in
-            ( { moduleStates | tableExampleState = tableExampleState }
-            , Cmd.map TableExampleMsg cmd
-            )
+                ( { moduleStates | tableExampleState = tableExampleState }
+                , Cmd.map TableExampleMsg cmd
+                )
 
         TextAreaExampleMsg msg ->
             let
                 ( textAreaExampleState, cmd ) =
                     TextAreaExample.update msg moduleStates.textAreaExampleState
             in
-            ( { moduleStates | textAreaExampleState = textAreaExampleState }
-            , Cmd.map TextAreaExampleMsg cmd
-            )
+                ( { moduleStates | textAreaExampleState = textAreaExampleState }
+                , Cmd.map TextAreaExampleMsg cmd
+                )
 
         TextInputExampleMsg msg ->
             let
                 ( textInputExampleState, cmd ) =
                     TextInputExample.update msg moduleStates.textInputExampleState
             in
-            ( { moduleStates | textInputExampleState = textInputExampleState }
-            , Cmd.map TextInputExampleMsg cmd
-            )
+                ( { moduleStates | textInputExampleState = textInputExampleState }
+                , Cmd.map TextInputExampleMsg cmd
+                )
 
         NoOp ->
             ( moduleStates, Cmd.none )
@@ -162,6 +173,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
     , Examples.Page.example NoOp
