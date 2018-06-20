@@ -173,7 +173,7 @@ squareLabelStyles assets model colorTheme =
     in
     css
         (if model.disabled then
-            [ cursor auto ] ++ baseStyles
+            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
          else
             [ cursor pointer ] ++ baseStyles
         )
@@ -205,7 +205,7 @@ lockLabelStyles image model =
     in
     css
         (if model.disabled then
-            [ cursor auto ] ++ baseStyles
+            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
          else
             [ cursor pointer ] ++ baseStyles
         )
