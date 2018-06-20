@@ -60,6 +60,19 @@ type IsSelected
     | PartiallySelected
 
 
+{-| -}
+type Theme
+    = Square ColorTheme
+    | LockOnInside
+    | Premium
+
+
+{-| -}
+type ColorTheme
+    = Default
+    | Gray
+
+
 selectedToMaybe : IsSelected -> Maybe Bool
 selectedToMaybe selected =
     case selected of
@@ -100,64 +113,14 @@ buildCheckbox assets modifierClasses model labelContent =
         case model.theme of
             Square colorTheme ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , labelStyles =
-                    css
-                        [ backgroundRepeat noRepeat
-                        , color Colors.gray20
-                        , if model.disabled then
-                            cursor auto
-                          else
-                            cursor pointer
-                        , Fonts.baseFont
-                        , fontSize (px 16)
-                        , outline none
-                        , padding2 (px 13) zero
-                        , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , property "background-position" "left center"
-                        , verticalAlign middle
-                        , display inlineBlock
-                        , case model.selected of
-                            Selected ->
-                                backgroundImage assets.checkboxChecked_svg
-
-                            NotSelected ->
-                                backgroundImage assets.checkboxUnchecked_svg
-
-                            PartiallySelected ->
-                                backgroundImage assets.checkboxCheckedPartially_svg
-                        , Css.batch <|
-                            case colorTheme of
-                                Gray ->
-                                    [ color Colors.gray45 ]
-
-                                Default ->
-                                    []
-                        ]
+                , labelStyles = squareLabelStyles assets model colorTheme
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
             LockOnInside ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
-                , labelStyles =
-                    css
-                        [ backgroundImage assets.checkboxLockOnInside_svg
-                        , backgroundRepeat noRepeat
-                        , backgroundSize (px 24)
-                        , color Colors.gray20
-                        , if model.disabled then
-                            cursor auto
-                          else
-                            cursor pointer
-                        , Fonts.baseFont
-                        , fontSize (px 16)
-                        , outline none
-                        , padding2 (px 13) zero
-                        , paddingLeft (px 35)
-                        , property "background-position" "left center"
-                        , verticalAlign middle
-                        , display inlineBlock
-                        ]
+                , labelStyles = lockLabelStyles assets.checkboxLockOnInside_svg model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -168,6 +131,112 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
+
+
+squareLabelStyles assets model colorTheme =
+    css
+        [ backgroundRepeat noRepeat
+        , color Colors.gray20
+        , if model.disabled then
+            cursor auto
+          else
+            cursor pointer
+        , Fonts.baseFont
+        , fontSize (px 16)
+        , outline none
+        , padding2 (px 13) zero
+        , paddingLeft (px (29 + 6)) -- checkbox width + padding
+        , property "background-position" "left center"
+        , verticalAlign middle
+        , display inlineBlock
+        , case model.selected of
+            Selected ->
+                backgroundImage assets.checkboxChecked_svg
+
+            NotSelected ->
+                backgroundImage assets.checkboxUnchecked_svg
+
+            PartiallySelected ->
+                backgroundImage assets.checkboxCheckedPartially_svg
+        , Css.batch <|
+            case colorTheme of
+                Gray ->
+                    [ color Colors.gray45 ]
+
+                Default ->
+                    []
+        ]
+
+
+lockLabelStyles image model =
+    let
+        baseStyles =
+            [ -- Positioning
+              display inlineBlock
+            , padding2 (px 13) zero
+            , paddingLeft (px 35)
+            , verticalAlign middle
+
+            -- Text
+            , color Colors.gray20
+            , Fonts.baseFont
+            , fontSize (px 16)
+
+            -- Focus & Hover
+            , outline none
+
+            -- Icon
+            , backgroundImage image
+            , backgroundRepeat noRepeat
+            , backgroundSize (px 24)
+            , property "background-position" "left center"
+            ]
+    in
+    css
+        (if model.disabled then
+            [ cursor auto ] ++ baseStyles
+         else
+            [ cursor pointer ] ++ baseStyles
+        )
+
+
+premiumLabelStyles :
+    Asset
+    -> { a | disabled : Bool }
+    -> Html.Styled.Attribute msg
+premiumLabelStyles image model =
+    let
+        baseStyles =
+            [ -- Positioning
+              alignItems center
+            , displayFlex
+
+            -- Focus & Hover
+            , cursor pointer
+            , outline none
+
+            -- Icon
+            , icon
+            ]
+
+        icon =
+            after
+                [ property "content" "''"
+                , display inlineBlock
+                , width (px 26)
+                , height (px 24)
+                , marginLeft (px 8)
+                , backgroundImage image
+                , backgroundRepeat noRepeat
+                , backgroundPosition Css.center
+                ]
+    in
+    css
+        (if model.disabled then
+            opacity (num 0.4) :: baseStyles
+         else
+            baseStyles
+        )
 
 
 labelClass : IsSelected -> Html.Styled.Attribute msg
@@ -256,58 +325,6 @@ viewLabel model content class theme =
         , theme
         ]
         [ content ]
-
-
-premiumLabelStyles :
-    Asset
-    -> { a | disabled : Bool }
-    -> Html.Styled.Attribute msg
-premiumLabelStyles image model =
-    let
-        baseStyles =
-            [ -- Positioning
-              alignItems center
-            , displayFlex
-
-            -- Focus & Hover
-            , cursor pointer
-            , outline none
-
-            -- Icon
-            , icon
-            ]
-
-        icon =
-            after
-                [ property "content" "''"
-                , display inlineBlock
-                , width (px 26)
-                , height (px 24)
-                , marginLeft (px 8)
-                , backgroundImage image
-                , backgroundRepeat noRepeat
-                , backgroundPosition Css.center
-                ]
-    in
-    css
-        (if model.disabled then
-            opacity (num 0.4) :: baseStyles
-         else
-            baseStyles
-        )
-
-
-{-| -}
-type Theme
-    = Square ColorTheme
-    | LockOnInside
-    | Premium
-
-
-{-| -}
-type ColorTheme
-    = Default
-    | Gray
 
 
 {-| The assets used in this module.
