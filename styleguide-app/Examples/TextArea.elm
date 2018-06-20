@@ -179,10 +179,9 @@ type alias Id =
 
 assets =
     { checkboxUnchecked_svg = Asset "checkboxUnchecked_svg"
-    , checkboxChecked_svg = Asset "checkboxChecked_svg"
+    , checkboxChecked_svg = Asset "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAb1BMVEX///9DoEc2nDt1tXcoly601bU5nD1nr2o/n0Pw9vAzmzhAn0QxmjYumTMqmDAsmTK92r6UxJacyJ1YqFu52LvC3MOQwpIZlCGLwI3M4s2u0q+q0KueyaCkzKX1+fXq8+rh7uHW6NeDvIVztHVssW4Cx6cUAAACZUlEQVR4nO3Zi1LTYBRF4dOSQkqt4AURL6Di+z+jQWVsadJcen5z9pm1HiDZ3yQzSSZmRERERERERERERERERERERERERERERERElKj7uQeUbrVdzz2hbKuqrlMTV9VikZr4BExN/ANMTHwGpiX+AyYl7gJTEveBCYkvgemIh8BkxDZgKmI7sCEuH+ae5lMXcLF8nHuaT93As7mn+QRQPYDqAVQPoHoA1QOoHkD1AKoHUD2A6gFUD6B6ANUDqB5A9QCqB1A9gOoBVA+gegDVA6geQPUAqgfw/3Rd7MhRgLcXhY4cBHhTLc7LEIMA755mFCFGAhYhBgF+f57hTowGdCcGAX672jm1KzEI8GG7WZQhRgFebvZP70YMAlwvNy8HOBGjAOsDoBMxCPB+U7eNcCAGAa7bgQ7EIECzi/OOIScSwwBLEQMByxBDAUsQgwHNfjoTwwG9iQGBDXHpRwwJ9CQGBZo9OhHDAr2IgYFmZw7E0EAPYnDg6cTwwFOJAsDTiBJAsx+TiSLAhng5jSgDnEoUAk4jSgGnEMWA44lywLFEQaDZxxFESeAYoiiwIb4aRpQFDiUKA80+DCBKA4cQxYFmb3qI8sCGuD1GTAA8TkwBPEKs33U9MbWAZm+7iC3/xiWBR4hZgCOJikCzL1f9MmngCKIq0Ozr6+TAhjjkKioDBxG1gWaf+25UdWAvUR/YQ8wANPvU9aqdBXiEmAXYScwD7PjozQRsJeYCthCzAQ+I+YBm76vkwD1iTuAOMSvQ7LpKDvxLzAz8TcwNNLu5TQ40u5t7ABERERERERERERERERFN7hdTvSHAHrHcMgAAAABJRU5ErkJggg=="
     , checkboxCheckedPartially_svg = Asset "checkboxCheckedPartially_svg"
     , iconPremiumUnlocked_png = Asset "iconPremiumUnlocked_png"
-    , iconCheck_png = Asset "iconCheck_png"
     , iconPremiumLocked_png = Asset "iconPremiumLocked_png"
     , checkboxLockOnInside_svg = Asset "checkboxLockOnInside_svg"
     , iconPremiumKey_png = Asset "iconPremiumKey_png"
