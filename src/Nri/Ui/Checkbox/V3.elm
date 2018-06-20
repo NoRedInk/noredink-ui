@@ -134,38 +134,49 @@ buildCheckbox assets modifierClasses model labelContent =
 
 
 squareLabelStyles assets model colorTheme =
+    let
+        baseStyles =
+            [ -- Postioning
+              display inlineBlock
+            , padding2 (px 13) zero
+            , paddingLeft (px (29 + 6)) -- checkbox width + padding
+            , verticalAlign middle
+
+            -- Text
+            , color Colors.gray20
+            , Fonts.baseFont
+            , fontSize (px 16)
+            , Css.batch <|
+                case colorTheme of
+                    Gray ->
+                        [ color Colors.gray45 ]
+
+                    Default ->
+                        []
+
+            -- Focus & Hover
+            , outline none
+
+            -- Icon
+            , backgroundRepeat noRepeat
+            , property "background-position" "left center"
+            , case model.selected of
+                Selected ->
+                    backgroundImage assets.checkboxChecked_svg
+
+                NotSelected ->
+                    backgroundImage assets.checkboxUnchecked_svg
+
+                PartiallySelected ->
+                    backgroundImage assets.checkboxCheckedPartially_svg
+            ]
+    in
     css
-        [ backgroundRepeat noRepeat
-        , color Colors.gray20
-        , if model.disabled then
-            cursor auto
-          else
-            cursor pointer
-        , Fonts.baseFont
-        , fontSize (px 16)
-        , outline none
-        , padding2 (px 13) zero
-        , paddingLeft (px (29 + 6)) -- checkbox width + padding
-        , property "background-position" "left center"
-        , verticalAlign middle
-        , display inlineBlock
-        , case model.selected of
-            Selected ->
-                backgroundImage assets.checkboxChecked_svg
-
-            NotSelected ->
-                backgroundImage assets.checkboxUnchecked_svg
-
-            PartiallySelected ->
-                backgroundImage assets.checkboxCheckedPartially_svg
-        , Css.batch <|
-            case colorTheme of
-                Gray ->
-                    [ color Colors.gray45 ]
-
-                Default ->
-                    []
-        ]
+        (if model.disabled then
+            [ cursor auto ] ++ baseStyles
+         else
+            [ cursor pointer ] ++ baseStyles
+        )
 
 
 lockLabelStyles image model =
