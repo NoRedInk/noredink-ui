@@ -218,27 +218,6 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            Locked ->
-                { containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
-                , labelStyles =
-                    css
-                        [ backgroundImage (assetPathUrl assets.iconPremiumLocked_png)
-                        , backgroundRepeat noRepeat
-                        , color Colors.gray20
-                        , display inlineBlock
-                        , Fonts.baseFont
-                        , fontSize (px 16)
-                        , minHeight (px 42) -- container height
-                        , outline none
-                        , padding2 (px 13) zero
-                        , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , property "background-position" "left center"
-                        , verticalAlign middle
-                        ]
-                , labelClasses = labelClass model.selected
-                , labelContent = labelContent
-                }
-
             LockOnInside ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
@@ -265,11 +244,6 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            --disabledStyles =
-            --    [ cursor pointer
-            --    , opacity (num 0.4)
-            --    , outline none
-            --    ]
             Premium ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
                 , labelStyles = premiumLabelStyles assets.iconPremiumFlag_svg model
@@ -418,7 +392,6 @@ indeterminateAttr =
 {-| -}
 type Theme
     = Square ColorTheme
-    | Locked
     | LockOnInside
     | Premium
 
