@@ -122,13 +122,13 @@ buildCheckbox assets modifierClasses model labelContent =
                         , display inlineBlock
                         , case model.selected of
                             Selected ->
-                                backgroundImage (assetPathUrl assets.checkboxChecked_svg)
+                                backgroundImage assets.checkboxChecked_svg
 
                             NotSelected ->
-                                backgroundImage (assetPathUrl assets.checkboxUnchecked_svg)
+                                backgroundImage assets.checkboxUnchecked_svg
 
                             PartiallySelected ->
-                                backgroundImage (assetPathUrl assets.checkboxCheckedPartially_svg)
+                                backgroundImage assets.checkboxCheckedPartially_svg
                         , Css.batch <|
                             case colorTheme of
                                 Gray ->
@@ -145,7 +145,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImage (assetPathUrl assets.checkboxLockOnInside_svg)
+                        [ backgroundImage assets.checkboxLockOnInside_svg
                         , backgroundRepeat noRepeat
                         , backgroundSize (px 24)
                         , color Colors.gray20
@@ -168,7 +168,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Premium ->
-                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
+                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
                 , labelStyles = premiumLabelStyles assets.iconPremiumFlag_svg model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -289,7 +289,7 @@ premiumLabelStyles image model =
                 , width (px 26)
                 , height (px 24)
                 , marginLeft (px 8)
-                , backgroundImage (assetPathUrl image)
+                , backgroundImage image
                 , backgroundRepeat noRepeat
                 , backgroundPosition Css.center
                 ]
@@ -300,16 +300,6 @@ premiumLabelStyles image model =
          else
             baseStyles
         )
-
-
-assetPathUrl : Asset -> BackgroundImage {}
-assetPathUrl =
-    url << Nri.Ui.AssetPath.Css.url
-
-
-indeterminateAttr : RootHtml.Attribute msg
-indeterminateAttr =
-    RootAttributes.property "indeterminate" (Json.Encode.bool True)
 
 
 {-| -}
@@ -333,7 +323,11 @@ type alias Assets r =
         , checkboxChecked_svg : Asset
         , checkboxCheckedPartially_svg : Asset
         , iconPremiumUnlocked_png : Asset
-        , iconPremiumLocked_png : Asset
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
     }
+
+
+backgroundImage =
+    Nri.Ui.AssetPath.Css.url
+        >> property "background-image"

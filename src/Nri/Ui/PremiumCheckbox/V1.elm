@@ -7,7 +7,10 @@ module Nri.Ui.PremiumCheckbox.V1 exposing (PremiumConfig, premium)
 -}
 
 import Accessibility.Styled as Html
+import Css exposing (..)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.AssetPath exposing (Asset(..))
+import Nri.Ui.AssetPath.Css
 import Nri.Ui.Checkbox.V3 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 
@@ -55,19 +58,41 @@ premium assets config =
             else
                 Checkbox.Square Checkbox.Default
     in
-    Checkbox.viewWithLabel assets
-        { identifier = config.id
-        , label = config.label
-        , setterMsg =
-            if isLocked then
-                \_ -> config.onLockedClick
-            else
-                config.onChange
-        , selected = config.selected
-        , disabled = config.disabled
-        , theme = theme
-        , noOpMsg = config.noOpMsg
-        }
+    Html.span []
+        [ Checkbox.viewWithLabel assets
+            { identifier = config.id
+            , label = config.label
+            , setterMsg =
+                if isLocked then
+                    \_ -> config.onLockedClick
+                else
+                    config.onChange
+            , selected = config.selected
+            , disabled = config.disabled
+            , theme = theme
+            , noOpMsg = config.noOpMsg
+            }
+        , if
+            (isLocked && config.showFlagWhenLocked)
+                || (not isLocked && config.contentPremiumLevel /= Free)
+          then
+            Html.div
+                [ Attributes.class "checkbox-PremiumClass"
+                , css
+                    [ property "content" "''"
+                    , display inlineBlock
+                    , width (px 26)
+                    , height (px 24)
+                    , marginLeft (px 8)
+                    , backgroundImage assets.iconPremiumFlag_svg
+                    , backgroundRepeat noRepeat
+                    , backgroundPosition Css.center
+                    ]
+                ]
+                []
+          else
+            Html.text ""
+        ]
 
 
 {-| The assets used in this module.
@@ -82,3 +107,8 @@ type alias Assets r =
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
     }
+
+
+backgroundImage =
+    Nri.Ui.AssetPath.Css.url
+        >> property "background-image"
