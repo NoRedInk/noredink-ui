@@ -143,16 +143,16 @@ squareLabelStyles assets model colorTheme =
             , verticalAlign middle
 
             -- Text
-            , color Colors.gray20
             , Fonts.baseFont
             , fontSize (px 16)
             , Css.batch <|
+                -- If this is the only difference, is it worth having a color theme at all??
                 case colorTheme of
                     Gray ->
                         [ color Colors.gray45 ]
 
                     Default ->
-                        []
+                        [ color Colors.gray20 ]
 
             -- Focus & Hover
             , outline none
