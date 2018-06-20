@@ -56,7 +56,7 @@ premium assets config =
             else if config.contentPremiumLevel /= Free then
                 Checkbox.Premium
             else
-                Checkbox.Square Checkbox.Default
+                Checkbox.Square
     in
     Html.div
         [ css

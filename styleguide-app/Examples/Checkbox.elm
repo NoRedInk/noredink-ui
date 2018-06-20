@@ -108,7 +108,7 @@ viewInteractableCheckbox id state =
         , setterMsg = ToggleCheck id
         , selected = isSelected id state
         , disabled = False
-        , theme = Checkbox.Square Checkbox.Default
+        , theme = Checkbox.Square
         , noOpMsg = NoOp
         }
 
@@ -122,7 +122,7 @@ viewIndeterminateCheckbox id state =
         , setterMsg = ToggleCheck id
         , selected = Checkbox.PartiallySelected
         , disabled = True
-        , theme = Checkbox.Square Checkbox.Default
+        , theme = Checkbox.Square
         , noOpMsg = NoOp
         }
 
@@ -150,7 +150,7 @@ viewDisabledCheckbox id state =
         , setterMsg = ToggleCheck id
         , selected = isSelected id state
         , disabled = True
-        , theme = Checkbox.Square Checkbox.Default
+        , theme = Checkbox.Square
         , noOpMsg = NoOp
         }
 

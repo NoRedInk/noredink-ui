@@ -1,7 +1,6 @@
 module Nri.Ui.Checkbox.V3
     exposing
-        ( ColorTheme(..)
-        , IsSelected(..)
+        ( IsSelected(..)
         , Model
         , Theme(..)
         , view
@@ -10,7 +9,7 @@ module Nri.Ui.Checkbox.V3
 
 {-|
 
-@docs Model, Theme, ColorTheme, IsSelected
+@docs Model, Theme, IsSelected
 
 @docs view, viewWithLabel
 
@@ -62,15 +61,9 @@ type IsSelected
 
 {-| -}
 type Theme
-    = Square ColorTheme
+    = Square
     | LockOnInside
     | Premium
-
-
-{-| -}
-type ColorTheme
-    = Default
-    | Gray
 
 
 selectedToMaybe : IsSelected -> Maybe Bool
@@ -111,9 +104,9 @@ buildCheckbox assets modifierClasses model labelContent =
     in
     viewCheckbox model <|
         case model.theme of
-            Square colorTheme ->
+            Square ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , labelStyles = squareLabelStyles assets model colorTheme
+                , labelStyles = squareLabelStyles assets model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -133,7 +126,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
 
-squareLabelStyles assets model colorTheme =
+squareLabelStyles assets model =
     let
         baseStyles =
             [ -- Postioning
@@ -145,14 +138,6 @@ squareLabelStyles assets model colorTheme =
             -- Text
             , Fonts.baseFont
             , fontSize (px 16)
-            , Css.batch <|
-                -- If this is the only difference, is it worth having a color theme at all??
-                case colorTheme of
-                    Gray ->
-                        [ color Colors.gray45 ]
-
-                    Default ->
-                        [ color Colors.gray20 ]
 
             -- Focus & Hover
             , outline none

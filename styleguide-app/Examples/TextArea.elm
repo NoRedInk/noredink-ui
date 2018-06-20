@@ -49,7 +49,7 @@ example parentMessage state =
                 , setterMsg = ToggleLabel
                 , selected = state.showLabel
                 , disabled = False
-                , theme = Checkbox.Square Checkbox.Default
+                , theme = Checkbox.Square
                 , noOpMsg = NoOp
                 }
                 |> Html.Styled.toUnstyled
@@ -59,7 +59,7 @@ example parentMessage state =
                 , setterMsg = ToggleAutoResize
                 , selected = state.autoResize
                 , disabled = False
-                , theme = Checkbox.Square Checkbox.Default
+                , theme = Checkbox.Square
                 , noOpMsg = NoOp
                 }
                 |> Html.Styled.toUnstyled
@@ -69,7 +69,7 @@ example parentMessage state =
                 , setterMsg = ToggleErrorState
                 , selected = state.isInError
                 , disabled = False
-                , theme = Checkbox.Square Checkbox.Default
+                , theme = Checkbox.Square
                 , noOpMsg = NoOp
                 }
                 |> Html.Styled.toUnstyled
