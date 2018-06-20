@@ -265,31 +265,6 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            Unlockable ->
-                { containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
-                , labelStyles =
-                    css
-                        [ backgroundImageDeprecated assets PremiumKey
-                        , backgroundRepeat noRepeat
-                        , color Colors.gray20
-                        , if model.disabled then
-                            cursor auto
-                          else
-                            cursor pointer
-                        , display inlineBlock
-                        , Fonts.baseFont
-                        , fontSize (px 16)
-                        , minHeight (px 42) -- container height
-                        , outline none
-                        , padding2 (px 13) zero
-                        , paddingLeft (px (29 + 6)) -- checkbox width + padding
-                        , property "background-position" "left center"
-                        , verticalAlign middle
-                        ]
-                , labelClasses = labelClass model.selected
-                , labelContent = labelContent
-                }
-
             --disabledStyles =
             --    [ cursor pointer
             --    , opacity (num 0.4)
@@ -440,7 +415,6 @@ type Theme
     = Square ColorTheme
     | Locked
     | LockOnInside
-    | Unlockable
     | Premium
 
 
@@ -469,7 +443,6 @@ type alias Assets r =
         , iconPremiumUnlocked_png : Asset
         , iconPremiumLocked_png : Asset
         , checkboxLockOnInside_svg : Asset
-        , iconPremiumKey_png : Asset
         , iconPremiumFlag_svg : Asset
     }
 
@@ -480,7 +453,6 @@ type CheckboxImage
     | CheckboxCheckedPartially
     | PremiumFlag
     | PremiumLocked
-    | PremiumKey
     | CheckboxLockOnInside
 
 
@@ -501,9 +473,6 @@ checkboxAssetPath assets checkboxImage =
 
         CheckboxLockOnInside ->
             assets.checkboxLockOnInside_svg
-
-        PremiumKey ->
-            assets.iconPremiumKey_png
 
         PremiumFlag ->
             assets.iconPremiumFlag_svg
