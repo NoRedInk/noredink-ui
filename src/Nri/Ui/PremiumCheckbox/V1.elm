@@ -102,8 +102,6 @@ type alias Assets r =
         | checkboxUnchecked_svg : Asset
         , checkboxChecked_svg : Asset
         , checkboxCheckedPartially_svg : Asset
-        , iconPremiumUnlocked_png : Asset
-        , iconPremiumLocked_png : Asset
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
     }

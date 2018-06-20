@@ -169,7 +169,7 @@ buildCheckbox assets modifierClasses model labelContent =
 
             Premium ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
-                , labelStyles = premiumLabelStyles assets.iconPremiumFlag_svg model
+                , labelStyles = premiumLabelStyles assets.checkboxLockOnInside_svg model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -322,9 +322,7 @@ type alias Assets r =
         | checkboxUnchecked_svg : Asset
         , checkboxChecked_svg : Asset
         , checkboxCheckedPartially_svg : Asset
-        , iconPremiumUnlocked_png : Asset
         , checkboxLockOnInside_svg : Asset
-        , iconPremiumFlag_svg : Asset
     }
 
 
