@@ -142,10 +142,6 @@ premium assets config =
                     [ "PremiumClass" ]
                   else
                     []
-                , if config.disabled then
-                    [ "Opacified" ]
-                  else
-                    []
                 ]
 
         theme =
@@ -203,13 +199,13 @@ buildCheckbox assets modifierClasses model labelContent =
                         , display inlineBlock
                         , case model.selected of
                             Selected ->
-                                backgroundImage assets CheckboxChecked
+                                backgroundImageDeprecated assets CheckboxChecked
 
                             NotSelected ->
-                                backgroundImage assets CheckboxUnchecked
+                                backgroundImageDeprecated assets CheckboxUnchecked
 
                             PartiallySelected ->
-                                backgroundImage assets CheckboxCheckedPartially
+                                backgroundImageDeprecated assets CheckboxCheckedPartially
                         , Css.batch <|
                             case colorTheme of
                                 Gray ->
@@ -226,7 +222,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImage assets PremiumLocked
+                        [ backgroundImageDeprecated assets PremiumLocked
                         , backgroundRepeat noRepeat
                         , color Colors.gray20
                         , display inlineBlock
@@ -247,7 +243,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImage assets CheckboxLockOnInside
+                        [ backgroundImageDeprecated assets CheckboxLockOnInside
                         , backgroundRepeat noRepeat
                         , backgroundSize (px 24)
                         , color Colors.gray20
@@ -273,7 +269,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "UnlockableClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImage assets PremiumKey
+                        [ backgroundImageDeprecated assets PremiumKey
                         , backgroundRepeat noRepeat
                         , color Colors.gray20
                         , if model.disabled then
@@ -294,37 +290,14 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            Disabled ->
-                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "Opacified" ])
-                , labelStyles =
-                    css
-                        [ cursor pointer
-                        , opacity (num 0.4)
-                        , outline none
-                        ]
-                , labelClasses = labelClass model.selected
-                , labelContent = labelContent
-                }
-
+            --disabledStyles =
+            --    [ cursor pointer
+            --    , opacity (num 0.4)
+            --    , outline none
+            --    ]
             Premium ->
                 { containerClasses = toClassList (modifierClasses ++ [ "SquareClass", "PremiumClass" ])
-                , labelStyles =
-                    css
-                        [ alignItems center
-                        , cursor pointer
-                        , displayFlex
-                        , outline none
-                        , after
-                            [ property "content" "''"
-                            , display inlineBlock
-                            , width (px 26)
-                            , height (px 24)
-                            , marginLeft (px 8)
-                            , backgroundImage assets PremiumFlag
-                            , backgroundRepeat noRepeat
-                            , backgroundPosition Css.center
-                            ]
-                        ]
+                , labelStyles = premiumLabelStyles assets.iconPremiumFlag_svg model
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -418,6 +391,45 @@ viewLabel model content class theme =
         [ content ]
 
 
+premiumLabelStyles :
+    Asset
+    -> { a | disabled : Bool }
+    -> Html.Styled.Attribute msg
+premiumLabelStyles image model =
+    let
+        baseStyles =
+            [ -- Positioning
+              alignItems center
+            , displayFlex
+
+            -- Focus & Hover
+            , cursor pointer
+            , outline none
+
+            -- Icon
+            , icon
+            ]
+
+        icon =
+            after
+                [ property "content" "''"
+                , display inlineBlock
+                , width (px 26)
+                , height (px 24)
+                , marginLeft (px 8)
+                , backgroundImage ((url << Nri.Ui.AssetPath.Css.url) image)
+                , backgroundRepeat noRepeat
+                , backgroundPosition Css.center
+                ]
+    in
+    css
+        (if model.disabled then
+            opacity (num 0.4) :: baseStyles
+         else
+            baseStyles
+        )
+
+
 indeterminateAttr : RootHtml.Attribute msg
 indeterminateAttr =
     RootAttributes.property "indeterminate" (Json.Encode.bool True)
@@ -429,7 +441,6 @@ type Theme
     | Locked
     | LockOnInside
     | Unlockable
-    | Disabled
     | Premium
 
 
@@ -443,8 +454,8 @@ type ColorTheme
 -- ICONS used instead of default browser implementations
 
 
-backgroundImage : Assets r -> CheckboxImage -> Css.Style
-backgroundImage assets checkboxImage =
+backgroundImageDeprecated : Assets r -> CheckboxImage -> Css.Style
+backgroundImageDeprecated assets checkboxImage =
     property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
 
 
