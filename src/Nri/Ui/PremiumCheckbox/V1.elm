@@ -1,6 +1,9 @@
 module Nri.Ui.PremiumCheckbox.V1 exposing (PremiumConfig, premium)
 
-{-| @docs PremiumConfig, premium
+{-|
+
+@docs PremiumConfig, premium
+
 -}
 
 import Accessibility.Styled as Html
@@ -17,6 +20,7 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
   - `onChange`: A message for when the user toggles the checkbox
   - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
     If you get this message, you should show an `Nri.Ui.Premium.Model.view`
+
 -}
 type alias PremiumConfig msg =
     { label : String
@@ -54,41 +58,41 @@ premium assets config =
             else
                 Checkbox.Square Checkbox.Default
     in
-        Html.span []
-            [ Checkbox.viewWithLabel assets
-                { identifier = config.id
-                , label = config.label
-                , setterMsg =
-                    if isLocked then
-                        \_ -> config.onLockedClick
-                    else
-                        config.onChange
-                , selected = config.selected
-                , disabled = config.disabled
-                , theme = theme
-                , noOpMsg = config.noOpMsg
-                }
-            , if
-                (isLocked && config.showFlagWhenLocked)
-                    || (not isLocked && config.contentPremiumLevel /= Free)
-              then
-                Html.div
-                    [ Attributes.class "checkbox-PremiumClass"
-                    , css
-                        [ property "content" "''"
-                        , display inlineBlock
-                        , width (px 26)
-                        , height (px 24)
-                        , marginLeft (px 8)
-                        , backgroundImage assets.iconPremiumFlag_svg
-                        , backgroundRepeat noRepeat
-                        , backgroundPosition Css.center
-                        ]
+    Html.span []
+        [ Checkbox.viewWithLabel assets
+            { identifier = config.id
+            , label = config.label
+            , setterMsg =
+                if isLocked then
+                    \_ -> config.onLockedClick
+                else
+                    config.onChange
+            , selected = config.selected
+            , disabled = config.disabled
+            , theme = theme
+            , noOpMsg = config.noOpMsg
+            }
+        , if
+            (isLocked && config.showFlagWhenLocked)
+                || (not isLocked && config.contentPremiumLevel /= Free)
+          then
+            Html.div
+                [ Attributes.class "checkbox-PremiumClass"
+                , css
+                    [ property "content" "''"
+                    , display inlineBlock
+                    , width (px 26)
+                    , height (px 24)
+                    , marginLeft (px 8)
+                    , backgroundImage assets.iconPremiumFlag_svg
+                    , backgroundRepeat noRepeat
+                    , backgroundPosition Css.center
                     ]
-                    []
-              else
-                Html.text ""
-            ]
+                ]
+                []
+          else
+            Html.text ""
+        ]
 
 
 {-| The assets used in this module.
