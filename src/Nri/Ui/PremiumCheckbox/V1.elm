@@ -58,7 +58,12 @@ premium assets config =
             else
                 Checkbox.Square Checkbox.Default
     in
-    Html.span []
+    Html.div
+        [ css
+            [ displayFlex
+            , alignItems center
+            ]
+        ]
         [ Checkbox.viewWithLabel assets
             { identifier = config.id
             , label = config.label
@@ -86,7 +91,7 @@ premium assets config =
                     , marginLeft (px 8)
                     , backgroundImage assets.iconPremiumFlag_svg
                     , backgroundRepeat noRepeat
-                    , backgroundPosition Css.center
+                    , backgroundPosition center
                     ]
                 ]
                 []
