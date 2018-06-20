@@ -110,7 +110,6 @@ buildCheckbox assets modifierClasses model labelContent =
                             cursor pointer
                         , Fonts.baseFont
                         , fontSize (px 16)
-                        , minHeight (px 42) -- container height
                         , outline none
                         , padding2 (px 13) zero
                         , paddingLeft (px (29 + 6)) -- checkbox width + padding
@@ -152,7 +151,6 @@ buildCheckbox assets modifierClasses model labelContent =
                             cursor pointer
                         , Fonts.baseFont
                         , fontSize (px 16)
-                        , minHeight (px 42) -- container height
                         , outline none
                         , padding2 (px 13) zero
                         , paddingLeft (px 35)
