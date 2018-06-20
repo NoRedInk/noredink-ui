@@ -3,9 +3,7 @@ module Nri.Ui.Checkbox.V3
         ( ColorTheme(..)
         , IsSelected(..)
         , Model
-        , PremiumConfig
         , Theme(..)
-        , premium
         , view
         , viewWithLabel
         )
@@ -15,11 +13,6 @@ module Nri.Ui.Checkbox.V3
 @docs Model, Theme, ColorTheme, IsSelected
 
 @docs view, viewWithLabel
-
-
-## Premium
-
-@docs PremiumConfig, premium
 
 -}
 
@@ -40,7 +33,6 @@ import Json.Encode
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V2 as HtmlExtra
@@ -99,75 +91,6 @@ viewWithLabel : Assets a -> Model msg -> Html.Html msg
 viewWithLabel assets model =
     buildCheckbox assets [] model <|
         Html.span [] [ Html.text model.label ]
-
-
-{-|
-
-  - `onChange`: A message for when the user toggles the checkbox
-  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
-
--}
-type alias PremiumConfig msg =
-    { label : String
-    , id : String
-    , selected : IsSelected
-    , disabled : Bool
-    , teacherPremiumLevel : PremiumLevel
-    , contentPremiumLevel : PremiumLevel
-    , showFlagWhenLocked : Bool
-    , onChange : Bool -> msg
-    , onLockedClick : msg
-    , noOpMsg : msg
-    }
-
-
-{-| A checkbox that should be used for premium content
-
-This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
-
--}
-premium : Assets a -> PremiumConfig msg -> Html.Html msg
-premium assets config =
-    let
-        isLocked =
-            not <|
-                PremiumLevel.allowedFor
-                    config.contentPremiumLevel
-                    config.teacherPremiumLevel
-
-        modifierClasses =
-            List.concat
-                [ if config.showFlagWhenLocked && config.contentPremiumLevel /= Free then
-                    [ "PremiumClass" ]
-                  else
-                    []
-                ]
-
-        theme =
-            if isLocked then
-                LockOnInside
-            else if config.contentPremiumLevel /= Free then
-                Premium
-            else
-                Square Default
-    in
-    buildCheckbox assets
-        modifierClasses
-        { identifier = config.id
-        , label = config.label
-        , setterMsg =
-            if isLocked then
-                \_ -> config.onLockedClick
-            else
-                config.onChange
-        , selected = config.selected
-        , disabled = config.disabled
-        , theme = theme
-        , noOpMsg = config.noOpMsg
-        }
-    <|
-        Html.span [] [ Html.text config.label ]
 
 
 buildCheckbox : Assets a -> List String -> Model msg -> Html.Html msg -> Html.Html msg
