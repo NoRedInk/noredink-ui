@@ -28,7 +28,6 @@ import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V2 as HtmlExtra
@@ -132,23 +131,10 @@ squareLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute ms
 squareLabelStyles model image =
     let
         baseStyles =
-            [ -- Postioning
-              display inlineBlock
-            , padding2 (px 13) zero
-            , paddingLeft (px (29 + 6)) -- checkbox width + padding
-            , verticalAlign middle
-
-            -- Text
-            , Fonts.baseFont
-            , fontSize (px 16)
-
-            -- Focus & Hover
+            [ positioning
+            , textStyle
             , outline none
-
-            -- Icon
-            , backgroundRepeat noRepeat
-            , property "background-position" "left center"
-            , backgroundImage image
+            , addIcon image
             ]
     in
     css
@@ -163,25 +149,10 @@ lockLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute msg
 lockLabelStyles model image =
     let
         baseStyles =
-            [ -- Positioning
-              display inlineBlock
-            , padding2 (px 13) zero
-            , paddingLeft (px 35)
-            , verticalAlign middle
-
-            -- Text
-            , color Colors.gray20
-            , Fonts.baseFont
-            , fontSize (px 16)
-
-            -- Focus & Hover
+            [ positioning
+            , textStyle
             , outline none
-
-            -- Icon
-            , backgroundImage image
-            , backgroundRepeat noRepeat
-            , backgroundSize (px 24)
-            , property "background-position" "left center"
+            , addIcon image
             ]
     in
     css
@@ -190,6 +161,34 @@ lockLabelStyles model image =
          else
             [ cursor pointer ] ++ baseStyles
         )
+
+
+positioning : Style
+positioning =
+    batch
+        [ display inlineBlock
+        , padding2 (px 13) zero
+        , paddingLeft (px (29 + 6)) -- checkbox width + padding
+        , verticalAlign middle
+        ]
+
+
+textStyle : Style
+textStyle =
+    batch
+        [ Fonts.baseFont
+        , fontSize (px 16)
+        ]
+
+
+addIcon : Asset -> Style
+addIcon icon =
+    batch
+        [ backgroundImage icon
+        , backgroundRepeat noRepeat
+        , backgroundSize (px 24)
+        , property "background-position" "left center"
+        ]
 
 
 labelClass : IsSelected -> Html.Styled.Attribute msg
