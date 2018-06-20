@@ -22,14 +22,11 @@ import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import Html as RootHtml
-import Html.Attributes as RootAttributes
 import Html.Events exposing (defaultOptions)
-import Html.Styled exposing (fromUnstyled, toUnstyled)
+import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode
-import Json.Encode
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Colors.V1 as Colors
@@ -326,6 +323,7 @@ type alias Assets r =
     }
 
 
+backgroundImage : Asset -> Style
 backgroundImage =
     Nri.Ui.AssetPath.Css.url
         >> property "background-image"
