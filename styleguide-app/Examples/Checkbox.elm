@@ -39,7 +39,6 @@ example parentMessage state =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
-        , viewEditingCheckbox "styleguide-checkbox-is-editing" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
         , h3 [] [ text "Premium Checkboxes" ]
         , Control.view SetPremiumControl state.premiumControl
@@ -142,20 +141,6 @@ viewLockedOnInsideCheckbox id state =
         }
 
 
-viewEditingCheckbox : Id -> State -> Html Msg
-viewEditingCheckbox id state =
-    Checkbox.viewWithLabel
-        assets
-        { identifier = id
-        , label = "This checkbox is for an editing state"
-        , setterMsg = ToggleCheck id
-        , selected = isSelected id state
-        , disabled = True
-        , theme = Checkbox.Square Checkbox.Gray
-        , noOpMsg = NoOp
-        }
-
-
 viewDisabledCheckbox : Id -> State -> Html Msg
 viewDisabledCheckbox id state =
     Checkbox.viewWithLabel
@@ -164,7 +149,7 @@ viewDisabledCheckbox id state =
         , label = "Disabled theme"
         , setterMsg = ToggleCheck id
         , selected = isSelected id state
-        , disabled = False
+        , disabled = True
         , theme = Checkbox.Square Checkbox.Default
         , noOpMsg = NoOp
         }
