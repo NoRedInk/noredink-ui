@@ -199,13 +199,13 @@ buildCheckbox assets modifierClasses model labelContent =
                         , display inlineBlock
                         , case model.selected of
                             Selected ->
-                                backgroundImageDeprecated assets CheckboxChecked
+                                backgroundImage (assetPathUrl assets.checkboxChecked_svg)
 
                             NotSelected ->
-                                backgroundImageDeprecated assets CheckboxUnchecked
+                                backgroundImage (assetPathUrl assets.checkboxUnchecked_svg)
 
                             PartiallySelected ->
-                                backgroundImageDeprecated assets CheckboxCheckedPartially
+                                backgroundImage (assetPathUrl assets.checkboxCheckedPartially_svg)
                         , Css.batch <|
                             case colorTheme of
                                 Gray ->
@@ -222,7 +222,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "LockedClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImageDeprecated assets PremiumLocked
+                        [ backgroundImage (assetPathUrl assets.iconPremiumLocked_png)
                         , backgroundRepeat noRepeat
                         , color Colors.gray20
                         , display inlineBlock
@@ -243,7 +243,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles =
                     css
-                        [ backgroundImageDeprecated assets CheckboxLockOnInside
+                        [ backgroundImage (assetPathUrl assets.checkboxLockOnInside_svg)
                         , backgroundRepeat noRepeat
                         , backgroundSize (px 24)
                         , color Colors.gray20
@@ -392,7 +392,7 @@ premiumLabelStyles image model =
                 , width (px 26)
                 , height (px 24)
                 , marginLeft (px 8)
-                , backgroundImage ((url << Nri.Ui.AssetPath.Css.url) image)
+                , backgroundImage (assetPathUrl image)
                 , backgroundRepeat noRepeat
                 , backgroundPosition Css.center
                 ]
@@ -403,6 +403,11 @@ premiumLabelStyles image model =
          else
             baseStyles
         )
+
+
+assetPathUrl : Asset -> BackgroundImage {}
+assetPathUrl =
+    url << Nri.Ui.AssetPath.Css.url
 
 
 indeterminateAttr : RootHtml.Attribute msg
@@ -424,15 +429,6 @@ type ColorTheme
     | Gray
 
 
-
--- ICONS used instead of default browser implementations
-
-
-backgroundImageDeprecated : Assets r -> CheckboxImage -> Css.Style
-backgroundImageDeprecated assets checkboxImage =
-    property "background-image" (Nri.Ui.AssetPath.Css.url <| checkboxAssetPath assets checkboxImage)
-
-
 {-| The assets used in this module.
 -}
 type alias Assets r =
@@ -445,34 +441,3 @@ type alias Assets r =
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
     }
-
-
-type CheckboxImage
-    = CheckboxUnchecked
-    | CheckboxChecked
-    | CheckboxCheckedPartially
-    | PremiumFlag
-    | PremiumLocked
-    | CheckboxLockOnInside
-
-
-checkboxAssetPath : Assets r -> CheckboxImage -> Asset
-checkboxAssetPath assets checkboxImage =
-    case checkboxImage of
-        CheckboxUnchecked ->
-            assets.checkboxUnchecked_svg
-
-        CheckboxChecked ->
-            assets.checkboxChecked_svg
-
-        CheckboxCheckedPartially ->
-            assets.checkboxCheckedPartially_svg
-
-        PremiumLocked ->
-            assets.iconPremiumLocked_png
-
-        CheckboxLockOnInside ->
-            assets.checkboxLockOnInside_svg
-
-        PremiumFlag ->
-            assets.iconPremiumFlag_svg
