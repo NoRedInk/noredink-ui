@@ -3,6 +3,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 import Assets exposing (assets)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Button
+import Examples.Checkbox
 import Examples.Colors
 import Examples.Dropdown
 import Examples.Fonts
@@ -31,6 +32,7 @@ import String.Extra
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
+    , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
@@ -43,6 +45,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
+    , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
@@ -54,6 +57,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
+    | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
@@ -75,6 +79,13 @@ update msg moduleStates =
             ( { moduleStates | buttonExampleState = buttonExampleState }
             , Cmd.map ButtonExampleMsg cmd
             )
+
+        CheckboxExampleMsg msg ->
+            let
+                ( checkboxExampleState, cmd ) =
+                    Examples.Checkbox.update msg moduleStates.checkboxExampleState
+            in
+            ( { moduleStates | checkboxExampleState = checkboxExampleState }, Cmd.map CheckboxExampleMsg cmd )
 
         DropdownMsg msg ->
             let
@@ -162,6 +173,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
     , Examples.Page.example NoOp

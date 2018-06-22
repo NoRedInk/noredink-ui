@@ -9,6 +9,10 @@ type alias Assets =
     , attention_svg : Asset
     , bulb : String
     , calendar : String
+    , checkboxCheckedPartially_svg : Asset
+    , checkboxChecked_svg : Asset
+    , checkboxLockOnInside_svg : Asset
+    , checkboxUnchecked_svg : Asset
     , checkmark : String
     , class : String
     , clever : String
@@ -32,6 +36,7 @@ type alias Assets =
     , iconCalendar_svg : Asset
     , iconCheck_png : Asset
     , iconFlag_png : Asset
+    , iconPremiumFlag_svg : Asset
     , icons_arrowDownBlue_svg : Asset
     , icons_arrowRightBlue_svg : Asset
     , icons_clockRed_svg : Asset
@@ -60,6 +65,8 @@ type alias Assets =
     , premiumLock_svg : Asset
     , preview : String
     , quiz : String
+    , rating : String
+    , revising : String
     , seemore : String
     , share : String
     , skip : String
@@ -69,6 +76,7 @@ type alias Assets =
     , speedometer : String
     , squiggly_png : Asset
     , startingOffBadge_png : Asset
+    , submitting : String
     , teach_assignments_copyWhite_svg : Asset
     , twitterBlue_svg : Asset
     , unarchiveBlue2x_png : Asset
@@ -76,9 +84,6 @@ type alias Assets =
     , writingcycle : String
     , x : String
     , xWhite_svg : Asset
-    , submitting : String
-    , rating : String
-    , revising : String
     }
 
 
@@ -89,6 +94,10 @@ assets =
     , attention_svg = Asset "assets/images/attention.svg"
     , bulb = "icon-bulb"
     , calendar = "icon-calendar"
+    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
+    , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
+    , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
+    , checkboxUnchecked_svg = Asset "assets/images/checkbox_unchecked.svg"
     , checkmark = "icon-checkmark"
     , class = "icon-class"
     , clever = "icon-clever"
@@ -112,6 +121,7 @@ assets =
     , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
     , iconCheck_png = Asset "assets/images/icon-check.png"
     , iconFlag_png = Asset "assets/images/icon-flag.png"
+    , iconPremiumFlag_svg = Asset "assets/images/icon_premium_flag.svg"
     , icons_arrowDownBlue_svg = Asset "assets/images/arrow-down-blue.svg"
     , icons_arrowRightBlue_svg = Asset "assets/images/arrow-right-blue.svg"
     , icons_clockRed_svg = Asset "assets/images/clock-red.svg"
@@ -139,6 +149,8 @@ assets =
     , premiumLock_svg = Asset "assets/images/premium-lock.svg"
     , preview = "icon-preview"
     , quiz = "icon-quiz"
+    , rating = "icon-rating"
+    , revising = "icon-revising"
     , seemore = "icon-seemore"
     , share = "icon-share"
     , skip = "icon-skip"
@@ -148,6 +160,7 @@ assets =
     , speedometer = "icon-speedometer"
     , squiggly_png = Asset "assets/images/squiggly.png"
     , startingOffBadge_png = Asset "assets/images/starting-off-badge.png"
+    , submitting = "icon-submitting"
     , teach_assignments_copyWhite_svg = Asset "assets/images/copy-white.svg"
     , twitterBlue_svg = Asset "assets/images/twitter-blue.svg"
     , unarchiveBlue2x_png = Asset "assets/images/unarchive-blue_2x.png"
@@ -155,7 +168,4 @@ assets =
     , writingcycle = "icon-writingcycle"
     , x = "icon-x"
     , xWhite_svg = Asset "assets/images/x-white.svg"
-    , submitting = "icon-submitting"
-    , rating = "icon-rating"
-    , revising = "icon-revising"
     }
