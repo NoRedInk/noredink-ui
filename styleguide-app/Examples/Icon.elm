@@ -49,7 +49,11 @@ example =
             --, { icon = Icon.guidedWrite, background = Light, alt = "GuidedWrite" }
             , { icon = Icon.writingAssignment, background = Light, alt = "WritingAssignment" }
             ]
-        , viewIconSection "Assignment Actions"
+        , viewIconSection "Student Assignment Actions"
+            [ { icon = Icon.assignmentStartButtonPrimary, background = Light, alt = "Start primary" }
+            , { icon = Icon.assignmentStartButtonSecondary, background = Light, alt = "Start secondary" }
+            ]
+        , viewIconSection "Teacher Assignment Actions"
             [ { icon = Icon.unarchive, background = Light, alt = "Unarchive" }
             , { icon = Icon.share, background = Light, alt = "Share" }
             , { icon = Icon.seeMore, background = Light, alt = "See More" }
