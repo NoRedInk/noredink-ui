@@ -6,6 +6,7 @@ module Examples.Fonts exposing (example)
 
 -}
 
+import HeadingsStyled as Headings
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
@@ -18,13 +19,13 @@ example =
     { filename = "Nri.Ui.Fonts.V1.elm"
     , category = Fonts
     , content =
-        [ Html.h3 [ css [ Fonts.baseFont ] ] [ Html.text "baseFont" ]
+        [ Headings.h3 [ Html.text "baseFont" ]
         , Html.p [ css [ Fonts.baseFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-        , Html.h3 [ css [ Fonts.quizFont ] ] [ Html.text "quizFont" ]
+        , Headings.h3 [ Html.text "quizFont" ]
         , Html.p [ css [ Fonts.quizFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-        , Html.h3 [ css [ Fonts.ugFont ] ] [ Html.text "ugFont" ]
+        , Headings.h3 [ Html.text "ugFont" ]
         , Html.p [ css [ Fonts.ugFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
         ]

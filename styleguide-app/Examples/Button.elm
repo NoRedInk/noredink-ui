@@ -5,6 +5,7 @@ module Examples.Button exposing (Msg, State, example, init, update)
 -}
 
 import Debug.Control as Control exposing (Control)
+import Headings
 import Html exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
@@ -207,7 +208,7 @@ buttons assets messages sizes model =
 toggleButtons : ModuleMessages Msg parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
-        [ h3 [] [ text "Button toggle" ]
+        [ Headings.h3 [ text "Button toggle" ]
         , Button.toggleButton
             { onDeselect = messages.showItWorked "onDeselect"
             , onSelect = messages.showItWorked "onSelect"

@@ -8,6 +8,7 @@ module Examples.Page exposing (example, styles)
 
 import Css
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Headings
 import Html exposing (Html)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Page.V1 as Page
@@ -20,18 +21,18 @@ example noOp =
     { filename = "Nri/Ui/Page/V1.elm"
     , category = Pages
     , content =
-        [ Html.h3 [] [ Html.text "Pages for problems" ]
-        , Html.h4 [] [ Html.text "Page: Not Found" ]
+        [ Headings.h3 [ Html.text "Pages for problems" ]
+        , Headings.h4 [ Html.text "Page: Not Found" ]
         , Page.notFound
             { link = noOp
             , name = "The Main Page"
             }
-        , Html.h4 [] [ Html.text "Page: Broken" ]
+        , Headings.h4 [ Html.text "Page: Broken" ]
         , Page.broken
             { link = noOp
             , name = "The Main Page"
             }
-        , Html.h4 [] [ Html.text "Page: No Permission" ]
+        , Headings.h4 [ Html.text "Page: No Permission" ]
         , Page.noPermission
             { link = noOp
             , name = "The Main Page"
