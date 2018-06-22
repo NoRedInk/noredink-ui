@@ -210,7 +210,6 @@ styles =
         [ -- NOTE: these will go away as the modules' styles are integrated with Nri.Css.Site.elm
           [ ModuleExample.styles
           ]
-        , (Examples.Icon.styles |> .css) ()
         , (Examples.Page.styles |> .css) ()
         , (Examples.SegmentedControl.styles |> .css) ()
         , (Button.styles |> .css) assets
