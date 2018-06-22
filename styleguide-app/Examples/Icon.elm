@@ -13,7 +13,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
-import Nri.Ui.Icon.V2 as Icon
+import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
@@ -195,7 +195,6 @@ viewIcon { alt, background, icon } =
             , title alt
             ]
             [ Icon.icon { alt = alt, icon = icon assets }
-                |> Html.fromUnstyled
             ]
         , Text.mediumBody [ Html.text alt ]
         ]
