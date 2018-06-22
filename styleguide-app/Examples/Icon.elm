@@ -9,6 +9,7 @@ module Examples.Icon exposing (example, styles)
 import Assets exposing (assets)
 import Css
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Headings
 import Html exposing (Html)
 import Html.Attributes exposing (style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -23,14 +24,14 @@ example =
     { filename = "Nri/Ui/Icon/V1.elm"
     , category = Icons
     , content =
-        [ Html.h3 [] [ Html.text "Icon" ]
-        , Html.h4 [] [ Html.text "Images" ]
+        [ Headings.h3 [ Html.text "Icon" ]
+        , Headings.h4 [ Html.text "Images" ]
         , Html.div [ styles.class [ Container ] ]
             (List.map viewIcon imageIcons)
-        , Html.h4 [] [ Html.text "Scalable Vector Graphics (SVGs)" ]
+        , Headings.h4 [ Html.text "Scalable Vector Graphics (SVGs)" ]
         , Html.div [ styles.class [ Container ] ]
             (List.map viewIcon svgIcons)
-        , Html.h5 [] [ Html.text "Assignment Types" ]
+        , Headings.h5 [ Html.text "Assignment Types" ]
         , Html.div [ styles.class [ Container ] ]
             (List.map viewIcon assignmentTypeSvgIcons)
         ]

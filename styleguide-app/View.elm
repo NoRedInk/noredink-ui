@@ -4,6 +4,7 @@ import Css exposing (..)
 import Css.Foreign exposing (Snippet)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import DEPRECATED.Css.Namespace
+import Headings
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import Html.CssHelpers
@@ -26,7 +27,7 @@ view model =
             , Html.div [ class [ StyleGuideContent ] ]
                 (case model.route of
                     Routes.Doodad doodad ->
-                        [ Html.h2 []
+                        [ Headings.h2
                             [ Html.a [ Html.Attributes.href "#" ] [ Html.text "(see all)" ] ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\m -> m.filename == ("Nri/" ++ doodad))
@@ -38,7 +39,7 @@ view model =
                     Routes.Category category ->
                         [ Html.section [ class [ Section ] ]
                             [ newComponentsLink
-                            , Html.h2 [] [ Html.text (toString category) ]
+                            , Headings.h2 [ Html.text (toString category) ]
                             , nriThemedModules model.moduleStates
                                 |> List.filter (\doodad -> category == doodad.category)
                                 |> List.map (ModuleExample.view True)
@@ -50,8 +51,8 @@ view model =
                     Routes.All ->
                         [ Html.section [ class [ Section ] ]
                             [ newComponentsLink
-                            , Html.h2 [] [ Html.text "NRI-Themed Modules" ]
-                            , Html.h3 [] [ Html.text "All Categories" ]
+                            , Headings.h2 [ Html.text "NRI-Themed Modules" ]
+                            , Headings.h3 [ Html.text "All Categories" ]
                             , nriThemedModules model.moduleStates
                                 |> List.map (ModuleExample.view True)
                                 |> Html.div []
@@ -66,7 +67,7 @@ view model =
 newComponentsLink : Html Msg
 newComponentsLink =
     Html.div []
-        [ Html.h2 [] [ Html.text "New Styleguide Components" ]
+        [ Headings.h2 [ Html.text "New Styleguide Components" ]
         , Html.div []
             [ Html.text "Future styleguide components can be found in "
             , Html.a [ href "https://app.zeplin.io/project/5973fb495395bdc871ebb055" ] [ Html.text "this Zepplin" ]
@@ -99,7 +100,7 @@ navigation route =
                 ]
     in
     Html.div [ class [ CategoryMenu ] ]
-        [ Html.h4 []
+        [ Headings.h4
             [ Html.text "Categories" ]
         , Html.ul [ class [ CategoryLinks ] ] <|
             Html.li []
