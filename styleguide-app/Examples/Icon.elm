@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Icon.V2 as Icon
+import Nri.Ui.Text.V2 as Text
 
 
 {-| -}
@@ -22,8 +23,7 @@ example =
     { filename = "ui/src/Nri/Icon.elm"
     , category = Icons
     , content =
-        [ Html.h3 [] [ Html.text "Icon" ]
-        , viewIconSection "Mastery Icons"
+        [ viewIconSection "Mastery Icons"
             [ { icon = Icon.gardening, background = Dark, alt = "Gardening" }
             , { icon = Icon.highFive, background = Dark, alt = "HighFive" }
             , { icon = Icon.okay, background = Dark, alt = "Okay" }
@@ -141,7 +141,7 @@ viewIconSection :
     -> Html msg
 viewIconSection headerText icons =
     Html.section []
-        [ Html.h4 [] [ Html.text headerText ]
+        [ Text.subHeading [ Html.text headerText ]
         , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             (List.map viewIcon icons)
         ]
@@ -197,5 +197,5 @@ viewIcon { alt, background, icon } =
             [ Icon.icon { alt = alt, icon = icon assets }
                 |> Html.fromUnstyled
             ]
-        , Html.p [] [ Html.text alt ]
+        , Text.mediumBody [ Html.text alt ]
         ]
