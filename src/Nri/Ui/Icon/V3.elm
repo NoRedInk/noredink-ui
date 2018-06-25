@@ -412,15 +412,15 @@ arrowRight assets =
 
 
 {-| -}
-assignmentStartButtonPrimary : { r | assignmentStartButtonPrimary_svg : String } -> IconType
+assignmentStartButtonPrimary : { r | assignmentStartButtonPrimary_svg : Asset } -> IconType
 assignmentStartButtonPrimary assets =
-    SvgIcon assets.assignmentStartButtonPrimary_svg
+    ImgIcon assets.assignmentStartButtonPrimary_svg
 
 
 {-| -}
-assignmentStartButtonSecondary : { r | assignmentStartButtonSecondary_svg : String } -> IconType
+assignmentStartButtonSecondary : { r | assignmentStartButtonSecondary_svg : Asset } -> IconType
 assignmentStartButtonSecondary assets =
-    SvgIcon assets.assignmentStartButtonSecondary_svg
+    ImgIcon assets.assignmentStartButtonSecondary_svg
 
 
 {-| -}
