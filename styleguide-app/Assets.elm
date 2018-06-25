@@ -9,6 +9,8 @@ type alias Assets =
     , attention_svg : Asset
     , bulb : String
     , calendar : String
+    , assignmentStartButtonPrimary_svg : Asset
+    , assignmentStartButtonSecondary_svg : Asset
     , checkboxCheckedPartially_svg : Asset
     , checkboxChecked_svg : Asset
     , checkboxLockOnInside_svg : Asset
@@ -94,6 +96,8 @@ assets =
     , attention_svg = Asset "assets/images/attention.svg"
     , bulb = "icon-bulb"
     , calendar = "icon-calendar"
+    , assignmentStartButtonPrimary_svg = Asset "assets/images/assignment-start-button-primary.svg"
+    , assignmentStartButtonSecondary_svg = Asset "assets/images/assignment-start-button-secondary.svg"
     , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
     , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
