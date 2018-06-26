@@ -138,10 +138,12 @@ squareLabelStyles model image =
             ]
     in
     css
-        (if model.disabled then
-            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
-         else
-            [ cursor pointer ] ++ baseStyles
+        (baseStyles
+            ++ (if model.disabled then
+                    [ cursor auto, checkboxImageSelector [ opacity (num 0.4) ] ]
+                else
+                    [ cursor pointer ]
+               )
         )
 
 
@@ -156,10 +158,14 @@ lockLabelStyles model image =
             ]
     in
     css
-        (if model.disabled then
-            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
-         else
-            [ cursor pointer ] ++ baseStyles
+        (baseStyles
+            ++ (if model.disabled then
+                    [ cursor auto
+                    , checkboxImageSelector [ opacity (num 0.4) ]
+                    ]
+                else
+                    [ cursor pointer ]
+               )
         )
 
 
@@ -183,7 +189,7 @@ addIcon : Asset -> Style
 addIcon icon =
     batch
         [ position relative
-        , before
+        , checkboxImageSelector
             [ backgroundImage icon
             , backgroundRepeat noRepeat
             , backgroundSize (px 24)
@@ -195,6 +201,11 @@ addIcon icon =
             , height (px 24)
             ]
         ]
+
+
+checkboxImageSelector : List Style -> Style
+checkboxImageSelector =
+    before
 
 
 labelClass : IsSelected -> Html.Styled.Attribute msg
