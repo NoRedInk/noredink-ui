@@ -168,7 +168,6 @@ positioning =
     batch
         [ display inlineBlock
         , padding4 (px 13) zero (px 13) (px 35)
-        , verticalAlign middle
         ]
 
 
@@ -183,10 +182,18 @@ textStyle =
 addIcon : Asset -> Style
 addIcon icon =
     batch
-        [ backgroundImage icon
-        , backgroundRepeat noRepeat
-        , backgroundSize (px 24)
-        , property "background-position" "left center"
+        [ position relative
+        , before
+            [ backgroundImage icon
+            , backgroundRepeat noRepeat
+            , backgroundSize (px 24)
+            , property "content" "''"
+            , position absolute
+            , left zero
+            , top (px 10)
+            , width (px 24)
+            , height (px 24)
+            ]
         ]
 
 
