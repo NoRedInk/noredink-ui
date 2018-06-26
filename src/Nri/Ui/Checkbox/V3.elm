@@ -61,7 +61,7 @@ type IsSelected
 {-| -}
 type Theme
     = Square
-    | LockOnInside
+    | Locked
 
 
 selectedToMaybe : IsSelected -> Maybe Bool
@@ -119,7 +119,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            LockOnInside ->
+            Locked ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles = lockLabelStyles model assets.checkboxLockOnInside_svg
                 , labelClasses = labelClass model.selected
