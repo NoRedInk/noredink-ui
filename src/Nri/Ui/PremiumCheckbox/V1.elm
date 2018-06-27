@@ -68,7 +68,7 @@ premium assets config =
             , disabled = config.disabled
             , theme =
                 if isLocked then
-                    Checkbox.LockOnInside
+                    Checkbox.Locked
                 else
                     Checkbox.Square
             , noOpMsg = config.noOpMsg

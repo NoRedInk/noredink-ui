@@ -132,11 +132,11 @@ viewLockedOnInsideCheckbox id state =
     Checkbox.viewWithLabel
         assets
         { identifier = id
-        , label = "I'm a locked Checkbox on the inside"
+        , label = "I'm a locked Checkbox"
         , setterMsg = ToggleCheck id
         , selected = Checkbox.NotSelected
         , disabled = True
-        , theme = Checkbox.LockOnInside
+        , theme = Checkbox.Locked
         , noOpMsg = NoOp
         }
 

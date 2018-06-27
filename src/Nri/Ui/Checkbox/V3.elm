@@ -61,7 +61,7 @@ type IsSelected
 {-| -}
 type Theme
     = Square
-    | LockOnInside
+    | Locked
 
 
 selectedToMaybe : IsSelected -> Maybe Bool
@@ -119,7 +119,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 , labelContent = labelContent
                 }
 
-            LockOnInside ->
+            Locked ->
                 { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
                 , labelStyles = lockLabelStyles model assets.checkboxLockOnInside_svg
                 , labelClasses = labelClass model.selected
@@ -138,10 +138,12 @@ squareLabelStyles model image =
             ]
     in
     css
-        (if model.disabled then
-            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
-         else
-            [ cursor pointer ] ++ baseStyles
+        (baseStyles
+            ++ (if model.disabled then
+                    [ cursor auto, checkboxImageSelector [ opacity (num 0.4) ] ]
+                else
+                    [ cursor pointer ]
+               )
         )
 
 
@@ -156,10 +158,14 @@ lockLabelStyles model image =
             ]
     in
     css
-        (if model.disabled then
-            [ cursor auto, opacity (num 0.4) ] ++ baseStyles
-         else
-            [ cursor pointer ] ++ baseStyles
+        (baseStyles
+            ++ (if model.disabled then
+                    [ cursor auto
+                    , checkboxImageSelector [ opacity (num 0.4) ]
+                    ]
+                else
+                    [ cursor pointer ]
+               )
         )
 
 
@@ -168,7 +174,6 @@ positioning =
     batch
         [ display inlineBlock
         , padding4 (px 13) zero (px 13) (px 35)
-        , verticalAlign middle
         ]
 
 
@@ -183,11 +188,24 @@ textStyle =
 addIcon : Asset -> Style
 addIcon icon =
     batch
-        [ backgroundImage icon
-        , backgroundRepeat noRepeat
-        , backgroundSize (px 24)
-        , property "background-position" "left center"
+        [ position relative
+        , checkboxImageSelector
+            [ backgroundImage icon
+            , backgroundRepeat noRepeat
+            , backgroundSize (px 24)
+            , property "content" "''"
+            , position absolute
+            , left zero
+            , top (px 10)
+            , width (px 24)
+            , height (px 24)
+            ]
         ]
+
+
+checkboxImageSelector : List Style -> Style
+checkboxImageSelector =
+    before
 
 
 labelClass : IsSelected -> Html.Styled.Attribute msg
