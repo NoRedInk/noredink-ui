@@ -52,7 +52,7 @@ spec =
                         , contentPremiumLevel = Free
                         , showFlagWhenLocked = True
                         }
-                        |> Query.has [ Selector.class "checkbox-Checked" ]
+                        |> Query.has [ Selector.class "checkbox-V3__Checked" ]
             , test "appears unselected when NotSelected is passed in" <|
                 \() ->
                     premiumView
@@ -63,7 +63,7 @@ spec =
                         , contentPremiumLevel = Free
                         , showFlagWhenLocked = True
                         }
-                        |> Query.has [ Selector.class "checkbox-Unchecked" ]
+                        |> Query.has [ Selector.class "checkbox-V3__Unchecked" ]
             , test "appears partially selected when PartiallySelected is passed in" <|
                 \() ->
                     premiumView
@@ -74,7 +74,7 @@ spec =
                         , contentPremiumLevel = Free
                         , showFlagWhenLocked = True
                         }
-                        |> Query.has [ Selector.class "checkbox-Indeterminate" ]
+                        |> Query.has [ Selector.class "checkbox-V3__Indeterminate" ]
             , test "appears locked when teacherPremiumLevel < contentPremiumLevel" <|
                 \() ->
                     premiumView
@@ -85,7 +85,7 @@ spec =
                         , contentPremiumLevel = Premium
                         , showFlagWhenLocked = True
                         }
-                        |> Query.has [ Selector.class "checkbox-LockOnInsideClass" ]
+                        |> Query.has [ Selector.class "checkbox-V3__Locked" ]
             , test "appears unlocked when teacherPremiumLevel >= contentPremiumLevel" <|
                 \() ->
                     premiumView
@@ -96,7 +96,7 @@ spec =
                         , contentPremiumLevel = Premium
                         , showFlagWhenLocked = True
                         }
-                        |> Query.hasNot [ Selector.class "checkbox-LockOnInsideClass" ]
+                        |> Query.hasNot [ Selector.class "checkbox-V3__Locked" ]
             , test "appears with P flag when teacherPremiumLevel >= contentPremiumLevel" <|
                 \() ->
                     premiumView
@@ -107,7 +107,7 @@ spec =
                         , contentPremiumLevel = Premium
                         , showFlagWhenLocked = False
                         }
-                        |> Query.has [ Selector.class "checkbox-PremiumClass" ]
+                        |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
             , test "does not appear with P flag when teacherPremiumLevel < contentPremiumLevel and showFlagWhenLocked = False" <|
                 \() ->
                     premiumView
@@ -118,7 +118,7 @@ spec =
                         , contentPremiumLevel = Premium
                         , showFlagWhenLocked = False
                         }
-                        |> Query.hasNot [ Selector.class "checkbox-PremiumClass" ]
+                        |> Query.hasNot [ Selector.class "premium-checkbox-V1__PremiumClass" ]
             , test "appears with P flag for Premium content when teacherPremiumLevel < contentPremiumLevel and showFlagWhenLocked = True" <|
                 \() ->
                     premiumView
@@ -129,7 +129,7 @@ spec =
                         , contentPremiumLevel = Premium
                         , showFlagWhenLocked = True
                         }
-                        |> Query.has [ Selector.class "checkbox-PremiumClass" ]
+                        |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
             , test "never shows P flag for nonPremium content" <|
                 \() ->
                     premiumView
@@ -140,7 +140,7 @@ spec =
                         , contentPremiumLevel = Free
                         , showFlagWhenLocked = True
                         }
-                        |> Query.hasNot [ Selector.class "checkbox-PremiumClass" ]
+                        |> Query.hasNot [ Selector.class "premium-checkbox-V1__PremiumClass" ]
             , test "is not disabled when disabled = False and the checkbox is unlocked" <|
                 \() ->
                     premiumView

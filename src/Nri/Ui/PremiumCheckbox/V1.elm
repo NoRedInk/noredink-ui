@@ -78,7 +78,7 @@ premium assets config =
                 || (not isLocked && config.contentPremiumLevel /= Free)
           then
             Html.div
-                [ Attributes.class "checkbox-PremiumClass"
+                [ Attributes.class "premium-checkbox-V1__PremiumClass"
                 , css
                     [ property "content" "''"
                     , display inlineBlock

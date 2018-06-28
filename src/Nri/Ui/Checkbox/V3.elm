@@ -81,7 +81,7 @@ selectedToMaybe selected =
 -}
 view : Assets a -> Model msg -> Html.Html msg
 view assets model =
-    buildCheckbox assets [] model <|
+    buildCheckbox assets model <|
         Html.span [ Accessibility.Styled.Style.invisible ]
             [ Html.text model.label ]
 
@@ -90,20 +90,16 @@ view assets model =
 -}
 viewWithLabel : Assets a -> Model msg -> Html.Html msg
 viewWithLabel assets model =
-    buildCheckbox assets [] model <|
+    buildCheckbox assets model <|
         Html.span [] [ Html.text model.label ]
 
 
-buildCheckbox : Assets a -> List String -> Model msg -> Html.Html msg -> Html.Html msg
-buildCheckbox assets modifierClasses model labelContent =
-    let
-        toClassList =
-            List.map (\a -> ( "checkbox-" ++ a, True )) >> Attributes.classList
-    in
+buildCheckbox : Assets a -> Model msg -> Html.Html msg -> Html.Html msg
+buildCheckbox assets model labelContent =
     viewCheckbox model <|
         case model.theme of
             Square ->
-                { containerClasses = toClassList (modifierClasses ++ [ "SquareClass" ])
+                { containerClasses = toClassList [ "SquareClass" ]
                 , labelStyles =
                     squareLabelStyles model <|
                         case model.selected of
@@ -120,7 +116,7 @@ buildCheckbox assets modifierClasses model labelContent =
                 }
 
             Locked ->
-                { containerClasses = toClassList (modifierClasses ++ [ "LockOnInsideClass" ])
+                { containerClasses = toClassList [ "Locked" ]
                 , labelStyles = lockLabelStyles model assets.checkboxLockOnInside_svg
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
@@ -212,22 +208,18 @@ labelClass : IsSelected -> Html.Styled.Attribute msg
 labelClass isSelected =
     case isSelected of
         Selected ->
-            Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Checked", True )
-                ]
+            toClassList [ "Label", "Checked" ]
 
         NotSelected ->
-            Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Unchecked", True )
-                ]
+            toClassList [ "Label", "Unchecked" ]
 
         PartiallySelected ->
-            Attributes.classList
-                [ ( "checkbox-Label", True )
-                , ( "checkbox-Indeterminate", True )
-                ]
+            toClassList [ "Label", "Indeterminate" ]
+
+
+toClassList : List String -> Html.Styled.Attribute msg
+toClassList =
+    List.map (\a -> ( "checkbox-V3__" ++ a, True )) >> Attributes.classList
 
 
 viewCheckbox :
