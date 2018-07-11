@@ -20,8 +20,9 @@ module Examples.Select
 -}
 
 import Html
+import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Select.V2
+import Nri.Ui.Select.V3 as Select
 
 
 {-| -}
@@ -36,7 +37,7 @@ type Msg
 
 {-| -}
 type alias State value =
-    Nri.Ui.Select.V2.Config value
+    Select.Config value
 
 
 {-| -}
@@ -45,7 +46,8 @@ example parentMessage state =
     { filename = "ui/src/Nri/Select.elm"
     , category = Inputs
     , content =
-        [ Html.map (parentMessage << ConsoleLog) (Nri.Ui.Select.V2.view state)
+        [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
+            |> Html.Styled.toUnstyled
         ]
     }
 
