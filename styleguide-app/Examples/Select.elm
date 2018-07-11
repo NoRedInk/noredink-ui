@@ -43,7 +43,7 @@ type alias State value =
 {-| -}
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
-    { filename = "ui/src/Nri/Select.elm"
+    { filename = "Nri.Ui.Select.V3"
     , category = Inputs
     , content =
         [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
