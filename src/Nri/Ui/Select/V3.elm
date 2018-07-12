@@ -1,7 +1,6 @@
 module Nri.Ui.Select.V3
     exposing
         ( Config
-        , customView
         , view
         )
 
@@ -20,7 +19,7 @@ module Nri.Ui.Select.V3
 
 # Render
 
-@docs view, customView
+@docs view
 
 -}
 
@@ -56,15 +55,6 @@ niceId prefix x =
 -}
 view : Config a -> Html a
 view config =
-    customView [] config
-
-
-{-| A select dropdown with custom attributes.
-This should be phased out as the new Select style is implemented,
-all pages should use the new, consistent style.
--}
-customView : List (Html.Attribute a) -> Config a -> Html a
-customView attributes config =
     let
         valueLookup =
             -- TODO: probably worth using Lazy here, since choices won't change often
@@ -101,6 +91,4 @@ customView attributes config =
             , Css.height (Css.px 45)
             , Css.width (Css.pct 100)
             ]
-            (onSelectHandler
-                :: attributes
-            )
+            [ onSelectHandler ]
