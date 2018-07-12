@@ -44,7 +44,7 @@ type alias Config a =
     }
 
 
-{-| TODO: move this to View.Extra
+{-| TODO: Consider moving this to Nri.Ui.Util once the non-0.19-approved `toString` is removed
 -}
 niceId : String -> a -> String
 niceId prefix x =
