@@ -3,8 +3,10 @@ module Spec.Nri.Ui.Select exposing (spec)
 import Expect exposing (Expectation)
 import Html
 import Html.Attributes as Attr
+import Html.Styled
 import Nri.Ui.Select.V1
 import Nri.Ui.Select.V2
+import Nri.Ui.Select.V3
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
@@ -15,6 +17,7 @@ spec =
     describe "view"
         [ describe "V1" (viewSuite Nri.Ui.Select.V1.view)
         , describe "V2" (viewSuite Nri.Ui.Select.V2.view)
+        , describe "V3" (viewSuite (Nri.Ui.Select.V3.view >> Html.Styled.toUnstyled))
         ]
 
 
