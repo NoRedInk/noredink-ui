@@ -129,13 +129,14 @@ view_ theme model =
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
                 , Attributes.class "override-sass-styles"
+                , Attributes.defaultValue model.value
                 , Attributes.attribute "aria-invalid" <|
                     if model.isInError then
                         "true"
                     else
                         "false"
                 ]
-                [ Html.text model.value ]
+                []
             ]
         , if not model.showLabel then
             Html.label
