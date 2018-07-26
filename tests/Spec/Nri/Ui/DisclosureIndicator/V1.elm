@@ -1,7 +1,7 @@
 module Spec.Nri.Ui.DisclosureIndicator.V1 exposing (spec)
 
-import Html exposing (div)
 import Html.Attributes exposing (alt)
+import Html.Styled exposing (div, toUnstyled)
 import Nri.Ui.AssetPath exposing (Asset(Asset))
 import Nri.Ui.DisclosureIndicator.V1 as DisclosureIndicator
 import Test exposing (..)
@@ -19,6 +19,7 @@ spec =
                     , label = "carrots"
                     }
                     |> (\x -> div [] [ x ])
+                    |> toUnstyled
                     |> Query.fromHtml
                     |> Query.find [ tag "img" ]
                     |> Query.has [ attribute (alt "show carrots") ]
@@ -29,6 +30,7 @@ spec =
                     , label = "carrots"
                     }
                     |> (\x -> div [] [ x ])
+                    |> toUnstyled
                     |> Query.fromHtml
                     |> Query.find [ tag "img" ]
                     |> Query.has [ attribute (alt "hide carrots") ]
