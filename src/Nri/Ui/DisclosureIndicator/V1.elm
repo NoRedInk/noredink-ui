@@ -1,7 +1,7 @@
 module Nri.Ui.DisclosureIndicator.V1 exposing (view, viewInline)
 
 {-| A caret that indicates that a section can expand. When the isOpen attribute is passed in as True, it will rotate. A "disclosure indicator" is a standard term for something that indicates that section can expand.
-@docs styles, view, viewInline
+@docs view, viewInline
 -}
 
 import Css exposing (..)
