@@ -5,6 +5,7 @@ import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Examples.Button
 import Examples.Checkbox
 import Examples.Colors
+import Examples.DisclosureIndicator
 import Examples.Dropdown
 import Examples.Fonts
 import Examples.Icon
@@ -38,6 +39,7 @@ type alias ModuleStates =
     , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
     , textInputExampleState : TextInputExample.State
+    , disclosureIndicatorExampleState : Examples.DisclosureIndicator.State
     }
 
 
@@ -51,6 +53,7 @@ init =
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
     , textInputExampleState = TextInputExample.init
+    , disclosureIndicatorExampleState = Examples.DisclosureIndicator.init
     }
 
 
@@ -64,6 +67,7 @@ type Msg
     | TableExampleMsg Examples.Table.Msg
     | TextAreaExampleMsg TextAreaExample.Msg
     | TextInputExampleMsg TextInputExample.Msg
+    | DisclosureIndicatorExampleMsg Examples.DisclosureIndicator.Msg
     | NoOp
 
 
@@ -147,6 +151,15 @@ update msg moduleStates =
             , Cmd.map TextInputExampleMsg cmd
             )
 
+        DisclosureIndicatorExampleMsg msg ->
+            let
+                ( disclosureIndicatorExampleState, cmd ) =
+                    Examples.DisclosureIndicator.update msg moduleStates.disclosureIndicatorExampleState
+            in
+            ( { moduleStates | disclosureIndicatorExampleState = disclosureIndicatorExampleState }
+            , Cmd.map DisclosureIndicatorExampleMsg cmd
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -184,6 +197,7 @@ nriThemedModules model =
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     , TextInputExample.example TextInputExampleMsg model.textInputExampleState
+    , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Colors.example
     ]
 
