@@ -40,5 +40,15 @@ Note: normally `attributeMsg` will be the same as `msg`, but we need them to be 
 
 -}
 styled : (List (Attribute attributeMsg) -> List (Html msg) -> Html msg) -> String -> List Style -> List (Attribute attributeMsg) -> List (Html msg) -> Html msg
-styled fn description styles attrs children =
-    fn (attribute "data-nri-description" description :: css styles :: attrs) children
+styled fn description styles =
+    -- Cache the computed css style so we only have to do the hashing once.
+    -- Just like in https://github.com/rtfeldman/elm-css/pull/456
+    let
+        descriptionAttr =
+            attribute "data-nri-description" description
+
+        cssAttr =
+            css styles
+    in
+    \attrs children ->
+        fn (descriptionAttr :: cssAttr :: attrs) children
