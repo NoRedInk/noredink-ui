@@ -125,6 +125,7 @@ example =
             , { icon = Icon.flipper, background = Light, alt = "Flipper" }
             , { icon = Icon.footsteps, background = Light, alt = "Footsteps" }
             , { icon = Icon.gear, background = Light, alt = "Gear" }
+            , { icon = Icon.pen, background = Light, alt = "Pen" }
             , { icon = Icon.newspaper, background = Light, alt = "Newspaper" }
             , { icon = Icon.sort, background = Light, alt = "Sort" }
             , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }

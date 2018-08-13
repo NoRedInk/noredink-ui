@@ -62,6 +62,7 @@ type alias Assets =
     , newspaper : String
     , openClose : String
     , performance : String
+    , pen : Asset
     , personBlue_svg : Asset
     , practice : String
     , premiumLock_svg : Asset
@@ -147,6 +148,7 @@ assets =
     , masteryBadge = "icon-mastery-badge"
     , newspaper = "icon-newspaper"
     , openClose = "icon-open-close"
+    , pen = Asset "assets/images/pen.svg"
     , performance = "icon-performance"
     , personBlue_svg = Asset "assets/images/person-blue.svg"
     , practice = "icon-practice"
