@@ -31,7 +31,7 @@ error assets content =
     alert
         [ iconContainer [ Css.color Colors.purple ]
             (Icon.decorativeIcon (Icon.exclamation assets))
-        , viewAlertContent Colors.purple content
+        , viewAlertContent Colors.purpleDark content
         ]
 
 
