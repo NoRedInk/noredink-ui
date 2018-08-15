@@ -22,7 +22,7 @@ import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.AssetPath
-import Nri.Ui.Colors.V1
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Icon.V3 as Icon
 
 
@@ -30,8 +30,8 @@ import Nri.Ui.Icon.V3 as Icon
 error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 error assets content =
     alert
-        [ viewIcon (Icon.attention assets) Nri.Ui.Colors.V1.purple
-        , viewAlertContent Nri.Ui.Colors.V1.purple content
+        [ viewIcon (Icon.attention assets) Colors.purple
+        , viewAlertContent Colors.purple content
         ]
 
 
@@ -39,8 +39,8 @@ error assets content =
 success : { r | checkmark : String } -> String -> Html msg
 success assets content =
     alert
-        [ viewIcon (Icon.checkMarkSvg assets) Nri.Ui.Colors.V1.green
-        , viewAlertContent Nri.Ui.Colors.V1.greenDarkest content
+        [ viewIcon (Icon.checkMarkSvg assets) Colors.green
+        , viewAlertContent Colors.greenDarkest content
         ]
 
 
@@ -48,8 +48,8 @@ success assets content =
 tip : { r | bulb : String } -> String -> Html msg
 tip assets content =
     alert
-        [ viewIcon (Icon.bulb assets) Nri.Ui.Colors.V1.white
-        , viewAlertContent Nri.Ui.Colors.V1.navy content
+        [ viewIcon (Icon.bulb assets) Colors.white
+        , viewAlertContent Colors.navy content
         ]
 
 
@@ -57,8 +57,8 @@ tip assets content =
 warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 warning assets content =
     alert
-        [ viewIcon (Icon.attention assets) Nri.Ui.Colors.V1.red
-        , viewAlertContent Nri.Ui.Colors.V1.red content
+        [ viewIcon (Icon.attention assets) Colors.red
+        , viewAlertContent Colors.red content
         ]
 
 
