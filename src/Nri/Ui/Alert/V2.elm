@@ -28,38 +28,42 @@ import Nri.Ui.Icon.V3 as Icon
 
 {-| -}
 error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
-error assets =
-    alert (Icon.attention assets)
-        Nri.Ui.Colors.V1.purple
-        Nri.Ui.Colors.V1.purple
+error assets content =
+    alert
+        [ viewIcon (Icon.attention assets) Nri.Ui.Colors.V1.purple
+        , viewAlertContent Nri.Ui.Colors.V1.purple content
+        ]
 
 
 {-| -}
 success : { r | checkmark : String } -> String -> Html msg
-success assets =
-    alert (Icon.checkMarkSvg assets)
-        Nri.Ui.Colors.V1.green
-        Nri.Ui.Colors.V1.greenDarkest
+success assets content =
+    alert
+        [ viewIcon (Icon.checkMarkSvg assets) Nri.Ui.Colors.V1.green
+        , viewAlertContent Nri.Ui.Colors.V1.greenDarkest content
+        ]
 
 
 {-| -}
 tip : { r | bulb : String } -> String -> Html msg
-tip assets =
-    alert (Icon.bulb assets)
-        Nri.Ui.Colors.V1.white
-        Nri.Ui.Colors.V1.navy
+tip assets content =
+    alert
+        [ viewIcon (Icon.bulb assets) Nri.Ui.Colors.V1.white
+        , viewAlertContent Nri.Ui.Colors.V1.navy content
+        ]
 
 
 {-| -}
 warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
-warning assets =
-    alert (Icon.attention assets)
-        Nri.Ui.Colors.V1.red
-        Nri.Ui.Colors.V1.red
+warning assets content =
+    alert
+        [ viewIcon (Icon.attention assets) Nri.Ui.Colors.V1.red
+        , viewAlertContent Nri.Ui.Colors.V1.red content
+        ]
 
 
-alert : Icon.IconType -> Css.ColorValue compatible -> Css.ColorValue compatible -> String -> Html msg
-alert icon iconBackgroundColor color content =
+alert : List (Html msg) -> Html msg
+alert =
     Html.div
         [ css
             [ Css.displayFlex
@@ -67,9 +71,6 @@ alert icon iconBackgroundColor color content =
             , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
             , Css.position Css.relative
             ]
-        ]
-        [ viewIcon icon iconBackgroundColor
-        , viewAlertContent color content
         ]
 
 
