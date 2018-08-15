@@ -85,10 +85,19 @@ viewIcon iconBackgroundColor icon =
             , Css.left Css.zero
             , Css.top Css.zero
 
+            -- Content positioning
+            , Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.center
+
             -- Size
             , Css.borderRadius (Css.px 13)
-            , Css.height (Css.px 25)
-            , Css.width (Css.px 25)
+            , Css.minHeight (Css.px 25)
+            , Css.minWidth (Css.px 25)
+            , Css.Foreign.children
+                [ Css.Foreign.img [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
+                , Css.Foreign.svg [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
+                ]
             ]
         ]
         [ Icon.decorativeIcon icon ]
