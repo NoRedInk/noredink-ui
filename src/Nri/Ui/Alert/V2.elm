@@ -1,8 +1,6 @@
 module Nri.Ui.Alert.V2
     exposing
-        ( Model
-        , error
-        , styles
+        ( error
         , success
         , tip
         , viewResult
@@ -11,9 +9,7 @@ module Nri.Ui.Alert.V2
 
 {-| UI components that highlight information to the user.
 
-@docs Model
 @docs error
-@docs styles
 @docs success
 @docs tip
 @docs viewResult
@@ -21,28 +17,14 @@ module Nri.Ui.Alert.V2
 
 -}
 
-import Accessibility
+import Accessibility.Styled as Html exposing (Html)
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import Html exposing (Html)
+import Html as RootHtml
+import Html.Styled exposing (fromUnstyled)
+import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
-
-
-{-| -}
-type alias Model =
-    { content : String }
-
-
-alert : CssClasses -> Model -> Html msg
-alert className { content } =
-    Accessibility.div
-        [ styles.class [ Alert, className ]
-        ]
-        [ Accessibility.div [] (Markdown.toHtml Nothing content)
-        ]
 
 
 {-| Show either an error or success alert depending on the given Result
@@ -51,99 +33,107 @@ viewResult : Result String String -> Html msg
 viewResult result =
     case result of
         Ok msg ->
-            success { content = msg }
+            success msg
 
         Err msg ->
-            error { content = msg }
+            error msg
 
 
 {-| -}
-error : Model -> Html msg
+error : String -> Html msg
 error =
-    alert Error
+    alert errorStyles
 
 
 {-| -}
-success : Model -> Html msg
+success : String -> Html msg
 success =
-    alert Success
+    alert successStyles
 
 
 {-| -}
-tip : Model -> Html msg
+tip : String -> Html msg
 tip =
-    alert Tip
+    alert tipStyles
 
 
 {-| -}
-warning : Model -> Html msg
+warning : String -> Html msg
 warning =
-    alert Warning
+    alert warningStyles
 
 
-type CssClasses
-    = Alert
-    | Error
-    | Success
-    | Tip
-    | Warning
+alert : List Css.Style -> String -> Html msg
+alert styles content =
+    Html.div [ css (alertStyles ++ styles) ]
+        [ RootHtml.div [] (Markdown.toHtml Nothing content)
+            |> fromUnstyled
+        ]
 
 
-{-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
-styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Alert-"
-        [ Css.Foreign.class Alert
-            [ Css.displayFlex
-            , Css.fontSize (Css.px 13)
-            , Css.lineHeight (Css.num 1.2)
-            , Css.listStyleType Css.none
-            , Css.overflow Css.hidden
-            , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
-            , Css.position Css.relative
-            , Css.Foreign.children
-                [ Css.Foreign.div
-                    [ Css.Foreign.children
-                        [ Css.Foreign.p
-                            [ Css.margin Css.zero
-                            ]
-                        ]
+alertStyles : List Css.Style
+alertStyles =
+    [ Css.displayFlex
+    , Css.fontSize (Css.px 13)
+    , Css.lineHeight (Css.num 1.2)
+    , Css.listStyleType Css.none
+    , Css.overflow Css.hidden
+    , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
+    , Css.position Css.relative
+    , Css.Foreign.children
+        [ Css.Foreign.div
+            [ Css.Foreign.children
+                [ Css.Foreign.p
+                    [ Css.margin Css.zero
                     ]
-                ]
-            , Css.after
-                [ Css.backgroundPosition Css.center
-                , Css.backgroundRepeat Css.noRepeat
-                , Css.borderRadius (Css.px 13)
-                , Css.height (Css.px 25)
-                , Css.left Css.zero
-                , Css.position Css.absolute
-                , Css.property "content" "\"\""
-                , Css.top Css.zero
-                , Css.width (Css.px 25)
-                ]
-            ]
-        , Css.Foreign.class Error
-            [ Css.color Nri.Ui.Colors.V1.purple
-            , Css.after
-                [ Css.backgroundColor Nri.Ui.Colors.V1.purple
-                ]
-            ]
-        , Css.Foreign.class Success
-            [ Css.color Nri.Ui.Colors.V1.greenDarkest
-            , Css.after
-                [ Css.backgroundColor Nri.Ui.Colors.V1.green
-                ]
-            ]
-        , Css.Foreign.class Tip
-            [ Css.color Nri.Ui.Colors.V1.navy
-            , Css.after
-                [ Css.backgroundColor Nri.Ui.Colors.V1.white
-                ]
-            ]
-        , Css.Foreign.class Warning
-            [ Css.color Nri.Ui.Colors.V1.red
-            , Css.after
-                [ Css.backgroundColor Nri.Ui.Colors.V1.red
                 ]
             ]
         ]
+    , Css.after
+        [ Css.backgroundPosition Css.center
+        , Css.backgroundRepeat Css.noRepeat
+        , Css.borderRadius (Css.px 13)
+        , Css.height (Css.px 25)
+        , Css.left Css.zero
+        , Css.position Css.absolute
+        , Css.property "content" "\"\""
+        , Css.top Css.zero
+        , Css.width (Css.px 25)
+        ]
+    ]
+
+
+errorStyles : List Css.Style
+errorStyles =
+    [ Css.color Nri.Ui.Colors.V1.purple
+    , Css.after
+        [ Css.backgroundColor Nri.Ui.Colors.V1.purple
+        ]
+    ]
+
+
+successStyles : List Css.Style
+successStyles =
+    [ Css.color Nri.Ui.Colors.V1.greenDarkest
+    , Css.after
+        [ Css.backgroundColor Nri.Ui.Colors.V1.green
+        ]
+    ]
+
+
+tipStyles : List Css.Style
+tipStyles =
+    [ Css.color Nri.Ui.Colors.V1.navy
+    , Css.after
+        [ Css.backgroundColor Nri.Ui.Colors.V1.white
+        ]
+    ]
+
+
+warningStyles : List Css.Style
+warningStyles =
+    [ Css.color Nri.Ui.Colors.V1.red
+    , Css.after
+        [ Css.backgroundColor Nri.Ui.Colors.V1.red
+        ]
+    ]
