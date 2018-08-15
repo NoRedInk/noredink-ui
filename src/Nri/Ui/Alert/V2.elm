@@ -3,7 +3,6 @@ module Nri.Ui.Alert.V2
         ( error
         , success
         , tip
-        , viewResult
         , warning
         )
 
@@ -12,7 +11,6 @@ module Nri.Ui.Alert.V2
 @docs error
 @docs success
 @docs tip
-@docs viewResult
 @docs warning
 
 -}
@@ -27,16 +25,8 @@ import Markdown
 import Nri.Ui.Colors.V1
 
 
-{-| Show either an error or success alert depending on the given Result
--}
-viewResult : Result String String -> Html msg
-viewResult result =
-    case result of
-        Ok msg ->
-            success msg
+{-| -}
 
-        Err msg ->
-            error msg
 
 
 {-| -}
