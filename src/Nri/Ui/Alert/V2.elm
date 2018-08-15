@@ -68,15 +68,16 @@ alert icon iconBackgroundColor styles content =
     Html.div [ css (alertStyles ++ styles) ]
         [ Html.div
             [ css
-                [ Css.backgroundPosition Css.center
-                , Css.backgroundRepeat Css.noRepeat
-                , Css.backgroundColor iconBackgroundColor
+                [ Css.backgroundColor iconBackgroundColor
+
+                -- Positioning
+                , Css.position Css.absolute
+                , Css.left Css.zero
+                , Css.top Css.zero
+
+                -- Size
                 , Css.borderRadius (Css.px 13)
                 , Css.height (Css.px 25)
-                , Css.left Css.zero
-                , Css.position Css.absolute
-                , Css.property "content" "\"\""
-                , Css.top Css.zero
                 , Css.width (Css.px 25)
                 ]
             ]
