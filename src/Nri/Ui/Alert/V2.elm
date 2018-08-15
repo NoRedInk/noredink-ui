@@ -66,25 +66,35 @@ warning assets =
 alert : Icon.IconType -> Css.ColorValue compatible -> List Css.Style -> String -> Html msg
 alert icon iconBackgroundColor styles content =
     Html.div [ css (alertStyles ++ styles) ]
-        [ Html.div
-            [ css
-                [ Css.backgroundColor iconBackgroundColor
-
-                -- Positioning
-                , Css.position Css.absolute
-                , Css.left Css.zero
-                , Css.top Css.zero
-
-                -- Size
-                , Css.borderRadius (Css.px 13)
-                , Css.height (Css.px 25)
-                , Css.width (Css.px 25)
-                ]
-            ]
-            [ Icon.decorativeIcon icon ]
-        , RootHtml.div [] (Markdown.toHtml Nothing content)
-            |> fromUnstyled
+        [ viewIcon icon iconBackgroundColor
+        , viewAlertContent content
         ]
+
+
+viewIcon : Icon.IconType -> Css.ColorValue compatible -> Html msg
+viewIcon icon iconBackgroundColor =
+    Html.div
+        [ css
+            [ Css.backgroundColor iconBackgroundColor
+
+            -- Positioning
+            , Css.position Css.absolute
+            , Css.left Css.zero
+            , Css.top Css.zero
+
+            -- Size
+            , Css.borderRadius (Css.px 13)
+            , Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            ]
+        ]
+        [ Icon.decorativeIcon icon ]
+
+
+viewAlertContent : String -> Html.Styled.Html msg
+viewAlertContent content =
+    RootHtml.div [] (Markdown.toHtml Nothing content)
+        |> fromUnstyled
 
 
 alertStyles : List Css.Style
