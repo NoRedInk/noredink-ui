@@ -29,7 +29,8 @@ import Nri.Ui.Icon.V3 as Icon
 error : { r | exclamation : String } -> String -> Html msg
 error assets content =
     alert
-        [ viewIcon Colors.purple (Icon.exclamation assets)
+        [ iconContainer [ Css.color Colors.purple ]
+            (Icon.decorativeIcon (Icon.exclamation assets))
         , viewAlertContent Colors.purple content
         ]
 
@@ -38,7 +39,12 @@ error assets content =
 success : { r | checkmark : String } -> String -> Html msg
 success assets content =
     alert
-        [ viewIcon Colors.green (Icon.checkMarkSvg assets)
+        [ iconContainer
+            [ Css.color Colors.white
+            , Css.backgroundColor Colors.green
+            , Css.Foreign.children [ Css.Foreign.svg [ Css.maxWidth (Css.px 15) ] ]
+            ]
+            (Icon.decorativeIcon (Icon.checkMarkSvg assets))
         , viewAlertContent Colors.greenDarkest content
         ]
 
@@ -47,7 +53,8 @@ success assets content =
 tip : { r | bulb : String } -> String -> Html msg
 tip assets content =
     alert
-        [ viewIcon Colors.white (Icon.bulb assets)
+        [ iconContainer [ Css.color Colors.yellow ]
+            (Icon.decorativeIcon (Icon.bulb assets))
         , viewAlertContent Colors.navy content
         ]
 
@@ -56,7 +63,8 @@ tip assets content =
 warning : { r | exclamation : String } -> String -> Html msg
 warning assets content =
     alert
-        [ viewIcon Colors.red (Icon.exclamation assets)
+        [ iconContainer [ Css.color Colors.red ]
+            (Icon.decorativeIcon (Icon.exclamation assets))
         , viewAlertContent Colors.red content
         ]
 
@@ -66,39 +74,37 @@ alert =
     Html.div
         [ css
             [ Css.displayFlex
-            , Css.overflow Css.hidden
             , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
             , Css.position Css.relative
             ]
         ]
 
 
-viewIcon : Css.ColorValue compatible -> Icon.IconType -> Html msg
-viewIcon iconBackgroundColor icon =
+iconContainer : List Css.Style -> Html msg -> Html msg
+iconContainer styles icon =
     Html.div
         [ css
-            [ Css.backgroundColor iconBackgroundColor
+            (styles
+                ++ [ -- Positioning
+                     Css.position Css.absolute
+                   , Css.left Css.zero
+                   , Css.top Css.zero
 
-            -- Positioning
-            , Css.position Css.absolute
-            , Css.left Css.zero
-            , Css.top Css.zero
+                   -- Content positioning
+                   , Css.displayFlex
+                   , Css.justifyContent Css.center
+                   , Css.alignItems Css.center
 
-            -- Content positioning
-            , Css.displayFlex
-            , Css.justifyContent Css.center
-            , Css.alignItems Css.center
-
-            -- Size
-            , Css.borderRadius (Css.px 13)
-            , Css.minHeight (Css.px 25)
-            , Css.minWidth (Css.px 25)
-            , Css.Foreign.children
-                [ Css.Foreign.svg [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
-                ]
-            ]
+                   -- Size
+                   , Css.borderRadius (Css.px 13)
+                   , Css.maxHeight (Css.px 25)
+                   , Css.maxWidth (Css.px 25)
+                   , Css.minHeight (Css.px 25)
+                   , Css.minWidth (Css.px 25)
+                   ]
+            )
         ]
-        [ Icon.decorativeIcon icon ]
+        [ icon ]
 
 
 viewAlertContent : Css.ColorValue compatible -> String -> Html.Styled.Html msg
