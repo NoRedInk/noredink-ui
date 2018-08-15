@@ -22,53 +22,47 @@ import Html as RootHtml
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
+import Nri.Ui.AssetPath
 import Nri.Ui.Colors.V1
+import Nri.Ui.Icon.V3 as Icon
 
 
-{-| -}
-
-
-
-{-| -}
-error : String -> Html msg
-error =
-    alert
+error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
+error assets =
+    alert (Icon.attention assets)
         [ Css.color Nri.Ui.Colors.V1.purple
         , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.purple ]
         ]
 
 
-{-| -}
-success : String -> Html msg
-success =
-    alert
+success : { r | checkmark : String } -> String -> Html msg
+success assets =
+    alert (Icon.checkMarkSvg assets)
         [ Css.color Nri.Ui.Colors.V1.greenDarkest
         , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.green ]
         ]
 
 
-{-| -}
-tip : String -> Html msg
-tip =
-    alert
+tip : { r | bulb : String } -> String -> Html msg
+tip assets =
+    alert (Icon.bulb assets)
         [ Css.color Nri.Ui.Colors.V1.navy
         , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.white ]
         ]
 
 
-{-| -}
-warning : String -> Html msg
-warning =
-    alert
+warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
+warning assets =
+    alert (Icon.attention assets)
         [ Css.color Nri.Ui.Colors.V1.red
         , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.red ]
         ]
 
 
-alert : List Css.Style -> String -> Html msg
-alert styles content =
+alert icon styles content =
     Html.div [ css (alertStyles ++ styles) ]
-        [ RootHtml.div [] (Markdown.toHtml Nothing content)
+        [ Icon.decorativeIcon icon
+        , RootHtml.div [] (Markdown.toHtml Nothing content)
             |> fromUnstyled
         ]
 

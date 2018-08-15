@@ -6,6 +6,7 @@ module Examples.Alert exposing (example)
 
 -}
 
+import Assets exposing (assets)
 import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Alert.V2 as Alert
@@ -16,10 +17,10 @@ example =
     { filename = "Nri/Alerts.elm"
     , category = Messaging
     , content =
-        [ Alert.error "This is an error"
-        , Alert.warning "This is a warning"
-        , Alert.tip "This is a tip"
-        , Alert.success "This is a success"
+        [ Alert.error assets "This is an error"
+        , Alert.warning assets "This is a warning"
+        , Alert.tip assets "This is a tip"
+        , Alert.success assets "This is a success"
         ]
             |> List.map Html.Styled.toUnstyled
     }
