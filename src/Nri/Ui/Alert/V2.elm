@@ -27,41 +27,60 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.Icon.V3 as Icon
 
 
+{-| -}
 error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 error assets =
     alert (Icon.attention assets)
+        Nri.Ui.Colors.V1.purple
         [ Css.color Nri.Ui.Colors.V1.purple
-        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.purple ]
         ]
 
 
+{-| -}
 success : { r | checkmark : String } -> String -> Html msg
 success assets =
     alert (Icon.checkMarkSvg assets)
+        Nri.Ui.Colors.V1.green
         [ Css.color Nri.Ui.Colors.V1.greenDarkest
-        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.green ]
         ]
 
 
+{-| -}
 tip : { r | bulb : String } -> String -> Html msg
 tip assets =
     alert (Icon.bulb assets)
+        Nri.Ui.Colors.V1.white
         [ Css.color Nri.Ui.Colors.V1.navy
-        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.white ]
         ]
 
 
+{-| -}
 warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 warning assets =
     alert (Icon.attention assets)
+        Nri.Ui.Colors.V1.red
         [ Css.color Nri.Ui.Colors.V1.red
-        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.red ]
         ]
 
 
-alert icon styles content =
+alert : Icon.IconType -> Css.ColorValue compatible -> List Css.Style -> String -> Html msg
+alert icon iconBackgroundColor styles content =
     Html.div [ css (alertStyles ++ styles) ]
-        [ Icon.decorativeIcon icon
+        [ Html.div
+            [ css
+                [ Css.backgroundPosition Css.center
+                , Css.backgroundRepeat Css.noRepeat
+                , Css.backgroundColor iconBackgroundColor
+                , Css.borderRadius (Css.px 13)
+                , Css.height (Css.px 25)
+                , Css.left Css.zero
+                , Css.position Css.absolute
+                , Css.property "content" "\"\""
+                , Css.top Css.zero
+                , Css.width (Css.px 25)
+                ]
+            ]
+            [ Icon.decorativeIcon icon ]
         , RootHtml.div [] (Markdown.toHtml Nothing content)
             |> fromUnstyled
         ]
@@ -84,16 +103,5 @@ alertStyles =
                     ]
                 ]
             ]
-        ]
-    , Css.after
-        [ Css.backgroundPosition Css.center
-        , Css.backgroundRepeat Css.noRepeat
-        , Css.borderRadius (Css.px 13)
-        , Css.height (Css.px 25)
-        , Css.left Css.zero
-        , Css.position Css.absolute
-        , Css.property "content" "\"\""
-        , Css.top Css.zero
-        , Css.width (Css.px 25)
         ]
     ]
