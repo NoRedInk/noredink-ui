@@ -60,7 +60,14 @@ warning assets =
 
 alert : Icon.IconType -> Css.ColorValue compatible -> Css.ColorValue compatible -> String -> Html msg
 alert icon iconBackgroundColor color content =
-    Html.div [ css alertStyles ]
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.overflow Css.hidden
+            , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
+            , Css.position Css.relative
+            ]
+        ]
         [ viewIcon icon iconBackgroundColor
         , viewAlertContent color content
         ]
@@ -98,12 +105,3 @@ viewAlertContent color content =
             ]
         ]
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)
-
-
-alertStyles : List Css.Style
-alertStyles =
-    [ Css.displayFlex
-    , Css.overflow Css.hidden
-    , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
-    , Css.position Css.relative
-    ]
