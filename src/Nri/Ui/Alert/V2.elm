@@ -22,6 +22,7 @@ import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
 
 
@@ -112,6 +113,7 @@ viewAlertContent color content =
     Html.div
         [ css
             [ Css.color color
+            , Fonts.baseFont
             , Css.fontSize (Css.px 13)
             , Css.lineHeight (Css.num 1.2)
             , Css.listStyleType Css.none
