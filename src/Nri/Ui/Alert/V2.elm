@@ -42,25 +42,37 @@ viewResult result =
 {-| -}
 error : String -> Html msg
 error =
-    alert errorStyles
+    alert
+        [ Css.color Nri.Ui.Colors.V1.purple
+        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.purple ]
+        ]
 
 
 {-| -}
 success : String -> Html msg
 success =
-    alert successStyles
+    alert
+        [ Css.color Nri.Ui.Colors.V1.greenDarkest
+        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.green ]
+        ]
 
 
 {-| -}
 tip : String -> Html msg
 tip =
-    alert tipStyles
+    alert
+        [ Css.color Nri.Ui.Colors.V1.navy
+        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.white ]
+        ]
 
 
 {-| -}
 warning : String -> Html msg
 warning =
-    alert warningStyles
+    alert
+        [ Css.color Nri.Ui.Colors.V1.red
+        , Css.after [ Css.backgroundColor Nri.Ui.Colors.V1.red ]
+        ]
 
 
 alert : List Css.Style -> String -> Html msg
@@ -99,41 +111,5 @@ alertStyles =
         , Css.property "content" "\"\""
         , Css.top Css.zero
         , Css.width (Css.px 25)
-        ]
-    ]
-
-
-errorStyles : List Css.Style
-errorStyles =
-    [ Css.color Nri.Ui.Colors.V1.purple
-    , Css.after
-        [ Css.backgroundColor Nri.Ui.Colors.V1.purple
-        ]
-    ]
-
-
-successStyles : List Css.Style
-successStyles =
-    [ Css.color Nri.Ui.Colors.V1.greenDarkest
-    , Css.after
-        [ Css.backgroundColor Nri.Ui.Colors.V1.green
-        ]
-    ]
-
-
-tipStyles : List Css.Style
-tipStyles =
-    [ Css.color Nri.Ui.Colors.V1.navy
-    , Css.after
-        [ Css.backgroundColor Nri.Ui.Colors.V1.white
-        ]
-    ]
-
-
-warningStyles : List Css.Style
-warningStyles =
-    [ Css.color Nri.Ui.Colors.V1.red
-    , Css.after
-        [ Css.backgroundColor Nri.Ui.Colors.V1.red
         ]
     ]
