@@ -21,16 +21,15 @@ import Css.Foreign
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.AssetPath
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Icon.V3 as Icon
 
 
 {-| -}
-error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
+error : { r | exclamation : String } -> String -> Html msg
 error assets content =
     alert
-        [ viewIcon Colors.purple (Icon.attention assets)
+        [ viewIcon Colors.purple (Icon.exclamation assets)
         , viewAlertContent Colors.purple content
         ]
 
@@ -54,10 +53,10 @@ tip assets content =
 
 
 {-| -}
-warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
+warning : { r | exclamation : String } -> String -> Html msg
 warning assets content =
     alert
-        [ viewIcon Colors.red (Icon.attention assets)
+        [ viewIcon Colors.red (Icon.exclamation assets)
         , viewAlertContent Colors.red content
         ]
 
@@ -95,8 +94,7 @@ viewIcon iconBackgroundColor icon =
             , Css.minHeight (Css.px 25)
             , Css.minWidth (Css.px 25)
             , Css.Foreign.children
-                [ Css.Foreign.img [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
-                , Css.Foreign.svg [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
+                [ Css.Foreign.svg [ Css.maxWidth (Css.px 16), Css.maxHeight (Css.px 16) ]
                 ]
             ]
         ]
