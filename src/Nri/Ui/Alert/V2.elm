@@ -30,7 +30,7 @@ import Nri.Ui.Icon.V3 as Icon
 error : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 error assets content =
     alert
-        [ viewIcon (Icon.attention assets) Colors.purple
+        [ viewIcon Colors.purple (Icon.attention assets)
         , viewAlertContent Colors.purple content
         ]
 
@@ -39,7 +39,7 @@ error assets content =
 success : { r | checkmark : String } -> String -> Html msg
 success assets content =
     alert
-        [ viewIcon (Icon.checkMarkSvg assets) Colors.green
+        [ viewIcon Colors.green (Icon.checkMarkSvg assets)
         , viewAlertContent Colors.greenDarkest content
         ]
 
@@ -48,7 +48,7 @@ success assets content =
 tip : { r | bulb : String } -> String -> Html msg
 tip assets content =
     alert
-        [ viewIcon (Icon.bulb assets) Colors.white
+        [ viewIcon Colors.white (Icon.bulb assets)
         , viewAlertContent Colors.navy content
         ]
 
@@ -57,7 +57,7 @@ tip assets content =
 warning : { r | attention_svg : Nri.Ui.AssetPath.Asset } -> String -> Html msg
 warning assets content =
     alert
-        [ viewIcon (Icon.attention assets) Colors.red
+        [ viewIcon Colors.red (Icon.attention assets)
         , viewAlertContent Colors.red content
         ]
 
@@ -74,8 +74,8 @@ alert =
         ]
 
 
-viewIcon : Icon.IconType -> Css.ColorValue compatible -> Html msg
-viewIcon icon iconBackgroundColor =
+viewIcon : Css.ColorValue compatible -> Icon.IconType -> Html msg
+viewIcon iconBackgroundColor icon =
     Html.div
         [ css
             [ Css.backgroundColor iconBackgroundColor
