@@ -66,6 +66,7 @@ module Nri.Ui.Icon.V3
         , okay
         , openClose
         , peerReview
+        , pen
         , performance
         , personBlue
         , preview
@@ -149,6 +150,7 @@ module Nri.Ui.Icon.V3
 @docs okay
 @docs openClose
 @docs peerReview
+@docs pen
 @docs performance
 @docs personBlue
 @docs preview
@@ -723,6 +725,12 @@ openClose assets =
 peerReview : { r | icons_peerReview_svg : Asset } -> IconType
 peerReview assets =
     ImgIcon assets.icons_peerReview_svg
+
+
+{-| -}
+pen : { r | pen : Asset } -> IconType
+pen assets =
+    ImgIcon assets.pen
 
 
 {-| -}
