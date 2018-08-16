@@ -5,4 +5,4 @@
 >
 > https://paper.dropbox.com/doc/noredink-ui-widget-library-fUK6yq32g187lxw2A60a8#:uid=619243092748985044355046&h2=Reviewers-list
 
-[ ] Run `elm-package bump` to make sure you're bumping to the correct version
+- [ ] Run `elm-package bump` to make sure you're bumping to the correct version
