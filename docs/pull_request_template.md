@@ -4,5 +4,5 @@
 > Then feel free to grab a reviewer from the list below and assign them to the PR!
 >
 > https://paper.dropbox.com/doc/noredink-ui-widget-library-fUK6yq32g187lxw2A60a8#:uid=619243092748985044355046&h2=Reviewers-list
-
-- [ ] Run `elm-package bump` to make sure you're bumping to the correct version
+>
+> It's best if we have separate pull requests for code changes and package version bumps. If you're just changing code, great! If you're just bumping the version, check out https://github.com/NoRedInk/noredink-ui#deploying.
