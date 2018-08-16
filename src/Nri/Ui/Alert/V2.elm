@@ -21,6 +21,7 @@ import Css.Foreign
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
+import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
@@ -72,52 +73,52 @@ warning assets content =
 
 alert : List (Html msg) -> Html msg
 alert =
-    Html.div
-        [ css
-            [ Css.displayFlex
-            , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
-            , Css.position Css.relative
-            ]
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Alert-V2__alert"
+        [ Css.displayFlex
+        , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
+        , Css.position Css.relative
         ]
+        []
 
 
 iconContainer : List Css.Style -> Html msg -> Html msg
 iconContainer styles icon =
-    Html.div
-        [ css
-            (styles
-                ++ [ -- Positioning
-                     Css.position Css.absolute
-                   , Css.left Css.zero
-                   , Css.top Css.zero
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Alert-V2__iconContainer"
+        (styles
+            ++ [ -- Positioning
+                 Css.position Css.absolute
+               , Css.left Css.zero
+               , Css.top Css.zero
 
-                   -- Content positioning
-                   , Css.displayFlex
-                   , Css.justifyContent Css.center
-                   , Css.alignItems Css.center
+               -- Content positioning
+               , Css.displayFlex
+               , Css.justifyContent Css.center
+               , Css.alignItems Css.center
 
-                   -- Size
-                   , Css.borderRadius (Css.px 13)
-                   , Css.maxHeight (Css.px 25)
-                   , Css.maxWidth (Css.px 25)
-                   , Css.minHeight (Css.px 25)
-                   , Css.minWidth (Css.px 25)
-                   ]
-            )
-        ]
+               -- Size
+               , Css.borderRadius (Css.px 13)
+               , Css.maxHeight (Css.px 25)
+               , Css.maxWidth (Css.px 25)
+               , Css.minHeight (Css.px 25)
+               , Css.minWidth (Css.px 25)
+               ]
+        )
+        []
         [ icon ]
 
 
 viewAlertContent : Css.ColorValue compatible -> String -> Html.Styled.Html msg
 viewAlertContent color content =
-    Html.div
-        [ css
-            [ Css.color color
-            , Fonts.baseFont
-            , Css.fontSize (Css.px 13)
-            , Css.lineHeight (Css.num 1.2)
-            , Css.listStyleType Css.none
-            , Css.Foreign.descendants [ Css.Foreign.p [ Css.margin Css.zero ] ]
-            ]
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Alert-V2__viewAlertContent"
+        [ Css.color color
+        , Fonts.baseFont
+        , Css.fontSize (Css.px 13)
+        , Css.lineHeight (Css.num 1.2)
+        , Css.listStyleType Css.none
+        , Css.Foreign.descendants [ Css.Foreign.p [ Css.margin Css.zero ] ]
         ]
+        []
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)
