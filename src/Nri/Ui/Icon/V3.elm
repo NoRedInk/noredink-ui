@@ -50,6 +50,7 @@ module Nri.Ui.Icon.V3
         , highFive
         , icon
         , key
+        , keychain
         , late
         , leaderboard
         , lightBulb
@@ -135,6 +136,7 @@ module Nri.Ui.Icon.V3
 @docs help
 @docs highFive
 @docs key
+@docs keychain
 @docs late
 @docs leaderboard
 @docs lightBulb
@@ -643,6 +645,12 @@ highFive assets =
 key : { r | key : String } -> IconType
 key assets =
     SvgIcon assets.key
+
+
+{-| -}
+keychain : { r | keychain : String } -> IconType
+keychain assets =
+    SvgIcon assets.keychain
 
 
 {-| -}
