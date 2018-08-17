@@ -4,9 +4,11 @@ module Examples.Button exposing (Msg, State, example, init, update)
    @docs Msg, State, example, init, update,
 -}
 
+import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Headings
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V3 as Button
@@ -151,7 +153,12 @@ buttons assets messages sizes model =
     let
         exampleRow style =
             List.concat
-                [ [ td [] [ text <| toString style ]
+                [ [ td
+                        [ css
+                            [ verticalAlign middle
+                            ]
+                        ]
+                        [ text <| toString style ]
                   ]
                 , sizes
                     |> List.map (exampleCell style)

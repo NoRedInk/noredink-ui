@@ -211,8 +211,8 @@ customButton attributes config content =
                     True
     in
     Nri.Ui.styled Html.button
-        "nri-button-v3"
-        (buttonStyles config.size config.width buttonStyle)
+        "Nri-Button-V3-CustomButton"
+        (buttonStyles config.size config.width buttonStyle False)
         ([ onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -261,7 +261,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-copyToClipboard"
-        (buttonStyles config.size config.width (styleToColorPalette config.style))
+        (buttonStyles config.size config.width (styleToColorPalette config.style) False)
         [ Widget.label "Copy URL to clipboard"
         , attribute "data-clipboard-text" config.copyText
         , widthStyle config.width
@@ -341,7 +341,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-toggleButton"
-        (buttonStyles Medium Nothing SecondaryColors
+        (buttonStyles Medium Nothing SecondaryColors False
             ++ toggledStyles
         )
         (if config.pressed then
@@ -490,9 +490,9 @@ linkBase : List (Attribute msg) -> LinkConfig -> Html msg
 linkBase extraAttrs config =
     Nri.Ui.styled Html.a
         "Nri-Button-V3-linkBase"
-        (buttonStyles config.size config.width (styleToColorPalette config.style)
-            ++ [ whiteSpace noWrap ]
-         -- TODO: Validate link text doesn't wrap and uses correct line height
+        (buttonStyles config.size config.width (styleToColorPalette config.style) True
+            ++ [ whiteSpace noWrap
+               ]
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -535,12 +535,12 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> List Style
-buttonStyles size width colorPalette =
+buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> Bool -> List Style
+buttonStyles size width colorPalette isLink =
     List.concat
         [ buttonStyle
         , colorStyle colorPalette
-        , sizeStyle size width
+        , sizeStyle size width isLink
         ]
 
 
@@ -604,11 +604,6 @@ buttonStyle =
 colorStyle : ColorPalette -> List Style
 colorStyle colorPalette =
     let
-        --         , Css.Foreign.class (ColorsStyle LoadingColors)
-        --             [ Css.property "box-shadow" "none"
-        --             , Css.property "border" "none"
-        --             , marginBottom zero
-        --             ]
         ( config, additionalStyles ) =
             case colorPalette of
                 PrimaryColors ->
@@ -758,8 +753,8 @@ colorStyle colorPalette =
     ]
 
 
-sizeStyle : ButtonSize -> Maybe Int -> List Style
-sizeStyle size width =
+sizeStyle : ButtonSize -> Maybe Int -> Bool -> List Style
+sizeStyle size width isLink =
     let
         config =
             case size of
@@ -806,11 +801,17 @@ sizeStyle size width =
                         [ padding2 zero (px config.sidePadding)
                         , minWidth (px config.minWidth)
                         ]
+
+        lineHeightPx =
+            if isLink then
+                config.height
+            else
+                config.lineHeight
     in
     [ fontSize (px config.fontSize)
     , borderRadius (px 8)
     , Css.height (px config.height)
-    , lineHeight (px config.lineHeight)
+    , lineHeight (px lineHeightPx)
     , boxSizing borderBox
     , borderWidth (px 1)
     , borderBottomWidth (px config.shadowHeight)
