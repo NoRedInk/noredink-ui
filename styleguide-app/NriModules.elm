@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, styles, s
 
 import Assets exposing (assets)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import Examples.Alert
 import Examples.Button
 import Examples.Checkbox
 import Examples.Colors
@@ -184,7 +185,8 @@ container width children =
 
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
-    [ Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    [ Examples.Alert.example
+    , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
