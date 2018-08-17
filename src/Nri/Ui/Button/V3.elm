@@ -67,6 +67,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Foreign
+import EventExtras
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onClick)
@@ -428,7 +429,8 @@ linkSpa :
     -> Html msg
 linkSpa toUrl toMsg config =
     linkBase
-        [-- EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route) TODO
+        [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
+            |> Attributes.fromUnstyled
         ]
         { label = config.label
         , icon = config.icon
