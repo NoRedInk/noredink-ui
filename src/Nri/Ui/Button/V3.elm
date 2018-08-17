@@ -265,8 +265,7 @@ copyToClipboard assets config =
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-copyToClipboard"
         (buttonStyles config.size config.width (styleToColorPalette config.style))
-        [ -- , styles.class [ CopyToClipboard ] -- TODO
-          Widget.label "Copy URL to clipboard"
+        [ Widget.label "Copy URL to clipboard"
         , attribute "data-clipboard-text" config.copyText
         , widthStyle config.width
         ]
@@ -795,7 +794,6 @@ sizeStyle size =
     --     | LabelIconAndText
     --     | Toggled
     --     | Delete
-    --     | CopyToClipboard
     --     | NewStyle
     -- styles : Styles.StylesWithAssets Never CssClasses msg { r | icons_xBlue_svg : Asset }
     -- styles =
