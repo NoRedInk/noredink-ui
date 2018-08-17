@@ -559,8 +559,6 @@ viewLabel icn label =
             ]
 
 
-{-| TODO: does this have a styled version?
--}
 renderMarkdown : String -> List (Html msg)
 renderMarkdown markdown =
     case Markdown.Block.parse Nothing markdown of
