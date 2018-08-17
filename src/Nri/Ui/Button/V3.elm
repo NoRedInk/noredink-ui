@@ -17,7 +17,6 @@ module Nri.Ui.Button.V3
         , linkSpa
         , linkWithMethod
         , linkWithTracking
-        , submit
         , toggleButton
         )
 
@@ -30,6 +29,7 @@ module Nri.Ui.Button.V3
   - Removes buttonDeprecated
   - Removes Tiny size
   - Removes one-off Active hack
+  - Removes "submit" button - we just used that for forms that were partially in Elm
 
 
 # About:
@@ -57,11 +57,6 @@ There will generally be a `*Button` and `*Link` version of each button style.
 ## `<a>` Buttons
 
 @docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-
-
-## `<input>` Buttons
-
-@docs submit
 
 -}
 
@@ -352,7 +347,6 @@ toggleButton config =
             [ onClick config.onDeselect
             , Widget.pressed <| Just True
 
-            -- , styles.class [ Button, Toggled, SizeStyle Medium ] -- TODO
             -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
             , Role.button
 
@@ -384,24 +378,6 @@ type alias InputConfig =
     , style : ButtonStyle
     , value : String
     }
-
-
-{-| A submit input that overrides the form's method to PUT
-
-TODO: Should this exist?
-
--}
-submit : InputConfig -> Html c
-submit config =
-    Nri.Ui.styled Html.button
-        "Nri-Ui-Button-V3-submit"
-        (buttonStyles config.size Nothing (styleToColorPalette config.style))
-        [ name config.name
-        , type_ "submit"
-        , value config.value
-        ]
-        [ Html.map never config.content
-        ]
 
 
 
