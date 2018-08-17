@@ -591,81 +591,127 @@ buttonStyle =
 colorStyle : ColorPalette -> List Style
 colorStyle colorPalette =
     let
-        config =
+        ( config, additionalStyles ) =
             case colorPalette of
                 PrimaryColors ->
-                    { background = Nri.Ui.Colors.V1.azure
-                    , hover = Nri.Ui.Colors.V1.azureDark
-                    , text = Nri.Ui.Colors.V1.white
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.azureDark
-                    }
+                    ( { background = Nri.Ui.Colors.V1.azure
+                      , hover = Nri.Ui.Colors.V1.azureDark
+                      , text = Nri.Ui.Colors.V1.white
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.azureDark
+                      }
+                    , []
+                    )
 
                 SecondaryColors ->
-                    { background = Nri.Ui.Colors.V1.white
-                    , hover = Nri.Ui.Colors.V1.glacier
-                    , text = Nri.Ui.Colors.V1.azure
-                    , border = Just <| Nri.Ui.Colors.V1.azure
-                    , shadow = Nri.Ui.Colors.V1.azure
-                    }
+                    ( { background = Nri.Ui.Colors.V1.white
+                      , hover = Nri.Ui.Colors.V1.glacier
+                      , text = Nri.Ui.Colors.V1.azure
+                      , border = Just <| Nri.Ui.Colors.V1.azure
+                      , shadow = Nri.Ui.Colors.V1.azure
+                      }
+                    , []
+                    )
 
                 BorderlessColors ->
-                    { background = rgba 0 0 0 0
-                    , hover = rgba 0 0 0 0
-                    , text = Nri.Ui.Colors.V1.azure
-                    , border = Nothing
-                    , shadow = rgba 0 0 0 0
-                    }
+                    ( { background = rgba 0 0 0 0
+                      , hover = rgba 0 0 0 0
+                      , text = Nri.Ui.Colors.V1.azure
+                      , border = Nothing
+                      , shadow = rgba 0 0 0 0
+                      }
+                    , [ Css.hover
+                            [ textDecoration underline
+                            , Css.disabled
+                                [ textDecoration none
+                                ]
+                            ]
+                      ]
+                      -- TODO: Weird case with borderless
+                      -- , [ Css.Foreign.descendants
+                      --         [ Css.Foreign.img
+                      --             [ Css.height (px (config.imageHeight * 1.6))
+                      --             , marginRight (px (config.imageHeight * 1.6 / 6))
+                      --             ]
+                      --         , Css.Foreign.svg
+                      --             [ Css.height (px (config.imageHeight * 1.6)) |> important
+                      --             , Css.width (px (config.imageHeight * 1.6)) |> important
+                      --             , marginRight (px (config.imageHeight * 1.6 / 6))
+                      --             ]
+                      --         , Css.Foreign.svg
+                      --             [ Css.important <| Css.height (px (config.imageHeight * 1.6))
+                      --             , Css.important <| Css.width auto
+                      --             , maxWidth (px (config.imageHeight * 1.25))
+                      --             , paddingRight (px (config.imageHeight * 1.6 / 6))
+                      --             , position relative
+                      --             , bottom (px 2)
+                      --             ]
+                      --         ]
+                      --   ]
+                    )
 
                 DangerColors ->
-                    { background = Nri.Ui.Colors.V1.red
-                    , hover = Nri.Ui.Colors.V1.redDark
-                    , text = Nri.Ui.Colors.V1.white
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.redDark
-                    }
+                    ( { background = Nri.Ui.Colors.V1.red
+                      , hover = Nri.Ui.Colors.V1.redDark
+                      , text = Nri.Ui.Colors.V1.white
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.redDark
+                      }
+                    , []
+                    )
 
                 PremiumColors ->
-                    { background = Nri.Ui.Colors.V1.yellow
-                    , hover = Nri.Ui.Colors.V1.ochre
-                    , text = Nri.Ui.Colors.V1.navy
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.ochre
-                    }
+                    ( { background = Nri.Ui.Colors.V1.yellow
+                      , hover = Nri.Ui.Colors.V1.ochre
+                      , text = Nri.Ui.Colors.V1.navy
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.ochre
+                      }
+                    , []
+                    )
 
                 InactiveColors ->
-                    { background = Nri.Ui.Colors.V1.gray92
-                    , hover = Nri.Ui.Colors.V1.gray92
-                    , text = Nri.Ui.Colors.V1.gray45
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.gray92
-                    }
+                    ( { background = Nri.Ui.Colors.V1.gray92
+                      , hover = Nri.Ui.Colors.V1.gray92
+                      , text = Nri.Ui.Colors.V1.gray45
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.gray92
+                      }
+                    , []
+                    )
 
                 LoadingColors ->
-                    { background = Nri.Ui.Colors.V1.glacier
-                    , hover = Nri.Ui.Colors.V1.glacier
-                    , text = Nri.Ui.Colors.V1.navy
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.glacier
-                    }
+                    ( { background = Nri.Ui.Colors.V1.glacier
+                      , hover = Nri.Ui.Colors.V1.glacier
+                      , text = Nri.Ui.Colors.V1.navy
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.glacier
+                      }
+                    , []
+                    )
 
                 SuccessColors ->
-                    { background = Nri.Ui.Colors.V1.greenDark
-                    , hover = Nri.Ui.Colors.V1.greenDark
-                    , text = Nri.Ui.Colors.V1.white
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.greenDark
-                    }
+                    ( { background = Nri.Ui.Colors.V1.greenDark
+                      , hover = Nri.Ui.Colors.V1.greenDark
+                      , text = Nri.Ui.Colors.V1.white
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.greenDark
+                      }
+                    , []
+                    )
 
                 ErrorColors ->
-                    { background = Nri.Ui.Colors.V1.purple
-                    , hover = Nri.Ui.Colors.V1.purple
-                    , text = Nri.Ui.Colors.V1.white
-                    , border = Nothing
-                    , shadow = Nri.Ui.Colors.V1.purple
-                    }
+                    ( { background = Nri.Ui.Colors.V1.purple
+                      , hover = Nri.Ui.Colors.V1.purple
+                      , text = Nri.Ui.Colors.V1.white
+                      , border = Nothing
+                      , shadow = Nri.Ui.Colors.V1.purple
+                      }
+                    , []
+                    )
     in
-    [ color config.text
+    [ batch additionalStyles
+    , color config.text
     , backgroundColor config.background
     , fontWeight (int 700)
     , textAlign center
@@ -777,54 +823,10 @@ sizeStyle size width =
             , verticalAlign middle
             ]
         ]
-
-    -- type CssClasses
-    --     = IsLink
-    --     | ExplicitWidth
-    --     | SizeStyle ButtonSize
-    --     | Toggled
-    --     | Delete
-    --     | NewStyle
-    -- styles : Styles.StylesWithAssets Never CssClasses msg { r | icons_xBlue_svg : Asset }
-    -- styles =
-    -- let
-    -- Borderless buttons get bigger icons
-    -- , Css.Foreign.withClass (ColorsStyle BorderlessColors)
-    --     [ Css.Foreign.descendants
-    --         [ Css.Foreign.img
-    --             [ Css.height (px (config.imageHeight * 1.6))
-    --             , marginRight (px (config.imageHeight * 1.6 / 6))
-    --             ]
-    --         , Css.Foreign.svg
-    --             [ Css.height (px (config.imageHeight * 1.6)) |> important
-    --             , Css.width (px (config.imageHeight * 1.6)) |> important
-    --             , marginRight (px (config.imageHeight * 1.6 / 6))
-    --             ]
-    --         , Css.Foreign.svg
-    --             [ Css.important <| Css.height (px (config.imageHeight * 1.6))
-    --             , Css.important <| Css.width auto
-    --             , maxWidth (px (config.imageHeight * 1.25))
-    --             , paddingRight (px (config.imageHeight * 1.6 / 6))
-    --             , position relative
-    --             , bottom (px 2)
-    --             ]
-    --         ]
-    -- ]
     ]
 
 
 
--- in
--- Styles.stylesWithAssets "Nri-Ui-Button-V2-" <|
---     \assets ->
---         , Css.Foreign.class (ColorsStyle BorderlessColors)
---             [ Css.hover
---                 [ textDecoration underline
---                 , Css.disabled
---                     [ textDecoration none
---                     ]
---                 ]
---             ]
 --         , Css.Foreign.class (ColorsStyle PremiumColors)
 --             [ Css.property "box-shadow" "none"
 --             , marginBottom zero
