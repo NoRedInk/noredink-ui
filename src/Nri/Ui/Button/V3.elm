@@ -80,6 +80,7 @@ import Markdown.Block
 import Markdown.Inline
 import Nri.Ui
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
+import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V3 as Icon exposing (IconType, decorativeIcon, icon)
@@ -330,9 +331,23 @@ type alias ToggleButtonConfig msg =
 {-| -}
 toggleButton : ToggleButtonConfig msg -> Html msg
 toggleButton config =
+    let
+        toggledStyles =
+            if config.pressed then
+                [ color Colors.gray20
+                , backgroundColor Colors.glacier
+                , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
+                , border3 (px 1) solid Colors.azure
+                , fontWeight bold
+                ]
+            else
+                []
+    in
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-toggleButton"
-        (buttonStyles Medium Nothing SecondaryColors)
+        (buttonStyles Medium Nothing SecondaryColors
+            ++ toggledStyles
+        )
         (if config.pressed then
             [ onClick config.onDeselect
             , Widget.pressed <| Just True
@@ -849,14 +864,3 @@ sizeStyle size width =
             ]
         ]
     ]
-
-
-
---         , Css.Foreign.class Toggled
---             [ color Colors.gray20
---             , backgroundColor Colors.glacier
---             , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
---             , border3 (px 1) solid Colors.azure
---             , fontWeight bold
---             ]
---         ]
