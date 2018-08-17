@@ -478,23 +478,12 @@ linkExternalWithTracking onTrack =
 -}
 linkBase : List (Attribute msg) -> LinkConfig -> Html msg
 linkBase extraAttrs config =
-    let
-        widthAttributes =
-            Maybe.map
-                (\widthAttr ->
-                    [ Css.width (px <| toFloat widthAttr)
-                    , maxWidth (pct 100)
-                    ]
-                )
-                config.width
-                |> Maybe.withDefault []
-    in
     Nri.Ui.styled Html.a
         "Nri-Button-V3-linkBase"
         (buttonStyles config.size config.width (styleToColorPalette config.style)
-            ++ widthAttributes
+            ++ [ whiteSpace noWrap ]
+         -- TODO: Validate link text doesn't wrap and uses correct line height
         )
-        -- :: styles.class [ IsLink ] -- TODO
         (Attributes.href config.url
             :: extraAttrs
         )
@@ -539,7 +528,9 @@ styleToColorPalette style =
 buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> List Style
 buttonStyles size width colorPalette =
     List.concat
-        [ colorStyle colorPalette
+        [ buttonStyle
+        , colorStyle colorPalette
+        , sizeStyle size width
         ]
 
 
@@ -551,8 +542,7 @@ viewLabel icn label =
 
         Just iconType ->
             [ span
-                [-- styles.class [ LabelIconAndText ]  TODO
-                ]
+                []
                 (decorativeIcon iconType
                     :: renderMarkdown label
                 )
@@ -595,10 +585,6 @@ buttonStyle =
     , Css.disabled
         [ cursor notAllowed
         ]
-
-    -- , Css.Foreign.withClass IsLink -- TODO
-    --     [ whiteSpace noWrap
-    --     ]
     ]
 
 
@@ -708,8 +694,8 @@ colorStyle colorPalette =
     ]
 
 
-sizeStyle : ButtonSize -> List Style
-sizeStyle size =
+sizeStyle : ButtonSize -> Maybe Int -> List Style
+sizeStyle size width =
     let
         config =
             case size of
@@ -742,24 +728,29 @@ sizeStyle size =
                     , shadowHeight = 4
                     , minWidth = 200
                     }
+
+        widthAttributes =
+            case width of
+                Just pxWidth ->
+                    batch
+                        [ maxWidth (pct 100)
+                        , Css.width (px <| toFloat pxWidth)
+                        ]
+
+                Nothing ->
+                    batch
+                        [ padding2 zero (px config.sidePadding)
+                        , minWidth (px config.minWidth)
+                        ]
     in
     [ fontSize (px config.fontSize)
     , borderRadius (px 8)
     , Css.height (px config.height)
     , lineHeight (px config.lineHeight)
-    , padding2 zero (px config.sidePadding)
     , boxSizing borderBox
-    , minWidth (px config.minWidth)
     , borderWidth (px 1)
     , borderBottomWidth (px config.shadowHeight)
-
-    -- , Css.Foreign.withClass ExplicitWidth -- TODO
-    --     [ padding2 zero (px 4)
-    --     , boxSizing borderBox
-    --     ]
-    -- , Css.Foreign.withClass IsLink -- TODO
-    --     [ lineHeight (px config.height)
-    --     ]
+    , widthAttributes
     , Css.Foreign.descendants
         [ Css.Foreign.img
             [ Css.height (px config.imageHeight)
@@ -791,7 +782,6 @@ sizeStyle size =
     --     = IsLink
     --     | ExplicitWidth
     --     | SizeStyle ButtonSize
-    --     | LabelIconAndText
     --     | Toggled
     --     | Delete
     --     | NewStyle
