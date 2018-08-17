@@ -44,7 +44,7 @@ success assets content =
         [ iconContainer
             [ Css.color Colors.white
             , Css.backgroundColor Colors.green
-            , Css.Foreign.children [ Css.Foreign.svg [ Css.maxWidth (Css.px 15) ] ]
+            , Css.Foreign.children [ Css.Foreign.svg [ Css.maxWidth (Css.px 12) ] ]
             ]
             (Icon.decorativeIcon (Icon.checkMarkSvg assets))
         , viewAlertContent Colors.greenDarkest content
