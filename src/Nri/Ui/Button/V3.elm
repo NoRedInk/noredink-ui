@@ -80,7 +80,7 @@ import Markdown.Block
 import Markdown.Inline
 import Nri.Ui
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
-import Nri.Ui.Colors.V1
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V3 as Icon exposing (IconType, decorativeIcon, icon)
 
@@ -284,16 +284,33 @@ type alias DeleteButtonConfig msg =
 
 {-| A delete button (blue X)
 -}
-delete : DeleteButtonConfig msg -> Html msg
-delete config =
-    Html.button
-        [ --styles.class [ Delete ] -- TODO
-          onClick config.onClick
+delete : { r | x : String } -> DeleteButtonConfig msg -> Html msg
+delete assets config =
+    Nri.Ui.styled Html.button
+        "Nri-Button-V3-delete"
+        [ display inlineBlock
+        , backgroundRepeat noRepeat
+        , backgroundColor transparent
+        , backgroundPosition center
+        , backgroundSize contain
+        , Css.property "border" "none"
+        , Css.width (px 15)
+        , Css.height (px 15)
+        , padding zero
+        , margin2 zero (px 6)
+        , cursor pointer
+        , color Colors.azure
+        ]
+        [ onClick config.onClick
         , type_ "button"
         , -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
           Widget.label config.label
         ]
-        []
+        [ Icon.icon
+            { alt = "Delete"
+            , icon = Icon.xSvg assets
+            }
+        ]
 
 
 
@@ -579,6 +596,9 @@ buttonStyle =
     , Css.property "background-image" "none"
     , textShadow none
     , Css.property "transition" "all 0.2s"
+    , boxShadow none
+    , border zero
+    , marginBottom zero
     , Css.hover
         [ textDecoration none
         ]
@@ -591,24 +611,29 @@ buttonStyle =
 colorStyle : ColorPalette -> List Style
 colorStyle colorPalette =
     let
+        --         , Css.Foreign.class (ColorsStyle LoadingColors)
+        --             [ Css.property "box-shadow" "none"
+        --             , Css.property "border" "none"
+        --             , marginBottom zero
+        --             ]
         ( config, additionalStyles ) =
             case colorPalette of
                 PrimaryColors ->
-                    ( { background = Nri.Ui.Colors.V1.azure
-                      , hover = Nri.Ui.Colors.V1.azureDark
-                      , text = Nri.Ui.Colors.V1.white
+                    ( { background = Colors.azure
+                      , hover = Colors.azureDark
+                      , text = Colors.white
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.azureDark
+                      , shadow = Colors.azureDark
                       }
                     , []
                     )
 
                 SecondaryColors ->
-                    ( { background = Nri.Ui.Colors.V1.white
-                      , hover = Nri.Ui.Colors.V1.glacier
-                      , text = Nri.Ui.Colors.V1.azure
-                      , border = Just <| Nri.Ui.Colors.V1.azure
-                      , shadow = Nri.Ui.Colors.V1.azure
+                    ( { background = Colors.white
+                      , hover = Colors.glacier
+                      , text = Colors.azure
+                      , border = Just <| Colors.azure
+                      , shadow = Colors.azure
                       }
                     , []
                     )
@@ -616,7 +641,7 @@ colorStyle colorPalette =
                 BorderlessColors ->
                     ( { background = rgba 0 0 0 0
                       , hover = rgba 0 0 0 0
-                      , text = Nri.Ui.Colors.V1.azure
+                      , text = Colors.azure
                       , border = Nothing
                       , shadow = rgba 0 0 0 0
                       }
@@ -651,61 +676,61 @@ colorStyle colorPalette =
                     )
 
                 DangerColors ->
-                    ( { background = Nri.Ui.Colors.V1.red
-                      , hover = Nri.Ui.Colors.V1.redDark
-                      , text = Nri.Ui.Colors.V1.white
+                    ( { background = Colors.red
+                      , hover = Colors.redDark
+                      , text = Colors.white
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.redDark
+                      , shadow = Colors.redDark
                       }
                     , []
                     )
 
                 PremiumColors ->
-                    ( { background = Nri.Ui.Colors.V1.yellow
-                      , hover = Nri.Ui.Colors.V1.ochre
-                      , text = Nri.Ui.Colors.V1.navy
+                    ( { background = Colors.yellow
+                      , hover = Colors.ochre
+                      , text = Colors.navy
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.ochre
+                      , shadow = Colors.ochre
                       }
                     , []
                     )
 
                 InactiveColors ->
-                    ( { background = Nri.Ui.Colors.V1.gray92
-                      , hover = Nri.Ui.Colors.V1.gray92
-                      , text = Nri.Ui.Colors.V1.gray45
+                    ( { background = Colors.gray92
+                      , hover = Colors.gray92
+                      , text = Colors.gray45
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.gray92
+                      , shadow = Colors.gray92
                       }
                     , []
                     )
 
                 LoadingColors ->
-                    ( { background = Nri.Ui.Colors.V1.glacier
-                      , hover = Nri.Ui.Colors.V1.glacier
-                      , text = Nri.Ui.Colors.V1.navy
+                    ( { background = Colors.glacier
+                      , hover = Colors.glacier
+                      , text = Colors.navy
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.glacier
+                      , shadow = Colors.glacier
                       }
                     , []
                     )
 
                 SuccessColors ->
-                    ( { background = Nri.Ui.Colors.V1.greenDark
-                      , hover = Nri.Ui.Colors.V1.greenDark
-                      , text = Nri.Ui.Colors.V1.white
+                    ( { background = Colors.greenDark
+                      , hover = Colors.greenDark
+                      , text = Colors.white
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.greenDark
+                      , shadow = Colors.greenDark
                       }
                     , []
                     )
 
                 ErrorColors ->
-                    ( { background = Nri.Ui.Colors.V1.purple
-                      , hover = Nri.Ui.Colors.V1.purple
-                      , text = Nri.Ui.Colors.V1.white
+                    ( { background = Colors.purple
+                      , hover = Colors.purple
+                      , text = Colors.white
                       , border = Nothing
-                      , shadow = Nri.Ui.Colors.V1.purple
+                      , shadow = Colors.purple
                       }
                     , []
                     )
@@ -827,48 +852,11 @@ sizeStyle size width =
 
 
 
---         , Css.Foreign.class (ColorsStyle PremiumColors)
---             [ Css.property "box-shadow" "none"
---             , marginBottom zero
---             ]
---         , Css.Foreign.class (ColorsStyle InactiveColors)
---             [ Css.property "box-shadow" "none"
---             , Css.property "border" "none"
---             , marginBottom zero
---             ]
---         , Css.Foreign.class (ColorsStyle SuccessColors)
---             [ Css.property "box-shadow" "none"
---             , Css.property "border" "none"
---             , marginBottom zero
---             ]
---         , Css.Foreign.class (ColorsStyle ErrorColors)
---             [ Css.property "box-shadow" "none"
---             , Css.property "border" "none"
---             , marginBottom zero
---             ]
---         , Css.Foreign.class (ColorsStyle LoadingColors)
---             [ Css.property "box-shadow" "none"
---             , Css.property "border" "none"
---             , marginBottom zero
---             ]
---         , Css.Foreign.class Delete
---             [ display inlineBlock
---             , backgroundImage (url <| AssetPath.url assets.icons_xBlue_svg)
---             , backgroundRepeat noRepeat
---             , backgroundColor transparent
---             , backgroundPosition center
---             , backgroundSize contain
---             , Css.property "border" "none"
---             , Css.width (px 15)
---             , Css.height (px 15)
---             , margin2 zero (px 6)
---             , cursor pointer
---             ]
 --         , Css.Foreign.class Toggled
---             [ color Nri.Ui.Colors.V1.gray20
---             , backgroundColor Nri.Ui.Colors.V1.glacier
---             , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Nri.Ui.Colors.V1.gray20)
---             , border3 (px 1) solid Nri.Ui.Colors.V1.azure
+--             [ color Colors.gray20
+--             , backgroundColor Colors.glacier
+--             , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
+--             , border3 (px 1) solid Colors.azure
 --             , fontWeight bold
 --             ]
 --         ]

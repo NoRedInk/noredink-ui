@@ -32,7 +32,7 @@ type ButtonType
 
 {-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset }
+    { r | teach_assignments_copyWhite_svg : Asset, x : String }
     -> (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
@@ -110,7 +110,7 @@ type alias Model =
     }
 
 
-viewButtonExamples : { r | teach_assignments_copyWhite_svg : Asset } -> ModuleMessages Msg parentMsg -> State -> Html parentMsg
+viewButtonExamples : { r | teach_assignments_copyWhite_svg : Asset, x : String } -> ModuleMessages Msg parentMsg -> State -> Html parentMsg
 viewButtonExamples assets messages (State control) =
     let
         model =
@@ -120,7 +120,7 @@ viewButtonExamples assets messages (State control) =
         |> fromUnstyled
     , buttons assets messages sizes model
     , toggleButtons messages
-    , Button.delete
+    , Button.delete assets
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
