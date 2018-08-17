@@ -76,8 +76,10 @@ alert =
     Nri.Ui.styled Html.div
         "Nri-Ui-Alert-V2__alert"
         [ Css.displayFlex
-        , Css.padding4 (Css.px 6) (Css.px 8) (Css.px 8) (Css.px 30)
-        , Css.position Css.relative
+        , Css.justifyContent Css.start
+        , Css.alignItems Css.center
+        , Css.paddingTop (Css.px 6)
+        , Css.paddingBottom (Css.px 8)
         ]
         []
 
@@ -87,22 +89,18 @@ iconContainer styles icon =
     Nri.Ui.styled Html.div
         "Nri-Ui-Alert-V2__iconContainer"
         (styles
-            ++ [ -- Positioning
-                 Css.position Css.absolute
-               , Css.left Css.zero
-               , Css.top Css.zero
-
-               -- Content positioning
-               , Css.displayFlex
+            ++ [ -- Content positioning
+                 Css.displayFlex
                , Css.justifyContent Css.center
                , Css.alignItems Css.center
+               , Css.marginRight (Css.px 5)
 
                -- Size
                , Css.borderRadius (Css.px 13)
-               , Css.maxHeight (Css.px 25)
-               , Css.maxWidth (Css.px 25)
-               , Css.minHeight (Css.px 25)
-               , Css.minWidth (Css.px 25)
+               , Css.maxHeight (Css.px 20)
+               , Css.maxWidth (Css.px 20)
+               , Css.minHeight (Css.px 20)
+               , Css.minWidth (Css.px 20)
                ]
         )
         []
