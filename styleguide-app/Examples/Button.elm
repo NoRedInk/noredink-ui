@@ -6,11 +6,11 @@ module Examples.Button exposing (Msg, State, example, init, update)
 
 import Debug.Control as Control exposing (Control)
 import Headings
-import Html exposing (..)
+import Html.Styled exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V2 as Button
-import Nri.Ui.Icon.V2 as Icon
+import Nri.Ui.Button.V3 as Button
+import Nri.Ui.Icon.V3 as Icon
 
 
 {-| -}
@@ -41,10 +41,11 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri/Button.elm"
+    { filename = "Nri.Ui.Button.V3"
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
+            |> List.map toUnstyled
     }
 
 
@@ -116,6 +117,7 @@ viewButtonExamples assets messages (State control) =
             Control.currentValue control
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
+        |> fromUnstyled
     , buttons assets messages sizes model
     , toggleButtons messages
     , Button.delete
@@ -208,7 +210,8 @@ buttons assets messages sizes model =
 toggleButtons : ModuleMessages Msg parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
-        [ Headings.h3 [ text "Button toggle" ]
+        [ Headings.h3 [ text "Button toggle" |> toUnstyled ]
+            |> fromUnstyled
         , Button.toggleButton
             { onDeselect = messages.showItWorked "onDeselect"
             , onSelect = messages.showItWorked "onSelect"
