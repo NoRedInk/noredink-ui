@@ -638,27 +638,6 @@ colorStyle colorPalette =
                                 ]
                             ]
                       ]
-                      -- TODO: Weird case with borderless
-                      -- , [ Css.Foreign.descendants
-                      --         [ Css.Foreign.img
-                      --             [ Css.height (px (config.imageHeight * 1.6))
-                      --             , marginRight (px (config.imageHeight * 1.6 / 6))
-                      --             ]
-                      --         , Css.Foreign.svg
-                      --             [ Css.height (px (config.imageHeight * 1.6)) |> important
-                      --             , Css.width (px (config.imageHeight * 1.6)) |> important
-                      --             , marginRight (px (config.imageHeight * 1.6 / 6))
-                      --             ]
-                      --         , Css.Foreign.svg
-                      --             [ Css.important <| Css.height (px (config.imageHeight * 1.6))
-                      --             , Css.important <| Css.width auto
-                      --             , maxWidth (px (config.imageHeight * 1.25))
-                      --             , paddingRight (px (config.imageHeight * 1.6 / 6))
-                      --             , position relative
-                      --             , bottom (px 2)
-                      --             ]
-                      --         ]
-                      --   ]
                     )
 
                 DangerColors ->
