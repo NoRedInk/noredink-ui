@@ -49,3 +49,35 @@ make test
 
 Travis will run `make ci` to verify everything looks good.
 You can run this locally to catch errors before you push!
+
+## Deploying
+
+Once you are ready to publish `master` as a new version, run the following to bump the version in `elm-packages.json`:
+
+```
+elm-package bump
+```
+
+Commit to a branch and open a pull request. Announce the PR in #eng-front-ops-changes to have it reviewed and merged to `master`. Now you can publish the package!
+
+```
+elm-package publish # requires a tag, see below
+```
+
+This will require a tag, so follow the instructions it provides. It should be something like this:
+
+```
+Verifying NoRedInk/noredink-ui 5.10.0 ...
+Version number 5.10.0 verified (MINOR change, 5.9.1 => 5.10.0)
+Error: Libraries must be tagged in git, but tag 5.10.0 was not found.
+
+These tags make it possible to find this specific version on GitHub.
+To tag the most recent commit and push it to GitHub, run this:
+
+    git tag -a 5.10.0 -m "release version 5.10.0"
+    git push origin 5.10.0
+```
+
+You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
+
+Once you've published, you should see the latest version at the top of http://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest.
