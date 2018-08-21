@@ -1,6 +1,7 @@
 module Nri.Ui.Checkbox.V3
     exposing
-        ( IsSelected(..)
+        ( Assets
+        , IsSelected(..)
         , Model
         , Theme(..)
         , selectedFromBool
@@ -12,7 +13,7 @@ module Nri.Ui.Checkbox.V3
 
 @docs Model, Theme, IsSelected
 
-@docs view, viewWithLabel
+@docs view, viewWithLabel, Assets
 
 @docs selectedFromBool
 
