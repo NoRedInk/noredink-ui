@@ -113,7 +113,7 @@ type ButtonStyle
   - Disabled: A button which appears with the InactiveColors palette and is disabled.
   - Error: A button which appears with the ErrorColors palette and is disabled.
   - Loading: A button which appears with the LoadingColors palette and is disabled
-  - Success: A button which appears with the InactiveColors palette and is disabled
+  - Success: A button which appears with the SuccessColors palette and is disabled
 
 -}
 type ButtonState
