@@ -707,7 +707,6 @@ sizeStyle size width elementType =
                 Small ->
                     { fontSize = 15
                     , height = 36
-                    , lineHeight = 15
                     , sidePadding = 16
                     , imageHeight = 15
                     , shadowHeight = 2
@@ -717,7 +716,6 @@ sizeStyle size width elementType =
                 Medium ->
                     { fontSize = 17
                     , height = 45
-                    , lineHeight = 19
                     , sidePadding = 16
                     , imageHeight = 15
                     , shadowHeight = 3
@@ -727,7 +725,6 @@ sizeStyle size width elementType =
                 Large ->
                     { fontSize = 20
                     , height = 56
-                    , lineHeight = 22
                     , sidePadding = 16
                     , imageHeight = 20
                     , shadowHeight = 4
@@ -752,7 +749,15 @@ sizeStyle size width elementType =
                     config.height
 
                 Button ->
-                    config.lineHeight
+                    case size of
+                        Small ->
+                            15
+
+                        Medium ->
+                            19
+
+                        Large ->
+                            22
     in
     [ Css.fontSize (Css.px config.fontSize)
     , Css.borderRadius (Css.px 8)
