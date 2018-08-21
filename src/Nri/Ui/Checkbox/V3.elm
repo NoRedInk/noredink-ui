@@ -3,6 +3,7 @@ module Nri.Ui.Checkbox.V3
         ( IsSelected(..)
         , Model
         , Theme(..)
+        , selectedFromBool
         , view
         , viewWithLabel
         )
@@ -12,6 +13,8 @@ module Nri.Ui.Checkbox.V3
 @docs Model, Theme, IsSelected
 
 @docs view, viewWithLabel
+
+@docs selectedFromBool
 
 -}
 
@@ -62,6 +65,21 @@ type IsSelected
 type Theme
     = Square
     | Locked
+
+
+{-| If your selectedness is always selected or not selected,
+you will likely store that state as a `Bool` in your model.
+`selectedFromBool` lets you easily convert that into an `IsSelected` value
+for use with `Nri.Ui.Checkbox`.
+-}
+selectedFromBool : Bool -> IsSelected
+selectedFromBool isSelected =
+    case isSelected of
+        True ->
+            Selected
+
+        False ->
+            NotSelected
 
 
 selectedToMaybe : IsSelected -> Maybe Bool
