@@ -216,19 +216,10 @@ customButton attributes config content =
         ([ onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
-         , widthStyle config.width
          ]
             ++ attributes
         )
         (viewLabel content.icon content.label)
-
-
-widthStyle : Maybe Int -> Attribute msg
-widthStyle width =
-    width
-        |> Maybe.map (\w -> [ ( "width", toString w ++ "px" ) ])
-        |> Maybe.withDefault []
-        |> Attributes.style
 
 
 
@@ -264,7 +255,6 @@ copyToClipboard assets config =
         (buttonStyles config.size config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , Attributes.attribute "data-clipboard-text" config.copyText
-        , widthStyle config.width
         ]
         (viewLabel maybeIcon config.buttonLabel)
 
