@@ -293,11 +293,7 @@ delete assets config =
         , -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
           Widget.label config.label
         ]
-        [ Icon.icon
-            { alt = "Delete"
-            , icon = Icon.xSvg assets
-            }
-        ]
+        [ Icon.icon { alt = "Delete", icon = Icon.xSvg assets } ]
 
 
 
@@ -472,9 +468,7 @@ linkExternalWithTracking : msg -> LinkConfig -> Html msg
 linkExternalWithTracking onTrack =
     linkBase
         "linkExternalWithTracking"
-        [ Attributes.target "_blank"
-        , onClick onTrack
-        ]
+        [ Attributes.target "_blank", onClick onTrack ]
 
 
 {-| Helper function for building links with an arbitrary number of Attributes
@@ -483,9 +477,8 @@ linkBase : String -> List (Attribute msg) -> LinkConfig -> Html msg
 linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        (buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
-            ++ [ Css.whiteSpace Css.noWrap
-               ]
+        (Css.whiteSpace Css.noWrap
+            :: buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -544,12 +537,7 @@ viewLabel icn label =
             renderMarkdown label
 
         Just iconType ->
-            [ Html.span
-                []
-                (decorativeIcon iconType
-                    :: renderMarkdown label
-                )
-            ]
+            [ Html.span [] (decorativeIcon iconType :: renderMarkdown label) ]
 
 
 renderMarkdown : String -> List (Html msg)
@@ -583,12 +571,8 @@ buttonStyle =
     , Css.boxShadow Css.none
     , Css.border Css.zero
     , Css.marginBottom Css.zero
-    , Css.hover
-        [ Css.textDecoration Css.none
-        ]
-    , Css.disabled
-        [ Css.cursor Css.notAllowed
-        ]
+    , Css.hover [ Css.textDecoration Css.none ]
+    , Css.disabled [ Css.cursor Css.notAllowed ]
     ]
 
 
@@ -626,9 +610,7 @@ colorStyle colorPalette =
                       }
                     , [ Css.hover
                             [ Css.textDecoration Css.underline
-                            , Css.disabled
-                                [ Css.textDecoration Css.none
-                                ]
+                            , Css.disabled [ Css.textDecoration Css.none ]
                             ]
                       ]
                     )
@@ -713,13 +695,9 @@ colorStyle colorPalette =
     , Css.hover
         [ Css.color config.text
         , Css.backgroundColor config.hover
-        , Css.disabled
-            [ Css.backgroundColor config.background
-            ]
+        , Css.disabled [ Css.backgroundColor config.background ]
         ]
-    , Css.visited
-        [ Css.color config.text
-        ]
+    , Css.visited [ Css.color config.text ]
     ]
 
 
