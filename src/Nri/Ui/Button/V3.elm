@@ -211,7 +211,7 @@ customButton attributes config content =
                     True
     in
     Nri.Ui.styled Html.button
-        "Nri-Button-V3-CustomButton"
+        (styledName "customButton")
         (buttonStyles config.size config.width buttonStyle Button)
         ([ onClick config.onClick
          , Attributes.disabled disabled
@@ -260,7 +260,7 @@ copyToClipboard assets config =
                 Nothing
     in
     Nri.Ui.styled Html.button
-        "Nri-Ui-Button-V3-copyToClipboard"
+        (styledName "copyToClipboard")
         (buttonStyles config.size config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , attribute "data-clipboard-text" config.copyText
@@ -284,7 +284,7 @@ type alias DeleteButtonConfig msg =
 delete : { r | x : String } -> DeleteButtonConfig msg -> Html msg
 delete assets config =
     Nri.Ui.styled Html.button
-        "Nri-Button-V3-delete"
+        (styledName "delete")
         [ display inlineBlock
         , backgroundRepeat noRepeat
         , backgroundColor transparent
@@ -340,7 +340,7 @@ toggleButton config =
                 []
     in
     Nri.Ui.styled Html.button
-        "Nri-Ui-Button-V3-toggleButton"
+        (styledName "toggleButton")
         (buttonStyles Medium Nothing SecondaryColors Button
             ++ toggledStyles
         )
@@ -405,7 +405,7 @@ some url
 -}
 link : LinkConfig -> Html msg
 link =
-    linkBase <| [ Attributes.target "_self" ]
+    linkBase "link" [ Attributes.target "_self" ]
 
 
 {-| Use this link for routing within a single page app.
@@ -429,6 +429,7 @@ linkSpa :
     -> Html msg
 linkSpa toUrl toMsg config =
     linkBase
+        "linkSpa"
         [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
             |> Attributes.fromUnstyled
         ]
@@ -446,7 +447,7 @@ some url and have it open to an external site
 -}
 linkExternal : LinkConfig -> Html msg
 linkExternal =
-    linkBase <| [ Attributes.target "_blank" ]
+    linkBase "linkExternal" [ Attributes.target "_blank" ]
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
@@ -454,7 +455,7 @@ some url, and it's an HTTP request (Rails includes JS to make this use the given
 -}
 linkWithMethod : String -> LinkConfig -> Html msg
 linkWithMethod method =
-    linkBase <| [ attribute "data-method" method ]
+    linkBase "linkWithMethod" [ attribute "data-method" method ]
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
@@ -462,7 +463,8 @@ This should only take in messages that result in a Msg that triggers Analytics.t
 -}
 linkWithTracking : msg -> LinkConfig -> Html msg
 linkWithTracking onTrack =
-    linkBase <|
+    linkBase
+        "linkWithTracking"
         [ Events.onWithOptions "click"
             { stopPropagation = False
             , preventDefault = True
@@ -478,7 +480,8 @@ This should only take in messages that result in tracking events. For buttons th
 -}
 linkExternalWithTracking : msg -> LinkConfig -> Html msg
 linkExternalWithTracking onTrack =
-    linkBase <|
+    linkBase
+        "linkExternalWithTracking"
         [ Attributes.target "_blank"
         , onClick onTrack
         ]
@@ -486,10 +489,10 @@ linkExternalWithTracking onTrack =
 
 {-| Helper function for building links with an arbitrary number of Attributes
 -}
-linkBase : List (Attribute msg) -> LinkConfig -> Html msg
-linkBase extraAttrs config =
+linkBase : String -> List (Attribute msg) -> LinkConfig -> Html msg
+linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Html.a
-        "Nri-Button-V3-linkBase"
+        (styledName linkFunctionName)
         (buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
             ++ [ whiteSpace noWrap
                ]
@@ -827,3 +830,8 @@ sizeStyle size width elementType =
             ]
         ]
     ]
+
+
+styledName : String -> String
+styledName suffix =
+    "Nri-Ui-Button-V3-" ++ suffix
