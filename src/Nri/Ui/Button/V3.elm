@@ -349,10 +349,6 @@ toggleButton config =
         (viewLabel Nothing config.label)
 
 
-
--- SUBMIT BUTTON
-
-
 {-| Inputs can be a clickable thing used in a form
 -}
 type alias InputConfig =
