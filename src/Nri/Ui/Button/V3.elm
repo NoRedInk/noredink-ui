@@ -70,16 +70,16 @@ import Css.Foreign
 import EventExtras
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events exposing (onClick)
+import Html.Styled.Events as Events
 import Json.Decode
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
-import Nri.Ui.Colors.Extra exposing (withAlpha)
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V3 as Icon exposing (IconType, decorativeIcon, icon)
+import Nri.Ui.Icon.V3 as Icon exposing (IconType)
 
 
 {-| Sizes for buttons and links that have button classes
@@ -213,7 +213,7 @@ customButton attributes config content =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         (buttonStyles config.size config.width buttonStyle Button)
-        ([ onClick config.onClick
+        ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
          ]
@@ -288,7 +288,7 @@ delete assets config =
         , Css.cursor Css.pointer
         , Css.color Colors.azure
         ]
-        [ onClick config.onClick
+        [ Events.onClick config.onClick
         , Attributes.type_ "button"
         , -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
           Widget.label config.label
@@ -318,7 +318,7 @@ toggleButton config =
             if config.pressed then
                 [ Css.color Colors.gray20
                 , Css.backgroundColor Colors.glacier
-                , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (withAlpha 0.2 Colors.gray20)
+                , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
                 , Css.border3 (Css.px 1) Css.solid Colors.azure
                 , Css.fontWeight Css.bold
                 ]
@@ -331,7 +331,7 @@ toggleButton config =
             ++ toggledStyles
         )
         (if config.pressed then
-            [ onClick config.onDeselect
+            [ Events.onClick config.onDeselect
             , Widget.pressed <| Just True
 
             -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
@@ -343,7 +343,7 @@ toggleButton config =
             , Attributes.type_ "button"
             ]
          else
-            [ onClick config.onSelect
+            [ Events.onClick config.onSelect
             , Widget.pressed <| Just False
             , Role.button
             , Attributes.type_ "button"
@@ -396,7 +396,7 @@ link =
 
 {-| Use this link for routing within a single page app.
 
-This will make a normal <a> tag, but change the onClick behavior to avoid reloading the page.
+This will make a normal <a> tag, but change the Events.onClick behavior to avoid reloading the page.
 
 See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
 
@@ -468,7 +468,7 @@ linkExternalWithTracking : msg -> LinkConfig -> Html msg
 linkExternalWithTracking onTrack =
     linkBase
         "linkExternalWithTracking"
-        [ Attributes.target "_blank", onClick onTrack ]
+        [ Attributes.target "_blank", Events.onClick onTrack ]
 
 
 {-| Helper function for building links with an arbitrary number of Attributes
@@ -537,7 +537,7 @@ viewLabel icn label =
             renderMarkdown label
 
         Just iconType ->
-            [ Html.span [] (decorativeIcon iconType :: renderMarkdown label) ]
+            [ Html.span [] (Icon.decorativeIcon iconType :: renderMarkdown label) ]
 
 
 renderMarkdown : String -> List (Html msg)
