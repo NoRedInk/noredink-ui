@@ -212,7 +212,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         "Nri-Button-V3-CustomButton"
-        (buttonStyles config.size config.width buttonStyle False)
+        (buttonStyles config.size config.width buttonStyle Button)
         ([ onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -261,7 +261,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-copyToClipboard"
-        (buttonStyles config.size config.width (styleToColorPalette config.style) False)
+        (buttonStyles config.size config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , attribute "data-clipboard-text" config.copyText
         , widthStyle config.width
@@ -341,7 +341,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         "Nri-Ui-Button-V3-toggleButton"
-        (buttonStyles Medium Nothing SecondaryColors False
+        (buttonStyles Medium Nothing SecondaryColors Button
             ++ toggledStyles
         )
         (if config.pressed then
@@ -490,7 +490,7 @@ linkBase : List (Attribute msg) -> LinkConfig -> Html msg
 linkBase extraAttrs config =
     Nri.Ui.styled Html.a
         "Nri-Button-V3-linkBase"
-        (buttonStyles config.size config.width (styleToColorPalette config.style) True
+        (buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
             ++ [ whiteSpace noWrap
                ]
         )
@@ -535,12 +535,12 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> Bool -> List Style
-buttonStyles size width colorPalette isLink =
+buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> ElementType -> List Style
+buttonStyles size width colorPalette elementType =
     List.concat
         [ buttonStyle
         , colorStyle colorPalette
-        , sizeStyle size width isLink
+        , sizeStyle size width elementType
         ]
 
 
@@ -730,8 +730,13 @@ colorStyle colorPalette =
     ]
 
 
-sizeStyle : ButtonSize -> Maybe Int -> Bool -> List Style
-sizeStyle size width isLink =
+type ElementType
+    = Anchor
+    | Button
+
+
+sizeStyle : ButtonSize -> Maybe Int -> ElementType -> List Style
+sizeStyle size width elementType =
     let
         config =
             case size of
@@ -780,10 +785,12 @@ sizeStyle size width isLink =
                         ]
 
         lineHeightPx =
-            if isLink then
-                config.height
-            else
-                config.lineHeight
+            case elementType of
+                Anchor ->
+                    config.height
+
+                Button ->
+                    config.lineHeight
     in
     [ fontSize (px config.fontSize)
     , borderRadius (px 8)
