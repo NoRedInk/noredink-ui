@@ -10,6 +10,10 @@ test: elm-stuff tests/elm-stuff node_modules
 diff: node_modules elm-stuff
 	if (elm-package diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
 
+.PHONY: sync_assets
+sync_assets: elm-stuff
+	exit 1
+
 .PHONY: format
 format: node_modules
 	elm-format --validate src tests styleguide-app
@@ -42,6 +46,10 @@ elm-stuff: elm-package.json node_modules
 %/elm-stuff: %/elm-package.json node_modules
 	cd $(@D); elm-package install --yes
 	touch -m $@
+
+.NOTPARALLEL: src/Nri/Ui/Assets.elm
+src/Nri/Ui/Assets.elm: $(shell find styleguide-app/assets/images -type f -name '*.svg')
+	node scripts/svgToElm.js $^ | elm-format --stdin >> $@
 
 # special targets for travis, but anyone can use them, really.
 
