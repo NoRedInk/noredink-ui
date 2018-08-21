@@ -28,7 +28,7 @@ documentation.json: node_modules
 styleguide-app/javascript.js: lib/index.js
 	npx browserify --entry lib/index.js --outfile styleguide-app/javascript.js
 
-styleguide-app/elm.js: styleguide-app/javascript.js styleguide-app/elm-stuff $(shell find src styleguide-app -type f -name '*.elm')
+styleguide-app/elm.js: styleguide-app/javascript.js styleguide-app/elm-stuff src/Nri/Ui/Assets.elm $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; elm-make Main.elm --output=$(@F)
 
 # plumbing
