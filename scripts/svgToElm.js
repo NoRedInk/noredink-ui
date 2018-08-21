@@ -4,22 +4,8 @@ var fs = require('fs'),
 
 const readFile = util.promisify(fs.readFile);
 
-files = process.argv.slice(2).sort();
-
-var svgs = files.map(file => {
-  return readFile(file).then(data => {
-    var result = parse(data.toString());
-    var name = camelCase(file.replace(/.*\//,''));
-    elm = `${name} : Html msg
-${name} = ${toElm(result.root)}`;
-    return elm;
-  }).catch(err => {
-    console.error(err);
-  });
-});
-
-Promise.all(svgs).then(data => {
-  var content = `module Assets exposing (..)
+const assetFileTemplate = data => {
+  return `module Nri.Ui.Assets exposing (..)
 import Svg as Svg
 import Svg.Attributes as A
 import Html exposing (Html)
@@ -30,6 +16,39 @@ import Html exposing (Html)
 -- Any manual edits will for sure be lost :(
 
 ${data.join('\n\n')}`;
+};
+
+const svgTemplate = (name, implementation) => {
+  return `
+${name} : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
+${name} attributes extraNodes = ${implementation}`;
+};
+
+function nodeTemplate(node) {
+  if (node.name === "style")
+    return `Svg.${node.name} [${attributes(node.attributes)}] [ Svg.text ${sanitize(node.content)} ]`;
+  else if (node.name === "svg")
+    return `Svg.${node.name}
+  (attributes ++ [${attributes(node.attributes)}])
+  (extraNodes ++ [${node.children.map(nodeTemplate).join(',\n  ')}])`;
+  else
+    return `Svg.${node.name} [${attributes(node.attributes)}] [${node.children.map(nodeTemplate).join(',\n  ')}]`;
+}
+
+files = process.argv.slice(2).sort();
+
+var svgs = files.map(file => {
+  return readFile(file).then(data => {
+    var result = parse(data.toString());
+    var name = camelCase(file.replace(/.*\//,''));
+    return svgTemplate(name, nodeTemplate(result.root));
+  }).catch(err => {
+    console.error(err);
+  });
+});
+
+Promise.all(svgs).then(data => {
+  var content = assetFileTemplate(data);
   console.log(content);
 });
 
@@ -47,12 +66,7 @@ function sanitize(content) {
   return '"' + content.replace(/(\r|\n)+/g,'\\n').replace(/\t/g,' ') + '"';
 }
 
-function toElm(node) {
-  if (node.name == "style")
-    return `Svg.${node.name} [${attributes(node.attributes)}] [ Svg.text ${sanitize(node.content)} ]`;
-  else
-    return `Svg.${node.name} [${attributes(node.attributes)}] [${node.children.map(toElm).join(',\n  ')}]`;
-}
+
 
 const regular = ["accentHeight", "accelerate", "accumulate", "additive",
 "alphabetic", "allowReorder", "amplitude", "arabicForm", "ascent",
