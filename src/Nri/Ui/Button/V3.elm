@@ -707,7 +707,6 @@ sizeStyle size width elementType =
                 Small ->
                     { fontSize = 15
                     , height = 36
-                    , sidePadding = 16
                     , imageHeight = 15
                     , shadowHeight = 2
                     , minWidth = 75
@@ -716,7 +715,6 @@ sizeStyle size width elementType =
                 Medium ->
                     { fontSize = 17
                     , height = 45
-                    , sidePadding = 16
                     , imageHeight = 15
                     , shadowHeight = 3
                     , minWidth = 100
@@ -725,7 +723,6 @@ sizeStyle size width elementType =
                 Large ->
                     { fontSize = 20
                     , height = 56
-                    , sidePadding = 16
                     , imageHeight = 20
                     , shadowHeight = 4
                     , minWidth = 200
@@ -739,7 +736,7 @@ sizeStyle size width elementType =
                     ]
 
                 Nothing ->
-                    [ Css.padding2 Css.zero (Css.px config.sidePadding)
+                    [ Css.padding2 Css.zero (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)
                     ]
 
