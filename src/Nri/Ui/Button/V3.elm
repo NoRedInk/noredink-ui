@@ -280,7 +280,7 @@ delete assets config =
         , Css.backgroundColor Css.transparent
         , Css.backgroundPosition Css.center
         , Css.backgroundSize Css.contain
-        , Css.property "border" "none"
+        , Css.border Css.zero
         , Css.width (Css.px 15)
         , Css.height (Css.px 15)
         , Css.padding Css.zero
@@ -577,7 +577,7 @@ buttonStyle =
     , Css.textOverflow Css.ellipsis
     , Css.overflow Css.hidden
     , Css.textDecoration Css.none
-    , Css.property "background-image" "none"
+    , Css.backgroundImage Css.none
     , Css.textShadow Css.none
     , Css.property "transition" "all 0.2s"
     , Css.boxShadow Css.none
