@@ -538,8 +538,7 @@ renderMarkdown markdown =
     case Markdown.Block.parse Nothing markdown of
         -- It seems to be always first wrapped in a `Paragraph` and never directly a `PlainInline`
         [ Markdown.Block.Paragraph _ inlines ] ->
-            List.map Markdown.Inline.toHtml inlines
-                |> List.map Styled.fromUnstyled
+            List.map (Markdown.Inline.toHtml >> Styled.fromUnstyled) inlines
 
         _ ->
             [ Html.text markdown ]
