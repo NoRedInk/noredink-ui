@@ -30,6 +30,16 @@ If you are moving in a widget from the monolith:
 - If `Nri.Ui.SomeModule.V1` is a direct copy of `Nri.SomeModule`, switch over to it everywhere!
 - If `Nri.Ui.SomeModule.V1` makes changes, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
 
+
+## Phasing out old versions
+
+Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
+
+Currently, `noredink-ui` is used by the monolith and by CCS. When neither of these repos use a version of a widget, it can be deleted. (Note: this will be a major version bump, so you may want to batch deletions together.)
+
+When touching code that uses a widget, prefer upgrading to the latest version.
+
+
 ## Examples
 
 This repo contains an app showcasing all of these UI widgets.
