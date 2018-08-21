@@ -62,13 +62,13 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 -- import EventExtras
 
-import Accessibility.Styled exposing (..)
+import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Foreign
 import EventExtras
-import Html.Styled as Html
+import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onClick)
 import Json.Decode
@@ -491,7 +491,7 @@ linkExternalWithTracking onTrack =
 -}
 linkBase : String -> List (Attribute msg) -> LinkConfig -> Html msg
 linkBase linkFunctionName extraAttrs config =
-    Nri.Ui.styled Html.a
+    Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         (buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
             ++ [ whiteSpace noWrap
@@ -568,7 +568,7 @@ renderMarkdown markdown =
         -- It seems to be always first wrapped in a `Paragraph` and never directly a `PlainInline`
         [ Markdown.Block.Paragraph _ inlines ] ->
             List.map Markdown.Inline.toHtml inlines
-                |> List.map Html.fromUnstyled
+                |> List.map Styled.fromUnstyled
 
         _ ->
             [ Html.text markdown ]
