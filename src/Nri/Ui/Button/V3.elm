@@ -741,16 +741,14 @@ sizeStyle size width elementType =
         widthAttributes =
             case width of
                 Just pxWidth ->
-                    Css.batch
-                        [ Css.maxWidth (Css.pct 100)
-                        , Css.width (Css.px <| toFloat pxWidth)
-                        ]
+                    [ Css.maxWidth (Css.pct 100)
+                    , Css.width (Css.px <| toFloat pxWidth)
+                    ]
 
                 Nothing ->
-                    Css.batch
-                        [ Css.padding2 Css.zero (Css.px config.sidePadding)
-                        , Css.minWidth (Css.px config.minWidth)
-                        ]
+                    [ Css.padding2 Css.zero (Css.px config.sidePadding)
+                    , Css.minWidth (Css.px config.minWidth)
+                    ]
 
         lineHeightPx =
             case elementType of
@@ -767,7 +765,7 @@ sizeStyle size width elementType =
     , Css.boxSizing Css.borderBox
     , Css.borderWidth (Css.px 1)
     , Css.borderBottomWidth (Css.px config.shadowHeight)
-    , widthAttributes
+    , Css.batch widthAttributes
     , Css.Foreign.descendants
         [ Css.Foreign.img
             [ Css.height (Css.px config.imageHeight)
