@@ -330,25 +330,22 @@ toggleButton config =
         (buttonStyles Medium Nothing SecondaryColors Button
             ++ toggledStyles
         )
-        (if config.pressed then
-            [ Events.onClick config.onDeselect
-            , Widget.pressed <| Just True
+        [ Events.onClick
+            (if config.pressed then
+                config.onDeselect
+             else
+                config.onSelect
+            )
+        , Widget.pressed <| Just config.pressed
 
-            -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
-            , Role.button
+        -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
+        , Role.button
 
-            -- Note: setting type: 'button' removes the default behavior of submit
-            -- equivalent to preventDefaultBehavior = false
-            -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
-            , Attributes.type_ "button"
-            ]
-         else
-            [ Events.onClick config.onSelect
-            , Widget.pressed <| Just False
-            , Role.button
-            , Attributes.type_ "button"
-            ]
-        )
+        -- Note: setting type: 'button' removes the default behavior of submit
+        -- equivalent to preventDefaultBehavior = false
+        -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
+        , Attributes.type_ "button"
+        ]
         (viewLabel Nothing config.label)
 
 
