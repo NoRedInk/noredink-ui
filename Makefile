@@ -49,9 +49,9 @@ elm-stuff: elm-package.json node_modules
 
 .NOTPARALLEL: src/Nri/Ui/Assets.elm
 src/Nri/Ui/Assets.elm: $(shell find styleguide-app/assets/images -type f -name '*.svg')
-	npx svgo $^ --multipass --disable=removeViewBox
 	mkdir -p tmp/
-	node scripts/svgToElm.js $^ > tmp/Assets.elm
+	npx svgo -f styleguide-app/assets/images/ --multipass --disable=removeViewBox -o tmp/
+	node scripts/svgToElm.js $(shell find tmp -type f -name '*.svg') > tmp/Assets.elm
 	elm-format tmp/Assets.elm --output $@
 
 # special targets for travis, but anyone can use them, really.
