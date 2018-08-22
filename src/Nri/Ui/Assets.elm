@@ -19,7 +19,7 @@ arrowDownBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-120.000000, -1265.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-down-blue", A.transform "translate(70.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.transform "translate(12.500000, 12.500000) rotate(270.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-120.000000, -1265.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-down-blue", A.transform "translate(70.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.transform "translate(12.500000, 12.500000) rotate(270.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ]
                ]
         )
 
@@ -32,7 +32,7 @@ arrowLeftBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-90.000000, -1260.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-left-blue", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.id "Page-1" ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-90.000000, -1260.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-left-blue", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.id "Page-1" ] [] ] ] ] ] ]
                ]
         )
 
@@ -45,7 +45,7 @@ arrowRightBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-80.000000, -1260.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-right-blue", A.transform "translate(25.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.id "Page-1", A.transform "translate(12.500000, 12.500000) rotate(180.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-80.000000, -1260.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-5-Copy", A.transform "translate(0.000000, 1210.000000)" ] [ Svg.g [ A.id "icon/arrow-right-blue", A.transform "translate(25.000000, 0.000000)" ] [ Svg.path [ A.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z", A.id "Page-1", A.transform "translate(12.500000, 12.500000) rotate(180.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ]
                ]
         )
 
@@ -58,7 +58,7 @@ assignmentStartButtonPrimarySvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -624.000000)" ]
                         [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ]
                             [ Svg.g [ A.id "Stacked-Group-2", A.transform "translate(0.000000, 574.000000)" ]
@@ -84,15 +84,15 @@ assignmentStartButtonSecondarySvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] [ Svg.path [ A.d "M0,25.3650791 C0,39.1738284 11.19375,50.3650803 25,50.3650803 C38.80875,50.3650803 50,39.1738284 50,25.3650791 C50,11.5588298 38.80625,0.365080324 25,0.365080324 C11.19375,0.365080324 0,11.5588298 0,25.3650791 Z", A.id "path-1" ] [] ]
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -684.000000)" ]
                         [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ]
                             [ Svg.g [ A.id "Stacked-Group-2", A.transform "translate(0.000000, 574.000000)" ]
                                 [ Svg.g [ A.id "assignment-start-button-secondary" ]
                                     [ Svg.g [ A.transform "translate(0.000000, 60.000000)" ]
                                         [ Svg.g [ A.id "Path" ]
-                                            [ Svg.use [ A.fill "#FFFFFF" ] []
-                                            , Svg.path [ A.stroke "#146AFF", A.d "M1.5,25.3650791 C1.5,38.3445152 12.021291,48.8650803 25,48.8650803 C37.9803224,48.8650803 48.5,38.3454018 48.5,25.3650791 C48.5,12.3872569 37.9778229,1.86508032 25,1.86508032 C12.0221771,1.86508032 1.5,12.3872569 1.5,25.3650791 Z" ] []
+                                            [ Svg.use [ A.fill "#FFFFFF", A.fillRule "evenodd", A.xlinkHref "#path-1" ] []
+                                            , Svg.path [ A.stroke "#146AFF", A.strokeWidth "3", A.d "M1.5,25.3650791 C1.5,38.3445152 12.021291,48.8650803 25,48.8650803 C37.9803224,48.8650803 48.5,38.3454018 48.5,25.3650791 C48.5,12.3872569 37.9778229,1.86508032 25,1.86508032 C12.0221771,1.86508032 1.5,12.3872569 1.5,25.3650791 Z" ] []
                                             ]
                                         , Svg.path [ A.d "M20.946522,34.4104003 C20.5071165,34.6639342 19.9615913,34.6639342 19.5221743,34.4104003 C19.0827687,34.1575729 18.8100004,33.6846894 18.8100004,33.1783395 L18.8100004,17.5518211 C18.8100004,17.0426111 19.0827687,16.5725764 19.5221743,16.3197604 C19.9615913,16.0662265 20.5071165,16.0662265 20.946522,16.3197604 L34.4778257,24.1344382 C34.9172427,24.3879721 35.1899996,24.8573004 35.1899996,25.3672168 C35.1899996,25.8735667 34.9200914,26.3436015 34.4778257,26.5964289 L20.946522,34.4104003 Z", A.id "Path", A.fill "#146AFF" ] []
                                         ]
@@ -121,9 +121,9 @@ attentionSvg attributes extraNodes =
 bulbYellowSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 bulbYellowSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 23 25", A.style "enable-background:new 0 0 23 25;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 23 25", A.style "enable-background:new 0 0 23 25;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FEC709;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FEC709;}\n" ]
                , Svg.g [ A.id "feedback" ]
                     [ Svg.g [ A.id "dot-tip", A.transform "translate(-261.000000, -371.000000)" ]
                         [ Svg.g [ A.id "alerts_x2F_tip", A.transform "translate(259.886945, 371.000000)" ]
@@ -153,9 +153,9 @@ bulbYellowSvg attributes extraNodes =
 checkGreenSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 checkGreenSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 21.7 17.1", A.style "enable-background:new 0 0 21.7 17.1;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 21.7 17.1", A.style "enable-background:new 0 0 21.7 17.1;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#00D93E;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#00D93E;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.id "check-green", A.class "st0", A.d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4\n L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
@@ -166,9 +166,9 @@ checkGreenSvg attributes extraNodes =
 checkWhiteSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 checkWhiteSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 21.7 17.1", A.style "enable-background:new 0 0 21.7 17.1;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 21.7 17.1", A.style "enable-background:new 0 0 21.7 17.1;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.id "check-white", A.class "st0", A.d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4\n L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
@@ -186,16 +186,16 @@ checkboxCheckedSvg attributes extraNodes =
                , Svg.defs []
                     [ Svg.rect [ A.id "path-1", A.x "0", A.y "0", A.width "27", A.height "27", A.rx "4" ] []
                     , Svg.filter [ A.x "-3.7%", A.y "-3.7%", A.width "107.4%", A.height "107.4%", A.filterUnits "objectBoundingBox", A.id "filter-2" ]
-                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.result "shadowOffsetInner1" ] []
-                        , Svg.feComposite [ A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
-                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0" ] []
+                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.in_ "SourceAlpha", A.result "shadowOffsetInner1" ] []
+                        , Svg.feComposite [ A.in_ "shadowOffsetInner1", A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
+                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0", A.type_ "matrix", A.in_ "shadowInnerInner1" ] []
                         ]
                     ]
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "checkbox_checked" ]
                         [ Svg.g []
-                            [ Svg.use [ A.fill "#D4F0FF" ] []
-                            , Svg.use [ A.fill "black", A.filter "url(#filter-2)" ] []
+                            [ Svg.use [ A.fill "#D4F0FF", A.fillRule "evenodd", A.xlinkHref "#path-1" ] []
+                            , Svg.use [ A.fill "black", A.fillOpacity "1", A.filter "url(#filter-2)", A.xlinkHref "#path-1" ] []
                             ]
                         , Svg.g [ A.id "icon/check-blue", A.transform "translate(3.600000, 3.600000)", A.fill "#146AFF" ] [ Svg.path [ A.d "M7.04980639,17.8647896 C6.57427586,17.8647896 6.11539815,17.6816086 5.77123987,17.3513276 L0.571859358,12.3786105 C-0.167340825,11.672716 -0.193245212,10.5014676 0.513574487,9.7631926 C1.21761872,9.02491757 2.38979222,8.99808803 3.12899241,9.70490773 L6.96746745,13.3750043 L16.7917062,2.73292703 C17.4855737,1.98077465 18.6558969,1.93451682 19.4061989,2.62745917 C20.1574262,3.32132667 20.2046091,4.49164987 19.5116668,5.24195193 L8.4097867,17.2689887 C8.07210452,17.6344256 7.60397524,17.8481368 7.10716611,17.8638644 C7.08866297,17.8647896 7.06923468,17.8647896 7.04980639,17.8647896" ] [] ]
                         ]
@@ -214,16 +214,16 @@ checkboxCheckedpartiallySvg attributes extraNodes =
                , Svg.defs []
                     [ Svg.rect [ A.id "path-1", A.x "0", A.y "0", A.width "27", A.height "27", A.rx "4" ] []
                     , Svg.filter [ A.x "-3.7%", A.y "-3.7%", A.width "107.4%", A.height "107.4%", A.filterUnits "objectBoundingBox", A.id "filter-2" ]
-                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.result "shadowOffsetInner1" ] []
-                        , Svg.feComposite [ A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
-                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0" ] []
+                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.in_ "SourceAlpha", A.result "shadowOffsetInner1" ] []
+                        , Svg.feComposite [ A.in_ "shadowOffsetInner1", A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
+                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0", A.type_ "matrix", A.in_ "shadowInnerInner1" ] []
                         ]
                     ]
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "checkbox_checkedPartially" ]
                         [ Svg.g [ A.id "checkbox_checked" ]
-                            [ Svg.use [ A.fill "#EBEBEB" ] []
-                            , Svg.use [ A.fill "black", A.filter "url(#filter-2)" ] []
+                            [ Svg.use [ A.fill "#EBEBEB", A.fillRule "evenodd", A.xlinkHref "#path-1" ] []
+                            , Svg.use [ A.fill "black", A.fillOpacity "1", A.filter "url(#filter-2)", A.xlinkHref "#path-1" ] []
                             ]
                         , Svg.path [ A.d "M22.2879231,10.8937777 C22.4823276,11.0881822 22.5430781,11.3676344 22.4701764,11.7321429 C22.1785697,13.2630784 21.6196651,14.4294879 20.793446,15.2314064 C19.9672268,16.033325 18.9830688,16.4342783 17.8409423,16.4342783 C16.9175209,16.4342783 16.073089,16.3006272 15.3076213,16.033321 C14.5421536,15.7660148 13.612671,15.3772116 12.5191457,14.8668998 C11.668626,14.4537903 10.9821454,14.1500378 10.4596833,13.9556333 C9.93722115,13.7612288 9.40869184,13.664028 8.87407945,13.664028 C7.53754849,13.664028 6.68704155,14.3201333 6.32253311,15.6323637 C6.27393198,15.8267682 6.17065614,15.9907946 6.01270248,16.1244477 C5.85474882,16.2581008 5.66642228,16.3249263 5.44771721,16.3249263 C5.20471159,16.3249263 4.9860098,16.2277255 4.7916053,16.033321 C4.59720079,15.8389165 4.5,15.6202147 4.5,15.3772091 C4.5,14.6238916 4.71262674,13.8705855 5.13788659,13.117268 C5.56314644,12.3639506 6.1342011,11.7503706 6.85106771,11.2765096 C7.56793431,10.8026486 8.32731551,10.5657217 9.12923409,10.5657217 C10.076956,10.5657217 10.933538,10.6993728 11.6990058,10.966679 C12.4644735,11.2339852 13.3939561,11.6227884 14.4874814,12.1331002 C15.3380011,12.5462097 16.0244817,12.8499622 16.5469438,13.0443667 C17.0694059,13.2387712 17.5979352,13.335972 18.1325476,13.335972 C18.8129634,13.335972 19.2868173,13.2266211 19.5541234,13.0079161 C19.8214296,12.789211 20.1008819,12.4004078 20.3924887,11.8414949 C20.4653904,11.6470904 20.5747413,11.4162385 20.7205446,11.1489323 C20.9149491,10.7844239 21.2065515,10.6021724 21.5953605,10.6021724 C21.8626667,10.6021724 22.0935186,10.6993732 22.2879231,10.8937777 Z", A.id "~", A.fill "#146AFF" ] []
                         ]
@@ -242,16 +242,16 @@ checkboxLockOnInsideSvg attributes extraNodes =
                , Svg.defs []
                     [ Svg.rect [ A.id "path-1", A.x "0", A.y "0", A.width "27", A.height "27", A.rx "4" ] []
                     , Svg.filter [ A.x "-3.7%", A.y "-3.7%", A.width "107.4%", A.height "107.4%", A.filterUnits "objectBoundingBox", A.id "filter-2" ]
-                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.result "shadowOffsetInner1" ] []
-                        , Svg.feComposite [ A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
-                        , Svg.feColorMatrix [ A.values "0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" ] []
+                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.in_ "SourceAlpha", A.result "shadowOffsetInner1" ] []
+                        , Svg.feComposite [ A.in_ "shadowOffsetInner1", A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
+                        , Svg.feColorMatrix [ A.values "0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0", A.type_ "matrix", A.in_ "shadowInnerInner1" ] []
                         ]
                     ]
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "checkbox_lock_on_inside" ]
                         [ Svg.g [ A.id "checkbox_checked" ]
-                            [ Svg.use [ A.fill "#EBEBEB" ] []
-                            , Svg.use [ A.fill "black", A.filter "url(#filter-2)" ] []
+                            [ Svg.use [ A.fill "#EBEBEB", A.fillRule "evenodd", A.xlinkHref "#path-1" ] []
+                            , Svg.use [ A.fill "black", A.fillOpacity "1", A.filter "url(#filter-2)", A.xlinkHref "#path-1" ] []
                             ]
                         , Svg.g [ A.id "icon/premium-lock-shadow", A.transform "translate(4.050000, 4.050000)" ]
                             [ Svg.g [ A.id "icon_premium_locked", A.transform "translate(3.040000, 0.271429)" ]
@@ -276,15 +276,15 @@ checkboxUncheckedSvg attributes extraNodes =
                , Svg.defs []
                     [ Svg.rect [ A.id "path-1", A.x "0", A.y "0", A.width "27", A.height "27", A.rx "4" ] []
                     , Svg.filter [ A.x "-3.7%", A.y "-3.7%", A.width "107.4%", A.height "107.4%", A.filterUnits "objectBoundingBox", A.id "filter-2" ]
-                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.result "shadowOffsetInner1" ] []
-                        , Svg.feComposite [ A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
-                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0" ] []
+                        [ Svg.feOffset [ A.dx "0", A.dy "2", A.in_ "SourceAlpha", A.result "shadowOffsetInner1" ] []
+                        , Svg.feComposite [ A.in_ "shadowOffsetInner1", A.in2 "SourceAlpha", A.operator "arithmetic", A.k2 "-1", A.k3 "1", A.result "shadowInnerInner1" ] []
+                        , Svg.feColorMatrix [ A.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0", A.type_ "matrix", A.in_ "shadowInnerInner1" ] []
                         ]
                     ]
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "checkbox_unchecked" ]
-                        [ Svg.use [ A.fill "#EBEBEB" ] []
-                        , Svg.use [ A.fill "black", A.filter "url(#filter-2)" ] []
+                        [ Svg.use [ A.fill "#EBEBEB", A.fillRule "evenodd", A.xlinkHref "#path-1" ] []
+                        , Svg.use [ A.fill "black", A.fillOpacity "1", A.filter "url(#filter-2)", A.xlinkHref "#path-1" ] []
                         ]
                     ]
                ]
@@ -294,9 +294,9 @@ checkboxUncheckedSvg attributes extraNodes =
 clockRedSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 clockRedSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 15 15", A.style "enable-background:new 0 0 15 15;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 15 15", A.style "enable-background:new 0 0 15 15;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FFFFFF;}\n .st1{fill:#F3336C;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FFFFFF;}\n .st1{fill:#F3336C;}\n" ]
                , Svg.g [ A.id "Page-1" ]
                     [ Svg.g [ A.id "icon_x2F_clock-red" ]
                         [ Svg.circle [ A.id "Oval-7", A.class "st0", A.cx "7.5", A.cy "7.5", A.r "6.9" ] []
@@ -319,7 +319,7 @@ copyWhiteSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Share-assignment-modal'", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Share-assignment-modal'", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "Share-assignment-modal", A.transform "translate(-188.000000, -218.000000)", A.fill "#FFFFFF" ]
                         [ Svg.g [ A.id "Group-3", A.transform "translate(66.000000, 207.000000)" ]
                             [ Svg.g [ A.id "button/medium-primary-copy", A.transform "translate(112.000000, 0.000000)" ]
@@ -358,7 +358,7 @@ equalsSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "UI-Icons", A.transform "translate(-191.000000, -1433.000000)", A.fill "#BFBFBF" ]
                         [ Svg.g [ A.id "icon/equals", A.transform "translate(191.000000, 1433.000000)" ]
                             [ Svg.rect [ A.id "Rectangle-8", A.x "0", A.y "0", A.width "25", A.height "5", A.rx "2.5" ] []
@@ -376,7 +376,7 @@ exclamationPointSvg attributes extraNodes =
         (attributes ++ [ A.width "4", A.height "12", A.viewBox "0 0 4 12" ])
         (extraNodes
             ++ [ Svg.title [] []
-               , Svg.path [ A.d "M3.234 10.575a1.363 1.363 0 1 1-2.726 0 1.363 1.363 0 0 1 2.726 0zm.648-8.398a1.978 1.978 0 0 1-.007.047l-.834 5.294c-.079.53-.542.926-1.085.926h-.013a1.096 1.096 0 0 1-1.085-.926L.024 2.224A1.93 1.93 0 0 1 1.93 0h.04a1.94 1.94 0 0 1 1.912 1.663v.514z", A.fill "#FFF" ] []
+               , Svg.path [ A.d "M3.234 10.575a1.363 1.363 0 1 1-2.726 0 1.363 1.363 0 0 1 2.726 0zm.648-8.398a1.978 1.978 0 0 1-.007.047l-.834 5.294c-.079.53-.542.926-1.085.926h-.013a1.096 1.096 0 0 1-1.085-.926L.024 2.224A1.93 1.93 0 0 1 1.93 0h.04a1.94 1.94 0 0 1 1.912 1.663v.514z", A.fill "#FFF", A.fillRule "evenodd" ] []
                ]
         )
 
@@ -384,9 +384,9 @@ exclamationPointSvg attributes extraNodes =
 facebookBlueSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 facebookBlueSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 10 19", A.style "enable-background:new 0 0 10 19;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 10 19", A.style "enable-background:new 0 0 10 19;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#146AFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#146AFF;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.class "st0", A.d "M10,3.1H8.2c-1.4,0-1.7,0.7-1.7,1.6v2.1h3.4l-0.5,3.4H6.5v8.6H2.9v-8.6H0V6.9h2.9V4.4C2.9,1.6,4.7,0,7.3,0\n C8.6,0,9.7,0.1,10,0.1V3.1z" ] []
@@ -402,7 +402,7 @@ flagRedSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "icon/flag/flag-red", A.transform "translate(-3.000000, 0.000000)", A.fill "#F3336C" ] [ Svg.path [ A.d "M21.3595028,1.24979142 C20.0642416,0.413816119 17.1066244,-0.368346404 13.036042,0.32412815 C9.68755214,0.893125313 6.15468046,0.307859169 4.99958285,0.0813449024 C4.87860838,0.0292007342 4.74678792,-1.77635684e-14 4.6066244,-1.77635684e-14 C4.06557651,-1.77635684e-14 3.64049725,0.435090939 3.64049725,0.976138829 L3.64049725,24.0271984 C3.64049725,24.5649091 4.06724512,25 4.6066244,25 C5.1493409,25 5.58610045,24.5632404 5.58610045,24.0271984 L5.58610045,12.9334223 C6.82921742,13.3472384 9.17570499,13.8640914 12.1512598,13.2821625 C16.1938929,12.4887369 19.510262,13.512014 19.510262,13.512014 C20.5302019,12.4949942 21.3190389,10.0296179 20.9456866,7.30852661 C20.538545,4.35090939 21.3595028,1.24979142 21.3595028,1.24979142 L21.3595028,1.24979142 Z", A.id "Page-1" ] [] ] ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "icon/flag/flag-red", A.transform "translate(-3.000000, 0.000000)", A.fill "#F3336C" ] [ Svg.path [ A.d "M21.3595028,1.24979142 C20.0642416,0.413816119 17.1066244,-0.368346404 13.036042,0.32412815 C9.68755214,0.893125313 6.15468046,0.307859169 4.99958285,0.0813449024 C4.87860838,0.0292007342 4.74678792,-1.77635684e-14 4.6066244,-1.77635684e-14 C4.06557651,-1.77635684e-14 3.64049725,0.435090939 3.64049725,0.976138829 L3.64049725,24.0271984 C3.64049725,24.5649091 4.06724512,25 4.6066244,25 C5.1493409,25 5.58610045,24.5632404 5.58610045,24.0271984 L5.58610045,12.9334223 C6.82921742,13.3472384 9.17570499,13.8640914 12.1512598,13.2821625 C16.1938929,12.4887369 19.510262,13.512014 19.510262,13.512014 C20.5302019,12.4949942 21.3190389,10.0296179 20.9456866,7.30852661 C20.538545,4.35090939 21.3595028,1.24979142 21.3595028,1.24979142 L21.3595028,1.24979142 Z", A.id "Page-1" ] [] ] ]
                ]
         )
 
@@ -415,12 +415,12 @@ helpBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -2284.000000)" ]
                         [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ]
                             [ Svg.g [ A.id "icon/help", A.transform "translate(0.000000, 2234.000000)" ]
                                 [ Svg.g [ A.id "Group" ]
-                                    [ Svg.circle [ A.id "Oval-1", A.stroke "#146AFF", A.cx "12.5", A.cy "12.5", A.r "11.5" ] []
+                                    [ Svg.circle [ A.id "Oval-1", A.stroke "#146AFF", A.strokeWidth "2", A.cx "12.5", A.cy "12.5", A.r "11.5" ] []
                                     , Svg.path [ A.d "M12.6825,6.6275 C13.3866702,6.6275 14.0095806,6.74395717 14.55125,6.976875 C15.0929194,7.20979283 15.5154151,7.53749789 15.81875,7.96 C16.1220849,8.38250211 16.27375,8.86458063 16.27375,9.40625 C16.27375,9.98041954 16.1329181,10.470623 15.85125,10.876875 C15.5695819,11.283127 15.1579194,11.7408308 14.61625,12.25 C14.1937479,12.6508353 13.8768761,12.9866653 13.665625,13.2575 C13.4543739,13.5283347 13.3216669,13.8262484 13.2675,14.15125 L13.18625,14.6875 L11.74,14.6875 L11.74,13.875 C11.74,13.3116639 11.8402073,12.8458352 12.040625,12.4775 C12.2410427,12.1091648 12.5362481,11.6975023 12.92625,11.2425 C13.2079181,10.9174984 13.419166,10.6385428 13.56,10.405625 C13.700834,10.1727072 13.77125,9.91541808 13.77125,9.63375 C13.77125,9.30874838 13.6602094,9.0595842 13.438125,8.88625 C13.2160406,8.7129158 12.8991687,8.62625 12.4875,8.62625 C11.7074961,8.62625 10.9437537,8.85916434 10.19625,9.325 L10.19625,7.29375 C10.9112536,6.84958111 11.7399953,6.6275 12.6825,6.6275 Z M11.17125,18.34375 L11.17125,15.7275 L13.82,15.7275 L13.82,18.34375 L11.17125,18.34375 Z", A.id "?", A.fill "#146AFF" ] []
                                     ]
                                 ]
@@ -434,9 +434,9 @@ helpBlueSvg attributes extraNodes =
 iconCalendarSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 iconCalendarSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 22.1 25", A.style "enable-background:new 0 0 22.1 25;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 22.1 25", A.style "enable-background:new 0 0 22.1 25;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#146AFF;}\n    .st1{fill:#146AFF;}\n  " ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#146AFF;}\n    .st1{fill:#146AFF;}\n  " ]
                , Svg.path [ A.class "st0", A.d "M19.2,23.4H2.9c-0.7,0-1.4-0.7-1.4-1.5V11.2h19v10.7C20.6,22.7,20,23.4,19.2,23.4z M2.9,5.1h3v1.2\n    c0,0.5,0.3,0.9,0.8,0.9c0.4,0,0.8-0.4,0.8-0.9V5.1h7.2v1.2c0,0.5,0.3,0.9,0.8,0.9c0.4,0,0.8-0.4,0.8-0.9V5.1h3\n    c0.7,0,1.4,0.7,1.4,1.5v2.9h-19V6.6C1.6,5.7,2.2,5.1,2.9,5.1z M22.1,6.1v16.3c-0.2,1.3-1,2.3-2.1,2.6H2.1C0.9,24.6,0,23.4,0,21.9\n    V6.6c0-1.8,1.3-3.2,2.9-3.2h3V0.9C5.9,0.4,6.3,0,6.7,0c0.4,0,0.8,0.4,0.8,0.9v2.5h7.2V0.9C14.7,0.4,15,0,15.5,0\n    c0.4,0,0.8,0.4,0.8,0.9v2.5h3C20.7,3.3,21.9,4.5,22.1,6.1z" ] []
                , Svg.rect [ A.x "3.3", A.y "13", A.class "st1", A.width "2.2", A.height "2.2" ] []
                , Svg.rect [ A.x "3.3", A.y "16.3", A.class "st1", A.width "2.2", A.height "2.2" ] []
@@ -462,7 +462,7 @@ iconMasteryBadgeSvg attributes extraNodes =
     Svg.svg
         (attributes ++ [ A.width "20", A.height "20", A.viewBox "0 0 20 20" ])
         (extraNodes
-            ++ [ Svg.g [ A.fill "none" ]
+            ++ [ Svg.g [ A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.path [ A.fill "#146AFF", A.d "M15.304 1.274A11.631 11.631 0 0 0 10 0C8.177 0 6.355.424 4.696 1.274L1.09 3.12a.165.165 0 0 0-.09.148v7.423a7.455 7.455 0 0 0 3.886 6.56l5.034 2.73a.17.17 0 0 0 .158 0l5.036-2.73A7.453 7.453 0 0 0 19 10.69V3.266a.16.16 0 0 0-.088-.146l-3.608-1.846z" ] []
                     , Svg.path [ A.fill "#FFF", A.d "M10.89 4.716l.744 1.45a1 1 0 0 0 .743.533l1.603.239a1 1 0 0 1 .548 1.708l-1.126 1.088a1 1 0 0 0-.291.885l.26 1.55a1 1 0 0 1-1.437 1.058l-1.483-.75a1 1 0 0 0-.903 0l-1.482.75a1 1 0 0 1-1.437-1.058l.26-1.55a1 1 0 0 0-.29-.885L5.471 8.646a1 1 0 0 1 .548-1.708l1.603-.239a1 1 0 0 0 .743-.532l.745-1.451a1 1 0 0 1 1.78 0z" ] []
                     ]
@@ -473,9 +473,9 @@ iconMasteryBadgeSvg attributes extraNodes =
 iconPremiumFlagSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 iconPremiumFlagSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 25 19", A.style "enable-background:new 0 0 25 19;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 25 19", A.style "enable-background:new 0 0 25 19;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FEC709;}\n    .st1{fill:#146AFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FEC709;}\n    .st1{fill:#146AFF;}\n" ]
                , Svg.g [ A.id "Page-1" ]
                     [ Svg.g [ A.id "icon_x2F_p-mini-pennant-yellow", A.transform "translate(0.000000, -3.000000)" ]
                         [ Svg.g [ A.id "Group", A.transform "translate(0.000000, 3.750000)" ]
@@ -541,7 +541,7 @@ logoRedBlackSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Symbols", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Symbols", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "headers/logged-out/normal", A.transform "translate(-15.000000, -29.000000)" ]
                         [ Svg.g [ A.id "headers/teacher/normal-copy" ]
                             [ Svg.g [ A.id "logo", A.transform "translate(15.000000, 29.000000)" ]
@@ -564,9 +564,9 @@ logoRedBlackSvg attributes extraNodes =
 peerReviewSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 peerReviewSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 90 93", A.style "enable-background:new 0 0 90 93;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 90 93", A.style "enable-background:new 0 0 90 93;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#00D93E;}\n .st1{fill:#00CBEB;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#00D93E;}\n .st1{fill:#00CBEB;}\n" ]
                , Svg.g [ A.id "Page-1" ]
                     [ Svg.g [ A.id "peer-review" ]
                         [ Svg.path [ A.id "Clip-2", A.class "st0", A.d "M26.4,69.4v-17c0-0.1,0-0.1,0-0.2v-0.1v-6l-2,3.9c-0.6,1.2-2,1.6-3.1,1.1c-1.1-0.6-1.5-2-1-3.2\n   l4-7.7c0.1-0.1,0.1-0.3,0.2-0.4c0.4-1,1.3-1.8,2.5-1.8H34l-3.6,6.9c-1.2,2.3-0.4,5.1,2,6.4c1.5,0.8,3.1,0.6,4.4-0.1l0.1-0.1v18.1\n   h-4.6V54.8h-1.2v14.6H26.4L26.4,69.4L26.4,69.4z M39.1,69.4V50.9c0-0.1,0-0.1,0-0.2v-0.1V44l-2.2,4.3c-0.7,1.3-2.2,1.8-3.4,1.2\n   c-1.2-0.6-1.7-2.2-1-3.5l4.4-8.5c0.1-0.1,0.2-0.3,0.3-0.4c0.4-1.1,1.5-2,2.8-2h10.5c1.3,0,2.4,0.8,2.8,2c0.1,0.1,0.2,0.3,0.3,0.4\n   l4.4,8.5c0.7,1.3,0.2,2.9-1,3.5c-1.2,0.6-2.8,0.1-3.4-1.2L50.9,44v6.6c0,0.1,0,0.2,0,0.3v0v18.5h-5.3V53.5h-1.3v15.9H39.1\n   L39.1,69.4L39.1,69.4z M53,69.4V51.3l0.1,0.1c1.3,0.8,2.9,0.9,4.4,0.1c2.4-1.2,3.1-4.1,2-6.4L56,38.2H63c1.2,0,2.1,0.7,2.5,1.8\n   c0.1,0.1,0.2,0.2,0.2,0.4l4,7.7c0.6,1.2,0.2,2.6-1,3.2c-1.1,0.6-2.5,0.1-3.1-1.1l-2-3.9v6c0,0.1,0,0.2,0,0.2v0v17h-4.8V54.8h-1.2\n   v14.6H53L53,69.4z M45.1,22.6c-2.9,0-5.2,2.3-5.2,5.2c0,2.9,2.3,5.2,5.2,5.2c2.9,0,5.2-2.3,5.2-5.2C50.3,24.9,48,22.6,45.1,22.6\n   L45.1,22.6L45.1,22.6L45.1,22.6z M27.1,31.5c0-2.6,2.1-4.7,4.7-4.7s4.7,2.1,4.7,4.7c0,2.6-2.1,4.7-4.7,4.7S27.1,34.1,27.1,31.5\n   L27.1,31.5z M53.6,31.5c0-2.6,2.1-4.7,4.7-4.7c2.6,0,4.7,2.1,4.7,4.7c0,2.6-2.1,4.7-4.7,4.7C55.7,36.2,53.6,34.1,53.6,31.5\n   L53.6,31.5z" ] []
@@ -580,9 +580,9 @@ peerReviewSvg attributes extraNodes =
 personBlueSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 personBlueSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 18 18", A.style "enable-background:new 0 0 18 18;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 18 18", A.style "enable-background:new 0 0 18 18;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#146AFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#146AFF;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.class "st0", A.d "M8.6,9.4c2.6,0,4.7-2.1,4.7-4.7c0-2.6-2.1-4.7-4.7-4.7C6,0,3.9,2.1,3.9,4.7C3.9,7.3,6,9.4,8.6,9.4L8.6,9.4z\n  M0,17.6C0,17.8,0.2,18,0.4,18h16.4c0.2,0,0.4-0.2,0.4-0.4v-0.8c0-3.2-2.1-5.9-6.3-5.9H6.3C2.1,11,0,13.7,0,16.8V17.6z" ] []
@@ -598,7 +598,7 @@ plusBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-225.000000, -108.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-3", A.transform "translate(0.000000, 58.000000)" ] [ Svg.g [ A.id "Group-3", A.transform "translate(175.000000, 0.000000)" ] [ Svg.g [ A.id "icon/plus-blue" ] [ Svg.path [ A.d "M3.8105802,7.57167235 C2.7298066,6.49089875 2.7298066,4.89135381 3.8105802,3.8105802 C4.89135381,2.7298066 6.49089875,2.7298066 7.57167235,3.8105802 L12.4135381,8.65244596 L17.2554039,3.8105802 C18.3361775,2.7298066 20.1302617,2.7298066 21.1894198,3.8105802 C22.2701934,4.89135381 22.2701934,6.685438 21.1894198,7.74459613 L16.347554,12.5864619 L21.1894198,17.4283276 C22.2701934,18.5091013 22.2701934,20.1086462 21.1894198,21.1894198 C20.1086462,22.2701934 18.5091013,22.2701934 17.4283276,21.1894198 L12.5864619,16.347554 L7.74459613,21.1894198 C6.66382253,22.2701934 4.86973834,22.2701934 3.8105802,21.1894198 C2.7298066,20.1086462 2.7298066,18.314562 3.8105802,17.2554039 L8.65244596,12.5864619 L3.8105802,7.57167235 Z", A.id "Shape", A.transform "translate(12.500000, 12.500000) rotate(45.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-225.000000, -108.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-3", A.transform "translate(0.000000, 58.000000)" ] [ Svg.g [ A.id "Group-3", A.transform "translate(175.000000, 0.000000)" ] [ Svg.g [ A.id "icon/plus-blue" ] [ Svg.path [ A.d "M3.8105802,7.57167235 C2.7298066,6.49089875 2.7298066,4.89135381 3.8105802,3.8105802 C4.89135381,2.7298066 6.49089875,2.7298066 7.57167235,3.8105802 L12.4135381,8.65244596 L17.2554039,3.8105802 C18.3361775,2.7298066 20.1302617,2.7298066 21.1894198,3.8105802 C22.2701934,4.89135381 22.2701934,6.685438 21.1894198,7.74459613 L16.347554,12.5864619 L21.1894198,17.4283276 C22.2701934,18.5091013 22.2701934,20.1086462 21.1894198,21.1894198 C20.1086462,22.2701934 18.5091013,22.2701934 17.4283276,21.1894198 L12.5864619,16.347554 L7.74459613,21.1894198 C6.66382253,22.2701934 4.86973834,22.2701934 3.8105802,21.1894198 C2.7298066,20.1086462 2.7298066,18.314562 3.8105802,17.2554039 L8.65244596,12.5864619 L3.8105802,7.57167235 Z", A.id "Shape", A.transform "translate(12.500000, 12.500000) rotate(45.000000) translate(-12.500000, -12.500000) " ] [] ] ] ] ] ] ]
                ]
         )
 
@@ -611,7 +611,7 @@ premiumLockSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "icon_premium_locked", A.transform "translate(0.880000, 0.257143)" ]
                         [ Svg.path [ A.d "M15.1703507,11.7613357 L15.1703507,7.54281617 C15.1703507,4.09252936 12.4022155,1.28571429 9.00015151,1.28571429 C5.59748152,1.28571429 2.82964933,4.09252936 2.82964933,7.54281617 L2.82964933,11.7613357 L1.947846,11.7613357 C0.872409555,11.7613357 0,12.6451106 0,13.7356938 L0,23.7399276 C0,24.8305108 0.872409555,25.7142857 1.947846,25.7142857 L16.0527601,25.7142857 C17.1281965,25.7142857 18,24.8305108 18,23.7399276 L18,13.7360011 C18,12.6454179 17.1281965,11.7613357 16.0527601,11.7613357 L15.1703507,11.7613357 Z M9.59559603,19.3582355 L9.59559603,21.7044182 C9.59559603,22.0384458 9.32863083,22.3088637 9.00015151,22.3088637 C8.67106614,22.3088637 8.40410094,22.0384458 8.40410094,21.7044182 L8.40410094,19.3582355 C7.73047592,19.1108645 7.24836282,18.4584813 7.24836282,17.689634 C7.24836282,16.7090617 8.03259204,15.9131726 9.00015151,15.9131726 C9.96680191,15.9131726 10.7522432,16.7090617 10.7522432,17.689634 C10.7522432,18.4594032 10.2692211,19.1117864 9.59559603,19.3582355 L9.59559603,19.3582355 Z M12.8337233,11.7613357 L5.16627666,11.7613357 L5.16627666,7.54281617 C5.16627666,5.39913958 6.88624771,3.654944 9.00015151,3.654944 C11.1137523,3.654944 12.8337233,5.39913958 12.8337233,7.54281617 L12.8337233,11.7613357 L12.8337233,11.7613357 Z", A.id "icon_premium_locked-copy", A.fill "#E68900" ] []
                         , Svg.rect [ A.id "Rectangle-9", A.fill "#FFFFFF", A.x "1.28571429", A.y "14.1428571", A.width "14.1428571", A.height "7.71428571" ] []
@@ -625,9 +625,9 @@ premiumLockSvg attributes extraNodes =
 quickWriteSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 quickWriteSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 90 70", A.style "enable-background:new 0 0 90 70;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 90 70", A.style "enable-background:new 0 0 90 70;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#00CFBE;}\n .st1{fill:#A839E7;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#00CFBE;}\n .st1{fill:#A839E7;}\n" ]
                , Svg.g [ A.id "Page-1" ]
                     [ Svg.g [ A.id "quick-write" ]
                         [ Svg.path [ A.id "Combined-Shape", A.class "st0", A.d "M62.7,12l-5,5H0v-5H62.7z M52.7,22l-5,5H11v-5H52.7z M42.7,32l-5,5H4v-5H42.7z M33.7,41\n   l-5,5H13v-5H33.7z" ] []
@@ -646,7 +646,7 @@ searchGraySvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-85.000000, -1948.000000)", A.fill "#BFBFBF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-2", A.transform "translate(0.000000, 1898.000000)" ] [ Svg.g [ A.id "icon/search-gray", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M17.3076923,10.5765481 C17.3076923,8.72359894 16.6484159,7.13841054 15.3317383,5.82135785 C14.0146856,4.50468019 12.4294972,3.84540382 10.5765481,3.84540382 C8.72359894,3.84540382 7.13841054,4.50468019 5.82135785,5.82135785 C4.50468019,7.13841054 3.84540382,8.72359894 3.84540382,10.5765481 C3.84540382,12.4294972 4.50468019,14.0146856 5.82135785,15.3317383 C7.13841054,16.6484159 8.72359894,17.3076923 10.5765481,17.3076923 C12.4294972,17.3076923 14.0146856,16.6484159 15.3317383,15.3317383 C16.6484159,14.0146856 17.3076923,12.4294972 17.3076923,10.5765481 L17.3076923,10.5765481 Z M25,23.0780481 C25,23.5981939 24.8094924,24.049337 24.4299772,24.4299772 C24.049337,24.8094924 23.5981939,25 23.0780481,25 C22.5361514,25 22.0861334,24.8094924 21.724619,24.4299772 L16.5707878,19.2911466 C14.7793412,20.5335713 12.7797612,21.1545962 10.5765481,21.1545962 C9.14399076,21.1545962 7.77406096,20.8763351 6.4675087,20.3198128 C5.16095644,19.7644156 4.03441138,19.0128855 3.08637345,18.0667227 C2.14021061,17.1201848 1.38868055,15.9936397 0.833658346,14.6855874 C0.27676107,13.3790352 0,12.0091054 0,10.5765481 C0,9.14399076 0.27676107,7.77406096 0.833658346,6.4675087 C1.38868055,5.16095644 2.14021061,4.03441138 3.08637345,3.08637345 C4.03441138,2.14021061 5.16095644,1.38868055 6.4675087,0.833658346 C7.77406096,0.27676107 9.14399076,0 10.5765481,0 C12.0091054,0 13.3790352,0.27676107 14.6855874,0.833658346 C15.9936397,1.38868055 17.1201848,2.14021061 18.0667227,3.08637345 C19.0128855,4.03441138 19.7644156,5.16095644 20.3198128,6.4675087 C20.8763351,7.77406096 21.1545962,9.14399076 21.1545962,10.5765481 C21.1545962,12.7797612 20.5335713,14.7793412 19.2911466,16.5707878 L24.4449778,21.724619 C24.8154926,22.0951338 25,22.5462769 25,23.0780481 L25,23.0780481 Z", A.id "icon/search-blue" ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-85.000000, -1948.000000)", A.fill "#BFBFBF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-2", A.transform "translate(0.000000, 1898.000000)" ] [ Svg.g [ A.id "icon/search-gray", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M17.3076923,10.5765481 C17.3076923,8.72359894 16.6484159,7.13841054 15.3317383,5.82135785 C14.0146856,4.50468019 12.4294972,3.84540382 10.5765481,3.84540382 C8.72359894,3.84540382 7.13841054,4.50468019 5.82135785,5.82135785 C4.50468019,7.13841054 3.84540382,8.72359894 3.84540382,10.5765481 C3.84540382,12.4294972 4.50468019,14.0146856 5.82135785,15.3317383 C7.13841054,16.6484159 8.72359894,17.3076923 10.5765481,17.3076923 C12.4294972,17.3076923 14.0146856,16.6484159 15.3317383,15.3317383 C16.6484159,14.0146856 17.3076923,12.4294972 17.3076923,10.5765481 L17.3076923,10.5765481 Z M25,23.0780481 C25,23.5981939 24.8094924,24.049337 24.4299772,24.4299772 C24.049337,24.8094924 23.5981939,25 23.0780481,25 C22.5361514,25 22.0861334,24.8094924 21.724619,24.4299772 L16.5707878,19.2911466 C14.7793412,20.5335713 12.7797612,21.1545962 10.5765481,21.1545962 C9.14399076,21.1545962 7.77406096,20.8763351 6.4675087,20.3198128 C5.16095644,19.7644156 4.03441138,19.0128855 3.08637345,18.0667227 C2.14021061,17.1201848 1.38868055,15.9936397 0.833658346,14.6855874 C0.27676107,13.3790352 0,12.0091054 0,10.5765481 C0,9.14399076 0.27676107,7.77406096 0.833658346,6.4675087 C1.38868055,5.16095644 2.14021061,4.03441138 3.08637345,3.08637345 C4.03441138,2.14021061 5.16095644,1.38868055 6.4675087,0.833658346 C7.77406096,0.27676107 9.14399076,0 10.5765481,0 C12.0091054,0 13.3790352,0.27676107 14.6855874,0.833658346 C15.9936397,1.38868055 17.1201848,2.14021061 18.0667227,3.08637345 C19.0128855,4.03441138 19.7644156,5.16095644 20.3198128,6.4675087 C20.8763351,7.77406096 21.1545962,9.14399076 21.1545962,10.5765481 C21.1545962,12.7797612 20.5335713,14.7793412 19.2911466,16.5707878 L24.4449778,21.724619 C24.8154926,22.0951338 25,22.5462769 25,23.0780481 L25,23.0780481 Z", A.id "icon/search-blue" ] [] ] ] ] ] ]
                ]
         )
 
@@ -659,7 +659,7 @@ squigglySvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ]
                     [ Svg.g [ A.id "Group" ]
                         [ Svg.polygon [ A.id "Star", A.fill "#00D93E", A.points "103.5 200.612109 94.7225868 206.62714 87.0879739 199.21524 77.4202706 203.66036 71.1480918 195.064818 60.8682208 197.812149 56.1389153 188.280242 45.5426096 189.250749 42.4922309 179.056693 31.8843271 178.222456 30.600629 167.659516 20.286297 165.044534 20.8062092 154.416586 11.0821737 150.096088 13.3907393 139.708879 4.53674295 133.807157 8.56754872 123.959508 0.838304951 116.646344 6.47539192 107.621555 0.0932569978 99.1073355 7.17445644 91.1650316 2.32303277 81.6946956 10.6446315 75.063363 7.46348567 64.9093545 16.7860864 59.7797647 15.3667342 49.2341962 25.4221427 45.7539179 25.8054164 35.1201661 36.3043569 33.3893208 38.4792303 22.9732994 49.1196673 23.0416803 53.0235733 13.1430393 63.4994009 15.0086792 69.0200312 5.91218439 79.0298789 9.52141221 86.0084151 1.48875328 95.2643178 6.73773811 103.5 0 111.735682 6.73773811 120.991585 1.48875328 127.970121 9.52141221 137.979969 5.91218439 143.500599 15.0086792 153.976427 13.1430393 157.880333 23.0416803 168.52077 22.9732994 170.695643 33.3893208 181.194584 35.1201661 181.577857 45.7539179 191.633266 49.2341962 190.213914 59.7797647 199.536514 64.9093545 196.355369 75.063363 204.676967 81.6946956 199.825544 91.1650316 206.906743 99.1073355 200.524608 107.621555 206.161695 116.646344 198.432451 123.959508 202.463257 133.807157 193.609261 139.708879 195.917826 150.096088 186.193791 154.416586 186.713703 165.044534 176.399371 167.659516 175.115673 178.222456 164.507769 179.056693 161.45739 189.250749 150.861085 188.280242 146.131779 197.812149 135.851908 195.064818 129.579729 203.66036 119.912026 199.21524 112.277413 206.62714" ] []
                         , Svg.g [ A.id "icon/check/check-white", A.transform "translate(71.000000, 71.000000)", A.fill "#FFFFFF" ] [ Svg.path [ A.d "M22.9118708,58.0605662 C21.3663966,58.0605662 19.875044,57.4652279 18.7565296,56.3918148 L1.85854291,40.2304842 C-0.543857683,37.9363269 -0.62804694,34.1297698 1.66911708,31.7303759 C3.95726083,29.3309821 7.76682472,29.2437861 10.1692253,31.5409501 L22.6442692,43.4687638 L54.5730451,8.88201284 C56.8281145,6.43751762 60.6316648,6.28717966 63.0701465,8.53924229 C65.511635,10.7943117 65.6649797,14.5978621 63.4129171,17.0363438 L27.3318068,56.1242133 C26.2343397,57.3118832 24.7129195,58.0064445 23.0982898,58.0575594 C23.0381547,58.0605662 22.9750127,58.0605662 22.9118708,58.0605662", A.id "icon/check-white" ] [] ]
@@ -677,7 +677,7 @@ starEmptySvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-85.000000, -1666.000000)", A.fill "#FFFFFF", A.stroke "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-23", A.transform "translate(0.000000, 1616.000000)" ] [ Svg.g [ A.id "icon/star/star-empty", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M12.5012523,1.00021966 L9.37761156,7.2596483 C9.08745828,7.84108319 8.53291447,8.24530991 7.89057913,8.34359915 L1.00000003,9.39798574 L5.96599145,14.3344355 C6.4240435,14.7897627 6.63402171,15.4382614 6.52978263,16.0756536 L5.39740897,22.999794 L11.5766762,19.7841479 C12.155346,19.4830123 12.8445142,19.4830123 13.4231841,19.7841479 L19.6024513,22.999794 L18.4700776,16.0756536 C18.3658385,15.4382614 18.5758168,14.7897627 19.0338688,14.3344355 L23.9998602,9.39798574 L17.1094786,8.34362936 C16.4669234,8.24530648 15.9122344,7.84084016 15.622165,7.25911483 L12.5012523,1.00021966 Z", A.id "icon/star-blue" ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-85.000000, -1666.000000)", A.fill "#FFFFFF", A.stroke "#146AFF", A.strokeWidth "2" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-23", A.transform "translate(0.000000, 1616.000000)" ] [ Svg.g [ A.id "icon/star/star-empty", A.transform "translate(35.000000, 0.000000)" ] [ Svg.path [ A.d "M12.5012523,1.00021966 L9.37761156,7.2596483 C9.08745828,7.84108319 8.53291447,8.24530991 7.89057913,8.34359915 L1.00000003,9.39798574 L5.96599145,14.3344355 C6.4240435,14.7897627 6.63402171,15.4382614 6.52978263,16.0756536 L5.39740897,22.999794 L11.5766762,19.7841479 C12.155346,19.4830123 12.8445142,19.4830123 13.4231841,19.7841479 L19.6024513,22.999794 L18.4700776,16.0756536 C18.3658385,15.4382614 18.5758168,14.7897627 19.0338688,14.3344355 L23.9998602,9.39798574 L17.1094786,8.34362936 C16.4669234,8.24530648 15.9122344,7.84084016 15.622165,7.25911483 L12.5012523,1.00021966 Z", A.id "icon/star-blue" ] [] ] ] ] ] ]
                ]
         )
 
@@ -690,7 +690,7 @@ starOrangeSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -1666.000000)", A.fill "#FEC709", A.stroke "#E68800" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-23", A.transform "translate(0.000000, 1616.000000)" ] [ Svg.g [ A.id "icon/star/star-orange" ] [ Svg.path [ A.d "M12.5012523,1.00021966 L9.37761156,7.2596483 C9.08745828,7.84108319 8.53291447,8.24530991 7.89057913,8.34359915 L1.00000003,9.39798574 L5.96599145,14.3344355 C6.4240435,14.7897627 6.63402171,15.4382614 6.52978263,16.0756536 L5.39740897,22.999794 L11.5766762,19.7841479 C12.155346,19.4830123 12.8445142,19.4830123 13.4231841,19.7841479 L19.6024513,22.999794 L18.4700776,16.0756536 C18.3658385,15.4382614 18.5758168,14.7897627 19.0338688,14.3344355 L23.9998602,9.39798574 L17.1094786,8.34362936 C16.4669234,8.24530648 15.9122344,7.84084016 15.622165,7.25911483 L12.5012523,1.00021966 Z", A.id "icon/star-blue-copy" ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -1666.000000)", A.fill "#FEC709", A.stroke "#E68800", A.strokeWidth "2" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-23", A.transform "translate(0.000000, 1616.000000)" ] [ Svg.g [ A.id "icon/star/star-orange" ] [ Svg.path [ A.d "M12.5012523,1.00021966 L9.37761156,7.2596483 C9.08745828,7.84108319 8.53291447,8.24530991 7.89057913,8.34359915 L1.00000003,9.39798574 L5.96599145,14.3344355 C6.4240435,14.7897627 6.63402171,15.4382614 6.52978263,16.0756536 L5.39740897,22.999794 L11.5766762,19.7841479 C12.155346,19.4830123 12.8445142,19.4830123 13.4231841,19.7841479 L19.6024513,22.999794 L18.4700776,16.0756536 C18.3658385,15.4382614 18.5758168,14.7897627 19.0338688,14.3344355 L23.9998602,9.39798574 L17.1094786,8.34362936 C16.4669234,8.24530648 15.9122344,7.84084016 15.622165,7.25911483 L12.5012523,1.00021966 Z", A.id "icon/star-blue-copy" ] [] ] ] ] ] ]
                ]
         )
 
@@ -698,9 +698,9 @@ starOrangeSvg attributes extraNodes =
 startingOffBadgeSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 startingOffBadgeSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 400 400", A.style "enable-background:new 0 0 400 400;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 400 400", A.style "enable-background:new 0 0 400 400;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
                , Svg.title [] []
                , Svg.path [ A.class "st0", A.d "M91.6,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7\n l-28,14.7l5.4-31.2l1-5.7l-4.2-4l-22.8-22.1l31.4-4.6l5.7-0.8l2.6-5.2L91.6,147.8 M91.5,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7\n l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4\n c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9\n c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C95.1,130,93.6,128,91.5,128.1L91.5,128.1z" ] []
                , Svg.path [ A.class "st0", A.d "M308.4,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7\n l-28,14.7l5.4-31.2l1-5.7l-4.1-4l-22.7-22.1l31.4-4.6l5.7-0.8l2.6-5.2L308.4,147.8 M308.4,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7\n l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4\n c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9\n c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C311.9,130,310.4,128,308.4,128.1L308.4,128.1z" ] []
@@ -713,9 +713,9 @@ startingOffBadgeSvg attributes extraNodes =
 twitterBlueSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 twitterBlueSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 20 16", A.style "enable-background:new 0 0 20 16;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 20 16", A.style "enable-background:new 0 0 20 16;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#146AFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#146AFF;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.class "st0", A.d "M17.9,4.5c0,5.3-4.1,11.4-11.6,11.4c-2.3,0-4.5-0.7-6.3-1.8c0.3,0,0.6,0,1,0c1.9,0,3.7-0.6,5.1-1.7\n c-1.8,0-3.3-1.2-3.8-2.8c0.3,0,0.5,0.1,0.8,0.1c0.4,0,0.7,0,1.1-0.1c-1.9-0.4-3.3-2-3.3-3.9v0C1.4,5.9,2,6.1,2.7,6.1\n c-1.1-0.7-1.8-2-1.8-3.4c0-0.7,0.2-1.4,0.6-2c2,2.4,5,4,8.4,4.2C9.7,4.6,9.7,4.3,9.7,4c0-2.2,1.8-4,4.1-4c1.2,0,2.2,0.5,3,1.3\n c0.9-0.2,1.8-0.5,2.6-1c-0.3,0.9-0.9,1.7-1.8,2.2c0.8-0.1,1.6-0.3,2.3-0.6c-0.6,0.8-1.3,1.5-2,2.1C17.9,4.1,17.9,4.3,17.9,4.5z" ] []
@@ -731,7 +731,7 @@ unarchiveBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Page-1", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "icon/archive/unarchive-blue", A.fill "#146AFF" ] [ Svg.path [ A.d "M0.857503203,22.6992086 C0.883930262,22.933469 0.962196617,23.1595115 1.08620552,23.359862 C1.21427892,23.5653547 1.3779284,23.7451493 1.57004241,23.8910525 C1.77231506,24.0451727 1.99795989,24.1653935 2.23886351,24.2455389 C2.48992578,24.3308187 2.75421199,24.375 3.01949741,24.375 L21.9732885,24.375 C22.2385739,24.375 22.5018297,24.3308187 22.7539224,24.2455389 C22.9958382,24.1653961 23.2235257,24.0451832 23.4278176,23.8910525 C23.6189116,23.7461804 23.7835785,23.568419 23.9116545,23.3649911 C24.0356608,23.1646354 24.1139272,22.9396187 24.1403568,22.7043377 L24.989088,15.0085859 C25.0185648,14.7486379 24.9880706,14.485602 24.9006578,14.2400365 C24.8142599,14.0016649 24.6780549,13.7848619 24.5001666,13.6060799 C24.3131397,13.4190809 24.0915568,13.2721625 23.8465939,13.1745518 C23.5792788,13.0676956 23.2936449,13.0132403 23.0059813,13.0142662 L1.99912121,13.0142662 C1.71145762,13.0132377 1.42686452,13.067693 1.15952343,13.1745518 C0.914557913,13.2721599 0.691949748,13.4190888 0.505950711,13.6060799 C0.328072868,13.7848593 0.190860848,14.0016518 0.105459499,14.2400365 C0.0149944385,14.4855993 -0.017531974,14.7486326 0.00889768776,15.0085859 L0.857503203,22.6992086 Z M7.18480117,17.4990919 C7.23460822,17.3850445 7.30779264,17.2833252 7.3982551,17.1990791 C7.49481691,17.1096908 7.60662711,17.0408504 7.72960817,16.9935864 C7.86174607,16.9432397 8.00100856,16.9175548 8.1432921,16.9175548 C8.28559645,16.9185806 8.42791122,16.9442681 8.56207616,16.9935864 C8.68811731,17.0408504 8.80500683,17.1107166 8.90766279,17.1990791 C9.00727428,17.2823047 9.08960773,17.3840213 9.14957863,17.4990919 C9.20751728,17.6121136 9.24004369,17.7374635 9.24309337,17.8648624 L9.28476881,19.2406444 L15.7117277,19.2406444 L15.7534031,17.8648624 L15.7544206,17.8648624 C15.7574703,17.7374556 15.7879644,17.6121057 15.8448856,17.4990919 C15.9048565,17.384016 15.9861726,17.2822968 16.0847692,17.1990791 C16.186413,17.1107166 16.3043225,17.0408504 16.4303559,16.9935864 C16.564526,16.9442681 16.7068304,16.9185806 16.8491399,16.9175548 C16.9904269,16.9175548 17.1306885,16.9432397 17.2628238,16.9935864 C17.3847979,17.0408504 17.4976229,17.1096908 17.5931621,17.1990791 C17.6856594,17.2823047 17.7588438,17.3850497 17.8096657,17.4990919 C17.8584553,17.6141679 17.8808179,17.7395178 17.8747185,17.8648624 L17.7629083,20.1478899 C17.7557916,20.270157 17.7222503,20.3903726 17.6643117,20.4972209 C17.6043408,20.6071598 17.525057,20.7027136 17.4295126,20.7818201 C17.3299011,20.8640172 17.2160587,20.9277206 17.0940742,20.9708734 C16.964986,21.0181374 16.827774,21.0417681 16.6905385,21.0417681 L8.30678806,21.0417681 C8.16956823,21.0417681 8.0323432,21.0181348 7.90325238,20.9708734 C7.77721123,20.9318291 7.65930428,20.8701826 7.55462128,20.7900398 C7.45907429,20.7109255 7.37979051,20.6143432 7.32083704,20.5054406 C7.26188356,20.397556 7.22833972,20.2783715 7.22122555,20.1561096 L7.10941535,17.8730821 C7.10535085,17.743621 7.13076309,17.6162169 7.18463203,17.4990788 L7.18480117,17.4990919 Z M18.6340984,2.81145837 L16.4517843,2.81145837 L16.5168371,1.84871345 C16.5422493,1.46445192 16.4853281,1.07811244 16.3501405,0.717471068 C16.3501405,0.685620682 16.3237135,0.656850386 16.3115148,0.625 L19.8051117,0.62602582 C20.3926167,0.62602582 20.8937317,1.05345069 20.9923257,1.63808899 L22.6084721,11.186366 L20.1750801,11.186366 L18.8170894,2.9821758 C18.8018436,2.88867629 18.7215424,2.81983589 18.6270128,2.81983589 L18.6340984,2.81145837 Z M8.93316089,0.707212872 L8.93417832,0.707212872 C8.79797332,1.06990589 8.7410521,1.458297 8.76748176,1.84563599 L8.83253458,2.80838091 L6.64920565,2.80838091 C6.55467609,2.80838091 6.47437488,2.87824712 6.4591291,2.97174664 L5.10113837,11.186195 L2.66774638,11.186195 L4.28389274,1.64107176 C4.3824894,1.05540763 4.88563137,0.626956948 5.47313644,0.627982768 L8.96569251,0.62798093 C8.95247898,0.664970143 8.93621577,0.685520731 8.92605192,0.717371117 L8.93316089,0.707212872 Z M8.79492364,4.67967722 L8.79594107,4.67967722 C8.75935015,4.76290276 8.73800242,4.85229111 8.73088824,4.94270791 C8.72580632,5.03723588 8.73800242,5.13176121 8.76747916,5.22217801 C8.79898814,5.3177318 8.84879519,5.40712015 8.91283059,5.4852087 C8.95958795,5.54274666 9.01447432,5.59411919 9.07444522,5.637272 C9.1374658,5.68248172 9.2055683,5.71946909 9.2777353,5.74823939 C9.35091973,5.7780355 9.42816866,5.80166618 9.50643761,5.81605133 C9.58673622,5.83146493 9.66906968,5.83968464 9.75140313,5.83968464 L10.9111649,5.83968464 L10.779027,9.93507243 C10.7749599,10.0645335 10.7973225,10.1929661 10.8461121,10.3111274 C10.8949017,10.4282576 10.9650364,10.534088 11.0544841,10.6214247 C11.1469814,10.7118415 11.2557419,10.7837646 11.3746741,10.8320544 C11.5007126,10.8844554 11.6359002,10.9111688 11.7731096,10.9111688 L13.5030984,10.9111688 C13.6393034,10.9111688 13.7744988,10.8844554 13.901534,10.8320544 C14.0204583,10.7837646 14.1292189,10.7118415 14.221724,10.6214247 C14.3111716,10.5340906 14.3813064,10.4282602 14.430096,10.3111274 C14.4788856,10.1929688 14.5012482,10.0645361 14.4971811,9.93507243 L14.3640257,5.83758039 L15.5766624,5.83758039 C15.6722094,5.83758039 15.766739,5.82627796 15.8582111,5.8036731 C15.9486761,5.7820967 16.0360889,5.74818941 16.1184224,5.70298233 C16.1946565,5.66188378 16.2647912,5.60948281 16.3267944,5.54783631 C16.3857478,5.48824407 16.4365697,5.41837523 16.4751955,5.34337203 C16.5077219,5.27966863 16.5310993,5.21288514 16.5453302,5.1430163 C16.5514296,5.10808319 16.5565115,5.07315009 16.5585437,5.03821435 C16.560576,5.00328125 16.560576,4.96731969 16.5585437,4.93238658 C16.5544766,4.88615105 16.546345,4.84094134 16.5351664,4.79573425 C16.5229677,4.75052454 16.5067045,4.7063459 16.4873942,4.66421891 C16.4690961,4.62106609 16.4457187,4.57996755 16.4203091,4.54092327 C16.3928646,4.49982473 16.3623704,4.46078045 16.3288292,4.4248189 L13.4126412,1.20058874 C13.3669012,1.14921621 13.3150619,1.1040065 13.2591581,1.06599067 C13.2012195,1.02592058 13.1392163,0.993041743 13.0741635,0.966325716 C13.0070784,0.93858387 12.9369437,0.917007463 12.8657915,0.902622314 C12.7184052,0.873852018 12.56595,0.873852018 12.4185403,0.902622314 C12.3463733,0.917007463 12.2752212,0.93858387 12.2071187,0.966325716 C12.1420658,0.993039113 12.0790453,1.02591795 12.0200918,1.06599067 C11.9631706,1.1040065 11.9103138,1.14921621 11.8635591,1.20058874 L8.95231505,4.41666495 C8.88421255,4.49167078 8.82830875,4.57695059 8.78765074,4.66942166 L8.79492364,4.67967722 Z", A.id "icon/unarchive-blue" ] [] ] ]
+               , Svg.g [ A.id "Page-1", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "icon/archive/unarchive-blue", A.fill "#146AFF" ] [ Svg.path [ A.d "M0.857503203,22.6992086 C0.883930262,22.933469 0.962196617,23.1595115 1.08620552,23.359862 C1.21427892,23.5653547 1.3779284,23.7451493 1.57004241,23.8910525 C1.77231506,24.0451727 1.99795989,24.1653935 2.23886351,24.2455389 C2.48992578,24.3308187 2.75421199,24.375 3.01949741,24.375 L21.9732885,24.375 C22.2385739,24.375 22.5018297,24.3308187 22.7539224,24.2455389 C22.9958382,24.1653961 23.2235257,24.0451832 23.4278176,23.8910525 C23.6189116,23.7461804 23.7835785,23.568419 23.9116545,23.3649911 C24.0356608,23.1646354 24.1139272,22.9396187 24.1403568,22.7043377 L24.989088,15.0085859 C25.0185648,14.7486379 24.9880706,14.485602 24.9006578,14.2400365 C24.8142599,14.0016649 24.6780549,13.7848619 24.5001666,13.6060799 C24.3131397,13.4190809 24.0915568,13.2721625 23.8465939,13.1745518 C23.5792788,13.0676956 23.2936449,13.0132403 23.0059813,13.0142662 L1.99912121,13.0142662 C1.71145762,13.0132377 1.42686452,13.067693 1.15952343,13.1745518 C0.914557913,13.2721599 0.691949748,13.4190888 0.505950711,13.6060799 C0.328072868,13.7848593 0.190860848,14.0016518 0.105459499,14.2400365 C0.0149944385,14.4855993 -0.017531974,14.7486326 0.00889768776,15.0085859 L0.857503203,22.6992086 Z M7.18480117,17.4990919 C7.23460822,17.3850445 7.30779264,17.2833252 7.3982551,17.1990791 C7.49481691,17.1096908 7.60662711,17.0408504 7.72960817,16.9935864 C7.86174607,16.9432397 8.00100856,16.9175548 8.1432921,16.9175548 C8.28559645,16.9185806 8.42791122,16.9442681 8.56207616,16.9935864 C8.68811731,17.0408504 8.80500683,17.1107166 8.90766279,17.1990791 C9.00727428,17.2823047 9.08960773,17.3840213 9.14957863,17.4990919 C9.20751728,17.6121136 9.24004369,17.7374635 9.24309337,17.8648624 L9.28476881,19.2406444 L15.7117277,19.2406444 L15.7534031,17.8648624 L15.7544206,17.8648624 C15.7574703,17.7374556 15.7879644,17.6121057 15.8448856,17.4990919 C15.9048565,17.384016 15.9861726,17.2822968 16.0847692,17.1990791 C16.186413,17.1107166 16.3043225,17.0408504 16.4303559,16.9935864 C16.564526,16.9442681 16.7068304,16.9185806 16.8491399,16.9175548 C16.9904269,16.9175548 17.1306885,16.9432397 17.2628238,16.9935864 C17.3847979,17.0408504 17.4976229,17.1096908 17.5931621,17.1990791 C17.6856594,17.2823047 17.7588438,17.3850497 17.8096657,17.4990919 C17.8584553,17.6141679 17.8808179,17.7395178 17.8747185,17.8648624 L17.7629083,20.1478899 C17.7557916,20.270157 17.7222503,20.3903726 17.6643117,20.4972209 C17.6043408,20.6071598 17.525057,20.7027136 17.4295126,20.7818201 C17.3299011,20.8640172 17.2160587,20.9277206 17.0940742,20.9708734 C16.964986,21.0181374 16.827774,21.0417681 16.6905385,21.0417681 L8.30678806,21.0417681 C8.16956823,21.0417681 8.0323432,21.0181348 7.90325238,20.9708734 C7.77721123,20.9318291 7.65930428,20.8701826 7.55462128,20.7900398 C7.45907429,20.7109255 7.37979051,20.6143432 7.32083704,20.5054406 C7.26188356,20.397556 7.22833972,20.2783715 7.22122555,20.1561096 L7.10941535,17.8730821 C7.10535085,17.743621 7.13076309,17.6162169 7.18463203,17.4990788 L7.18480117,17.4990919 Z M18.6340984,2.81145837 L16.4517843,2.81145837 L16.5168371,1.84871345 C16.5422493,1.46445192 16.4853281,1.07811244 16.3501405,0.717471068 C16.3501405,0.685620682 16.3237135,0.656850386 16.3115148,0.625 L19.8051117,0.62602582 C20.3926167,0.62602582 20.8937317,1.05345069 20.9923257,1.63808899 L22.6084721,11.186366 L20.1750801,11.186366 L18.8170894,2.9821758 C18.8018436,2.88867629 18.7215424,2.81983589 18.6270128,2.81983589 L18.6340984,2.81145837 Z M8.93316089,0.707212872 L8.93417832,0.707212872 C8.79797332,1.06990589 8.7410521,1.458297 8.76748176,1.84563599 L8.83253458,2.80838091 L6.64920565,2.80838091 C6.55467609,2.80838091 6.47437488,2.87824712 6.4591291,2.97174664 L5.10113837,11.186195 L2.66774638,11.186195 L4.28389274,1.64107176 C4.3824894,1.05540763 4.88563137,0.626956948 5.47313644,0.627982768 L8.96569251,0.62798093 C8.95247898,0.664970143 8.93621577,0.685520731 8.92605192,0.717371117 L8.93316089,0.707212872 Z M8.79492364,4.67967722 L8.79594107,4.67967722 C8.75935015,4.76290276 8.73800242,4.85229111 8.73088824,4.94270791 C8.72580632,5.03723588 8.73800242,5.13176121 8.76747916,5.22217801 C8.79898814,5.3177318 8.84879519,5.40712015 8.91283059,5.4852087 C8.95958795,5.54274666 9.01447432,5.59411919 9.07444522,5.637272 C9.1374658,5.68248172 9.2055683,5.71946909 9.2777353,5.74823939 C9.35091973,5.7780355 9.42816866,5.80166618 9.50643761,5.81605133 C9.58673622,5.83146493 9.66906968,5.83968464 9.75140313,5.83968464 L10.9111649,5.83968464 L10.779027,9.93507243 C10.7749599,10.0645335 10.7973225,10.1929661 10.8461121,10.3111274 C10.8949017,10.4282576 10.9650364,10.534088 11.0544841,10.6214247 C11.1469814,10.7118415 11.2557419,10.7837646 11.3746741,10.8320544 C11.5007126,10.8844554 11.6359002,10.9111688 11.7731096,10.9111688 L13.5030984,10.9111688 C13.6393034,10.9111688 13.7744988,10.8844554 13.901534,10.8320544 C14.0204583,10.7837646 14.1292189,10.7118415 14.221724,10.6214247 C14.3111716,10.5340906 14.3813064,10.4282602 14.430096,10.3111274 C14.4788856,10.1929688 14.5012482,10.0645361 14.4971811,9.93507243 L14.3640257,5.83758039 L15.5766624,5.83758039 C15.6722094,5.83758039 15.766739,5.82627796 15.8582111,5.8036731 C15.9486761,5.7820967 16.0360889,5.74818941 16.1184224,5.70298233 C16.1946565,5.66188378 16.2647912,5.60948281 16.3267944,5.54783631 C16.3857478,5.48824407 16.4365697,5.41837523 16.4751955,5.34337203 C16.5077219,5.27966863 16.5310993,5.21288514 16.5453302,5.1430163 C16.5514296,5.10808319 16.5565115,5.07315009 16.5585437,5.03821435 C16.560576,5.00328125 16.560576,4.96731969 16.5585437,4.93238658 C16.5544766,4.88615105 16.546345,4.84094134 16.5351664,4.79573425 C16.5229677,4.75052454 16.5067045,4.7063459 16.4873942,4.66421891 C16.4690961,4.62106609 16.4457187,4.57996755 16.4203091,4.54092327 C16.3928646,4.49982473 16.3623704,4.46078045 16.3288292,4.4248189 L13.4126412,1.20058874 C13.3669012,1.14921621 13.3150619,1.1040065 13.2591581,1.06599067 C13.2012195,1.02592058 13.1392163,0.993041743 13.0741635,0.966325716 C13.0070784,0.93858387 12.9369437,0.917007463 12.8657915,0.902622314 C12.7184052,0.873852018 12.56595,0.873852018 12.4185403,0.902622314 C12.3463733,0.917007463 12.2752212,0.93858387 12.2071187,0.966325716 C12.1420658,0.993039113 12.0790453,1.02591795 12.0200918,1.06599067 C11.9631706,1.1040065 11.9103138,1.14921621 11.8635591,1.20058874 L8.95231505,4.41666495 C8.88421255,4.49167078 8.82830875,4.57695059 8.78765074,4.66942166 L8.79492364,4.67967722 Z", A.id "icon/unarchive-blue" ] [] ] ]
                ]
         )
 
@@ -744,7 +744,7 @@ xBlueSvg attributes extraNodes =
             ++ [ Svg.title [] []
                , Svg.desc [] []
                , Svg.defs [] []
-               , Svg.g [ A.id "Style-guide", A.stroke "none", A.fill "none" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -888.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-3", A.transform "translate(0.000000, 838.000000)" ] [ Svg.g [ A.id "icon/x-blue" ] [ Svg.path [ A.d "M1.0665529,6.01535836 C-0.355517634,4.59328783 -0.355517634,2.48862344 1.0665529,1.0665529 C2.48862344,-0.355517634 4.59328783,-0.355517634 6.01535836,1.0665529 L12.3862344,7.4374289 L18.7571104,1.0665529 C20.1791809,-0.355517634 22.539818,-0.355517634 23.9334471,1.0665529 C25.3555176,2.48862344 25.3555176,4.84926052 23.9334471,6.24288965 L17.5625711,12.6137656 L23.9334471,18.9846416 C25.3555176,20.4067122 25.3555176,22.5113766 23.9334471,23.9334471 C22.5113766,25.3555176 20.4067122,25.3555176 18.9846416,23.9334471 L12.6137656,17.5625711 L6.24288965,23.9334471 C4.82081911,25.3555176 2.46018203,25.3555176 1.0665529,23.9334471 C-0.355517634,22.5113766 -0.355517634,20.1507395 1.0665529,18.7571104 L7.4374289,12.6137656 L1.0665529,6.01535836 Z" ] [] ] ] ] ] ]
+               , Svg.g [ A.id "Style-guide", A.stroke "none", A.strokeWidth "1", A.fill "none", A.fillRule "evenodd" ] [ Svg.g [ A.id "UI-Icons", A.transform "translate(-50.000000, -888.000000)", A.fill "#146AFF" ] [ Svg.g [ A.id "Stacked-Group", A.transform "translate(50.000000, 50.000000)" ] [ Svg.g [ A.id "Stacked-Group-3", A.transform "translate(0.000000, 838.000000)" ] [ Svg.g [ A.id "icon/x-blue" ] [ Svg.path [ A.d "M1.0665529,6.01535836 C-0.355517634,4.59328783 -0.355517634,2.48862344 1.0665529,1.0665529 C2.48862344,-0.355517634 4.59328783,-0.355517634 6.01535836,1.0665529 L12.3862344,7.4374289 L18.7571104,1.0665529 C20.1791809,-0.355517634 22.539818,-0.355517634 23.9334471,1.0665529 C25.3555176,2.48862344 25.3555176,4.84926052 23.9334471,6.24288965 L17.5625711,12.6137656 L23.9334471,18.9846416 C25.3555176,20.4067122 25.3555176,22.5113766 23.9334471,23.9334471 C22.5113766,25.3555176 20.4067122,25.3555176 18.9846416,23.9334471 L12.6137656,17.5625711 L6.24288965,23.9334471 C4.82081911,25.3555176 2.46018203,25.3555176 1.0665529,23.9334471 C-0.355517634,22.5113766 -0.355517634,20.1507395 1.0665529,18.7571104 L7.4374289,12.6137656 L1.0665529,6.01535836 Z" ] [] ] ] ] ] ]
                ]
         )
 
@@ -752,9 +752,9 @@ xBlueSvg attributes extraNodes =
 xWhiteSvg : List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Html msg
 xWhiteSvg attributes extraNodes =
     Svg.svg
-        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 13 12.9", A.style "enable-background:new 0 0 13 12.9;" ])
+        (attributes ++ [ A.version "1.1", A.id "Layer_1", A.x "0px", A.y "0px", A.viewBox "0 0 13 12.9", A.style "enable-background:new 0 0 13 12.9;", A.xmlSpace "preserve" ])
         (extraNodes
-            ++ [ Svg.style [] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
+            ++ [ Svg.style [ A.type_ "text/css" ] [ Svg.text ".st0{fill:#FFFFFF;}\n" ]
                , Svg.title [] []
                , Svg.desc [] []
                , Svg.path [ A.id "x-white", A.class "st0", A.d "M0.6,3c-0.8-0.7-0.8-1.8,0-2.5c0.7-0.7,1.8-0.7,2.6,0l3.3,3.3l3.3-3.3c0.7-0.7,2-0.7,2.7,0\n s0.7,2,0,2.7L9.1,6.5l3.3,3.3c0.7,0.7,0.7,1.8,0,2.6c-0.7,0.7-1.8,0.7-2.6,0L6.6,9.1l-3.3,3.3c-0.7,0.7-2,0.7-2.7,0s-0.7-2,0-2.7\n l3.3-3.2L0.6,3z" ] []
