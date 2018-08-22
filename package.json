@@ -26,6 +26,7 @@
     "elm-test": "0.18.12"
   },
   "dependencies": {
+    "svgo": "^1.0.5",
     "xml-parser": "^1.2.1"
   }
 }
