@@ -46,6 +46,7 @@ module Nri.Ui.Icon.V3
         , gear
         , greenCheckMark
         , guidedWrite
+        , hat
         , help
         , highFive
         , icon
@@ -134,6 +135,7 @@ module Nri.Ui.Icon.V3
 @docs gear
 @docs greenCheckMark
 @docs guidedWrite
+@docs hat
 @docs help
 @docs highFive
 @docs key
@@ -629,6 +631,12 @@ greenCheckMark assets =
 guidedWrite : { r | icons_guidedWrite_svg : Asset } -> IconType
 guidedWrite assets =
     ImgIcon assets.icons_guidedWrite_svg
+
+
+{-| -}
+hat : { r | hat : String } -> IconType
+hat assets =
+    SvgIcon assets.hat
 
 
 {-| -}
