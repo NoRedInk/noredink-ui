@@ -60,14 +60,12 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 -}
 
--- import EventExtras
-
 import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Style)
 import Css.Foreign
-import EventExtras
+import EventExtras.Styled as EventExtras
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -410,7 +408,6 @@ linkSpa toUrl toMsg config =
     linkBase
         "linkSpa"
         [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
-            |> Attributes.fromUnstyled
         ]
         { label = config.label
         , icon = config.icon
@@ -461,7 +458,9 @@ linkExternalWithTracking : msg -> LinkConfig -> Html msg
 linkExternalWithTracking onTrack =
     linkBase
         "linkExternalWithTracking"
-        [ Attributes.target "_blank", Events.onClick onTrack ]
+        [ Attributes.target "_blank"
+        , EventExtras.onClickForLinkWithHref onTrack
+        ]
 
 
 {-| Helper function for building links with an arbitrary number of Attributes

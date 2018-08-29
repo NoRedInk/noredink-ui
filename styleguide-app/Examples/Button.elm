@@ -126,6 +126,15 @@ viewButtonExamples assets messages (State control) =
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
+    , Button.linkExternalWithTracking
+        (messages.showItWorked "linkExternalWithTracking clicked")
+        { size = Button.Medium
+        , style = Button.Secondary
+        , width = Nothing
+        , label = "linkExternalWithTracking"
+        , icon = Nothing
+        , url = "#"
+        }
     ]
         |> div []
 
