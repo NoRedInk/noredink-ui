@@ -10,6 +10,7 @@ import Examples.DisclosureIndicator
 import Examples.Dropdown
 import Examples.Fonts
 import Examples.Icon
+import Examples.Modal
 import Examples.Page
 import Examples.SegmentedControl
 import Examples.Select
@@ -26,7 +27,6 @@ import Nri.Ui.Button.V2 as Button
 import Nri.Ui.Dropdown.V1
 import Nri.Ui.Icon.V2
 import Nri.Ui.SegmentedControl.V5
-import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V2 as TextArea
 import String.Extra
 
@@ -41,6 +41,7 @@ type alias ModuleStates =
     , textAreaExampleState : TextAreaExample.State
     , textInputExampleState : TextInputExample.State
     , disclosureIndicatorExampleState : Examples.DisclosureIndicator.State
+    , modalExampleState : Examples.Modal.State
     }
 
 
@@ -55,6 +56,7 @@ init =
     , textAreaExampleState = TextAreaExample.init
     , textInputExampleState = TextInputExample.init
     , disclosureIndicatorExampleState = Examples.DisclosureIndicator.init
+    , modalExampleState = Examples.Modal.init
     }
 
 
@@ -69,6 +71,7 @@ type Msg
     | TextAreaExampleMsg TextAreaExample.Msg
     | TextInputExampleMsg TextInputExample.Msg
     | DisclosureIndicatorExampleMsg Examples.DisclosureIndicator.Msg
+    | ModalExampleMsg Examples.Modal.Msg
     | NoOp
 
 
@@ -161,6 +164,15 @@ update msg moduleStates =
             , Cmd.map DisclosureIndicatorExampleMsg cmd
             )
 
+        ModalExampleMsg msg ->
+            let
+                ( modalExampleState, cmd ) =
+                    Examples.Modal.update msg moduleStates.modalExampleState
+            in
+            ( { moduleStates | modalExampleState = modalExampleState }
+            , Cmd.map ModalExampleMsg cmd
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -201,6 +213,7 @@ nriThemedModules model =
     , TextInputExample.example TextInputExampleMsg model.textInputExampleState
     , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Colors.example
+    , Examples.Modal.example ModalExampleMsg model.modalExampleState
     ]
 
 
