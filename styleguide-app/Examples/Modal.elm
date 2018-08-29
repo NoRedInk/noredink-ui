@@ -176,7 +176,6 @@ viewModal modal =
                             , height (px 200)
                             , backgroundColor Colors.gray75
                             , border3 (px 1) dashed Colors.gray20
-                            , padding (px 20)
                             ]
                         ]
                         [ text "Imagine an image" ]
@@ -198,7 +197,6 @@ viewModal modal =
                                 , height (px 200)
                                 , backgroundColor Colors.gray75
                                 , border3 (px 1) dashed Colors.gray20
-                                , padding (px 20)
                                 ]
                             ]
                             [ text "Imagine an image" ]

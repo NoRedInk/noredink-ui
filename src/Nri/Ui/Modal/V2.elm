@@ -82,7 +82,10 @@ view modalType { title, visibleTitle, content, onDismiss, footerContent, width }
                , Css.position Css.fixed
                , Css.top Css.zero
                , Css.width (Css.pct 100)
-               , Css.zIndex (Css.int 3)
+               , Css.zIndex (Css.int 200)
+               , Css.displayFlex
+               , Css.alignItems Css.center
+               , Css.justifyContent Css.center
                ]
         )
         [ Role.dialog
@@ -107,23 +110,19 @@ view modalType { title, visibleTitle, content, onDismiss, footerContent, width }
             []
         , Nri.Ui.styled div
             "modal-container"
-            [ Css.alignItems Css.center
-            , Css.displayFlex
-            , Css.flexDirection Css.column
-            , Css.flexWrap Css.noWrap
+            [ Css.width (Css.px 600)
+            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+            , Css.margin2 (Css.px 75) Css.auto
             , Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.borderRadius (Css.px 20)
-            , Css.margin2 (Css.px 75) Css.auto
-            , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 150))
-            , Css.padding2 (Css.px 45) Css.zero
-            , Css.position Css.relative -- required for closeButtonContainer
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            , case width of
-                Nothing ->
-                    Css.width (Css.px 600)
-
-                Just width ->
-                    Css.width (Css.px (toFloat width))
+            , Css.position Css.relative -- required for closeButtonContainer
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.flexDirection Css.column
+            , Css.flexWrap Css.noWrap
+            , Fonts.baseFont
             ]
             []
             [ -- This global <style> node sets overflow to hidden on the body element,
@@ -170,10 +169,11 @@ viewContent : ModalType -> Html msg -> Html msg
 viewContent modalType content =
     Nri.Ui.styled div
         "modal-content"
-        [ Css.flexShrink (Css.int 4)
-        , Css.overflowY Css.auto
-        , Css.padding2 Css.zero (Css.px 45)
+        [ Css.overflowY Css.scroll
+        , Css.padding2 (Css.px 30) (Css.px 45)
         , Css.width (Css.pct 100)
+        , Css.minHeight (Css.px 150)
+        , Css.boxSizing Css.borderBox
         ]
         []
         [ content ]
