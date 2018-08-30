@@ -12,7 +12,6 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Checkbox.V3 as Checkbox
-import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 
 
 {-|
@@ -22,13 +21,15 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
     If you get this message, you should show an `Nri.Ui.Premium.Model.view`
 
 -}
-type alias PremiumConfig msg =
+type alias PremiumConfig level msg =
     { label : String
     , id : String
     , selected : Checkbox.IsSelected
     , disabled : Bool
-    , teacherPremiumLevel : PremiumLevel
-    , contentPremiumLevel : PremiumLevel
+    , teacherPremiumLevel : level
+    , contentPremiumLevel : level
+    , isFree : level -> Bool
+    , allowedFor : level -> level -> Bool
     , showFlagWhenLocked : Bool
     , onChange : Bool -> msg
     , onLockedClick : msg
@@ -41,12 +42,12 @@ type alias PremiumConfig msg =
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
 
 -}
-premium : Assets a -> PremiumConfig msg -> Html.Html msg
+premium : Assets a -> PremiumConfig level msg -> Html.Html msg
 premium assets config =
     let
         isLocked =
             not <|
-                PremiumLevel.allowedFor
+                config.allowedFor
                     config.contentPremiumLevel
                     config.teacherPremiumLevel
     in
@@ -75,7 +76,7 @@ premium assets config =
             }
         , if
             (isLocked && config.showFlagWhenLocked)
-                || (not isLocked && config.contentPremiumLevel /= Free)
+                || not (isLocked || config.isFree config.contentPremiumLevel)
           then
             Html.div
                 [ Attributes.class "premium-checkbox-V1__PremiumClass"

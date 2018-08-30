@@ -3,7 +3,7 @@ module Spec.Nri.Ui.PremiumCheckbox.V1 exposing (spec)
 import Html.Styled
 import Nri.Ui.AssetPath exposing (Asset(Asset))
 import Nri.Ui.Checkbox.V3 exposing (IsSelected(..))
-import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V1 as PremiumCheckbox
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -18,6 +18,8 @@ premiumView config =
         , disabled = config.disabled
         , teacherPremiumLevel = config.teacherPremiumLevel
         , contentPremiumLevel = config.contentPremiumLevel
+        , allowedFor = PremiumLevel.allowedFor
+        , isFree = \level -> level == PremiumLevel.Free
         , showFlagWhenLocked = config.showFlagWhenLocked
         , onChange = \_ -> ()
         , onLockedClick = ()

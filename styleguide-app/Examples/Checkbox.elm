@@ -174,6 +174,8 @@ viewPremiumCheckboxes state =
                 , disabled = config.disabled
                 , teacherPremiumLevel = config.teacherPremiumLevel
                 , contentPremiumLevel = premiumLevel
+                , allowedFor = PremiumLevel.allowedFor
+                , isFree = \level -> level == PremiumLevel.Free
                 , showFlagWhenLocked = config.showFlagWhenLocked
                 , onChange = ToggleCheck label
                 , onLockedClick = NoOp
