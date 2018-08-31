@@ -21,15 +21,13 @@ import Nri.Ui.Checkbox.V3 as Checkbox
     If you get this message, you should show an `Nri.Ui.Premium.Model.view`
 
 -}
-type alias PremiumConfig level msg =
+type alias PremiumConfig msg =
     { label : String
     , id : String
     , selected : Checkbox.IsSelected
     , disabled : Bool
-    , teacherPremiumLevel : level
-    , contentPremiumLevel : level
-    , isFree : level -> Bool
-    , allowedFor : level -> level -> Bool
+    , isLocked : Bool
+    , isFree : Bool
     , showFlagWhenLocked : Bool
     , onChange : Bool -> msg
     , onLockedClick : msg
@@ -42,15 +40,8 @@ type alias PremiumConfig level msg =
 This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
 
 -}
-premium : Assets a -> PremiumConfig level msg -> Html.Html msg
+premium : Assets a -> PremiumConfig msg -> Html.Html msg
 premium assets config =
-    let
-        isLocked =
-            not <|
-                config.allowedFor
-                    config.contentPremiumLevel
-                    config.teacherPremiumLevel
-    in
     Html.div
         [ css
             [ displayFlex
@@ -61,22 +52,22 @@ premium assets config =
             { identifier = config.id
             , label = config.label
             , setterMsg =
-                if isLocked then
+                if config.isLocked then
                     \_ -> config.onLockedClick
                 else
                     config.onChange
             , selected = config.selected
             , disabled = config.disabled
             , theme =
-                if isLocked then
+                if config.isLocked then
                     Checkbox.Locked
                 else
                     Checkbox.Square
             , noOpMsg = config.noOpMsg
             }
         , if
-            (isLocked && config.showFlagWhenLocked)
-                || not (isLocked || config.isFree config.contentPremiumLevel)
+            (config.isLocked && config.showFlagWhenLocked)
+                || (not config.isLocked && not config.isFree)
           then
             Html.div
                 [ Attributes.class "premium-checkbox-V1__PremiumClass"

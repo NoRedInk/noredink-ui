@@ -16,10 +16,8 @@ premiumView config =
         , id = "id"
         , selected = config.selected
         , disabled = config.disabled
-        , teacherPremiumLevel = config.teacherPremiumLevel
-        , contentPremiumLevel = config.contentPremiumLevel
-        , allowedFor = PremiumLevel.allowedFor
-        , isFree = \level -> level == PremiumLevel.Free
+        , isLocked = not <| PremiumLevel.allowedFor config.contentPremiumLevel config.teacherPremiumLevel
+        , isFree = config.contentPremiumLevel == PremiumLevel.Free
         , showFlagWhenLocked = config.showFlagWhenLocked
         , onChange = \_ -> ()
         , onLockedClick = ()

@@ -172,10 +172,8 @@ viewPremiumCheckboxes state =
                     else
                         Checkbox.NotSelected
                 , disabled = config.disabled
-                , teacherPremiumLevel = config.teacherPremiumLevel
-                , contentPremiumLevel = premiumLevel
-                , allowedFor = PremiumLevel.allowedFor
-                , isFree = \level -> level == PremiumLevel.Free
+                , isLocked = not <| PremiumLevel.allowedFor premiumLevel config.teacherPremiumLevel
+                , isFree = premiumLevel == PremiumLevel.Free
                 , showFlagWhenLocked = config.showFlagWhenLocked
                 , onChange = ToggleCheck label
                 , onLockedClick = NoOp
