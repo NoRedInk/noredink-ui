@@ -155,7 +155,7 @@ viewHeader modalType title =
          )
             :: [ Css.fontWeight (Css.int 700)
                , Css.lineHeight (Css.px 27)
-               , Css.margin4 Css.zero Css.zero (Css.px 40) Css.zero
+               , Css.margin2 Css.zero (Css.px 65)
                , Css.fontSize (Css.px 20)
                , Fonts.baseFont
                ]
@@ -193,7 +193,7 @@ viewFooter footerContent =
                 , Css.flexDirection Css.column
                 , Css.flexGrow (Css.int 2)
                 , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 40) Css.zero Css.zero Css.zero
+                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
                 , Css.width (Css.pct 100)
                 ]
                 []
