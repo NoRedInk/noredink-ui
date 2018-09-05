@@ -2,7 +2,7 @@ module Nri.Ui.PremiumCheckbox.V1 exposing (Pennant(..), PremiumConfig, premium)
 
 {-|
 
-@docs PremiumConfig, premium
+@docs PremiumConfig, premium, Pennant
 
 -}
 
@@ -34,6 +34,9 @@ type alias PremiumConfig msg =
     }
 
 
+{-| Premium is the yellow "P" pennant
+PremiumWithWriting is the yellow "P+" pennant
+-}
 type Pennant
     = Premium
     | PremiumWithWriting
