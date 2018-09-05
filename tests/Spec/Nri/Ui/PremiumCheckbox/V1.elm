@@ -137,5 +137,5 @@ assets =
     , checkboxLockOnInside_svg = Asset "checkboxLockOnInside reference"
     , iconPremiumKey_png = Asset "iconPremiumKey reference"
     , iconPremiumFlag_svg = Asset "iconPremiumFlag reference"
-    , iconPremiumWritingFlag_svg = Asset "iconPremiumWritingFlag reference"
+    , iconPremiumWithWritingFlag_svg = Asset "iconPremiumWritingFlag reference"
     }
