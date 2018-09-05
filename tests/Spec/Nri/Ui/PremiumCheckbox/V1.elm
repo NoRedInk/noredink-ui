@@ -12,13 +12,12 @@ import Test.Html.Selector as Selector
 
 premiumView config =
     PremiumCheckbox.premium assets
-        { label = config.label
+        { label = "i am label"
         , id = "id"
         , selected = config.selected
         , disabled = config.disabled
-        , isLocked = not <| PremiumLevel.allowedFor config.contentPremiumLevel config.teacherPremiumLevel
-        , isFree = config.contentPremiumLevel == PremiumLevel.Free
-        , showFlagWhenLocked = config.showFlagWhenLocked
+        , isLocked = config.isLocked
+        , pennant = config.pennant
         , onChange = \_ -> ()
         , onLockedClick = ()
         , noOpMsg = ()
@@ -34,133 +33,92 @@ spec =
             [ test "displays the label" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = Selected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.text "i am label" ]
             , test "appears selected when Selected is passed in" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = Selected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.class "checkbox-V3__Checked" ]
             , test "appears unselected when NotSelected is passed in" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = NotSelected
+                        { selected = NotSelected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.class "checkbox-V3__Unchecked" ]
             , test "appears partially selected when PartiallySelected is passed in" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = PartiallySelected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.class "checkbox-V3__Indeterminate" ]
-            , test "appears locked when teacherPremiumLevel < contentPremiumLevel" <|
+            , test "appears locked when isLocked = True" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Premium
-                        , showFlagWhenLocked = True
+                        , isLocked = True
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.class "checkbox-V3__Locked" ]
-            , test "appears unlocked when teacherPremiumLevel >= contentPremiumLevel" <|
+            , test "appears unlocked when isLocked = False" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Premium
-                        , contentPremiumLevel = Premium
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.hasNot [ Selector.class "checkbox-V3__Locked" ]
-            , test "appears with P flag when teacherPremiumLevel >= contentPremiumLevel" <|
+            , test "appears with P flag when Premium pennant is passed in" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Premium
-                        , contentPremiumLevel = Premium
-                        , showFlagWhenLocked = False
+                        , isLocked = False
+                        , pennant = Just PremiumCheckbox.Premium
                         }
                         |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
-            , test "does not appear with P flag when teacherPremiumLevel < contentPremiumLevel and showFlagWhenLocked = False" <|
+            , test "appears with P+ flag when Premium pennant is passed in" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Premium
-                        , showFlagWhenLocked = False
+                        , isLocked = False
+                        , pennant = Just PremiumCheckbox.PremiumWithWriting
                         }
-                        |> Query.hasNot [ Selector.class "premium-checkbox-V1__PremiumClass" ]
-            , test "appears with P flag for Premium content when teacherPremiumLevel < contentPremiumLevel and showFlagWhenLocked = True" <|
-                \() ->
-                    premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
-                        , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Premium
-                        , showFlagWhenLocked = True
-                        }
+                        -- TODO
                         |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
-            , test "never shows P flag for nonPremium content" <|
+            , test "is not disabled when disabled = False" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
-                        }
-                        |> Query.hasNot [ Selector.class "premium-checkbox-V1__PremiumClass" ]
-            , test "is not disabled when disabled = False and the checkbox is unlocked" <|
-                \() ->
-                    premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
-                        , disabled = False
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.disabled False ]
-            , test "is disabled when disabled = True and the checkbox is unlocked" <|
+            , test "is disabled when disabled = True" <|
                 \() ->
                     premiumView
-                        { label = "i am label"
-                        , selected = PartiallySelected
+                        { selected = Selected
                         , disabled = True
-                        , teacherPremiumLevel = Free
-                        , contentPremiumLevel = Free
-                        , showFlagWhenLocked = True
+                        , isLocked = False
+                        , pennant = Nothing
                         }
                         |> Query.has [ Selector.disabled True ]
             ]

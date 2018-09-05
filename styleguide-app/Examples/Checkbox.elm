@@ -19,14 +19,12 @@ import Set exposing (Set)
 {-| -}
 type Msg
     = ToggleCheck Id Bool
-    | SetPremiumControl (Control PremiumExampleConfig)
     | NoOp
 
 
 {-| -}
 type alias State =
     { isChecked : Set String
-    , premiumControl : Control PremiumExampleConfig
     }
 
 
@@ -41,8 +39,6 @@ example parentMessage state =
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
         , h3 [] [ text "Premium Checkboxes" ]
-        , Control.view SetPremiumControl state.premiumControl
-            |> Html.fromUnstyled
         , viewPremiumCheckboxes state
         ]
             |> List.map (Html.toUnstyled << Html.map parentMessage)
@@ -53,17 +49,6 @@ example parentMessage state =
 init : State
 init =
     { isChecked = Set.empty
-    , premiumControl =
-        Control.record PremiumExampleConfig
-            |> Control.field "disabled" (Control.bool False)
-            |> Control.field "teacherPremiumLevel"
-                (Control.choice
-                    [ ( "Free", Control.value PremiumLevel.Free )
-                    , ( "Premium", Control.value PremiumLevel.Premium )
-                    , ( "Premium (with writing)", Control.value PremiumLevel.PremiumWithWriting )
-                    ]
-                )
-            |> Control.field "showFlagWhenLocked" (Control.bool True)
     }
 
 
@@ -81,9 +66,6 @@ update msg state =
             in
             ( { state | isChecked = isChecked }, Cmd.none )
 
-        SetPremiumControl premiumControl ->
-            ( { state | premiumControl = premiumControl }, Cmd.none )
-
         NoOp ->
             ( state, Cmd.none )
 
@@ -95,7 +77,7 @@ update msg state =
 type alias PremiumExampleConfig =
     { disabled : Bool
     , teacherPremiumLevel : PremiumLevel
-    , showFlagWhenLocked : Bool
+    , pennant : Maybe PremiumCheckbox.Pennant
     }
 
 
@@ -158,32 +140,29 @@ viewDisabledCheckbox id state =
 viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     let
-        config =
-            Control.currentValue state.premiumControl
-
-        checkbox label premiumLevel =
+        checkbox config =
             PremiumCheckbox.premium
                 assets
-                { label = label
-                , id = "premium-checkbox-" ++ label
+                { label = config.label
+                , id = "premium-checkbox-" ++ config.label
                 , selected =
-                    if Set.member label state.isChecked then
+                    if Set.member config.label state.isChecked then
                         Checkbox.Selected
                     else
                         Checkbox.NotSelected
                 , disabled = config.disabled
-                , isLocked = not <| PremiumLevel.allowedFor premiumLevel config.teacherPremiumLevel
-                , isFree = premiumLevel == PremiumLevel.Free
-                , showFlagWhenLocked = config.showFlagWhenLocked
-                , onChange = ToggleCheck label
+                , isLocked = config.isLocked
+                , pennant = config.pennant
+                , onChange = ToggleCheck config.label
                 , onLockedClick = NoOp
                 , noOpMsg = NoOp
                 }
     in
     Html.div []
-        [ checkbox "Identify Adjectives 1 (Free)" PremiumLevel.Free
-        , checkbox "Identify Adjectives 2 (Premium)" PremiumLevel.Premium
-        , checkbox "Revising Wordy Phrases 1 (Writing)" PremiumLevel.PremiumWithWriting
+        [ checkbox { label = "Identify Adjectives 1 (Free)", disabled = False, isLocked = False, pennant = Nothing }
+        , checkbox { label = "Identify Adjectives 2 (Premium)", disabled = False, isLocked = False, pennant = Just PremiumCheckbox.Premium }
+        , checkbox { label = "Revising Wordy Phrases 1 (Writing)", disabled = False, isLocked = True, pennant = Just PremiumCheckbox.PremiumWithWriting }
+        , checkbox { label = "Revising Wordy Phrases 2 (Writing) (Disabled)", disabled = True, isLocked = True, pennant = Just PremiumCheckbox.PremiumWithWriting }
         ]
 
 

@@ -1,4 +1,4 @@
-module Nri.Ui.PremiumCheckbox.V1 exposing (PremiumConfig, premium)
+module Nri.Ui.PremiumCheckbox.V1 exposing (Pennant(..), PremiumConfig, premium)
 
 {-|
 
@@ -27,12 +27,16 @@ type alias PremiumConfig msg =
     , selected : Checkbox.IsSelected
     , disabled : Bool
     , isLocked : Bool
-    , isFree : Bool
-    , showFlagWhenLocked : Bool
+    , pennant : Maybe Pennant
     , onChange : Bool -> msg
     , onLockedClick : msg
     , noOpMsg : msg
     }
+
+
+type Pennant
+    = Premium
+    | PremiumWithWriting
 
 
 {-| A checkbox that should be used for premium content
@@ -65,26 +69,33 @@ premium assets config =
                     Checkbox.Square
             , noOpMsg = config.noOpMsg
             }
-        , if
-            (config.isLocked && config.showFlagWhenLocked)
-                || (not config.isLocked && not config.isFree)
-          then
-            Html.div
-                [ Attributes.class "premium-checkbox-V1__PremiumClass"
-                , css
-                    [ property "content" "''"
-                    , display inlineBlock
-                    , width (px 26)
-                    , height (px 24)
-                    , marginLeft (px 8)
-                    , backgroundImage assets.iconPremiumFlag_svg
-                    , backgroundRepeat noRepeat
-                    , backgroundPosition center
+        , case config.pennant of
+            Just pennant ->
+                Html.div
+                    [ Attributes.class "premium-checkbox-V1__PremiumClass"
+                    , css
+                        [ property "content" "''"
+                        , display inlineBlock
+                        , width (px 26)
+                        , height (px 24)
+                        , marginLeft (px 8)
+                        , backgroundImage
+                            (case pennant of
+                                Premium ->
+                                    assets.iconPremiumFlag_svg
+
+                                PremiumWithWriting ->
+                                    -- TODO
+                                    assets.iconPremiumFlag_svg
+                            )
+                        , backgroundRepeat noRepeat
+                        , backgroundPosition center
+                        ]
                     ]
-                ]
-                []
-          else
-            Html.text ""
+                    []
+
+            Nothing ->
+                Html.text ""
         ]
 
 
