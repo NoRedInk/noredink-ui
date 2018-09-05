@@ -85,8 +85,7 @@ premium assets config =
                                     assets.iconPremiumFlag_svg
 
                                 PremiumWithWriting ->
-                                    -- TODO
-                                    assets.iconPremiumFlag_svg
+                                    assets.iconPremiumWritingFlag_svg
                             )
                         , backgroundRepeat noRepeat
                         , backgroundPosition center
@@ -108,6 +107,7 @@ type alias Assets r =
         , checkboxCheckedPartially_svg : Asset
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
+        , iconPremiumWritingFlag_svg : Asset
     }
 
 

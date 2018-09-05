@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.PremiumCheckbox.V1 exposing (spec)
 
+import Html.Attributes
 import Html.Styled
 import Nri.Ui.AssetPath exposing (Asset(Asset))
 import Nri.Ui.Checkbox.V3 exposing (IsSelected(..))
@@ -92,7 +93,8 @@ spec =
                         , isLocked = False
                         , pennant = Just PremiumCheckbox.Premium
                         }
-                        |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
+                        |> Query.find [ Selector.tag "style" ]
+                        |> Query.has [ Selector.text "iconPremiumFlag reference" ]
             , test "appears with P+ flag when Premium pennant is passed in" <|
                 \() ->
                     premiumView
@@ -101,8 +103,8 @@ spec =
                         , isLocked = False
                         , pennant = Just PremiumCheckbox.PremiumWithWriting
                         }
-                        -- TODO
-                        |> Query.has [ Selector.class "premium-checkbox-V1__PremiumClass" ]
+                        |> Query.find [ Selector.tag "style" ]
+                        |> Query.has [ Selector.text "iconPremiumWritingFlag reference" ]
             , test "is not disabled when disabled = False" <|
                 \() ->
                     premiumView
@@ -135,4 +137,5 @@ assets =
     , checkboxLockOnInside_svg = Asset "checkboxLockOnInside reference"
     , iconPremiumKey_png = Asset "iconPremiumKey reference"
     , iconPremiumFlag_svg = Asset "iconPremiumFlag reference"
+    , iconPremiumWritingFlag_svg = Asset "iconPremiumWritingFlag reference"
     }
