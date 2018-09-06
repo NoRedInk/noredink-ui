@@ -1,5 +1,5 @@
 {
-    "version": "5.14.1",
+    "version": "5.15.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
@@ -29,6 +29,7 @@
         "Nri.Ui.Icon.V3",
         "Nri.Ui.InputStyles",
         "Nri.Ui.Modal.V1",
+        "Nri.Ui.Modal.V2",
         "Nri.Ui.Outline.V1",
         "Nri.Ui.Page.V1",
         "Nri.Ui.Palette.V1",
