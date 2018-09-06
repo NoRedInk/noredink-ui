@@ -7,6 +7,7 @@ module Examples.Modal exposing (Msg, State, example, init, update)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
+import Assets
 import Css exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -114,7 +115,7 @@ viewModal : ModalType -> Html Msg
 viewModal modal =
     case modal of
         InfoModal ->
-            Modal.info
+            Modal.info Assets.assets
                 { title = "Info Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -127,7 +128,7 @@ viewModal modal =
                 }
 
         WarningModal ->
-            Modal.warning
+            Modal.warning Assets.assets
                 { title = "Warning Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -140,7 +141,7 @@ viewModal modal =
                 }
 
         NoButtonModal ->
-            Modal.info
+            Modal.info Assets.assets
                 { title = "No Buttons"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -150,7 +151,7 @@ viewModal modal =
                 }
 
         NoDismissModal ->
-            Modal.info
+            Modal.info Assets.assets
                 { title = "No Dismiss"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -163,7 +164,7 @@ viewModal modal =
                 }
 
         NoHeading ->
-            Modal.info
+            Modal.info Assets.assets
                 { title = "Hidden title"
                 , onDismiss = Just DismissModal
                 , visibleTitle = False
@@ -182,7 +183,7 @@ viewModal modal =
                 }
 
         ScrolledContentModal ->
-            Modal.info
+            Modal.info Assets.assets
                 { title = "Scrolled Content"
                 , onDismiss = Just DismissModal
                 , visibleTitle = True
