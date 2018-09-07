@@ -43,9 +43,6 @@ type Pennant
 
 
 {-| A checkbox that should be used for premium content
-
-This checkbox is locked when the premium level of the content is greater than the premium level of the teacher
-
 -}
 premium : Assets a -> PremiumConfig msg -> Html.Html msg
 premium assets config =
