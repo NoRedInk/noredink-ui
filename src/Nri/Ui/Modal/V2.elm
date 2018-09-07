@@ -23,11 +23,9 @@ import Css.Foreign exposing (Snippet, body, children, descendants, everything, s
 import Html.Styled
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
-import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
 
 
 {-|
@@ -50,29 +48,25 @@ type alias Model msg =
     }
 
 
-type alias Assets r =
-    { r | icons_xBlue_svg : Asset }
-
-
 type ModalType
     = Info
     | Warning
 
 
 {-| -}
-info : Assets r -> Model msg -> Html msg
-info assets =
-    view assets Info
+info : Model msg -> Html msg
+info =
+    view Info
 
 
 {-| -}
-warning : Assets r -> Model msg -> Html msg
-warning assets =
-    view assets Warning
+warning : Model msg -> Html msg
+warning =
+    view Warning
 
 
-view : Assets r -> ModalType -> Model msg -> Html msg
-view assets modalType { title, visibleTitle, content, onDismiss, footerContent, width } =
+view : ModalType -> Model msg -> Html msg
+view modalType { title, visibleTitle, content, onDismiss, footerContent, width } =
     Nri.Ui.styled div
         "modal-backdrop-container"
         ((case modalType of
@@ -138,12 +132,6 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
                 [ Css.Foreign.body
                     [ Css.overflow Css.hidden ]
                 ]
-            , case onDismiss of
-                Just msg ->
-                    closeButton assets msg
-
-                Nothing ->
-                    text ""
             , if visibleTitle then
                 viewHeader modalType title
               else
@@ -151,26 +139,6 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
             , viewContent modalType content
             , viewFooter footerContent
             ]
-        ]
-
-
-closeButton : Assets r -> msg -> Html msg
-closeButton assets msg =
-    Nri.Ui.styled div
-        "close-button-container"
-        [ Css.position Css.absolute
-        , Css.top Css.zero
-        , Css.right Css.zero
-        , Css.padding (Css.px 25)
-        ]
-        []
-        [ Icon.button
-            { alt = "Close"
-            , msg = msg
-            , icon = Icon.close assets
-            , disabled = False
-            , size = Icon.Medium
-            }
         ]
 
 
