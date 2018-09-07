@@ -82,32 +82,15 @@ custom { header, view, width } =
 {-| Displays a table of data without a header row
 -}
 viewWithoutHeader : List (Column data msg) -> List data -> Html msg
-viewWithoutHeader columns data =
-    table [] <|
-        List.map (viewRow columns) data
+viewWithoutHeader columns =
+    tableWithoutHeader [] columns (viewRow columns)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
 view : List (Column data msg) -> List data -> Html msg
-view columns data =
-    tableWithHeader [] columns <|
-        List.map (viewRow columns) data
-
-
-viewHeaders : List (Column data msg) -> Html msg
-viewHeaders columns =
-    tr
-        [ css headersStyles ]
-        (List.map viewRowHeader columns)
-
-
-viewRowHeader : Column data msg -> Html msg
-viewRowHeader (Column header _ width) =
-    th
-        [ css (width :: headerStyles)
-        ]
-        [ header ]
+view columns =
+    tableWithHeader [] columns (viewRow columns)
 
 
 viewRow : List (Column data msg) -> data -> Html msg
@@ -135,16 +118,14 @@ data is on its way and what it will look like when it arrives.
 -}
 viewLoading : List (Column data msg) -> Html msg
 viewLoading columns =
-    tableWithHeader loadingTableStyles columns <|
-        List.map (viewLoadingRow columns) (List.range 0 8)
+    tableWithHeader loadingTableStyles columns (viewLoadingRow columns) (List.range 0 8)
 
 
 {-| Display the loading table without a header row
 -}
 viewLoadingWithoutHeader : List (Column data msg) -> Html msg
 viewLoadingWithoutHeader columns =
-    table loadingTableStyles <|
-        List.map (viewLoadingRow columns) (List.range 0 8)
+    tableWithoutHeader loadingTableStyles columns (viewLoadingRow columns) (List.range 0 8)
 
 
 viewLoadingRow : List (Column data msg) -> Int -> Html msg
@@ -173,14 +154,45 @@ stylesLoadingColumn rowIndex colIndex width =
 -- HELP
 
 
+tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
+tableWithoutHeader styles columns toRow data =
+    table styles
+        [ tableBody toRow data
+        ]
+
+
+tableWithHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
+tableWithHeader styles columns toRow data =
+    table styles
+        [ tableHeader columns
+        , tableBody toRow data
+        ]
+
+
 table : List Style -> List (Html msg) -> Html msg
 table styles =
     Html.table [ css (styles ++ tableStyles) ]
 
 
-tableWithHeader : List Style -> List (Column data msg) -> List (Html msg) -> Html msg
-tableWithHeader styles columns rows =
-    table styles (viewHeaders columns :: rows)
+tableHeader : List (Column data msg) -> Html msg
+tableHeader columns =
+    thead []
+        [ tr [ css headersStyles ]
+            (List.map tableRowHeader columns)
+        ]
+
+
+tableRowHeader : Column data msg -> Html msg
+tableRowHeader (Column header _ width) =
+    th
+        [ css (width :: headerStyles)
+        ]
+        [ header ]
+
+
+tableBody : (a -> Html msg) -> List a -> Html msg
+tableBody toRow items =
+    tbody [] (List.map toRow items)
 
 
 
