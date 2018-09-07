@@ -1,8 +1,8 @@
-module Nri.Ui.PremiumCheckbox.V1 exposing (Pennant(..), PremiumConfig, premium)
+module Nri.Ui.PremiumCheckbox.V1 exposing (PremiumConfig, premium)
 
 {-|
 
-@docs PremiumConfig, premium, Pennant
+@docs PremiumConfig, premium
 
 -}
 
@@ -12,6 +12,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Checkbox.V3 as Checkbox
+import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 
 
 {-|
@@ -26,20 +27,13 @@ type alias PremiumConfig msg =
     , id : String
     , selected : Checkbox.IsSelected
     , disabled : Bool
-    , isLocked : Bool
-    , pennant : Maybe Pennant
+    , teacherPremiumLevel : PremiumLevel
+    , contentPremiumLevel : PremiumLevel
+    , showFlagWhenLocked : Bool
     , onChange : Bool -> msg
     , onLockedClick : msg
     , noOpMsg : msg
     }
-
-
-{-| Premium is the yellow "P" pennant
-PremiumWithWriting is the yellow "P+" pennant
--}
-type Pennant
-    = Premium
-    | PremiumWithWriting
 
 
 {-| A checkbox that should be used for premium content
@@ -49,6 +43,13 @@ This checkbox is locked when the premium level of the content is greater than th
 -}
 premium : Assets a -> PremiumConfig msg -> Html.Html msg
 premium assets config =
+    let
+        isLocked =
+            not <|
+                PremiumLevel.allowedFor
+                    config.contentPremiumLevel
+                    config.teacherPremiumLevel
+    in
     Html.div
         [ css
             [ displayFlex
@@ -59,45 +60,39 @@ premium assets config =
             { identifier = config.id
             , label = config.label
             , setterMsg =
-                if config.isLocked then
+                if isLocked then
                     \_ -> config.onLockedClick
                 else
                     config.onChange
             , selected = config.selected
             , disabled = config.disabled
             , theme =
-                if config.isLocked then
+                if isLocked then
                     Checkbox.Locked
                 else
                     Checkbox.Square
             , noOpMsg = config.noOpMsg
             }
-        , case config.pennant of
-            Just pennant ->
-                Html.div
-                    [ Attributes.class "premium-checkbox-V1__PremiumClass"
-                    , css
-                        [ property "content" "''"
-                        , display inlineBlock
-                        , width (px 26)
-                        , height (px 24)
-                        , marginLeft (px 8)
-                        , backgroundImage
-                            (case pennant of
-                                Premium ->
-                                    assets.iconPremiumFlag_svg
-
-                                PremiumWithWriting ->
-                                    assets.iconPremiumWithWritingFlag_svg
-                            )
-                        , backgroundRepeat noRepeat
-                        , backgroundPosition center
-                        ]
+        , if
+            (isLocked && config.showFlagWhenLocked)
+                || (not isLocked && config.contentPremiumLevel /= Free)
+          then
+            Html.div
+                [ Attributes.class "premium-checkbox-V1__PremiumClass"
+                , css
+                    [ property "content" "''"
+                    , display inlineBlock
+                    , width (px 26)
+                    , height (px 24)
+                    , marginLeft (px 8)
+                    , backgroundImage assets.iconPremiumFlag_svg
+                    , backgroundRepeat noRepeat
+                    , backgroundPosition center
                     ]
-                    []
-
-            Nothing ->
-                Html.text ""
+                ]
+                []
+          else
+            Html.text ""
         ]
 
 
@@ -110,7 +105,6 @@ type alias Assets r =
         , checkboxCheckedPartially_svg : Asset
         , checkboxLockOnInside_svg : Asset
         , iconPremiumFlag_svg : Asset
-        , iconPremiumWithWritingFlag_svg : Asset
     }
 
 
