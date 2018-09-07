@@ -13,7 +13,7 @@ import Test.Html.Selector as Selector
 
 premiumView config =
     PremiumCheckbox.premium assets
-        { label = "i am labelzzzzzzzz"
+        { label = "i am label"
         , id = "id"
         , selected = config.selected
         , disabled = config.disabled
