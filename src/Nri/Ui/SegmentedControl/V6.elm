@@ -92,12 +92,12 @@ sharedTabStyles =
     , color Colors.azure
     , fontWeight bold
     , lineHeight (px 30)
-    , firstChild
+    , firstOfType
         [ borderTopLeftRadius (px 8)
         , borderBottomLeftRadius (px 8)
         , borderLeft3 (px 1) solid Colors.azure
         ]
-    , lastChild
+    , lastOfType
         [ borderTopRightRadius (px 8)
         , borderBottomRightRadius (px 8)
         ]
