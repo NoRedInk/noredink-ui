@@ -19,12 +19,10 @@ module Examples.SegmentedControl
 -}
 
 import Css
-import Css.Foreign
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V6
-import Nri.Ui.Styles.V1
+import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
 
 
 {-| -}
@@ -43,8 +41,7 @@ example parentMessage state =
     { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
-        [ Html.div [ css [ Css.width (Css.px 500) ] ]
-            [ Nri.Ui.SegmentedControl.V6.view state ]
+        [ Nri.Ui.SegmentedControl.V6.view state
             |> Html.map parentMessage
             |> Html.toUnstyled
         ]
@@ -68,6 +65,7 @@ init =
           }
         ]
     , selected = "a"
+    , width = FitContent
     }
 
 

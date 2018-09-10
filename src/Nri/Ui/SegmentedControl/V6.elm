@@ -1,4 +1,4 @@
-module Nri.Ui.SegmentedControl.V6 exposing (Config, Icon, Option, view)
+module Nri.Ui.SegmentedControl.V6 exposing (Config, Icon, Option, Width(..), view)
 
 {-|
 
@@ -25,6 +25,7 @@ type alias Config a msg =
     { onClick : a -> msg
     , options : List (Option a)
     , selected : a
+    , width : Width
     }
 
 
@@ -35,6 +36,12 @@ type alias Option a =
     , label : String
     , id : String
     }
+
+
+{-| -}
+type Width
+    = FitContent
+    | FillContainer
 
 
 {-| -}
@@ -60,6 +67,13 @@ view config =
                             focusedTabStyles
                         else
                             unFocusedTabStyles
+                    , css <|
+                        case config.width of
+                            FitContent ->
+                                []
+
+                            FillContainer ->
+                                expandingTabStyles
                     ]
                     [ case option.icon of
                         Nothing ->
@@ -104,8 +118,6 @@ sharedTabStyles =
     , border3 (px 1) solid Colors.azure
     , borderLeft (px 0)
     , boxSizing borderBox
-    , FlexBox.flexGrow 1
-    , textAlign center
     ]
 
 
@@ -122,4 +134,11 @@ unFocusedTabStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
+    ]
+
+
+expandingTabStyles : List Style
+expandingTabStyles =
+    [ FlexBox.flexGrow 1
+    , textAlign center
     ]
