@@ -4,7 +4,6 @@ module Examples.SegmentedControl
         , State
         , example
         , init
-        , styles
         , update
         )
 
@@ -21,7 +20,8 @@ module Examples.SegmentedControl
 
 import Css
 import Css.Foreign
-import Html
+import Html.Styled as Html
+import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.SegmentedControl.V6
 import Nri.Ui.Styles.V1
@@ -43,8 +43,10 @@ example parentMessage state =
     { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
-        [ Html.map parentMessage
-            (styles.div Container [ Nri.Ui.SegmentedControl.V6.view state ])
+        [ Html.div [ css [ Css.width (Css.px 500) ] ]
+            [ Nri.Ui.SegmentedControl.V6.view state ]
+            |> Html.map parentMessage
+            |> Html.toUnstyled
         ]
     }
 
@@ -75,21 +77,6 @@ update msg state =
     case msg of
         Select id ->
             ( { state | selected = id }, Cmd.none )
-
-
-{-| -}
-styles : Nri.Ui.Styles.V1.Styles a b c
-styles =
-    Nri.Ui.Styles.V1.styles
-        "Examples-SegmentedControl-"
-        [ Css.Foreign.class Container
-            [ Css.width (Css.px 500)
-            ]
-        ]
-
-
-type Classes
-    = Container
 
 
 
