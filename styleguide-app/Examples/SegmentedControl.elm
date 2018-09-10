@@ -18,9 +18,10 @@ module Examples.SegmentedControl
 
 -}
 
-import Css
-import Html.Styled as Html
-import Html.Styled.Attributes exposing (css)
+import Accessibility.Styled
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attr
+import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
 
@@ -28,6 +29,7 @@ import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
 {-| -}
 type Msg
     = Select Id
+    | SetFillContainer Bool
 
 
 {-| -}
@@ -41,10 +43,10 @@ example parentMessage state =
     { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
-        [ Nri.Ui.SegmentedControl.V6.view state
-            |> Html.map parentMessage
-            |> Html.toUnstyled
-        ]
+        List.map (Html.map parentMessage >> Html.toUnstyled)
+            [ fillContainerCheckbox state.width
+            , Nri.Ui.SegmentedControl.V6.view state
+            ]
     }
 
 
@@ -69,12 +71,50 @@ init =
     }
 
 
+fillContainerCheckbox : Width -> Html Msg
+fillContainerCheckbox currentOption =
+    let
+        id =
+            "SegmentedControl-fill-container-checkbox"
+
+        isChecked =
+            case currentOption of
+                FitContent ->
+                    Just False
+
+                FillContainer ->
+                    Just True
+    in
+    Html.div []
+        [ Accessibility.Styled.checkbox "Fill container"
+            isChecked
+            [ Attr.id id
+            , Events.onCheck SetFillContainer
+            ]
+        , Html.label
+            [ Attr.for id
+            ]
+            [ Html.text "Fill Container" ]
+        ]
+
+
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         Select id ->
             ( { state | selected = id }, Cmd.none )
+
+        SetFillContainer fillContainer ->
+            ( { state
+                | width =
+                    if fillContainer then
+                        FillContainer
+                    else
+                        FitContent
+              }
+            , Cmd.none
+            )
 
 
 
