@@ -13,7 +13,6 @@ module Examples.SegmentedControl
 @docs State
 @docs example
 @docs init
-@docs styles
 @docs update
 
 -}

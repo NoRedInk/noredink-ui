@@ -2,7 +2,7 @@ module Nri.Ui.SegmentedControl.V6 exposing (Config, Icon, Option, Width(..), vie
 
 {-|
 
-@docs Config, Icon, Option, styles, view, CssClass
+@docs Config, Icon, Option, Width, view
 
 -}
 
