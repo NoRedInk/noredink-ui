@@ -23,7 +23,7 @@ import Css
 import Css.Foreign
 import Html
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V5
+import Nri.Ui.SegmentedControl.V6
 import Nri.Ui.Styles.V1
 
 
@@ -34,17 +34,17 @@ type Msg
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V5.Config Id Msg
+    Nri.Ui.SegmentedControl.V6.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V5.elm"
+    { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
         [ Html.map parentMessage
-            (styles.div Container [ Nri.Ui.SegmentedControl.V5.view state ])
+            (styles.div Container [ Nri.Ui.SegmentedControl.V6.view state ])
         ]
     }
 
