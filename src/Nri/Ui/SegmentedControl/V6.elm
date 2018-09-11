@@ -9,10 +9,10 @@ module Nri.Ui.SegmentedControl.V6 exposing (Config, Icon, Option, Width(..), vie
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr exposing (css)
 import Html.Styled.Events as Events
+import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
@@ -54,40 +54,46 @@ type alias Icon =
 {-| -}
 view : Config a msg -> Html.Html msg
 view config =
-    config.options
-        |> List.map
-            (\option ->
-                Html.div
-                    [ Attr.id option.id
-                    , Role.tab
-                    , Events.onClick (config.onClick option.value)
-                    , css sharedTabStyles
-                    , css <|
-                        if option.value == config.selected then
-                            focusedTabStyles
-                        else
-                            unFocusedTabStyles
-                    , css <|
-                        case config.width of
-                            FitContent ->
-                                []
+    tabList <|
+        List.map (viewTab config) config.options
 
-                            FillContainer ->
-                                expandingTabStyles
-                    ]
-                    [ case option.icon of
-                        Nothing ->
-                            Html.text ""
 
-                        Just icon ->
-                            viewIcon icon
-                    , Html.text option.label
-                    ]
-            )
-        |> div
-            [ Role.tabList
-            , css [ FlexBox.displayFlex, cursor pointer ]
-            ]
+tabList : List (Html.Html msg) -> Html.Html msg
+tabList =
+    Nri.Ui.styled div
+        "Nri-Ui-SegmentedControl-tabList"
+        [ FlexBox.displayFlex, cursor pointer ]
+        [ Role.tabList ]
+
+
+viewTab : Config a msg -> Option a -> Html.Html msg
+viewTab config option =
+    Html.div
+        [ Attr.id option.id
+        , Role.tab
+        , Events.onClick (config.onClick option.value)
+        , css sharedTabStyles
+        , css <|
+            if option.value == config.selected then
+                focusedTabStyles
+            else
+                unFocusedTabStyles
+        , css <|
+            case config.width of
+                FitContent ->
+                    []
+
+                FillContainer ->
+                    expandingTabStyles
+        ]
+        [ case option.icon of
+            Nothing ->
+                Html.text ""
+
+            Just icon ->
+                viewIcon icon
+        , Html.text option.label
+        ]
 
 
 viewIcon : Icon -> Html.Html msg
