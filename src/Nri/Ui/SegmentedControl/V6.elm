@@ -15,7 +15,6 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
 
@@ -62,7 +61,7 @@ tabList : List (Html.Html msg) -> Html.Html msg
 tabList =
     Nri.Ui.styled div
         "Nri-Ui-SegmentedControl-tabList"
-        [ FlexBox.displayFlex, cursor pointer ]
+        [ displayFlex, cursor pointer ]
         [ Role.tabList ]
 
 
@@ -145,6 +144,6 @@ unFocusedTabStyles =
 
 expandingTabStyles : List Style
 expandingTabStyles =
-    [ FlexBox.flexGrow 1
+    [ flexGrow (int 1)
     , textAlign center
     ]
