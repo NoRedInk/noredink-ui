@@ -4,7 +4,6 @@ module Examples.SegmentedControl
         , State
         , example
         , init
-        , styles
         , update
         )
 
@@ -14,38 +13,39 @@ module Examples.SegmentedControl
 @docs State
 @docs example
 @docs init
-@docs styles
 @docs update
 
 -}
 
-import Css
-import Css.Foreign
-import Html
+import Accessibility.Styled
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attr
+import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V5
-import Nri.Ui.Styles.V1
+import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
 
 
 {-| -}
 type Msg
     = Select Id
+    | SetFillContainer Bool
 
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V5.Config Id Msg
+    Nri.Ui.SegmentedControl.V6.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V5.elm"
+    { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
-        [ Html.map parentMessage
-            (styles.div Container [ Nri.Ui.SegmentedControl.V5.view state ])
-        ]
+        List.map (Html.map parentMessage >> Html.toUnstyled)
+            [ fillContainerCheckbox state.width
+            , Nri.Ui.SegmentedControl.V6.view state
+            ]
     }
 
 
@@ -66,7 +66,35 @@ init =
           }
         ]
     , selected = "a"
+    , width = FitContent
     }
+
+
+fillContainerCheckbox : Width -> Html Msg
+fillContainerCheckbox currentOption =
+    let
+        id =
+            "SegmentedControl-fill-container-checkbox"
+
+        isChecked =
+            case currentOption of
+                FitContent ->
+                    Just False
+
+                FillContainer ->
+                    Just True
+    in
+    Html.div []
+        [ Accessibility.Styled.checkbox "Fill container"
+            isChecked
+            [ Attr.id id
+            , Events.onCheck SetFillContainer
+            ]
+        , Html.label
+            [ Attr.for id
+            ]
+            [ Html.text "Fill Container" ]
+        ]
 
 
 {-| -}
@@ -76,20 +104,16 @@ update msg state =
         Select id ->
             ( { state | selected = id }, Cmd.none )
 
-
-{-| -}
-styles : Nri.Ui.Styles.V1.Styles a b c
-styles =
-    Nri.Ui.Styles.V1.styles
-        "Examples-SegmentedControl-"
-        [ Css.Foreign.class Container
-            [ Css.width (Css.px 500)
-            ]
-        ]
-
-
-type Classes
-    = Container
+        SetFillContainer fillContainer ->
+            ( { state
+                | width =
+                    if fillContainer then
+                        FillContainer
+                    else
+                        FitContent
+              }
+            , Cmd.none
+            )
 
 
 
