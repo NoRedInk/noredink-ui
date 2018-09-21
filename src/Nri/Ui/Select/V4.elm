@@ -32,7 +32,8 @@ import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events exposing (..)
 import Json.Decode exposing (Decoder, andThen, succeed)
 import Nri.Ui
-import Nri.Ui.Colors.V1
+import Nri.Ui.AssetPath exposing (Asset(..))
+import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.InputStyles.V2 as InputStyles exposing (Theme)
 import Nri.Ui.Util
 
@@ -54,8 +55,8 @@ niceId prefix x =
 
 {-| A normal select dropdown
 -}
-view : Config a -> Html a
-view config =
+view : { r | icons_selectArrows_svg : Asset } -> Config a -> Html a
+view assets config =
     let
         valueLookup =
             -- TODO: probably worth using Lazy here, since choices won't change often
@@ -78,6 +79,9 @@ view config =
                 , Attributes.selected (choice.value == config.current)
                 ]
                 [ Html.text choice.label ]
+
+        assetUrl =
+            Nri.Ui.AssetPath.url assets.icons_selectArrows_svg
     in
     config.choices
         |> List.map viewChoice
@@ -86,6 +90,11 @@ view config =
             [ InputStyles.input InputStyles.Standard False
             , Css.Foreign.withClass "override-sass-styles"
                 [ Css.height (Css.px 45)
+                , VendorPrefixed.property "appearance" "none"
+                , Css.backgroundImage (Css.url assetUrl)
+                , Css.backgroundRepeat Css.noRepeat
+                , Css.backgroundPosition Css.right
+                , Css.backgroundOrigin Css.contentBox
                 ]
             ]
             [ onSelectHandler, class "override-sass-styles" ]
