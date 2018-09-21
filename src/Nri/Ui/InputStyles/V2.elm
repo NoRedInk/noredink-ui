@@ -114,6 +114,7 @@ input theme isInError =
                 -- fix bootstrap
                 , display inlineBlock
                 , verticalAlign top
+                , backgroundColor white
                 , marginBottom zero
                 , marginTop (px 9)
                 , boxShadow6 inset zero (px 2) zero zero gray92

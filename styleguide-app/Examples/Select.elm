@@ -22,7 +22,7 @@ module Examples.Select
 import Html
 import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Select.V3 as Select
+import Nri.Ui.Select.V4 as Select
 
 
 {-| -}
@@ -43,7 +43,7 @@ type alias State value =
 {-| -}
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.Select.V3"
+    { filename = "Nri.Ui.Select.V4"
     , category = Inputs
     , content =
         [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
