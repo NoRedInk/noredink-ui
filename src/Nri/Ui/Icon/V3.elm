@@ -75,6 +75,7 @@ module Nri.Ui.Icon.V3
         , rating
         , revising
         , seeMore
+        , selectArrows
         , share
         , skip
         , sort
@@ -158,6 +159,7 @@ module Nri.Ui.Icon.V3
 @docs preview
 @docs quickWrite
 @docs seeMore
+@docs selectArrows
 @docs share
 @docs skip
 @docs sort
@@ -781,6 +783,12 @@ share assets =
 skip : { r | skip : String } -> IconType
 skip assets =
     SvgIcon assets.skip
+
+
+{-| -}
+selectArrows : { r | icons_selectArrows_svg : Asset } -> IconType
+selectArrows assets =
+    ImgIcon assets.icons_selectArrows_svg
 
 
 {-| -}

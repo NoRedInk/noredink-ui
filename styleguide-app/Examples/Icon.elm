@@ -81,6 +81,7 @@ example =
             , { icon = Icon.arrowLeft, background = Light, alt = "ArrowLeft" }
             , { icon = Icon.arrowRight, background = Light, alt = "ArrowRight" }
             , { icon = Icon.caret, background = Light, alt = "Caret" }
+            , { icon = Icon.selectArrows, background = Light, alt = "SelectArrows" }
             ]
         , viewIconSection "Checkmarks"
             [ { icon = Icon.checkMarkSvg, background = Light, alt = "CheckMarkSvg" }

@@ -42,6 +42,7 @@ type alias Assets =
     , iconPremiumWithWritingFlag_svg : Asset
     , icons_arrowDownBlue_svg : Asset
     , icons_arrowRightBlue_svg : Asset
+    , icons_selectArrows_svg : Asset
     , icons_clockRed_svg : Asset
     , icons_equals_svg : Asset
     , icons_helpBlue_svg : Asset
@@ -139,6 +140,7 @@ assets =
     , icons_quickWrite_svg = Asset "assets/images/quick-write.svg"
     , icons_searchGray_svg = Asset "assets/images/search-gray.svg"
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
+    , icons_selectArrows_svg = Asset "assets/images/select-arrows.svg"
     , key = "icon-key"
     , leaderboard = "icon-leaderboard"
     , leftArrowBlue_png = Asset "assets/images/left-arrow-blue.png"
