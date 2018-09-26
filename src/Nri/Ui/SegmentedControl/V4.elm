@@ -1,4 +1,4 @@
-module Nri.Ui.SegmentedControl.V4 exposing (Config, CssClass, Icon, Option, styles, view)
+module Nri.Ui.SegmentedControl.V4 exposing (Config, Icon, Option, styles, view, CssClass)
 
 {-|
 

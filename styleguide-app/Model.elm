@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Model exposing (Model)
 
 import NriModules exposing (ModuleStates)
 import Routes exposing (Route)

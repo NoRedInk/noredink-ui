@@ -1,11 +1,10 @@
-module Examples.SegmentedControl
-    exposing
-        ( Msg
-        , State
-        , example
-        , init
-        , update
-        )
+module Examples.SegmentedControl exposing
+    ( Msg
+    , State
+    , example
+    , init
+    , update
+    )
 
 {-|
 
@@ -109,6 +108,7 @@ update msg state =
                 | width =
                     if fillContainer then
                         FillContainer
+
                     else
                         FitContent
               }

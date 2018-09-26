@@ -1,13 +1,12 @@
-module Nri.Ui.TextInput.V1
-    exposing
-        ( InputType
-        , Model
-        , number
-        , styles
-        , text
-        , view
-        , withInvisibleLabel
-        )
+module Nri.Ui.TextInput.V1 exposing
+    ( InputType
+    , Model
+    , styles
+    , view
+    , withInvisibleLabel
+    , number
+    , text
+    )
 
 {-|
 

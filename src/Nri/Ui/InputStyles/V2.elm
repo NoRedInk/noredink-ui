@@ -1,16 +1,7 @@
-module Nri.Ui.InputStyles.V2
-    exposing
-        ( Theme(..)
-        , input
-        , inputLineHeight
-        , inputPaddingVertical
-        , label
-        , textAreaHeight
-        , writingLineHeight
-        , writingMinHeight
-        , writingPadding
-        , writingPaddingTop
-        )
+module Nri.Ui.InputStyles.V2 exposing
+    ( label, Theme(..), input
+    , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+    )
 
 {-| InputStyles used by the TextInput and TextArea widgets.
 
@@ -61,6 +52,7 @@ label theme inError =
                 , color navy
                 , if inError then
                     batch [ color purple ]
+
                   else
                     batch []
                 ]
@@ -90,6 +82,7 @@ label theme inError =
                         , backgroundColor white
                         , borderColor purple
                         ]
+
                   else
                     batch []
                 ]
@@ -133,6 +126,7 @@ input theme isInError =
                             , boxShadow6 inset zero (px 2) zero zero purpleLight
                             ]
                         ]
+
                   else
                     batch []
                 ]
@@ -168,6 +162,7 @@ input theme isInError =
                                             , color white
                                             , borderColor purple
                                             ]
+
                                       else
                                         batch []
                                     ]

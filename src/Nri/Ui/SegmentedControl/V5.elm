@@ -1,4 +1,4 @@
-module Nri.Ui.SegmentedControl.V5 exposing (Config, CssClass, Icon, Option, styles, view)
+module Nri.Ui.SegmentedControl.V5 exposing (Config, Icon, Option, styles, view, CssClass)
 
 {-|
 
@@ -50,6 +50,7 @@ focusedClass : a -> a -> CssClass
 focusedClass value selected =
     if value == selected then
         Focused
+
     else
         Unfocused
 

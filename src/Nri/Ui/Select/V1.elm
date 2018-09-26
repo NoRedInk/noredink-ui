@@ -1,10 +1,8 @@
-module Nri.Ui.Select.V1
-    exposing
-        ( Config
-        , customView
-        , styles
-        , view
-        )
+module Nri.Ui.Select.V1 exposing
+    ( Config
+    , view, customView
+    , styles
+    )
 
 {-| Build a select input.
 

@@ -1,4 +1,4 @@
-module EventExtras exposing (..)
+module EventExtras exposing (onClickPreventDefaultForLinkWithHref)
 
 import Html
 import Html.Events exposing (..)

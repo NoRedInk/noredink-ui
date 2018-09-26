@@ -1,4 +1,4 @@
-module Nri.Ui.PremiumCheckbox.V2 exposing (Pennant(..), PremiumConfig, premium)
+module Nri.Ui.PremiumCheckbox.V2 exposing (PremiumConfig, premium, Pennant(..))
 
 {-|
 
@@ -58,6 +58,7 @@ premium assets config =
             , setterMsg =
                 if config.isLocked then
                     \_ -> config.onLockedClick
+
                 else
                     config.onChange
             , selected = config.selected
@@ -65,6 +66,7 @@ premium assets config =
             , theme =
                 if config.isLocked then
                     Checkbox.Locked
+
                 else
                     Checkbox.Square
             , noOpMsg = config.noOpMsg

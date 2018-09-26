@@ -1,13 +1,8 @@
-module Nri.Ui.Checkbox.V3
-    exposing
-        ( Assets
-        , IsSelected(..)
-        , Model
-        , Theme(..)
-        , selectedFromBool
-        , view
-        , viewWithLabel
-        )
+module Nri.Ui.Checkbox.V3 exposing
+    ( Model, Theme(..), IsSelected(..)
+    , view, viewWithLabel, Assets
+    , selectedFromBool
+    )
 
 {-|
 
@@ -156,6 +151,7 @@ squareLabelStyles model image =
         (baseStyles
             ++ (if model.disabled then
                     [ cursor auto, checkboxImageSelector [ opacity (num 0.4) ] ]
+
                 else
                     [ cursor pointer ]
                )
@@ -178,6 +174,7 @@ lockLabelStyles model image =
                     [ cursor auto
                     , checkboxImageSelector [ opacity (num 0.4) ]
                     ]
+
                 else
                     [ cursor pointer ]
                )
@@ -286,6 +283,7 @@ viewLabel model content class theme =
         , Widget.checked (selectedToMaybe model.selected)
         , if not model.disabled then
             Attributes.tabindex 0
+
           else
             ExtraAttributes.none
         , if not model.disabled then
@@ -296,9 +294,11 @@ viewLabel model content class theme =
                     -- 32 is the space bar, 13 is enter
                     if (keyCode == 32 || keyCode == 13) && not model.disabled then
                         Just <| model.setterMsg (Maybe.map not (selectedToMaybe model.selected) |> Maybe.withDefault True)
+
                     else
                         Nothing
                 )
+
           else
             ExtraAttributes.none
         , class

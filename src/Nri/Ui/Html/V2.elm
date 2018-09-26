@@ -1,4 +1,8 @@
-module Nri.Ui.Html.V2 exposing (..)
+module Nri.Ui.Html.V2 exposing
+    ( role, noOpHref, noOpHrefUrl
+    , onEsc, onEnter, onKeyUp, onEnterAndSpace
+    , textFromList, oxfordifyWithHtml, nbsp
+    )
 
 {-| For all utils involving HTML. New version of Nri.Ui.Html.Extra.
 
@@ -46,6 +50,7 @@ onEsc onEscAction onOtherKey =
             (\keyCode ->
                 if keyCode == 27 then
                     onEscAction
+
                 else
                     onOtherKey
             )
@@ -60,6 +65,7 @@ onEnter onEnterAction =
         (\keyCode ->
             if keyCode == 13 then
                 Just onEnterAction
+
             else
                 Nothing
         )
@@ -73,6 +79,7 @@ onEnterAndSpace msg =
         (\keyCode ->
             if keyCode == 13 || keyCode == 32 then
                 Just msg
+
             else
                 Nothing
         )

@@ -1,11 +1,10 @@
-module Nri.Ui.Dropdown.V1
-    exposing
-        ( CssClasses
-        , ViewOptionEntry
-        , styles
-        , view
-        , viewWithoutLabel
-        )
+module Nri.Ui.Dropdown.V1 exposing
+    ( CssClasses
+    , ViewOptionEntry
+    , styles
+    , view
+    , viewWithoutLabel
+    )
 
 {-|
 
@@ -113,6 +112,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
         [ label
             (if displayLabel then
                 [ for identifier ]
+
              else
                 [ for identifier, invisible ]
             )
@@ -147,6 +147,7 @@ viewOption defaultDisplayText { isSelected, val, displayText } =
             , style [ ( "display", "none" ) ]
             ]
             [ text defaultDisplayText ]
+
     else
         option
             [ value <| toString val

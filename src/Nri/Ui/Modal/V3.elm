@@ -1,9 +1,8 @@
-module Nri.Ui.Modal.V3
-    exposing
-        ( Model
-        , info
-        , warning
-        )
+module Nri.Ui.Modal.V3 exposing
+    ( Model
+    , info
+    , warning
+    )
 
 {-| Changes from V2:
 
@@ -146,6 +145,7 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
                     text ""
             , if visibleTitle then
                 viewHeader modalType title
+
               else
                 text ""
             , viewContent modalType content

@@ -1,14 +1,4 @@
-module Nri.Ui.TextArea.V2
-    exposing
-        ( Height(..)
-        , HeightBehavior(..)
-        , Model
-        , contentCreation
-        , generateId
-        , styles
-        , view
-        , writing
-        )
+module Nri.Ui.TextArea.V2 exposing (view, writing, contentCreation, Height(..), HeightBehavior(..), Model, generateId, styles)
 
 {-|
 
@@ -173,6 +163,7 @@ view_ textAreaStyle model =
                 , Accessibility.Styled.Style.invisible
                 ]
                 [ Html.text model.label ]
+
           else
             Html.label
                 [ Attributes.for (generateId model.label)

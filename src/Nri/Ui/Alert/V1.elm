@@ -1,13 +1,12 @@
-module Nri.Ui.Alert.V1
-    exposing
-        ( Model
-        , error
-        , styles
-        , success
-        , tip
-        , viewResult
-        , warning
-        )
+module Nri.Ui.Alert.V1 exposing
+    ( Model
+    , error
+    , styles
+    , success
+    , tip
+    , viewResult
+    , warning
+    )
 
 {-| UI components that highlight information to the user.
 

@@ -1,12 +1,10 @@
-module Nri.Ui.TextInput.V2
-    exposing
-        ( InputType
-        , Model
-        , number
-        , text
-        , view
-        , writing
-        )
+module Nri.Ui.TextInput.V2 exposing
+    ( InputType
+    , Model
+    , view, writing
+    , number
+    , text
+    )
 
 {-|
 
@@ -127,6 +125,7 @@ view_ inputStyle model =
                 , Accessibility.Style.invisible
                 ]
                 [ Html.text model.label ]
+
           else
             Html.label
                 [ for idValue

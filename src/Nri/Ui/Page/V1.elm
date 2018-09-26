@@ -1,4 +1,4 @@
-module Nri.Ui.Page.V1 exposing (DefaultPage, blocked, broken, noPermission, notFound)
+module Nri.Ui.Page.V1 exposing (DefaultPage, broken, blocked, notFound, noPermission)
 
 {-| A styled NRI issue page!
 

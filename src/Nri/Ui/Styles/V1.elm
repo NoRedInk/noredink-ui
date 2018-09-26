@@ -1,4 +1,7 @@
-module Nri.Ui.Styles.V1 exposing (Keyframe, Styles, StylesWithAssets, keyframes, styles, stylesWithAssets, stylesWithExtraStylesheets, toString)
+module Nri.Ui.Styles.V1 exposing
+    ( Styles, StylesWithAssets, styles, stylesWithExtraStylesheets, stylesWithAssets
+    , Keyframe, keyframes, toString
+    )
 
 {-| Simplifies using elm-css in modules that expose views
 

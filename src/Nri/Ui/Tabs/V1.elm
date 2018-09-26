@@ -1,16 +1,15 @@
-module Nri.Ui.Tabs.V1
-    exposing
-        ( Alignment(..)
-        , Config
-        , LinkConfig
-        , Tab
-        , TabLink
-        , links
-        , styles
-        , view
-        , viewCustom
-        , viewTabDefault
-        )
+module Nri.Ui.Tabs.V1 exposing
+    ( Alignment(..)
+    , Config
+    , LinkConfig
+    , Tab
+    , TabLink
+    , links
+    , styles
+    , view
+    , viewCustom
+    , viewTabDefault
+    )
 
 {-|
 
@@ -153,11 +152,13 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
                             |> List.Zipper.next
                             |> Maybe.map (List.Zipper.current >> .id >> onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No next tab")
+
                     else if keyCode == 37 then
                         tabs
                             |> List.Zipper.previous
                             |> Maybe.map (List.Zipper.current >> .id >> onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No previous tab")
+
                     else
                         Json.Decode.fail "Wrong key code"
                 )

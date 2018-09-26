@@ -1,10 +1,9 @@
-module Nri.Ui.Alert.V2
-    exposing
-        ( error
-        , success
-        , tip
-        , warning
-        )
+module Nri.Ui.Alert.V2 exposing
+    ( error
+    , success
+    , tip
+    , warning
+    )
 
 {-| UI components that highlight information to the user.
 

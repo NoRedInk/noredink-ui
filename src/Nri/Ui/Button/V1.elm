@@ -1,12 +1,11 @@
-module Nri.Ui.Button.V1
-    exposing
-        ( ButtonContent
-        , ButtonSize(..)
-        , ButtonState(..)
-        , ButtonStyle(..)
-        , button
-        , styles
-        )
+module Nri.Ui.Button.V1 exposing
+    ( styles
+    , ButtonContent
+    , ButtonSize(..)
+    , ButtonState(..)
+    , ButtonStyle(..)
+    , button
+    )
 
 {-| Common NoRedInk buttons. For accessibility purposes, buttons that perform an
 action on the current page should be HTML `<button>` elements and are created here
@@ -326,6 +325,7 @@ styles =
                     , backgroundColor config.hover
                     , if config.border == config.background then
                         borderColor config.hover
+
                       else
                         Css.batch []
                     , Css.disabled

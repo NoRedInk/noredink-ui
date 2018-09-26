@@ -1,30 +1,7 @@
-module Nri.Ui.CssFlexBoxWithVendorPrefix
-    exposing
-        ( alignItems
-        , alignSelf
-        , baseline
-        , center
-        , column
-        , columnReverse
-        , displayFlex
-        , displayInlineFlex
-        , flexBasis
-        , flexDirection
-        , flexEnd
-        , flexGrow
-        , flexShrink
-        , flexStart
-        , flexWrap
-        , justifyContent
-        , nowrap
-        , row
-        , rowReverse
-        , spaceAround
-        , spaceBetween
-        , stretch
-        , wrap
-        , wrapReverse
-        )
+module Nri.Ui.CssFlexBoxWithVendorPrefix exposing
+    ( displayFlex, displayInlineFlex, flexDirection, justifyContent, alignItems, alignSelf, flexBasis
+    , flexGrow, flexShrink, row, rowReverse, column, columnReverse, flexStart, flexEnd, baseline, stretch, center, spaceBetween, spaceAround, flexWrap, nowrap, wrap, wrapReverse
+    )
 
 {-|
 

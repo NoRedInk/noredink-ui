@@ -1,13 +1,12 @@
-module ModuleExample
-    exposing
-        ( Category(..)
-        , ModuleExample
-        , ModuleMessages
-        , categoryForDisplay
-        , categoryFromString
-        , styles
-        , view
-        )
+module ModuleExample exposing
+    ( Category(..)
+    , ModuleExample
+    , ModuleMessages
+    , categoryForDisplay
+    , categoryFromString
+    , styles
+    , view
+    )
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet)
@@ -174,6 +173,7 @@ view showFocusLink { filename, content } =
                     Html.a
                         [ Html.Attributes.href <| "#doodad/" ++ filename ]
                         [ Html.text "(see only this)" ]
+
                   else
                     Html.text ""
                 ]

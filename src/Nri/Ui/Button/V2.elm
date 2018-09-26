@@ -1,28 +1,10 @@
-module Nri.Ui.Button.V2
-    exposing
-        ( ButtonConfig
-        , ButtonContent
-        , ButtonDeprecatedConfig
-        , ButtonSize(..)
-        , ButtonState(..)
-        , ButtonStyle(..)
-        , LinkConfig
-        , ToggleButtonConfig
-        , button
-        , buttonDeprecated
-        , copyToClipboard
-        , customButton
-        , delete
-        , link
-        , linkExternal
-        , linkExternalWithTracking
-        , linkSpa
-        , linkWithMethod
-        , linkWithTracking
-        , styles
-        , submit
-        , toggleButton
-        )
+module Nri.Ui.Button.V2 exposing
+    ( styles
+    , ButtonSize(..), ButtonStyle(..), ButtonState(..), ButtonContent
+    , ButtonConfig, ButtonDeprecatedConfig, button, buttonDeprecated, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
+    , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , submit
+    )
 
 {-| Common NoRedInk buttons. For accessibility purposes, buttons that perform an
 action on the current page should be HTML `<button>` elements and are created here
@@ -266,6 +248,7 @@ buttonDeprecated config =
         classStyle =
             if config.disabled then
                 InactiveColors
+
             else
                 styleToColorPalette config.style
     in
@@ -303,6 +286,7 @@ copyToClipboard assets config =
         maybeIcon =
             if config.withIcon then
                 Just (Icon.copy assets)
+
             else
                 Nothing
     in
@@ -371,6 +355,7 @@ toggleButton config =
             -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
             , type_ "button"
             ]
+
          else
             [ onClick config.onSelect
             , Widget.pressed <| Just False

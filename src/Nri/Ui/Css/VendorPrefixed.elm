@@ -1,4 +1,4 @@
-module Nri.Ui.Css.VendorPrefixed exposing (complexProperty, property, value)
+module Nri.Ui.Css.VendorPrefixed exposing (property, value, complexProperty)
 
 {-| Vendor prefixed css properties.
 

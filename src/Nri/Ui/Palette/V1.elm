@@ -1,4 +1,7 @@
-module Nri.Ui.Palette.V1 exposing (..)
+module Nri.Ui.Palette.V1 exposing
+    ( Palette, PaletteName(..)
+    , white, gray, darkGray, blue, darkBlue, purple, turquoise, green, red, aqua, cornflower
+    )
 
 {-| Predefined color palettes for use in configurable components
 

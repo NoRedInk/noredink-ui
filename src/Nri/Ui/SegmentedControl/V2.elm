@@ -61,6 +61,7 @@ focusedClass : a -> a -> CssClass
 focusedClass value selected =
     if value == selected then
         Focused
+
     else
         Unfocused
 

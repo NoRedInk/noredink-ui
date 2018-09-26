@@ -2,7 +2,7 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 
 {-|
 
-@docs Msg, State, example, init, update,
+@docs Msg, State, example, init, update
 
 -}
 
@@ -61,6 +61,7 @@ update msg state =
                 isChecked =
                     if checked then
                         Set.insert id state.isChecked
+
                     else
                         Set.remove id state.isChecked
             in
@@ -148,6 +149,7 @@ viewPremiumCheckboxes state =
                 , selected =
                     if Set.member config.label state.isChecked then
                         Checkbox.Selected
+
                     else
                         Checkbox.NotSelected
                 , disabled = config.disabled
@@ -174,5 +176,6 @@ isSelected : Id -> State -> Checkbox.IsSelected
 isSelected id state =
     if Set.member id state.isChecked then
         Checkbox.Selected
+
     else
         Checkbox.NotSelected
