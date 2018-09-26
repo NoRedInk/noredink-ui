@@ -1,17 +1,9 @@
-module Nri.Ui.Icon.V1
-    exposing
-        ( Assets
-        , AssignmentType(..)
-        , CssClasses
-        , IconSize(..)
-        , IconType(..)
-        , button
-        , decorativeIcon
-        , icon
-        , link
-        , linkExternal
-        , styles
-        )
+module Nri.Ui.Icon.V1 exposing
+    ( icon, decorativeIcon, link, linkExternal, button
+    , IconType(..), AssignmentType(..), IconSize(..)
+    , styles, CssClasses
+    , Assets
+    )
 
 {-|
 
@@ -238,6 +230,7 @@ linkAttributes : IconLinkModel -> List (Attribute Never)
 linkAttributes model =
     if model.disabled then
         [ styles.class [ Disabled, Link, iconSizeToCssClass model.size ] ]
+
     else
         [ styles.class [ Link, iconSizeToCssClass model.size ], href model.url ]
 

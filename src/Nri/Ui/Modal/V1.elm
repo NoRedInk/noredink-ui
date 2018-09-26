@@ -1,10 +1,9 @@
-module Nri.Ui.Modal.V1
-    exposing
-        ( Model
-        , info
-        , styles
-        , warning
-        )
+module Nri.Ui.Modal.V1 exposing
+    ( Model
+    , info
+    , styles
+    , warning
+    )
 
 {-|
 

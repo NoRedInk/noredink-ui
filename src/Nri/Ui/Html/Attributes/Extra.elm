@@ -1,4 +1,4 @@
-module Nri.Ui.Html.Attributes.Extra exposing (includeIf, none)
+module Nri.Ui.Html.Attributes.Extra exposing (none, includeIf)
 
 {-| Extras for working with Html.Attributes
 
@@ -34,5 +34,6 @@ includeIf : Bool -> Attribute msg -> Attribute msg
 includeIf cond attr =
     if cond then
         attr
+
     else
         none

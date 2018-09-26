@@ -62,6 +62,7 @@ premium assets config =
             , setterMsg =
                 if isLocked then
                     \_ -> config.onLockedClick
+
                 else
                     config.onChange
             , selected = config.selected
@@ -69,6 +70,7 @@ premium assets config =
             , theme =
                 if isLocked then
                     Checkbox.Locked
+
                 else
                     Checkbox.Square
             , noOpMsg = config.noOpMsg
@@ -91,6 +93,7 @@ premium assets config =
                     ]
                 ]
                 []
+
           else
             Html.text ""
         ]

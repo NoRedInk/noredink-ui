@@ -1,7 +1,9 @@
 module Nri.Ui.DisclosureIndicator.V1 exposing (view, viewInline)
 
 {-| A caret that indicates that a section can expand. When the isOpen attribute is passed in as True, it will rotate. A "disclosure indicator" is a standard term for something that indicates that section can expand.
+
 @docs view, viewInline
+
 -}
 
 import Css exposing (..)
@@ -46,6 +48,7 @@ viewWithStyle style assets config =
         label =
             if config.isOpen then
                 "hide " ++ config.label
+
             else
                 "show " ++ config.label
     in
@@ -67,6 +70,7 @@ headerStyle isOpen =
         , property "transition" "transform 0.2s"
         , if isOpen then
             transform (rotate <| deg 0)
+
           else
             transform (rotate <| deg -90)
         ]
@@ -81,6 +85,7 @@ inlineStyle isOpen =
         , property "transition" "transform 0.1s"
         , if isOpen then
             transform (rotate <| deg 0)
+
           else
             transform (rotate <| deg -90)
         ]

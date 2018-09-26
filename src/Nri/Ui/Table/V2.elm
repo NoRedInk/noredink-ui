@@ -1,15 +1,9 @@
-module Nri.Ui.Table.V2
-    exposing
-        ( Column
-        , custom
-        , keyframeStyles
-        , keyframes
-        , string
-        , view
-        , viewLoading
-        , viewLoadingWithoutHeader
-        , viewWithoutHeader
-        )
+module Nri.Ui.Table.V2 exposing
+    ( Column, custom, string
+    , view, viewWithoutHeader
+    , viewLoading, viewLoadingWithoutHeader
+    , keyframes, keyframeStyles
+    )
 
 {-| Upgrading from V1:
 

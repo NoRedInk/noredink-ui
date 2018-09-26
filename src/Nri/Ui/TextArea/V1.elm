@@ -1,12 +1,4 @@
-module Nri.Ui.TextArea.V1
-    exposing
-        ( Model
-        , contentCreation
-        , generateId
-        , styles
-        , view
-        , writing
-        )
+module Nri.Ui.TextArea.V1 exposing (view, writing, contentCreation, Model, generateId, styles)
 
 {-|
 
@@ -114,6 +106,7 @@ view_ textAreaStyle model =
                        ]
                 )
                 []
+
           else
             Html.textarea sharedAttributes
                 [ Html.text model.value ]
@@ -124,6 +117,7 @@ view_ textAreaStyle model =
                 , Accessibility.Style.invisible
                 ]
                 [ Html.text model.label ]
+
           else
             Html.label
                 [ for (generateId model.label)

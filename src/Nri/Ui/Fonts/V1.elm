@@ -1,9 +1,4 @@
-module Nri.Ui.Fonts.V1
-    exposing
-        ( baseFont
-        , quizFont
-        , ugFont
-        )
+module Nri.Ui.Fonts.V1 exposing (baseFont, quizFont, ugFont)
 
 {-| Fonts for NoRedInk projects
 

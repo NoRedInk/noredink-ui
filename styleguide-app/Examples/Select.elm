@@ -1,12 +1,11 @@
-module Examples.Select
-    exposing
-        ( Msg
-        , State
-        , Value
-        , example
-        , init
-        , update
-        )
+module Examples.Select exposing
+    ( Msg
+    , State
+    , Value
+    , example
+    , init
+    , update
+    )
 
 {-|
 

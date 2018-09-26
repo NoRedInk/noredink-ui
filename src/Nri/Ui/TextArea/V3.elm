@@ -1,13 +1,4 @@
-module Nri.Ui.TextArea.V3
-    exposing
-        ( Height(..)
-        , HeightBehavior(..)
-        , Model
-        , contentCreation
-        , generateId
-        , view
-        , writing
-        )
+module Nri.Ui.TextArea.V3 exposing (view, writing, contentCreation, Height(..), HeightBehavior(..), Model, generateId)
 
 {-|
 
@@ -132,6 +123,7 @@ view_ theme model =
                 , Attributes.attribute "aria-invalid" <|
                     if model.isInError then
                         "true"
+
                     else
                         "false"
                 ]
@@ -144,6 +136,7 @@ view_ theme model =
                 , Accessibility.Styled.Style.invisible
                 ]
                 [ Html.text model.label ]
+
           else
             Html.label
                 [ Attributes.for (generateId model.label)

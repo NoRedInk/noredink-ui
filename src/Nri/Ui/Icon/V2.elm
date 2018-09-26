@@ -1,91 +1,81 @@
-module Nri.Ui.Icon.V2
-    exposing
-        ( CssClasses
-        , IconLinkSpaModel
-        , IconSize(..)
-        , IconType
-        , activity
-        , add
-        , arrowDown
-        , arrowLeft
-        , arrowRight
-        , assignmentTypeDiagnostic
-        , assignmentTypePractice
-        , assignmentTypeQuiz
-        , assignmentTypeWritingCycle
-        , attention
-        , bang
-        , bulb
-        , button
-        , calendar
-        , caret
-        , checkMark
-        , checkMarkSquiggily
-        , checkMarkSvg
-        , class
-        , clever
-        , clock
-        , close
-        , compassSvg
-        , copy
-        , custom
-        , darkBlueCheckMark
-        , decorativeIcon
-        , document
-        , download
-        , edit
-        , editWriting
-        , equalitySign
-        , exclamation
-        , facebook
-        , flag
-        , flipper
-        , footsteps
-        , gardening
-        , gear
-        , greenCheckMark
-        , guidedWrite
-        , help
-        , highFive
-        , icon
-        , key
-        , late
-        , leaderboard
-        , lightBulb
-        , link
-        , linkExternal
-        , linkSpa
-        , lock
-        , lockDeprecated
-        , logo
-        , masteryBadge
-        , newspaper
-        , notStarred
-        , okay
-        , openClose
-        , peerReview
-        , performance
-        , personBlue
-        , preview
-        , quickWrite
-        , rating
-        , revising
-        , seeMore
-        , share
-        , skip
-        , sort
-        , sortArrow
-        , speedometer
-        , starred
-        , styles
-        , submitting
-        , thumbsUp
-        , twitter
-        , unarchive
-        , writingAssignment
-        , x
-        , xSvg
-        )
+module Nri.Ui.Icon.V2 exposing
+    ( icon, decorativeIcon, link, linkExternal, linkSpa, button
+    , IconType, IconSize(..), IconLinkSpaModel
+    , styles
+    , CssClasses
+    , activity
+    , add
+    , arrowDown
+    , arrowLeft
+    , arrowRight
+    , assignmentTypeDiagnostic
+    , assignmentTypePractice
+    , assignmentTypeQuiz
+    , assignmentTypeWritingCycle
+    , attention
+    , bang
+    , bulb
+    , calendar
+    , caret
+    , checkMark
+    , checkMarkSquiggily
+    , checkMarkSvg
+    , class
+    , clever
+    , clock
+    , close
+    , copy
+    , compassSvg
+    , custom
+    , darkBlueCheckMark
+    , document
+    , download
+    , edit
+    , editWriting
+    , equalitySign
+    , exclamation
+    , facebook
+    , flag
+    , flipper
+    , footsteps
+    , gardening
+    , gear
+    , greenCheckMark
+    , guidedWrite
+    , help
+    , highFive
+    , key
+    , late
+    , leaderboard
+    , lightBulb
+    , lock
+    , lockDeprecated
+    , logo
+    , masteryBadge
+    , newspaper
+    , notStarred
+    , okay
+    , openClose
+    , peerReview
+    , performance
+    , personBlue
+    , preview
+    , quickWrite
+    , seeMore
+    , share
+    , skip
+    , sort
+    , sortArrow
+    , speedometer
+    , starred
+    , thumbsUp
+    , twitter
+    , unarchive
+    , writingAssignment
+    , x
+    , xSvg
+    , submitting, rating, revising
+    )
 
 {-|
 
@@ -337,6 +327,7 @@ defaultLinkAttributes : IconLinkModel -> List (Attribute msg)
 defaultLinkAttributes model =
     if model.disabled then
         [ styles.class [ Disabled, Link, iconSizeToCssClass model.size ] ]
+
     else
         [ styles.class [ Link, iconSizeToCssClass model.size ], href model.url ]
 

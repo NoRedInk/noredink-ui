@@ -1,18 +1,10 @@
-module Nri.Ui.Checkbox.V2
-    exposing
-        ( ColorTheme(..)
-        , IsSelected(..)
-        , Model
-        , PremiumConfig
-        , Theme(..)
-        , disabled
-        , keyframeCss
-        , premium
-        , styles
-        , view
-        , viewAttention
-        , viewWithLabel
-        )
+module Nri.Ui.Checkbox.V2 exposing
+    ( Model, Theme(..), ColorTheme(..)
+    , view, viewWithLabel, viewAttention, disabled
+    , IsSelected(..)
+    , keyframeCss, styles
+    , PremiumConfig, premium
+    )
 
 {-|
 
@@ -131,6 +123,7 @@ customView modifierClasses showLabels model =
             , Widget.checked model.isChecked
             , if not model.disabled then
                 Attributes.tabindex 0
+
               else
                 Attributes.none
             , if not model.disabled then
@@ -140,15 +133,18 @@ customView modifierClasses showLabels model =
                         -- 32 is the space bar, 13 is enter
                         if (keyCode == 32 || keyCode == 13) && not model.disabled then
                             Just <| model.setterMsg (Maybe.map not model.isChecked |> Maybe.withDefault True)
+
                         else
                             Nothing
                     )
+
               else
                 Attributes.none
             ]
             [ span
                 (if showLabels then
                     []
+
                  else
                     [ Accessibility.Style.invisible ]
                 )
@@ -252,10 +248,12 @@ premium config =
             List.concat
                 [ if config.showFlagWhenLocked && config.contentPremiumLevel /= Free then
                     [ PremiumClass ]
+
                   else
                     []
                 , if config.disabled then
                     [ Opacified ]
+
                   else
                     []
                 ]
@@ -263,8 +261,10 @@ premium config =
         theme =
             if isLocked then
                 LockOnInside
+
             else if config.contentPremiumLevel /= Free then
                 Premium
+
             else
                 Square Default
     in
@@ -275,6 +275,7 @@ premium config =
         , setterMsg =
             if isLocked then
                 \_ -> config.onLockedClick
+
             else
                 config.onChange
         , isChecked = isChecked

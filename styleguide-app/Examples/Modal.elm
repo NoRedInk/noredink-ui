@@ -2,7 +2,7 @@ module Examples.Modal exposing (Msg, State, example, init, update)
 
 {-|
 
-@docs Msg, State, example, init, update,
+@docs Msg, State, example, init, update
 
 -}
 

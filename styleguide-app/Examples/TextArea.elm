@@ -2,7 +2,7 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 {-|
 
-@docs Msg, State, example, init, update,
+@docs Msg, State, example, init, update
 
 -}
 
@@ -83,6 +83,7 @@ example parentMessage state =
             , height =
                 if state.autoResize == Checkbox.Selected then
                     TextArea.AutoResize TextArea.SingleLine
+
                 else
                     TextArea.Fixed
             , placeholder = "Placeholder"
@@ -98,6 +99,7 @@ example parentMessage state =
             , height =
                 if state.autoResize == Checkbox.Selected then
                     TextArea.AutoResize TextArea.DefaultHeight
+
                 else
                     TextArea.Fixed
             , placeholder = "Placeholder"
@@ -113,6 +115,7 @@ example parentMessage state =
             , height =
                 if state.autoResize == Checkbox.Selected then
                     TextArea.AutoResize TextArea.DefaultHeight
+
                 else
                     TextArea.Fixed
             , placeholder = "Placeholder"
@@ -141,6 +144,7 @@ update msg state =
         toggle bool =
             if bool then
                 Checkbox.Selected
+
             else
                 Checkbox.NotSelected
     in

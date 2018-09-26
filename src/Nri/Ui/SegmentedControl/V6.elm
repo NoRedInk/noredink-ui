@@ -75,6 +75,7 @@ viewTab config option =
         , css <|
             if option.value == config.selected then
                 focusedTabStyles
+
             else
                 unFocusedTabStyles
         , css <|

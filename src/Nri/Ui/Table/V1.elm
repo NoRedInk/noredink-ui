@@ -1,16 +1,9 @@
-module Nri.Ui.Table.V1
-    exposing
-        ( Column
-        , custom
-        , keyframeStyles
-        , keyframes
-        , string
-        , styles
-        , view
-        , viewLoading
-        , viewLoadingWithoutHeader
-        , viewWithoutHeader
-        )
+module Nri.Ui.Table.V1 exposing
+    ( Column, custom, string, styles
+    , view, viewWithoutHeader
+    , viewLoading, viewLoadingWithoutHeader
+    , keyframes, keyframeStyles
+    )
 
 {-|
 

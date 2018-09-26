@@ -1,4 +1,7 @@
-module Nri.Ui.InputStyles exposing (Assets, CssClasses(..), inputLineHeight, inputPaddingVertical, styles, textAreaHeight, writingLineHeight, writingMinHeight, writingPadding, writingPaddingTop)
+module Nri.Ui.InputStyles exposing
+    ( styles, CssClasses(..)
+    , Assets, inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+    )
 
 {-| InputStyles used by the TextInput and TextArea widgets.
 

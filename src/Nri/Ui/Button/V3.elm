@@ -1,24 +1,8 @@
-module Nri.Ui.Button.V3
-    exposing
-        ( ButtonConfig
-        , ButtonContent
-        , ButtonSize(..)
-        , ButtonState(..)
-        , ButtonStyle(..)
-        , LinkConfig
-        , ToggleButtonConfig
-        , button
-        , copyToClipboard
-        , customButton
-        , delete
-        , link
-        , linkExternal
-        , linkExternalWithTracking
-        , linkSpa
-        , linkWithMethod
-        , linkWithTracking
-        , toggleButton
-        )
+module Nri.Ui.Button.V3 exposing
+    ( ButtonSize(..), ButtonStyle(..), ButtonState(..), ButtonContent
+    , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
+    , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    )
 
 {-|
 
@@ -245,6 +229,7 @@ copyToClipboard assets config =
         maybeIcon =
             if config.withIcon then
                 Just (Icon.copy assets)
+
             else
                 Nothing
     in
@@ -320,6 +305,7 @@ toggleButton config =
                 , Css.border3 (Css.px 1) Css.solid Colors.azure
                 , Css.fontWeight Css.bold
                 ]
+
             else
                 []
     in
@@ -331,6 +317,7 @@ toggleButton config =
         [ Events.onClick
             (if config.pressed then
                 config.onDeselect
+
              else
                 config.onSelect
             )

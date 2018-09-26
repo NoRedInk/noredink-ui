@@ -1,50 +1,22 @@
-module Nri.Ui.Colors.V1
-    exposing
-        ( aqua
-        , aquaDark
-        , aquaLight
-        , azure
-        , azureDark
-        , blue
-        , blueDeep
-        , cornflower
-        , cornflowerDark
-        , cornflowerLight
-        , cyan
-        , frost
-        , glacier
-        , grassland
-        , gray20
-        , gray45
-        , gray75
-        , gray92
-        , gray96
-        , green
-        , greenDark
-        , greenDarkest
-        , greenLight
-        , greenLightest
-        , highlightLightBlue
-        , highlightLightMagenta
-        , highlightLightYellow
-        , lichen
-        , magenta
-        , navy
-        , ochre
-        , orange
-        , purple
-        , purpleDark
-        , purpleLight
-        , red
-        , redDark
-        , redLight
-        , sunshine
-        , turquoise
-        , turquoiseDark
-        , turquoiseLight
-        , white
-        , yellow
-        )
+module Nri.Ui.Colors.V1 exposing
+    ( aqua, aquaDark, aquaLight, azure, azureDark
+    , white
+    , blue, blueDeep
+    , cornflower, cornflowerDark, cornflowerLight, cyan
+    , frost
+    , gray20, gray45, gray75, gray92, gray96
+    , glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
+    , highlightLightBlue, highlightLightMagenta, highlightLightYellow
+    , lichen
+    , magenta
+    , navy
+    , orange, ochre
+    , purple, purpleDark, purpleLight
+    , red, redDark, redLight
+    , sunshine
+    , turquoise, turquoiseDark, turquoiseLight
+    , yellow
+    )
 
 {-| Comprehensive list of named colors.
 

@@ -1,11 +1,9 @@
-module Nri.Ui.TextInput.V3
-    exposing
-        ( Model
-        , number
-        , text
-        , view
-        , writing
-        )
+module Nri.Ui.TextInput.V3 exposing
+    ( Model
+    , view, writing
+    , number
+    , text
+    )
 
 {-|
 
@@ -107,6 +105,7 @@ view_ theme model =
                         [ textAlign center
                         , Css.height Css.auto
                         ]
+
                   else
                     Css.Foreign.withClass "override-sass-styles"
                         [ Css.height (px 45)
@@ -121,6 +120,7 @@ view_ theme model =
             , Attributes.attribute "aria-invalid" <|
                 if model.isInError then
                     "true"
+
                 else
                     "false"
             ]
@@ -131,6 +131,7 @@ view_ theme model =
                 , css [ InputStyles.label theme model.isInError ]
                 ]
                 [ Html.text model.label ]
+
           else
             Html.label
                 [ for idValue

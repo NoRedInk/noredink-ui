@@ -2,7 +2,7 @@ module Examples.Dropdown exposing (Msg, State, Value, example, init, update)
 
 {-|
 
-@docs Msg, State, Value, example, init, update,
+@docs Msg, State, Value, example, init, update
 
 -}
 

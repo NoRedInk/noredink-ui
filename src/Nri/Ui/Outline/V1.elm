@@ -1,4 +1,12 @@
-module Nri.Ui.Outline.V1 exposing (NodeConfig, NodeLayout, config, html, node, segment, styles)
+module Nri.Ui.Outline.V1 exposing
+    ( segment
+    , node
+    , NodeLayout
+    , NodeConfig
+    , config
+    , html
+    , styles
+    )
 
 {-| A module for rendering outline layouts.
 

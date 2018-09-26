@@ -1,17 +1,8 @@
-module Nri.Ui.Text.V2
-    exposing
-        ( caption
-        , heading
-        , mediumBody
-        , noWidow
-        , smallBody
-        , smallBodyGray
-        , smallHeading
-        , subHeading
-        , tagline
-        , ugMediumBody
-        , ugSmallBody
-        )
+module Nri.Ui.Text.V2 exposing
+    ( caption, heading, mediumBody, smallBody, smallBodyGray, subHeading, smallHeading, tagline
+    , ugMediumBody, ugSmallBody
+    , noWidow
+    )
 
 {-|
 
@@ -23,7 +14,7 @@ module Nri.Ui.Text.V2
 
 ## User-generated text styles:
 
-@docs ugMediumBody,ugSmallBody
+@docs ugMediumBody, ugSmallBody
 
 
 ## Modifying strings to display nicely:
@@ -258,8 +249,10 @@ noWidow inputs =
             (\i word ->
                 if i == 0 then
                     word
+
                 else if i == insertPoint && insertPoint > 0 then
                     nbsp ++ word
+
                 else
                     " " ++ word
             )

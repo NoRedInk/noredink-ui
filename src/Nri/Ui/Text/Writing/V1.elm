@@ -1,7 +1,4 @@
-module Nri.Ui.Text.Writing.V1
-    exposing
-        ( footnote
-        )
+module Nri.Ui.Text.Writing.V1 exposing (footnote)
 
 {-| Text types for writing:
 

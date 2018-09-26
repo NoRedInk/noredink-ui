@@ -1,4 +1,8 @@
-module Nri.Ui.DatePickerConstants exposing (..)
+module Nri.Ui.DatePickerConstants exposing
+    ( datePickerTag
+    , dialogTag
+    , footerTag
+    )
 
 {-|
 

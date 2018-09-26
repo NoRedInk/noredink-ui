@@ -1,20 +1,11 @@
-module Debug.Control
-    exposing
-        ( Control
-        , allValues
-        , bool
-        , choice
-        , currentValue
-        , field
-        , list
-        , map
-        , maybe
-        , record
-        , string
-        , value
-        , values
-        , view
-        )
+module Debug.Control exposing
+    ( Control
+    , value
+    , bool, string
+    , values, maybe, choice, list, record, field
+    , map
+    , view, currentValue, allValues
+    )
 
 {-| Create interactive controls for complex data structures.
 
@@ -84,6 +75,7 @@ maybe isJust (Control value) =
         { currentValue =
             if isJust then
                 Just value.currentValue
+
             else
                 Nothing
         , allValues =
@@ -105,6 +97,7 @@ maybe isJust (Control value) =
                         , Html.text " "
                         , if isJust then
                             view_ (maybe isJust) (Control value)
+
                           else
                             Html.text "Nothing"
                         ]
