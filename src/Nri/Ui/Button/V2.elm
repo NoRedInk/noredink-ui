@@ -654,13 +654,14 @@ styles =
                 , borderRadius (px 8)
                 , minHeight (px config.minHeight)
                 , lineHeight (px config.lineHeight)
-                , padding2 zero (px config.sidePadding)
+                , padding2 (Css.px 4) (px config.sidePadding)
                 , boxSizing borderBox
                 , minWidth (px config.minWidth)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
                 , Css.Foreign.withClass ExplicitWidth
-                    [ padding2 zero (px 4)
+                    [ paddingLeft (px 4)
+                    , paddingRight (px 4)
                     , boxSizing borderBox
                     ]
                 , Css.Foreign.withClass IsLink

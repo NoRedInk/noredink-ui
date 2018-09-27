@@ -721,7 +721,8 @@ sizeStyle size width elementType =
                     ]
 
                 Nothing ->
-                    [ Css.padding2 Css.zero (Css.px 16)
+                    [ Css.paddingLeft (Css.px 16)
+                    , Css.paddingRight (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)
                     ]
 
@@ -744,6 +745,8 @@ sizeStyle size width elementType =
     [ Css.fontSize (Css.px config.fontSize)
     , Css.borderRadius (Css.px 8)
     , Css.minHeight (Css.px config.minHeight)
+    , Css.paddingTop (Css.px 4)
+    , Css.paddingBottom (Css.px 4)
     , Css.lineHeight (Css.px lineHeightPx)
     , Css.boxSizing Css.borderBox
     , Css.borderWidth (Css.px 1)
