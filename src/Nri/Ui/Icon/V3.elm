@@ -44,6 +44,7 @@ module Nri.Ui.Icon.V3 exposing
     , guidedWrite
     , hat
     , help
+    , helpSvg
     , highFive
     , key
     , keychain
@@ -127,6 +128,7 @@ module Nri.Ui.Icon.V3 exposing
 @docs guidedWrite
 @docs hat
 @docs help
+@docs helpSvg
 @docs highFive
 @docs key
 @docs keychain
@@ -634,6 +636,12 @@ hat assets =
 help : { r | icons_helpBlue_svg : Asset } -> IconType
 help assets =
     ImgIcon assets.icons_helpBlue_svg
+
+
+{-| -}
+helpSvg : { r | help : String } -> IconType
+helpSvg assets =
+    SvgIcon assets.help
 
 
 {-| -}
