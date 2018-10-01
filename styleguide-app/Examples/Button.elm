@@ -56,12 +56,18 @@ init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Button")
-        |> Control.field "icon (copyToClipboard only has one icon choice)"
+        |> Control.field "icon (copyToClipboard has only one choice)"
             (Control.maybe False <|
                 Control.choice
                     [ ( "Performance", Control.value (Icon.performance assets) )
                     , ( "Lock", Control.value (Icon.lock assets) )
                     ]
+            )
+        |> Control.field "sizing (button and copyToClipboard only)"
+            (Control.choice
+                [ ( "Nri.Ui.Button.V4.Fixed", Control.value Button.Fixed )
+                , ( "Nri.Ui.Button.V4.GrowsVertically", Control.value Button.GrowsVertically )
+                ]
             )
         |> Control.field "width"
             (Control.maybe True <|
@@ -72,12 +78,12 @@ init assets =
             )
         |> Control.field "button type"
             (Control.choice
-                [ ( "Nri.Button.button", Control.value Button )
-                , ( "Nri.Button.link", Control.value Link )
-                , ( "Nri.Button.copyToClipboard", Control.value CopyToClipboard )
+                [ ( "Nri.Ui.Button.V4.button", Control.value Button )
+                , ( "Nri.Ui.Button.V4.link", Control.value Link )
+                , ( "Nri.Ui.Button.V4.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
-        |> Control.field "state (only applies to Nri.Button.button)"
+        |> Control.field "state (button only)"
             (Control.choice <|
                 List.map (\x -> ( toString x, Control.value x ))
                     [ Button.Enabled
@@ -106,13 +112,18 @@ update msg state =
 type alias Model =
     { label : String
     , icon : Maybe Icon.IconType
+    , sizing : Button.ButtonSizing
     , width : Maybe Int
     , buttonType : ButtonType
     , state : Button.ButtonState
     }
 
 
-viewButtonExamples : { r | teach_assignments_copyWhite_svg : Asset, x : String } -> ModuleMessages Msg parentMsg -> State -> Html parentMsg
+viewButtonExamples :
+    { r | teach_assignments_copyWhite_svg : Asset, x : String }
+    -> ModuleMessages Msg parentMsg
+    -> State
+    -> Html parentMsg
 viewButtonExamples assets messages (State control) =
     let
         model =
@@ -120,7 +131,7 @@ viewButtonExamples assets messages (State control) =
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages sizes model
+    , buttons assets messages model.sizing sizes model
     , toggleButtons messages
     , Button.delete assets
         { label = "Delete Something"
@@ -147,6 +158,13 @@ sizes =
     ]
 
 
+sizings : List Button.ButtonSizing
+sizings =
+    [ Button.GrowsVertically
+    , Button.Fixed
+    ]
+
+
 allStyles : List Button.ButtonStyle
 allStyles =
     [ Button.Primary
@@ -157,10 +175,16 @@ allStyles =
     ]
 
 
-buttons : { r | teach_assignments_copyWhite_svg : Asset } -> ModuleMessages Msg parentMsg -> List Button.ButtonSize -> Model -> Html parentMsg
-buttons assets messages sizes model =
+buttons :
+    { r | teach_assignments_copyWhite_svg : Asset }
+    -> ModuleMessages Msg parentMsg
+    -> Button.ButtonSizing
+    -> List Button.ButtonSize
+    -> Model
+    -> Html parentMsg
+buttons assets messages sizing sizes model =
     let
-        exampleRow style =
+        exampleRow sizing style =
             List.concat
                 [ [ td
                         [ css
@@ -170,11 +194,11 @@ buttons assets messages sizes model =
                         [ text <| toString style ]
                   ]
                 , sizes
-                    |> List.map (exampleCell style)
+                    |> List.map (exampleCell style sizing)
                 ]
                 |> tr []
 
-        exampleCell style size =
+        exampleCell style sizing size =
             (case model.buttonType of
                 Link ->
                     Button.link
@@ -189,6 +213,7 @@ buttons assets messages sizes model =
                 Button ->
                     Button.button
                         { size = size
+                        , sizing = sizing
                         , style = style
                         , onClick = messages.showItWorked (toString ( style, size ))
                         , width = model.width
@@ -202,6 +227,7 @@ buttons assets messages sizes model =
                     Button.copyToClipboard
                         assets
                         { size = size
+                        , sizing = sizing
                         , style = style
                         , copyText = "wire up in your coffee file with clipboard.js"
                         , buttonLabel = model.label
@@ -218,7 +244,7 @@ buttons assets messages sizes model =
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
         , allStyles
-            |> List.map exampleRow
+            |> List.map (exampleRow sizing)
         ]
         |> table []
 

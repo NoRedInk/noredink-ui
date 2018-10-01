@@ -1,5 +1,5 @@
 module Nri.Ui.Button.V4 exposing
-    ( ButtonSize(..), ButtonStyle(..), ButtonState(..), ButtonContent
+    ( ButtonSize(..), ButtonSizing(..), ButtonStyle(..), ButtonState(..), ButtonContent
     , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
     , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
@@ -7,13 +7,9 @@ module Nri.Ui.Button.V4 exposing
 {-|
 
 
-# Changes from V2:
+# Changes from V3:
 
-  - Uses Html.Styled
-  - Removes buttonDeprecated
-  - Removes Tiny size
-  - Removes one-off Active hack
-  - Removes "submit" button - we just used that for forms that were partially in Elm
+  - Adds `ButtonSizing`.
 
 
 # About:
@@ -30,7 +26,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## Common configs
 
-@docs ButtonSize, ButtonStyle, ButtonState, ButtonContent
+@docs ButtonSize, ButtonSizing, ButtonStyle, ButtonState, ButtonContent
 
 
 ## `<button>` Buttons
@@ -70,6 +66,27 @@ type ButtonSize
     = Small
     | Medium
     | Large
+
+
+{-| Sizing behavior for buttons and links that have button classes
+
+This is distinct from size because it describes how a button or link should grow
+with its contents.
+
+A `Fixed` button allows only a single line of button text; any more is
+truncated. Use this when the button text is short and static, or has been
+supplied by the user and could be so long as to break layout.
+
+A `GrowsVertically` button grows vertically to accommodate all the button
+content. Use this when the button text may contain longer text, such as a quiz
+answer, and where it's more important to display the full text than guarantee a
+fixed layout; i.e. where not having the full text could prevent a human from
+using the site.
+
+-}
+type ButtonSizing
+    = GrowsVertically
+    | Fixed
 
 
 {-| Styleguide-approved styles for your buttons!
@@ -112,6 +129,7 @@ type ButtonState
 type alias ButtonConfig msg =
     { onClick : msg
     , size : ButtonSize
+    , sizing : ButtonSizing
     , style : ButtonStyle
     , width : Maybe Int
     }
@@ -194,7 +212,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        (buttonStyles config.size config.width buttonStyle Button)
+        (buttonStyles config.size config.sizing config.width buttonStyle Button)
         ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -212,6 +230,7 @@ customButton attributes config content =
 -}
 type alias CopyToClipboardConfig =
     { size : ButtonSize
+    , sizing : ButtonSizing
     , style : ButtonStyle
     , copyText : String
     , buttonLabel : String
@@ -235,7 +254,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         (styledName "copyToClipboard")
-        (buttonStyles config.size config.width (styleToColorPalette config.style) Button)
+        (buttonStyles config.size config.sizing config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , Attributes.attribute "data-clipboard-text" config.copyText
         ]
@@ -311,7 +330,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium Nothing SecondaryColors Button
+        (buttonStyles Medium Fixed Nothing SecondaryColors Button
             ++ toggledStyles
         )
         [ Events.onClick
@@ -457,7 +476,7 @@ linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         (Css.whiteSpace Css.noWrap
-            :: buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
+            :: buttonStyles config.size Fixed config.width (styleToColorPalette config.style) Anchor
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -500,12 +519,12 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> Maybe Int -> ColorPalette -> ElementType -> List Style
-buttonStyles size width colorPalette elementType =
+buttonStyles : ButtonSize -> ButtonSizing -> Maybe Int -> ColorPalette -> ElementType -> List Style
+buttonStyles size sizing width colorPalette elementType =
     List.concat
         [ buttonStyle
         , colorStyle colorPalette
-        , sizeStyle size width elementType
+        , sizeStyle size sizing width elementType
         ]
 
 
@@ -684,14 +703,14 @@ type ElementType
     | Button
 
 
-sizeStyle : ButtonSize -> Maybe Int -> ElementType -> List Style
-sizeStyle size width elementType =
+sizeStyle : ButtonSize -> ButtonSizing -> Maybe Int -> ElementType -> List Style
+sizeStyle size sizing width elementType =
     let
         config =
             case size of
                 Small ->
                     { fontSize = 15
-                    , minHeight = 36
+                    , height = 36
                     , imageHeight = 15
                     , shadowHeight = 2
                     , minWidth = 75
@@ -699,7 +718,7 @@ sizeStyle size width elementType =
 
                 Medium ->
                     { fontSize = 17
-                    , minHeight = 45
+                    , height = 45
                     , imageHeight = 15
                     , shadowHeight = 3
                     , minWidth = 100
@@ -707,11 +726,33 @@ sizeStyle size width elementType =
 
                 Large ->
                     { fontSize = 20
-                    , minHeight = 56
+                    , height = 56
                     , imageHeight = 20
                     , shadowHeight = 4
                     , minWidth = 200
                     }
+
+        sizingAttributes =
+            case elementType of
+                Button ->
+                    case sizing of
+                        GrowsVertically ->
+                            [ Css.minHeight (Css.px config.height)
+                            , Css.overflow Css.visible
+                            , Css.paddingTop (Css.px 4)
+                            , Css.paddingBottom (Css.px 4)
+                            ]
+
+                        Fixed ->
+                            [ Css.height (Css.px config.height)
+                            , Css.overflow Css.hidden
+                            , Css.whiteSpace Css.noWrap
+                            , Css.paddingTop Css.zero
+                            , Css.paddingBottom Css.zero
+                            ]
+
+                _ ->
+                    []
 
         widthAttributes =
             case width of
@@ -729,7 +770,7 @@ sizeStyle size width elementType =
         lineHeightPx =
             case elementType of
                 Anchor ->
-                    config.minHeight
+                    config.height
 
                 Button ->
                     case size of
@@ -744,13 +785,11 @@ sizeStyle size width elementType =
     in
     [ Css.fontSize (Css.px config.fontSize)
     , Css.borderRadius (Css.px 8)
-    , Css.minHeight (Css.px config.minHeight)
-    , Css.paddingTop (Css.px 4)
-    , Css.paddingBottom (Css.px 4)
     , Css.lineHeight (Css.px lineHeightPx)
     , Css.boxSizing Css.borderBox
     , Css.borderWidth (Css.px 1)
     , Css.borderBottomWidth (Css.px config.shadowHeight)
+    , Css.batch sizingAttributes
     , Css.batch widthAttributes
     , Css.Foreign.descendants
         [ Css.Foreign.img
