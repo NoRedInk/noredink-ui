@@ -1,5 +1,5 @@
 module Nri.Ui.Button.V4 exposing
-    ( ButtonSize(..), ButtonHeight(..), ButtonWidth, ButtonStyle(..), ButtonState(..), ButtonContent
+    ( ButtonSize(..), ButtonHeight(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..), ButtonContent
     , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
     , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
@@ -9,7 +9,8 @@ module Nri.Ui.Button.V4 exposing
 
 # Changes from V3:
 
-  - Adds `ButtonSizing`.
+  - Adds `ButtonHeight`.
+  - Adds `ButtonWidth`.
 
 
 # About:
@@ -92,11 +93,13 @@ type ButtonHeight
 
 {-| Width sizing behavior for buttons.
 
-TODO: Change to a custom type rather than an alias.
+`WidthExact Int` defines a size in `px` for the button's total width, and
+`WidthUnbounded` leaves the maxiumum width unbounded (there is a minimum width).
 
 -}
-type alias ButtonWidth =
-    Maybe Int
+type ButtonWidth
+    = WidthExact Int
+    | WidthUnbounded
 
 
 {-| Styleguide-approved styles for your buttons!
@@ -340,7 +343,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium HeightFixed Nothing SecondaryColors Button
+        (buttonStyles Medium HeightFixed WidthUnbounded SecondaryColors Button
             ++ toggledStyles
         )
         [ Events.onClick
@@ -789,12 +792,12 @@ sizeStyle size height width elementType =
 
         widthAttributes =
             case width of
-                Just pxWidth ->
+                WidthExact pxWidth ->
                     [ Css.maxWidth (Css.pct 100)
                     , Css.width (Css.px <| toFloat pxWidth)
                     ]
 
-                Nothing ->
+                WidthUnbounded ->
                     [ Css.paddingLeft (Css.px 16)
                     , Css.paddingRight (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)

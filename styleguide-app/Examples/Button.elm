@@ -71,11 +71,11 @@ init assets =
                 ]
             )
         |> Control.field "width"
-            (Control.maybe True <|
-                Control.choice
-                    [ ( "120", Control.value 120 )
-                    , ( "70", Control.value 70 )
-                    ]
+            (Control.choice
+                [ ( "Nri.Ui.Button.V4.WidthExact 120", Control.value <| Button.WidthExact 120 )
+                , ( "Nri.Ui.Button.V4.WidthExact 70", Control.value <| Button.WidthExact 70 )
+                , ( "Nri.Ui.Button.V4.WidthUnbounded", Control.value <| Button.WidthUnbounded )
+                ]
             )
         |> Control.field "button type"
             (Control.choice
@@ -142,7 +142,7 @@ viewButtonExamples assets messages (State control) =
         (messages.showItWorked "linkExternalWithTracking clicked")
         { size = Button.Medium
         , style = Button.Secondary
-        , width = Nothing
+        , width = Button.WidthUnbounded
         , label = "linkExternalWithTracking"
         , icon = Nothing
         , url = "#"
