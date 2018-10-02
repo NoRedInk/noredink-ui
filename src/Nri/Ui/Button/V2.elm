@@ -652,20 +652,19 @@ styles =
             Css.Foreign.class (SizeStyle size)
                 [ fontSize (px config.fontSize)
                 , borderRadius (px 8)
-                , minHeight (px config.minHeight)
+                , Css.height (px config.height)
                 , lineHeight (px config.lineHeight)
-                , padding2 (Css.px 4) (px config.sidePadding)
+                , padding2 zero (px config.sidePadding)
                 , boxSizing borderBox
                 , minWidth (px config.minWidth)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
                 , Css.Foreign.withClass ExplicitWidth
-                    [ paddingLeft (px 4)
-                    , paddingRight (px 4)
+                    [ padding2 zero (px 4)
                     , boxSizing borderBox
                     ]
                 , Css.Foreign.withClass IsLink
-                    [ lineHeight (px config.minHeight)
+                    [ lineHeight (px config.height)
                     ]
                 , Css.Foreign.descendants
                     [ Css.Foreign.img
@@ -773,7 +772,7 @@ styles =
                 ]
             , sizeStyle TinyDeprecated
                 { fontSize = 13
-                , minHeight = 25
+                , height = 25
                 , lineHeight = 25
                 , sidePadding = 8
                 , minWidth = 50
@@ -782,7 +781,7 @@ styles =
                 }
             , sizeStyle Small
                 { fontSize = 15
-                , minHeight = 36
+                , height = 36
                 , lineHeight = 15
                 , sidePadding = 16
                 , imageHeight = 15
@@ -791,7 +790,7 @@ styles =
                 }
             , sizeStyle Medium
                 { fontSize = 17
-                , minHeight = 45
+                , height = 45
                 , lineHeight = 19
                 , sidePadding = 16
                 , imageHeight = 15
@@ -800,7 +799,7 @@ styles =
                 }
             , sizeStyle Large
                 { fontSize = 20
-                , minHeight = 56
+                , height = 56
                 , lineHeight = 22
                 , sidePadding = 16
                 , imageHeight = 20
