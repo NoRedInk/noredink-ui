@@ -24,6 +24,12 @@ should be able to use the same CSS class in all cases.
 There will generally be a `*Button` and `*Link` version of each button style.
 (These will be created as they are needed.)
 
+In general a button should never truncate or obscure its contents. This could
+make it difficult or impossible for a student or teacher to use the site, so in
+general choose buttons that grow to fit their contents. It is better to risk
+weird layout than to block users. Might this be a golden rule? Of course there
+may be exceptions, for example if button content is supplied by an end-user.
+
 
 ## Common configs
 
