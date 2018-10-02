@@ -71,7 +71,7 @@ type ButtonSize
 
 {-| Height sizing behavior for buttons.
 
-A `HeightFixed` button allows only a single line of button text; any more is
+A `HeightDefault` button allows only a single line of button text; any more is
 truncated. Use this when the button text is short and static, or has been
 supplied by the user and could be so long as to break layout.
 
@@ -86,7 +86,7 @@ because an upper bound can be placed on how many lines to allow.
 
 -}
 type ButtonHeight
-    = HeightFixed
+    = HeightDefault
     | HeightBounded Int
     | HeightUnbounded
 
@@ -343,7 +343,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium HeightFixed WidthUnbounded SecondaryColors Button
+        (buttonStyles Medium HeightDefault WidthUnbounded SecondaryColors Button
             ++ toggledStyles
         )
         [ Events.onClick
@@ -489,7 +489,7 @@ linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         (Css.whiteSpace Css.noWrap
-            :: buttonStyles config.size HeightFixed config.width (styleToColorPalette config.style) Anchor
+            :: buttonStyles config.size HeightDefault config.width (styleToColorPalette config.style) Anchor
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -749,7 +749,7 @@ sizeStyle size height width elementType =
             case elementType of
                 Button ->
                     case height of
-                        HeightFixed ->
+                        HeightDefault ->
                             [ Css.height (Css.px config.height)
                             , Css.whiteSpace Css.noWrap
                             , Css.paddingTop Css.zero

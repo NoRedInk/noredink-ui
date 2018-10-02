@@ -65,7 +65,7 @@ init assets =
             )
         |> Control.field "height (button and copyToClipboard only)"
             (Control.choice
-                [ ( "Nri.Ui.Button.V4.HeightFixed", Control.value Button.HeightFixed )
+                [ ( "Nri.Ui.Button.V4.HeightDefault", Control.value Button.HeightDefault )
                 , ( "Nri.Ui.Button.V4.HeightBounded 2", Control.value (Button.HeightBounded 2) )
                 , ( "Nri.Ui.Button.V4.HeightUnbounded", Control.value Button.HeightUnbounded )
                 ]
