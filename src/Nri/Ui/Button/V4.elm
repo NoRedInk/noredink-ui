@@ -1,5 +1,5 @@
 module Nri.Ui.Button.V4 exposing
-    ( ButtonSize(..), ButtonSizing(..), ButtonStyle(..), ButtonState(..), ButtonContent
+    ( ButtonSize(..), ButtonHeight(..), ButtonWidth, ButtonStyle(..), ButtonState(..), ButtonContent
     , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
     , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
@@ -26,7 +26,7 @@ There will generally be a `*Button` and `*Link` version of each button style.
 
 ## Common configs
 
-@docs ButtonSize, ButtonSizing, ButtonStyle, ButtonState, ButtonContent
+@docs ButtonSize, ButtonHeight, ButtonWidth, ButtonStyle, ButtonState, ButtonContent
 
 
 ## `<button>` Buttons
@@ -68,25 +68,35 @@ type ButtonSize
     | Large
 
 
-{-| Sizing behavior for buttons and links that have button classes
+{-| Height sizing behavior for buttons.
 
-This is distinct from size because it describes how a button or link should grow
-with its contents.
-
-A `Fixed` button allows only a single line of button text; any more is
+A `HeightFixed` button allows only a single line of button text; any more is
 truncated. Use this when the button text is short and static, or has been
 supplied by the user and could be so long as to break layout.
 
-A `GrowsVertically` button grows vertically to accommodate all the button
-content. Use this when the button text may contain longer text, such as a quiz
-answer, and where it's more important to display the full text than guarantee a
-fixed layout; i.e. where not having the full text could prevent a human from
-using the site.
+A `HeightBounded Int` or `HeightUnbounded` button grows vertically to
+accommodate some or all the button content. Use this when the button text may
+contain longer text, such as a quiz answer, and where it's more important to
+display the full text than guarantee a fixed layout; i.e. where not having the
+full text could prevent a human from using the site.
+
+`HeightBounded Int` is useful for dealing with user-supplied button content,
+because an upper bound can be placed on how many lines to allow.
 
 -}
-type ButtonSizing
-    = GrowsVertically
-    | Fixed
+type ButtonHeight
+    = HeightFixed
+    | HeightBounded Int
+    | HeightUnbounded
+
+
+{-| Width sizing behavior for buttons.
+
+TODO: Change to a custom type rather than an alias.
+
+-}
+type alias ButtonWidth =
+    Maybe Int
 
 
 {-| Styleguide-approved styles for your buttons!
@@ -129,9 +139,9 @@ type ButtonState
 type alias ButtonConfig msg =
     { onClick : msg
     , size : ButtonSize
-    , sizing : ButtonSizing
     , style : ButtonStyle
-    , width : Maybe Int
+    , height : ButtonHeight
+    , width : ButtonWidth
     }
 
 
@@ -212,7 +222,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        (buttonStyles config.size config.sizing config.width buttonStyle Button)
+        (buttonStyles config.size config.height config.width buttonStyle Button)
         ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -230,12 +240,12 @@ customButton attributes config content =
 -}
 type alias CopyToClipboardConfig =
     { size : ButtonSize
-    , sizing : ButtonSizing
     , style : ButtonStyle
     , copyText : String
     , buttonLabel : String
     , withIcon : Bool
-    , width : Maybe Int
+    , height : ButtonHeight
+    , width : ButtonWidth
     }
 
 
@@ -254,7 +264,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         (styledName "copyToClipboard")
-        (buttonStyles config.size config.sizing config.width (styleToColorPalette config.style) Button)
+        (buttonStyles config.size config.height config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , Attributes.attribute "data-clipboard-text" config.copyText
         ]
@@ -330,7 +340,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium Fixed Nothing SecondaryColors Button
+        (buttonStyles Medium HeightFixed Nothing SecondaryColors Button
             ++ toggledStyles
         )
         [ Events.onClick
@@ -379,7 +389,7 @@ type alias LinkConfig =
     , url : String
     , size : ButtonSize
     , style : ButtonStyle
-    , width : Maybe Int
+    , width : ButtonWidth
     }
 
 
@@ -406,7 +416,7 @@ linkSpa :
         , icon : Maybe IconType
         , size : ButtonSize
         , style : ButtonStyle
-        , width : Maybe Int
+        , width : ButtonWidth
         , route : route
         }
     -> Html msg
@@ -476,7 +486,7 @@ linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         (Css.whiteSpace Css.noWrap
-            :: buttonStyles config.size Fixed config.width (styleToColorPalette config.style) Anchor
+            :: buttonStyles config.size HeightFixed config.width (styleToColorPalette config.style) Anchor
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -519,12 +529,12 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> ButtonSizing -> Maybe Int -> ColorPalette -> ElementType -> List Style
-buttonStyles size sizing width colorPalette elementType =
+buttonStyles : ButtonSize -> ButtonHeight -> ButtonWidth -> ColorPalette -> ElementType -> List Style
+buttonStyles size height width colorPalette elementType =
     List.concat
         [ buttonStyle
         , colorStyle colorPalette
-        , sizeStyle size sizing width elementType
+        , sizeStyle size height width elementType
         ]
 
 
@@ -703,8 +713,8 @@ type ElementType
     | Button
 
 
-sizeStyle : ButtonSize -> ButtonSizing -> Maybe Int -> ElementType -> List Style
-sizeStyle size sizing width elementType =
+sizeStyle : ButtonSize -> ButtonHeight -> ButtonWidth -> ElementType -> List Style
+sizeStyle size height width elementType =
     let
         config =
             case size of
@@ -735,20 +745,43 @@ sizeStyle size sizing width elementType =
         sizingAttributes =
             case elementType of
                 Button ->
-                    case sizing of
-                        GrowsVertically ->
-                            [ Css.minHeight (Css.px config.height)
-                            , Css.overflow Css.visible
-                            , Css.paddingTop (Css.px 4)
-                            , Css.paddingBottom (Css.px 4)
-                            ]
-
-                        Fixed ->
+                    case height of
+                        HeightFixed ->
                             [ Css.height (Css.px config.height)
-                            , Css.overflow Css.hidden
                             , Css.whiteSpace Css.noWrap
                             , Css.paddingTop Css.zero
                             , Css.paddingBottom Css.zero
+                            ]
+
+                        HeightBounded factor ->
+                            let
+                                verticalPaddingPx =
+                                    4
+
+                                minHeightPx =
+                                    config.height
+
+                                maxHeightPx =
+                                    -- Have to consider padding and shadowHeight
+                                    -- because `box-model` is set to `border-box`.
+                                    (lineHeightPx * toFloat factor)
+                                        + (verticalPaddingPx * 2)
+                                        + config.shadowHeight
+                            in
+                            [ Css.minHeight (Css.px config.height)
+                            , Css.maxHeight (Css.px (max minHeightPx maxHeightPx))
+                            , Css.paddingTop (Css.px verticalPaddingPx)
+                            , Css.paddingBottom (Css.px verticalPaddingPx)
+                            ]
+
+                        HeightUnbounded ->
+                            let
+                                verticalPaddingPx =
+                                    4
+                            in
+                            [ Css.minHeight (Css.px config.height)
+                            , Css.paddingTop (Css.px verticalPaddingPx)
+                            , Css.paddingBottom (Css.px verticalPaddingPx)
                             ]
 
                 _ ->
