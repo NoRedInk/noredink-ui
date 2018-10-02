@@ -691,7 +691,7 @@ sizeStyle size width elementType =
             case size of
                 Small ->
                     { fontSize = 15
-                    , minHeight = 36
+                    , height = 36
                     , imageHeight = 15
                     , shadowHeight = 2
                     , minWidth = 75
@@ -699,7 +699,7 @@ sizeStyle size width elementType =
 
                 Medium ->
                     { fontSize = 17
-                    , minHeight = 45
+                    , height = 45
                     , imageHeight = 15
                     , shadowHeight = 3
                     , minWidth = 100
@@ -707,7 +707,7 @@ sizeStyle size width elementType =
 
                 Large ->
                     { fontSize = 20
-                    , minHeight = 56
+                    , height = 56
                     , imageHeight = 20
                     , shadowHeight = 4
                     , minWidth = 200
@@ -721,15 +721,14 @@ sizeStyle size width elementType =
                     ]
 
                 Nothing ->
-                    [ Css.paddingLeft (Css.px 16)
-                    , Css.paddingRight (Css.px 16)
+                    [ Css.padding2 Css.zero (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)
                     ]
 
         lineHeightPx =
             case elementType of
                 Anchor ->
-                    config.minHeight
+                    config.height
 
                 Button ->
                     case size of
@@ -744,9 +743,7 @@ sizeStyle size width elementType =
     in
     [ Css.fontSize (Css.px config.fontSize)
     , Css.borderRadius (Css.px 8)
-    , Css.minHeight (Css.px config.minHeight)
-    , Css.paddingTop (Css.px 4)
-    , Css.paddingBottom (Css.px 4)
+    , Css.height (Css.px config.height)
     , Css.lineHeight (Css.px lineHeightPx)
     , Css.boxSizing Css.borderBox
     , Css.borderWidth (Css.px 1)
