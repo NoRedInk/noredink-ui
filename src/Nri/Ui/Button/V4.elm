@@ -10,6 +10,8 @@ module Nri.Ui.Button.V4 exposing
 # Changes from V3:
 
   - Adds `ButtonWidth`.
+  - Button now grows vertically to fit content.
+    To limit the height use attributes on its container or consider truncating content before rendering.
 
 
 # About:
