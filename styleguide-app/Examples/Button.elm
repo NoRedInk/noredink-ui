@@ -63,13 +63,6 @@ init assets =
                     , ( "Lock", Control.value (Icon.lock assets) )
                     ]
             )
-        |> Control.field "height (button and copyToClipboard only)"
-            (Control.choice
-                [ ( "Nri.Ui.Button.V4.HeightDefault", Control.value Button.HeightDefault )
-                , ( "Nri.Ui.Button.V4.HeightBounded 2", Control.value (Button.HeightBounded 2) )
-                , ( "Nri.Ui.Button.V4.HeightUnbounded", Control.value Button.HeightUnbounded )
-                ]
-            )
         |> Control.field "width"
             (Control.choice
                 [ ( "Nri.Ui.Button.V4.WidthExact 120", Control.value <| Button.WidthExact 120 )
@@ -113,7 +106,6 @@ update msg state =
 type alias Model =
     { label : String
     , icon : Maybe Icon.IconType
-    , height : Button.ButtonHeight
     , width : Button.ButtonWidth
     , buttonType : ButtonType
     , state : Button.ButtonState
@@ -132,7 +124,7 @@ viewButtonExamples assets messages (State control) =
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages model.height sizes model
+    , buttons assets messages sizes model
     , toggleButtons messages
     , Button.delete assets
         { label = "Delete Something"
@@ -172,13 +164,12 @@ allStyles =
 buttons :
     { r | teach_assignments_copyWhite_svg : Asset }
     -> ModuleMessages Msg parentMsg
-    -> Button.ButtonHeight
     -> List Button.ButtonSize
     -> Model
     -> Html parentMsg
-buttons assets messages height sizes model =
+buttons assets messages sizes model =
     let
-        exampleRow height style =
+        exampleRow style =
             List.concat
                 [ [ td
                         [ css
@@ -188,11 +179,11 @@ buttons assets messages height sizes model =
                         [ text <| toString style ]
                   ]
                 , sizes
-                    |> List.map (exampleCell style height)
+                    |> List.map (exampleCell style)
                 ]
                 |> tr []
 
-        exampleCell style height size =
+        exampleCell style size =
             (case model.buttonType of
                 Link ->
                     Button.link
@@ -209,7 +200,6 @@ buttons assets messages height sizes model =
                         { size = size
                         , style = style
                         , onClick = messages.showItWorked (toString ( style, size ))
-                        , height = model.height
                         , width = model.width
                         }
                         { label = model.label
@@ -225,7 +215,6 @@ buttons assets messages height sizes model =
                         , copyText = "wire up in your coffee file with clipboard.js"
                         , buttonLabel = model.label
                         , withIcon = model.icon /= Nothing
-                        , height = model.height
                         , width = model.width
                         }
             )
@@ -238,7 +227,7 @@ buttons assets messages height sizes model =
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
         , allStyles
-            |> List.map (exampleRow height)
+            |> List.map exampleRow
         ]
         |> table []
 
