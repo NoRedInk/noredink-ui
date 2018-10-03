@@ -1,5 +1,5 @@
 module Nri.Ui.Button.V4 exposing
-    ( ButtonSize(..), ButtonHeight(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..), ButtonContent
+    ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..), ButtonContent
     , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
     , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
@@ -9,7 +9,6 @@ module Nri.Ui.Button.V4 exposing
 
 # Changes from V3:
 
-  - Adds `ButtonHeight`.
   - Adds `ButtonWidth`.
 
 
@@ -33,7 +32,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## Common configs
 
-@docs ButtonSize, ButtonHeight, ButtonWidth, ButtonStyle, ButtonState, ButtonContent
+@docs ButtonSize, ButtonWidth, ButtonStyle, ButtonState, ButtonContent
 
 
 ## `<button>` Buttons
@@ -73,28 +72,6 @@ type ButtonSize
     = Small
     | Medium
     | Large
-
-
-{-| Height sizing behavior for buttons.
-
-A `HeightDefault` button allows only a single line of button text; any more is
-truncated. Use this when the button text is short and static, or has been
-supplied by the user and could be so long as to break layout.
-
-A `HeightBounded Int` or `HeightUnbounded` button grows vertically to
-accommodate some or all the button content. Use this when the button text may
-contain longer text, such as a quiz answer, and where it's more important to
-display the full text than guarantee a fixed layout; i.e. where not having the
-full text could prevent a human from using the site.
-
-`HeightBounded Int` is useful for dealing with user-supplied button content,
-because an upper bound can be placed on how many lines to allow.
-
--}
-type ButtonHeight
-    = HeightDefault
-    | HeightBounded Int
-    | HeightUnbounded
 
 
 {-| Width sizing behavior for buttons.
@@ -149,7 +126,6 @@ type alias ButtonConfig msg =
     { onClick : msg
     , size : ButtonSize
     , style : ButtonStyle
-    , height : ButtonHeight
     , width : ButtonWidth
     }
 
@@ -231,7 +207,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        (buttonStyles config.size config.height config.width buttonStyle Button)
+        (buttonStyles config.size config.width buttonStyle Button)
         ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -253,7 +229,6 @@ type alias CopyToClipboardConfig =
     , copyText : String
     , buttonLabel : String
     , withIcon : Bool
-    , height : ButtonHeight
     , width : ButtonWidth
     }
 
@@ -273,7 +248,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         (styledName "copyToClipboard")
-        (buttonStyles config.size config.height config.width (styleToColorPalette config.style) Button)
+        (buttonStyles config.size config.width (styleToColorPalette config.style) Button)
         [ Widget.label "Copy URL to clipboard"
         , Attributes.attribute "data-clipboard-text" config.copyText
         ]
@@ -349,7 +324,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium HeightDefault WidthUnbounded SecondaryColors Button
+        (buttonStyles Medium WidthUnbounded SecondaryColors Button
             ++ toggledStyles
         )
         [ Events.onClick
@@ -495,7 +470,7 @@ linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         (Css.whiteSpace Css.noWrap
-            :: buttonStyles config.size HeightDefault config.width (styleToColorPalette config.style) Anchor
+            :: buttonStyles config.size config.width (styleToColorPalette config.style) Anchor
         )
         (Attributes.href config.url
             :: extraAttrs
@@ -538,12 +513,12 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> ButtonHeight -> ButtonWidth -> ColorPalette -> ElementType -> List Style
-buttonStyles size height width colorPalette elementType =
+buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> ElementType -> List Style
+buttonStyles size width colorPalette elementType =
     List.concat
         [ buttonStyle
         , colorStyle colorPalette
-        , sizeStyle size height width elementType
+        , sizeStyle size width elementType
         ]
 
 
@@ -722,8 +697,8 @@ type ElementType
     | Button
 
 
-sizeStyle : ButtonSize -> ButtonHeight -> ButtonWidth -> ElementType -> List Style
-sizeStyle size height width elementType =
+sizeStyle : ButtonSize -> ButtonWidth -> ElementType -> List Style
+sizeStyle size width elementType =
     let
         config =
             case size of
@@ -754,44 +729,14 @@ sizeStyle size height width elementType =
         sizingAttributes =
             case elementType of
                 Button ->
-                    case height of
-                        HeightDefault ->
-                            [ Css.height (Css.px config.height)
-                            , Css.whiteSpace Css.noWrap
-                            , Css.paddingTop Css.zero
-                            , Css.paddingBottom Css.zero
-                            ]
-
-                        HeightBounded factor ->
-                            let
-                                verticalPaddingPx =
-                                    4
-
-                                minHeightPx =
-                                    config.height
-
-                                maxHeightPx =
-                                    -- Have to consider padding and shadowHeight
-                                    -- because `box-model` is set to `border-box`.
-                                    (lineHeightPx * toFloat factor)
-                                        + (verticalPaddingPx * 2)
-                                        + config.shadowHeight
-                            in
-                            [ Css.minHeight (Css.px config.height)
-                            , Css.maxHeight (Css.px (max minHeightPx maxHeightPx))
-                            , Css.paddingTop (Css.px verticalPaddingPx)
-                            , Css.paddingBottom (Css.px verticalPaddingPx)
-                            ]
-
-                        HeightUnbounded ->
-                            let
-                                verticalPaddingPx =
-                                    4
-                            in
-                            [ Css.minHeight (Css.px config.height)
-                            , Css.paddingTop (Css.px verticalPaddingPx)
-                            , Css.paddingBottom (Css.px verticalPaddingPx)
-                            ]
+                    let
+                        verticalPaddingPx =
+                            4
+                    in
+                    [ Css.minHeight (Css.px config.height)
+                    , Css.paddingTop (Css.px verticalPaddingPx)
+                    , Css.paddingBottom (Css.px verticalPaddingPx)
+                    ]
 
                 _ ->
                     []
