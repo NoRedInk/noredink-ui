@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V3 as Button
+import Nri.Ui.Button.V4 as Button
 import Nri.Ui.Icon.V3 as Icon
 
 
@@ -43,7 +43,7 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri.Ui.Button.V3"
+    { filename = "Nri.Ui.Button.V4"
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
@@ -56,7 +56,7 @@ init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Button")
-        |> Control.field "icon (copyToClipboard only has one icon choice)"
+        |> Control.field "icon (copyToClipboard has only one choice)"
             (Control.maybe False <|
                 Control.choice
                     [ ( "Performance", Control.value (Icon.performance assets) )
@@ -64,20 +64,20 @@ init assets =
                     ]
             )
         |> Control.field "width"
-            (Control.maybe True <|
-                Control.choice
-                    [ ( "120", Control.value 120 )
-                    , ( "70", Control.value 70 )
-                    ]
+            (Control.choice
+                [ ( "Nri.Ui.Button.V4.WidthExact 120", Control.value <| Button.WidthExact 120 )
+                , ( "Nri.Ui.Button.V4.WidthExact 70", Control.value <| Button.WidthExact 70 )
+                , ( "Nri.Ui.Button.V4.WidthUnbounded", Control.value <| Button.WidthUnbounded )
+                ]
             )
         |> Control.field "button type"
             (Control.choice
-                [ ( "Nri.Button.button", Control.value Button )
-                , ( "Nri.Button.link", Control.value Link )
-                , ( "Nri.Button.copyToClipboard", Control.value CopyToClipboard )
+                [ ( "Nri.Ui.Button.V4.button", Control.value Button )
+                , ( "Nri.Ui.Button.V4.link", Control.value Link )
+                , ( "Nri.Ui.Button.V4.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
-        |> Control.field "state (only applies to Nri.Button.button)"
+        |> Control.field "state (button only)"
             (Control.choice <|
                 List.map (\x -> ( toString x, Control.value x ))
                     [ Button.Enabled
@@ -106,13 +106,17 @@ update msg state =
 type alias Model =
     { label : String
     , icon : Maybe Icon.IconType
-    , width : Maybe Int
+    , width : Button.ButtonWidth
     , buttonType : ButtonType
     , state : Button.ButtonState
     }
 
 
-viewButtonExamples : { r | teach_assignments_copyWhite_svg : Asset, x : String } -> ModuleMessages Msg parentMsg -> State -> Html parentMsg
+viewButtonExamples :
+    { r | teach_assignments_copyWhite_svg : Asset, x : String }
+    -> ModuleMessages Msg parentMsg
+    -> State
+    -> Html parentMsg
 viewButtonExamples assets messages (State control) =
     let
         model =
@@ -130,7 +134,7 @@ viewButtonExamples assets messages (State control) =
         (messages.showItWorked "linkExternalWithTracking clicked")
         { size = Button.Medium
         , style = Button.Secondary
-        , width = Nothing
+        , width = Button.WidthUnbounded
         , label = "linkExternalWithTracking"
         , icon = Nothing
         , url = "#"
@@ -157,7 +161,12 @@ allStyles =
     ]
 
 
-buttons : { r | teach_assignments_copyWhite_svg : Asset } -> ModuleMessages Msg parentMsg -> List Button.ButtonSize -> Model -> Html parentMsg
+buttons :
+    { r | teach_assignments_copyWhite_svg : Asset }
+    -> ModuleMessages Msg parentMsg
+    -> List Button.ButtonSize
+    -> Model
+    -> Html parentMsg
 buttons assets messages sizes model =
     let
         exampleRow style =
