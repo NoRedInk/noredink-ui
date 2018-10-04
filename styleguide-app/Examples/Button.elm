@@ -219,7 +219,7 @@ buttons assets messages sizes model =
                         }
             )
                 |> List.singleton
-                |> td []
+                |> td [ css [ verticalAlign middle ] ]
     in
     List.concat
         [ [ sizes
