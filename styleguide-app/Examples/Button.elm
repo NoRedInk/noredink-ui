@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V4 as Button
+import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Icon.V3 as Icon
 
 
@@ -43,7 +43,7 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri.Ui.Button.V4"
+    { filename = "Nri.Ui.Button.V5"
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
@@ -65,16 +65,16 @@ init assets =
             )
         |> Control.field "width"
             (Control.choice
-                [ ( "Nri.Ui.Button.V4.WidthExact 120", Control.value <| Button.WidthExact 120 )
-                , ( "Nri.Ui.Button.V4.WidthExact 70", Control.value <| Button.WidthExact 70 )
-                , ( "Nri.Ui.Button.V4.WidthUnbounded", Control.value <| Button.WidthUnbounded )
+                [ ( "Nri.Ui.Button.V5.WidthExact 120", Control.value <| Button.WidthExact 120 )
+                , ( "Nri.Ui.Button.V5.WidthExact 70", Control.value <| Button.WidthExact 70 )
+                , ( "Nri.Ui.Button.V5.WidthUnbounded", Control.value <| Button.WidthUnbounded )
                 ]
             )
         |> Control.field "button type"
             (Control.choice
-                [ ( "Nri.Ui.Button.V4.button", Control.value Button )
-                , ( "Nri.Ui.Button.V4.link", Control.value Link )
-                , ( "Nri.Ui.Button.V4.copyToClipboard", Control.value CopyToClipboard )
+                [ ( "Nri.Ui.Button.V5.button", Control.value Button )
+                , ( "Nri.Ui.Button.V5.link", Control.value Link )
+                , ( "Nri.Ui.Button.V5.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
         |> Control.field "state (button only)"
@@ -219,7 +219,7 @@ buttons assets messages sizes model =
                         }
             )
                 |> List.singleton
-                |> td []
+                |> td [ css [ verticalAlign middle ] ]
     in
     List.concat
         [ [ sizes
