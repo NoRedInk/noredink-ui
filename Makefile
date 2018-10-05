@@ -1,5 +1,5 @@
 NPM_PREFIX=$(realpath .)/node_modules
-PATH:=${NPM_PREFIX}/.bin:${PATH}
+PATH:="${NPM_PREFIX}/.bin:${PATH}"
 SHELL:=env PATH=${PATH} /bin/sh
 
 .PHONY: test
