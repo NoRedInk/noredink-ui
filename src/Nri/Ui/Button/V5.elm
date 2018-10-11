@@ -529,8 +529,9 @@ viewLabel : Maybe IconType -> String -> Html msg
 viewLabel icn label =
     Nri.Ui.styled Html.span
         "button-label-span"
-        [ Css.overflowX Css.hidden
-        , Css.overflowWrap Css.breakWord
+        [ Css.overflow Css.hidden -- Keep scrollbars out of our button
+        , Css.overflowWrap Css.breakWord -- Ensure that words that exceed the button width break instead of disappearing
+        , Css.padding2 (Css.px 2) Css.zero -- Without a bit of bottom padding, text that extends below the baseline, like "g" gets cut off
         ]
         []
         (case icn of
