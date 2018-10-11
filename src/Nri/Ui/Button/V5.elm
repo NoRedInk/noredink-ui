@@ -740,7 +740,7 @@ sizeStyle size width =
         sizingAttributes =
             let
                 verticalPaddingPx =
-                    4
+                    2
             in
             [ Css.minHeight (Css.px config.height)
             , Css.paddingTop (Css.px verticalPaddingPx)
