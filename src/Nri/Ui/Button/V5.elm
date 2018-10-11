@@ -11,6 +11,8 @@ module Nri.Ui.Button.V5 exposing
 
   - Allows links with words exceeding button-width to wrap
   - Standardizes vertical text alignment between buttons and links
+  - Limit CSS transitions to a subset of properties to avoid unintended "zoom"
+    effects.
 
 
 # About:
@@ -567,7 +569,7 @@ buttonStyle =
         , Css.textDecoration Css.none
         , Css.backgroundImage Css.none
         , Css.textShadow Css.none
-        , Css.property "transition" "all 0.2s"
+        , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
         , Css.boxShadow Css.none
         , Css.border Css.zero
         , Css.marginBottom Css.zero
