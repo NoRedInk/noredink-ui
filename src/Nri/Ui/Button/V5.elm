@@ -208,7 +208,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        (buttonStyles config.size config.width buttonStyle)
+        [ buttonStyles config.size config.width buttonStyle ]
         ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -249,7 +249,7 @@ copyToClipboard assets config =
     in
     Nri.Ui.styled Html.button
         (styledName "copyToClipboard")
-        (buttonStyles config.size config.width (styleToColorPalette config.style))
+        [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
         [ Widget.label "Copy URL to clipboard"
         , Attributes.attribute "data-clipboard-text" config.copyText
         ]
@@ -313,21 +313,23 @@ toggleButton config =
     let
         toggledStyles =
             if config.pressed then
-                [ Css.color Colors.gray20
-                , Css.backgroundColor Colors.glacier
-                , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
-                , Css.border3 (Css.px 1) Css.solid Colors.azure
-                , Css.fontWeight Css.bold
-                ]
+                Css.batch
+                    [ Css.color Colors.gray20
+                    , Css.backgroundColor Colors.glacier
+                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                    , Css.border3 (Css.px 1) Css.solid Colors.azure
+                    , Css.fontWeight Css.bold
+                    ]
 
             else
-                []
+                Css.batch
+                    []
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        (buttonStyles Medium WidthUnbounded SecondaryColors
-            ++ toggledStyles
-        )
+        [ buttonStyles Medium WidthUnbounded SecondaryColors
+        , toggledStyles
+        ]
         [ Events.onClick
             (if config.pressed then
                 config.onDeselect
@@ -470,7 +472,7 @@ linkBase : String -> List (Attribute msg) -> LinkConfig -> Html msg
 linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        (buttonStyles config.size config.width (styleToColorPalette config.style))
+        [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
         (Attributes.href config.url
             :: extraAttrs
         )
@@ -512,9 +514,9 @@ styleToColorPalette style =
             PremiumColors
 
 
-buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style
+buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> Style
 buttonStyles size width colorPalette =
-    List.concat
+    Css.batch
         [ buttonStyle
         , colorStyle colorPalette
         , sizeStyle size width
@@ -553,29 +555,31 @@ renderMarkdown markdown =
 -- STYLES
 
 
-buttonStyle : List Style
+buttonStyle : Style
 buttonStyle =
-    [ Css.cursor Css.pointer
-    , -- Specifying the font can and should go away after bootstrap is removed from application.css
-      Nri.Ui.Fonts.V1.baseFont
-    , Css.textOverflow Css.ellipsis
-    , Css.overflow Css.hidden
-    , Css.textDecoration Css.none
-    , Css.backgroundImage Css.none
-    , Css.textShadow Css.none
-    , Css.property "transition" "all 0.2s"
-    , Css.boxShadow Css.none
-    , Css.border Css.zero
-    , Css.marginBottom Css.zero
-    , Css.hover [ Css.textDecoration Css.none ]
-    , Css.disabled [ Css.cursor Css.notAllowed ]
-    , Css.displayFlex
-    , Css.alignItems Css.center
-    , Css.justifyContent Css.center
-    ]
+    Css.batch
+        [ Css.cursor Css.pointer
+        , Css.display Css.inlineBlock
+        , -- Specifying the font can and should go away after bootstrap is removed from application.css
+          Nri.Ui.Fonts.V1.baseFont
+        , Css.textOverflow Css.ellipsis
+        , Css.overflow Css.hidden
+        , Css.textDecoration Css.none
+        , Css.backgroundImage Css.none
+        , Css.textShadow Css.none
+        , Css.property "transition" "all 0.2s"
+        , Css.boxShadow Css.none
+        , Css.border Css.zero
+        , Css.marginBottom Css.zero
+        , Css.hover [ Css.textDecoration Css.none ]
+        , Css.disabled [ Css.cursor Css.notAllowed ]
+        , Css.displayFlex
+        , Css.alignItems Css.center
+        , Css.justifyContent Css.center
+        ]
 
 
-colorStyle : ColorPalette -> List Style
+colorStyle : ColorPalette -> Style
 colorStyle colorPalette =
     let
         ( config, additionalStyles ) =
@@ -674,33 +678,34 @@ colorStyle colorPalette =
                     , []
                     )
     in
-    [ Css.batch additionalStyles
-    , Css.color config.text
-    , Css.backgroundColor config.background
-    , Css.fontWeight (Css.int 700)
-    , Css.textAlign Css.center
-    , case config.border of
-        Nothing ->
-            Css.borderStyle Css.none
+    Css.batch
+        [ Css.batch additionalStyles
+        , Css.color config.text
+        , Css.backgroundColor config.background
+        , Css.fontWeight (Css.int 700)
+        , Css.textAlign Css.center
+        , case config.border of
+            Nothing ->
+                Css.borderStyle Css.none
 
-        Just color ->
-            Css.batch
-                [ Css.borderColor color
-                , Css.borderStyle Css.solid
-                ]
-    , Css.borderBottomStyle Css.solid
-    , Css.borderBottomColor config.shadow
-    , Css.fontStyle Css.normal
-    , Css.hover
-        [ Css.color config.text
-        , Css.backgroundColor config.hover
-        , Css.disabled [ Css.backgroundColor config.background ]
+            Just color ->
+                Css.batch
+                    [ Css.borderColor color
+                    , Css.borderStyle Css.solid
+                    ]
+        , Css.borderBottomStyle Css.solid
+        , Css.borderBottomColor config.shadow
+        , Css.fontStyle Css.normal
+        , Css.hover
+            [ Css.color config.text
+            , Css.backgroundColor config.hover
+            , Css.disabled [ Css.backgroundColor config.background ]
+            ]
+        , Css.visited [ Css.color config.text ]
         ]
-    , Css.visited [ Css.color config.text ]
-    ]
 
 
-sizeStyle : ButtonSize -> ButtonWidth -> List Style
+sizeStyle : ButtonSize -> ButtonWidth -> Style
 sizeStyle size width =
     let
         config =
@@ -765,41 +770,42 @@ sizeStyle size width =
                 Large ->
                     22
     in
-    [ Css.fontSize (Css.px config.fontSize)
-    , Css.borderRadius (Css.px 8)
-    , Css.lineHeight (Css.px lineHeightPx)
-    , Css.boxSizing Css.borderBox
-    , Css.borderWidth (Css.px 1)
-    , Css.borderBottomWidth (Css.px config.shadowHeight)
-    , Css.batch sizingAttributes
-    , Css.batch widthAttributes
-    , Css.Foreign.descendants
-        [ Css.Foreign.img
-            [ Css.height (Css.px config.imageHeight)
-            , Css.marginRight (Css.px <| config.imageHeight / 6)
-            , Css.position Css.relative
-            , Css.bottom (Css.px 2)
-            , Css.verticalAlign Css.middle
-            ]
-        , Css.Foreign.svg
-            [ Css.height (Css.px config.imageHeight) |> Css.important
-            , Css.width (Css.px config.imageHeight) |> Css.important
-            , Css.marginRight (Css.px <| config.imageHeight / 6)
-            , Css.position Css.relative
-            , Css.bottom (Css.px 2)
-            , Css.verticalAlign Css.middle
-            ]
-        , Css.Foreign.svg
-            [ Css.important <| Css.height (Css.px config.imageHeight)
-            , Css.important <| Css.width Css.auto
-            , Css.maxWidth (Css.px (config.imageHeight * 1.25))
-            , Css.paddingRight (Css.px <| config.imageHeight / 6)
-            , Css.position Css.relative
-            , Css.bottom (Css.px 2)
-            , Css.verticalAlign Css.middle
+    Css.batch
+        [ Css.fontSize (Css.px config.fontSize)
+        , Css.borderRadius (Css.px 8)
+        , Css.lineHeight (Css.px lineHeightPx)
+        , Css.boxSizing Css.borderBox
+        , Css.borderWidth (Css.px 1)
+        , Css.borderBottomWidth (Css.px config.shadowHeight)
+        , Css.batch sizingAttributes
+        , Css.batch widthAttributes
+        , Css.Foreign.descendants
+            [ Css.Foreign.img
+                [ Css.height (Css.px config.imageHeight)
+                , Css.marginRight (Css.px <| config.imageHeight / 6)
+                , Css.position Css.relative
+                , Css.bottom (Css.px 2)
+                , Css.verticalAlign Css.middle
+                ]
+            , Css.Foreign.svg
+                [ Css.height (Css.px config.imageHeight) |> Css.important
+                , Css.width (Css.px config.imageHeight) |> Css.important
+                , Css.marginRight (Css.px <| config.imageHeight / 6)
+                , Css.position Css.relative
+                , Css.bottom (Css.px 2)
+                , Css.verticalAlign Css.middle
+                ]
+            , Css.Foreign.svg
+                [ Css.important <| Css.height (Css.px config.imageHeight)
+                , Css.important <| Css.width Css.auto
+                , Css.maxWidth (Css.px (config.imageHeight * 1.25))
+                , Css.paddingRight (Css.px <| config.imageHeight / 6)
+                , Css.position Css.relative
+                , Css.bottom (Css.px 2)
+                , Css.verticalAlign Css.middle
+                ]
             ]
         ]
-    ]
 
 
 styledName : String -> String
