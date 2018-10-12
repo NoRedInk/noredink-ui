@@ -1,5 +1,5 @@
 {
-    "version": "5.20.2",
+    "version": "5.21.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
@@ -15,6 +15,7 @@
         "Nri.Ui.Button.V2",
         "Nri.Ui.Button.V3",
         "Nri.Ui.Button.V4",
+        "Nri.Ui.Button.V5",
         "Nri.Ui.Checkbox.V1",
         "Nri.Ui.Checkbox.V2",
         "Nri.Ui.Checkbox.V3",
