@@ -40,6 +40,7 @@ example =
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
             , { icon = Icon.assignmentTypeQuiz, background = Light, alt = "Quiz" }
             , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
+            , { icon = Icon.assignmentTypePeerReview, background = Dark, alt = "PeerReview" }
             , { icon = Icon.peerReview, background = Light, alt = "PeerReview" }
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }

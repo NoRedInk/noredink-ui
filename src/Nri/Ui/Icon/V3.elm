@@ -9,6 +9,7 @@ module Nri.Ui.Icon.V3 exposing
     , assignmentStartButtonPrimary
     , assignmentStartButtonSecondary
     , assignmentTypeDiagnostic
+    , assignmentTypePeerReview
     , assignmentTypePractice
     , assignmentTypeQuiz
     , assignmentTypeWritingCycle
@@ -93,6 +94,7 @@ module Nri.Ui.Icon.V3 exposing
 @docs assignmentStartButtonPrimary
 @docs assignmentStartButtonSecondary
 @docs assignmentTypeDiagnostic
+@docs assignmentTypePeerReview
 @docs assignmentTypePractice
 @docs assignmentTypeQuiz
 @docs assignmentTypeWritingCycle
@@ -426,6 +428,12 @@ assignmentStartButtonSecondary assets =
 assignmentTypeDiagnostic : { r | diagnostic : String } -> IconType
 assignmentTypeDiagnostic assets =
     SvgIcon assets.diagnostic
+
+
+{-| -}
+assignmentTypePeerReview : { r | icons_peerReviewWhite_svg : Asset } -> IconType
+assignmentTypePeerReview assets =
+    ImgIcon assets.icons_peerReviewWhite_svg
 
 
 {-| -}
