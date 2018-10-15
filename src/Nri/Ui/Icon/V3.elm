@@ -11,6 +11,7 @@ module Nri.Ui.Icon.V3 exposing
     , assignmentTypeDiagnostic
     , assignmentTypePeerReview
     , assignmentTypePractice
+    , assignmentTypeQuickWrite
     , assignmentTypeQuiz
     , assignmentTypeWritingCycle
     , attention
@@ -96,6 +97,7 @@ module Nri.Ui.Icon.V3 exposing
 @docs assignmentTypeDiagnostic
 @docs assignmentTypePeerReview
 @docs assignmentTypePractice
+@docs assignmentTypeQuickWrite
 @docs assignmentTypeQuiz
 @docs assignmentTypeWritingCycle
 @docs attention
@@ -440,6 +442,12 @@ assignmentTypePeerReview assets =
 assignmentTypePractice : { r | practice : String } -> IconType
 assignmentTypePractice assets =
     SvgIcon assets.practice
+
+
+{-| -}
+assignmentTypeQuickWrite : { r | icons_quickWriteWhite_svg : Asset } -> IconType
+assignmentTypeQuickWrite assets =
+    ImgIcon assets.icons_quickWriteWhite_svg
 
 
 {-| -}

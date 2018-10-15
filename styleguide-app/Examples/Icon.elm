@@ -39,6 +39,7 @@ example =
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
             , { icon = Icon.assignmentTypeQuiz, background = Light, alt = "Quiz" }
+            , { icon = Icon.assignmentTypeQuickWrite, background = Dark, alt = "QuickWrite" }
             , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
             , { icon = Icon.assignmentTypePeerReview, background = Dark, alt = "PeerReview" }
             , { icon = Icon.peerReview, background = Light, alt = "PeerReview" }
