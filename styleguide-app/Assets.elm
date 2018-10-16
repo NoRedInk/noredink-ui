@@ -46,8 +46,10 @@ type alias Assets =
     , icons_equals_svg : Asset
     , icons_helpBlue_svg : Asset
     , icons_peerReview_svg : Asset
+    , icons_peerReviewWhite_svg : Asset
     , icons_plusBlue_svg : Asset
     , icons_quickWrite_svg : Asset
+    , icons_quickWriteWhite_svg : Asset
     , icons_searchGray_svg : Asset
     , icons_xBlue_svg : Asset
     , icons_xBlue_svg : Asset
@@ -135,8 +137,10 @@ assets =
     , icons_equals_svg = Asset "assets/images/equals.svg"
     , icons_helpBlue_svg = Asset "assets/images/help-blue.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
+    , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
     , icons_plusBlue_svg = Asset "assets/images/plus-blue.svg"
     , icons_quickWrite_svg = Asset "assets/images/quick-write.svg"
+    , icons_quickWriteWhite_svg = Asset "assets/images/quick-write-white.svg"
     , icons_searchGray_svg = Asset "assets/images/search-gray.svg"
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
     , key = "icon-key"

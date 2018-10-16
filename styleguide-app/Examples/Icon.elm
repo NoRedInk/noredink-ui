@@ -39,14 +39,16 @@ example =
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
             , { icon = Icon.assignmentTypeQuiz, background = Light, alt = "Quiz" }
-            , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
+            , { icon = Icon.assignmentTypeQuickWrite, background = Dark, alt = "QuickWrite" }
+            , { icon = Icon.quickWrite, background = Light, alt = "QuickWrite" }
+            , { icon = Icon.assignmentTypePeerReview, background = Dark, alt = "PeerReview" }
             , { icon = Icon.peerReview, background = Light, alt = "PeerReview" }
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }
             , { icon = Icon.revising, background = Light, alt = "Revising" }
-            , { icon = Icon.quickWrite, background = Light, alt = "QuickWrite" }
 
             --, { icon = Icon.guidedWrite, background = Light, alt = "GuidedWrite" }
+            , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
             , { icon = Icon.writingAssignment, background = Light, alt = "WritingAssignment" }
             ]
         , viewIconSection "Student Assignment Actions"
