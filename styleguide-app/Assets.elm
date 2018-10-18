@@ -34,6 +34,7 @@ type alias Assets =
     , flipper : String
     , footsteps : String
     , gear : String
+    , guidedDraftWhite : String
     , hint_png : Asset
     , iconCalendar_svg : Asset
     , iconCheck_png : Asset
@@ -44,7 +45,6 @@ type alias Assets =
     , icons_arrowRightBlue_svg : Asset
     , icons_clockRed_svg : Asset
     , icons_equals_svg : Asset
-    , icons_guidedDraftWhite_svg : Asset
     , icons_helpBlue_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
@@ -127,6 +127,7 @@ assets =
     , flipper = "icon-flipper"
     , footsteps = "icon-footsteps"
     , gear = "icon-gear"
+    , guidedDraftWhite = "guided-draft-white"
     , hint_png = Asset "assets/images/hint.png"
     , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
     , iconCheck_png = Asset "assets/images/icon-check.png"
@@ -137,7 +138,6 @@ assets =
     , icons_arrowRightBlue_svg = Asset "assets/images/arrow-right-blue.svg"
     , icons_clockRed_svg = Asset "assets/images/clock-red.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
-    , icons_guidedDraftWhite_svg = Asset "assets/images/guided-draft-white.svg"
     , icons_helpBlue_svg = Asset "assets/images/help-blue.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
