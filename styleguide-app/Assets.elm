@@ -6,13 +6,13 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 type alias Assets =
     { activity : String
     , arrowDown : String
+    , assignmentStartButtonPrimary_svg : Asset
+    , assignmentStartButtonSecondary_svg : Asset
     , attention_svg : Asset
     , bulb : String
     , calendar : String
-    , assignmentStartButtonPrimary_svg : Asset
-    , assignmentStartButtonSecondary_svg : Asset
-    , checkboxCheckedPartially_svg : Asset
     , checkboxChecked_svg : Asset
+    , checkboxCheckedPartially_svg : Asset
     , checkboxLockOnInside_svg : Asset
     , checkboxUnchecked_svg : Asset
     , checkmark : String
@@ -44,6 +44,7 @@ type alias Assets =
     , icons_arrowRightBlue_svg : Asset
     , icons_clockRed_svg : Asset
     , icons_equals_svg : Asset
+    , icons_guidedDraftWhite_svg : Asset
     , icons_helpBlue_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
@@ -65,8 +66,8 @@ type alias Assets =
     , masteryBadge : String
     , newspaper : String
     , openClose : String
-    , performance : String
     , pen : Asset
+    , performance : String
     , personBlue_svg : Asset
     , practice : String
     , premiumLock_svg : Asset
@@ -103,8 +104,8 @@ assets =
     , calendar = "icon-calendar"
     , assignmentStartButtonPrimary_svg = Asset "assets/images/assignment-start-button-primary.svg"
     , assignmentStartButtonSecondary_svg = Asset "assets/images/assignment-start-button-secondary.svg"
-    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
+    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
     , checkboxUnchecked_svg = Asset "assets/images/checkbox_unchecked.svg"
     , checkmark = "icon-checkmark"
@@ -136,6 +137,7 @@ assets =
     , icons_arrowRightBlue_svg = Asset "assets/images/arrow-right-blue.svg"
     , icons_clockRed_svg = Asset "assets/images/clock-red.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
+    , icons_guidedDraftWhite_svg = Asset "assets/images/guided-draft-white.svg"
     , icons_helpBlue_svg = Asset "assets/images/help-blue.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"

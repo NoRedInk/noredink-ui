@@ -9,6 +9,7 @@ module Nri.Ui.Icon.V3 exposing
     , assignmentStartButtonPrimary
     , assignmentStartButtonSecondary
     , assignmentTypeDiagnostic
+    , assignmentTypeGuidedDraft
     , assignmentTypePeerReview
     , assignmentTypeSelfReview
     , assignmentTypePractice
@@ -27,8 +28,8 @@ module Nri.Ui.Icon.V3 exposing
     , clever
     , clock
     , close
-    , copy
     , compassSvg
+    , copy
     , custom
     , darkBlueCheckMark
     , document
@@ -75,13 +76,13 @@ module Nri.Ui.Icon.V3 exposing
     , sortArrow
     , speedometer
     , starred
+    , submitting, rating, revising
     , thumbsUp
     , twitter
     , unarchive
     , writingAssignment
     , x
     , xSvg
-    , submitting, rating, revising
     )
 
 {-|
@@ -96,6 +97,7 @@ module Nri.Ui.Icon.V3 exposing
 @docs assignmentStartButtonPrimary
 @docs assignmentStartButtonSecondary
 @docs assignmentTypeDiagnostic
+@docs assignmentTypeGuidedDraft
 @docs assignmentTypePeerReview
 @docs assignmentTypeSelfReview
 @docs assignmentTypePractice
@@ -114,8 +116,8 @@ module Nri.Ui.Icon.V3 exposing
 @docs clever
 @docs clock
 @docs close
-@docs copy
 @docs compassSvg
+@docs copy
 @docs custom
 @docs darkBlueCheckMark
 @docs document
@@ -162,13 +164,13 @@ module Nri.Ui.Icon.V3 exposing
 @docs sortArrow
 @docs speedometer
 @docs starred
+@docs submitting, rating, revising
 @docs thumbsUp
 @docs twitter
 @docs unarchive
 @docs writingAssignment
 @docs x
 @docs xSvg
-@docs submitting, rating, revising
 
 -}
 
@@ -432,6 +434,12 @@ assignmentStartButtonSecondary assets =
 assignmentTypeDiagnostic : { r | diagnostic : String } -> IconType
 assignmentTypeDiagnostic assets =
     SvgIcon assets.diagnostic
+
+
+{-| -}
+assignmentTypeGuidedDraft : { r | icons_guidedDraftWhite_svg : Asset } -> IconType
+assignmentTypeGuidedDraft assets =
+    ImgIcon assets.icons_guidedDraftWhite_svg
 
 
 {-| -}
