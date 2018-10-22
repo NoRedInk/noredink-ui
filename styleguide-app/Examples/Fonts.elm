@@ -6,7 +6,7 @@ module Examples.Fonts exposing (example)
 
 -}
 
-import HeadingsStyled as Headings
+import Headings
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
@@ -29,5 +29,4 @@ example =
         , Html.p [ css [ Fonts.ugFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
         ]
-            |> List.map Html.toUnstyled
     }

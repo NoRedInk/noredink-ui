@@ -1,5 +1,6 @@
 module Main exposing (init, main)
 
+import Html.Styled
 import Model exposing (..)
 import Navigation
 import NriModules as NriModules
@@ -15,7 +16,7 @@ main =
         { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         }
 
 

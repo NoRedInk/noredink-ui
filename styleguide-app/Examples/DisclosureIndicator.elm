@@ -63,7 +63,7 @@ example parentMessage state =
             , Html.span [] [ Html.text "list item with detail" ]
             ]
         ]
-            |> List.map (Html.map parentMessage >> Html.toUnstyled)
+            |> List.map (Html.map parentMessage)
     }
 
 

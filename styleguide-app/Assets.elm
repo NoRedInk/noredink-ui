@@ -1,6 +1,6 @@
 module Assets exposing (Assets, assets)
 
-import Nri.Ui.AssetPath as AssetPath exposing (Asset(Asset))
+import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 
 
 type alias Assets =

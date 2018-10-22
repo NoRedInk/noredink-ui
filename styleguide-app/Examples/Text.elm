@@ -36,5 +36,4 @@ example =
         , Text.ugSmallBody [ Html.text <| "This is an ugSmallBody." ]
         , Text.caption [ Html.text <| "This is a caption. " ++ longerBody ]
         ]
-            |> List.map Html.toUnstyled
     }

@@ -5,9 +5,8 @@ import Css.Foreign exposing (Snippet)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import DEPRECATED.Css.Namespace
 import Headings
-import Html exposing (Html, img)
-import Html.Attributes exposing (..)
-import Html.CssHelpers
+import Html.Styled as Html exposing (Html, img)
+import Html.Styled.Attributes as Attributes exposing (..)
 import Model exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay)
 import Nri.Ui.Colors.V1 as Colors
@@ -21,14 +20,19 @@ import Update exposing (..)
 view : Model -> Html Msg
 view model =
     Html.div []
-        [ attachElmCssStyles
-        , Html.div [ class [ StyleGuideLayout ] ]
+        [ Html.styled Html.div
+            [ displayFlex
+            , alignItems flexStart
+            ]
+            []
             [ navigation model.route
-            , Html.div [ class [ StyleGuideContent ] ]
+            , Html.styled Html.div
+                [ flexGrow (int 1) ]
+                []
                 (case model.route of
                     Routes.Doodad doodad ->
                         [ Headings.h2
-                            [ Html.a [ Html.Attributes.href "#" ] [ Html.text "(see all)" ] ]
+                            [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\m -> m.filename == ("Nri/" ++ doodad))
                             |> List.map (ModuleExample.view True)
@@ -37,7 +41,9 @@ view model =
                         ]
 
                     Routes.Category category ->
-                        [ Html.section [ class [ Section ] ]
+                        [ Html.styled Html.section
+                            [ sectionStyles ]
+                            []
                             [ newComponentsLink
                             , Headings.h2 [ Html.text (toString category) ]
                             , nriThemedModules model.moduleStates
@@ -49,7 +55,9 @@ view model =
                         ]
 
                     Routes.All ->
-                        [ Html.section [ class [ Section ] ]
+                        [ Html.styled Html.section
+                            [ sectionStyles ]
+                            []
                             [ newComponentsLink
                             , Headings.h2 [ Html.text "NRI-Themed Modules" ]
                             , Headings.h3 [ Html.text "All Categories" ]
@@ -89,28 +97,52 @@ navigation route =
 
         navLink category =
             Html.li []
-                [ Html.a
-                    [ classList
-                        [ ( ActiveCategory, isActive category )
-                        , ( NavLink, True )
-                        ]
-                    , Html.Attributes.href <| "#category/" ++ toString category
+                [ Html.styled Html.a
+                    [ backgroundColor transparent
+                    , borderStyle none
+                    , if isActive category then
+                        color Colors.navy
+
+                      else
+                        color Colors.azure
                     ]
+                    [ Attributes.href <| "#category/" ++ toString category ]
                     [ Html.text (categoryForDisplay category) ]
                 ]
     in
-    Html.div [ class [ CategoryMenu ] ]
+    Html.styled Html.div
+        [ flexBasis (px 300)
+        , backgroundColor Colors.gray92
+        , marginRight (px 40)
+        , padding (px 25)
+        , VendorPrefixed.value "position" "sticky"
+        , top (px 150)
+        , flexShrink zero
+        ]
+        []
         [ Headings.h4
             [ Html.text "Categories" ]
-        , Html.ul [ class [ CategoryLinks ] ] <|
-            Html.li []
-                [ Html.a
-                    [ Html.Attributes.href "#"
-                    , classList
-                        [ ( ActiveCategory, route == Routes.All )
-                        , ( NavLink, True )
-                        ]
+        , Html.styled Html.ul
+            [ margin4 zero zero (px 40) zero
+            , Css.Foreign.children
+                [ Css.Foreign.selector "li"
+                    [ margin2 (px 10) zero
                     ]
+                ]
+            ]
+            []
+          <|
+            Html.li []
+                [ Html.styled Html.a
+                    [ backgroundColor transparent
+                    , borderStyle none
+                    , if route == Routes.All then
+                        color Colors.navy
+
+                      else
+                        color Colors.azure
+                    ]
+                    [ Attributes.href "#" ]
                     [ Html.text "All" ]
                 ]
                 :: List.map
@@ -144,6 +176,11 @@ type Classes
     | NavLink
 
 
+sectionStyles : Css.Style
+sectionStyles =
+    Css.batch [ margin2 (px 40) zero ]
+
+
 layoutFixer : List Snippet
 layoutFixer =
     -- TODO: remove when universal header seizes power
@@ -171,34 +208,7 @@ styles : Stylesheet
 styles =
     (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-") <|
         List.concat
-            [ [ Css.Foreign.class Section
-                    [ margin2 (px 40) zero
-                    ]
-              , Css.Foreign.class StyleGuideLayout
-                    [ displayFlex
-                    , alignItems flexStart
-                    ]
-              , Css.Foreign.class StyleGuideContent
-                    [ flexGrow (int 1)
-                    ]
-              , Css.Foreign.class CategoryMenu
-                    [ flexBasis (px 300)
-                    , backgroundColor Colors.gray92
-                    , marginRight (px 40)
-                    , padding (px 25)
-                    , VendorPrefixed.value "position" "sticky"
-                    , top (px 150)
-                    , flexShrink zero
-                    ]
-              , Css.Foreign.class CategoryLinks
-                    [ margin4 zero zero (px 40) zero
-                    , Css.Foreign.children
-                        [ Css.Foreign.selector "li"
-                            [ margin2 (px 10) zero
-                            ]
-                        ]
-                    ]
-              , Css.Foreign.class NavLink
+            [ [ Css.Foreign.class NavLink
                     [ backgroundColor transparent
                     , borderStyle none
                     , color Colors.azure
@@ -209,18 +219,3 @@ styles =
               ]
             , layoutFixer
             ]
-
-
-{ id, class, classList } =
-    Html.CssHelpers.withNamespace "Page-StyleGuide-"
-
-
-attachElmCssStyles : Html msg
-attachElmCssStyles =
-    Html.CssHelpers.style <|
-        .css <|
-            compile <|
-                List.concat
-                    [ [ styles ]
-                    , NriModules.styles
-                    ]

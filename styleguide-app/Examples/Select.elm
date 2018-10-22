@@ -18,7 +18,6 @@ module Examples.Select exposing
 
 -}
 
-import Html
 import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Select.V3 as Select
@@ -46,7 +45,6 @@ example parentMessage state =
     , category = Inputs
     , content =
         [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
-            |> Html.Styled.toUnstyled
         ]
     }
 

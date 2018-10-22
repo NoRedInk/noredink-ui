@@ -9,10 +9,9 @@ module Examples.Modal exposing (Msg, State, example, init, update)
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
 import Assets
 import Css exposing (..)
-import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Button.V3 as Button
+import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V3 as Modal
 
@@ -43,7 +42,6 @@ example parentMessage state =
         , viewButtons
         ]
             |> List.map (Html.map parentMessage)
-            |> List.map Html.Styled.toUnstyled
     }
 
 
@@ -102,7 +100,7 @@ modalLaunchButton ( label, details, modalType ) =
             { onClick = ShowModal modalType
             , size = Button.Small
             , style = Button.Secondary
-            , width = Nothing
+            , width = Button.WidthUnbounded
             }
             { label = label
             , state = Button.Enabled
@@ -211,7 +209,7 @@ modalFooterButton label style =
         { onClick = DismissModal
         , size = Button.Large
         , style = style
-        , width = Just 230
+        , width = Button.WidthExact 230
         }
         { label = label
         , state = Button.Enabled

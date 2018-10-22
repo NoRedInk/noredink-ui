@@ -6,10 +6,9 @@ module Examples.Table exposing (Msg, State, example, init, update)
 
 import Css exposing (..)
 import Headings
-import Html
-import Html.Styled
+import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Button.V2 as Button
+import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Table.V2 as Table
 
 
@@ -44,7 +43,6 @@ example parentMessage state =
                 , Table.custom
                     { header =
                         Html.text "Actions"
-                            |> Html.Styled.fromUnstyled
                     , width = px 250
                     , view =
                         \_ ->
@@ -52,13 +50,12 @@ example parentMessage state =
                                 { size = Button.Small
                                 , style = Button.Primary
                                 , onClick = NoOp
-                                , width = Nothing
+                                , width = Button.WidthUnbounded
                                 }
                                 { label = "Action"
                                 , state = Button.Enabled
                                 , icon = Nothing
                                 }
-                                |> Html.Styled.fromUnstyled
                     }
                 ]
 
@@ -70,19 +67,15 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-        [ Html.Styled.toUnstyled Table.keyframeStyles
+        [ Table.keyframeStyles
         , Headings.h4 [ Html.text "With header" ]
         , Table.view columns data
-            |> Html.Styled.toUnstyled
         , Headings.h4 [ Html.text "Without header" ]
         , Table.viewWithoutHeader columns data
-            |> Html.Styled.toUnstyled
         , Headings.h4 [ Html.text "Loading" ]
         , Table.viewLoading columns
-            |> Html.Styled.toUnstyled
         , Headings.h4 [ Html.text "Loading without header" ]
         , Table.viewLoadingWithoutHeader columns
-            |> Html.Styled.toUnstyled
         ]
             |> List.map (Html.map parentMessage)
     }

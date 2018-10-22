@@ -7,7 +7,6 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 -}
 
 import Assets exposing (assets)
-import Debug.Control as Control exposing (Control)
 import Html.Styled as Html exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V3 as Checkbox
@@ -41,7 +40,7 @@ example parentMessage state =
         , h3 [] [ text "Premium Checkboxes" ]
         , viewPremiumCheckboxes state
         ]
-            |> List.map (Html.toUnstyled << Html.map parentMessage)
+            |> List.map (Html.map parentMessage)
     }
 
 

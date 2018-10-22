@@ -47,7 +47,6 @@ example assets unnamedMessages state =
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
-            |> List.map toUnstyled
     }
 
 
@@ -235,8 +234,7 @@ buttons assets messages sizes model =
 toggleButtons : ModuleMessages Msg parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
-        [ Headings.h3 [ text "Button toggle" |> toUnstyled ]
-            |> fromUnstyled
+        [ Headings.h3 [ text "Button toggle" ]
         , Button.toggleButton
             { onDeselect = messages.showItWorked "onDeselect"
             , onSelect = messages.showItWorked "onSelect"
