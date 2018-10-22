@@ -23,7 +23,6 @@ module Nri.Ui.Select.V3 exposing
 -}
 
 import Css
-import Css.Foreign
 import Dict
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
@@ -31,7 +30,6 @@ import Html.Styled.Events exposing (..)
 import Json.Decode exposing (Decoder, andThen, succeed)
 import Nri.Ui
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
 import Nri.Ui.Util
 
 

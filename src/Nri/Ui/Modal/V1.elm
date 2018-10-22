@@ -25,7 +25,6 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Styles.V1
-import View.Extra exposing (viewIf, viewJust)
 
 
 type ModalType
@@ -98,7 +97,11 @@ view modalType { title, visibleTitle, content, onDismiss, footerContent, width }
                         [ ( "width", toString width ++ "px" ) ]
             ]
             [ styleNode
-            , viewIf (\() -> viewHeader modalType title) visibleTitle
+            , if visibleTitle then
+                viewHeader modalType title
+
+              else
+                Html.text ""
             , viewContent modalType content
             , viewFooter footerContent
             ]
