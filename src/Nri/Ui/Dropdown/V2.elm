@@ -6,7 +6,6 @@ module Nri.Ui.Dropdown.V2 exposing
 
 {-|
 
-@docs CssClasses
 @docs ViewOptionEntry
 @docs view
 @docs viewWithoutLabel
