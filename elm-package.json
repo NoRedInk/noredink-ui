@@ -1,5 +1,5 @@
 {
-    "version": "5.23.0",
+    "version": "5.24.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD-3-Clause",
@@ -26,6 +26,7 @@
         "Nri.Ui.Divider.V1",
         "Nri.Ui.Divider.V2",
         "Nri.Ui.Dropdown.V1",
+        "Nri.Ui.Dropdown.V2",
         "Nri.Ui.Effects.V1",
         "Nri.Ui.Fonts.V1",
         "Nri.Ui.Icon.V1",
