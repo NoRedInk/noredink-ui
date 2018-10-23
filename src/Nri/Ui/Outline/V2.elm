@@ -15,7 +15,6 @@ module Nri.Ui.Outline.V2 exposing
 @docs NodeConfig
 @docs config
 @docs html
-@docs styles
 
 -}
 

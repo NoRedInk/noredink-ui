@@ -2,7 +2,7 @@ module Nri.Ui.Divider.V2 exposing (view)
 
 {-| <https://staging.noredink.com/style_guide#ui/src/Nri/Divider.elm>
 
-@docs styles, view
+@docs view
 
 -}
 

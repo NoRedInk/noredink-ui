@@ -8,7 +8,6 @@ module Nri.Ui.BannerAlert.V2 exposing
 
 @docs error
 @docs neutral
-@docs styles
 @docs success
 
 -}
