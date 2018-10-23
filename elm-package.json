@@ -2,7 +2,7 @@
     "version": "5.22.0",
     "summary": "UI Widgets we use at NRI",
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
-    "license": "BSD3",
+    "license": "BSD-3-Clause",
     "source-directories": [
         "src"
     ],
