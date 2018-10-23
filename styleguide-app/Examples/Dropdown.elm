@@ -6,9 +6,9 @@ module Examples.Dropdown exposing (Msg, State, Value, example, init, update)
 
 -}
 
-import Html
+import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Dropdown.V1
+import Nri.Ui.Dropdown.V2
 
 
 {-| -}
@@ -23,7 +23,7 @@ type Msg
 
 {-| -}
 type alias State value =
-    List (Nri.Ui.Dropdown.V1.ViewOptionEntry value)
+    List (Nri.Ui.Dropdown.V2.ViewOptionEntry value)
 
 
 {-| -}
@@ -32,7 +32,7 @@ example parentMessage state =
     { filename = "Nri/Ui/Dropdown/V1.elm"
     , category = Inputs
     , content =
-        [ Html.map parentMessage (Nri.Ui.Dropdown.V1.view "All the foods!" state ConsoleLog)
+        [ Html.Styled.map parentMessage (Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog)
         ]
     }
 

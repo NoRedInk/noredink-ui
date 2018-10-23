@@ -36,7 +36,6 @@ import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Attribute, Html)
 import Html.Attributes
 import Html.Events
@@ -46,7 +45,6 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Styles.V1
-import View.Extra
 
 
 {-| This is a better choice for a no-op than "#" because "#" changes your
@@ -108,7 +106,9 @@ viewCustom config viewInnerTab =
     Html.div []
         [ Html.div
             [ styles.class [ Container ] ]
-            [ View.Extra.viewJust viewTitle config.title
+            [ config.title
+                |> Maybe.map viewTitle
+                |> Maybe.withDefault (Html.text "")
             , Html.ul
                 [ styles.class [ Tabs config.alignment ]
                 , Accessibility.Role.tabList
@@ -199,7 +199,9 @@ links config =
     Html.div []
         [ Html.nav
             [ styles.class [ Container ] ]
-            [ View.Extra.viewJust viewTitle config.title
+            [ config.title
+                |> Maybe.map viewTitle
+                |> Maybe.withDefault (Html.text "")
             , Html.ul
                 [ styles.class [ Tabs config.alignment ] ]
                 (config.tabs

@@ -4,17 +4,12 @@ module ModuleExample exposing
     , ModuleMessages
     , categoryForDisplay
     , categoryFromString
-    , styles
     , view
     )
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import DEPRECATED.Css.Namespace
-import Html exposing (Html, img)
-import Html.Attributes
-import Html.CssHelpers
+import Html.Styled as Html exposing (Html, img)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
 
 
@@ -163,63 +158,34 @@ categoryForDisplay category =
 
 view : Bool -> ModuleExample msg -> Html msg
 view showFocusLink { filename, content } =
-    Html.div [ class [ Module ] ]
-        [ Html.div [ class [ ModuleHeader ] ]
-            [ Html.h2
-                [ class [ ModuleName ] ]
+    Html.div
+        []
+        [ Html.styled Html.div
+            [ display block
+            , backgroundColor glacier
+            , padding (px 20)
+            , marginTop (px 20)
+            ]
+            []
+            [ Html.styled Html.h2
+                [ color gray20
+                , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
+                , fontSize (px 20)
+                ]
+                []
                 [ Html.text filename
                 , Html.text " "
                 , if showFocusLink then
                     Html.a
-                        [ Html.Attributes.href <| "#doodad/" ++ filename ]
+                        [ Attributes.href <| "#doodad/" ++ filename ]
                         [ Html.text "(see only this)" ]
 
                   else
                     Html.text ""
                 ]
             ]
-        , Html.div [ class [ ModuleBody ] ] content
+        , Html.styled Html.div
+            [ padding2 (px 20) zero ]
+            []
+            content
         ]
-
-
-type Classes
-    = Module
-    | ModuleHeader
-    | ModuleName
-    | ModuleImporting
-    | ModuleBody
-
-
-viewStyles : List Snippet
-viewStyles =
-    [ Css.Foreign.class ModuleHeader
-        [ display block
-        , backgroundColor glacier
-        , padding (px 20)
-        , marginTop (px 20)
-        ]
-    , Css.Foreign.class ModuleImporting
-        [ display block
-        , padding (px 20)
-        , margin2 (px 20) zero
-        ]
-    , Css.Foreign.class ModuleBody
-        [ padding2 (px 20) zero ]
-    , Css.Foreign.class ModuleName
-        [ color gray20
-        , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
-        , fontSize (px 20)
-        ]
-    ]
-
-
-styles : Stylesheet
-styles =
-    List.concat
-        [ viewStyles
-        ]
-        |> (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-ModuleExample-")
-
-
-{ id, class, classList } =
-    Html.CssHelpers.withNamespace "Page-StyleGuide-ModuleExample-"

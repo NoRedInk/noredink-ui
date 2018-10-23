@@ -7,7 +7,6 @@ module Examples.Alert exposing (example)
 -}
 
 import Assets exposing (assets)
-import Html.Styled
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Alert.V2 as Alert
 
@@ -22,5 +21,4 @@ example =
         , Alert.tip assets "This is a tip"
         , Alert.success assets "This is a success"
         ]
-            |> List.map Html.Styled.toUnstyled
     }

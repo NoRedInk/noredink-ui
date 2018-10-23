@@ -64,7 +64,6 @@ example =
                     , Css.flexWrap Css.wrap
                     ]
                 ]
-            |> Html.toUnstyled
         ]
     }
 

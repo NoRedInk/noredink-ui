@@ -1,4 +1,4 @@
-module Examples.Page exposing (example, styles)
+module Examples.Page exposing (example)
 
 {-|
 
@@ -9,10 +9,9 @@ module Examples.Page exposing (example, styles)
 import Css
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Headings
-import Html exposing (Html)
+import Html.Styled as Html exposing (Html)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Page.V1 as Page
-import Nri.Ui.Styles.V1 as Styles
+import Nri.Ui.Page.V2 as Page
 
 
 {-| -}
@@ -21,7 +20,13 @@ example noOp =
     { filename = "Nri/Ui/Page/V1.elm"
     , category = Pages
     , content =
-        [ Headings.h3 [ Html.text "Pages for problems" ]
+        [ Css.Foreign.global
+            [ Css.Foreign.selector "[data-page-container]"
+                [ Css.displayFlex
+                , Css.flexWrap Css.wrap
+                ]
+            ]
+        , Headings.h3 [ Html.text "Pages for problems" ]
         , Headings.h4 [ Html.text "Page: Not Found" ]
         , Page.notFound
             { link = noOp
@@ -39,22 +44,3 @@ example noOp =
             }
         ]
     }
-
-
-{-| -}
-styles : Styles.Styles id class msg
-styles =
-    Styles.styles "Examples-Page-"
-        [ Css.Foreign.class Container
-            [ Css.displayFlex
-            , Css.flexWrap Css.wrap
-            ]
-        ]
-
-
-
--- INTERNAL
-
-
-type CssClasses
-    = Container

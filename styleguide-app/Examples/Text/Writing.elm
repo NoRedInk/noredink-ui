@@ -4,7 +4,7 @@ module Examples.Text.Writing exposing (example)
    @docs example
 -}
 
-import Html.Styled exposing (text, toUnstyled)
+import Html.Styled exposing (text)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
@@ -24,6 +24,5 @@ example =
                 """
         in
         [ TextWriting.footnote [ text <| "This is a footnote. " ++ longerBody ]
-            |> toUnstyled
         ]
     }

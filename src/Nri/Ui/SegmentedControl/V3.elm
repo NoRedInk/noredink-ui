@@ -19,7 +19,6 @@ import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V1 as Icon
 import Nri.Ui.Styles.V1
-import View.Extra
 
 
 {-| -}
@@ -61,7 +60,12 @@ view assets config =
                         , ( Focused, option.value == config.selected )
                         ]
                     ]
-                    [ View.Extra.viewJust (viewIcon assets) option.icon
+                    [ case option.icon of
+                        Just icon ->
+                            viewIcon assets icon
+
+                        Nothing ->
+                            Html.text ""
                     , Html.text option.label
                     ]
             )

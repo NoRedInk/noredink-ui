@@ -7,11 +7,9 @@ module Nri.Ui.DisclosureIndicator.V1 exposing (view, viewInline)
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (alt, type_)
 import Nri.Ui.AssetPath as AssetPath
-import Nri.Ui.Styles.V1
 
 
 type alias Config =

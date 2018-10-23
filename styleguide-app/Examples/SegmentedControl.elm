@@ -41,7 +41,7 @@ example parentMessage state =
     { filename = "Nri/Ui/SegmentedControl/V6.elm"
     , category = Behaviors
     , content =
-        List.map (Html.map parentMessage >> Html.toUnstyled)
+        List.map (Html.map parentMessage)
             [ fillContainerCheckbox state.width
             , Nri.Ui.SegmentedControl.V6.view state
             ]

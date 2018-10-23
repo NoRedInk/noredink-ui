@@ -138,7 +138,6 @@ example =
             , { icon = Icon.logo, background = Light, alt = "Logo" }
             ]
         ]
-            |> List.map Html.toUnstyled
     }
 
 
