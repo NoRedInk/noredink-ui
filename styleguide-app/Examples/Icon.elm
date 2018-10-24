@@ -43,6 +43,7 @@ example =
             , { icon = Icon.quickWrite, background = Light, alt = "QuickWrite" }
             , { icon = Icon.assignmentTypePeerReview, background = Dark, alt = "PeerReview" }
             , { icon = Icon.peerReview, background = Light, alt = "PeerReview" }
+            , { icon = Icon.assignmentTypeSelfReview, background = Dark, alt = "SelfReview" }
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }
             , { icon = Icon.revising, background = Light, alt = "Revising" }
