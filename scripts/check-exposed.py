@@ -58,6 +58,7 @@ def read_exposed_modules():
 if __name__ == "__main__":
     available = set(find_v_modules())
     exposed = set(read_exposed_modules())
+    # XXX: Do we need to check that parent modules are exposed too?
     missing = available - exposed
     for module in sorted(missing):
         print("Not exposed:", module, file=sys.stderr)
