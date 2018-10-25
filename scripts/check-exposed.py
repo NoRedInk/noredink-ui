@@ -51,7 +51,7 @@ def find_v_modules():
 
 
 def read_exposed_modules():
-    with open("elm-package.json", "rb") as pkg:
+    with open("elm-package.json", "r", encoding="utf-8") as pkg:
         yield from json.load(pkg).get("exposed-modules")
 
 
