@@ -6,6 +6,10 @@ SHELL:=env PATH=${PATH} /bin/sh
 test: elm-stuff tests/elm-stuff node_modules
 	elm-test
 
+.PHONY: checks
+checks:
+	scripts/check-exposed.py
+
 .PHONY: diff
 diff: node_modules elm-stuff
 	if (elm-package diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
@@ -49,4 +53,4 @@ elm-stuff: elm-package.json node_modules
 setup: node_modules elm-stuff tests/elm-stuff styleguide-app/elm-stuff
 
 .PHONY: ci
-ci: test format documentation.json diff styleguide-app/elm.js
+ci: checks test format documentation.json diff styleguide-app/elm.js
