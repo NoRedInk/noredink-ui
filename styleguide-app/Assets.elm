@@ -34,7 +34,7 @@ type alias Assets =
     , flipper : String
     , footsteps : String
     , gear : String
-    , guidedDraftWhite : String
+    , guidedDraft : String
     , hint_png : Asset
     , iconCalendar_svg : Asset
     , iconCheck_png : Asset
@@ -127,7 +127,7 @@ assets =
     , flipper = "icon-flipper"
     , footsteps = "icon-footsteps"
     , gear = "icon-gear"
-    , guidedDraftWhite = "icon-guided-draft-white"
+    , guidedDraft = "icon-guided-draft"
     , hint_png = Asset "assets/images/hint.png"
     , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
     , iconCheck_png = Asset "assets/images/icon-check.png"

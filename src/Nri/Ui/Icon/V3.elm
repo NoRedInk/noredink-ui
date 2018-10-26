@@ -437,9 +437,9 @@ assignmentTypeDiagnostic assets =
 
 
 {-| -}
-assignmentTypeGuidedDraft : { r | guidedDraftWhite : String } -> IconType
+assignmentTypeGuidedDraft : { r | guidedDraft : String } -> IconType
 assignmentTypeGuidedDraft assets =
-    SvgIcon assets.guidedDraftWhite
+    SvgIcon assets.guidedDraft
 
 
 {-| -}
