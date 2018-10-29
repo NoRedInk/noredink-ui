@@ -27,8 +27,8 @@ module Nri.Ui.Icon.V3 exposing
     , clever
     , clock
     , close
-    , copy
     , compassSvg
+    , copy
     , custom
     , darkBlueCheckMark
     , document
@@ -75,13 +75,13 @@ module Nri.Ui.Icon.V3 exposing
     , sortArrow
     , speedometer
     , starred
+    , submitting, rating, revising
     , thumbsUp
     , twitter
     , unarchive
     , writingAssignment
     , x
     , xSvg
-    , submitting, rating, revising
     )
 
 {-|
@@ -114,8 +114,8 @@ module Nri.Ui.Icon.V3 exposing
 @docs clever
 @docs clock
 @docs close
-@docs copy
 @docs compassSvg
+@docs copy
 @docs custom
 @docs darkBlueCheckMark
 @docs document
@@ -162,13 +162,13 @@ module Nri.Ui.Icon.V3 exposing
 @docs sortArrow
 @docs speedometer
 @docs starred
+@docs submitting, rating, revising
 @docs thumbsUp
 @docs twitter
 @docs unarchive
 @docs writingAssignment
 @docs x
 @docs xSvg
-@docs submitting, rating, revising
 
 -}
 

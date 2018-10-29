@@ -9,6 +9,7 @@ module Nri.Ui.Icon.V4 exposing
     , assignmentStartButtonPrimary
     , assignmentStartButtonSecondary
     , assignmentTypeDiagnostic
+    , assignmentTypeGuidedDraft
     , assignmentTypePeerReview
     , assignmentTypeSelfReview
     , assignmentTypePractice
@@ -96,6 +97,7 @@ module Nri.Ui.Icon.V4 exposing
 @docs assignmentStartButtonPrimary
 @docs assignmentStartButtonSecondary
 @docs assignmentTypeDiagnostic
+@docs assignmentTypeGuidedDraft
 @docs assignmentTypePeerReview
 @docs assignmentTypeSelfReview
 @docs assignmentTypePractice
@@ -432,6 +434,12 @@ assignmentStartButtonSecondary assets =
 assignmentTypeDiagnostic : { r | diagnostic : String } -> IconType
 assignmentTypeDiagnostic assets =
     SvgIcon assets.diagnostic
+
+
+{-| -}
+assignmentTypeGuidedDraft : { r | guidedDraft : String } -> IconType
+assignmentTypeGuidedDraft assets =
+    SvgIcon assets.guidedDraft
 
 
 {-| -}
