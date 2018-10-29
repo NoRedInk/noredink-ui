@@ -13,7 +13,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
@@ -39,15 +39,13 @@ example =
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
             , { icon = Icon.assignmentTypeQuiz, background = Light, alt = "Quiz" }
-            , { icon = Icon.assignmentTypeQuickWrite, background = Dark, alt = "QuickWrite" }
-            , { icon = Icon.quickWrite, background = Light, alt = "QuickWrite" }
-            , { icon = Icon.assignmentTypePeerReview, background = Dark, alt = "PeerReview" }
-            , { icon = Icon.peerReview, background = Light, alt = "PeerReview" }
-            , { icon = Icon.assignmentTypeSelfReview, background = Dark, alt = "SelfReview" }
+            , { icon = Icon.assignmentTypeQuickWrite, background = Light, alt = "QuickWrite" }
+            , { icon = Icon.assignmentTypeGuidedDraft, background = Light, alt = "GuidedDraft" }
+            , { icon = Icon.assignmentTypePeerReview, background = Light, alt = "PeerReview" }
+            , { icon = Icon.assignmentTypeSelfReview, background = Light, alt = "SelfReview" }
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }
             , { icon = Icon.revising, background = Light, alt = "Revising" }
-            , { icon = Icon.assignmentTypeGuidedDraft, background = Light, alt = "GuidedDraft" }
 
             --, { icon = Icon.guidedWrite, background = Light, alt = "GuidedWrite" }
             , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }

@@ -48,11 +48,11 @@ type alias Assets =
     , icons_helpBlue_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
-    , icons_selfReviewWhite_svg : Asset
     , icons_plusBlue_svg : Asset
     , icons_quickWrite_svg : Asset
     , icons_quickWriteWhite_svg : Asset
     , icons_searchGray_svg : Asset
+    , icons_selfReviewWhite_svg : Asset
     , icons_xBlue_svg : Asset
     , icons_xBlue_svg : Asset
     , key : String
@@ -66,16 +66,19 @@ type alias Assets =
     , masteryBadge : String
     , newspaper : String
     , openClose : String
+    , peerReview : String
     , pen : Asset
     , performance : String
     , personBlue_svg : Asset
     , practice : String
     , premiumLock_svg : Asset
     , preview : String
+    , quickWrite : String
     , quiz : String
     , rating : String
     , revising : String
     , seemore : String
+    , selfReview : String
     , share : String
     , skip : String
     , smallCheckmark_png : Asset
@@ -141,11 +144,11 @@ assets =
     , icons_helpBlue_svg = Asset "assets/images/help-blue.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
-    , icons_selfReviewWhite_svg = Asset "assets/images/self-review-white.svg"
     , icons_plusBlue_svg = Asset "assets/images/plus-blue.svg"
     , icons_quickWrite_svg = Asset "assets/images/quick-write.svg"
     , icons_quickWriteWhite_svg = Asset "assets/images/quick-write-white.svg"
     , icons_searchGray_svg = Asset "assets/images/search-gray.svg"
+    , icons_selfReviewWhite_svg = Asset "assets/images/self-review-white.svg"
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
     , key = "icon-key"
     , leaderboard = "icon-leaderboard"
@@ -158,16 +161,19 @@ assets =
     , masteryBadge = "icon-mastery-badge"
     , newspaper = "icon-newspaper"
     , openClose = "icon-open-close"
+    , peerReview = "icon-peer-review"
     , pen = Asset "assets/images/pen.svg"
     , performance = "icon-performance"
     , personBlue_svg = Asset "assets/images/person-blue.svg"
     , practice = "icon-practice"
     , premiumLock_svg = Asset "assets/images/premium-lock.svg"
     , preview = "icon-preview"
+    , quickWrite = "icon-quick-write"
     , quiz = "icon-quiz"
     , rating = "icon-rating"
     , revising = "icon-revising"
     , seemore = "icon-seemore"
+    , selfReview = "icon-self-review"
     , share = "icon-share"
     , skip = "icon-skip"
     , smallCheckmark_png = Asset "assets/images/small_checkmark.png"

@@ -1,4 +1,4 @@
-module Nri.Ui.Icon.V3 exposing
+module Nri.Ui.Icon.V4 exposing
     ( icon, decorativeIcon, link, linkExternal, linkSpa, button
     , IconType, IconSize(..), IconLinkSpaModel
     , activity
@@ -9,6 +9,7 @@ module Nri.Ui.Icon.V3 exposing
     , assignmentStartButtonPrimary
     , assignmentStartButtonSecondary
     , assignmentTypeDiagnostic
+    , assignmentTypeGuidedDraft
     , assignmentTypePeerReview
     , assignmentTypeSelfReview
     , assignmentTypePractice
@@ -27,8 +28,8 @@ module Nri.Ui.Icon.V3 exposing
     , clever
     , clock
     , close
-    , compassSvg
     , copy
+    , compassSvg
     , custom
     , darkBlueCheckMark
     , document
@@ -75,13 +76,13 @@ module Nri.Ui.Icon.V3 exposing
     , sortArrow
     , speedometer
     , starred
-    , submitting, rating, revising
     , thumbsUp
     , twitter
     , unarchive
     , writingAssignment
     , x
     , xSvg
+    , submitting, rating, revising
     )
 
 {-|
@@ -96,6 +97,7 @@ module Nri.Ui.Icon.V3 exposing
 @docs assignmentStartButtonPrimary
 @docs assignmentStartButtonSecondary
 @docs assignmentTypeDiagnostic
+@docs assignmentTypeGuidedDraft
 @docs assignmentTypePeerReview
 @docs assignmentTypeSelfReview
 @docs assignmentTypePractice
@@ -114,8 +116,8 @@ module Nri.Ui.Icon.V3 exposing
 @docs clever
 @docs clock
 @docs close
-@docs compassSvg
 @docs copy
+@docs compassSvg
 @docs custom
 @docs darkBlueCheckMark
 @docs document
@@ -162,13 +164,13 @@ module Nri.Ui.Icon.V3 exposing
 @docs sortArrow
 @docs speedometer
 @docs starred
-@docs submitting, rating, revising
 @docs thumbsUp
 @docs twitter
 @docs unarchive
 @docs writingAssignment
 @docs x
 @docs xSvg
+@docs submitting, rating, revising
 
 -}
 
@@ -435,15 +437,21 @@ assignmentTypeDiagnostic assets =
 
 
 {-| -}
-assignmentTypePeerReview : { r | icons_peerReviewWhite_svg : Asset } -> IconType
-assignmentTypePeerReview assets =
-    ImgIcon assets.icons_peerReviewWhite_svg
+assignmentTypeGuidedDraft : { r | guidedDraft : String } -> IconType
+assignmentTypeGuidedDraft assets =
+    SvgIcon assets.guidedDraft
 
 
 {-| -}
-assignmentTypeSelfReview : { r | icons_selfReviewWhite_svg : Asset } -> IconType
+assignmentTypePeerReview : { r | peerReview : String } -> IconType
+assignmentTypePeerReview assets =
+    SvgIcon assets.peerReview
+
+
+{-| -}
+assignmentTypeSelfReview : { r | selfReview : String } -> IconType
 assignmentTypeSelfReview assets =
-    ImgIcon assets.icons_selfReviewWhite_svg
+    SvgIcon assets.selfReview
 
 
 {-| -}
@@ -453,9 +461,9 @@ assignmentTypePractice assets =
 
 
 {-| -}
-assignmentTypeQuickWrite : { r | icons_quickWriteWhite_svg : Asset } -> IconType
+assignmentTypeQuickWrite : { r | quickWrite : String } -> IconType
 assignmentTypeQuickWrite assets =
-    ImgIcon assets.icons_quickWriteWhite_svg
+    SvgIcon assets.quickWrite
 
 
 {-| -}
