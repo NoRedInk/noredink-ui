@@ -6,13 +6,13 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 type alias Assets =
     { activity : String
     , arrowDown : String
+    , assignmentStartButtonPrimary_svg : Asset
+    , assignmentStartButtonSecondary_svg : Asset
     , attention_svg : Asset
     , bulb : String
     , calendar : String
-    , assignmentStartButtonPrimary_svg : Asset
-    , assignmentStartButtonSecondary_svg : Asset
-    , checkboxCheckedPartially_svg : Asset
     , checkboxChecked_svg : Asset
+    , checkboxCheckedPartially_svg : Asset
     , checkboxLockOnInside_svg : Asset
     , checkboxUnchecked_svg : Asset
     , checkmark : String
@@ -34,6 +34,7 @@ type alias Assets =
     , flipper : String
     , footsteps : String
     , gear : String
+    , guidedDraft : String
     , hint_png : Asset
     , iconCalendar_svg : Asset
     , iconCheck_png : Asset
@@ -106,8 +107,8 @@ assets =
     , calendar = "icon-calendar"
     , assignmentStartButtonPrimary_svg = Asset "assets/images/assignment-start-button-primary.svg"
     , assignmentStartButtonSecondary_svg = Asset "assets/images/assignment-start-button-secondary.svg"
-    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
+    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
     , checkboxUnchecked_svg = Asset "assets/images/checkbox_unchecked.svg"
     , checkmark = "icon-checkmark"
@@ -129,6 +130,7 @@ assets =
     , flipper = "icon-flipper"
     , footsteps = "icon-footsteps"
     , gear = "icon-gear"
+    , guidedDraft = "icon-guided-draft"
     , hint_png = Asset "assets/images/hint.png"
     , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
     , iconCheck_png = Asset "assets/images/icon-check.png"
