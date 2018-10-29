@@ -6,7 +6,7 @@ module Nri.Ui.Colors.V1 exposing
     , frost
     , gray20, gray45, gray75, gray92, gray96
     , glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
-    , highlightLightBlue, highlightLightMagenta, highlightLightYellow
+    , highlightLightBlue, highlightLightMagenta, highlightLightYellow, highlightBrown, highlightBrownDark
     , lichen
     , magenta
     , navy
@@ -30,7 +30,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs frost
 @docs gray20, gray45, gray75, gray92, gray96
 @docs glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
-@docs highlightLightBlue, highlightLightMagenta, highlightLightYellow
+@docs highlightLightBlue, highlightLightMagenta, highlightLightYellow, highlightBrown, highlightBrownDark
 @docs lichen
 @docs magenta
 @docs navy
@@ -315,6 +315,26 @@ highlightLightMagenta =
 highlightLightYellow : Css.Color
 highlightLightYellow =
     withAlpha 0.75 yellow
+
+
+{-|
+
+<p style="font-size:2em; background-color: #ffc6a1">#ffc6a1</p>
+
+-}
+highlightBrown : Css.Color
+highlightBrown =
+    hex "#ffc6a1"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #943b00">#943b00</p>
+
+-}
+highlightBrownDark : Css.Color
+highlightBrownDark =
+    hex "#943b00"
 
 
 {-|
