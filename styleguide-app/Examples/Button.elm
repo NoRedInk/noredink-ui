@@ -11,8 +11,8 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V5 as Button
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Button.V6 as Button
+import Nri.Ui.Icon.V4 as Icon
 
 
 {-| -}

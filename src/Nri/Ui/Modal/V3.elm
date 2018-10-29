@@ -26,7 +26,7 @@ import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Icon.V4 as Icon
 
 
 {-|

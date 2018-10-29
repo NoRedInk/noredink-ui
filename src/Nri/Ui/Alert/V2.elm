@@ -23,7 +23,7 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Icon.V4 as Icon
 
 
 {-| -}
