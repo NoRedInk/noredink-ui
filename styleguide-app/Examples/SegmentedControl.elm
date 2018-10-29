@@ -21,7 +21,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
+import Nri.Ui.SegmentedControl.V7 exposing (Width(..))
 
 
 {-| -}
@@ -32,18 +32,18 @@ type Msg
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V6.Config Id Msg
+    Nri.Ui.SegmentedControl.V7.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Ui/SegmentedControl/V6.elm"
+    { filename = "Nri/Ui/SegmentedControl/V7.elm"
     , category = Behaviors
     , content =
         List.map (Html.map parentMessage)
             [ fillContainerCheckbox state.width
-            , Nri.Ui.SegmentedControl.V6.view state
+            , Nri.Ui.SegmentedControl.V7.view state
             ]
     }
 

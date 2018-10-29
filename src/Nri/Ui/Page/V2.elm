@@ -9,7 +9,7 @@ module Nri.Ui.Page.V2 exposing (DefaultPage, broken, blocked, notFound, noPermis
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Button.V6 as Button
 import Nri.Ui.Text.V2 as Text
 
 

@@ -8,7 +8,7 @@ import Css exposing (..)
 import Headings
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Button.V6 as Button
 import Nri.Ui.Table.V2 as Table
 
 
