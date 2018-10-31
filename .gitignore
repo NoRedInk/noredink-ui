@@ -227,3 +227,4 @@ Session.vim
 tags
 
 # End of https://www.gitignore.io/api/osx,elm,vim,node,macos,linux,emacs,sublimetext
+dist.js
