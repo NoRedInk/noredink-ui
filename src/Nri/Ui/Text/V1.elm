@@ -138,9 +138,45 @@ captionClassString =
     classString captionClasses
 
 
+classToString : CssClasses -> String
+classToString classes =
+    case classes of
+        Text ->
+            "Text"
+
+        Heading ->
+            "Heading"
+
+        Tagline ->
+            "Tagline"
+
+        SubHeading ->
+            "SubHeading"
+
+        SmallHeading ->
+            "SmallHeading"
+
+        MediumBody ->
+            "MediumBody"
+
+        SmallBody ->
+            "SmallBody"
+
+        SmallBodyGray ->
+            "SmallBodyGray"
+
+        Caption ->
+            "Caption"
+
+
+classToNamespacedString : CssClasses -> String
+classToNamespacedString classes =
+    classToString classes ++ namespace
+
+
 classString : List CssClasses -> String
 classString classes =
-    String.join " " (List.map (identifierToString namespace) classes)
+    String.join " " (List.map classToNamespacedString classes)
 
 
 {-| User-generated text.
