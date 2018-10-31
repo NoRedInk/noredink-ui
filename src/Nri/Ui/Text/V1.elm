@@ -34,7 +34,6 @@ module Nri.Ui.Text.V1 exposing
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import Css.Helpers exposing (identifierToString)
 import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
