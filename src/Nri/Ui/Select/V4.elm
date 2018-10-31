@@ -1,24 +1,8 @@
-module Nri.Ui.Select.V4 exposing
-    ( Config
-    , view
-    )
+module Nri.Ui.Select.V4 exposing (Config, view)
 
 {-| Build a select input.
 
-
-## Upgrading to V3
-
-  - Remove the old styles. V3 uses compile-at-runtime elm-css!
-
-
-# Configure
-
-@docs Config
-
-
-# Render
-
-@docs view
+@docs Config, view
 
 -}
 
@@ -33,7 +17,7 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.Util
 
 
-{-| Select-specific Choice.Config
+{-| Configure a Select
 -}
 type alias Config a =
     { choices : List { label : String, value : a }
@@ -49,7 +33,7 @@ niceId prefix x =
     prefix ++ "-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation (toString x))
 
 
-{-| A normal select dropdown
+{-| A select dropdown
 -}
 view : Config a -> Html a
 view config =
