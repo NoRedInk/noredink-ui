@@ -170,7 +170,7 @@ classToString classes =
 
 classToNamespacedString : CssClasses -> String
 classToNamespacedString classes =
-    classToString classes ++ namespace
+    namespace ++ classToString classes
 
 
 classString : List CssClasses -> String
