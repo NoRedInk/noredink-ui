@@ -1,13 +1,18 @@
 {
   "name": "@noredink/ui",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "UI widgets we use.",
   "main": "lib/index.js",
   "directories": {
     "test": "tests"
   },
+  "files": [
+    "dist.js"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run build-lib",
+    "build-lib": "npx browserify --entry lib/index.js --outfile dist.js"
   },
   "repository": {
     "type": "git",
