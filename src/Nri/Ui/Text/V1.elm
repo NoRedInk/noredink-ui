@@ -34,7 +34,6 @@ module Nri.Ui.Text.V1 exposing
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import Css.Helpers exposing (identifierToString)
 import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -138,9 +137,45 @@ captionClassString =
     classString captionClasses
 
 
+classToString : CssClasses -> String
+classToString classes =
+    case classes of
+        Text ->
+            "Text"
+
+        Heading ->
+            "Heading"
+
+        Tagline ->
+            "Tagline"
+
+        SubHeading ->
+            "SubHeading"
+
+        SmallHeading ->
+            "SmallHeading"
+
+        MediumBody ->
+            "MediumBody"
+
+        SmallBody ->
+            "SmallBody"
+
+        SmallBodyGray ->
+            "SmallBodyGray"
+
+        Caption ->
+            "Caption"
+
+
+classToNamespacedString : CssClasses -> String
+classToNamespacedString classes =
+    namespace ++ classToString classes
+
+
 classString : List CssClasses -> String
 classString classes =
-    String.join " " (List.map (identifierToString namespace) classes)
+    String.join " " (List.map classToNamespacedString classes)
 
 
 {-| User-generated text.
