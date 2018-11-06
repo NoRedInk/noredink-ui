@@ -65,7 +65,22 @@ styles :
     -> List Snippet
     -> Styles id class msg
 styles namespace snippets =
-    stylesWithExtraStylesheets namespace [] snippets
+    let
+        { id, class, classList } =
+            Html.CssHelpers.withNamespace namespace
+
+        sheet =
+            snippets
+                |> DEPRECATED.Css.Namespace.namespace namespace
+                |> stylesheet
+    in
+    { css = \_ -> [ sheet ]
+    , id = id
+    , class = class
+    , classList = classList
+    , div = \cl -> Html.div [ class [ cl ] ]
+    , span = \cl -> Html.span [ class [ cl ] ]
+    }
 
 
 {-| Use this instead of [`styles`](#styles) if you need to
