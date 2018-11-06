@@ -39,7 +39,6 @@ There will generally be a `*Button` and `*Link` version of each button style.
 import Accessibility exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)

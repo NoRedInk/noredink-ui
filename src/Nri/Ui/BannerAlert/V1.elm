@@ -17,7 +17,6 @@ module Nri.Ui.BannerAlert.V1 exposing
 import Accessibility
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (Html)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
