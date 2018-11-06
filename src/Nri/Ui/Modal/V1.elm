@@ -16,11 +16,10 @@ module Nri.Ui.Modal.V1 exposing
 
 import Css
 import Css.Foreign exposing (Snippet, body, children, descendants, everything, selector)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.CssHelpers exposing (..)
 import Html.Events exposing (onClick)
+import Html.Styled exposing (toUnstyled)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1 as Fonts
@@ -145,14 +144,11 @@ open (and this node is present on the page).
 -}
 styleNode : Html msg
 styleNode =
-    [ stylesheet
-        [ Css.Foreign.body
-            [ Css.overflow Css.hidden ]
-        ]
+    [ Css.Foreign.body
+        [ Css.overflow Css.hidden ]
     ]
-        |> compile
-        |> .css
-        |> Html.CssHelpers.style
+        |> Css.Foreign.global
+        |> toUnstyled
 
 
 type CssClasses
