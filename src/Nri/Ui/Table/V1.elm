@@ -19,11 +19,11 @@ module Nri.Ui.Table.V1 exposing
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import DEPRECATED.Nri.Ui.Styles.V1 exposing (Keyframe, styles)
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
-import Nri.Ui.Styles.V1 exposing (styles)
 
 
 {-| Closed representation of how to render the header and cells of a column
@@ -186,9 +186,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Table-V1-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Table-V1-"
         [ Css.Foreign.class Headers
             [ borderBottom3 (px 3) solid gray75
             , height (px 45)
@@ -229,14 +229,14 @@ styles =
 
 
 {-| -}
-keyframes : List Nri.Ui.Styles.V1.Keyframe
+keyframes : List Keyframe
 keyframes =
-    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-flash"
+    [ DEPRECATED.Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-flash"
         [ ( "0%", "opacity: 0.6" )
         , ( "50%", "opacity: 0.2" )
         , ( "100%", "opacity: 0.6" )
         ]
-    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-fadein"
+    , DEPRECATED.Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V1-fadein"
         [ ( "from", "opacity: 0" )
         , ( "to", "opacity: 1" )
         ]
@@ -248,7 +248,7 @@ keyframeStyles : Html msg
 keyframeStyles =
     Html.node "style"
         []
-        (List.map (Html.text << Nri.Ui.Styles.V1.toString) keyframes)
+        (List.map (Html.text << DEPRECATED.Nri.Ui.Styles.V1.toString) keyframes)
 
 
 flashAnimation : List Css.Style

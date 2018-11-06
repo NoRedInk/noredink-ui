@@ -16,12 +16,12 @@ module Nri.Ui.InputStyles exposing
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import DEPRECATED.Nri.Ui.Styles.V1 as Styles
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.DatePickerConstants
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Styles.V1 as Styles
 
 
 {-| Classes to be used in Nri Inputs such as Nri.TextInput and Nri.TextArea

@@ -21,13 +21,13 @@ module Nri.Ui.Select.V2 exposing
 
 import Css
 import Css.Foreign
+import DEPRECATED.Nri.Ui.Styles.V1
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode exposing (Decoder, andThen, succeed)
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
 import Nri.Ui.Util
 
 
@@ -93,9 +93,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses c
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Select-V2-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Select-V2-"
         [ Css.Foreign.class Select
             [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75

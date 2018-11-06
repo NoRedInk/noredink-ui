@@ -31,11 +31,11 @@ module Nri.Ui.Table.V2 exposing
 -}
 
 import Css exposing (..)
+import DEPRECATED.Nri.Ui.Styles.V1 exposing (Keyframe)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
-import Nri.Ui.Styles.V1
 
 
 {-| Closed representation of how to render the header and cells of a column
@@ -256,14 +256,14 @@ tableStyles =
 
 
 {-| -}
-keyframes : List Nri.Ui.Styles.V1.Keyframe
+keyframes : List Keyframe
 keyframes =
-    [ Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-flash"
+    [ DEPRECATED.Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-flash"
         [ ( "0%", "opacity: 0.6" )
         , ( "50%", "opacity: 0.2" )
         , ( "100%", "opacity: 0.6" )
         ]
-    , Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-fadein"
+    , DEPRECATED.Nri.Ui.Styles.V1.keyframes "Nri-Ui-Table-V2-fadein"
         [ ( "from", "opacity: 0" )
         , ( "to", "opacity: 1" )
         ]
@@ -275,7 +275,7 @@ keyframeStyles : Html msg
 keyframeStyles =
     Html.node "style"
         []
-        (List.map (Html.text << Nri.Ui.Styles.V1.toString) keyframes)
+        (List.map (Html.text << DEPRECATED.Nri.Ui.Styles.V1.toString) keyframes)
 
 
 flashAnimation : List Css.Style

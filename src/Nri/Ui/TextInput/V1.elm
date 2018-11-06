@@ -27,12 +27,12 @@ module Nri.Ui.TextInput.V1 exposing
 import Accessibility.Style
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Styles.V1
 import Regex
 
 
@@ -126,7 +126,7 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     let
         inputStyle =
@@ -155,7 +155,7 @@ styles =
             , Css.marginTop (px 9)
             ]
     in
-    Nri.Ui.Styles.V1.styles "Nri-Ui-TextInput-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-TextInput-"
         [ Css.Foreign.selector "input[type=text]"
             [ Css.Foreign.withClass Input inputStyle ]
         , Css.Foreign.selector "input[type=number]"

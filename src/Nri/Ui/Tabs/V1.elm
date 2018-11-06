@@ -36,6 +36,7 @@ import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (Attribute, Html)
 import Html.Attributes
 import Html.Events
@@ -44,7 +45,6 @@ import List.Zipper exposing (Zipper(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Styles.V1
 
 
 {-| This is a better choice for a no-op than "#" because "#" changes your
@@ -267,9 +267,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Tabs-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Tabs-"
         [ Css.Foreign.class Container
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd

@@ -40,12 +40,12 @@ import Accessibility exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Styles.V1
 
 
 {-| Sizes for buttons that have button classes
@@ -249,7 +249,7 @@ linearGradient ( top, bottom ) =
 
 {-| Required CSS styles for `Nri.Ui.Button`.
 -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     let
         newSizeStyle size config =
@@ -368,7 +368,7 @@ styles =
                     ]
                 ]
     in
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Button-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Button-"
         [ Css.Foreign.class Button
             [ cursor pointer
             , display inlineBlock

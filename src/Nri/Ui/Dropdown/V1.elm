@@ -19,13 +19,13 @@ module Nri.Ui.Dropdown.V1 exposing
 import Accessibility.Style exposing (invisible)
 import Css
 import Css.Foreign
+import DEPRECATED.Nri.Ui.Styles.V1
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, targetValue)
 import Json.Decode
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify)
 import String
 
@@ -162,9 +162,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses c
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Dropdown-V1-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Dropdown-V1-"
         [ Css.Foreign.class Dropdown
             [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75

@@ -18,11 +18,11 @@ import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
 import Svg exposing (svg, use)
 import Svg.Attributes exposing (xlinkHref)
 
@@ -544,9 +544,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Icon-V1-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Icon-V1-"
         [ Css.Foreign.class Disabled
             [ Css.property "cursor" "not-allowed" ]
         , Css.Foreign.class Button

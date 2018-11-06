@@ -34,12 +34,12 @@ module Nri.Ui.Text.V1 exposing
 
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Styles.V1
 
 
 {-| This is a Page Heading.
@@ -232,9 +232,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles namespace
+    DEPRECATED.Nri.Ui.Styles.V1.styles namespace
         [ Css.Foreign.class Heading
             [ Fonts.baseFont
             , fontSize (px 30)

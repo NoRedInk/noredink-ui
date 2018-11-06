@@ -24,10 +24,10 @@ import Accessibility
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (Html)
 import Markdown
 import Nri.Ui.Colors.V1
-import Nri.Ui.Styles.V1
 
 
 {-| -}
@@ -89,9 +89,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Alert-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Alert-"
         [ Css.Foreign.class Alert
             [ Css.displayFlex
             , Css.fontSize (Css.px 13)

@@ -10,6 +10,7 @@ import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html
 import Html.Attributes
 import Html.Events
@@ -18,7 +19,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V2 as Icon
-import Nri.Ui.Styles.V1
 
 
 {-| -}
@@ -99,9 +99,9 @@ type CssClass
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V5-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V5-"
         [ Css.Foreign.class SegmentedControl
             [ FlexBox.displayFlex
             , cursor pointer

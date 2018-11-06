@@ -18,10 +18,10 @@ import Accessibility
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (Html)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Styles.V1
 
 
 {-| A banner to show error alerts
@@ -68,9 +68,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
         [ Css.Foreign.class AlertMessage
             [ Css.fontSize (Css.px 20)
             , Css.fontWeight (Css.int 700)

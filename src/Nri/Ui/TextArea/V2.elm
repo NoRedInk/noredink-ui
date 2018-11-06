@@ -20,11 +20,11 @@ module Nri.Ui.TextArea.V2 exposing (view, writing, contentCreation, Height(..), 
 
 import Accessibility.Styled.Style
 import Css exposing ((|+|))
+import DEPRECATED.Nri.Ui.Styles.V1 exposing (StylesWithAssets)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.InputStyles as InputStyles exposing (CssClasses(..))
-import Nri.Ui.Styles.V1
 import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
@@ -230,6 +230,6 @@ generateId labelText =
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (InputStyles.Assets r)
+styles : StylesWithAssets Never CssClasses msg (InputStyles.Assets r)
 styles =
     InputStyles.styles

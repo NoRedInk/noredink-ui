@@ -9,9 +9,9 @@ module Nri.Ui.Divider.V1 exposing (styles, view)
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Styles.V1
 
 
 type alias Config =
@@ -38,9 +38,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-Divider-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-Divider-"
         [ Css.Foreign.class Container
             [ Css.width (pct 100)
             , Css.displayFlex

@@ -22,12 +22,12 @@ module Nri.Ui.Outline.V1 exposing
 
 import Css
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Nri.Ui.Styles.V1 exposing (Styles)
 import Html exposing (Attribute, Html)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Effects.V1
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Palette.V1 exposing (Palette)
-import Nri.Ui.Styles.V1 exposing (Styles)
 
 
 {-| A wrapper for a node rendered into Html. This type exists to prevent us
@@ -161,7 +161,7 @@ labelHeight =
 -}
 styles : Styles a Style b
 styles =
-    Nri.Ui.Styles.V1.styles "Outline" <|
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Outline" <|
         [ Css.Foreign.class Segment
             [ Css.position Css.relative
             , Css.zIndex (Css.int 0)

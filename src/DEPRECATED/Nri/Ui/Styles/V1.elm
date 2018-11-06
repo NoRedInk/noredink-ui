@@ -1,9 +1,10 @@
-module Nri.Ui.Styles.V1 exposing
+module DEPRECATED.Nri.Ui.Styles.V1 exposing
     ( Styles, StylesWithAssets, styles, stylesWithExtraStylesheets, stylesWithAssets
     , Keyframe, keyframes, toString
     )
 
-{-| Simplifies using elm-css in modules that expose views
+{-| DEPRECATED - This module is incompatible with Elm 0.19. Puffins are working
+on removing it from existing code. New code should use Html.Styled instead!
 
 
 ## Creating namespaces stylesheets

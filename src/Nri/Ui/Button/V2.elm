@@ -47,6 +47,7 @@ import Accessibility.Role as Role
 import Accessibility.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import DEPRECATED.Nri.Ui.Styles.V1 as Styles
 import EventExtras
 import Html
 import Html.Attributes exposing (..)
@@ -60,7 +61,6 @@ import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V2 as Icon exposing (IconType, decorativeIcon, icon)
-import Nri.Ui.Styles.V1 as Styles
 
 
 {-| Sizes for buttons and links that have button classes

@@ -17,6 +17,7 @@ module Nri.Ui.Modal.V1 exposing
 import Css
 import Css.Foreign exposing (Snippet, body, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
+import DEPRECATED.Nri.Ui.Styles.V1
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.CssHelpers exposing (..)
@@ -24,7 +25,6 @@ import Html.Events exposing (onClick)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Styles.V1
 
 
 type ModalType
@@ -170,9 +170,9 @@ type CssClasses
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
+styles : DEPRECATED.Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
-    Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
+    DEPRECATED.Nri.Ui.Styles.V1.styles "Nri-Ui-BannerAlert-"
         [ Css.Foreign.class BackdropContainer
             [ Css.height (Css.vh 100)
             , Css.left Css.zero

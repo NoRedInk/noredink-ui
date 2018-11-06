@@ -27,6 +27,7 @@ import Accessibility.Style
 import Accessibility.Widget as Widget
 import Css exposing (..)
 import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import DEPRECATED.Nri.Ui.Styles.V1 exposing (Keyframe, StylesWithAssets)
 import Html
 import Html.Attributes as Attributes
 import Html.Events as Events exposing (defaultOptions)
@@ -39,7 +40,6 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.Extra as Attributes
 import Nri.Ui.Html.Extra exposing (onEnter, onKeyUp)
-import Nri.Ui.Styles.V1
 
 
 {-|
@@ -589,9 +589,9 @@ checkboxAssetPath assets checkboxImage =
 
 
 {-| -}
-keyframeCss : Nri.Ui.Styles.V1.Keyframe
+keyframeCss : Keyframe
 keyframeCss =
-    Nri.Ui.Styles.V1.keyframes "pulsate"
+    DEPRECATED.Nri.Ui.Styles.V1.keyframes "pulsate"
         [ ( "0%", "transform: scale(1, 1);" )
         , ( "50%", "transform: scale(1.2);" )
         , ( "100%", "transform: scale(1, 1);" )
@@ -599,7 +599,7 @@ keyframeCss =
 
 
 {-| -}
-styles : Nri.Ui.Styles.V1.StylesWithAssets Never CssClasses msg (Assets r)
+styles : StylesWithAssets Never CssClasses msg (Assets r)
 styles =
     (\assets ->
         [ mainSnippet
@@ -615,7 +615,7 @@ styles =
         ]
             |> List.concat
     )
-        |> Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
+        |> DEPRECATED.Nri.Ui.Styles.V1.stylesWithAssets "checkbox-"
 
 
 {-| The assets used in this module.
