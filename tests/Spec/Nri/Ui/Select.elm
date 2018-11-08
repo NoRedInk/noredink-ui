@@ -4,8 +4,6 @@ import Expect exposing (Expectation)
 import Html
 import Html.Attributes as Attr
 import Html.Styled
-import Nri.Ui.Select.V1
-import Nri.Ui.Select.V2
 import Nri.Ui.Select.V3
 import Nri.Ui.Select.V5
 import Test exposing (..)
