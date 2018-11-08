@@ -16,7 +16,7 @@ module Nri.Ui.Alert.V2 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Css
-import Css.Foreign
+import Css.Global
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
@@ -43,7 +43,7 @@ success assets content =
         [ iconContainer
             [ Css.color Colors.white
             , Css.backgroundColor Colors.green
-            , Css.Foreign.children [ Css.Foreign.svg [ Css.maxWidth (Css.px 12) ] ]
+            , Css.Global.children [ Css.Global.svg [ Css.maxWidth (Css.px 12) ] ]
             ]
             (Icon.decorativeIcon (Icon.checkMarkSvg assets))
         , viewAlertContent Colors.greenDarkest content
@@ -115,7 +115,7 @@ viewAlertContent color content =
         , Css.fontSize (Css.px 13)
         , Css.lineHeight (Css.num 1.2)
         , Css.listStyleType Css.none
-        , Css.Foreign.descendants [ Css.Foreign.p [ Css.margin Css.zero ] ]
+        , Css.Global.descendants [ Css.Global.p [ Css.margin Css.zero ] ]
         ]
         []
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)

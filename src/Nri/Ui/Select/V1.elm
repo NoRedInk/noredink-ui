@@ -20,7 +20,7 @@ module Nri.Ui.Select.V1 exposing
 -}
 
 import Css
-import Css.Foreign
+import Css.Global
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -96,7 +96,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Select-V1-"
-        [ Css.Foreign.class Select
+        [ Css.Global.class Select
             [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75
             , Css.borderRadius (Css.px 8)

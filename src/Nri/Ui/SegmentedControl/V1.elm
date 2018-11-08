@@ -9,7 +9,7 @@ module Nri.Ui.SegmentedControl.V1 exposing (Config, Option, styles, view)
 import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html
 import Html.Attributes
 import Html.Events
@@ -67,11 +67,11 @@ type CssClass
 styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V1-"
-        [ Css.Foreign.class SegmentedControl
+        [ Css.Global.class SegmentedControl
             [ FlexBox.displayFlex
             , cursor pointer
             ]
-        , Css.Foreign.class Tab
+        , Css.Global.class Tab
             [ padding2 (px 6) (px 20)
             , height (px 45)
             , Nri.Ui.Fonts.V1.baseFont
@@ -93,7 +93,7 @@ styles =
             , borderBottom3 (px 3) solid Colors.azure
             , boxSizing borderBox
             ]
-        , Css.Foreign.class Focused
+        , Css.Global.class Focused
             [ color Colors.gray20
             , backgroundColor Colors.glacier
             , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)

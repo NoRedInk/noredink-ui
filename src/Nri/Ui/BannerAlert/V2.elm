@@ -14,7 +14,7 @@ module Nri.Ui.BannerAlert.V2 exposing
 
 import Accessibility.Styled as Accessibility
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
@@ -81,8 +81,8 @@ bannerStyles =
         , Css.justifyContent Css.center
         , Css.padding (Css.px 20)
         , Css.width (Css.pct 100)
-        , Css.Foreign.children
-            [ Css.Foreign.button
+        , Css.Global.children
+            [ Css.Global.button
                 [ Css.position Css.absolute
                 , Css.right (Css.px 15)
                 ]

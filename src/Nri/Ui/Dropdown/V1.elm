@@ -18,7 +18,7 @@ module Nri.Ui.Dropdown.V1 exposing
 
 import Accessibility.Style exposing (invisible)
 import Css
-import Css.Foreign
+import Css.Global
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -165,7 +165,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses c
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Dropdown-V1-"
-        [ Css.Foreign.class Dropdown
+        [ Css.Global.class Dropdown
             [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.gray75
             , Css.borderRadius (Css.px 8)

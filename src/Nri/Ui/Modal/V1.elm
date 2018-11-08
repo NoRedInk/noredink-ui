@@ -15,7 +15,7 @@ module Nri.Ui.Modal.V1 exposing
 -}
 
 import Css
-import Css.Foreign exposing (Snippet, body, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -144,10 +144,10 @@ open (and this node is present on the page).
 -}
 styleNode : Html msg
 styleNode =
-    [ Css.Foreign.body
+    [ Css.Global.body
         [ Css.overflow Css.hidden ]
     ]
-        |> Css.Foreign.global
+        |> Css.Global.global
         |> toUnstyled
 
 
@@ -169,7 +169,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses b
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Modal-"
-        [ Css.Foreign.class BackdropContainer
+        [ Css.Global.class BackdropContainer
             [ Css.height (Css.vh 100)
             , Css.left Css.zero
             , Css.overflow Css.hidden
@@ -178,26 +178,26 @@ styles =
             , Css.width (Css.pct 100)
             , Css.zIndex (Css.int 3)
             ]
-        , Css.Foreign.class BackdropContainerWarning
+        , Css.Global.class BackdropContainerWarning
             [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Nri.Ui.Colors.V1.gray20)
             ]
-        , Css.Foreign.class BackdropContainerInfo
+        , Css.Global.class BackdropContainerInfo
             [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Nri.Ui.Colors.V1.navy)
             ]
-        , Css.Foreign.class ClickCatcher
+        , Css.Global.class ClickCatcher
             [ Css.bottom Css.zero
             , Css.left Css.zero
             , Css.position Css.absolute
             , Css.right Css.zero
             , Css.top Css.zero
             ]
-        , Css.Foreign.class Content
+        , Css.Global.class Content
             [ Css.flexShrink (Css.int 4)
             , Css.overflowY Css.auto
             , Css.padding2 Css.zero (Css.px 45)
             , Css.width (Css.pct 100)
             ]
-        , Css.Foreign.class Footer
+        , Css.Global.class Footer
             [ Css.alignItems Css.center
             , Css.displayFlex
             , Css.flexDirection Css.column
@@ -206,28 +206,28 @@ styles =
             , Css.margin4 (Css.px 40) Css.zero Css.zero Css.zero
             , Css.width (Css.pct 100)
             ]
-        , Css.Foreign.class FooterItem
+        , Css.Global.class FooterItem
             [ Css.margin4 (Css.px 10) Css.zero Css.zero Css.zero
             , Css.firstChild
                 [ Css.margin Css.zero
                 ]
             ]
-        , Css.Foreign.class Heading
+        , Css.Global.class Heading
             [ Css.fontWeight (Css.int 700)
             , Css.lineHeight (Css.px 27)
             , Css.margin4 Css.zero Css.zero (Css.px 40) Css.zero
             ]
-        , Css.Foreign.class HeadingInfo
+        , Css.Global.class HeadingInfo
             [ Css.fontSize (Css.px 20)
             , Fonts.baseFont
             , Css.color Nri.Ui.Colors.V1.navy
             ]
-        , Css.Foreign.class HeadingWarning
+        , Css.Global.class HeadingWarning
             [ Css.fontSize (Css.px 20)
             , Fonts.baseFont
             , Css.color Nri.Ui.Colors.V1.red
             ]
-        , Css.Foreign.class ModalContainer
+        , Css.Global.class ModalContainer
             [ Css.alignItems Css.center
             , Css.displayFlex
             , Css.flexDirection Css.column

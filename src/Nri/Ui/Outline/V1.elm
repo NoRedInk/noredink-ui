@@ -21,7 +21,7 @@ module Nri.Ui.Outline.V1 exposing
 -}
 
 import Css
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (Attribute, Html)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Effects.V1
@@ -162,7 +162,7 @@ labelHeight =
 styles : Styles a Style b
 styles =
     Nri.Ui.Styles.V1.styles "Outline" <|
-        [ Css.Foreign.class Segment
+        [ Css.Global.class Segment
             [ Css.position Css.relative
             , Css.zIndex (Css.int 0)
 
@@ -170,15 +170,15 @@ styles =
             -- top level nodes.
             , Css.overflow Css.auto
             ]
-        , Css.Foreign.class Node
+        , Css.Global.class Node
             -- The node's relative positioning allows the connecting line to
             -- point upward relative from the node's bounding box.
             [ Css.position Css.relative
             , Css.display Css.block
 
             -- This selects all nodes on a level but the first.
-            , Css.Foreign.generalSiblings
-                [ Css.Foreign.class Node
+            , Css.Global.generalSiblings
+                [ Css.Global.class Node
                     -- Add some spacing between nodes of the same level.
                     [ Css.marginTop (Css.px 20)
                     , Css.before
@@ -190,9 +190,9 @@ styles =
                 ]
 
             -- Child nodes have a connecting line and are indented.
-            , Css.Foreign.descendants nestedNodeStyles
+            , Css.Global.descendants nestedNodeStyles
             ]
-        , Css.Foreign.class InnerNode
+        , Css.Global.class InnerNode
             [ Css.overflow Css.auto
 
             -- The position and zIndex create a new stacking context. Connecting
@@ -202,7 +202,7 @@ styles =
 
             -- Recursively assign color styles to the different nested levels of
             -- the outline structure.
-            , Css.Foreign.descendants
+            , Css.Global.descendants
                 (colorStyles
                     [ Nri.Ui.Palette.V1.cornflower
                     , Nri.Ui.Palette.V1.aqua
@@ -211,12 +211,12 @@ styles =
                     ]
                 )
             ]
-        , Css.Foreign.class GhostedNode
+        , Css.Global.class GhostedNode
             [ Css.opacity (Css.num 0.5)
             , Css.zIndex (Css.int -1)
             , Css.position Css.relative
             ]
-        , Css.Foreign.class Label
+        , Css.Global.class Label
             [ Css.border2 (Css.px 1) Css.solid
             , Css.padding2 Css.zero (Css.px 15)
             , Css.fontSize (Css.px 15)
@@ -233,7 +233,7 @@ styles =
             , Css.color Colors.gray20
             , Css.fontWeight Css.bold
             ]
-        , Css.Foreign.class Contents
+        , Css.Global.class Contents
             [ Css.borderRadius (Css.px 8)
             , Css.marginTop (Css.px (labelHeight / 2))
             , Css.marginLeft (Css.px (labelHeight / 2))
@@ -245,9 +245,9 @@ styles =
             , Css.marginRight (Css.px 5)
             , Css.marginBottom (Css.px 5)
             ]
-        , Css.Foreign.class SelectedNode
-            [ Css.Foreign.children
-                [ Css.Foreign.class Contents
+        , Css.Global.class SelectedNode
+            [ Css.Global.children
+                [ Css.Global.class Contents
                     [ Css.batch Nri.Ui.Effects.V1.selectionShadow
                     ]
                 ]
@@ -258,7 +258,7 @@ styles =
 
 nestedNodeStyles : List Snippet
 nestedNodeStyles =
-    [ Css.Foreign.class Node
+    [ Css.Global.class Node
         [ Css.marginTop (Css.px 20)
         , Css.before
             -- Draw the connect line. It is like an antenna pointing
@@ -268,14 +268,14 @@ nestedNodeStyles =
             , Css.borderBottom2 (Css.px 1) Css.solid
             , Css.batch lineStyles
             ]
-        , Css.Foreign.children
+        , Css.Global.children
             -- Indent this node relative to the parent.
-            [ Css.Foreign.class InnerNode
+            [ Css.Global.class InnerNode
                 [ Css.marginLeft (Css.px 50)
                 ]
             ]
         ]
-    , Css.Foreign.class CustomHtml
+    , Css.Global.class CustomHtml
         [ Css.marginLeft (Css.px 50)
         ]
     ]
@@ -309,10 +309,10 @@ curvedConnectingLineStyles =
     --         │
     --         ╰─ Child Node 3
     --
-    [ Css.Foreign.class Node
+    [ Css.Global.class Node
         [ Css.lastOfType
-            [ Css.Foreign.descendants
-                [ Css.Foreign.class Node
+            [ Css.Global.descendants
+                [ Css.Global.class Node
                     [ Css.lastOfType
                         [ Css.before
                             [ Css.borderRadius (Css.px 8)
@@ -338,11 +338,11 @@ curvedConnectingLineStyles =
     --         │
     --         ╰─ Child Node 2
     --
-    , Css.Foreign.class Node
-        [ Css.Foreign.descendants
-            [ Css.Foreign.class Node
-                [ Css.Foreign.descendants
-                    [ Css.Foreign.class Node
+    , Css.Global.class Node
+        [ Css.Global.descendants
+            [ Css.Global.class Node
+                [ Css.Global.descendants
+                    [ Css.Global.class Node
                         [ Css.lastOfType
                             [ Css.before
                                 [ Css.borderRadius (Css.px 8)
@@ -363,13 +363,13 @@ colorStyles palettes =
             []
 
         palette :: rest ->
-            [ Css.Foreign.class InnerNode
-                [ Css.Foreign.descendants (colorStyles rest)
+            [ Css.Global.class InnerNode
+                [ Css.Global.descendants (colorStyles rest)
                 ]
-            , Css.Foreign.class Contents
+            , Css.Global.class Contents
                 [ Css.backgroundColor palette.background
                 ]
-            , Css.Foreign.class Label
+            , Css.Global.class Label
                 [ Css.color palette.primary
                 , Css.borderColor palette.border
                 ]

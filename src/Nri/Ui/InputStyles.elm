@@ -15,7 +15,7 @@ module Nri.Ui.InputStyles exposing
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.CssFlexBoxWithVendorPrefix as FlexBox

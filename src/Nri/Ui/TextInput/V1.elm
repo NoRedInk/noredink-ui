@@ -26,7 +26,7 @@ module Nri.Ui.TextInput.V1 exposing
 
 import Accessibility.Style
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
@@ -156,11 +156,11 @@ styles =
             ]
     in
     Nri.Ui.Styles.V1.styles "Nri-Ui-TextInput-"
-        [ Css.Foreign.selector "input[type=text]"
-            [ Css.Foreign.withClass Input inputStyle ]
-        , Css.Foreign.selector "input[type=number]"
-            [ Css.Foreign.withClass Input inputStyle ]
-        , Css.Foreign.class OverlappingLabel
+        [ Css.Global.selector "input[type=text]"
+            [ Css.Global.withClass Input inputStyle ]
+        , Css.Global.selector "input[type=number]"
+            [ Css.Global.withClass Input inputStyle ]
+        , Css.Global.class OverlappingLabel
             [ Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.left (Css.px 10)
             , Css.top (Css.px 0)
@@ -171,18 +171,18 @@ styles =
             , Css.position Css.absolute
             , Css.fontWeight (int 600)
             ]
-        , Css.Foreign.class OverlappingLabelInput
+        , Css.Global.class OverlappingLabelInput
             [ Css.position Css.relative
             ]
-        , Css.Foreign.class IsInError
-            [ Css.Foreign.children
-                [ Css.Foreign.class Input
-                    [ Css.Foreign.withClass IsInErrorInput
+        , Css.Global.class IsInError
+            [ Css.Global.children
+                [ Css.Global.class Input
+                    [ Css.Global.withClass IsInErrorInput
                         [ borderColor purple
                         , focus [ borderColor purple ]
                         ]
                     ]
-                , Css.Foreign.class OverlappingLabel
+                , Css.Global.class OverlappingLabel
                     [ color purple
                     ]
                 ]

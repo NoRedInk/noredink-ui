@@ -161,7 +161,7 @@ module Nri.Ui.Icon.V2 exposing
 import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import EventExtras
 import Html
 import Html.Attributes as Attr exposing (..)
@@ -807,9 +807,9 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Icon-V1-"
-        [ Css.Foreign.class Disabled
+        [ Css.Global.class Disabled
             [ Css.property "cursor" "not-allowed" ]
-        , Css.Foreign.class Button
+        , Css.Global.class Button
             [ backgroundColor transparent
             , border zero
             , color Nri.Ui.Colors.V1.azure
@@ -820,7 +820,7 @@ styles =
                 [ backgroundColor transparent
                 ]
             ]
-        , Css.Foreign.class Link
+        , Css.Global.class Link
             [ color Nri.Ui.Colors.V1.azure
             , display inlineBlock
             , fontFamily inherit
@@ -828,14 +828,14 @@ styles =
             , padding zero
             , visited [ color Nri.Ui.Colors.V1.azure ]
             ]
-        , Css.Foreign.class SmallIcon
+        , Css.Global.class SmallIcon
             [ Css.width (px 20)
             , Css.height (px 20)
             ]
-        , Css.Foreign.class MediumIcon
+        , Css.Global.class MediumIcon
             [ Css.width (px 25)
             , Css.height (px 25)
             ]
-        , Css.Foreign.class SvgIconContainer
+        , Css.Global.class SvgIconContainer
             [ fill currentColor ]
         ]

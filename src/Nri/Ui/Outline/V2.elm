@@ -19,7 +19,7 @@ module Nri.Ui.Outline.V2 exposing
 -}
 
 import Css
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
@@ -186,8 +186,8 @@ nodeStyles =
         , Css.display Css.block
 
         -- This selects all nodes on a level but the first.
-        , Css.Foreign.generalSiblings
-            [ Css.Foreign.selector "[data-is-node]"
+        , Css.Global.generalSiblings
+            [ Css.Global.selector "[data-is-node]"
                 -- Add some spacing between nodes of the same level.
                 [ Css.marginTop (Css.px 20)
                 , Css.before
@@ -199,8 +199,8 @@ nodeStyles =
             ]
 
         -- Child nodes have a connecting line and are indented.
-        , Css.Foreign.descendants
-            [ Css.Foreign.selector "[data-is-node]"
+        , Css.Global.descendants
+            [ Css.Global.selector "[data-is-node]"
                 [ Css.marginTop (Css.px 20)
                 , Css.before
                     -- Draw the connect line. It is like an antenna pointing
@@ -210,14 +210,14 @@ nodeStyles =
                     , Css.borderBottom2 (Css.px 1) Css.solid
                     , Css.batch lineStyles
                     ]
-                , Css.Foreign.children
+                , Css.Global.children
                     -- Indent this node relative to the parent.
-                    [ Css.Foreign.selector "[data-is-inner-node]"
+                    [ Css.Global.selector "[data-is-inner-node]"
                         [ Css.marginLeft (Css.px 50)
                         ]
                     ]
                 ]
-            , Css.Foreign.selector "[data-is-custom-html]"
+            , Css.Global.selector "[data-is-custom-html]"
                 [ Css.marginLeft (Css.px 50)
                 ]
             ]
@@ -246,8 +246,8 @@ nodeStyles =
         --         ╰─ Child Node 3
         --
         , Css.lastOfType
-            [ Css.Foreign.descendants
-                [ Css.Foreign.selector "[data-is-node]"
+            [ Css.Global.descendants
+                [ Css.Global.selector "[data-is-node]"
                     [ Css.lastOfType
                         [ Css.before
                             [ Css.borderRadius (Css.px 8)
@@ -272,10 +272,10 @@ nodeStyles =
         --         │
         --         ╰─ Child Node 2
         --
-        , Css.Foreign.descendants
-            [ Css.Foreign.selector "[data-is-node]"
-                [ Css.Foreign.descendants
-                    [ Css.Foreign.selector "[data-is-node]"
+        , Css.Global.descendants
+            [ Css.Global.selector "[data-is-node]"
+                [ Css.Global.descendants
+                    [ Css.Global.selector "[data-is-node]"
                         [ Css.lastOfType
                             [ Css.before
                                 [ Css.borderRadius (Css.px 8)
@@ -300,7 +300,7 @@ innerNodeStyles =
 
         -- Recursively assign color styles to the different nested levels of
         -- the outline structure.
-        , Css.Foreign.descendants
+        , Css.Global.descendants
             (colorStyles
                 [ Nri.Ui.Palette.V1.cornflower
                 , Nri.Ui.Palette.V1.aqua
@@ -360,8 +360,8 @@ contentsStyles =
 selectedNodeStyles : Css.Style
 selectedNodeStyles =
     Css.batch
-        [ Css.Foreign.children
-            [ Css.Foreign.selector "[data-is-contents]"
+        [ Css.Global.children
+            [ Css.Global.selector "[data-is-contents]"
                 [ Css.batch Nri.Ui.Effects.V1.selectionShadow
                 ]
             ]
@@ -375,13 +375,13 @@ colorStyles palettes =
             []
 
         palette :: rest ->
-            [ Css.Foreign.selector "[data-is-inner-node]"
-                [ Css.Foreign.descendants (colorStyles rest)
+            [ Css.Global.selector "[data-is-inner-node]"
+                [ Css.Global.descendants (colorStyles rest)
                 ]
-            , Css.Foreign.selector "[data-is-contents]"
+            , Css.Global.selector "[data-is-contents]"
                 [ Css.backgroundColor palette.background
                 ]
-            , Css.Foreign.selector "[data-is-label]"
+            , Css.Global.selector "[data-is-label]"
                 [ Css.color palette.primary
                 , Css.borderColor palette.border
                 ]

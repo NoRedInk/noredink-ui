@@ -18,7 +18,7 @@ module Nri.Ui.Table.V1 exposing
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Nri.Ui.Colors.V1 exposing (..)
@@ -189,39 +189,39 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Table-V1-"
-        [ Css.Foreign.class Headers
+        [ Css.Global.class Headers
             [ borderBottom3 (px 3) solid gray75
             , height (px 45)
             , fontSize (px 15)
             ]
-        , Css.Foreign.class Header
+        , Css.Global.class Header
             [ padding4 (px 15) (px 12) (px 11) (px 12)
             , textAlign left
             , fontWeight bold
             ]
-        , Css.Foreign.class Row
+        , Css.Global.class Row
             [ height (px 45)
             , fontSize (px 14)
             , color gray20
             , pseudoClass "nth-child(odd)"
                 [ backgroundColor gray96 ]
             ]
-        , Css.Foreign.class Cell
+        , Css.Global.class Cell
             [ width (px 300)
             , padding2 (px 14) (px 10)
             ]
-        , Css.Foreign.class LoadingContent
+        , Css.Global.class LoadingContent
             [ width (pct 100)
             , display inlineBlock
             , height (Css.em 1)
             , borderRadius (Css.em 1)
             , backgroundColor gray75
             ]
-        , Css.Foreign.class LoadingCell
+        , Css.Global.class LoadingCell
             flashAnimation
-        , Css.Foreign.class LoadingTable
+        , Css.Global.class LoadingTable
             fadeInAnimation
-        , Css.Foreign.class Table
+        , Css.Global.class Table
             [ borderCollapse collapse
             , baseFont
             ]

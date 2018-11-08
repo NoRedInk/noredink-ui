@@ -33,7 +33,7 @@ module Nri.Ui.Text.V1 exposing
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (..)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -235,7 +235,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles namespace
-        [ Css.Foreign.class Heading
+        [ Css.Global.class Heading
             [ Fonts.baseFont
             , fontSize (px 30)
             , color navy
@@ -243,7 +243,7 @@ styles =
             , fontWeight (int 700)
             , margin zero
             ]
-        , Css.Foreign.class Tagline
+        , Css.Global.class Tagline
             [ Fonts.baseFont
             , fontSize (px 20)
             , color gray45
@@ -251,7 +251,7 @@ styles =
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)
             ]
-        , Css.Foreign.class SubHeading
+        , Css.Global.class SubHeading
             [ Fonts.baseFont
             , fontSize (px 20)
             , color navy
@@ -259,7 +259,7 @@ styles =
             , fontWeight (int 700)
             , margin4 (px 20) (px 0) (px 10) (px 0)
             ]
-        , Css.Foreign.class SmallHeading
+        , Css.Global.class SmallHeading
             [ Fonts.baseFont
             , fontSize (px 16)
             , color gray20
@@ -267,7 +267,7 @@ styles =
             , fontWeight (int 700)
             , margin zero
             ]
-        , Css.Foreign.class MediumBody
+        , Css.Global.class MediumBody
             [ Fonts.baseFont
             , fontSize (px 18)
             , color gray20
@@ -275,7 +275,7 @@ styles =
             , fontWeight (int 400)
             , margin4 (px 10) (px 0) (px 0) (px 0)
             ]
-        , Css.Foreign.class SmallBody
+        , Css.Global.class SmallBody
             [ Fonts.baseFont
             , fontSize (px 15)
             , color gray20
@@ -283,7 +283,7 @@ styles =
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
-        , Css.Foreign.class SmallBodyGray
+        , Css.Global.class SmallBodyGray
             [ Fonts.baseFont
             , fontSize (px 15)
             , color gray45
@@ -291,7 +291,7 @@ styles =
             , fontWeight (int 400)
             , margin4 (px 7) (px 0) (px 0) (px 0)
             ]
-        , Css.Foreign.class Caption
+        , Css.Global.class Caption
             [ Fonts.baseFont
             , fontSize (px 13)
             , color gray45
@@ -299,7 +299,7 @@ styles =
             , fontWeight (int 400)
             , margin4 (px 5) (px 0) (px 0) (px 0)
             ]
-        , Css.Foreign.class Text
+        , Css.Global.class Text
             [ padding zero
             , textAlign left
             , firstChild

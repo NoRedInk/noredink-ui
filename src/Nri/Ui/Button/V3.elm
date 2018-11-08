@@ -48,7 +48,7 @@ import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Style)
-import Css.Foreign
+import Css.Global
 import EventExtras.Styled as EventExtras
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
@@ -749,15 +749,15 @@ sizeStyle size width elementType =
     , Css.borderWidth (Css.px 1)
     , Css.borderBottomWidth (Css.px config.shadowHeight)
     , Css.batch widthAttributes
-    , Css.Foreign.descendants
-        [ Css.Foreign.img
+    , Css.Global.descendants
+        [ Css.Global.img
             [ Css.height (Css.px config.imageHeight)
             , Css.marginRight (Css.px <| config.imageHeight / 6)
             , Css.position Css.relative
             , Css.bottom (Css.px 2)
             , Css.verticalAlign Css.middle
             ]
-        , Css.Foreign.svg
+        , Css.Global.svg
             [ Css.height (Css.px config.imageHeight) |> Css.important
             , Css.width (Css.px config.imageHeight) |> Css.important
             , Css.marginRight (Css.px <| config.imageHeight / 6)
@@ -765,7 +765,7 @@ sizeStyle size width elementType =
             , Css.bottom (Css.px 2)
             , Css.verticalAlign Css.middle
             ]
-        , Css.Foreign.svg
+        , Css.Global.svg
             [ Css.important <| Css.height (Css.px config.imageHeight)
             , Css.important <| Css.width Css.auto
             , Css.maxWidth (Css.px (config.imageHeight * 1.25))

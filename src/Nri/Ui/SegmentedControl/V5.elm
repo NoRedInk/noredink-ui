@@ -9,7 +9,7 @@ module Nri.Ui.SegmentedControl.V5 exposing (Config, Icon, Option, styles, view, 
 import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html
 import Html.Attributes
 import Html.Events
@@ -102,11 +102,11 @@ type CssClass
 styles : Nri.Ui.Styles.V1.Styles Never CssClass msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-SegmentedControl-V5-"
-        [ Css.Foreign.class SegmentedControl
+        [ Css.Global.class SegmentedControl
             [ FlexBox.displayFlex
             , cursor pointer
             ]
-        , Css.Foreign.class Tab
+        , Css.Global.class Tab
             [ padding2 (px 6) (px 20)
             , height (px 45)
             , Fonts.baseFont
@@ -129,15 +129,15 @@ styles =
             , FlexBox.flexGrow 1
             , textAlign center
             ]
-        , Css.Foreign.class IconContainer
+        , Css.Global.class IconContainer
             [ marginRight (px 10)
             ]
-        , Css.Foreign.class Focused
+        , Css.Global.class Focused
             [ backgroundColor Colors.glacier
             , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
             , color Colors.gray20
             ]
-        , Css.Foreign.class Unfocused
+        , Css.Global.class Unfocused
             [ backgroundColor Colors.white
             , boxShadow5 inset zero (px -2) zero Colors.azure
             , color Colors.azure

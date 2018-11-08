@@ -35,7 +35,7 @@ import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (Attribute, Html)
 import Html.Attributes
 import Html.Events
@@ -270,7 +270,7 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Tabs-"
-        [ Css.Foreign.class Container
+        [ Css.Global.class Container
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd
             , Css.borderBottom (Css.px 1)
@@ -278,7 +278,7 @@ styles =
             , Css.borderBottomColor Nri.Ui.Colors.V1.navy
             , Nri.Ui.Fonts.V1.baseFont
             ]
-        , Css.Foreign.class Title
+        , Css.Global.class Title
             [ Css.flexGrow (Css.int 2)
             , Css.fontSize (Css.px 30)
             , Css.fontWeight Css.bold
@@ -288,19 +288,19 @@ styles =
             , Css.color Nri.Ui.Colors.V1.navy
             , Css.width (Css.px 430)
             ]
-        , Css.Foreign.class (Tabs Left)
+        , Css.Global.class (Tabs Left)
             [ stylesTabs
             , Css.justifyContent Css.flexStart
             ]
-        , Css.Foreign.class (Tabs Center)
+        , Css.Global.class (Tabs Center)
             [ stylesTabs
             , Css.justifyContent Css.center
             ]
-        , Css.Foreign.class (Tabs Right)
+        , Css.Global.class (Tabs Right)
             [ stylesTabs
             , Css.justifyContent Css.flexEnd
             ]
-        , Css.Foreign.class (TabContainer False) <|
+        , Css.Global.class (TabContainer False) <|
             [ stylesTab
             , Css.backgroundColor Nri.Ui.Colors.V1.frost
             , Css.backgroundImage <|
@@ -309,14 +309,14 @@ styles =
                     (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 25))
                     [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 100) ]
             ]
-        , Css.Foreign.class (TabContainer True) <|
+        , Css.Global.class (TabContainer True) <|
             [ stylesTab
             , Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Nri.Ui.Colors.V1.white
             ]
-        , Css.Foreign.class TabContainerLink
+        , Css.Global.class TabContainerLink
             [ Css.color Nri.Ui.Colors.V1.navy
             , Css.hover [ Css.textDecoration Css.none ]
             , Css.focus [ Css.textDecoration Css.none ]
@@ -325,7 +325,7 @@ styles =
             , Css.position Css.relative
             , Css.textDecoration Css.none
             ]
-        , Css.Foreign.class TabClickableLink
+        , Css.Global.class TabClickableLink
             [ Css.color Nri.Ui.Colors.V1.navy
             , Css.display Css.inlineBlock
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)

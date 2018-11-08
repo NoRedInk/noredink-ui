@@ -7,7 +7,7 @@ module Nri.Ui.Divider.V1 exposing (styles, view)
 -}
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Styles.V1
@@ -40,24 +40,24 @@ type CssClasses
 styles : Nri.Ui.Styles.V1.Styles Never CssClasses msg
 styles =
     Nri.Ui.Styles.V1.styles "Nri-Ui-Divider-"
-        [ Css.Foreign.class Container
+        [ Css.Global.class Container
             [ Css.width (pct 100)
             , Css.displayFlex
             , Css.alignItems Css.center
             ]
-        , Css.Foreign.class LeftLine
+        , Css.Global.class LeftLine
             [ Css.width (px 10)
             , Css.height (px 1)
             , backgroundColor Colors.gray75
             , marginTop (px 2)
             ]
-        , Css.Foreign.class RightLine
+        , Css.Global.class RightLine
             [ Css.flexGrow (Css.int 1)
             , backgroundColor Colors.gray75
             , Css.height (px 1)
             , marginTop (px 2)
             ]
-        , Css.Foreign.class Title
+        , Css.Global.class Title
             [ margin2 zero (px 5)
             , fontSize (px 12)
             , color Colors.gray45

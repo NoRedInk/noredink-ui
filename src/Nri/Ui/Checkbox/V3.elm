@@ -19,7 +19,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import Html.Events exposing (defaultOptions)
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -252,7 +252,7 @@ viewCheckbox model config =
         [ css
             [ display block
             , height inherit
-            , descendants [ Css.Foreign.input [ display none ] ]
+            , descendants [ Css.Global.input [ display none ] ]
             ]
         , config.containerClasses
         , Attributes.id <| model.identifier ++ "-container"

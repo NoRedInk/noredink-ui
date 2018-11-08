@@ -18,7 +18,7 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css
-import Css.Foreign exposing (Snippet, body, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
 import Html.Styled
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
@@ -133,8 +133,8 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
             [ -- This global <style> node sets overflow to hidden on the body element,
               -- thereby preventing the page from scrolling behind the backdrop when the modal is
               -- open (and this node is present on the page).
-              Css.Foreign.global
-                [ Css.Foreign.body
+              Css.Global.global
+                [ Css.Global.body
                     [ Css.overflow Css.hidden ]
                 ]
             , case onDismiss of

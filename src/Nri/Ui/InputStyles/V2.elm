@@ -15,7 +15,7 @@ module Nri.Ui.InputStyles.V2 exposing
 -}
 
 import Css exposing (..)
-import Css.Foreign
+import Css.Global
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1
 
@@ -132,7 +132,7 @@ input theme isInError =
                 ]
     in
     batch
-        [ Css.Foreign.withClass "override-sass-styles"
+        [ Css.Global.withClass "override-sass-styles"
             [ case theme of
                 Standard ->
                     batch
@@ -151,8 +151,8 @@ input theme isInError =
                         , padding writingPadding
                         , paddingTop writingPaddingTop
                         , focus
-                            [ Css.Foreign.adjacentSiblings
-                                [ Css.Foreign.label
+                            [ Css.Global.adjacentSiblings
+                                [ Css.Global.label
                                     [ backgroundColor azure
                                     , color white
                                     , borderColor azure

@@ -20,7 +20,7 @@ module Nri.Ui.Styles.V1 exposing
 
 -}
 
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import DEPRECATED.Css.Namespace
 import Html exposing (Attribute, Html)
@@ -55,7 +55,7 @@ This will help you make sure you don't mismatch the namespace you're using.
 
     { css, class } =
         Nri.Ui.Styles.styles "Nri-Ui-MyWidget-"
-            [ Css.Foreign.class Container
+            [ Css.Global.class Container
                 [ backgroundColor Nri.Ui.Colors.V1.ochre ]
             ]
 

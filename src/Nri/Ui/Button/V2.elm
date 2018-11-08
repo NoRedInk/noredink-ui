@@ -46,7 +46,7 @@ import Accessibility exposing (..)
 import Accessibility.Role as Role
 import Accessibility.Widget as Widget
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import EventExtras
 import Html
 import Html.Attributes exposing (..)
@@ -649,7 +649,7 @@ styles : Styles.StylesWithAssets Never CssClasses msg { r | icons_xBlue_svg : As
 styles =
     let
         sizeStyle size config =
-            Css.Foreign.class (SizeStyle size)
+            Css.Global.class (SizeStyle size)
                 [ fontSize (px config.fontSize)
                 , borderRadius (px 8)
                 , Css.height (px config.height)
@@ -659,22 +659,22 @@ styles =
                 , minWidth (px config.minWidth)
                 , borderWidth (px 1)
                 , borderBottomWidth (px config.shadowHeight)
-                , Css.Foreign.withClass ExplicitWidth
+                , Css.Global.withClass ExplicitWidth
                     [ padding2 zero (px 4)
                     , boxSizing borderBox
                     ]
-                , Css.Foreign.withClass IsLink
+                , Css.Global.withClass IsLink
                     [ lineHeight (px config.height)
                     ]
-                , Css.Foreign.descendants
-                    [ Css.Foreign.img
+                , Css.Global.descendants
+                    [ Css.Global.img
                         [ Css.height (px config.imageHeight)
                         , marginRight (px <| config.imageHeight / 6)
                         , position relative
                         , bottom (px 2)
                         , verticalAlign middle
                         ]
-                    , Css.Foreign.svg
+                    , Css.Global.svg
                         [ Css.height (px config.imageHeight) |> important
                         , Css.width (px config.imageHeight) |> important
                         , marginRight (px <| config.imageHeight / 6)
@@ -682,7 +682,7 @@ styles =
                         , bottom (px 2)
                         , verticalAlign middle
                         ]
-                    , Css.Foreign.svg
+                    , Css.Global.svg
                         [ Css.important <| Css.height (px config.imageHeight)
                         , Css.important <| Css.width auto
                         , maxWidth (px (config.imageHeight * 1.25))
@@ -694,18 +694,18 @@ styles =
                     ]
 
                 -- Borderless buttons get bigger icons
-                , Css.Foreign.withClass (ColorsStyle BorderlessColors)
-                    [ Css.Foreign.descendants
-                        [ Css.Foreign.img
+                , Css.Global.withClass (ColorsStyle BorderlessColors)
+                    [ Css.Global.descendants
+                        [ Css.Global.img
                             [ Css.height (px (config.imageHeight * 1.6))
                             , marginRight (px (config.imageHeight * 1.6 / 6))
                             ]
-                        , Css.Foreign.svg
+                        , Css.Global.svg
                             [ Css.height (px (config.imageHeight * 1.6)) |> important
                             , Css.width (px (config.imageHeight * 1.6)) |> important
                             , marginRight (px (config.imageHeight * 1.6 / 6))
                             ]
-                        , Css.Foreign.svg
+                        , Css.Global.svg
                             [ Css.important <| Css.height (px (config.imageHeight * 1.6))
                             , Css.important <| Css.width auto
                             , maxWidth (px (config.imageHeight * 1.25))
@@ -718,7 +718,7 @@ styles =
                 ]
 
         styleStyle style config =
-            Css.Foreign.class (ColorsStyle style)
+            Css.Global.class (ColorsStyle style)
                 [ color config.text
                 , backgroundColor config.background
                 , fontWeight (int 700)
@@ -749,7 +749,7 @@ styles =
     in
     Styles.stylesWithAssets "Nri-Ui-Button-V2-" <|
         \assets ->
-            [ Css.Foreign.class Button
+            [ Css.Global.class Button
                 [ cursor pointer
                 , display inlineBlock
                 , -- Specifying the font can and should go away after bootstrap is removed from application.css
@@ -766,7 +766,7 @@ styles =
                 , Css.disabled
                     [ cursor notAllowed
                     ]
-                , Css.Foreign.withClass IsLink
+                , Css.Global.withClass IsLink
                     [ whiteSpace noWrap
                     ]
                 ]
@@ -827,7 +827,7 @@ styles =
                 , border = Nothing
                 , shadow = transparent
                 }
-            , Css.Foreign.class (ColorsStyle BorderlessColors)
+            , Css.Global.class (ColorsStyle BorderlessColors)
                 [ Css.hover
                     [ textDecoration underline
                     , Css.disabled
@@ -877,7 +877,7 @@ styles =
                 , border = Nothing
                 , shadow = Nri.Ui.Colors.V1.gray92
                 }
-            , Css.Foreign.class (ColorsStyle ActiveColors)
+            , Css.Global.class (ColorsStyle ActiveColors)
                 [ Css.boxShadow none
                 , Css.boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Nri.Ui.Colors.V1.gray20)
                 , border3 (px 1) solid Nri.Ui.Colors.V1.azure
@@ -889,31 +889,31 @@ styles =
                 , border = Nothing
                 , shadow = Nri.Ui.Colors.V1.greenDark
                 }
-            , Css.Foreign.class (ColorsStyle PremiumColors)
+            , Css.Global.class (ColorsStyle PremiumColors)
                 [ Css.property "box-shadow" "none"
                 , marginBottom zero
                 ]
-            , Css.Foreign.class (ColorsStyle InactiveColors)
-                [ Css.property "box-shadow" "none"
-                , Css.property "border" "none"
-                , marginBottom zero
-                ]
-            , Css.Foreign.class (ColorsStyle SuccessColors)
+            , Css.Global.class (ColorsStyle InactiveColors)
                 [ Css.property "box-shadow" "none"
                 , Css.property "border" "none"
                 , marginBottom zero
                 ]
-            , Css.Foreign.class (ColorsStyle ErrorColors)
+            , Css.Global.class (ColorsStyle SuccessColors)
                 [ Css.property "box-shadow" "none"
                 , Css.property "border" "none"
                 , marginBottom zero
                 ]
-            , Css.Foreign.class (ColorsStyle LoadingColors)
+            , Css.Global.class (ColorsStyle ErrorColors)
                 [ Css.property "box-shadow" "none"
                 , Css.property "border" "none"
                 , marginBottom zero
                 ]
-            , Css.Foreign.class Delete
+            , Css.Global.class (ColorsStyle LoadingColors)
+                [ Css.property "box-shadow" "none"
+                , Css.property "border" "none"
+                , marginBottom zero
+                ]
+            , Css.Global.class Delete
                 [ display inlineBlock
                 , backgroundImage (url <| AssetPath.url assets.icons_xBlue_svg)
                 , backgroundRepeat noRepeat
@@ -926,7 +926,7 @@ styles =
                 , margin2 zero (px 6)
                 , cursor pointer
                 ]
-            , Css.Foreign.class Toggled
+            , Css.Global.class Toggled
                 [ color Nri.Ui.Colors.V1.gray20
                 , backgroundColor Nri.Ui.Colors.V1.glacier
                 , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Nri.Ui.Colors.V1.gray20)
