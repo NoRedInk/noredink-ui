@@ -810,4 +810,4 @@ sizeStyle size width =
 
 styledName : String -> String
 styledName suffix =
-    "Nri-Ui-Button-V5-" ++ suffix
+    "Nri-Ui-Button-V6-" ++ suffix
