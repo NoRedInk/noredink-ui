@@ -14,6 +14,7 @@ import Examples.Page
 import Examples.SegmentedControl
 import Examples.Select
 import Examples.Table
+import Examples.Tabs
 import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
@@ -208,6 +209,7 @@ nriThemedModules model =
     , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Colors.example
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
+    , Examples.Tabs.example NoOp
     ]
 
 
