@@ -20,7 +20,7 @@ type Tab
 
 example : msg -> ModuleExample msg
 example noOp =
-    { filename = "Nri/Tabs.elm"
+    { filename = "Nri.Ui.Tabs.V2"
     , category = Behaviors
     , content =
         [ Tabs.view
