@@ -15,7 +15,7 @@ module Nri.Ui.TextArea.V3 exposing (view, writing, contentCreation, Height(..), 
 -}
 
 import Accessibility.Styled.Style
-import Css exposing ((|+|), px)
+import Css exposing (plus, px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -187,12 +187,12 @@ calculateMinHeight textAreaStyle specifiedHeight =
 
 singleLineHeight : Css.Px
 singleLineHeight =
-    InputStyles.inputPaddingVertical |+| InputStyles.inputLineHeight |+| InputStyles.inputPaddingVertical
+    px (.numericValue InputStyles.inputPaddingVertical + .numericValue InputStyles.inputLineHeight + .numericValue InputStyles.inputPaddingVertical)
 
 
 writingSingleLineHeight : Css.Px
 writingSingleLineHeight =
-    InputStyles.writingPaddingTop |+| InputStyles.writingLineHeight |+| InputStyles.writingPadding
+    px (.numericValue InputStyles.writingPaddingTop + .numericValue InputStyles.writingLineHeight + .numericValue InputStyles.writingPadding)
 
 
 {-| -}

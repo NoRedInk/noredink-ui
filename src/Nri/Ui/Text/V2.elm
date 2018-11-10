@@ -28,7 +28,6 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Styles.V1
 
 
 {-| This is a Page Heading.

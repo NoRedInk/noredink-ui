@@ -33,7 +33,6 @@ import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
