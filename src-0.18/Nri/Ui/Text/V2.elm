@@ -235,7 +235,7 @@ noWidow inputs =
         -- this value is a unicode non-breaking space since Elm
         -- doesn't support named character entities
         nbsp =
-            "\u{00A0}"
+            " "
 
         words =
             String.split " " inputs
