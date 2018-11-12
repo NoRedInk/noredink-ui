@@ -29,7 +29,7 @@ import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Html.V2 as HtmlExtra
+import Nri.Ui.Html.V3 as HtmlExtra
 
 
 {-| -}

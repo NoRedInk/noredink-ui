@@ -7,6 +7,7 @@ import Html.Styled
 import Nri.Ui.Select.V1
 import Nri.Ui.Select.V2
 import Nri.Ui.Select.V3
+import Nri.Ui.Select.V5
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
@@ -18,6 +19,14 @@ spec =
         [ describe "V1" (viewSuite Nri.Ui.Select.V1.view)
         , describe "V2" (viewSuite Nri.Ui.Select.V2.view)
         , describe "V3" (viewSuite (Nri.Ui.Select.V3.view >> Html.Styled.toUnstyled))
+        , describe "V5"
+            (viewSuite
+                (\config ->
+                    { choices = config.choices, current = config.current, id = Nothing, valueToString = identity }
+                        |> Nri.Ui.Select.V5.view
+                        |> Html.Styled.toUnstyled
+                )
+            )
         ]
 
 

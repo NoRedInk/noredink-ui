@@ -1,4 +1,7 @@
-module Examples.Tabs exposing (example)
+module Examples.Tabs exposing
+    ( example
+    , Tab(..)
+    )
 
 {-|
 
@@ -6,11 +9,10 @@ module Examples.Tabs exposing (example)
 
 -}
 
-import Assets exposing (assets)
 import Html.Styled as Html
 import List.Zipper
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Tabs.V2 as Tabs
+import Nri.Ui.Tabs.V3 as Tabs
 
 
 type Tab
@@ -18,15 +20,21 @@ type Tab
     | Second
 
 
-example : msg -> ModuleExample msg
-example noOp =
+example : (Tab -> msg) -> Tab -> ModuleExample msg
+example changeTab tab =
     { filename = "Nri.Ui.Tabs.V2"
     , category = Behaviors
     , content =
         [ Tabs.view
             { title = Nothing
-            , onSelect = \_ -> noOp
-            , tabs = List.Zipper.Zipper [ Tabs.Tab "First tab" First ] (Tabs.Tab "Second tab" Second) []
+            , onSelect = changeTab
+            , tabs =
+                case tab of
+                    First ->
+                        List.Zipper.Zipper [] (Tabs.Tab "First tab" First) [ Tabs.Tab "Second tab" Second ]
+
+                    Second ->
+                        List.Zipper.Zipper [ Tabs.Tab "First tab" First ] (Tabs.Tab "Second tab" Second) []
             , content =
                 \id ->
                     case id of
@@ -36,6 +44,13 @@ example noOp =
                         Second ->
                             Html.text "Second"
             , alignment = Tabs.Center
+            }
+        , Tabs.links
+            { title = Nothing
+            , content = Html.text "Links"
+            , alignment = Tabs.Left
+            , tabs =
+                List.Zipper.Zipper [] (Tabs.TabLink "Nowhere" Nothing) [ Tabs.TabLink "Elm" (Just "http://elm-lang.org") ]
             }
         ]
     }

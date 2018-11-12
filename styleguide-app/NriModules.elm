@@ -37,6 +37,7 @@ type alias ModuleStates =
     , textInputExampleState : TextInputExample.State
     , disclosureIndicatorExampleState : Examples.DisclosureIndicator.State
     , modalExampleState : Examples.Modal.State
+    , tabsExampleState : Examples.Tabs.Tab
     }
 
 
@@ -52,6 +53,7 @@ init =
     , textInputExampleState = TextInputExample.init
     , disclosureIndicatorExampleState = Examples.DisclosureIndicator.init
     , modalExampleState = Examples.Modal.init
+    , tabsExampleState = Examples.Tabs.First
     }
 
 
@@ -67,6 +69,7 @@ type Msg
     | TextInputExampleMsg TextInputExample.Msg
     | DisclosureIndicatorExampleMsg Examples.DisclosureIndicator.Msg
     | ModalExampleMsg Examples.Modal.Msg
+    | TabsExampleMsg Examples.Tabs.Tab
     | NoOp
 
 
@@ -168,6 +171,11 @@ update msg moduleStates =
             , Cmd.map ModalExampleMsg cmd
             )
 
+        TabsExampleMsg tab ->
+            ( { moduleStates | tabsExampleState = tab }
+            , Cmd.none
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -209,7 +217,7 @@ nriThemedModules model =
     , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Colors.example
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
-    , Examples.Tabs.example NoOp
+    , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     ]
 
 
