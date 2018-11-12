@@ -16,7 +16,7 @@ diff: node_modules elm-stuff
 
 .PHONY: format
 format: node_modules
-	elm-format --validate src tests styleguide-app
+	elm-format --validate src && elm-format --validate --elm-version=0.18 tests styleguide-app
 
 .PHONY: clean
 clean:
