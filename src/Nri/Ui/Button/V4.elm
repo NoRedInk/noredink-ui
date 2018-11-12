@@ -167,7 +167,7 @@ button config content =
 customButton : List (Attribute msg) -> ButtonConfig msg -> ButtonContent -> Html msg
 customButton attributes config content =
     let
-        buttonStyle =
+        buttonStyle_ =
             case content.state of
                 Enabled ->
                     styleToColorPalette config.style
@@ -209,7 +209,7 @@ customButton attributes config content =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        (buttonStyles config.size config.width buttonStyle Button)
+        (buttonStyles config.size config.width buttonStyle_ Button)
         ([ Events.onClick config.onClick
          , Attributes.disabled disabled
          , Attributes.type_ "button"
@@ -443,11 +443,8 @@ linkWithTracking : msg -> LinkConfig -> Html msg
 linkWithTracking onTrack =
     linkBase
         "linkWithTracking"
-        [ Events.onWithOptions "click"
-            { stopPropagation = False
-            , preventDefault = True
-            }
-            (Json.Decode.succeed onTrack)
+        [ Events.preventDefaultOn "click"
+            (Json.Decode.succeed ( onTrack, True ))
         ]
 
 

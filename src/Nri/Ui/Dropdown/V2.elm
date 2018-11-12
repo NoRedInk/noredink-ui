@@ -20,8 +20,7 @@ import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (on, targetValue)
 import Json.Decode
 import Nri.Ui.Colors.V1
-import Nri.Ui.Util exposing (dashify)
-import String
+import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
 {-| This dropdown has atypical select tag behavior.
@@ -97,7 +96,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
                         msgsByVal : Dict.Dict String msg
                         msgsByVal =
                             optionEntries
-                                |> List.map (\{ val } -> ( toString val, onSelect val ))
+                                |> List.map (\opt -> ( dashify (removePunctuation opt.displayText), onSelect opt.val ))
                                 |> Dict.fromList
                     in
                     [ on "change" (Json.Decode.map msgForValue targetValue) ]
@@ -108,7 +107,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
                 [ for identifier ]
 
              else
-                [ for identifier, invisible ]
+                for identifier :: invisible
             )
             [ text defaultDisplayText ]
         , Html.styled select
@@ -124,7 +123,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
                   It will be really hard to track down and review all of those,
                   so we reset the margin here as a workaround.
                -}
-               style [ ( "margin", "0" ) ]
+               style "margin" "0"
              ]
                 ++ changeHandlers
             )
@@ -136,15 +135,15 @@ viewOption : String -> ViewOptionEntry a -> Html msg
 viewOption defaultDisplayText { isSelected, val, displayText } =
     if isSelected then
         option
-            [ value <| toString val
+            [ value <| dashify (removePunctuation displayText)
             , selected isSelected
-            , style [ ( "display", "none" ) ]
+            , style "display" "none"
             ]
             [ text defaultDisplayText ]
 
     else
         option
-            [ value <| toString val
+            [ value <| dashify (removePunctuation displayText)
             , selected isSelected
             ]
             [ text displayText ]

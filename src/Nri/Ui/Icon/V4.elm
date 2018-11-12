@@ -276,7 +276,7 @@ icon : { alt : String, icon : IconType } -> Html msg
 icon config =
     case config.icon of
         SvgIcon iconId ->
-            svg [ svgStyle ]
+            svg svgStyle
                 [ Svg.title [] [ RootHtml.text config.alt ]
                 , use [ xlinkHref ("#" ++ iconId) ] []
                 ]
@@ -296,9 +296,7 @@ decorativeIcon iconType =
     case iconType of
         SvgIcon iconId ->
             svg
-                [ svgStyle
-                , Role.img
-                ]
+                (Role.img :: svgStyle)
                 [ use [ xlinkHref ("#" ++ iconId) ] []
                 ]
                 |> Html.Styled.fromUnstyled
@@ -899,10 +897,9 @@ a string. Another workaround is to use the `Svg.Attributes.class` attribute but
 since `withNamespace` hides a call to `Html.Attributes.class` we can't do it
 properly.
 -}
-svgStyle : RootHtml.Attribute msg
+svgStyle : List (RootHtml.Attribute msg)
 svgStyle =
-    RootAttr.style
-        [ ( "fill", "currentColor" )
-        , ( "width", "100%" )
-        , ( "height", "100%" )
-        ]
+    [ RootAttr.style "fill" "currentColor"
+    , RootAttr.style "width" "100%"
+    , RootAttr.style "height" "100%"
+    ]

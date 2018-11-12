@@ -65,8 +65,8 @@ custom :
     , width : LengthOrAuto compatible
     }
     -> Column data msg
-custom { header, view, width } =
-    Column header view (Css.width width)
+custom options =
+    Column options.header options.view (Css.width options.width)
 
 
 
@@ -140,7 +140,7 @@ viewLoadingColumn rowIndex colIndex (Column _ _ width) =
 stylesLoadingColumn : Int -> Int -> Style -> List Style
 stylesLoadingColumn rowIndex colIndex width =
     [ width
-    , property "animation-delay" (toString (toFloat (rowIndex + colIndex) * 0.1) ++ "s")
+    , property "animation-delay" (String.fromFloat (toFloat (rowIndex + colIndex) * 0.1) ++ "s")
     ]
 
 

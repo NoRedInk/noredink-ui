@@ -2,6 +2,7 @@ module Nri.Ui.Html.V3 exposing
     ( role
     , onEsc, onEnter, onKeyUp, onEnterAndSpace
     , textFromList, oxfordifyWithHtml, nbsp
+    , Options, defaultOptions
     )
 
 {-| For all utils involving HTML. New version of Nri.Ui.Html.Extra.
@@ -12,13 +13,30 @@ module Nri.Ui.Html.V3 exposing
 
 @docs textFromList, oxfordifyWithHtml, nbsp
 
+@docs Options, defaultOptions
+
 -}
 
 import Char
 import Html.Styled as Html exposing (Attribute, Html, span, text)
 import Html.Styled.Attributes exposing (..)
-import Html.Styled.Events exposing (..)
+import Html.Styled.Events as Events exposing (..)
 import Json.Decode
+
+
+{-| -}
+type alias Options =
+    { preventDefault : Bool
+    , stopPropagation : Bool
+    }
+
+
+{-| -}
+defaultOptions : Options
+defaultOptions =
+    { preventDefault = False
+    , stopPropagation = False
+    }
 
 
 {-| Convenience for defining role attributes, e.g. <div role="tabpanel">
@@ -75,15 +93,22 @@ onEnterAndSpace msg =
 -}
 onKeyUp : Options -> (Int -> Maybe a) -> Attribute a
 onKeyUp options toMaybeMsg =
-    onWithOptions "keyup" options <|
-        Json.Decode.andThen
-            (\keyCode ->
-                keyCode
+    keyCode
+        |> Json.Decode.andThen
+            (\keyCode_ ->
+                keyCode_
                     |> toMaybeMsg
                     |> Maybe.map Json.Decode.succeed
-                    |> Maybe.withDefault (Json.Decode.fail (toString keyCode))
+                    |> Maybe.withDefault (Json.Decode.fail (String.fromInt keyCode_))
             )
-            keyCode
+        |> Json.Decode.map
+            (\data ->
+                { message = data
+                , stopPropagation = options.stopPropagation
+                , preventDefault = options.preventDefault
+                }
+            )
+        |> Events.custom "keyup"
 
 
 {-| Takes a list of strings, joins them with a space and returns it as a Html.text.

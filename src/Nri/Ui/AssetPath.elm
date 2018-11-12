@@ -1,4 +1,4 @@
-module Nri.Ui.AssetPath exposing (Asset(Asset), url)
+module Nri.Ui.AssetPath exposing (Asset(..), url)
 
 {-| Helpers for dealing with assets.
 
@@ -14,5 +14,5 @@ type Asset
 
 {-| -}
 url : Asset -> String
-url (Asset url) =
-    url
+url (Asset url_) =
+    url_

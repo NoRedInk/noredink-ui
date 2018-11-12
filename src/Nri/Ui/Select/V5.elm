@@ -48,7 +48,7 @@ view config =
         decodeValue string =
             Dict.get string valueLookup
                 |> Maybe.map Json.Decode.succeed
-                |> Maybe.withDefault (Json.Decode.fail ("Nri.Select: could not decode the value: " ++ toString string ++ "\nexpected one of: " ++ toString (Dict.keys valueLookup)))
+                |> Maybe.withDefault (Json.Decode.fail ("Nri.Select: could not decode the value: " ++ string ++ "\nexpected one of: " ++ String.join ", " (Dict.keys valueLookup)))
 
         onSelectHandler =
             on "change" (targetValue |> andThen decodeValue)

@@ -29,7 +29,7 @@ type alias DefaultPage msg =
 notFound : DefaultPage msg -> Html msg
 notFound defaultPage =
     view
-        { emoji = "\x1F914"
+        { emoji = "\u{1F914}"
         , title = "We couldn’t find that!"
         , subtitle = "Feel free to browse around, or check out our help center."
         , defaultPage = Just defaultPage
@@ -68,7 +68,7 @@ blocked details =
 noPermission : DefaultPage msg -> Html msg
 noPermission defaultPage =
     view
-        { emoji = "\x1F910"
+        { emoji = "\u{1F910}"
         , title = "You do not have access to this page!"
         , subtitle = "Talk to a site administrator if you believe you should have access to this page."
         , defaultPage = Just defaultPage

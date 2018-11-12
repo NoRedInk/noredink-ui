@@ -145,8 +145,8 @@ node { label, contents, children, selected, attrs, ghosted } =
 
 
 unlayout : NodeLayout msg -> Html msg
-unlayout (NodeLayout html) =
-    html
+unlayout (NodeLayout html_) =
+    html_
 
 
 type Style

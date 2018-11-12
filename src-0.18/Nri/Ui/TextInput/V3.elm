@@ -25,7 +25,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
 import Nri.Ui.InputStyles.V2 as InputStyles exposing (Theme)
-import Regex
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -140,10 +140,3 @@ view_ theme model =
                 ]
                 [ Html.text model.label ]
         ]
-
-
-{-| Convenience method for going from a string with spaces to a string with dashes.
--}
-dashify : String -> String
-dashify =
-    Regex.replace Regex.All (Regex.regex " ") (always "-")

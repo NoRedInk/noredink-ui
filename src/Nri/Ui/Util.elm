@@ -7,7 +7,12 @@ import Regex
 -}
 dashify : String -> String
 dashify =
-    Regex.replace Regex.All (Regex.regex " ") (always "-")
+    let
+        regex =
+            Regex.fromString " "
+                |> Maybe.withDefault Regex.never
+    in
+    Regex.replace regex (always "-")
 
 
 {-| Convenience method for removing punctuation
@@ -15,4 +20,9 @@ dashify =
 -}
 removePunctuation : String -> String
 removePunctuation =
-    Regex.replace Regex.All (Regex.regex "[^A-z0-9\\w\\s]") (always "")
+    let
+        regex =
+            Regex.fromString "[^A-z0-9\\w\\s]"
+                |> Maybe.withDefault Regex.never
+    in
+    Regex.replace regex (always "")
