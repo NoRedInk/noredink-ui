@@ -2,6 +2,13 @@
 
 UI widgets we use.
 
+## Dual publishing notes
+
+This package is published for both 0.18 and 0.19! The 0.18 source code is in src-0.18. While
+we still have codebases that utilize either version we'll need to make updates to any version
+after 6.0.0 in both src and src-0.18. Eventually, everything will be updated to 0.19 at which
+point we will delete src-0.18 and stop publishing for Elm 0.18.
+
 ## Versioning policy
 
 We try to avoid breaking changes and the associated major version bumps in this package. The reason for that is to avoid the following scenario:
