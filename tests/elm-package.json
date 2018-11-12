@@ -4,7 +4,7 @@
     "repository": "https://github.com/NoRedInk/noredink-ui.git",
     "license": "BSD3",
     "source-directories": [
-        "../src",
+        "../src-0.18",
         "."
     ],
     "exposed-modules": [],
