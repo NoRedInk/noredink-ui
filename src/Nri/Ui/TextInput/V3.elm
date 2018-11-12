@@ -20,12 +20,12 @@ module Nri.Ui.TextInput.V3 exposing
 
 import Accessibility.Styled.Style as Accessibility
 import Css exposing (batch, center, position, px, relative, textAlign)
-import Css.Foreign
+import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
 import Nri.Ui.InputStyles.V2 as InputStyles exposing (Theme)
-import Regex
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -66,8 +66,8 @@ text =
 number : InputType (Maybe Int)
 number =
     InputType
-        { toString = Maybe.map toString >> Maybe.withDefault ""
-        , fromString = String.toInt >> Result.toMaybe
+        { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
+        , fromString = String.toInt
         , fieldType = "number"
         }
 
@@ -101,18 +101,18 @@ view_ theme model =
             , css
                 [ InputStyles.input theme model.isInError
                 , if theme == InputStyles.Writing then
-                    Css.Foreign.withClass "override-sass-styles"
+                    Css.Global.withClass "override-sass-styles"
                         [ textAlign center
                         , Css.height Css.auto
                         ]
 
                   else
-                    Css.Foreign.withClass "override-sass-styles"
+                    Css.Global.withClass "override-sass-styles"
                         [ Css.height (px 45)
                         ]
                 ]
             , placeholder model.placeholder
-            , defaultValue (inputType.toString model.value)
+            , value (inputType.toString model.value)
             , onInput (inputType.fromString >> model.onInput)
             , autofocus model.autofocus
             , type_ inputType.fieldType
@@ -134,16 +134,10 @@ view_ theme model =
 
           else
             Html.label
-                [ for idValue
-                , css [ InputStyles.label theme model.isInError ]
-                , Accessibility.invisible
-                ]
+                ([ for idValue
+                 , css [ InputStyles.label theme model.isInError ]
+                 ]
+                    ++ Accessibility.invisible
+                )
                 [ Html.text model.label ]
         ]
-
-
-{-| Convenience method for going from a string with spaces to a string with dashes.
--}
-dashify : String -> String
-dashify =
-    Regex.replace Regex.All (Regex.regex " ") (always "-")

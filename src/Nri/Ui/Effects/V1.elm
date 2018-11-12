@@ -32,4 +32,4 @@ selectionShadow =
 
 colorToString : Css.Color -> String
 colorToString { red, green, blue } =
-    String.concat [ "rgb(", toString red, ",", toString green, ",", toString blue, ")" ]
+    String.concat [ "rgb(", String.fromInt red, ",", String.fromInt green, ",", String.fromInt blue, ")" ]

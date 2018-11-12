@@ -19,8 +19,8 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import Css.Foreign exposing (Snippet, children, descendants, everything, selector)
-import Html.Events exposing (defaultOptions)
+import Css.Global exposing (Snippet, children, descendants, everything, selector)
+import Html.Events
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
@@ -29,7 +29,7 @@ import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.AssetPath.Css
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Html.V3 as HtmlExtra
+import Nri.Ui.Html.V3 as HtmlExtra exposing (defaultOptions)
 
 
 {-| -}
@@ -96,7 +96,7 @@ selectedToMaybe selected =
 view : Assets a -> Model msg -> Html.Html msg
 view assets model =
     buildCheckbox assets model <|
-        Html.span [ Accessibility.Styled.Style.invisible ]
+        Html.span Accessibility.Styled.Style.invisible
             [ Html.text model.label ]
 
 
@@ -252,16 +252,15 @@ viewCheckbox model config =
         [ css
             [ display block
             , height inherit
-            , descendants [ Css.Foreign.input [ display none ] ]
+            , descendants [ Css.Global.input [ display none ] ]
             ]
         , config.containerClasses
         , Attributes.id <| model.identifier ++ "-container"
         , -- This is necessary to prevent event propagation.
           -- See https://github.com/elm-lang/html/issues/96
           Attributes.map (always model.noOpMsg) <|
-            Events.onWithOptions "click"
-                { defaultOptions | stopPropagation = True }
-                (Json.Decode.succeed "stop click propagation")
+            Events.stopPropagationOn "click"
+                (Json.Decode.succeed ( "stop click propagation", True ))
         ]
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)

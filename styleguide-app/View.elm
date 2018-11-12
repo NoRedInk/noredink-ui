@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Css exposing (..)
-import Css.Foreign exposing (Snippet)
+import Css.Global exposing (Snippet)
 import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
 import DEPRECATED.Css.Namespace
 import Headings
@@ -124,8 +124,8 @@ navigation route =
             [ Html.text "Categories" ]
         , Html.styled Html.ul
             [ margin4 zero zero (px 40) zero
-            , Css.Foreign.children
-                [ Css.Foreign.selector "li"
+            , Css.Global.children
+                [ Css.Global.selector "li"
                     [ margin2 (px 10) zero
                     ]
                 ]
@@ -184,21 +184,21 @@ sectionStyles =
 layoutFixer : List Snippet
 layoutFixer =
     -- TODO: remove when universal header seizes power
-    [ Css.Foreign.selector "#header-menu"
+    [ Css.Global.selector "#header-menu"
         [ Css.property "float" "none"
         ]
-    , Css.Foreign.selector "#page-container"
+    , Css.Global.selector "#page-container"
         [ maxWidth (px 1400)
         ]
-    , Css.Foreign.selector ".anonymous .log-in-button"
+    , Css.Global.selector ".anonymous .log-in-button"
         [ Css.property "float" "none"
         , right zero
         , top zero
         ]
-    , Css.Foreign.selector ".l-inline-blocks"
+    , Css.Global.selector ".l-inline-blocks"
         [ textAlign right
         ]
-    , Css.Foreign.everything
+    , Css.Global.everything
         [ Fonts.baseFont
         ]
     ]
@@ -208,12 +208,12 @@ styles : Stylesheet
 styles =
     (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-") <|
         List.concat
-            [ [ Css.Foreign.class NavLink
+            [ [ Css.Global.class NavLink
                     [ backgroundColor transparent
                     , borderStyle none
                     , color Colors.azure
                     ]
-              , Css.Foreign.class ActiveCategory
+              , Css.Global.class ActiveCategory
                     [ color Colors.navy
                     ]
               ]

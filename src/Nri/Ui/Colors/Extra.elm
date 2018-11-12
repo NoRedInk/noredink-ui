@@ -18,7 +18,7 @@ toCoreColor (Css.hex "#FFFFFF") -- "RGBA 255 255 255 1 : Color.Color"
 -}
 toCoreColor : Css.Color -> Color.Color
 toCoreColor cssColor =
-    Color.rgba cssColor.red cssColor.green cssColor.blue cssColor.alpha
+    Color.rgba (toFloat cssColor.red) (toFloat cssColor.green) (toFloat cssColor.blue) cssColor.alpha
 
 
 {-| Add an alpha property to a Css.Color

@@ -8,7 +8,7 @@ module Examples.Icon exposing (example)
 
 import Assets exposing (Assets, assets)
 import Css
-import Css.Foreign
+import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -191,8 +191,8 @@ viewIcon { alt, background, icon } =
                 , Css.width (Css.px 80)
                 , Css.margin (Css.px 10)
                 , Css.color azure
-                , Css.Foreign.descendants
-                    [ Css.Foreign.img
+                , Css.Global.descendants
+                    [ Css.Global.img
                         [ Css.maxWidth (Css.pct 100)
                         , Css.maxHeight (Css.pct 100)
                         ]

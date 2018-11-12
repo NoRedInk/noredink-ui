@@ -1,7 +1,7 @@
 module EventExtras exposing (onClickPreventDefaultForLinkWithHref)
 
 import Html
-import Html.Events exposing (..)
+import Html.Events as Events
 import Json.Decode
 
 
@@ -24,18 +24,16 @@ onClickPreventDefaultForLinkWithHref msg =
                 (Json.Decode.field "metaKey" Json.Decode.bool)
 
         succeedIfFalse : a -> Bool -> Json.Decode.Decoder a
-        succeedIfFalse msg preventDefault =
+        succeedIfFalse msg_ preventDefault =
             case preventDefault of
                 False ->
-                    Json.Decode.succeed msg
+                    Json.Decode.succeed msg_
 
                 True ->
                     Json.Decode.fail "succeedIfFalse: condition was True"
     in
-    onWithOptions "click"
-        { stopPropagation = False
-        , preventDefault = True
-        }
+    Events.preventDefaultOn "click"
         (isSpecialClick
             |> Json.Decode.andThen (succeedIfFalse msg)
+            |> Json.Decode.map (\a -> ( a, True ))
         )

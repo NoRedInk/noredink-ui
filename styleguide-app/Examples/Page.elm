@@ -7,7 +7,7 @@ module Examples.Page exposing (example)
 -}
 
 import Css
-import Css.Foreign exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Headings
 import Html.Styled as Html exposing (Html)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
@@ -20,8 +20,8 @@ example noOp =
     { filename = "Nri/Ui/Page/V1.elm"
     , category = Pages
     , content =
-        [ Css.Foreign.global
-            [ Css.Foreign.selector "[data-page-container]"
+        [ Css.Global.global
+            [ Css.Global.selector "[data-page-container]"
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
                 ]
