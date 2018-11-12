@@ -63,7 +63,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
                 [ text defaultDisplayText ]
 
         options =
-            List.map (viewOption defaultDisplayText) optionEntries
+            List.indexedMap (viewOption defaultDisplayText) optionEntries
 
         identifier =
             dashify (String.toLower defaultDisplayText)
@@ -96,7 +96,7 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
                         msgsByVal : Dict.Dict String msg
                         msgsByVal =
                             optionEntries
-                                |> List.map (\opt -> ( dashify (removePunctuation opt.displayText), onSelect opt.val ))
+                                |> List.indexedMap (\index opt -> ( String.fromInt index, onSelect opt.val ))
                                 |> Dict.fromList
                     in
                     [ on "change" (Json.Decode.map msgForValue targetValue) ]
@@ -131,11 +131,11 @@ viewWithLabelMarkup displayLabel defaultDisplayText optionEntries onSelect =
         ]
 
 
-viewOption : String -> ViewOptionEntry a -> Html msg
-viewOption defaultDisplayText { isSelected, val, displayText } =
+viewOption : String -> Int -> ViewOptionEntry a -> Html msg
+viewOption defaultDisplayText index { isSelected, val, displayText } =
     if isSelected then
         option
-            [ value <| dashify (removePunctuation displayText)
+            [ value <| String.fromInt index
             , selected isSelected
             , style "display" "none"
             ]
@@ -143,7 +143,7 @@ viewOption defaultDisplayText { isSelected, val, displayText } =
 
     else
         option
-            [ value <| dashify (removePunctuation displayText)
+            [ value <| String.fromInt index
             , selected isSelected
             ]
             [ text displayText ]
