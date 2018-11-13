@@ -9,7 +9,7 @@ import Headings
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V5 as Button
-import Nri.Ui.Table.V2 as Table
+import Nri.Ui.Table.V4 as Table
 
 
 {-| -}
@@ -25,7 +25,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Table.elm"
+    { filename = "Nri.Ui.Table.V4"
     , category = Layout
     , content =
         let
@@ -67,8 +67,7 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-        [ Table.keyframeStyles
-        , Headings.h4 [ Html.text "With header" ]
+        [ Headings.h4 [ Html.text "With header" ]
         , Table.view columns data
         , Headings.h4 [ Html.text "Without header" ]
         , Table.viewWithoutHeader columns data

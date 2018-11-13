@@ -2,8 +2,6 @@ module View exposing (view)
 
 import Css exposing (..)
 import Css.Global exposing (Snippet)
-import DEPRECATED.Css.File exposing (Stylesheet, compile, stylesheet)
-import DEPRECATED.Css.Namespace
 import Headings
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
@@ -20,7 +18,8 @@ import Update exposing (..)
 view : Model -> Html Msg
 view model =
     Html.div []
-        [ Html.styled Html.div
+        [ Css.Global.global layoutFixer
+        , Html.styled Html.div
             [ displayFlex
             , alignItems flexStart
             ]
@@ -166,16 +165,6 @@ navigation route =
         ]
 
 
-type Classes
-    = Section
-    | StyleGuideLayout
-    | StyleGuideContent
-    | CategoryMenu
-    | CategoryLinks
-    | ActiveCategory
-    | NavLink
-
-
 sectionStyles : Css.Style
 sectionStyles =
     Css.batch [ margin2 (px 40) zero ]
@@ -199,23 +188,9 @@ layoutFixer =
         [ textAlign right
         ]
     , Css.Global.everything
+        [ fontFamily inherit
+        ]
+    , Css.Global.body
         [ Fonts.baseFont
         ]
     ]
-
-
-styles : Stylesheet
-styles =
-    (stylesheet << DEPRECATED.Css.Namespace.namespace "Page-StyleGuide-") <|
-        List.concat
-            [ [ Css.Global.class NavLink
-                    [ backgroundColor transparent
-                    , borderStyle none
-                    , color Colors.azure
-                    ]
-              , Css.Global.class ActiveCategory
-                    [ color Colors.navy
-                    ]
-              ]
-            , layoutFixer
-            ]

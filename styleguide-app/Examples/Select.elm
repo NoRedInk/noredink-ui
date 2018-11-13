@@ -20,7 +20,7 @@ module Examples.Select exposing
 
 import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Select.V3 as Select
+import Nri.Ui.Select.V5 as Select
 
 
 {-| -}
@@ -58,6 +58,8 @@ init =
         , { label = "Burritos", value = "Burritos" }
         , { label = "Enchiladas", value = "Enchiladas" }
         ]
+    , id = Nothing
+    , valueToString = identity
     }
 
 
