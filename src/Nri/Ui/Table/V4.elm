@@ -272,7 +272,7 @@ fadeIn =
 flashAnimation : List Css.Style
 flashAnimation =
     [ animationName flash
-    , animationDuration (sec 2)
+    , property "animation-duration" "2s"
     , property "animation-iteration-count" "infinite"
     , opacity (num 0.6)
     ]
@@ -281,8 +281,8 @@ flashAnimation =
 fadeInAnimation : List Css.Style
 fadeInAnimation =
     [ animationName fadeIn
-    , animationDuration (sec 0.4)
-    , animationDelay (sec 0.2)
+    , property "animation-duration" "0.4s"
+    , property "animation-delay" "0.2s"
     , property "animation-fill-mode" "forwards"
     , animationIterationCount (int 1)
     , opacity (num 0)

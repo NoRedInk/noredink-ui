@@ -254,11 +254,12 @@ tableStyles =
 
 flash : Css.Animations.Keyframes {}
 flash =
-    Css.Animations.keyframes
-        [ ( 0, [ Css.Animations.opacity (Css.num 0.6) ] )
-        , ( 50, [ Css.Animations.opacity (Css.num 0.2) ] )
-        , ( 100, [ Css.Animations.opacity (Css.num 0.6) ] )
-        ]
+    Debug.log "" <|
+        Css.Animations.keyframes
+            [ ( 0, [ Css.Animations.opacity (Css.num 0.6) ] )
+            , ( 50, [ Css.Animations.opacity (Css.num 0.2) ] )
+            , ( 100, [ Css.Animations.opacity (Css.num 0.6) ] )
+            ]
 
 
 fadeIn : Css.Animations.Keyframes {}
@@ -272,7 +273,7 @@ fadeIn =
 flashAnimation : List Css.Style
 flashAnimation =
     [ animationName flash
-    , animationDuration (sec 2)
+    , property "animation-duration" "2s"
     , property "animation-iteration-count" "infinite"
     , opacity (num 0.6)
     ]
@@ -281,8 +282,8 @@ flashAnimation =
 fadeInAnimation : List Css.Style
 fadeInAnimation =
     [ animationName fadeIn
-    , animationDuration (sec 0.4)
-    , animationDelay (sec 0.2)
+    , property "animation-duration" "0.4s"
+    , property "animation-delay" "0.2s"
     , property "animation-fill-mode" "forwards"
     , animationIterationCount (int 1)
     , opacity (num 0)
