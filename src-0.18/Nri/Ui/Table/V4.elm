@@ -254,12 +254,11 @@ tableStyles =
 
 flash : Css.Animations.Keyframes {}
 flash =
-    Debug.log "" <|
-        Css.Animations.keyframes
-            [ ( 0, [ Css.Animations.opacity (Css.num 0.6) ] )
-            , ( 50, [ Css.Animations.opacity (Css.num 0.2) ] )
-            , ( 100, [ Css.Animations.opacity (Css.num 0.6) ] )
-            ]
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.opacity (Css.num 0.6) ] )
+        , ( 50, [ Css.Animations.opacity (Css.num 0.2) ] )
+        , ( 100, [ Css.Animations.opacity (Css.num 0.6) ] )
+        ]
 
 
 fadeIn : Css.Animations.Keyframes {}
