@@ -248,6 +248,12 @@ viewCheckbox :
         }
     -> Html.Html msg
 viewCheckbox model config =
+    let
+        toggledValue =
+            selectedToMaybe model.selected
+                |> Maybe.withDefault False
+                |> not
+    in
     Html.Styled.span
         [ css
             [ display block
@@ -266,7 +272,7 @@ viewCheckbox model config =
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
             [ Widget.label model.label
-            , Events.onCheck model.setterMsg
+            , Events.onClick (model.setterMsg toggledValue)
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
             ]
