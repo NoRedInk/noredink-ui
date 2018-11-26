@@ -77,6 +77,5 @@ view config =
             , Css.cursor Css.pointer
             , Css.fontSize (Css.px 15)
             , Css.height (Css.px 45)
-            , Css.width (Css.pct 100)
             ]
             ([ onSelectHandler ] ++ extraAttrs)
