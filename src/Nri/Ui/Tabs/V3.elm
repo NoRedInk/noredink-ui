@@ -173,7 +173,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
                 )
                 Events.keyCode
         ]
-        [ Html.styled Html.button
+        [ Html.styled Html.div
             [ Css.color Nri.Ui.Colors.V1.navy
             , Css.hover [ Css.textDecoration Css.none ]
             , Css.focus [ Css.textDecoration Css.none ]
@@ -184,7 +184,6 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Css.property "background" "none"
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
-            , Css.border Css.zero
             , Css.cursor Css.pointer
             ]
             [ Attributes.fromUnstyled <| Accessibility.Role.tab
