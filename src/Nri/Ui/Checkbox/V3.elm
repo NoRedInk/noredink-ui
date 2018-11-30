@@ -271,7 +271,7 @@ viewCheckbox model config =
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
             [ Widget.label model.label
-            , Events.onClick (model.setterMsg toggledValue)
+            , Events.onCheck (\_ -> model.setterMsg toggledValue)
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
             ]
