@@ -1,8 +1,9 @@
 module Routes exposing (Route(..), fromLocation)
 
+import Browser.Navigation as Navigation
 import ModuleExample exposing (categoryFromString)
-import Navigation
-import UrlParser as Url exposing ((</>), custom, s, string, top)
+import Url exposing (Url)
+import Url.Parser as Url exposing ((</>), custom, s, string, top)
 
 
 type Route
@@ -22,10 +23,10 @@ route =
 
 category : Url.Parser (ModuleExample.Category -> a) a
 category =
-    custom "category" categoryFromString
+    custom "category" (categoryFromString >> Result.toMaybe)
 
 
-fromLocation : Navigation.Location -> Route
+fromLocation : Url -> Route
 fromLocation location =
-    Url.parseHash route location
+    Url.parse route location
         |> Maybe.withDefault All

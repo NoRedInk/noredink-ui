@@ -1,5 +1,6 @@
 module View exposing (view)
 
+import Browser exposing (Document)
 import Css exposing (..)
 import Css.Global exposing (Snippet)
 import Headings
@@ -15,8 +16,13 @@ import Routes as Routes exposing (Route)
 import Update exposing (..)
 
 
-view : Model -> Html Msg
+view : Model -> Document Msg
 view model =
+    { title = "Style Guide", body = [ view_ model |> Html.toUnstyled ] }
+
+
+view_ : Model -> Html Msg
+view_ model =
     Html.div []
         [ Css.Global.global layoutFixer
         , Html.styled Html.div
@@ -44,7 +50,7 @@ view model =
                             [ sectionStyles ]
                             []
                             [ newComponentsLink
-                            , Headings.h2 [ Html.text (toString category) ]
+                            , Headings.h2 [ Html.text (Debug.toString category) ]
                             , nriThemedModules model.moduleStates
                                 |> List.filter (\doodad -> category == doodad.category)
                                 |> List.map (ModuleExample.view True)
@@ -105,7 +111,7 @@ navigation route =
                       else
                         color Colors.azure
                     ]
-                    [ Attributes.href <| "#category/" ++ toString category ]
+                    [ Attributes.href <| "#category/" ++ Debug.toString category ]
                     [ Html.text (categoryForDisplay category) ]
                 ]
     in

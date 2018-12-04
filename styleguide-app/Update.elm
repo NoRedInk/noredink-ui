@@ -1,13 +1,15 @@
 module Update exposing (Msg(..), subscriptions, update)
 
+import Browser
 import Model exposing (..)
 import NriModules as NriModules
-import Routes as Routes exposing (Route)
+import Url exposing (Url)
 
 
 type Msg
     = UpdateModuleStates NriModules.Msg
-    | UrlChanged Route
+    | OnUrlRequest Browser.UrlRequest
+    | OnUrlChange Url
     | NoOp
 
 
@@ -23,10 +25,13 @@ update action model =
             , Cmd.map UpdateModuleStates cmd
             )
 
-        UrlChanged route ->
-            ( { model | route = route }
-            , Cmd.none
-            )
+        OnUrlRequest request ->
+            -- TODO
+            ( model, Cmd.none )
+
+        OnUrlChange route ->
+            -- TODO
+            ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )

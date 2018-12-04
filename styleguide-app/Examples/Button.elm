@@ -11,8 +11,8 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V5 as Button
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Button.V6 as Button
+import Nri.Ui.Icon.V4 as Icon
 
 
 {-| -}
@@ -43,7 +43,7 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri.Ui.Button.V5"
+    { filename = "Nri.Ui.Button.V7"
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
@@ -58,34 +58,35 @@ init assets =
         |> Control.field "icon (copyToClipboard has only one choice)"
             (Control.maybe False <|
                 Control.choice
-                    [ ( "Performance", Control.value (Icon.performance assets) )
-                    , ( "Lock", Control.value (Icon.lock assets) )
+                    ( "Performance", Control.value (Icon.performance assets) )
+                    [ ( "Lock", Control.value (Icon.lock assets) )
                     ]
             )
         |> Control.field "width"
             (Control.choice
-                [ ( "Nri.Ui.Button.V5.WidthExact 120", Control.value <| Button.WidthExact 120 )
-                , ( "Nri.Ui.Button.V5.WidthExact 70", Control.value <| Button.WidthExact 70 )
-                , ( "Nri.Ui.Button.V5.WidthUnbounded", Control.value <| Button.WidthUnbounded )
+                ( "Nri.Ui.Button.V7.WidthExact 120", Control.value <| Button.WidthExact 120 )
+                [ ( "Nri.Ui.Button.V7.WidthExact 70", Control.value <| Button.WidthExact 70 )
+                , ( "Nri.Ui.Button.V7.WidthUnbounded", Control.value <| Button.WidthUnbounded )
                 ]
             )
         |> Control.field "button type"
             (Control.choice
-                [ ( "Nri.Ui.Button.V5.button", Control.value Button )
-                , ( "Nri.Ui.Button.V5.link", Control.value Link )
-                , ( "Nri.Ui.Button.V5.copyToClipboard", Control.value CopyToClipboard )
+                ( "Nri.Ui.Button.V7.button", Control.value Button )
+                [ ( "Nri.Ui.Button.V7.link", Control.value Link )
+                , ( "Nri.Ui.Button.V7.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
         |> Control.field "state (button only)"
-            (Control.choice <|
-                List.map (\x -> ( toString x, Control.value x ))
-                    [ Button.Enabled
-                    , Button.Disabled
+            (Control.choice
+                ( Debug.toString Button.Enabled, Control.value Button.Enabled )
+                (List.map (\x -> ( Debug.toString x, Control.value x ))
+                    [ Button.Disabled
                     , Button.Error
                     , Button.Unfulfilled
                     , Button.Loading
                     , Button.Success
                     ]
+                )
             )
         |> State
 
@@ -123,7 +124,7 @@ viewButtonExamples assets messages (State control) =
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages sizes model
+    , buttons assets messages model
     , toggleButtons messages
     , Button.delete assets
         { label = "Delete Something"
@@ -163,10 +164,9 @@ allStyles =
 buttons :
     { r | teach_assignments_copyWhite_svg : Asset }
     -> ModuleMessages Msg parentMsg
-    -> List Button.ButtonSize
     -> Model
     -> Html parentMsg
-buttons assets messages sizes model =
+buttons assets messages model =
     let
         exampleRow style =
             List.concat
@@ -175,7 +175,7 @@ buttons assets messages sizes model =
                             [ verticalAlign middle
                             ]
                         ]
-                        [ text <| toString style ]
+                        [ text <| Debug.toString style ]
                   ]
                 , sizes
                     |> List.map (exampleCell style)
@@ -198,7 +198,7 @@ buttons assets messages sizes model =
                     Button.button
                         { size = size
                         , style = style
-                        , onClick = messages.showItWorked (toString ( style, size ))
+                        , onClick = messages.showItWorked (Debug.toString ( style, size ))
                         , width = model.width
                         }
                         { label = model.label
@@ -222,7 +222,7 @@ buttons assets messages sizes model =
     in
     List.concat
         [ [ sizes
-                |> List.map (\size -> th [] [ text <| toString size ])
+                |> List.map (\size -> th [] [ text <| Debug.toString size ])
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
         , allStyles

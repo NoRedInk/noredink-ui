@@ -1,28 +1,30 @@
 module Main exposing (init, main)
 
-import Html.Styled
+import Browser
+import Browser.Navigation exposing (Key)
 import Model exposing (..)
-import Navigation
 import NriModules as NriModules
 import Routes as Routes exposing (Route(..))
 import Update exposing (Msg(..), subscriptions, update)
+import Url exposing (Url)
 import View exposing (view)
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Navigation.program
-        (Routes.fromLocation >> UrlChanged)
+    Browser.application
         { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = view >> Html.Styled.toUnstyled
+        , view = view
+        , onUrlRequest = OnUrlRequest
+        , onUrlChange = OnUrlChange
         }
 
 
-init : Navigation.Location -> ( Model, Cmd Msg )
-init location =
-    ( { route = Routes.fromLocation location
+init : () -> Url -> Key -> ( Model, Cmd Msg )
+init () url _ =
+    ( { route = Routes.fromLocation url
       , moduleStates = NriModules.init
       }
     , Cmd.none

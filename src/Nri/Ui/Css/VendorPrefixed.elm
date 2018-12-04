@@ -19,11 +19,11 @@ prefixes =
 {-| Same as Css.property but vendor prefixed.
 -}
 property : String -> String -> Css.Style
-property prop value =
+property prop value_ =
     prefixes
         |> List.map
             (\prefix ->
-                Css.property (prefix ++ prop) value
+                Css.property (prefix ++ prop) value_
             )
         |> Css.batch
 
@@ -31,11 +31,11 @@ property prop value =
 {-| Same as Css.property but vendor prefixed.
 -}
 value : String -> String -> Css.Style
-value prop value =
+value prop value_ =
     prefixes
         |> List.map
             (\prefix ->
-                Css.property prop (prefix ++ value)
+                Css.property prop (prefix ++ value_)
             )
         |> Css.batch
 
