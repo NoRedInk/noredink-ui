@@ -190,6 +190,7 @@ viewHeader modalType title =
                , Css.margin2 Css.zero (Css.px 65)
                , Css.fontSize (Css.px 20)
                , Fonts.baseFont
+               , Css.textAlign Css.center
                ]
         )
         []
