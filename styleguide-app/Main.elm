@@ -23,9 +23,10 @@ main =
 
 
 init : () -> Url -> Key -> ( Model, Cmd Msg )
-init () url _ =
+init () url key =
     ( { route = Routes.fromLocation url
       , moduleStates = NriModules.init
+      , navigationKey = key
       }
     , Cmd.none
     )

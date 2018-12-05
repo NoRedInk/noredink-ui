@@ -2,8 +2,8 @@ module Routes exposing (Route(..), fromLocation)
 
 import Browser.Navigation as Navigation
 import ModuleExample exposing (categoryFromString)
+import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
-import Url.Parser as Url exposing ((</>), custom, s, string, top)
 
 
 type Route
@@ -12,21 +12,35 @@ type Route
     | All
 
 
-route : Url.Parser (Route -> a) a
+route : Parser Route
 route =
-    Url.oneOf
-        [ Url.map Category (s "category" </> category)
-        , Url.map Doodad (s "doodad" </> s "Nri" </> string)
-        , Url.map All top
+    Parser.oneOf
+        [ Parser.succeed Category
+            |. Parser.token "category/"
+            |= (pathComponent |> Parser.andThen category)
+        , Parser.succeed Doodad
+            |. Parser.token "doodad/Nri/"
+            |= pathComponent
+        , Parser.succeed All
         ]
 
 
-category : Url.Parser (ModuleExample.Category -> a) a
-category =
-    custom "category" (categoryFromString >> Result.toMaybe)
+pathComponent : Parser String
+pathComponent =
+    Parser.getChompedString (Parser.chompUntilEndOr "/")
+
+
+category : String -> Parser ModuleExample.Category
+category string =
+    case categoryFromString string of
+        Ok c ->
+            Parser.succeed c
+
+        Err e ->
+            Parser.problem e
 
 
 fromLocation : Url -> Route
 fromLocation location =
-    Url.parse route location
-        |> Maybe.withDefault All
+    Parser.run route (Maybe.withDefault "" location.fragment)
+        |> Result.withDefault All

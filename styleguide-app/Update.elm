@@ -1,8 +1,10 @@
 module Update exposing (Msg(..), subscriptions, update)
 
-import Browser
+import Browser exposing (UrlRequest(..))
+import Browser.Navigation exposing (pushUrl)
 import Model exposing (..)
 import NriModules as NriModules
+import Routes
 import Url exposing (Url)
 
 
@@ -26,8 +28,12 @@ update action model =
             )
 
         OnUrlRequest request ->
-            -- TODO
-            ( model, Cmd.none )
+            case request of
+                Internal loc ->
+                    ( { model | route = Routes.fromLocation loc }, Cmd.none )
+
+                External loc ->
+                    ( model, pushUrl model.navigationKey loc )
 
         OnUrlChange route ->
             -- TODO
