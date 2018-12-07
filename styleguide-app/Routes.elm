@@ -17,17 +17,17 @@ route =
     Parser.oneOf
         [ Parser.succeed Category
             |. Parser.token "category/"
-            |= (pathComponent |> Parser.andThen category)
+            |= (restOfPath |> Parser.andThen category)
         , Parser.succeed Doodad
-            |. Parser.token "doodad/Nri/"
-            |= pathComponent
+            |. Parser.token "doodad/"
+            |= restOfPath
         , Parser.succeed All
         ]
 
 
-pathComponent : Parser String
-pathComponent =
-    Parser.getChompedString (Parser.chompUntilEndOr "/")
+restOfPath : Parser String
+restOfPath =
+    Parser.getChompedString (Parser.chompWhile (always True))
 
 
 category : String -> Parser ModuleExample.Category

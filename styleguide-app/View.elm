@@ -39,7 +39,7 @@ view_ model =
                         [ Headings.h2
                             [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
                         , nriThemedModules model.moduleStates
-                            |> List.filter (\m -> m.filename == ("Nri/" ++ doodad))
+                            |> List.filter (\m -> m.filename == doodad)
                             |> List.map (ModuleExample.view True)
                             |> Html.div []
                             |> Html.map UpdateModuleStates
