@@ -1,7 +1,7 @@
 module Update exposing (Msg(..), subscriptions, update)
 
 import Browser exposing (UrlRequest(..))
-import Browser.Navigation exposing (pushUrl)
+import Browser.Navigation
 import Model exposing (..)
 import NriModules as NriModules
 import Routes
@@ -30,14 +30,13 @@ update action model =
         OnUrlRequest request ->
             case request of
                 Internal loc ->
-                    ( { model | route = Routes.fromLocation loc }, pushUrl model.navigationKey (Url.toString loc) )
+                    ( model, Browser.Navigation.pushUrl model.navigationKey (Url.toString loc) )
 
                 External loc ->
-                    ( model, pushUrl model.navigationKey loc )
+                    ( model, Browser.Navigation.load loc )
 
         OnUrlChange route ->
-            -- TODO
-            ( model, Cmd.none )
+            ( { model | route = Routes.fromLocation route }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
