@@ -11,7 +11,7 @@ checks:
 	scripts/check-exposed.py
 
 .PHONY: diff
-diff: node_modules elm-stuff
+diff: node_modules
 	if (elm diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
 
 .PHONY: format
