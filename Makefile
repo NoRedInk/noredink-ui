@@ -3,7 +3,7 @@ PATH:="${NPM_PREFIX}/.bin:${PATH}"
 SHELL:=env PATH=${PATH} /bin/sh
 
 .PHONY: test
-test: elm-stuff tests/elm-stuff node_modules
+test: node_modules
 	elm-test
 
 .PHONY: checks

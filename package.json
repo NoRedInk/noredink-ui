@@ -28,6 +28,6 @@
     "browserify": "16.2.3",
     "elm": "0.19.0",
     "elm-format": "0.8.1",
-    "elm-test": "0.18.12"
+    "elm-test": "0.19.0-rev3"
   }
 }
