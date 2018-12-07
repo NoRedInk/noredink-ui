@@ -30,7 +30,7 @@ update action model =
         OnUrlRequest request ->
             case request of
                 Internal loc ->
-                    ( { model | route = Routes.fromLocation loc }, Cmd.none )
+                    ( { model | route = Routes.fromLocation loc }, pushUrl model.navigationKey (Url.toString loc) )
 
                 External loc ->
                     ( model, pushUrl model.navigationKey loc )
