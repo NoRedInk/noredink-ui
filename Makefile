@@ -22,6 +22,11 @@ format: node_modules
 clean:
 	rm -rf node_modules styleguide-app/elm.js styleguide-app/javascript.js $(shell find . -type d -name 'elm-stuff')
 
+.PHONY: styleguide-app
+styleguide-app: styleguide-app/elm.js
+	@echo "Visit http://localhost:8000/index.html to see the styleguide app in your browser"
+	cd styleguide-app && elm reactor
+
 documentation.json: node_modules
 	elm make --docs $@
 
