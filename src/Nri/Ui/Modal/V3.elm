@@ -187,7 +187,7 @@ viewHeader modalType title =
          )
             :: [ Css.fontWeight (Css.int 700)
                , Css.lineHeight (Css.px 27)
-               , Css.margin2 Css.zero (Css.px 65)
+               , Css.margin2 Css.zero (Css.px 49)
                , Css.fontSize (Css.px 20)
                , Fonts.baseFont
                , Css.textAlign Css.center
