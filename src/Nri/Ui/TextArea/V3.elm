@@ -115,6 +115,7 @@ view_ theme model =
                         Css.minHeight heightForStyle
                 ]
                 [ Events.onInput model.onInput
+                , Attributes.value model.value
                 , Attributes.id (generateId model.label)
                 , Attributes.autofocus model.autofocus
                 , Attributes.placeholder model.placeholder
@@ -127,7 +128,7 @@ view_ theme model =
                     else
                         "false"
                 ]
-                [ Html.text model.value ]
+                []
             ]
         , if not model.showLabel then
             Html.label
