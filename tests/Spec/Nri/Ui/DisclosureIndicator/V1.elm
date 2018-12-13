@@ -2,7 +2,7 @@ module Spec.Nri.Ui.DisclosureIndicator.V1 exposing (spec)
 
 import Html.Attributes exposing (alt)
 import Html.Styled exposing (div, toUnstyled)
-import Nri.Ui.AssetPath exposing (Asset(Asset))
+import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.DisclosureIndicator.V1 as DisclosureIndicator
 import Test exposing (..)
 import Test.Html.Query as Query

@@ -22,8 +22,7 @@ import Examples.TextInput as TextInputExample
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Navigation
-import String.Extra
+import Url exposing (Url)
 
 
 type alias ModuleStates =
@@ -74,8 +73,8 @@ type Msg
 
 
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
-update msg moduleStates =
-    case msg of
+update outsideMsg moduleStates =
+    case outsideMsg of
         ButtonExampleMsg msg ->
             let
                 ( buttonExampleState, cmd ) =
@@ -193,7 +192,7 @@ container : Int -> List (Html msg) -> Html msg
 container width children =
     Html.div
         [ Html.Attributes.class "demo-container"
-        , style [ ( "width", toString width ++ "px" ) ]
+        , style "width" (Debug.toString width ++ "px")
         ]
         children
 
@@ -229,8 +228,7 @@ exampleMessages exampleMessageWrapper exampleName =
     }
 
 
-route : Navigation.Location -> Maybe String
+route : Url -> Maybe String
 route location =
-    location.hash
-        |> String.dropLeft 1
-        |> String.Extra.nonEmpty
+    location.fragment
+        |> Maybe.map (String.dropLeft 1)

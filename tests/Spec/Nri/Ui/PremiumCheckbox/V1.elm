@@ -1,7 +1,7 @@
 module Spec.Nri.Ui.PremiumCheckbox.V1 exposing (spec)
 
 import Html.Styled
-import Nri.Ui.AssetPath exposing (Asset(Asset))
+import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V3 exposing (IsSelected(..))
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V1 as PremiumCheckbox

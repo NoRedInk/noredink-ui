@@ -54,7 +54,6 @@ type alias Assets =
     , icons_searchGray_svg : Asset
     , icons_selfReviewWhite_svg : Asset
     , icons_xBlue_svg : Asset
-    , icons_xBlue_svg : Asset
     , key : String
     , leaderboard : String
     , leftArrowBlue_png : Asset
