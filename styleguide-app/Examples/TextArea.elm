@@ -12,7 +12,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V3 as Checkbox
 import Nri.Ui.Text.V2 as Text
-import Nri.Ui.TextArea.V3 as TextArea
+import Nri.Ui.TextArea.V4 as TextArea
 
 
 {-| -}
@@ -36,7 +36,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.TextArea.V3"
+    { filename = "Nri.Ui.TextArea.V4"
     , category = Inputs
     , content =
         [ Text.heading [ Html.text "Textarea controls" ]
