@@ -8,11 +8,12 @@ import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Headings
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V7 as Button
 import Nri.Ui.Icon.V4 as Icon
+import Nri.Ui.Text.V2 as Text
 
 
 {-| -}
@@ -121,9 +122,21 @@ viewButtonExamples assets messages (State control) =
     let
         model =
             Control.currentValue control
+
+        maybeExplanation =
+            if model.buttonType == CopyToClipboard then
+                div [ css [ Css.margin2 (Css.px 10) Css.zero ] ]
+                    [ Text.smallBody
+                        [ text "CopyToClipboard requires 'clipboard.js'. See assets/clipboard-setup.js for example configuration."
+                        ]
+                    ]
+
+            else
+                text ""
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
+    , maybeExplanation
     , buttons assets messages model
     , toggleButtons messages
     , Button.delete assets
@@ -207,15 +220,17 @@ buttons assets messages model =
                         }
 
                 CopyToClipboard ->
-                    Button.copyToClipboard
-                        assets
-                        { size = size
-                        , style = style
-                        , copyText = "wire up in your coffee file with clipboard.js"
-                        , buttonLabel = model.label
-                        , withIcon = model.icon /= Nothing
-                        , width = model.width
-                        }
+                    div [ id "clipboard-container" ]
+                        [ Button.copyToClipboard
+                            assets
+                            { size = size
+                            , style = style
+                            , copyText = "wire up in your coffee file with clipboard.js"
+                            , buttonLabel = model.label
+                            , withIcon = model.icon /= Nothing
+                            , width = model.width
+                            }
+                        ]
             )
                 |> List.singleton
                 |> td [ css [ verticalAlign middle ] ]
