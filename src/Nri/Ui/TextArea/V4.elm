@@ -129,22 +129,22 @@ view_ theme model =
                         "false"
                 ]
                 []
-            ]
-        , if not model.showLabel then
-            Html.label
-                ([ Attributes.for (generateId model.label)
-                 , Attributes.css [ InputStyles.label theme model.isInError ]
-                 ]
-                    ++ Accessibility.Styled.Style.invisible
-                )
-                [ Html.text model.label ]
+            , if not model.showLabel then
+                Html.label
+                    ([ Attributes.for (generateId model.label)
+                     , Attributes.css [ InputStyles.label theme model.isInError ]
+                     ]
+                        ++ Accessibility.Styled.Style.invisible
+                    )
+                    [ Html.text model.label ]
 
-          else
-            Html.label
-                [ Attributes.for (generateId model.label)
-                , Attributes.css [ InputStyles.label theme model.isInError ]
-                ]
-                [ Html.text model.label ]
+              else
+                Html.label
+                    [ Attributes.for (generateId model.label)
+                    , Attributes.css [ InputStyles.label theme model.isInError ]
+                    ]
+                    [ Html.text model.label ]
+            ]
         ]
 
 
