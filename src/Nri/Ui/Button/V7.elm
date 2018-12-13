@@ -555,7 +555,6 @@ buttonStyle : Style
 buttonStyle =
     Css.batch
         [ Css.cursor Css.pointer
-        , Css.display Css.inlineBlock
         , -- Specifying the font can and should go away after bootstrap is removed from application.css
           Nri.Ui.Fonts.V1.baseFont
         , Css.textOverflow Css.ellipsis
@@ -569,7 +568,7 @@ buttonStyle =
         , Css.marginBottom Css.zero
         , Css.hover [ Css.textDecoration Css.none ]
         , Css.disabled [ Css.cursor Css.notAllowed ]
-        , Css.displayFlex
+        , Css.display Css.inlineFlex
         , Css.alignItems Css.center
         , Css.justifyContent Css.center
         ]
