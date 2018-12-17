@@ -20,7 +20,7 @@ format: node_modules
 
 .PHONY: clean
 clean:
-	rm -rf node_modules styleguide-app/elm.js styleguide-app/javascript.js $(shell find . -type d -name 'elm-stuff')
+	rm -rf node_modules styleguide-app/elm.js styleguide-app/bundle.js $(shell find . -type d -name 'elm-stuff')
 
 .PHONY: styleguide-app
 styleguide-app: styleguide-app/elm.js
@@ -30,10 +30,10 @@ styleguide-app: styleguide-app/elm.js
 documentation.json: node_modules
 	elm make --docs $@
 
-styleguide-app/javascript.js: lib/index.js
-	npx browserify --entry lib/index.js --outfile styleguide-app/javascript.js
+styleguide-app/bundle.js: lib/index.js node_modules
+	npx browserify --entry styleguide-app/manifest.js --outfile styleguide-app/bundle.js
 
-styleguide-app/elm.js: styleguide-app/javascript.js $(shell find src styleguide-app -type f -name '*.elm')
+styleguide-app/elm.js: styleguide-app/bundle.js $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; elm make Main.elm --output=$(@F)
 
 # plumbing
