@@ -84,7 +84,7 @@ then:
 
 ```
 git tag -a 5.10.0 -m "release version 5.10.0"
-git push origin master --tags
+git push origin 5.10.0
 elm publish
 ```
 
