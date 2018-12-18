@@ -13,10 +13,6 @@ stdenv.mkDerivation {
     git
     gnumake
 
-    # elm dependencies
-    elmPackages.elm
-    elmPackages.elm-format
-
     # node dependencies
     nodePackages.npm
   ];
