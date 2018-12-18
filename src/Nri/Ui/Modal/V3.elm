@@ -202,7 +202,7 @@ viewContent : ModalType -> Html msg -> Html msg
 viewContent modalType content =
     Nri.Ui.styled div
         "modal-content"
-        [ Css.overflowY Css.scroll
+        [ Css.overflowY Css.auto
         , Css.padding2 (Css.px 30) (Css.px 45)
         , Css.width (Css.pct 100)
         , Css.minHeight (Css.px 150)
