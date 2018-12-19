@@ -184,13 +184,13 @@ input theme isInError =
 {-| -}
 inputPaddingVertical : Px
 inputPaddingVertical =
-    px 8
+    px 12
 
 
 {-| -}
 inputLineHeight : Px
 inputLineHeight =
-    px 20
+    px 21
 
 
 {-| -}
