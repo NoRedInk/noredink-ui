@@ -68,6 +68,7 @@ init assets =
                 ( "Nri.Ui.Button.V7.WidthExact 120", Control.value <| Button.WidthExact 120 )
                 [ ( "Nri.Ui.Button.V7.WidthExact 70", Control.value <| Button.WidthExact 70 )
                 , ( "Nri.Ui.Button.V7.WidthUnbounded", Control.value <| Button.WidthUnbounded )
+                , ( "Nri.Ui.Button.V7.WidthFillContainer", Control.value <| Button.WidthFillContainer )
                 ]
             )
         |> Control.field "button type"
@@ -233,7 +234,12 @@ buttons assets messages model =
                         ]
             )
                 |> List.singleton
-                |> td [ css [ verticalAlign middle ] ]
+                |> td
+                    [ css
+                        [ verticalAlign middle
+                        , Css.width (Css.px 200)
+                        ]
+                    ]
     in
     List.concat
         [ [ sizes

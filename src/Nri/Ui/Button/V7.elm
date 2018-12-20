@@ -9,6 +9,8 @@ module Nri.Ui.Button.V7 exposing
 
 # Changes from V6:
 
+  - WidthUnbounded button displays inlineFlex, so that it doesn't accidentally take up the entire width
+  - Add WidthFillContainer, for when we intend to take up the full container
 
 
 # About:
@@ -82,6 +84,7 @@ type ButtonSize
 type ButtonWidth
     = WidthExact Int
     | WidthUnbounded
+    | WidthFillContainer
 
 
 {-| Styleguide-approved styles for your buttons!
@@ -752,6 +755,13 @@ sizeStyle size width =
                     [ Css.paddingLeft (Css.px 16)
                     , Css.paddingRight (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)
+                    ]
+
+                WidthFillContainer ->
+                    [ Css.paddingLeft (Css.px 16)
+                    , Css.paddingRight (Css.px 16)
+                    , Css.minWidth (Css.px config.minWidth)
+                    , Css.width (Css.pct 100)
                     ]
 
         lineHeightPx =
