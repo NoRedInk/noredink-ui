@@ -4,10 +4,7 @@ UI widgets we use.
 
 ## Dual publishing notes
 
-This package is published for both 0.18 and 0.19! The 0.18 source code is in src-0.18. While
-we still have codebases that utilize either version we'll need to make updates to any version
-after 6.0.0 in both src and src-0.18. Eventually, everything will be updated to 0.19 at which
-point we will delete src-0.18 and stop publishing for Elm 0.18.
+All internal consumers of this repository have been upgrade to Elm 0.19, so we will not be continuing to update the Elm 0.18 source.
 
 ## Versioning policy
 
@@ -76,13 +73,19 @@ You can run this locally to catch errors before you push!
 
 Once your PR is merged, you can publish `master` as a new version:
 
-Run the following to bump && publish the version in `elm-packages.json`:
+Run the following to bump && publish the version in `elm.json`:
 
 ```
-elm-package bump
+elm bump
+```
+
+Commit and push your changes in a PR. Once it's approved and merged,
+then:
+
+```
 git tag -a 5.10.0 -m "release version 5.10.0"
-git push origin master --tags
-elm-package publish
+git push origin 5.10.0
+elm publish
 ```
 
 You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
