@@ -9,9 +9,9 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 import Assets exposing (assets)
 import Html.Styled as Html exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V3 as Checkbox
+import Nri.Ui.Checkbox.V4 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V2 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V3 as PremiumCheckbox
 import Set exposing (Set)
 
 
