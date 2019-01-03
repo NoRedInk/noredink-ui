@@ -55,6 +55,20 @@ example =
           , ( "yellow", Colors.yellow, "Yellow highlighter" )
           , ( "ochre", Colors.ochre, "Yellow button shadow" )
           , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
+          , ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
+          , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
+          , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
+          , ( "highlightCyanDark", Colors.highlightCyanDark, "Dark cyan background highlights" )
+          , ( "highlightMagenta", Colors.highlightMagenta, "Magenta background highlights" )
+          , ( "highlightMagentaDark", Colors.highlightMagentaDark, "Dark magenta background highlights" )
+          , ( "highlightGreen", Colors.highlightGreen, "Green background highlights" )
+          , ( "highlightGreenDark", Colors.highlightGreenDark, "Dark green background highlights" )
+          , ( "highlightBlue", Colors.highlightBlue, "Blue background highlights" )
+          , ( "highlightBlueDark", Colors.highlightBlueDark, "Dark blue background highlights" )
+          , ( "highlightPurple", Colors.highlightPurple, "Purple background highlights" )
+          , ( "highlightPurpleDark", Colors.highlightPurpleDark, "Dark purple background highlights" )
+          , ( "highlightBrown", Colors.highlightBrown, "Brown background highlights" )
+          , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
           ]
             |> List.map viewColor
             |> Html.div
