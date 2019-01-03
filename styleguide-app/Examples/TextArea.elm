@@ -37,7 +37,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.TextArea.V3"
+    { filename = "Nri.Ui.TextArea.v3"
     , category = Inputs
     , content =
         [ Text.heading [ Html.text "Textarea controls" ]
