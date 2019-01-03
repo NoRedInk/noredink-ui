@@ -118,6 +118,22 @@ example parentMessage state =
             , placeholder = "Placeholder"
             , showLabel = state.showLabel == Checkbox.Selected
             }
+        , TextArea.writing
+            { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
+            , autofocus = False
+            , onInput = InputGiven 4
+            , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
+            , isInError = state.isInError == Checkbox.Selected
+            , label = "TextArea.writing onBlur demonstration"
+            , height =
+                if state.autoResize == Checkbox.Selected then
+                    TextArea.AutoResize TextArea.DefaultHeight
+
+                else
+                    TextArea.Fixed
+            , placeholder = "Placeholder"
+            , showLabel = state.showLabel == Checkbox.Selected
+            }
         ]
             |> List.map (Html.map parentMessage)
     }
