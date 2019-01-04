@@ -6,7 +6,14 @@ module Nri.Ui.Colors.V1 exposing
     , frost
     , gray20, gray45, gray75, gray92, gray96
     , glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
-    , highlightLightBlue, highlightLightMagenta, highlightLightYellow, highlightBrown, highlightBrownDark
+    , highlightLightBlue, highlightLightMagenta, highlightLightYellow
+    , highlightBlue, highlightBlueDark
+    , highlightCyan, highlightCyanDark
+    , highlightGreen, highlightGreenDark
+    , highlightMagenta, highlightMagentaDark
+    , highlightPurple, highlightPurpleDark
+    , highlightYellow, highlightYellowDark
+    , highlightBrown, highlightBrownDark
     , lichen
     , magenta
     , navy
@@ -30,7 +37,14 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs frost
 @docs gray20, gray45, gray75, gray92, gray96
 @docs glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
-@docs highlightLightBlue, highlightLightMagenta, highlightLightYellow, highlightBrown, highlightBrownDark
+@docs highlightLightBlue, highlightLightMagenta, highlightLightYellow
+@docs highlightBlue, highlightBlueDark
+@docs highlightCyan, highlightCyanDark
+@docs highlightGreen, highlightGreenDark
+@docs highlightMagenta, highlightMagentaDark
+@docs highlightPurple, highlightPurpleDark
+@docs highlightYellow, highlightYellowDark
+@docs highlightBrown, highlightBrownDark
 @docs lichen
 @docs magenta
 @docs navy
@@ -315,6 +329,126 @@ highlightLightMagenta =
 highlightLightYellow : Css.Color
 highlightLightYellow =
     withAlpha 0.75 yellow
+
+
+{-|
+
+<p style="font-size:2em; background-color: #fee798">#fee798</p>
+
+-}
+highlightYellow : Css.Color
+highlightYellow =
+    hex "#fee798"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #795d01">#795d01</p>
+
+-}
+highlightYellowDark : Css.Color
+highlightYellowDark =
+    hex "#795d01"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #7dfff1">#7dfff1</p>
+
+-}
+highlightCyan : Css.Color
+highlightCyan =
+    hex "#7dfff1"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #006156">#006156</p>
+
+-}
+highlightCyanDark : Css.Color
+highlightCyanDark =
+    hex "#006156"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #ffb8f3">#ffb8f3</p>
+
+-}
+highlightMagenta : Css.Color
+highlightMagenta =
+    hex "#ffb8f3"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #a30088">#a30088</p>
+
+-}
+highlightMagentaDark : Css.Color
+highlightMagentaDark =
+    hex "#a30088"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #8fffb3">#8fffb3</p>
+
+-}
+highlightGreen : Css.Color
+highlightGreen =
+    hex "#8fffb3"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #007025">#007025</p>
+
+-}
+highlightGreenDark : Css.Color
+highlightGreenDark =
+    hex "#007025"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #ccdeff">#ccdeff</p>
+
+-}
+highlightBlue : Css.Color
+highlightBlue =
+    hex "#ccdeff"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #002e85">#002e85</p>
+
+-}
+highlightBlueDark : Css.Color
+highlightBlueDark =
+    hex "#002e85"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #c9b0ff">#c9b0ff</p>
+
+-}
+highlightPurple : Css.Color
+highlightPurple =
+    hex "#c9b0ff"
+
+
+{-|
+
+<p style="font-size:2em; background-color: #3c00bd">#3c00bd</p>
+
+-}
+highlightPurpleDark : Css.Color
+highlightPurpleDark =
+    hex "#3c00bd"
 
 
 {-|
