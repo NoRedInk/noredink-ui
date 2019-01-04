@@ -13,7 +13,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V3 as Checkbox
 import Nri.Ui.Text.V2 as Text
-import Nri.Ui.TextArea.V3 as TextArea
+import Nri.Ui.TextArea.V4 as TextArea
 
 
 {-| -}
@@ -37,7 +37,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.TextArea.v3"
+    { filename = "Nri.Ui.TextArea.v4"
     , category = Inputs
     , content =
         [ Text.heading [ Html.text "Textarea controls" ]
@@ -74,6 +74,7 @@ example parentMessage state =
             { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
             , autofocus = False
             , onInput = InputGiven 1
+            , onBlur = Nothing
             , isInError = state.isInError == Checkbox.Selected
             , label = "TextArea.view"
             , height =
@@ -89,6 +90,7 @@ example parentMessage state =
             { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
             , autofocus = False
             , onInput = InputGiven 2
+            , onBlur = Nothing
             , isInError = state.isInError == Checkbox.Selected
             , label = "TextArea.writing"
             , height =
@@ -104,8 +106,25 @@ example parentMessage state =
             { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
             , autofocus = False
             , onInput = InputGiven 3
+            , onBlur = Nothing
             , isInError = state.isInError == Checkbox.Selected
             , label = "TextArea.contentCreation"
+            , height =
+                if state.autoResize == Checkbox.Selected then
+                    TextArea.AutoResize TextArea.DefaultHeight
+
+                else
+                    TextArea.Fixed
+            , placeholder = "Placeholder"
+            , showLabel = state.showLabel == Checkbox.Selected
+            }
+        , TextArea.writing
+            { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
+            , autofocus = False
+            , onInput = InputGiven 4
+            , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
+            , isInError = state.isInError == Checkbox.Selected
+            , label = "TextArea.writing onBlur demonstration"
             , height =
                 if state.autoResize == Checkbox.Selected then
                     TextArea.AutoResize TextArea.DefaultHeight
