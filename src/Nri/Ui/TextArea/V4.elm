@@ -10,6 +10,15 @@ module Nri.Ui.TextArea.V4 exposing (view, writing, contentCreation, Height(..), 
 
 ## The Nri styleguide-specified textarea with overlapping label
 
+
+## Creating New Versions
+
+When upgrading this module, we need to make sure to also include a new
+custom element, or else autosizing will break! This means doing the following:
+
+1.  Creating a new module in `lib/TextArea`
+2.  Requiring that module in `lib/index.js`
+
 @docs view, writing, contentCreation, Height, HeightBehavior, Model, generateId
 
 -}
