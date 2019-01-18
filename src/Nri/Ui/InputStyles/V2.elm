@@ -146,7 +146,7 @@ input theme isInError =
                     batch
                         [ sharedStyles
                         , Nri.Ui.Fonts.V1.quizFont
-                        , fontSize (px 20)
+                        , fontSize (px 18)
                         , lineHeight writingLineHeight
                         , padding writingPadding
                         , paddingTop writingPaddingTop
@@ -202,7 +202,7 @@ textAreaHeight =
 {-| -}
 writingLineHeight : Px
 writingLineHeight =
-    px 25
+    px 30
 
 
 {-| -}
