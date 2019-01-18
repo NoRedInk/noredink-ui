@@ -7,7 +7,8 @@
     "test": "tests"
   },
   "files": [
-    "dist.js"
+    "dist.js",
+    "lib/**/*.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
