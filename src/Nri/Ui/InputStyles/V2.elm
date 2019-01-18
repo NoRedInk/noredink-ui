@@ -202,7 +202,7 @@ textAreaHeight =
 {-| -}
 writingLineHeight : Px
 writingLineHeight =
-    px 30
+    px 27
 
 
 {-| -}
