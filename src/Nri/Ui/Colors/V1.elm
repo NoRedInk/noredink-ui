@@ -438,7 +438,7 @@ highlightBlueDark =
 -}
 highlightPurple : Css.Color
 highlightPurple =
-    hex "#c9b0ff"
+    hex "#e3d6ff"
 
 
 {-|
