@@ -1,6 +1,7 @@
 module Nri.Ui.TextInput.V4 exposing
     ( Model
     , view, writing
+    , generateId
     , number
     , text
     )
@@ -9,6 +10,7 @@ module Nri.Ui.TextInput.V4 exposing
 
 @docs Model
 @docs view, writing
+@docs generateId
 
 
 ## Input types
@@ -90,7 +92,7 @@ view_ : Theme -> Model value msg -> Html msg
 view_ theme model =
     let
         idValue =
-            "Nri-Ui-TextInput-" ++ dashify model.label
+            generateId model.label
 
         (InputType inputType) =
             model.type_
@@ -144,3 +146,11 @@ view_ theme model =
                 )
                 [ Html.text model.label ]
         ]
+
+
+{-| Gives you the DOM element id that will be used by a `TextInput.view` with the given label.
+This is for use when you need the DOM element id for use in javascript (such as trigger an event to focus a particular text input)
+-}
+generateId : String -> String
+generateId labelText =
+    "Nri-Ui-TextInput-" ++ dashify labelText
