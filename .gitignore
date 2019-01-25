@@ -234,3 +234,6 @@ dist.js
 
 # generated documentation file from Elm
 documentation.json
+
+# direnv config file
+.envrc
