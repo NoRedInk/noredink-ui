@@ -11,10 +11,10 @@ module Nri.Ui.Icon.V4 exposing
     , assignmentTypeDiagnostic
     , assignmentTypeGuidedDraft
     , assignmentTypePeerReview
-    , assignmentTypeSelfReview
     , assignmentTypePractice
     , assignmentTypeQuickWrite
     , assignmentTypeQuiz
+    , assignmentTypeSelfReview
     , assignmentTypeWritingCycle
     , attention
     , bang
@@ -28,8 +28,8 @@ module Nri.Ui.Icon.V4 exposing
     , clever
     , clock
     , close
-    , copy
     , compassSvg
+    , copy
     , custom
     , darkBlueCheckMark
     , document
@@ -50,6 +50,7 @@ module Nri.Ui.Icon.V4 exposing
     , help
     , helpSvg
     , highFive
+    , highlighter
     , key
     , keychain
     , late
@@ -59,6 +60,7 @@ module Nri.Ui.Icon.V4 exposing
     , lockDeprecated
     , logo
     , masteryBadge
+    , microscope
     , newspaper
     , notStarred
     , okay
@@ -69,6 +71,8 @@ module Nri.Ui.Icon.V4 exposing
     , personBlue
     , preview
     , quickWrite
+    , scale
+    , search
     , seeMore
     , share
     , skip
@@ -76,13 +80,13 @@ module Nri.Ui.Icon.V4 exposing
     , sortArrow
     , speedometer
     , starred
+    , submitting, rating, revising
     , thumbsUp
     , twitter
     , unarchive
     , writingAssignment
     , x
     , xSvg
-    , submitting, rating, revising
     )
 
 {-|
@@ -99,10 +103,10 @@ module Nri.Ui.Icon.V4 exposing
 @docs assignmentTypeDiagnostic
 @docs assignmentTypeGuidedDraft
 @docs assignmentTypePeerReview
-@docs assignmentTypeSelfReview
 @docs assignmentTypePractice
 @docs assignmentTypeQuickWrite
 @docs assignmentTypeQuiz
+@docs assignmentTypeSelfReview
 @docs assignmentTypeWritingCycle
 @docs attention
 @docs bang
@@ -116,8 +120,8 @@ module Nri.Ui.Icon.V4 exposing
 @docs clever
 @docs clock
 @docs close
-@docs copy
 @docs compassSvg
+@docs copy
 @docs custom
 @docs darkBlueCheckMark
 @docs document
@@ -138,6 +142,7 @@ module Nri.Ui.Icon.V4 exposing
 @docs help
 @docs helpSvg
 @docs highFive
+@docs highlighter
 @docs key
 @docs keychain
 @docs late
@@ -147,6 +152,7 @@ module Nri.Ui.Icon.V4 exposing
 @docs lockDeprecated
 @docs logo
 @docs masteryBadge
+@docs microscope
 @docs newspaper
 @docs notStarred
 @docs okay
@@ -157,6 +163,8 @@ module Nri.Ui.Icon.V4 exposing
 @docs personBlue
 @docs preview
 @docs quickWrite
+@docs scale
+@docs search
 @docs seeMore
 @docs share
 @docs skip
@@ -164,13 +172,13 @@ module Nri.Ui.Icon.V4 exposing
 @docs sortArrow
 @docs speedometer
 @docs starred
+@docs submitting, rating, revising
 @docs thumbsUp
 @docs twitter
 @docs unarchive
 @docs writingAssignment
 @docs x
 @docs xSvg
-@docs submitting, rating, revising
 
 -}
 
@@ -681,6 +689,12 @@ highFive assets =
 
 
 {-| -}
+highlighter : { r | highlighter : String } -> IconType
+highlighter assets =
+    SvgIcon assets.highlighter
+
+
+{-| -}
 key : { r | key : String } -> IconType
 key assets =
     SvgIcon assets.key
@@ -732,6 +746,12 @@ logo assets =
 masteryBadge : { r | masteryBadge : String } -> IconType
 masteryBadge assets =
     SvgIcon assets.masteryBadge
+
+
+{-| -}
+microscope : { r | microscope : String } -> IconType
+microscope assets =
+    SvgIcon assets.microscope
 
 
 {-| -}
@@ -792,6 +812,18 @@ preview assets =
 quickWrite : { r | icons_quickWrite_svg : Asset } -> IconType
 quickWrite assets =
     ImgIcon assets.icons_quickWrite_svg
+
+
+{-| -}
+scale : { r | scale : String } -> IconType
+scale assets =
+    SvgIcon assets.scale
+
+
+{-| -}
+search : { r | search : String } -> IconType
+search assets =
+    SvgIcon assets.search
 
 
 {-| -}
