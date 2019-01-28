@@ -72,6 +72,7 @@ module Nri.Ui.Icon.V4 exposing
     , preview
     , quickWrite
     , scale
+    , search
     , seeMore
     , share
     , skip
@@ -163,6 +164,7 @@ module Nri.Ui.Icon.V4 exposing
 @docs preview
 @docs quickWrite
 @docs scale
+@docs search
 @docs seeMore
 @docs share
 @docs skip
@@ -816,6 +818,12 @@ quickWrite assets =
 scale : { r | scale : String } -> IconType
 scale assets =
     SvgIcon assets.scale
+
+
+{-| -}
+search : { r | search : String } -> IconType
+search assets =
+    SvgIcon assets.search
 
 
 {-| -}
