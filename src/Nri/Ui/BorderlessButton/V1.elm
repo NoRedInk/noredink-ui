@@ -1,10 +1,12 @@
 module Nri.Ui.BorderlessButton.V1 exposing (Size(..), button)
 
 import Css
+import Css.Global
 import Html.Styled as Html exposing (..)
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
 type Size
@@ -16,6 +18,7 @@ type Size
 type alias Config =
     { label : String
     , size : Size
+    , icon : Maybe IconType -- TODO: maybe do something else?
     }
 
 
@@ -32,6 +35,23 @@ button config =
 
                 Large ->
                     20
+
+        icon =
+            case config.icon of
+                Just iconType ->
+                    -- TODO: We should never use an image here, only SVG
+                    Nri.Ui.styled Html.span
+                        "icon-holder"
+                        [ Css.height (Css.px fontSize)
+                        , Css.width (Css.px fontSize)
+                        , Css.display Css.inlineBlock
+                        , Css.marginRight (Css.px 5)
+                        ]
+                        []
+                        [ Icon.decorativeIcon iconType ]
+
+                Nothing ->
+                    text ""
     in
     Nri.Ui.styled Html.button
         "borderless-button-v1"
@@ -53,4 +73,6 @@ button config =
         , Css.fontSize (Css.px fontSize)
         ]
         []
-        [ text config.label ]
+        [ icon
+        , text config.label
+        ]
