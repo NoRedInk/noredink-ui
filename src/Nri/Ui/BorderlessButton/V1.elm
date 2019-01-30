@@ -1,4 +1,31 @@
-module Nri.Ui.BorderlessButton.V1 exposing (Size(..), button)
+module Nri.Ui.BorderlessButton.V1 exposing
+    ( button
+    , Size(..)
+    )
+
+{-|
+
+
+# About:
+
+BorderlessButton looks different from Nri.Ui.Button in that it displays without margin or padding.
+BorderlessButton has the suave, traditional look of a "link"!
+
+For accessibility purposes, buttons that perform an action on the current page should be HTML `<button>`
+elements and are created here with `*Button` functions. Buttons that take the user to a new page should be
+HTML `<a>` elements and are created here with `*Link` functions.
+
+
+# `<button>` creators
+
+@docs button
+
+
+# Config
+
+@docs Size
+
+-}
 
 import Css
 import Css.Global
@@ -10,12 +37,16 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
+{-| Sizes for the button
+-}
 type Size
     = Small
     | Medium
     | Large
 
 
+{-| Config for the button
+-}
 type alias Config msg =
     { label : String
     , size : Size
@@ -24,6 +55,8 @@ type alias Config msg =
     }
 
 
+{-| Creates a `<button>` element
+-}
 button : Config msg -> Html msg
 button config =
     let
