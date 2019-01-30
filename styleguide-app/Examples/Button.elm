@@ -11,6 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
+import Nri.Ui.BorderlessButton.V1 as BorderlessButton
 import Nri.Ui.Button.V7 as Button
 import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
@@ -153,6 +154,7 @@ viewButtonExamples assets messages (State control) =
         , icon = Nothing
         , url = "#"
         }
+    , BorderlessButton.button "I am borderless"
     ]
         |> div []
 
