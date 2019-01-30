@@ -154,7 +154,18 @@ viewButtonExamples assets messages (State control) =
         , icon = Nothing
         , url = "#"
         }
-    , BorderlessButton.button "I am borderless"
+    , BorderlessButton.button
+        { label = "I am borderless small"
+        , size = BorderlessButton.Small
+        }
+    , BorderlessButton.button
+        { label = "I am borderless medium"
+        , size = BorderlessButton.Medium
+        }
+    , BorderlessButton.button
+        { label = "I am borderless large"
+        , size = BorderlessButton.Large
+        }
     ]
         |> div []
 

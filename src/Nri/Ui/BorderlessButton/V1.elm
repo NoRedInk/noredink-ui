@@ -1,4 +1,4 @@
-module Nri.Ui.BorderlessButton.V1 exposing (button)
+module Nri.Ui.BorderlessButton.V1 exposing (Size(..), button)
 
 import Css
 import Html.Styled as Html exposing (..)
@@ -7,8 +7,32 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 
 
-button : String -> Html msg
-button label =
+type Size
+    = Small
+    | Medium
+    | Large
+
+
+type alias Config =
+    { label : String
+    , size : Size
+    }
+
+
+button : Config -> Html msg
+button config =
+    let
+        fontSize =
+            case config.size of
+                Small ->
+                    15
+
+                Medium ->
+                    17
+
+                Large ->
+                    20
+    in
     Nri.Ui.styled Html.button
         "borderless-button-v1"
         [ Css.cursor Css.pointer
@@ -26,6 +50,7 @@ button label =
         , Css.textAlign Css.left
         , Css.borderStyle Css.none
         , Css.hover [ Css.textDecoration Css.underline ]
+        , Css.fontSize (Css.px fontSize)
         ]
         []
-        [ text label ]
+        [ text config.label ]
