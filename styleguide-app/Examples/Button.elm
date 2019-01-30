@@ -158,16 +158,19 @@ viewButtonExamples assets messages (State control) =
         { label = "I am borderless small"
         , size = BorderlessButton.Small
         , icon = model.icon
+        , onClick = messages.showItWorked "borderless small"
         }
     , BorderlessButton.button
         { label = "I am borderless medium"
         , size = BorderlessButton.Medium
         , icon = model.icon
+        , onClick = messages.showItWorked "borderless medium"
         }
     , BorderlessButton.button
         { label = "I am borderless large"
         , size = BorderlessButton.Large
         , icon = model.icon
+        , onClick = messages.showItWorked "borderless large"
         }
     ]
         |> div []

@@ -3,6 +3,7 @@ module Nri.Ui.BorderlessButton.V1 exposing (Size(..), button)
 import Css
 import Css.Global
 import Html.Styled as Html exposing (..)
+import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
@@ -15,14 +16,15 @@ type Size
     | Large
 
 
-type alias Config =
+type alias Config msg =
     { label : String
     , size : Size
     , icon : Maybe IconType -- TODO: maybe do something else?
+    , onClick : msg
     }
 
 
-button : Config -> Html msg
+button : Config msg -> Html msg
 button config =
     let
         fontSize =
@@ -72,7 +74,8 @@ button config =
         , Css.hover [ Css.textDecoration Css.underline ]
         , Css.fontSize (Css.px fontSize)
         ]
-        []
+        [ Events.onClick config.onClick
+        ]
         [ icon
         , text config.label
         ]
