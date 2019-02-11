@@ -7,7 +7,9 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 -}
 
 import Assets exposing (assets)
+import Css
 import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V4 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
@@ -37,6 +39,7 @@ example parentMessage state =
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
+        , viewMultilineCheckboxes
         , h3 [] [ text "Premium Checkboxes" ]
         , viewPremiumCheckboxes state
         ]
@@ -135,6 +138,53 @@ viewDisabledCheckbox id state =
         , theme = Checkbox.Square
         , noOpMsg = NoOp
         }
+
+viewMultilineCheckboxes : Html Msg
+viewMultilineCheckboxes =
+    Html.section
+        [ css [ Css.width (Css.px 500) ] ]
+        [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
+        , Checkbox.viewWithLabel
+            assets
+            { identifier = "fake"
+            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
+            , setterMsg = ToggleCheck "fake"
+            , selected = Checkbox.NotSelected
+            , disabled = False
+            , theme = Checkbox.Square
+            , noOpMsg = NoOp
+            }
+        , Checkbox.viewWithLabel
+            assets
+            { identifier = "fake"
+            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
+            , setterMsg = ToggleCheck "fake"
+            , selected = Checkbox.PartiallySelected
+            , disabled = True
+            , theme = Checkbox.Square
+            , noOpMsg = NoOp
+            }
+        , Checkbox.viewWithLabel
+            assets
+            { identifier = "fake"
+            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
+            , setterMsg = ToggleCheck "fake"
+            , selected = Checkbox.NotSelected
+            , disabled = True
+            , theme = Checkbox.Locked
+            , noOpMsg = NoOp
+            }
+        , Checkbox.viewWithLabel
+            assets
+            { identifier = "fake"
+            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
+            , setterMsg = ToggleCheck "fake"
+            , selected = Checkbox.NotSelected
+            , disabled = True
+            , theme = Checkbox.Square
+            , noOpMsg = NoOp
+            }
+        ]
 
 
 viewPremiumCheckboxes : State -> Html Msg
