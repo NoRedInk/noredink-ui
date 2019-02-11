@@ -139,6 +139,7 @@ viewDisabledCheckbox id state =
         , noOpMsg = NoOp
         }
 
+
 viewMultilineCheckboxes : Html Msg
 viewMultilineCheckboxes =
     Html.section
