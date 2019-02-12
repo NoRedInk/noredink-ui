@@ -14,6 +14,7 @@ stdenv.mkDerivation {
     gnumake
 
     # node dependencies
+    nodejs
     nodePackages.npm
   ];
 }
