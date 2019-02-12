@@ -211,7 +211,7 @@ addIcon icon =
             , property "content" "''"
             , position absolute
             , left zero
-            , top (px 10)
+            , top (calc (pct 50) minus (px 12))
             , width (px 24)
             , height (px 24)
             ]

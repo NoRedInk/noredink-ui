@@ -353,12 +353,12 @@ highlightYellowDark =
 
 {-|
 
-<p style="font-size:2em; background-color: #7dfff1">#7dfff1</p>
+<p style="font-size:2em; background-color: #b9fff7">#b9fff7</p>
 
 -}
 highlightCyan : Css.Color
 highlightCyan =
-    hex "#7dfff1"
+    hex "#b9fff7"
 
 
 {-|
