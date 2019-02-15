@@ -2,9 +2,9 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
-import Examples.ClickableText
 import Examples.Button
 import Examples.Checkbox
+import Examples.ClickableText
 import Examples.Colors
 import Examples.DisclosureIndicator
 import Examples.Dropdown
