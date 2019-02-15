@@ -122,6 +122,7 @@ clickableTextStyles fontSize =
     , Css.textDecoration Css.none
     , Css.hover [ Css.textDecoration Css.underline ]
     , Css.fontSize fontSize
+    , Css.padding Css.zero
     ]
 
 
