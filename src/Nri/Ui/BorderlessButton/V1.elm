@@ -50,7 +50,7 @@ type Size
 type alias Config msg =
     { label : String
     , size : Size
-    , icon : Maybe IconType -- TODO: maybe do something else?
+    , icon : Maybe IconType
     , onClick : msg
     }
 
@@ -61,54 +61,66 @@ button : Config msg -> Html msg
 button config =
     let
         fontSize =
-            case config.size of
-                Small ->
-                    15
-
-                Medium ->
-                    17
-
-                Large ->
-                    20
-
-        icon =
-            case config.icon of
-                Just iconType ->
-                    -- TODO: We should never use an image here, only SVG
-                    Nri.Ui.styled Html.span
-                        "icon-holder"
-                        [ Css.height (Css.px fontSize)
-                        , Css.width (Css.px fontSize)
-                        , Css.display Css.inlineBlock
-                        , Css.marginRight (Css.px 5)
-                        ]
-                        []
-                        [ Icon.decorativeIcon iconType ]
-
-                Nothing ->
-                    text ""
+            sizeToPx config.size
     in
     Nri.Ui.styled Html.button
         "borderless-button-v1"
-        [ Css.cursor Css.pointer
-        , -- Specifying the font can and should go away after bootstrap is removed from application.css
-          Nri.Ui.Fonts.V1.baseFont
-        , Css.backgroundImage Css.none
-        , Css.textShadow Css.none
-        , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
-        , Css.boxShadow Css.none
-        , Css.border Css.zero
-        , Css.disabled [ Css.cursor Css.notAllowed ]
-        , Css.color Colors.azure
-        , Css.backgroundColor Css.transparent
-        , Css.fontWeight (Css.int 600)
-        , Css.textAlign Css.left
-        , Css.borderStyle Css.none
-        , Css.hover [ Css.textDecoration Css.underline ]
-        , Css.fontSize (Css.px fontSize)
-        ]
+        (buttonStyles fontSize)
         [ Events.onClick config.onClick
         ]
-        [ icon
+        [ icon fontSize config.icon
         , text config.label
         ]
+
+
+buttonStyles : Css.Px -> List Css.Style
+buttonStyles fontSize =
+    [ Css.cursor Css.pointer
+    , -- Specifying the font can and should go away after bootstrap is removed from application.css
+      Nri.Ui.Fonts.V1.baseFont
+    , Css.backgroundImage Css.none
+    , Css.textShadow Css.none
+    , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
+    , Css.boxShadow Css.none
+    , Css.border Css.zero
+    , Css.disabled [ Css.cursor Css.notAllowed ]
+    , Css.color Colors.azure
+    , Css.backgroundColor Css.transparent
+    , Css.fontWeight (Css.int 600)
+    , Css.textAlign Css.left
+    , Css.borderStyle Css.none
+    , Css.hover [ Css.textDecoration Css.underline ]
+    , Css.fontSize fontSize
+    ]
+
+
+icon : Css.Px -> Maybe IconType -> Html msg
+icon fontSize maybeIcon =
+    case maybeIcon of
+        Just iconType ->
+            -- TODO: We should never use an image here, only SVG
+            Nri.Ui.styled Html.span
+                "icon-holder"
+                [ Css.height fontSize
+                , Css.width fontSize
+                , Css.display Css.inlineBlock
+                , Css.marginRight (Css.px 5)
+                ]
+                []
+                [ Icon.decorativeIcon iconType ]
+
+        Nothing ->
+            text ""
+
+
+sizeToPx : Size -> Css.Px
+sizeToPx size =
+    case size of
+        Small ->
+            Css.px 15
+
+        Medium ->
+            Css.px 17
+
+        Large ->
+            Css.px 20
