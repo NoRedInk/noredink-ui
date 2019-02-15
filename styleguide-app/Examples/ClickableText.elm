@@ -1,4 +1,4 @@
-module Examples.BorderlessButton exposing (Msg, State, example, init, update)
+module Examples.ClickableText exposing (Msg, State, example, init, update)
 
 {- \
    @docs Msg, State, example, init, update,
@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.BorderlessButton.V1 as BorderlessButton exposing (Size(..))
+import Nri.Ui.ClickableText.V1 as ClickableText exposing (Size(..))
 import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
 
@@ -41,9 +41,9 @@ example :
 example assets unnamedMessages state =
     let
         messages =
-            unnamedMessages "BorderlessButtonExample"
+            unnamedMessages "ClickableTextExample"
     in
-    { filename = "Nri.Ui.BorderlessButton.V1"
+    { filename = "Nri.Ui.ClickableText.V1"
     , category = Buttons
     , content =
         [ viewExamples assets messages state ]
@@ -54,7 +54,7 @@ example assets unnamedMessages state =
 init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
-        |> Control.field "label" (Control.string "Borderless Button")
+        |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "icon"
             (Control.maybe False <|
                 Control.choice
@@ -64,8 +64,8 @@ init assets =
             )
         |> Control.field "button type"
             (Control.choice
-                ( "Nri.Ui.BorderlessButton.V1.button", Control.value Button )
-                [ ( "Nri.Ui.BorderlessButton.V1.link", Control.value Link )
+                ( "Nri.Ui.ClickableText.V1.button", Control.value Button )
+                [ ( "Nri.Ui.ClickableText.V1.link", Control.value Link )
                 ]
             )
         |> State
@@ -125,7 +125,7 @@ buttons assets messages model =
         exampleCell size =
             (case model.buttonType of
                 Link ->
-                    BorderlessButton.link
+                    ClickableText.link
                         { size = size
                         , label = model.label
                         , icon = model.icon
@@ -134,7 +134,7 @@ buttons assets messages model =
                         []
 
                 Button ->
-                    BorderlessButton.button
+                    ClickableText.button
                         { size = size
                         , onClick = messages.showItWorked (Debug.toString size)
                         , label = model.label

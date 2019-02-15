@@ -2,7 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
-import Examples.BorderlessButton
+import Examples.ClickableText
 import Examples.Button
 import Examples.Checkbox
 import Examples.Colors
@@ -28,7 +28,7 @@ import Url exposing (Url)
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
-    , borderlessButtonExampleState : Examples.BorderlessButton.State
+    , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
@@ -45,7 +45,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
-    , borderlessButtonExampleState = Examples.BorderlessButton.init assets
+    , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
@@ -61,7 +61,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
-    | BorderlessButtonExampleMsg Examples.BorderlessButton.Msg
+    | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
@@ -88,13 +88,13 @@ update outsideMsg moduleStates =
             , Cmd.map ButtonExampleMsg cmd
             )
 
-        BorderlessButtonExampleMsg msg ->
+        ClickableTextExampleMsg msg ->
             let
-                ( borderlessButtonExampleState, cmd ) =
-                    Examples.BorderlessButton.update msg moduleStates.borderlessButtonExampleState
+                ( clickableTextExampleState, cmd ) =
+                    Examples.ClickableText.update msg moduleStates.clickableTextExampleState
             in
-            ( { moduleStates | borderlessButtonExampleState = borderlessButtonExampleState }
-            , Cmd.map BorderlessButtonExampleMsg cmd
+            ( { moduleStates | clickableTextExampleState = clickableTextExampleState }
+            , Cmd.map ClickableTextExampleMsg cmd
             )
 
         CheckboxExampleMsg msg ->
@@ -214,7 +214,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
     , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
-    , Examples.BorderlessButton.example assets (exampleMessages BorderlessButtonExampleMsg) model.borderlessButtonExampleState
+    , Examples.ClickableText.example assets (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example

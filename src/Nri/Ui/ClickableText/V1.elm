@@ -1,4 +1,4 @@
-module Nri.Ui.BorderlessButton.V1 exposing
+module Nri.Ui.ClickableText.V1 exposing
     ( button, link
     , Size(..)
     )
@@ -8,8 +8,8 @@ module Nri.Ui.BorderlessButton.V1 exposing
 
 # About:
 
-BorderlessButton looks different from Nri.Ui.Button in that it displays without margin or padding.
-BorderlessButton has the suave, traditional look of a "link"!
+ClickableText looks different from Nri.Ui.Button in that it displays without margin or padding.
+ClickableText has the suave, traditional look of a "link"!
 
 For accessibility purposes, buttons that perform an action on the current page should be HTML `<button>`
 elements and are created here with `*Button` functions. Buttons that take the user to a new page should be
