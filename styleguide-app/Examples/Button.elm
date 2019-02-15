@@ -11,7 +11,6 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.BorderlessButton.V1 as BorderlessButton
 import Nri.Ui.Button.V7 as Button
 import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
@@ -154,45 +153,6 @@ viewButtonExamples assets messages (State control) =
         , icon = Nothing
         , url = "#"
         }
-    , BorderlessButton.button
-        { label = "I am borderless small"
-        , size = BorderlessButton.Small
-        , icon = model.icon
-        , onClick = messages.showItWorked "borderless small"
-        }
-    , BorderlessButton.button
-        { label = "I am borderless medium"
-        , size = BorderlessButton.Medium
-        , icon = model.icon
-        , onClick = messages.showItWorked "borderless medium"
-        }
-    , BorderlessButton.button
-        { label = "I am borderless large"
-        , size = BorderlessButton.Large
-        , icon = model.icon
-        , onClick = messages.showItWorked "borderless large"
-        }
-    , BorderlessButton.link
-        { label = "I am borderless small link"
-        , size = BorderlessButton.Small
-        , icon = model.icon
-        , url = "https://www.noredink.com"
-        }
-        []
-    , BorderlessButton.link
-        { label = "I am borderless medium"
-        , size = BorderlessButton.Medium
-        , icon = model.icon
-        , url = "https://www.noredink.com"
-        }
-        []
-    , BorderlessButton.link
-        { label = "I am borderless large"
-        , size = BorderlessButton.Large
-        , icon = model.icon
-        , url = "https://www.noredink.com"
-        }
-        []
     ]
         |> div []
 

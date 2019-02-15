@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
+import Examples.BorderlessButton
 import Examples.Button
 import Examples.Checkbox
 import Examples.Colors
@@ -27,6 +28,7 @@ import Url exposing (Url)
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
+    , borderlessButtonExampleState : Examples.BorderlessButton.State
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
@@ -43,6 +45,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
+    , borderlessButtonExampleState = Examples.BorderlessButton.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
@@ -58,6 +61,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
+    | BorderlessButtonExampleMsg Examples.BorderlessButton.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
@@ -82,6 +86,15 @@ update outsideMsg moduleStates =
             in
             ( { moduleStates | buttonExampleState = buttonExampleState }
             , Cmd.map ButtonExampleMsg cmd
+            )
+
+        BorderlessButtonExampleMsg msg ->
+            let
+                ( borderlessButtonExampleState, cmd ) =
+                    Examples.BorderlessButton.update msg moduleStates.borderlessButtonExampleState
+            in
+            ( { moduleStates | borderlessButtonExampleState = borderlessButtonExampleState }
+            , Cmd.map BorderlessButtonExampleMsg cmd
             )
 
         CheckboxExampleMsg msg ->
@@ -201,6 +214,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
     , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.BorderlessButton.example assets (exampleMessages BorderlessButtonExampleMsg) model.borderlessButtonExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
