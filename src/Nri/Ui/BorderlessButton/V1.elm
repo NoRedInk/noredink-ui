@@ -1,5 +1,5 @@
 module Nri.Ui.BorderlessButton.V1 exposing
-    ( button
+    ( button, link
     , Size(..)
     )
 
@@ -18,7 +18,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 # `<button>` creators
 
-@docs button
+@docs button, link
 
 
 # Config
@@ -30,6 +30,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 import Css
 import Css.Global
 import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
@@ -47,7 +48,7 @@ type Size
 
 {-| Config for the button
 -}
-type alias Config msg =
+type alias ButtonConfig msg =
     { label : String
     , size : Size
     , icon : Maybe IconType
@@ -57,15 +58,15 @@ type alias Config msg =
 
 {-| Creates a `<button>` element
 -}
-button : Config msg -> Html msg
+button : ButtonConfig msg -> Html msg
 button config =
     let
         fontSize =
             sizeToPx config.size
     in
     Nri.Ui.styled Html.button
-        "borderless-button-v1"
-        (buttonStyles fontSize)
+        (dataDescriptor "button")
+        (clickableTextStyles fontSize)
         [ Events.onClick config.onClick
         ]
         [ icon fontSize config.icon
@@ -73,8 +74,37 @@ button config =
         ]
 
 
-buttonStyles : Css.Px -> List Css.Style
-buttonStyles fontSize =
+{-| Config for the link
+-}
+type alias LinkConfig =
+    { label : String
+    , size : Size
+    , icon : Maybe IconType
+    , url : String
+    }
+
+
+{-| Creates a `<a>` element
+-}
+link : LinkConfig -> List (Attribute msg) -> Html msg
+link config additionalAttributes =
+    let
+        fontSize =
+            sizeToPx config.size
+    in
+    Nri.Ui.styled Html.a
+        (dataDescriptor "link")
+        (clickableTextStyles fontSize)
+        (Attributes.href config.url
+            :: additionalAttributes
+        )
+        [ icon fontSize config.icon
+        , text config.label
+        ]
+
+
+clickableTextStyles : Css.Px -> List Css.Style
+clickableTextStyles fontSize =
     [ Css.cursor Css.pointer
     , -- Specifying the font can and should go away after bootstrap is removed from application.css
       Nri.Ui.Fonts.V1.baseFont
@@ -89,6 +119,7 @@ buttonStyles fontSize =
     , Css.fontWeight (Css.int 600)
     , Css.textAlign Css.left
     , Css.borderStyle Css.none
+    , Css.textDecoration Css.none
     , Css.hover [ Css.textDecoration Css.underline ]
     , Css.fontSize fontSize
     ]
@@ -100,7 +131,7 @@ icon fontSize maybeIcon =
         Just iconType ->
             -- TODO: We should never use an image here, only SVG
             Nri.Ui.styled Html.span
-                "icon-holder"
+                (dataDescriptor "icon-holder")
                 [ Css.height fontSize
                 , Css.width fontSize
                 , Css.display Css.inlineBlock
@@ -124,3 +155,8 @@ sizeToPx size =
 
         Large ->
             Css.px 20
+
+
+dataDescriptor : String -> String
+dataDescriptor descriptor =
+    "borderless-button-v1-" ++ descriptor

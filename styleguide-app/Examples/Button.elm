@@ -172,6 +172,27 @@ viewButtonExamples assets messages (State control) =
         , icon = model.icon
         , onClick = messages.showItWorked "borderless large"
         }
+    , BorderlessButton.link
+        { label = "I am borderless small link"
+        , size = BorderlessButton.Small
+        , icon = model.icon
+        , url = "https://www.noredink.com"
+        }
+        []
+    , BorderlessButton.link
+        { label = "I am borderless medium"
+        , size = BorderlessButton.Medium
+        , icon = model.icon
+        , url = "https://www.noredink.com"
+        }
+        []
+    , BorderlessButton.link
+        { label = "I am borderless large"
+        , size = BorderlessButton.Large
+        , icon = model.icon
+        , url = "https://www.noredink.com"
+        }
+        []
     ]
         |> div []
 
