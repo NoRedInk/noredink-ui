@@ -160,4 +160,4 @@ sizeToPx size =
 
 dataDescriptor : String -> String
 dataDescriptor descriptor =
-    "borderless-button-v1-" ++ descriptor
+    "clickable-text-v1-" ++ descriptor
