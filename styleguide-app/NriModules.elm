@@ -4,6 +4,7 @@ import Assets exposing (assets)
 import Examples.Alert
 import Examples.Button
 import Examples.Checkbox
+import Examples.ClickableText
 import Examples.Colors
 import Examples.DisclosureIndicator
 import Examples.Dropdown
@@ -27,6 +28,7 @@ import Url exposing (Url)
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
+    , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
@@ -43,6 +45,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
+    , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
@@ -58,6 +61,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
+    | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
@@ -82,6 +86,15 @@ update outsideMsg moduleStates =
             in
             ( { moduleStates | buttonExampleState = buttonExampleState }
             , Cmd.map ButtonExampleMsg cmd
+            )
+
+        ClickableTextExampleMsg msg ->
+            let
+                ( clickableTextExampleState, cmd ) =
+                    Examples.ClickableText.update msg moduleStates.clickableTextExampleState
+            in
+            ( { moduleStates | clickableTextExampleState = clickableTextExampleState }
+            , Cmd.map ClickableTextExampleMsg cmd
             )
 
         CheckboxExampleMsg msg ->
@@ -201,6 +214,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
     , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.ClickableText.example assets (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Icon.example
