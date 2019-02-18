@@ -110,7 +110,6 @@ clickableTextStyles fontSize =
       Nri.Ui.Fonts.V1.baseFont
     , Css.backgroundImage Css.none
     , Css.textShadow Css.none
-    , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
     , Css.boxShadow Css.none
     , Css.border Css.zero
     , Css.disabled [ Css.cursor Css.notAllowed ]
