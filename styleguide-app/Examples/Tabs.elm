@@ -22,7 +22,7 @@ type Tab
 
 example : (Tab -> msg) -> Tab -> ModuleExample msg
 example changeTab tab =
-    { filename = "Nri.Ui.Tabs.V2"
+    { filename = "Nri.Ui.Tabs.V3"
     , category = Behaviors
     , content =
         [ Tabs.view

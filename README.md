@@ -90,4 +90,4 @@ elm publish
 
 You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
 
-Once you've published, you should see the latest version at the top of https://dmy.github.io/elm-0.18-packages/.
+Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>.
