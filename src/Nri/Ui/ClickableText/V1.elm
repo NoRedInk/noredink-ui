@@ -1,5 +1,6 @@
 module Nri.Ui.ClickableText.V1 exposing
-    ( button, link
+    ( ButtonConfig, button
+    , LinkConfig, link
     , Size(..)
     )
 
@@ -18,7 +19,12 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 # `<button>` creators
 
-@docs button, link
+@docs ButtonConfig, button
+
+
+# `<a>` creators
+
+@docs LinkConfig, link
 
 
 # Config
