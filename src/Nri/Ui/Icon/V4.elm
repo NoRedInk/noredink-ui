@@ -1,6 +1,9 @@
 module Nri.Ui.Icon.V4 exposing
-    ( icon, decorativeIcon, link, linkExternal, linkSpa, button
-    , IconType, IconSize(..), IconLinkSpaModel
+    ( icon, decorativeIcon
+    , IconType, IconSize(..)
+    , IconLinkModel, link, linkExternal
+    , IconButtonModel, button
+    , IconLinkSpaModel, linkSpa
     , activity
     , add
     , arrowDown
@@ -91,8 +94,11 @@ module Nri.Ui.Icon.V4 exposing
 
 {-|
 
-@docs icon, decorativeIcon, link, linkExternal, linkSpa, button
-@docs IconType, IconSize, IconLinkSpaModel
+@docs icon, decorativeIcon
+@docs IconType, IconSize
+@docs IconLinkModel, link, linkExternal
+@docs IconButtonModel, button
+@docs IconLinkSpaModel, linkSpa
 @docs activity
 @docs add
 @docs arrowDown
@@ -217,6 +223,7 @@ type alias IconLinkSpaModel route =
     }
 
 
+{-| -}
 type alias IconButtonModel msg =
     { alt : String
     , msg : msg
