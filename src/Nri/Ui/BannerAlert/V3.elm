@@ -52,37 +52,35 @@ success =
 
 banner : List Css.Style -> String -> Html msg
 banner bannerType alertMessage =
-    Html.div [ css (bannerStyles ++ bannerType) ]
+    Html.div
+        [ css
+            ([ Css.alignItems Css.center
+             , Css.displayFlex
+             , Css.justifyContent Css.center
+             , Css.padding (Css.px 20)
+             , Css.width (Css.pct 100)
+             , Css.Global.children
+                [ Css.Global.button
+                    [ Css.position Css.absolute
+                    , Css.right (Css.px 15)
+                    ]
+                ]
+             ]
+                ++ bannerType
+            )
+        ]
         [ notification alertMessage ]
 
 
 notification : String -> Html msg
 notification message =
-    Html.div [ css [ alertMessageStyles ] ] [ Html.text message ]
-
-
-alertMessageStyles : Style
-alertMessageStyles =
-    batch
-        [ Css.fontSize (Css.px 20)
-        , Css.fontWeight (Css.int 700)
-        , Css.lineHeight (Css.px 25)
-        , Css.maxWidth (Css.px 600)
-        , Nri.Ui.Fonts.V1.baseFont
-        ]
-
-
-bannerStyles : List Style
-bannerStyles =
-    [ Css.alignItems Css.center
-    , Css.displayFlex
-    , Css.justifyContent Css.center
-    , Css.padding (Css.px 20)
-    , Css.width (Css.pct 100)
-    , Css.Global.children
-        [ Css.Global.button
-            [ Css.position Css.absolute
-            , Css.right (Css.px 15)
+    Html.div
+        [ css
+            [ Css.fontSize (Css.px 20)
+            , Css.fontWeight (Css.int 700)
+            , Css.lineHeight (Css.px 25)
+            , Css.maxWidth (Css.px 600)
+            , Nri.Ui.Fonts.V1.baseFont
             ]
         ]
-    ]
+        [ Html.text message ]
