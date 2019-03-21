@@ -12,10 +12,10 @@ module Nri.Ui.BannerAlert.V3 exposing
 
 -}
 
-import Accessibility.Styled as Accessibility
+import Accessibility.Styled as Html exposing (Html)
 import Css exposing (..)
 import Css.Global exposing (Snippet, children, descendants, everything, selector)
-import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
 
@@ -43,15 +43,13 @@ success =
 
 banner : Css.Style -> String -> Html msg
 banner bannerType alertMessage =
-    Html.styled Accessibility.div
-        [ bannerStyles, bannerType ]
-        []
+    Html.div [ css [ batch [ bannerStyles, bannerType ] ] ]
         [ notification alertMessage ]
 
 
 notification : String -> Html msg
 notification message =
-    Html.styled Html.div [ alertMessageStyles ] [] [ Accessibility.text message ]
+    Html.div [ css [ alertMessageStyles ] ] [ Html.text message ]
 
 
 type CssClasses
