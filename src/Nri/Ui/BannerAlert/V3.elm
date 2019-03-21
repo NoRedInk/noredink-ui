@@ -6,6 +6,7 @@ module Nri.Ui.BannerAlert.V3 exposing
 
 {-|
 
+@docs Assets
 @docs error
 @docs neutral
 @docs success
@@ -22,10 +23,20 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
+{-| The assets required to use this module.
+-}
+type alias Assets assets =
+    { assets
+        | exclamationPoint_svg : Asset
+        , tip_svg : Asset
+        , checkWhite_svg : Asset
+    }
+
+
 {-| A banner to show error alerts
 -}
-error : String -> Html msg
-error =
+error : Assets a -> String -> Html msg
+error assets =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
@@ -34,8 +45,8 @@ error =
 
 {-| A banner to show neutral alerts
 -}
-neutral : String -> Html msg
-neutral =
+neutral : Assets a -> String -> Html msg
+neutral assets =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
@@ -44,8 +55,8 @@ neutral =
 
 {-| A banner for success alerts
 -}
-success : String -> Html msg
-success =
+success : Assets a -> String -> Html msg
+success assets =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
@@ -86,10 +97,7 @@ type BannerType
     | Success --  checkWhite_svg
 
 
-icon :
-    { r | exclamationPoint_svg : Asset, tip_svg : Asset, checkWhite_svg : Asset }
-    -> BannerType
-    -> Html msg
+icon : Assets assets -> BannerType -> Html msg
 icon assets bannerType =
     let
         ( containerStyle, iconStyle, asset ) =

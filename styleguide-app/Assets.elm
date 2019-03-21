@@ -15,6 +15,7 @@ type alias Assets =
     , checkboxCheckedPartially_svg : Asset
     , checkboxLockOnInside_svg : Asset
     , checkboxUnchecked_svg : Asset
+    , checkWhite_svg : Asset
     , checkmark : String
     , class : String
     , clever : String
@@ -89,6 +90,7 @@ type alias Assets =
     , submitting : String
     , teach_assignments_copyWhite_svg : Asset
     , twitterBlue_svg : Asset
+    , tip_svg : Asset
     , unarchiveBlue2x_png : Asset
     , writingAssignment : String
     , writingcycle : String
@@ -111,6 +113,7 @@ assets =
     , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
     , checkboxUnchecked_svg = Asset "assets/images/checkbox_unchecked.svg"
     , checkmark = "icon-checkmark"
+    , checkWhite_svg = Asset "assets/images/checkwhite.svg"
     , class = "icon-class"
     , clever = "icon-clever"
     , clock = "icon-clock"
@@ -183,6 +186,7 @@ assets =
     , startingOffBadge_png = Asset "assets/images/starting-off-badge.png"
     , submitting = "icon-submitting"
     , teach_assignments_copyWhite_svg = Asset "assets/images/copy-white.svg"
+    , tip_svg = Asset "assets/images/tip.svg"
     , twitterBlue_svg = Asset "assets/images/twitter-blue.svg"
     , unarchiveBlue2x_png = Asset "assets/images/unarchive-blue_2x.png"
     , writingAssignment = "icon-writing-assignment"
