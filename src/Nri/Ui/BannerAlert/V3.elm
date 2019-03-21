@@ -24,40 +24,41 @@ import Nri.Ui.Fonts.V1
 -}
 error : String -> Html msg
 error =
-    banner errorStyles
+    banner
+        [ Css.backgroundColor Nri.Ui.Colors.V1.purpleLight
+        , Css.color Nri.Ui.Colors.V1.purpleDark
+        ]
 
 
 {-| A banner to show neutral alerts
 -}
 neutral : String -> Html msg
 neutral =
-    banner neutralStyles
+    banner
+        [ Css.backgroundColor Nri.Ui.Colors.V1.frost
+        , Css.color Nri.Ui.Colors.V1.navy
+        ]
 
 
 {-| A banner for success alerts
 -}
 success : String -> Html msg
 success =
-    banner successStyles
+    banner
+        [ Css.backgroundColor Nri.Ui.Colors.V1.greenLightest
+        , Css.color Nri.Ui.Colors.V1.greenDarkest
+        ]
 
 
-banner : Css.Style -> String -> Html msg
+banner : List Css.Style -> String -> Html msg
 banner bannerType alertMessage =
-    Html.div [ css [ batch [ bannerStyles, bannerType ] ] ]
+    Html.div [ css (bannerStyles ++ bannerType) ]
         [ notification alertMessage ]
 
 
 notification : String -> Html msg
 notification message =
     Html.div [ css [ alertMessageStyles ] ] [ Html.text message ]
-
-
-type CssClasses
-    = AlertMessage
-    | Banner
-    | Error
-    | Neutral
-    | Success
 
 
 alertMessageStyles : Style
@@ -71,42 +72,17 @@ alertMessageStyles =
         ]
 
 
-bannerStyles : Style
+bannerStyles : List Style
 bannerStyles =
-    batch
-        [ Css.alignItems Css.center
-        , Css.displayFlex
-        , Css.justifyContent Css.center
-        , Css.padding (Css.px 20)
-        , Css.width (Css.pct 100)
-        , Css.Global.children
-            [ Css.Global.button
-                [ Css.position Css.absolute
-                , Css.right (Css.px 15)
-                ]
+    [ Css.alignItems Css.center
+    , Css.displayFlex
+    , Css.justifyContent Css.center
+    , Css.padding (Css.px 20)
+    , Css.width (Css.pct 100)
+    , Css.Global.children
+        [ Css.Global.button
+            [ Css.position Css.absolute
+            , Css.right (Css.px 15)
             ]
         ]
-
-
-errorStyles : Style
-errorStyles =
-    batch
-        [ Css.backgroundColor Nri.Ui.Colors.V1.purpleLight
-        , Css.color Nri.Ui.Colors.V1.purpleDark
-        ]
-
-
-neutralStyles : Style
-neutralStyles =
-    batch
-        [ Css.backgroundColor Nri.Ui.Colors.V1.frost
-        , Css.color Nri.Ui.Colors.V1.navy
-        ]
-
-
-successStyles : Style
-successStyles =
-    batch
-        [ Css.backgroundColor Nri.Ui.Colors.V1.greenLightest
-        , Css.color Nri.Ui.Colors.V1.greenDarkest
-        ]
+    ]
