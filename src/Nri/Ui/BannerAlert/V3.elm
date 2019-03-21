@@ -13,10 +13,10 @@ module Nri.Ui.BannerAlert.V3 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Css exposing (..)
-import Css.Global exposing (Snippet, children, descendants, everything, selector)
+import Css
+import Css.Global
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Colors.V1
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 
 
@@ -25,9 +25,9 @@ import Nri.Ui.Fonts.V1
 error : String -> Html msg
 error =
     banner
-        [ Css.backgroundColor Nri.Ui.Colors.V1.purpleLight
-        , Css.color Nri.Ui.Colors.V1.purpleDark
-        ]
+        { backgroundColor = Colors.purpleLight
+        , color = Colors.purpleDark
+        }
 
 
 {-| A banner to show neutral alerts
@@ -35,9 +35,9 @@ error =
 neutral : String -> Html msg
 neutral =
     banner
-        [ Css.backgroundColor Nri.Ui.Colors.V1.frost
-        , Css.color Nri.Ui.Colors.V1.navy
-        ]
+        { backgroundColor = Colors.frost
+        , color = Colors.navy
+        }
 
 
 {-| A banner for success alerts
@@ -45,29 +45,35 @@ neutral =
 success : String -> Html msg
 success =
     banner
-        [ Css.backgroundColor Nri.Ui.Colors.V1.greenLightest
-        , Css.color Nri.Ui.Colors.V1.greenDarkest
-        ]
+        { backgroundColor = Colors.greenLightest
+        , color = Colors.greenDarkest
+        }
 
 
-banner : List Css.Style -> String -> Html msg
-banner bannerType alertMessage =
+type alias Config =
+    { color : Css.Color
+    , backgroundColor : Css.Color
+    }
+
+
+banner : Config -> String -> Html msg
+banner { color, backgroundColor } alertMessage =
     Html.div
         [ css
-            ([ Css.alignItems Css.center
-             , Css.displayFlex
-             , Css.justifyContent Css.center
-             , Css.padding (Css.px 20)
-             , Css.width (Css.pct 100)
-             , Css.Global.children
+            [ Css.alignItems Css.center
+            , Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.padding (Css.px 20)
+            , Css.width (Css.pct 100)
+            , Css.Global.children
                 [ Css.Global.button
                     [ Css.position Css.absolute
                     , Css.right (Css.px 15)
                     ]
                 ]
-             ]
-                ++ bannerType
-            )
+            , Css.backgroundColor backgroundColor
+            , Css.color color
+            ]
         ]
         [ notification alertMessage ]
 
