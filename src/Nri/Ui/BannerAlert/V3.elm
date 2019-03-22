@@ -40,7 +40,11 @@ error assets =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
-        , icon = icon assets.exclamationPoint_svg Error
+        , icon =
+            { backgroundColor = Colors.purple
+            , height = Css.px 25
+            , asset = assets.exclamationPoint_svg
+            }
         }
 
 
@@ -51,7 +55,11 @@ neutral assets =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
-        , icon = icon assets.tip_svg Neutral
+        , icon =
+            { backgroundColor = Colors.frost
+            , height = Css.px 50
+            , asset = assets.tip_svg
+            }
         }
 
 
@@ -62,18 +70,22 @@ success assets =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
-        , icon = icon assets.checkWhite_svg Success
+        , icon =
+            { backgroundColor = Colors.green
+            , height = Css.px 20
+            , asset = assets.checkWhite_svg
+            }
         }
 
 
-type alias Config msg =
+type alias Config =
     { color : Css.Color
     , backgroundColor : Css.Color
-    , icon : Html msg
+    , icon : IconConfig
     }
 
 
-banner : Config msg -> String -> Html msg
+banner : Config -> String -> Html msg
 banner config alertMessage =
     Html.div
         [ css
@@ -92,46 +104,29 @@ banner config alertMessage =
             , Css.color config.color
             ]
         ]
-        [ config.icon
+        [ icon config.icon
         , notification alertMessage
         ]
 
 
-type BannerType
-    = Error -- exclamationPoint_svg
-    | Neutral -- tip_svg
-    | Success --  checkWhite_svg
+type alias IconConfig =
+    { backgroundColor : Css.Color
+    , height : Css.Px
+    , asset : Asset
+    }
 
 
-icon : Asset -> BannerType -> Html msg
-icon asset bannerType =
-    let
-        ( backgroundColor, iconHeight ) =
-            case bannerType of
-                Error ->
-                    ( Colors.purple
-                    , Css.px 25
-                    )
-
-                Neutral ->
-                    ( Colors.frost
-                    , Css.px 50
-                    )
-
-                Success ->
-                    ( Colors.green
-                    , Css.px 20
-                    )
-    in
+icon : IconConfig -> Html msg
+icon config =
     Html.div
         [ css
             [ iconContainer
-            , Css.backgroundColor backgroundColor
+            , Css.backgroundColor config.backgroundColor
             ]
         ]
         [ Html.decorativeImg
-            [ css [ Css.height iconHeight ]
-            , Attributes.src (AssetPath.url asset)
+            [ css [ Css.height config.height ]
+            , Attributes.src (AssetPath.url config.asset)
             ]
         ]
 
