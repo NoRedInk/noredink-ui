@@ -16,19 +16,9 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
-{-| The assets required to use this module.
--}
-type alias Assets assets =
-    { assets
-        | exclamationPoint_svg : Asset
-        , tip_svg : Asset
-        , checkWhite_svg : Asset
-    }
-
-
 {-| A banner to show error alerts
 -}
-error : Assets a -> String -> Html msg
+error : { a | exclamationPoint_svg : Asset } -> String -> Html msg
 error assets =
     banner
         { backgroundColor = Colors.purpleLight
@@ -43,7 +33,7 @@ error assets =
 
 {-| A banner to show neutral alerts
 -}
-neutral : Assets a -> String -> Html msg
+neutral : { a | tip_svg : Asset } -> String -> Html msg
 neutral assets =
     banner
         { backgroundColor = Colors.frost
@@ -58,7 +48,7 @@ neutral assets =
 
 {-| A banner for success alerts
 -}
-success : Assets a -> String -> Html msg
+success : { a | checkWhite_svg : Asset } -> String -> Html msg
 success assets =
     banner
         { backgroundColor = Colors.greenLightest
