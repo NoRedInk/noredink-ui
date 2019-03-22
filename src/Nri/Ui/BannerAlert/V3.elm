@@ -120,7 +120,14 @@ icon : IconConfig -> Html msg
 icon config =
     Html.div
         [ css
-            [ iconContainer
+            [ Css.borderRadius (Css.pct 50)
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.center
+            , Css.width (Css.px 50)
+            , Css.height (Css.px 50)
+            , Css.marginRight (Css.px 20)
+            , Css.flexShrink (Css.num 0)
             , Css.backgroundColor config.backgroundColor
             ]
         ]
@@ -143,17 +150,3 @@ notification message =
             ]
         ]
         [ Html.text message ]
-
-
-iconContainer : Css.Style
-iconContainer =
-    Css.batch
-        [ Css.borderRadius (Css.pct 50)
-        , Css.displayFlex
-        , Css.alignItems Css.center
-        , Css.justifyContent Css.center
-        , Css.width (Css.px 50)
-        , Css.height (Css.px 50)
-        , Css.marginRight (Css.px 20)
-        , Css.flexShrink (Css.num 0)
-        ]
