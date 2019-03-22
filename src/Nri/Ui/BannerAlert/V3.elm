@@ -106,26 +106,31 @@ type BannerType
 icon : Asset -> BannerType -> Html msg
 icon asset bannerType =
     let
-        ( containerStyle, iconStyle ) =
+        ( backgroundColor, iconHeight ) =
             case bannerType of
                 Error ->
-                    ( errorIcon
-                    , errorIconImage
+                    ( Colors.purple
+                    , Css.px 25
                     )
 
                 Neutral ->
-                    ( neutralIcon
-                    , neutralIconImage
+                    ( Colors.frost
+                    , Css.px 50
                     )
 
                 Success ->
-                    ( successIcon
-                    , successIconImage
+                    ( Colors.green
+                    , Css.px 20
                     )
     in
-    Html.div [ css containerStyle ]
+    Html.div
+        [ css
+            [ iconContainer
+            , Css.backgroundColor backgroundColor
+            ]
+        ]
         [ Html.decorativeImg
-            [ css iconStyle
+            [ css [ Css.height iconHeight ]
             , Attributes.src (AssetPath.url asset)
             ]
         ]
@@ -143,48 +148,6 @@ notification message =
             ]
         ]
         [ Html.text message ]
-
-
-
--- ICON STYLES
-
-
-errorIcon : List Css.Style
-errorIcon =
-    [ iconContainer
-    , Css.backgroundColor Colors.purple
-    ]
-
-
-errorIconImage : List Css.Style
-errorIconImage =
-    [ Css.height (Css.px 25)
-    ]
-
-
-neutralIcon : List Css.Style
-neutralIcon =
-    [ iconContainer
-    ]
-
-
-neutralIconImage : List Css.Style
-neutralIconImage =
-    [ Css.height (Css.px 50)
-    ]
-
-
-successIcon : List Css.Style
-successIcon =
-    [ iconContainer
-    , Css.backgroundColor Colors.green
-    ]
-
-
-successIconImage : List Css.Style
-successIconImage =
-    [ Css.height (Css.px 20)
-    ]
 
 
 iconContainer : Css.Style
