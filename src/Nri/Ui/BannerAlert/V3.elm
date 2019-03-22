@@ -40,6 +40,7 @@ error assets =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
+        , icon = icon assets.exclamationPoint_svg Error
         }
 
 
@@ -50,6 +51,7 @@ neutral assets =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
+        , icon = icon assets.tip_svg Neutral
         }
 
 
@@ -60,17 +62,19 @@ success assets =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
+        , icon = icon assets.checkWhite_svg Success
         }
 
 
-type alias Config =
+type alias Config msg =
     { color : Css.Color
     , backgroundColor : Css.Color
+    , icon : Html msg
     }
 
 
-banner : Config -> String -> Html msg
-banner { color, backgroundColor } alertMessage =
+banner : Config msg -> String -> Html msg
+banner config alertMessage =
     Html.div
         [ css
             [ Css.alignItems Css.center
@@ -84,11 +88,13 @@ banner { color, backgroundColor } alertMessage =
                     , Css.right (Css.px 15)
                     ]
                 ]
-            , Css.backgroundColor backgroundColor
-            , Css.color color
+            , Css.backgroundColor config.backgroundColor
+            , Css.color config.color
             ]
         ]
-        [ notification alertMessage ]
+        [ config.icon
+        , notification alertMessage
+        ]
 
 
 type BannerType
@@ -97,27 +103,24 @@ type BannerType
     | Success --  checkWhite_svg
 
 
-icon : Assets assets -> BannerType -> Html msg
-icon assets bannerType =
+icon : Asset -> BannerType -> Html msg
+icon asset bannerType =
     let
-        ( containerStyle, iconStyle, asset ) =
+        ( containerStyle, iconStyle ) =
             case bannerType of
                 Error ->
                     ( errorIcon
                     , errorIconImage
-                    , assets.exclamationPoint_svg
                     )
 
                 Neutral ->
                     ( neutralIcon
                     , neutralIconImage
-                    , assets.tip_svg
                     )
 
                 Success ->
                     ( successIcon
                     , successIconImage
-                    , assets.checkWhite_svg
                     )
     in
     Html.div [ css containerStyle ]
