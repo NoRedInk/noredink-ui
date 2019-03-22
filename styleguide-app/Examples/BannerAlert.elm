@@ -17,7 +17,7 @@ example =
     { filename = "Nri.Ui.BannerAlert.V3.elm"
     , category = Messaging
     , content =
-        [ h3 [] [ text "errorBanner" ]
+        [ h3 [] [ text "error" ]
         , BannerAlert.error assets "This is an error message!"
         , h3 [] [ text "neutral" ]
         , BannerAlert.neutral assets "This is a neutral message!"
