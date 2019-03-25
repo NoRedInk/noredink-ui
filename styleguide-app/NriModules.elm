@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
+import Examples.BannerAlert
 import Examples.Button
 import Examples.Checkbox
 import Examples.ClickableText
@@ -213,6 +214,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
+    , Examples.BannerAlert.example
     , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.ClickableText.example assets (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
