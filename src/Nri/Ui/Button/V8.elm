@@ -61,6 +61,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Style)
 import Css.Global
 import EventExtras.Styled as EventExtras
+import Html as RootHtml
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -73,6 +74,9 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Icon.V4 as Icon exposing (IconType)
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Svg
+import Svg.Attributes
 
 
 {-| Sizes for buttons and links that have button classes
@@ -236,7 +240,16 @@ delete assets config =
         , -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
           Widget.label config.label
         ]
-        [ Icon.icon { alt = "Delete", icon = Icon.xSvg assets } ]
+        [ Svg.svg [ Svg.Attributes.viewBox "0 0 25 25" ]
+            [ Svg.title [] [ RootHtml.text "Delete" ]
+            , Svg.path
+                [ Svg.Attributes.fill "#146aff" -- TODO: this should be azure, but css colors aren't extractable afaik
+                , Svg.Attributes.d "M1.067 6.015c-1.423-1.422-1.423-3.526 0-4.948 1.422-1.423 3.526-1.423 4.948 0l6.371 6.37 6.371-6.37c1.422-1.423 3.783-1.423 5.176 0 1.423 1.422 1.423 3.782 0 5.176l-6.37 6.37 6.37 6.372c1.423 1.422 1.423 3.526 0 4.948-1.422 1.423-3.526 1.423-4.948 0l-6.371-6.37-6.371 6.37c-1.422 1.423-3.783 1.423-5.176 0-1.423-1.422-1.423-3.782 0-5.176l6.37-6.143-6.37-6.599z"
+                ]
+                []
+            ]
+            |> Styled.fromUnstyled
+        ]
 
 
 
