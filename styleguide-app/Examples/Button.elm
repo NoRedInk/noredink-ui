@@ -155,7 +155,6 @@ allStyles : List Button.ButtonStyle
 allStyles =
     [ Button.Primary
     , Button.Secondary
-    , Button.Borderless
     , Button.Danger
     , Button.Premium
     ]

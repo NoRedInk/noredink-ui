@@ -15,6 +15,7 @@ module Nri.Ui.Button.V8 exposing
   - Removes dependency on Icon that makes versioned assets hard to work with
   - Removes copyToClipboard, which has additional dependencies and also isn't broadly used
   - Removes customButton from what's exposed, as it's not in use
+  - Removes Borderless style (use ClickableText instead)
 
 
 # About:
@@ -95,17 +96,10 @@ type ButtonWidth
 
 
 {-| Styleguide-approved styles for your buttons!
-
-Note on borderless buttons:
-A borderless button that performs an action on the current page
-This button is intended to look like a link.
-Only use a borderless button when the clickable text in question follows the same layout/margin/padding as a bordered button
-
 -}
 type ButtonStyle
     = Primary
     | Secondary
-    | Borderless
     | Danger
     | Premium
 
@@ -466,7 +460,6 @@ linkBase linkFunctionName extraAttrs config =
 type ColorPalette
     = PrimaryColors
     | SecondaryColors
-    | BorderlessColors
     | DangerColors
     | PremiumColors
     | InactiveColors
@@ -483,9 +476,6 @@ styleToColorPalette style =
 
         Secondary ->
             SecondaryColors
-
-        Borderless ->
-            BorderlessColors
 
         Danger ->
             DangerColors
@@ -582,20 +572,6 @@ colorStyle colorPalette =
                       , shadow = Colors.azure
                       }
                     , []
-                    )
-
-                BorderlessColors ->
-                    ( { background = Css.rgba 0 0 0 0
-                      , hover = Css.rgba 0 0 0 0
-                      , text = Colors.azure
-                      , border = Nothing
-                      , shadow = Css.rgba 0 0 0 0
-                      }
-                    , [ Css.hover
-                            [ Css.textDecoration Css.underline
-                            , Css.disabled [ Css.textDecoration Css.none ]
-                            ]
-                      ]
                     )
 
                 DangerColors ->
