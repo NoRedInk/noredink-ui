@@ -1,6 +1,6 @@
 module Nri.Ui.Button.V8 exposing
-    ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..), ButtonContent
-    , ButtonConfig, button
+    ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
+    , button
     , delete
     , ToggleButtonConfig, toggleButton
     , LinkConfig, link, linkSpa
@@ -37,12 +37,12 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## Common configs
 
-@docs ButtonSize, ButtonWidth, ButtonStyle, ButtonState, ButtonContent
+@docs ButtonSize, ButtonWidth, ButtonStyle, ButtonState
 
 
 ## `<button>` Buttons
 
-@docs ButtonConfig, button
+@docs button
 @docs delete
 @docs ToggleButtonConfig, toggleButton
 
@@ -71,7 +71,7 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V4 as Icon exposing (Icon)
+import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
 {-| Sizes for buttons and links that have button classes
@@ -129,26 +129,6 @@ type ButtonState
     | Success
 
 
-{-| The part of a button that remains constant through different button states
--}
-type alias ButtonConfig msg =
-    { onClick : msg
-    , size : ButtonSize
-    , style : ButtonStyle
-    , width : ButtonWidth
-    }
-
-
-{-| ButtonContent, often changes based on ButtonState. For example, a button in the "Success"
-state may have a different label than a button in the "Error" state
--}
-type alias ButtonContent =
-    { label : String
-    , state : ButtonState
-    , icon : Maybe IconType
-    }
-
-
 {-| A delightful button which can trigger an effect when clicked!
 
 This button will trigger the passed-in message if the button state is:
@@ -164,15 +144,19 @@ This button will be Disabled if the button state is:
   - Success
 
 -}
-button : ButtonConfig msg -> ButtonContent -> Html msg
+button :
+    { onClick : msg
+    , size : ButtonSize
+    , style : ButtonStyle
+    , width : ButtonWidth
+    }
+    ->
+        { label : String
+        , state : ButtonState
+        , icon : Maybe IconType
+        }
+    -> Html msg
 button config content =
-    customButton [] config content
-
-
-{-| Exactly the same as button but you can pass in a list of attributes
--}
-customButton : List (Attribute msg) -> ButtonConfig msg -> ButtonContent -> Html msg
-customButton attributes config content =
     let
         buttonStyle_ =
             case content.state of
@@ -217,12 +201,10 @@ customButton attributes config content =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ ]
-        ([ Events.onClick config.onClick
-         , Attributes.disabled disabled
-         , Attributes.type_ "button"
-         ]
-            ++ attributes
-        )
+        [ Events.onClick config.onClick
+        , Attributes.disabled disabled
+        , Attributes.type_ "button"
+        ]
         [ viewLabel content.icon content.label ]
 
 
