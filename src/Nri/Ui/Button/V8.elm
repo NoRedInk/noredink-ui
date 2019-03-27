@@ -3,7 +3,7 @@ module Nri.Ui.Button.V8 exposing
     , button
     , delete
     , ToggleButtonConfig, toggleButton
-    , LinkConfig, link, linkSpa
+    , link, linkSpa
     , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
 
@@ -49,7 +49,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## `<a>` Buttons
 
-@docs LinkConfig, link, linkSpa
+@docs link, linkSpa
 @docs linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 -}
@@ -317,12 +317,13 @@ type alias InputConfig =
 -- LINKS THAT LOOK LIKE BUTTONS
 
 
-{-| Links are clickable things with a url.
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
+some url.
 
 NOTE: Links do not support two-line labels.
 
 -}
-type alias LinkConfig =
+link :
     { label : String
     , icon : Maybe IconType
     , url : String
@@ -330,12 +331,7 @@ type alias LinkConfig =
     , style : ButtonStyle
     , width : ButtonWidth
     }
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url
--}
-link : LinkConfig -> Html msg
+    -> Html msg
 link =
     linkBase "link" [ Attributes.target "_self" ]
 
@@ -376,7 +372,15 @@ linkSpa toUrl toMsg config =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url and have it open to an external site
 -}
-linkExternal : LinkConfig -> Html msg
+linkExternal :
+    { label : String
+    , icon : Maybe IconType
+    , url : String
+    , size : ButtonSize
+    , style : ButtonStyle
+    , width : ButtonWidth
+    }
+    -> Html msg
 linkExternal =
     linkBase "linkExternal" [ Attributes.target "_blank" ]
 
@@ -384,7 +388,17 @@ linkExternal =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
 -}
-linkWithMethod : String -> LinkConfig -> Html msg
+linkWithMethod :
+    String
+    ->
+        { label : String
+        , icon : Maybe IconType
+        , url : String
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+    -> Html msg
 linkWithMethod method =
     linkBase "linkWithMethod" [ Attributes.attribute "data-method" method ]
 
@@ -392,7 +406,17 @@ linkWithMethod method =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
 This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
 -}
-linkWithTracking : msg -> LinkConfig -> Html msg
+linkWithTracking :
+    msg
+    ->
+        { label : String
+        , icon : Maybe IconType
+        , url : String
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+    -> Html msg
 linkWithTracking onTrack =
     linkBase
         "linkWithTracking"
@@ -406,7 +430,17 @@ linkWithTracking onTrack =
 This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
 
 -}
-linkExternalWithTracking : msg -> LinkConfig -> Html msg
+linkExternalWithTracking :
+    msg
+    ->
+        { label : String
+        , icon : Maybe IconType
+        , url : String
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+    -> Html msg
 linkExternalWithTracking onTrack =
     linkBase
         "linkExternalWithTracking"
@@ -417,7 +451,18 @@ linkExternalWithTracking onTrack =
 
 {-| Helper function for building links with an arbitrary number of Attributes
 -}
-linkBase : String -> List (Attribute msg) -> LinkConfig -> Html msg
+linkBase :
+    String
+    -> List (Attribute msg)
+    ->
+        { label : String
+        , icon : Maybe IconType
+        , url : String
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+    -> Html msg
 linkBase linkFunctionName extraAttrs config =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
