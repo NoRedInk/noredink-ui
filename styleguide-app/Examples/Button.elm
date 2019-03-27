@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V7 as Button
+import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
 
@@ -30,7 +30,6 @@ type State
 type ButtonType
     = Button
     | Link
-    | CopyToClipboard
 
 
 {-| -}
@@ -44,7 +43,7 @@ example assets unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri.Ui.Button.V7"
+    { filename = "Nri.Ui.Button.V8"
     , category = Buttons
     , content =
         [ viewButtonExamples assets messages state ]
@@ -56,7 +55,7 @@ init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Button")
-        |> Control.field "icon (copyToClipboard has only one choice)"
+        |> Control.field "icon"
             (Control.maybe False <|
                 Control.choice
                     ( "Performance", Control.value (Icon.performance assets) )
@@ -75,7 +74,6 @@ init assets =
             (Control.choice
                 ( "Nri.Ui.Button.V7.button", Control.value Button )
                 [ ( "Nri.Ui.Button.V7.link", Control.value Link )
-                , ( "Nri.Ui.Button.V7.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
         |> Control.field "state (button only)"
@@ -123,21 +121,9 @@ viewButtonExamples assets messages (State control) =
     let
         model =
             Control.currentValue control
-
-        maybeExplanation =
-            if model.buttonType == CopyToClipboard then
-                div [ css [ Css.margin2 (Css.px 10) Css.zero ] ]
-                    [ Text.smallBody
-                        [ text "CopyToClipboard requires 'clipboard.js'. See assets/clipboard-setup.js for example configuration."
-                        ]
-                    ]
-
-            else
-                text ""
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , maybeExplanation
     , buttons assets messages model
     , toggleButtons messages
     , Button.delete assets
@@ -219,19 +205,6 @@ buttons assets messages model =
                         , icon = model.icon
                         , state = model.state
                         }
-
-                CopyToClipboard ->
-                    div [ id "clipboard-container" ]
-                        [ Button.copyToClipboard
-                            assets
-                            { size = size
-                            , style = style
-                            , copyText = "wire up in your coffee file with clipboard.js"
-                            , buttonLabel = model.label
-                            , withIcon = model.icon /= Nothing
-                            , width = model.width
-                            }
-                        ]
             )
                 |> List.singleton
                 |> td
