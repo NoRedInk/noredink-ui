@@ -206,15 +206,15 @@ button config content =
 -- DELETE BUTTON
 
 
-type alias DeleteButtonConfig msg =
-    { label : String
-    , onClick : msg
-    }
-
-
 {-| A delete button (blue X)
 -}
-delete : { r | x : String } -> DeleteButtonConfig msg -> Html msg
+delete :
+    { r | x : String }
+    ->
+        { label : String
+        , onClick : msg
+        }
+    -> Html msg
 delete assets config =
     Nri.Ui.styled Html.button
         (styledName "delete")
