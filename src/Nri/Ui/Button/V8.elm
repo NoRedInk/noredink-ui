@@ -2,7 +2,7 @@ module Nri.Ui.Button.V8 exposing
     ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
     , delete
-    , ToggleButtonConfig, toggleButton
+    , toggleButton
     , link, linkSpa
     , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
@@ -44,7 +44,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 @docs button
 @docs delete
-@docs ToggleButtonConfig, toggleButton
+@docs toggleButton
 
 
 ## `<a>` Buttons
@@ -249,18 +249,15 @@ delete assets config =
 -- TOGGLE BUTTON
 
 
-{-| Buttons can be toggled into a pressed state and back again.
+{-| A button that can be toggled into a pressed state and back again.
 -}
-type alias ToggleButtonConfig msg =
+toggleButton :
     { label : String
     , onSelect : msg
     , onDeselect : msg
     , pressed : Bool
     }
-
-
-{-| -}
-toggleButton : ToggleButtonConfig msg -> Html msg
+    -> Html msg
 toggleButton config =
     let
         toggledStyles =
