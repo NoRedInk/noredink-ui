@@ -151,7 +151,7 @@ button :
     ->
         { label : String
         , state : ButtonState
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         }
     -> Html msg
 button config content =
@@ -312,7 +312,7 @@ NOTE: Links do not support two-line labels.
 -}
 link :
     { label : String
-    , icon : Maybe IconType
+    , icon : Maybe Svg
     , url : String
     , size : ButtonSize
     , style : ButtonStyle
@@ -335,7 +335,7 @@ linkSpa :
     -> (route -> msg)
     ->
         { label : String
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         , size : ButtonSize
         , style : ButtonStyle
         , width : ButtonWidth
@@ -361,7 +361,7 @@ some url and have it open to an external site
 -}
 linkExternal :
     { label : String
-    , icon : Maybe IconType
+    , icon : Maybe Svg
     , url : String
     , size : ButtonSize
     , style : ButtonStyle
@@ -379,7 +379,7 @@ linkWithMethod :
     String
     ->
         { label : String
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         , url : String
         , size : ButtonSize
         , style : ButtonStyle
@@ -397,7 +397,7 @@ linkWithTracking :
     msg
     ->
         { label : String
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         , url : String
         , size : ButtonSize
         , style : ButtonStyle
@@ -421,7 +421,7 @@ linkExternalWithTracking :
     msg
     ->
         { label : String
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         , url : String
         , size : ButtonSize
         , style : ButtonStyle
@@ -443,7 +443,7 @@ linkBase :
     -> List (Attribute msg)
     ->
         { label : String
-        , icon : Maybe IconType
+        , icon : Maybe Svg
         , url : String
         , size : ButtonSize
         , style : ButtonStyle
@@ -500,8 +500,8 @@ buttonStyles size width colorPalette =
         ]
 
 
-viewLabel : Maybe IconType -> String -> Html msg
-viewLabel icn label =
+viewLabel : Maybe Svg -> String -> Html msg
+viewLabel maybeSvg label =
     Nri.Ui.styled Html.span
         "button-label-span"
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
@@ -509,12 +509,12 @@ viewLabel icn label =
         , Css.padding2 (Css.px 2) Css.zero -- Without a bit of bottom padding, text that extends below the baseline, like "g" gets cut off
         ]
         []
-        (case icn of
+        (case maybeSvg of
             Nothing ->
                 renderMarkdown label
 
-            Just iconType ->
-                Icon.decorativeIcon iconType :: renderMarkdown label
+            Just svg ->
+                NriSvg.toHtml svg :: renderMarkdown label
         )
 
 

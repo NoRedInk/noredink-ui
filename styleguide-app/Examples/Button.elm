@@ -13,6 +13,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, Mod
 import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Icon.V4 as Icon
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V2 as Text
 
 
@@ -34,11 +35,10 @@ type ButtonType
 
 {-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> (String -> ModuleMessages Msg parentMsg)
+    (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
-example assets unnamedMessages state =
+example unnamedMessages state =
     let
         messages =
             unnamedMessages "ButtonExample"
@@ -46,7 +46,7 @@ example assets unnamedMessages state =
     { filename = "Nri.Ui.Button.V8"
     , category = Buttons
     , content =
-        [ viewButtonExamples assets messages state ]
+        [ viewButtonExamples messages state ]
     }
 
 
@@ -58,8 +58,18 @@ init assets =
         |> Control.field "icon"
             (Control.maybe False <|
                 Control.choice
-                    ( "Performance", Control.value (Icon.performance assets) )
-                    [ ( "Lock", Control.value (Icon.lock assets) )
+                    ( "Performance"
+                    , Icon.performance assets
+                        |> Icon.decorativeIcon
+                        |> NriSvg.fromHtml
+                        |> Control.value
+                    )
+                    [ ( "Lock"
+                      , Icon.lock assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
                     ]
             )
         |> Control.field "width"
@@ -105,7 +115,7 @@ update msg state =
 
 type alias Model =
     { label : String
-    , icon : Maybe Icon.IconType
+    , icon : Maybe Svg
     , width : Button.ButtonWidth
     , buttonType : ButtonType
     , state : Button.ButtonState
@@ -113,18 +123,17 @@ type alias Model =
 
 
 viewButtonExamples :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> State
     -> Html parentMsg
-viewButtonExamples assets messages (State control) =
+viewButtonExamples messages (State control) =
     let
         model =
             Control.currentValue control
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages model
+    , buttons messages model
     , toggleButtons messages
     , Button.delete
         { label = "Delete Something"
@@ -161,11 +170,10 @@ allStyles =
 
 
 buttons :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> Model
     -> Html parentMsg
-buttons assets messages model =
+buttons messages model =
     let
         exampleRow style =
             List.concat
