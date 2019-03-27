@@ -302,17 +302,6 @@ toggleButton config =
         [ viewLabel Nothing config.label ]
 
 
-{-| Inputs can be a clickable thing used in a form
--}
-type alias InputConfig =
-    { content : Html Never
-    , name : String
-    , size : ButtonSize
-    , style : ButtonStyle
-    , value : String
-    }
-
-
 
 -- LINKS THAT LOOK LIKE BUTTONS
 
