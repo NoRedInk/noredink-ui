@@ -1,7 +1,10 @@
 module Nri.Ui.Button.V8 exposing
     ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..), ButtonContent
-    , ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
-    , LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , ButtonConfig, button
+    , delete
+    , ToggleButtonConfig, toggleButton
+    , LinkConfig, link, linkSpa
+    , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     )
 
 {-|
@@ -10,6 +13,8 @@ module Nri.Ui.Button.V8 exposing
 # Changes from V7:
 
   - Removes dependency on Icon that makes versioned assets hard to work with
+  - Removes copyToClipboard, which has additional dependencies and also isn't broadly used
+  - Removes customButton from what's exposed, as it's not in use
 
 
 # About:
@@ -37,12 +42,15 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## `<button>` Buttons
 
-@docs ButtonConfig, button, customButton, delete, copyToClipboard, ToggleButtonConfig, toggleButton
+@docs ButtonConfig, button
+@docs delete
+@docs ToggleButtonConfig, toggleButton
 
 
 ## `<a>` Buttons
 
-@docs LinkConfig, link, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs LinkConfig, link, linkSpa
+@docs linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 -}
 
@@ -216,44 +224,6 @@ customButton attributes config content =
             ++ attributes
         )
         [ viewLabel content.icon content.label ]
-
-
-
--- COPY TO CLIPBOARD BUTTON
-
-
-{-| Config for copyToClipboard
--}
-type alias CopyToClipboardConfig =
-    { size : ButtonSize
-    , style : ButtonStyle
-    , copyText : String
-    , buttonLabel : String
-    , withIcon : Bool
-    , width : ButtonWidth
-    }
-
-
-{-| See ui/src/Page/Teach/Courses/Assignments/index.coffee
-You will need to hook this up to clipboard.js
--}
-copyToClipboard : { r | teach_assignments_copyWhite_svg : Asset } -> CopyToClipboardConfig -> Html msg
-copyToClipboard assets config =
-    let
-        maybeIcon =
-            if config.withIcon then
-                Just (Icon.copy assets)
-
-            else
-                Nothing
-    in
-    Nri.Ui.styled Html.button
-        (styledName "copyToClipboard")
-        [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
-        [ Widget.label "Copy URL to clipboard"
-        , Attributes.attribute "data-clipboard-text" config.copyText
-        ]
-        [ viewLabel maybeIcon config.buttonLabel ]
 
 
 
