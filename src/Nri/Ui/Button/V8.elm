@@ -212,14 +212,8 @@ button config content =
 
 {-| A delete button (blue X)
 -}
-delete :
-    { r | x : String }
-    ->
-        { label : String
-        , onClick : msg
-        }
-    -> Html msg
-delete assets config =
+delete : { label : String, onClick : msg } -> Html msg
+delete config =
     Nri.Ui.styled Html.button
         (styledName "delete")
         [ Css.display Css.inlineBlock

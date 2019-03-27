@@ -34,7 +34,7 @@ type ButtonType
 
 {-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
+    { r | teach_assignments_copyWhite_svg : Asset }
     -> (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
@@ -113,7 +113,7 @@ type alias Model =
 
 
 viewButtonExamples :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
+    { r | teach_assignments_copyWhite_svg : Asset }
     -> ModuleMessages Msg parentMsg
     -> State
     -> Html parentMsg
@@ -126,7 +126,7 @@ viewButtonExamples assets messages (State control) =
         |> fromUnstyled
     , buttons assets messages model
     , toggleButtons messages
-    , Button.delete assets
+    , Button.delete
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
