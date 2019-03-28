@@ -1,6 +1,6 @@
 module Nri.Ui.ClickableText.V2 exposing
-    ( ButtonConfig, button
-    , LinkConfig, link
+    ( button
+    , link
     , Size(..)
     )
 
@@ -26,12 +26,12 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 # `<button>` creators
 
-@docs ButtonConfig, button
+@docs button
 
 
 # `<a>` creators
 
-@docs LinkConfig, link
+@docs link
 
 
 # Config
@@ -59,19 +59,15 @@ type Size
     | Large
 
 
-{-| Config for the button
+{-| Creates a `<button>` element
 -}
-type alias ButtonConfig msg =
+button :
     { label : String
     , size : Size
     , icon : Maybe IconType
     , onClick : msg
     }
-
-
-{-| Creates a `<button>` element
--}
-button : ButtonConfig msg -> Html msg
+    -> Html msg
 button config =
     let
         fontSize =
@@ -87,19 +83,16 @@ button config =
         ]
 
 
-{-| Config for the link
+{-| Creates a `<a>` element
 -}
-type alias LinkConfig =
+link :
     { label : String
     , size : Size
     , icon : Maybe IconType
     , url : String
     }
-
-
-{-| Creates a `<a>` element
--}
-link : LinkConfig -> List (Attribute msg) -> Html msg
+    -> List (Attribute msg)
+    -> Html msg
 link config additionalAttributes =
     let
         fontSize =
