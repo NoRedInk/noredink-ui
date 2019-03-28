@@ -34,11 +34,10 @@ type ButtonType
 
 {-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> (String -> ModuleMessages Msg parentMsg)
+    (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
-example assets unnamedMessages state =
+example unnamedMessages state =
     let
         messages =
             unnamedMessages "ClickableTextExample"
@@ -46,7 +45,7 @@ example assets unnamedMessages state =
     { filename = "Nri.Ui.ClickableText.V1"
     , category = Buttons
     , content =
-        [ viewExamples assets messages state ]
+        [ viewExamples messages state ]
     }
 
 
@@ -91,18 +90,17 @@ type alias Model =
 
 
 viewExamples :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> State
     -> Html parentMsg
-viewExamples assets messages (State control) =
+viewExamples messages (State control) =
     let
         model =
             Control.currentValue control
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages model
+    , buttons messages model
     ]
         |> div []
 
@@ -116,11 +114,10 @@ sizes =
 
 
 buttons :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> Model
     -> Html parentMsg
-buttons assets messages model =
+buttons messages model =
     let
         exampleCell size =
             (case model.buttonType of
