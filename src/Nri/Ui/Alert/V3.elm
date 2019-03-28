@@ -24,14 +24,19 @@ import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.SpriteSheet exposing (exclamationMark)
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 {-| -}
-error : { r | exclamation : String } -> String -> Html msg
-error assets content =
+error : String -> Html msg
+error content =
     alert
-        [ iconContainer [ Css.color Colors.purple ]
-            (Icon.decorativeIcon (Icon.exclamation assets))
+        [ iconContainer
+            [ Css.color Colors.purple
+            , Css.height (Css.px 20)
+            ]
+            (NriSvg.toHtml exclamationMark)
         , viewAlertContent Colors.purpleDark content
         ]
 

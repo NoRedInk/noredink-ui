@@ -104,6 +104,7 @@ icon config =
     Html.div
         [ css
             [ Css.borderRadius (Css.pct 50)
+            , Css.color Colors.white
             , Css.displayFlex
             , Css.alignItems Css.center
             , Css.justifyContent Css.center

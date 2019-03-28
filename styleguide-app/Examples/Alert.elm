@@ -16,7 +16,7 @@ example =
     { filename = "Nri.Ui.Alert.V3.elm"
     , category = Messaging
     , content =
-        [ Alert.error assets "This is an error"
+        [ Alert.error "This is an error"
         , Alert.warning assets "This is a warning"
         , Alert.tip assets "This is a tip"
         , Alert.success assets "This is a success"
