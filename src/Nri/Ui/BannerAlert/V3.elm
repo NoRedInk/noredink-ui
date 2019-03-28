@@ -39,7 +39,7 @@ neutral =
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.frost
+            { backgroundColor = Colors.navy
             , height = Css.px 50
             , asset = bulb
             }
@@ -103,7 +103,8 @@ icon : IconConfig -> Html msg
 icon config =
     Html.div
         [ css
-            [ Css.borderRadius (Css.pct 50)
+            [ Css.boxSizing Css.borderBox
+            , Css.borderRadius (Css.pct 50)
             , Css.color Colors.white
             , Css.displayFlex
             , Css.alignItems Css.center
@@ -111,6 +112,7 @@ icon config =
             , Css.width (Css.px 50)
             , Css.height (Css.px 50)
             , Css.marginRight (Css.px 20)
+            , Css.padding (Css.px 8)
             , Css.flexShrink (Css.num 0)
             , Css.backgroundColor config.backgroundColor
             ]
