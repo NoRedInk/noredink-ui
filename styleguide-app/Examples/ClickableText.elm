@@ -1,7 +1,9 @@
 module Examples.ClickableText exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Css exposing (middle, verticalAlign)
@@ -98,6 +100,13 @@ viewExamples messages (State control) =
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
     , buttons messages model
+    , Text.smallBody
+        [ text "Sometimes, we'll want our clickable links: "
+        , linkView model Small
+        , text " and clickable buttons: "
+        , buttonView messages model Small
+        , text " to show up in-line."
+        ]
     ]
         |> div []
 
@@ -116,23 +125,6 @@ buttons :
     -> Html parentMsg
 buttons messages model =
     let
-        linkView size =
-            ClickableText.link
-                { size = size
-                , label = model.label
-                , icon = model.icon
-                , url = "#"
-                }
-                []
-
-        buttonView size =
-            ClickableText.button
-                { size = size
-                , onClick = messages.showItWorked (Debug.toString size)
-                , label = model.label
-                , icon = model.icon
-                }
-
         exampleCell view =
             view
                 |> List.singleton
@@ -147,10 +139,31 @@ buttons messages model =
         |> List.map (\size -> th [] [ text <| Debug.toString size ])
         |> (\sizeHeadings -> tr [] (th [] [ td [] [] ] :: sizeHeadings))
     , sizes
-        |> List.map (linkView >> exampleCell)
+        |> List.map (linkView model >> exampleCell)
         |> (\linkViews -> tr [] (td [] [ text ".link" ] :: linkViews))
     , sizes
-        |> List.map (buttonView >> exampleCell)
+        |> List.map (buttonView messages model >> exampleCell)
         |> (\buttonViews -> tr [] (td [] [ text ".button" ] :: buttonViews))
     ]
         |> table []
+
+
+linkView : Model -> ClickableText.Size -> Html msg
+linkView model size =
+    ClickableText.link
+        { size = size
+        , label = model.label
+        , icon = model.icon
+        , url = "#"
+        }
+        []
+
+
+buttonView : ModuleMessages Msg parentMsg -> Model -> ClickableText.Size -> Html parentMsg
+buttonView messages model size =
+    ClickableText.button
+        { size = size
+        , onClick = messages.showItWorked (Debug.toString size)
+        , label = model.label
+        , icon = model.icon
+        }
