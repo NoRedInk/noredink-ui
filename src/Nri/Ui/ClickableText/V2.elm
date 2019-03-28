@@ -7,6 +7,13 @@ module Nri.Ui.ClickableText.V2 exposing
 {-|
 
 
+# Changes from V1
+
+  - Removes dependency on Icon that makes versioned assets hard to work with
+  - Fixes vertical alignment of icons
+  - Inlines configs to make parsing documentation easier
+
+
 # About:
 
 ClickableText looks different from Nri.Ui.Button in that it displays without margin or padding.
@@ -165,4 +172,4 @@ sizeToPx size =
 
 dataDescriptor : String -> String
 dataDescriptor descriptor =
-    "clickable-text-v1-" ++ descriptor
+    "clickable-text-v2-" ++ descriptor
