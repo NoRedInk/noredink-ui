@@ -33,8 +33,9 @@ error : String -> Html msg
 error content =
     alert
         [ iconContainer
-            [ Css.color Colors.purple
-            , Css.height (Css.px 20)
+            [ Css.color Colors.white
+            , Css.backgroundColor Colors.purple
+            , Css.Global.children [ Css.Global.svg [ Css.maxHeight (Css.px 13) ] ]
             ]
             (NriSvg.toHtml exclamationMark)
         , viewAlertContent Colors.purpleDark content
