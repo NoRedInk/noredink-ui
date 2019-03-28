@@ -10,53 +10,53 @@ import Accessibility.Styled as Html exposing (Html)
 import Css
 import Css.Global
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V4 as Icon exposing (IconType)
+import Nri.Ui.SpriteSheet exposing (checkmark, exclamationMark, tip)
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 {-| A banner to show error alerts
 -}
-error : { a | exclamationPoint_svg : Asset } -> String -> Html msg
-error assets =
+error : String -> Html msg
+error =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
             { backgroundColor = Colors.purple
             , height = Css.px 25
-            , asset = assets.exclamationPoint_svg
+            , asset = exclamationMark
             }
         }
 
 
 {-| A banner to show neutral alerts
 -}
-neutral : { a | tip_svg : Asset } -> String -> Html msg
-neutral assets =
+neutral : String -> Html msg
+neutral =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
             { backgroundColor = Colors.frost
             , height = Css.px 50
-            , asset = assets.tip_svg
+            , asset = tip
             }
         }
 
 
 {-| A banner for success alerts
 -}
-success : { a | checkWhite_svg : Asset } -> String -> Html msg
-success assets =
+success : String -> Html msg
+success =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
             { backgroundColor = Colors.green
             , height = Css.px 20
-            , asset = assets.checkWhite_svg
+            , asset = checkmark
             }
         }
 
@@ -95,7 +95,7 @@ banner config alertMessage =
 type alias IconConfig =
     { backgroundColor : Css.Color
     , height : Css.Px
-    , asset : Asset
+    , asset : Svg
     }
 
 
@@ -114,10 +114,10 @@ icon config =
             , Css.backgroundColor config.backgroundColor
             ]
         ]
-        [ Html.decorativeImg
+        [ Html.div
             [ css [ Css.height config.height ]
-            , Attributes.src (AssetPath.url config.asset)
             ]
+            [ NriSvg.toHtml config.asset ]
         ]
 
 
