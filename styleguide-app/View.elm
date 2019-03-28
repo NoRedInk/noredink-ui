@@ -4,6 +4,8 @@ import Browser exposing (Document)
 import Css exposing (..)
 import Css.Global exposing (Snippet)
 import Headings
+import Html as RootHtml
+import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Model exposing (..)
@@ -18,7 +20,16 @@ import Update exposing (..)
 
 view : Model -> Document Msg
 view model =
-    { title = "Style Guide", body = [ view_ model |> Html.toUnstyled ] }
+    { title = "Style Guide"
+    , body =
+        [ view_ model |> Html.toUnstyled
+        , RootHtml.node "link"
+            [ Html.Attributes.href "https://fonts.googleapis.com/css?family=Muli:400,400i,600,600i,700,700i,800,800i,900,900i"
+            , Html.Attributes.rel "stylesheet"
+            ]
+            []
+        ]
+    }
 
 
 view_ : Model -> Html Msg
