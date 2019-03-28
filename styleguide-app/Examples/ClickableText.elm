@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.ClickableText.V1 as ClickableText exposing (Size(..))
+import Nri.Ui.ClickableText.V2 as ClickableText exposing (Size(..))
 import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.Text.V2 as Text
 
