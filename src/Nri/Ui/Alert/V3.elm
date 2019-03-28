@@ -32,12 +32,7 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 error : String -> Html msg
 error content =
     alert
-        [ iconContainer
-            [ Css.color Colors.white
-            , Css.backgroundColor Colors.purple
-            , Css.Global.children [ Css.Global.svg [ Css.maxHeight (Css.px 13) ] ]
-            ]
-            (NriSvg.toHtml exclamationMark)
+        [ exclamation Colors.purple
         , viewAlertContent Colors.purpleDark content
         ]
 
@@ -68,11 +63,10 @@ tip content =
 
 
 {-| -}
-warning : { r | exclamation : String } -> String -> Html msg
-warning assets content =
+warning : String -> Html msg
+warning content =
     alert
-        [ iconContainer [ Css.color Colors.red ]
-            (Icon.decorativeIcon (Icon.exclamation assets))
+        [ exclamation Colors.red
         , viewAlertContent Colors.red content
         ]
 
@@ -90,16 +84,25 @@ alert =
         []
 
 
+exclamation : Css.Color -> Html msg
+exclamation backgroundColor =
+    iconContainer
+        [ Css.color Colors.white
+        , Css.backgroundColor backgroundColor
+        ]
+        (Html.div
+            [ css [ Css.marginTop (Css.px 1), Css.height (Css.px 13) ] ]
+            [ NriSvg.toHtml exclamationMark ]
+        )
+
+
 iconContainer : List Css.Style -> Html msg -> Html msg
 iconContainer styles icon =
     Nri.Ui.styled Html.div
         "Nri-Ui-Alert-V3__iconContainer"
         (styles
             ++ [ -- Content positioning
-                 Css.displayFlex
-               , Css.justifyContent Css.center
-               , Css.alignItems Css.center
-               , Css.marginRight (Css.px 5)
+                 Css.marginRight (Css.px 5)
 
                -- Size
                , Css.borderRadius (Css.px 13)

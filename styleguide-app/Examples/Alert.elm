@@ -6,7 +6,6 @@ module Examples.Alert exposing (example)
 
 -}
 
-import Assets exposing (assets)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Alert.V3 as Alert
 
@@ -17,7 +16,7 @@ example =
     , category = Messaging
     , content =
         [ Alert.error "This is an error"
-        , Alert.warning assets "This is a warning"
+        , Alert.warning "This is a warning"
         , Alert.tip "This is a tip"
         , Alert.success "This is a success"
         ]
