@@ -41,7 +41,6 @@ HTML `<a>` elements and are created here with `*Link` functions.
 -}
 
 import Css
-import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
