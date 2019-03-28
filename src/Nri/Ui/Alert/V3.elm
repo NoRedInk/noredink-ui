@@ -24,7 +24,7 @@ import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
-import Nri.Ui.SpriteSheet exposing (checkmark, exclamationMark)
+import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -56,11 +56,12 @@ success content =
 
 
 {-| -}
-tip : { r | bulb : String } -> String -> Html msg
-tip assets content =
+tip : String -> Html msg
+tip content =
     alert
-        [ iconContainer [ Css.color Colors.yellow ]
-            (Icon.decorativeIcon (Icon.bulb assets))
+        [ iconContainer
+            [ Css.color Colors.yellow ]
+            (NriSvg.toHtml bulb)
         , viewAlertContent Colors.navy content
         ]
 

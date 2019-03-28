@@ -18,7 +18,7 @@ example =
     , content =
         [ Alert.error "This is an error"
         , Alert.warning assets "This is a warning"
-        , Alert.tip assets "This is a tip"
+        , Alert.tip "This is a tip"
         , Alert.success "This is a success"
         ]
     }

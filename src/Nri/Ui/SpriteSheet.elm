@@ -40,7 +40,7 @@ checkmark =
         , width "100%"
         , height "100%"
         ]
-        [ Svg.style [] [ Svg.text " .st0{fill:#FFFFFF;} " ]
+        [ Svg.style [] [ Svg.text " .st0{fill:currentcolor;} " ]
         , Svg.path [ id "check-white", class "st0", d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4 L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
         ]
         |> fromUnstyled
@@ -52,7 +52,7 @@ bulb : NriSvg.Svg
 bulb =
     Svg.svg [ id "Layer_1", viewBox "0 0 45 45", width "100%", height "100%" ]
         [ defs []
-            [ Svg.style [] [ Svg.text ".cls-1,.cls-2{fill:none;}.cls-2{clip-rule:evenodd;}.cls-3{clip-path:url(#clip-path);}.cls-4{clip-path:url(#clip-path-2);}.cls-5{fill:#00488A;}.cls-6{clip-path:url(#clip-path-3);}.cls-7{fill:#fff;}.cls-8{clip-path:url(#clip-path-5);}.cls-9{clip-path:url(#clip-path-7);}.cls-10{clip-path:url(#clip-path-9);}.cls-11{clip-path:url(#clip-path-11);}.cls-12{clip-path:url(#clip-path-13);}.cls-13{clip-path:url(#clip-path-15);}.cls-14{clip-path:url(#clip-path-17);}.cls-15{clip-path:url(#clip-path-19);}.cls-16{clip-path:url(#clip-path-21);}.cls-17{clip-path:url(#clip-path-23);}.cls-18{clip-path:url(#clip-path-25);}.cls-19{clip-path:url(#clip-path-27);}.cls-20{clip-path:url(#clip-path-28);}.cls-21{clip-path:url(#clip-path-29);}.cls-22{clip-path:url(#clip-path-30);}.cls-23{clip-path:url(#clip-path-31);}.cls-24{clip-path:url(#clip-path-32);}.cls-25{clip-path:url(#clip-path-33);}.cls-26{clip-path:url(#clip-path-34);}.cls-27{clip-path:url(#clip-path-35);}" ]
+            [ Svg.style [] [ Svg.text ".cls-1,.cls-2{fill:none;}.cls-2{clip-rule:evenodd;}.cls-3{clip-path:url(#clip-path);}.cls-4{clip-path:url(#clip-path-2);}.cls-5{fill:#00488A;}.cls-6{clip-path:url(#clip-path-3);}.cls-7{fill:currentcolor;}.cls-8{clip-path:url(#clip-path-5);}.cls-9{clip-path:url(#clip-path-7);}.cls-10{clip-path:url(#clip-path-9);}.cls-11{clip-path:url(#clip-path-11);}.cls-12{clip-path:url(#clip-path-13);}.cls-13{clip-path:url(#clip-path-15);}.cls-14{clip-path:url(#clip-path-17);}.cls-15{clip-path:url(#clip-path-19);}.cls-16{clip-path:url(#clip-path-21);}.cls-17{clip-path:url(#clip-path-23);}.cls-18{clip-path:url(#clip-path-25);}.cls-19{clip-path:url(#clip-path-27);}.cls-20{clip-path:url(#clip-path-28);}.cls-21{clip-path:url(#clip-path-29);}.cls-22{clip-path:url(#clip-path-30);}.cls-23{clip-path:url(#clip-path-31);}.cls-24{clip-path:url(#clip-path-32);}.cls-25{clip-path:url(#clip-path-33);}.cls-26{clip-path:url(#clip-path-34);}.cls-27{clip-path:url(#clip-path-35);}" ]
             , Svg.clipPath [ id "clip-path" ] [ circle [ class "cls-1", cx "22.5", cy "22.5", r "22.5" ] [] ]
             , Svg.clipPath [ id "clip-path-2" ] [ rect [ class "cls-1", x "-204", y "-317", width "1024", height "874" ] [] ]
             , Svg.clipPath [ id "clip-path-3" ] [ Svg.path [ class "cls-2", d "M35.26,21.37h-3a.66.66,0,0,0,0,1.31h3a.66.66,0,1,0,0-1.31Z" ] [] ]
