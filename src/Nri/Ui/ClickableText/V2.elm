@@ -119,8 +119,7 @@ link config additionalAttributes =
 clickableTextStyles : Css.Px -> List Css.Style
 clickableTextStyles fontSize =
     [ Css.cursor Css.pointer
-    , -- Specifying the font can and should go away after bootstrap is removed from application.css
-      Nri.Ui.Fonts.V1.baseFont
+    , Nri.Ui.Fonts.V1.baseFont
     , Css.backgroundImage Css.none
     , Css.textShadow Css.none
     , Css.boxShadow Css.none
