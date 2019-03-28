@@ -101,8 +101,23 @@ viewContent config =
         fontSize =
             sizeToPx config.size
     in
-    div [ Attributes.css [ Css.fontSize fontSize ] ]
-        [ icon fontSize config.icon
+    span [ Attributes.css [ Css.fontSize fontSize ] ]
+        [ case config.icon of
+            Just icon ->
+                div
+                    [ Attributes.css
+                        [ Css.height fontSize
+                        , Css.maxWidth fontSize
+                        , Css.display Css.inlineBlock
+                        , Css.verticalAlign Css.baseline
+                        , Css.marginRight (Css.px 2)
+                        ]
+                    ]
+                    [ NriSvg.toHtml icon
+                    ]
+
+            Nothing ->
+                text ""
         , text config.label
         ]
 
@@ -125,14 +140,6 @@ clickableTextStyles =
     , Css.hover [ Css.textDecoration Css.underline ]
     , Css.padding Css.zero
     ]
-
-
-icon : Css.Px -> Maybe Svg -> Html msg
-icon fontSize maybeIcon =
-    div [ Attributes.css [ Css.height fontSize ] ]
-        [ Maybe.map NriSvg.toHtml maybeIcon
-            |> Maybe.withDefault (text "")
-        ]
 
 
 sizeToPx : Size -> Css.Px
