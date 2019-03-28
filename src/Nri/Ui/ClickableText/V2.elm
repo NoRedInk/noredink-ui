@@ -48,7 +48,7 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V4 as Icon exposing (IconType)
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 {-| Sizes for the button
@@ -64,7 +64,7 @@ type Size
 button :
     { label : String
     , size : Size
-    , icon : Maybe IconType
+    , icon : Maybe Svg
     , onClick : msg
     }
     -> Html msg
@@ -88,7 +88,7 @@ button config =
 link :
     { label : String
     , size : Size
-    , icon : Maybe IconType
+    , icon : Maybe Svg
     , url : String
     }
     -> List (Attribute msg)
@@ -130,23 +130,12 @@ clickableTextStyles fontSize =
     ]
 
 
-icon : Css.Px -> Maybe IconType -> Html msg
+icon : Css.Px -> Maybe Svg -> Html msg
 icon fontSize maybeIcon =
-    case maybeIcon of
-        Just iconType ->
-            -- TODO: We should never use an image here, only SVG
-            Nri.Ui.styled Html.span
-                (dataDescriptor "icon-holder")
-                [ Css.height fontSize
-                , Css.width fontSize
-                , Css.display Css.inlineBlock
-                , Css.marginRight (Css.px 5)
-                ]
-                []
-                [ Icon.decorativeIcon iconType ]
-
-        Nothing ->
-            text ""
+    div [ Attributes.css [ Css.height fontSize ] ]
+        [ Maybe.map NriSvg.toHtml maybeIcon
+            |> Maybe.withDefault (text "")
+        ]
 
 
 sizeToPx : Size -> Css.Px

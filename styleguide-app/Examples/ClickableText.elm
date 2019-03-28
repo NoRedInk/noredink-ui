@@ -10,9 +10,9 @@ import Headings
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.ClickableText.V2 as ClickableText exposing (Size(..))
 import Nri.Ui.Icon.V4 as Icon
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V2 as Text
 
 
@@ -49,10 +49,20 @@ init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "icon"
-            (Control.maybe False <|
+            (Control.maybe True <|
                 Control.choice
-                    ( "Performance", Control.value (Icon.performance assets) )
-                    [ ( "Lock", Control.value (Icon.lock assets) )
+                    ( "Performance"
+                    , Icon.performance assets
+                        |> Icon.decorativeIcon
+                        |> NriSvg.fromHtml
+                        |> Control.value
+                    )
+                    [ ( "Lock"
+                      , Icon.lock assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
                     ]
             )
         |> State
@@ -72,7 +82,7 @@ update msg state =
 
 type alias Model =
     { label : String
-    , icon : Maybe Icon.IconType
+    , icon : Maybe Svg
     }
 
 
