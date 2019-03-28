@@ -8,12 +8,12 @@ module Examples.Alert exposing (example)
 
 import Assets exposing (assets)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Alert.V2 as Alert
+import Nri.Ui.Alert.V3 as Alert
 
 
 example : ModuleExample msg
 example =
-    { filename = "Nri/Alerts.elm"
+    { filename = "Nri.Ui.Alert.V3.elm"
     , category = Messaging
     , content =
         [ Alert.error assets "This is an error"
