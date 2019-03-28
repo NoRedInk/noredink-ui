@@ -12,7 +12,7 @@ import Css.Global
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.SpriteSheet exposing (checkmark, exclamationMark, tip)
+import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -41,7 +41,7 @@ neutral =
         , icon =
             { backgroundColor = Colors.frost
             , height = Css.px 50
-            , asset = tip
+            , asset = bulb
             }
         }
 
