@@ -27,12 +27,6 @@ type State
 
 
 {-| -}
-type ButtonType
-    = Button
-    | Link
-
-
-{-| -}
 example :
     (String -> ModuleMessages Msg parentMsg)
     -> State
@@ -61,12 +55,6 @@ init assets =
                     [ ( "Lock", Control.value (Icon.lock assets) )
                     ]
             )
-        |> Control.field "button type"
-            (Control.choice
-                ( "Nri.Ui.ClickableText.V1.button", Control.value Button )
-                [ ( "Nri.Ui.ClickableText.V1.link", Control.value Link )
-                ]
-            )
         |> State
 
 
@@ -85,7 +73,6 @@ update msg state =
 type alias Model =
     { label : String
     , icon : Maybe Icon.IconType
-    , buttonType : ButtonType
     }
 
 
@@ -119,25 +106,25 @@ buttons :
     -> Html parentMsg
 buttons messages model =
     let
-        exampleCell size =
-            (case model.buttonType of
-                Link ->
-                    ClickableText.link
-                        { size = size
-                        , label = model.label
-                        , icon = model.icon
-                        , url = "#"
-                        }
-                        []
+        linkView size =
+            ClickableText.link
+                { size = size
+                , label = model.label
+                , icon = model.icon
+                , url = "#"
+                }
+                []
 
-                Button ->
-                    ClickableText.button
-                        { size = size
-                        , onClick = messages.showItWorked (Debug.toString size)
-                        , label = model.label
-                        , icon = model.icon
-                        }
-            )
+        buttonView size =
+            ClickableText.button
+                { size = size
+                , onClick = messages.showItWorked (Debug.toString size)
+                , label = model.label
+                , icon = model.icon
+                }
+
+        exampleCell view =
+            view
                 |> List.singleton
                 |> td
                     [ css
@@ -148,9 +135,12 @@ buttons messages model =
     in
     [ sizes
         |> List.map (\size -> th [] [ text <| Debug.toString size ])
-        |> tr []
+        |> (\sizeHeadings -> tr [] (th [] [ td [] [] ] :: sizeHeadings))
     , sizes
-        |> List.map exampleCell
-        |> tr []
+        |> List.map (linkView >> exampleCell)
+        |> (\linkViews -> tr [] (td [] [ text ".link" ] :: linkViews))
+    , sizes
+        |> List.map (buttonView >> exampleCell)
+        |> (\buttonViews -> tr [] (td [] [ text ".button" ] :: buttonViews))
     ]
         |> table []
