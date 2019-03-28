@@ -69,18 +69,12 @@ button :
     }
     -> Html msg
 button config =
-    let
-        fontSize =
-            sizeToPx config.size
-    in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextStyles fontSize)
+        clickableTextStyles
         [ Events.onClick config.onClick
         ]
-        [ icon fontSize config.icon
-        , text config.label
-        ]
+        [ viewContent config ]
 
 
 {-| Creates a `<a>` element
@@ -94,23 +88,27 @@ link :
     -> List (Attribute msg)
     -> Html msg
 link config additionalAttributes =
+    Nri.Ui.styled Html.a
+        (dataDescriptor "link")
+        clickableTextStyles
+        (Attributes.href config.url :: additionalAttributes)
+        [ viewContent config ]
+
+
+viewContent : { a | label : String, size : Size, icon : Maybe Svg } -> Html msg
+viewContent config =
     let
         fontSize =
             sizeToPx config.size
     in
-    Nri.Ui.styled Html.a
-        (dataDescriptor "link")
-        (clickableTextStyles fontSize)
-        (Attributes.href config.url
-            :: additionalAttributes
-        )
+    div [ Attributes.css [ Css.fontSize fontSize ] ]
         [ icon fontSize config.icon
         , text config.label
         ]
 
 
-clickableTextStyles : Css.Px -> List Css.Style
-clickableTextStyles fontSize =
+clickableTextStyles : List Css.Style
+clickableTextStyles =
     [ Css.cursor Css.pointer
     , Nri.Ui.Fonts.V1.baseFont
     , Css.backgroundImage Css.none
@@ -125,7 +123,6 @@ clickableTextStyles fontSize =
     , Css.borderStyle Css.none
     , Css.textDecoration Css.none
     , Css.hover [ Css.textDecoration Css.underline ]
-    , Css.fontSize fontSize
     , Css.padding Css.zero
     ]
 
