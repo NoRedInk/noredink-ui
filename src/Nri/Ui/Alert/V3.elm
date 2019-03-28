@@ -44,9 +44,16 @@ success content =
         [ iconContainer
             [ Css.color Colors.white
             , Css.backgroundColor Colors.green
-            , Css.Global.children [ Css.Global.svg [ Css.maxWidth (Css.px 12) ] ]
             ]
-            (NriSvg.toHtml checkmark)
+            (Html.div
+                [ css
+                    [ Css.width (Css.px 12)
+                    , Css.height (Css.px 12)
+                    , Css.margin Css.auto
+                    ]
+                ]
+                [ NriSvg.toHtml checkmark ]
+            )
         , viewAlertContent Colors.greenDarkest content
         ]
 
@@ -55,9 +62,7 @@ success content =
 tip : String -> Html msg
 tip content =
     alert
-        [ iconContainer
-            [ Css.color Colors.yellow ]
-            (NriSvg.toHtml bulb)
+        [ iconContainer [ Css.color Colors.yellow ] (NriSvg.toHtml bulb)
         , viewAlertContent Colors.navy content
         ]
 
