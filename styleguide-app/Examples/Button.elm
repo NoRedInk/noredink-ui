@@ -11,8 +11,9 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V7 as Button
+import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Icon.V4 as Icon
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V2 as Text
 
 
@@ -30,24 +31,22 @@ type State
 type ButtonType
     = Button
     | Link
-    | CopyToClipboard
 
 
 {-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> (String -> ModuleMessages Msg parentMsg)
+    (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
-example assets unnamedMessages state =
+example unnamedMessages state =
     let
         messages =
             unnamedMessages "ButtonExample"
     in
-    { filename = "Nri.Ui.Button.V7"
+    { filename = "Nri.Ui.Button.V8"
     , category = Buttons
     , content =
-        [ viewButtonExamples assets messages state ]
+        [ viewButtonExamples messages state ]
     }
 
 
@@ -56,11 +55,21 @@ init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Button")
-        |> Control.field "icon (copyToClipboard has only one choice)"
+        |> Control.field "icon"
             (Control.maybe False <|
                 Control.choice
-                    ( "Performance", Control.value (Icon.performance assets) )
-                    [ ( "Lock", Control.value (Icon.lock assets) )
+                    ( "Performance"
+                    , Icon.performance assets
+                        |> Icon.decorativeIcon
+                        |> NriSvg.fromHtml
+                        |> Control.value
+                    )
+                    [ ( "Lock"
+                      , Icon.lock assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
                     ]
             )
         |> Control.field "width"
@@ -75,7 +84,6 @@ init assets =
             (Control.choice
                 ( "Nri.Ui.Button.V7.button", Control.value Button )
                 [ ( "Nri.Ui.Button.V7.link", Control.value Link )
-                , ( "Nri.Ui.Button.V7.copyToClipboard", Control.value CopyToClipboard )
                 ]
             )
         |> Control.field "state (button only)"
@@ -107,7 +115,7 @@ update msg state =
 
 type alias Model =
     { label : String
-    , icon : Maybe Icon.IconType
+    , icon : Maybe Svg
     , width : Button.ButtonWidth
     , buttonType : ButtonType
     , state : Button.ButtonState
@@ -115,32 +123,19 @@ type alias Model =
 
 
 viewButtonExamples :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> State
     -> Html parentMsg
-viewButtonExamples assets messages (State control) =
+viewButtonExamples messages (State control) =
     let
         model =
             Control.currentValue control
-
-        maybeExplanation =
-            if model.buttonType == CopyToClipboard then
-                div [ css [ Css.margin2 (Css.px 10) Css.zero ] ]
-                    [ Text.smallBody
-                        [ text "CopyToClipboard requires 'clipboard.js'. See assets/clipboard-setup.js for example configuration."
-                        ]
-                    ]
-
-            else
-                text ""
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , maybeExplanation
-    , buttons assets messages model
+    , buttons messages model
     , toggleButtons messages
-    , Button.delete assets
+    , Button.delete
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
@@ -169,18 +164,16 @@ allStyles : List Button.ButtonStyle
 allStyles =
     [ Button.Primary
     , Button.Secondary
-    , Button.Borderless
     , Button.Danger
     , Button.Premium
     ]
 
 
 buttons :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> Model
     -> Html parentMsg
-buttons assets messages model =
+buttons messages model =
     let
         exampleRow style =
             List.concat
@@ -219,19 +212,6 @@ buttons assets messages model =
                         , icon = model.icon
                         , state = model.state
                         }
-
-                CopyToClipboard ->
-                    div [ id "clipboard-container" ]
-                        [ Button.copyToClipboard
-                            assets
-                            { size = size
-                            , style = style
-                            , copyText = "wire up in your coffee file with clipboard.js"
-                            , buttonLabel = model.label
-                            , withIcon = model.icon /= Nothing
-                            , width = model.width
-                            }
-                        ]
             )
                 |> List.singleton
                 |> td

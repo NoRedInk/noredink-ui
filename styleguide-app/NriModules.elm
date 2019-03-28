@@ -215,7 +215,7 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
     , Examples.BannerAlert.example
-    , Examples.Button.example assets (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.ClickableText.example assets (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
