@@ -19,6 +19,6 @@ example =
         [ Alert.error "This is an error"
         , Alert.warning assets "This is a warning"
         , Alert.tip assets "This is a tip"
-        , Alert.success assets "This is a success"
+        , Alert.success "This is a success"
         ]
     }

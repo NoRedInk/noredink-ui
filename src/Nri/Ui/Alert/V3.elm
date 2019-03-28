@@ -24,7 +24,7 @@ import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
-import Nri.Ui.SpriteSheet exposing (exclamationMark)
+import Nri.Ui.SpriteSheet exposing (checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -42,15 +42,15 @@ error content =
 
 
 {-| -}
-success : { r | checkmark : String } -> String -> Html msg
-success assets content =
+success : String -> Html msg
+success content =
     alert
         [ iconContainer
             [ Css.color Colors.white
             , Css.backgroundColor Colors.green
             , Css.Global.children [ Css.Global.svg [ Css.maxWidth (Css.px 12) ] ]
             ]
-            (Icon.decorativeIcon (Icon.checkMarkSvg assets))
+            (NriSvg.toHtml checkmark)
         , viewAlertContent Colors.greenDarkest content
         ]
 
