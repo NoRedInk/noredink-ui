@@ -40,7 +40,7 @@ neutral =
         , color = Colors.navy
         , icon =
             { backgroundColor = Colors.navy
-            , height = Css.px 50
+            , height = Css.px 32
             , asset = bulb
             }
         }
