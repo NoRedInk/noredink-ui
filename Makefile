@@ -34,12 +34,14 @@ styleguide-app/bundle.js: lib/index.js node_modules
 styleguide-app/elm.js: styleguide-app/bundle.js $(shell find src styleguide-app -type f -name '*.elm')
 	cd styleguide-app; npx elm make Main.elm --output=$(@F)
 
+docs: docs/index.html styleguide-app/elm.js docs/bundle.js
+	touch -m $@
 
-.PHONY: gh-pages
-	# This is used by github pages to render the styleguide.
-    # You will not be able to test it locally due to https://github.com/elm/url/issues/10
-gh-pages:
-	cd styleguide-app; npx elm make Main.elm --output=./../docs/index.html; cd ..
+docs/bundle.js:
+	cp styleguide-app/bundle.js docs/bundle.js
+
+docs/index.html:
+	cd styleguide-app; npx elm make Main.elm --output=./../docs/index.html
 
 # plumbing
 
