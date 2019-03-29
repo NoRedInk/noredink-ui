@@ -1,6 +1,6 @@
 module Main exposing (init, main)
 
-import Browser exposing (Document)
+import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation exposing (Key)
 import Css exposing (..)
 import Css.Global exposing (Snippet)
@@ -9,14 +9,12 @@ import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
-import Model exposing (..)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
-import NriModules as NriModules exposing (nriThemedModules)
+import NriModules as NriModules exposing (ModuleStates, nriThemedModules)
 import Routes as Routes exposing (Route(..))
-import Update exposing (..)
 import Url exposing (Url)
 
 
@@ -40,6 +38,14 @@ init () url key =
       }
     , Cmd.none
     )
+
+
+type alias Model =
+    { -- Global UI
+      route : Route
+    , moduleStates : ModuleStates
+    , navigationKey : Key
+    }
 
 
 view : Model -> Document Msg
@@ -237,3 +243,42 @@ layoutFixer =
         [ Fonts.baseFont
         ]
     ]
+
+
+type Msg
+    = UpdateModuleStates NriModules.Msg
+    | OnUrlRequest Browser.UrlRequest
+    | OnUrlChange Url
+    | NoOp
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update action model =
+    case action of
+        UpdateModuleStates msg ->
+            let
+                ( moduleStates, cmd ) =
+                    NriModules.update msg model.moduleStates
+            in
+            ( { model | moduleStates = moduleStates }
+            , Cmd.map UpdateModuleStates cmd
+            )
+
+        OnUrlRequest request ->
+            case request of
+                Internal loc ->
+                    ( model, Browser.Navigation.pushUrl model.navigationKey (Url.toString loc) )
+
+                External loc ->
+                    ( model, Browser.Navigation.load loc )
+
+        OnUrlChange route ->
+            ( { model | route = Routes.fromLocation route }, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.map UpdateModuleStates (NriModules.subscriptions model.moduleStates)
