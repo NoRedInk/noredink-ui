@@ -237,3 +237,5 @@ documentation.json
 
 # direnv config file
 .envrc
+
+/public

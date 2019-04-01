@@ -16,5 +16,8 @@ stdenv.mkDerivation {
     # node dependencies
     nodejs
     nodePackages.npm
+
+    # preview dependencies
+    python3
   ];
 }
