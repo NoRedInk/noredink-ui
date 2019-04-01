@@ -22,8 +22,8 @@ clean:
 
 .PHONY: styleguide-app
 styleguide-app: styleguide-app/elm.js
-	@echo "Visit http://localhost:8000/index.html to see the styleguide app in your browser"
-	cd styleguide-app && npx elm reactor
+	@echo "the styleguide-app command is deprecated; use serve-public."
+	@exit 1
 
 documentation.json: node_modules
 	npx elm make --docs $@
