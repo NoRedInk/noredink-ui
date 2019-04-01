@@ -61,7 +61,7 @@ public/%: styleguide-app/%
 
 .PHONY: serve-public
 serve-public: public
-	cd public; python -m http.server
+	./scripts/serve.sh public
 
 # plumbing
 
