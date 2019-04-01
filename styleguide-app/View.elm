@@ -28,7 +28,6 @@ view model =
             , Html.Attributes.rel "stylesheet"
             ]
             []
-        , RootHtml.div [ Html.Attributes.id "svg-target" ] []
         ]
     }
 
