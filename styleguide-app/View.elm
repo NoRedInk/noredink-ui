@@ -21,14 +21,7 @@ import Update exposing (..)
 view : Model -> Document Msg
 view model =
     { title = "Style Guide"
-    , body =
-        [ view_ model |> Html.toUnstyled
-        , RootHtml.node "link"
-            [ Html.Attributes.href "https://fonts.googleapis.com/css?family=Muli:400,400i,600,600i,700,700i,800,800i,900,900i"
-            , Html.Attributes.rel "stylesheet"
-            ]
-            []
-        ]
+    , body = [ view_ model |> Html.toUnstyled ]
     }
 
 
