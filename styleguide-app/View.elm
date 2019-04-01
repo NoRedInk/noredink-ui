@@ -29,7 +29,6 @@ view model =
             ]
             []
         , RootHtml.div [ Html.Attributes.id "svg-target" ] []
-        , RootHtml.node "SCRIPT" [ Html.Attributes.src "bundle.js" ] []
         ]
     }
 
