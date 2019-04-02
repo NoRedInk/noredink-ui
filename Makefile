@@ -22,7 +22,7 @@ clean:
 
 .PHONY: styleguide-app
 styleguide-app:
-	./script/watch.sh
+	./script/develop.sh
 
 documentation.json: node_modules
 	npx elm make --docs $@

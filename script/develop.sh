@@ -19,7 +19,7 @@ To quit, hit "q" or ctrl-c.
 
 EOF
 
-# start a web server, and tear it down with the rest of the process
+# start a web server in the background and tear it down when exiting
 ./script/serve.sh public &
 SERVER_PID=$!
 cleanup() {
