@@ -28,7 +28,7 @@ styleguide-app: styleguide-app/elm.js
 documentation.json: node_modules
 	npx elm make --docs $@
 
-styleguide-app/bundle.js: lib/index.js node_modules
+styleguide-app/bundle.js: lib/index.js styleguide-app/manifest.js styleguide-app/assets/generated_svgs.js styleguide-app/assets/clipboard-setup.js node_modules
 	npx browserify --entry styleguide-app/manifest.js --outfile styleguide-app/bundle.js
 
 styleguide-app/elm.js: styleguide-app/bundle.js $(shell find src styleguide-app -type f -name '*.elm')
