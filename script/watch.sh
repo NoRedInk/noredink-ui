@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if ! test -d public; then make public; fi
+
 # start a web server
 ./script/serve.sh public &
 SERVER_PID=$!
