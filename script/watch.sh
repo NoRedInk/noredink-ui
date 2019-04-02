@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # start a web server
-./scripts/serve.sh public &
+./script/serve.sh public &
 SERVER_PID=$!
 
 # start a watcher

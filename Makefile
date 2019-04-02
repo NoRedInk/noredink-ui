@@ -6,7 +6,7 @@ test: node_modules
 
 .PHONY: checks
 checks:
-	scripts/check-exposed.py
+	script/check-exposed.py
 
 .PHONY: diff
 diff: node_modules
@@ -61,7 +61,7 @@ public/%: styleguide-app/%
 
 .PHONY: serve-public
 serve-public: public
-	./scripts/watch.sh
+	./script/watch.sh
 
 # plumbing
 
