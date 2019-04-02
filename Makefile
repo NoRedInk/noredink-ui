@@ -21,9 +21,8 @@ clean:
 	rm -rf node_modules styleguide-app/elm.js styleguide-app/bundle.js $(shell find . -type d -name 'elm-stuff') public
 
 .PHONY: styleguide-app
-styleguide-app: styleguide-app/elm.js
-	@echo "the styleguide-app command is deprecated; use serve-public."
-	@exit 1
+styleguide-app:
+	./script/watch.sh
 
 documentation.json: node_modules
 	npx elm make --docs $@
@@ -58,10 +57,6 @@ public: public/index.html public/elm.js public/bundle.js $(PUBLIC_ASSETS)
 public/%: styleguide-app/%
 	@mkdir -p $(@D)
 	cp $< $@
-
-.PHONY: serve-public
-serve-public: public
-	./script/watch.sh
 
 # plumbing
 
