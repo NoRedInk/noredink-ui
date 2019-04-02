@@ -20,7 +20,7 @@ fi
 cd "$TARGET"
 
 if python --version | grep -qE '^Python 3'; then
-    python -m http.server
+    exec python -m http.server
 else
-    python -m SimpleHTTPServer
+    exec python -m SimpleHTTPServer
 fi
