@@ -61,7 +61,7 @@ public/%: styleguide-app/%
 
 .PHONY: serve-public
 serve-public: public
-	./scripts/serve.sh public
+	./scripts/watch.sh
 
 # plumbing
 
