@@ -4,6 +4,8 @@ import Browser exposing (Document)
 import Css exposing (..)
 import Css.Global exposing (Snippet)
 import Headings
+import Html as RootHtml
+import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Model exposing (..)
@@ -18,7 +20,9 @@ import Update exposing (..)
 
 view : Model -> Document Msg
 view model =
-    { title = "Style Guide", body = [ view_ model |> Html.toUnstyled ] }
+    { title = "Style Guide"
+    , body = [ view_ model |> Html.toUnstyled ]
+    }
 
 
 view_ : Model -> Html Msg

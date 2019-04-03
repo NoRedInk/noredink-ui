@@ -51,7 +51,7 @@ This repo contains an app showcasing all of these UI widgets.
 To see them locally:
 
 ```
-make styleguide-app
+script/develop.sh
 ```
 
 If you'd like to test your widget in the monolith before publishing, check out the helpful tips [here](https://paper.dropbox.com/doc/Grafting-noredink-ui-into-the-monolith--AOae7awXY8Br7YEhbZunUEZdAg-ff7N9zwMyRR2D5Umza5Ez).
