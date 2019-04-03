@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! test -d public; then make -j public; fi
+if test -d public; then
+    rm -rf public
+    make -j public
+fi
 
 cat <<EOF
 == 👋 Hello! ==================================================================
