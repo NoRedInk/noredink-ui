@@ -1,7 +1,9 @@
 module Examples.ClickableText exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Css exposing (middle, verticalAlign)
@@ -10,9 +12,9 @@ import Headings
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.ClickableText.V1 as ClickableText exposing (Size(..))
+import Nri.Ui.ClickableText.V2 as ClickableText exposing (Size(..))
 import Nri.Ui.Icon.V4 as Icon
+import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V2 as Text
 
 
@@ -27,26 +29,19 @@ type State
 
 
 {-| -}
-type ButtonType
-    = Button
-    | Link
-
-
-{-| -}
 example :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> (String -> ModuleMessages Msg parentMsg)
+    (String -> ModuleMessages Msg parentMsg)
     -> State
     -> ModuleExample parentMsg
-example assets unnamedMessages state =
+example unnamedMessages state =
     let
         messages =
             unnamedMessages "ClickableTextExample"
     in
-    { filename = "Nri.Ui.ClickableText.V1"
+    { filename = "Nri.Ui.ClickableText.V2"
     , category = Buttons
     , content =
-        [ viewExamples assets messages state ]
+        [ viewExamples messages state ]
     }
 
 
@@ -56,17 +51,21 @@ init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "icon"
-            (Control.maybe False <|
+            (Control.maybe True <|
                 Control.choice
-                    ( "Performance", Control.value (Icon.performance assets) )
-                    [ ( "Lock", Control.value (Icon.lock assets) )
+                    ( "Performance"
+                    , Icon.performance assets
+                        |> Icon.decorativeIcon
+                        |> NriSvg.fromHtml
+                        |> Control.value
+                    )
+                    [ ( "Lock"
+                      , Icon.lock assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
                     ]
-            )
-        |> Control.field "button type"
-            (Control.choice
-                ( "Nri.Ui.ClickableText.V1.button", Control.value Button )
-                [ ( "Nri.Ui.ClickableText.V1.link", Control.value Link )
-                ]
             )
         |> State
 
@@ -85,24 +84,29 @@ update msg state =
 
 type alias Model =
     { label : String
-    , icon : Maybe Icon.IconType
-    , buttonType : ButtonType
+    , icon : Maybe Svg
     }
 
 
 viewExamples :
-    { r | teach_assignments_copyWhite_svg : Asset, x : String }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> State
     -> Html parentMsg
-viewExamples assets messages (State control) =
+viewExamples messages (State control) =
     let
         model =
             Control.currentValue control
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , buttons assets messages model
+    , buttons messages model
+    , Text.smallBody
+        [ text "Sometimes, we'll want our clickable links: "
+        , linkView model Small
+        , text " and clickable buttons: "
+        , buttonView messages model Small
+        , text " to show up in-line."
+        ]
     ]
         |> div []
 
@@ -116,31 +120,13 @@ sizes =
 
 
 buttons :
-    { r | teach_assignments_copyWhite_svg : Asset }
-    -> ModuleMessages Msg parentMsg
+    ModuleMessages Msg parentMsg
     -> Model
     -> Html parentMsg
-buttons assets messages model =
+buttons messages model =
     let
-        exampleCell size =
-            (case model.buttonType of
-                Link ->
-                    ClickableText.link
-                        { size = size
-                        , label = model.label
-                        , icon = model.icon
-                        , url = "#"
-                        }
-                        []
-
-                Button ->
-                    ClickableText.button
-                        { size = size
-                        , onClick = messages.showItWorked (Debug.toString size)
-                        , label = model.label
-                        , icon = model.icon
-                        }
-            )
+        exampleCell view =
+            view
                 |> List.singleton
                 |> td
                     [ css
@@ -151,9 +137,33 @@ buttons assets messages model =
     in
     [ sizes
         |> List.map (\size -> th [] [ text <| Debug.toString size ])
-        |> tr []
+        |> (\sizeHeadings -> tr [] (th [] [ td [] [] ] :: sizeHeadings))
     , sizes
-        |> List.map exampleCell
-        |> tr []
+        |> List.map (linkView model >> exampleCell)
+        |> (\linkViews -> tr [] (td [] [ text ".link" ] :: linkViews))
+    , sizes
+        |> List.map (buttonView messages model >> exampleCell)
+        |> (\buttonViews -> tr [] (td [] [ text ".button" ] :: buttonViews))
     ]
         |> table []
+
+
+linkView : Model -> ClickableText.Size -> Html msg
+linkView model size =
+    ClickableText.link
+        { size = size
+        , label = model.label
+        , icon = model.icon
+        , url = "#"
+        }
+        []
+
+
+buttonView : ModuleMessages Msg parentMsg -> Model -> ClickableText.Size -> Html parentMsg
+buttonView messages model size =
+    ClickableText.button
+        { size = size
+        , onClick = messages.showItWorked (Debug.toString size)
+        , label = model.label
+        , icon = model.icon
+        }

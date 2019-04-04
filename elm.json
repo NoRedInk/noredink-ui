@@ -6,10 +6,12 @@
     "version": "6.10.0",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
+        "Nri.Ui.Alert.V3",
         "Nri.Ui.AssetPath",
         "Nri.Ui.BannerAlert.V2",
         "Nri.Ui.BannerAlert.V3",
         "Nri.Ui.ClickableText.V1",
+        "Nri.Ui.ClickableText.V2",
         "Nri.Ui.Button.V3",
         "Nri.Ui.Button.V4",
         "Nri.Ui.Button.V5",
