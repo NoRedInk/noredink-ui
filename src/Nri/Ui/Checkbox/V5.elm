@@ -144,29 +144,6 @@ textStyle =
         ]
 
 
-iconStyle : Icon -> Style
-iconStyle icon =
-    batch
-        [ position relative
-        , checkboxImageSelector
-            [ property "background-image" "url(todo)"
-            , backgroundRepeat noRepeat
-            , backgroundSize (px 24)
-            , property "content" "''"
-            , position absolute
-            , left zero
-            , top (calc (pct 50) minus (px 12))
-            , width (px 24)
-            , height (px 24)
-            ]
-        ]
-
-
-checkboxImageSelector : List Style -> Style
-checkboxImageSelector =
-    before
-
-
 labelClass : IsSelected -> Html.Styled.Attribute msg
 labelClass isSelected =
     case isSelected of
@@ -296,7 +273,7 @@ viewEnabledLabel model labelView icon =
             , cursor pointer
             ]
         ]
-        [ viewIcon icon
+        [ viewIcon [] icon
         , labelView model.label
         ]
 
@@ -326,10 +303,9 @@ viewDisabledLabel model labelView icon =
             , textStyle
             , outline none
             , cursor auto
-            , checkboxImageSelector [ opacity (num 0.4) ]
             ]
         ]
-        [ viewIcon icon
+        [ viewIcon [ opacity (num 0.4) ] icon
         , labelView model.label
         ]
 
@@ -339,9 +315,20 @@ viewLabelContent label =
     Html.span [] [ Html.text label ]
 
 
-viewIcon : Icon -> Html.Html msg
-viewIcon (Icon icon) =
-    Html.map never icon
+viewIcon : List Style -> Icon -> Html.Html msg
+viewIcon styles (Icon icon) =
+    Html.div
+        [ css
+            [ position relative
+            , left zero
+            , top (calc (pct 50) minus (px 12))
+            , width (px 24)
+            , height (px 24)
+            , Css.batch styles
+            ]
+        ]
+        [ Html.map never icon
+        ]
 
 
 type Icon
