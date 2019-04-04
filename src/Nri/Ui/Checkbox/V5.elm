@@ -185,11 +185,7 @@ viewSquareCheckbox model labelView =
                 PartiallySelected ->
                     checkboxCheckedPartially
     in
-    Html.Styled.span
-        [ css [ display block, height inherit, descendants [ Css.Global.input [ display none ] ] ]
-        , Attributes.id (model.identifier ++ "-container")
-        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
-        ]
+    checkboxContainer model
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
             [ Events.onCheck (\_ -> onCheck model)
@@ -215,11 +211,7 @@ viewLockedCheckbox :
     -> (String -> Html.Html msg)
     -> Html.Html msg
 viewLockedCheckbox model labelView =
-    Html.Styled.span
-        [ css [ display block, height inherit, descendants [ Css.Global.input [ display none ] ] ]
-        , Attributes.id (model.identifier ++ "-container")
-        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
-        ]
+    checkboxContainer model
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
             [ Events.onCheck (\_ -> onCheck model)
@@ -231,6 +223,19 @@ viewLockedCheckbox model labelView =
 
           else
             viewEnabledLabel model labelView checkboxLockOnInside
+        ]
+
+
+checkboxContainer : { a | identifier : String } -> List (Html.Html msg) -> Html.Html msg
+checkboxContainer model =
+    Html.Styled.span
+        [ css
+            [ display block
+            , height inherit
+            , descendants [ Css.Global.input [ display none ] ]
+            ]
+        , Attributes.id (model.identifier ++ "-container")
+        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
 
 
