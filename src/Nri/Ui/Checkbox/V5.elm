@@ -123,17 +123,7 @@ buildCheckbox model labelView =
             viewSquareCheckbox model viewLabelContent
 
         Locked ->
-            viewCheckbox model <|
-                { containerClasses = toClassList [ "Locked" ]
-                , labelStyles =
-                    if model.disabled then
-                        disabledLockStyles
-
-                    else
-                        enabledLockLabelStyles
-                , labelContent = labelView model.label
-                , icon = checkboxLockOnInside
-                }
+            viewLockedCheckbox model viewLabelContent
 
 
 disabledSquareLabel : Icon -> List Style
@@ -237,93 +227,6 @@ toClassList =
     List.map (\a -> ( "checkbox-V3__" ++ a, True )) >> Attributes.classList
 
 
-viewCheckbox :
-    { a
-        | identifier : String
-        , label : String
-        , setterMsg : Bool -> msg
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    ->
-        { containerClasses : Html.Attribute msg
-        , labelStyles : Icon -> List Style
-        , labelContent : Html.Html msg
-        , icon : Icon
-        }
-    -> Html.Html msg
-viewCheckbox model config =
-    let
-        toggledValue =
-            selectedToMaybe model.selected
-                |> Maybe.withDefault False
-                |> not
-    in
-    Html.Styled.span
-        [ css
-            [ display block
-            , height inherit
-            , descendants [ Css.Global.input [ display none ] ]
-            ]
-        , config.containerClasses
-        , Attributes.id <| model.identifier ++ "-container"
-        , Events.stopPropagationOn "click"
-            (Json.Decode.fail "stop click propagation")
-        ]
-        [ Html.checkbox model.identifier
-            (selectedToMaybe model.selected)
-            [ Widget.label model.label
-            , Events.onCheck (\_ -> model.setterMsg toggledValue)
-            , Attributes.id model.identifier
-            , Attributes.disabled model.disabled
-            ]
-        , viewLabel model config.labelContent (labelClass model.selected) (config.labelStyles config.icon)
-        ]
-
-
-viewLabel :
-    { a
-        | identifier : String
-        , setterMsg : Bool -> msg
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    -> Html.Html msg
-    -> Html.Attribute msg
-    -> List Style
-    -> Html.Html msg
-viewLabel model content class theme =
-    Html.Styled.label
-        [ Attributes.for model.identifier
-        , Aria.controls model.identifier
-        , Widget.disabled model.disabled
-        , Widget.checked (selectedToMaybe model.selected)
-        , if not model.disabled then
-            Attributes.tabindex 0
-
-          else
-            ExtraAttributes.none
-        , if not model.disabled then
-            --TODO: the accessibility keyboard module might make this a tad more readable.
-            HtmlExtra.onKeyUp
-                { defaultOptions | preventDefault = True }
-                (\keyCode ->
-                    -- 32 is the space bar, 13 is enter
-                    if (keyCode == 32 || keyCode == 13) && not model.disabled then
-                        Just <| model.setterMsg (Maybe.map not (selectedToMaybe model.selected) |> Maybe.withDefault True)
-
-                    else
-                        Nothing
-                )
-
-          else
-            ExtraAttributes.none
-        , class
-        , css theme
-        ]
-        [ content ]
-
-
 viewSquareCheckbox :
     { a
         | identifier : String
@@ -365,6 +268,38 @@ viewSquareCheckbox model labelView =
 
           else
             viewEnabledLabel model labelView icon
+        ]
+
+
+viewLockedCheckbox :
+    { a
+        | identifier : String
+        , label : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
+    -> (String -> Html.Html msg)
+    -> Html.Html msg
+viewLockedCheckbox model labelView =
+    Html.Styled.span
+        [ css [ display block, height inherit ]
+        , Attributes.id (model.identifier ++ "-container")
+        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
+        ]
+        [ Html.checkbox model.identifier
+            (selectedToMaybe model.selected)
+            ([ Events.onCheck (\_ -> onCheck model)
+             , Attributes.id model.identifier
+             , Attributes.disabled model.disabled
+             ]
+                ++ Accessibility.Styled.Style.invisible
+            )
+        , if model.disabled then
+            viewDisabledLabel model labelView checkboxLockOnInside
+
+          else
+            viewEnabledLabel model labelView checkboxLockOnInside
         ]
 
 
