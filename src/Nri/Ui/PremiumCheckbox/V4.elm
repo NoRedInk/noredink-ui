@@ -102,11 +102,7 @@ premium assets config =
 -}
 type alias Assets r =
     { r
-        | checkboxUnchecked_svg : Asset
-        , checkboxChecked_svg : Asset
-        , checkboxCheckedPartially_svg : Asset
-        , checkboxLockOnInside_svg : Asset
-        , iconPremiumFlag_svg : Asset
+        | iconPremiumFlag_svg : Asset
         , iconPremiumWithWritingFlag_svg : Asset
     }
 
