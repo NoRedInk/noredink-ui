@@ -340,6 +340,39 @@ viewLabel model content class theme =
         [ content ]
 
 
+viewSquareCheckbox :
+    { a
+        | identifier : String
+        , label : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
+    ->
+        { labelStyles : Icon -> List Style
+        , labelContent : Html.Html msg
+        , icon : Icon
+        }
+    -> Html.Html msg
+viewSquareCheckbox model config =
+    Html.Styled.span
+        [ css [ display block, height inherit ]
+        , Attributes.id (model.identifier ++ "-container")
+        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
+        ]
+        [ Html.checkbox model.identifier
+            (selectedToMaybe model.selected)
+            ([ Widget.label model.label
+             , Events.onCheck (\_ -> onCheck model)
+             , Attributes.id model.identifier
+             , Attributes.disabled model.disabled
+             ]
+                ++ Accessibility.Styled.Style.invisible
+            )
+        , viewLabel model config.labelContent (labelClass model.selected) (config.labelStyles config.icon)
+        ]
+
+
 viewEnabledLabel :
     { a
         | identifier : String
@@ -362,11 +395,7 @@ viewEnabledLabel model content class icon =
             (\keyCode ->
                 -- 32 is the space bar, 13 is enter
                 if keyCode == 32 || keyCode == 13 then
-                    selectedToMaybe model.selected
-                        |> Maybe.map not
-                        |> Maybe.withDefault True
-                        |> model.setterMsg
-                        |> Just
+                    Just (onCheck model)
 
                 else
                     Nothing
@@ -382,6 +411,14 @@ viewEnabledLabel model content class icon =
         [ viewIcon icon
         , content
         ]
+
+
+onCheck : { a | setterMsg : Bool -> msg, selected : IsSelected } -> msg
+onCheck model =
+    selectedToMaybe model.selected
+        |> Maybe.withDefault False
+        |> not
+        |> model.setterMsg
 
 
 viewDisabledLabel :
