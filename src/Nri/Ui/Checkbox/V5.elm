@@ -119,39 +119,38 @@ buildCheckbox model labelContent =
     viewCheckbox model <|
         case model.theme of
             Square ->
-                let
-                    squareIcon =
-                        case model.selected of
-                            Selected ->
-                                checkboxChecked
-
-                            NotSelected ->
-                                checkboxUnchecked
-
-                            PartiallySelected ->
-                                checkboxCheckedPartially
-                in
                 { containerClasses = toClassList [ "SquareClass" ]
                 , labelStyles =
                     if model.disabled then
-                        disabledSquareLabel squareIcon
+                        disabledSquareLabel
 
                     else
-                        enabledSquareLabel squareIcon
+                        enabledSquareLabel
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
+                , icon =
+                    case model.selected of
+                        Selected ->
+                            checkboxChecked
+
+                        NotSelected ->
+                            checkboxUnchecked
+
+                        PartiallySelected ->
+                            checkboxCheckedPartially
                 }
 
             Locked ->
                 { containerClasses = toClassList [ "Locked" ]
                 , labelStyles =
                     if model.disabled then
-                        disabledLockStyles checkboxLockOnInside
+                        disabledLockStyles
 
                     else
-                        enabledLockLabelStyles checkboxLockOnInside
+                        enabledLockLabelStyles
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
+                , icon = checkboxLockOnInside
                 }
 
 
@@ -257,12 +256,19 @@ toClassList =
 
 
 viewCheckbox :
-    Model msg
+    { a
+        | identifier : String
+        , label : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
     ->
         { containerClasses : Html.Attribute msg
-        , labelStyles : List Style
+        , labelStyles : Icon -> List Style
         , labelClasses : Html.Attribute msg
         , labelContent : Html.Html msg
+        , icon : Icon
         }
     -> Html.Html msg
 viewCheckbox model config =
@@ -290,11 +296,21 @@ viewCheckbox model config =
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
             ]
-        , viewLabel model config.labelContent config.labelClasses config.labelStyles
+        , viewLabel model config.labelContent config.labelClasses (config.labelStyles config.icon)
         ]
 
 
-viewLabel : Model msg -> Html.Html msg -> Html.Attribute msg -> List Style -> Html.Html msg
+viewLabel :
+    { a
+        | identifier : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
+    -> Html.Html msg
+    -> Html.Attribute msg
+    -> List Style
+    -> Html.Html msg
 viewLabel model content class theme =
     Html.Styled.label
         [ Attributes.for model.identifier
