@@ -6,6 +6,11 @@ module Nri.Ui.Checkbox.V5 exposing
 
 {-|
 
+
+# Changes from V5:
+
+  - Removes `noOpMsg` from Model
+
 @docs Model, Theme, IsSelected
 
 @docs view, viewWithLabel, Assets
@@ -41,7 +46,6 @@ type alias Model msg =
     , selected : IsSelected
     , disabled : Bool
     , theme : Theme
-    , noOpMsg : msg
     }
 
 
@@ -265,11 +269,8 @@ viewCheckbox model config =
             ]
         , config.containerClasses
         , Attributes.id <| model.identifier ++ "-container"
-        , -- This is necessary to prevent event propagation.
-          -- See https://github.com/elm-lang/html/issues/96
-          Attributes.map (always model.noOpMsg) <|
-            Events.stopPropagationOn "click"
-                (Json.Decode.succeed ( "stop click propagation", True ))
+        , Events.stopPropagationOn "click"
+            (Json.Decode.fail "stop click propagation")
         ]
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)

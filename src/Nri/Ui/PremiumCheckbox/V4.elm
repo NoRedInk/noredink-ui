@@ -30,7 +30,6 @@ type alias PremiumConfig msg =
     , pennant : Maybe Pennant
     , onChange : Bool -> msg
     , onLockedClick : msg
-    , noOpMsg : msg
     }
 
 
@@ -69,7 +68,6 @@ premium assets config =
 
                 else
                     Checkbox.Square
-            , noOpMsg = config.noOpMsg
             }
         , case config.pennant of
             Just pennant ->

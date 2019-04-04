@@ -94,7 +94,6 @@ viewInteractableCheckbox id state =
         , selected = isSelected id state
         , disabled = False
         , theme = Checkbox.Square
-        , noOpMsg = NoOp
         }
 
 
@@ -108,7 +107,6 @@ viewIndeterminateCheckbox id state =
         , selected = Checkbox.PartiallySelected
         , disabled = True
         , theme = Checkbox.Square
-        , noOpMsg = NoOp
         }
 
 
@@ -122,7 +120,6 @@ viewLockedOnInsideCheckbox id state =
         , selected = Checkbox.NotSelected
         , disabled = True
         , theme = Checkbox.Locked
-        , noOpMsg = NoOp
         }
 
 
@@ -136,7 +133,6 @@ viewDisabledCheckbox id state =
         , selected = isSelected id state
         , disabled = True
         , theme = Checkbox.Square
-        , noOpMsg = NoOp
         }
 
 
@@ -153,7 +149,6 @@ viewMultilineCheckboxes =
             , selected = Checkbox.NotSelected
             , disabled = False
             , theme = Checkbox.Square
-            , noOpMsg = NoOp
             }
         , Checkbox.viewWithLabel
             assets
@@ -163,7 +158,6 @@ viewMultilineCheckboxes =
             , selected = Checkbox.PartiallySelected
             , disabled = True
             , theme = Checkbox.Square
-            , noOpMsg = NoOp
             }
         , Checkbox.viewWithLabel
             assets
@@ -173,7 +167,6 @@ viewMultilineCheckboxes =
             , selected = Checkbox.NotSelected
             , disabled = True
             , theme = Checkbox.Locked
-            , noOpMsg = NoOp
             }
         , Checkbox.viewWithLabel
             assets
@@ -183,7 +176,6 @@ viewMultilineCheckboxes =
             , selected = Checkbox.NotSelected
             , disabled = True
             , theme = Checkbox.Square
-            , noOpMsg = NoOp
             }
         ]
 
@@ -207,7 +199,6 @@ viewPremiumCheckboxes state =
                 , pennant = config.pennant
                 , onChange = ToggleCheck config.label
                 , onLockedClick = NoOp
-                , noOpMsg = NoOp
                 }
     in
     Html.div []
