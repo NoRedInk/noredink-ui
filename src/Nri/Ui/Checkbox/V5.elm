@@ -274,6 +274,7 @@ positioning =
     batch
         [ display inlineBlock
         , padding4 (px 13) zero (px 13) (px 35)
+        , position relative
         ]
 
 
@@ -291,7 +292,7 @@ viewIcon : List Style -> Icon -> Html.Html msg
 viewIcon styles (Icon icon) =
     Html.div
         [ css
-            [ position relative
+            [ position absolute
             , left zero
             , top (calc (pct 50) minus (px 12))
             , width (px 24)
