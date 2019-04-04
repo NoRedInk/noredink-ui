@@ -101,9 +101,11 @@ selectedToMaybe selected =
 -}
 view : Model msg -> Html.Html msg
 view model =
-    buildCheckbox model <|
-        Html.span Accessibility.Styled.Style.invisible
-            [ Html.text model.label ]
+    buildCheckbox model
+        (\label ->
+            Html.span Accessibility.Styled.Style.invisible
+                [ Html.text label ]
+        )
 
 
 {-| Shows a checkbox and its label text
@@ -111,35 +113,17 @@ view model =
 viewWithLabel : Model msg -> Html.Html msg
 viewWithLabel model =
     buildCheckbox model <|
-        Html.span [] [ Html.text model.label ]
+        \label -> Html.span [] [ Html.text label ]
 
 
-buildCheckbox : Model msg -> Html.Html msg -> Html.Html msg
-buildCheckbox model labelContent =
-    viewCheckbox model <|
-        case model.theme of
-            Square ->
-                { containerClasses = toClassList [ "SquareClass" ]
-                , labelStyles =
-                    if model.disabled then
-                        disabledSquareLabel
+buildCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
+buildCheckbox model labelView =
+    case model.theme of
+        Square ->
+            viewSquareCheckbox model viewLabelContent
 
-                    else
-                        enabledSquareLabel
-                , labelContent = labelContent
-                , icon =
-                    case model.selected of
-                        Selected ->
-                            checkboxChecked
-
-                        NotSelected ->
-                            checkboxUnchecked
-
-                        PartiallySelected ->
-                            checkboxCheckedPartially
-                }
-
-            Locked ->
+        Locked ->
+            viewCheckbox model <|
                 { containerClasses = toClassList [ "Locked" ]
                 , labelStyles =
                     if model.disabled then
@@ -147,7 +131,7 @@ buildCheckbox model labelContent =
 
                     else
                         enabledLockLabelStyles
-                , labelContent = labelContent
+                , labelContent = labelView model.label
                 , icon = checkboxLockOnInside
                 }
 
@@ -348,13 +332,21 @@ viewSquareCheckbox :
         , selected : IsSelected
         , disabled : Bool
     }
-    ->
-        { labelStyles : Icon -> List Style
-        , labelContent : Html.Html msg
-        , icon : Icon
-        }
+    -> (String -> Html.Html msg)
     -> Html.Html msg
-viewSquareCheckbox model config =
+viewSquareCheckbox model labelView =
+    let
+        icon =
+            case model.selected of
+                Selected ->
+                    checkboxChecked
+
+                NotSelected ->
+                    checkboxUnchecked
+
+                PartiallySelected ->
+                    checkboxCheckedPartially
+    in
     Html.Styled.span
         [ css [ display block, height inherit ]
         , Attributes.id (model.identifier ++ "-container")
@@ -362,14 +354,17 @@ viewSquareCheckbox model config =
         ]
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
-            ([ Widget.label model.label
-             , Events.onCheck (\_ -> onCheck model)
+            ([ Events.onCheck (\_ -> onCheck model)
              , Attributes.id model.identifier
              , Attributes.disabled model.disabled
              ]
                 ++ Accessibility.Styled.Style.invisible
             )
-        , viewLabel model config.labelContent (labelClass model.selected) (config.labelStyles config.icon)
+        , if model.disabled then
+            viewDisabledLabel model labelView icon
+
+          else
+            viewEnabledLabel model labelView icon
         ]
 
 
@@ -378,12 +373,12 @@ viewEnabledLabel :
         | identifier : String
         , setterMsg : Bool -> msg
         , selected : IsSelected
+        , label : String
     }
-    -> Html.Html msg
-    -> Html.Attribute msg
+    -> (String -> Html.Html msg)
     -> Icon
     -> Html.Html msg
-viewEnabledLabel model content class icon =
+viewEnabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
@@ -400,7 +395,7 @@ viewEnabledLabel model content class icon =
                 else
                     Nothing
             )
-        , class
+        , labelClass model.selected
         , css
             [ positioning
             , textStyle
@@ -409,7 +404,7 @@ viewEnabledLabel model content class icon =
             ]
         ]
         [ viewIcon icon
-        , content
+        , labelView model.label
         ]
 
 
@@ -422,18 +417,17 @@ onCheck model =
 
 
 viewDisabledLabel :
-    { a | identifier : String, selected : IsSelected }
-    -> Html.Html msg
-    -> Html.Attribute msg
+    { a | identifier : String, selected : IsSelected, label : String }
+    -> (String -> Html.Html msg)
     -> Icon
     -> Html.Html msg
-viewDisabledLabel model content class icon =
+viewDisabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
         , Widget.disabled True
         , Widget.checked (selectedToMaybe model.selected)
-        , class
+        , labelClass model.selected
         , css
             [ positioning
             , textStyle
@@ -443,8 +437,13 @@ viewDisabledLabel model content class icon =
             ]
         ]
         [ viewIcon icon
-        , content
+        , labelView model.label
         ]
+
+
+viewLabelContent : String -> Html.Html msg
+viewLabelContent label =
+    Html.span [] [ Html.text label ]
 
 
 viewIcon : Icon -> Html.Html msg
