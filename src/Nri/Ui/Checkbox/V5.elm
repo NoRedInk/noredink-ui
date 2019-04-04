@@ -126,48 +126,6 @@ buildCheckbox model labelView =
             viewLockedCheckbox model viewLabelContent
 
 
-disabledSquareLabel : Icon -> List Style
-disabledSquareLabel image =
-    [ positioning
-    , textStyle
-    , outline none
-    , iconStyle image
-    , cursor auto
-    , checkboxImageSelector [ opacity (num 0.4) ]
-    ]
-
-
-enabledSquareLabel : Icon -> List Style
-enabledSquareLabel image =
-    [ positioning
-    , textStyle
-    , outline none
-    , iconStyle image
-    , cursor pointer
-    ]
-
-
-disabledLockStyles : Icon -> List Style
-disabledLockStyles image =
-    [ positioning
-    , textStyle
-    , outline none
-    , iconStyle image
-    , cursor auto
-    , checkboxImageSelector [ opacity (num 0.4) ]
-    ]
-
-
-enabledLockLabelStyles : Icon -> List Style
-enabledLockLabelStyles image =
-    [ positioning
-    , textStyle
-    , outline none
-    , iconStyle image
-    , cursor pointer
-    ]
-
-
 positioning : Style
 positioning =
     batch
