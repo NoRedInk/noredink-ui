@@ -348,18 +348,16 @@ viewEnabledLabel :
         | identifier : String
         , setterMsg : Bool -> msg
         , selected : IsSelected
-        , disabled : Bool
     }
     -> Html.Html msg
     -> Html.Attribute msg
-    -> List Style
     -> Icon
     -> Html.Html msg
-viewEnabledLabel model content class theme icon =
+viewEnabledLabel model content class icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
-        , Widget.disabled model.disabled
+        , Widget.disabled False
         , Widget.checked (selectedToMaybe model.selected)
         , Attributes.tabindex 0
         , HtmlExtra.onKeyUp
@@ -377,56 +375,47 @@ viewEnabledLabel model content class theme icon =
                     Nothing
             )
         , class
-        , css theme
+        , css
+            [ positioning
+            , textStyle
+            , outline none
+            , cursor pointer
+            ]
         ]
-        [ viewEnabledIcon icon
+        [ viewIcon icon
         , content
         ]
-
-
-viewEnabledIcon : Icon -> Html.Html msg
-viewEnabledIcon icon =
-    viewIcon
-        [ cursor pointer
-        ]
-        icon
 
 
 viewDisabledLabel :
     { a | identifier : String, selected : IsSelected }
     -> Html.Html msg
     -> Html.Attribute msg
-    -> List Style
     -> Icon
     -> Html.Html msg
-viewDisabledLabel model content class theme icon =
+viewDisabledLabel model content class icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
         , Widget.disabled True
         , Widget.checked (selectedToMaybe model.selected)
         , class
-        , css theme
+        , css
+            [ positioning
+            , textStyle
+            , outline none
+            , cursor auto
+            , checkboxImageSelector [ opacity (num 0.4) ]
+            ]
         ]
-        [ viewDisabledIcon icon
+        [ viewIcon icon
         , content
         ]
 
 
-viewDisabledIcon : Icon -> Html.Html msg
-viewDisabledIcon icon =
-    viewIcon
-        [ cursor auto
-        , checkboxImageSelector [ opacity (num 0.4) ]
-        ]
-        icon
-
-
-viewIcon : List Style -> Icon -> Html.Html msg
-viewIcon styles (Icon icon) =
-    Html.div [ css styles ]
-        [ Html.map never icon
-        ]
+viewIcon : Icon -> Html.Html msg
+viewIcon (Icon icon) =
+    Html.map never icon
 
 
 type Icon
