@@ -353,8 +353,9 @@ viewEnabledLabel :
     -> Html.Html msg
     -> Html.Attribute msg
     -> List Style
+    -> Icon
     -> Html.Html msg
-viewEnabledLabel model content class theme =
+viewEnabledLabel model content class theme icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
@@ -378,7 +379,17 @@ viewEnabledLabel model content class theme =
         , class
         , css theme
         ]
-        [ content ]
+        [ viewEnabledIcon icon
+        , content
+        ]
+
+
+viewEnabledIcon : Icon -> Html.Html msg
+viewEnabledIcon icon =
+    viewIcon
+        [ cursor pointer
+        ]
+        icon
 
 
 viewDisabledLabel :
@@ -386,8 +397,9 @@ viewDisabledLabel :
     -> Html.Html msg
     -> Html.Attribute msg
     -> List Style
+    -> Icon
     -> Html.Html msg
-viewDisabledLabel model content class theme =
+viewDisabledLabel model content class theme icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
@@ -396,7 +408,25 @@ viewDisabledLabel model content class theme =
         , class
         , css theme
         ]
-        [ content ]
+        [ viewDisabledIcon icon
+        , content
+        ]
+
+
+viewDisabledIcon : Icon -> Html.Html msg
+viewDisabledIcon icon =
+    viewIcon
+        [ cursor auto
+        , checkboxImageSelector [ opacity (num 0.4) ]
+        ]
+        icon
+
+
+viewIcon : List Style -> Icon -> Html.Html msg
+viewIcon styles (Icon icon) =
+    Html.div [ css styles ]
+        [ Html.map never icon
+        ]
 
 
 type Icon
