@@ -14,7 +14,7 @@ module Nri.Ui.Checkbox.V5 exposing
 
 @docs Model, Theme, IsSelected
 
-@docs view, viewWithLabel, Assets
+@docs view, viewWithLabel
 
 @docs selectedFromBool
 
