@@ -162,16 +162,7 @@ toClassList =
     List.map (\a -> ( "checkbox-V3__" ++ a, True )) >> Attributes.classList
 
 
-viewSquareCheckbox :
-    { a
-        | identifier : String
-        , label : String
-        , setterMsg : Bool -> msg
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    -> (String -> Html.Html msg)
-    -> Html.Html msg
+viewSquareCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 viewSquareCheckbox model labelView =
     let
         icon =
@@ -186,12 +177,7 @@ viewSquareCheckbox model labelView =
                     checkboxCheckedPartially
     in
     checkboxContainer model
-        [ Html.checkbox model.identifier
-            (selectedToMaybe model.selected)
-            [ Events.onCheck (\_ -> onCheck model)
-            , Attributes.id model.identifier
-            , Attributes.disabled model.disabled
-            ]
+        [ viewCheckbox model
         , if model.disabled then
             viewDisabledLabel model labelView icon
 
@@ -200,24 +186,10 @@ viewSquareCheckbox model labelView =
         ]
 
 
-viewLockedCheckbox :
-    { a
-        | identifier : String
-        , label : String
-        , setterMsg : Bool -> msg
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    -> (String -> Html.Html msg)
-    -> Html.Html msg
+viewLockedCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 viewLockedCheckbox model labelView =
     checkboxContainer model
-        [ Html.checkbox model.identifier
-            (selectedToMaybe model.selected)
-            [ Events.onCheck (\_ -> onCheck model)
-            , Attributes.id model.identifier
-            , Attributes.disabled model.disabled
-            ]
+        [ viewCheckbox model
         , if model.disabled then
             viewDisabledLabel model labelView checkboxLockOnInside
 
@@ -236,6 +208,23 @@ checkboxContainer model =
             ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
+        ]
+
+
+viewCheckbox :
+    { a
+        | identifier : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
+    -> Html.Html msg
+viewCheckbox model =
+    Html.checkbox model.identifier
+        (selectedToMaybe model.selected)
+        [ Events.onCheck (\_ -> onCheck model)
+        , Attributes.id model.identifier
+        , Attributes.disabled model.disabled
         ]
 
 
