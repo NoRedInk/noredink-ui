@@ -186,18 +186,16 @@ viewSquareCheckbox model labelView =
                     checkboxCheckedPartially
     in
     Html.Styled.span
-        [ css [ display block, height inherit ]
+        [ css [ display block, height inherit, descendants [ Css.Global.input [ display none ] ] ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
-            ([ Events.onCheck (\_ -> onCheck model)
-             , Attributes.id model.identifier
-             , Attributes.disabled model.disabled
-             ]
-                ++ Accessibility.Styled.Style.invisible
-            )
+            [ Events.onCheck (\_ -> onCheck model)
+            , Attributes.id model.identifier
+            , Attributes.disabled model.disabled
+            ]
         , if model.disabled then
             viewDisabledLabel model labelView icon
 
@@ -218,18 +216,16 @@ viewLockedCheckbox :
     -> Html.Html msg
 viewLockedCheckbox model labelView =
     Html.Styled.span
-        [ css [ display block, height inherit ]
+        [ css [ display block, height inherit, descendants [ Css.Global.input [ display none ] ] ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
         [ Html.checkbox model.identifier
             (selectedToMaybe model.selected)
-            ([ Events.onCheck (\_ -> onCheck model)
-             , Attributes.id model.identifier
-             , Attributes.disabled model.disabled
-             ]
-                ++ Accessibility.Styled.Style.invisible
-            )
+            [ Events.onCheck (\_ -> onCheck model)
+            , Attributes.id model.identifier
+            , Attributes.disabled model.disabled
+            ]
         , if model.disabled then
             viewDisabledLabel model labelView checkboxLockOnInside
 
