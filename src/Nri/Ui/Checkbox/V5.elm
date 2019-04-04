@@ -343,6 +343,62 @@ viewLabel model content class theme =
         [ content ]
 
 
+viewEnabledLabel :
+    { a
+        | identifier : String
+        , setterMsg : Bool -> msg
+        , selected : IsSelected
+        , disabled : Bool
+    }
+    -> Html.Html msg
+    -> Html.Attribute msg
+    -> List Style
+    -> Html.Html msg
+viewEnabledLabel model content class theme =
+    Html.Styled.label
+        [ Attributes.for model.identifier
+        , Aria.controls model.identifier
+        , Widget.disabled model.disabled
+        , Widget.checked (selectedToMaybe model.selected)
+        , Attributes.tabindex 0
+        , HtmlExtra.onKeyUp
+            { defaultOptions | preventDefault = True }
+            (\keyCode ->
+                -- 32 is the space bar, 13 is enter
+                if keyCode == 32 || keyCode == 13 then
+                    selectedToMaybe model.selected
+                        |> Maybe.map not
+                        |> Maybe.withDefault True
+                        |> model.setterMsg
+                        |> Just
+
+                else
+                    Nothing
+            )
+        , class
+        , css theme
+        ]
+        [ content ]
+
+
+viewDisabledLabel :
+    { a | identifier : String, selected : IsSelected }
+    -> Html.Html msg
+    -> Html.Attribute msg
+    -> List Style
+    -> Html.Html msg
+viewDisabledLabel model content class theme =
+    Html.Styled.label
+        [ Attributes.for model.identifier
+        , Aria.controls model.identifier
+        , Widget.disabled True
+        , Widget.checked (selectedToMaybe model.selected)
+        , class
+        , css theme
+        ]
+        [ content ]
+
+
 type Icon
     = Icon (Html.Html Never)
 
