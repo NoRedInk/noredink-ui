@@ -126,7 +126,6 @@ buildCheckbox model labelContent =
 
                     else
                         enabledSquareLabel
-                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 , icon =
                     case model.selected of
@@ -148,7 +147,6 @@ buildCheckbox model labelContent =
 
                     else
                         enabledLockLabelStyles
-                , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 , icon = checkboxLockOnInside
                 }
@@ -266,7 +264,6 @@ viewCheckbox :
     ->
         { containerClasses : Html.Attribute msg
         , labelStyles : Icon -> List Style
-        , labelClasses : Html.Attribute msg
         , labelContent : Html.Html msg
         , icon : Icon
         }
@@ -296,7 +293,7 @@ viewCheckbox model config =
             , Attributes.id model.identifier
             , Attributes.disabled model.disabled
             ]
-        , viewLabel model config.labelContent config.labelClasses (config.labelStyles config.icon)
+        , viewLabel model config.labelContent (labelClass model.selected) (config.labelStyles config.icon)
         ]
 
 
