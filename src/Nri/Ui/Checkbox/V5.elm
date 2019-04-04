@@ -294,7 +294,7 @@ viewIcon styles (Icon icon) =
         [ css
             [ position absolute
             , left zero
-            , top (calc (pct 50) minus (px 12))
+            , top (calc (pct 50) minus (px 14))
             , width (px 24)
             , height (px 24)
             , Css.batch styles
