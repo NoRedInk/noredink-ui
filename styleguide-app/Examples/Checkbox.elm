@@ -11,9 +11,9 @@ import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V4 as Checkbox
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V3 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V4 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -32,7 +32,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri/Checkbox.elm"
+    { filename = "Nri.Ui.Checkbox.V5.elm"
     , category = Inputs
     , content =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
