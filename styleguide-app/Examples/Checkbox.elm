@@ -87,7 +87,6 @@ type alias PremiumExampleConfig =
 viewInteractableCheckbox : Id -> State -> Html Msg
 viewInteractableCheckbox id state =
     Checkbox.viewWithLabel
-        assets
         { identifier = id
         , label = "This is an interactable checkbox!"
         , setterMsg = ToggleCheck id
@@ -100,7 +99,6 @@ viewInteractableCheckbox id state =
 viewIndeterminateCheckbox : Id -> State -> Html Msg
 viewIndeterminateCheckbox id state =
     Checkbox.viewWithLabel
-        assets
         { identifier = id
         , label = "This Checkbox is set in an indeterminate state"
         , setterMsg = ToggleCheck id
@@ -113,7 +111,6 @@ viewIndeterminateCheckbox id state =
 viewLockedOnInsideCheckbox : Id -> State -> Html Msg
 viewLockedOnInsideCheckbox id state =
     Checkbox.viewWithLabel
-        assets
         { identifier = id
         , label = "I'm a locked Checkbox"
         , setterMsg = ToggleCheck id
@@ -126,7 +123,6 @@ viewLockedOnInsideCheckbox id state =
 viewDisabledCheckbox : Id -> State -> Html Msg
 viewDisabledCheckbox id state =
     Checkbox.viewWithLabel
-        assets
         { identifier = id
         , label = "Disabled theme"
         , setterMsg = ToggleCheck id
@@ -142,7 +138,6 @@ viewMultilineCheckboxes =
         [ css [ Css.width (Css.px 500) ] ]
         [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
         , Checkbox.viewWithLabel
-            assets
             { identifier = "fake"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
@@ -151,7 +146,6 @@ viewMultilineCheckboxes =
             , theme = Checkbox.Square
             }
         , Checkbox.viewWithLabel
-            assets
             { identifier = "fake"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
@@ -160,7 +154,6 @@ viewMultilineCheckboxes =
             , theme = Checkbox.Square
             }
         , Checkbox.viewWithLabel
-            assets
             { identifier = "fake"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
@@ -169,7 +162,6 @@ viewMultilineCheckboxes =
             , theme = Checkbox.Locked
             }
         , Checkbox.viewWithLabel
-            assets
             { identifier = "fake"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"

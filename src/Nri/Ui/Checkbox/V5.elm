@@ -1,6 +1,6 @@
 module Nri.Ui.Checkbox.V5 exposing
     ( Model, Theme(..), IsSelected(..)
-    , view, viewWithLabel, Assets
+    , view, viewWithLabel
     , selectedFromBool
     )
 
@@ -10,6 +10,7 @@ module Nri.Ui.Checkbox.V5 exposing
 # Changes from V5:
 
   - Removes `noOpMsg` from Model
+  - Removes dependency on external assets
 
 @docs Model, Theme, IsSelected
 
@@ -30,8 +31,6 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.AssetPath exposing (Asset(..))
-import Nri.Ui.AssetPath.Css
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -100,23 +99,23 @@ selectedToMaybe selected =
 
 {-| Shows a checkbox (the label is only used for accessibility hints)
 -}
-view : Assets a -> Model msg -> Html.Html msg
-view assets model =
-    buildCheckbox assets model <|
+view : Model msg -> Html.Html msg
+view model =
+    buildCheckbox model <|
         Html.span Accessibility.Styled.Style.invisible
             [ Html.text model.label ]
 
 
 {-| Shows a checkbox and its label text
 -}
-viewWithLabel : Assets a -> Model msg -> Html.Html msg
-viewWithLabel assets model =
-    buildCheckbox assets model <|
+viewWithLabel : Model msg -> Html.Html msg
+viewWithLabel model =
+    buildCheckbox model <|
         Html.span [] [ Html.text model.label ]
 
 
-buildCheckbox : Assets a -> Model msg -> Html.Html msg -> Html.Html msg
-buildCheckbox assets model labelContent =
+buildCheckbox : Model msg -> Html.Html msg -> Html.Html msg
+buildCheckbox model labelContent =
     viewCheckbox model <|
         case model.theme of
             Square ->
@@ -138,7 +137,7 @@ buildCheckbox assets model labelContent =
 
             Locked ->
                 { containerClasses = toClassList [ "Locked" ]
-                , labelStyles = lockLabelStyles model assets.checkboxLockOnInside_svg
+                , labelStyles = lockLabelStyles model checkboxLockOnInside
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -316,17 +315,6 @@ viewLabel model content class theme =
         , theme
         ]
         [ content ]
-
-
-{-| The assets used in this module.
--}
-type alias Assets r =
-    { r
-        | checkboxUnchecked_svg : Asset
-        , checkboxChecked_svg : Asset
-        , checkboxCheckedPartially_svg : Asset
-        , checkboxLockOnInside_svg : Asset
-    }
 
 
 backgroundImage : Icon -> Style

@@ -51,7 +51,7 @@ premium assets config =
             , alignItems center
             ]
         ]
-        [ Checkbox.viewWithLabel assets
+        [ Checkbox.viewWithLabel
             { identifier = config.id
             , label = config.label
             , setterMsg =
