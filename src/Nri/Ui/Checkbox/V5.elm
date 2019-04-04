@@ -125,13 +125,13 @@ buildCheckbox assets model labelContent =
                     squareLabelStyles model <|
                         case model.selected of
                             Selected ->
-                                assets.checkboxChecked_svg
+                                checkboxChecked
 
                             NotSelected ->
-                                assets.checkboxUnchecked_svg
+                                checkboxUnchecked
 
                             PartiallySelected ->
-                                assets.checkboxCheckedPartially_svg
+                                checkboxCheckedPartially
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
@@ -144,7 +144,7 @@ buildCheckbox assets model labelContent =
                 }
 
 
-squareLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute msg
+squareLabelStyles : { b | disabled : Bool } -> Icon -> Html.Styled.Attribute msg
 squareLabelStyles model image =
     let
         baseStyles =
@@ -165,7 +165,7 @@ squareLabelStyles model image =
         )
 
 
-lockLabelStyles : { b | disabled : Bool } -> Asset -> Html.Styled.Attribute msg
+lockLabelStyles : { b | disabled : Bool } -> Icon -> Html.Styled.Attribute msg
 lockLabelStyles model image =
     let
         baseStyles =
@@ -206,7 +206,7 @@ textStyle =
         ]
 
 
-addIcon : Asset -> Style
+addIcon : Icon -> Style
 addIcon icon =
     batch
         [ position relative
@@ -329,13 +329,18 @@ type alias Assets r =
     }
 
 
-backgroundImage : Asset -> Style
-backgroundImage =
-    Nri.Ui.AssetPath.Css.url
-        >> property "background-image"
+backgroundImage : Icon -> Style
+backgroundImage (Icon icon) =
+    -- Nri.Ui.AssetPath.Css.url
+    --     >> property "background-image"
+    property "background-image" "url(todo)"
 
 
-checkboxUnchecked : Html.Html msg
+type Icon
+    = Icon (Html.Html Never)
+
+
+checkboxUnchecked : Icon
 checkboxUnchecked =
     Svg.svg
         [ Svg.Attributes.width "27px"
@@ -404,9 +409,10 @@ checkboxUnchecked =
             ]
         ]
         |> Html.Styled.fromUnstyled
+        |> Icon
 
 
-checkboxChecked : Html.Html msg
+checkboxChecked : Icon
 checkboxChecked =
     Svg.svg
         [ Svg.Attributes.width "27px"
@@ -491,9 +497,10 @@ checkboxChecked =
             ]
         ]
         |> Html.Styled.fromUnstyled
+        |> Icon
 
 
-checkboxCheckedPartially : Html.Html msg
+checkboxCheckedPartially : Icon
 checkboxCheckedPartially =
     Svg.svg
         [ Svg.Attributes.width "27px"
@@ -572,9 +579,10 @@ checkboxCheckedPartially =
             ]
         ]
         |> Html.Styled.fromUnstyled
+        |> Icon
 
 
-checkboxLockOnInside : Html.Html msg
+checkboxLockOnInside : Icon
 checkboxLockOnInside =
     Svg.svg
         [ Svg.Attributes.width "27px"
@@ -677,3 +685,4 @@ checkboxLockOnInside =
             ]
         ]
         |> Html.Styled.fromUnstyled
+        |> Icon
