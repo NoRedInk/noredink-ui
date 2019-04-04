@@ -118,47 +118,34 @@ viewWithLabel model =
 
 buildCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 buildCheckbox model labelView =
-    case model.theme of
-        Square ->
-            viewSquareCheckbox model labelView
-
-        Locked ->
-            viewLockedCheckbox model labelView
-
-
-viewSquareCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
-viewSquareCheckbox model labelView =
-    let
-        icon =
-            case model.selected of
-                Selected ->
-                    checkboxChecked
-
-                NotSelected ->
-                    checkboxUnchecked
-
-                PartiallySelected ->
-                    checkboxCheckedPartially
-    in
     checkboxContainer model
         [ viewCheckbox model
-        , if model.disabled then
-            viewDisabledLabel model labelView icon
+        , case model.theme of
+            Square ->
+                let
+                    icon =
+                        case model.selected of
+                            Selected ->
+                                checkboxChecked
 
-          else
-            viewEnabledLabel model labelView icon
-        ]
+                            NotSelected ->
+                                checkboxUnchecked
 
+                            PartiallySelected ->
+                                checkboxCheckedPartially
+                in
+                if model.disabled then
+                    viewDisabledLabel model labelView icon
 
-viewLockedCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
-viewLockedCheckbox model labelView =
-    checkboxContainer model
-        [ viewCheckbox model
-        , if model.disabled then
-            viewDisabledLabel model labelView checkboxLockOnInside
+                else
+                    viewEnabledLabel model labelView icon
 
-          else
-            viewEnabledLabel model labelView checkboxLockOnInside
+            Locked ->
+                if model.disabled then
+                    viewDisabledLabel model labelView checkboxLockOnInside
+
+                else
+                    viewEnabledLabel model labelView checkboxLockOnInside
         ]
 
 
