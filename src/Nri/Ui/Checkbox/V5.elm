@@ -126,42 +126,6 @@ buildCheckbox model labelView =
             viewLockedCheckbox model labelView
 
 
-positioning : Style
-positioning =
-    batch
-        [ display inlineBlock
-        , padding4 (px 13) zero (px 13) (px 35)
-        ]
-
-
-textStyle : Style
-textStyle =
-    batch
-        [ Fonts.baseFont
-        , fontSize (px 16)
-        , fontWeight (int 600)
-        , color Colors.navy
-        ]
-
-
-labelClass : IsSelected -> Html.Styled.Attribute msg
-labelClass isSelected =
-    case isSelected of
-        Selected ->
-            toClassList [ "Label", "Checked" ]
-
-        NotSelected ->
-            toClassList [ "Label", "Unchecked" ]
-
-        PartiallySelected ->
-            toClassList [ "Label", "Indeterminate" ]
-
-
-toClassList : List String -> Html.Styled.Attribute msg
-toClassList =
-    List.map (\a -> ( "checkbox-V3__" ++ a, True )) >> Attributes.classList
-
-
 viewSquareCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 viewSquareCheckbox model labelView =
     let
@@ -297,6 +261,42 @@ viewDisabledLabel model labelView icon =
         ]
         [ viewIcon [ opacity (num 0.4) ] icon
         , labelView model.label
+        ]
+
+
+labelClass : IsSelected -> Html.Styled.Attribute msg
+labelClass isSelected =
+    case isSelected of
+        Selected ->
+            toClassList [ "Label", "Checked" ]
+
+        NotSelected ->
+            toClassList [ "Label", "Unchecked" ]
+
+        PartiallySelected ->
+            toClassList [ "Label", "Indeterminate" ]
+
+
+toClassList : List String -> Html.Styled.Attribute msg
+toClassList =
+    List.map (\a -> ( "checkbox-V5__" ++ a, True )) >> Attributes.classList
+
+
+positioning : Style
+positioning =
+    batch
+        [ display inlineBlock
+        , padding4 (px 13) zero (px 13) (px 35)
+        ]
+
+
+textStyle : Style
+textStyle =
+    batch
+        [ Fonts.baseFont
+        , fontSize (px 16)
+        , fontWeight (int 600)
+        , color Colors.navy
         ]
 
 
