@@ -366,11 +366,17 @@ checkboxUnchecked =
             [ Svg.g
                 [ Svg.Attributes.id "checkbox_unchecked"
                 ]
-                [ Svg.use [ Svg.Attributes.fill "#EBEBEB", Svg.Attributes.fillRule "evenodd" ] []
+                [ Svg.use
+                    [ Svg.Attributes.fill "#EBEBEB"
+                    , Svg.Attributes.fillRule "evenodd"
+                    , Svg.Attributes.xlinkHref "#path-1"
+                    ]
+                    []
                 , Svg.use
                     [ Svg.Attributes.fill "black"
                     , Svg.Attributes.fillOpacity "1"
                     , Svg.Attributes.filter "url(#filter-2)"
+                    , Svg.Attributes.xlinkHref "#path-1"
                     ]
                     []
                 ]
@@ -442,12 +448,14 @@ checkboxChecked =
                     [ Svg.use
                         [ Svg.Attributes.fill "#D4F0FF"
                         , Svg.Attributes.fillRule "evenodd"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     , Svg.use
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     ]
@@ -528,12 +536,14 @@ checkboxCheckedPartially =
                     [ Svg.use
                         [ Svg.Attributes.fill "#EBEBEB"
                         , Svg.Attributes.fillRule "evenodd"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     , Svg.use
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     ]
@@ -614,12 +624,14 @@ checkboxLockOnInside =
                     [ Svg.use
                         [ Svg.Attributes.fill "#EBEBEB"
                         , Svg.Attributes.fillRule "evenodd"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     , Svg.use
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
+                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
                         []
                     ]
