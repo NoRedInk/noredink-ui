@@ -120,10 +120,10 @@ buildCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 buildCheckbox model labelView =
     case model.theme of
         Square ->
-            viewSquareCheckbox model viewLabelContent
+            viewSquareCheckbox model labelView
 
         Locked ->
-            viewLockedCheckbox model viewLabelContent
+            viewLockedCheckbox model labelView
 
 
 positioning : Style
@@ -308,11 +308,6 @@ viewDisabledLabel model labelView icon =
         [ viewIcon [ opacity (num 0.4) ] icon
         , labelView model.label
         ]
-
-
-viewLabelContent : String -> Html.Html msg
-viewLabelContent label =
-    Html.span [] [ Html.text label ]
 
 
 viewIcon : List Style -> Icon -> Html.Html msg
