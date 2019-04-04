@@ -119,9 +119,8 @@ buildCheckbox model labelContent =
     viewCheckbox model <|
         case model.theme of
             Square ->
-                { containerClasses = toClassList [ "SquareClass" ]
-                , labelStyles =
-                    squareLabelStyles model <|
+                let
+                    squareIcon =
                         case model.selected of
                             Selected ->
                                 checkboxChecked
@@ -131,60 +130,71 @@ buildCheckbox model labelContent =
 
                             PartiallySelected ->
                                 checkboxCheckedPartially
+                in
+                { containerClasses = toClassList [ "SquareClass" ]
+                , labelStyles =
+                    if model.disabled then
+                        disabledSquareLabel squareIcon
+
+                    else
+                        enabledSquareLabel squareIcon
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
             Locked ->
                 { containerClasses = toClassList [ "Locked" ]
-                , labelStyles = lockLabelStyles model checkboxLockOnInside
+                , labelStyles =
+                    if model.disabled then
+                        disabledLockStyles checkboxLockOnInside
+
+                    else
+                        enabledLockLabelStyles checkboxLockOnInside
                 , labelClasses = labelClass model.selected
                 , labelContent = labelContent
                 }
 
 
-squareLabelStyles : { b | disabled : Bool } -> Icon -> Html.Styled.Attribute msg
-squareLabelStyles model image =
-    let
-        baseStyles =
-            [ positioning
-            , textStyle
-            , outline none
-            , addIcon image
-            ]
-    in
-    css
-        (baseStyles
-            ++ (if model.disabled then
-                    [ cursor auto, checkboxImageSelector [ opacity (num 0.4) ] ]
-
-                else
-                    [ cursor pointer ]
-               )
-        )
+disabledSquareLabel : Icon -> List Style
+disabledSquareLabel image =
+    [ positioning
+    , textStyle
+    , outline none
+    , iconStyle image
+    , cursor auto
+    , checkboxImageSelector [ opacity (num 0.4) ]
+    ]
 
 
-lockLabelStyles : { b | disabled : Bool } -> Icon -> Html.Styled.Attribute msg
-lockLabelStyles model image =
-    let
-        baseStyles =
-            [ positioning
-            , textStyle
-            , outline none
-            , addIcon image
-            ]
-    in
-    css
-        (baseStyles
-            ++ (if model.disabled then
-                    [ cursor auto
-                    , checkboxImageSelector [ opacity (num 0.4) ]
-                    ]
+enabledSquareLabel : Icon -> List Style
+enabledSquareLabel image =
+    [ positioning
+    , textStyle
+    , outline none
+    , iconStyle image
+    , cursor pointer
+    ]
 
-                else
-                    [ cursor pointer ]
-               )
-        )
+
+disabledLockStyles : Icon -> List Style
+disabledLockStyles image =
+    [ positioning
+    , textStyle
+    , outline none
+    , iconStyle image
+    , cursor auto
+    , checkboxImageSelector [ opacity (num 0.4) ]
+    ]
+
+
+enabledLockLabelStyles : Icon -> List Style
+enabledLockLabelStyles image =
+    [ positioning
+    , textStyle
+    , outline none
+    , iconStyle image
+    , cursor pointer
+    ]
 
 
 positioning : Style
@@ -205,12 +215,12 @@ textStyle =
         ]
 
 
-addIcon : Icon -> Style
-addIcon icon =
+iconStyle : Icon -> Style
+iconStyle icon =
     batch
         [ position relative
         , checkboxImageSelector
-            [ backgroundImage icon
+            [ property "background-image" "url(todo)"
             , backgroundRepeat noRepeat
             , backgroundSize (px 24)
             , property "content" "''"
@@ -250,7 +260,7 @@ viewCheckbox :
     Model msg
     ->
         { containerClasses : Html.Attribute msg
-        , labelStyles : Html.Attribute msg
+        , labelStyles : List Style
         , labelClasses : Html.Attribute msg
         , labelContent : Html.Html msg
         }
@@ -284,7 +294,7 @@ viewCheckbox model config =
         ]
 
 
-viewLabel : Model msg -> Html.Html msg -> Html.Attribute msg -> Html.Attribute msg -> Html.Html msg
+viewLabel : Model msg -> Html.Html msg -> Html.Attribute msg -> List Style -> Html.Html msg
 viewLabel model content class theme =
     Html.Styled.label
         [ Attributes.for model.identifier
@@ -312,16 +322,9 @@ viewLabel model content class theme =
           else
             ExtraAttributes.none
         , class
-        , theme
+        , css theme
         ]
         [ content ]
-
-
-backgroundImage : Icon -> Style
-backgroundImage (Icon icon) =
-    -- Nri.Ui.AssetPath.Css.url
-    --     >> property "background-image"
-    property "background-image" "url(todo)"
 
 
 type Icon
