@@ -1,11 +1,16 @@
 module Nri.Ui.SlideModal.V1 exposing
-    ( Config
-    , Panel
-    , State
-    , closed
-    , open
+    ( Config, Panel
+    , State, closed, open
     , view
     )
+
+{-|
+
+@docs Config, Panel
+@docs State, closed, open
+@docs view
+
+-}
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria exposing (labelledBy)
@@ -26,6 +31,7 @@ import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
+{-| -}
 type alias Config msg =
     { panels : List (Panel msg)
     , height : Css.Vh
@@ -33,20 +39,27 @@ type alias Config msg =
     }
 
 
+{-| -}
 type State
     = State (Maybe Int)
 
 
+{-| Create the open state for the modal (the first panel will show).
+-}
 open : State
 open =
     State (Just 0)
 
 
+{-| Close the modal.
+-}
 closed : State
 closed =
     State Nothing
 
 
+{-| View the modal (includes the modal backdrop).
+-}
 view : Config msg -> State -> Html msg
 view config (State state) =
     Maybe.andThen (viewPanels config.parentMsg config.panels) state
@@ -118,7 +131,8 @@ viewPanels parentMsg panels current =
             Just (viewPanel (parentMsg (State (Just (current + 1)))) head)
 
 
-{-| -}
+{-| Configuration for a single modal view in the sequence of modal views.
+-}
 type alias Panel msg =
     { icon : Html Never
     , title : String
