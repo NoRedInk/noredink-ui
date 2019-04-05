@@ -46,17 +46,9 @@ closed =
 
 view : Config msg -> State -> Html msg
 view config (State state) =
-    case state of
-        Just current ->
-            case viewPanels config.parentMsg current config.panels of
-                Just panels ->
-                    viewModal panels
-
-                Nothing ->
-                    text ""
-
-        Nothing ->
-            text ""
+    Maybe.andThen (viewPanels config.parentMsg config.panels) state
+        |> Maybe.map viewModal
+        |> Maybe.withDefault (Html.text "")
 
 
 viewModal : List (Html msg) -> Html msg
@@ -108,8 +100,8 @@ viewModal panels =
         ]
 
 
-viewPanels : (State -> msg) -> Int -> List (Panel msg) -> Maybe (List (Html msg))
-viewPanels parentMsg current panels =
+viewPanels : (State -> msg) -> List (Panel msg) -> Int -> Maybe (List (Html msg))
+viewPanels parentMsg panels current =
     case List.drop current panels of
         [] ->
             Nothing
