@@ -12,6 +12,7 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SlideModal.V1 as SlideModal
 
 
@@ -81,7 +82,17 @@ modalLaunchButton =
 viewModal : Html Msg
 viewModal =
     SlideModal.view
-        { content = text "This is where the content goes!"
+        { icon =
+            div
+                [ css
+                    [ Css.backgroundColor Colors.gray45
+                    , Css.height (pct 100)
+                    , Css.width (pct 100)
+                    ]
+                ]
+                []
+        , title = "Welcome to Self-Review, FirstName!"
+        , content = text "This is where the content goes!"
         , onDismiss = Just DismissModal
         , width = Nothing
         , footerContent =
