@@ -21,12 +21,12 @@ import Svg.Attributes exposing (..)
 
 {-| -}
 type Msg
-    = ModalMsg (Maybe Int)
+    = ModalMsg SlideModal.State
 
 
 {-| -}
 type alias State =
-    { modal : Maybe Int }
+    { modal : SlideModal.State }
 
 
 {-| -}
@@ -45,7 +45,8 @@ example parentMessage state =
 {-| -}
 init : State
 init =
-    { modal = Nothing }
+    { modal = SlideModal.closed
+    }
 
 
 {-| -}
@@ -63,7 +64,7 @@ update msg state =
 modalLaunchButton : Html Msg
 modalLaunchButton =
     Button.button
-        { onClick = ModalMsg (Just 0)
+        { onClick = ModalMsg SlideModal.open
         , size = Button.Small
         , style = Button.Secondary
         , width = Button.WidthUnbounded
@@ -74,7 +75,7 @@ modalLaunchButton =
         }
 
 
-viewModal : Maybe Int -> Html Msg
+viewModal : SlideModal.State -> Html Msg
 viewModal state =
     SlideModal.view
         { panels =
@@ -98,8 +99,8 @@ viewModal state =
               }
             ]
         , parentMsg = ModalMsg
-        , current = state
         }
+        state
 
 
 grayBox : Html msg

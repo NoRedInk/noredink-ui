@@ -1,4 +1,10 @@
-module Nri.Ui.SlideModal.V1 exposing (view)
+module Nri.Ui.SlideModal.V1 exposing
+    ( Config
+    , State
+    , closed
+    , open
+    , view
+    )
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
@@ -18,10 +24,31 @@ import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
-view model =
-    case model.current of
+type alias Config msg =
+    { panels : List (Panel msg)
+    , parentMsg : State -> msg
+    }
+
+
+type State
+    = State (Maybe Int)
+
+
+open : State
+open =
+    State (Just 0)
+
+
+closed : State
+closed =
+    State Nothing
+
+
+view : Config msg -> State -> Html msg
+view config (State state) =
+    case state of
         Just current ->
-            case viewPanels model.parentMsg current model.panels of
+            case viewPanels config.parentMsg current config.panels of
                 Just panels ->
                     viewModal panels
 
@@ -81,19 +108,20 @@ viewModal panels =
         ]
 
 
-viewPanels : (Maybe Int -> msg) -> Int -> List (Panel msg) -> Maybe (List (Html msg))
+viewPanels : (State -> msg) -> Int -> List (Panel msg) -> Maybe (List (Html msg))
 viewPanels parentMsg current panels =
     case List.drop current panels of
         [] ->
             Nothing
 
         head :: [] ->
-            Just (viewPanel (parentMsg Nothing) head)
+            Just (viewPanel (parentMsg (State Nothing)) head)
 
         head :: _ ->
-            Just (viewPanel (parentMsg (Just (current + 1))) head)
+            Just (viewPanel (parentMsg (State (Just (current + 1)))) head)
 
 
+{-| -}
 type alias Panel msg =
     { icon : Html msg
     , title : String
