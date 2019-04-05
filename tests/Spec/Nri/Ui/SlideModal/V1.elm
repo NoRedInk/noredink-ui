@@ -44,6 +44,21 @@ all =
                         , Query.hasNot [ text "Title2", text "Content2" ]
                         , Query.hasNot [ text "Title3", text "Content3" ]
                         ]
+        , test "can click through" <|
+            \() ->
+                { panels = threePanels
+                , height = Css.vh 60
+                , parentMsg = identity
+                }
+                    |> initTest
+                    |> click "Continue1"
+                    |> click "Continue2"
+                    |> click "Continue3"
+                    |> assertAndFinish
+                        [ Query.hasNot [ text "Title1", text "Content1" ]
+                        , Query.hasNot [ text "Title2", text "Content2" ]
+                        , Query.hasNot [ text "Title3", text "Content3" ]
+                        ]
         ]
 
 
@@ -105,8 +120,8 @@ simulate findElement event testContext =
     }
 
 
-assert : List (Query.Single SlideModal.State -> Expectation) -> TestContext -> Expectation
-assert expectations { view, state } =
+assertAndFinish : List (Query.Single SlideModal.State -> Expectation) -> TestContext -> Expectation
+assertAndFinish expectations { view, state } =
     case Result.map view state of
         Ok query ->
             Expect.all expectations query
