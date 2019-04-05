@@ -15,6 +15,7 @@ module Nri.Ui.SlideModal.V1 exposing
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Global
@@ -257,7 +258,14 @@ dot type_ =
                     , Css.display Css.inlineBlock
                     , Css.backgroundColor Colors.gray75
                     , Css.cursor Css.pointer
+
+                    -- resets
+                    , Css.borderWidth Css.zero
+                    , Css.padding Css.zero
+                    , Css.hover [ Css.outline Css.none ]
                     ]
                 , onClick (State (Just id))
                 ]
-                [ text ("Go to " ++ title) ]
+                [ span Accessibility.Styled.Style.invisible
+                    [ text ("Go to " ++ title) ]
+                ]
