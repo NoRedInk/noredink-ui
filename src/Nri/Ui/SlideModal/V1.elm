@@ -28,6 +28,7 @@ import Nri.Ui.Text.V2 as Text
 
 type alias Config msg =
     { panels : List (Panel msg)
+    , height : Css.Vh
     , parentMsg : State -> msg
     }
 
@@ -49,16 +50,16 @@ closed =
 view : Config msg -> State -> Html msg
 view config (State state) =
     Maybe.andThen (viewPanels config.parentMsg config.panels) state
-        |> Maybe.map (viewModal >> viewBackdrop)
+        |> Maybe.map (viewModal config.height >> viewBackdrop)
         |> Maybe.withDefault (Html.text "")
 
 
-viewModal : ( String, List (Html msg) ) -> Html msg
-viewModal ( labelledById, panels ) =
+viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
+viewModal height ( labelledById, panels ) =
     Nri.Ui.styled div
         "modal-container"
         [ Css.width (Css.px 600)
-        , Css.minHeight (Css.px 400)
+        , Css.height height
         , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
         , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
         , Css.margin2 (Css.px 75) Css.auto

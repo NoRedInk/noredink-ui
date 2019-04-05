@@ -98,6 +98,7 @@ viewModal state =
               , buttonLabel = "Let's get to it!"
               }
             ]
+        , height = Css.vh 60
         , parentMsg = ModalMsg
         }
         state
