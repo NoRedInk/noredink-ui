@@ -93,23 +93,6 @@ viewModal =
                 []
         , title = "Welcome to Self-Review, FirstName!"
         , content = text "This is where the content goes!"
-        , onDismiss = Just DismissModal
+        , button = { label = "Continue", msg = DismissModal }
         , width = Nothing
-        , footerContent =
-            [ modalFooterButton "Primary" Button.Primary
-            ]
-        }
-
-
-modalFooterButton : String -> Button.ButtonStyle -> Html Msg
-modalFooterButton label style =
-    Button.button
-        { onClick = DismissModal
-        , size = Button.Large
-        , style = style
-        , width = Button.WidthExact 230
-        }
-        { label = label
-        , state = Button.Enabled
-        , icon = Nothing
         }

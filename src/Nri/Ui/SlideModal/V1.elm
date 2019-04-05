@@ -10,6 +10,7 @@ import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
 import Nri.Ui.AssetPath exposing (Asset(..))
+import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -17,7 +18,7 @@ import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
-view { icon, title, content, onDismiss, footerContent, width } =
+view { icon, title, content, button, width } =
     Nri.Ui.styled div
         "modal-backdrop-container"
         (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
@@ -63,7 +64,7 @@ view { icon, title, content, onDismiss, footerContent, width } =
             , viewIcon icon
             , Text.subHeading [ Html.text title ]
             , viewContent content
-            , viewFooter footerContent
+            , viewFooter button
             ]
         ]
 
@@ -80,40 +81,6 @@ viewContent content =
         ]
         []
         [ content ]
-
-
-viewFooter : List (Html msg) -> Html msg
-viewFooter footerContent =
-    case footerContent of
-        [] ->
-            Html.text ""
-
-        _ ->
-            Nri.Ui.styled div
-                "modal-footer"
-                [ Css.alignItems Css.center
-                , Css.displayFlex
-                , Css.flexDirection Css.column
-                , Css.flexGrow (Css.int 2)
-                , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                , Css.width (Css.pct 100)
-                ]
-                []
-                (List.map
-                    (\x ->
-                        Nri.Ui.styled div
-                            "modal-footer-item"
-                            [ Css.margin4 (Css.px 10) Css.zero Css.zero Css.zero
-                            , Css.firstChild
-                                [ Css.margin Css.zero
-                                ]
-                            ]
-                            []
-                            [ x ]
-                    )
-                    footerContent
-                )
 
 
 viewIcon : Html msg -> Html msg
@@ -134,3 +101,31 @@ viewIcon svg =
             ]
         ]
         [ svg ]
+
+
+viewFooter : { label : String, msg : msg } -> Html msg
+viewFooter button =
+    Nri.Ui.styled div
+        "modal-footer"
+        [ Css.alignItems Css.center
+        , Css.displayFlex
+        , Css.flexDirection Css.column
+        , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+        ]
+        []
+        [ viewFooterButton button
+        ]
+
+
+viewFooterButton : { label : String, msg : msg } -> Html msg
+viewFooterButton { label, msg } =
+    Button.button
+        { onClick = msg
+        , size = Button.Large
+        , style = Button.Primary
+        , width = Button.WidthExact 230
+        }
+        { label = label
+        , state = Button.Enabled
+        , icon = Nothing
+        }
