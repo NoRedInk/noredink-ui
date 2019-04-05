@@ -125,10 +125,10 @@ viewPanels parentMsg panels current =
             Nothing
 
         head :: [] ->
-            Just (viewPanel (parentMsg (State Nothing)) head)
+            Just (viewPanel parentMsg (State Nothing) head)
 
         head :: _ ->
-            Just (viewPanel (parentMsg (State (Just (current + 1)))) head)
+            Just (viewPanel parentMsg (State (Just (current + 1))) head)
 
 
 {-| Configuration for a single modal view in the sequence of modal views.
@@ -141,8 +141,8 @@ type alias Panel msg =
     }
 
 
-viewPanel : msg -> Panel msg -> ( String, List (Html msg) )
-viewPanel msg { icon, title, content, buttonLabel } =
+viewPanel : (State -> msg) -> State -> Panel msg -> ( String, List (Html msg) )
+viewPanel parentMsg msg { icon, title, content, buttonLabel } =
     let
         id =
             "modal-header__" ++ String.replace " " "-" title
@@ -152,6 +152,7 @@ viewPanel msg { icon, title, content, buttonLabel } =
       , Text.subHeading [ span [ Html.Styled.Attributes.id id ] [ Html.text title ] ]
       , viewContent content
       , viewFooter { label = buttonLabel, msg = msg }
+            |> Html.map parentMsg
       ]
     )
 
@@ -192,7 +193,7 @@ viewIcon svg =
         |> Html.map never
 
 
-viewFooter : { label : String, msg : msg } -> Html msg
+viewFooter : { label : String, msg : State } -> Html State
 viewFooter button =
     Nri.Ui.styled div
         "modal-footer"
@@ -204,9 +205,9 @@ viewFooter button =
         []
         [ viewFooterButton button
         , div [ css [ Css.marginTop (Css.px 16) ] ]
-            [ dot Inactive
+            [ dot (Inactive 0 "Title1")
             , dot Active
-            , dot Inactive
+            , dot (Inactive 2 "Title3")
             ]
         ]
 
@@ -227,41 +228,36 @@ viewFooterButton { label, msg } =
 
 type Dot
     = Active
-    | Inactive
+    | Inactive Int String
 
 
-dot : Dot -> Html.Html msg
+dot : Dot -> Html.Html State
 dot type_ =
-    Html.div
-        ([ css
-            [ Css.height (Css.px 10)
-            , Css.width (Css.px 10)
-            , Css.borderRadius (Css.px 5)
-            , Css.margin2 Css.zero (Css.px 2)
-            , Css.display Css.inlineBlock
-            ]
-         ]
-            ++ (case type_ of
-                    Active ->
-                        [ css [ Css.backgroundColor Colors.azure ]
-                        ]
+    case type_ of
+        Active ->
+            Html.div
+                [ css
+                    [ Css.height (Css.px 10)
+                    , Css.width (Css.px 10)
+                    , Css.borderRadius (Css.px 5)
+                    , Css.margin2 Css.zero (Css.px 2)
+                    , Css.display Css.inlineBlock
+                    , Css.backgroundColor Colors.azure
+                    ]
+                ]
+                []
 
-                    Inactive ->
-                        [ css
-                            [ Css.backgroundColor Colors.gray75
-                            , Css.cursor Css.pointer
-                            ]
-
-                        -- ahhh ClickableDiv, my old friend.
-                        -- , Html.Styled.Events.onClick
-                        --     (SetModal
-                        --         (PeerReviewIntroModal
-                        --             { step = stepNum
-                        --             , formStep = data.formStep
-                        --             }
-                        --         )
-                        --     )
-                        ]
-               )
-        )
-        []
+        Inactive id title ->
+            Html.button
+                [ css
+                    [ Css.height (Css.px 10)
+                    , Css.width (Css.px 10)
+                    , Css.borderRadius (Css.px 5)
+                    , Css.margin2 Css.zero (Css.px 2)
+                    , Css.display Css.inlineBlock
+                    , Css.backgroundColor Colors.gray75
+                    , Css.cursor Css.pointer
+                    ]
+                , onClick (State (Just id))
+                ]
+                [ text ("Go to " ++ title) ]
