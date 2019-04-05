@@ -94,5 +94,4 @@ viewModal =
         , title = "Welcome to Self-Review, FirstName!"
         , content = text "This is where the content goes!"
         , button = { label = "Continue", msg = DismissModal }
-        , width = Nothing
         }

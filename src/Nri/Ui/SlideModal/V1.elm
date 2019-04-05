@@ -18,7 +18,7 @@ import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
-view { icon, title, content, button, width } =
+view { icon, title, content, button } =
     Nri.Ui.styled div
         "modal-backdrop-container"
         (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
