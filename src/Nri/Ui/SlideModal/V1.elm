@@ -219,9 +219,6 @@ viewFooter { previous, current, upcoming } =
             List.head upcoming
                 |> Maybe.map Tuple.first
                 |> Maybe.withDefault closed
-
-        inactiveDot ( state, title ) =
-            Inactive state title
     in
     Nri.Ui.styled div
         "modal-footer"
@@ -232,13 +229,18 @@ viewFooter { previous, current, upcoming } =
         ]
         []
         [ viewFooterButton { label = current.buttonLabel, msg = nextPanel }
-        , (List.map inactiveDot previous
+        , (List.map (uncurry Inactive) previous
             ++ Active
-            :: List.map inactiveDot upcoming
+            :: List.map (uncurry InactiveDisabled) upcoming
           )
             |> List.map dot
             |> div [ css [ Css.marginTop (Css.px 16) ] ]
         ]
+
+
+uncurry : (a -> b -> c) -> ( a, b ) -> c
+uncurry f ( a, b ) =
+    f a b
 
 
 viewFooterButton : { label : String, msg : msg } -> Html msg
@@ -258,41 +260,48 @@ viewFooterButton { label, msg } =
 type Dot
     = Active
     | Inactive State String
+    | InactiveDisabled State String
 
 
 dot : Dot -> Html.Html State
 dot type_ =
+    let
+        styles backgroundColor cursor =
+            css
+                [ Css.height (Css.px 10)
+                , Css.width (Css.px 10)
+                , Css.borderRadius (Css.px 5)
+                , Css.margin2 Css.zero (Css.px 2)
+                , Css.display Css.inlineBlock
+                , Css.cursor cursor
+                , Css.backgroundColor backgroundColor
+
+                -- resets
+                , Css.borderWidth Css.zero
+                , Css.padding Css.zero
+                , Css.hover [ Css.outline Css.none ]
+                ]
+    in
     case type_ of
         Active ->
             Html.div
-                [ css
-                    [ Css.height (Css.px 10)
-                    , Css.width (Css.px 10)
-                    , Css.borderRadius (Css.px 5)
-                    , Css.margin2 Css.zero (Css.px 2)
-                    , Css.display Css.inlineBlock
-                    , Css.backgroundColor Colors.azure
-                    ]
+                [ styles Colors.azure Css.auto
                 ]
                 []
 
         Inactive goTo title ->
             Html.button
-                [ css
-                    [ Css.height (Css.px 10)
-                    , Css.width (Css.px 10)
-                    , Css.borderRadius (Css.px 5)
-                    , Css.margin2 Css.zero (Css.px 2)
-                    , Css.display Css.inlineBlock
-                    , Css.backgroundColor Colors.gray75
-                    , Css.cursor Css.pointer
-
-                    -- resets
-                    , Css.borderWidth Css.zero
-                    , Css.padding Css.zero
-                    , Css.hover [ Css.outline Css.none ]
-                    ]
+                [ styles Colors.gray75 Css.pointer
                 , onClick goTo
+                ]
+                [ span Accessibility.Styled.Style.invisible
+                    [ text ("Go to " ++ title) ]
+                ]
+
+        InactiveDisabled goTo title ->
+            Html.button
+                [ styles Colors.gray75 Css.auto
+                , Html.Styled.Attributes.disabled True
                 ]
                 [ span Accessibility.Styled.Style.invisible
                     [ text ("Go to " ++ title) ]
