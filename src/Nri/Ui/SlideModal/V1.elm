@@ -19,9 +19,14 @@ import Nri.Ui.Text.V2 as Text
 
 
 view model =
-    case viewPanels model of
-        Just panels ->
-            viewModal panels
+    case model.current of
+        Just current ->
+            case viewPanels model.parentMsg current model.panels of
+                Just panels ->
+                    viewModal panels
+
+                Nothing ->
+                    text ""
 
         Nothing ->
             text ""
@@ -76,28 +81,33 @@ viewModal panels =
         ]
 
 
-viewPanels : { a | panels : List (Panel msg), current : Maybe Int } -> Maybe (List (Html msg))
-viewPanels { panels, current } =
-    panels
-        |> List.drop (Maybe.withDefault 0 current)
-        |> List.head
-        |> Maybe.map viewPanel
+viewPanels : (Maybe Int -> msg) -> Int -> List (Panel msg) -> Maybe (List (Html msg))
+viewPanels parentMsg current panels =
+    case List.drop current panels of
+        [] ->
+            Nothing
+
+        head :: [] ->
+            Just (viewPanel (parentMsg Nothing) head)
+
+        head :: _ ->
+            Just (viewPanel (parentMsg (Just (current + 1))) head)
 
 
 type alias Panel msg =
     { icon : Html msg
     , title : String
     , content : Html msg
-    , button : { label : String, msg : msg }
+    , buttonLabel : String
     }
 
 
-viewPanel : Panel msg -> List (Html msg)
-viewPanel { icon, title, content, button } =
+viewPanel : msg -> Panel msg -> List (Html msg)
+viewPanel msg { icon, title, content, buttonLabel } =
     [ viewIcon icon
     , Text.subHeading [ Html.text title ]
     , viewContent content
-    , viewFooter button
+    , viewFooter { label = buttonLabel, msg = msg }
     ]
 
 

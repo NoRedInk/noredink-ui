@@ -21,13 +21,12 @@ import Svg.Attributes exposing (..)
 
 {-| -}
 type Msg
-    = DismissModal
-    | ShowModal
+    = ModalMsg (Maybe Int)
 
 
 {-| -}
 type alias State =
-    { modal : Bool }
+    { modal : Maybe Int }
 
 
 {-| -}
@@ -36,11 +35,7 @@ example parentMessage state =
     { filename = "Nri.Ui.SlideModal.V1.elm"
     , category = Modals
     , content =
-        [ if state.modal then
-            viewModal
-
-          else
-            Html.text ""
+        [ viewModal state.modal
         , modalLaunchButton
         ]
             |> List.map (Html.map parentMessage)
@@ -50,18 +45,15 @@ example parentMessage state =
 {-| -}
 init : State
 init =
-    { modal = False }
+    { modal = Nothing }
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        DismissModal ->
-            ( { state | modal = False }, Cmd.none )
-
-        ShowModal ->
-            ( { state | modal = True }, Cmd.none )
+        ModalMsg modal ->
+            ( { state | modal = modal }, Cmd.none )
 
 
 
@@ -71,7 +63,7 @@ update msg state =
 modalLaunchButton : Html Msg
 modalLaunchButton =
     Button.button
-        { onClick = ShowModal
+        { onClick = ModalMsg (Just 0)
         , size = Button.Small
         , style = Button.Secondary
         , width = Button.WidthUnbounded
@@ -82,14 +74,14 @@ modalLaunchButton =
         }
 
 
-viewModal : Html Msg
-viewModal =
+viewModal : Maybe Int -> Html Msg
+viewModal state =
     SlideModal.view
         { panels =
             [ { icon = grayBox
               , title = "Welcome to Self-Review, FirstName!"
               , content = Html.text "This is where the content goes!"
-              , button = { label = "Continue", msg = DismissModal }
+              , buttonLabel = "Continue"
               }
             , { icon = fancyIcon
               , title = "Here are the steps we’ll take:"
@@ -97,15 +89,16 @@ viewModal =
                     div [ css [ Css.height (Css.px 400) ] ]
                         [ Html.text "Sometimes the content may change height."
                         ]
-              , button = { label = "Continue", msg = DismissModal }
+              , buttonLabel = "Okay, keep going!"
               }
             , { icon = grayBox
               , title = "As you revise, remember:"
               , content = Html.text "Sometimes things may change back."
-              , button = { label = "Continue", msg = DismissModal }
+              , buttonLabel = "Let's get to it!"
               }
             ]
-        , current = Just 1
+        , parentMsg = ModalMsg
+        , current = state
         }
 
 
