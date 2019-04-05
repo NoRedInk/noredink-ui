@@ -76,9 +76,12 @@ viewModal panels =
         ]
 
 
-viewPanels : { a | panels : List (Panel msg) } -> Maybe (List (Html msg))
-viewPanels { panels } =
-    Maybe.map viewPanel (List.head panels)
+viewPanels : { a | panels : List (Panel msg), current : Maybe Int } -> Maybe (List (Html msg))
+viewPanels { panels, current } =
+    panels
+        |> List.drop (Maybe.withDefault 0 current)
+        |> List.head
+        |> Maybe.map viewPanel
 
 
 type alias Panel msg =
