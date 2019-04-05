@@ -62,10 +62,40 @@ closed =
 {-| View the modal (includes the modal backdrop).
 -}
 view : Config msg -> State -> Html msg
-view config (State state) =
-    Maybe.andThen (viewPanels config.parentMsg config.panels) state
+view config state =
+    summarize state config.panels
+        |> Maybe.map (viewPanels config.parentMsg)
         |> Maybe.map (viewModal config.height >> viewBackdrop)
         |> Maybe.withDefault (Html.text "")
+
+
+type alias Summary msg =
+    { current : Panel msg
+    , upcoming : List ( State, String )
+    , previous : List ( State, String )
+    }
+
+
+summarize : State -> List (Panel msg) -> Maybe (Summary msg)
+summarize (State state) panels =
+    let
+        indexedPanels =
+            List.indexedMap
+                (\i { title } -> ( State (Just i), title ))
+                panels
+
+        toSummary current currentPanel =
+            { current = currentPanel
+            , upcoming = List.drop (current + 1) indexedPanels
+            , previous = List.take current indexedPanels
+            }
+    in
+    Maybe.andThen
+        (\current ->
+            List.head (List.drop current panels)
+                |> Maybe.map (toSummary current)
+        )
+        state
 
 
 viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
@@ -119,19 +149,6 @@ viewBackdrop modal =
         ]
 
 
-viewPanels : (State -> msg) -> List (Panel msg) -> Int -> Maybe ( String, List (Html msg) )
-viewPanels parentMsg panels current =
-    case List.drop current panels of
-        [] ->
-            Nothing
-
-        head :: [] ->
-            Just (viewPanel parentMsg (State Nothing) head)
-
-        head :: _ ->
-            Just (viewPanel parentMsg (State (Just (current + 1))) head)
-
-
 {-| Configuration for a single modal view in the sequence of modal views.
 -}
 type alias Panel msg =
@@ -142,18 +159,19 @@ type alias Panel msg =
     }
 
 
-viewPanel : (State -> msg) -> State -> Panel msg -> ( String, List (Html msg) )
-viewPanel parentMsg msg { icon, title, content, buttonLabel } =
+viewPanels : (State -> msg) -> Summary msg -> ( String, List (Html msg) )
+viewPanels parentMsg ({ current } as summary) =
     let
         id =
-            "modal-header__" ++ String.replace " " "-" title
+            "modal-header__" ++ String.replace " " "-" current.title
     in
     ( id
-    , [ viewIcon icon
-      , Text.subHeading [ span [ Html.Styled.Attributes.id id ] [ Html.text title ] ]
-      , viewContent content
-      , viewFooter { label = buttonLabel, msg = msg }
-            |> Html.map parentMsg
+    , [ viewIcon current.icon
+      , Text.subHeading
+            [ span [ Html.Styled.Attributes.id id ] [ Html.text current.title ]
+            ]
+      , viewContent current.content
+      , viewFooter summary |> Html.map parentMsg
       ]
     )
 
@@ -194,8 +212,17 @@ viewIcon svg =
         |> Html.map never
 
 
-viewFooter : { label : String, msg : State } -> Html State
-viewFooter button =
+viewFooter : Summary msg -> Html State
+viewFooter { previous, current, upcoming } =
+    let
+        nextPanel =
+            List.head upcoming
+                |> Maybe.map Tuple.first
+                |> Maybe.withDefault closed
+
+        inactiveDot ( state, title ) =
+            Inactive state title
+    in
     Nri.Ui.styled div
         "modal-footer"
         [ Css.displayFlex
@@ -204,12 +231,13 @@ viewFooter button =
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         ]
         []
-        [ viewFooterButton button
-        , div [ css [ Css.marginTop (Css.px 16) ] ]
-            [ dot (Inactive 0 "Title1")
-            , dot Active
-            , dot (Inactive 2 "Title3")
-            ]
+        [ viewFooterButton { label = current.buttonLabel, msg = nextPanel }
+        , (List.map inactiveDot previous
+            ++ Active
+            :: List.map inactiveDot upcoming
+          )
+            |> List.map dot
+            |> div [ css [ Css.marginTop (Css.px 16) ] ]
         ]
 
 
@@ -229,7 +257,7 @@ viewFooterButton { label, msg } =
 
 type Dot
     = Active
-    | Inactive Int String
+    | Inactive State String
 
 
 dot : Dot -> Html.Html State
@@ -248,7 +276,7 @@ dot type_ =
                 ]
                 []
 
-        Inactive id title ->
+        Inactive goTo title ->
             Html.button
                 [ css
                     [ Css.height (Css.px 10)
@@ -264,7 +292,7 @@ dot type_ =
                     , Css.padding Css.zero
                     , Css.hover [ Css.outline Css.none ]
                     ]
-                , onClick (State (Just id))
+                , onClick goTo
                 ]
                 [ span Accessibility.Styled.Style.invisible
                     [ text ("Go to " ++ title) ]
