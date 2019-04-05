@@ -59,6 +59,20 @@ all =
                         , Query.hasNot [ text "Title2", text "Content2" ]
                         , Query.hasNot [ text "Title3", text "Content3" ]
                         ]
+        , test "can navigate back using the dots" <|
+            \() ->
+                { panels = threePanels
+                , height = Css.vh 60
+                , parentMsg = identity
+                }
+                    |> initTest
+                    |> click "Continue1"
+                    |> click "Go to Title1"
+                    |> assertAndFinish
+                        [ Query.has [ text "Title1", text "Content1" ]
+                        , Query.hasNot [ text "Title2", text "Content2" ]
+                        , Query.hasNot [ text "Title3", text "Content3" ]
+                        ]
         ]
 
 
