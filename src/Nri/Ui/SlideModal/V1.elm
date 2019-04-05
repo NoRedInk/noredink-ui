@@ -27,6 +27,7 @@ view model =
             text ""
 
 
+viewModal : List (Html msg) -> Html msg
 viewModal panels =
     Nri.Ui.styled div
         "modal-backdrop-container"
@@ -75,10 +76,20 @@ viewModal panels =
         ]
 
 
+viewPanels : { a | panels : List (Panel msg) } -> Maybe (List (Html msg))
 viewPanels { panels } =
     Maybe.map viewPanel (List.head panels)
 
 
+type alias Panel msg =
+    { icon : Html msg
+    , title : String
+    , content : Html msg
+    , button : { label : String, msg : msg }
+    }
+
+
+viewPanel : Panel msg -> List (Html msg)
 viewPanel { icon, title, content, button } =
     [ viewIcon icon
     , Text.subHeading [ Html.text title ]
