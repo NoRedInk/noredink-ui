@@ -48,31 +48,30 @@ closed =
 view : Config msg -> State -> Html msg
 view config (State state) =
     Maybe.andThen (viewPanels config.parentMsg config.panels) state
-        |> Maybe.map viewModal
+        |> Maybe.map (viewModal >> viewBackdrop)
         |> Maybe.withDefault (Html.text "")
 
 
 viewModal : List (Html msg) -> Html msg
 viewModal panels =
-    viewBackdrop <|
-        Nri.Ui.styled div
-            "modal-container"
-            [ Css.width (Css.px 600)
-            , Css.minHeight (Css.px 400)
-            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
-            , Css.margin2 (Css.px 75) Css.auto
-            , Css.backgroundColor Colors.white
-            , Css.borderRadius (Css.px 20)
-            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.flexDirection Css.column
-            , Css.flexWrap Css.noWrap
-            , Fonts.baseFont
-            ]
-            []
-            panels
+    Nri.Ui.styled div
+        "modal-container"
+        [ Css.width (Css.px 600)
+        , Css.minHeight (Css.px 400)
+        , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+        , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+        , Css.margin2 (Css.px 75) Css.auto
+        , Css.backgroundColor Colors.white
+        , Css.borderRadius (Css.px 20)
+        , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+        , Css.displayFlex
+        , Css.alignItems Css.center
+        , Css.flexDirection Css.column
+        , Css.flexWrap Css.noWrap
+        , Fonts.baseFont
+        ]
+        []
+        panels
 
 
 viewBackdrop : Html msg -> Html msg
