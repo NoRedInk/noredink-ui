@@ -190,7 +190,7 @@ viewIcon { alt, background, icon } =
                 , Css.height (Css.px 80)
                 , Css.width (Css.px 80)
                 , Css.margin (Css.px 10)
-                , Css.color azure
+                , Css.color green
                 , Css.Global.descendants
                     [ Css.Global.img
                         [ Css.maxWidth (Css.pct 100)
