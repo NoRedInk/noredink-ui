@@ -150,6 +150,7 @@ viewContent content =
         , Css.padding2 (Css.px 30) (Css.px 45)
         , Css.width (Css.pct 100)
         , Css.minHeight (Css.px 150)
+        , Css.marginBottom Css.auto
         , Css.boxSizing Css.borderBox
         ]
         []
@@ -181,9 +182,9 @@ viewFooter : { label : String, msg : msg } -> Html msg
 viewFooter button =
     Nri.Ui.styled div
         "modal-footer"
-        [ Css.alignItems Css.center
-        , Css.displayFlex
+        [ Css.displayFlex
         , Css.flexDirection Css.column
+        , Css.alignItems Css.center
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         ]
         []
