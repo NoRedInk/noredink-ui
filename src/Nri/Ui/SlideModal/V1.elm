@@ -8,6 +8,7 @@ module Nri.Ui.SlideModal.V1 exposing
     )
 
 import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled.Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css
@@ -52,8 +53,8 @@ view config (State state) =
         |> Maybe.withDefault (Html.text "")
 
 
-viewModal : List (Html msg) -> Html msg
-viewModal panels =
+viewModal : ( String, List (Html msg) ) -> Html msg
+viewModal ( labelledById, panels ) =
     Nri.Ui.styled div
         "modal-container"
         [ Css.width (Css.px 600)
@@ -70,7 +71,10 @@ viewModal panels =
         , Css.flexWrap Css.noWrap
         , Fonts.baseFont
         ]
-        []
+        [ Role.dialog
+        , Widget.modal True
+        , labelledBy labelledById
+        ]
         panels
 
 
@@ -91,9 +95,7 @@ viewBackdrop modal =
                , Css.justifyContent Css.center
                ]
         )
-        [ Role.dialog
-        , Widget.modal True
-        ]
+        []
         [ -- This global <style> node sets overflow to hidden on the body element,
           -- thereby preventing the page from scrolling behind the backdrop when the modal is
           -- open (and this node is present on the page).
@@ -102,7 +104,7 @@ viewBackdrop modal =
         ]
 
 
-viewPanels : (State -> msg) -> List (Panel msg) -> Int -> Maybe (List (Html msg))
+viewPanels : (State -> msg) -> List (Panel msg) -> Int -> Maybe ( String, List (Html msg) )
 viewPanels parentMsg panels current =
     case List.drop current panels of
         [] ->
@@ -124,13 +126,19 @@ type alias Panel msg =
     }
 
 
-viewPanel : msg -> Panel msg -> List (Html msg)
+viewPanel : msg -> Panel msg -> ( String, List (Html msg) )
 viewPanel msg { icon, title, content, buttonLabel } =
-    [ viewIcon icon
-    , Text.subHeading [ Html.text title ]
-    , viewContent content
-    , viewFooter { label = buttonLabel, msg = msg }
-    ]
+    let
+        id =
+            "modal-header__" ++ String.replace " " "-" title
+    in
+    ( id
+    , [ viewIcon icon
+      , Text.subHeading [ span [ Html.Styled.Attributes.id id ] [ Html.text title ] ]
+      , viewContent content
+      , viewFooter { label = buttonLabel, msg = msg }
+      ]
+    )
 
 
 viewContent : Html msg -> Html msg
