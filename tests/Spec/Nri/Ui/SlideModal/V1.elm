@@ -73,6 +73,19 @@ all =
                         , Query.hasNot [ text "Title2", text "Content2" ]
                         , Query.hasNot [ text "Title3", text "Content3" ]
                         ]
+        , test "cannot navigate forward using the dots" <|
+            \() ->
+                { panels = threePanels
+                , height = Css.vh 60
+                , parentMsg = identity
+                }
+                    |> initTest
+                    |> click "Continue1"
+                    |> assertAndFinish
+                        [ Query.has [ tag "button", containing [ text "Go to Title1" ] ]
+                        , Query.hasNot [ tag "button", containing [ text "Go to Title2" ] ]
+                        , Query.has [ tag "button", disabled True, containing [ text "Go to Title3" ] ]
+                        ]
         ]
 
 
