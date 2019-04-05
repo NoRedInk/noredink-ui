@@ -3,8 +3,10 @@ module Spec.Nri.Ui.SlideModal.V1 exposing (all)
 import Css
 import Expect exposing (Expectation)
 import Html.Styled as Html
+import Json.Encode
 import Nri.Ui.SlideModal.V1 as SlideModal
 import Test exposing (..)
+import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
@@ -63,3 +65,51 @@ threePanels =
       , buttonLabel = "Continue3"
       }
     ]
+
+
+type alias TestContext =
+    { view : SlideModal.State -> Query.Single SlideModal.State
+    , state : Result String SlideModal.State
+    }
+
+
+initTest : SlideModal.Config SlideModal.State -> TestContext
+initTest config =
+    { view = SlideModal.view config >> Html.toUnstyled >> Query.fromHtml
+    , state = Ok SlideModal.open
+    }
+
+
+click : String -> TestContext -> TestContext
+click buttonText =
+    simulate
+        (Query.find [ tag "button", containing [ text buttonText ] ])
+        Event.click
+
+
+simulate :
+    (Query.Single SlideModal.State -> Query.Single SlideModal.State)
+    -> ( String, Json.Encode.Value )
+    -> TestContext
+    -> TestContext
+simulate findElement event testContext =
+    { testContext
+        | state =
+            Result.andThen
+                (testContext.view
+                    >> findElement
+                    >> Event.simulate event
+                    >> Event.toResult
+                )
+                testContext.state
+    }
+
+
+assert : List (Query.Single SlideModal.State -> Expectation) -> TestContext -> Expectation
+assert expectations { view, state } =
+    case Result.map view state of
+        Ok query ->
+            Expect.all expectations query
+
+        Err err ->
+            Expect.fail err
