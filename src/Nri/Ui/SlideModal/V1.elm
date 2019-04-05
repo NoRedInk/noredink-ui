@@ -115,7 +115,7 @@ viewPanels parentMsg panels current =
 
 {-| -}
 type alias Panel msg =
-    { icon : Html msg
+    { icon : Html Never
     , title : String
     , content : Html msg
     , buttonLabel : String
@@ -145,7 +145,7 @@ viewContent content =
         [ content ]
 
 
-viewIcon : Html msg -> Html msg
+viewIcon : Html Never -> Html msg
 viewIcon svg =
     div
         [ css
@@ -163,6 +163,7 @@ viewIcon svg =
             ]
         ]
         [ svg ]
+        |> Html.map never
 
 
 viewFooter : { label : String, msg : msg } -> Html msg
