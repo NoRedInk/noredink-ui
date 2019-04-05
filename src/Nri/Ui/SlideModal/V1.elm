@@ -54,8 +54,8 @@ view config (State state) =
 
 viewModal : List (Html msg) -> Html msg
 viewModal panels =
-    viewBackdrop
-        [ Nri.Ui.styled div
+    viewBackdrop <|
+        Nri.Ui.styled div
             "modal-container"
             [ Css.width (Css.px 600)
             , Css.minHeight (Css.px 400)
@@ -72,20 +72,11 @@ viewModal panels =
             , Fonts.baseFont
             ]
             []
-            -- This global <style> node sets overflow to hidden on the body element,
-            -- thereby preventing the page from scrolling behind the backdrop when the modal is
-            -- open (and this node is present on the page).
-            (Css.Global.global
-                [ Css.Global.body
-                    [ Css.overflow Css.hidden ]
-                ]
-                :: panels
-            )
-        ]
+            panels
 
 
-viewBackdrop : List (Html msg) -> Html msg
-viewBackdrop =
+viewBackdrop : Html msg -> Html msg
+viewBackdrop modal =
     Nri.Ui.styled div
         "modal-backdrop-container"
         (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
@@ -103,6 +94,12 @@ viewBackdrop =
         )
         [ Role.dialog
         , Widget.modal True
+        ]
+        [ -- This global <style> node sets overflow to hidden on the body element,
+          -- thereby preventing the page from scrolling behind the backdrop when the modal is
+          -- open (and this node is present on the page).
+          Css.Global.global [ Css.Global.body [ Css.overflow Css.hidden ] ]
+        , modal
         ]
 
 
