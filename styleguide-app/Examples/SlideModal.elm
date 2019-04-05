@@ -82,16 +82,23 @@ modalLaunchButton =
 viewModal : Html Msg
 viewModal =
     SlideModal.view
-        { icon =
-            div
-                [ css
-                    [ Css.backgroundColor Colors.gray45
-                    , Css.height (pct 100)
-                    , Css.width (pct 100)
-                    ]
-                ]
-                []
-        , title = "Welcome to Self-Review, FirstName!"
-        , content = text "This is where the content goes!"
-        , button = { label = "Continue", msg = DismissModal }
+        { panels =
+            [ { icon = grayBox
+              , title = "Welcome to Self-Review, FirstName!"
+              , content = text "This is where the content goes!"
+              , button = { label = "Continue", msg = DismissModal }
+              }
+            ]
         }
+
+
+grayBox : Html msg
+grayBox =
+    div
+        [ css
+            [ Css.backgroundColor Colors.gray45
+            , Css.height (pct 100)
+            , Css.width (pct 100)
+            ]
+        ]
+        []

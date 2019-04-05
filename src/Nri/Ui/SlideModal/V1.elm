@@ -18,7 +18,16 @@ import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Text.V2 as Text
 
 
-view { icon, title, content, button } =
+view model =
+    case viewPanels model of
+        Just panels ->
+            viewModal panels
+
+        Nothing ->
+            text ""
+
+
+viewModal panels =
     Nri.Ui.styled div
         "modal-backdrop-container"
         (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
@@ -54,19 +63,28 @@ view { icon, title, content, button } =
             , Fonts.baseFont
             ]
             []
-            [ -- This global <style> node sets overflow to hidden on the body element,
-              -- thereby preventing the page from scrolling behind the backdrop when the modal is
-              -- open (and this node is present on the page).
-              Css.Global.global
+            -- This global <style> node sets overflow to hidden on the body element,
+            -- thereby preventing the page from scrolling behind the backdrop when the modal is
+            -- open (and this node is present on the page).
+            (Css.Global.global
                 [ Css.Global.body
                     [ Css.overflow Css.hidden ]
                 ]
-            , viewIcon icon
-            , Text.subHeading [ Html.text title ]
-            , viewContent content
-            , viewFooter button
-            ]
+                :: panels
+            )
         ]
+
+
+viewPanels { panels } =
+    Maybe.map viewPanel (List.head panels)
+
+
+viewPanel { icon, title, content, button } =
+    [ viewIcon icon
+    , Text.subHeading [ Html.text title ]
+    , viewContent content
+    , viewFooter button
+    ]
 
 
 viewContent : Html msg -> Html msg
