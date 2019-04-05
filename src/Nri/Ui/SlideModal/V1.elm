@@ -203,6 +203,11 @@ viewFooter button =
         ]
         []
         [ viewFooterButton button
+        , div [ css [ Css.marginTop (Css.px 16) ] ]
+            [ dot Inactive
+            , dot Active
+            , dot Inactive
+            ]
         ]
 
 
@@ -218,3 +223,45 @@ viewFooterButton { label, msg } =
         , state = Button.Enabled
         , icon = Nothing
         }
+
+
+type Dot
+    = Active
+    | Inactive
+
+
+dot : Dot -> Html.Html msg
+dot type_ =
+    Html.div
+        ([ css
+            [ Css.height (Css.px 10)
+            , Css.width (Css.px 10)
+            , Css.borderRadius (Css.px 5)
+            , Css.margin2 Css.zero (Css.px 2)
+            , Css.display Css.inlineBlock
+            ]
+         ]
+            ++ (case type_ of
+                    Active ->
+                        [ css [ Css.backgroundColor Colors.azure ]
+                        ]
+
+                    Inactive ->
+                        [ css
+                            [ Css.backgroundColor Colors.gray75
+                            , Css.cursor Css.pointer
+                            ]
+
+                        -- ahhh ClickableDiv, my old friend.
+                        -- , Html.Styled.Events.onClick
+                        --     (SetModal
+                        --         (PeerReviewIntroModal
+                        --             { step = stepNum
+                        --             , formStep = data.formStep
+                        --             }
+                        --         )
+                        --     )
+                        ]
+               )
+        )
+        []
