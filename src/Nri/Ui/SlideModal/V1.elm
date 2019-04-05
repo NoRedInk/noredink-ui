@@ -1,5 +1,6 @@
 module Nri.Ui.SlideModal.V1 exposing
     ( Config
+    , Panel
     , State
     , closed
     , open
@@ -53,24 +54,7 @@ view config (State state) =
 
 viewModal : List (Html msg) -> Html msg
 viewModal panels =
-    Nri.Ui.styled div
-        "modal-backdrop-container"
-        (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
-            :: [ Css.height (Css.vh 100)
-               , Css.left Css.zero
-               , Css.overflow Css.hidden
-               , Css.position Css.fixed
-               , Css.top Css.zero
-               , Css.width (Css.pct 100)
-               , Css.zIndex (Css.int 200)
-               , Css.displayFlex
-               , Css.alignItems Css.center
-               , Css.justifyContent Css.center
-               ]
-        )
-        [ Role.dialog
-        , Widget.modal True
-        ]
+    viewBackdrop
         [ Nri.Ui.styled div
             "modal-container"
             [ Css.width (Css.px 600)
@@ -97,6 +81,28 @@ viewModal panels =
                 ]
                 :: panels
             )
+        ]
+
+
+viewBackdrop : List (Html msg) -> Html msg
+viewBackdrop =
+    Nri.Ui.styled div
+        "modal-backdrop-container"
+        (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
+            :: [ Css.height (Css.vh 100)
+               , Css.left Css.zero
+               , Css.overflow Css.hidden
+               , Css.position Css.fixed
+               , Css.top Css.zero
+               , Css.width (Css.pct 100)
+               , Css.zIndex (Css.int 200)
+               , Css.displayFlex
+               , Css.alignItems Css.center
+               , Css.justifyContent Css.center
+               ]
+        )
+        [ Role.dialog
+        , Widget.modal True
         ]
 
 
