@@ -86,10 +86,6 @@ example =
             ]
         , viewIconSection "Checkmarks"
             [ { icon = Icon.checkMarkSvg, background = Light, alt = "CheckMarkSvg" }
-            , { icon = Icon.darkBlueCheckMark, background = Light, alt = "DarkBlueCheckMark" }
-            , { icon = Icon.checkMark, background = Dark, alt = "CheckMark" }
-            , { icon = Icon.checkMarkSquiggily, background = Dark, alt = "CheckMarkSquiggily" }
-            , { icon = Icon.greenCheckMark, background = Light, alt = "GreenCheckMark" }
             ]
         , viewIconSection "Xs"
             [ { icon = Icon.xSvg, background = Light, alt = "XSvg" }
