@@ -15,6 +15,7 @@ import Examples.Modal
 import Examples.Page
 import Examples.SegmentedControl
 import Examples.Select
+import Examples.SlideModal
 import Examples.Table
 import Examples.Tabs
 import Examples.Text
@@ -39,6 +40,7 @@ type alias ModuleStates =
     , textInputExampleState : TextInputExample.State
     , disclosureIndicatorExampleState : Examples.DisclosureIndicator.State
     , modalExampleState : Examples.Modal.State
+    , slideModalExampleState : Examples.SlideModal.State
     , tabsExampleState : Examples.Tabs.Tab
     }
 
@@ -56,6 +58,7 @@ init =
     , textInputExampleState = TextInputExample.init
     , disclosureIndicatorExampleState = Examples.DisclosureIndicator.init
     , modalExampleState = Examples.Modal.init
+    , slideModalExampleState = Examples.SlideModal.init
     , tabsExampleState = Examples.Tabs.First
     }
 
@@ -73,6 +76,7 @@ type Msg
     | TextInputExampleMsg TextInputExample.Msg
     | DisclosureIndicatorExampleMsg Examples.DisclosureIndicator.Msg
     | ModalExampleMsg Examples.Modal.Msg
+    | SlideModalExampleMsg Examples.SlideModal.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | NoOp
 
@@ -184,6 +188,15 @@ update outsideMsg moduleStates =
             , Cmd.map ModalExampleMsg cmd
             )
 
+        SlideModalExampleMsg msg ->
+            let
+                ( slideModalExampleState, cmd ) =
+                    Examples.SlideModal.update msg moduleStates.slideModalExampleState
+            in
+            ( { moduleStates | slideModalExampleState = slideModalExampleState }
+            , Cmd.map SlideModalExampleMsg cmd
+            )
+
         TabsExampleMsg tab ->
             ( { moduleStates | tabsExampleState = tab }
             , Cmd.none
@@ -232,6 +245,7 @@ nriThemedModules model =
     , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Colors.example
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
+    , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     ]
 
