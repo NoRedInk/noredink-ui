@@ -99,29 +99,43 @@ summarize (State state) panels =
 
 
 viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
-viewModal height ( labelledById, panels ) =
+viewModal height ( labelledById, panel ) =
     Nri.Ui.styled div
         "modal-container"
         [ Css.width (Css.px 600)
-        , Css.height height
-        , Css.minHeight (Css.px 360)
-        , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
         , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
         , Css.margin2 (Css.px 75) Css.auto
         , Css.backgroundColor Colors.white
         , Css.borderRadius (Css.px 20)
         , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-        , Css.displayFlex
-        , Css.alignItems Css.center
-        , Css.flexDirection Css.column
-        , Css.flexWrap Css.noWrap
-        , Fonts.baseFont
         ]
         [ Role.dialog
         , Widget.modal True
         , labelledBy labelledById
         ]
-        panels
+        [ panelContainer height panel ]
+
+
+panelContainer : Css.Vh -> List (Html msg) -> Html msg
+panelContainer height panel =
+    div
+        [ css
+            [ -- Layout
+              Css.height height
+            , Css.minHeight (Css.px 360)
+            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+
+            -- Interior positioning
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.flexDirection Css.column
+            , Css.flexWrap Css.noWrap
+
+            -- Styles
+            , Fonts.baseFont
+            ]
+        ]
+        panel
 
 
 viewBackdrop : Html msg -> Html msg
