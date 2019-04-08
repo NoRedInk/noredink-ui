@@ -65,10 +65,14 @@ closed =
 -}
 view : Config msg -> State -> Html msg
 view config state =
-    summarize state config.panels
-        |> Maybe.map (viewPanels config.parentMsg)
-        |> Maybe.map (viewModal config.height >> viewBackdrop)
-        |> Maybe.withDefault (Html.text "")
+    case summarize state config.panels of
+        Just summary ->
+            viewPanels config.parentMsg summary
+                |> viewModal config.height Nothing
+                |> viewBackdrop
+
+        Nothing ->
+            Html.text ""
 
 
 type alias Summary msg =
@@ -100,8 +104,8 @@ summarize (State state) panels =
         state
 
 
-viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
-viewModal height ( labelledById, panel ) =
+viewModal : Css.Vh -> Maybe ( String, List (Html msg) ) -> ( String, List (Html msg) ) -> Html msg
+viewModal height previous ( labelledById, panel ) =
     Keyed.node "div"
         [ css
             [ Css.width (Css.px 600)
@@ -115,7 +119,14 @@ viewModal height ( labelledById, panel ) =
         , Widget.modal True
         , labelledBy labelledById
         ]
-        [ ( labelledById, panelContainer height panel ) ]
+        [ case previous of
+            Just ( previousId, previousPanel ) ->
+                ( previousId, div [ css [ animateOut ] ] previousPanel )
+
+            Nothing ->
+                ( "no-previous-panel", Html.text "" )
+        , ( labelledById, panelContainer height panel )
+        ]
 
 
 panelContainer : Css.Vh -> List (Html msg) -> Html msg
