@@ -171,6 +171,7 @@ panelContainer height panel =
         [ css
             [ -- Layout
               Css.height height
+            , Css.width (Css.px 600)
             , Css.minHeight (Css.px 360)
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
 
@@ -191,14 +192,19 @@ panelContainer height panel =
 animateIn : Css.Style
 animateIn =
     Css.batch
-        [ Css.animationDuration (Css.ms 1000)
+        [ Css.animationDuration (Css.ms 300)
+        , Css.property "animation-timing-function" "ease-in-out"
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0
-                  , [ Css.Animations.property "margin-left" "600px" ]
+                  , [ Css.Animations.transform [ Css.translateX (Css.px 300) ]
+                    , Css.Animations.opacity (Css.int 0)
+                    ]
                   )
                 , ( 100
-                  , [ Css.Animations.property "margin-left" "0" ]
+                  , [ Css.Animations.transform [ Css.translateX Css.zero ]
+                    , Css.Animations.opacity (Css.int 100)
+                    ]
                   )
                 ]
             )
@@ -210,12 +216,19 @@ animateOut =
     Css.batch
         [ Css.position Css.absolute
         , Css.zIndex (Css.int -1)
-        , Css.animationDuration (Css.ms 1000)
+        , Css.animationDuration (Css.ms 150)
+        , Css.property "animation-timing-function" "ease-out"
         , Css.animationName
             (Css.Animations.keyframes
-                [ ( 100
-                  , [ Css.Animations.transform [ Css.translateX (Css.px -600) ]
+                [ ( 0
+                  , [ Css.Animations.transform [ Css.translateX Css.zero ]
                     , Css.Animations.opacity (Css.int 100)
+                    ]
+                  )
+                , ( 30, [ Css.Animations.opacity (Css.int 30) ] )
+                , ( 100
+                  , [ Css.Animations.transform [ Css.translateX (Css.px -100) ]
+                    , Css.Animations.opacity (Css.int 0)
                     ]
                   )
                 ]
