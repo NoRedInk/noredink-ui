@@ -67,9 +67,23 @@ view : Config msg -> State -> Html msg
 view config state =
     case summarize state config.panels of
         Just summary ->
-            viewPanels config.parentMsg summary
-                |> viewModal config.height Nothing
-                |> viewBackdrop
+            let
+                currentView =
+                    viewPanels config.parentMsg summary
+
+                previousView previousPanel =
+                    viewPanels config.parentMsg
+                        { current = previousPanel
+                        , upcoming = []
+                        , previous = []
+                        , previousPanel = Nothing
+                        }
+            in
+            viewBackdrop
+                (viewModal config.height
+                    (Maybe.map previousView summary.previousPanel)
+                    currentView
+                )
 
         Nothing ->
             Html.text ""
@@ -79,6 +93,7 @@ type alias Summary msg =
     { current : Panel msg
     , upcoming : List ( State, String )
     , previous : List ( State, String )
+    , previousPanel : Maybe (Panel msg)
     }
 
 
@@ -89,19 +104,40 @@ summarize (State state) panels =
             List.indexedMap
                 (\i { title } -> ( State (Just i), title ))
                 panels
-
-        toSummary current currentPanel =
-            { current = currentPanel
-            , upcoming = List.drop (current + 1) indexedPanels
-            , previous = List.take current indexedPanels
-            }
     in
-    Maybe.andThen
-        (\current ->
-            List.head (List.drop current panels)
-                |> Maybe.map (toSummary current)
-        )
-        state
+    case state of
+        Just current ->
+            case List.drop (current - 1) panels of
+                first :: second :: rest ->
+                    if current > 0 then
+                        Just
+                            { current = second
+                            , previousPanel = Just first
+                            , upcoming = List.drop (current + 1) indexedPanels
+                            , previous = List.take current indexedPanels
+                            }
+
+                    else
+                        Just
+                            { current = first
+                            , previousPanel = Nothing
+                            , upcoming = List.drop (current + 1) indexedPanels
+                            , previous = List.take current indexedPanels
+                            }
+
+                first :: [] ->
+                    Just
+                        { current = first
+                        , previousPanel = Nothing
+                        , upcoming = List.drop (current + 1) indexedPanels
+                        , previous = List.take current indexedPanels
+                        }
+
+                [] ->
+                    Nothing
+
+        Nothing ->
+            Nothing
 
 
 viewModal : Css.Vh -> Maybe ( String, List (Html msg) ) -> ( String, List (Html msg) ) -> Html msg
@@ -154,26 +190,32 @@ panelContainer height panel =
 
 animateIn : Css.Style
 animateIn =
-    slide (Css.px 600) (Css.px 0)
-
-
-animateOut : Css.Style
-animateOut =
-    slide (Css.px 0) (Css.px -600)
-
-
-slide : Css.Length compatible units -> Css.Length compatible units -> Css.Style
-slide start end =
     Css.batch
         [ Css.animationDuration (Css.ms 1000)
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX start ]
-                    ]
+                  , [ Css.Animations.property "margin-left" "600px" ]
                   )
                 , ( 100
-                  , [ Css.Animations.transform [ Css.translateX end ]
+                  , [ Css.Animations.property "margin-left" "0" ]
+                  )
+                ]
+            )
+        ]
+
+
+animateOut : Css.Style
+animateOut =
+    Css.batch
+        [ Css.position Css.absolute
+        , Css.zIndex (Css.int -1)
+        , Css.animationDuration (Css.ms 1000)
+        , Css.animationName
+            (Css.Animations.keyframes
+                [ ( 100
+                  , [ Css.Animations.transform [ Css.translateX (Css.px -600) ]
+                    , Css.Animations.opacity (Css.int 100)
                     ]
                   )
                 ]
