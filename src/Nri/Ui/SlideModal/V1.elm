@@ -104,6 +104,7 @@ viewModal height ( labelledById, panels ) =
         "modal-container"
         [ Css.width (Css.px 600)
         , Css.height height
+        , Css.minHeight (Css.px 360)
         , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
         , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
         , Css.margin2 (Css.px 75) Css.auto
@@ -183,7 +184,6 @@ viewContent content =
         [ Css.overflowY Css.auto
         , Css.padding2 (Css.px 30) (Css.px 45)
         , Css.width (Css.pct 100)
-        , Css.minHeight (Css.px 150)
         , Css.marginBottom Css.auto
         , Css.boxSizing Css.borderBox
         ]
