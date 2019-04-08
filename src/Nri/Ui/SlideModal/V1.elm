@@ -18,6 +18,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css
+import Css.Animations
 import Css.Global
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -133,6 +134,21 @@ panelContainer height panel =
 
             -- Styles
             , Fonts.baseFont
+
+            -- Animate in
+            , Css.animationDuration (Css.ms 1000)
+            , Css.animationName
+                (Css.Animations.keyframes
+                    [ ( 0
+                      , [ Css.Animations.transform [ Css.translateX (Css.px 600) ]
+                        ]
+                      )
+                    , ( 100
+                      , [ Css.Animations.transform [ Css.translateX (Css.px 0) ]
+                        ]
+                      )
+                    ]
+                )
             ]
         ]
         panel
