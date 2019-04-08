@@ -135,24 +135,39 @@ panelContainer height panel =
 
             -- Styles
             , Fonts.baseFont
-
-            -- Animate in
-            , Css.animationDuration (Css.ms 1000)
-            , Css.animationName
-                (Css.Animations.keyframes
-                    [ ( 0
-                      , [ Css.Animations.transform [ Css.translateX (Css.px 600) ]
-                        ]
-                      )
-                    , ( 100
-                      , [ Css.Animations.transform [ Css.translateX (Css.px 0) ]
-                        ]
-                      )
-                    ]
-                )
+            , animateIn
             ]
         ]
         panel
+
+
+animateIn : Css.Style
+animateIn =
+    slide (Css.px 600) (Css.px 0)
+
+
+animateOut : Css.Style
+animateOut =
+    slide (Css.px 0) (Css.px -600)
+
+
+slide : Css.Length compatible units -> Css.Length compatible units -> Css.Style
+slide start end =
+    Css.batch
+        [ Css.animationDuration (Css.ms 1000)
+        , Css.animationName
+            (Css.Animations.keyframes
+                [ ( 0
+                  , [ Css.Animations.transform [ Css.translateX start ]
+                    ]
+                  )
+                , ( 100
+                  , [ Css.Animations.transform [ Css.translateX end ]
+                    ]
+                  )
+                ]
+            )
+        ]
 
 
 viewBackdrop : Html msg -> Html msg
