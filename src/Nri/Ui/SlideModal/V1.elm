@@ -23,6 +23,7 @@ import Css.Global
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import Html.Styled.Keyed as Keyed
 import Nri.Ui
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Button.V8 as Button
@@ -101,20 +102,20 @@ summarize (State state) panels =
 
 viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
 viewModal height ( labelledById, panel ) =
-    Nri.Ui.styled div
-        "modal-container"
-        [ Css.width (Css.px 600)
-        , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
-        , Css.margin2 (Css.px 75) Css.auto
-        , Css.backgroundColor Colors.white
-        , Css.borderRadius (Css.px 20)
-        , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-        ]
-        [ Role.dialog
+    Keyed.node "div"
+        [ css
+            [ Css.width (Css.px 600)
+            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+            , Css.margin2 (Css.px 75) Css.auto
+            , Css.backgroundColor Colors.white
+            , Css.borderRadius (Css.px 20)
+            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+            ]
+        , Role.dialog
         , Widget.modal True
         , labelledBy labelledById
         ]
-        [ panelContainer height panel ]
+        [ ( labelledById, panelContainer height panel ) ]
 
 
 panelContainer : Css.Vh -> List (Html msg) -> Html msg
