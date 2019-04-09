@@ -273,6 +273,7 @@ dot type_ =
                 , Css.borderRadius (Css.px 5)
                 , Css.margin2 Css.zero (Css.px 2)
                 , Css.display Css.inlineBlock
+                , Css.verticalAlign Css.middle
                 , Css.cursor cursor
                 , Css.backgroundColor backgroundColor
 
