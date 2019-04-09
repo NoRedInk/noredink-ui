@@ -36,7 +36,7 @@ import Nri.Ui.Text.V2 as Text
 
 {-| -}
 type alias Config msg =
-    { panels : List (Panel msg)
+    { panels : List Panel
     , height : Css.Vh
     , parentMsg : State -> msg
     }
@@ -46,6 +46,7 @@ type alias Config msg =
 type State
     = State
         { currentPanelIndex : Maybe Int
+        , previousPanel : Maybe ( Direction, Panel )
         }
 
 
@@ -55,6 +56,7 @@ open : State
 open =
     State
         { currentPanelIndex = Just 0
+        , previousPanel = Nothing
         }
 
 
@@ -64,6 +66,7 @@ closed : State
 closed =
     State
         { currentPanelIndex = Nothing
+        , previousPanel = Nothing
         }
 
 
@@ -83,37 +86,55 @@ view config state =
             Html.text ""
 
 
-type alias Summary msg =
-    { current : Panel msg
+type alias Summary =
+    { current : Panel
     , upcoming : List ( State, String )
     , previous : List ( State, String )
-    , previousPanel : Maybe (Panel msg)
+    , previousPanel : Maybe Panel
     }
 
 
-summarize : State -> List (Panel msg) -> Maybe (Summary msg)
+summarize : State -> List Panel -> Maybe Summary
 summarize (State { currentPanelIndex }) panels =
     let
         indexedPanels =
-            List.indexedMap
-                (\i { title } -> ( State { currentPanelIndex = Just i }, title ))
-                panels
+            List.indexedMap (\i { title } -> ( i, title )) panels
+
+        toOtherPanel direction currentPanel ( i, title ) =
+            ( State
+                { currentPanelIndex = Just i
+                , previousPanel =
+                    Just
+                        ( direction
+                        , { currentPanel | content = currentPanel.content }
+                        )
+                }
+            , title
+            )
+
+        toSummary current currentPanel =
+            { current = currentPanel
+            , previousPanel =
+                if current > 0 then
+                    List.head (List.drop (current - 1) panels)
+
+                else
+                    Nothing
+            , upcoming =
+                indexedPanels
+                    |> List.drop (current + 1)
+                    |> List.map (toOtherPanel FromRTL currentPanel)
+            , previous =
+                indexedPanels
+                    |> List.take current
+                    |> List.map (toOtherPanel FromLTR currentPanel)
+            }
     in
     case currentPanelIndex of
         Just current ->
             case List.drop current panels of
                 currentPanel :: rest ->
-                    Just
-                        { current = currentPanel
-                        , previousPanel =
-                            if current > 0 then
-                                List.head (List.drop (current - 1) panels)
-
-                            else
-                                Nothing
-                        , upcoming = List.drop (current + 1) indexedPanels
-                        , previous = List.take current indexedPanels
-                        }
+                    Just (toSummary current currentPanel)
 
                 [] ->
                     Nothing
@@ -274,15 +295,15 @@ viewBackdrop modal =
 
 {-| Configuration for a single modal view in the sequence of modal views.
 -}
-type alias Panel msg =
+type alias Panel =
     { icon : Html Never
     , title : String
-    , content : Html msg
+    , content : Html Never
     , buttonLabel : String
     }
 
 
-viewPanels : (State -> msg) -> Summary msg -> ( String, List (Html msg) )
+viewPanels : (State -> msg) -> Summary -> ( String, List (Html msg) )
 viewPanels parentMsg ({ current } as summary) =
     ( panelId current
     , [ viewIcon current.icon
@@ -295,7 +316,7 @@ viewPanels parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : (State -> msg) -> Panel msg -> ( String, List (Html msg) )
+viewPreviousPanel : (State -> msg) -> Panel -> ( String, List (Html msg) )
 viewPreviousPanel parentMsg previousPanel =
     ( panelId previousPanel
     , [ viewIcon previousPanel.icon
@@ -307,12 +328,12 @@ viewPreviousPanel parentMsg previousPanel =
     )
 
 
-panelId : Panel msg -> String
+panelId : Panel -> String
 panelId { title } =
     "modal-header__" ++ String.replace " " "-" title
 
 
-viewContent : Html msg -> Html msg
+viewContent : Html Never -> Html msg
 viewContent content =
     Nri.Ui.styled div
         "modal-content"
@@ -323,7 +344,7 @@ viewContent content =
         , Css.boxSizing Css.borderBox
         ]
         []
-        [ content ]
+        [ Html.map never content ]
 
 
 viewIcon : Html Never -> Html msg
@@ -347,7 +368,7 @@ viewIcon svg =
         |> Html.map never
 
 
-viewFooter : Summary msg -> Html State
+viewFooter : Summary -> Html State
 viewFooter { previous, current, upcoming } =
     let
         nextPanel =
