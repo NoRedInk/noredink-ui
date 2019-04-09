@@ -77,7 +77,7 @@ view config (State { currentPanelIndex, previousPanel }) =
     case Maybe.andThen (summarize config.panels) currentPanelIndex of
         Just summary ->
             viewBackdrop
-                (viewModal config.height previousPanel (viewPanels config.parentMsg summary))
+                (viewModal config previousPanel summary)
 
         Nothing ->
             Html.text ""
@@ -126,8 +126,12 @@ summarize panels current =
             Nothing
 
 
-viewModal : Css.Vh -> Maybe ( Direction, Panel ) -> ( String, List (Html msg) ) -> Html msg
-viewModal height previous ( labelledById, panel ) =
+viewModal : Config msg -> Maybe ( Direction, Panel ) -> Summary -> Html msg
+viewModal config previous summary =
+    let
+        ( labelledById, currentPanel ) =
+            viewCurrentPanel config.parentMsg summary
+    in
     Keyed.node "div"
         [ css
             [ Css.width (Css.px 600)
@@ -144,11 +148,12 @@ viewModal height previous ( labelledById, panel ) =
         (case previous of
             Just ( direction, previousPanel ) ->
                 [ viewPreviousPanel direction previousPanel
-                , ( labelledById, panelContainer height direction panel )
+                , ( labelledById, panelContainer config.height direction currentPanel )
                 ]
 
             Nothing ->
-                [ ( labelledById, panelContainer height FromRTL panel ) ]
+                [ ( labelledById, panelContainer config.height FromRTL currentPanel )
+                ]
         )
 
 
@@ -282,8 +287,8 @@ type alias Panel =
     }
 
 
-viewPanels : (State -> msg) -> Summary -> ( String, List (Html msg) )
-viewPanels parentMsg ({ current } as summary) =
+viewCurrentPanel : (State -> msg) -> Summary -> ( String, List (Html msg) )
+viewCurrentPanel parentMsg ({ current } as summary) =
     ( panelId current
     , [ viewIcon current.icon
       , Text.subHeading
