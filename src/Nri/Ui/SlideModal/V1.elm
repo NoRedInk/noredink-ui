@@ -137,12 +137,12 @@ viewModal height previous ( labelledById, panel ) =
 
             Nothing ->
                 ( "no-previous-panel", Html.text "" )
-        , ( labelledById, panelContainer height panel )
+        , ( labelledById, panelContainer height FromRTL panel )
         ]
 
 
-panelContainer : Css.Vh -> List (Html msg) -> Html msg
-panelContainer height panel =
+panelContainer : Css.Vh -> Direction -> List (Html msg) -> Html msg
+panelContainer height direction panel =
     div
         [ css
             [ -- Layout
@@ -159,26 +159,36 @@ panelContainer height panel =
 
             -- Styles
             , Fonts.baseFont
-            , animateIn
+            , animateIn direction
             ]
         ]
         panel
 
 
-animateIn : Css.Style
-animateIn =
+type Direction
+    = FromRTL
+
+
+animateIn : Direction -> Css.Style
+animateIn direction =
+    let
+        ( start, end ) =
+            case direction of
+                FromRTL ->
+                    ( Css.px 300, Css.zero )
+    in
     Css.batch
         [ Css.animationDuration (Css.ms 300)
         , Css.property "animation-timing-function" "ease-in-out"
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX (Css.px 300) ]
+                  , [ Css.Animations.transform [ Css.translateX start ]
                     , Css.Animations.opacity (Css.int 0)
                     ]
                   )
                 , ( 100
-                  , [ Css.Animations.transform [ Css.translateX Css.zero ]
+                  , [ Css.Animations.transform [ Css.translateX end ]
                     , Css.Animations.opacity (Css.int 100)
                     ]
                   )
