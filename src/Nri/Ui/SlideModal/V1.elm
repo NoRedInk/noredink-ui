@@ -172,6 +172,7 @@ panelContainer height direction panel =
 
 type Direction
     = FromRTL
+    | FromLTR
 
 
 animateIn : Direction -> Css.Style
@@ -181,6 +182,9 @@ animateIn direction =
             case direction of
                 FromRTL ->
                     ( Css.px 300, Css.zero )
+
+                FromLTR ->
+                    ( Css.px -300, Css.zero )
     in
     Css.batch
         [ Css.animationDuration (Css.ms 300)
@@ -209,6 +213,9 @@ animateOut direction =
             case direction of
                 FromRTL ->
                     ( Css.zero, Css.px -100 )
+
+                FromLTR ->
+                    ( Css.zero, Css.px 100 )
     in
     Css.batch
         [ Css.position Css.absolute
