@@ -46,20 +46,26 @@ example unnamedMessages state =
 
 
 {-| -}
-init : { r | performance : String, lock : String } -> State
+init : { r | performance : String, lock : String, help : String } -> State
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "icon"
             (Control.maybe True <|
                 Control.choice
-                    ( "Performance"
-                    , Icon.performance assets
+                    ( "Help"
+                    , Icon.helpSvg assets
                         |> Icon.decorativeIcon
                         |> NriSvg.fromHtml
                         |> Control.value
                     )
-                    [ ( "Lock"
+                    [ ( "Performance"
+                      , Icon.performance assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
+                    , ( "Lock"
                       , Icon.lock assets
                             |> Icon.decorativeIcon
                             |> NriSvg.fromHtml
