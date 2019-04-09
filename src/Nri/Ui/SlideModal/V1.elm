@@ -133,7 +133,12 @@ viewModal height previous ( labelledById, panel ) =
         ]
         [ case previous of
             Just ( previousId, previousPanel ) ->
-                ( previousId, div [ css [ animateOut ] ] previousPanel )
+                ( previousId
+                , div
+                    [ css [ animateOut FromRTL ]
+                    ]
+                    previousPanel
+                )
 
             Nothing ->
                 ( "no-previous-panel", Html.text "" )
@@ -197,8 +202,14 @@ animateIn direction =
         ]
 
 
-animateOut : Css.Style
-animateOut =
+animateOut : Direction -> Css.Style
+animateOut direction =
+    let
+        ( start, end ) =
+            case direction of
+                FromRTL ->
+                    ( Css.zero, Css.px -100 )
+    in
     Css.batch
         [ Css.position Css.absolute
         , Css.zIndex (Css.int -1)
@@ -207,13 +218,13 @@ animateOut =
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX Css.zero ]
+                  , [ Css.Animations.transform [ Css.translateX start ]
                     , Css.Animations.opacity (Css.int 100)
                     ]
                   )
                 , ( 30, [ Css.Animations.opacity (Css.int 30) ] )
                 , ( 100
-                  , [ Css.Animations.transform [ Css.translateX (Css.px -100) ]
+                  , [ Css.Animations.transform [ Css.translateX end ]
                     , Css.Animations.opacity (Css.int 0)
                     ]
                   )
