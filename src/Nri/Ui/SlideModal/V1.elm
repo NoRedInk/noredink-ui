@@ -73,14 +73,11 @@ closed =
 {-| View the modal (includes the modal backdrop).
 -}
 view : Config msg -> State -> Html msg
-view config state =
-    case summarize state config.panels of
+view config (State { currentPanelIndex, previousPanel }) =
+    case summarize currentPanelIndex config.panels of
         Just summary ->
             viewBackdrop
-                (viewModal config.height
-                    (Maybe.map (viewPreviousPanel config.parentMsg) summary.previousPanel)
-                    (viewPanels config.parentMsg summary)
-                )
+                (viewModal config.height previousPanel (viewPanels config.parentMsg summary))
 
         Nothing ->
             Html.text ""
@@ -90,12 +87,11 @@ type alias Summary =
     { current : Panel
     , upcoming : List ( State, String )
     , previous : List ( State, String )
-    , previousPanel : Maybe Panel
     }
 
 
-summarize : State -> List Panel -> Maybe Summary
-summarize (State { currentPanelIndex }) panels =
+summarize : Maybe Int -> List Panel -> Maybe Summary
+summarize currentPanelIndex panels =
     let
         indexedPanels =
             List.indexedMap (\i { title } -> ( i, title )) panels
@@ -114,12 +110,6 @@ summarize (State { currentPanelIndex }) panels =
 
         toSummary current currentPanel =
             { current = currentPanel
-            , previousPanel =
-                if current > 0 then
-                    List.head (List.drop (current - 1) panels)
-
-                else
-                    Nothing
             , upcoming =
                 indexedPanels
                     |> List.drop (current + 1)
@@ -143,7 +133,7 @@ summarize (State { currentPanelIndex }) panels =
             Nothing
 
 
-viewModal : Css.Vh -> Maybe ( String, List (Html msg) ) -> ( String, List (Html msg) ) -> Html msg
+viewModal : Css.Vh -> Maybe ( Direction, Panel ) -> ( String, List (Html msg) ) -> Html msg
 viewModal height previous ( labelledById, panel ) =
     Keyed.node "div"
         [ css
@@ -158,19 +148,15 @@ viewModal height previous ( labelledById, panel ) =
         , Widget.modal True
         , labelledBy labelledById
         ]
-        [ case previous of
-            Just ( previousId, previousPanel ) ->
-                ( previousId
-                , div
-                    [ css [ animateOut FromRTL ]
-                    ]
-                    previousPanel
-                )
+        (case previous of
+            Just ( direction, previousPanel ) ->
+                [ viewPreviousPanel direction previousPanel
+                , ( labelledById, panelContainer height direction panel )
+                ]
 
             Nothing ->
-                ( "no-previous-panel", Html.text "" )
-        , ( labelledById, panelContainer height FromRTL panel )
-        ]
+                [ ( labelledById, panelContainer height FromRTL panel ) ]
+        )
 
 
 panelContainer : Css.Vh -> Direction -> List (Html msg) -> Html msg
@@ -316,15 +302,19 @@ viewPanels parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : (State -> msg) -> Panel -> ( String, List (Html msg) )
-viewPreviousPanel parentMsg previousPanel =
+viewPreviousPanel : Direction -> Panel -> ( String, Html msg )
+viewPreviousPanel direction previousPanel =
     ( panelId previousPanel
-    , [ viewIcon previousPanel.icon
-      , Text.subHeading
+    , div
+        [ css [ animateOut direction ]
+        ]
+        [ viewIcon previousPanel.icon
+        , Text.subHeading
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
             ]
-      , viewContent previousPanel.content
-      ]
+        , viewContent previousPanel.content
+        ]
+        |> Html.map never
     )
 
 
