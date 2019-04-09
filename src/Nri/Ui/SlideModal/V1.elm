@@ -74,7 +74,7 @@ closed =
 -}
 view : Config msg -> State -> Html msg
 view config (State { currentPanelIndex, previousPanel }) =
-    case summarize currentPanelIndex config.panels of
+    case Maybe.andThen (summarize config.panels) currentPanelIndex of
         Just summary ->
             viewBackdrop
                 (viewModal config.height previousPanel (viewPanels config.parentMsg summary))
@@ -90,8 +90,8 @@ type alias Summary =
     }
 
 
-summarize : Maybe Int -> List Panel -> Maybe Summary
-summarize currentPanelIndex panels =
+summarize : List Panel -> Int -> Maybe Summary
+summarize panels current =
     let
         indexedPanels =
             List.indexedMap (\i { title } -> ( i, title )) panels
@@ -107,29 +107,22 @@ summarize currentPanelIndex panels =
                 }
             , title
             )
-
-        toSummary current currentPanel =
-            { current = currentPanel
-            , upcoming =
-                indexedPanels
-                    |> List.drop (current + 1)
-                    |> List.map (toOtherPanel FromRTL currentPanel)
-            , previous =
-                indexedPanels
-                    |> List.take current
-                    |> List.map (toOtherPanel FromLTR currentPanel)
-            }
     in
-    case currentPanelIndex of
-        Just current ->
-            case List.drop current panels of
-                currentPanel :: rest ->
-                    Just (toSummary current currentPanel)
+    case List.drop current panels of
+        currentPanel :: rest ->
+            Just
+                { current = currentPanel
+                , upcoming =
+                    indexedPanels
+                        |> List.drop (current + 1)
+                        |> List.map (toOtherPanel FromRTL currentPanel)
+                , previous =
+                    indexedPanels
+                        |> List.take current
+                        |> List.map (toOtherPanel FromLTR currentPanel)
+                }
 
-                [] ->
-                    Nothing
-
-        Nothing ->
+        [] ->
             Nothing
 
 
