@@ -14,7 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SlideModal.V1 as SlideModal
+import Nri.Ui.SlideModal.V2 as SlideModal
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -32,7 +32,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.SlideModal.V1.elm"
+    { filename = "Nri.Ui.SlideModal.V2.elm"
     , category = Modals
     , content =
         [ viewModal state.modal

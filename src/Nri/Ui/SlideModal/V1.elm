@@ -18,12 +18,10 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css
-import Css.Animations
 import Css.Global
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
-import Html.Styled.Keyed as Keyed
 import Nri.Ui
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Button.V8 as Button
@@ -36,7 +34,7 @@ import Nri.Ui.Text.V2 as Text
 
 {-| -}
 type alias Config msg =
-    { panels : List Panel
+    { panels : List (Panel msg)
     , height : Css.Vh
     , parentMsg : State -> msg
     }
@@ -44,212 +42,85 @@ type alias Config msg =
 
 {-| -}
 type State
-    = State
-        { currentPanelIndex : Maybe Int
-        , previousPanel : Maybe ( Direction, Panel )
-        }
+    = State (Maybe Int)
 
 
 {-| Create the open state for the modal (the first panel will show).
 -}
 open : State
 open =
-    State
-        { currentPanelIndex = Just 0
-        , previousPanel = Nothing
-        }
+    State (Just 0)
 
 
 {-| Close the modal.
 -}
 closed : State
 closed =
-    State
-        { currentPanelIndex = Nothing
-        , previousPanel = Nothing
-        }
+    State Nothing
 
 
 {-| View the modal (includes the modal backdrop).
 -}
 view : Config msg -> State -> Html msg
-view config ((State { currentPanelIndex }) as state) =
-    case Maybe.andThen (summarize config.panels) currentPanelIndex of
-        Just summary ->
-            viewBackdrop
-                (viewModal config state summary)
-
-        Nothing ->
-            Html.text ""
+view config state =
+    summarize state config.panels
+        |> Maybe.map (viewPanels config.parentMsg)
+        |> Maybe.map (viewModal config.height >> viewBackdrop)
+        |> Maybe.withDefault (Html.text "")
 
 
-type alias Summary =
-    { current : Panel
+type alias Summary msg =
+    { current : Panel msg
     , upcoming : List ( State, String )
     , previous : List ( State, String )
     }
 
 
-summarize : List Panel -> Int -> Maybe Summary
-summarize panels current =
+summarize : State -> List (Panel msg) -> Maybe (Summary msg)
+summarize (State state) panels =
     let
         indexedPanels =
-            List.indexedMap (\i { title } -> ( i, title )) panels
+            List.indexedMap
+                (\i { title } -> ( State (Just i), title ))
+                panels
 
-        toOtherPanel direction currentPanel ( i, title ) =
-            ( State
-                { currentPanelIndex = Just i
-                , previousPanel =
-                    Just
-                        ( direction
-                        , { currentPanel | content = currentPanel.content }
-                        )
-                }
-            , title
-            )
+        toSummary current currentPanel =
+            { current = currentPanel
+            , upcoming = List.drop (current + 1) indexedPanels
+            , previous = List.take current indexedPanels
+            }
     in
-    case List.drop current panels of
-        currentPanel :: rest ->
-            Just
-                { current = currentPanel
-                , upcoming =
-                    indexedPanels
-                        |> List.drop (current + 1)
-                        |> List.map (toOtherPanel FromRTL currentPanel)
-                , previous =
-                    indexedPanels
-                        |> List.take current
-                        |> List.map (toOtherPanel FromLTR currentPanel)
-                }
-
-        [] ->
-            Nothing
+    Maybe.andThen
+        (\current ->
+            List.head (List.drop current panels)
+                |> Maybe.map (toSummary current)
+        )
+        state
 
 
-viewModal : Config msg -> State -> Summary -> Html msg
-viewModal config ((State { previousPanel }) as state) summary =
-    let
-        ( labelledById, currentPanel ) =
-            viewCurrentPanel config.parentMsg summary
-    in
-    Keyed.node "div"
-        [ css
-            [ Css.width (Css.px 600)
-            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
-            , Css.margin2 (Css.px 75) Css.auto
-            , Css.backgroundColor Colors.white
-            , Css.borderRadius (Css.px 20)
-            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            ]
-        , Role.dialog
+viewModal : Css.Vh -> ( String, List (Html msg) ) -> Html msg
+viewModal height ( labelledById, panels ) =
+    Nri.Ui.styled div
+        "modal-container"
+        [ Css.width (Css.px 600)
+        , Css.height height
+        , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+        , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+        , Css.margin2 (Css.px 75) Css.auto
+        , Css.backgroundColor Colors.white
+        , Css.borderRadius (Css.px 20)
+        , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+        , Css.displayFlex
+        , Css.alignItems Css.center
+        , Css.flexDirection Css.column
+        , Css.flexWrap Css.noWrap
+        , Fonts.baseFont
+        ]
+        [ Role.dialog
         , Widget.modal True
         , labelledBy labelledById
         ]
-        (case previousPanel of
-            Just ( direction, panelView ) ->
-                [ viewPreviousPanel direction panelView
-                    |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
-                , ( labelledById, panelContainer config.height direction currentPanel )
-                ]
-
-            Nothing ->
-                [ ( labelledById, panelContainer config.height FromRTL currentPanel )
-                ]
-        )
-
-
-panelContainer : Css.Vh -> Direction -> List (Html msg) -> Html msg
-panelContainer height direction panel =
-    div
-        [ css
-            [ -- Layout
-              Css.height height
-            , Css.width (Css.px 600)
-            , Css.minHeight (Css.px 360)
-            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-
-            -- Interior positioning
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.flexDirection Css.column
-            , Css.flexWrap Css.noWrap
-
-            -- Styles
-            , Fonts.baseFont
-            , animateIn direction
-            ]
-        ]
-        panel
-
-
-type Direction
-    = FromRTL
-    | FromLTR
-
-
-animateIn : Direction -> Css.Style
-animateIn direction =
-    let
-        ( start, end ) =
-            case direction of
-                FromRTL ->
-                    ( Css.px 300, Css.zero )
-
-                FromLTR ->
-                    ( Css.px -300, Css.zero )
-    in
-    Css.batch
-        [ Css.animationDuration (Css.ms 300)
-        , Css.property "animation-timing-function" "ease-in-out"
-        , Css.animationName
-            (Css.Animations.keyframes
-                [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX start ]
-                    , Css.Animations.opacity (Css.int 0)
-                    ]
-                  )
-                , ( 100
-                  , [ Css.Animations.transform [ Css.translateX end ]
-                    , Css.Animations.opacity (Css.int 100)
-                    ]
-                  )
-                ]
-            )
-        ]
-
-
-animateOut : Direction -> Css.Style
-animateOut direction =
-    let
-        ( start, end ) =
-            case direction of
-                FromRTL ->
-                    ( Css.zero, Css.px -100 )
-
-                FromLTR ->
-                    ( Css.zero, Css.px 100 )
-    in
-    Css.batch
-        [ Css.position Css.absolute
-        , Css.zIndex (Css.int -1)
-        , Css.animationDuration (Css.ms 150)
-        , Css.property "animation-timing-function" "ease-out"
-        , Css.animationName
-            (Css.Animations.keyframes
-                [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX start ]
-                    , Css.Animations.opacity (Css.int 100)
-                    ]
-                  )
-                , ( 30, [ Css.Animations.opacity (Css.int 30) ] )
-                , ( 100
-                  , [ Css.Animations.transform [ Css.translateX end ]
-                    , Css.Animations.opacity (Css.int 0)
-                    ]
-                  )
-                ]
-            )
-        ]
+        panels
 
 
 viewBackdrop : Html msg -> Html msg
@@ -280,20 +151,24 @@ viewBackdrop modal =
 
 {-| Configuration for a single modal view in the sequence of modal views.
 -}
-type alias Panel =
+type alias Panel msg =
     { icon : Html Never
     , title : String
-    , content : Html Never
+    , content : Html msg
     , buttonLabel : String
     }
 
 
-viewCurrentPanel : (State -> msg) -> Summary -> ( String, List (Html msg) )
-viewCurrentPanel parentMsg ({ current } as summary) =
-    ( panelId current
+viewPanels : (State -> msg) -> Summary msg -> ( String, List (Html msg) )
+viewPanels parentMsg ({ current } as summary) =
+    let
+        id =
+            "modal-header__" ++ String.replace " " "-" current.title
+    in
+    ( id
     , [ viewIcon current.icon
       , Text.subHeading
-            [ span [ Html.Styled.Attributes.id (panelId current) ] [ Html.text current.title ]
+            [ span [ Html.Styled.Attributes.id id ] [ Html.text current.title ]
             ]
       , viewContent current.content
       , viewFooter summary |> Html.map parentMsg
@@ -301,58 +176,19 @@ viewCurrentPanel parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : Direction -> Panel -> ( String, Html () )
-viewPreviousPanel direction previousPanel =
-    ( panelId previousPanel
-    , div
-        [ css [ animateOut direction ]
-        ]
-        [ viewIcon previousPanel.icon
-        , Text.subHeading
-            [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
-            ]
-        , viewContent previousPanel.content
-        , Html.div
-            [ css
-                [ Css.displayFlex
-                , Css.flexDirection Css.column
-                , Css.alignItems Css.center
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                ]
-            ]
-            [ Button.button
-                { onClick = ()
-                , size = Button.Large
-                , style = Button.Primary
-                , width = Button.WidthExact 230
-                }
-                { label = previousPanel.buttonLabel
-                , state = Button.Disabled
-                , icon = Nothing
-                }
-            , div [ css [ Css.marginTop (Css.px 16) ] ] []
-            ]
-        ]
-    )
-
-
-panelId : Panel -> String
-panelId { title } =
-    "modal-header__" ++ String.replace " " "-" title
-
-
-viewContent : Html Never -> Html msg
+viewContent : Html msg -> Html msg
 viewContent content =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
         , Css.padding2 (Css.px 30) (Css.px 45)
         , Css.width (Css.pct 100)
+        , Css.minHeight (Css.px 150)
         , Css.marginBottom Css.auto
         , Css.boxSizing Css.borderBox
         ]
         []
-        [ Html.map never content ]
+        [ content ]
 
 
 viewIcon : Html Never -> Html msg
@@ -376,7 +212,7 @@ viewIcon svg =
         |> Html.map never
 
 
-viewFooter : Summary -> Html State
+viewFooter : Summary msg -> Html State
 viewFooter { previous, current, upcoming } =
     let
         nextPanel =
