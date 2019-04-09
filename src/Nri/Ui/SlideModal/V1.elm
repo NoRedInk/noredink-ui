@@ -44,21 +44,27 @@ type alias Config msg =
 
 {-| -}
 type State
-    = State (Maybe Int)
+    = State
+        { currentPanelIndex : Maybe Int
+        }
 
 
 {-| Create the open state for the modal (the first panel will show).
 -}
 open : State
 open =
-    State (Just 0)
+    State
+        { currentPanelIndex = Just 0
+        }
 
 
 {-| Close the modal.
 -}
 closed : State
 closed =
-    State Nothing
+    State
+        { currentPanelIndex = Nothing
+        }
 
 
 {-| View the modal (includes the modal backdrop).
@@ -86,14 +92,14 @@ type alias Summary msg =
 
 
 summarize : State -> List (Panel msg) -> Maybe (Summary msg)
-summarize (State state) panels =
+summarize (State { currentPanelIndex }) panels =
     let
         indexedPanels =
             List.indexedMap
-                (\i { title } -> ( State (Just i), title ))
+                (\i { title } -> ( State { currentPanelIndex = Just i }, title ))
                 panels
     in
-    case state of
+    case currentPanelIndex of
         Just current ->
             case List.drop current panels of
                 currentPanel :: rest ->
