@@ -67,22 +67,10 @@ view : Config msg -> State -> Html msg
 view config state =
     case summarize state config.panels of
         Just summary ->
-            let
-                currentView =
-                    viewPanels config.parentMsg summary
-
-                previousView previousPanel =
-                    viewPanels config.parentMsg
-                        { current = previousPanel
-                        , upcoming = []
-                        , previous = []
-                        , previousPanel = Nothing
-                        }
-            in
             viewBackdrop
                 (viewModal config.height
-                    (Maybe.map previousView summary.previousPanel)
-                    currentView
+                    (Maybe.map (viewPreviousPanel config.parentMsg) summary.previousPanel)
+                    (viewPanels config.parentMsg summary)
                 )
 
         Nothing ->
@@ -274,19 +262,32 @@ type alias Panel msg =
 
 viewPanels : (State -> msg) -> Summary msg -> ( String, List (Html msg) )
 viewPanels parentMsg ({ current } as summary) =
-    let
-        id =
-            "modal-header__" ++ String.replace " " "-" current.title
-    in
-    ( id
+    ( panelId current
     , [ viewIcon current.icon
       , Text.subHeading
-            [ span [ Html.Styled.Attributes.id id ] [ Html.text current.title ]
+            [ span [ Html.Styled.Attributes.id (panelId current) ] [ Html.text current.title ]
             ]
       , viewContent current.content
       , viewFooter summary |> Html.map parentMsg
       ]
     )
+
+
+viewPreviousPanel : (State -> msg) -> Panel msg -> ( String, List (Html msg) )
+viewPreviousPanel parentMsg previousPanel =
+    ( panelId previousPanel
+    , [ viewIcon previousPanel.icon
+      , Text.subHeading
+            [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
+            ]
+      , viewContent previousPanel.content
+      ]
+    )
+
+
+panelId : Panel msg -> String
+panelId { title } =
+    "modal-header__" ++ String.replace " " "-" title
 
 
 viewContent : Html msg -> Html msg
