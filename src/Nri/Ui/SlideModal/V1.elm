@@ -95,28 +95,16 @@ summarize (State state) panels =
     in
     case state of
         Just current ->
-            case List.drop (current - 1) panels of
-                first :: second :: rest ->
-                    if current > 0 then
-                        Just
-                            { current = second
-                            , previousPanel = Just first
-                            , upcoming = List.drop (current + 1) indexedPanels
-                            , previous = List.take current indexedPanels
-                            }
-
-                    else
-                        Just
-                            { current = first
-                            , previousPanel = Nothing
-                            , upcoming = List.drop (current + 1) indexedPanels
-                            , previous = List.take current indexedPanels
-                            }
-
-                first :: [] ->
+            case List.drop current panels of
+                currentPanel :: rest ->
                     Just
-                        { current = first
-                        , previousPanel = Nothing
+                        { current = currentPanel
+                        , previousPanel =
+                            if current > 0 then
+                                List.head (List.drop (current - 1) panels)
+
+                            else
+                                Nothing
                         , upcoming = List.drop (current + 1) indexedPanels
                         , previous = List.take current indexedPanels
                         }
