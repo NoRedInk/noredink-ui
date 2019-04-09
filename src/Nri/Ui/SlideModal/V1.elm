@@ -73,11 +73,11 @@ closed =
 {-| View the modal (includes the modal backdrop).
 -}
 view : Config msg -> State -> Html msg
-view config (State { currentPanelIndex, previousPanel }) =
+view config ((State { currentPanelIndex }) as state) =
     case Maybe.andThen (summarize config.panels) currentPanelIndex of
         Just summary ->
             viewBackdrop
-                (viewModal config previousPanel summary)
+                (viewModal config state summary)
 
         Nothing ->
             Html.text ""
@@ -126,8 +126,8 @@ summarize panels current =
             Nothing
 
 
-viewModal : Config msg -> Maybe ( Direction, Panel ) -> Summary -> Html msg
-viewModal config previous summary =
+viewModal : Config msg -> State -> Summary -> Html msg
+viewModal config ((State { previousPanel }) as state) summary =
     let
         ( labelledById, currentPanel ) =
             viewCurrentPanel config.parentMsg summary
@@ -145,9 +145,10 @@ viewModal config previous summary =
         , Widget.modal True
         , labelledBy labelledById
         ]
-        (case previous of
-            Just ( direction, previousPanel ) ->
-                [ viewPreviousPanel direction previousPanel
+        (case previousPanel of
+            Just ( direction, panelView ) ->
+                [ viewPreviousPanel direction panelView
+                    |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( labelledById, panelContainer config.height direction currentPanel )
                 ]
 
@@ -300,7 +301,7 @@ viewCurrentPanel parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : Direction -> Panel -> ( String, Html msg )
+viewPreviousPanel : Direction -> Panel -> ( String, Html () )
 viewPreviousPanel direction previousPanel =
     ( panelId previousPanel
     , div
@@ -311,8 +312,27 @@ viewPreviousPanel direction previousPanel =
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
             ]
         , viewContent previousPanel.content
+        , Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.flexDirection Css.column
+                , Css.alignItems Css.center
+                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+                ]
+            ]
+            [ Button.button
+                { onClick = ()
+                , size = Button.Large
+                , style = Button.Primary
+                , width = Button.WidthExact 230
+                }
+                { label = previousPanel.buttonLabel
+                , state = Button.Disabled
+                , icon = Nothing
+                }
+            , div [ css [ Css.marginTop (Css.px 16) ] ] []
+            ]
         ]
-        |> Html.map never
     )
 
 
