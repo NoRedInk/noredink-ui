@@ -101,24 +101,30 @@ viewContent config =
             sizeToPx config.size
     in
     span [ Attributes.css [ Css.fontSize fontSize ] ]
-        [ case config.icon of
+        (case config.icon of
             Just icon ->
-                div
+                [ div
                     [ Attributes.css
-                        [ Css.height fontSize
-                        , Css.maxWidth fontSize
-                        , Css.display Css.inlineBlock
-                        , Css.verticalAlign Css.baseline
-                        , Css.marginRight (Css.px 2)
+                        [ Css.displayFlex
+                        , Css.alignItems Css.center
+                        , Css.property "line-height" "normal"
                         ]
                     ]
-                    [ NriSvg.toHtml icon
+                    [ div
+                        [ Attributes.css
+                            [ Css.marginRight (Css.px 2)
+                            , Css.height fontSize
+                            , Css.maxWidth fontSize
+                            ]
+                        ]
+                        [ NriSvg.toHtml icon ]
+                    , span [] [ text config.label ]
                     ]
+                ]
 
             Nothing ->
-                text ""
-        , text config.label
-        ]
+                [ text config.label ]
+        )
 
 
 clickableTextStyles : List Css.Style
@@ -138,6 +144,8 @@ clickableTextStyles =
     , Css.textDecoration Css.none
     , Css.hover [ Css.textDecoration Css.underline ]
     , Css.padding Css.zero
+    , Css.display Css.inlineBlock
+    , Css.verticalAlign Css.textBottom
     ]
 
 
