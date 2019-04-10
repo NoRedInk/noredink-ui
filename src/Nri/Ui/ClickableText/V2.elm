@@ -112,9 +112,17 @@ viewContent config =
                     ]
                     [ div
                         [ Attributes.css
-                            [ Css.marginRight (Css.px 2)
-                            , Css.height fontSize
+                            [ Css.height fontSize
                             , Css.maxWidth fontSize
+                            , case config.size of
+                                Small ->
+                                    Css.marginRight (Css.px 2)
+
+                                Medium ->
+                                    Css.marginRight (Css.px 3)
+
+                                Large ->
+                                    Css.marginRight (Css.px 4)
                             ]
                         ]
                         [ NriSvg.toHtml icon ]
