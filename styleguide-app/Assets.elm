@@ -15,8 +15,8 @@ type alias Assets =
     , checkboxCheckedPartially_svg : Asset
     , checkboxLockOnInside_svg : Asset
     , checkboxUnchecked_svg : Asset
-    , checkWhite_svg : Asset
     , checkmark : String
+    , checkWhite_svg : Asset
     , class : String
     , clever : String
     , clock : String
@@ -36,6 +36,7 @@ type alias Assets =
     , footsteps : String
     , gear : String
     , guidedDraft : String
+    , help : String
     , hint_png : Asset
     , iconCalendar_svg : Asset
     , iconCheck_png : Asset
@@ -89,8 +90,8 @@ type alias Assets =
     , startingOffBadge_png : Asset
     , submitting : String
     , teach_assignments_copyWhite_svg : Asset
-    , twitterBlue_svg : Asset
     , tip_svg : Asset
+    , twitterBlue_svg : Asset
     , unarchiveBlue2x_png : Asset
     , writingAssignment : String
     , writingcycle : String
@@ -103,11 +104,11 @@ assets : Assets
 assets =
     { activity = "icon-activity"
     , arrowDown = "icon-arrow-down"
+    , assignmentStartButtonPrimary_svg = Asset "assets/images/assignment-start-button-primary.svg"
+    , assignmentStartButtonSecondary_svg = Asset "assets/images/assignment-start-button-secondary.svg"
     , attention_svg = Asset "assets/images/attention.svg"
     , bulb = "icon-bulb"
     , calendar = "icon-calendar"
-    , assignmentStartButtonPrimary_svg = Asset "assets/images/assignment-start-button-primary.svg"
-    , assignmentStartButtonSecondary_svg = Asset "assets/images/assignment-start-button-secondary.svg"
     , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
     , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
     , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
@@ -133,6 +134,7 @@ assets =
     , footsteps = "icon-footsteps"
     , gear = "icon-gear"
     , guidedDraft = "icon-guided-draft"
+    , help = "icon-help"
     , hint_png = Asset "assets/images/hint.png"
     , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
     , iconCheck_png = Asset "assets/images/icon-check.png"
