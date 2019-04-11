@@ -31,7 +31,7 @@ translateXBy =
 
 slideDuration : Css.Style
 slideDuration =
-    Css.animationDuration (Css.ms 1000)
+    Css.animationDuration (Css.ms 700)
 
 
 slideTimingFunction : Css.Style
