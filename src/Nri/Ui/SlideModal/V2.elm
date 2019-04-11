@@ -155,7 +155,22 @@ viewModal config ((State { previousPanel }) as state) summary =
         ]
         (case previousPanel of
             Just ( direction, panelView ) ->
-                [ viewPreviousPanel config.height direction panelView
+                [ ( panelId panelView
+                  , panelContainer config.height
+                        [ Slide.animateOut direction ]
+                        [ viewIcon panelView.icon
+                        , Text.subHeading
+                            [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
+                            ]
+                        , viewContent panelView.content
+                        , viewFlexibleFooter
+                            { buttonLabel = panelView.buttonLabel
+                            , buttonMsg = ()
+                            , buttonState = Button.Disabled
+                            }
+                            [ InactiveDisabled () "" ]
+                        ]
+                  )
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( labelledById
                   , panelContainer config.height [ Slide.animateIn direction ] currentPanel
@@ -204,26 +219,6 @@ type alias Panel =
     , content : Html Never
     , buttonLabel : String
     }
-
-
-viewPreviousPanel : Css.Vh -> AnimationDirection -> Panel -> ( String, Html () )
-viewPreviousPanel height direction previousPanel =
-    ( panelId previousPanel
-    , panelContainer height
-        [ Slide.animateOut direction ]
-        [ viewIcon previousPanel.icon
-        , Text.subHeading
-            [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
-            ]
-        , viewContent previousPanel.content
-        , viewFlexibleFooter
-            { buttonLabel = previousPanel.buttonLabel
-            , buttonMsg = ()
-            , buttonState = Button.Disabled
-            }
-            [ InactiveDisabled () "" ]
-        ]
-    )
 
 
 panelContainer : Css.Vh -> List Css.Style -> List (Html msg) -> Html msg
