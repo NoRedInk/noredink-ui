@@ -327,7 +327,16 @@ viewFooter { previous, current, upcoming } =
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         ]
         []
-        [ viewFooterButton { label = current.buttonLabel, msg = nextPanel }
+        [ Button.button
+            { onClick = nextPanel
+            , size = Button.Large
+            , style = Button.Primary
+            , width = Button.WidthExact 230
+            }
+            { label = current.buttonLabel
+            , state = Button.Enabled
+            , icon = Nothing
+            }
         , (List.map (uncurry Inactive) previous
             ++ Active
             :: List.map (uncurry InactiveDisabled) upcoming
@@ -340,20 +349,6 @@ viewFooter { previous, current, upcoming } =
 uncurry : (a -> b -> c) -> ( a, b ) -> c
 uncurry f ( a, b ) =
     f a b
-
-
-viewFooterButton : { label : String, msg : msg } -> Html msg
-viewFooterButton { label, msg } =
-    Button.button
-        { onClick = msg
-        , size = Button.Large
-        , style = Button.Primary
-        , width = Button.WidthExact 230
-        }
-        { label = label
-        , state = Button.Enabled
-        , icon = Nothing
-        }
 
 
 type Dot
