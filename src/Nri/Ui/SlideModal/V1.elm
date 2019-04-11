@@ -104,6 +104,7 @@ viewModal height ( labelledById, panels ) =
         "modal-container"
         [ Css.width (Css.px 600)
         , Css.height height
+        , Css.minHeight (Css.px 400)
         , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
         , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
         , Css.margin2 (Css.px 75) Css.auto
@@ -197,6 +198,7 @@ viewIcon svg =
         [ css
             [ Css.width (Css.px 100)
             , Css.height (Css.px 100)
+            , Css.flexShrink Css.zero
             , Css.displayFlex
             , Css.alignItems Css.center
             , Css.justifyContent Css.center
@@ -222,7 +224,8 @@ viewFooter { previous, current, upcoming } =
     in
     Nri.Ui.styled div
         "modal-footer"
-        [ Css.displayFlex
+        [ Css.flexShrink Css.zero
+        , Css.displayFlex
         , Css.flexDirection Css.column
         , Css.alignItems Css.center
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
@@ -273,6 +276,7 @@ dot type_ =
                 , Css.borderRadius (Css.px 5)
                 , Css.margin2 Css.zero (Css.px 2)
                 , Css.display Css.inlineBlock
+                , Css.verticalAlign Css.middle
                 , Css.cursor cursor
                 , Css.backgroundColor backgroundColor
 
