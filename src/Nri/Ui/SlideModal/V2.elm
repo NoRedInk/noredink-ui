@@ -128,16 +128,6 @@ summarize panels current =
 
 viewModal : Config msg -> State -> Summary -> Html msg
 viewModal config (State { previousPanel }) summary =
-    let
-        currentPanel =
-            [ viewIcon summary.current.icon
-            , Text.subHeading
-                [ span [ Html.Styled.Attributes.id (panelId summary.current) ]
-                    [ Html.text summary.current.title ]
-                ]
-            , viewContent summary.current.content
-            ]
-    in
     Keyed.node "div"
         [ css
             [ Css.boxSizing Css.borderBox
@@ -153,33 +143,41 @@ viewModal config (State { previousPanel }) summary =
         ]
         (case previousPanel of
             Just ( direction, panelView ) ->
-                [ ( panelId panelView
-                  , panelContainer config.height
-                        [ Slide.animateOut direction ]
-                        [ viewIcon panelView.icon
-                        , Text.subHeading
-                            [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
-                            ]
-                        , viewContent panelView.content
+                ( panelId panelView
+                , panelContainer config.height
+                    [ Slide.animateOut direction ]
+                    [ viewIcon panelView.icon
+                    , Text.subHeading
+                        [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
                         ]
-                  )
-                , ( panelId summary.current
-                  , panelContainer config.height [ Slide.animateIn direction ] currentPanel
-                  )
-                , ( panelId summary.current ++ "-footer"
-                  , viewActiveFooter summary |> Html.map config.parentMsg
-                  )
-                ]
+                    , viewContent panelView.content
+                    ]
+                )
+                    :: viewModalContent config summary [ Slide.animateIn direction ]
 
             Nothing ->
-                [ ( panelId summary.current
-                  , panelContainer config.height [] currentPanel
-                  )
-                , ( panelId summary.current ++ "-footer"
-                  , viewActiveFooter summary |> Html.map config.parentMsg
-                  )
-                ]
+                viewModalContent config summary []
         )
+
+
+viewModalContent : Config msg -> Summary -> List Css.Style -> List ( String, Html msg )
+viewModalContent config summary styles =
+    [ ( panelId summary.current
+      , panelContainer config.height
+            styles
+            [ viewIcon summary.current.icon
+            , Text.subHeading
+                [ span [ Html.Styled.Attributes.id (panelId summary.current) ]
+                    [ Html.text summary.current.title ]
+                ]
+            , viewContent summary.current.content
+            ]
+      )
+    , ( panelId summary.current ++ "-footer"
+      , viewActiveFooter summary
+            |> Html.map config.parentMsg
+      )
+    ]
 
 
 viewBackdrop : Html msg -> Html msg
@@ -228,7 +226,7 @@ panelContainer height animationStyles panel =
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
             , Css.height height
             , Css.width (Css.px 600)
-            , Css.margin3 (Css.px 35) (Css.px 21) (Css.px 25)
+            , Css.margin3 (Css.px 35) (Css.px 21) Css.zero
 
             -- Interior positioning
             , Css.displayFlex
@@ -320,7 +318,7 @@ viewFlexibleFooter { buttonLabel, buttonMsg, buttonState } dotList =
         , Css.displayFlex
         , Css.flexDirection Css.column
         , Css.alignItems Css.center
-        , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+        , Css.margin4 (Css.px 20) Css.zero (Css.px 25) Css.zero
         ]
         []
         [ Button.button
