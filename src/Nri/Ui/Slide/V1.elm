@@ -4,7 +4,8 @@ module Nri.Ui.Slide.V1 exposing
     , animateIn, animateOut
     )
 
-{-|
+{-| Note: You'll almost certainly want to used keyed nodes if you're
+using this module.
 
 @docs AnimationDirection
 @docs withSlidingContents
