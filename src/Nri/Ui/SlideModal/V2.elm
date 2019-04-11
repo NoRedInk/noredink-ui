@@ -46,7 +46,7 @@ type alias Config msg =
 type State
     = State
         { currentPanelIndex : Maybe Int
-        , previousPanel : Maybe ( Direction, Panel )
+        , previousPanel : Maybe ( AnimationDirection, Panel )
         }
 
 
@@ -189,38 +189,46 @@ panelContainer height panel maybeAnimateIn =
         panel
 
 
-type Direction
+type AnimationDirection
     = FromRTL
     | FromLTR
 
 
-animateIn : Direction -> Css.Style
+translateXBy : Float
+translateXBy =
+    400
+
+
+slideDuration : Css.Style
+slideDuration =
+    Css.animationDuration (Css.ms 1000)
+
+
+slideTimingFunction : Css.Style
+slideTimingFunction =
+    Css.property "animation-timing-function" "linear"
+
+
+animateIn : AnimationDirection -> Css.Style
 animateIn direction =
     let
         ( start, end ) =
             case direction of
                 FromRTL ->
-                    ( Css.px 400, Css.zero )
+                    ( Css.px translateXBy, Css.zero )
 
                 FromLTR ->
-                    ( Css.px -400, Css.zero )
+                    ( Css.px -translateXBy, Css.zero )
     in
     Css.batch
-        [ slideTiming
+        [ slideDuration
+        , slideTimingFunction
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0, [ Css.Animations.transform [ Css.translateX start ] ] )
                 , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
                 ]
             )
-        ]
-
-
-slideTiming : Css.Style
-slideTiming =
-    Css.batch
-        [ Css.animationDuration (Css.ms 1000)
-        , Css.property "animation-timing-function" "linear"
         ]
 
 
@@ -273,16 +281,16 @@ viewCurrentPanel parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : Direction -> Panel -> ( String, Html () )
+viewPreviousPanel : AnimationDirection -> Panel -> ( String, Html () )
 viewPreviousPanel direction previousPanel =
     let
         ( start, end ) =
             case direction of
                 FromRTL ->
-                    ( Css.zero, Css.px -400 )
+                    ( Css.zero, Css.px -translateXBy )
 
                 FromLTR ->
-                    ( Css.zero, Css.px 400 )
+                    ( Css.zero, Css.px translateXBy )
     in
     ( panelId previousPanel
     , div
@@ -290,10 +298,8 @@ viewPreviousPanel direction previousPanel =
             [ Css.position Css.absolute
             , Css.transform (Css.translate2 end Css.zero)
             , Css.batch
-                [ slideTiming
-
-                -- , Css.property "animation-play-state" "paused"
-                -- , Css.property "animation-delay" "-1"
+                [ slideDuration
+                , slideTimingFunction
                 , Css.animationName
                     (Css.Animations.keyframes
                         [ ( 0
