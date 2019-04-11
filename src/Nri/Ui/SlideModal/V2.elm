@@ -132,10 +132,10 @@ viewModal config (State { previousPanel }) summary =
         currentPanel =
             [ viewIcon summary.current.icon
             , Text.subHeading
-                [ span [ Html.Styled.Attributes.id (panelId summary.current) ] [ Html.text summary.current.title ]
+                [ span [ Html.Styled.Attributes.id (panelId summary.current) ]
+                    [ Html.text summary.current.title ]
                 ]
             , viewContent summary.current.content
-            , viewActiveFooter summary |> Html.map config.parentMsg
             ]
     in
     Keyed.node "div"
@@ -166,11 +166,17 @@ viewModal config (State { previousPanel }) summary =
                 , ( panelId summary.current
                   , panelContainer config.height [ Slide.animateIn direction ] currentPanel
                   )
+                , ( panelId summary.current ++ "-footer"
+                  , viewActiveFooter summary |> Html.map config.parentMsg
+                  )
                 ]
 
             Nothing ->
                 [ ( panelId summary.current
                   , panelContainer config.height [] currentPanel
+                  )
+                , ( panelId summary.current ++ "-footer"
+                  , viewActiveFooter summary |> Html.map config.parentMsg
                   )
                 ]
         )
