@@ -17,7 +17,9 @@ import Accessibility.Styled.Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
+import Color
 import Css
+import Css.Animations
 import Css.Global
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -351,7 +353,7 @@ type Dot msg
 dot : Dot msg -> Html.Html msg
 dot type_ =
     let
-        styles backgroundColor cursor =
+        styles ( startColor, endColor ) cursor =
             css
                 [ Css.height (Css.px 10)
                 , Css.width (Css.px 10)
@@ -360,24 +362,39 @@ dot type_ =
                 , Css.display Css.inlineBlock
                 , Css.verticalAlign Css.middle
                 , Css.cursor cursor
-                , Css.backgroundColor backgroundColor
+
+                -- Color
+                , Css.animationDuration (Css.ms 600)
+                , Css.property "animation-timing-function" "linear"
+                , Css.animationName
+                    (Css.Animations.keyframes
+                        [ ( 0, [ animateBackgroundColor startColor ] )
+                        , ( 100, [ animateBackgroundColor endColor ] )
+                        ]
+                    )
+                , Css.backgroundColor endColor
 
                 -- resets
                 , Css.borderWidth Css.zero
                 , Css.padding Css.zero
                 , Css.hover [ Css.outline Css.none ]
                 ]
+
+        animateBackgroundColor color =
+            Nri.Ui.Colors.Extra.toCoreColor color
+                |> Color.toCssString
+                |> Css.Animations.property "background-color"
     in
     case type_ of
         Active ->
             Html.div
-                [ styles Colors.azure Css.auto
+                [ styles ( Colors.gray75, Colors.azure ) Css.auto
                 ]
                 []
 
         Inactive goTo title ->
             Html.button
-                [ styles Colors.gray75 Css.pointer
+                [ styles ( Colors.gray75, Colors.gray75 ) Css.pointer
                 , onClick goTo
                 ]
                 [ span Accessibility.Styled.Style.invisible
@@ -386,7 +403,7 @@ dot type_ =
 
         InactiveDisabled goTo title ->
             Html.button
-                [ styles Colors.gray75 Css.auto
+                [ styles ( Colors.gray75, Colors.gray75 ) Css.auto
                 , Html.Styled.Attributes.disabled True
                 ]
                 [ span Accessibility.Styled.Style.invisible
