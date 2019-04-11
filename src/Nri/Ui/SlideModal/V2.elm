@@ -127,7 +127,7 @@ summarize panels current =
 
 
 viewModal : Config msg -> State -> Summary -> Html msg
-viewModal config ((State { previousPanel }) as state) summary =
+viewModal config (State { previousPanel }) summary =
     let
         currentPanel =
             [ viewIcon summary.current.icon
@@ -161,15 +161,8 @@ viewModal config ((State { previousPanel }) as state) summary =
                             [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
                             ]
                         , viewContent panelView.content
-                        , viewFlexibleFooter
-                            { buttonLabel = panelView.buttonLabel
-                            , buttonMsg = ()
-                            , buttonState = Button.Disabled
-                            }
-                            [ InactiveDisabled () "" ]
                         ]
                   )
-                    |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( panelId summary.current
                   , panelContainer config.height [ Slide.animateIn direction ] currentPanel
                   )
