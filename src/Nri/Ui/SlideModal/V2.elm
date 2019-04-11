@@ -130,7 +130,15 @@ viewModal : Config msg -> State -> Summary -> Html msg
 viewModal config ((State { previousPanel }) as state) summary =
     let
         ( labelledById, currentPanel ) =
-            viewCurrentPanel config.parentMsg summary
+            ( panelId summary.current
+            , [ viewIcon summary.current.icon
+              , Text.subHeading
+                    [ span [ Html.Styled.Attributes.id (panelId summary.current) ] [ Html.text summary.current.title ]
+                    ]
+              , viewContent summary.current.content
+              , viewActiveFooter summary |> Html.map config.parentMsg
+              ]
+            )
     in
     Keyed.node "div"
         [ css
@@ -196,19 +204,6 @@ type alias Panel =
     , content : Html Never
     , buttonLabel : String
     }
-
-
-viewCurrentPanel : (State -> msg) -> Summary -> ( String, List (Html msg) )
-viewCurrentPanel parentMsg ({ current } as summary) =
-    ( panelId current
-    , [ viewIcon current.icon
-      , Text.subHeading
-            [ span [ Html.Styled.Attributes.id (panelId current) ] [ Html.text current.title ]
-            ]
-      , viewContent current.content
-      , viewActiveFooter summary |> Html.map parentMsg
-      ]
-    )
 
 
 viewPreviousPanel : Css.Vh -> AnimationDirection -> Panel -> ( String, Html () )
