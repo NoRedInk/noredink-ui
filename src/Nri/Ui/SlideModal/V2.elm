@@ -220,26 +220,12 @@ viewPreviousPanel direction previousPanel =
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
             ]
         , viewContent previousPanel.content
-        , Html.div
-            [ css
-                [ Css.displayFlex
-                , Css.flexDirection Css.column
-                , Css.alignItems Css.center
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                ]
-            ]
-            [ Button.button
-                { onClick = ()
-                , size = Button.Large
-                , style = Button.Primary
-                , width = Button.WidthExact 230
-                }
-                { label = previousPanel.buttonLabel
-                , state = Button.Disabled
-                , icon = Nothing
-                }
-            , div [ css [ Css.marginTop (Css.px 16) ] ] []
-            ]
+        , viewFlexibleFooter
+            { buttonLabel = previousPanel.buttonLabel
+            , buttonMsg = ()
+            , buttonState = Button.Disabled
+            }
+            [ InactiveDisabled () "" ]
         ]
     )
 
@@ -333,11 +319,11 @@ viewActiveFooter { previous, current, upcoming } =
 
 viewFlexibleFooter :
     { buttonLabel : String
-    , buttonMsg : State
+    , buttonMsg : msg
     , buttonState : Button.ButtonState
     }
-    -> List Dot
-    -> Html State
+    -> List (Dot msg)
+    -> Html msg
 viewFlexibleFooter { buttonLabel, buttonMsg, buttonState } dotList =
     Nri.Ui.styled div
         "modal-footer"
@@ -369,13 +355,13 @@ uncurry f ( a, b ) =
     f a b
 
 
-type Dot
+type Dot msg
     = Active
-    | Inactive State String
-    | InactiveDisabled State String
+    | Inactive msg String
+    | InactiveDisabled msg String
 
 
-dot : Dot -> Html.Html State
+dot : Dot msg -> Html.Html msg
 dot type_ =
     let
         styles backgroundColor cursor =
