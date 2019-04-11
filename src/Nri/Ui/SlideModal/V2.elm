@@ -129,16 +129,14 @@ summarize panels current =
 viewModal : Config msg -> State -> Summary -> Html msg
 viewModal config ((State { previousPanel }) as state) summary =
     let
-        ( labelledById, currentPanel ) =
-            ( panelId summary.current
-            , [ viewIcon summary.current.icon
-              , Text.subHeading
-                    [ span [ Html.Styled.Attributes.id (panelId summary.current) ] [ Html.text summary.current.title ]
-                    ]
-              , viewContent summary.current.content
-              , viewActiveFooter summary |> Html.map config.parentMsg
-              ]
-            )
+        currentPanel =
+            [ viewIcon summary.current.icon
+            , Text.subHeading
+                [ span [ Html.Styled.Attributes.id (panelId summary.current) ] [ Html.text summary.current.title ]
+                ]
+            , viewContent summary.current.content
+            , viewActiveFooter summary |> Html.map config.parentMsg
+            ]
     in
     Keyed.node "div"
         [ css
@@ -151,7 +149,7 @@ viewModal config ((State { previousPanel }) as state) summary =
             ]
         , Role.dialog
         , Widget.modal True
-        , labelledBy labelledById
+        , labelledBy (panelId summary.current)
         ]
         (case previousPanel of
             Just ( direction, panelView ) ->
@@ -172,13 +170,13 @@ viewModal config ((State { previousPanel }) as state) summary =
                         ]
                   )
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
-                , ( labelledById
+                , ( panelId summary.current
                   , panelContainer config.height [ Slide.animateIn direction ] currentPanel
                   )
                 ]
 
             Nothing ->
-                [ ( labelledById
+                [ ( panelId summary.current
                   , panelContainer config.height [] currentPanel
                   )
                 ]
