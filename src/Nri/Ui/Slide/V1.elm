@@ -1,14 +1,23 @@
 module Nri.Ui.Slide.V1 exposing
     ( AnimationDirection(..)
-    , animateIn
-    , animateOut
     , withSlidingContents
+    , animateIn, animateOut
     )
+
+{-|
+
+@docs AnimationDirection
+@docs withSlidingContents
+@docs animateIn, animateOut
+
+-}
 
 import Css
 import Css.Animations
 
 
+{-| Slide from right to left or from left to right.
+-}
 type AnimationDirection
     = FromRTL
     | FromLTR
@@ -29,6 +38,8 @@ slideTimingFunction =
     Css.property "animation-timing-function" "ease-in-out"
 
 
+{-| Add this class to the container whose descendents are sliding.
+-}
 withSlidingContents : Css.Style
 withSlidingContents =
     Css.batch
@@ -37,6 +48,8 @@ withSlidingContents =
         ]
 
 
+{-| Add this style to the element you want to animate in.
+-}
 animateIn : AnimationDirection -> Css.Style
 animateIn direction =
     let
@@ -61,6 +74,10 @@ animateIn direction =
         ]
 
 
+{-| Add this style to the element you want to animate out.
+Note: this will absolutely position the element.
+You must add `withSlidingContents` to one of its ancestors.
+-}
 animateOut : AnimationDirection -> Css.Style
 animateOut direction =
     let
