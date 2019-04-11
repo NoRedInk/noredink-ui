@@ -147,16 +147,16 @@ viewModal config ((State { previousPanel }) as state) summary =
         ]
         (case previousPanel of
             Just ( direction, panelView ) ->
-                [ viewPreviousPanel direction panelView
+                [ viewPreviousPanel config.height direction panelView
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( labelledById
-                  , panelContainer [ Css.height config.height, Slide.animateIn direction ] currentPanel
+                  , panelContainer config.height [ Slide.animateIn direction ] currentPanel
                   )
                 ]
 
             Nothing ->
                 [ ( labelledById
-                  , panelContainer [ Css.height config.height ] currentPanel
+                  , panelContainer config.height [] currentPanel
                   )
                 ]
         )
@@ -211,10 +211,11 @@ viewCurrentPanel parentMsg ({ current } as summary) =
     )
 
 
-viewPreviousPanel : AnimationDirection -> Panel -> ( String, Html () )
-viewPreviousPanel direction previousPanel =
+viewPreviousPanel : Css.Vh -> AnimationDirection -> Panel -> ( String, Html () )
+viewPreviousPanel height direction previousPanel =
     ( panelId previousPanel
-    , panelContainer [ Slide.animateOut direction ]
+    , panelContainer height
+        [ Slide.animateOut direction ]
         [ viewIcon previousPanel.icon
         , Text.subHeading
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
@@ -230,14 +231,15 @@ viewPreviousPanel direction previousPanel =
     )
 
 
-panelContainer : List Css.Style -> List (Html msg) -> Html msg
-panelContainer animationStyles panel =
+panelContainer : Css.Vh -> List Css.Style -> List (Html msg) -> Html msg
+panelContainer height animationStyles panel =
     div
         [ css
             [ -- Layout
               Css.minHeight (Css.px 400)
             , Css.minHeight (Css.px 360)
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+            , Css.height height
             , Css.width (Css.px 600)
             , Css.margin3 (Css.px 35) (Css.px 21) (Css.px 25)
 
