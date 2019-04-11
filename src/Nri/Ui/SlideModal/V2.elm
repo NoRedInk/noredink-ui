@@ -151,17 +151,21 @@ viewModal config ((State { previousPanel }) as state) summary =
             Just ( direction, panelView ) ->
                 [ viewPreviousPanel direction panelView
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
-                , ( labelledById, panelContainer config.height direction currentPanel )
+                , ( labelledById
+                  , panelContainer config.height currentPanel (Just (animateIn direction))
+                  )
                 ]
 
             Nothing ->
-                [ ( labelledById, panelContainer config.height FromRTL currentPanel )
+                [ ( labelledById
+                  , panelContainer config.height currentPanel Nothing
+                  )
                 ]
         )
 
 
-panelContainer : Css.Vh -> Direction -> List (Html msg) -> Html msg
-panelContainer height direction panel =
+panelContainer : Css.Vh -> List (Html msg) -> Maybe Css.Style -> Html msg
+panelContainer height panel maybeAnimateIn =
     div
         [ css
             [ -- Layout
@@ -179,7 +183,7 @@ panelContainer height direction panel =
 
             -- Styles
             , Fonts.baseFont
-            , animateIn direction
+            , Maybe.withDefault (Css.batch []) maybeAnimateIn
             ]
         ]
         panel
