@@ -1,0 +1,164 @@
+module Examples.Slide exposing (Msg, State, example, init, update)
+
+{-|
+
+@docs Msg, State, example, init, update
+
+-}
+
+import Accessibility.Styled as Html
+import Css
+import Html.Styled.Attributes exposing (css)
+import Html.Styled.Keyed as Keyed
+import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Slide.V1 as Slide
+
+
+{-| -}
+type Msg
+    = TriggerAnimation Slide.AnimationDirection
+
+
+{-| -}
+type alias State =
+    { direction : Slide.AnimationDirection
+    , current : Panel
+    , previous : Maybe Panel
+    }
+
+
+{-| -}
+example : (Msg -> msg) -> State -> ModuleExample msg
+example parentMessage state =
+    { filename = "Nri.Ui.Slide.V1.elm"
+    , category = Behaviors
+    , content =
+        [ Keyed.node "div"
+            [ css
+                [ Slide.withSlidingContents
+                , Css.border3 (Css.px 3) Css.solid Colors.gray75
+                , Css.padding (Css.px 20)
+                , Css.width (Css.px 600)
+                ]
+            ]
+            (case state.previous of
+                Just previousPanel ->
+                    [ viewPanel previousPanel (Slide.animateOut state.direction)
+                    , viewPanel state.current (Slide.animateIn state.direction)
+                    ]
+
+                Nothing ->
+                    [ viewPanel state.current (Css.batch [])
+                    ]
+            )
+        , Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.justifyContent Css.spaceBetween
+                , Css.marginTop (Css.px 20)
+                , Css.width (Css.px 300)
+                ]
+            ]
+            [ triggerAnimation Slide.FromLTR "Left-to-right"
+            , triggerAnimation Slide.FromRTL "Right-to-left"
+            ]
+        ]
+            |> List.map (Html.map parentMessage)
+    }
+
+
+{-| -}
+init : State
+init =
+    { direction = Slide.FromRTL
+    , current = One
+    , previous = Nothing
+    }
+
+
+{-| -}
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        TriggerAnimation direction ->
+            ( { state
+                | direction = direction
+                , current =
+                    case ( direction, state.current ) of
+                        ( Slide.FromRTL, One ) ->
+                            Three
+
+                        ( Slide.FromRTL, Two ) ->
+                            One
+
+                        ( Slide.FromRTL, Three ) ->
+                            Two
+
+                        ( Slide.FromLTR, One ) ->
+                            Two
+
+                        ( Slide.FromLTR, Two ) ->
+                            Three
+
+                        ( Slide.FromLTR, Three ) ->
+                            One
+                , previous = Just state.current
+              }
+            , Cmd.none
+            )
+
+
+
+-- INTERNAL
+
+
+type Panel
+    = One
+    | Two
+    | Three
+
+
+viewPanel : Panel -> Css.Style -> ( String, Html.Html msg )
+viewPanel panel animation =
+    let
+        ( color, text, key ) =
+            case panel of
+                One ->
+                    ( Colors.red, "Panel One", "panel-1" )
+
+                Two ->
+                    ( Colors.yellow, "Panel Two", "panel-2" )
+
+                Three ->
+                    ( Colors.green, "Panel Three", "panel-3" )
+    in
+    ( key
+    , Html.div
+        [ css
+            [ Css.border3 (Css.px 2) Css.dashed color
+            , Css.color color
+            , Css.padding (Css.px 10)
+            , Css.width (Css.px 100)
+            , Css.textAlign Css.center
+            , animation
+            ]
+        ]
+        [ Html.text text
+        ]
+    )
+
+
+triggerAnimation : Slide.AnimationDirection -> String -> Html.Html Msg
+triggerAnimation direction label =
+    Button.button
+        { onClick = TriggerAnimation direction
+        , size = Button.Small
+        , style = Button.Secondary
+        , width = Button.WidthUnbounded
+        }
+        { label = label
+        , state = Button.Enabled
+        , icon = Nothing
+        }
