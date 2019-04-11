@@ -18,7 +18,6 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css
-import Css.Animations
 import Css.Global
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -31,6 +30,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Slide.V1 as Slide exposing (AnimationDirection(..))
 import Nri.Ui.Text.V2 as Text
 
 
@@ -140,8 +140,7 @@ viewModal config ((State { previousPanel }) as state) summary =
             , Css.backgroundColor Colors.white
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            , Css.position Css.relative
-            , Css.overflowX Css.hidden
+            , Slide.withSlidingContents
             ]
         , Role.dialog
         , Widget.modal True
@@ -152,7 +151,7 @@ viewModal config ((State { previousPanel }) as state) summary =
                 [ viewPreviousPanel direction panelView
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( labelledById
-                  , panelContainer config.height currentPanel (Just (animateIn direction))
+                  , panelContainer config.height currentPanel (Just (Slide.animateIn direction))
                   )
                 ]
 
@@ -187,49 +186,6 @@ panelContainer height panel maybeAnimateIn =
             ]
         ]
         panel
-
-
-type AnimationDirection
-    = FromRTL
-    | FromLTR
-
-
-translateXBy : Float
-translateXBy =
-    400
-
-
-slideDuration : Css.Style
-slideDuration =
-    Css.animationDuration (Css.ms 1000)
-
-
-slideTimingFunction : Css.Style
-slideTimingFunction =
-    Css.property "animation-timing-function" "linear"
-
-
-animateIn : AnimationDirection -> Css.Style
-animateIn direction =
-    let
-        ( start, end ) =
-            case direction of
-                FromRTL ->
-                    ( Css.px translateXBy, Css.zero )
-
-                FromLTR ->
-                    ( Css.px -translateXBy, Css.zero )
-    in
-    Css.batch
-        [ slideDuration
-        , slideTimingFunction
-        , Css.animationName
-            (Css.Animations.keyframes
-                [ ( 0, [ Css.Animations.transform [ Css.translateX start ] ] )
-                , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
-                ]
-            )
-        ]
 
 
 viewBackdrop : Html msg -> Html msg
@@ -283,35 +239,8 @@ viewCurrentPanel parentMsg ({ current } as summary) =
 
 viewPreviousPanel : AnimationDirection -> Panel -> ( String, Html () )
 viewPreviousPanel direction previousPanel =
-    let
-        ( start, end ) =
-            case direction of
-                FromRTL ->
-                    ( Css.zero, Css.px -translateXBy )
-
-                FromLTR ->
-                    ( Css.zero, Css.px translateXBy )
-    in
     ( panelId previousPanel
-    , div
-        [ css
-            [ Css.position Css.absolute
-            , Css.transform (Css.translate2 end Css.zero)
-            , Css.batch
-                [ slideDuration
-                , slideTimingFunction
-                , Css.animationName
-                    (Css.Animations.keyframes
-                        [ ( 0
-                          , [ Css.Animations.transform [ Css.translateX start ]
-                            ]
-                          )
-                        , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
-                        ]
-                    )
-                ]
-            ]
-        ]
+    , div [ css [ Slide.animateOut direction ] ]
         [ viewIcon previousPanel.icon
         , Text.subHeading
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
