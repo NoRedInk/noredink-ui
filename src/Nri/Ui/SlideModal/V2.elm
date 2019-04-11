@@ -140,6 +140,8 @@ viewModal config ((State { previousPanel }) as state) summary =
             , Css.backgroundColor Colors.white
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+            , Css.position Css.relative
+            , Css.overflowX Css.hidden
             ]
         , Role.dialog
         , Widget.modal True
@@ -194,62 +196,27 @@ animateIn direction =
         ( start, end ) =
             case direction of
                 FromRTL ->
-                    ( Css.px 300, Css.zero )
+                    ( Css.px 400, Css.zero )
 
                 FromLTR ->
-                    ( Css.px -300, Css.zero )
+                    ( Css.px -400, Css.zero )
     in
     Css.batch
-        [ Css.animationDuration (Css.ms 300)
-        , Css.property "animation-timing-function" "ease-in-out"
+        [ slideTiming
         , Css.animationName
             (Css.Animations.keyframes
-                [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX start ]
-                    , Css.Animations.opacity (Css.int 0)
-                    ]
-                  )
-                , ( 100
-                  , [ Css.Animations.transform [ Css.translateX end ]
-                    , Css.Animations.opacity (Css.int 100)
-                    ]
-                  )
+                [ ( 0, [ Css.Animations.transform [ Css.translateX start ] ] )
+                , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
                 ]
             )
         ]
 
 
-animateOut : Direction -> Css.Style
-animateOut direction =
-    let
-        ( start, end ) =
-            case direction of
-                FromRTL ->
-                    ( Css.zero, Css.px -100 )
-
-                FromLTR ->
-                    ( Css.zero, Css.px 100 )
-    in
+slideTiming : Css.Style
+slideTiming =
     Css.batch
-        [ Css.position Css.absolute
-        , Css.zIndex (Css.int -1)
-        , Css.animationDuration (Css.ms 150)
-        , Css.property "animation-timing-function" "ease-out"
-        , Css.animationName
-            (Css.Animations.keyframes
-                [ ( 0
-                  , [ Css.Animations.transform [ Css.translateX start ]
-                    , Css.Animations.opacity (Css.int 100)
-                    ]
-                  )
-                , ( 30, [ Css.Animations.opacity (Css.int 30) ] )
-                , ( 100
-                  , [ Css.Animations.transform [ Css.translateX end ]
-                    , Css.Animations.opacity (Css.int 0)
-                    ]
-                  )
-                ]
-            )
+        [ Css.animationDuration (Css.ms 1000)
+        , Css.property "animation-timing-function" "linear"
         ]
 
 
@@ -304,9 +271,36 @@ viewCurrentPanel parentMsg ({ current } as summary) =
 
 viewPreviousPanel : Direction -> Panel -> ( String, Html () )
 viewPreviousPanel direction previousPanel =
+    let
+        ( start, end ) =
+            case direction of
+                FromRTL ->
+                    ( Css.zero, Css.px -400 )
+
+                FromLTR ->
+                    ( Css.zero, Css.px 400 )
+    in
     ( panelId previousPanel
     , div
-        [ css [ animateOut direction ]
+        [ css
+            [ Css.position Css.absolute
+            , Css.transform (Css.translate2 end Css.zero)
+            , Css.batch
+                [ slideTiming
+
+                -- , Css.property "animation-play-state" "paused"
+                -- , Css.property "animation-delay" "-1"
+                , Css.animationName
+                    (Css.Animations.keyframes
+                        [ ( 0
+                          , [ Css.Animations.transform [ Css.translateX start ]
+                            ]
+                          )
+                        , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
+                        ]
+                    )
+                ]
+            ]
         ]
         [ viewIcon previousPanel.icon
         , Text.subHeading
