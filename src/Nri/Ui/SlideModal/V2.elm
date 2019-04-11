@@ -134,8 +134,7 @@ viewModal config ((State { previousPanel }) as state) summary =
     in
     Keyed.node "div"
         [ css
-            [ Css.width (Css.px 600)
-            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+            [ Css.boxSizing Css.borderBox
             , Css.margin2 (Css.px 75) Css.auto
             , Css.backgroundColor Colors.white
             , Css.borderRadius (Css.px 20)
@@ -151,41 +150,16 @@ viewModal config ((State { previousPanel }) as state) summary =
                 [ viewPreviousPanel direction panelView
                     |> Tuple.mapSecond (Html.map (\_ -> config.parentMsg state))
                 , ( labelledById
-                  , panelContainer config.height currentPanel (Just (Slide.animateIn direction))
+                  , panelContainer [ Css.height config.height, Slide.animateIn direction ] currentPanel
                   )
                 ]
 
             Nothing ->
                 [ ( labelledById
-                  , panelContainer config.height currentPanel Nothing
+                  , panelContainer [ Css.height config.height ] currentPanel
                   )
                 ]
         )
-
-
-panelContainer : Css.Vh -> List (Html msg) -> Maybe Css.Style -> Html msg
-panelContainer height panel maybeAnimateIn =
-    div
-        [ css
-            [ -- Layout
-              Css.height height
-            , Css.minHeight (Css.px 400)
-            , Css.width (Css.px 600)
-            , Css.minHeight (Css.px 360)
-            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-
-            -- Interior positioning
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.flexDirection Css.column
-            , Css.flexWrap Css.noWrap
-
-            -- Styles
-            , Fonts.baseFont
-            , Maybe.withDefault (Css.batch []) maybeAnimateIn
-            ]
-        ]
-        panel
 
 
 viewBackdrop : Html msg -> Html msg
@@ -240,7 +214,7 @@ viewCurrentPanel parentMsg ({ current } as summary) =
 viewPreviousPanel : AnimationDirection -> Panel -> ( String, Html () )
 viewPreviousPanel direction previousPanel =
     ( panelId previousPanel
-    , div [ css [ Slide.animateOut direction ] ]
+    , panelContainer [ Slide.animateOut direction ]
         [ viewIcon previousPanel.icon
         , Text.subHeading
             [ span [ Html.Styled.Attributes.id (panelId previousPanel) ] [ Html.text previousPanel.title ]
@@ -268,6 +242,31 @@ viewPreviousPanel direction previousPanel =
             ]
         ]
     )
+
+
+panelContainer : List Css.Style -> List (Html msg) -> Html msg
+panelContainer animationStyles panel =
+    div
+        [ css
+            [ -- Layout
+              Css.minHeight (Css.px 400)
+            , Css.minHeight (Css.px 360)
+            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+            , Css.width (Css.px 600)
+            , Css.margin3 (Css.px 35) (Css.px 21) (Css.px 25)
+
+            -- Interior positioning
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.flexDirection Css.column
+            , Css.flexWrap Css.noWrap
+
+            -- Styles
+            , Fonts.baseFont
+            , Css.batch animationStyles
+            ]
+        ]
+        panel
 
 
 panelId : Panel -> String

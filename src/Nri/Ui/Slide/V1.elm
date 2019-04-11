@@ -16,7 +16,7 @@ type AnimationDirection
 
 translateXBy : Float
 translateXBy =
-    400
+    700
 
 
 slideDuration : Css.Style
@@ -26,7 +26,7 @@ slideDuration =
 
 slideTimingFunction : Css.Style
 slideTimingFunction =
-    Css.property "animation-timing-function" "linear"
+    Css.property "animation-timing-function" "ease-in-out"
 
 
 withSlidingContents : Css.Style
@@ -51,6 +51,7 @@ animateIn direction =
     Css.batch
         [ slideDuration
         , slideTimingFunction
+        , Css.property "animation-delay" "-50ms"
         , Css.animationName
             (Css.Animations.keyframes
                 [ ( 0, [ Css.Animations.transform [ Css.translateX start ] ] )
@@ -74,15 +75,13 @@ animateOut direction =
     Css.batch
         [ Css.position Css.absolute
         , Css.transform (Css.translate2 end Css.zero)
+        , Css.property "animation-delay" "-50ms"
         , Css.batch
             [ slideDuration
             , slideTimingFunction
             , Css.animationName
                 (Css.Animations.keyframes
-                    [ ( 0
-                      , [ Css.Animations.transform [ Css.translateX start ]
-                        ]
-                      )
+                    [ ( 0, [ Css.Animations.transform [ Css.translateX start ] ] )
                     , ( 100, [ Css.Animations.transform [ Css.translateX end ] ] )
                     ]
                 )
