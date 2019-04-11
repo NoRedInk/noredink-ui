@@ -206,7 +206,7 @@ viewCurrentPanel parentMsg ({ current } as summary) =
             [ span [ Html.Styled.Attributes.id (panelId current) ] [ Html.text current.title ]
             ]
       , viewContent current.content
-      , viewFooter summary |> Html.map parentMsg
+      , viewActiveFooter summary |> Html.map parentMsg
       ]
     )
 
@@ -310,14 +310,35 @@ viewIcon svg =
         |> Html.map never
 
 
-viewFooter : Summary -> Html State
-viewFooter { previous, current, upcoming } =
+viewActiveFooter : Summary -> Html State
+viewActiveFooter { previous, current, upcoming } =
     let
         nextPanel =
             List.head upcoming
                 |> Maybe.map Tuple.first
                 |> Maybe.withDefault closed
+
+        dots =
+            List.map (uncurry Inactive) previous
+                ++ Active
+                :: List.map (uncurry InactiveDisabled) upcoming
     in
+    viewFlexibleFooter
+        { buttonLabel = current.buttonLabel
+        , buttonMsg = nextPanel
+        , buttonState = Button.Enabled
+        }
+        dots
+
+
+viewFlexibleFooter :
+    { buttonLabel : String
+    , buttonMsg : State
+    , buttonState : Button.ButtonState
+    }
+    -> List Dot
+    -> Html State
+viewFlexibleFooter { buttonLabel, buttonMsg, buttonState } dotList =
     Nri.Ui.styled div
         "modal-footer"
         [ Css.flexShrink Css.zero
@@ -328,19 +349,16 @@ viewFooter { previous, current, upcoming } =
         ]
         []
         [ Button.button
-            { onClick = nextPanel
+            { onClick = buttonMsg
             , size = Button.Large
             , style = Button.Primary
             , width = Button.WidthExact 230
             }
-            { label = current.buttonLabel
-            , state = Button.Enabled
+            { label = buttonLabel
+            , state = buttonState
             , icon = Nothing
             }
-        , (List.map (uncurry Inactive) previous
-            ++ Active
-            :: List.map (uncurry InactiveDisabled) upcoming
-          )
+        , dotList
             |> List.map dot
             |> div [ css [ Css.marginTop (Css.px 16) ] ]
         ]
