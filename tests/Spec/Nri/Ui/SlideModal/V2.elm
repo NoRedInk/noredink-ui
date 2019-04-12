@@ -19,7 +19,7 @@ all =
                 SlideModal.open
                     |> SlideModal.view
                         { panels = threePanels
-                        , height = Css.vh 60
+                        , height = Css.px 400
                         , parentMsg = identity
                         }
                     |> Html.toUnstyled
@@ -34,7 +34,7 @@ all =
                 SlideModal.closed
                     |> SlideModal.view
                         { panels = threePanels
-                        , height = Css.vh 60
+                        , height = Css.px 400
                         , parentMsg = identity
                         }
                     |> Html.toUnstyled
@@ -47,7 +47,7 @@ all =
         , test "can click through" <|
             \() ->
                 { panels = threePanels
-                , height = Css.vh 60
+                , height = Css.px 400
                 , parentMsg = identity
                 }
                     |> initTest
@@ -62,7 +62,7 @@ all =
         , test "can navigate back using the dots" <|
             \() ->
                 { panels = threePanels
-                , height = Css.vh 60
+                , height = Css.px 400
                 , parentMsg = identity
                 }
                     |> initTest
@@ -76,7 +76,7 @@ all =
         , test "cannot navigate forward using the dots" <|
             \() ->
                 { panels = threePanels
-                , height = Css.vh 60
+                , height = Css.px 400
                 , parentMsg = identity
                 }
                     |> initTest
