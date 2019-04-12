@@ -15,6 +15,7 @@ import Examples.Modal
 import Examples.Page
 import Examples.SegmentedControl
 import Examples.Select
+import Examples.Slide
 import Examples.SlideModal
 import Examples.Table
 import Examples.Tabs
@@ -41,6 +42,7 @@ type alias ModuleStates =
     , disclosureIndicatorExampleState : Examples.DisclosureIndicator.State
     , modalExampleState : Examples.Modal.State
     , slideModalExampleState : Examples.SlideModal.State
+    , slideExampleState : Examples.Slide.State
     , tabsExampleState : Examples.Tabs.Tab
     }
 
@@ -59,6 +61,7 @@ init =
     , disclosureIndicatorExampleState = Examples.DisclosureIndicator.init
     , modalExampleState = Examples.Modal.init
     , slideModalExampleState = Examples.SlideModal.init
+    , slideExampleState = Examples.Slide.init
     , tabsExampleState = Examples.Tabs.First
     }
 
@@ -77,6 +80,7 @@ type Msg
     | DisclosureIndicatorExampleMsg Examples.DisclosureIndicator.Msg
     | ModalExampleMsg Examples.Modal.Msg
     | SlideModalExampleMsg Examples.SlideModal.Msg
+    | SlideExampleMsg Examples.Slide.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | NoOp
 
@@ -197,6 +201,15 @@ update outsideMsg moduleStates =
             , Cmd.map SlideModalExampleMsg cmd
             )
 
+        SlideExampleMsg msg ->
+            let
+                ( slideExampleState, cmd ) =
+                    Examples.Slide.update msg moduleStates.slideExampleState
+            in
+            ( { moduleStates | slideExampleState = slideExampleState }
+            , Cmd.map SlideExampleMsg cmd
+            )
+
         TabsExampleMsg tab ->
             ( { moduleStates | tabsExampleState = tab }
             , Cmd.none
@@ -246,6 +259,7 @@ nriThemedModules model =
     , Examples.Colors.example
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
+    , Examples.Slide.example SlideExampleMsg model.slideExampleState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     ]
 
