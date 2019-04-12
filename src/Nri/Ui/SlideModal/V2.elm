@@ -39,7 +39,7 @@ import Nri.Ui.Text.V2 as Text
 {-| -}
 type alias Config msg =
     { panels : List Panel
-    , height : Css.Vh
+    , height : Css.Px
     , parentMsg : State -> msg
     }
 
@@ -218,7 +218,7 @@ type alias Panel =
     }
 
 
-panelContainer : Css.Vh -> List Css.Style -> List (Html msg) -> Html msg
+panelContainer : Css.Px -> List Css.Style -> List (Html msg) -> Html msg
 panelContainer height animationStyles panel =
     div
         [ css
