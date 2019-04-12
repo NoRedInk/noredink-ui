@@ -10,6 +10,7 @@ import Accessibility.Styled as Html
 import Css
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
+import List.Zipper as Zipper exposing (Zipper(..))
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -24,7 +25,7 @@ type Msg
 {-| -}
 type alias State =
     { direction : Slide.AnimationDirection
-    , current : Panel
+    , panels : Zipper Panel
     , previous : Maybe Panel
     }
 
@@ -46,11 +47,11 @@ example parentMessage state =
             (case state.previous of
                 Just previousPanel ->
                     [ viewPanel previousPanel (Slide.animateOut state.direction)
-                    , viewPanel state.current (Slide.animateIn state.direction)
+                    , viewPanel (Zipper.current state.panels) (Slide.animateIn state.direction)
                     ]
 
                 Nothing ->
-                    [ viewPanel state.current (Css.batch [])
+                    [ viewPanel (Zipper.current state.panels) (Css.batch [])
                     ]
             )
         , Html.div
@@ -73,7 +74,7 @@ example parentMessage state =
 init : State
 init =
     { direction = Slide.FromRTL
-    , current = One
+    , panels = Zipper [] One [ Two, Three ]
     , previous = Nothing
     }
 
@@ -85,26 +86,16 @@ update msg state =
         TriggerAnimation direction ->
             ( { state
                 | direction = direction
-                , current =
-                    case ( direction, state.current ) of
-                        ( Slide.FromRTL, One ) ->
-                            Three
+                , panels =
+                    case direction of
+                        Slide.FromRTL ->
+                            Zipper.next state.panels
+                                |> Maybe.withDefault (Zipper.first state.panels)
 
-                        ( Slide.FromRTL, Two ) ->
-                            One
-
-                        ( Slide.FromRTL, Three ) ->
-                            Two
-
-                        ( Slide.FromLTR, One ) ->
-                            Two
-
-                        ( Slide.FromLTR, Two ) ->
-                            Three
-
-                        ( Slide.FromLTR, Three ) ->
-                            One
-                , previous = Just state.current
+                        Slide.FromLTR ->
+                            Zipper.previous state.panels
+                                |> Maybe.withDefault (Zipper.last state.panels)
+                , previous = Just (Zipper.current state.panels)
               }
             , Cmd.none
             )
