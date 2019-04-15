@@ -80,26 +80,16 @@ example =
         , viewIconSection "Arrows and Carets"
             [ { icon = Icon.arrowDown, background = Light, alt = "ArrowDown" }
             , { icon = Icon.sortArrow, background = Light, alt = "SortArrow" }
-            , { icon = Icon.arrowLeft, background = Light, alt = "ArrowLeft" }
-            , { icon = Icon.arrowRight, background = Light, alt = "ArrowRight" }
-            , { icon = Icon.caret, background = Light, alt = "Caret" }
             ]
         , viewIconSection "Checkmarks"
             [ { icon = Icon.checkMarkSvg, background = Light, alt = "CheckMarkSvg" }
-            , { icon = Icon.darkBlueCheckMark, background = Light, alt = "DarkBlueCheckMark" }
-            , { icon = Icon.checkMark, background = Dark, alt = "CheckMark" }
-            , { icon = Icon.checkMarkSquiggily, background = Dark, alt = "CheckMarkSquiggily" }
-            , { icon = Icon.greenCheckMark, background = Light, alt = "GreenCheckMark" }
             ]
         , viewIconSection "Xs"
             [ { icon = Icon.xSvg, background = Light, alt = "XSvg" }
-            , { icon = Icon.x, background = Dark, alt = "X" }
-            , { icon = Icon.close, background = Light, alt = "Close" }
             ]
         , viewIconSection "Bangs"
             [ { icon = Icon.exclamation, background = Light, alt = "Exclamation" }
             , { icon = Icon.attention, background = Dark, alt = "Attention" }
-            , { icon = Icon.bang, background = Dark, alt = "Bang" }
             ]
         , viewIconSection "Bulbs and Tips"
             [ { icon = Icon.bulb, background = Light, alt = "Bulb" }
@@ -109,16 +99,13 @@ example =
         , viewIconSection "Locks and keys"
             [ { icon = Icon.key, background = Light, alt = "Key" }
             , { icon = Icon.lock, background = Light, alt = "Lock" }
-            , { icon = Icon.lockDeprecated, background = Light, alt = "LockDeprecated" }
             ]
         , viewIconSection "Time"
             [ { icon = Icon.calendar, background = Light, alt = "Calendar" }
             , { icon = Icon.clock, background = Light, alt = "Clock" }
-            , { icon = Icon.late, background = Light, alt = "Late" }
             ]
         , viewIconSection "Save helpers"
-            [ { icon = Icon.copy, background = Dark, alt = "Copy" }
-            , { icon = Icon.download, background = Light, alt = "Download" }
+            [ { icon = Icon.download, background = Light, alt = "Download" }
             ]
         , viewIconSection "Uncategorized (SVGs)"
             [ { icon = Icon.activity, background = Light, alt = "Activity" }
@@ -190,7 +177,7 @@ viewIcon { alt, background, icon } =
                 , Css.height (Css.px 80)
                 , Css.width (Css.px 80)
                 , Css.margin (Css.px 10)
-                , Css.color azure
+                , Css.color green
                 , Css.Global.descendants
                     [ Css.Global.img
                         [ Css.maxWidth (Css.pct 100)
