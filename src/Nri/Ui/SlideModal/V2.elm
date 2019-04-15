@@ -189,7 +189,10 @@ viewBackdrop modal =
         (Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
             :: [ Css.height (Css.vh 100)
                , Css.left Css.zero
-               , Css.overflow Css.hidden
+               , Css.overflowX Css.hidden
+               , -- allow the user to scroll when the content doesn't fit the
+                 -- viewport, but don't display a scrollbar if we don't need it
+                 Css.overflowY Css.visible
                , Css.position Css.fixed
                , Css.top Css.zero
                , Css.width (Css.pct 100)
