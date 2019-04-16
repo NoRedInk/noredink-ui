@@ -114,9 +114,10 @@ viewContent config =
                         [ Attributes.css
                             [ Css.height fontSize
                             , Css.maxWidth fontSize
+                            , Css.minWidth fontSize -- so it doesn't shrink when the label is long
                             , case config.size of
                                 Small ->
-                                    Css.marginRight (Css.px 2)
+                                    Css.marginRight (Css.px 3)
 
                                 Medium ->
                                     Css.marginRight (Css.px 3)
