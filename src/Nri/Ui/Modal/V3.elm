@@ -117,7 +117,7 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
             "modal-container"
             [ Css.width (Css.px 600)
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-            , Css.padding4 (Css.px 35) Css.zero (Css.px 25) Css.zero
+            , Css.padding4 (Css.px 40) Css.zero (Css.px 40) Css.zero
             , Css.margin2 (Css.px 75) Css.auto
             , Css.backgroundColor Nri.Ui.Colors.V1.white
             , Css.borderRadius (Css.px 20)
@@ -203,7 +203,7 @@ viewContent modalType content =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
-        , Css.padding2 (Css.px 30) (Css.px 45)
+        , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.minHeight (Css.px 150)
         , Css.boxSizing Css.borderBox
@@ -228,6 +228,7 @@ viewFooter footerContent =
                 , Css.flexWrap Css.noWrap
                 , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
                 , Css.width (Css.pct 100)
+                , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
                 ]
                 []
                 (List.map

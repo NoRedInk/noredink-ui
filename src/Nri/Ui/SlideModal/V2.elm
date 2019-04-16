@@ -257,7 +257,7 @@ viewContent content =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
-        , Css.padding2 (Css.px 30) (Css.px 45)
+        , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.marginBottom Css.auto
         , Css.boxSizing Css.borderBox
@@ -324,6 +324,7 @@ viewFlexibleFooter { buttonLabel, buttonMsg, buttonState } dotList =
         , Css.flexDirection Css.column
         , Css.alignItems Css.center
         , Css.margin4 (Css.px 20) Css.zero (Css.px 25) Css.zero
+        , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
         ]
         []
         [ Button.button
