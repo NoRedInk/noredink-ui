@@ -281,7 +281,7 @@ textStyle : Style
 textStyle =
     batch
         [ Fonts.baseFont
-        , fontSize (px 16)
+        , fontSize (px 15)
         , fontWeight (int 600)
         , color Colors.navy
         ]
