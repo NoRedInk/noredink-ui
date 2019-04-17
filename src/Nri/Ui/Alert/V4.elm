@@ -45,8 +45,7 @@ somethingWentWrong errorMessageForEngineers =
                 [ css
                     [ Fonts.baseFont
                     , Css.fontSize (Css.px 14)
-                    , Css.color Colors.gray75
-                    , Css.marginLeft (Css.px 25)
+                    , Css.color Colors.gray45
                     ]
                 ]
                 [ Html.text "Details for NoRedInk engineers" ]
@@ -55,7 +54,7 @@ somethingWentWrong errorMessageForEngineers =
                     [ Css.display Css.block
                     , Css.whiteSpace Css.normal
                     , Css.overflowWrap Css.breakWord
-                    , Css.color Colors.red
+                    , Css.color Colors.gray45
                     , Css.backgroundColor Colors.gray96
                     , Css.border3 (Css.px 1) Css.solid Colors.gray92
                     , Css.borderRadius (Css.px 3)
