@@ -132,7 +132,7 @@ alert =
         "Nri-Ui-Alert-V3__alert"
         [ Css.displayFlex
         , Css.justifyContent Css.start
-        , Css.alignItems Css.center
+        , Css.alignItems Css.flexStart
         , Css.paddingTop (Css.px 6)
         , Css.paddingBottom (Css.px 8)
         ]
@@ -157,7 +157,8 @@ iconContainer styles icon =
         "Nri-Ui-Alert-V3__iconContainer"
         (styles
             ++ [ -- Content positioning
-                 Css.marginRight (Css.px 5)
+                 Css.marginTop (Css.px -2)
+               , Css.marginRight (Css.px 5)
 
                -- Size
                , Css.borderRadius (Css.px 13)
