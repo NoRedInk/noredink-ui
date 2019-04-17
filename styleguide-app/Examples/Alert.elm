@@ -7,12 +7,12 @@ module Examples.Alert exposing (example)
 -}
 
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Alert.V3 as Alert
+import Nri.Ui.Alert.V4 as Alert
 
 
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Alert.V3.elm"
+    { filename = "Nri.Ui.Alert.V4.elm"
     , category = Messaging
     , content =
         [ Alert.error "This is an error"
