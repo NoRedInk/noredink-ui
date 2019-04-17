@@ -1,16 +1,14 @@
 module Nri.Ui.Alert.V4 exposing
-    ( error
-    , success
-    , tip
-    , warning
+    ( error, success, tip, warning
+    , complexError, complexWarning
+    , somethingWentWrong
     )
 
 {-| UI components that highlight information to the user.
 
-@docs error
-@docs success
-@docs tip
-@docs warning
+@docs error, success, tip, warning
+@docs complexError, complexWarning
+@docs somethingWentWrong
 
 -}
 
@@ -26,6 +24,39 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+
+
+{-| -}
+complexError : Html msg -> Html msg
+complexError content =
+    Html.text "TODO"
+
+
+{-| -}
+complexWarning : Html msg -> Html msg
+complexWarning content =
+    Html.text "TODO"
+
+
+{-| -}
+somethingWentWrong : String -> Html msg
+somethingWentWrong errorMessageForEngineers =
+    Html.div []
+        [ error "Sorry, something went wrong.  Please try again later."
+        , Html.details [ css [ Css.margin (Css.px 10) ] ]
+            [ Html.summary
+                [ css [ Css.color Colors.gray45 ] ]
+                [ Html.text "Details for NoRedInk engineers" ]
+            , Html.code
+                [ css
+                    [ Css.display Css.block
+                    , Css.whiteSpace Css.normal
+                    , Css.property "word-wrap" "break-word"
+                    ]
+                ]
+                [ Html.text errorMessageForEngineers ]
+            ]
+        ]
 
 
 {-| -}
