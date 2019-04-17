@@ -16,12 +16,17 @@ example =
     { filename = "Nri.Ui.Alert.V4.elm"
     , category = Messaging
     , content =
-        [ Alert.error "This is an **error**"
+        [ Html.h4 [] [ Html.text "Markdown-supporting:" ]
+        , Alert.error "This is an **error**"
         , Alert.warning "This is a **warning**"
         , Alert.tip "This is a **tip**"
         , Alert.success "This is a **success**"
+        , Html.hr [] []
+        , Html.h4 [] [ Html.text "Html-supporting:" ]
         , Alert.complexError (complexHtml "complexError")
         , Alert.complexWarning (complexHtml "complexWarning")
+        , Html.hr [] []
+        , Html.h4 [] [ Html.text "Stacktraces-supporting:" ]
         , Alert.somethingWentWrong exampleRailsError
         ]
     }
