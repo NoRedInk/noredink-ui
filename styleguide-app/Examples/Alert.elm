@@ -20,11 +20,20 @@ example =
         , Alert.warning "This is a warning"
         , Alert.tip "This is a tip"
         , Alert.success "This is a success"
-        , Alert.complexError (Html.text "TODO")
-        , Alert.complexWarning (Html.text "TODO")
+        , Alert.complexError (complexHtml "complexError")
+        , Alert.complexWarning (complexHtml "complexWarning")
         , Alert.somethingWentWrong exampleRailsError
         ]
     }
+
+
+complexHtml : String -> Html.Html msg
+complexHtml name =
+    Html.div []
+        [ Html.p [] [ Html.text "We support more complex alerts as well." ]
+        , Html.p [] [ Html.text "Like this, for example!" ]
+        , Html.p [] [ Html.text ("I'm a " ++ name) ]
+        ]
 
 
 
