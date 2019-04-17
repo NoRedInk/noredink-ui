@@ -4,7 +4,19 @@ module Nri.Ui.Alert.V4 exposing
     , somethingWentWrong
     )
 
-{-| UI components that highlight information to the user.
+{-|
+
+
+# Changes from V3:
+
+  - Changes the error font color from `purpleDark` to `purple`
+  - Adds `complexError` and `complexWarning` errors that support Html arguments
+  - Adds `somethingWentWrong` error for displaying stacktraces
+
+
+# About:
+
+UI components that highlight information to the user.
 
 @docs error, success, tip, warning
 @docs complexError, complexWarning
@@ -78,7 +90,12 @@ somethingWentWrong errorMessageForEngineers =
         ]
 
 
-{-| -}
+{-| import Nri.Ui.Alert.V4 as Alert
+
+    view =
+        Alert.error "Some **awesome** message!"
+
+-}
 error : String -> Html msg
 error content =
     alert
@@ -87,7 +104,12 @@ error content =
         ]
 
 
-{-| -}
+{-| import Nri.Ui.Alert.V4 as Alert
+
+    view =
+        Alert.success "Some **awesome** message!"
+
+-}
 success : String -> Html msg
 success content =
     alert
@@ -108,7 +130,12 @@ success content =
         ]
 
 
-{-| -}
+{-| import Nri.Ui.Alert.V4 as Alert
+
+    view =
+        Alert.tip "Some **awesome** message!"
+
+-}
 tip : String -> Html msg
 tip content =
     alert
@@ -117,7 +144,12 @@ tip content =
         ]
 
 
-{-| -}
+{-| import Nri.Ui.Alert.V4 as Alert
+
+    view =
+        Alert.warning "Some **awesome** message!"
+
+-}
 warning : String -> Html msg
 warning content =
     alert
