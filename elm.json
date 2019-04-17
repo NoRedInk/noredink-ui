@@ -7,6 +7,7 @@
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
+        "Nri.Ui.Alert.V4",
         "Nri.Ui.AssetPath",
         "Nri.Ui.BannerAlert.V2",
         "Nri.Ui.BannerAlert.V3",
