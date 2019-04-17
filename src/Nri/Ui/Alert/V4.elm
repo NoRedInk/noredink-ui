@@ -43,15 +43,28 @@ somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     Html.div []
         [ error "Sorry, something went wrong.  Please try again later."
-        , Html.details [ css [ Css.margin (Css.px 10) ] ]
+        , Html.details []
             [ Html.summary
-                [ css [ Css.color Colors.gray45 ] ]
+                [ css
+                    [ Fonts.baseFont
+                    , Css.fontSize (Css.px 14)
+                    , Css.color Colors.gray75
+                    , Css.marginLeft (Css.px 25)
+                    ]
+                ]
                 [ Html.text "Details for NoRedInk engineers" ]
             , Html.code
                 [ css
                     [ Css.display Css.block
                     , Css.whiteSpace Css.normal
-                    , Css.property "word-wrap" "break-word"
+                    , Css.overflowWrap Css.breakWord
+                    , Css.color Colors.red
+                    , Css.backgroundColor Colors.gray96
+                    , Css.border3 (Css.px 1) Css.solid Colors.gray92
+                    , Css.borderRadius (Css.px 3)
+                    , Css.padding2 (Css.px 2) (Css.px 4)
+                    , Css.fontSize (Css.px 12)
+                    , Css.fontFamily Css.monospace
                     ]
                 ]
                 [ Html.text errorMessageForEngineers ]
