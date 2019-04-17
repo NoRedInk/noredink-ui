@@ -22,10 +22,6 @@ example =
         , Alert.tip "This is a **tip**"
         , Alert.success "This is a **success**"
         , Html.hr [] []
-        , Html.h4 [] [ Html.text "Html-supporting:" ]
-        , Alert.complexError (complexHtml "complexError")
-        , Alert.complexWarning (complexHtml "complexWarning")
-        , Html.hr [] []
         , Html.h4 [] [ Html.text "Stacktraces-supporting:" ]
         , Alert.somethingWentWrong exampleRailsError
         ]

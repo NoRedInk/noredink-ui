@@ -1,6 +1,5 @@
 module Nri.Ui.Alert.V4 exposing
     ( error, success, tip, warning
-    , complexError, complexWarning
     , somethingWentWrong
     )
 
@@ -10,7 +9,6 @@ module Nri.Ui.Alert.V4 exposing
 # Changes from V3:
 
   - Changes the error font color from `purpleDark` to `purple`
-  - Adds `complexError` and `complexWarning` errors that support Html arguments
   - Adds `somethingWentWrong` error for displaying stacktraces
 
 
@@ -19,7 +17,6 @@ module Nri.Ui.Alert.V4 exposing
 UI components that highlight information to the user.
 
 @docs error, success, tip, warning
-@docs complexError, complexWarning
 @docs somethingWentWrong
 
 -}
@@ -36,24 +33,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
-
-
-{-| -}
-complexError : Html msg -> Html msg
-complexError content =
-    alert
-        [ exclamation Colors.purple
-        , alertHtml Colors.purple [ content ]
-        ]
-
-
-{-| -}
-complexWarning : Html msg -> Html msg
-complexWarning content =
-    alert
-        [ exclamation Colors.red
-        , alertHtml Colors.red [ content ]
-        ]
 
 
 {-| -}
@@ -206,13 +185,6 @@ iconContainer styles icon =
 
 alertString : Css.ColorValue compatible -> String -> Html msg
 alertString color content =
-    Markdown.toHtml Nothing content
-        |> List.map fromUnstyled
-        |> alertHtml color
-
-
-alertHtml : Css.ColorValue compatible -> List (Html msg) -> Html msg
-alertHtml color content =
     Nri.Ui.styled Html.div
         "Nri-Ui-Alert-V4--alert"
         [ Css.color color
@@ -223,4 +195,4 @@ alertHtml color content =
         , Css.Global.descendants [ Css.Global.p [ Css.margin Css.zero ] ]
         ]
         []
-        content
+        (Markdown.toHtml Nothing content |> List.map fromUnstyled)
