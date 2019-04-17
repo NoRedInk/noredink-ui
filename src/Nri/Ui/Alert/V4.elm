@@ -29,13 +29,19 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 {-| -}
 complexError : Html msg -> Html msg
 complexError content =
-    Html.text "TODO"
+    alert
+        [ exclamation Colors.purple
+        , alertHtml Colors.purple [ content ]
+        ]
 
 
 {-| -}
 complexWarning : Html msg -> Html msg
 complexWarning content =
-    Html.text "TODO"
+    alert
+        [ exclamation Colors.red
+        , alertHtml Colors.red [ content ]
+        ]
 
 
 {-| -}
@@ -77,7 +83,7 @@ error : String -> Html msg
 error content =
     alert
         [ exclamation Colors.purple
-        , viewAlertContent Colors.purple content
+        , alertString Colors.purple content
         ]
 
 
@@ -98,7 +104,7 @@ success content =
                 ]
                 [ NriSvg.toHtml checkmark ]
             )
-        , viewAlertContent Colors.greenDarkest content
+        , alertString Colors.greenDarkest content
         ]
 
 
@@ -107,7 +113,7 @@ tip : String -> Html msg
 tip content =
     alert
         [ iconContainer [ Css.color Colors.yellow ] (NriSvg.toHtml bulb)
-        , viewAlertContent Colors.navy content
+        , alertString Colors.navy content
         ]
 
 
@@ -116,7 +122,7 @@ warning : String -> Html msg
 warning content =
     alert
         [ exclamation Colors.red
-        , viewAlertContent Colors.red content
+        , alertString Colors.red content
         ]
 
 
@@ -165,10 +171,17 @@ iconContainer styles icon =
         [ icon ]
 
 
-viewAlertContent : Css.ColorValue compatible -> String -> Html.Styled.Html msg
-viewAlertContent color content =
+alertString : Css.ColorValue compatible -> String -> Html msg
+alertString color content =
+    Markdown.toHtml Nothing content
+        |> List.map fromUnstyled
+        |> alertHtml color
+
+
+alertHtml : Css.ColorValue compatible -> List (Html msg) -> Html msg
+alertHtml color content =
     Nri.Ui.styled Html.div
-        "Nri-Ui-Alert-V3__viewAlertContent"
+        "Nri-Ui-Alert-V4--alert"
         [ Css.color color
         , Fonts.baseFont
         , Css.fontSize (Css.px 13)
@@ -177,4 +190,4 @@ viewAlertContent color content =
         , Css.Global.descendants [ Css.Global.p [ Css.margin Css.zero ] ]
         ]
         []
-        (Markdown.toHtml Nothing content |> List.map fromUnstyled)
+        content
