@@ -33,7 +33,7 @@ error : String -> Html msg
 error content =
     alert
         [ exclamation Colors.purple
-        , viewAlertContent Colors.purpleDark content
+        , viewAlertContent Colors.purple content
         ]
 
 
