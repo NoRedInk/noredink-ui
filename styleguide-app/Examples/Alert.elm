@@ -16,10 +16,10 @@ example =
     { filename = "Nri.Ui.Alert.V4.elm"
     , category = Messaging
     , content =
-        [ Alert.error "This is an error"
-        , Alert.warning "This is a warning"
-        , Alert.tip "This is a tip"
-        , Alert.success "This is a success"
+        [ Alert.error "This is an **error**"
+        , Alert.warning "This is a **warning**"
+        , Alert.tip "This is a **tip**"
+        , Alert.success "This is a **success**"
         , Alert.complexError (complexHtml "complexError")
         , Alert.complexWarning (complexHtml "complexWarning")
         , Alert.somethingWentWrong exampleRailsError
