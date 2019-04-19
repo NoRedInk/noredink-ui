@@ -130,7 +130,21 @@ viewAlertContent color content =
         , Css.fontSize (Css.px 13)
         , Css.lineHeight (Css.num 1.2)
         , Css.listStyleType Css.none
-        , Css.Global.descendants [ Css.Global.p [ Css.margin Css.zero ] ]
+
+        -- This global selector and overrides are necessary due to
+        -- old stylesheets used on the monolith that set the
+        -- `.txt p { font-size: 18px; }` -- without these overrides,
+        -- we may see giant ugly alerts.
+        -- Remove these if you want to! but be emotionally prepped
+        -- to deal with visual regressions. 🙏
+        , Css.Global.descendants
+            [ Css.Global.p
+                [ Css.margin Css.zero
+                , Css.lineHeight (Css.num 1.2)
+                , Css.fontSize (Css.px 13)
+                , Fonts.baseFont
+                ]
+            ]
         ]
         []
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)
