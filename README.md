@@ -54,7 +54,7 @@ To see them locally:
 script/develop.sh
 ```
 
-If you'd like to test your widget in the monolith before publishing, check out the helpful tips [here](https://paper.dropbox.com/doc/Grafting-noredink-ui-into-the-monolith--AOae7awXY8Br7YEhbZunUEZdAg-ff7N9zwMyRR2D5Umza5Ez).
+If you'd like to test your widget in the monolith before publishing, run `script/test-elm-package.py ../path_to_this_repo` from the monolith's directory.
 
 ## Tests
 
