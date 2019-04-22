@@ -358,7 +358,7 @@ highlightYellowDark =
 -}
 highlightCyan : Css.Color
 highlightCyan =
-    hex "#b9fff7"
+    hex "#9BFFF4"
 
 
 {-|
