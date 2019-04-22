@@ -3,10 +3,11 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "6.12.0",
+    "version": "6.13.0",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
+        "Nri.Ui.Alert.V4",
         "Nri.Ui.AssetPath",
         "Nri.Ui.BannerAlert.V2",
         "Nri.Ui.BannerAlert.V3",
