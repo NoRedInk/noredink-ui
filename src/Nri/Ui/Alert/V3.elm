@@ -108,6 +108,7 @@ iconContainer styles icon =
         (styles
             ++ [ -- Content positioning
                  Css.marginRight (Css.px 5)
+               , Css.lineHeight (Css.num 1.2)
 
                -- Size
                , Css.borderRadius (Css.px 13)
