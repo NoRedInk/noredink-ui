@@ -13,7 +13,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V3 as Modal
+import Nri.Ui.Modal.V4 as Modal
 
 
 {-| -}
