@@ -1,14 +1,18 @@
 module Nri.Ui.Modal.V4 exposing
-    ( Model
+    ( Model, Dismissibility(..)
     , info
     , warning
     )
 
-{-| Changes from V2:
+{-| Changes from V3:
+
+  - changed `onDismiss` from `Maybe msg` to `Dismissibility msg`
+
+Changes from V2:
 
   - Add assets for close button
 
-@docs Model
+@docs Model, Dismissibility
 @docs info
 @docs warning
 
@@ -44,9 +48,22 @@ type alias Model msg =
     , visibleTitle : Bool
     , content : Html msg
     , footerContent : List (Html msg)
-    , onDismiss : Maybe msg
+    , onDismiss : Dismissibility msg
     , width : Maybe Int
     }
+
+
+{-|
+
+  - `NotDismissible`
+  - `WithBackgroundOrX`: user can dismiss by clicking "X" (top right) or modal backdrop
+  - `WithOnlyX`: user can dismiss by clicking "X" (top right)
+
+-}
+type Dismissibility msg
+    = NotDismissible
+    | WithBackgroundOrX msg
+    | WithOnlyX msg
 
 
 type alias Assets r =
@@ -106,11 +123,14 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
             , Css.top Css.zero
             ]
             (case onDismiss of
-                Nothing ->
+                NotDismissible ->
                     []
 
-                Just msg ->
+                WithBackgroundOrX msg ->
                     [ onClick msg ]
+
+                WithOnlyX msg ->
+                    []
             )
             []
         , Nri.Ui.styled div
@@ -138,11 +158,14 @@ view assets modalType { title, visibleTitle, content, onDismiss, footerContent, 
                     [ Css.overflow Css.hidden ]
                 ]
             , case onDismiss of
-                Just msg ->
+                NotDismissible ->
+                    text ""
+
+                WithBackgroundOrX msg ->
                     closeButton assets msg
 
-                Nothing ->
-                    text ""
+                WithOnlyX msg ->
+                    closeButton assets msg
             , if visibleTitle then
                 viewHeader modalType title
 
