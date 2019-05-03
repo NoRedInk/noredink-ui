@@ -163,7 +163,7 @@ navigation route =
                     , Inputs
                     , Buttons
                     , Icons
-                    , Behaviors
+                    , Widgets
                     , Messaging
                     , Modals
                     , Pages

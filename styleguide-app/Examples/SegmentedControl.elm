@@ -39,7 +39,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { filename = "Nri/Ui/SegmentedControl/V6.elm"
-    , category = Behaviors
+    , category = Widgets
     , content =
         List.map (Html.map parentMessage)
             [ fillContainerCheckbox state.width

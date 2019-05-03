@@ -33,7 +33,7 @@ type Category
     | Inputs
     | Buttons
     | Icons
-    | Behaviors
+    | Widgets
     | Messaging
     | Modals
     | Colors
@@ -53,8 +53,8 @@ categoryFromString string =
         "Inputs" ->
             Ok Inputs
 
-        "Behaviors" ->
-            Ok Behaviors
+        "Widgets" ->
+            Ok Widgets
 
         "Buttons" ->
             Ok Buttons
@@ -93,8 +93,8 @@ categoryForDisplay category =
         Inputs ->
             "Inputs"
 
-        Behaviors ->
-            "Behaviors"
+        Widgets ->
+            "Widgets"
 
         Buttons ->
             "Buttons and Links"

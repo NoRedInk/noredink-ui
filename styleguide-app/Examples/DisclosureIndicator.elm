@@ -30,7 +30,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { filename = "ui/src/Nri/Ui/DisclosureIndicator/V1..elm"
-    , category = Behaviors
+    , category = Widgets
     , content =
         [ Html.h3 [] [ Html.text "Panel indicator" ]
         , Html.div
