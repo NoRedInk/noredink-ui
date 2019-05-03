@@ -13,7 +13,7 @@ import Nri.Ui.BannerAlert.V3 as BannerAlert
 
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.BannerAlert.V3"
+    { name = "Nri.Ui.BannerAlert.V3"
     , category = Messaging
     , content =
         [ h3 [] [ text "error" ]

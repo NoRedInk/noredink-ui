@@ -20,7 +20,7 @@ import Nri.Ui.Text.V2 as Text
 {-| -}
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Icon.V4"
+    { name = "Nri.Ui.Icon.V4"
     , category = Icons
     , content =
         [ viewIconSection "Mastery Icons"

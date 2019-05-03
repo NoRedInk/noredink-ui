@@ -14,7 +14,7 @@ import Nri.Ui.Text.V2 as Text
 {-| -}
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Text.V2"
+    { name = "Nri.Ui.Text.V2"
     , category = Text
     , content =
         let

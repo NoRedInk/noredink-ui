@@ -17,7 +17,7 @@ import Nri.Ui.Page.V2 as Page
 {-| -}
 example : msg -> ModuleExample msg
 example noOp =
-    { filename = "Nri.Ui.Page.V1"
+    { name = "Nri.Ui.Page.V1"
     , category = Pages
     , content =
         [ Css.Global.global

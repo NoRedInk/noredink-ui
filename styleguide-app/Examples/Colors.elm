@@ -15,7 +15,7 @@ import Nri.Ui.Colors.V1 as Colors
 
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Colors.V1"
+    { name = "Nri.Ui.Colors.V1"
     , category = Colors
     , content =
         [ [ ( "gray20", Colors.gray20, "Main text" )

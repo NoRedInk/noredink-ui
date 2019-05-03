@@ -14,7 +14,7 @@ import Nri.Ui.Colors.V1 exposing (..)
 
 
 type alias ModuleExample msg =
-    { filename : String
+    { name : String
     , content : List (Html msg)
     , category : Category
     }
@@ -122,7 +122,7 @@ categoryForDisplay category =
 
 
 view : Bool -> ModuleExample msg -> Html msg
-view showFocusLink { filename, content } =
+view showFocusLink { name, content } =
     Html.div
         []
         [ Html.styled Html.div
@@ -138,11 +138,11 @@ view showFocusLink { filename, content } =
                 , fontSize (px 20)
                 ]
                 []
-                [ Html.text filename
+                [ Html.text name
                 , Html.text " "
                 , if showFocusLink then
                     Html.a
-                        [ Attributes.href <| "#doodad/" ++ filename ]
+                        [ Attributes.href <| "#doodad/" ++ name ]
                         [ Html.text "(see only this)" ]
 
                   else

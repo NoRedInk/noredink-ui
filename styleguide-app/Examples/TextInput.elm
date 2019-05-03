@@ -27,7 +27,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.TextInput.V4"
+    { name = "Nri.Ui.TextInput.V4"
     , category = Inputs
     , content =
         [ Html.map parentMessage <|

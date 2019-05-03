@@ -32,7 +32,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.Checkbox.V5"
+    { name = "Nri.Ui.Checkbox.V5"
     , category = Inputs
     , content =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
