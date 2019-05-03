@@ -2,7 +2,6 @@ module View exposing (view)
 
 import Browser exposing (Document)
 import Css exposing (..)
-import Css.Global exposing (Snippet)
 import Headings
 import Html as RootHtml
 import Html.Attributes
@@ -27,57 +26,54 @@ view model =
 
 view_ : Model -> Html Msg
 view_ model =
-    Html.div []
-        [ Css.Global.global layoutFixer
+    Html.styled Html.div
+        [ displayFlex
+        , alignItems flexStart
+        ]
+        []
+        [ navigation model.route
         , Html.styled Html.div
-            [ displayFlex
-            , alignItems flexStart
-            ]
+            [ flexGrow (int 1) ]
             []
-            [ navigation model.route
-            , Html.styled Html.div
-                [ flexGrow (int 1) ]
-                []
-                (case model.route of
-                    Routes.Doodad doodad ->
-                        [ Headings.h2
-                            [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
+            (case model.route of
+                Routes.Doodad doodad ->
+                    [ Headings.h2
+                        [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
+                    , nriThemedModules model.moduleStates
+                        |> List.filter (\m -> m.filename == doodad)
+                        |> List.map (ModuleExample.view True)
+                        |> Html.div []
+                        |> Html.map UpdateModuleStates
+                    ]
+
+                Routes.Category category ->
+                    [ Html.styled Html.section
+                        [ sectionStyles ]
+                        []
+                        [ newComponentsLink
+                        , Headings.h2 [ Html.text (categoryForDisplay category) ]
                         , nriThemedModules model.moduleStates
-                            |> List.filter (\m -> m.filename == doodad)
+                            |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
                             |> Html.div []
                             |> Html.map UpdateModuleStates
                         ]
+                    ]
 
-                    Routes.Category category ->
-                        [ Html.styled Html.section
-                            [ sectionStyles ]
-                            []
-                            [ newComponentsLink
-                            , Headings.h2 [ Html.text (categoryForDisplay category) ]
-                            , nriThemedModules model.moduleStates
-                                |> List.filter (\doodad -> category == doodad.category)
-                                |> List.map (ModuleExample.view True)
-                                |> Html.div []
-                                |> Html.map UpdateModuleStates
-                            ]
+                Routes.All ->
+                    [ Html.styled Html.section
+                        [ sectionStyles ]
+                        []
+                        [ newComponentsLink
+                        , Headings.h2 [ Html.text "NRI-Themed Modules" ]
+                        , Headings.h3 [ Html.text "All Categories" ]
+                        , nriThemedModules model.moduleStates
+                            |> List.map (ModuleExample.view True)
+                            |> Html.div []
+                            |> Html.map UpdateModuleStates
                         ]
-
-                    Routes.All ->
-                        [ Html.styled Html.section
-                            [ sectionStyles ]
-                            []
-                            [ newComponentsLink
-                            , Headings.h2 [ Html.text "NRI-Themed Modules" ]
-                            , Headings.h3 [ Html.text "All Categories" ]
-                            , nriThemedModules model.moduleStates
-                                |> List.map (ModuleExample.view True)
-                                |> Html.div []
-                                |> Html.map UpdateModuleStates
-                            ]
-                        ]
-                )
-            ]
+                    ]
+            )
         ]
 
 
@@ -173,29 +169,3 @@ navigation route =
 sectionStyles : Css.Style
 sectionStyles =
     Css.batch [ margin2 (px 40) zero ]
-
-
-layoutFixer : List Snippet
-layoutFixer =
-    -- TODO: remove when universal header seizes power
-    [ Css.Global.selector "#header-menu"
-        [ Css.property "float" "none"
-        ]
-    , Css.Global.selector "#page-container"
-        [ maxWidth (px 1400)
-        ]
-    , Css.Global.selector ".anonymous .log-in-button"
-        [ Css.property "float" "none"
-        , right zero
-        , top zero
-        ]
-    , Css.Global.selector ".l-inline-blocks"
-        [ textAlign right
-        ]
-    , Css.Global.everything
-        [ fontFamily inherit
-        ]
-    , Css.Global.body
-        [ Fonts.baseFont
-        ]
-    ]
