@@ -54,7 +54,7 @@ view_ model =
                             [ sectionStyles ]
                             []
                             [ newComponentsLink
-                            , Headings.h2 [ Html.text (Debug.toString category) ]
+                            , Headings.h2 [ Html.text (categoryForDisplay category) ]
                             , nriThemedModules model.moduleStates
                                 |> List.filter (\doodad -> category == doodad.category)
                                 |> List.map (ModuleExample.view True)
