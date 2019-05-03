@@ -63,8 +63,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ Headings.h2 [ Html.text "NRI-Themed Modules" ]
-                        , Headings.h3 [ Html.text "All Categories" ]
+                        [ Headings.h2 [ Html.text "All" ]
                         , nriThemedModules model.moduleStates
                             |> List.map (ModuleExample.view True)
                             |> Html.div []
