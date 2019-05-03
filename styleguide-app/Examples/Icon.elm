@@ -62,6 +62,7 @@ example =
             , { icon = Icon.preview, background = Light, alt = "Preview" }
             , { icon = Icon.performance, background = Light, alt = "Performance" }
             , { icon = Icon.openClose, background = Light, alt = "OpenClose" }
+            , { icon = Icon.download, background = Light, alt = "Download" }
             ]
         , viewIconSection "Edit"
             [ { icon = Icon.edit, background = Light, alt = "Edit" }
@@ -94,7 +95,7 @@ example =
         , viewIconSection "Bulbs and Tips"
             [ { icon = Icon.bulb, background = Light, alt = "Bulb" }
             , { icon = Icon.lightBulb, background = Light, alt = "LightBulb" }
-            , { icon = Icon.help, background = Light, alt = "Help" }
+            , { icon = Icon.helpSvg, background = Light, alt = "Help" }
             ]
         , viewIconSection "Locks and keys"
             [ { icon = Icon.key, background = Light, alt = "Key" }
@@ -103,9 +104,6 @@ example =
         , viewIconSection "Time"
             [ { icon = Icon.calendar, background = Light, alt = "Calendar" }
             , { icon = Icon.clock, background = Light, alt = "Clock" }
-            ]
-        , viewIconSection "Save helpers"
-            [ { icon = Icon.download, background = Light, alt = "Download" }
             ]
         , viewIconSection "Uncategorized (SVGs)"
             [ { icon = Icon.activity, background = Light, alt = "Activity" }
@@ -118,11 +116,6 @@ example =
             , { icon = Icon.newspaper, background = Light, alt = "Newspaper" }
             , { icon = Icon.sort, background = Light, alt = "Sort" }
             , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }
-            ]
-        , viewIconSection "Uncategorized Images"
-            [ { icon = Icon.add, background = Light, alt = "Add" }
-            , { icon = Icon.equalitySign, background = Light, alt = "EqualitySign" }
-            , { icon = Icon.logo, background = Light, alt = "Logo" }
             ]
         ]
     }
