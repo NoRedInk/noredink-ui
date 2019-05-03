@@ -105,22 +105,45 @@ navigation route =
                     False
 
         navLink category =
-            Html.li []
-                [ Html.styled Html.a
-                    [ backgroundColor transparent
-                    , borderStyle none
-                    , if isActive category then
-                        color Colors.navy
+            Html.styled Html.a
+                [ backgroundColor transparent
+                , borderStyle none
+                , if isActive category then
+                    color Colors.navy
 
-                      else
-                        color Colors.azure
-                    ]
-                    [ Attributes.href <| "#category/" ++ Debug.toString category ]
-                    [ Html.text (categoryForDisplay category) ]
+                  else
+                    color Colors.azure
+                , textDecoration none
                 ]
+                [ Attributes.href <| "#category/" ++ Debug.toString category ]
+                [ Html.text (categoryForDisplay category) ]
+
+        allLink =
+            Html.styled Html.a
+                [ backgroundColor transparent
+                , borderStyle none
+                , if route == Routes.All then
+                    color Colors.navy
+
+                  else
+                    color Colors.azure
+                , textDecoration none
+                ]
+                [ Attributes.href "#" ]
+                [ Html.text "All" ]
+
+        toNavLi element =
+            Html.li
+                [ css
+                    [ margin2 (px 10) zero
+                    , listStyle none
+                    , textDecoration none
+                    ]
+                ]
+                [ element ]
     in
     Html.styled Html.div
-        [ flexBasis (px 300)
+        [ flexBasis (px 200)
         , backgroundColor Colors.gray92
         , marginRight (px 40)
         , padding (px 25)
@@ -131,43 +154,28 @@ navigation route =
         []
         [ Headings.h4
             [ Html.text "Categories" ]
-        , Html.styled Html.ul
-            [ margin4 zero zero (px 40) zero
-            , Css.Global.children
-                [ Css.Global.selector "li"
-                    [ margin2 (px 10) zero
-                    ]
+        , (allLink
+            :: List.map
+                navLink
+                [ Messaging
+                , Animations
+                , Buttons
+                , Colors
+                , Pages
+                , Icons
+                , Inputs
+                , Modals
+                , Tables
+                , Text
+                , Widgets
                 ]
-            ]
-            []
-          <|
-            Html.li []
-                [ Html.styled Html.a
-                    [ backgroundColor transparent
-                    , borderStyle none
-                    , if route == Routes.All then
-                        color Colors.navy
-
-                      else
-                        color Colors.azure
-                    ]
-                    [ Attributes.href "#" ]
-                    [ Html.text "All" ]
+          )
+            |> List.map toNavLi
+            |> Html.styled Html.ul
+                [ margin4 zero zero (px 40) zero
+                , padding zero
                 ]
-                :: List.map
-                    navLink
-                    [ Messaging
-                    , Animations
-                    , Buttons
-                    , Colors
-                    , Pages
-                    , Icons
-                    , Inputs
-                    , Modals
-                    , Tables
-                    , Text
-                    , Widgets
-                    ]
+                []
         ]
 
 
