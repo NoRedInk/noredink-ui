@@ -38,11 +38,16 @@ view_ model =
             []
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ nriThemedModules model.moduleStates
-                        |> List.filter (\m -> m.name == doodad)
-                        |> List.map (ModuleExample.view False)
-                        |> Html.div []
-                        |> Html.map UpdateModuleStates
+                    [ Html.styled Html.section
+                        [ sectionStyles ]
+                        []
+                        [ Headings.h2 [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
+                        , nriThemedModules model.moduleStates
+                            |> List.filter (\m -> m.name == doodad)
+                            |> List.map (ModuleExample.view False)
+                            |> Html.div []
+                            |> Html.map UpdateModuleStates
+                        ]
                     ]
 
                 Routes.Category category ->
