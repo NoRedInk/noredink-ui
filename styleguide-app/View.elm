@@ -29,6 +29,7 @@ view_ model =
     Html.styled Html.div
         [ displayFlex
         , alignItems flexStart
+        , minHeight (vh 100)
         ]
         []
         [ navigation model.route
