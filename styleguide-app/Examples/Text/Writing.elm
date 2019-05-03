@@ -13,7 +13,7 @@ import Nri.Ui.Text.Writing.V1 as TextWriting
 example : ModuleExample msg
 example =
     { filename = "Nri.Ui.Text.Writing.V1.elm"
-    , category = TextWriting
+    , category = Text
     , content =
         let
             longerBody =

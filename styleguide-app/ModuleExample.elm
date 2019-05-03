@@ -38,8 +38,6 @@ type Category
     | Modals
     | Colors
     | Text
-    | TextWriting
-    | Fonts
     | DynamicSymbols
     | Pages
     | QuestionTypes
@@ -76,12 +74,6 @@ categoryFromString string =
 
         "Text" ->
             Ok Text
-
-        "TextWriting" ->
-            Ok TextWriting
-
-        "Fonts" ->
-            Ok Fonts
 
         "DynamicSymbols" ->
             Ok DynamicSymbols
@@ -125,12 +117,6 @@ categoryForDisplay category =
 
         Text ->
             "Text"
-
-        TextWriting ->
-            "TextWriting"
-
-        Fonts ->
-            "Fonts"
 
         DynamicSymbols ->
             "Dynamic Symbols"
