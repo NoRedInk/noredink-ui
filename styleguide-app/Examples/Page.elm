@@ -26,7 +26,6 @@ example noOp =
                 , Css.flexWrap Css.wrap
                 ]
             ]
-        , Headings.h3 [ Html.text "Pages for problems" ]
         , Headings.h4 [ Html.text "Page: Not Found" ]
         , Page.notFound
             { link = noOp
