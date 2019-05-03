@@ -103,7 +103,7 @@ categoryForDisplay category =
             "Icons"
 
         Messaging ->
-            "Messaging"
+            "Alerts and Messages"
 
         Modals ->
             "Modals"
