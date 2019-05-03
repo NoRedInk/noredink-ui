@@ -141,7 +141,7 @@ viewAlertContent color content =
         , Css.Global.descendants
             [ Css.Global.p
                 [ Css.margin Css.zero
-                , Css.lineHeight (Css.num 1.2)
+                , Css.lineHeight iconContainerSize
                 , Css.fontSize (Css.px 13)
                 , Fonts.baseFont
                 ]
