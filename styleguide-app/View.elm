@@ -156,17 +156,17 @@ navigation route =
                 ]
                 :: List.map
                     navLink
-                    [ Animations
-                    , Text
-                    , Colors
-                    , Tables
-                    , Inputs
+                    [ Messaging
+                    , Animations
                     , Buttons
-                    , Icons
-                    , Widgets
-                    , Messaging
-                    , Modals
+                    , Colors
                     , Pages
+                    , Icons
+                    , Inputs
+                    , Modals
+                    , Tables
+                    , Text
+                    , Widgets
                     ]
         ]
 
