@@ -38,9 +38,7 @@ type Category
     | Modals
     | Colors
     | Text
-    | DynamicSymbols
     | Pages
-    | QuestionTypes
 
 
 {-| Used for route changes
@@ -75,14 +73,8 @@ categoryFromString string =
         "Text" ->
             Ok Text
 
-        "DynamicSymbols" ->
-            Ok DynamicSymbols
-
         "Pages" ->
             Ok Pages
-
-        "QuestionTypes" ->
-            Ok QuestionTypes
 
         _ ->
             Err "Invalid String"
@@ -118,14 +110,8 @@ categoryForDisplay category =
         Text ->
             "Text"
 
-        DynamicSymbols ->
-            "Dynamic Symbols"
-
         Pages ->
             "Pages"
-
-        QuestionTypes ->
-            "Question types / Quiz UI"
 
 
 view : Bool -> ModuleExample msg -> Html msg
