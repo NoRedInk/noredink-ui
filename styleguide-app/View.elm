@@ -167,7 +167,6 @@ navigation route =
                     , Behaviors
                     , Messaging
                     , Modals
-                    , Writing
                     , DynamicSymbols
                     , Pages
                     , QuestionTypes

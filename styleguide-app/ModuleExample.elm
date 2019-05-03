@@ -36,7 +36,6 @@ type Category
     | Behaviors
     | Messaging
     | Modals
-    | Writing
     | NotesToDeveloper
     | Colors
     | Text
@@ -72,9 +71,6 @@ categoryFromString string =
 
         "Modals" ->
             Ok Modals
-
-        "Writing" ->
-            Ok Writing
 
         "NotesToDeveloper" ->
             Ok NotesToDeveloper
@@ -127,9 +123,6 @@ categoryForDisplay category =
 
         Modals ->
             "Modals"
-
-        Writing ->
-            "Writing"
 
         NotesToDeveloper ->
             "NotesToDeveloper"
