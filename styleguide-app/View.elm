@@ -38,9 +38,7 @@ view_ model =
             []
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ Headings.h2
-                        [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
-                    , nriThemedModules model.moduleStates
+                    [ nriThemedModules model.moduleStates
                         |> List.filter (\m -> m.name == doodad)
                         |> List.map (ModuleExample.view False)
                         |> Html.div []
