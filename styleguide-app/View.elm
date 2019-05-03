@@ -20,7 +20,7 @@ import Update exposing (..)
 
 view : Model -> Document Msg
 view model =
-    { title = "Style Guide"
+    { title = "Styleguide 😎"
     , body = [ view_ model |> Html.toUnstyled ]
     }
 
