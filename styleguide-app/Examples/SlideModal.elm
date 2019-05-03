@@ -32,7 +32,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.SlideModal.V2.elm"
+    { filename = "Nri.Ui.SlideModal.V2"
     , category = Modals
     , content =
         [ viewModal state.modal

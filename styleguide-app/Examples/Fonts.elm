@@ -16,7 +16,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 {-| -}
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Fonts.V1.elm"
+    { filename = "Nri.Ui.Fonts.V1"
     , category = Text
     , content =
         [ Headings.h3 [ Html.text "baseFont" ]
