@@ -156,7 +156,8 @@ navigation route =
                 ]
                 :: List.map
                     navLink
-                    [ Text
+                    [ Animations
+                    , Text
                     , Colors
                     , Tables
                     , Inputs

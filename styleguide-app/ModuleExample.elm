@@ -39,6 +39,7 @@ type Category
     | Colors
     | Text
     | Pages
+    | Animations
 
 
 {-| Used for route changes
@@ -76,6 +77,9 @@ categoryFromString string =
         "Pages" ->
             Ok Pages
 
+        "Animations" ->
+            Ok Animations
+
         _ ->
             Err "Invalid String"
 
@@ -112,6 +116,9 @@ categoryForDisplay category =
 
         Pages ->
             "Error Pages"
+
+        Animations ->
+            "Animations"
 
 
 view : Bool -> ModuleExample msg -> Html msg
