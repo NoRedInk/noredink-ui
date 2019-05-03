@@ -50,8 +50,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ newComponentsLink
-                        , Headings.h2 [ Html.text (categoryForDisplay category) ]
+                        [ Headings.h2 [ Html.text (categoryForDisplay category) ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
@@ -64,8 +63,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ newComponentsLink
-                        , Headings.h2 [ Html.text "NRI-Themed Modules" ]
+                        [ Headings.h2 [ Html.text "NRI-Themed Modules" ]
                         , Headings.h3 [ Html.text "All Categories" ]
                         , nriThemedModules model.moduleStates
                             |> List.map (ModuleExample.view True)
@@ -74,18 +72,6 @@ view_ model =
                         ]
                     ]
             )
-        ]
-
-
-newComponentsLink : Html Msg
-newComponentsLink =
-    Html.div []
-        [ Headings.h2 [ Html.text "New Styleguide Components" ]
-        , Html.div []
-            [ Html.text "Future styleguide components can be found in "
-            , Html.a [ href "https://app.zeplin.io/project/5973fb495395bdc871ebb055" ] [ Html.text "this Zepplin" ]
-            , Html.text "."
-            ]
         ]
 
 
@@ -110,6 +96,7 @@ navigation route =
 
                   else
                     color Colors.azure
+                , Fonts.baseFont
                 ]
                 [ Attributes.href hash ]
                 [ Html.text displayName ]
