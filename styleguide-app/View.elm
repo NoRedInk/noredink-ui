@@ -158,7 +158,7 @@ navigation route =
                     navLink
                     [ Text
                     , Colors
-                    , Layout
+                    , Tables
                     , Inputs
                     , Buttons
                     , Icons

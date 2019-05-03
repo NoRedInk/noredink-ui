@@ -29,7 +29,7 @@ type alias ModuleMessages moduleMsg parentMsg =
 
 
 type Category
-    = Layout
+    = Tables
     | Inputs
     | Buttons
     | Icons
@@ -46,8 +46,8 @@ type Category
 categoryFromString : String -> Result String Category
 categoryFromString string =
     case string of
-        "Layout" ->
-            Ok Layout
+        "Tables" ->
+            Ok Tables
 
         "Inputs" ->
             Ok Inputs
@@ -83,8 +83,8 @@ categoryFromString string =
 categoryForDisplay : Category -> String
 categoryForDisplay category =
     case category of
-        Layout ->
-            "Layout"
+        Tables ->
+            "Tables"
 
         Inputs ->
             "Inputs"
@@ -93,7 +93,7 @@ categoryForDisplay category =
             "Behaviors"
 
         Buttons ->
-            "Buttons"
+            "Buttons and Links"
 
         Icons ->
             "Icons"
@@ -108,10 +108,10 @@ categoryForDisplay category =
             "Colors"
 
         Text ->
-            "Text"
+            "Text and Fonts"
 
         Pages ->
-            "Pages"
+            "Error Pages"
 
 
 view : Bool -> ModuleExample msg -> Html msg
