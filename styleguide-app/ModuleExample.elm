@@ -136,18 +136,17 @@ view showFocusLink { name, content } =
                 [ color gray20
                 , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
                 , fontSize (px 20)
+                , marginBottom zero
                 ]
                 []
-                [ Html.text name
-                , Html.text " "
-                , if showFocusLink then
-                    Html.a
-                        [ Attributes.href <| "#doodad/" ++ name ]
-                        [ Html.text "(see only this)" ]
+                [ Html.text name ]
+            , if showFocusLink then
+                Html.a
+                    [ Attributes.href <| "#doodad/" ++ name ]
+                    [ Html.text "see only this" ]
 
-                  else
-                    Html.text ""
-                ]
+              else
+                Html.text ""
             ]
         , Html.styled Html.div
             [ padding2 (px 20) zero ]
