@@ -42,7 +42,7 @@ view_ model =
                         [ Html.a [ Attributes.href "#" ] [ Html.text "(see all)" ] ]
                     , nriThemedModules model.moduleStates
                         |> List.filter (\m -> m.name == doodad)
-                        |> List.map (ModuleExample.view True)
+                        |> List.map (ModuleExample.view False)
                         |> Html.div []
                         |> Html.map UpdateModuleStates
                     ]
