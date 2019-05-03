@@ -104,33 +104,24 @@ navigation route =
                 _ ->
                     False
 
+        categoryLink active hash displayName =
+            Html.styled Html.a
+                [ backgroundColor transparent
+                , borderStyle none
+                , textDecoration none
+                , if active then
+                    color Colors.navy
+
+                  else
+                    color Colors.azure
+                ]
+                [ Attributes.href hash ]
+                [ Html.text displayName ]
+
         navLink category =
-            Html.styled Html.a
-                [ backgroundColor transparent
-                , borderStyle none
-                , if isActive category then
-                    color Colors.navy
-
-                  else
-                    color Colors.azure
-                , textDecoration none
-                ]
-                [ Attributes.href <| "#category/" ++ Debug.toString category ]
-                [ Html.text (categoryForDisplay category) ]
-
-        allLink =
-            Html.styled Html.a
-                [ backgroundColor transparent
-                , borderStyle none
-                , if route == Routes.All then
-                    color Colors.navy
-
-                  else
-                    color Colors.azure
-                , textDecoration none
-                ]
-                [ Attributes.href "#" ]
-                [ Html.text "All" ]
+            categoryLink (isActive category)
+                ("#category/" ++ Debug.toString category)
+                (categoryForDisplay category)
 
         toNavLi element =
             Html.li
@@ -154,7 +145,7 @@ navigation route =
         []
         [ Headings.h4
             [ Html.text "Categories" ]
-        , (allLink
+        , (categoryLink (route == Routes.All) "#" "All"
             :: List.map
                 navLink
                 [ Messaging
