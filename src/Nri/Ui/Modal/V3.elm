@@ -228,7 +228,6 @@ viewFooter footerContent =
                 , Css.flexWrap Css.noWrap
                 , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
                 , Css.width (Css.pct 100)
-                , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
                 ]
                 []
                 (List.map
