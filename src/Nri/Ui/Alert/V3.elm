@@ -108,14 +108,14 @@ iconContainer styles icon =
         (styles
             ++ [ -- Content positioning
                  Css.marginRight (Css.px 5)
-               , Css.lineHeight (Css.num 1.2)
 
                -- Size
                , Css.borderRadius (Css.px 13)
-               , Css.maxHeight (Css.px 20)
-               , Css.maxWidth (Css.px 20)
-               , Css.minHeight (Css.px 20)
-               , Css.minWidth (Css.px 20)
+               , Css.lineHeight iconContainerSize
+               , Css.maxHeight iconContainerSize
+               , Css.maxWidth iconContainerSize
+               , Css.minHeight iconContainerSize
+               , Css.minWidth iconContainerSize
                ]
         )
         []
@@ -129,7 +129,7 @@ viewAlertContent color content =
         [ Css.color color
         , Fonts.baseFont
         , Css.fontSize (Css.px 13)
-        , Css.lineHeight (Css.num 1.2)
+        , Css.lineHeight iconContainerSize
         , Css.listStyleType Css.none
 
         -- This global selector and overrides are necessary due to
@@ -149,3 +149,8 @@ viewAlertContent color content =
         ]
         []
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)
+
+
+iconContainerSize : Css.Px
+iconContainerSize =
+    Css.px 20
