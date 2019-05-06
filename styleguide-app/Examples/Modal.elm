@@ -13,7 +13,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V3 as Modal
+import Nri.Ui.Modal.V4 as Modal
 
 
 {-| -}
@@ -71,6 +71,7 @@ type ModalType
     | WarningModal
     | NoButtonModal
     | NoDismissModal
+    | OnlyXDismissModal
     | NoHeading
     | ScrolledContentModal
 
@@ -80,7 +81,8 @@ viewButtons =
     [ ( "Info Modal", "Modal.info", InfoModal )
     , ( "Warning Modal", "Modal.warning", WarningModal )
     , ( "No Button Modal", "Modal.info { ... footerContent = [] ... }", NoButtonModal )
-    , ( "No Dismiss Modal", "Modal.info { ... onDismiss Nothing ... }", NoDismissModal )
+    , ( "No Dismiss Modal", "Modal.info { ... onDismiss = NotDismissible ... }", NoDismissModal )
+    , ( "Only X-Dismiss Modal", "Modal.info { ... onDismiss = WithOnlyX ... }", OnlyXDismissModal )
     , ( "No Heading", "Modal.info { ... visibleTitle = False ... }", NoHeading )
     , ( "Scrolled Content"
       , "Modal.info { content = Html.text 'so much stuff' }"
@@ -117,7 +119,7 @@ viewModal modal =
                 { title = "Info Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
-                , onDismiss = Just DismissModal
+                , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , width = Nothing
                 , footerContent =
                     [ modalFooterButton "Primary" Button.Primary
@@ -130,7 +132,7 @@ viewModal modal =
                 { title = "Warning Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
-                , onDismiss = Just DismissModal
+                , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , width = Nothing
                 , footerContent =
                     [ modalFooterButton "Primary" Button.Danger
@@ -143,7 +145,7 @@ viewModal modal =
                 { title = "No Buttons"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
-                , onDismiss = Just DismissModal
+                , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , width = Nothing
                 , footerContent = []
                 }
@@ -153,7 +155,20 @@ viewModal modal =
                 { title = "No Dismiss"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
-                , onDismiss = Nothing
+                , onDismiss = Modal.NotDismissible
+                , width = Nothing
+                , footerContent =
+                    [ modalFooterButton "Primary" Button.Primary
+                    , modalFooterButton "Cancel" Button.Borderless
+                    ]
+                }
+
+        OnlyXDismissModal ->
+            Modal.info Assets.assets
+                { title = "Only X-Dismiss"
+                , visibleTitle = True
+                , content = text "This is where the content goes!"
+                , onDismiss = Modal.WithOnlyX DismissModal
                 , width = Nothing
                 , footerContent =
                     [ modalFooterButton "Primary" Button.Primary
@@ -164,7 +179,7 @@ viewModal modal =
         NoHeading ->
             Modal.info Assets.assets
                 { title = "Hidden title"
-                , onDismiss = Just DismissModal
+                , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , visibleTitle = False
                 , footerContent = []
                 , width = Nothing
@@ -183,7 +198,7 @@ viewModal modal =
         ScrolledContentModal ->
             Modal.info Assets.assets
                 { title = "Scrolled Content"
-                , onDismiss = Just DismissModal
+                , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , visibleTitle = True
                 , footerContent = [ modalFooterButton "Primary" Button.Primary ]
                 , width = Nothing
