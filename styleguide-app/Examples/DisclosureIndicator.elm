@@ -1,7 +1,9 @@
 module Examples.DisclosureIndicator exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Css
@@ -15,14 +17,14 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 {-| -}
 type Msg
-    = DisclosureIndicatorToggle Bool
-    | InlineDisclosureIndicatorToggle Bool
+    = ToggleMedium Bool
+    | ToggleSmall Bool
 
 
 {-| -}
 type alias State =
-    { disclosed : Bool
-    , inlineDisclosed : Bool
+    { mediumState : Bool
+    , smallState : Bool
     }
 
 
@@ -39,9 +41,9 @@ example parentMessage state =
                 , Css.outline Css.none
                 , Css.fontSize (Css.px 20)
                 ]
-            , onClick (DisclosureIndicatorToggle (not state.disclosed))
+            , onClick (ToggleMedium (not state.mediumState))
             ]
-            [ DisclosureIndicator.view { isOpen = state.disclosed }
+            [ DisclosureIndicator.medium { isOpen = state.mediumState }
             , Html.text "Item with detail"
             ]
         , Html.h3 [] [ Html.text "Inline indicator" ]
@@ -63,9 +65,9 @@ example parentMessage state =
                 , Fonts.baseFont
                 , Css.fontSize (Css.px 16)
                 ]
-            , onClick (InlineDisclosureIndicatorToggle (not state.inlineDisclosed))
+            , onClick (ToggleSmall (not state.smallState))
             ]
-            [ DisclosureIndicator.viewInline { isOpen = state.inlineDisclosed }
+            [ DisclosureIndicator.small { isOpen = state.smallState }
             , Html.text "Item with detail"
             ]
         ]
@@ -76,8 +78,8 @@ example parentMessage state =
 {-| -}
 init : State
 init =
-    { disclosed = False
-    , inlineDisclosed = False
+    { mediumState = False
+    , smallState = False
     }
 
 
@@ -85,8 +87,8 @@ init =
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        DisclosureIndicatorToggle disclosed ->
-            ( { state | disclosed = disclosed }, Cmd.none )
+        ToggleMedium mediumState ->
+            ( { state | mediumState = mediumState }, Cmd.none )
 
-        InlineDisclosureIndicatorToggle disclosed ->
-            ( { state | inlineDisclosed = disclosed }, Cmd.none )
+        ToggleSmall mediumState ->
+            ( { state | smallState = mediumState }, Cmd.none )

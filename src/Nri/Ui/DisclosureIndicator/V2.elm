@@ -1,8 +1,8 @@
-module Nri.Ui.DisclosureIndicator.V2 exposing (view, viewInline)
+module Nri.Ui.DisclosureIndicator.V2 exposing (medium, small)
 
 {-| A caret that indicates that a section can expand. When the isOpen attribute is passed in as True, it will rotate. A "disclosure indicator" is a standard term for something that indicates that section can expand.
 
-@docs view, viewInline
+@docs medium, small
 
 -}
 
@@ -20,21 +20,17 @@ type alias Config =
 
 
 {-| -}
-view : Config -> Html msg
-view config =
+medium : Config -> Html msg
+medium config =
     viewWithStyle
         [ marginRight (px 10) ]
         (px 15)
         config
 
 
-{-| The inline variant of the indicator is smaller and occupies
-less vertical space so it can be inlined in lists or tables
-without breaking text flow. Also, it rotates from right to
-down direction when expanding.
--}
-viewInline : Config -> Html msg
-viewInline config =
+{-| -}
+small : Config -> Html msg
+small config =
     viewWithStyle
         [ padding2 (px 0) (px 8) ]
         (px 9)
