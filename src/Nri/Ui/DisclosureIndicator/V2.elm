@@ -1,6 +1,22 @@
 module Nri.Ui.DisclosureIndicator.V2 exposing (view)
 
-{-| A caret that indicates that a section can expand. When the isOpen attribute is passed in as True, it will rotate. A "disclosure indicator" is a standard term for something that indicates that section can expand.
+{-|
+
+
+# Changes from V1
+
+  - Removes dependency on Icon that makes versioned assets hard to work with
+  - Allows for customized size and styles with a single `view` function
+  - Removes `Config` in favor of an explicit type annotation
+
+(If you need the old `view` and `viewInline` styles, please copy the configurations
+from the styleguide examples.)
+
+
+# About:
+
+A caret that indicates that a section can expand and collapse. When `isOpen` is True, the caret will rotate down.
+"Disclosure indicator" is a standard term for something that indicates that section can expand.
 
 @docs medium, small
 
