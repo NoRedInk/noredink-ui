@@ -11,6 +11,7 @@ import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
+import Nri.Ui.Fonts.V1 as Fonts
 
 
 {-| -}
@@ -33,13 +34,18 @@ example parentMessage state =
     , category = Widgets
     , content =
         [ Html.h3 [] [ Html.text "Panel indicator" ]
-        , Html.div
-            [ onClick
-                (DisclosureIndicatorToggle <| not state.disclosed)
+        , Html.button
+            [ css
+                [ Css.borderStyle Css.none
+                , Css.outline Css.none
+                , Css.fontSize (Css.px 20)
+                ]
+            , onClick (DisclosureIndicatorToggle (not state.disclosed))
             ]
             [ DisclosureIndicator.view assets
                 { isOpen = state.disclosed
                 }
+            , Html.text "Item with detail"
             ]
         , Html.h3 [] [ Html.text "Inline indicator" ]
         , Html.p []
@@ -51,14 +57,21 @@ example parentMessage state =
                 down direction when expanding.
                 """
             ]
-        , Html.div
-            [ css [ inlineIndicatorContainer ]
-            , onClick (InlineDisclosureIndicatorToggle <| not state.inlineDisclosed)
+        , Html.button
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.borderStyle Css.none
+                , Css.outline Css.none
+                , Fonts.baseFont
+                , Css.fontSize (Css.px 16)
+                ]
+            , onClick (InlineDisclosureIndicatorToggle (not state.inlineDisclosed))
             ]
             [ DisclosureIndicator.viewInline assets
                 { isOpen = state.inlineDisclosed
                 }
-            , Html.span [] [ Html.text "list item with detail" ]
+            , Html.text "Item with detail"
             ]
         ]
             |> List.map (Html.map parentMessage)
@@ -82,11 +95,3 @@ update msg state =
 
         InlineDisclosureIndicatorToggle disclosed ->
             ( { state | inlineDisclosed = disclosed }, Cmd.none )
-
-
-inlineIndicatorContainer : Css.Style
-inlineIndicatorContainer =
-    Css.batch
-        [ Css.displayFlex
-        , Css.alignItems Css.center
-        ]
