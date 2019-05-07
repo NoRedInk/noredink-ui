@@ -17,7 +17,7 @@ import Nri.Ui.Page.V2 as Page
 {-| -}
 example : msg -> ModuleExample msg
 example noOp =
-    { filename = "Nri/Ui/Page/V1.elm"
+    { name = "Nri.Ui.Page.V1"
     , category = Pages
     , content =
         [ Css.Global.global
@@ -26,7 +26,6 @@ example noOp =
                 , Css.flexWrap Css.wrap
                 ]
             ]
-        , Headings.h3 [ Html.text "Pages for problems" ]
         , Headings.h4 [ Html.text "Page: Not Found" ]
         , Page.notFound
             { link = noOp

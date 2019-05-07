@@ -33,8 +33,8 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { filename = "Nri.Ui.Slide.V1.elm"
-    , category = Behaviors
+    { name = "Nri.Ui.Slide.V1"
+    , category = Animations
     , content =
         [ Keyed.node "div"
             [ css

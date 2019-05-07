@@ -38,7 +38,7 @@ example unnamedMessages state =
         messages =
             unnamedMessages "ClickableTextExample"
     in
-    { filename = "Nri.Ui.ClickableText.V2"
+    { name = "Nri.Ui.ClickableText.V2"
     , category = Buttons
     , content =
         [ viewExamples messages state ]

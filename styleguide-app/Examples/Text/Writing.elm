@@ -12,8 +12,8 @@ import Nri.Ui.Text.Writing.V1 as TextWriting
 {-| -}
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Text.Writing.V1.elm"
-    , category = TextWriting
+    { name = "Nri.Ui.Text.Writing.V1"
+    , category = Text
     , content =
         let
             longerBody =

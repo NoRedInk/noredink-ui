@@ -13,7 +13,7 @@ import Nri.Ui.Alert.V4 as Alert
 
 example : ModuleExample msg
 example =
-    { filename = "Nri.Ui.Alert.V4.elm"
+    { name = "Nri.Ui.Alert.V4"
     , category = Messaging
     , content =
         [ Html.h4 [] [ Html.text "Markdown-supporting:" ]

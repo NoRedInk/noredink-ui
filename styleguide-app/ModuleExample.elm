@@ -14,7 +14,7 @@ import Nri.Ui.Colors.V1 exposing (..)
 
 
 type alias ModuleExample msg =
-    { filename : String
+    { name : String
     , content : List (Html msg)
     , category : Category
     }
@@ -29,22 +29,17 @@ type alias ModuleMessages moduleMsg parentMsg =
 
 
 type Category
-    = Layout
+    = Tables
     | Inputs
     | Buttons
     | Icons
-    | Behaviors
+    | Widgets
     | Messaging
     | Modals
-    | Writing
-    | NotesToDeveloper
     | Colors
     | Text
-    | TextWriting
-    | Fonts
-    | DynamicSymbols
     | Pages
-    | QuestionTypes
+    | Animations
 
 
 {-| Used for route changes
@@ -52,14 +47,14 @@ type Category
 categoryFromString : String -> Result String Category
 categoryFromString string =
     case string of
-        "Layout" ->
-            Ok Layout
+        "Tables" ->
+            Ok Tables
 
         "Inputs" ->
             Ok Inputs
 
-        "Behaviors" ->
-            Ok Behaviors
+        "Widgets" ->
+            Ok Widgets
 
         "Buttons" ->
             Ok Buttons
@@ -73,32 +68,17 @@ categoryFromString string =
         "Modals" ->
             Ok Modals
 
-        "Writing" ->
-            Ok Writing
-
-        "NotesToDeveloper" ->
-            Ok NotesToDeveloper
-
         "Colors" ->
             Ok Colors
 
         "Text" ->
             Ok Text
 
-        "TextWriting" ->
-            Ok TextWriting
-
-        "Fonts" ->
-            Ok Fonts
-
-        "DynamicSymbols" ->
-            Ok DynamicSymbols
-
         "Pages" ->
             Ok Pages
 
-        "QuestionTypes" ->
-            Ok QuestionTypes
+        "Animations" ->
+            Ok Animations
 
         _ ->
             Err "Invalid String"
@@ -107,57 +87,42 @@ categoryFromString string =
 categoryForDisplay : Category -> String
 categoryForDisplay category =
     case category of
-        Layout ->
-            "Layout"
+        Tables ->
+            "Tables"
 
         Inputs ->
             "Inputs"
 
-        Behaviors ->
-            "Behaviors"
+        Widgets ->
+            "Widgets"
 
         Buttons ->
-            "Buttons"
+            "Buttons and Links"
 
         Icons ->
             "Icons"
 
         Messaging ->
-            "Messaging"
+            "Alerts and Messages"
 
         Modals ->
             "Modals"
-
-        Writing ->
-            "Writing"
-
-        NotesToDeveloper ->
-            "NotesToDeveloper"
 
         Colors ->
             "Colors"
 
         Text ->
-            "Text"
-
-        TextWriting ->
-            "TextWriting"
-
-        Fonts ->
-            "Fonts"
-
-        DynamicSymbols ->
-            "Dynamic Symbols"
+            "Text and Fonts"
 
         Pages ->
-            "Pages"
+            "Error Pages"
 
-        QuestionTypes ->
-            "Question types / Quiz UI"
+        Animations ->
+            "Animations"
 
 
 view : Bool -> ModuleExample msg -> Html msg
-view showFocusLink { filename, content } =
+view showFocusLink { name, content } =
     Html.div
         []
         [ Html.styled Html.div
@@ -171,18 +136,18 @@ view showFocusLink { filename, content } =
                 [ color gray20
                 , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
                 , fontSize (px 20)
+                , marginTop zero
+                , marginBottom zero
                 ]
                 []
-                [ Html.text filename
-                , Html.text " "
-                , if showFocusLink then
-                    Html.a
-                        [ Attributes.href <| "#doodad/" ++ filename ]
-                        [ Html.text "(see only this)" ]
+                [ Html.text name ]
+            , if showFocusLink then
+                Html.a
+                    [ Attributes.href <| "#doodad/" ++ name ]
+                    [ Html.text "see only this" ]
 
-                  else
-                    Html.text ""
-                ]
+              else
+                Html.text ""
             ]
         , Html.styled Html.div
             [ padding2 (px 20) zero ]

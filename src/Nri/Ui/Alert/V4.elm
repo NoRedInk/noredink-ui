@@ -96,12 +96,7 @@ success content =
             , Css.backgroundColor Colors.green
             ]
             (Html.div
-                [ css
-                    [ Css.width (Css.px 12)
-                    , Css.height (Css.px 12)
-                    , Css.margin Css.auto
-                    ]
-                ]
+                [ css [ Css.width (Css.px 12), Css.marginTop (Css.px 1) ] ]
                 [ NriSvg.toHtml checkmark ]
             )
         , alertString Colors.greenDarkest content
@@ -156,7 +151,7 @@ exclamation backgroundColor =
         , Css.backgroundColor backgroundColor
         ]
         (Html.div
-            [ css [ Css.marginTop (Css.px 1), Css.height (Css.px 13) ] ]
+            [ css [ Css.height (Css.px 13), Css.marginTop (Css.px 1) ] ]
             [ NriSvg.toHtml exclamationMark ]
         )
 
@@ -164,18 +159,19 @@ exclamation backgroundColor =
 iconContainer : List Css.Style -> Html msg -> Html msg
 iconContainer styles icon =
     Nri.Ui.styled Html.div
-        "Nri-Ui-Alert-V3__iconContainer"
+        "Nri-Ui-Alert-V4__iconContainer"
         (styles
             ++ [ -- Content positioning
-                 Css.marginTop (Css.px -2)
+                 Css.displayFlex
+               , Css.alignItems Css.center
+               , Css.justifyContent Css.center
                , Css.marginRight (Css.px 5)
+               , Css.lineHeight (Css.px 13)
 
                -- Size
                , Css.borderRadius (Css.px 13)
-               , Css.maxHeight (Css.px 20)
-               , Css.maxWidth (Css.px 20)
-               , Css.minHeight (Css.px 20)
-               , Css.minWidth (Css.px 20)
+               , Css.height (Css.px 20)
+               , Css.width (Css.px 20)
                ]
         )
         []
@@ -189,9 +185,25 @@ alertString color content =
         [ Css.color color
         , Fonts.baseFont
         , Css.fontSize (Css.px 13)
-        , Css.lineHeight (Css.num 1.2)
+
+        --, Css.lineHeight (Css.px 20)
         , Css.listStyleType Css.none
-        , Css.Global.descendants [ Css.Global.p [ Css.margin Css.zero ] ]
+
+        -- This global selector and overrides are necessary due to
+        -- old stylesheets used on the monolith that set the
+        -- `.txt p { font-size: 18px; }` -- without these overrides,
+        -- we may see giant ugly alerts.
+        -- Remove these if you want to! but be emotionally prepped
+        -- to deal with visual regressions. 🙏
+        , Css.Global.descendants
+            [ Css.Global.p
+                [ Css.margin Css.zero
+
+                --, Css.lineHeight (Css.px 20)
+                , Css.fontSize (Css.px 13)
+                , Fonts.baseFont
+                ]
+            ]
         ]
         []
         (Markdown.toHtml Nothing content |> List.map fromUnstyled)
