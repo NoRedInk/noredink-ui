@@ -16,12 +16,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 
 {-| -}
-type Msg
-    = ToggleMedium Bool
-    | ToggleSmall Bool
-
-
-{-| -}
 type alias State =
     { mediumState : Bool
     , smallState : Bool
@@ -34,35 +28,47 @@ example parentMessage state =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
-        [ Html.div []
-            [ Html.button
-                [ css
-                    [ Css.borderStyle Css.none
-                    , Css.outline Css.none
-                    , Css.fontSize (Css.px 20)
-                    ]
-                , onClick (ToggleMedium (not state.mediumState))
-                ]
-                [ DisclosureIndicator.view
-                    { isOpen = state.mediumState
-                    , size = Css.px 15
-                    , styles = [ Css.marginRight (Css.px 10) ]
-                    }
-                , Html.text "Item with detail"
-                ]
-            ]
-        , if state.mediumState then
-            code """
-                    DisclosureIndicator.view
-                        { isOpen = state.mediumState
-                        , size = Css.px 15
-                        , styles = [ Css.marginRight (Css.px 10) ]
-                        }
-                    """
+        [ viewExample ToggleMedium
+            state.mediumState
+            (Css.px 20)
+            (DisclosureIndicator.view
+                { isOpen = state.mediumState
+                , size = Css.px 15
+                , styles = [ Css.marginRight (Css.px 10) ]
+                }
+            )
+            """
+            DisclosureIndicator.view
+                { isOpen = state.mediumState
+                , size = Css.px 15
+                , styles = [ Css.marginRight (Css.px 10) ]
+                }
+            """
+        , viewExample ToggleSmall
+            state.smallState
+            (Css.px 16)
+            (DisclosureIndicator.view
+                { isOpen = state.smallState
+                , size = Css.px 9
+                , styles = [ Css.paddingRight (Css.px 8) ]
+                }
+            )
+            """
+            DisclosureIndicator.view
+                { isOpen = state.smallState
+                , size = Css.px 9
+                , styles = [ Css.paddingRight (Css.px 8) ]
+                }
+            """
+        ]
+            |> List.map (Html.map parentMessage)
+    }
 
-          else
-            Html.text ""
-        , Html.div []
+
+viewExample : msg -> Bool -> Css.Px -> Html.Html msg -> String -> Html.Html msg
+viewExample toggle isOpen fontSize disclosureView disclosureCode =
+    Html.div []
+        [ Html.div []
             [ Html.button
                 [ css
                     [ Css.displayFlex
@@ -70,32 +76,20 @@ example parentMessage state =
                     , Css.borderStyle Css.none
                     , Css.outline Css.none
                     , Fonts.baseFont
-                    , Css.fontSize (Css.px 16)
+                    , Css.fontSize fontSize
                     ]
-                , onClick (ToggleSmall (not state.smallState))
+                , onClick toggle
                 ]
-                [ DisclosureIndicator.view
-                    { isOpen = state.smallState
-                    , size = Css.px 9
-                    , styles = [ Css.paddingRight (Css.px 8) ]
-                    }
-                , Html.text "Item with detail"
+                [ disclosureView
+                , Html.text "Open for code example"
                 ]
             ]
-        , if state.smallState then
-            code """
-                    DisclosureIndicator.view
-                        { isOpen = state.smallState
-                        , size = Css.px 9
-                        , styles = [ Css.paddingRight (Css.px 8) ]
-                        }
-                    """
+        , if isOpen then
+            code disclosureCode
 
           else
             Html.text ""
         ]
-            |> List.map (Html.map parentMessage)
-    }
 
 
 code : String -> Html.Html msg
@@ -118,11 +112,17 @@ init =
 
 
 {-| -}
+type Msg
+    = ToggleMedium
+    | ToggleSmall
+
+
+{-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ToggleMedium mediumState ->
-            ( { state | mediumState = mediumState }, Cmd.none )
+        ToggleMedium ->
+            ( { state | mediumState = not state.mediumState }, Cmd.none )
 
-        ToggleSmall mediumState ->
-            ( { state | smallState = mediumState }, Cmd.none )
+        ToggleSmall ->
+            ( { state | smallState = not state.smallState }, Cmd.none )
