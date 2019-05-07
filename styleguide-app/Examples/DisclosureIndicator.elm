@@ -10,7 +10,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.DisclosureIndicator.V1 as DisclosureIndicatorV1
+import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 
 
 {-| -}
@@ -29,7 +29,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.DisclosureIndicator.V1"
+    { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
         [ Html.h3 [] [ Html.text "Panel indicator" ]
@@ -37,7 +37,7 @@ example parentMessage state =
             [ onClick
                 (DisclosureIndicatorToggle <| not state.disclosed)
             ]
-            [ DisclosureIndicatorV1.view assets
+            [ DisclosureIndicator.view assets
                 { isOpen = state.disclosed
                 , label = "Details"
                 }
@@ -56,7 +56,7 @@ example parentMessage state =
             [ css [ inlineIndicatorContainer ]
             , onClick (InlineDisclosureIndicatorToggle <| not state.inlineDisclosed)
             ]
-            [ DisclosureIndicatorV1.viewInline assets
+            [ DisclosureIndicator.viewInline assets
                 { isOpen = state.inlineDisclosed
                 , label = "Details"
                 }
