@@ -14,15 +14,13 @@ import Nri.Ui.SpriteSheet exposing (arrowLeft)
 import Nri.Ui.Svg.V1 as NriSvg
 
 
-type alias Config =
+{-| -}
+view :
     { isOpen : Bool
     , size : Css.Px
     , styles : List Css.Style
     }
-
-
-{-| -}
-view : Config -> Html msg
+    -> Html msg
 view { styles, size, isOpen } =
     div
         [ css
