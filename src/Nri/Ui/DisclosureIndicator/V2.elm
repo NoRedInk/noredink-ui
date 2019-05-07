@@ -18,7 +18,7 @@ from the styleguide examples.)
 A caret that indicates that a section can expand and collapse. When `isOpen` is True, the caret will rotate down.
 "Disclosure indicator" is a standard term for something that indicates that section can expand.
 
-@docs medium, small
+@docs view
 
 -}
 
