@@ -1,4 +1,4 @@
-module Nri.Ui.DisclosureIndicator.V2 exposing (medium, small)
+module Nri.Ui.DisclosureIndicator.V2 exposing (view)
 
 {-| A caret that indicates that a section can expand. When the isOpen attribute is passed in as True, it will rotate. A "disclosure indicator" is a standard term for something that indicates that section can expand.
 
@@ -16,29 +16,14 @@ import Nri.Ui.Svg.V1 as NriSvg
 
 type alias Config =
     { isOpen : Bool
+    , size : Css.Px
+    , styles : List Css.Style
     }
 
 
 {-| -}
-medium : Config -> Html msg
-medium config =
-    viewWithStyle
-        [ marginRight (px 10) ]
-        (px 15)
-        config
-
-
-{-| -}
-small : Config -> Html msg
-small config =
-    viewWithStyle
-        [ padding2 (px 0) (px 8) ]
-        (px 9)
-        config
-
-
-viewWithStyle : List Css.Style -> Css.Px -> Config -> Html msg
-viewWithStyle style size config =
+view : Config -> Html msg
+view { styles, size, isOpen } =
     div
         [ css
             ([ Css.display Css.inlineBlock
@@ -46,7 +31,7 @@ viewWithStyle style size config =
              , width size
              , height size
              ]
-                ++ style
+                ++ styles
             )
         ]
         [ div
@@ -56,7 +41,7 @@ viewWithStyle style size config =
                 , Css.alignItems Css.center
                 , color Colors.azure
                 , property "transition" "transform 0.1s"
-                , if config.isOpen then
+                , if isOpen then
                     transform (rotate (deg -90))
 
                   else

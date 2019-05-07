@@ -34,45 +34,79 @@ example parentMessage state =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
-        [ Html.h3 [] [ Html.text "Panel indicator" ]
-        , Html.button
-            [ css
-                [ Css.borderStyle Css.none
-                , Css.outline Css.none
-                , Css.fontSize (Css.px 20)
+        [ Html.div []
+            [ Html.button
+                [ css
+                    [ Css.borderStyle Css.none
+                    , Css.outline Css.none
+                    , Css.fontSize (Css.px 20)
+                    ]
+                , onClick (ToggleMedium (not state.mediumState))
                 ]
-            , onClick (ToggleMedium (not state.mediumState))
-            ]
-            [ DisclosureIndicator.medium { isOpen = state.mediumState }
-            , Html.text "Item with detail"
-            ]
-        , Html.h3 [] [ Html.text "Inline indicator" ]
-        , Html.p []
-            [ Html.text
-                """
-                The inline variant of the indicator is smaller and occupies
-                less vertical space so it can be inlined in lists or tables
-                without breaking text flow. Also, it rotates from right to
-                down direction when expanding.
-                """
-            ]
-        , Html.button
-            [ css
-                [ Css.displayFlex
-                , Css.alignItems Css.center
-                , Css.borderStyle Css.none
-                , Css.outline Css.none
-                , Fonts.baseFont
-                , Css.fontSize (Css.px 16)
+                [ DisclosureIndicator.view
+                    { isOpen = state.mediumState
+                    , size = Css.px 15
+                    , styles = [ Css.marginRight (Css.px 10) ]
+                    }
+                , Html.text "Item with detail"
                 ]
-            , onClick (ToggleSmall (not state.smallState))
             ]
-            [ DisclosureIndicator.small { isOpen = state.smallState }
-            , Html.text "Item with detail"
+        , if state.mediumState then
+            code """
+                    DisclosureIndicator.view
+                        { isOpen = state.mediumState
+                        , size = Css.px 15
+                        , styles = [ Css.marginRight (Css.px 10) ]
+                        }
+                    """
+
+          else
+            Html.text ""
+        , Html.div []
+            [ Html.button
+                [ css
+                    [ Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.borderStyle Css.none
+                    , Css.outline Css.none
+                    , Fonts.baseFont
+                    , Css.fontSize (Css.px 16)
+                    ]
+                , onClick (ToggleSmall (not state.smallState))
+                ]
+                [ DisclosureIndicator.view
+                    { isOpen = state.smallState
+                    , size = Css.px 9
+                    , styles = [ Css.paddingRight (Css.px 8) ]
+                    }
+                , Html.text "Item with detail"
+                ]
             ]
+        , if state.smallState then
+            code """
+                    DisclosureIndicator.view
+                        { isOpen = state.smallState
+                        , size = Css.px 9
+                        , styles = [ Css.paddingRight (Css.px 8) ]
+                        }
+                    """
+
+          else
+            Html.text ""
         ]
             |> List.map (Html.map parentMessage)
     }
+
+
+code : String -> Html.Html msg
+code copy =
+    Html.code
+        [ css
+            [ Css.fontSize (Css.px 12)
+            , Css.whiteSpace Css.pre
+            ]
+        ]
+        [ Html.text copy ]
 
 
 {-| -}
