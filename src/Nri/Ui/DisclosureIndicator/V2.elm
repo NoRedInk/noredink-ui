@@ -14,7 +14,6 @@ import Nri.Ui.AssetPath as AssetPath
 
 type alias Config =
     { isOpen : Bool
-    , label : String
     }
 
 
@@ -40,7 +39,6 @@ view assets config =
             transform (rotate <| deg -90)
         ]
         assets
-        config
 
 
 {-| The inline variant of the indicator is smaller and occupies
@@ -62,22 +60,12 @@ viewInline assets config =
             transform (rotate <| deg -90)
         ]
         assets
-        config
 
 
-viewWithStyle : List Css.Style -> Assets a -> Config -> Html msg
-viewWithStyle style assets config =
-    let
-        label =
-            if config.isOpen then
-                "hide " ++ config.label
-
-            else
-                "show " ++ config.label
-    in
+viewWithStyle : List Css.Style -> Assets a -> Html msg
+viewWithStyle style assets =
     img
-        [ alt label
-        , Attributes.src <| AssetPath.url <| assets.icons_arrowDownBlue_svg
+        [ Attributes.src <| AssetPath.url <| assets.icons_arrowDownBlue_svg
         , Attributes.css style
         ]
         []

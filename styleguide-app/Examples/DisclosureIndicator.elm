@@ -39,7 +39,6 @@ example parentMessage state =
             ]
             [ DisclosureIndicator.view assets
                 { isOpen = state.disclosed
-                , label = "Details"
                 }
             ]
         , Html.h3 [] [ Html.text "Inline indicator" ]
@@ -58,7 +57,6 @@ example parentMessage state =
             ]
             [ DisclosureIndicator.viewInline assets
                 { isOpen = state.inlineDisclosed
-                , label = "Details"
                 }
             , Html.span [] [ Html.text "list item with detail" ]
             ]
