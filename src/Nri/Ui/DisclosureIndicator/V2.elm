@@ -8,8 +8,10 @@ module Nri.Ui.DisclosureIndicator.V2 exposing (view, viewInline)
 
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attributes exposing (alt, type_)
-import Nri.Ui.AssetPath as AssetPath
+import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.SpriteSheet exposing (arrowLeft)
+import Nri.Ui.Svg.V1 as NriSvg
 
 
 type alias Config =
@@ -17,21 +19,12 @@ type alias Config =
     }
 
 
-type alias Assets r =
-    { r
-        | icons_arrowDownBlue_svg : AssetPath.Asset
-    }
-
-
 {-| -}
-view : Assets a -> Config -> Html msg
-view assets config =
+view : Config -> Html msg
+view config =
     viewWithStyle
-        [ marginRight (px 10)
-        , width (px 15)
-        , height (px 15)
-        ]
-        assets
+        [ marginRight (px 10) ]
+        (px 15)
         config
 
 
@@ -40,30 +33,40 @@ less vertical space so it can be inlined in lists or tables
 without breaking text flow. Also, it rotates from right to
 down direction when expanding.
 -}
-viewInline : Assets a -> Config -> Html msg
-viewInline assets config =
+viewInline : Config -> Html msg
+viewInline config =
     viewWithStyle
-        [ padding2 (px 0) (px 8)
-        , height (px 9)
-        ]
-        assets
+        [ padding2 (px 0) (px 8) ]
+        (px 9)
         config
 
 
-viewWithStyle : List Css.Style -> Assets a -> Config -> Html msg
-viewWithStyle style assets config =
-    img
-        [ Attributes.src <| AssetPath.url <| assets.icons_arrowDownBlue_svg
-        , Attributes.css
-            (style
-                ++ [ cursor pointer
-                   , property "transition" "transform 0.1s"
-                   , if config.isOpen then
-                        transform (rotate <| deg 0)
-
-                     else
-                        transform (rotate <| deg -90)
-                   ]
+viewWithStyle : List Css.Style -> Css.Px -> Config -> Html msg
+viewWithStyle style size config =
+    div
+        [ css
+            ([ Css.display Css.inlineBlock
+             , cursor pointer
+             , width size
+             , height size
+             ]
+                ++ style
             )
         ]
-        []
+        [ div
+            [ css
+                [ Css.displayFlex
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                , color Colors.azure
+                , property "transition" "transform 0.1s"
+                , if config.isOpen then
+                    transform (rotate (deg -90))
+
+                  else
+                    transform (rotate (deg -180))
+                ]
+            ]
+            [ NriSvg.toHtml arrowLeft
+            ]
+        ]

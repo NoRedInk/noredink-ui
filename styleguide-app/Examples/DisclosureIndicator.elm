@@ -4,7 +4,6 @@ module Examples.DisclosureIndicator exposing (Msg, State, example, init, update)
    @docs Msg, State, example, init, update,
 -}
 
-import Assets exposing (Assets, assets)
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
@@ -42,9 +41,7 @@ example parentMessage state =
                 ]
             , onClick (DisclosureIndicatorToggle (not state.disclosed))
             ]
-            [ DisclosureIndicator.view assets
-                { isOpen = state.disclosed
-                }
+            [ DisclosureIndicator.view { isOpen = state.disclosed }
             , Html.text "Item with detail"
             ]
         , Html.h3 [] [ Html.text "Inline indicator" ]
@@ -68,9 +65,7 @@ example parentMessage state =
                 ]
             , onClick (InlineDisclosureIndicatorToggle (not state.inlineDisclosed))
             ]
-            [ DisclosureIndicator.viewInline assets
-                { isOpen = state.inlineDisclosed
-                }
+            [ DisclosureIndicator.viewInline { isOpen = state.inlineDisclosed }
             , Html.text "Item with detail"
             ]
         ]
