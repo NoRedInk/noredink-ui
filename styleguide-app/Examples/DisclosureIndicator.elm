@@ -17,8 +17,8 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 {-| -}
 type alias State =
-    { mediumState : Bool
-    , smallState : Bool
+    { largeState : Bool
+    , mediumState : Bool
     }
 
 
@@ -28,38 +28,20 @@ example parentMessage state =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
-        [ viewExample ToggleMedium
+        [ viewExample ToggleLarge
+            state.largeState
+            (Css.px 17)
+            (DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState)
+            ("DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] True"
+                ++ "\nI'm a 17px caret icon."
+            )
+        , viewExample ToggleMedium
             state.mediumState
-            (Css.px 20)
-            (DisclosureIndicator.view
-                { isOpen = state.mediumState
-                , size = Css.px 15
-                , styles = [ Css.marginRight (Css.px 10) ]
-                }
+            (Css.px 15)
+            (DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] state.mediumState)
+            ("DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] True"
+                ++ "\nI'm a 15px caret icon."
             )
-            """
-            DisclosureIndicator.view
-                { isOpen = state.mediumState
-                , size = Css.px 15
-                , styles = [ Css.marginRight (Css.px 10) ]
-                }
-            """
-        , viewExample ToggleSmall
-            state.smallState
-            (Css.px 16)
-            (DisclosureIndicator.view
-                { isOpen = state.smallState
-                , size = Css.px 9
-                , styles = [ Css.paddingRight (Css.px 8) ]
-                }
-            )
-            """
-            DisclosureIndicator.view
-                { isOpen = state.smallState
-                , size = Css.px 9
-                , styles = [ Css.paddingRight (Css.px 8) ]
-                }
-            """
         ]
             |> List.map (Html.map parentMessage)
     }
@@ -67,7 +49,7 @@ example parentMessage state =
 
 viewExample : msg -> Bool -> Css.Px -> Html.Html msg -> String -> Html.Html msg
 viewExample toggle isOpen fontSize disclosureView disclosureCode =
-    Html.div []
+    Html.div [ css [ Css.margin2 (Css.px 16) Css.zero ] ]
         [ Html.div []
             [ Html.button
                 [ css
@@ -81,7 +63,7 @@ viewExample toggle isOpen fontSize disclosureView disclosureCode =
                 , onClick toggle
                 ]
                 [ disclosureView
-                , Html.text "Open for code example"
+                , Html.text "Toggle me!"
                 ]
             ]
         , if isOpen then
@@ -106,23 +88,23 @@ code copy =
 {-| -}
 init : State
 init =
-    { mediumState = False
-    , smallState = False
+    { largeState = False
+    , mediumState = False
     }
 
 
 {-| -}
 type Msg
-    = ToggleMedium
-    | ToggleSmall
+    = ToggleLarge
+    | ToggleMedium
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
+        ToggleLarge ->
+            ( { state | largeState = not state.largeState }, Cmd.none )
+
         ToggleMedium ->
             ( { state | mediumState = not state.mediumState }, Cmd.none )
-
-        ToggleSmall ->
-            ( { state | smallState = not state.smallState }, Cmd.none )

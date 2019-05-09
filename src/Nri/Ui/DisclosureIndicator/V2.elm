@@ -1,4 +1,4 @@
-module Nri.Ui.DisclosureIndicator.V2 exposing (view)
+module Nri.Ui.DisclosureIndicator.V2 exposing (medium, large)
 
 {-|
 
@@ -6,11 +6,8 @@ module Nri.Ui.DisclosureIndicator.V2 exposing (view)
 # Changes from V1
 
   - Removes dependency on Icon that makes versioned assets hard to work with
-  - Allows for customized size and styles with a single `view` function
+  - Renames the helpers to `medium` and `large`
   - Removes `Config` in favor of an explicit type annotation
-
-(If you need the old `view` and `viewInline` styles, please copy the configurations
-from the styleguide examples.)
 
 
 # About:
@@ -18,7 +15,7 @@ from the styleguide examples.)
 A caret that indicates that a section can expand and collapse. When `isOpen` is True, the caret will rotate down.
 "Disclosure indicator" is a standard term for something that indicates that section can expand.
 
-@docs view
+@docs medium, large
 
 -}
 
@@ -28,6 +25,18 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SpriteSheet exposing (arrowLeft)
 import Nri.Ui.Svg.V1 as NriSvg
+
+
+{-| -}
+medium : List Css.Style -> Bool -> Html msg
+medium styles isOpen =
+    view { isOpen = isOpen, size = px 15, styles = styles }
+
+
+{-| -}
+large : List Css.Style -> Bool -> Html msg
+large styles isOpen =
+    view { isOpen = isOpen, size = px 17, styles = styles }
 
 
 {-| -}
