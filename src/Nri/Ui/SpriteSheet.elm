@@ -1,8 +1,16 @@
-module Nri.Ui.SpriteSheet exposing (checkmark, exclamationMark, bulb)
+module Nri.Ui.SpriteSheet exposing
+    ( arrowLeft
+    , bulb
+    , checkmark
+    , exclamationMark
+    )
 
 {-|
 
-@docs checkmark, exclamationMark, bulb
+@docs arrowLeft
+@docs bulb
+@docs checkmark
+@docs exclamationMark
 
 -}
 
@@ -86,6 +94,25 @@ bulb =
                     ]
                 ]
             ]
+        ]
+        |> fromUnstyled
+        |> NriSvg.fromHtml
+
+
+{-| -}
+arrowLeft : NriSvg.Svg
+arrowLeft =
+    svg
+        [ viewBox "0 0 25 25"
+        , width "100%"
+        , height "100%"
+        , fill "currentcolor"
+        ]
+        [ Svg.path
+            [ fillRule "evenodd"
+            , d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
+            ]
+            []
         ]
         |> fromUnstyled
         |> NriSvg.fromHtml

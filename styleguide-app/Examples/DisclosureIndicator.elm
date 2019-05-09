@@ -1,94 +1,110 @@
 module Examples.DisclosureIndicator exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
-import Assets exposing (Assets, assets)
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.DisclosureIndicator.V1 as DisclosureIndicatorV1
-
-
-{-| -}
-type Msg
-    = DisclosureIndicatorToggle Bool
-    | InlineDisclosureIndicatorToggle Bool
+import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
+import Nri.Ui.Fonts.V1 as Fonts
 
 
 {-| -}
 type alias State =
-    { disclosed : Bool
-    , inlineDisclosed : Bool
+    { largeState : Bool
+    , mediumState : Bool
     }
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.DisclosureIndicator.V1"
+    { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
-        [ Html.h3 [] [ Html.text "Panel indicator" ]
-        , Html.div
-            [ onClick
-                (DisclosureIndicatorToggle <| not state.disclosed)
-            ]
-            [ DisclosureIndicatorV1.view assets
-                { isOpen = state.disclosed
-                , label = "Details"
-                }
-            ]
-        , Html.h3 [] [ Html.text "Inline indicator" ]
-        , Html.p []
-            [ Html.text
-                """
-                The inline variant of the indicator is smaller and occupies
-                less vertical space so it can be inlined in lists or tables
-                without breaking text flow. Also, it rotates from right to
-                down direction when expanding.
-                """
-            ]
-        , Html.div
-            [ css [ inlineIndicatorContainer ]
-            , onClick (InlineDisclosureIndicatorToggle <| not state.inlineDisclosed)
-            ]
-            [ DisclosureIndicatorV1.viewInline assets
-                { isOpen = state.inlineDisclosed
-                , label = "Details"
-                }
-            , Html.span [] [ Html.text "list item with detail" ]
-            ]
+        [ viewExample ToggleLarge
+            state.largeState
+            (Css.px 17)
+            (DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState)
+            ("DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] True"
+                ++ "\nI'm a 17px caret icon."
+            )
+        , viewExample ToggleMedium
+            state.mediumState
+            (Css.px 15)
+            (DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] state.mediumState)
+            ("DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] True"
+                ++ "\nI'm a 15px caret icon."
+            )
         ]
             |> List.map (Html.map parentMessage)
     }
 
 
+viewExample : msg -> Bool -> Css.Px -> Html.Html msg -> String -> Html.Html msg
+viewExample toggle isOpen fontSize disclosureView disclosureCode =
+    Html.div [ css [ Css.margin2 (Css.px 16) Css.zero ] ]
+        [ Html.div []
+            [ Html.button
+                [ css
+                    [ Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.borderStyle Css.none
+                    , Css.outline Css.none
+                    , Fonts.baseFont
+                    , Css.fontSize fontSize
+                    ]
+                , onClick toggle
+                ]
+                [ disclosureView
+                , Html.text "Toggle me!"
+                ]
+            ]
+        , if isOpen then
+            code disclosureCode
+
+          else
+            Html.text ""
+        ]
+
+
+code : String -> Html.Html msg
+code copy =
+    Html.code
+        [ css
+            [ Css.fontSize (Css.px 12)
+            , Css.whiteSpace Css.pre
+            ]
+        ]
+        [ Html.text copy ]
+
+
 {-| -}
 init : State
 init =
-    { disclosed = False
-    , inlineDisclosed = False
+    { largeState = False
+    , mediumState = False
     }
+
+
+{-| -}
+type Msg
+    = ToggleLarge
+    | ToggleMedium
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        DisclosureIndicatorToggle disclosed ->
-            ( { state | disclosed = disclosed }, Cmd.none )
+        ToggleLarge ->
+            ( { state | largeState = not state.largeState }, Cmd.none )
 
-        InlineDisclosureIndicatorToggle disclosed ->
-            ( { state | inlineDisclosed = disclosed }, Cmd.none )
-
-
-inlineIndicatorContainer : Css.Style
-inlineIndicatorContainer =
-    Css.batch
-        [ Css.displayFlex
-        , Css.alignItems Css.center
-        ]
+        ToggleMedium ->
+            ( { state | mediumState = not state.mediumState }, Cmd.none )
