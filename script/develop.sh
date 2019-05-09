@@ -3,8 +3,9 @@ set -euo pipefail
 
 if test -d public; then
     rm -rf public
-    make -j public
 fi
+
+make -j public
 
 cat <<EOF
 == 👋 Hello! ==================================================================
