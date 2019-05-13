@@ -29,7 +29,7 @@ type alias State value =
 {-| -}
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Dropdown.V1"
+    { name = "Nri.Ui.Dropdown.V2"
     , category = Inputs
     , content =
         [ Html.Styled.map parentMessage (Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog)

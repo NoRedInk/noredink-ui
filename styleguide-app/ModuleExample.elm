@@ -142,15 +142,26 @@ view showFocusLink { name, content } =
                 []
                 [ Html.text name ]
             , if showFocusLink then
-                Html.a
-                    [ Attributes.href <| "#doodad/" ++ name ]
-                    [ Html.text "see only this" ]
+                viewLink "see only this" ("#doodad/" ++ name)
 
               else
                 Html.text ""
+            , String.replace "." "-" name
+                |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
+                |> viewLink "view docs"
             ]
         , Html.styled Html.div
             [ padding2 (px 20) zero ]
             []
             content
+        ]
+
+
+viewLink : String -> String -> Html msg
+viewLink text href =
+    Html.a
+        [ Attributes.href href
+        , Attributes.css [ Css.display Css.block ]
+        ]
+        [ Html.text text
         ]
