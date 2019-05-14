@@ -23,7 +23,7 @@ navigate to the page.
 -}
 type alias DefaultPage msg =
     { link : msg
-    , recoveryText : RecoveryText String
+    , recoveryText : RecoveryText
     }
 
 
@@ -31,10 +31,10 @@ type alias DefaultPage msg =
 will be returned to. Reload displays default text to reload
 the current page. Custom is to add flexibility to the button.
 -}
-type RecoveryText a
-    = ReturnTo a
+type RecoveryText
+    = ReturnTo String
     | Reload
-    | Custom a
+    | Custom String
 
 
 {-| For the not found page.
@@ -145,7 +145,7 @@ viewExit config =
                             "Return to " ++ name
 
                         Reload ->
-                            "Reload the page"
+                            "Try again"
 
                         Custom text ->
                             text

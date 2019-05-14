@@ -35,7 +35,7 @@ all =
                         |> Html.toUnstyled
                         |> Query.fromHtml
                         |> Expect.all
-                            [ Query.has [ text "Reload the page" ] ]
+                            [ Query.has [ text "Try again" ] ]
             , test "handles recovery text for Custom" <|
                 \() ->
                     Page.notFound
