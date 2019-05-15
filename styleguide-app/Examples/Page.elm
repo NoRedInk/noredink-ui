@@ -11,13 +11,13 @@ import Css.Global exposing (Snippet, adjacentSiblings, children, class, descenda
 import Headings
 import Html.Styled as Html exposing (Html)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Page.V2 as Page
+import Nri.Ui.Page.V3 as Page
 
 
 {-| -}
 example : msg -> ModuleExample msg
 example noOp =
-    { name = "Nri.Ui.Page.V1"
+    { name = "Nri.Ui.Page.V3"
     , category = Pages
     , content =
         [ Css.Global.global
@@ -26,20 +26,20 @@ example noOp =
                 , Css.flexWrap Css.wrap
                 ]
             ]
-        , Headings.h4 [ Html.text "Page: Not Found" ]
+        , Headings.h4 [ Html.text "Page: Not Found, recovery text: ReturnTo" ]
         , Page.notFound
             { link = noOp
-            , name = "The Main Page"
+            , recoveryText = Page.ReturnTo "the main page"
             }
-        , Headings.h4 [ Html.text "Page: Broken" ]
+        , Headings.h4 [ Html.text "Page: Broken, recovery text: Reload" ]
         , Page.broken
             { link = noOp
-            , name = "The Main Page"
+            , recoveryText = Page.Reload
             }
-        , Headings.h4 [ Html.text "Page: No Permission" ]
+        , Headings.h4 [ Html.text "Page: No Permission, recovery text: Custom" ]
         , Page.noPermission
             { link = noOp
-            , name = "The Main Page"
+            , recoveryText = Page.Custom "Hit the road, Jack"
             }
         ]
     }
