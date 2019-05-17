@@ -83,7 +83,7 @@ init =
 {-| -}
 init2 : State2 Value
 init2 =
-    { current = Just "Tacos"
+    { current = Nothing
     , choices =
         [ { label = "Tacos", value = "Tacos" }
         , { label = "Burritos", value = "Burritos" }
@@ -91,7 +91,7 @@ init2 =
         ]
     , id = Nothing
     , valueToString = identity
-    , defaultDisplayText = Just "Select a tortilla based joy"
+    , defaultDisplayText = Nothing
     }
 
 

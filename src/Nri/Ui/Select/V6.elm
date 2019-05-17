@@ -77,9 +77,18 @@ view config =
             config.id
                 |> Maybe.map (\id -> [ Attributes.id id ])
                 |> Maybe.withDefault []
+
+        currentVal =
+            if config.current == Nothing && config.defaultDisplayText == Nothing then
+                config.choices
+                    |> List.head
+                    |> Maybe.map .value
+
+            else
+                config.current
     in
     config.choices
-        |> List.map (viewChoice config.current config.valueToString)
+        |> List.map (viewChoice currentVal config.valueToString)
         |> (++) defaultOption
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
