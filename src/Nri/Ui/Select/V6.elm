@@ -20,12 +20,16 @@ import Nri.Ui.Util
 {-| Configure a Select
 -}
 type alias Config a =
-    { choices : List { label : String, value : a }
-    , current : a
+    { choices : List (Choice a)
+    , current : Maybe a
     , id : Maybe String
     , valueToString : a -> String
     , defaultDisplayText : Maybe String
     }
+
+
+type alias Choice a =
+    { label : String, value : a }
 
 
 {-| TODO: Consider moving this to Nri.Ui.Util once the non-0.19-approved `toString` is removed
@@ -55,27 +59,19 @@ view config =
             on "change" (targetValue |> andThen decodeValue)
 
         defaultOption =
-            case config.defaultDisplayText of
-                Just defaultText ->
-                    [ Html.option
-                        [ Attributes.id (niceId "nri-select" "default")
-                        , Attributes.value (niceId "nri-select" "default")
-                        , Attributes.selected True
-                        , disabled True
+            config.defaultDisplayText
+                |> Maybe.map
+                    (\displayText ->
+                        [ Html.option
+                            [ Attributes.id (niceId "nri-select" "default")
+                            , Attributes.value (niceId "nri-select" "default")
+                            , Attributes.selected (config.current == Nothing)
+                            , disabled True
+                            ]
+                            [ text displayText ]
                         ]
-                        [ text defaultText ]
-                    ]
-
-                Nothing ->
-                    []
-
-        viewChoice choice =
-            Html.option
-                [ Attributes.id (niceId "nri-select" (config.valueToString choice.value))
-                , Attributes.value (niceId "nri-select" (config.valueToString choice.value))
-                , Attributes.selected (choice.value == config.current)
-                ]
-                [ Html.text choice.label ]
+                    )
+                |> Maybe.withDefault []
 
         extraAttrs =
             config.id
@@ -83,7 +79,7 @@ view config =
                 |> Maybe.withDefault []
     in
     config.choices
-        |> List.map viewChoice
+        |> List.map (viewChoice config.current config.valueToString)
         |> (++) defaultOption
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
@@ -97,3 +93,19 @@ view config =
             , Css.width (Css.pct 100)
             ]
             ([ onSelectHandler ] ++ extraAttrs)
+
+
+viewChoice : Maybe a -> (a -> String) -> Choice a -> Html a
+viewChoice current toString choice =
+    let
+        isSelected =
+            current
+                |> Maybe.map ((==) choice.value)
+                |> Maybe.withDefault False
+    in
+    Html.option
+        [ Attributes.id (niceId "nri-select" (toString choice.value))
+        , Attributes.value (niceId "nri-select" (toString choice.value))
+        , Attributes.selected isSelected
+        ]
+        [ Html.text choice.label ]
