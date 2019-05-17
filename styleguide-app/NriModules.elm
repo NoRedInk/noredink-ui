@@ -36,7 +36,6 @@ type alias ModuleStates =
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
-    , selectState2 : Examples.Select.State2 Examples.Select.Value
     , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
     , textInputExampleState : TextInputExample.State
@@ -56,7 +55,6 @@ init =
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
-    , selectState2 = Examples.Select.init2
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
     , textInputExampleState = TextInputExample.init
@@ -75,7 +73,6 @@ type Msg
     | DropdownMsg Examples.Dropdown.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
-    | SelectMsg2 Examples.Select.Msg
     | ShowItWorked String String
     | TableExampleMsg Examples.Table.Msg
     | TextAreaExampleMsg TextAreaExample.Msg
@@ -140,15 +137,6 @@ update outsideMsg moduleStates =
                     Examples.Select.update msg moduleStates.selectState
             in
             ( { moduleStates | selectState = selectState }
-            , Cmd.map SelectMsg cmd
-            )
-
-        SelectMsg2 msg ->
-            let
-                ( selectState2, cmd ) =
-                    Examples.Select.update2 msg moduleStates.selectState2
-            in
-            ( { moduleStates | selectState2 = selectState2 }
             , Cmd.map SelectMsg cmd
             )
 
@@ -261,7 +249,6 @@ nriThemedModules model =
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
-    , Examples.Select.example2 SelectMsg2 model.selectState2
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
