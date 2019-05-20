@@ -8,10 +8,10 @@ module Nri.Ui.Select.V6 exposing (Config, view)
 
 import Css
 import Dict
-import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attributes exposing (..)
-import Html.Styled.Events exposing (..)
-import Json.Decode exposing (Decoder, andThen, succeed)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
+import Json.Decode exposing (Decoder)
 import Nri.Ui
 import Nri.Ui.Colors.V1
 import Nri.Ui.Util
@@ -64,7 +64,7 @@ view config =
                     )
 
         onSelectHandler =
-            on "change" (targetValue |> andThen decodeValue)
+            Events.on "change" (Events.targetValue |> Json.Decode.andThen decodeValue)
 
         defaultOption =
             config.defaultDisplayText
@@ -106,9 +106,9 @@ viewDefaultChoice : Maybe a -> String -> Html a
 viewDefaultChoice current displayText =
     Html.option
         [ Attributes.selected (current == Nothing)
-        , disabled True
+        , Attributes.disabled True
         ]
-        [ text displayText ]
+        [ Html.text displayText ]
 
 
 viewChoice : Maybe a -> (a -> String) -> Choice a -> Html a
