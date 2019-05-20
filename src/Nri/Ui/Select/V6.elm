@@ -1,8 +1,8 @@
-module Nri.Ui.Select.V6 exposing (Config, view)
+module Nri.Ui.Select.V6 exposing (Config, Choice, view)
 
 {-| Build a select input.
 
-@docs Config, view
+@docs Config, Choice, view
 
 -}
 
@@ -28,6 +28,8 @@ type alias Config a =
     }
 
 
+{-| A single possible choice.
+-}
 type alias Choice a =
     { label : String, value : a }
 
