@@ -60,17 +60,7 @@ view config =
 
         defaultOption =
             config.defaultDisplayText
-                |> Maybe.map
-                    (\displayText ->
-                        [ Html.option
-                            [ Attributes.id (niceId "nri-select" "default")
-                            , Attributes.value (niceId "nri-select" "default")
-                            , Attributes.selected (config.current == Nothing)
-                            , disabled True
-                            ]
-                            [ text displayText ]
-                        ]
-                    )
+                |> Maybe.map (viewDefaultChoice config.current >> List.singleton)
                 |> Maybe.withDefault []
 
         extraAttrs =
@@ -102,6 +92,17 @@ view config =
             , Css.width (Css.pct 100)
             ]
             ([ onSelectHandler ] ++ extraAttrs)
+
+
+viewDefaultChoice : Maybe a -> String -> Html a
+viewDefaultChoice current displayText =
+    Html.option
+        [ Attributes.id (niceId "nri-select" "default")
+        , Attributes.value (niceId "nri-select" "default")
+        , Attributes.selected (current == Nothing)
+        , disabled True
+        ]
+        [ text displayText ]
 
 
 viewChoice : Maybe a -> (a -> String) -> Choice a -> Html a
