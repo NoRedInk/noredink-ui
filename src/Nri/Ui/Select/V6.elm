@@ -105,9 +105,7 @@ view config =
 viewDefaultChoice : Maybe a -> String -> Html a
 viewDefaultChoice current displayText =
     Html.option
-        [ Attributes.id (niceId "nri-select" "default")
-        , Attributes.value (niceId "nri-select" "default")
-        , Attributes.selected (current == Nothing)
+        [ Attributes.selected (current == Nothing)
         , disabled True
         ]
         [ text displayText ]
