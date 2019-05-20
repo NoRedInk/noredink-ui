@@ -45,7 +45,6 @@ view : Config a -> Html a
 view config =
     let
         valueLookup =
-            -- TODO: probably worth using Lazy here, since choices won't change often
             config.choices
                 |> List.map (\x -> ( niceId (config.valueToString x.value), x.value ))
                 |> Dict.fromList
