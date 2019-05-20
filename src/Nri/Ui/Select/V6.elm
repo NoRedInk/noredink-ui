@@ -32,11 +32,9 @@ type alias Choice a =
     { label : String, value : a }
 
 
-{-| TODO: Consider moving this to Nri.Ui.Util once the non-0.19-approved `toString` is removed
--}
-niceId : String -> String -> String
-niceId prefix x =
-    prefix ++ "-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
+niceId : String -> String
+niceId x =
+    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
 
 
 {-| A select dropdown
@@ -47,7 +45,7 @@ view config =
         valueLookup =
             -- TODO: probably worth using Lazy here, since choices won't change often
             config.choices
-                |> List.map (\x -> ( niceId "nri-select" (config.valueToString x.value), x.value ))
+                |> List.map (\x -> ( niceId (config.valueToString x.value), x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -120,8 +118,8 @@ viewChoice current toString choice =
                 |> Maybe.withDefault False
     in
     Html.option
-        [ Attributes.id (niceId "nri-select" (toString choice.value))
-        , Attributes.value (niceId "nri-select" (toString choice.value))
+        [ Attributes.id (niceId (toString choice.value))
+        , Attributes.value (niceId (toString choice.value))
         , Attributes.selected isSelected
         ]
         [ Html.text choice.label ]
