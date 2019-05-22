@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Checks that `elm-package.json` contains an `exposed-modules` entry for every
+# Checks that `elm.json` contains an `exposed-modules` entry for every
 # module in `src/Nri` (recursively) named `Vn.elm`, where `n` is a decimal
 # number.
 #
@@ -56,14 +56,9 @@ def read_exposed_modules(path):
 
 
 if __name__ == "__main__":
-    available_18 = set(find_v_modules("src-0.18"))
-    available_19 = set(find_v_modules("src"))
-    exposed_18 = set(read_exposed_modules("elm-package.json"))
-    exposed_19 = set(read_exposed_modules("elm.json"))
-    # XXX: Do we need to check that parent modules are exposed too?
-    missing_18 = available_18 - exposed_18
-    missing_19 = available_19 - exposed_19
-    missing = missing_18.union(missing_19)
+    available = set(find_v_modules("src"))
+    exposed = set(read_exposed_modules("elm.json"))
+    missing = available - exposed
     for module in sorted(missing):
         print("Not exposed:", module, file=sys.stderr)
     raise SystemExit(

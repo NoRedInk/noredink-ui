@@ -2,10 +2,6 @@
 
 UI widgets we use.
 
-## Dual publishing notes
-
-All internal consumers of this repository have been upgrade to Elm 0.19, so we will not be continuing to update the Elm 0.18 source.
-
 ## Versioning policy
 
 We try to avoid breaking changes and the associated major version bumps in this package. The reason for that is to avoid the following scenario:
