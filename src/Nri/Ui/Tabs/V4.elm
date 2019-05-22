@@ -33,6 +33,7 @@ import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
+import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -190,6 +191,75 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Attributes.tabindex -1
             ]
             [ viewInnerTab tab ]
+        ]
+
+
+{-| Represents a link to a route in your SPA
+-}
+type alias SpaTab route =
+    { label : String
+    , route : route
+    }
+
+
+{-| Config for tabs for `viewSpaTabs`
+-}
+type alias SpaConfig route msg =
+    { title : Maybe String
+    , tabs : Zipper (SpaTab route)
+    , content : Html msg
+    , alignment : Alignment
+    , toUrl : route -> String
+    , toMsg : route -> msg
+    }
+
+
+{-| See `SpaConfig`
+-}
+viewSpaTabs : SpaConfig route msg -> Html msg
+viewSpaTabs config =
+    Html.div []
+        [ Html.styled Html.nav
+            [ Css.displayFlex
+            , Css.alignItems Css.flexEnd
+            , Css.borderBottom (Css.px 1)
+            , Css.borderBottomStyle Css.solid
+            , Css.borderBottomColor Nri.Ui.Colors.V1.navy
+            , Nri.Ui.Fonts.V1.baseFont
+            ]
+            []
+            [ config.title
+                |> Maybe.map viewTitle
+                |> Maybe.withDefault (Html.text "")
+            , Html.styled Html.ul
+                (stylesTabsAligned config.alignment)
+                []
+                (config.tabs
+                    |> mapWithCurrent (viewSpaTab config)
+                    |> List.Zipper.toList
+                )
+            ]
+        , Html.div [] [ config.content ]
+        ]
+
+
+viewSpaTab : SpaConfig route msg -> Bool -> SpaTab route -> Html msg
+viewSpaTab config isSelected spaTab =
+    Html.styled Html.li
+        (stylesTabSelectable isSelected)
+        [ Attributes.fromUnstyled <| Accessibility.Role.presentation
+        , Attributes.id (tabToId spaTab)
+        ]
+        [ Html.styled Html.a
+            [ Css.color Nri.Ui.Colors.V1.navy
+            , Css.display Css.inlineBlock
+            , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
+            , Css.textDecoration Css.none
+            ]
+            [ Attributes.href (config.toUrl spaTab.route)
+            , Attributes.fromUnstyled <| EventExtras.onClickPreventDefaultForLinkWithHref (config.toMsg spaTab.route)
+            ]
+            [ Html.text spaTab.label ]
         ]
 
 
