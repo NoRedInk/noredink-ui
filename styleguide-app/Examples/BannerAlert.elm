@@ -1,8 +1,8 @@
-module Examples.BannerAlert exposing (example)
+module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 {-|
 
-@docs example
+@docs example, State, init, Msg, update
 
 -}
 
@@ -11,17 +11,17 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.BannerAlert.V4 as BannerAlert
 
 
-example : ModuleExample msg
-example =
-    { name = "Nri.Ui.BannerAlert.V3"
+example : (Msg -> msg) -> State -> ModuleExample msg
+example parentMsg state =
+    { name = "Nri.Ui.BannerAlert.V4"
     , category = Messaging
     , content =
         [ h3 [] [ text "alert" ]
-        , BannerAlert.alert "This is an alert message!"
+        , BannerAlert.alert "This is an alert message!" (Just NoOp)
         , h3 [] [ text "error" ]
-        , BannerAlert.error "This is an error message!"
+        , BannerAlert.error "This is an error message!" Nothing
         , h3 [] [ text "neutral" ]
-        , BannerAlert.neutral "This is a neutral message!"
+        , BannerAlert.neutral "This is a neutral message!" Nothing
         , h3 [] [ text "success" ]
         , BannerAlert.success
             """This is a success message!
@@ -29,5 +29,27 @@ example =
             Wow, how successful! You're the biggest success I've ever seen!
             You should feel great about yourself! Give yourself a very big round of applause!
             """
+            Nothing
         ]
+            |> List.map (Html.Styled.map parentMsg)
     }
+
+
+type alias State =
+    {}
+
+
+init : State
+init =
+    {}
+
+
+type Msg
+    = NoOp
+
+
+update : Msg -> State -> State
+update msg state =
+    case msg of
+        NoOp ->
+            state

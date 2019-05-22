@@ -13,15 +13,18 @@ import Accessibility.Styled as Html exposing (Html)
 import Css
 import Css.Global
 import Html.Styled.Attributes as Attributes exposing (css)
+import Nri.Ui
+import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Icon.V4 as Icon
 import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 {-| A banner to show error alerts
 -}
-alert : String -> Html msg
+alert : String -> Maybe msg -> Html msg
 alert =
     banner
         { backgroundColor = Colors.sunshine
@@ -36,7 +39,7 @@ alert =
 
 {-| A banner to show error alerts
 -}
-error : String -> Html msg
+error : String -> Maybe msg -> Html msg
 error =
     banner
         { backgroundColor = Colors.purpleLight
@@ -51,7 +54,7 @@ error =
 
 {-| A banner to show neutral alerts
 -}
-neutral : String -> Html msg
+neutral : String -> Maybe msg -> Html msg
 neutral =
     banner
         { backgroundColor = Colors.frost
@@ -66,7 +69,7 @@ neutral =
 
 {-| A banner for success alerts
 -}
-success : String -> Html msg
+success : String -> Maybe msg -> Html msg
 success =
     banner
         { backgroundColor = Colors.greenLightest
@@ -86,8 +89,17 @@ type alias Config =
     }
 
 
-banner : Config -> String -> Html msg
-banner config alertMessage =
+banner : Config -> String -> Maybe msg -> Html msg
+banner config alertMessage dismissMsg =
+    let
+        maybeDismissButton =
+            case dismissMsg of
+                Nothing ->
+                    Html.text ""
+
+                Just msg ->
+                    dismissButton (Icon.xSvg { x = "xSvg" }) msg
+    in
     Html.div
         [ css
             [ Css.alignItems Css.center
@@ -107,6 +119,27 @@ banner config alertMessage =
         ]
         [ icon config.icon
         , notification alertMessage
+        , maybeDismissButton
+        ]
+
+
+dismissButton : Icon.IconType -> msg -> Html msg
+dismissButton xIcon msg =
+    Nri.Ui.styled Html.div
+        "dismiss-button-container"
+        [ Css.position Css.absolute
+        , Css.top Css.zero
+        , Css.right Css.zero
+        , Css.padding (Css.px 25)
+        ]
+        []
+        [ Icon.button
+            { alt = "Dismiss banner"
+            , msg = msg
+            , icon = xIcon
+            , disabled = False
+            , size = Icon.Medium
+            }
         ]
 
 

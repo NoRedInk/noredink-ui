@@ -31,6 +31,7 @@ import Url exposing (Url)
 
 type alias ModuleStates =
     { buttonExampleState : Examples.Button.State
+    , bannerAlertExampleState : Examples.BannerAlert.State
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
@@ -50,6 +51,7 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init assets
+    , bannerAlertExampleState = Examples.BannerAlert.init
     , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
@@ -68,6 +70,7 @@ init =
 
 type Msg
     = ButtonExampleMsg Examples.Button.Msg
+    | BannerAlertExampleMsg Examples.BannerAlert.Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
@@ -95,6 +98,14 @@ update outsideMsg moduleStates =
             in
             ( { moduleStates | buttonExampleState = buttonExampleState }
             , Cmd.map ButtonExampleMsg cmd
+            )
+
+        BannerAlertExampleMsg msg ->
+            ( { moduleStates
+                | bannerAlertExampleState =
+                    Examples.BannerAlert.update msg moduleStates.bannerAlertExampleState
+              }
+            , Cmd.none
             )
 
         ClickableTextExampleMsg msg ->
@@ -240,7 +251,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
-    , Examples.BannerAlert.example
+    , Examples.BannerAlert.example BannerAlertExampleMsg model.bannerAlertExampleState
     , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
