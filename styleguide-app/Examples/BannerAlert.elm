@@ -8,7 +8,7 @@ module Examples.BannerAlert exposing (example)
 
 import Html.Styled exposing (h3, text)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.BannerAlert.V3 as BannerAlert
+import Nri.Ui.BannerAlert.V4 as BannerAlert
 
 
 example : ModuleExample msg
@@ -16,7 +16,9 @@ example =
     { name = "Nri.Ui.BannerAlert.V3"
     , category = Messaging
     , content =
-        [ h3 [] [ text "error" ]
+        [ h3 [] [ text "alert" ]
+        , BannerAlert.alert "This is an alert message!"
+        , h3 [] [ text "error" ]
         , BannerAlert.error "This is an error message!"
         , h3 [] [ text "neutral" ]
         , BannerAlert.neutral "This is a neutral message!"
