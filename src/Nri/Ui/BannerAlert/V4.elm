@@ -13,12 +13,11 @@ import Accessibility.Styled as Html exposing (Html)
 import Css
 import Css.Global
 import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Events
 import Nri.Ui
-import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V4 as Icon
-import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
+import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark, xSvg)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -98,7 +97,7 @@ banner config alertMessage dismissMsg =
                     Html.text ""
 
                 Just msg ->
-                    dismissButton (Icon.xSvg { x = "xSvg" }) msg
+                    dismissButton msg
     in
     Html.div
         [ css
@@ -123,23 +122,23 @@ banner config alertMessage dismissMsg =
         ]
 
 
-dismissButton : Icon.IconType -> msg -> Html msg
-dismissButton xIcon msg =
+dismissButton : msg -> Html msg
+dismissButton msg =
     Nri.Ui.styled Html.div
         "dismiss-button-container"
-        [ Css.position Css.absolute
-        , Css.top Css.zero
-        , Css.right Css.zero
-        , Css.padding (Css.px 25)
-        ]
         []
-        [ Icon.button
-            { alt = "Dismiss banner"
-            , msg = msg
-            , icon = xIcon
-            , disabled = False
-            , size = Icon.Medium
-            }
+        []
+        [ Html.button
+            [ Html.Styled.Events.onClick msg
+            , css
+                [ Css.borderWidth Css.zero
+                , Css.backgroundColor Css.unset
+                , Css.color Colors.azure
+                ]
+            ]
+            [ -- TODO: add hidden text ("Dismiss banner") for what this is about
+              NriSvg.toHtml xSvg
+            ]
         ]
 
 
