@@ -101,24 +101,37 @@ banner config alertMessage dismissMsg =
     in
     Html.div
         [ css
-            [ Css.alignItems Css.center
-            , Css.displayFlex
+            [ Css.displayFlex
             , Css.justifyContent Css.center
-            , Css.padding (Css.px 20)
-            , Css.width (Css.pct 100)
-            , Css.Global.children
-                [ Css.Global.button
-                    [ Css.position Css.absolute
-                    , Css.right (Css.px 15)
-                    ]
-                ]
             , Css.backgroundColor config.backgroundColor
             , Css.color config.color
             ]
         ]
-        [ icon config.icon
-        , notification alertMessage
-        , maybeDismissButton
+        [ Html.span
+            [ css
+                [ Css.alignItems Css.center
+                , Css.displayFlex
+                , Css.justifyContent Css.center
+                , Css.padding (Css.px 20)
+                , Css.width (Css.pct 100)
+                , Css.Global.children
+                    [ Css.Global.button
+                        [ Css.position Css.relative
+                        , Css.right (Css.px 15)
+                        ]
+                    ]
+                ]
+            ]
+            [ icon config.icon
+            , notification alertMessage
+            ]
+        , Html.span
+            [ css
+                [ Css.display Css.inlineBlock
+                , Css.float Css.right
+                ]
+            ]
+            [ maybeDismissButton ]
         ]
 
 
@@ -126,7 +139,11 @@ dismissButton : msg -> Html msg
 dismissButton msg =
     Nri.Ui.styled Html.div
         "dismiss-button-container"
-        []
+        [ Css.position Css.relative
+        , Css.top (Css.px 5)
+        , Css.right Css.zero
+        , Css.padding (Css.px 25)
+        ]
         []
         [ Html.button
             [ Html.Styled.Events.onClick msg
@@ -134,6 +151,8 @@ dismissButton msg =
                 [ Css.borderWidth Css.zero
                 , Css.backgroundColor Css.unset
                 , Css.color Colors.azure
+                , Css.width (Css.px 30)
+                , Css.height (Css.px 30)
                 ]
             ]
             [ -- TODO: add hidden text ("Dismiss banner") for what this is about
