@@ -1,11 +1,8 @@
-module Nri.Ui.BannerAlert.V4 exposing
-    ( error, neutral, success
-    , alert
-    )
+module Nri.Ui.BannerAlert.V4 exposing (alert, error, neutral, success)
 
 {-|
 
-@docs error, neutral, success
+@docs alert, error, neutral, success
 
 -}
 

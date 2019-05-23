@@ -6,7 +6,7 @@ module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 -}
 
-import Html.Styled exposing (h3, text)
+import Html.Styled exposing (div, h3, text)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.BannerAlert.V4 as BannerAlert
 
@@ -16,8 +16,19 @@ example parentMsg state =
     { name = "Nri.Ui.BannerAlert.V4"
     , category = Messaging
     , content =
-        [ h3 [] [ text "alert" ]
-        , BannerAlert.alert "This is an alert message!" (Just NoOp)
+        [ if state.show then
+            div
+                []
+                [ h3 [] [ text "alert" ]
+                , BannerAlert.alert "This is a dismissable alert message!" (Just Dismiss)
+                ]
+
+          else
+            div
+                []
+                [ h3 [] [ text "success" ]
+                , BannerAlert.success "the alert message was dismissed. 👍" Nothing
+                ]
         , h3 [] [ text "error" ]
         , BannerAlert.error "This is an error message!" Nothing
         , h3 [] [ text "neutral" ]
@@ -36,16 +47,17 @@ example parentMsg state =
 
 
 type alias State =
-    {}
+    { show : Bool }
 
 
 init : State
 init =
-    {}
+    { show = True }
 
 
 type Msg
     = NoOp
+    | Dismiss
 
 
 update : Msg -> State -> State
@@ -53,3 +65,6 @@ update msg state =
     case msg of
         NoOp ->
             state
+
+        Dismiss ->
+            { state | show = False }
