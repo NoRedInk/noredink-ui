@@ -27,7 +27,7 @@ example parentMsg state =
             div
                 []
                 [ h3 [] [ text "success" ]
-                , BannerAlert.success "the alert message was dismissed. 👍" Nothing
+                , BannerAlert.success "The alert message was dismissed. 👍" Nothing
                 ]
         , h3 [] [ text "error" ]
         , BannerAlert.error "This is an error message!" Nothing
