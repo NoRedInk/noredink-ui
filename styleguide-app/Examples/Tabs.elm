@@ -53,7 +53,9 @@ example changeTab tab =
                 List.Zipper.Zipper
                     []
                     (Tabs.NormalLink { label = "Nowhere", href = Nothing })
-                    [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" } ]
+                    [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" }
+                    , Tabs.SpaLink { label = "Spa", href = "/#category/Widgets", msg = changeTab Second }
+                    ]
             }
         ]
     }
