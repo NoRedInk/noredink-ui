@@ -12,7 +12,7 @@ module Examples.Tabs exposing
 import Html.Styled as Html
 import List.Zipper
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Tabs.V3 as Tabs
+import Nri.Ui.Tabs.V4 as Tabs
 
 
 type Tab
@@ -22,7 +22,7 @@ type Tab
 
 example : (Tab -> msg) -> Tab -> ModuleExample msg
 example changeTab tab =
-    { name = "Nri.Ui.Tabs.V3"
+    { name = "Nri.Ui.Tabs.V4"
     , category = Widgets
     , content =
         [ Tabs.view
@@ -50,7 +50,12 @@ example changeTab tab =
             , content = Html.text "Links"
             , alignment = Tabs.Left
             , tabs =
-                List.Zipper.Zipper [] (Tabs.TabLink "Nowhere" Nothing) [ Tabs.TabLink "Elm" (Just "http://elm-lang.org") ]
+                List.Zipper.Zipper
+                    []
+                    (Tabs.NormalLink { label = "Nowhere", href = Nothing })
+                    [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" }
+                    , Tabs.SpaLink { label = "Spa", href = "/#category/Widgets", msg = changeTab Second }
+                    ]
             }
         ]
     }
