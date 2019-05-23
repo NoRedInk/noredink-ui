@@ -265,6 +265,13 @@ viewTabLink config isSelected tabConfig =
                     , Just href
                     , [ Attributes.fromUnstyled <| EventExtras.onClickPreventDefaultForLinkWithHref msg ]
                     )
+
+        currentPage =
+            if isSelected then
+                [ Attributes.fromUnstyled <| Accessibility.Aria.currentPage ]
+
+            else
+                []
     in
     Html.styled Html.li
         (stylesTabSelectable isSelected)
@@ -279,7 +286,7 @@ viewTabLink config isSelected tabConfig =
                     , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
                     ]
-                    ([ Attributes.href href ] ++ preventDefault)
+                    ([ Attributes.href href ] ++ preventDefault ++ currentPage)
                     [ Html.text tabLabel ]
 
             Nothing ->
@@ -294,7 +301,7 @@ viewTabLink config isSelected tabConfig =
                     , Css.property "background" "none"
                     , Css.lineHeight (Css.num 1)
                     ]
-                    []
+                    currentPage
                     [ Html.text tabLabel ]
         ]
 
