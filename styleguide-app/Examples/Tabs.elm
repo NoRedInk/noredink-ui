@@ -50,7 +50,10 @@ example changeTab tab =
             , content = Html.text "Links"
             , alignment = Tabs.Left
             , tabs =
-                List.Zipper.Zipper [] (Tabs.TabLink "Nowhere" Nothing) [ Tabs.TabLink "Elm" (Just "http://elm-lang.org") ]
+                List.Zipper.Zipper
+                    []
+                    (Tabs.NormalLink { label = "Nowhere", href = Nothing })
+                    [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" } ]
             }
         ]
     }
