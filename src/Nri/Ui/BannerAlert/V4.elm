@@ -153,6 +153,7 @@ dismissButton msg =
                 , Css.width (Css.px 30)
                 , Css.height (Css.px 30)
                 , Css.padding2 Css.zero (Css.px 7)
+                , Css.cursor Css.pointer
                 ]
             ]
             [ NriSvg.toHtml xSvg
