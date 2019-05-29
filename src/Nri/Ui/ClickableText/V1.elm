@@ -41,7 +41,7 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V4 as Icon exposing (IconType)
+import Nri.Ui.Icon.V5 as Icon exposing (IconType)
 
 
 {-| Sizes for the button
