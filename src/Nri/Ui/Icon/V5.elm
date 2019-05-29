@@ -53,7 +53,6 @@ module Nri.Ui.Icon.V5 exposing
     , help
     , helpSvg
     , highFive
-    , highlighter
     , key
     , keychain
     , late
@@ -63,7 +62,6 @@ module Nri.Ui.Icon.V5 exposing
     , lockDeprecated
     , logo
     , masteryBadge
-    , microscope
     , newspaper
     , notStarred
     , okay
@@ -74,8 +72,6 @@ module Nri.Ui.Icon.V5 exposing
     , personBlue
     , preview
     , quickWrite
-    , scale
-    , search
     , seeMore
     , share
     , skip
@@ -148,7 +144,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs help
 @docs helpSvg
 @docs highFive
-@docs highlighter
 @docs key
 @docs keychain
 @docs late
@@ -158,7 +153,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs lockDeprecated
 @docs logo
 @docs masteryBadge
-@docs microscope
 @docs newspaper
 @docs notStarred
 @docs okay
@@ -169,8 +163,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs personBlue
 @docs preview
 @docs quickWrite
-@docs scale
-@docs search
 @docs seeMore
 @docs share
 @docs skip
@@ -696,12 +688,6 @@ highFive assets =
 
 
 {-| -}
-highlighter : { r | highlighter : String } -> IconType
-highlighter assets =
-    SvgIcon assets.highlighter
-
-
-{-| -}
 key : { r | key : String } -> IconType
 key assets =
     SvgIcon assets.key
@@ -753,12 +739,6 @@ logo assets =
 masteryBadge : { r | masteryBadge : String } -> IconType
 masteryBadge assets =
     SvgIcon assets.masteryBadge
-
-
-{-| -}
-microscope : { r | microscope : String } -> IconType
-microscope assets =
-    SvgIcon assets.microscope
 
 
 {-| -}
@@ -819,18 +799,6 @@ preview assets =
 quickWrite : { r | icons_quickWrite_svg : Asset } -> IconType
 quickWrite assets =
     ImgIcon assets.icons_quickWrite_svg
-
-
-{-| -}
-scale : { r | scale : String } -> IconType
-scale assets =
-    SvgIcon assets.scale
-
-
-{-| -}
-search : { r | search : String } -> IconType
-search assets =
-    SvgIcon assets.search
 
 
 {-| -}
