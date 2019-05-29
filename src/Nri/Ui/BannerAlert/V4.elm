@@ -7,6 +7,7 @@ module Nri.Ui.BannerAlert.V4 exposing (alert, error, neutral, success)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Global
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -144,16 +145,18 @@ dismissButton msg =
         []
         [ Html.button
             [ Html.Styled.Events.onClick msg
+            , Widget.label "Dismiss banner"
             , css
                 [ Css.borderWidth Css.zero
                 , Css.backgroundColor Css.unset
                 , Css.color Colors.azure
                 , Css.width (Css.px 30)
                 , Css.height (Css.px 30)
+                , Css.padding2 Css.zero (Css.px 7)
+                , Css.cursor Css.pointer
                 ]
             ]
-            [ -- TODO: add hidden text ("Dismiss banner") for what this is about
-              NriSvg.toHtml xSvg
+            [ NriSvg.toHtml xSvg
             ]
         ]
 
