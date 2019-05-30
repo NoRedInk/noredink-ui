@@ -13,7 +13,7 @@ import Nri.Ui.BannerAlert.V5 as BannerAlert
 
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMsg state =
-    { name = "Nri.Ui.BannerAlert.V4"
+    { name = "Nri.Ui.BannerAlert.V5"
     , category = Messaging
     , content =
         [ if state.show then
@@ -37,7 +37,7 @@ example parentMsg state =
                 { prefixText = "Click "
                 , linkText = "here"
                 , linkUrl = "http://www.noredink.com"
-                , postfixText = " to check out NoRedInk"
+                , postfixText = " to check out NoRedInk."
                 , target = BannerAlert.Blank
                 }
             )
