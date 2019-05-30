@@ -27,7 +27,7 @@ alert =
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.yellow
+            { backgroundColor = Colors.ochre
             , height = Css.px 25
             , asset = exclamationMark
             }
@@ -101,6 +101,7 @@ banner config alertMessage dismissMsg =
         [ css
             [ Css.displayFlex
             , Css.justifyContent Css.center
+            , Css.alignItems Css.center
             , Css.backgroundColor config.backgroundColor
             , Css.color config.color
             ]
@@ -123,13 +124,7 @@ banner config alertMessage dismissMsg =
             [ icon config.icon
             , notification alertMessage
             ]
-        , Html.span
-            [ css
-                [ Css.display Css.inlineBlock
-                , Css.float Css.right
-                ]
-            ]
-            [ maybeDismissButton ]
+        , maybeDismissButton
         ]
 
 
@@ -137,10 +132,7 @@ dismissButton : msg -> Html msg
 dismissButton msg =
     Nri.Ui.styled Html.div
         "dismiss-button-container"
-        [ Css.position Css.relative
-        , Css.top (Css.px 5)
-        , Css.right Css.zero
-        , Css.padding (Css.px 25)
+        [ Css.padding (Css.px 25)
         ]
         []
         [ Html.button
@@ -195,13 +187,13 @@ icon config =
 
 notification : String -> Html msg
 notification message =
-    Html.div
-        [ css
-            [ Css.fontSize (Css.px 20)
-            , Css.fontWeight (Css.int 700)
-            , Css.lineHeight (Css.px 25)
-            , Css.maxWidth (Css.px 600)
-            , Nri.Ui.Fonts.V1.baseFont
-            ]
+    Nri.Ui.styled Html.div
+        "banner-alert-notification"
+        [ Css.fontSize (Css.px 20)
+        , Css.fontWeight (Css.int 700)
+        , Css.lineHeight (Css.px 27)
+        , Css.maxWidth (Css.px 600)
+        , Nri.Ui.Fonts.V1.baseFont
         ]
+        []
         [ Html.text message ]
