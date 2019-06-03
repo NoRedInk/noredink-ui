@@ -53,7 +53,6 @@ type alias Assets =
     , performance : String
     , personBlue_svg : Asset
     , practice : String
-    , premiumLock_svg : Asset
     , preview : String
     , quickWrite : String
     , quiz : String
@@ -129,7 +128,6 @@ assets =
     , performance = "icon-performance"
     , personBlue_svg = Asset "assets/images/person-blue.svg"
     , practice = "icon-practice"
-    , premiumLock_svg = Asset "assets/images/premium-lock.svg"
     , preview = "icon-preview"
     , quickWrite = "icon-quick-write"
     , quiz = "icon-quiz"

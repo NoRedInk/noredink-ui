@@ -22,7 +22,7 @@ module Nri.Ui.Icon.V5 exposing
     , IconButtonModel, button
     , IconLinkModel, link, linkExternal
     , IconLinkSpaModel, linkSpa
-    , lockDeprecated, logo, peerReview
+    , logo, peerReview
     )
 
 {-|
@@ -573,12 +573,6 @@ lightBulb assets =
 lock : { r | lock : String } -> IconType
 lock assets =
     SvgIcon assets.lock
-
-
-{-| -}
-lockDeprecated : { r | premiumLock_svg : Asset } -> IconType
-lockDeprecated assets =
-    ImgIcon assets.premiumLock_svg
 
 
 {-| -}
