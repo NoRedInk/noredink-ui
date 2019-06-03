@@ -18,7 +18,7 @@ module Nri.Ui.Icon.V5 exposing
     , gear, pen, newspaper, sort, speedometer
     , skip
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, button
-    , close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -437,12 +437,6 @@ clever assets =
 clock : { r | clock : String } -> IconType
 clock assets =
     SvgIcon assets.clock
-
-
-{-| -}
-close : { r | icons_xBlue_svg : Asset } -> IconType
-close assets =
-    ImgIcon assets.icons_xBlue_svg
 
 
 {-| -}
