@@ -12,7 +12,6 @@ type alias Assets =
     , bulb : String
     , calendar : String
     , checkmark : String
-    , checkWhite_svg : Asset
     , class : String
     , clever : String
     , clock : String
@@ -38,6 +37,7 @@ type alias Assets =
     , iconFlag_png : Asset
     , iconPremiumFlag_svg : Asset
     , iconPremiumWithWritingFlag_svg : Asset
+    , icons_clockRed_svg : Asset
     , icons_equals_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
@@ -96,7 +96,6 @@ assets =
     , bulb = "icon-bulb"
     , calendar = "icon-calendar"
     , checkmark = "icon-checkmark"
-    , checkWhite_svg = Asset "assets/images/check-white.svg"
     , class = "icon-class"
     , clever = "icon-clever"
     , clock = "icon-clock"
@@ -122,6 +121,7 @@ assets =
     , iconFlag_png = Asset "assets/images/icon-flag.png"
     , iconPremiumFlag_svg = Asset "assets/images/icon_premium_flag.svg"
     , iconPremiumWithWritingFlag_svg = Asset "assets/images/icon_premium_writing_flag.svg"
+    , icons_clockRed_svg = Asset "assets/images/clock-red.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
