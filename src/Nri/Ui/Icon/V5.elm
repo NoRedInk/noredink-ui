@@ -17,8 +17,8 @@ module Nri.Ui.Icon.V5 exposing
     , activity, compassSvg, document, flipper, footsteps
     , gear, pen, newspaper, sort, speedometer
     , skip
-    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconType
-    , IconSize(..), bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, button
+    , caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -108,7 +108,7 @@ module Nri.Ui.Icon.V5 exposing
 
 ## For the Icon API
 
-@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
+@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize, IconType, button
 
 -}
 
@@ -401,12 +401,6 @@ assignmentTypeWritingCycle assets =
 attention : { r | attention_svg : Asset } -> IconType
 attention assets =
     ImgIcon assets.attention_svg
-
-
-{-| -}
-bang : { r | exclamationPoint_svg : Asset } -> IconType
-bang assets =
-    ImgIcon assets.exclamationPoint_svg
 
 
 {-| -}
