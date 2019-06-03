@@ -1,172 +1,108 @@
 module Nri.Ui.Icon.V5 exposing
-    ( icon, decorativeIcon
-    , IconType, IconSize(..)
-    , IconLinkModel, link, linkExternal
-    , IconButtonModel, button
-    , IconLinkSpaModel, linkSpa
-    , activity
-    , add
-    , arrowDown
-    , assignmentStartButtonPrimary
-    , assignmentStartButtonSecondary
-    , assignmentTypeDiagnostic
-    , assignmentTypeGuidedDraft
-    , assignmentTypePeerReview
-    , assignmentTypePractice
-    , assignmentTypeQuickWrite
-    , assignmentTypeQuiz
-    , assignmentTypeSelfReview
-    , assignmentTypeWritingCycle
-    , attention
-    , bang
-    , bulb
-    , calendar
-    , caret
+    ( gardening, highFive, okay, thumbsUp, masteryBadge
+    , starred, notStarred, flag
+    , assignmentTypeDiagnostic, assignmentTypePractice, assignmentTypeQuiz, assignmentTypeQuickWrite, assignmentTypeGuidedDraft, assignmentTypePeerReview, assignmentTypeSelfReview, submitting, rating, revising, guidedWrite, assignmentTypeWritingCycle, writingAssignment
+    , assignmentStartButtonPrimary, assignmentStartButtonSecondary
+    , unarchive, share, seeMore, preview, performance, openClose, download
+    , edit, editWriting
+    , class, leaderboard, personBlue
+    , facebook, twitter, clever
+    , arrowDown, sortArrow
     , checkMarkSvg
-    , class
-    , clever
-    , clock
-    , close
-    , compassSvg
-    , copy
-    , custom
-    , darkBlueCheckMark
-    , document
-    , download
-    , edit
-    , editWriting
-    , equalitySign
-    , exclamation
-    , facebook
-    , flag
-    , flipper
-    , footsteps
-    , gardening
-    , gear
-    , greenCheckMark
-    , guidedWrite
-    , hat
-    , help
-    , helpSvg
-    , highFive
-    , key
-    , keychain
-    , late
-    , leaderboard
-    , lightBulb
-    , lock
-    , lockDeprecated
-    , logo
-    , masteryBadge
-    , newspaper
-    , notStarred
-    , okay
-    , openClose
-    , peerReview
-    , pen
-    , performance
-    , personBlue
-    , preview
-    , quickWrite
-    , seeMore
-    , share
-    , skip
-    , sort
-    , sortArrow
-    , speedometer
-    , starred
-    , submitting, rating, revising
-    , thumbsUp
-    , twitter
-    , unarchive
-    , writingAssignment
     , xSvg
+    , exclamation, attention
+    , bulb, lightBulb, helpSvg
+    , key, lock
+    , calendar, clock
+    , activity, compassSvg, document, flipper, footsteps, gear, pen, newspaper, sort, speedometer
+    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview, quickWrite, skip
     )
 
 {-|
 
-@docs icon, decorativeIcon
-@docs IconType, IconSize
-@docs IconLinkModel, link, linkExternal
-@docs IconButtonModel, button
-@docs IconLinkSpaModel, linkSpa
-@docs activity
-@docs add
-@docs arrowDown
-@docs assignmentStartButtonPrimary
-@docs assignmentStartButtonSecondary
-@docs assignmentTypeDiagnostic
-@docs assignmentTypeGuidedDraft
-@docs assignmentTypePeerReview
-@docs assignmentTypePractice
-@docs assignmentTypeQuickWrite
-@docs assignmentTypeQuiz
-@docs assignmentTypeSelfReview
-@docs assignmentTypeWritingCycle
-@docs attention
-@docs bang
-@docs bulb
-@docs calendar
-@docs caret
+
+## Mastery Icons
+
+@docs gardening, highFive, okay, thumbsUp, masteryBadge
+
+
+## Stars and Flags
+
+@docs starred, notStarred, flag
+
+
+## Assignment Types
+
+@docs assignmentTypeDiagnostic, assignmentTypePractice, assignmentTypeQuiz, assignmentTypeQuickWrite, assignmentTypeGuidedDraft, assignmentTypePeerReview, assignmentTypeSelfReview, submitting, rating, revising, guidedWrite, assignmentTypeWritingCycle, writingAssignment
+
+
+## Student Assignment Actions
+
+@docs assignmentStartButtonPrimary, assignmentStartButtonSecondary
+
+
+## Teacher Assignment Actions
+
+@docs unarchive, share, seeMore, preview, performance, openClose, download
+
+
+## Edit
+
+@docs edit, editWriting
+
+
+## Humans
+
+@docs class, leaderboard, personBlue
+
+
+## Social Media
+
+@docs facebook, twitter, clever
+
+
+## Arrows and Carets
+
+@docs arrowDown, sortArrow
+
+
+## Checkmarks
+
 @docs checkMarkSvg
-@docs class
-@docs clever
-@docs clock
-@docs close
-@docs compassSvg
-@docs copy
-@docs custom
-@docs darkBlueCheckMark
-@docs document
-@docs download
-@docs edit
-@docs editWriting
-@docs equalitySign
-@docs exclamation
-@docs facebook
-@docs flag
-@docs flipper
-@docs footsteps
-@docs gardening
-@docs gear
-@docs greenCheckMark
-@docs guidedWrite
-@docs hat
-@docs help
-@docs helpSvg
-@docs highFive
-@docs key
-@docs keychain
-@docs late
-@docs leaderboard
-@docs lightBulb
-@docs lock
-@docs lockDeprecated
-@docs logo
-@docs masteryBadge
-@docs newspaper
-@docs notStarred
-@docs okay
-@docs openClose
-@docs peerReview
-@docs pen
-@docs performance
-@docs personBlue
-@docs preview
-@docs quickWrite
-@docs seeMore
-@docs share
-@docs skip
-@docs sort
-@docs sortArrow
-@docs speedometer
-@docs starred
-@docs submitting, rating, revising
-@docs thumbsUp
-@docs twitter
-@docs unarchive
-@docs writingAssignment
+
+
+## Xs
+
 @docs xSvg
+
+
+## Bangs
+
+@docs exclamation, attention
+
+
+## Bulbs and Tips
+
+@docs bulb, lightBulb, helpSvg
+
+
+## Locks and keys
+
+@docs key, lock
+
+
+## Time
+
+@docs calendar, clock
+
+
+## Uncategorized (SVGs)
+
+@docs activity, compassSvg, document, flipper, footsteps, gear, pen, newspaper, sort, speedometer
+
+## For the Icon API
+
+@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
 
 -}
 
