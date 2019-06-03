@@ -44,7 +44,6 @@ type alias Assets =
     , icons_helpBlue_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
-    , icons_plusBlue_svg : Asset
     , icons_quickWriteWhite_svg : Asset
     , icons_searchGray_svg : Asset
     , icons_selfReviewWhite_svg : Asset
@@ -133,7 +132,6 @@ assets =
     , icons_helpBlue_svg = Asset "assets/images/help-blue.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
-    , icons_plusBlue_svg = Asset "assets/images/plus-blue.svg"
     , icons_quickWriteWhite_svg = Asset "assets/images/quick-write-white.svg"
     , icons_searchGray_svg = Asset "assets/images/search-gray.svg"
     , icons_selfReviewWhite_svg = Asset "assets/images/self-review-white.svg"

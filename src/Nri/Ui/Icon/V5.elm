@@ -18,7 +18,7 @@ module Nri.Ui.Icon.V5 exposing
     , gear, pen, newspaper, sort, speedometer
     , skip
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconType
-    , IconSize(..), add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , IconSize(..), bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -329,12 +329,6 @@ sizeStyles size =
 activity : { r | activity : String } -> IconType
 activity assets =
     SvgIcon assets.activity
-
-
-{-| -}
-add : { r | icons_plusBlue_svg : Asset } -> IconType
-add assets =
-    ImgIcon assets.icons_plusBlue_svg
 
 
 {-| -}
