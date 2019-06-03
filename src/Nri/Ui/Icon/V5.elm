@@ -18,7 +18,7 @@ module Nri.Ui.Icon.V5 exposing
     , gear, pen, newspaper, sort, speedometer
     , skip
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconType
-    , IconSize(..), add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview, quickWrite
+    , IconSize(..), add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -701,12 +701,6 @@ personBlue assets =
 preview : { r | preview : String } -> IconType
 preview assets =
     SvgIcon assets.preview
-
-
-{-| -}
-quickWrite : { r | icons_quickWrite_svg : Asset } -> IconType
-quickWrite assets =
-    ImgIcon assets.icons_quickWrite_svg
 
 
 {-| -}
