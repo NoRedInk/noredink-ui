@@ -18,7 +18,7 @@ module Nri.Ui.Icon.V5 exposing
     , gear, pen, newspaper, sort, speedometer
     , skip
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, button
-    , caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -413,12 +413,6 @@ bulb assets =
 calendar : { r | calendar : String } -> IconType
 calendar assets =
     SvgIcon assets.calendar
-
-
-{-| -}
-caret : { r | icons_arrowDownBlue_svg : Asset } -> IconType
-caret assets =
-    ImgIcon assets.icons_arrowDownBlue_svg
 
 
 {-| -}
