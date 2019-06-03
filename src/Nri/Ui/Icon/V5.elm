@@ -14,8 +14,11 @@ module Nri.Ui.Icon.V5 exposing
     , bulb, lightBulb, helpSvg
     , key, lock
     , calendar, clock
-    , activity, compassSvg, document, flipper, footsteps, gear, pen, newspaper, sort, speedometer
-    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview, quickWrite, skip
+    , activity, compassSvg, document, flipper, footsteps
+    , gear, pen, newspaper, sort, speedometer
+    , skip
+    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconType
+    , IconSize(..), add, bang, button, caret, close, copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview, quickWrite
     )
 
 {-|
@@ -98,7 +101,10 @@ module Nri.Ui.Icon.V5 exposing
 
 ## Uncategorized (SVGs)
 
-@docs activity, compassSvg, document, flipper, footsteps, gear, pen, newspaper, sort, speedometer
+@docs activity, compassSvg, document, flipper, footsteps
+@docs gear, pen, newspaper, sort, speedometer
+@docs skip
+
 
 ## For the Icon API
 

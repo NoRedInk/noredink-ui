@@ -116,6 +116,7 @@ example =
             , { icon = Icon.newspaper, background = Light, alt = "Newspaper" }
             , { icon = Icon.sort, background = Light, alt = "Sort" }
             , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }
+            , { icon = Icon.skip, background = Light, alt = "Skip" }
             ]
         ]
     }
