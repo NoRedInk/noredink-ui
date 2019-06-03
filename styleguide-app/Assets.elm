@@ -90,7 +90,6 @@ type alias Assets =
     , writingAssignment : String
     , writingcycle : String
     , x : String
-    , xWhite_svg : Asset
     }
 
 
@@ -182,5 +181,4 @@ assets =
     , writingAssignment = "icon-writing-assignment"
     , writingcycle = "icon-writingcycle"
     , x = "icon-x"
-    , xWhite_svg = Asset "assets/images/x-white.svg"
     }

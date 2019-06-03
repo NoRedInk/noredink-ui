@@ -80,7 +80,6 @@ module Nri.Ui.Icon.V5 exposing
     , twitter
     , unarchive
     , writingAssignment
-    , x
     , xSvg
     )
 
@@ -167,7 +166,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs twitter
 @docs unarchive
 @docs writingAssignment
-@docs x
 @docs xSvg
 
 -}
@@ -833,12 +831,6 @@ unarchive assets =
 writingAssignment : { r | writingAssignment : String } -> IconType
 writingAssignment assets =
     SvgIcon assets.writingAssignment
-
-
-{-| -}
-x : { r | xWhite_svg : Asset } -> IconType
-x assets =
-    ImgIcon assets.xWhite_svg
 
 
 {-| -}
