@@ -17,10 +17,13 @@ module Nri.Ui.Icon.V5 exposing
     , activity, compassSvg, document, flipper, footsteps
     , gear, pen, newspaper, sort, speedometer
     , skip, equalitySign
-    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
-    , button, decorativeIcon, icon
+    , IconSize(..), IconType
+    , decorativeIcon, icon
     , custom
-    , link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , IconButtonModel, button
+    , IconLinkModel, link, linkExternal
+    , IconLinkSpaModel, linkSpa
+    , lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -110,9 +113,21 @@ module Nri.Ui.Icon.V5 exposing
 
 ## For the Icon API
 
-@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize, IconType
-@docs button, decorativeIcon, icon
+@docs IconSize, IconType
+@docs decorativeIcon, icon
+
 @docs custom
+
+
+### Buttons
+
+@docs IconButtonModel, button
+
+
+### Links
+
+@docs IconLinkModel, link, linkExternal
+@docs IconLinkSpaModel, linkSpa
 
 -}
 
