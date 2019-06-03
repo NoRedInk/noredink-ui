@@ -11,10 +11,6 @@ type alias Assets =
     , attention_svg : Asset
     , bulb : String
     , calendar : String
-    , checkboxChecked_svg : Asset
-    , checkboxCheckedPartially_svg : Asset
-    , checkboxLockOnInside_svg : Asset
-    , checkboxUnchecked_svg : Asset
     , checkmark : String
     , checkWhite_svg : Asset
     , class : String
@@ -107,10 +103,6 @@ assets =
     , attention_svg = Asset "assets/images/attention.svg"
     , bulb = "icon-bulb"
     , calendar = "icon-calendar"
-    , checkboxChecked_svg = Asset "assets/images/checkbox_checked.svg"
-    , checkboxCheckedPartially_svg = Asset "assets/images/checkbox_checkedPartially.svg"
-    , checkboxLockOnInside_svg = Asset "assets/images/checkbox_lock_on_inside.svg"
-    , checkboxUnchecked_svg = Asset "assets/images/checkbox_unchecked.svg"
     , checkmark = "icon-checkmark"
     , checkWhite_svg = Asset "assets/images/check-white.svg"
     , class = "icon-class"

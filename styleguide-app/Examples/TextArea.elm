@@ -6,12 +6,11 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 -}
 
-import Assets exposing (assets)
 import Dict exposing (Dict)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
-import Nri.Ui.Checkbox.V3 as Checkbox
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Text.V2 as Text
 import Nri.Ui.TextArea.V4 as TextArea
 
@@ -22,7 +21,6 @@ type Msg
     | ToggleLabel Bool
     | ToggleAutoResize Bool
     | ToggleErrorState Bool
-    | NoOp
 
 
 {-| -}
@@ -42,32 +40,29 @@ example parentMessage state =
     , content =
         [ Text.heading [ Html.text "Textarea controls" ]
         , Html.div []
-            [ Checkbox.viewWithLabel assets
+            [ Checkbox.viewWithLabel
                 { identifier = "show-textarea-label"
                 , label = "Show Label"
                 , setterMsg = ToggleLabel
                 , selected = state.showLabel
                 , disabled = False
                 , theme = Checkbox.Square
-                , noOpMsg = NoOp
                 }
-            , Checkbox.viewWithLabel assets
+            , Checkbox.viewWithLabel
                 { identifier = "textarea-autoresize"
                 , label = "Autoresize"
                 , setterMsg = ToggleAutoResize
                 , selected = state.autoResize
                 , disabled = False
                 , theme = Checkbox.Square
-                , noOpMsg = NoOp
                 }
-            , Checkbox.viewWithLabel assets
+            , Checkbox.viewWithLabel
                 { identifier = "textarea-isInError"
                 , label = "Show Error State"
                 , setterMsg = ToggleErrorState
                 , selected = state.isInError
                 , disabled = False
                 , theme = Checkbox.Square
-                , noOpMsg = NoOp
                 }
             ]
         , TextArea.view
@@ -180,9 +175,6 @@ update msg state =
             ( { state | autoResize = toggle bool }
             , Cmd.none
             )
-
-        NoOp ->
-            ( state, Cmd.none )
 
 
 
