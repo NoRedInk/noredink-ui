@@ -19,7 +19,7 @@ module Nri.Ui.Icon.V5 exposing
     , skip, equalitySign
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
     , button, custom, decorativeIcon
-    , hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -529,12 +529,6 @@ gear assets =
 guidedWrite : { r | icons_guidedWrite_svg : Asset } -> IconType
 guidedWrite assets =
     ImgIcon assets.icons_guidedWrite_svg
-
-
-{-| -}
-hat : { r | hat : String } -> IconType
-hat assets =
-    SvgIcon assets.hat
 
 
 {-| -}
