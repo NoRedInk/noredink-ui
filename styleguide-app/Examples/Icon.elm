@@ -116,6 +116,7 @@ example =
             , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }
             , { icon = Icon.skip, background = Light, alt = "Skip" }
             , { icon = Icon.equalitySign, background = Light, alt = "EqualitySign" }
+            , { icon = Icon.logo, background = Light, alt = "Logo" }
             ]
         ]
     }

@@ -17,12 +17,12 @@ module Nri.Ui.Icon.V5 exposing
     , activity, compassSvg, document, flipper, footsteps
     , gear, pen, newspaper, sort, speedometer
     , skip, equalitySign
+    , logo
     , IconSize(..), IconType
     , decorativeIcon, icon
     , IconButtonModel, button
     , IconLinkModel, link, linkExternal
     , IconLinkSpaModel, linkSpa
-    , logo
     )
 
 {-|
@@ -116,6 +116,7 @@ module Nri.Ui.Icon.V5 exposing
 @docs activity, compassSvg, document, flipper, footsteps
 @docs gear, pen, newspaper, sort, speedometer
 @docs skip, equalitySign
+@docs logo
 
 
 # Using Icons
