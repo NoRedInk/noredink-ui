@@ -46,8 +46,6 @@ example =
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }
             , { icon = Icon.revising, background = Light, alt = "Revising" }
-
-            --, { icon = Icon.guidedWrite, background = Light, alt = "GuidedWrite" }
             , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
             , { icon = Icon.writingAssignment, background = Light, alt = "WritingAssignment" }
             ]
