@@ -36,10 +36,6 @@ type alias Assets =
     , iconPremiumWithWritingFlag_svg : Asset
     , icons_equals_svg : Asset
     , icons_peerReview_svg : Asset
-    , icons_peerReviewWhite_svg : Asset
-    , icons_quickWriteWhite_svg : Asset
-    , icons_searchGray_svg : Asset
-    , icons_selfReviewWhite_svg : Asset
     , icons_xBlue_svg : Asset
     , key : String
     , leaderboard : String
@@ -116,10 +112,6 @@ assets =
     , iconPremiumWithWritingFlag_svg = Asset "assets/images/icon_premium_writing_flag.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
-    , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
-    , icons_quickWriteWhite_svg = Asset "assets/images/quick-write-white.svg"
-    , icons_searchGray_svg = Asset "assets/images/search-gray.svg"
-    , icons_selfReviewWhite_svg = Asset "assets/images/self-review-white.svg"
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
     , key = "icon-key"
     , leaderboard = "icon-leaderboard"
