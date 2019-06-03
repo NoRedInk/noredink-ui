@@ -17,8 +17,9 @@ module Nri.Ui.Icon.V5 exposing
     , activity, compassSvg, document, flipper, footsteps
     , gear, pen, newspaper, sort, speedometer
     , skip
-    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType, button
-    , copy, custom, darkBlueCheckMark, decorativeIcon, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
+    , button, custom, decorativeIcon
+    , darkBlueCheckMark, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -108,7 +109,8 @@ module Nri.Ui.Icon.V5 exposing
 
 ## For the Icon API
 
-@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize, IconType, button
+@docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize, IconType
+@docs button, custom, decorativeIcon
 
 -}
 
@@ -437,12 +439,6 @@ clever assets =
 clock : { r | clock : String } -> IconType
 clock assets =
     SvgIcon assets.clock
-
-
-{-| -}
-copy : { r | teach_assignments_copyWhite_svg : Asset } -> IconType
-copy assets =
-    ImgIcon assets.teach_assignments_copyWhite_svg
 
 
 {-| -}
