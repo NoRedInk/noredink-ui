@@ -28,6 +28,14 @@ module Nri.Ui.Icon.V5 exposing
 {-|
 
 
+# Changes from V4
+
+  - Removes old icons
+
+
+# Icon types
+
+
 ## Mastery Icons
 
 @docs gardening, highFive, okay, thumbsUp, masteryBadge
@@ -110,18 +118,18 @@ module Nri.Ui.Icon.V5 exposing
 @docs skip, equalitySign
 
 
-## For the Icon API
+# Using Icons
 
 @docs IconSize, IconType
 @docs decorativeIcon, icon
 
 
-### Buttons
+## Buttons
 
 @docs IconButtonModel, button
 
 
-### Links
+## Links
 
 @docs IconLinkModel, link, linkExternal
 @docs IconLinkSpaModel, linkSpa
