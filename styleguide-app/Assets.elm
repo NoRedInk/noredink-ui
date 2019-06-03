@@ -80,7 +80,6 @@ type alias Assets =
     , sort : String
     , sortArrow : String
     , speedometer : String
-    , squiggly_png : Asset
     , startingOffBadge_png : Asset
     , submitting : String
     , teach_assignments_copyWhite_svg : Asset
@@ -171,7 +170,6 @@ assets =
     , sort = "icon-sort"
     , sortArrow = "icon-sort-arrow"
     , speedometer = "icon-speedometer"
-    , squiggly_png = Asset "assets/images/squiggly.png"
     , startingOffBadge_png = Asset "assets/images/starting-off-badge.png"
     , submitting = "icon-submitting"
     , teach_assignments_copyWhite_svg = Asset "assets/images/copy-white.svg"
