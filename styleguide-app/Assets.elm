@@ -24,7 +24,6 @@ type alias Assets =
     , edit : String
     , editWriting : String
     , exclamation : String
-    , exclamationPoint_svg : Asset
     , facebookBlue_svg : Asset
     , flipper : String
     , footsteps : String
@@ -108,7 +107,6 @@ assets =
     , edit = "icon-edit"
     , editWriting = "icon-edit-writing"
     , exclamation = "icon-exclamation"
-    , exclamationPoint_svg = Asset "assets/images/exclamation-point.svg"
     , facebookBlue_svg = Asset "assets/images/facebook-blue.svg"
     , flipper = "icon-flipper"
     , footsteps = "icon-footsteps"
