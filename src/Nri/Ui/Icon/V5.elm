@@ -19,7 +19,7 @@ module Nri.Ui.Icon.V5 exposing
     , skip
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
     , button, custom, decorativeIcon
-    , darkBlueCheckMark, equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -451,12 +451,6 @@ compassSvg assets =
 custom : Asset -> IconType
 custom asset =
     ImgIcon asset
-
-
-{-| -}
-darkBlueCheckMark : { r | darkBlueCheckmark_svg : Asset } -> IconType
-darkBlueCheckMark assets =
-    ImgIcon assets.darkBlueCheckmark_svg
 
 
 {-| -}

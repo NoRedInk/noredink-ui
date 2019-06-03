@@ -19,7 +19,6 @@ type alias Assets =
     , commentNotStarred_png : Asset
     , commentStarred_png : Asset
     , compass : String
-    , darkBlueCheckmark_svg : Asset
     , diagnostic : String
     , document : String
     , download : String
@@ -107,7 +106,6 @@ assets =
     , commentNotStarred_png = Asset "assets/images/comment-notStarred.png"
     , commentStarred_png = Asset "assets/images/comment-starred.png"
     , compass = "icon-compass"
-    , darkBlueCheckmark_svg = Asset "assets/images/dark-blue-checkmark.svg"
     , diagnostic = "icon-diagnostic"
     , document = "icon-document"
     , download = "icon-download"
