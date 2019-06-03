@@ -7,8 +7,6 @@ module Nri.Ui.Icon.V5 exposing
     , activity
     , add
     , arrowDown
-    , arrowLeft
-    , arrowRight
     , assignmentStartButtonPrimary
     , assignmentStartButtonSecondary
     , assignmentTypeDiagnostic
@@ -98,8 +96,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs activity
 @docs add
 @docs arrowDown
-@docs arrowLeft
-@docs arrowRight
 @docs assignmentStartButtonPrimary
 @docs assignmentStartButtonSecondary
 @docs assignmentTypeDiagnostic
@@ -409,18 +405,6 @@ add assets =
 arrowDown : { r | arrowDown : String } -> IconType
 arrowDown assets =
     SvgIcon assets.arrowDown
-
-
-{-| -}
-arrowLeft : { r | leftArrowBlue_png : Asset } -> IconType
-arrowLeft assets =
-    ImgIcon assets.leftArrowBlue_png
-
-
-{-| -}
-arrowRight : { r | icons_arrowRightBlue_svg : Asset } -> IconType
-arrowRight assets =
-    ImgIcon assets.icons_arrowRightBlue_svg
 
 
 {-| -}
