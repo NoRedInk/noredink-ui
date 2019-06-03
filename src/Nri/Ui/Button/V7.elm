@@ -64,7 +64,7 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Icon.V5 as Icon exposing (IconType)
+import Nri.Ui.Icon.V4 as Icon exposing (IconType)
 
 
 {-| Sizes for buttons and links that have button classes
