@@ -22,7 +22,7 @@ module Nri.Ui.Icon.V5 exposing
     , IconButtonModel, button
     , IconLinkModel, link, linkExternal
     , IconLinkSpaModel, linkSpa
-    , logo, peerReview
+    , logo
     )
 
 {-|
@@ -617,12 +617,6 @@ okay assets =
 openClose : { r | openClose : String } -> IconType
 openClose assets =
     SvgIcon assets.openClose
-
-
-{-| -}
-peerReview : { r | icons_peerReview_svg : Asset } -> IconType
-peerReview assets =
-    ImgIcon assets.icons_peerReview_svg
 
 
 {-| -}
