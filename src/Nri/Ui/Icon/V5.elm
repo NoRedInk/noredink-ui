@@ -22,8 +22,6 @@ module Nri.Ui.Icon.V5 exposing
     , bulb
     , calendar
     , caret
-    , checkMark
-    , checkMarkSquiggily
     , checkMarkSvg
     , class
     , clever
@@ -111,8 +109,6 @@ module Nri.Ui.Icon.V5 exposing
 @docs bulb
 @docs calendar
 @docs caret
-@docs checkMark
-@docs checkMarkSquiggily
 @docs checkMarkSvg
 @docs class
 @docs clever
@@ -495,18 +491,6 @@ calendar assets =
 caret : { r | icons_arrowDownBlue_svg : Asset } -> IconType
 caret assets =
     ImgIcon assets.icons_arrowDownBlue_svg
-
-
-{-| -}
-checkMark : { r | iconCheck_png : Asset } -> IconType
-checkMark assets =
-    ImgIcon assets.iconCheck_png
-
-
-{-| -}
-checkMarkSquiggily : { r | squiggly_png : Asset } -> IconType
-checkMarkSquiggily assets =
-    ImgIcon assets.squiggly_png
 
 
 {-| -}
