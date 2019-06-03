@@ -19,7 +19,6 @@ module Nri.Ui.Icon.V5 exposing
     , skip, equalitySign
     , IconSize(..), IconType
     , decorativeIcon, icon
-    , custom
     , IconButtonModel, button
     , IconLinkModel, link, linkExternal
     , IconLinkSpaModel, linkSpa
@@ -115,8 +114,6 @@ module Nri.Ui.Icon.V5 exposing
 
 @docs IconSize, IconType
 @docs decorativeIcon, icon
-
-@docs custom
 
 
 ### Buttons
@@ -462,12 +459,6 @@ clock assets =
 compassSvg : { r | compass : String } -> IconType
 compassSvg assets =
     SvgIcon assets.compass
-
-
-{-| -}
-custom : Asset -> IconType
-custom asset =
-    ImgIcon asset
 
 
 {-| -}
