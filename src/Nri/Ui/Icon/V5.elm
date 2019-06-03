@@ -18,8 +18,9 @@ module Nri.Ui.Icon.V5 exposing
     , gear, pen, newspaper, sort, speedometer
     , skip, equalitySign
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
-    , button, custom, decorativeIcon
-    , icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , button, decorativeIcon, icon
+    , custom
+    , link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -110,7 +111,8 @@ module Nri.Ui.Icon.V5 exposing
 ## For the Icon API
 
 @docs IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize, IconType
-@docs button, custom, decorativeIcon
+@docs button, decorativeIcon, icon
+@docs custom
 
 -}
 
@@ -547,18 +549,6 @@ highFive assets =
 key : { r | key : String } -> IconType
 key assets =
     SvgIcon assets.key
-
-
-{-| -}
-keychain : { r | keychain : String } -> IconType
-keychain assets =
-    SvgIcon assets.keychain
-
-
-{-| -}
-late : { r | icons_clockRed_svg : Asset } -> IconType
-late assets =
-    ImgIcon assets.icons_clockRed_svg
 
 
 {-| -}

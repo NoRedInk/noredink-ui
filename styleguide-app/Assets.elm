@@ -38,7 +38,6 @@ type alias Assets =
     , iconFlag_png : Asset
     , iconPremiumFlag_svg : Asset
     , iconPremiumWithWritingFlag_svg : Asset
-    , icons_clockRed_svg : Asset
     , icons_equals_svg : Asset
     , icons_peerReview_svg : Asset
     , icons_peerReviewWhite_svg : Asset
@@ -123,7 +122,6 @@ assets =
     , iconFlag_png = Asset "assets/images/icon-flag.png"
     , iconPremiumFlag_svg = Asset "assets/images/icon_premium_flag.svg"
     , iconPremiumWithWritingFlag_svg = Asset "assets/images/icon_premium_writing_flag.svg"
-    , icons_clockRed_svg = Asset "assets/images/clock-red.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
     , icons_peerReview_svg = Asset "assets/images/peer-review.svg"
     , icons_peerReviewWhite_svg = Asset "assets/images/peer-review-white.svg"
