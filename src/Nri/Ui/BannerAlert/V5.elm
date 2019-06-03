@@ -1,8 +1,8 @@
-module Nri.Ui.BannerAlert.V4 exposing (alert, error, neutral, success)
+module Nri.Ui.BannerAlert.V5 exposing (alert, error, neutral, success, LinkConfig, BannerContent(..), Target(..))
 
 {-|
 
-@docs alert, error, neutral, success
+@docs alert, error, neutral, success, LinkConfig, BannerContent, Target
 
 -}
 
@@ -19,9 +19,16 @@ import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark, xSvg)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
+{-| A type to capture either plain content, or a string which will include a url link.
+-}
+type BannerContent
+    = Plain String
+    | WithLink LinkConfig
+
+
 {-| A banner to show error alerts
 -}
-alert : String -> Maybe msg -> Html msg
+alert : BannerContent -> Maybe msg -> Html msg
 alert =
     banner
         { backgroundColor = Colors.sunshine
@@ -36,7 +43,7 @@ alert =
 
 {-| A banner to show error alerts
 -}
-error : String -> Maybe msg -> Html msg
+error : BannerContent -> Maybe msg -> Html msg
 error =
     banner
         { backgroundColor = Colors.purpleLight
@@ -51,7 +58,7 @@ error =
 
 {-| A banner to show neutral alerts
 -}
-neutral : String -> Maybe msg -> Html msg
+neutral : BannerContent -> Maybe msg -> Html msg
 neutral =
     banner
         { backgroundColor = Colors.frost
@@ -66,7 +73,7 @@ neutral =
 
 {-| A banner for success alerts
 -}
-success : String -> Maybe msg -> Html msg
+success : BannerContent -> Maybe msg -> Html msg
 success =
     banner
         { backgroundColor = Colors.greenLightest
@@ -79,15 +86,15 @@ success =
         }
 
 
-type alias Config =
+type alias StyleConfig =
     { color : Css.Color
     , backgroundColor : Css.Color
     , icon : IconConfig
     }
 
 
-banner : Config -> String -> Maybe msg -> Html msg
-banner config alertMessage dismissMsg =
+banner : StyleConfig -> BannerContent -> Maybe msg -> Html msg
+banner config bannerContent dismissMsg =
     let
         maybeDismissButton =
             case dismissMsg of
@@ -96,6 +103,30 @@ banner config alertMessage dismissMsg =
 
                 Just msg ->
                     dismissButton msg
+
+        alertMessage =
+            case bannerContent of
+                Plain string ->
+                    Html.text string
+
+                WithLink linkConfig ->
+                    Html.div
+                        [ css
+                            [ Css.fontSize (Css.px 20)
+                            , Css.fontWeight (Css.int 700)
+                            , Css.lineHeight (Css.px 25)
+                            , Css.maxWidth (Css.px 600)
+                            , Nri.Ui.Fonts.V1.baseFont
+                            ]
+                        ]
+                        [ Html.text linkConfig.prefixText
+                        , Html.a
+                            [ Attributes.href <| linkConfig.linkUrl
+                            , targetToAttribute linkConfig.target
+                            ]
+                            [ Html.text linkConfig.linkText ]
+                        , Html.text linkConfig.postfixText
+                        ]
     in
     Html.div
         [ css
@@ -185,7 +216,7 @@ icon config =
         ]
 
 
-notification : String -> Html msg
+notification : Html msg -> Html msg
 notification message =
     Nri.Ui.styled Html.div
         "banner-alert-notification"
@@ -196,4 +227,32 @@ notification message =
         , Nri.Ui.Fonts.V1.baseFont
         ]
         []
-        [ Html.text message ]
+        [ message ]
+
+
+{-| Config describing a message containing an embedded link.
+-}
+type alias LinkConfig =
+    { prefixText : String
+    , linkText : String
+    , linkUrl : String
+    , postfixText : String
+    , target : Target
+    }
+
+
+{-| The link target. Corresponds to values of "_blank" and "_self"
+-}
+type Target
+    = Blank
+    | Self
+
+
+targetToAttribute : Target -> Html.Attribute msg
+targetToAttribute linkTarget =
+    case linkTarget of
+        Blank ->
+            Attributes.target "_blank"
+
+        Self ->
+            Attributes.target "_self"
