@@ -1,31 +1,81 @@
-module Examples.BannerAlert exposing (example)
+module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 {-|
 
-@docs example
+@docs example, State, init, Msg, update
 
 -}
 
-import Html.Styled exposing (h3, text)
+import Html.Styled exposing (div, h3, text)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.BannerAlert.V3 as BannerAlert
+import Nri.Ui.BannerAlert.V5 as BannerAlert
 
 
-example : ModuleExample msg
-example =
-    { name = "Nri.Ui.BannerAlert.V3"
+example : (Msg -> msg) -> State -> ModuleExample msg
+example parentMsg state =
+    { name = "Nri.Ui.BannerAlert.V5"
     , category = Messaging
     , content =
-        [ h3 [] [ text "error" ]
-        , BannerAlert.error "This is an error message!"
+        [ if state.show then
+            div
+                []
+                [ h3 [] [ text "alert" ]
+                , BannerAlert.alert (BannerAlert.Plain "This is a dismissable alert message!") (Just Dismiss)
+                ]
+
+          else
+            div
+                []
+                [ h3 [] [ text "success" ]
+                , BannerAlert.success (BannerAlert.Plain "The alert message was dismissed. 👍") Nothing
+                ]
+        , h3 [] [ text "error" ]
+        , BannerAlert.error (BannerAlert.Plain "This is an error message!") Nothing
+        , h3 [] [ text "error with link" ]
+        , BannerAlert.error
+            (BannerAlert.WithLink
+                { prefixText = "Click "
+                , linkText = "here"
+                , linkUrl = "http://www.noredink.com"
+                , postfixText = " to check out NoRedInk."
+                , target = BannerAlert.Blank
+                }
+            )
+            Nothing
         , h3 [] [ text "neutral" ]
-        , BannerAlert.neutral "This is a neutral message!"
+        , BannerAlert.neutral (BannerAlert.Plain "This is a neutral message!") Nothing
         , h3 [] [ text "success" ]
         , BannerAlert.success
-            """This is a success message!
+            (BannerAlert.Plain """This is a success message!
             Let's see what happens if there is a very long message!
             Wow, how successful! You're the biggest success I've ever seen!
             You should feel great about yourself! Give yourself a very big round of applause!
-            """
+            """)
+            Nothing
         ]
+            |> List.map (Html.Styled.map parentMsg)
     }
+
+
+type alias State =
+    { show : Bool }
+
+
+init : State
+init =
+    { show = True }
+
+
+type Msg
+    = NoOp
+    | Dismiss
+
+
+update : Msg -> State -> State
+update msg state =
+    case msg of
+        NoOp ->
+            state
+
+        Dismiss ->
+            { state | show = False }

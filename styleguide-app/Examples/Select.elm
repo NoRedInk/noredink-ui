@@ -20,7 +20,7 @@ module Examples.Select exposing
 
 import Html.Styled
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Select.V5 as Select
+import Nri.Ui.Select.V6 as Select
 
 
 {-| -}
@@ -41,7 +41,7 @@ type alias State value =
 {-| -}
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Select.V5"
+    { name = "Nri.Ui.Select.V6"
     , category = Inputs
     , content =
         [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
@@ -52,7 +52,7 @@ example parentMessage state =
 {-| -}
 init : State Value
 init =
-    { current = ""
+    { current = Nothing
     , choices =
         [ { label = "Tacos", value = "Tacos" }
         , { label = "Burritos", value = "Burritos" }
@@ -60,6 +60,7 @@ init =
         ]
     , id = Nothing
     , valueToString = identity
+    , defaultDisplayText = Just "Select a tasty tortilla based treat!"
     }
 
 

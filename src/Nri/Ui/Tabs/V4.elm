@@ -1,9 +1,9 @@
-module Nri.Ui.Tabs.V3 exposing
+module Nri.Ui.Tabs.V4 exposing
     ( Alignment(..)
     , Config
     , LinkConfig
     , Tab
-    , TabLink
+    , LinkTabConfig(..)
     , links
     , view
     , viewCustom
@@ -16,7 +16,7 @@ module Nri.Ui.Tabs.V3 exposing
 @docs Config
 @docs LinkConfig
 @docs Tab
-@docs TabLink
+@docs LinkTabConfig
 @docs links
 @docs view
 @docs viewCustom
@@ -33,6 +33,7 @@ import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
 import Css exposing (Style)
+import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -173,7 +174,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
                 )
                 Events.keyCode
         ]
-        [ Html.styled Html.button
+        [ Html.styled Html.div
             [ Css.color Nri.Ui.Colors.V1.navy
             , Css.hover [ Css.textDecoration Css.none ]
             , Css.focus [ Css.textDecoration Css.none ]
@@ -184,7 +185,6 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Css.property "background" "none"
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
-            , Css.border Css.zero
             , Css.cursor Css.pointer
             ]
             [ Attributes.fromUnstyled <| Accessibility.Role.tab
@@ -194,19 +194,30 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
         ]
 
 
-{-| Describe a tab that is meant to link to another page
+{-| The types of links that we can show.
+
+  - `NormalLink` - A link to another page.
+  - `SpaLink` - A link to another SPA page. The `msg` type should be used to handle
+    the navigation event.
+
 -}
-type alias TabLink =
-    { label : String
-    , href : Maybe String
-    }
+type LinkTabConfig msg
+    = NormalLink
+        { label : String
+        , href : Maybe String
+        }
+    | SpaLink
+        { label : String
+        , href : String
+        , msg : msg
+        }
 
 
 {-| Configure a set a tab links
 -}
 type alias LinkConfig msg =
     { title : Maybe String
-    , tabs : Zipper TabLink
+    , tabs : Zipper (LinkTabConfig msg)
     , content : Html msg
     , alignment : Alignment
     }
@@ -241,14 +252,33 @@ links config =
         ]
 
 
-viewTabLink : LinkConfig msg -> Bool -> TabLink -> Html msg
-viewTabLink config isSelected tabLink =
+viewTabLink : LinkConfig msg -> Bool -> LinkTabConfig msg -> Html msg
+viewTabLink config isSelected tabConfig =
+    let
+        ( tabLabel, tabHref, preventDefault ) =
+            case tabConfig of
+                NormalLink { label, href } ->
+                    ( label, href, [] )
+
+                SpaLink { label, href, msg } ->
+                    ( label
+                    , Just href
+                    , [ Attributes.fromUnstyled <| EventExtras.onClickPreventDefaultForLinkWithHref msg ]
+                    )
+
+        currentPage =
+            if isSelected then
+                [ Attributes.fromUnstyled <| Accessibility.Aria.currentPage ]
+
+            else
+                []
+    in
     Html.styled Html.li
         (stylesTabSelectable isSelected)
         [ Attributes.fromUnstyled <| Accessibility.Role.presentation
-        , Attributes.id (tabToId tabLink)
+        , Attributes.id (tabToId { label = tabLabel })
         ]
-        [ case tabLink.href of
+        [ case tabHref of
             Just href ->
                 Html.styled Html.a
                     [ Css.color Nri.Ui.Colors.V1.navy
@@ -256,8 +286,8 @@ viewTabLink config isSelected tabLink =
                     , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
                     ]
-                    [ Attributes.href href ]
-                    [ Html.text tabLink.label ]
+                    ([ Attributes.href href ] ++ preventDefault ++ currentPage)
+                    [ Html.text tabLabel ]
 
             Nothing ->
                 Html.styled Html.button
@@ -271,8 +301,8 @@ viewTabLink config isSelected tabLink =
                     , Css.property "background" "none"
                     , Css.lineHeight (Css.num 1)
                     ]
-                    []
-                    [ Html.text tabLink.label ]
+                    currentPage
+                    [ Html.text tabLabel ]
         ]
 
 
