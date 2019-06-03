@@ -39,7 +39,6 @@ type alias Assets =
     , icons_xBlue_svg : Asset
     , key : String
     , leaderboard : String
-    , leftArrowBlue_png : Asset
     , level1Badge_png : Asset
     , level2Badge_png : Asset
     , level3Badge_png : Asset
@@ -114,7 +113,6 @@ assets =
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
     , key = "icon-key"
     , leaderboard = "icon-leaderboard"
-    , leftArrowBlue_png = Asset "assets/images/left-arrow-blue.png"
     , level1Badge_png = Asset "assets/images/level-1-badge.png"
     , level2Badge_png = Asset "assets/images/level-2-badge.png"
     , level3Badge_png = Asset "assets/images/level-3-badge.png"
