@@ -1,4 +1,4 @@
-module Nri.Ui.PremiumCheckbox.V4 exposing (PremiumConfig, premium, Pennant(..))
+module Nri.Ui.PremiumCheckbox.V5 exposing (PremiumConfig, premium, Pennant(..))
 
 {-|
 
@@ -9,8 +9,6 @@ module Nri.Ui.PremiumCheckbox.V4 exposing (PremiumConfig, premium, Pennant(..))
 import Accessibility.Styled as Html
 import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.AssetPath exposing (Asset(..))
-import Nri.Ui.AssetPath.Css
 import Nri.Ui.Checkbox.V5 as Checkbox
 
 
@@ -43,8 +41,8 @@ type Pennant
 
 {-| A checkbox that should be used for premium content
 -}
-premium : Assets a -> PremiumConfig msg -> Html.Html msg
-premium assets config =
+premium : PremiumConfig msg -> Html.Html msg
+premium config =
     Html.div
         [ css
             [ displayFlex
@@ -72,21 +70,21 @@ premium assets config =
         , case config.pennant of
             Just pennant ->
                 Html.div
-                    [ Attributes.class "premium-checkbox-V1__PremiumClass"
+                    [ Attributes.class "premium-checkbox-V5__PremiumClass"
                     , css
                         [ property "content" "''"
                         , display inlineBlock
                         , width (px 26)
                         , height (px 24)
                         , marginLeft (px 8)
-                        , backgroundImage
-                            (case pennant of
-                                Premium ->
-                                    assets.iconPremiumFlag_svg
 
-                                PremiumWithWriting ->
-                                    assets.iconPremiumWithWritingFlag_svg
-                            )
+                        -- , backgroundImage
+                        --     (case pennant of
+                        --         Premium ->
+                        --             assets.iconPremiumFlag_svg
+                        --         PremiumWithWriting ->
+                        --             assets.iconPremiumWithWritingFlag_svg
+                        --     )
                         , backgroundRepeat noRepeat
                         , backgroundPosition center
                         ]
@@ -96,18 +94,3 @@ premium assets config =
             Nothing ->
                 Html.text ""
         ]
-
-
-{-| The assets used in this module.
--}
-type alias Assets r =
-    { r
-        | iconPremiumFlag_svg : Asset
-        , iconPremiumWithWritingFlag_svg : Asset
-    }
-
-
-backgroundImage : Asset -> Style
-backgroundImage =
-    Nri.Ui.AssetPath.Css.url
-        >> property "background-image"

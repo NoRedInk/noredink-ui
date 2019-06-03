@@ -6,14 +6,13 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 
 -}
 
-import Assets exposing (assets)
 import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V4 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V5 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -177,7 +176,6 @@ viewPremiumCheckboxes state =
     let
         checkbox config =
             PremiumCheckbox.premium
-                assets
                 { label = config.label
                 , id = "premium-checkbox-" ++ config.label
                 , selected =
