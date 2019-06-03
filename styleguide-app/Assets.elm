@@ -66,7 +66,6 @@ type alias Assets =
     , speedometer : String
     , startingOffBadge_png : Asset
     , submitting : String
-    , teach_assignments_copyWhite_svg : Asset
     , tip_svg : Asset
     , twitterBlue_svg : Asset
     , unarchiveBlue2x_png : Asset
@@ -140,7 +139,6 @@ assets =
     , speedometer = "icon-speedometer"
     , startingOffBadge_png = Asset "assets/images/starting-off-badge.png"
     , submitting = "icon-submitting"
-    , teach_assignments_copyWhite_svg = Asset "assets/images/copy-white.svg"
     , tip_svg = Asset "assets/images/tip.svg"
     , twitterBlue_svg = Asset "assets/images/twitter-blue.svg"
     , unarchiveBlue2x_png = Asset "assets/images/unarchive-blue_2x.png"
