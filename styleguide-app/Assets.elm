@@ -31,8 +31,6 @@ type alias Assets =
     , guidedDraft : String
     , help : String
     , hint_png : Asset
-    , iconCalendar_svg : Asset
-    , iconCheck_png : Asset
     , iconFlag_png : Asset
     , iconPremiumFlag_svg : Asset
     , iconPremiumWithWritingFlag_svg : Asset
@@ -114,8 +112,6 @@ assets =
     , guidedDraft = "icon-guided-draft"
     , help = "icon-help"
     , hint_png = Asset "assets/images/hint.png"
-    , iconCalendar_svg = Asset "assets/images/icon-calendar.svg"
-    , iconCheck_png = Asset "assets/images/icon-check.png"
     , iconFlag_png = Asset "assets/images/icon-flag.png"
     , iconPremiumFlag_svg = Asset "assets/images/icon_premium_flag.svg"
     , iconPremiumWithWritingFlag_svg = Asset "assets/images/icon_premium_writing_flag.svg"
