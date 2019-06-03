@@ -73,7 +73,6 @@ type alias Assets =
     , selfReview : String
     , share : String
     , skip : String
-    , smallCheckmark_png : Asset
     , sort : String
     , sortArrow : String
     , speedometer : String
@@ -160,7 +159,6 @@ assets =
     , selfReview = "icon-self-review"
     , share = "icon-share"
     , skip = "icon-skip"
-    , smallCheckmark_png = Asset "assets/images/small_checkmark.png"
     , sort = "icon-sort"
     , sortArrow = "icon-sort-arrow"
     , speedometer = "icon-speedometer"

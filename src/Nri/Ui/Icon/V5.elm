@@ -16,10 +16,10 @@ module Nri.Ui.Icon.V5 exposing
     , calendar, clock
     , activity, compassSvg, document, flipper, footsteps
     , gear, pen, newspaper, sort, speedometer
-    , skip
+    , skip, equalitySign
     , IconButtonModel, IconLinkModel, IconLinkSpaModel, IconSize(..), IconType
     , button, custom, decorativeIcon
-    , equalitySign, greenCheckMark, hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
+    , hat, help, icon, keychain, late, link, linkExternal, linkSpa, lockDeprecated, logo, peerReview
     )
 
 {-|
@@ -104,7 +104,7 @@ module Nri.Ui.Icon.V5 exposing
 
 @docs activity, compassSvg, document, flipper, footsteps
 @docs gear, pen, newspaper, sort, speedometer
-@docs skip
+@docs skip, equalitySign
 
 
 ## For the Icon API
@@ -523,12 +523,6 @@ gardening assets =
 gear : { r | gear : String } -> IconType
 gear assets =
     SvgIcon assets.gear
-
-
-{-| -}
-greenCheckMark : { r | smallCheckmark_png : Asset } -> IconType
-greenCheckMark assets =
-    ImgIcon assets.smallCheckmark_png
 
 
 {-| -}
