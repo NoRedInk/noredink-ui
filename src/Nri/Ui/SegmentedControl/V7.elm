@@ -111,7 +111,6 @@ sharedTabStyles =
     , height (px 45)
     , Fonts.baseFont
     , fontSize (px 15)
-    , color Colors.azure
     , fontWeight bold
     , lineHeight (px 30)
     , firstOfType
@@ -135,7 +134,7 @@ focusedTabStyles : List Style
 focusedTabStyles =
     [ backgroundColor Colors.glacier
     , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
-    , color Colors.gray20
+    , color Colors.navy
     ]
 
 
