@@ -127,6 +127,7 @@ sharedTabStyles =
     , borderLeft (px 0)
     , boxSizing borderBox
     , cursor pointer
+    , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
     ]
 
 
@@ -143,6 +144,7 @@ unFocusedTabStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
+    , hover [ backgroundColor Colors.glacier ]
     ]
 
 
