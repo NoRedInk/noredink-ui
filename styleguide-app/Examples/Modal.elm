@@ -7,7 +7,6 @@ module Examples.Modal exposing (Msg, State, example, init, update)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
-import Assets
 import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -115,7 +114,7 @@ viewModal : ModalType -> Html Msg
 viewModal modal =
     case modal of
         InfoModal ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "Info Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -128,7 +127,7 @@ viewModal modal =
                 }
 
         WarningModal ->
-            Modal.warning Assets.assets
+            Modal.warning
                 { title = "Warning Modal"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -141,7 +140,7 @@ viewModal modal =
                 }
 
         NoButtonModal ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "No Buttons"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -151,7 +150,7 @@ viewModal modal =
                 }
 
         NoDismissModal ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "No Dismiss"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -164,7 +163,7 @@ viewModal modal =
                 }
 
         OnlyXDismissModal ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "Only X-Dismiss"
                 , visibleTitle = True
                 , content = text "This is where the content goes!"
@@ -177,7 +176,7 @@ viewModal modal =
                 }
 
         NoHeading ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "Hidden title"
                 , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , visibleTitle = False
@@ -196,7 +195,7 @@ viewModal modal =
                 }
 
         ScrolledContentModal ->
-            Modal.info Assets.assets
+            Modal.info
                 { title = "Scrolled Content"
                 , onDismiss = Modal.WithBackgroundOrX DismissModal
                 , visibleTitle = True
