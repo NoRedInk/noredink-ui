@@ -1,8 +1,8 @@
-module Nri.Ui.PremiumCheckbox.V5 exposing (PremiumConfig, premium, Pennant(..))
+module Nri.Ui.PremiumCheckbox.V5 exposing (premium, Pennant(..))
 
 {-|
 
-@docs PremiumConfig, premium, Pennant
+@docs premium, Pennant
 
 -}
 
@@ -15,25 +15,6 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
-{-|
-
-  - `onChange`: A message for when the user toggles the checkbox
-  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
-
--}
-type alias PremiumConfig msg =
-    { label : String
-    , id : String
-    , selected : Checkbox.IsSelected
-    , disabled : Bool
-    , isLocked : Bool
-    , pennant : Maybe Pennant
-    , onChange : Bool -> msg
-    , onLockedClick : msg
-    }
-
-
 {-| Premium is the yellow "P" pennant
 PremiumWithWriting is the yellow "P+" pennant
 -}
@@ -43,8 +24,23 @@ type Pennant
 
 
 {-| A checkbox that should be used for premium content
+
+  - `onChange`: A message for when the user toggles the checkbox
+  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
+    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
+
 -}
-premium : PremiumConfig msg -> Html msg
+premium :
+    { label : String
+    , id : String
+    , selected : Checkbox.IsSelected
+    , disabled : Bool
+    , isLocked : Bool
+    , pennant : Maybe Pennant
+    , onChange : Bool -> msg
+    , onLockedClick : msg
+    }
+    -> Html msg
 premium config =
     Html.div
         [ css
