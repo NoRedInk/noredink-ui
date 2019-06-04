@@ -21,7 +21,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.SegmentedControl.V6 exposing (Width(..))
+import Nri.Ui.SegmentedControl.V7 as SegmentedControl
 
 
 {-| -}
@@ -32,18 +32,18 @@ type Msg
 
 {-| -}
 type alias State =
-    Nri.Ui.SegmentedControl.V6.Config Id Msg
+    SegmentedControl.Config Id Msg
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.SegmentedControl.V6"
+    { name = "Nri.Ui.SegmentedControl.V7"
     , category = Widgets
     , content =
         List.map (Html.map parentMessage)
             [ fillContainerCheckbox state.width
-            , Nri.Ui.SegmentedControl.V6.view state
+            , SegmentedControl.view state
             ]
     }
 
@@ -65,11 +65,11 @@ init =
           }
         ]
     , selected = "a"
-    , width = FitContent
+    , width = SegmentedControl.FitContent
     }
 
 
-fillContainerCheckbox : Width -> Html Msg
+fillContainerCheckbox : SegmentedControl.Width -> Html Msg
 fillContainerCheckbox currentOption =
     let
         id =
@@ -77,10 +77,10 @@ fillContainerCheckbox currentOption =
 
         isChecked =
             case currentOption of
-                FitContent ->
+                SegmentedControl.FitContent ->
                     Just False
 
-                FillContainer ->
+                SegmentedControl.FillContainer ->
                     Just True
     in
     Html.div []
@@ -107,10 +107,10 @@ update msg state =
             ( { state
                 | width =
                     if fillContainer then
-                        FillContainer
+                        SegmentedControl.FillContainer
 
                     else
-                        FitContent
+                        SegmentedControl.FitContent
               }
             , Cmd.none
             )
