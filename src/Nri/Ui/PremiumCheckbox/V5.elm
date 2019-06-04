@@ -4,6 +4,13 @@ module Nri.Ui.PremiumCheckbox.V5 exposing (view, Pennant(..))
 
 @docs view, Pennant
 
+
+# Changes from V4
+
+  - inlines the Config
+  - renames render function from `premium` to `view`
+  - removes dependency on Assets
+
 -}
 
 import Accessibility.Styled as Html exposing (Html)
