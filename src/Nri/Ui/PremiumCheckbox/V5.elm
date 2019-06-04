@@ -1,8 +1,8 @@
-module Nri.Ui.PremiumCheckbox.V5 exposing (premium, Pennant(..))
+module Nri.Ui.PremiumCheckbox.V5 exposing (view, Pennant(..))
 
 {-|
 
-@docs premium, Pennant
+@docs view, Pennant
 
 -}
 
@@ -30,7 +30,7 @@ type Pennant
     If you get this message, you should show an `Nri.Ui.Premium.Model.view`
 
 -}
-premium :
+view :
     { label : String
     , id : String
     , selected : Checkbox.IsSelected
@@ -41,7 +41,7 @@ premium :
     , onLockedClick : msg
     }
     -> Html msg
-premium config =
+view config =
     Html.div
         [ css
             [ displayFlex
