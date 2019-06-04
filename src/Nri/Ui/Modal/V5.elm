@@ -1,16 +1,10 @@
-module Nri.Ui.Modal.V4 exposing
+module Nri.Ui.Modal.V5 exposing
     ( Model, Dismissibility(..)
     , info
     , warning
     )
 
-{-| Changes from V3:
-
-  - changed `onDismiss` from `Maybe msg` to `Dismissibility msg`
-
-Changes from V2:
-
-  - Add assets for close button
+{-| Changes from V4:
 
 @docs Model, Dismissibility
 @docs info

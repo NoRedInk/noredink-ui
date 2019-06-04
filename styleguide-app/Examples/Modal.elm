@@ -13,7 +13,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V4 as Modal
+import Nri.Ui.Modal.V5 as Modal
 
 
 {-| -}
@@ -30,7 +30,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Modal.V3"
+    { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
         [ case state.modal of
