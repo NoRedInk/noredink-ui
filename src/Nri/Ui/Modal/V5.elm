@@ -177,9 +177,11 @@ closeButton msg =
         , Css.padding (Css.px 25)
         , Css.borderWidth Css.zero
         , Css.width (Css.px 75)
-        , Css.color Colors.azure
         , Css.backgroundColor Css.transparent
         , Css.cursor Css.pointer
+        , Css.color Colors.azure
+        , Css.hover [ Css.color Colors.azureDark ]
+        , Css.property "transition" "color 0.1s"
         ]
         [ onClick msg ]
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
