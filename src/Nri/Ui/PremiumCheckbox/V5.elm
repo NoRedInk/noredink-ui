@@ -36,7 +36,7 @@ view :
     , selected : Checkbox.IsSelected
     , disabled : Bool
     , isLocked : Bool
-    , pennant : Maybe Pennant
+    , pennant : Pennant
     , onChange : Bool -> msg
     , onLockedClick : msg
     }
@@ -67,14 +67,11 @@ view config =
                     Checkbox.Square
             }
         , case config.pennant of
-            Just Premium ->
+            Premium ->
                 premiumFlag
 
-            Just PremiumWithWriting ->
+            PremiumWithWriting ->
                 premiumWithWritingFlag
-
-            Nothing ->
-                Html.text ""
         ]
 
 
