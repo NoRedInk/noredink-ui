@@ -66,7 +66,11 @@ tabList =
 
 viewTab : Config a msg -> Option a -> Html.Html msg
 viewTab config option =
-    Html.div
+    let
+        element attrs children =
+            Html.button attrs children
+    in
+    element
         [ Role.tab
         , Events.onClick (config.onClick option.value)
         , css sharedTabStyles
@@ -122,6 +126,7 @@ sharedTabStyles =
     , border3 (px 1) solid Colors.azure
     , borderLeft (px 0)
     , boxSizing borderBox
+    , cursor pointer
     ]
 
 
