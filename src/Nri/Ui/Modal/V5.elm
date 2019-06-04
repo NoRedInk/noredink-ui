@@ -183,7 +183,9 @@ closeButton msg =
         , Css.hover [ Css.color Colors.azureDark ]
         , Css.property "transition" "color 0.1s"
         ]
-        [ onClick msg, Widget.label "Close modal" ]
+        [ onClick msg
+        , Widget.label "Close modal"
+        ]
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
 
