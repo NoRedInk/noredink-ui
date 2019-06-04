@@ -7,11 +7,12 @@ module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), vie
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attr exposing (attribute, css, href)
+import Html.Styled.Attributes as Attr exposing (css, href)
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
@@ -108,7 +109,7 @@ viewTab maybeToUrl config option =
               ]
             , if option.value == config.selected then
                 [ css focusedTabStyles
-                , attribute "aria-current" "page"
+                , Aria.currentPage
                 ]
 
               else
