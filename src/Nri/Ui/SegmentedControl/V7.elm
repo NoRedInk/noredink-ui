@@ -17,7 +17,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
+import Nri.Ui.Icon.V5 as Icon
 
 
 {-| -}

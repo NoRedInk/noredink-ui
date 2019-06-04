@@ -17,22 +17,39 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled
+import Debug.Control as Control exposing (Control)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.SegmentedControl.V7 as SegmentedControl
 
 
 {-| -}
 type Msg
-    = Select Id
-    | SetFillContainer Bool
+    = Select ExampleOption
+    | ChangeOptions (Control Options)
+
+
+type ExampleOption
+    = A
+    | B
+    | C
 
 
 {-| -}
 type alias State =
-    SegmentedControl.Config Id Msg
+    { selected : ExampleOption
+    , optionsControl : Control Options
+    }
+
+
+type alias Options =
+    { width : SegmentedControl.Width
+    , icon : Maybe SegmentedControl.Icon
+    , useSpa : Bool
+    }
 
 
 {-| -}
@@ -41,57 +58,57 @@ example parentMessage state =
     { name = "Nri.Ui.SegmentedControl.V7"
     , category = Widgets
     , content =
-        List.map (Html.map parentMessage)
-            [ fillContainerCheckbox state.width
-            , SegmentedControl.view state
-            ]
+        [ Control.view ChangeOptions state.optionsControl
+            |> Html.fromUnstyled
+        , let
+            options =
+                Control.currentValue state.optionsControl
+
+            viewFn =
+                if options.useSpa then
+                    SegmentedControl.viewSpa Debug.toString
+
+                else
+                    SegmentedControl.view
+          in
+          viewFn
+            { onClick = Select
+            , options =
+                [ A, B, C ]
+                    |> List.map
+                        (\i ->
+                            { icon = options.icon
+                            , label = "Option " ++ Debug.toString i
+                            , value = i
+                            }
+                        )
+            , selected = state.selected
+            , width = options.width
+            }
+        ]
+            |> List.map (Html.map parentMessage)
     }
 
 
 {-| -}
-init : State
-init =
-    { onClick = Select
-    , options =
-        [ { icon = Nothing
-          , label = "Option A"
-          , value = "a"
-          }
-        , { icon = Nothing
-          , label = "Option B"
-          , value = "b"
-          }
-        ]
-    , selected = "a"
-    , width = SegmentedControl.FitContent
+init : { r | help : String } -> State
+init assets =
+    { selected = A
+    , optionsControl =
+        Control.record Options
+            |> Control.field "width"
+                (Control.choice
+                    ( "FitContent", Control.value SegmentedControl.FitContent )
+                    [ ( "FillContainer", Control.value SegmentedControl.FillContainer ) ]
+                )
+            |> Control.field "icon"
+                (Control.maybe False (Control.value { alt = "Help", icon = Icon.helpSvg assets }))
+            |> Control.field "which view function"
+                (Control.choice
+                    ( "view", Control.value False )
+                    [ ( "viewSpa", Control.value True ) ]
+                )
     }
-
-
-fillContainerCheckbox : SegmentedControl.Width -> Html Msg
-fillContainerCheckbox currentOption =
-    let
-        id =
-            "SegmentedControl-fill-container-checkbox"
-
-        isChecked =
-            case currentOption of
-                SegmentedControl.FitContent ->
-                    Just False
-
-                SegmentedControl.FillContainer ->
-                    Just True
-    in
-    Html.div []
-        [ Accessibility.Styled.checkbox "Fill container"
-            isChecked
-            [ Attr.id id
-            , Events.onCheck SetFillContainer
-            ]
-        , Html.label
-            [ Attr.for id
-            ]
-            [ Html.text "Fill Container" ]
-        ]
 
 
 {-| -}
@@ -99,24 +116,11 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         Select id ->
-            ( { state | selected = id }, Cmd.none )
-
-        SetFillContainer fillContainer ->
-            ( { state
-                | width =
-                    if fillContainer then
-                        SegmentedControl.FillContainer
-
-                    else
-                        SegmentedControl.FitContent
-              }
+            ( { state | selected = id }
             , Cmd.none
             )
 
-
-
--- INTERNAL
-
-
-type alias Id =
-    String
+        ChangeOptions newOptions ->
+            ( { state | optionsControl = newOptions }
+            , Cmd.none
+            )
