@@ -54,12 +54,10 @@ init =
     { onClick = Select
     , options =
         [ { icon = Nothing
-          , id = "a"
           , label = "Option A"
           , value = "a"
           }
         , { icon = Nothing
-          , id = "b"
           , label = "Option B"
           , value = "b"
           }

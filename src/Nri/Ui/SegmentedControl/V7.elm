@@ -33,7 +33,6 @@ type alias Option a =
     { value : a
     , icon : Maybe Icon
     , label : String
-    , id : String
     }
 
 
@@ -68,8 +67,7 @@ tabList =
 viewTab : Config a msg -> Option a -> Html.Html msg
 viewTab config option =
     Html.div
-        [ Attr.id option.id
-        , Role.tab
+        [ Role.tab
         , Events.onClick (config.onClick option.value)
         , css sharedTabStyles
         , css <|
