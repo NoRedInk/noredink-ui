@@ -1,16 +1,17 @@
-module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view)
+module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view, viewSpa)
 
 {-|
 
-@docs Config, Icon, Option, Width, view
+@docs Config, Icon, Option, Width, view, viewSpa
 
 -}
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
+import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attr exposing (css)
+import Html.Styled.Attributes as Attr exposing (css, href)
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
@@ -53,7 +54,20 @@ type alias Icon =
 view : Config a msg -> Html.Html msg
 view config =
     tabList <|
-        List.map (viewTab config) config.options
+        List.map (viewTab Nothing config) config.options
+
+
+{-| Creates a segmented control that supports SPA navigation.
+You should always use this instead of `view` when building a SPA
+and the segmented control options correspond to routes in the SPA.
+
+The first parameter is a function that takes a `route` and returns the URL of that route.
+
+-}
+viewSpa : (route -> String) -> Config route msg -> Html msg
+viewSpa toUrl config =
+    tabList <|
+        List.map (viewTab (Just toUrl) config) config.options
 
 
 tabList : List (Html.Html msg) -> Html.Html msg
@@ -64,15 +78,31 @@ tabList =
         [ Role.tabList ]
 
 
-viewTab : Config a msg -> Option a -> Html.Html msg
-viewTab config option =
+viewTab : Maybe (a -> String) -> Config a msg -> Option a -> Html.Html msg
+viewTab maybeToUrl config option =
     let
         element attrs children =
-            Html.button attrs children
+            case maybeToUrl of
+                Nothing ->
+                    -- This is for a non-SPA view
+                    Html.button
+                        (Events.onClick (config.onClick option.value)
+                            :: attrs
+                        )
+                        children
+
+                Just toUrl ->
+                    -- This is a for a SPA view
+                    Html.a
+                        (href (toUrl option.value)
+                            :: EventExtras.onClickPreventDefaultForLinkWithHref
+                                (config.onClick option.value)
+                            :: attrs
+                        )
+                        children
     in
     element
         [ Role.tab
-        , Events.onClick (config.onClick option.value)
         , css sharedTabStyles
         , css <|
             if option.value == config.selected then
@@ -127,6 +157,7 @@ sharedTabStyles =
     , boxSizing borderBox
     , cursor pointer
     , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
+    , textDecoration none
     ]
 
 
