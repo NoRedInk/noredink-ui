@@ -6,8 +6,9 @@ module Nri.Ui.PremiumCheckbox.V5 exposing (PremiumConfig, premium, Pennant(..))
 
 -}
 
-import Accessibility.Styled as Html
+import Accessibility.Styled as Html exposing (Html)
 import Css exposing (..)
+import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Svg exposing (..)
@@ -43,7 +44,7 @@ type Pennant
 
 {-| A checkbox that should be used for premium content
 -}
-premium : PremiumConfig msg -> Html.Html msg
+premium : PremiumConfig msg -> Html msg
 premium config =
     Html.div
         [ css
@@ -70,35 +71,18 @@ premium config =
                     Checkbox.Square
             }
         , case config.pennant of
-            Just pennant ->
-                Html.div
-                    [ Attributes.class "premium-checkbox-V5__PremiumClass"
-                    , css
-                        [ property "content" "''"
-                        , Css.display inlineBlock
-                        , Css.width (px 26)
-                        , Css.height (px 24)
-                        , marginLeft (px 8)
+            Just Premium ->
+                premiumFlag
 
-                        -- , backgroundImage
-                        --     (case pennant of
-                        --         Premium ->
-                        --             assets.iconPremiumFlag_svg
-                        --         PremiumWithWriting ->
-                        --             assets.iconPremiumWithWritingFlag_svg
-                        --     )
-                        , backgroundRepeat noRepeat
-                        , backgroundPosition center
-                        ]
-                    ]
-                    []
+            Just PremiumWithWriting ->
+                premiumWithWritingFlag
 
             Nothing ->
                 Html.text ""
         ]
 
 
-premiumFlag : Svg msg
+premiumFlag : Html msg
 premiumFlag =
     svg
         [ version "1.1"
@@ -106,9 +90,10 @@ premiumFlag =
         , x "0px"
         , y "0px"
         , Svg.Attributes.viewBox "0 0 25 19"
-        , Svg.Attributes.style "enable-background:new 0 0 25 19;"
+        , Svg.Attributes.style "enable-background:new 0 0 25 19;margin-left: 8px;"
         ]
-        [ Svg.style [] [ text " .st0{fill:#FEC709;} .st1{fill:#146AFF;} " ]
+        [ Svg.title [] [ text "Premium" ]
+        , Svg.style [] [ text " .st0{fill:#FEC709;} .st1{fill:#146AFF;} " ]
         , g [ id "Page-1" ]
             [ g [ id "icon_x2F_p-mini-pennant-yellow", Svg.Attributes.transform "translate(0.000000, -3.000000)" ]
                 [ g
@@ -131,16 +116,19 @@ premiumFlag =
                 ]
             ]
         ]
+        |> fromUnstyled
 
 
-premiumWithWriting : Svg msg
-premiumWithWriting =
+premiumWithWritingFlag : Html msg
+premiumWithWritingFlag =
     svg
         [ Svg.Attributes.width "25"
         , Svg.Attributes.height "18"
         , Svg.Attributes.viewBox "0 0 25 18"
+        , Svg.Attributes.style "margin-left: 8px;"
         ]
-        [ g
+        [ Svg.title [] [ text "Premium with Writing" ]
+        , g
             [ Svg.Attributes.fill "none"
             , fillRule "evenodd"
             ]
@@ -156,3 +144,4 @@ premiumWithWriting =
                 []
             ]
         ]
+        |> fromUnstyled
