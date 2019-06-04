@@ -11,7 +11,7 @@ import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attr exposing (css, href)
+import Html.Styled.Attributes as Attr exposing (attribute, css, href)
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
@@ -102,22 +102,25 @@ viewTab maybeToUrl config option =
                         children
     in
     element
-        [ Role.tab
-        , css sharedTabStyles
-        , css <|
-            if option.value == config.selected then
-                focusedTabStyles
+        (List.concat
+            [ [ Role.tab
+              , css sharedTabStyles
+              ]
+            , if option.value == config.selected then
+                [ css focusedTabStyles
+                , attribute "aria-current" "page"
+                ]
 
-            else
-                unFocusedTabStyles
-        , css <|
-            case config.width of
+              else
+                [ css unFocusedTabStyles ]
+            , case config.width of
                 FitContent ->
                     []
 
                 FillContainer ->
-                    expandingTabStyles
-        ]
+                    [ css expandingTabStyles ]
+            ]
+        )
         [ case option.icon of
             Nothing ->
                 Html.text ""
