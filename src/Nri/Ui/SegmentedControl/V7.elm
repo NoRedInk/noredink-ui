@@ -22,12 +22,21 @@ import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Util exposing (dashify)
 
 
-{-| -}
+{-|
+
+  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `options`: the list of options available
+  - `selected`: the value of the currently-selected option
+  - `width`: how to size the segmented control
+  - `content`: the panel content for the selected option
+
+-}
 type alias Config a msg =
     { onClick : a -> msg
     , options : List (Option a)
     , selected : a
     , width : Width
+    , content : Html msg
     }
 
 
@@ -55,8 +64,7 @@ type alias Icon =
 {-| -}
 view : Config a msg -> Html.Html msg
 view config =
-    tabList <|
-        List.map (viewTab Nothing config) config.options
+    viewHelper Nothing config
 
 
 {-| Creates a segmented control that supports SPA navigation.
@@ -68,23 +76,52 @@ The first parameter is a function that takes a `route` and returns the URL of th
 -}
 viewSpa : (route -> String) -> Config route msg -> Html msg
 viewSpa toUrl config =
-    tabList <|
-        List.map (viewTab (Just toUrl) config) config.options
+    viewHelper (Just toUrl) config
 
 
-tabList : List (Html.Html msg) -> Html.Html msg
-tabList =
-    Nri.Ui.styled div
-        "Nri-Ui-SegmentedControl-tabList"
-        [ displayFlex, cursor pointer ]
-        [ Role.tabList ]
+viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
+viewHelper maybeToUrl config =
+    let
+        selected =
+            config.options
+                |> List.filter (\o -> o.value == config.selected)
+                |> List.head
+    in
+    div []
+        [ tabList
+            [ css
+                [ displayFlex
+                , cursor pointer
+                ]
+            ]
+            (List.map (viewTab maybeToUrl config) config.options)
+        , tabPanel
+            (List.filterMap identity
+                [ Maybe.map (Attr.id << panelIdFor) selected
+                , Maybe.map (Aria.labelledBy << tabIdFor) selected
+                , Just <| css [ paddingTop (px 10) ]
+                ]
+            )
+            [ config.content
+            ]
+        ]
+
+
+tabIdFor : Option a -> String
+tabIdFor option =
+    "Nri-Ui-SegmentedControl-Tab-" ++ dashify option.label
+
+
+panelIdFor : Option a -> String
+panelIdFor option =
+    "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
 viewTab : Maybe (a -> String) -> Config a msg -> Option a -> Html.Html msg
 viewTab maybeToUrl config option =
     let
         idValue =
-            "Nri-Ui-SegmentedControl-" ++ dashify option.label
+            tabIdFor option
 
         element attrs children =
             case maybeToUrl of
@@ -110,6 +147,7 @@ viewTab maybeToUrl config option =
         (List.concat
             [ [ Attr.id idValue
               , Role.tab
+              , Aria.controls (panelIdFor option)
               , css sharedTabStyles
               ]
             , if option.value == config.selected then

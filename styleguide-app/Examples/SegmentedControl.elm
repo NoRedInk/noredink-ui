@@ -84,6 +84,7 @@ example parentMessage state =
                         )
             , selected = state.selected
             , width = options.width
+            , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
             }
         ]
             |> List.map (Html.map parentMessage)
