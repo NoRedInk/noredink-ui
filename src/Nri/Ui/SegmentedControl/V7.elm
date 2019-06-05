@@ -19,6 +19,7 @@ import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Icon.V5 as Icon
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -82,6 +83,9 @@ tabList =
 viewTab : Maybe (a -> String) -> Config a msg -> Option a -> Html.Html msg
 viewTab maybeToUrl config option =
     let
+        idValue =
+            "Nri-Ui-SegmentedControl-" ++ dashify option.label
+
         element attrs children =
             case maybeToUrl of
                 Nothing ->
@@ -104,7 +108,8 @@ viewTab maybeToUrl config option =
     in
     element
         (List.concat
-            [ [ Role.tab
+            [ [ Attr.id idValue
+              , Role.tab
               , css sharedTabStyles
               ]
             , if option.value == config.selected then
