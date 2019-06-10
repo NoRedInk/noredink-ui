@@ -22,6 +22,7 @@ import Color
 import Css
 import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
 import Html as Root
+import Html.Attributes exposing (style)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
@@ -101,12 +102,12 @@ warning config model =
         { ifClosed =
             Maybe.map (Root.map config.parentMsg) config.launchButton
                 |> Maybe.withDefault (Root.text "")
-        , overlayColor = toOverlayColor Colors.red
+        , overlayColor = toOverlayColor Colors.gray20
         , modalContainer =
             \l ->
                 viewModalContainer (List.map Html.Styled.fromUnstyled l)
                     |> Html.Styled.toUnstyled
-        , title = config.title Colors.navy
+        , title = config.title Colors.red
         , content = Html.Styled.toUnstyled config.content
         }
         model
@@ -176,15 +177,12 @@ viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, Li
 viewTitle { visibleTitle, title } color =
     ( title
     , if visibleTitle then
-        [--css
-         --    [ Css.fontWeight (Css.int 700)
-         --    , Css.lineHeight (Css.px 27)
-         --    , Css.margin2 Css.zero (Css.px 49)
-         --    , Css.fontSize (Css.px 20)
-         --    , Fonts.baseFont
-         --    , Css.textAlign Css.center
-         --    , Css.color color
-         --    ]
+        [ style "font-weight" "700"
+        , style "line-height" "27px"
+        , style "margin" "0 49px"
+        , style "font-size" "20px"
+        , style "text-align" "center"
+        , style "color" (Color.toCssString (Nri.Ui.Colors.Extra.toCoreColor color))
         ]
 
       else
