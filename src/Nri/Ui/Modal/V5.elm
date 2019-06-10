@@ -2,7 +2,7 @@ module Nri.Ui.Modal.V5 exposing
     ( Model
     , info
     , warning
-    , Msg, closeButton, init, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
+    , Msg, closeButton, init, launchButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
     )
 
 {-| Changes from V4:
@@ -63,7 +63,8 @@ update msg model =
 
 {-| -}
 info :
-    { title : String
+    { launchButton : Maybe (Root.Html Msg)
+    , title : String
     , visibleTitle : Bool
     , content : Html msg
     , parentMsg : Msg -> msg
@@ -73,10 +74,8 @@ info :
 info config model =
     Modal.view
         { ifClosed =
-            Root.button
-                (Modal.openOnClick "launch-modal")
-                [ Root.text "Launch Modal" ]
-                |> Root.map config.parentMsg
+            Maybe.map (Root.map config.parentMsg) config.launchButton
+                |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.navy
         , modalContainer =
             \l ->
@@ -96,7 +95,8 @@ info config model =
 
 {-| -}
 warning :
-    { title : String
+    { launchButton : Maybe (Root.Html Msg)
+    , title : String
     , visibleTitle : Bool
     , content : Html msg
     , parentMsg : Msg -> msg
@@ -106,10 +106,8 @@ warning :
 warning config model =
     Modal.view
         { ifClosed =
-            Root.button
-                (Modal.openOnClick "launch-modal")
-                [ Root.text "Launch Modal" ]
-                |> Root.map config.parentMsg
+            Maybe.map (Root.map config.parentMsg) config.launchButton
+                |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.red
         , modalContainer =
             \l ->
@@ -125,6 +123,19 @@ warning config model =
         }
         model
         |> Html.Styled.fromUnstyled
+
+
+launchButton : List Css.Style -> String -> Maybe (Root.Html Msg)
+launchButton styles label =
+    button
+        (css styles
+            :: (Modal.openOnClick (String.replace " " "-" label)
+                    |> List.map Html.Styled.Attributes.fromUnstyled
+               )
+        )
+        [ text label ]
+        |> Html.Styled.toUnstyled
+        |> Just
 
 
 toOverlayColor : Css.Color -> String

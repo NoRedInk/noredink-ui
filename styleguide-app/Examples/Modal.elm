@@ -34,14 +34,16 @@ example parentMessage state =
     , category = Modals
     , content =
         [ Modal.info
-            { title = "Modal.info"
+            { launchButton = Modal.launchButton [] "Launch Info Modal"
+            , title = "Modal.info"
             , visibleTitle = True
             , content = text "This is where the content goes!"
             , parentMsg = InfoModalMsg
             }
             state.infoModal
         , Modal.warning
-            { title = "Modal.warning"
+            { launchButton = Modal.launchButton [] "Launch Warning Modal"
+            , title = "Modal.warning"
             , visibleTitle = True
             , content = text "This is where the content goes!"
             , parentMsg = WarningModalMsg
