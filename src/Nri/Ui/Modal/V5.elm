@@ -15,10 +15,13 @@ module Nri.Ui.Modal.V5 exposing
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
+import Color
 import Css
 import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
 import Html.Styled
+import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import Modal
 import Nri.Ui
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -161,10 +164,84 @@ view modalType { title, visibleTitle, content, onDismiss, footerContent, width }
 
               else
                 text ""
-            , viewContent modalType content
+            , viewContent [ content ]
             , viewFooter footerContent
             ]
         ]
+
+
+modalConfig :
+    ModalType
+    -> String
+    -> Html msg
+    ->
+        { ifClosed : Html msg
+        , overlayColor : String
+        , modalContainer : List (Html msg) -> Html msg
+        , title : ( String, List (Attribute Never) )
+        , content : Html msg
+        }
+modalConfig modalType title content =
+    { ifClosed = text ""
+    , overlayColor =
+        (case modalType of
+            Info ->
+                Colors.navy
+
+            Warning ->
+                Colors.gray20
+        )
+            |> Nri.Ui.Colors.Extra.withAlpha 0.9
+            |> Nri.Ui.Colors.Extra.toCoreColor
+            |> Color.toCssString
+    , modalContainer =
+        \modalContents ->
+            div
+                [ css
+                    [ Css.width (Css.px 600)
+                    , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
+                    , Css.padding4 (Css.px 40) Css.zero (Css.px 40) Css.zero
+                    , Css.margin2 (Css.px 75) Css.auto
+                    , Css.backgroundColor Colors.white
+                    , Css.borderRadius (Css.px 20)
+                    , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+                    , Css.position Css.relative -- required for closeButtonContainer
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.flexDirection Css.column
+                    , Css.flexWrap Css.noWrap
+                    , Fonts.baseFont
+                    ]
+                ]
+                [ -- This global <style> node sets overflow to hidden on the body element,
+                  -- thereby preventing the page from scrolling behind the backdrop when the modal is
+                  -- open (and this node is present on the page).
+                  Css.Global.global
+                    [ Css.Global.body
+                        [ Css.overflow Css.hidden ]
+                    ]
+                , viewContent modalContents
+                ]
+    , title =
+        ( title
+        , [ css
+                [ Css.fontWeight (Css.int 700)
+                , Css.lineHeight (Css.px 27)
+                , Css.margin2 Css.zero (Css.px 49)
+                , Css.fontSize (Css.px 20)
+                , Fonts.baseFont
+                , Css.textAlign Css.center
+                , case modalType of
+                    Info ->
+                        Css.color Colors.navy
+
+                    Warning ->
+                        Css.color Colors.red
+                ]
+          ]
+        )
+    , content = content
+    }
 
 
 closeButton : msg -> Html msg
@@ -214,8 +291,8 @@ viewHeader modalType title =
         ]
 
 
-viewContent : ModalType -> Html msg -> Html msg
-viewContent modalType content =
+viewContent : List (Html msg) -> Html msg
+viewContent =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
@@ -225,7 +302,6 @@ viewContent modalType content =
         , Css.boxSizing Css.borderBox
         ]
         []
-        [ content ]
 
 
 viewFooter : List (Html msg) -> Html msg
