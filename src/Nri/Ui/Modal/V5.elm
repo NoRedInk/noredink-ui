@@ -64,8 +64,7 @@ update msg model =
 {-| -}
 info :
     { launchButton : Maybe (Root.Html Msg)
-    , title : String
-    , visibleTitle : Bool
+    , title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
     , parentMsg : Msg -> msg
     }
@@ -81,12 +80,7 @@ info config model =
             \l ->
                 viewModalContainer (List.map Html.Styled.fromUnstyled l)
                     |> Html.Styled.toUnstyled
-        , title =
-            viewTitle
-                { title = config.title
-                , color = Colors.navy
-                , visibleTitle = config.visibleTitle
-                }
+        , title = config.title Colors.navy
         , content = Html.Styled.toUnstyled config.content
         }
         model
@@ -96,8 +90,7 @@ info config model =
 {-| -}
 warning :
     { launchButton : Maybe (Root.Html Msg)
-    , title : String
-    , visibleTitle : Bool
+    , title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
     , parentMsg : Msg -> msg
     }
@@ -113,12 +106,7 @@ warning config model =
             \l ->
                 viewModalContainer (List.map Html.Styled.fromUnstyled l)
                     |> Html.Styled.toUnstyled
-        , title =
-            viewTitle
-                { title = config.title
-                , color = Colors.navy
-                , visibleTitle = config.visibleTitle
-                }
+        , title = config.title Colors.navy
         , content = Html.Styled.toUnstyled config.content
         }
         model
@@ -184,7 +172,8 @@ viewModalContainer modalContents =
         ]
 
 
-viewTitle { visibleTitle, title, color } =
+viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
+viewTitle { visibleTitle, title } color =
     ( title
     , if visibleTitle then
         [--css
