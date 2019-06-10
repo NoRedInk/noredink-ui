@@ -6,24 +6,29 @@ module Examples.Modal exposing (Msg, State, example, init, update, subscriptions
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
+import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, text)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V5 as Modal
-
-
-{-| -}
-type Msg
-    = InfoModalMsg Modal.Msg
-    | WarningModalMsg Modal.Msg
 
 
 {-| -}
 type alias State =
     { infoModal : Modal.Model
     , warningModal : Modal.Model
+    , visibleTitle : Bool
+    }
+
+
+{-| -}
+init : State
+init =
+    { infoModal = Modal.init
+    , warningModal = Modal.init
+    , visibleTitle = True
     }
 
 
@@ -33,16 +38,36 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ Modal.info
+        [ h4 [] [ text "Settings" ]
+        , Checkbox.viewWithLabel
+            { identifier = "visible-title"
+            , label = "Visible title"
+            , selected = Checkbox.selectedFromBool state.visibleTitle
+            , setterMsg = SetVisibleTitle
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , h4 [] [ text "Modals" ]
+        , Modal.info
             { launchButton = Modal.launchButton [] "Launch Info Modal"
-            , title = Modal.viewTitle { title = "Modal.info", visibleTitle = True }
+            , title =
+                Modal.viewTitle
+                    { title = "Modal.info"
+                    , visibleTitle =
+                        state.visibleTitle
+                    }
             , content = text "This is where the content goes!"
             , parentMsg = InfoModalMsg
             }
             state.infoModal
         , Modal.warning
             { launchButton = Modal.launchButton [] "Launch Warning Modal"
-            , title = Modal.viewTitle { title = "Modal.warning", visibleTitle = True }
+            , title =
+                Modal.viewTitle
+                    { title = "Modal.warning"
+                    , visibleTitle =
+                        state.visibleTitle
+                    }
             , content = text "This is where the content goes!"
             , parentMsg = WarningModalMsg
             }
@@ -53,11 +78,10 @@ example parentMessage state =
 
 
 {-| -}
-init : State
-init =
-    { infoModal = Modal.init
-    , warningModal = Modal.init
-    }
+type Msg
+    = InfoModalMsg Modal.Msg
+    | WarningModalMsg Modal.Msg
+    | SetVisibleTitle Bool
 
 
 {-| -}
@@ -77,6 +101,9 @@ update msg state =
                     ( { state | warningModal = newState }
                     , Cmd.map WarningModalMsg cmds
                     )
+
+        SetVisibleTitle value ->
+            ( { state | visibleTitle = value }, Cmd.none )
 
 
 {-| -}
