@@ -2,7 +2,7 @@ module Nri.Ui.Modal.V5 exposing
     ( Model
     , info
     , warning
-    , Msg, closeButton, init, launchButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
+    , FocusableElement(..), Msg, closeButton, init, launchButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
     )
 
 {-| Changes from V4:
@@ -190,8 +190,14 @@ viewTitle { visibleTitle, title } color =
     )
 
 
-closeButton : msg -> Html msg
-closeButton msg =
+type FocusableElement
+    = OnlyFocusableElement
+    | FirstFocusableElement
+    | LastFocusableElement
+
+
+closeButton : FocusableElement -> Html Msg
+closeButton focusableElement =
     Nri.Ui.styled button
         "close-button-container"
         [ Css.position Css.absolute
@@ -206,9 +212,21 @@ closeButton msg =
         , Css.hover [ Css.color Colors.azureDark ]
         , Css.property "transition" "color 0.1s"
         ]
-        [ onClick msg
-        , Widget.label "Close modal"
-        ]
+        (Widget.label "Close modal"
+            :: (Modal.closeOnClick
+                    :: (case focusableElement of
+                            OnlyFocusableElement ->
+                                Modal.singleFocusableElement
+
+                            FirstFocusableElement ->
+                                Modal.firstFocusableElement
+
+                            LastFocusableElement ->
+                                Modal.lastFocusableElement
+                       )
+                    |> List.map Html.Styled.Attributes.fromUnstyled
+               )
+        )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
 

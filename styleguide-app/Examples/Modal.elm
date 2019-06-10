@@ -20,6 +20,7 @@ type alias State =
     { infoModal : Modal.Model
     , warningModal : Modal.Model
     , visibleTitle : Bool
+    , showX : Bool
     }
 
 
@@ -29,6 +30,7 @@ init =
     { infoModal = Modal.init
     , warningModal = Modal.init
     , visibleTitle = True
+    , showX = False
     }
 
 
@@ -47,6 +49,14 @@ example parentMessage state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "show-x"
+            , label = "Show X button"
+            , selected = Checkbox.selectedFromBool state.showX
+            , setterMsg = SetShowX
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         , h4 [] [ text "Modals" ]
         , Modal.info
             { launchButton = Modal.launchButton [] "Launch Info Modal"
@@ -56,7 +66,9 @@ example parentMessage state =
                     , visibleTitle =
                         state.visibleTitle
                     }
-            , content = text "This is where the content goes!"
+            , content =
+                viewContent state
+                    |> Html.map InfoModalMsg
             , parentMsg = InfoModalMsg
             }
             state.infoModal
@@ -68,7 +80,9 @@ example parentMessage state =
                     , visibleTitle =
                         state.visibleTitle
                     }
-            , content = text "This is where the content goes!"
+            , content =
+                viewContent state
+                    |> Html.map WarningModalMsg
             , parentMsg = WarningModalMsg
             }
             state.warningModal
@@ -77,11 +91,24 @@ example parentMessage state =
     }
 
 
+viewContent : State -> Html Modal.Msg
+viewContent state =
+    div []
+        [ if state.showX then
+            Modal.closeButton Modal.OnlyFocusableElement
+
+          else
+            text ""
+        , text "This is where the content goes!"
+        ]
+
+
 {-| -}
 type Msg
     = InfoModalMsg Modal.Msg
     | WarningModalMsg Modal.Msg
     | SetVisibleTitle Bool
+    | SetShowX Bool
 
 
 {-| -}
@@ -104,6 +131,9 @@ update msg state =
 
         SetVisibleTitle value ->
             ( { state | visibleTitle = value }, Cmd.none )
+
+        SetShowX value ->
+            ( { state | showX = value }, Cmd.none )
 
 
 {-| -}
