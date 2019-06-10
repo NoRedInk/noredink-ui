@@ -1,7 +1,8 @@
 module Nri.Ui.Modal.V5 exposing
-    ( Model, Dismissibility(..)
+    ( Model
     , info
     , warning
+    , Msg, closeButton, init, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
     )
 
 {-| Changes from V4:
@@ -12,12 +13,15 @@ module Nri.Ui.Modal.V5 exposing
 
 -}
 
+import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Color
 import Css
 import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
+import Html as Root
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
@@ -30,104 +34,110 @@ import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 
 
-{-|
+type alias Model =
+    Modal.Model
 
-  - `onDismiss`: See `Dismissibility`
-  - `visibleTitle`: If `False`, the title will still be used for screen readers
-  - `content`: This will be placed in a `width:100%` div in the main area of the modal
-  - `footerContent`: The optional items here will be stacked below the main content area and center-aligned.
-    Commonly you will either give a list of Nri.Ui.Buttons,
-    or an empty list.
 
+{-| -}
+init : Model
+init =
+    Modal.init
+
+
+type alias Msg =
+    Modal.Msg
+
+
+{-| Include the subscription if you want the modal to dismiss on `Esc`.
 -}
-type alias Model msg =
+subscriptions : Model -> Sub Msg
+subscriptions =
+    Modal.subscriptions
+
+
+{-| -}
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    Modal.update msg model
+
+
+{-| -}
+info :
     { title : String
     , visibleTitle : Bool
     , content : Html msg
-    , footerContent : List (Html msg)
-    , onDismiss : Dismissibility msg
-    , width : Maybe Int
+    , parentMsg : Msg -> msg
     }
-
-
-{-|
-
-  - `NotDismissible`
-  - `WithBackgroundOrX`: user can dismiss by clicking "X" (top right) or modal backdrop
-  - `WithOnlyX`: user can dismiss by clicking "X" (top right)
-
--}
-type Dismissibility msg
-    = NotDismissible
-    | WithBackgroundOrX msg
-    | WithOnlyX msg
-
-
-type ModalType
-    = Info
-    | Warning
+    -> Model
+    -> Html msg
+info config model =
+    Modal.view
+        { ifClosed =
+            Root.button
+                (Modal.openOnClick "launch-modal")
+                [ Root.text "Launch Modal" ]
+                |> Root.map config.parentMsg
+        , overlayColor = toOverlayColor Colors.navy
+        , modalContainer =
+            \l ->
+                viewModalContainer (List.map Html.Styled.fromUnstyled l)
+                    |> Html.Styled.toUnstyled
+        , title =
+            viewTitle
+                { title = config.title
+                , color = Colors.navy
+                , visibleTitle = config.visibleTitle
+                }
+        , content = Html.Styled.toUnstyled config.content
+        }
+        model
+        |> Html.Styled.fromUnstyled
 
 
 {-| -}
-info : Model msg -> Html msg
-info =
-    view Info
+warning :
+    { title : String
+    , visibleTitle : Bool
+    , content : Html msg
+    , parentMsg : Msg -> msg
+    }
+    -> Model
+    -> Html msg
+warning config model =
+    Modal.view
+        { ifClosed =
+            Root.button
+                (Modal.openOnClick "launch-modal")
+                [ Root.text "Launch Modal" ]
+                |> Root.map config.parentMsg
+        , overlayColor = toOverlayColor Colors.red
+        , modalContainer =
+            \l ->
+                viewModalContainer (List.map Html.Styled.fromUnstyled l)
+                    |> Html.Styled.toUnstyled
+        , title =
+            viewTitle
+                { title = config.title
+                , color = Colors.navy
+                , visibleTitle = config.visibleTitle
+                }
+        , content = Html.Styled.toUnstyled config.content
+        }
+        model
+        |> Html.Styled.fromUnstyled
 
 
-{-| -}
-warning : Model msg -> Html msg
-warning =
-    view Warning
+toOverlayColor : Css.Color -> String
+toOverlayColor color =
+    color
+        |> Nri.Ui.Colors.Extra.withAlpha 0.9
+        |> Nri.Ui.Colors.Extra.toCoreColor
+        |> Color.toCssString
 
 
-view : ModalType -> Model msg -> Html msg
-view modalType { title, visibleTitle, content, onDismiss, footerContent, width } =
-    Nri.Ui.styled div
-        "modal-backdrop-container"
-        ((case modalType of
-            Info ->
-                Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
-
-            Warning ->
-                Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-         )
-            :: [ Css.height (Css.vh 100)
-               , Css.left Css.zero
-               , Css.overflow Css.hidden
-               , Css.position Css.fixed
-               , Css.top Css.zero
-               , Css.width (Css.pct 100)
-               , Css.zIndex (Css.int 200)
-               , Css.displayFlex
-               , Css.alignItems Css.center
-               , Css.justifyContent Css.center
-               ]
-        )
-        [ Role.dialog
-        , Widget.label title
-        , Widget.modal True
-        ]
-        [ Nri.Ui.styled Html.Styled.div
-            "modal-click-catcher"
-            [ Css.bottom Css.zero
-            , Css.left Css.zero
-            , Css.position Css.absolute
-            , Css.right Css.zero
-            , Css.top Css.zero
-            ]
-            (case onDismiss of
-                NotDismissible ->
-                    []
-
-                WithBackgroundOrX msg ->
-                    [ onClick msg ]
-
-                WithOnlyX msg ->
-                    []
-            )
-            []
-        , Nri.Ui.styled div
-            "modal-container"
+viewModalContainer modalContents =
+    div
+        [ css
             [ Css.width (Css.px 600)
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
             , Css.padding4 (Css.px 40) Css.zero (Css.px 40) Css.zero
@@ -142,106 +152,44 @@ view modalType { title, visibleTitle, content, onDismiss, footerContent, width }
             , Css.flexWrap Css.noWrap
             , Fonts.baseFont
             ]
-            []
-            [ -- This global <style> node sets overflow to hidden on the body element,
-              -- thereby preventing the page from scrolling behind the backdrop when the modal is
-              -- open (and this node is present on the page).
-              Css.Global.global
-                [ Css.Global.body
-                    [ Css.overflow Css.hidden ]
-                ]
-            , case onDismiss of
-                NotDismissible ->
-                    text ""
-
-                WithBackgroundOrX msg ->
-                    closeButton msg
-
-                WithOnlyX msg ->
-                    closeButton msg
-            , if visibleTitle then
-                viewHeader modalType title
-
-              else
-                text ""
-            , viewContent [ content ]
-            , viewFooter footerContent
+        ]
+        [ -- This global <style> node sets overflow to hidden on the body element,
+          -- thereby preventing the page from scrolling behind the backdrop when the modal is
+          -- open (and this node is present on the page).
+          Css.Global.global
+            [ Css.Global.body
+                [ Css.overflow Css.hidden ]
             ]
+        , Nri.Ui.styled div
+            "modal-content"
+            [ Css.overflowY Css.auto
+            , Css.padding2 (Css.px 30) (Css.px 40)
+            , Css.width (Css.pct 100)
+            , Css.minHeight (Css.px 150)
+            , Css.boxSizing Css.borderBox
+            ]
+            []
+            modalContents
         ]
 
 
-modalConfig :
-    ModalType
-    -> String
-    -> Html msg
-    ->
-        { ifClosed : Html msg
-        , overlayColor : String
-        , modalContainer : List (Html msg) -> Html msg
-        , title : ( String, List (Attribute Never) )
-        , content : Html msg
-        }
-modalConfig modalType title content =
-    { ifClosed = text ""
-    , overlayColor =
-        (case modalType of
-            Info ->
-                Colors.navy
+viewTitle { visibleTitle, title, color } =
+    ( title
+    , if visibleTitle then
+        [--css
+         --    [ Css.fontWeight (Css.int 700)
+         --    , Css.lineHeight (Css.px 27)
+         --    , Css.margin2 Css.zero (Css.px 49)
+         --    , Css.fontSize (Css.px 20)
+         --    , Fonts.baseFont
+         --    , Css.textAlign Css.center
+         --    , Css.color color
+         --    ]
+        ]
 
-            Warning ->
-                Colors.gray20
-        )
-            |> Nri.Ui.Colors.Extra.withAlpha 0.9
-            |> Nri.Ui.Colors.Extra.toCoreColor
-            |> Color.toCssString
-    , modalContainer =
-        \modalContents ->
-            div
-                [ css
-                    [ Css.width (Css.px 600)
-                    , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-                    , Css.padding4 (Css.px 40) Css.zero (Css.px 40) Css.zero
-                    , Css.margin2 (Css.px 75) Css.auto
-                    , Css.backgroundColor Colors.white
-                    , Css.borderRadius (Css.px 20)
-                    , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-                    , Css.position Css.relative -- required for closeButtonContainer
-                    , Css.displayFlex
-                    , Css.alignItems Css.center
-                    , Css.flexDirection Css.column
-                    , Css.flexWrap Css.noWrap
-                    , Fonts.baseFont
-                    ]
-                ]
-                [ -- This global <style> node sets overflow to hidden on the body element,
-                  -- thereby preventing the page from scrolling behind the backdrop when the modal is
-                  -- open (and this node is present on the page).
-                  Css.Global.global
-                    [ Css.Global.body
-                        [ Css.overflow Css.hidden ]
-                    ]
-                , viewContent modalContents
-                ]
-    , title =
-        ( title
-        , [ css
-                [ Css.fontWeight (Css.int 700)
-                , Css.lineHeight (Css.px 27)
-                , Css.margin2 Css.zero (Css.px 49)
-                , Css.fontSize (Css.px 20)
-                , Fonts.baseFont
-                , Css.textAlign Css.center
-                , case modalType of
-                    Info ->
-                        Css.color Colors.navy
-
-                    Warning ->
-                        Css.color Colors.red
-                ]
-          ]
-        )
-    , content = content
-    }
+      else
+        Accessibility.Style.invisible
+    )
 
 
 closeButton : msg -> Html msg
@@ -265,43 +213,6 @@ closeButton msg =
         ]
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
-
-
-viewHeader : ModalType -> String -> Html msg
-viewHeader modalType title =
-    Nri.Ui.styled Html.h3
-        "modal-header"
-        ((case modalType of
-            Info ->
-                Css.color Colors.navy
-
-            Warning ->
-                Css.color Colors.red
-         )
-            :: [ Css.fontWeight (Css.int 700)
-               , Css.lineHeight (Css.px 27)
-               , Css.margin2 Css.zero (Css.px 49)
-               , Css.fontSize (Css.px 20)
-               , Fonts.baseFont
-               , Css.textAlign Css.center
-               ]
-        )
-        []
-        [ Html.text title
-        ]
-
-
-viewContent : List (Html msg) -> Html msg
-viewContent =
-    Nri.Ui.styled div
-        "modal-content"
-        [ Css.overflowY Css.auto
-        , Css.padding2 (Css.px 30) (Css.px 40)
-        , Css.width (Css.pct 100)
-        , Css.minHeight (Css.px 150)
-        , Css.boxSizing Css.borderBox
-        ]
-        []
 
 
 viewFooter : List (Html msg) -> Html msg
