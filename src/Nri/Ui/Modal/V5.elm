@@ -2,7 +2,8 @@ module Nri.Ui.Modal.V5 exposing
     ( info, warning
     , Model, init, Msg, update, subscriptions
     , viewTitle, viewContent, viewFooter
-    , closeButton, launchButton, primaryButton
+    , launchButton, closeButton
+    , primaryButton, secondaryButton, dangerButton
     , FocusableElement(..)
     )
 
@@ -12,7 +13,8 @@ module Nri.Ui.Modal.V5 exposing
 @docs Model, init, Msg, update, subscriptions
 
 @docs viewTitle, viewContent, viewFooter
-@docs closeButton, launchButton, primaryButton
+@docs launchButton, closeButton
+@docs primaryButton, secondaryButton, dangerButton
 
 -}
 
@@ -254,8 +256,28 @@ viewFooter =
 primaryButton : FocusableElement -> msg -> String -> Html msg
 primaryButton focusableElement msg label =
     Nri.Ui.styled button
-        "close-button-container"
+        "modal__primary-button"
         [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
+        [ onClick msg ]
+        [ text label ]
+
+
+{-| -}
+secondaryButton : FocusableElement -> msg -> String -> Html msg
+secondaryButton focusableElement msg label =
+    Nri.Ui.styled button
+        "modal__secondary-button"
+        [ buttonStyle, colorStyle SecondaryColors, sizeStyle ]
+        [ onClick msg ]
+        [ text label ]
+
+
+{-| -}
+dangerButton : FocusableElement -> msg -> String -> Html msg
+dangerButton focusableElement msg label =
+    Nri.Ui.styled button
+        "modal__warning-button"
+        [ buttonStyle, colorStyle DangerColors, sizeStyle ]
         [ onClick msg ]
         [ text label ]
 

@@ -78,7 +78,7 @@ example parentMessage state =
                     { title = "Modal.info"
                     , visibleTitle = state.visibleTitle
                     }
-            , content = viewContent InfoModalMsg state
+            , content = viewInfoContent InfoModalMsg state
             }
             state.infoModal
         , Modal.warning
@@ -91,7 +91,7 @@ example parentMessage state =
                     { title = "Modal.warning"
                     , visibleTitle = state.visibleTitle
                     }
-            , content = viewContent WarningModalMsg state
+            , content = viewWarningContent WarningModalMsg state
             }
             state.warningModal
         ]
@@ -99,8 +99,8 @@ example parentMessage state =
     }
 
 
-viewContent : (Modal.Msg -> Msg) -> State -> Html Msg
-viewContent wrapMsg state =
+viewInfoContent : (Modal.Msg -> Msg) -> State -> Html Msg
+viewInfoContent wrapMsg state =
     div [] <|
         case ( state.showX, state.showContinue ) of
             ( True, True ) ->
@@ -126,6 +126,41 @@ viewContent wrapMsg state =
                     [ Modal.primaryButton Modal.OnlyFocusableElement
                         ForceClose
                         "Continue"
+                    ]
+                ]
+
+            ( False, False ) ->
+                [ Modal.viewContent [ text "This is where the content goes!" ]
+                ]
+
+
+viewWarningContent : (Modal.Msg -> Msg) -> State -> Html Msg
+viewWarningContent wrapMsg state =
+    div [] <|
+        case ( state.showX, state.showContinue ) of
+            ( True, True ) ->
+                [ Modal.closeButton Modal.LastFocusableElement
+                    |> Html.map wrapMsg
+                , Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewFooter
+                    [ Modal.dangerButton Modal.FirstFocusableElement
+                        ForceClose
+                        "Have no fear"
+                    ]
+                ]
+
+            ( True, False ) ->
+                [ Modal.closeButton Modal.OnlyFocusableElement
+                    |> Html.map wrapMsg
+                , Modal.viewContent [ text "This is where the content goes!" ]
+                ]
+
+            ( False, True ) ->
+                [ Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewFooter
+                    [ Modal.dangerButton Modal.OnlyFocusableElement
+                        ForceClose
+                        "Have no fear"
                     ]
                 ]
 
