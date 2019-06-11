@@ -25,7 +25,7 @@ import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Color
 import Css
-import Css.Global exposing (Snippet, body, children, descendants, everything, selector)
+import Css.Global
 import Html as Root
 import Html.Attributes exposing (style)
 import Html.Styled
@@ -182,6 +182,22 @@ type FocusableElement
     | LastFocusableElement
 
 
+withFocusTrap : FocusableElement -> List (Html.Styled.Attribute Msg)
+withFocusTrap focusableElement =
+    case focusableElement of
+        OnlyFocusableElement ->
+            List.map Html.Styled.Attributes.fromUnstyled
+                Modal.singleFocusableElement
+
+        FirstFocusableElement ->
+            List.map Html.Styled.Attributes.fromUnstyled
+                Modal.firstFocusableElement
+
+        LastFocusableElement ->
+            List.map Html.Styled.Attributes.fromUnstyled
+                Modal.lastFocusableElement
+
+
 closeButton : FocusableElement -> Html Msg
 closeButton focusableElement =
     Nri.Ui.styled button
@@ -199,18 +215,8 @@ closeButton focusableElement =
         , Css.property "transition" "color 0.1s"
         ]
         (Widget.label "Close modal"
-            :: (Modal.closeOnClick
-                    :: (case focusableElement of
-                            OnlyFocusableElement ->
-                                Modal.singleFocusableElement
-
-                            FirstFocusableElement ->
-                                Modal.firstFocusableElement
-
-                            LastFocusableElement ->
-                                Modal.lastFocusableElement
-                       )
-                    |> List.map Html.Styled.Attributes.fromUnstyled
+            :: (Html.Styled.Attributes.fromUnstyled Modal.closeOnClick
+                    :: withFocusTrap focusableElement
                )
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
@@ -248,32 +254,41 @@ viewFooter =
 
 
 {-| -}
-primaryButton : FocusableElement -> msg -> String -> Html msg
-primaryButton focusableElement msg label =
+primaryButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
+primaryButton focusableElement msg wrapMsg label =
     Nri.Ui.styled button
         "modal__primary-button"
         [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
-        [ onClick msg ]
+        (onClick msg
+            :: List.map (Html.Styled.Attributes.map wrapMsg)
+                (withFocusTrap focusableElement)
+        )
         [ text label ]
 
 
 {-| -}
-secondaryButton : FocusableElement -> msg -> String -> Html msg
-secondaryButton focusableElement msg label =
+secondaryButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
+secondaryButton focusableElement msg wrapMsg label =
     Nri.Ui.styled button
         "modal__secondary-button"
         [ buttonStyle, colorStyle SecondaryColors, sizeStyle ]
-        [ onClick msg ]
+        (onClick msg
+            :: List.map (Html.Styled.Attributes.map wrapMsg)
+                (withFocusTrap focusableElement)
+        )
         [ text label ]
 
 
 {-| -}
-dangerButton : FocusableElement -> msg -> String -> Html msg
-dangerButton focusableElement msg label =
+dangerButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
+dangerButton focusableElement msg wrapMsg label =
     Nri.Ui.styled button
         "modal__warning-button"
         [ buttonStyle, colorStyle DangerColors, sizeStyle ]
-        [ onClick msg ]
+        (onClick msg
+            :: List.map (Html.Styled.Attributes.map wrapMsg)
+                (withFocusTrap focusableElement)
+        )
         [ text label ]
 
 

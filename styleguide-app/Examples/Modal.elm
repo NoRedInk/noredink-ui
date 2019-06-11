@@ -8,6 +8,7 @@ module Examples.Modal exposing (Msg, State, example, init, update, subscriptions
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, text)
 import Css exposing (..)
+import Css.Global
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
@@ -76,14 +77,14 @@ example parentMessage state =
 viewInfoContent : (Modal.Msg -> Msg) -> State -> Html Msg
 viewInfoContent wrapMsg state =
     viewContent wrapMsg
-        (\f -> Modal.primaryButton f ForceClose "Continue")
+        (\f -> Modal.primaryButton f ForceClose wrapMsg "Continue")
         state
 
 
 viewWarningContent : (Modal.Msg -> Msg) -> State -> Html Msg
 viewWarningContent wrapMsg state =
     viewContent wrapMsg
-        (\f -> Modal.dangerButton f ForceClose "Have no fear")
+        (\f -> Modal.dangerButton f ForceClose wrapMsg "Have no fear")
         state
 
 
@@ -92,11 +93,11 @@ viewContent wrapMsg mainButton state =
     div [] <|
         case ( state.showX, state.showContinue ) of
             ( True, True ) ->
-                [ Modal.closeButton Modal.LastFocusableElement
+                [ Modal.closeButton Modal.FirstFocusableElement
                     |> Html.map wrapMsg
                 , Modal.viewContent [ viewSettings state ]
                 , Modal.viewFooter
-                    [ mainButton Modal.FirstFocusableElement
+                    [ mainButton Modal.LastFocusableElement
                     ]
                 ]
 
