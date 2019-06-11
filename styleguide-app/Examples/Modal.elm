@@ -42,33 +42,7 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ h4 [] [ text "Settings" ]
-        , Checkbox.viewWithLabel
-            { identifier = "visible-title"
-            , label = "Visible title"
-            , selected = Checkbox.selectedFromBool state.visibleTitle
-            , setterMsg = SetVisibleTitle
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "show-x"
-            , label = "Show X button"
-            , selected = Checkbox.selectedFromBool state.showX
-            , setterMsg = SetShowX
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "show-continue"
-            , label = "Show main button"
-            , selected = Checkbox.selectedFromBool state.showContinue
-            , setterMsg = SetShowContinue
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , h4 [] [ text "Modals" ]
-        , Modal.info
+        [ Modal.info
             { launchButton =
                 Modal.launchButton [] "Launch Info Modal"
                     |> Html.map InfoModalMsg
@@ -120,7 +94,7 @@ viewContent wrapMsg mainButton state =
             ( True, True ) ->
                 [ Modal.closeButton Modal.LastFocusableElement
                     |> Html.map wrapMsg
-                , Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewContent [ viewSettings state ]
                 , Modal.viewFooter
                     [ mainButton Modal.FirstFocusableElement
                     ]
@@ -129,19 +103,48 @@ viewContent wrapMsg mainButton state =
             ( True, False ) ->
                 [ Modal.closeButton Modal.OnlyFocusableElement
                     |> Html.map wrapMsg
-                , Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewContent [ viewSettings state ]
                 ]
 
             ( False, True ) ->
-                [ Modal.viewContent [ text "This is where the content goes!" ]
+                [ Modal.viewContent [ viewSettings state ]
                 , Modal.viewFooter
                     [ mainButton Modal.OnlyFocusableElement
                     ]
                 ]
 
             ( False, False ) ->
-                [ Modal.viewContent [ text "This is where the content goes!" ]
-                ]
+                [ Modal.viewContent [ viewSettings state ] ]
+
+
+viewSettings : State -> Html Msg
+viewSettings state =
+    div []
+        [ Checkbox.viewWithLabel
+            { identifier = "visible-title"
+            , label = "Visible title"
+            , selected = Checkbox.selectedFromBool state.visibleTitle
+            , setterMsg = SetVisibleTitle
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "show-x"
+            , label = "Show X button"
+            , selected = Checkbox.selectedFromBool state.showX
+            , setterMsg = SetShowX
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "show-continue"
+            , label = "Show main button"
+            , selected = Checkbox.selectedFromBool state.showContinue
+            , setterMsg = SetShowContinue
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        ]
 
 
 {-| -}
