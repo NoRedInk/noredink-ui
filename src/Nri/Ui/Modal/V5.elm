@@ -144,10 +144,6 @@ viewModalContainer modalContents =
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
             , Css.position Css.relative -- required for closeButtonContainer
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.flexDirection Css.column
-            , Css.flexWrap Css.noWrap
             , Fonts.baseFont
             ]
         ]
@@ -247,7 +243,6 @@ viewFooter =
         , Css.flexWrap Css.noWrap
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         , Css.width (Css.pct 100)
-        , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
         ]
         []
 
@@ -389,8 +384,7 @@ sizeStyle =
         widthAttributes =
             [ Css.paddingLeft (Css.px 16)
             , Css.paddingRight (Css.px 16)
-            , Css.minWidth (Css.px config.minWidth)
-            , Css.width (Css.pct 100)
+            , Css.minWidth (Css.px 230)
             ]
 
         lineHeightPx =
