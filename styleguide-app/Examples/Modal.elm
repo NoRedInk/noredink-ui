@@ -21,6 +21,7 @@ type alias State =
     , warningModal : Modal.Model
     , visibleTitle : Bool
     , showX : Bool
+    , showContinue : Bool
     }
 
 
@@ -31,6 +32,7 @@ init =
     , warningModal = Modal.init
     , visibleTitle = True
     , showX = False
+    , showContinue = False
     }
 
 
@@ -57,6 +59,14 @@ example parentMessage state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "show-continue"
+            , label = "Show Continue button"
+            , selected = Checkbox.selectedFromBool state.showContinue
+            , setterMsg = SetShowContinue
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         , h4 [] [ text "Modals" ]
         , Modal.info
             { launchButton = Modal.launchButton [] "Launch Info Modal"
@@ -66,9 +76,7 @@ example parentMessage state =
                     , visibleTitle =
                         state.visibleTitle
                     }
-            , content =
-                viewContent state
-                    |> Html.map InfoModalMsg
+            , content = viewContent InfoModalMsg state
             , parentMsg = InfoModalMsg
             }
             state.infoModal
@@ -80,9 +88,7 @@ example parentMessage state =
                     , visibleTitle =
                         state.visibleTitle
                     }
-            , content =
-                viewContent state
-                    |> Html.map WarningModalMsg
+            , content = viewContent WarningModalMsg state
             , parentMsg = WarningModalMsg
             }
             state.warningModal
@@ -91,24 +97,45 @@ example parentMessage state =
     }
 
 
-viewContent : State -> Html Modal.Msg
-viewContent state =
-    div []
-        [ if state.showX then
-            Modal.closeButton Modal.OnlyFocusableElement
+viewContent : (Modal.Msg -> Msg) -> State -> Html Msg
+viewContent wrapMsg state =
+    div [] <|
+        case ( state.showX, state.showContinue ) of
+            ( True, True ) ->
+                [ Modal.closeButton Modal.LastFocusableElement
+                    |> Html.map wrapMsg
+                , text "This is where the content goes!"
+                , Modal.primaryButton Modal.FirstFocusableElement
+                    ForceClose
+                    "Continue"
+                ]
 
-          else
-            text ""
-        , text "This is where the content goes!"
-        ]
+            ( True, False ) ->
+                [ Modal.closeButton Modal.OnlyFocusableElement
+                    |> Html.map wrapMsg
+                , text "This is where the content goes!"
+                ]
+
+            ( False, True ) ->
+                [ text "This is where the content goes!"
+                , Modal.primaryButton Modal.OnlyFocusableElement
+                    ForceClose
+                    "Continue"
+                ]
+
+            ( False, False ) ->
+                [ text "This is where the content goes!"
+                ]
 
 
 {-| -}
 type Msg
     = InfoModalMsg Modal.Msg
     | WarningModalMsg Modal.Msg
+    | ForceClose
     | SetVisibleTitle Bool
     | SetShowX Bool
+    | SetShowContinue Bool
 
 
 {-| -}
@@ -129,11 +156,22 @@ update msg state =
                     , Cmd.map WarningModalMsg cmds
                     )
 
+        ForceClose ->
+            ( { state
+                | infoModal = Modal.init
+                , warningModal = Modal.init
+              }
+            , Cmd.none
+            )
+
         SetVisibleTitle value ->
             ( { state | visibleTitle = value }, Cmd.none )
 
         SetShowX value ->
             ( { state | showX = value }, Cmd.none )
+
+        SetShowContinue value ->
+            ( { state | showContinue = value }, Cmd.none )
 
 
 {-| -}

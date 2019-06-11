@@ -2,7 +2,7 @@ module Nri.Ui.Modal.V5 exposing
     ( Model
     , info
     , warning
-    , FocusableElement(..), Msg, closeButton, init, launchButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
+    , FocusableElement(..), Msg, closeButton, init, launchButton, primaryButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
     )
 
 {-| Changes from V4:
@@ -229,6 +229,16 @@ closeButton focusableElement =
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
+
+
+{-| -}
+primaryButton : FocusableElement -> msg -> String -> Html msg
+primaryButton focusableElement msg label =
+    Nri.Ui.styled button
+        "close-button-container"
+        []
+        [ onClick msg ]
+        [ text label ]
 
 
 viewFooter : List (Html msg) -> Html msg
