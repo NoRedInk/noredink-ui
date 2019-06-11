@@ -1,15 +1,18 @@
 module Nri.Ui.Modal.V5 exposing
-    ( Model
-    , info
-    , warning
-    , FocusableElement(..), Msg, closeButton, init, launchButton, primaryButton, subscriptions, toOverlayColor, update, viewFooter, viewModalContainer, viewTitle
+    ( info, warning
+    , Model, init, Msg, update, subscriptions
+    , viewTitle, viewContent, viewFooter
+    , closeButton, launchButton, primaryButton
+    , FocusableElement(..)
     )
 
 {-| Changes from V4:
 
-@docs Model, Dismissibility
-@docs info
-@docs warning
+@docs info, warning
+@docs Model, init, Msg, update, subscriptions
+
+@docs viewTitle, viewContent, viewFooter
+@docs closeButton, launchButton, primaryButton
 
 -}
 
@@ -77,10 +80,7 @@ info config model =
                 |> Maybe.map Html.Styled.toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.navy
-        , modalContainer =
-            \l ->
-                viewModalContainer (List.map Html.Styled.fromUnstyled l)
-                    |> Html.Styled.toUnstyled
+        , modalContainer = viewModalContainer
         , title = config.title Colors.navy
         , content = Html.Styled.toUnstyled config.content
         }
@@ -103,10 +103,7 @@ warning config model =
                 |> Maybe.map Html.Styled.toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.gray20
-        , modalContainer =
-            \l ->
-                viewModalContainer (List.map Html.Styled.fromUnstyled l)
-                    |> Html.Styled.toUnstyled
+        , modalContainer = viewModalContainer
         , title = config.title Colors.red
         , content = Html.Styled.toUnstyled config.content
         }
@@ -133,6 +130,7 @@ toOverlayColor color =
         |> Color.toCssString
 
 
+viewModalContainer : List (Root.Html msg) -> Root.Html msg
 viewModalContainer modalContents =
     div
         [ css
@@ -158,17 +156,9 @@ viewModalContainer modalContents =
             [ Css.Global.body
                 [ Css.overflow Css.hidden ]
             ]
-        , Nri.Ui.styled div
-            "modal-content"
-            [ Css.overflowY Css.auto
-            , Css.padding2 (Css.px 30) (Css.px 40)
-            , Css.width (Css.pct 100)
-            , Css.minHeight (Css.px 150)
-            , Css.boxSizing Css.borderBox
-            ]
-            []
-            modalContents
+        , div [] (List.map Html.Styled.fromUnstyled modalContents)
         ]
+        |> Html.Styled.toUnstyled
 
 
 viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
@@ -230,6 +220,37 @@ closeButton focusableElement =
 
 
 {-| -}
+viewContent : List (Html msg) -> Html msg
+viewContent =
+    Nri.Ui.styled div
+        "modal-content"
+        [ Css.overflowY Css.auto
+        , Css.padding2 (Css.px 30) (Css.px 40)
+        , Css.width (Css.pct 100)
+        , Css.minHeight (Css.px 150)
+        , Css.boxSizing Css.borderBox
+        ]
+        []
+
+
+{-| -}
+viewFooter : List (Html msg) -> Html msg
+viewFooter =
+    Nri.Ui.styled div
+        "modal-footer"
+        [ Css.alignItems Css.center
+        , Css.displayFlex
+        , Css.flexDirection Css.column
+        , Css.flexGrow (Css.int 2)
+        , Css.flexWrap Css.noWrap
+        , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+        , Css.width (Css.pct 100)
+        , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
+        ]
+        []
+
+
+{-| -}
 primaryButton : FocusableElement -> msg -> String -> Html msg
 primaryButton focusableElement msg label =
     Nri.Ui.styled button
@@ -237,38 +258,3 @@ primaryButton focusableElement msg label =
         []
         [ onClick msg ]
         [ text label ]
-
-
-viewFooter : List (Html msg) -> Html msg
-viewFooter footerContent =
-    case footerContent of
-        [] ->
-            Html.text ""
-
-        _ ->
-            Nri.Ui.styled div
-                "modal-footer"
-                [ Css.alignItems Css.center
-                , Css.displayFlex
-                , Css.flexDirection Css.column
-                , Css.flexGrow (Css.int 2)
-                , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                , Css.width (Css.pct 100)
-                , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
-                ]
-                []
-                (List.map
-                    (\x ->
-                        Nri.Ui.styled div
-                            "modal-footer-item"
-                            [ Css.margin4 (Css.px 10) Css.zero Css.zero Css.zero
-                            , Css.firstChild
-                                [ Css.margin Css.zero
-                                ]
-                            ]
-                            []
-                            [ x ]
-                    )
-                    footerContent
-                )

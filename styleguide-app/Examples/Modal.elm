@@ -31,8 +31,8 @@ init =
     { infoModal = Modal.init
     , warningModal = Modal.init
     , visibleTitle = True
-    , showX = False
-    , showContinue = False
+    , showX = True
+    , showContinue = True
     }
 
 
@@ -106,27 +106,31 @@ viewContent wrapMsg state =
             ( True, True ) ->
                 [ Modal.closeButton Modal.LastFocusableElement
                     |> Html.map wrapMsg
-                , text "This is where the content goes!"
-                , Modal.primaryButton Modal.FirstFocusableElement
-                    ForceClose
-                    "Continue"
+                , Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewFooter
+                    [ Modal.primaryButton Modal.FirstFocusableElement
+                        ForceClose
+                        "Continue"
+                    ]
                 ]
 
             ( True, False ) ->
                 [ Modal.closeButton Modal.OnlyFocusableElement
                     |> Html.map wrapMsg
-                , text "This is where the content goes!"
+                , Modal.viewContent [ text "This is where the content goes!" ]
                 ]
 
             ( False, True ) ->
-                [ text "This is where the content goes!"
-                , Modal.primaryButton Modal.OnlyFocusableElement
-                    ForceClose
-                    "Continue"
+                [ Modal.viewContent [ text "This is where the content goes!" ]
+                , Modal.viewFooter
+                    [ Modal.primaryButton Modal.OnlyFocusableElement
+                        ForceClose
+                        "Continue"
+                    ]
                 ]
 
             ( False, False ) ->
-                [ text "This is where the content goes!"
+                [ Modal.viewContent [ text "This is where the content goes!" ]
                 ]
 
 
