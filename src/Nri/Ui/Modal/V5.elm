@@ -37,6 +37,7 @@ import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 
 
+{-| -}
 type alias Model =
     Modal.Model
 
@@ -47,6 +48,7 @@ init =
     Modal.init
 
 
+{-| -}
 type alias Msg =
     Modal.Msg
 
@@ -104,6 +106,7 @@ warning config model =
         |> fromUnstyled
 
 
+{-| -}
 launchButton : List Css.Style -> String -> Html Msg
 launchButton styles label =
     button
@@ -135,6 +138,7 @@ modalStyles =
     ]
 
 
+{-| -}
 viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
 viewTitle { visibleTitle, title } color =
     ( title
@@ -183,6 +187,7 @@ withFocusTrap focusableElement =
         )
 
 
+{-| -}
 closeButton : FocusableElement -> Html Msg
 closeButton focusableElement =
     Nri.Ui.styled button
