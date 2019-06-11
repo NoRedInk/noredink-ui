@@ -61,7 +61,7 @@ example parentMessage state =
             }
         , Checkbox.viewWithLabel
             { identifier = "show-continue"
-            , label = "Show Continue button"
+            , label = "Show main button"
             , selected = Checkbox.selectedFromBool state.showContinue
             , setterMsg = SetShowContinue
             , disabled = False
@@ -101,41 +101,20 @@ example parentMessage state =
 
 viewInfoContent : (Modal.Msg -> Msg) -> State -> Html Msg
 viewInfoContent wrapMsg state =
-    div [] <|
-        case ( state.showX, state.showContinue ) of
-            ( True, True ) ->
-                [ Modal.closeButton Modal.LastFocusableElement
-                    |> Html.map wrapMsg
-                , Modal.viewContent [ text "This is where the content goes!" ]
-                , Modal.viewFooter
-                    [ Modal.primaryButton Modal.FirstFocusableElement
-                        ForceClose
-                        "Continue"
-                    ]
-                ]
-
-            ( True, False ) ->
-                [ Modal.closeButton Modal.OnlyFocusableElement
-                    |> Html.map wrapMsg
-                , Modal.viewContent [ text "This is where the content goes!" ]
-                ]
-
-            ( False, True ) ->
-                [ Modal.viewContent [ text "This is where the content goes!" ]
-                , Modal.viewFooter
-                    [ Modal.primaryButton Modal.OnlyFocusableElement
-                        ForceClose
-                        "Continue"
-                    ]
-                ]
-
-            ( False, False ) ->
-                [ Modal.viewContent [ text "This is where the content goes!" ]
-                ]
+    viewContent wrapMsg
+        (\f -> Modal.primaryButton f ForceClose "Continue")
+        state
 
 
 viewWarningContent : (Modal.Msg -> Msg) -> State -> Html Msg
 viewWarningContent wrapMsg state =
+    viewContent wrapMsg
+        (\f -> Modal.dangerButton f ForceClose "Have no fear")
+        state
+
+
+viewContent : (Modal.Msg -> Msg) -> (Modal.FocusableElement -> Html Msg) -> State -> Html Msg
+viewContent wrapMsg mainButton state =
     div [] <|
         case ( state.showX, state.showContinue ) of
             ( True, True ) ->
@@ -143,9 +122,7 @@ viewWarningContent wrapMsg state =
                     |> Html.map wrapMsg
                 , Modal.viewContent [ text "This is where the content goes!" ]
                 , Modal.viewFooter
-                    [ Modal.dangerButton Modal.FirstFocusableElement
-                        ForceClose
-                        "Have no fear"
+                    [ mainButton Modal.FirstFocusableElement
                     ]
                 ]
 
@@ -158,9 +135,7 @@ viewWarningContent wrapMsg state =
             ( False, True ) ->
                 [ Modal.viewContent [ text "This is where the content goes!" ]
                 , Modal.viewFooter
-                    [ Modal.dangerButton Modal.OnlyFocusableElement
-                        ForceClose
-                        "Have no fear"
+                    [ mainButton Modal.OnlyFocusableElement
                     ]
                 ]
 
