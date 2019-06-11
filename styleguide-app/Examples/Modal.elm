@@ -90,32 +90,22 @@ viewWarningContent wrapMsg state =
 
 viewContent : (Modal.Msg -> Msg) -> (Modal.FocusableElement -> Html Msg) -> State -> Html Msg
 viewContent wrapMsg mainButton state =
-    div [] <|
-        case ( state.showX, state.showContinue ) of
-            ( True, True ) ->
-                [ Modal.closeButton Modal.FirstFocusableElement
-                    |> Html.map wrapMsg
-                , Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ mainButton Modal.LastFocusableElement
-                    ]
+    div []
+        [ if state.showX then
+            Modal.closeButton Modal.FirstFocusableElement
+                |> Html.map wrapMsg
+
+          else
+            text ""
+        , Modal.viewContent [ viewSettings state ]
+        , if state.showContinue then
+            Modal.viewFooter
+                [ mainButton Modal.LastFocusableElement
                 ]
 
-            ( True, False ) ->
-                [ Modal.closeButton Modal.OnlyFocusableElement
-                    |> Html.map wrapMsg
-                , Modal.viewContent [ viewSettings state ]
-                ]
-
-            ( False, True ) ->
-                [ Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ mainButton Modal.OnlyFocusableElement
-                    ]
-                ]
-
-            ( False, False ) ->
-                [ Modal.viewContent [ viewSettings state ] ]
+          else
+            text ""
+        ]
 
 
 viewSettings : State -> Html Msg
