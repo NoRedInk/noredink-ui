@@ -20,7 +20,6 @@ module Nri.Ui.Modal.V5 exposing
 
 import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
-import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Color
@@ -28,7 +27,6 @@ import Css
 import Css.Global
 import Html as Root
 import Html.Attributes exposing (style)
-import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Modal
@@ -79,15 +77,15 @@ info config model =
     Modal.view
         { ifClosed =
             config.launchButton
-                |> Maybe.map Html.Styled.toUnstyled
+                |> Maybe.map toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.navy
         , modalContainer = viewModalContainer
         , title = config.title Colors.navy
-        , content = Html.Styled.toUnstyled config.content
+        , content = toUnstyled config.content
         }
         model
-        |> Html.Styled.fromUnstyled
+        |> fromUnstyled
 
 
 {-| -}
@@ -102,15 +100,15 @@ warning config model =
     Modal.view
         { ifClosed =
             config.launchButton
-                |> Maybe.map Html.Styled.toUnstyled
+                |> Maybe.map toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.gray20
         , modalContainer = viewModalContainer
         , title = config.title Colors.red
-        , content = Html.Styled.toUnstyled config.content
+        , content = toUnstyled config.content
         }
         model
-        |> Html.Styled.fromUnstyled
+        |> fromUnstyled
 
 
 launchButton : List Css.Style -> String -> Html Msg
@@ -154,9 +152,9 @@ viewModalContainer modalContents =
             [ Css.Global.body
                 [ Css.overflow Css.hidden ]
             ]
-        , div [] (List.map Html.Styled.fromUnstyled modalContents)
+        , div [] (List.map fromUnstyled modalContents)
         ]
-        |> Html.Styled.toUnstyled
+        |> toUnstyled
 
 
 viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
@@ -183,23 +181,22 @@ type FocusableElement
     | LastFocusableElement
 
 
-withFocusTrap : FocusableElement -> List (Html.Styled.Attribute Msg)
+withFocusTrap : FocusableElement -> List (Attribute Msg)
 withFocusTrap focusableElement =
-    case focusableElement of
-        OnlyFocusableElement ->
-            List.map Html.Styled.Attributes.fromUnstyled
+    List.map Html.Styled.Attributes.fromUnstyled
+        (case focusableElement of
+            OnlyFocusableElement ->
                 Modal.singleFocusableElement
 
-        FirstFocusableElement ->
-            List.map Html.Styled.Attributes.fromUnstyled
+            FirstFocusableElement ->
                 Modal.firstFocusableElement
 
-        MiddleFocusableElement ->
-            []
+            MiddleFocusableElement ->
+                []
 
-        LastFocusableElement ->
-            List.map Html.Styled.Attributes.fromUnstyled
+            LastFocusableElement ->
                 Modal.lastFocusableElement
+        )
 
 
 closeButton : FocusableElement -> Html Msg
