@@ -43,7 +43,7 @@ type alias Model =
 
 
 {-| -}
-init : Model
+init : { dismissOnEscAndOverlayClick : Bool } -> Model
 init =
     Modal.init
 
@@ -68,7 +68,6 @@ update msg model =
 {-| -}
 info :
     { title : Css.Color -> ( String, List (Root.Attribute Never) )
-    , dismissOnEscAndOverlayClick : Bool
     , content : Html msg
     , wrapMsg : Msg -> msg
     }
@@ -77,9 +76,8 @@ info :
 info config model =
     Modal.view
         { overlayColor = toOverlayColor Colors.navy
-        , dismissOnEscAndOverlayClick = config.dismissOnEscAndOverlayClick
         , wrapMsg = config.wrapMsg
-        , modalContainer = viewModalContainer
+        , modalAttributes = modalStyles
         , title = config.title Colors.navy
         , content = toUnstyled config.content
         }
@@ -90,7 +88,6 @@ info config model =
 {-| -}
 warning :
     { title : Css.Color -> ( String, List (Root.Attribute Never) )
-    , dismissOnEscAndOverlayClick : Bool
     , content : Html msg
     , wrapMsg : Msg -> msg
     }
@@ -99,9 +96,8 @@ warning :
 warning config model =
     Modal.view
         { overlayColor = toOverlayColor Colors.gray20
-        , dismissOnEscAndOverlayClick = config.dismissOnEscAndOverlayClick
         , wrapMsg = config.wrapMsg
-        , modalContainer = viewModalContainer
+        , modalAttributes = modalStyles
         , title = config.title Colors.red
         , content = toUnstyled config.content
         }
@@ -124,35 +120,20 @@ toOverlayColor : Css.Color -> String
 toOverlayColor color =
     color
         |> Nri.Ui.Colors.Extra.withAlpha 0.9
-        |> Nri.Ui.Colors.Extra.toCoreColor
-        |> Color.toCssString
+        |> toCssString
 
 
-viewModalContainer : List (Root.Html msg) -> Root.Html msg
-viewModalContainer modalContents =
-    div
-        [ css
-            [ Css.width (Css.px 600)
-            , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
-            , Css.padding4 (Css.px 40) Css.zero (Css.px 40) Css.zero
-            , Css.margin2 (Css.px 75) Css.auto
-            , Css.backgroundColor Colors.white
-            , Css.borderRadius (Css.px 20)
-            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            , Css.position Css.relative -- required for closeButtonContainer
-            , Fonts.baseFont
-            ]
-        ]
-        [ -- This global <style> node sets overflow to hidden on the body element,
-          -- thereby preventing the page from scrolling behind the backdrop when the modal is
-          -- open (and this node is present on the page).
-          Css.Global.global
-            [ Css.Global.body
-                [ Css.overflow Css.hidden ]
-            ]
-        , div [] (List.map fromUnstyled modalContents)
-        ]
-        |> toUnstyled
+modalStyles : List (Root.Attribute Never)
+modalStyles =
+    [ style "width" "600px"
+    , style "max-height" "calc(100vh - 100px)"
+    , style "padding" "40px 0 40px 0"
+    , style "margin" "75px auto"
+    , style "background-color" (toCssString Colors.white)
+    , style "border-radius" "20px"
+    , style "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+    , style "position" "relative" -- required for closeButtonContainer
+    ]
 
 
 viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
@@ -164,12 +145,17 @@ viewTitle { visibleTitle, title } color =
         , style "margin" "0 49px"
         , style "font-size" "20px"
         , style "text-align" "center"
-        , style "color" (Color.toCssString (Nri.Ui.Colors.Extra.toCoreColor color))
+        , style "color" (toCssString color)
         ]
 
       else
         Accessibility.Style.invisible
     )
+
+
+toCssString : Css.Color -> String
+toCssString =
+    Color.toCssString << Nri.Ui.Colors.Extra.toCoreColor
 
 
 type FocusableElement

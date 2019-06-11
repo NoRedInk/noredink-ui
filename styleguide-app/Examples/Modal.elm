@@ -31,8 +31,8 @@ type alias State =
 {-| -}
 init : State
 init =
-    { infoModal = Modal.init
-    , warningModal = Modal.init
+    { infoModal = Modal.init { dismissOnEscAndOverlayClick = True }
+    , warningModal = Modal.init { dismissOnEscAndOverlayClick = True }
     , visibleTitle = True
     , showX = True
     , showContinue = True
@@ -47,7 +47,15 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ Modal.launchButton [] "Launch Info Modal"
+        [ Checkbox.viewWithLabel
+            { identifier = "dismiss-on-click"
+            , label = "Dismiss on ESC and on backdrop click"
+            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
+            , setterMsg = SetDismissOnEscAndOverlayClick
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Modal.launchButton [] "Launch Info Modal"
             |> Html.map InfoModalMsg
         , Modal.launchButton [] "Launch Warning Modal"
             |> Html.map WarningModalMsg
@@ -57,7 +65,6 @@ example parentMessage state =
                     { title = "Modal.info"
                     , visibleTitle = state.visibleTitle
                     }
-            , dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick
             , content = viewInfoContent InfoModalMsg state
             , wrapMsg = InfoModalMsg
             }
@@ -68,7 +75,6 @@ example parentMessage state =
                     { title = "Modal.warning"
                     , visibleTitle = state.visibleTitle
                     }
-            , dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick
             , content = viewWarningContent WarningModalMsg state
             , wrapMsg = WarningModalMsg
             }
@@ -157,14 +163,6 @@ viewSettings state =
             , disabled = False
             , theme = Checkbox.Square
             }
-        , Checkbox.viewWithLabel
-            { identifier = "dismiss-on-click"
-            , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
-            , setterMsg = SetDismissOnEscAndOverlayClick
-            , disabled = False
-            , theme = Checkbox.Square
-            }
         ]
 
 
@@ -200,8 +198,8 @@ update msg state =
 
         ForceClose ->
             ( { state
-                | infoModal = Modal.init
-                , warningModal = Modal.init
+                | infoModal = Modal.init { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
+                , warningModal = Modal.init { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
               }
             , Cmd.none
             )
@@ -219,7 +217,20 @@ update msg state =
             ( { state | showSecondary = value }, Cmd.none )
 
         SetDismissOnEscAndOverlayClick value ->
-            ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
+            let
+                newInfoModal =
+                    Modal.init { dismissOnEscAndOverlayClick = value }
+
+                newWarningModal =
+                    Modal.init { dismissOnEscAndOverlayClick = value }
+            in
+            ( { state
+                | dismissOnEscAndOverlayClick = value
+                , infoModal = newInfoModal
+                , warningModal = newWarningModal
+              }
+            , Cmd.none
+            )
 
 
 {-| -}
