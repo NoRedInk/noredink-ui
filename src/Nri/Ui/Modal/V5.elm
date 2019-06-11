@@ -64,17 +64,17 @@ update msg model =
 
 {-| -}
 info :
-    { launchButton : Maybe (Root.Html Msg)
+    { launchButton : Maybe (Html msg)
     , title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
-    , parentMsg : Msg -> msg
     }
     -> Model
     -> Html msg
 info config model =
     Modal.view
         { ifClosed =
-            Maybe.map (Root.map config.parentMsg) config.launchButton
+            config.launchButton
+                |> Maybe.map Html.Styled.toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.navy
         , modalContainer =
@@ -90,17 +90,17 @@ info config model =
 
 {-| -}
 warning :
-    { launchButton : Maybe (Root.Html Msg)
+    { launchButton : Maybe (Html msg)
     , title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
-    , parentMsg : Msg -> msg
     }
     -> Model
     -> Html msg
 warning config model =
     Modal.view
         { ifClosed =
-            Maybe.map (Root.map config.parentMsg) config.launchButton
+            config.launchButton
+                |> Maybe.map Html.Styled.toUnstyled
                 |> Maybe.withDefault (Root.text "")
         , overlayColor = toOverlayColor Colors.gray20
         , modalContainer =
@@ -114,7 +114,7 @@ warning config model =
         |> Html.Styled.fromUnstyled
 
 
-launchButton : List Css.Style -> String -> Maybe (Root.Html Msg)
+launchButton : List Css.Style -> String -> Html Msg
 launchButton styles label =
     button
         (css styles
@@ -123,8 +123,6 @@ launchButton styles label =
                )
         )
         [ text label ]
-        |> Html.Styled.toUnstyled
-        |> Just
 
 
 toOverlayColor : Css.Color -> String

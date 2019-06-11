@@ -69,27 +69,29 @@ example parentMessage state =
             }
         , h4 [] [ text "Modals" ]
         , Modal.info
-            { launchButton = Modal.launchButton [] "Launch Info Modal"
+            { launchButton =
+                Modal.launchButton [] "Launch Info Modal"
+                    |> Html.map InfoModalMsg
+                    |> Just
             , title =
                 Modal.viewTitle
                     { title = "Modal.info"
-                    , visibleTitle =
-                        state.visibleTitle
+                    , visibleTitle = state.visibleTitle
                     }
             , content = viewContent InfoModalMsg state
-            , parentMsg = InfoModalMsg
             }
             state.infoModal
         , Modal.warning
-            { launchButton = Modal.launchButton [] "Launch Warning Modal"
+            { launchButton =
+                Modal.launchButton [] "Launch Warning Modal"
+                    |> Html.map WarningModalMsg
+                    |> Just
             , title =
                 Modal.viewTitle
                     { title = "Modal.warning"
-                    , visibleTitle =
-                        state.visibleTitle
+                    , visibleTitle = state.visibleTitle
                     }
             , content = viewContent WarningModalMsg state
-            , parentMsg = WarningModalMsg
             }
             state.warningModal
         ]
