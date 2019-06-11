@@ -23,6 +23,7 @@ type alias State =
     , visibleTitle : Bool
     , showX : Bool
     , showContinue : Bool
+    , showSecondary : Bool
     }
 
 
@@ -34,6 +35,7 @@ init =
     , visibleTitle = True
     , showX = True
     , showContinue = True
+    , showSecondary = False
     }
 
 
@@ -99,9 +101,19 @@ viewContent wrapMsg mainButton state =
             text ""
         , Modal.viewContent [ viewSettings state ]
         , if state.showContinue then
-            Modal.viewFooter
-                [ mainButton Modal.LastFocusableElement
-                ]
+            if state.showSecondary then
+                Modal.viewFooter
+                    [ mainButton Modal.MiddleFocusableElement
+                    , Modal.secondaryButton Modal.LastFocusableElement
+                        ForceClose
+                        wrapMsg
+                        "Close"
+                    ]
+
+            else
+                Modal.viewFooter
+                    [ mainButton Modal.LastFocusableElement
+                    ]
 
           else
             text ""
@@ -135,6 +147,14 @@ viewSettings state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "show-secondary"
+            , label = "Show secondary button"
+            , selected = Checkbox.selectedFromBool state.showSecondary
+            , setterMsg = SetShowSecondary
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         ]
 
 
@@ -146,6 +166,7 @@ type Msg
     | SetVisibleTitle Bool
     | SetShowX Bool
     | SetShowContinue Bool
+    | SetShowSecondary Bool
 
 
 {-| -}
@@ -182,6 +203,9 @@ update msg state =
 
         SetShowContinue value ->
             ( { state | showContinue = value }, Cmd.none )
+
+        SetShowSecondary value ->
+            ( { state | showSecondary = value }, Cmd.none )
 
 
 {-| -}

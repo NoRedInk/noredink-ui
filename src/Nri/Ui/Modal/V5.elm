@@ -179,6 +179,7 @@ viewTitle { visibleTitle, title } color =
 type FocusableElement
     = OnlyFocusableElement
     | FirstFocusableElement
+    | MiddleFocusableElement
     | LastFocusableElement
 
 
@@ -192,6 +193,9 @@ withFocusTrap focusableElement =
         FirstFocusableElement ->
             List.map Html.Styled.Attributes.fromUnstyled
                 Modal.firstFocusableElement
+
+        MiddleFocusableElement ->
+            []
 
         LastFocusableElement ->
             List.map Html.Styled.Attributes.fromUnstyled
