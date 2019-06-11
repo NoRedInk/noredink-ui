@@ -275,7 +275,11 @@ secondaryButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
 secondaryButton focusableElement msg wrapMsg label =
     Nri.Ui.styled button
         "modal__secondary-button"
-        [ buttonStyle, colorStyle SecondaryColors, sizeStyle ]
+        [ buttonStyle
+        , colorStyle SecondaryColors
+        , Css.fontSize (Css.px 20)
+        , Css.marginTop (Css.px 30)
+        ]
         (onClick msg
             :: List.map (Html.Styled.Attributes.map wrapMsg)
                 (withFocusTrap focusableElement)
@@ -333,23 +337,20 @@ colorStyle colorPalette =
                     { background = Colors.azure
                     , hover = Colors.azureDark
                     , text = Colors.white
-                    , border = Nothing
                     , shadow = Colors.azureDark
                     }
 
                 SecondaryColors ->
                     { background = Colors.white
-                    , hover = Colors.glacier
+                    , hover = Colors.white
                     , text = Colors.azure
-                    , border = Just <| Colors.azure
-                    , shadow = Colors.azure
+                    , shadow = Colors.white
                     }
 
                 DangerColors ->
                     { background = Colors.red
                     , hover = Colors.redDark
                     , text = Colors.white
-                    , border = Nothing
                     , shadow = Colors.redDark
                     }
     in
@@ -358,15 +359,7 @@ colorStyle colorPalette =
         , Css.backgroundColor config.background
         , Css.fontWeight (Css.int 700)
         , Css.textAlign Css.center
-        , case config.border of
-            Nothing ->
-                Css.borderStyle Css.none
-
-            Just color ->
-                Css.batch
-                    [ Css.borderColor color
-                    , Css.borderStyle Css.solid
-                    ]
+        , Css.borderStyle Css.none
         , Css.borderBottomStyle Css.solid
         , Css.borderBottomColor config.shadow
         , Css.fontStyle Css.normal
