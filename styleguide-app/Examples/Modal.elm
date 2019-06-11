@@ -45,30 +45,28 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ Modal.info
-            { launchButton =
-                Modal.launchButton [] "Launch Info Modal"
-                    |> Html.map InfoModalMsg
-                    |> Just
-            , title =
+        [ Modal.launchButton [] "Launch Info Modal"
+            |> Html.map InfoModalMsg
+        , Modal.launchButton [] "Launch Warning Modal"
+            |> Html.map WarningModalMsg
+        , Modal.info
+            { title =
                 Modal.viewTitle
                     { title = "Modal.info"
                     , visibleTitle = state.visibleTitle
                     }
             , content = viewInfoContent InfoModalMsg state
+            , wrapMsg = InfoModalMsg
             }
             state.infoModal
         , Modal.warning
-            { launchButton =
-                Modal.launchButton [] "Launch Warning Modal"
-                    |> Html.map WarningModalMsg
-                    |> Just
-            , title =
+            { title =
                 Modal.viewTitle
                     { title = "Modal.warning"
                     , visibleTitle = state.visibleTitle
                     }
             , content = viewWarningContent WarningModalMsg state
+            , wrapMsg = WarningModalMsg
             }
             state.warningModal
         ]

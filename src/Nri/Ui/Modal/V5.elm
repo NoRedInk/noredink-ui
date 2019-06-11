@@ -67,19 +67,17 @@ update msg model =
 
 {-| -}
 info :
-    { launchButton : Maybe (Html msg)
-    , title : Css.Color -> ( String, List (Root.Attribute Never) )
+    { title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
+    , wrapMsg : Msg -> msg
     }
     -> Model
     -> Html msg
 info config model =
     Modal.view
-        { ifClosed =
-            config.launchButton
-                |> Maybe.map toUnstyled
-                |> Maybe.withDefault (Root.text "")
-        , overlayColor = toOverlayColor Colors.navy
+        { overlayColor = toOverlayColor Colors.navy
+        , dismissOnEscAndOverlayClick = True
+        , wrapMsg = config.wrapMsg
         , modalContainer = viewModalContainer
         , title = config.title Colors.navy
         , content = toUnstyled config.content
@@ -90,19 +88,17 @@ info config model =
 
 {-| -}
 warning :
-    { launchButton : Maybe (Html msg)
-    , title : Css.Color -> ( String, List (Root.Attribute Never) )
+    { title : Css.Color -> ( String, List (Root.Attribute Never) )
     , content : Html msg
+    , wrapMsg : Msg -> msg
     }
     -> Model
     -> Html msg
 warning config model =
     Modal.view
-        { ifClosed =
-            config.launchButton
-                |> Maybe.map toUnstyled
-                |> Maybe.withDefault (Root.text "")
-        , overlayColor = toOverlayColor Colors.gray20
+        { overlayColor = toOverlayColor Colors.gray20
+        , dismissOnEscAndOverlayClick = True
+        , wrapMsg = config.wrapMsg
         , modalContainer = viewModalContainer
         , title = config.title Colors.red
         , content = toUnstyled config.content
@@ -216,9 +212,8 @@ closeButton focusableElement =
         , Css.property "transition" "color 0.1s"
         ]
         (Widget.label "Close modal"
-            :: (Html.Styled.Attributes.fromUnstyled Modal.closeOnClick
-                    :: withFocusTrap focusableElement
-               )
+            :: onClick Modal.close
+            :: withFocusTrap focusableElement
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
