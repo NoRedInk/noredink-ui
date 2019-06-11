@@ -3,8 +3,7 @@ module Nri.Ui.Modal.V5 exposing
     , Model, init, Msg, update, subscriptions
     , viewTitle, viewContent, viewFooter
     , launchButton, closeButton
-    , primaryButton, secondaryButton, dangerButton
-    , FocusableElement(..)
+    , FocusableElement(..), primaryButton, secondaryButton, dangerButton
     )
 
 {-| Changes from V4:
@@ -14,7 +13,7 @@ module Nri.Ui.Modal.V5 exposing
 
 @docs viewTitle, viewContent, viewFooter
 @docs launchButton, closeButton
-@docs primaryButton, secondaryButton, dangerButton
+@docs FocusableElement, primaryButton, secondaryButton, dangerButton
 
 -}
 
@@ -158,6 +157,7 @@ toCssString =
     Color.toCssString << Nri.Ui.Colors.Extra.toCoreColor
 
 
+{-| -}
 type FocusableElement
     = OnlyFocusableElement
     | FirstFocusableElement
