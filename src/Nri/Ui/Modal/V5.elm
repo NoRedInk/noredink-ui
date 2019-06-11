@@ -68,6 +68,7 @@ update msg model =
 {-| -}
 info :
     { title : Css.Color -> ( String, List (Root.Attribute Never) )
+    , dismissOnEscAndOverlayClick : Bool
     , content : Html msg
     , wrapMsg : Msg -> msg
     }
@@ -76,7 +77,7 @@ info :
 info config model =
     Modal.view
         { overlayColor = toOverlayColor Colors.navy
-        , dismissOnEscAndOverlayClick = True
+        , dismissOnEscAndOverlayClick = config.dismissOnEscAndOverlayClick
         , wrapMsg = config.wrapMsg
         , modalContainer = viewModalContainer
         , title = config.title Colors.navy
@@ -89,6 +90,7 @@ info config model =
 {-| -}
 warning :
     { title : Css.Color -> ( String, List (Root.Attribute Never) )
+    , dismissOnEscAndOverlayClick : Bool
     , content : Html msg
     , wrapMsg : Msg -> msg
     }
@@ -97,7 +99,7 @@ warning :
 warning config model =
     Modal.view
         { overlayColor = toOverlayColor Colors.gray20
-        , dismissOnEscAndOverlayClick = True
+        , dismissOnEscAndOverlayClick = config.dismissOnEscAndOverlayClick
         , wrapMsg = config.wrapMsg
         , modalContainer = viewModalContainer
         , title = config.title Colors.red

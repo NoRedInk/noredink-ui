@@ -24,6 +24,7 @@ type alias State =
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
+    , dismissOnEscAndOverlayClick : Bool
     }
 
 
@@ -36,6 +37,7 @@ init =
     , showX = True
     , showContinue = True
     , showSecondary = False
+    , dismissOnEscAndOverlayClick = True
     }
 
 
@@ -55,6 +57,7 @@ example parentMessage state =
                     { title = "Modal.info"
                     , visibleTitle = state.visibleTitle
                     }
+            , dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick
             , content = viewInfoContent InfoModalMsg state
             , wrapMsg = InfoModalMsg
             }
@@ -65,6 +68,7 @@ example parentMessage state =
                     { title = "Modal.warning"
                     , visibleTitle = state.visibleTitle
                     }
+            , dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick
             , content = viewWarningContent WarningModalMsg state
             , wrapMsg = WarningModalMsg
             }
@@ -153,6 +157,14 @@ viewSettings state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "dismiss-on-click"
+            , label = "Dismiss on ESC and on backdrop click"
+            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
+            , setterMsg = SetDismissOnEscAndOverlayClick
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         ]
 
 
@@ -165,6 +177,7 @@ type Msg
     | SetShowX Bool
     | SetShowContinue Bool
     | SetShowSecondary Bool
+    | SetDismissOnEscAndOverlayClick Bool
 
 
 {-| -}
@@ -204,6 +217,9 @@ update msg state =
 
         SetShowSecondary value ->
             ( { state | showSecondary = value }, Cmd.none )
+
+        SetDismissOnEscAndOverlayClick value ->
+            ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
 
 
 {-| -}
