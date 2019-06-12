@@ -1,6 +1,6 @@
 module Nri.Ui.Modal.V5 exposing
-    ( info, warning
-    , Model, init, Msg, update, subscriptions
+    ( Model, init, Msg, update, subscriptions
+    , info, warning
     , viewContent, viewFooter
     , launchButton, closeButton
     , primaryButton, secondaryButton, dangerButton
@@ -8,10 +8,52 @@ module Nri.Ui.Modal.V5 exposing
 
 {-| Changes from V4:
 
-@docs info, warning
+  - Remove dependence on Assets
+  - Adds keyboard support (escape key to exit, tabs contained within the modal)
+
+These changes have required major API changes. Be sure to wire up subscriptions!
+
+    import Html.Styled exposing (..)
+    import Nri.Ui.Modal.V5 as Modal
+
+    view : Modal.State -> Html Msg
+    view state =
+        Modal.info
+            { title = { title = "Modal Header", visibleTitle = True }
+            , wrapMsg = ModalMsg
+            , content =
+                \{ onlyFocusableElement } ->
+                    div []
+                        [ Modal.viewContent [ text "Content goes here!" ]
+                        , Modal.viewFooter
+                            [ Modal.primaryButton DoSomething "Continue" onlyFocusableElement
+                            , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
+                            ]
+                        ]
+            }
+            state
+
+
+## State and updates
+
 @docs Model, init, Msg, update, subscriptions
 
+
+## Views
+
+
+### Modals
+
+@docs info, warning
+
+
+### View containers
+
 @docs viewContent, viewFooter
+
+
+### Buttons
+
 @docs launchButton, closeButton
 @docs primaryButton, secondaryButton, dangerButton
 
