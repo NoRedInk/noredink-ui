@@ -1,9 +1,9 @@
 module Nri.Ui.Modal.V5 exposing
     ( info, warning
     , Model, init, Msg, update, subscriptions
-    , viewTitle, viewContent, viewFooter
+    , viewContent, viewFooter
     , launchButton, closeButton
-    , FocusableElement(..), primaryButton, secondaryButton, dangerButton
+    , primaryButton, secondaryButton, dangerButton
     )
 
 {-| Changes from V4:
@@ -11,12 +11,13 @@ module Nri.Ui.Modal.V5 exposing
 @docs info, warning
 @docs Model, init, Msg, update, subscriptions
 
-@docs viewTitle, viewContent, viewFooter
+@docs viewContent, viewFooter
 @docs launchButton, closeButton
-@docs FocusableElement, primaryButton, secondaryButton, dangerButton
+@docs primaryButton, secondaryButton, dangerButton
 
 -}
 
+import Accessibility.Modal as Modal
 import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Style
@@ -28,7 +29,6 @@ import Html as Root
 import Html.Attributes exposing (style)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
-import Modal
 import Nri.Ui
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -43,7 +43,7 @@ type alias Model =
 
 
 {-| -}
-init : { dismissOnEscAndOverlayClick : Bool } -> Model
+init : Model
 init =
     Modal.init
 
@@ -61,15 +61,20 @@ subscriptions =
 
 
 {-| -}
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    Modal.update msg model
+update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
+update config msg model =
+    Modal.update config msg model
 
 
 {-| -}
 info :
-    { title : Css.Color -> ( String, List (Root.Attribute Never) )
-    , content : Html msg
+    { title : { visibleTitle : Bool, title : String }
+    , content :
+        { onlyFocusableElement : List (Root.Attribute msg)
+        , firstFocusableElement : List (Root.Attribute msg)
+        , lastFocusableElement : List (Root.Attribute msg)
+        }
+        -> Html msg
     , wrapMsg : Msg -> msg
     }
     -> Model
@@ -79,8 +84,8 @@ info config model =
         { overlayColor = toOverlayColor Colors.navy
         , wrapMsg = config.wrapMsg
         , modalAttributes = modalStyles
-        , title = config.title Colors.navy
-        , content = toUnstyled config.content
+        , title = viewTitle Colors.navy config.title
+        , content = config.content >> toUnstyled
         }
         model
         |> fromUnstyled
@@ -88,8 +93,13 @@ info config model =
 
 {-| -}
 warning :
-    { title : Css.Color -> ( String, List (Root.Attribute Never) )
-    , content : Html msg
+    { title : { visibleTitle : Bool, title : String }
+    , content :
+        { onlyFocusableElement : List (Root.Attribute msg)
+        , firstFocusableElement : List (Root.Attribute msg)
+        , lastFocusableElement : List (Root.Attribute msg)
+        }
+        -> Html msg
     , wrapMsg : Msg -> msg
     }
     -> Model
@@ -99,30 +109,16 @@ warning config model =
         { overlayColor = toOverlayColor Colors.gray20
         , wrapMsg = config.wrapMsg
         , modalAttributes = modalStyles
-        , title = config.title Colors.red
-        , content = toUnstyled config.content
+        , title = viewTitle Colors.red config.title
+        , content = config.content >> toUnstyled
         }
         model
         |> fromUnstyled
 
 
-{-| -}
-launchButton : List Css.Style -> String -> Html Msg
-launchButton styles label =
-    button
-        (css styles
-            :: (Modal.openOnClick (String.replace " " "-" label)
-                    |> List.map Html.Styled.Attributes.fromUnstyled
-               )
-        )
-        [ text label ]
-
-
 toOverlayColor : Css.Color -> String
 toOverlayColor color =
-    color
-        |> Nri.Ui.Colors.Extra.withAlpha 0.9
-        |> toCssString
+    toCssString (Nri.Ui.Colors.Extra.withAlpha 0.9 color)
 
 
 modalStyles : List (Root.Attribute Never)
@@ -139,8 +135,8 @@ modalStyles =
 
 
 {-| -}
-viewTitle : { visibleTitle : Bool, title : String } -> Css.Color -> ( String, List (Root.Attribute Never) )
-viewTitle { visibleTitle, title } color =
+viewTitle : Css.Color -> { visibleTitle : Bool, title : String } -> ( String, List (Root.Attribute Never) )
+viewTitle color { visibleTitle, title } =
     ( title
     , if visibleTitle then
         [ style "font-weight" "700"
@@ -159,57 +155,6 @@ viewTitle { visibleTitle, title } color =
 toCssString : Css.Color -> String
 toCssString =
     Color.toCssString << Nri.Ui.Colors.Extra.toCoreColor
-
-
-{-| -}
-type FocusableElement
-    = OnlyFocusableElement
-    | FirstFocusableElement
-    | MiddleFocusableElement
-    | LastFocusableElement
-
-
-withFocusTrap : FocusableElement -> List (Attribute Msg)
-withFocusTrap focusableElement =
-    List.map Html.Styled.Attributes.fromUnstyled
-        (case focusableElement of
-            OnlyFocusableElement ->
-                Modal.singleFocusableElement
-
-            FirstFocusableElement ->
-                Modal.firstFocusableElement
-
-            MiddleFocusableElement ->
-                []
-
-            LastFocusableElement ->
-                Modal.lastFocusableElement
-        )
-
-
-{-| -}
-closeButton : FocusableElement -> Html Msg
-closeButton focusableElement =
-    Nri.Ui.styled button
-        "close-button-container"
-        [ Css.position Css.absolute
-        , Css.top Css.zero
-        , Css.right Css.zero
-        , Css.padding (Css.px 25)
-        , Css.borderWidth Css.zero
-        , Css.width (Css.px 75)
-        , Css.backgroundColor Css.transparent
-        , Css.cursor Css.pointer
-        , Css.color Colors.azure
-        , Css.hover [ Css.color Colors.azureDark ]
-        , Css.property "transition" "color 0.1s"
-        ]
-        (Widget.label "Close modal"
-            :: onClick Modal.close
-            :: withFocusTrap focusableElement
-        )
-        [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
-        ]
 
 
 {-| -}
@@ -242,22 +187,59 @@ viewFooter =
         []
 
 
+
+--BUTTONS
+
+
 {-| -}
-primaryButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
-primaryButton focusableElement msg wrapMsg label =
-    Nri.Ui.styled button
-        "modal__primary-button"
-        [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
-        (onClick msg
-            :: List.map (Html.Styled.Attributes.map wrapMsg)
-                (withFocusTrap focusableElement)
+launchButton : (Msg -> msg) -> List Css.Style -> String -> Html msg
+launchButton wrapMsg styles label =
+    button
+        (css styles
+            :: List.map Html.Styled.Attributes.fromUnstyled
+                (Modal.openOnClick wrapMsg (String.replace " " "-" label))
         )
         [ text label ]
 
 
 {-| -}
-secondaryButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
-secondaryButton focusableElement msg wrapMsg label =
+closeButton : (Msg -> msg) -> List (Root.Attribute msg) -> Html msg
+closeButton wrapMsg focusableElementAttrs =
+    Nri.Ui.styled button
+        "close-button-container"
+        [ Css.position Css.absolute
+        , Css.top Css.zero
+        , Css.right Css.zero
+        , Css.padding (Css.px 25)
+        , Css.borderWidth Css.zero
+        , Css.width (Css.px 75)
+        , Css.backgroundColor Css.transparent
+        , Css.cursor Css.pointer
+        , Css.color Colors.azure
+        , Css.hover [ Css.color Colors.azureDark ]
+        , Css.property "transition" "color 0.1s"
+        ]
+        (Widget.label "Close modal"
+            :: Html.Styled.Attributes.map wrapMsg (onClick Modal.close)
+            :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs
+        )
+        [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
+        ]
+
+
+{-| -}
+primaryButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+primaryButton msg label focusableElementAttrs =
+    Nri.Ui.styled button
+        "modal__primary-button"
+        [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
+        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
+        [ text label ]
+
+
+{-| -}
+secondaryButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+secondaryButton msg label focusableElementAttrs =
     Nri.Ui.styled button
         "modal__secondary-button"
         [ buttonStyle
@@ -265,23 +247,17 @@ secondaryButton focusableElement msg wrapMsg label =
         , Css.fontSize (Css.px 20)
         , Css.marginTop (Css.px 30)
         ]
-        (onClick msg
-            :: List.map (Html.Styled.Attributes.map wrapMsg)
-                (withFocusTrap focusableElement)
-        )
+        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
         [ text label ]
 
 
 {-| -}
-dangerButton : FocusableElement -> msg -> (Msg -> msg) -> String -> Html msg
-dangerButton focusableElement msg wrapMsg label =
+dangerButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+dangerButton msg label focusableElementAttrs =
     Nri.Ui.styled button
         "modal__warning-button"
         [ buttonStyle, colorStyle DangerColors, sizeStyle ]
-        (onClick msg
-            :: List.map (Html.Styled.Attributes.map wrapMsg)
-                (withFocusTrap focusableElement)
-        )
+        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
         [ text label ]
 
 

@@ -22,7 +22,7 @@
             "pablohirafuji/elm-markdown": "2.0.5",
             "rtfeldman/elm-css": "16.0.0",
             "tesk9/accessible-html": "4.0.0",
-            "tesk9/modal": "4.1.0",
+            "tesk9/modal": "5.0.0",
             "wernerdegroot/listzipper": "3.2.0"
         },
         "indirect": {

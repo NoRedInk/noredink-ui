@@ -31,8 +31,8 @@ type alias State =
 {-| -}
 init : State
 init =
-    { infoModal = Modal.init { dismissOnEscAndOverlayClick = True }
-    , warningModal = Modal.init { dismissOnEscAndOverlayClick = True }
+    { infoModal = Modal.init
+    , warningModal = Modal.init
     , visibleTitle = True
     , showX = True
     , showContinue = True
@@ -47,36 +47,26 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ Checkbox.viewWithLabel
-            { identifier = "dismiss-on-click"
-            , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
-            , setterMsg = SetDismissOnEscAndOverlayClick
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Modal.launchButton [] "Launch Info Modal"
-            |> Html.map InfoModalMsg
-        , Modal.launchButton [] "Launch Warning Modal"
-            |> Html.map WarningModalMsg
+        [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
+        , Modal.launchButton WarningModalMsg [] "Launch Warning Modal"
         , Modal.info
-            { title =
-                Modal.viewTitle
-                    { title = "Modal.info"
-                    , visibleTitle = state.visibleTitle
-                    }
-            , content = viewInfoContent InfoModalMsg state
+            { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
             , wrapMsg = InfoModalMsg
+            , content =
+                viewContent
+                    state
+                    InfoModalMsg
+                    (Modal.primaryButton ForceClose "Continue")
             }
             state.infoModal
         , Modal.warning
-            { title =
-                Modal.viewTitle
-                    { title = "Modal.warning"
-                    , visibleTitle = state.visibleTitle
-                    }
-            , content = viewWarningContent WarningModalMsg state
+            { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
             , wrapMsg = WarningModalMsg
+            , content =
+                viewContent
+                    state
+                    WarningModalMsg
+                    (Modal.dangerButton ForceClose "Have no fear")
             }
             state.warningModal
         ]
@@ -84,26 +74,10 @@ example parentMessage state =
     }
 
 
-viewInfoContent : (Modal.Msg -> Msg) -> State -> Html Msg
-viewInfoContent wrapMsg state =
-    viewContent wrapMsg
-        (\f -> Modal.primaryButton f ForceClose wrapMsg "Continue")
-        state
-
-
-viewWarningContent : (Modal.Msg -> Msg) -> State -> Html Msg
-viewWarningContent wrapMsg state =
-    viewContent wrapMsg
-        (\f -> Modal.dangerButton f ForceClose wrapMsg "Have no fear")
-        state
-
-
-viewContent : (Modal.Msg -> Msg) -> (Modal.FocusableElement -> Html Msg) -> State -> Html Msg
-viewContent wrapMsg mainButton state =
+viewContent state wrapMsg primaryButton { firstFocusableElement, lastFocusableElement } =
     div []
         [ if state.showX then
-            Modal.closeButton Modal.FirstFocusableElement
-                |> Html.map wrapMsg
+            Modal.closeButton wrapMsg firstFocusableElement
 
           else
             text ""
@@ -111,16 +85,16 @@ viewContent wrapMsg mainButton state =
         , if state.showContinue then
             if state.showSecondary then
                 Modal.viewFooter
-                    [ mainButton Modal.MiddleFocusableElement
-                    , Modal.secondaryButton Modal.LastFocusableElement
+                    [ primaryButton []
+                    , Modal.secondaryButton
                         ForceClose
-                        wrapMsg
                         "Close"
+                        lastFocusableElement
                     ]
 
             else
                 Modal.viewFooter
-                    [ mainButton Modal.LastFocusableElement
+                    [ primaryButton lastFocusableElement
                     ]
 
           else
@@ -163,6 +137,14 @@ viewSettings state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "dismiss-on-click"
+            , label = "Dismiss on ESC and on backdrop click"
+            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
+            , setterMsg = SetDismissOnEscAndOverlayClick
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         ]
 
 
@@ -181,16 +163,20 @@ type Msg
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
+    let
+        updateConfig =
+            { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
+    in
     case msg of
         InfoModalMsg modalMsg ->
-            case Modal.update modalMsg state.infoModal of
+            case Modal.update updateConfig modalMsg state.infoModal of
                 ( newState, cmds ) ->
                     ( { state | infoModal = newState }
                     , Cmd.map InfoModalMsg cmds
                     )
 
         WarningModalMsg modalMsg ->
-            case Modal.update modalMsg state.warningModal of
+            case Modal.update updateConfig modalMsg state.warningModal of
                 ( newState, cmds ) ->
                     ( { state | warningModal = newState }
                     , Cmd.map WarningModalMsg cmds
@@ -198,8 +184,8 @@ update msg state =
 
         ForceClose ->
             ( { state
-                | infoModal = Modal.init { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
-                , warningModal = Modal.init { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
+                | infoModal = Modal.init
+                , warningModal = Modal.init
               }
             , Cmd.none
             )
@@ -217,20 +203,7 @@ update msg state =
             ( { state | showSecondary = value }, Cmd.none )
 
         SetDismissOnEscAndOverlayClick value ->
-            let
-                newInfoModal =
-                    Modal.init { dismissOnEscAndOverlayClick = value }
-
-                newWarningModal =
-                    Modal.init { dismissOnEscAndOverlayClick = value }
-            in
-            ( { state
-                | dismissOnEscAndOverlayClick = value
-                , infoModal = newInfoModal
-                , warningModal = newWarningModal
-              }
-            , Cmd.none
-            )
+            ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
 
 
 {-| -}
