@@ -9,6 +9,7 @@ module Examples.Modal exposing (Msg, State, example, init, update, subscriptions
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, text)
 import Css exposing (..)
 import Css.Global
+import Html as Root
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
@@ -52,21 +53,13 @@ example parentMessage state =
         , Modal.info
             { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
             , wrapMsg = InfoModalMsg
-            , content =
-                viewContent
-                    state
-                    InfoModalMsg
-                    (Modal.primaryButton ForceClose "Continue")
+            , content = viewContent state InfoModalMsg Modal.primaryButton
             }
             state.infoModal
         , Modal.warning
             { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
             , wrapMsg = WarningModalMsg
-            , content =
-                viewContent
-                    state
-                    WarningModalMsg
-                    (Modal.dangerButton ForceClose "Have no fear")
+            , content = viewContent state WarningModalMsg Modal.dangerButton
             }
             state.warningModal
         ]
@@ -74,7 +67,24 @@ example parentMessage state =
     }
 
 
-viewContent state wrapMsg primaryButton { firstFocusableElement, lastFocusableElement } =
+viewContent :
+    State
+    -> (Modal.Msg -> Msg)
+    -> (Msg -> String -> List (Root.Attribute Msg) -> Html Msg)
+    ->
+        { a
+            | firstFocusableElement : List (Root.Attribute Msg)
+            , lastFocusableElement : List (Root.Attribute Msg)
+        }
+    -> Html Msg
+viewContent state wrapMsg mainButton { firstFocusableElement, lastFocusableElement } =
+    let
+        primaryButton =
+            mainButton ForceClose "Continue"
+
+        secondaryButton =
+            Modal.secondaryButton ForceClose "Close"
+    in
     div []
         [ if state.showX then
             Modal.closeButton wrapMsg firstFocusableElement
@@ -82,20 +92,21 @@ viewContent state wrapMsg primaryButton { firstFocusableElement, lastFocusableEl
           else
             text ""
         , Modal.viewContent [ viewSettings state ]
-        , if state.showContinue then
-            if state.showSecondary then
-                Modal.viewFooter
-                    [ primaryButton []
-                    , Modal.secondaryButton
-                        ForceClose
-                        "Close"
-                        lastFocusableElement
-                    ]
+        , if state.showContinue && state.showSecondary then
+            Modal.viewFooter
+                [ primaryButton []
+                , secondaryButton lastFocusableElement
+                ]
 
-            else
-                Modal.viewFooter
-                    [ primaryButton lastFocusableElement
-                    ]
+          else if state.showContinue then
+            Modal.viewFooter
+                [ primaryButton lastFocusableElement
+                ]
+
+          else if state.showSecondary then
+            Modal.viewFooter
+                [ secondaryButton lastFocusableElement
+                ]
 
           else
             text ""
