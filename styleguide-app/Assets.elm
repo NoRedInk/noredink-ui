@@ -32,8 +32,6 @@ type alias Assets =
     , help : String
     , hint_png : Asset
     , iconFlag_png : Asset
-    , iconPremiumFlag_svg : Asset
-    , iconPremiumWithWritingFlag_svg : Asset
     , icons_equals_svg : Asset
     , icons_xBlue_svg : Asset
     , key : String
@@ -104,8 +102,6 @@ assets =
     , help = "icon-help"
     , hint_png = Asset "assets/images/hint.png"
     , iconFlag_png = Asset "assets/images/icon-flag.png"
-    , iconPremiumFlag_svg = Asset "assets/images/icon_premium_flag.svg"
-    , iconPremiumWithWritingFlag_svg = Asset "assets/images/icon_premium_writing_flag.svg"
     , icons_equals_svg = Asset "assets/images/equals.svg"
     , icons_xBlue_svg = Asset "assets/images/x-blue.svg"
     , key = "icon-key"
