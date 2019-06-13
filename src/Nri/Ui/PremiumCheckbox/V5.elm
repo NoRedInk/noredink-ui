@@ -87,10 +87,10 @@ premiumFlag =
     svg
         [ version "1.1"
         , id "Layer_1"
-        , x "0px"
-        , y "0px"
+        , Svg.Attributes.width "25"
+        , Svg.Attributes.height "19"
         , Svg.Attributes.viewBox "0 0 25 19"
-        , Svg.Attributes.style "enable-background:new 0 0 25 19;margin-left: 8px;"
+        , Svg.Attributes.style "margin-left: 8px;"
         ]
         [ Svg.title [] [ text "Premium" ]
         , Svg.style [] [ text " .premium-flag-st0{fill:#FEC709;} .premium-flag-st1{fill:#146AFF;} " ]
