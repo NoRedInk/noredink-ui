@@ -293,7 +293,7 @@ positioning : Style
 positioning =
     batch
         [ display inlineBlock
-        , padding4 (px 13) zero (px 13) (px 35)
+        , padding4 (px 13) (px 10) (px 13) (px 45)
         , position relative
         ]
 
@@ -317,6 +317,7 @@ viewIcon styles (Icon icon) =
             , top (calc (pct 50) minus (px 14))
             , width (px 24)
             , height (px 24)
+            , paddingLeft (px 10)
             , Css.batch styles
             ]
         ]
