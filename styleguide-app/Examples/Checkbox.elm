@@ -10,7 +10,8 @@ import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V5 as CheckboxV5
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V5 as PremiumCheckbox
 import Set exposing (Set)
@@ -31,13 +32,14 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Checkbox.V5"
+    { name = "Nri.Ui.Checkbox.V6"
     , category = Inputs
     , content =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
+        , viewHighlightedCheckbox "styleguide-checkbox-highlighted" state
         , viewMultilineCheckboxes
         , h3 [] [ text "Premium Checkboxes" ]
         , viewPremiumCheckboxes state
@@ -103,6 +105,18 @@ viewIndeterminateCheckbox id state =
         , setterMsg = ToggleCheck id
         , selected = Checkbox.PartiallySelected
         , disabled = True
+        , theme = Checkbox.Square
+        }
+
+
+viewHighlightedCheckbox : Id -> State -> Html Msg
+viewHighlightedCheckbox id state =
+    Checkbox.viewHighlightWithLabel
+        { identifier = id
+        , label = "This Checkbox is highlighed"
+        , setterMsg = ToggleCheck id
+        , selected = isSelected id state
+        , disabled = False
         , theme = Checkbox.Square
         }
 
@@ -180,10 +194,10 @@ viewPremiumCheckboxes state =
                 , id = "premium-checkbox-" ++ config.label
                 , selected =
                     if Set.member config.label state.isChecked then
-                        Checkbox.Selected
+                        CheckboxV5.Selected
 
                     else
-                        Checkbox.NotSelected
+                        CheckboxV5.NotSelected
                 , disabled = config.disabled
                 , isLocked = config.isLocked
                 , pennant = config.pennant
