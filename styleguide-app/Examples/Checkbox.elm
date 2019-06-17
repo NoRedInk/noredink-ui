@@ -10,10 +10,9 @@ import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V5 as CheckboxV5
 import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V5 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -194,10 +193,10 @@ viewPremiumCheckboxes state =
                 , id = "premium-checkbox-" ++ config.label
                 , selected =
                     if Set.member config.label state.isChecked then
-                        CheckboxV5.Selected
+                        Checkbox.Selected
 
                     else
-                        CheckboxV5.NotSelected
+                        Checkbox.NotSelected
                 , disabled = config.disabled
                 , isLocked = config.isLocked
                 , pennant = config.pennant
