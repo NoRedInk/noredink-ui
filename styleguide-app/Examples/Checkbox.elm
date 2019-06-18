@@ -6,14 +6,13 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 
 -}
 
-import Assets exposing (assets)
 import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V4 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V5 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -80,7 +79,7 @@ update msg state =
 type alias PremiumExampleConfig =
     { disabled : Bool
     , teacherPremiumLevel : PremiumLevel
-    , pennant : Maybe PremiumCheckbox.Pennant
+    , pennant : PremiumCheckbox.Pennant
     }
 
 
@@ -176,8 +175,7 @@ viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     let
         checkbox config =
-            PremiumCheckbox.premium
-                assets
+            PremiumCheckbox.view
                 { label = config.label
                 , id = "premium-checkbox-" ++ config.label
                 , selected =
@@ -194,10 +192,24 @@ viewPremiumCheckboxes state =
                 }
     in
     Html.div []
-        [ checkbox { label = "Identify Adjectives 1 (Free)", disabled = False, isLocked = False, pennant = Nothing }
-        , checkbox { label = "Identify Adjectives 2 (Premium)", disabled = False, isLocked = False, pennant = Just PremiumCheckbox.Premium }
-        , checkbox { label = "Revising Wordy Phrases 1 (Writing)", disabled = False, isLocked = True, pennant = Just PremiumCheckbox.PremiumWithWriting }
-        , checkbox { label = "Revising Wordy Phrases 2 (Writing) (Disabled)", disabled = True, isLocked = True, pennant = Just PremiumCheckbox.PremiumWithWriting }
+        [ checkbox
+            { label = "Identify Adjectives 2 (Premium)"
+            , disabled = False
+            , isLocked = False
+            , pennant = PremiumCheckbox.Premium
+            }
+        , checkbox
+            { label = "Revising Wordy Phrases 1 (Writing)"
+            , disabled = False
+            , isLocked = True
+            , pennant = PremiumCheckbox.PremiumWithWriting
+            }
+        , checkbox
+            { label = "Revising Wordy Phrases 2 (Writing) (Disabled)"
+            , disabled = True
+            , isLocked = True
+            , pennant = PremiumCheckbox.PremiumWithWriting
+            }
         ]
 
 
