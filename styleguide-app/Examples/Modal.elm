@@ -53,13 +53,21 @@ example parentMessage state =
         , Modal.info
             { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
             , wrapMsg = InfoModalMsg
-            , content = viewContent state InfoModalMsg Modal.primaryButton
+            , content =
+                viewContent state
+                    InfoModalMsg
+                    (Modal.primaryButton ForceClose "Continue")
+                    (Modal.secondaryButton ForceClose "Close")
             }
             state.infoModal
         , Modal.warning
             { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
             , wrapMsg = WarningModalMsg
-            , content = viewContent state WarningModalMsg Modal.dangerButton
+            , content =
+                viewContent state
+                    WarningModalMsg
+                    (Modal.dangerButton ForceClose "Continue")
+                    (Modal.secondaryButton ForceClose "Close")
             }
             state.warningModal
         ]
@@ -70,20 +78,14 @@ example parentMessage state =
 viewContent :
     State
     -> (Modal.Msg -> Msg)
-    -> (Msg -> String -> List (Root.Attribute Msg) -> Html Msg)
+    -> (List (Root.Attribute Msg) -> Html Msg)
+    -> (List (Root.Attribute Msg) -> Html Msg)
     -> Modal.FocusableElementAttrs Msg
     -> Html Msg
-viewContent state wrapMsg mainButton { firstFocusableElement, lastFocusableElement } =
-    let
-        primaryButton =
-            mainButton ForceClose "Continue"
-
-        secondaryButton =
-            Modal.secondaryButton ForceClose "Close"
-    in
+viewContent state wrapMsg primaryButton secondaryButton focusableElementAttrs =
     div []
         [ if state.showX then
-            Modal.closeButton wrapMsg firstFocusableElement
+            Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
 
           else
             text ""
@@ -91,17 +93,17 @@ viewContent state wrapMsg mainButton { firstFocusableElement, lastFocusableEleme
         , if state.showContinue && state.showSecondary then
             Modal.viewFooter
                 [ primaryButton []
-                , secondaryButton lastFocusableElement
+                , secondaryButton focusableElementAttrs.lastFocusableElement
                 ]
 
           else if state.showContinue then
             Modal.viewFooter
-                [ primaryButton lastFocusableElement
+                [ primaryButton focusableElementAttrs.lastFocusableElement
                 ]
 
           else if state.showSecondary then
             Modal.viewFooter
-                [ secondaryButton lastFocusableElement
+                [ secondaryButton focusableElementAttrs.lastFocusableElement
                 ]
 
           else
