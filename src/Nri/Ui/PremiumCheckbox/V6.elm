@@ -15,8 +15,14 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
-{-| Premium is the yellow "P" pennant
-PremiumWithWriting is the yellow "P+" pennant
+{-| Changes from V6:
+
+  - inherited changes from Nri.Ui.Checkbox.V6
+      - adjusts padding for all checkboxes to accommodate highlight style.
+        Keep this in mind if using this module on an existing page -- make sure alignement, styling is consistent.
+        Premium is the yellow "P" pennant
+        PremiumWithWriting is the yellow "P+" pennant
+
 -}
 type Pennant
     = Premium

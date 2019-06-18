@@ -7,10 +7,11 @@ module Nri.Ui.Checkbox.V6 exposing
 {-|
 
 
-# Changes from V5:
+# Changes from V6:
 
-  - Removes `noOpMsg` from Model
-  - Removes dependency on external assets
+  - adds a highlight style option
+  - adjusts padding for all checkboxes to accommodate highlight style.
+    Keep this in mind if using this module on an existing page -- make sure alignement, styling is consistent.
 
 @docs Model, Theme, IsSelected
 
