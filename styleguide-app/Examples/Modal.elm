@@ -1,232 +1,224 @@
-module Examples.Modal exposing (Msg, State, example, init, update)
+module Examples.Modal exposing (Msg, State, example, init, update, subscriptions)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example, init, update, subscriptions
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
-import Assets
+import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, text)
 import Css exposing (..)
+import Css.Global
+import Html as Root
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V4 as Modal
-
-
-{-| -}
-type Msg
-    = DismissModal
-    | ShowModal ModalType
+import Nri.Ui.Modal.V5 as Modal
 
 
 {-| -}
 type alias State =
-    { modal : Maybe ModalType }
-
-
-{-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
-    { name = "Nri.Ui.Modal.V3"
-    , category = Modals
-    , content =
-        [ case state.modal of
-            Just modal ->
-                viewModal modal
-
-            Nothing ->
-                text ""
-        , viewButtons
-        ]
-            |> List.map (Html.map parentMessage)
+    { infoModal : Modal.Model
+    , warningModal : Modal.Model
+    , visibleTitle : Bool
+    , showX : Bool
+    , showContinue : Bool
+    , showSecondary : Bool
+    , dismissOnEscAndOverlayClick : Bool
     }
 
 
 {-| -}
 init : State
 init =
-    { modal = Nothing }
+    { infoModal = Modal.init
+    , warningModal = Modal.init
+    , visibleTitle = True
+    , showX = True
+    , showContinue = True
+    , showSecondary = False
+    , dismissOnEscAndOverlayClick = True
+    }
+
+
+{-| -}
+example : (Msg -> msg) -> State -> ModuleExample msg
+example parentMessage state =
+    { name = "Nri.Ui.Modal.V5"
+    , category = Modals
+    , content =
+        [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
+        , Modal.launchButton WarningModalMsg [] "Launch Warning Modal"
+        , Modal.info
+            { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
+            , wrapMsg = InfoModalMsg
+            , content =
+                viewContent state
+                    InfoModalMsg
+                    (Modal.primaryButton ForceClose "Continue")
+                    (Modal.secondaryButton ForceClose "Close")
+            }
+            state.infoModal
+        , Modal.warning
+            { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
+            , wrapMsg = WarningModalMsg
+            , content =
+                viewContent state
+                    WarningModalMsg
+                    (Modal.dangerButton ForceClose "Continue")
+                    (Modal.secondaryButton ForceClose "Close")
+            }
+            state.warningModal
+        ]
+            |> List.map (Html.map parentMessage)
+    }
+
+
+viewContent :
+    State
+    -> (Modal.Msg -> Msg)
+    -> (List (Root.Attribute Msg) -> Html Msg)
+    -> (List (Root.Attribute Msg) -> Html Msg)
+    -> Modal.FocusableElementAttrs Msg
+    -> Html Msg
+viewContent state wrapMsg primaryButton secondaryButton focusableElementAttrs =
+    div []
+        [ if state.showX then
+            Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+
+          else
+            text ""
+        , Modal.viewContent [ viewSettings state ]
+        , if state.showContinue && state.showSecondary then
+            Modal.viewFooter
+                [ primaryButton []
+                , secondaryButton focusableElementAttrs.lastFocusableElement
+                ]
+
+          else if state.showContinue then
+            Modal.viewFooter
+                [ primaryButton focusableElementAttrs.lastFocusableElement
+                ]
+
+          else if state.showSecondary then
+            Modal.viewFooter
+                [ secondaryButton focusableElementAttrs.lastFocusableElement
+                ]
+
+          else
+            text ""
+        ]
+
+
+viewSettings : State -> Html Msg
+viewSettings state =
+    div []
+        [ Checkbox.viewWithLabel
+            { identifier = "visible-title"
+            , label = "Visible title"
+            , selected = Checkbox.selectedFromBool state.visibleTitle
+            , setterMsg = SetVisibleTitle
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "show-x"
+            , label = "Show X button"
+            , selected = Checkbox.selectedFromBool state.showX
+            , setterMsg = SetShowX
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "show-continue"
+            , label = "Show main button"
+            , selected = Checkbox.selectedFromBool state.showContinue
+            , setterMsg = SetShowContinue
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "show-secondary"
+            , label = "Show secondary button"
+            , selected = Checkbox.selectedFromBool state.showSecondary
+            , setterMsg = SetShowSecondary
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        , Checkbox.viewWithLabel
+            { identifier = "dismiss-on-click"
+            , label = "Dismiss on ESC and on backdrop click"
+            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
+            , setterMsg = SetDismissOnEscAndOverlayClick
+            , disabled = False
+            , theme = Checkbox.Square
+            }
+        ]
+
+
+{-| -}
+type Msg
+    = InfoModalMsg Modal.Msg
+    | WarningModalMsg Modal.Msg
+    | ForceClose
+    | SetVisibleTitle Bool
+    | SetShowX Bool
+    | SetShowContinue Bool
+    | SetShowSecondary Bool
+    | SetDismissOnEscAndOverlayClick Bool
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
+    let
+        updateConfig =
+            { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
+    in
     case msg of
-        DismissModal ->
-            ( { state | modal = Nothing }, Cmd.none )
+        InfoModalMsg modalMsg ->
+            case Modal.update updateConfig modalMsg state.infoModal of
+                ( newState, cmds ) ->
+                    ( { state | infoModal = newState }
+                    , Cmd.map InfoModalMsg cmds
+                    )
 
-        ShowModal modalType ->
-            ( { state | modal = Just modalType }, Cmd.none )
+        WarningModalMsg modalMsg ->
+            case Modal.update updateConfig modalMsg state.warningModal of
+                ( newState, cmds ) ->
+                    ( { state | warningModal = newState }
+                    , Cmd.map WarningModalMsg cmds
+                    )
+
+        ForceClose ->
+            ( { state
+                | infoModal = Modal.init
+                , warningModal = Modal.init
+              }
+            , Cmd.none
+            )
+
+        SetVisibleTitle value ->
+            ( { state | visibleTitle = value }, Cmd.none )
+
+        SetShowX value ->
+            ( { state | showX = value }, Cmd.none )
+
+        SetShowContinue value ->
+            ( { state | showContinue = value }, Cmd.none )
+
+        SetShowSecondary value ->
+            ( { state | showSecondary = value }, Cmd.none )
+
+        SetDismissOnEscAndOverlayClick value ->
+            ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
 
 
-
--- INTERNAL
-
-
-type ModalType
-    = InfoModal
-    | WarningModal
-    | NoButtonModal
-    | NoDismissModal
-    | OnlyXDismissModal
-    | NoHeading
-    | ScrolledContentModal
-
-
-viewButtons : Html Msg
-viewButtons =
-    [ ( "Info Modal", "Modal.info", InfoModal )
-    , ( "Warning Modal", "Modal.warning", WarningModal )
-    , ( "No Button Modal", "Modal.info { ... footerContent = [] ... }", NoButtonModal )
-    , ( "No Dismiss Modal", "Modal.info { ... onDismiss = NotDismissible ... }", NoDismissModal )
-    , ( "Only X-Dismiss Modal", "Modal.info { ... onDismiss = WithOnlyX ... }", OnlyXDismissModal )
-    , ( "No Heading", "Modal.info { ... visibleTitle = False ... }", NoHeading )
-    , ( "Scrolled Content"
-      , "Modal.info { content = Html.text 'so much stuff' }"
-      , ScrolledContentModal
-      )
-    ]
-        |> List.map modalLaunchButton
-        |> div []
-
-
-modalLaunchButton : ( String, String, ModalType ) -> Html Msg
-modalLaunchButton ( label, details, modalType ) =
-    div []
-        [ h3 [] [ text label ]
-        , p [] [ text details ]
-        , Button.button
-            { onClick = ShowModal modalType
-            , size = Button.Small
-            , style = Button.Secondary
-            , width = Button.WidthUnbounded
-            }
-            { label = label
-            , state = Button.Enabled
-            , icon = Nothing
-            }
+{-| -}
+subscriptions : State -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ Sub.map InfoModalMsg (Modal.subscriptions model.infoModal)
+        , Sub.map WarningModalMsg (Modal.subscriptions model.warningModal)
         ]
-
-
-viewModal : ModalType -> Html Msg
-viewModal modal =
-    case modal of
-        InfoModal ->
-            Modal.info Assets.assets
-                { title = "Info Modal"
-                , visibleTitle = True
-                , content = text "This is where the content goes!"
-                , onDismiss = Modal.WithBackgroundOrX DismissModal
-                , width = Nothing
-                , footerContent =
-                    [ modalFooterButton "Primary" Button.Primary
-                    , modalFooterButton "Cancel" Button.Borderless
-                    ]
-                }
-
-        WarningModal ->
-            Modal.warning Assets.assets
-                { title = "Warning Modal"
-                , visibleTitle = True
-                , content = text "This is where the content goes!"
-                , onDismiss = Modal.WithBackgroundOrX DismissModal
-                , width = Nothing
-                , footerContent =
-                    [ modalFooterButton "Primary" Button.Danger
-                    , modalFooterButton "Cancel" Button.Borderless
-                    ]
-                }
-
-        NoButtonModal ->
-            Modal.info Assets.assets
-                { title = "No Buttons"
-                , visibleTitle = True
-                , content = text "This is where the content goes!"
-                , onDismiss = Modal.WithBackgroundOrX DismissModal
-                , width = Nothing
-                , footerContent = []
-                }
-
-        NoDismissModal ->
-            Modal.info Assets.assets
-                { title = "No Dismiss"
-                , visibleTitle = True
-                , content = text "This is where the content goes!"
-                , onDismiss = Modal.NotDismissible
-                , width = Nothing
-                , footerContent =
-                    [ modalFooterButton "Primary" Button.Primary
-                    , modalFooterButton "Cancel" Button.Borderless
-                    ]
-                }
-
-        OnlyXDismissModal ->
-            Modal.info Assets.assets
-                { title = "Only X-Dismiss"
-                , visibleTitle = True
-                , content = text "This is where the content goes!"
-                , onDismiss = Modal.WithOnlyX DismissModal
-                , width = Nothing
-                , footerContent =
-                    [ modalFooterButton "Primary" Button.Primary
-                    , modalFooterButton "Cancel" Button.Borderless
-                    ]
-                }
-
-        NoHeading ->
-            Modal.info Assets.assets
-                { title = "Hidden title"
-                , onDismiss = Modal.WithBackgroundOrX DismissModal
-                , visibleTitle = False
-                , footerContent = []
-                , width = Nothing
-                , content =
-                    div
-                        [ css
-                            [ width (pct 100)
-                            , height (px 200)
-                            , backgroundColor Colors.gray75
-                            , border3 (px 1) dashed Colors.gray20
-                            ]
-                        ]
-                        [ text "Imagine an image" ]
-                }
-
-        ScrolledContentModal ->
-            Modal.info Assets.assets
-                { title = "Scrolled Content"
-                , onDismiss = Modal.WithBackgroundOrX DismissModal
-                , visibleTitle = True
-                , footerContent = [ modalFooterButton "Primary" Button.Primary ]
-                , width = Nothing
-                , content =
-                    div []
-                        [ text "\nIt was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.\n\n\nIt was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.\n\nIt was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.\n                          "
-                        , div
-                            [ css
-                                [ width (pct 100)
-                                , height (px 200)
-                                , backgroundColor Colors.gray75
-                                , border3 (px 1) dashed Colors.gray20
-                                ]
-                            ]
-                            [ text "Imagine an image" ]
-                        ]
-                }
-
-
-modalFooterButton : String -> Button.ButtonStyle -> Html Msg
-modalFooterButton label style =
-    Button.button
-        { onClick = DismissModal
-        , size = Button.Large
-        , style = style
-        , width = Button.WidthExact 230
-        }
-        { label = label
-        , state = Button.Enabled
-        , icon = Nothing
-        }

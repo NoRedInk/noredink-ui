@@ -233,7 +233,8 @@ update outsideMsg moduleStates =
 subscriptions : ModuleStates -> Sub Msg
 subscriptions moduleStates =
     Sub.batch
-        []
+        [ Sub.map ModalExampleMsg (Examples.Modal.subscriptions moduleStates.modalExampleState)
+        ]
 
 
 {-| A container with a visually-apparent size for demonstrating how style guide components
