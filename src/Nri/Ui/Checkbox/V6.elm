@@ -10,8 +10,6 @@ module Nri.Ui.Checkbox.V6 exposing
 # Changes from V6:
 
   - adds a highlight style option
-  - adjusts padding for all checkboxes to accommodate highlight style.
-    Keep this in mind if using this module on an existing page -- make sure alignement, styling is consistent.
 
 @docs Model, Theme, IsSelected
 
@@ -294,7 +292,7 @@ positioning : Style
 positioning =
     batch
         [ display inlineBlock
-        , padding4 (px 13) (px 10) (px 13) (px 45)
+        , padding4 (px 13) zero (px 13) (px 35)
         , position relative
         ]
 
@@ -318,7 +316,6 @@ viewIcon styles (Icon icon) =
             , top (calc (pct 50) minus (px 14))
             , width (px 24)
             , height (px 24)
-            , paddingLeft (px 10)
             , Css.batch styles
             ]
         ]
