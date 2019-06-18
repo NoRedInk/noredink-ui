@@ -114,6 +114,7 @@ update config msg model =
     Modal.update config msg model
 
 
+{-| -}
 type alias FocusableElementAttrs msg =
     { onlyFocusableElement : List (Root.Attribute msg)
     , firstFocusableElement : List (Root.Attribute msg)
