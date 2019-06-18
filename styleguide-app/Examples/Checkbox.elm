@@ -40,7 +40,7 @@ example parentMessage state =
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
         , viewHighlightedCheckbox "styleguide-checkbox-highlighted" state
         , viewMultilineCheckboxes
-        , h3 [] [ text "Premium Checkboxes" ]
+        , h3 [] [ text "Premium checkboxes" ]
         , viewPremiumCheckboxes state
         ]
             |> List.map (Html.map parentMessage)
