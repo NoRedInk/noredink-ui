@@ -34,6 +34,10 @@ These changes have required major API changes. Be sure to wire up subscriptions!
             }
             state
 
+    subscriptions : Modal.State -> Sub Msg
+    subscriptions state =
+        Modal.subscriptions state
+
 
 ## State and updates
 
