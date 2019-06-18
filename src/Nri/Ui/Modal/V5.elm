@@ -1,6 +1,7 @@
 module Nri.Ui.Modal.V5 exposing
-    ( Model, init, Msg, update, subscriptions
-    , info, warning
+    ( Model, init
+    , Msg, update, subscriptions
+    , info, warning, FocusableElementAttrs
     , viewContent, viewFooter
     , launchButton, closeButton
     , primaryButton, secondaryButton, dangerButton
@@ -36,7 +37,8 @@ These changes have required major API changes. Be sure to wire up subscriptions!
 
 ## State and updates
 
-@docs Model, init, Msg, update, subscriptions
+@docs Model, init
+@docs Msg, update, subscriptions
 
 
 ## Views
@@ -44,7 +46,7 @@ These changes have required major API changes. Be sure to wire up subscriptions!
 
 ### Modals
 
-@docs info, warning
+@docs info, warning, FocusableElementAttrs
 
 
 ### View containers
@@ -108,15 +110,17 @@ update config msg model =
     Modal.update config msg model
 
 
+type alias FocusableElementAttrs msg =
+    { onlyFocusableElement : List (Root.Attribute msg)
+    , firstFocusableElement : List (Root.Attribute msg)
+    , lastFocusableElement : List (Root.Attribute msg)
+    }
+
+
 {-| -}
 info :
     { title : { visibleTitle : Bool, title : String }
-    , content :
-        { onlyFocusableElement : List (Root.Attribute msg)
-        , firstFocusableElement : List (Root.Attribute msg)
-        , lastFocusableElement : List (Root.Attribute msg)
-        }
-        -> Html msg
+    , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
     -> Model
@@ -136,12 +140,7 @@ info config model =
 {-| -}
 warning :
     { title : { visibleTitle : Bool, title : String }
-    , content :
-        { onlyFocusableElement : List (Root.Attribute msg)
-        , firstFocusableElement : List (Root.Attribute msg)
-        , lastFocusableElement : List (Root.Attribute msg)
-        }
-        -> Html msg
+    , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
     -> Model

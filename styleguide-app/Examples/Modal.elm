@@ -71,11 +71,7 @@ viewContent :
     State
     -> (Modal.Msg -> Msg)
     -> (Msg -> String -> List (Root.Attribute Msg) -> Html Msg)
-    ->
-        { a
-            | firstFocusableElement : List (Root.Attribute Msg)
-            , lastFocusableElement : List (Root.Attribute Msg)
-        }
+    -> Modal.FocusableElementAttrs Msg
     -> Html Msg
 viewContent state wrapMsg mainButton { firstFocusableElement, lastFocusableElement } =
     let
