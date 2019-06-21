@@ -1,5 +1,6 @@
 module Nri.Ui.Modal.V5 exposing
     ( Model, init
+    , close, open
     , Msg, update, subscriptions
     , info, warning, FocusableElementAttrs
     , viewContent, viewFooter
@@ -42,6 +43,7 @@ These changes have required major API changes. Be sure to wire up subscriptions!
 ## State and updates
 
 @docs Model, init
+@docs close, open
 @docs Msg, update, subscriptions
 
 
@@ -112,6 +114,19 @@ subscriptions =
 update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
 update config msg model =
     Modal.update config msg model
+
+
+{-| -}
+close : Msg
+close =
+    Modal.close
+
+
+{-| Pass the id of the element that focus should return to when the modal closes.
+-}
+open : String -> Msg
+open =
+    Modal.open
 
 
 {-| -}
