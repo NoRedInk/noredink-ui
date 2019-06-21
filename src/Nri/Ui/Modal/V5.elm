@@ -139,7 +139,8 @@ type alias FocusableElementAttrs msg =
 
 {-| -}
 info :
-    { title : { visibleTitle : Bool, title : String }
+    { visibleTitle : Bool
+    , title : String
     , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
@@ -151,7 +152,8 @@ info config model =
 
 {-| -}
 warning :
-    { title : { visibleTitle : Bool, title : String }
+    { visibleTitle : Bool
+    , title : String
     , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
@@ -164,7 +166,8 @@ warning config model =
 view :
     { overlayColor : Css.Color, titleColor : Css.Color }
     ->
-        { title : { visibleTitle : Bool, title : String }
+        { visibleTitle : Bool
+        , title : String
         , content : FocusableElementAttrs msg -> Html msg
         , wrapMsg : Msg -> msg
         }
@@ -175,7 +178,7 @@ view { overlayColor, titleColor } config model =
         { overlayColor = toOverlayColor overlayColor
         , wrapMsg = config.wrapMsg
         , modalAttributes = modalStyles
-        , title = viewTitle titleColor config.title
+        , title = viewTitle titleColor { title = config.title, visibleTitle = config.visibleTitle }
         , content =
             \{ onlyFocusableElement, firstFocusableElement, lastFocusableElement } ->
                 { onlyFocusableElement = List.map Html.Styled.Attributes.fromUnstyled onlyFocusableElement

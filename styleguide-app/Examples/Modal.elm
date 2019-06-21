@@ -51,7 +51,8 @@ example parentMessage state =
         [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
         , Modal.launchButton WarningModalMsg [] "Launch Warning Modal"
         , Modal.info
-            { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
+            { title = "Modal.info"
+            , visibleTitle = state.visibleTitle
             , wrapMsg = InfoModalMsg
             , content =
                 viewContent state
@@ -61,7 +62,8 @@ example parentMessage state =
             }
             state.infoModal
         , Modal.warning
-            { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
+            { title = "Modal.warning"
+            , visibleTitle = state.visibleTitle
             , wrapMsg = WarningModalMsg
             , content =
                 viewContent state
