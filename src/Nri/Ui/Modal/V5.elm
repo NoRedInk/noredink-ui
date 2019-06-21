@@ -241,7 +241,10 @@ viewFooter =
 launchButton : (Msg -> msg) -> List Css.Style -> String -> Html msg
 launchButton wrapMsg styles label =
     button
-        (css styles
+        (css
+            (Css.batch [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
+                :: styles
+            )
             :: List.map Html.Styled.Attributes.fromUnstyled
                 (Modal.openOnClick wrapMsg (String.replace " " "-" label))
         )
