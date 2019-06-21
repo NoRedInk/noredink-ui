@@ -1,6 +1,6 @@
 module Nri.Ui.Button.V8 exposing
     ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
-    , button
+    , button, customizableButton
     , delete
     , toggleButton
     , link, linkSpa
@@ -43,7 +43,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## `<button>` Buttons
 
-@docs button
+@docs button, customizableButton
 @docs delete
 @docs toggleButton
 
@@ -154,6 +154,24 @@ button :
         }
     -> Html msg
 button config content =
+    customizableButton config content []
+
+
+{-| -}
+customizableButton :
+    { onClick : msg
+    , size : ButtonSize
+    , style : ButtonStyle
+    , width : ButtonWidth
+    }
+    ->
+        { label : String
+        , state : ButtonState
+        , icon : Maybe Svg
+        }
+    -> List (Styled.Attribute msg)
+    -> Html msg
+customizableButton config content attrs =
     let
         buttonStyle_ =
             case content.state of
@@ -198,10 +216,13 @@ button config content =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ ]
-        [ Events.onClick config.onClick
-        , Attributes.disabled disabled
-        , Attributes.type_ "button"
-        ]
+        (List.append
+            [ Events.onClick config.onClick
+            , Attributes.disabled disabled
+            , Attributes.type_ "button"
+            ]
+            attrs
+        )
         [ viewLabel content.icon content.label ]
 
 
