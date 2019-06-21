@@ -78,8 +78,8 @@ example parentMessage state =
 viewContent :
     State
     -> (Modal.Msg -> Msg)
-    -> (List (Root.Attribute Msg) -> Html Msg)
-    -> (List (Root.Attribute Msg) -> Html Msg)
+    -> (List (Html.Attribute Msg) -> Html Msg)
+    -> (List (Html.Attribute Msg) -> Html Msg)
     -> Modal.FocusableElementAttrs Msg
     -> Html Msg
 viewContent state wrapMsg primaryButton secondaryButton focusableElementAttrs =

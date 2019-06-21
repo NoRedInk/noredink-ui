@@ -131,9 +131,9 @@ open =
 
 {-| -}
 type alias FocusableElementAttrs msg =
-    { onlyFocusableElement : List (Root.Attribute msg)
-    , firstFocusableElement : List (Root.Attribute msg)
-    , lastFocusableElement : List (Root.Attribute msg)
+    { onlyFocusableElement : List (Attribute msg)
+    , firstFocusableElement : List (Attribute msg)
+    , lastFocusableElement : List (Attribute msg)
     }
 
 
@@ -146,15 +146,7 @@ info :
     -> Model
     -> Html msg
 info config model =
-    Modal.view
-        { overlayColor = toOverlayColor Colors.navy
-        , wrapMsg = config.wrapMsg
-        , modalAttributes = modalStyles
-        , title = viewTitle Colors.navy config.title
-        , content = config.content >> toUnstyled
-        }
-        model
-        |> fromUnstyled
+    view { overlayColor = Colors.navy, titleColor = Colors.navy } config model
 
 
 {-| -}
@@ -166,12 +158,32 @@ warning :
     -> Model
     -> Html msg
 warning config model =
+    view { overlayColor = Colors.gray20, titleColor = Colors.red } config model
+
+
+view :
+    { overlayColor : Css.Color, titleColor : Css.Color }
+    ->
+        { title : { visibleTitle : Bool, title : String }
+        , content : FocusableElementAttrs msg -> Html msg
+        , wrapMsg : Msg -> msg
+        }
+    -> Model
+    -> Html msg
+view { overlayColor, titleColor } config model =
     Modal.view
-        { overlayColor = toOverlayColor Colors.gray20
+        { overlayColor = toOverlayColor overlayColor
         , wrapMsg = config.wrapMsg
         , modalAttributes = modalStyles
-        , title = viewTitle Colors.red config.title
-        , content = config.content >> toUnstyled
+        , title = viewTitle titleColor config.title
+        , content =
+            \{ onlyFocusableElement, firstFocusableElement, lastFocusableElement } ->
+                { onlyFocusableElement = List.map Html.Styled.Attributes.fromUnstyled onlyFocusableElement
+                , firstFocusableElement = List.map Html.Styled.Attributes.fromUnstyled firstFocusableElement
+                , lastFocusableElement = List.map Html.Styled.Attributes.fromUnstyled lastFocusableElement
+                }
+                    |> config.content
+                    |> toUnstyled
         }
         model
         |> fromUnstyled
@@ -267,7 +279,7 @@ launchButton wrapMsg styles label =
 
 
 {-| -}
-closeButton : (Msg -> msg) -> List (Root.Attribute msg) -> Html msg
+closeButton : (Msg -> msg) -> List (Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
     Nri.Ui.styled button
         "close-button-container"
@@ -285,24 +297,24 @@ closeButton wrapMsg focusableElementAttrs =
         ]
         (Widget.label "Close modal"
             :: Html.Styled.Attributes.map wrapMsg (onClick Modal.close)
-            :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs
+            :: focusableElementAttrs
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
 
 
 {-| -}
-primaryButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+primaryButton : msg -> String -> List (Attribute msg) -> Html msg
 primaryButton msg label focusableElementAttrs =
     Nri.Ui.styled button
         "modal__primary-button"
         [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
-        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
+        (onClick msg :: focusableElementAttrs)
         [ text label ]
 
 
 {-| -}
-secondaryButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+secondaryButton : msg -> String -> List (Attribute msg) -> Html msg
 secondaryButton msg label focusableElementAttrs =
     Nri.Ui.styled button
         "modal__secondary-button"
@@ -311,17 +323,17 @@ secondaryButton msg label focusableElementAttrs =
         , Css.fontSize (Css.px 20)
         , Css.marginTop (Css.px 30)
         ]
-        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
+        (onClick msg :: focusableElementAttrs)
         [ text label ]
 
 
 {-| -}
-dangerButton : msg -> String -> List (Root.Attribute msg) -> Html msg
+dangerButton : msg -> String -> List (Attribute msg) -> Html msg
 dangerButton msg label focusableElementAttrs =
     Nri.Ui.styled button
         "modal__warning-button"
         [ buttonStyle, colorStyle DangerColors, sizeStyle ]
-        (onClick msg :: List.map Html.Styled.Attributes.fromUnstyled focusableElementAttrs)
+        (onClick msg :: focusableElementAttrs)
         [ text label ]
 
 
