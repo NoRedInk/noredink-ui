@@ -5,7 +5,6 @@ module Nri.Ui.Modal.V5 exposing
     , info, warning, FocusableElementAttrs
     , viewContent, viewFooter
     , launchButton, closeButton
-    , primaryButton, secondaryButton, dangerButton
     )
 
 {-| Changes from V4:
@@ -63,7 +62,6 @@ These changes have required major API changes. Be sure to wire up subscriptions!
 ### Buttons
 
 @docs launchButton, closeButton
-@docs primaryButton, secondaryButton, dangerButton
 
 -}
 
@@ -80,6 +78,7 @@ import Html.Attributes exposing (style)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
+import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -268,17 +267,24 @@ viewFooter =
 
 
 {-| -}
-launchButton : (Msg -> msg) -> List Css.Style -> String -> Html msg
-launchButton wrapMsg styles label =
-    button
-        (css
-            (Css.batch [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
-                :: styles
-            )
-            :: List.map Html.Styled.Attributes.fromUnstyled
-                (Modal.openOnClick wrapMsg (String.replace " " "-" label))
-        )
-        [ text label ]
+launchButton : (Msg -> msg) -> String -> Html msg
+launchButton wrapMsg label =
+    let
+        id =
+            String.replace " " "-" label
+    in
+    Button.customizableButton
+        { onClick = wrapMsg (Modal.open id)
+        , size = Button.Medium
+        , style = Button.Primary
+        , width = Button.WidthUnbounded
+        }
+        { label = label
+        , state = Button.Enabled
+        , icon = Nothing
+        }
+        [ Html.Styled.Attributes.id id
+        ]
 
 
 {-| -}
@@ -303,152 +309,4 @@ closeButton wrapMsg focusableElementAttrs =
             :: focusableElementAttrs
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
-        ]
-
-
-{-| -}
-primaryButton : msg -> String -> List (Attribute msg) -> Html msg
-primaryButton msg label focusableElementAttrs =
-    Nri.Ui.styled button
-        "modal__primary-button"
-        [ buttonStyle, colorStyle PrimaryColors, sizeStyle ]
-        (onClick msg :: focusableElementAttrs)
-        [ text label ]
-
-
-{-| -}
-secondaryButton : msg -> String -> List (Attribute msg) -> Html msg
-secondaryButton msg label focusableElementAttrs =
-    Nri.Ui.styled button
-        "modal__secondary-button"
-        [ buttonStyle
-        , colorStyle SecondaryColors
-        , Css.fontSize (Css.px 20)
-        , Css.marginTop (Css.px 30)
-        ]
-        (onClick msg :: focusableElementAttrs)
-        [ text label ]
-
-
-{-| -}
-dangerButton : msg -> String -> List (Attribute msg) -> Html msg
-dangerButton msg label focusableElementAttrs =
-    Nri.Ui.styled button
-        "modal__warning-button"
-        [ buttonStyle, colorStyle DangerColors, sizeStyle ]
-        (onClick msg :: focusableElementAttrs)
-        [ text label ]
-
-
-buttonStyle : Css.Style
-buttonStyle =
-    Css.batch
-        [ Css.cursor Css.pointer
-        , -- Specifying the font can and should go away after bootstrap is removed from application.css
-          Fonts.baseFont
-        , Css.textOverflow Css.ellipsis
-        , Css.overflow Css.hidden
-        , Css.textDecoration Css.none
-        , Css.backgroundImage Css.none
-        , Css.textShadow Css.none
-        , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
-        , Css.boxShadow Css.none
-        , Css.border Css.zero
-        , Css.marginBottom Css.zero
-        , Css.hover [ Css.textDecoration Css.none ]
-        , Css.display Css.inlineFlex
-        , Css.alignItems Css.center
-        , Css.justifyContent Css.center
-        ]
-
-
-type ColorPalette
-    = PrimaryColors
-    | SecondaryColors
-    | DangerColors
-
-
-colorStyle : ColorPalette -> Css.Style
-colorStyle colorPalette =
-    let
-        config =
-            case colorPalette of
-                PrimaryColors ->
-                    { background = Colors.azure
-                    , hover = Colors.azureDark
-                    , text = Colors.white
-                    , shadow = Colors.azureDark
-                    }
-
-                SecondaryColors ->
-                    { background = Colors.white
-                    , hover = Colors.white
-                    , text = Colors.azure
-                    , shadow = Colors.white
-                    }
-
-                DangerColors ->
-                    { background = Colors.red
-                    , hover = Colors.redDark
-                    , text = Colors.white
-                    , shadow = Colors.redDark
-                    }
-    in
-    Css.batch
-        [ Css.color config.text
-        , Css.backgroundColor config.background
-        , Css.fontWeight (Css.int 700)
-        , Css.textAlign Css.center
-        , Css.borderStyle Css.none
-        , Css.borderBottomStyle Css.solid
-        , Css.borderBottomColor config.shadow
-        , Css.fontStyle Css.normal
-        , Css.hover
-            [ Css.color config.text
-            , Css.backgroundColor config.hover
-            , Css.disabled [ Css.backgroundColor config.background ]
-            ]
-        , Css.visited [ Css.color config.text ]
-        ]
-
-
-sizeStyle : Css.Style
-sizeStyle =
-    let
-        config =
-            { fontSize = 20
-            , height = 56
-            , imageHeight = 20
-            , shadowHeight = 4
-            , minWidth = 200
-            }
-
-        sizingAttributes =
-            let
-                verticalPaddingPx =
-                    2
-            in
-            [ Css.minHeight (Css.px config.height)
-            , Css.paddingTop (Css.px verticalPaddingPx)
-            , Css.paddingBottom (Css.px verticalPaddingPx)
-            ]
-
-        widthAttributes =
-            [ Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
-            , Css.minWidth (Css.px 230)
-            ]
-
-        lineHeightPx =
-            22
-    in
-    Css.batch
-        [ Css.fontSize (Css.px config.fontSize)
-        , Css.borderRadius (Css.px 8)
-        , Css.lineHeight (Css.px lineHeightPx)
-        , Css.boxSizing Css.borderBox
-        , Css.borderWidth (Css.px 1)
-        , Css.borderBottomWidth (Css.px config.shadowHeight)
-        , Css.batch sizingAttributes
-        , Css.batch widthAttributes
         ]

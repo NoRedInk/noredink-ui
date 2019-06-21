@@ -12,6 +12,7 @@ import Css.Global
 import Html as Root
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V5 as Modal
@@ -48,8 +49,8 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V5"
     , category = Modals
     , content =
-        [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
-        , Modal.launchButton WarningModalMsg [] "Launch Warning Modal"
+        [ Modal.launchButton InfoModalMsg "Launch Info Modal"
+        , Modal.launchButton WarningModalMsg "Launch Warning Modal"
         , Modal.info
             { title = "Modal.info"
             , visibleTitle = state.visibleTitle
@@ -57,8 +58,28 @@ example parentMessage state =
             , content =
                 viewContent state
                     InfoModalMsg
-                    (Modal.primaryButton ForceClose "Continue")
-                    (Modal.secondaryButton ForceClose "Close")
+                    (Button.customizableButton
+                        { onClick = ForceClose
+                        , size = Button.Medium
+                        , style = Button.Primary
+                        , width = Button.WidthUnbounded
+                        }
+                        { label = "Continue"
+                        , state = Button.Enabled
+                        , icon = Nothing
+                        }
+                    )
+                    (Button.customizableButton
+                        { onClick = ForceClose
+                        , size = Button.Medium
+                        , style = Button.Secondary
+                        , width = Button.WidthUnbounded
+                        }
+                        { label = "Close"
+                        , state = Button.Enabled
+                        , icon = Nothing
+                        }
+                    )
             }
             state.infoModal
         , Modal.warning
@@ -68,8 +89,28 @@ example parentMessage state =
             , content =
                 viewContent state
                     WarningModalMsg
-                    (Modal.dangerButton ForceClose "Continue")
-                    (Modal.secondaryButton ForceClose "Close")
+                    (Button.customizableButton
+                        { onClick = ForceClose
+                        , size = Button.Medium
+                        , style = Button.Danger
+                        , width = Button.WidthUnbounded
+                        }
+                        { label = "Continue"
+                        , state = Button.Enabled
+                        , icon = Nothing
+                        }
+                    )
+                    (Button.customizableButton
+                        { onClick = ForceClose
+                        , size = Button.Medium
+                        , style = Button.Secondary
+                        , width = Button.WidthUnbounded
+                        }
+                        { label = "Close"
+                        , state = Button.Enabled
+                        , icon = Nothing
+                        }
+                    )
             }
             state.warningModal
         ]
