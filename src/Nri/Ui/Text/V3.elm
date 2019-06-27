@@ -4,7 +4,19 @@ module Nri.Ui.Text.V3 exposing
     , noWidow
     )
 
-{-|
+{-| Changes from V2:
+
+  - Normalizes how margin is applied (see "Understading spacing", below).
+
+
+## Understanding spacing
+
+  - All text styles have a specific line-height. This is set so that when text in the given style
+    is long enough to wrap, the spacing between wrapped lines looks good.
+  - No text styles have padding.
+  - Heading styles do not have margin. It is up to the caller to add appropriate margin to the layout.
+  - Paragraph styles only have bottom margin, but with **:last-child bottom margin set to zero**.
+    This bottom margin is set to look good when multiple paragraphs of the same style follow one another.
 
 
 ## Semantic text types:
@@ -35,16 +47,13 @@ import Nri.Ui.Fonts.V1 as Fonts
 heading : List (Html msg) -> Html msg
 heading content =
     h1
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 30)
-                   , color navy
-                   , lineHeight (px 40.5)
-                   , fontWeight (int 700)
-                   , margin zero
-                   ]
-            )
+        [ headingStyles
+            { font = Fonts.baseFont
+            , color = navy
+            , size = 30
+            , lineHeight = 40.5
+            , weight = 700
+            }
         ]
         content
 
@@ -54,16 +63,13 @@ heading content =
 tagline : List (Html msg) -> Html msg
 tagline content =
     h2
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 20)
-                   , color gray45
-                   , lineHeight (px 27)
-                   , fontWeight (int 400)
-                   , margin4 (px 5) (px 0) (px 0) (px 0)
-                   ]
-            )
+        [ headingStyles
+            { font = Fonts.baseFont
+            , color = gray45
+            , size = 20
+            , lineHeight = 27
+            , weight = 400
+            }
         ]
         content
 
@@ -73,16 +79,13 @@ tagline content =
 subHeading : List (Html msg) -> Html msg
 subHeading content =
     h3
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 20)
-                   , color navy
-                   , lineHeight (px 27)
-                   , fontWeight (int 700)
-                   , margin4 (px 20) (px 0) (px 10) (px 0)
-                   ]
-            )
+        [ headingStyles
+            { font = Fonts.baseFont
+            , color = navy
+            , size = 20
+            , lineHeight = 27
+            , weight = 700
+            }
         ]
         content
 
@@ -92,16 +95,13 @@ subHeading content =
 smallHeading : List (Html msg) -> Html msg
 smallHeading content =
     h4
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 16)
-                   , color gray20
-                   , lineHeight (px 23)
-                   , fontWeight (int 700)
-                   , margin zero
-                   ]
-            )
+        [ headingStyles
+            { font = Fonts.baseFont
+            , color = gray20
+            , size = 16
+            , lineHeight = 23
+            , weight = 700
+            }
         ]
         content
 
@@ -111,16 +111,14 @@ smallHeading content =
 mediumBody : List (Html msg) -> Html msg
 mediumBody content =
     p
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 18)
-                   , color gray20
-                   , lineHeight (px 27)
-                   , fontWeight (int 400)
-                   , margin4 (px 10) (px 0) (px 0) (px 0)
-                   ]
-            )
+        [ paragraphStyles
+            { font = Fonts.baseFont
+            , color = gray20
+            , size = 18
+            , lineHeight = 27
+            , weight = 400
+            , margin = 10
+            }
         ]
         content
 
@@ -130,16 +128,14 @@ mediumBody content =
 smallBody : List (Html msg) -> Html msg
 smallBody content =
     p
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 15)
-                   , color gray20
-                   , lineHeight (px 23)
-                   , fontWeight (int 400)
-                   , margin4 (px 7) (px 0) (px 0) (px 0)
-                   ]
-            )
+        [ paragraphStyles
+            { font = Fonts.baseFont
+            , color = gray20
+            , size = 15
+            , lineHeight = 23
+            , weight = 400
+            , margin = 7
+            }
         ]
         content
 
@@ -149,27 +145,45 @@ smallBody content =
 smallBodyGray : List (Html msg) -> Html msg
 smallBodyGray content =
     p
-        [ css
-            (textStyles
-                ++ [ Fonts.baseFont
-                   , fontSize (px 15)
-                   , color gray45
-                   , lineHeight (px 23)
-                   , fontWeight (int 400)
-                   , margin4 (px 7) (px 0) (px 0) (px 0)
-                   ]
-            )
+        [ paragraphStyles
+            { font = Fonts.baseFont
+            , color = gray45
+            , size = 15
+            , lineHeight = 23
+            , weight = 400
+            , margin = 7
+            }
         ]
         content
 
 
-textStyles =
-    [ padding zero
-    , textAlign left
-    , firstChild
-        [ margin zero
+headingStyles config =
+    css
+        [ config.font
+        , fontSize (px config.size)
+        , color config.color
+        , lineHeight (px config.lineHeight)
+        , fontWeight (int config.weight)
+        , padding zero
+        , textAlign left
+        , margin zero
         ]
-    ]
+
+
+paragraphStyles config =
+    css
+        [ config.font
+        , fontSize (px config.size)
+        , color config.color
+        , lineHeight (px config.lineHeight)
+        , fontWeight (int config.weight)
+        , padding zero
+        , textAlign left
+        , margin4 (px 0) (px 0) (px config.margin) (px 0)
+        , lastChild
+            [ margin zero
+            ]
+        ]
 
 
 {-| This is a little note or caption.
@@ -177,14 +191,14 @@ textStyles =
 caption : List (Html msg) -> Html msg
 caption content =
     p
-        [ css
-            [ Fonts.baseFont
-            , fontSize (px 13)
-            , color gray45
-            , lineHeight (px 18)
-            , fontWeight (int 400)
-            , margin4 (px 5) (px 0) (px 0) (px 0)
-            ]
+        [ paragraphStyles
+            { font = Fonts.baseFont
+            , color = gray45
+            , size = 13
+            , lineHeight = 18
+            , weight = 400
+            , margin = 5
+            }
         ]
         content
 
@@ -200,9 +214,7 @@ ugMediumBody =
             , lineHeight (px 30)
             , whiteSpace preLine
             , color gray20
-            , margin4 (px 10) (px 0) (px 0) (px 0)
-            , firstChild [ margin zero ]
-            , firstOfType [ margin zero ]
+            , margin4 (px 0) (px 0) (px 10) (px 0)
             ]
         ]
 
@@ -218,9 +230,7 @@ ugSmallBody =
             , lineHeight (px 25)
             , whiteSpace preLine
             , color gray20
-            , margin4 (px 7) (px 0) (px 0) (px 0)
-            , firstChild [ margin zero ]
-            , firstOfType [ margin zero ]
+            , margin4 (px 0) (px 0) (px 7) (px 0)
             ]
         ]
 
