@@ -1,5 +1,6 @@
 module Nri.Ui.Text.V3 exposing
-    ( caption, heading, mediumBody, smallBody, smallBodyGray, subHeading, smallHeading, tagline
+    ( heading, subHeading, smallHeading, tagline
+    , caption, mediumBody, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
     , noWidow
     )
@@ -14,17 +15,23 @@ module Nri.Ui.Text.V3 exposing
   - All text styles have a specific line-height. This is set so that when text in the given style
     is long enough to wrap, the spacing between wrapped lines looks good.
   - No text styles have padding.
-  - Heading styles do not have margin. It is up to the caller to add appropriate margin to the layout.
-  - Paragraph styles only have bottom margin, but with **:last-child bottom margin set to zero**.
+  - **Heading styles** do not have margin. It is up to the caller to add appropriate margin to the layout.
+  - **Paragraph styles** only have bottom margin, but with **:last-child bottom margin set to zero**.
     This bottom margin is set to look good when multiple paragraphs of the same style follow one another.
+  - **User-authored content blocks** preserve line breaks and do not have margin.
 
 
-## Semantic text types:
+## Heading styles
 
-@docs caption, heading, mediumBody, smallBody, smallBodyGray, subHeading, smallHeading, tagline
+@docs heading, subHeading, smallHeading, tagline
 
 
-## User-generated text styles:
+## Paragraph styles
+
+@docs caption, mediumBody, smallBody, smallBodyGray
+
+
+## User-authored content blocks:
 
 @docs ugMediumBody, ugSmallBody
 
@@ -214,7 +221,7 @@ ugMediumBody =
             , lineHeight (px 30)
             , whiteSpace preLine
             , color gray20
-            , margin4 (px 0) (px 0) (px 10) (px 0)
+            , margin zero
             ]
         ]
 
@@ -230,7 +237,7 @@ ugSmallBody =
             , lineHeight (px 25)
             , whiteSpace preLine
             , color gray20
-            , margin4 (px 0) (px 0) (px 7) (px 0)
+            , margin zero
             ]
         ]
 
