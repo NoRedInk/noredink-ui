@@ -1,7 +1,7 @@
 module Headings exposing (h1, h2, h3, h4, h5)
 
 import Html.Styled exposing (Html)
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V3 as Text
 
 
 h1 : List (Html msg) -> Html msg

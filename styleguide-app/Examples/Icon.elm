@@ -14,7 +14,7 @@ import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V3 as Text
 
 
 {-| -}

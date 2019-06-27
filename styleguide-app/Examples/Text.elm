@@ -8,13 +8,13 @@ module Examples.Text exposing (example)
 
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V3 as Text
 
 
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Text.V2"
+    { name = "Nri.Ui.Text.V3"
     , category = Text
     , content =
         let
