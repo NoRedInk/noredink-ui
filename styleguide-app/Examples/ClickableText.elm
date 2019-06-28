@@ -15,7 +15,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, Mod
 import Nri.Ui.ClickableText.V2 as ClickableText exposing (Size(..))
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V3 as Text
 
 
 {-| -}

@@ -11,7 +11,7 @@ import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V3 as Text
 import Nri.Ui.TextArea.V4 as TextArea
 
 
