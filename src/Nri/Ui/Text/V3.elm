@@ -7,7 +7,7 @@ module Nri.Ui.Text.V3 exposing
 
 {-| Changes from V2:
 
-  - Normalizes how margin is applied (see "Understading spacing", below).
+  - Normalizes how margin is applied (see "Understanding spacing", below).
 
 
 ## Understanding spacing
