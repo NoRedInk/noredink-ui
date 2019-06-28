@@ -25,7 +25,8 @@ example =
                     how long the assignment will take.
                 """
         in
-        [ Text.heading [ Html.text "This is the main page heading." ]
+        [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\""
+        , Text.heading [ Html.text "This is the main page heading." ]
         , Text.tagline [ Html.text "This is a tagline" ]
         , Text.subHeading [ Html.text "This is a subHeading" ]
         , Text.smallHeading [ Html.text "This is a smallHeading" ]
