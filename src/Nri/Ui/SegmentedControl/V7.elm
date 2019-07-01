@@ -205,6 +205,12 @@ sharedTabStyles =
     , cursor pointer
     , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
     , textDecoration none
+    , hover
+        [ textDecoration none
+        ]
+    , focus
+        [ textDecoration none
+        ]
     ]
 
 
