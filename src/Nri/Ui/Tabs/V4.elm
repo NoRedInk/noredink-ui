@@ -32,7 +32,7 @@ import Accessibility.Aria
 import Accessibility.Key
 import Accessibility.Role
 import Accessibility.Widget
-import Css exposing (Style)
+import Css exposing (..)
 import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
@@ -176,8 +176,6 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
         ]
         [ Html.styled Html.div
             [ Css.color Colors.navy
-            , Css.hover [ Css.textDecoration Css.none ]
-            , Css.focus [ Css.textDecoration Css.none ]
             , Css.display Css.inlineBlock
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             , Css.position Css.relative
@@ -285,6 +283,12 @@ viewTabLink config isSelected tabConfig =
                     , Css.display Css.inlineBlock
                     , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
+                    , hover
+                        [ textDecoration none
+                        ]
+                    , focus
+                        [ textDecoration none
+                        ]
                     ]
                     ([ Attributes.href href ] ++ preventDefault ++ currentPage)
                     [ Html.text tabLabel ]
@@ -394,5 +398,9 @@ stylesTab =
     , Css.cursor Css.pointer
     , Css.firstChild
         [ Css.marginLeft Css.zero
+        ]
+    , property "transition" "background-color 0.2s"
+    , hover
+        [ backgroundColor Colors.white
         ]
     ]
