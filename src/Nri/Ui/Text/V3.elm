@@ -59,7 +59,7 @@ heading content =
             { font = Fonts.baseFont
             , color = navy
             , size = 30
-            , lineHeight = 40.5
+            , lineHeight = 38
             , weight = 700
             }
         ]
@@ -75,7 +75,7 @@ tagline content =
             { font = Fonts.baseFont
             , color = gray45
             , size = 20
-            , lineHeight = 27
+            , lineHeight = 30
             , weight = 400
             }
         ]
@@ -91,7 +91,7 @@ subHeading content =
             { font = Fonts.baseFont
             , color = navy
             , size = 20
-            , lineHeight = 27
+            , lineHeight = 26
             , weight = 700
             }
         ]
@@ -107,9 +107,12 @@ smallHeading content =
             { font = Fonts.baseFont
             , color = gray20
             , size = 16
-            , lineHeight = 23
+            , lineHeight = 21
             , weight = 700
             }
+        , css
+            [ letterSpacing (px -0.13)
+            ]
         ]
         content
 
@@ -123,7 +126,7 @@ mediumBody content =
             { font = Fonts.baseFont
             , color = gray20
             , size = 18
-            , lineHeight = 27
+            , lineHeight = 28
             , weight = 400
             , margin = 10
             }
