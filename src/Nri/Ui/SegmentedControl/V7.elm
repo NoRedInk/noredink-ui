@@ -227,7 +227,9 @@ unFocusedTabStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
-    , hover [ backgroundColor Colors.glacier ]
+    , hover
+        [ backgroundColor Colors.frost
+        ]
     ]
 
 
