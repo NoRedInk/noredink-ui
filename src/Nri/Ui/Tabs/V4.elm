@@ -40,7 +40,7 @@ import Html.Styled.Events as Events
 import Json.Decode
 import List.Zipper exposing (Zipper(..))
 import Nri.Ui.Colors.Extra
-import Nri.Ui.Colors.V1
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 
 
@@ -99,7 +99,7 @@ viewCustom config viewInnerTab =
             , Css.alignItems Css.flexEnd
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Nri.Ui.Colors.V1.navy
+            , Css.borderBottomColor Colors.navy
             , Nri.Ui.Fonts.V1.baseFont
             ]
             []
@@ -131,7 +131,7 @@ viewTitle title =
         , Css.margin Css.zero
         , Css.marginTop (Css.px 5)
         , Css.marginBottom (Css.px 10)
-        , Css.color Nri.Ui.Colors.V1.navy
+        , Css.color Colors.navy
         , Css.width (Css.px 430)
         ]
         []
@@ -175,7 +175,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
                 Events.keyCode
         ]
         [ Html.styled Html.div
-            [ Css.color Nri.Ui.Colors.V1.navy
+            [ Css.color Colors.navy
             , Css.hover [ Css.textDecoration Css.none ]
             , Css.focus [ Css.textDecoration Css.none ]
             , Css.display Css.inlineBlock
@@ -233,7 +233,7 @@ links config =
             , Css.alignItems Css.flexEnd
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Nri.Ui.Colors.V1.navy
+            , Css.borderBottomColor Colors.navy
             , Nri.Ui.Fonts.V1.baseFont
             ]
             []
@@ -281,7 +281,7 @@ viewTabLink config isSelected tabConfig =
         [ case tabHref of
             Just href ->
                 Html.styled Html.a
-                    [ Css.color Nri.Ui.Colors.V1.navy
+                    [ Css.color Colors.navy
                     , Css.display Css.inlineBlock
                     , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
@@ -291,7 +291,7 @@ viewTabLink config isSelected tabConfig =
 
             Nothing ->
                 Html.styled Html.button
-                    [ Css.color Nri.Ui.Colors.V1.navy
+                    [ Css.color Colors.navy
                     , Css.display Css.inlineBlock
                     , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
@@ -365,19 +365,19 @@ stylesTabSelectable isSelected =
     let
         stylesDynamic =
             if isSelected then
-                [ Css.backgroundColor Nri.Ui.Colors.V1.white
+                [ Css.backgroundColor Colors.white
                 , Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
-                , Css.borderBottomColor Nri.Ui.Colors.V1.white
+                , Css.borderBottomColor Colors.white
                 ]
 
             else
-                [ Css.backgroundColor Nri.Ui.Colors.V1.frost
+                [ Css.backgroundColor Colors.frost
                 , Css.backgroundImage <|
                     Css.linearGradient2 Css.toTop
-                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0.25 Nri.Ui.Colors.V1.azure) (Css.pct 0))
-                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 25))
-                        [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Nri.Ui.Colors.V1.azure) (Css.pct 100) ]
+                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0.25 Colors.azure) (Css.pct 0))
+                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 25))
+                        [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 100) ]
                 ]
     in
     stylesTab ++ stylesDynamic
@@ -388,7 +388,7 @@ stylesTab =
     [ Css.display Css.inlineBlock
     , Css.borderTopLeftRadius (Css.px 10)
     , Css.borderTopRightRadius (Css.px 10)
-    , Css.border3 (Css.px 1) Css.solid Nri.Ui.Colors.V1.navy
+    , Css.border3 (Css.px 1) Css.solid Colors.navy
     , Css.marginBottom (Css.px -1)
     , Css.marginLeft (Css.px 10)
     , Css.cursor Css.pointer
