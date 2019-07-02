@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "6.21.0",
+    "version": "6.23.1",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
@@ -64,6 +64,7 @@
         "Nri.Ui.Tabs.V3",
         "Nri.Ui.Tabs.V4",
         "Nri.Ui.Text.V2",
+        "Nri.Ui.Text.V3",
         "Nri.Ui.Text.Writing.V1",
         "Nri.Ui.TextArea.V3",
         "Nri.Ui.TextArea.V4",
@@ -79,10 +80,10 @@
         "elm/json": "1.0.0 <= v < 2.0.0",
         "elm/regex": "1.0.0 <= v < 2.0.0",
         "elm/svg": "1.0.1 <= v < 2.0.0",
-        "tesk9/accessible-html-with-css": "2.1.1 <= v < 3.0.0",
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
         "rtfeldman/elm-css": "16.0.0 <= v < 17.0.0",
         "tesk9/accessible-html": "4.0.0 <= v < 5.0.0",
+        "tesk9/accessible-html-with-css": "2.1.1 <= v < 3.0.0",
         "tesk9/modal": "5.0.1 <= v < 6.0.0",
         "wernerdegroot/listzipper": "3.1.1 <= v < 4.0.0"
     },
