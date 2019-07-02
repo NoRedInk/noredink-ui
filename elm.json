@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "6.22.0",
+    "version": "6.23.1",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
@@ -64,6 +64,7 @@
         "Nri.Ui.Tabs.V3",
         "Nri.Ui.Tabs.V4",
         "Nri.Ui.Text.V2",
+        "Nri.Ui.Text.V3",
         "Nri.Ui.Text.Writing.V1",
         "Nri.Ui.TextArea.V3",
         "Nri.Ui.TextArea.V4",
