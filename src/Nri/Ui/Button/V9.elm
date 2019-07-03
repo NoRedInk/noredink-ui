@@ -1,16 +1,16 @@
 module Nri.Ui.Button.V9 exposing
-    ( onClick, setButtonState, href
+    ( ButtonOrLink, build
+    , renderButton, renderLink
+    , onClick, setButtonState, href
+    , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , withLabel
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , withIcon
-    , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
+    , ButtonState(..)
     , delete
     , toggleButton
-    , linkSpa
-    , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , ButtonOrLink, build, renderButton, renderLink
     )
 
 {-|
@@ -41,9 +41,10 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ##
 
-@docs buildButton, buildLink
+@docs ButtonOrLink, build
+@docs renderButton, renderLink
 @docs onClick, setButtonState, href
-@docs render
+@docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 @docs withLabel
 @docs small, medium, large
 @docs exactWidth, unboundedWidth, fillContainerWidth
@@ -60,12 +61,6 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 @docs delete
 @docs toggleButton
-
-
-## `<a>` Buttons
-
-@docs linkSpa
-@docs linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 -}
 
