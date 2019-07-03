@@ -2,6 +2,8 @@ module Nri.Ui.Button.V9 exposing
     ( buildButton, buildLink
     , render
     , small, medium, large
+    , exactWidth, unboundedWidth, fillContainerWidth
+    , primary, secondary, danger, premium
     , withIcon
     , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
@@ -42,6 +44,8 @@ may be exceptions, for example if button content is supplied by an end-user.
 @docs buildButton, buildLink
 @docs render
 @docs small, medium, large
+@docs exactWidth, unboundedWidth, fillContainerWidth
+@docs primary, secondary, danger, premium
 @docs withIcon
 
 
@@ -195,6 +199,34 @@ type ButtonSize
     | Large
 
 
+{-| -}
+exactWidth : Int -> ButtonOrLink msg -> ButtonOrLink msg
+exactWidth inPx =
+    setWidth (WidthExact inPx)
+
+
+{-| -}
+unboundedWidth : ButtonOrLink msg -> ButtonOrLink msg
+unboundedWidth =
+    setWidth WidthUnbounded
+
+
+{-| -}
+fillContainerWidth : ButtonOrLink msg -> ButtonOrLink msg
+fillContainerWidth =
+    setWidth WidthFillContainer
+
+
+setWidth : ButtonWidth -> ButtonOrLink msg -> ButtonOrLink msg
+setWidth width buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button { config | width = width } state
+
+        Link config ->
+            Link { config | width = width }
+
+
 {-| Width sizing behavior for buttons.
 
 `WidthExact Int` defines a size in `px` for the button's total width, and
@@ -205,6 +237,40 @@ type ButtonWidth
     = WidthExact Int
     | WidthUnbounded
     | WidthFillContainer
+
+
+{-| -}
+primary : ButtonOrLink msg -> ButtonOrLink msg
+primary =
+    setStyle Primary
+
+
+{-| -}
+secondary : ButtonOrLink msg -> ButtonOrLink msg
+secondary =
+    setStyle Secondary
+
+
+{-| -}
+danger : ButtonOrLink msg -> ButtonOrLink msg
+danger =
+    setStyle Danger
+
+
+{-| -}
+premium : ButtonOrLink msg -> ButtonOrLink msg
+premium =
+    setStyle Premium
+
+
+setStyle : ButtonStyle -> ButtonOrLink msg -> ButtonOrLink msg
+setStyle style buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button { config | style = style } state
+
+        Link config ->
+            Link { config | style = style }
 
 
 {-| Styleguide-approved styles for your buttons!
