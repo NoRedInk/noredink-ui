@@ -97,7 +97,7 @@ type ButtonOrLink msg
     = ButtonOrLink
         { onClick : msg
         , url : String
-        , target : String
+        , linkType : Link
         , size : ButtonSize
         , style : ButtonStyle
         , width : ButtonWidth
@@ -113,7 +113,7 @@ build =
     ButtonOrLink
         { onClick = ()
         , url = "#"
-        , target = "_self"
+        , linkType = Default
         , size = Medium
         , style = Primary
         , width = WidthUnbounded
@@ -129,7 +129,7 @@ onClick msg (ButtonOrLink config) =
     ButtonOrLink
         { onClick = msg
         , url = config.url
-        , target = config.target
+        , linkType = config.linkType
         , size = config.size
         , style = config.style
         , width = config.width
@@ -151,7 +151,7 @@ href url (ButtonOrLink config) =
     ButtonOrLink
         { onClick = config.onClick
         , url = url
-        , target = config.target
+        , linkType = config.linkType
         , size = config.size
         , style = config.style
         , width = config.width
@@ -179,15 +179,39 @@ renderButton attributes (ButtonOrLink config) =
 {-| -}
 renderLink : List (Attribute msg) -> ButtonOrLink msg -> Html msg
 renderLink attributes (ButtonOrLink config) =
-    linkBase "link"
-        (Attributes.target config.target :: attributes)
-        { label = config.label
-        , icon = config.icon
-        , url = config.url
-        , size = config.size
-        , style = config.style
-        , width = config.width
-        }
+    case config.linkType of
+        Default ->
+            linkBase "link"
+                (Attributes.target "_self" :: attributes)
+                config
+
+        SinglePageApp ->
+            linkBase "linkSpa"
+                (EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
+                    :: attributes
+                )
+                config
+
+        WithMethod method ->
+            linkBase "linkWithMethod"
+                (Attributes.attribute "data-method" method
+                    :: attributes
+                )
+                config
+
+        External ->
+            linkBase "linkExternal"
+                (Attributes.target "_blank" :: attributes)
+                config
+
+        ExternalWithTracking ->
+            linkBase
+                "linkWithTracking"
+                (Events.preventDefaultOn "click"
+                    (Json.Decode.succeed ( config.onClick, True ))
+                    :: attributes
+                )
+                config
 
 
 {-| -}
@@ -502,6 +526,14 @@ toggleButton config =
 -- LINKS THAT LOOK LIKE BUTTONS
 
 
+type Link
+    = Default
+    | SinglePageApp
+    | WithMethod String
+    | External
+    | ExternalWithTracking
+
+
 {-| Use this link for routing within a single page app.
 
 This will make a normal <a> tag, but change the Events.onClick behavior to avoid reloading the page.
@@ -621,12 +653,13 @@ linkBase :
     String
     -> List (Attribute msg)
     ->
-        { label : String
-        , icon : Maybe Svg
-        , url : String
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
+        { a
+            | label : String
+            , icon : Maybe Svg
+            , url : String
+            , size : ButtonSize
+            , style : ButtonStyle
+            , width : ButtonWidth
         }
     -> Html msg
 linkBase linkFunctionName extraAttrs config =
