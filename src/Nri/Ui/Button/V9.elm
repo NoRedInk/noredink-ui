@@ -176,42 +176,109 @@ renderButton attributes (ButtonOrLink config) =
         }
 
 
+type Link
+    = Default
+    | WithTracking
+    | SinglePageApp
+    | WithMethod String
+    | External
+    | ExternalWithTracking
+
+
+{-| Use this link for routing within a single page app.
+
+This will make a normal <a> tag, but change the Events.onClick behavior to avoid reloading the page.
+
+See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
+
+-}
+linkSpa : ButtonOrLink msg -> ButtonOrLink msg
+linkSpa buttonOrLink =
+    buttonOrLink
+
+
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
+some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
+-}
+linkWithMethod : String -> ButtonOrLink msg -> ButtonOrLink msg
+linkWithMethod method (ButtonOrLink config) =
+    ButtonOrLink { config | linkType = WithMethod method }
+
+
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
+This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
+-}
+linkWithTracking : ButtonOrLink msg -> ButtonOrLink msg
+linkWithTracking (ButtonOrLink config) =
+    ButtonOrLink { config | linkType = WithTracking }
+
+
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
+some url and have it open to an external site
+-}
+linkExternal : ButtonOrLink msg -> ButtonOrLink msg
+linkExternal (ButtonOrLink config) =
+    ButtonOrLink { config | linkType = External }
+
+
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
+
+This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
+
+-}
+linkExternalWithTracking : ButtonOrLink msg -> ButtonOrLink msg
+linkExternalWithTracking (ButtonOrLink config) =
+    ButtonOrLink { config | linkType = ExternalWithTracking }
+
+
 {-| -}
 renderLink : List (Attribute msg) -> ButtonOrLink msg -> Html msg
 renderLink attributes (ButtonOrLink config) =
+    let
+        linkBase linkFunctionName extraAttrs =
+            Nri.Ui.styled Styled.a
+                (styledName linkFunctionName)
+                [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
+                (Attributes.href config.url :: extraAttrs)
+                [ viewLabel config.icon config.label ]
+    in
     case config.linkType of
         Default ->
             linkBase "link"
                 (Attributes.target "_self" :: attributes)
-                config
 
         SinglePageApp ->
             linkBase "linkSpa"
                 (EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
                     :: attributes
                 )
-                config
 
         WithMethod method ->
             linkBase "linkWithMethod"
                 (Attributes.attribute "data-method" method
                     :: attributes
                 )
-                config
 
-        External ->
-            linkBase "linkExternal"
-                (Attributes.target "_blank" :: attributes)
-                config
-
-        ExternalWithTracking ->
+        WithTracking ->
             linkBase
                 "linkWithTracking"
                 (Events.preventDefaultOn "click"
                     (Json.Decode.succeed ( config.onClick, True ))
                     :: attributes
                 )
-                config
+
+        External ->
+            linkBase "linkExternal"
+                (Attributes.target "_blank" :: attributes)
+
+        ExternalWithTracking ->
+            linkBase "linkExternalWithTracking"
+                (List.append
+                    [ Attributes.target "_blank"
+                    , EventExtras.onClickForLinkWithHref config.onClick
+                    ]
+                    attributes
+                )
 
 
 {-| -}
@@ -524,155 +591,6 @@ toggleButton config =
 
 
 -- LINKS THAT LOOK LIKE BUTTONS
-
-
-type Link
-    = Default
-    | SinglePageApp
-    | WithMethod String
-    | External
-    | ExternalWithTracking
-
-
-{-| Use this link for routing within a single page app.
-
-This will make a normal <a> tag, but change the Events.onClick behavior to avoid reloading the page.
-
-See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
-
--}
-linkSpa :
-    (route -> String)
-    -> (route -> msg)
-    ->
-        { label : String
-        , icon : Maybe Svg
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        , route : route
-        }
-    -> Html msg
-linkSpa toUrl toMsg config =
-    linkBase
-        "linkSpa"
-        [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
-        ]
-        { label = config.label
-        , icon = config.icon
-        , size = config.size
-        , style = config.style
-        , width = config.width
-        , url = toUrl config.route
-        }
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url and have it open to an external site
--}
-linkExternal :
-    { label : String
-    , icon : Maybe Svg
-    , url : String
-    , size : ButtonSize
-    , style : ButtonStyle
-    , width : ButtonWidth
-    }
-    -> Html msg
-linkExternal =
-    linkBase "linkExternal" [ Attributes.target "_blank" ]
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
--}
-linkWithMethod :
-    String
-    ->
-        { label : String
-        , icon : Maybe Svg
-        , url : String
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        }
-    -> Html msg
-linkWithMethod method =
-    linkBase "linkWithMethod" [ Attributes.attribute "data-method" method ]
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
-This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
--}
-linkWithTracking :
-    msg
-    ->
-        { label : String
-        , icon : Maybe Svg
-        , url : String
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        }
-    -> Html msg
-linkWithTracking onTrack =
-    linkBase
-        "linkWithTracking"
-        [ Events.preventDefaultOn "click"
-            (Json.Decode.succeed ( onTrack, True ))
-        ]
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
-
-This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
-
--}
-linkExternalWithTracking :
-    msg
-    ->
-        { label : String
-        , icon : Maybe Svg
-        , url : String
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        }
-    -> Html msg
-linkExternalWithTracking onTrack =
-    linkBase
-        "linkExternalWithTracking"
-        [ Attributes.target "_blank"
-        , EventExtras.onClickForLinkWithHref onTrack
-        ]
-
-
-{-| Helper function for building links with an arbitrary number of Attributes
--}
-linkBase :
-    String
-    -> List (Attribute msg)
-    ->
-        { a
-            | label : String
-            , icon : Maybe Svg
-            , url : String
-            , size : ButtonSize
-            , style : ButtonStyle
-            , width : ButtonWidth
-        }
-    -> Html msg
-linkBase linkFunctionName extraAttrs config =
-    Nri.Ui.styled Styled.a
-        (styledName linkFunctionName)
-        [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
-        (Attributes.href config.url
-            :: extraAttrs
-        )
-        [ viewLabel config.icon config.label ]
-
-
-
 -- HELPERS
 
 

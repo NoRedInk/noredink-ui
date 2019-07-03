@@ -147,15 +147,13 @@ viewButtonExamples messages (State control) =
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
-    , Button.linkExternalWithTracking
-        (messages.showItWorked "linkExternalWithTracking clicked")
-        { size = Button.Medium
-        , style = Button.Secondary
-        , width = Button.WidthUnbounded
-        , label = "linkExternalWithTracking"
-        , icon = Nothing
-        , url = "#"
-        }
+    , Button.build
+        |> Button.withLabel "linkExternalWithTracking"
+        |> Button.unboundedWidth
+        |> Button.secondary
+        |> Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
+        |> Button.linkExternalWithTracking
+        |> Button.renderLink []
     ]
         |> div []
 
