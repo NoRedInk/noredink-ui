@@ -1,5 +1,7 @@
 module Nri.Ui.Button.V9 exposing
-    ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
+    ( buildButton, buildLink
+    , render
+    , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
     , delete
     , toggleButton
@@ -33,7 +35,13 @@ weird layout than to block users. Might this be a golden rule? Of course there
 may be exceptions, for example if button content is supplied by an end-user.
 
 
-## Common configs
+##
+
+@docs buildButton, buildLink
+@docs render
+
+
+## Commonly-used attributes
 
 @docs ButtonSize, ButtonWidth, ButtonStyle, ButtonState
 
@@ -73,6 +81,67 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
+
+
+{-| -}
+type ButtonOrLink msg
+    = Button
+        { onClick : msg
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+        { label : String
+        , state : ButtonState
+        , icon : Maybe Svg
+        }
+    | Link
+        { label : String
+        , icon : Maybe Svg
+        , url : String
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        }
+
+
+{-| -}
+buildButton : String -> msg -> ButtonOrLink msg
+buildButton label onClick =
+    Button
+        { onClick = onClick
+        , size = Medium
+        , style = Primary
+        , width = WidthUnbounded
+        }
+        { label = label
+        , state = Enabled
+        , icon = Nothing
+        }
+
+
+{-| -}
+buildLink : String -> String -> ButtonOrLink msg
+buildLink label url =
+    Link
+        { label = label
+        , icon = Nothing
+        , url = url
+        , size = Medium
+        , style = Primary
+        , width = WidthUnbounded
+        }
+
+
+{-| -}
+render : ButtonOrLink msg -> Html msg
+render buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            button config state
+
+        Link config ->
+            link config
 
 
 {-| Sizes for buttons and links that have button classes

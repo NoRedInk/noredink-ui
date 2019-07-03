@@ -45,8 +45,7 @@ example unnamedMessages state =
     in
     { name = "Nri.Ui.Button.V9"
     , category = Buttons
-    , content =
-        [ viewButtonExamples messages state ]
+    , content = [ viewButtonExamples messages state ]
     }
 
 
@@ -133,6 +132,10 @@ viewButtonExamples messages (State control) =
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
+    , Button.buildButton model.label (messages.showItWorked "Button clicked!")
+        |> Button.render
+    , Button.buildLink model.label "#"
+        |> Button.render
     , buttons messages model
     , toggleButtons messages
     , Button.delete
