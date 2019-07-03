@@ -1,6 +1,8 @@
 module Nri.Ui.Button.V9 exposing
     ( buildButton, buildLink
+    , onClick, setButtonState, href
     , render
+    , withLabel
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
@@ -11,6 +13,7 @@ module Nri.Ui.Button.V9 exposing
     , toggleButton
     , link, linkSpa
     , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , ButtonOrLink
     )
 
 {-|
@@ -42,7 +45,9 @@ may be exceptions, for example if button content is supplied by an end-user.
 ##
 
 @docs buildButton, buildLink
+@docs onClick, setButtonState, href
 @docs render
+@docs withLabel
 @docs small, medium, large
 @docs exactWidth, unboundedWidth, fillContainerWidth
 @docs primary, secondary, danger, premium
@@ -114,31 +119,78 @@ type ButtonOrLink msg
 
 
 {-| -}
-buildButton : String -> msg -> ButtonOrLink msg
-buildButton label onClick =
+buildButton : ButtonOrLink ()
+buildButton =
     Button
-        { onClick = onClick
+        { onClick = ()
         , size = Medium
         , style = Primary
         , width = WidthUnbounded
         }
-        { label = label
+        { label = ""
         , state = Enabled
         , icon = Nothing
         }
 
 
 {-| -}
-buildLink : String -> String -> ButtonOrLink msg
-buildLink label url =
+onClick : msg -> ButtonOrLink () -> ButtonOrLink msg
+onClick msg buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button
+                { onClick = msg
+                , size = config.size
+                , style = config.style
+                , width = config.width
+                }
+                state
+
+        Link config ->
+            Link config
+
+
+{-| -}
+setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
+setButtonState buttonState buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button config { state | state = buttonState }
+
+        Link config ->
+            Link config
+
+
+{-| -}
+buildLink : ButtonOrLink ()
+buildLink =
     Link
-        { label = label
+        { label = ""
         , icon = Nothing
-        , url = url
+        , url = "#"
         , size = Medium
         , style = Primary
         , width = WidthUnbounded
         }
+
+
+{-| -}
+href : String -> ButtonOrLink () -> Maybe (ButtonOrLink msg)
+href url buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Nothing
+
+        Link config ->
+            Just <|
+                Link
+                    { label = config.label
+                    , icon = config.icon
+                    , url = url
+                    , size = config.size
+                    , style = config.style
+                    , width = config.width
+                    }
 
 
 {-| -}
@@ -150,6 +202,17 @@ render buttonOrLink =
 
         Link config ->
             link config
+
+
+{-| -}
+withLabel : String -> ButtonOrLink () -> ButtonOrLink ()
+withLabel label buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button config { state | label = label }
+
+        Link config ->
+            Link { config | label = label }
 
 
 {-| -}

@@ -11,15 +11,10 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V9 as Button
+import Nri.Ui.Button.V9 as Button exposing (ButtonOrLink)
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V3 as Text
-
-
-{-| -}
-type Msg
-    = SetState State
 
 
 {-| -}
@@ -50,39 +45,53 @@ example unnamedMessages state =
 
 
 {-| -}
+type Msg
+    = SetState State
+    | NoOp
+
+
+{-| -}
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        SetState newState ->
+            ( newState, Cmd.none )
+
+        NoOp ->
+            ( state, Cmd.none )
+
+
+
+-- INTERNAL
+
+
+type alias Model =
+    { label : String
+    , icon : Maybe Svg
+    , width : ButtonOrLink () -> ButtonOrLink ()
+    , buttonType : ButtonType
+    , state : Button.ButtonState
+    }
+
+
+{-| -}
 init : { r | performance : String, lock : String } -> State
 init assets =
     Control.record Model
-        |> Control.field "label" (Control.string "Button")
-        |> Control.field "icon"
-            (Control.maybe False <|
-                Control.choice
-                    ( "Performance"
-                    , Icon.performance assets
-                        |> Icon.decorativeIcon
-                        |> NriSvg.fromHtml
-                        |> Control.value
-                    )
-                    [ ( "Lock"
-                      , Icon.lock assets
-                            |> Icon.decorativeIcon
-                            |> NriSvg.fromHtml
-                            |> Control.value
-                      )
-                    ]
-            )
+        |> Control.field "label" (Control.string "Label")
+        |> Control.field "icon" (iconChoice assets)
         |> Control.field "width"
             (Control.choice
-                ( "Nri.Ui.Button.V7.WidthExact 120", Control.value <| Button.WidthExact 120 )
-                [ ( "Nri.Ui.Button.V7.WidthExact 70", Control.value <| Button.WidthExact 70 )
-                , ( "Nri.Ui.Button.V7.WidthUnbounded", Control.value <| Button.WidthUnbounded )
-                , ( "Nri.Ui.Button.V7.WidthFillContainer", Control.value <| Button.WidthFillContainer )
+                ( "exactWidth 120", Control.value (Button.exactWidth 120) )
+                [ ( "exactWidth 70", Control.value (Button.exactWidth 70) )
+                , ( "unboundedWidth", Control.value Button.unboundedWidth )
+                , ( "fillContainerWidth", Control.value Button.fillContainerWidth )
                 ]
             )
         |> Control.field "button type"
             (Control.choice
-                ( "Nri.Ui.Button.V7.button", Control.value Button )
-                [ ( "Nri.Ui.Button.V7.link", Control.value Link )
+                ( "button", Control.value Button )
+                [ ( "link", Control.value Link )
                 ]
             )
         |> Control.field "state (button only)"
@@ -100,25 +109,25 @@ init assets =
         |> State
 
 
-{-| -}
-update : Msg -> State -> ( State, Cmd Msg )
-update msg state =
-    case msg of
-        SetState newState ->
-            ( newState, Cmd.none )
-
-
-
--- INTERNAL
-
-
-type alias Model =
-    { label : String
-    , icon : Maybe Svg
-    , width : Button.ButtonWidth
-    , buttonType : ButtonType
-    , state : Button.ButtonState
-    }
+iconChoice : { r | performance : String, lock : String } -> Control.Control (Maybe Svg)
+iconChoice assets =
+    Control.choice
+        ( "Nothing", Control.value Nothing )
+        [ ( "Just Performance"
+          , Icon.performance assets
+                |> Icon.decorativeIcon
+                |> NriSvg.fromHtml
+                |> Just
+                |> Control.value
+          )
+        , ( "Just Lock"
+          , Icon.lock assets
+                |> Icon.decorativeIcon
+                |> NriSvg.fromHtml
+                |> Just
+                |> Control.value
+          )
+        ]
 
 
 viewButtonExamples :
@@ -132,10 +141,6 @@ viewButtonExamples messages (State control) =
     in
     [ Control.view (State >> SetState >> messages.wrapper) control
         |> fromUnstyled
-    , Button.buildButton model.label (messages.showItWorked "Button clicked!")
-        |> Button.render
-    , Button.buildLink model.label "#"
-        |> Button.render
     , buttons messages model
     , toggleButtons messages
     , Button.delete
@@ -155,66 +160,65 @@ viewButtonExamples messages (State control) =
         |> div []
 
 
-sizes : List Button.ButtonSize
-sizes =
-    [ Button.Small
-    , Button.Medium
-    , Button.Large
-    ]
-
-
-allStyles : List Button.ButtonStyle
-allStyles =
-    [ Button.Primary
-    , Button.Secondary
-    , Button.Danger
-    , Button.Premium
-    ]
-
-
 buttons :
     ModuleMessages Msg parentMsg
     -> Model
     -> Html parentMsg
 buttons messages model =
     let
-        exampleRow style =
+        sizes =
+            [ ( Button.small, "Button.small" )
+            , ( Button.medium, "Button.medium" )
+            , ( Button.large, "Button.large" )
+            ]
+
+        styles =
+            [ ( Button.primary, "Button.primary" )
+            , ( Button.secondary, "Button.secondary" )
+            , ( Button.danger, "Button.danger" )
+            , ( Button.premium, "Button.premium" )
+            ]
+
+        exampleRow ( style, styleName ) =
             List.concat
                 [ [ td
                         [ css
                             [ verticalAlign middle
                             ]
                         ]
-                        [ text <| Debug.toString style ]
+                        [ text styleName ]
                   ]
-                , sizes
-                    |> List.map (exampleCell style)
+                , List.map (Tuple.first >> exampleCell style) sizes
                 ]
                 |> tr []
 
-        exampleCell style size =
+        addAttributes button =
+            [ Maybe.map Button.withIcon model.icon
+            , Just (Button.withLabel model.label)
+            , Just model.width
+            , Just (Button.setButtonState model.state)
+            ]
+                |> List.filterMap identity
+                |> List.foldl (\addAttr b -> addAttr b) button
+
+        exampleCell setStyle setSize =
             (case model.buttonType of
                 Link ->
-                    Button.link
-                        { size = size
-                        , style = style
-                        , label = model.label
-                        , icon = model.icon
-                        , url = ""
-                        , width = model.width
-                        }
+                    Button.buildLink
+                        |> addAttributes
+                        |> setSize
+                        |> setStyle
+                        |> Button.href ""
+                        |> Maybe.map Button.render
+                        |> Maybe.withDefault (Html.Styled.text "")
 
                 Button ->
-                    Button.button
-                        { size = size
-                        , style = style
-                        , onClick = messages.showItWorked (Debug.toString ( style, size ))
-                        , width = model.width
-                        }
-                        { label = model.label
-                        , icon = model.icon
-                        , state = model.state
-                        }
+                    Button.buildButton
+                        |> addAttributes
+                        |> setSize
+                        |> setStyle
+                        |> Button.onClick (messages.showItWorked "Button clicked!")
+                        |> Button.render
             )
                 |> List.singleton
                 |> td
@@ -226,11 +230,10 @@ buttons messages model =
     in
     List.concat
         [ [ sizes
-                |> List.map (\size -> th [] [ text <| Debug.toString size ])
+                |> List.map (\( _, sizeName ) -> th [] [ text sizeName ])
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
-        , allStyles
-            |> List.map exampleRow
+        , List.map exampleRow styles
         ]
         |> table []
 
