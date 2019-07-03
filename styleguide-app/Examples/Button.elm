@@ -196,7 +196,6 @@ buttons messages model =
             [ Maybe.map Button.withIcon model.icon
             , Just (Button.withLabel model.label)
             , Just model.width
-            , Just (Button.setButtonState model.state)
             ]
                 |> List.filterMap identity
                 |> List.foldl (\addAttr b -> addAttr b) button
@@ -217,6 +216,7 @@ buttons messages model =
                         |> addAttributes
                         |> setSize
                         |> setStyle
+                        |> Button.setButtonState model.state
                         |> Button.onClick (messages.showItWorked "Button clicked!")
                         |> Button.render
             )

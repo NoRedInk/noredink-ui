@@ -8,10 +8,9 @@ module Nri.Ui.Button.V9 exposing
     , primary, secondary, danger, premium
     , withIcon
     , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
-    , button
     , delete
     , toggleButton
-    , link, linkSpa
+    , linkSpa
     , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , ButtonOrLink
     )
@@ -61,14 +60,13 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## `<button>` Buttons
 
-@docs button
 @docs delete
 @docs toggleButton
 
 
 ## `<a>` Buttons
 
-@docs link, linkSpa
+@docs linkSpa
 @docs linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 -}
@@ -109,12 +107,14 @@ type ButtonOrLink msg
         , icon : Maybe Svg
         }
     | Link
+        (List (Attribute Never))
         { label : String
         , icon : Maybe Svg
         , url : String
         , size : ButtonSize
         , style : ButtonStyle
         , width : ButtonWidth
+        , target : String
         }
 
 
@@ -146,8 +146,8 @@ onClick msg buttonOrLink =
                 }
                 state
 
-        Link config ->
-            Link config
+        Link attributes config ->
+            Link attributes config
 
 
 {-| -}
@@ -157,20 +157,21 @@ setButtonState buttonState buttonOrLink =
         Button config state ->
             Button config { state | state = buttonState }
 
-        Link config ->
-            Link config
+        Link attributes config ->
+            Link attributes config
 
 
 {-| -}
 buildLink : ButtonOrLink ()
 buildLink =
-    Link
+    Link []
         { label = ""
         , icon = Nothing
         , url = "#"
         , size = Medium
         , style = Primary
         , width = WidthUnbounded
+        , target = "_self"
         }
 
 
@@ -181,15 +182,16 @@ href url buttonOrLink =
         Button config state ->
             Nothing
 
-        Link config ->
+        Link attributes config ->
             Just <|
-                Link
+                Link attributes
                     { label = config.label
                     , icon = config.icon
                     , url = url
                     , size = config.size
                     , style = config.style
                     , width = config.width
+                    , target = config.target
                     }
 
 
@@ -200,8 +202,16 @@ render buttonOrLink =
         Button config state ->
             button config state
 
-        Link config ->
-            link config
+        Link attributes config ->
+            linkBase "link"
+                [ Attributes.target config.target ]
+                { label = config.label
+                , icon = config.icon
+                , url = config.url
+                , size = config.size
+                , style = config.style
+                , width = config.width
+                }
 
 
 {-| -}
@@ -211,8 +221,8 @@ withLabel label buttonOrLink =
         Button config state ->
             Button config { state | label = label }
 
-        Link config ->
-            Link { config | label = label }
+        Link attributes config ->
+            Link attributes { config | label = label }
 
 
 {-| -}
@@ -239,8 +249,8 @@ setSize size buttonOrLink =
         Button config state ->
             Button { config | size = size } state
 
-        Link config ->
-            Link { config | size = size }
+        Link attributes config ->
+            Link attributes { config | size = size }
 
 
 {-| -}
@@ -250,8 +260,8 @@ withIcon icon buttonOrLink =
         Button config state ->
             Button config { state | icon = Just icon }
 
-        Link config ->
-            Link { config | icon = Just icon }
+        Link attributes config ->
+            Link attributes { config | icon = Just icon }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -286,8 +296,8 @@ setWidth width buttonOrLink =
         Button config state ->
             Button { config | width = width } state
 
-        Link config ->
-            Link { config | width = width }
+        Link attributes config ->
+            Link attributes { config | width = width }
 
 
 {-| Width sizing behavior for buttons.
@@ -332,8 +342,8 @@ setStyle style buttonOrLink =
         Button config state ->
             Button { config | style = style } state
 
-        Link config ->
-            Link { config | style = style }
+        Link attributes config ->
+            Link attributes { config | style = style }
 
 
 {-| Styleguide-approved styles for your buttons!
@@ -539,25 +549,6 @@ toggleButton config =
 
 
 -- LINKS THAT LOOK LIKE BUTTONS
-
-
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url.
-
-NOTE: Links do not support two-line labels.
-
--}
-link :
-    { label : String
-    , icon : Maybe Svg
-    , url : String
-    , size : ButtonSize
-    , style : ButtonStyle
-    , width : ButtonWidth
-    }
-    -> Html msg
-link =
-    linkBase "link" [ Attributes.target "_self" ]
 
 
 {-| Use this link for routing within a single page app.
