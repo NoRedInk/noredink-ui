@@ -213,7 +213,7 @@ buttons messages model =
                             Button.renderLink []
 
                         Button ->
-                            Button.renderButton
+                            Button.renderButton []
                    )
             )
                 |> List.singleton

@@ -162,8 +162,8 @@ href url (ButtonOrLink config) =
 
 
 {-| -}
-renderButton : ButtonOrLink msg -> Html msg
-renderButton (ButtonOrLink config) =
+renderButton : List (Attribute msg) -> ButtonOrLink msg -> Html msg
+renderButton attributes (ButtonOrLink config) =
     button
         { onClick = config.onClick
         , size = config.size
