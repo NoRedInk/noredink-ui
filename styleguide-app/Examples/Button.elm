@@ -194,31 +194,27 @@ buttons messages model =
 
         addAttributes button =
             [ Maybe.map Button.withIcon model.icon
-            , Just (Button.withLabel model.label)
-            , Just model.width
             ]
                 |> List.filterMap identity
                 |> List.foldl (\addAttr b -> addAttr b) button
 
         exampleCell setStyle setSize =
-            (case model.buttonType of
-                Link ->
-                    Button.buildLink
-                        |> addAttributes
-                        |> setSize
-                        |> setStyle
-                        |> Button.href ""
-                        |> Maybe.map Button.render
-                        |> Maybe.withDefault (Html.Styled.text "")
+            (Button.build
+                |> addAttributes
+                |> setSize
+                |> setStyle
+                |> Button.withLabel model.label
+                |> model.width
+                |> Button.setButtonState model.state
+                |> Button.href ""
+                |> Button.onClick (messages.showItWorked "Button clicked!")
+                |> (case model.buttonType of
+                        Link ->
+                            Button.renderLink
 
-                Button ->
-                    Button.buildButton
-                        |> addAttributes
-                        |> setSize
-                        |> setStyle
-                        |> Button.setButtonState model.state
-                        |> Button.onClick (messages.showItWorked "Button clicked!")
-                        |> Button.render
+                        Button ->
+                            Button.renderButton
+                   )
             )
                 |> List.singleton
                 |> td

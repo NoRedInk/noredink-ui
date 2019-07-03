@@ -1,7 +1,5 @@
 module Nri.Ui.Button.V9 exposing
-    ( buildButton, buildLink
-    , onClick, setButtonState, href
-    , render
+    ( onClick, setButtonState, href
     , withLabel
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
@@ -12,7 +10,7 @@ module Nri.Ui.Button.V9 exposing
     , toggleButton
     , linkSpa
     , linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , ButtonOrLink
+    , ButtonOrLink, build, renderButton, renderLink
     )
 
 {-|
@@ -96,38 +94,31 @@ import Svg.Attributes
 
 {-| -}
 type ButtonOrLink msg
-    = Button
+    = ButtonOrLink
+        (List (Attribute Never))
         { onClick : msg
+        , url : String
+        , target : String
         , size : ButtonSize
         , style : ButtonStyle
         , width : ButtonWidth
-        }
-        { label : String
+        , label : String
         , state : ButtonState
         , icon : Maybe Svg
-        }
-    | Link
-        (List (Attribute Never))
-        { label : String
-        , icon : Maybe Svg
-        , url : String
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        , target : String
         }
 
 
 {-| -}
-buildButton : ButtonOrLink ()
-buildButton =
-    Button
+build : ButtonOrLink ()
+build =
+    ButtonOrLink []
         { onClick = ()
+        , url = "#"
+        , target = "_self"
         , size = Medium
         , style = Primary
         , width = WidthUnbounded
-        }
-        { label = ""
+        , label = ""
         , state = Enabled
         , icon = Nothing
         }
@@ -135,94 +126,75 @@ buildButton =
 
 {-| -}
 onClick : msg -> ButtonOrLink () -> ButtonOrLink msg
-onClick msg buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button
-                { onClick = msg
-                , size = config.size
-                , style = config.style
-                , width = config.width
-                }
-                state
-
-        Link attributes config ->
-            Link attributes config
-
-
-{-| -}
-setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
-setButtonState buttonState buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button config { state | state = buttonState }
-
-        Link attributes config ->
-            Link attributes config
-
-
-{-| -}
-buildLink : ButtonOrLink ()
-buildLink =
-    Link []
-        { label = ""
-        , icon = Nothing
-        , url = "#"
-        , size = Medium
-        , style = Primary
-        , width = WidthUnbounded
-        , target = "_self"
+onClick msg (ButtonOrLink attributes config) =
+    ButtonOrLink attributes
+        { onClick = msg
+        , url = config.url
+        , target = config.target
+        , size = config.size
+        , style = config.style
+        , width = config.width
+        , label = config.label
+        , state = config.state
+        , icon = config.icon
         }
 
 
 {-| -}
-href : String -> ButtonOrLink () -> Maybe (ButtonOrLink msg)
-href url buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Nothing
-
-        Link attributes config ->
-            Just <|
-                Link attributes
-                    { label = config.label
-                    , icon = config.icon
-                    , url = url
-                    , size = config.size
-                    , style = config.style
-                    , width = config.width
-                    , target = config.target
-                    }
+setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
+setButtonState buttonState (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | state = buttonState }
 
 
 {-| -}
-render : ButtonOrLink msg -> Html msg
-render buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            button config state
+href : String -> ButtonOrLink () -> ButtonOrLink ()
+href url (ButtonOrLink attributes config) =
+    ButtonOrLink attributes
+        { onClick = config.onClick
+        , url = url
+        , target = config.target
+        , size = config.size
+        , style = config.style
+        , width = config.width
+        , label = config.label
+        , state = config.state
+        , icon = config.icon
+        }
 
-        Link attributes config ->
-            linkBase "link"
-                [ Attributes.target config.target ]
-                { label = config.label
-                , icon = config.icon
-                , url = config.url
-                , size = config.size
-                , style = config.style
-                , width = config.width
-                }
+
+{-| -}
+renderButton : ButtonOrLink msg -> Html msg
+renderButton (ButtonOrLink attributes config) =
+    button
+        { onClick = config.onClick
+        , size = config.size
+        , style = config.style
+        , width = config.width
+        }
+        { label = config.label
+        , state = config.state
+        , icon = config.icon
+        }
+
+
+{-| -}
+renderLink : ButtonOrLink msg -> Html msg
+renderLink (ButtonOrLink attributes config) =
+    linkBase "link"
+        [ Attributes.target config.target ]
+        { label = config.label
+        , icon = config.icon
+        , url = config.url
+        , size = config.size
+        , style = config.style
+        , width = config.width
+        }
 
 
 {-| -}
 withLabel : String -> ButtonOrLink () -> ButtonOrLink ()
-withLabel label buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button config { state | label = label }
-
-        Link attributes config ->
-            Link attributes { config | label = label }
+withLabel label (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | label = label }
 
 
 {-| -}
@@ -244,24 +216,14 @@ large =
 
 
 setSize : ButtonSize -> ButtonOrLink msg -> ButtonOrLink msg
-setSize size buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button { config | size = size } state
-
-        Link attributes config ->
-            Link attributes { config | size = size }
+setSize size (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | size = size }
 
 
 {-| -}
 withIcon : Svg -> ButtonOrLink msg -> ButtonOrLink msg
-withIcon icon buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button config { state | icon = Just icon }
-
-        Link attributes config ->
-            Link attributes { config | icon = Just icon }
+withIcon icon (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | icon = Just icon }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -291,13 +253,8 @@ fillContainerWidth =
 
 
 setWidth : ButtonWidth -> ButtonOrLink msg -> ButtonOrLink msg
-setWidth width buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button { config | width = width } state
-
-        Link attributes config ->
-            Link attributes { config | width = width }
+setWidth width (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | width = width }
 
 
 {-| Width sizing behavior for buttons.
@@ -337,13 +294,8 @@ premium =
 
 
 setStyle : ButtonStyle -> ButtonOrLink msg -> ButtonOrLink msg
-setStyle style buttonOrLink =
-    case buttonOrLink of
-        Button config state ->
-            Button { config | style = style } state
-
-        Link attributes config ->
-            Link attributes { config | style = style }
+setStyle style (ButtonOrLink attributes config) =
+    ButtonOrLink attributes { config | style = style }
 
 
 {-| Styleguide-approved styles for your buttons!
