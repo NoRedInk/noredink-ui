@@ -1,4 +1,4 @@
-module Nri.Ui.Button.V8 exposing
+module Nri.Ui.Button.V9 exposing
     ( ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
     , delete
@@ -10,12 +10,9 @@ module Nri.Ui.Button.V8 exposing
 {-|
 
 
-# Changes from V7:
+# Changes from V8:
 
-  - Removes dependency on Icon that makes versioned assets hard to work with
-  - Removes copyToClipboard, which has additional dependencies and also isn't broadly used
-  - Removes customButton from what's exposed, as it's not in use
-  - Removes Borderless style (use ClickableText instead)
+  - Changes API to be attribute-based, rather than config-based
 
 
 # About:

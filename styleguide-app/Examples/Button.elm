@@ -11,7 +11,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V3 as Text
@@ -43,7 +43,7 @@ example unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { name = "Nri.Ui.Button.V8"
+    { name = "Nri.Ui.Button.V9"
     , category = Buttons
     , content =
         [ viewButtonExamples messages state ]
