@@ -95,7 +95,6 @@ import Svg.Attributes
 {-| -}
 type ButtonOrLink msg
     = ButtonOrLink
-        (List (Attribute Never))
         { onClick : msg
         , url : String
         , target : String
@@ -111,7 +110,7 @@ type ButtonOrLink msg
 {-| -}
 build : ButtonOrLink ()
 build =
-    ButtonOrLink []
+    ButtonOrLink
         { onClick = ()
         , url = "#"
         , target = "_self"
@@ -126,8 +125,8 @@ build =
 
 {-| -}
 onClick : msg -> ButtonOrLink () -> ButtonOrLink msg
-onClick msg (ButtonOrLink attributes config) =
-    ButtonOrLink attributes
+onClick msg (ButtonOrLink config) =
+    ButtonOrLink
         { onClick = msg
         , url = config.url
         , target = config.target
@@ -142,14 +141,14 @@ onClick msg (ButtonOrLink attributes config) =
 
 {-| -}
 setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
-setButtonState buttonState (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | state = buttonState }
+setButtonState buttonState (ButtonOrLink config) =
+    ButtonOrLink { config | state = buttonState }
 
 
 {-| -}
 href : String -> ButtonOrLink () -> ButtonOrLink ()
-href url (ButtonOrLink attributes config) =
-    ButtonOrLink attributes
+href url (ButtonOrLink config) =
+    ButtonOrLink
         { onClick = config.onClick
         , url = url
         , target = config.target
@@ -164,7 +163,7 @@ href url (ButtonOrLink attributes config) =
 
 {-| -}
 renderButton : ButtonOrLink msg -> Html msg
-renderButton (ButtonOrLink attributes config) =
+renderButton (ButtonOrLink config) =
     button
         { onClick = config.onClick
         , size = config.size
@@ -178,10 +177,10 @@ renderButton (ButtonOrLink attributes config) =
 
 
 {-| -}
-renderLink : ButtonOrLink msg -> Html msg
-renderLink (ButtonOrLink attributes config) =
+renderLink : List (Attribute msg) -> ButtonOrLink msg -> Html msg
+renderLink attributes (ButtonOrLink config) =
     linkBase "link"
-        [ Attributes.target config.target ]
+        (Attributes.target config.target :: attributes)
         { label = config.label
         , icon = config.icon
         , url = config.url
@@ -193,8 +192,8 @@ renderLink (ButtonOrLink attributes config) =
 
 {-| -}
 withLabel : String -> ButtonOrLink () -> ButtonOrLink ()
-withLabel label (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | label = label }
+withLabel label (ButtonOrLink config) =
+    ButtonOrLink { config | label = label }
 
 
 {-| -}
@@ -216,14 +215,14 @@ large =
 
 
 setSize : ButtonSize -> ButtonOrLink msg -> ButtonOrLink msg
-setSize size (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | size = size }
+setSize size (ButtonOrLink config) =
+    ButtonOrLink { config | size = size }
 
 
 {-| -}
 withIcon : Svg -> ButtonOrLink msg -> ButtonOrLink msg
-withIcon icon (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | icon = Just icon }
+withIcon icon (ButtonOrLink config) =
+    ButtonOrLink { config | icon = Just icon }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -253,8 +252,8 @@ fillContainerWidth =
 
 
 setWidth : ButtonWidth -> ButtonOrLink msg -> ButtonOrLink msg
-setWidth width (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | width = width }
+setWidth width (ButtonOrLink config) =
+    ButtonOrLink { config | width = width }
 
 
 {-| Width sizing behavior for buttons.
@@ -294,8 +293,8 @@ premium =
 
 
 setStyle : ButtonStyle -> ButtonOrLink msg -> ButtonOrLink msg
-setStyle style (ButtonOrLink attributes config) =
-    ButtonOrLink attributes { config | style = style }
+setStyle style (ButtonOrLink config) =
+    ButtonOrLink { config | style = style }
 
 
 {-| Styleguide-approved styles for your buttons!

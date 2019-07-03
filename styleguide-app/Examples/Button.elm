@@ -210,7 +210,7 @@ buttons messages model =
                 |> Button.onClick (messages.showItWorked "Button clicked!")
                 |> (case model.buttonType of
                         Link ->
-                            Button.renderLink
+                            Button.renderLink []
 
                         Button ->
                             Button.renderButton
