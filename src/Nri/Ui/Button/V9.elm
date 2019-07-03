@@ -2,6 +2,7 @@ module Nri.Ui.Button.V9 exposing
     ( buildButton, buildLink
     , render
     , small, medium, large
+    , withIcon
     , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
     , delete
@@ -41,6 +42,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 @docs buildButton, buildLink
 @docs render
 @docs small, medium, large
+@docs withIcon
 
 
 ## Commonly-used attributes
@@ -172,6 +174,17 @@ setSize size buttonOrLink =
 
         Link config ->
             Link { config | size = size }
+
+
+{-| -}
+withIcon : Svg -> ButtonOrLink msg -> ButtonOrLink msg
+withIcon icon buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button config { state | icon = Just icon }
+
+        Link config ->
+            Link { config | icon = Just icon }
 
 
 {-| Sizes for buttons and links that have button classes
