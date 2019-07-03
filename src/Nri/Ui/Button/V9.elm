@@ -1,6 +1,7 @@
 module Nri.Ui.Button.V9 exposing
     ( buildButton, buildLink
     , render
+    , small, medium, large
     , ButtonSize(..), ButtonWidth(..), ButtonStyle(..), ButtonState(..)
     , button
     , delete
@@ -39,6 +40,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 @docs buildButton, buildLink
 @docs render
+@docs small, medium, large
 
 
 ## Commonly-used attributes
@@ -142,6 +144,34 @@ render buttonOrLink =
 
         Link config ->
             link config
+
+
+{-| -}
+small : ButtonOrLink msg -> ButtonOrLink msg
+small =
+    setSize Small
+
+
+{-| -}
+medium : ButtonOrLink msg -> ButtonOrLink msg
+medium =
+    setSize Medium
+
+
+{-| -}
+large : ButtonOrLink msg -> ButtonOrLink msg
+large =
+    setSize Large
+
+
+setSize : ButtonSize -> ButtonOrLink msg -> ButtonOrLink msg
+setSize size buttonOrLink =
+    case buttonOrLink of
+        Button config state ->
+            Button { config | size = size } state
+
+        Link config ->
+            Link { config | size = size }
 
 
 {-| Sizes for buttons and links that have button classes
