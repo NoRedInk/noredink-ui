@@ -54,7 +54,7 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 ## Commonly-used attributes
 
-@docs ButtonSize, ButtonWidth, ButtonStyle, ButtonState
+@docs ButtonState
 
 
 ## `<button>` Buttons
