@@ -167,6 +167,7 @@ iconContainer styles icon =
                , Css.justifyContent Css.center
                , Css.marginRight (Css.px 5)
                , Css.lineHeight (Css.px 13)
+               , Css.flexShrink Css.zero
 
                -- Size
                , Css.borderRadius (Css.px 13)
