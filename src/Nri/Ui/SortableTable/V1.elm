@@ -23,6 +23,8 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Table.V4
+import Svg exposing (Svg)
+import Svg.Attributes
 
 
 type SortDirection
@@ -365,4 +367,12 @@ arrow direction =
                     ++ result
                 )
             ]
+        ]
+
+
+sortArrow : Svg msg
+sortArrow =
+    Svg.svg
+        [ Svg.Attributes.viewBox "0 0 8 6" ]
+        [ Svg.polygon [ Svg.Attributes.points "0 6 4 0 8 6 0 6" ] []
         ]
