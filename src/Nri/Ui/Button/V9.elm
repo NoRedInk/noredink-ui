@@ -9,6 +9,7 @@ module Nri.Ui.Button.V9 exposing
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , withIcon
+    , withCustomAttributes
     , delete
     , toggleButton
     )
@@ -66,6 +67,11 @@ module Nri.Ui.Button.V9 exposing
 @docs withIcon
 
 
+## Add custom attributes
+
+@docs withCustomAttributes
+
+
 # Commonly-used buttons
 
 @docs delete
@@ -113,6 +119,7 @@ type ButtonOrLink msg
         , label : String
         , state : ButtonState
         , icon : Maybe Svg
+        , customAttributes : List (Html.Attribute msg)
         }
 
 
@@ -129,6 +136,7 @@ build =
         , label = ""
         , state = Enabled
         , icon = Nothing
+        , customAttributes = []
         }
 
 
@@ -145,6 +153,7 @@ onClick msg (ButtonOrLink config) =
         , label = config.label
         , state = config.state
         , icon = config.icon
+        , customAttributes = []
         }
 
 
@@ -161,6 +170,7 @@ href url (ButtonOrLink config) =
         , label = config.label
         , state = config.state
         , icon = config.icon
+        , customAttributes = []
         }
 
 
@@ -282,6 +292,12 @@ renderLink attributes (ButtonOrLink config) =
                     ]
                     attributes
                 )
+
+
+{-| -}
+withCustomAttributes : List (Html.Attribute msg) -> ButtonOrLink msg -> ButtonOrLink msg
+withCustomAttributes customAttributes (ButtonOrLink config) =
+    ButtonOrLink { config | customAttributes = customAttributes }
 
 
 {-| -}
