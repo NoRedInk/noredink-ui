@@ -589,11 +589,6 @@ toggleButton config =
         [ viewLabel Nothing config.label ]
 
 
-
--- LINKS THAT LOOK LIKE BUTTONS
--- HELPERS
-
-
 type ColorPalette
     = PrimaryColors
     | SecondaryColors
