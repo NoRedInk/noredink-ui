@@ -1,7 +1,9 @@
 module Examples.Button exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Css exposing (middle, verticalAlign)
@@ -70,7 +72,7 @@ type alias Model =
     , icon : Maybe Svg
     , width : ButtonOrLink () -> ButtonOrLink ()
     , buttonType : ButtonType
-    , state : Button.ButtonState
+    , state : ButtonOrLink () -> ButtonOrLink ()
     }
 
 
@@ -96,15 +98,13 @@ init assets =
             )
         |> Control.field "state (button only)"
             (Control.choice
-                ( Debug.toString Button.Enabled, Control.value Button.Enabled )
-                (List.map (\x -> ( Debug.toString x, Control.value x ))
-                    [ Button.Disabled
-                    , Button.Error
-                    , Button.Unfulfilled
-                    , Button.Loading
-                    , Button.Success
-                    ]
-                )
+                ( "enabled", Control.value Button.enabled )
+                [ ( "disabled", Control.value Button.disabled )
+                , ( "error", Control.value Button.error )
+                , ( "unfulfilled", Control.value Button.unfulfilled )
+                , ( "loading", Control.value Button.loading )
+                , ( "success", Control.value Button.success )
+                ]
             )
         |> State
 
@@ -203,7 +203,7 @@ buttons messages model =
                 |> setStyle
                 |> Button.withLabel model.label
                 |> model.width
-                |> Button.setButtonState model.state
+                |> model.state
                 |> Button.href ""
                 |> Button.onClick (messages.showItWorked "Button clicked!")
                 |> (case model.buttonType of

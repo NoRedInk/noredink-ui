@@ -1,14 +1,14 @@
 module Nri.Ui.Button.V9 exposing
     ( ButtonOrLink, build
     , renderButton, renderLink
-    , onClick, setButtonState, href
+    , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , withLabel
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
+    , enabled, unfulfilled, disabled, error, loading, success
     , withIcon
-    , ButtonState(..)
     , delete
     , toggleButton
     )
@@ -43,18 +43,14 @@ may be exceptions, for example if button content is supplied by an end-user.
 
 @docs ButtonOrLink, build
 @docs renderButton, renderLink
-@docs onClick, setButtonState, href
+@docs onClick, href
 @docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 @docs withLabel
 @docs small, medium, large
 @docs exactWidth, unboundedWidth, fillContainerWidth
 @docs primary, secondary, danger, premium
+@docs enabled, unfulfilled, disabled, error, loading, success
 @docs withIcon
-
-
-## Commonly-used attributes
-
-@docs ButtonState
 
 
 ## `<button>` Buttons
@@ -132,12 +128,6 @@ onClick msg (ButtonOrLink config) =
         , state = config.state
         , icon = config.icon
         }
-
-
-{-| -}
-setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
-setButtonState buttonState (ButtonOrLink config) =
-    ButtonOrLink { config | state = buttonState }
 
 
 {-| -}
@@ -392,15 +382,54 @@ type ButtonStyle
     | Premium
 
 
+{-| An enabled button. Takes the appearance of ButtonStyle.
+-}
+enabled : ButtonOrLink msg -> ButtonOrLink msg
+enabled =
+    setButtonState Enabled
+
+
+{-| A button which appears with the InactiveColors palette but is not disabled.
+-}
+unfulfilled : ButtonOrLink msg -> ButtonOrLink msg
+unfulfilled =
+    setButtonState Unfulfilled
+
+
+{-| A button which appears with the InactiveColors palette and is disabled.
+-}
+disabled : ButtonOrLink msg -> ButtonOrLink msg
+disabled =
+    setButtonState Disabled
+
+
+{-| A button which appears with the ErrorColors palette and is disabled.
+-}
+error : ButtonOrLink msg -> ButtonOrLink msg
+error =
+    setButtonState Error
+
+
+{-| A button which appears with the LoadingColors palette and is disabled.
+-}
+loading : ButtonOrLink msg -> ButtonOrLink msg
+loading =
+    setButtonState Loading
+
+
+{-| A button which appears with the SuccessColors palette and is disabled .
+-}
+success : ButtonOrLink msg -> ButtonOrLink msg
+success =
+    setButtonState Success
+
+
+setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
+setButtonState buttonState (ButtonOrLink config) =
+    ButtonOrLink { config | state = buttonState }
+
+
 {-| Describes the state of a button. Has consequences for appearance and disabled attribute.
-
-  - Enabled: An enabled button. Takes the appearance of ButtonStyle
-  - Unfulfilled: A button which appears with the InactiveColors palette but is not disabled.
-  - Disabled: A button which appears with the InactiveColors palette and is disabled.
-  - Error: A button which appears with the ErrorColors palette and is disabled.
-  - Loading: A button which appears with the LoadingColors palette and is disabled
-  - Success: A button which appears with the SuccessColors palette and is disabled
-
 -}
 type ButtonState
     = Enabled
@@ -460,7 +489,7 @@ button config content =
                 Success ->
                     SuccessColors
 
-        disabled =
+        isDisabled =
             case content.state of
                 Enabled ->
                     False
@@ -484,7 +513,7 @@ button config content =
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ ]
         [ Events.onClick config.onClick
-        , Attributes.disabled disabled
+        , Attributes.disabled isDisabled
         , Attributes.type_ "button"
         ]
         [ viewLabel content.icon content.label ]
