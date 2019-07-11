@@ -6,7 +6,7 @@ module Examples.SortableTable exposing (Msg, State, example, init, update)
 
 -}
 
-import Html
+import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.SortableTable.V1 as SortableTable
 
@@ -31,8 +31,8 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage { sortState } =
-    { filename = "Nri.Ui.SortableTable.V1"
-    , category = Layout
+    { name = "Nri.Ui.SortableTable.V1"
+    , category = Tables
     , content =
         let
             config =

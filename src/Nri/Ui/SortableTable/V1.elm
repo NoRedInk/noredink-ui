@@ -16,13 +16,12 @@ module Nri.Ui.SortableTable.V1 exposing
 
 import Css exposing (..)
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
-import Html exposing (Html)
-import Html.Events
-import Html.Styled
-import List.Extra
-import Nri.IconDEPRECATED
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
+import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Table.V4
 
 
@@ -181,7 +180,6 @@ viewLoading config state =
     in
     Nri.Ui.Table.V4.viewLoading
         tableColumns
-        |> Html.Styled.toUnstyled
 
 
 {-| -}
@@ -197,15 +195,30 @@ view config state entries =
     Nri.Ui.Table.V4.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
-        |> Html.Styled.toUnstyled
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
 findSorter columns columnId =
     columns
-        |> List.Extra.find (\(Column column) -> column.id == columnId)
+        |> listExtraFind (\(Column column) -> column.id == columnId)
         |> Maybe.map (\(Column column) -> column.sorter)
         |> Maybe.withDefault identitySorter
+
+
+{-| Taken from <https://github.com/elm-community/list-extra/blob/8.2.0/src/List/Extra.elm#L556>
+-}
+listExtraFind : (a -> Bool) -> List a -> Maybe a
+listExtraFind predicate list =
+    case list of
+        [] ->
+            Nothing
+
+        first :: rest ->
+            if predicate first then
+                Just first
+
+            else
+                listExtraFind predicate rest
 
 
 identitySorter : Sorter a
@@ -217,8 +230,8 @@ identitySorter =
 buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V4.Column entry msg
 buildTableColumn updateMsg state (Column column) =
     Nri.Ui.Table.V4.custom
-        { header = Html.Styled.fromUnstyled (viewSortHeader column.header updateMsg state column.id)
-        , view = column.view >> Html.Styled.fromUnstyled
+        { header = viewSortHeader column.header updateMsg state column.id
+        , view = column.view
         , width = Css.px (toFloat column.width)
         }
 
@@ -231,15 +244,21 @@ viewSortHeader header updateMsg state id =
 
         headerStyle =
             if state.column == id then
-                Styles.sortActive
+                [ fontWeight bold ]
 
             else
-                Styles.sortInactive
+                [ fontWeight normal ]
     in
     Html.div
-        [ Styles.sortHeader
-        , headerStyle
-        , Html.Events.onClick (updateMsg nextState)
+        [ css
+            [ Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.spaceBetween
+            , cursor pointer
+            , CssVendorPrefix.property "user-select" "none"
+            ]
+        , css headerStyle
+        , Html.Styled.Events.onClick (updateMsg nextState)
         ]
         [ Html.div [] [ header ]
         , viewSortButton updateMsg state id
@@ -251,19 +270,26 @@ viewSortButton updateMsg state id =
     let
         ifActive bool =
             if bool then
-                [ Styles.arrowActive ]
+                [ css [ color Nri.Ui.Colors.V1.azure ] ]
 
             else
                 []
 
         arrows upHighlighted downHighlighted =
-            Html.div [ Styles.arrows ]
+            Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.flexDirection Css.column
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.center
+                    ]
+                ]
                 [ Html.div
-                    (Styles.upArrow :: ifActive upHighlighted)
-                    [ Nri.IconDEPRECATED.decorativeIcon Nri.IconDEPRECATED.SortArrow ]
+                    (css [ arrow Up ] :: ifActive upHighlighted)
+                    [ Icon.decorativeIcon (Icon.sortArrow { sortArrow = "sort_arrow" }) ]
                 , Html.div
-                    (Styles.downArrow :: ifActive downHighlighted)
-                    [ Nri.IconDEPRECATED.decorativeIcon Nri.IconDEPRECATED.SortArrow ]
+                    (css [ arrow Down ] :: ifActive downHighlighted)
+                    [ Icon.decorativeIcon (Icon.sortArrow { sortArrow = "sort_arrow" }) ]
                 ]
 
         buttonContent =
@@ -278,7 +304,11 @@ viewSortButton updateMsg state id =
                     arrows False False
     in
     Html.div
-        [ Styles.sortButton ]
+        [ css
+            [ padding (px 2)
+            , color Nri.Ui.Colors.V1.gray75
+            ]
+        ]
         [ buttonContent ]
 
 
@@ -305,53 +335,12 @@ flipSortDirection order =
             Ascending
 
 
-sortHeader : UniqueClass
-sortHeader =
-    uniqueClass
-        [ Css.displayFlex
-        , Css.alignItems Css.center
-        , Css.justifyContent Css.spaceBetween
-        , cursor pointer
-        , CssVendorPrefix.property "user-select" "none"
-        ]
-
-
-sortButton : UniqueClass
-sortButton =
-    uniqueClass
-        [ padding (px 2)
-        , color Nri.Ui.Colors.V1.gray75
-        ]
-
-
-sortInactive : UniqueClass
-sortInactive =
-    uniqueClass
-        [ fontWeight normal ]
-
-
-sortActive : UniqueClass
-sortActive =
-    uniqueClass
-        [ fontWeight bold ]
-
-
-arrows : UniqueClass
-arrows =
-    uniqueClass
-        [ Css.displayFlex
-        , Css.flexDirection Css.column
-        , Css.alignItems Css.center
-        , Css.justifyContent Css.center
-        ]
-
-
 type Direction
     = Up
     | Down
 
 
-arrow : Direction -> UniqueClass
+arrow : Direction -> Css.Style
 arrow direction =
     let
         result =
@@ -362,7 +351,7 @@ arrow direction =
                 Down ->
                     [ transform <| rotate (deg 180) ]
     in
-    uniqueClass
+    Css.batch
         [ width (px 8)
         , height (px 6)
         , position relative
@@ -376,21 +365,4 @@ arrow direction =
                     ++ result
                 )
             ]
-        ]
-
-
-upArrow : UniqueClass
-upArrow =
-    arrow Up
-
-
-downArrow : UniqueClass
-downArrow =
-    arrow Down
-
-
-arrowActive : UniqueClass
-arrowActive =
-    uniqueClass
-        [ color Nri.Ui.Colors.V1.azure
         ]
