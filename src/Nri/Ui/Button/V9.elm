@@ -1,9 +1,9 @@
 module Nri.Ui.Button.V9 exposing
     ( ButtonOrLink, build
     , renderButton, renderLink
+    , withLabel
     , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , withLabel
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
@@ -39,21 +39,52 @@ weird layout than to block users. Might this be a golden rule? Of course there
 may be exceptions, for example if button content is supplied by an end-user.
 
 
-##
+# Create and render a button or link
+
+
+## Begin building a button or link
 
 @docs ButtonOrLink, build
+
+
+## Render a button or link
+
 @docs renderButton, renderLink
+
+
+## Label the button
+
+@docs withLabel
+
+
+## Add event listeners and links
+
 @docs onClick, href
 @docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-@docs withLabel
+
+
+## Size the button
+
 @docs small, medium, large
 @docs exactWidth, unboundedWidth, fillContainerWidth
+
+
+## Change the color scheme
+
 @docs primary, secondary, danger, premium
+
+
+## Change the state (buttons only)
+
 @docs enabled, unfulfilled, disabled, error, loading, success
+
+
+## Add an icon
+
 @docs withIcon
 
 
-## `<button>` Buttons
+# Commonly-used buttons
 
 @docs delete
 @docs toggleButton
