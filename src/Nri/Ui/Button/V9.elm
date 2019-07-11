@@ -487,10 +487,11 @@ renderButton (ButtonOrLink config) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ ]
-        [ Events.onClick config.onClick
-        , Attributes.disabled isDisabled
-        , Attributes.type_ "button"
-        ]
+        (Events.onClick config.onClick
+            :: Attributes.disabled isDisabled
+            :: Attributes.type_ "button"
+            :: config.customAttributes
+        )
         [ viewLabel config.icon config.label ]
 
 
