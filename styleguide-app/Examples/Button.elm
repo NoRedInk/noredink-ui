@@ -165,16 +165,16 @@ buttons :
 buttons messages model =
     let
         sizes =
-            [ ( Button.small, "Button.small" )
-            , ( Button.medium, "Button.medium" )
-            , ( Button.large, "Button.large" )
+            [ ( Button.small, "small" )
+            , ( Button.medium, "medium" )
+            , ( Button.large, "large" )
             ]
 
         styles =
-            [ ( Button.primary, "Button.primary" )
-            , ( Button.secondary, "Button.secondary" )
-            , ( Button.danger, "Button.danger" )
-            , ( Button.premium, "Button.premium" )
+            [ ( Button.primary, "primary" )
+            , ( Button.secondary, "secondary" )
+            , ( Button.danger, "danger" )
+            , ( Button.premium, "premium" )
             ]
 
         exampleRow ( style, styleName ) =
