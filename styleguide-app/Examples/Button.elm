@@ -204,6 +204,7 @@ buttons messages model =
                 |> Button.withLabel model.label
                 |> model.width
                 |> model.state
+                |> Button.withCustomAttributes [ Html.Styled.Attributes.class "styleguide-button" ]
                 |> Button.href ""
                 |> Button.onClick (messages.showItWorked "Button clicked!")
                 |> (case model.buttonType of
