@@ -11,6 +11,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -59,6 +60,7 @@ viewExample toggle isOpen fontSize disclosureView disclosureCode =
                     , Css.outline Css.none
                     , Fonts.baseFont
                     , Css.fontSize fontSize
+                    , Css.backgroundColor Colors.white
                     ]
                 , onClick toggle
                 ]
