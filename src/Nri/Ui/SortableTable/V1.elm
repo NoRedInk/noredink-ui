@@ -23,8 +23,8 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Table.V4
-import Svg exposing (Svg)
-import Svg.Attributes
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as SvgAttributes
 
 
 type SortDirection
@@ -370,9 +370,35 @@ arrow direction =
         ]
 
 
-sortArrow : Svg msg
-sortArrow =
-    Svg.svg
-        [ Svg.Attributes.viewBox "0 0 8 6" ]
-        [ Svg.polygon [ Svg.Attributes.points "0 6 4 0 8 6 0 6" ] []
+sortArrow : Direction -> Bool -> Html msg
+sortArrow direction active =
+    Html.div
+        [ css
+            [ width (px 8)
+            , height (px 6)
+            , position relative
+            , margin2 (px 1) zero
+            , if active then
+                color Nri.Ui.Colors.V1.azure
+
+              else
+                color Nri.Ui.Colors.V1.gray75
+            ]
+        ]
+        [ Svg.svg
+            [ SvgAttributes.viewBox "0 0 8 6"
+            , css
+                [ position absolute
+                , top zero
+                , left zero
+                , case direction of
+                    Up ->
+                        Css.batch []
+
+                    Down ->
+                        Css.batch [ transform <| rotate (deg 180) ]
+                ]
+            ]
+            [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
+            ]
         ]
