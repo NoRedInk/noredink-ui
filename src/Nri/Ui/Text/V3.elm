@@ -54,41 +54,41 @@ import Nri.Ui.Heading.V1 as Heading
 {-| This is a Page Heading.
 -}
 heading : List (Html msg) -> Html msg
-heading =
-    Heading.heading
-        >> Heading.withVisualLevel Heading.Top
-        >> Heading.withDocumentLevel Heading.H1
-        >> Heading.view
+heading content =
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Top
+        |> Heading.withDocumentLevel Heading.H1
+        |> Heading.view
 
 
 {-| This is a tagline for a page heading.
 -}
 tagline : List (Html msg) -> Html msg
-tagline =
-    Heading.heading
-        >> Heading.withVisualLevel Heading.Tagline
-        >> Heading.withDocumentLevel Heading.H2
-        >> Heading.view
+tagline content =
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Tagline
+        |> Heading.withDocumentLevel Heading.H2
+        |> Heading.view
 
 
 {-| This is a subhead.
 -}
 subHeading : List (Html msg) -> Html msg
-subHeading =
-    Heading.heading
-        >> Heading.withVisualLevel Heading.Subhead
-        >> Heading.withDocumentLevel Heading.H3
-        >> Heading.view
+subHeading content =
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Subhead
+        |> Heading.withDocumentLevel Heading.H3
+        |> Heading.view
 
 
 {-| This is a small Page Heading.
 -}
 smallHeading : List (Html msg) -> Html msg
-smallHeading =
-    Heading.heading
-        >> Heading.withVisualLevel Heading.Small
-        >> Heading.withDocumentLevel Heading.H4
-        >> Heading.view
+smallHeading content =
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Small
+        |> Heading.withDocumentLevel Heading.H4
+        |> Heading.view
 
 
 {-| This is some medium body copy.
