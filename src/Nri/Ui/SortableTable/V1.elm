@@ -14,14 +14,15 @@ module Nri.Ui.SortableTable.V1 exposing
 
 -}
 
+import Color
 import Css exposing (..)
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
-import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Table.V4
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as SvgAttributes
@@ -243,13 +244,6 @@ viewSortHeader header updateMsg state id =
     let
         nextState =
             nextTableState state id
-
-        headerStyle =
-            if state.column == id then
-                [ fontWeight bold ]
-
-            else
-                [ fontWeight normal ]
     in
     Html.div
         [ css
@@ -258,8 +252,12 @@ viewSortHeader header updateMsg state id =
             , Css.justifyContent Css.spaceBetween
             , cursor pointer
             , CssVendorPrefix.property "user-select" "none"
+            , if state.column == id then
+                fontWeight bold
+
+              else
+                fontWeight normal
             ]
-        , css headerStyle
         , Html.Styled.Events.onClick (updateMsg nextState)
         ]
         [ Html.div [] [ header ]
@@ -270,13 +268,6 @@ viewSortHeader header updateMsg state id =
 viewSortButton : (State id -> msg) -> State id -> id -> Html msg
 viewSortButton updateMsg state id =
     let
-        ifActive bool =
-            if bool then
-                [ css [ color Nri.Ui.Colors.V1.azure ] ]
-
-            else
-                []
-
         arrows upHighlighted downHighlighted =
             Html.div
                 [ css
@@ -286,12 +277,8 @@ viewSortButton updateMsg state id =
                     , Css.justifyContent Css.center
                     ]
                 ]
-                [ Html.div
-                    (css [ arrow Up ] :: ifActive upHighlighted)
-                    [ Icon.decorativeIcon (Icon.sortArrow { sortArrow = "sort_arrow" }) ]
-                , Html.div
-                    (css [ arrow Down ] :: ifActive downHighlighted)
-                    [ Icon.decorativeIcon (Icon.sortArrow { sortArrow = "sort_arrow" }) ]
+                [ sortArrow Up upHighlighted
+                , sortArrow Down downHighlighted
                 ]
 
         buttonContent =
@@ -305,13 +292,7 @@ viewSortButton updateMsg state id =
                 ( False, _ ) ->
                     arrows False False
     in
-    Html.div
-        [ css
-            [ padding (px 2)
-            , color Nri.Ui.Colors.V1.gray75
-            ]
-        ]
-        [ buttonContent ]
+    Html.div [ css [ padding (px 2) ] ] [ buttonContent ]
 
 
 nextTableState : State id -> id -> State id
@@ -342,34 +323,6 @@ type Direction
     | Down
 
 
-arrow : Direction -> Css.Style
-arrow direction =
-    let
-        result =
-            case direction of
-                Up ->
-                    []
-
-                Down ->
-                    [ transform <| rotate (deg 180) ]
-    in
-    Css.batch
-        [ width (px 8)
-        , height (px 6)
-        , position relative
-        , margin2 (px 1) zero
-        , children
-            [ selector "svg"
-                ([ position absolute
-                 , top zero
-                 , left zero
-                 ]
-                    ++ result
-                )
-            ]
-        ]
-
-
 sortArrow : Direction -> Bool -> Html msg
 sortArrow direction active =
     Html.div
@@ -378,16 +331,11 @@ sortArrow direction active =
             , height (px 6)
             , position relative
             , margin2 (px 1) zero
-            , if active then
-                color Nri.Ui.Colors.V1.azure
-
-              else
-                color Nri.Ui.Colors.V1.gray75
             ]
         ]
         [ Svg.svg
             [ SvgAttributes.viewBox "0 0 8 6"
-            , css
+            , SvgAttributes.css
                 [ position absolute
                 , top zero
                 , left zero
@@ -398,7 +346,17 @@ sortArrow direction active =
                     Down ->
                         Css.batch [ transform <| rotate (deg 180) ]
                 ]
+            , if active then
+                SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.azure)
+
+              else
+                SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.gray75)
             ]
             [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
             ]
         ]
+
+
+toCssString : Css.Color -> String
+toCssString =
+    Color.toCssString << Nri.Ui.Colors.Extra.toCoreColor
