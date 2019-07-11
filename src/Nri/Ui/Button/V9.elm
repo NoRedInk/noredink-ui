@@ -97,6 +97,7 @@ import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
@@ -110,7 +111,7 @@ styledName suffix =
 {-| -}
 type ButtonOrLink msg
     = ButtonOrLink
-        { onClick : msg
+        { onClick : Maybe msg
         , url : String
         , linkType : Link
         , size : ButtonSize
@@ -124,10 +125,10 @@ type ButtonOrLink msg
 
 
 {-| -}
-build : ButtonOrLink ()
+build : ButtonOrLink msg
 build =
     ButtonOrLink
-        { onClick = ()
+        { onClick = Nothing
         , url = "#"
         , linkType = Default
         , size = Medium
@@ -141,10 +142,10 @@ build =
 
 
 {-| -}
-onClick : msg -> ButtonOrLink () -> ButtonOrLink msg
+onClick : msg -> ButtonOrLink msg -> ButtonOrLink msg
 onClick msg (ButtonOrLink config) =
     ButtonOrLink
-        { onClick = msg
+        { onClick = Just msg
         , url = config.url
         , linkType = config.linkType
         , size = config.size
@@ -153,12 +154,12 @@ onClick msg (ButtonOrLink config) =
         , label = config.label
         , state = config.state
         , icon = config.icon
-        , customAttributes = []
+        , customAttributes = config.customAttributes
         }
 
 
 {-| -}
-href : String -> ButtonOrLink () -> ButtonOrLink ()
+href : String -> ButtonOrLink msg -> ButtonOrLink msg
 href url (ButtonOrLink config) =
     ButtonOrLink
         { onClick = config.onClick
@@ -170,7 +171,7 @@ href url (ButtonOrLink config) =
         , label = config.label
         , state = config.state
         , icon = config.icon
-        , customAttributes = []
+        , customAttributes = config.customAttributes
         }
 
 
@@ -247,7 +248,9 @@ renderLink (ButtonOrLink config) =
 
         SinglePageApp ->
             linkBase "linkSpa"
-                (EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
+                ((Maybe.map EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
+                    |> Maybe.withDefault AttributesExtra.none
+                 )
                     :: config.customAttributes
                 )
 
@@ -260,8 +263,14 @@ renderLink (ButtonOrLink config) =
         WithTracking ->
             linkBase
                 "linkWithTracking"
-                (Events.preventDefaultOn "click"
-                    (Json.Decode.succeed ( config.onClick, True ))
+                ((Maybe.map
+                    (\msg ->
+                        Events.preventDefaultOn "click"
+                            (Json.Decode.succeed ( msg, True ))
+                    )
+                    config.onClick
+                    |> Maybe.withDefault AttributesExtra.none
+                 )
                     :: config.customAttributes
                 )
 
@@ -273,7 +282,8 @@ renderLink (ButtonOrLink config) =
             linkBase "linkExternalWithTracking"
                 (List.append
                     [ Attributes.target "_blank"
-                    , EventExtras.onClickForLinkWithHref config.onClick
+                    , Maybe.map EventExtras.onClickForLinkWithHref config.onClick
+                        |> Maybe.withDefault AttributesExtra.none
                     ]
                     config.customAttributes
                 )
@@ -286,7 +296,7 @@ withCustomAttributes customAttributes (ButtonOrLink config) =
 
 
 {-| -}
-withLabel : String -> ButtonOrLink () -> ButtonOrLink ()
+withLabel : String -> ButtonOrLink msg -> ButtonOrLink msg
 withLabel label (ButtonOrLink config) =
     ButtonOrLink { config | label = label }
 
@@ -493,7 +503,9 @@ renderButton (ButtonOrLink config) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ ]
-        (Events.onClick config.onClick
+        ((Maybe.map Events.onClick config.onClick
+            |> Maybe.withDefault AttributesExtra.none
+         )
             :: Attributes.disabled isDisabled
             :: Attributes.type_ "button"
             :: config.customAttributes

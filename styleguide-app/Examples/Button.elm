@@ -20,8 +20,8 @@ import Nri.Ui.Text.V3 as Text
 
 
 {-| -}
-type State
-    = State (Control Model)
+type State parentMsg
+    = State (Control (Model parentMsg))
 
 
 {-| -}
@@ -32,8 +32,8 @@ type ButtonType
 
 {-| -}
 example :
-    (String -> ModuleMessages Msg parentMsg)
-    -> State
+    (String -> ModuleMessages (Msg parentMsg) parentMsg)
+    -> State parentMsg
     -> ModuleExample parentMsg
 example unnamedMessages state =
     let
@@ -47,13 +47,13 @@ example unnamedMessages state =
 
 
 {-| -}
-type Msg
-    = SetState State
+type Msg parentMsg
+    = SetState (State parentMsg)
     | NoOp
 
 
 {-| -}
-update : Msg -> State -> ( State, Cmd Msg )
+update : Msg msg -> State msg -> ( State msg, Cmd (Msg msg) )
 update msg state =
     case msg of
         SetState newState ->
@@ -67,33 +67,33 @@ update msg state =
 -- INTERNAL
 
 
-type alias Model =
+type alias Model msg =
     { label : String
     , icon : Maybe Svg
-    , width : ButtonOrLink () -> ButtonOrLink ()
     , buttonType : ButtonType
-    , state : ButtonOrLink () -> ButtonOrLink ()
+    , width : ButtonOrLink msg -> ButtonOrLink msg
+    , state : ButtonOrLink msg -> ButtonOrLink msg
     }
 
 
 {-| -}
-init : { r | performance : String, lock : String } -> State
+init : { r | performance : String, lock : String } -> State msg
 init assets =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
         |> Control.field "icon" (iconChoice assets)
+        |> Control.field "button type"
+            (Control.choice
+                ( "button", Control.value Button )
+                [ ( "link", Control.value Link )
+                ]
+            )
         |> Control.field "width"
             (Control.choice
                 ( "exactWidth 120", Control.value (Button.exactWidth 120) )
                 [ ( "exactWidth 70", Control.value (Button.exactWidth 70) )
                 , ( "unboundedWidth", Control.value Button.unboundedWidth )
                 , ( "fillContainerWidth", Control.value Button.fillContainerWidth )
-                ]
-            )
-        |> Control.field "button type"
-            (Control.choice
-                ( "button", Control.value Button )
-                [ ( "link", Control.value Link )
                 ]
             )
         |> Control.field "state (button only)"
@@ -131,8 +131,8 @@ iconChoice assets =
 
 
 viewButtonExamples :
-    ModuleMessages Msg parentMsg
-    -> State
+    ModuleMessages (Msg parentMsg) parentMsg
+    -> State parentMsg
     -> Html parentMsg
 viewButtonExamples messages (State control) =
     let
@@ -159,8 +159,8 @@ viewButtonExamples messages (State control) =
 
 
 buttons :
-    ModuleMessages Msg parentMsg
-    -> Model
+    ModuleMessages (Msg parentMsg) parentMsg
+    -> Model parentMsg
     -> Html parentMsg
 buttons messages model =
     let
@@ -232,7 +232,7 @@ buttons messages model =
         |> table []
 
 
-toggleButtons : ModuleMessages Msg parentMsg -> Html parentMsg
+toggleButtons : ModuleMessages (Msg parentMsg) parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
         [ Headings.h3 [ text "Button toggle" ]
