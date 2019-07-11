@@ -21,24 +21,6 @@ module Nri.Ui.Button.V9 exposing
   - Changes API to be attribute-based, rather than config-based
 
 
-# About:
-
-Common NoRedInk buttons. For accessibility purposes, buttons that perform an
-action on the current page should be HTML `<button>` elements and are created here
-with `*Button` functions. Buttons that take the user to a new page should be
-HTML `<a>` elements and are created here with `*Link` functions. Both versions
-should be able to use the same CSS class in all cases.
-
-There will generally be a `*Button` and `*Link` version of each button style.
-(These will be created as they are needed.)
-
-In general a button should never truncate or obscure its contents. This could
-make it difficult or impossible for a student or teacher to use the site, so in
-general choose buttons that grow to fit their contents. It is better to risk
-weird layout than to block users. Might this be a golden rule? Of course there
-may be exceptions, for example if button content is supplied by an end-user.
-
-
 # Create and render a button or link
 
 
