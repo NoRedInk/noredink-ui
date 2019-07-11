@@ -174,21 +174,6 @@ href url (ButtonOrLink config) =
         }
 
 
-{-| -}
-renderButton : List (Attribute msg) -> ButtonOrLink msg -> Html msg
-renderButton attributes (ButtonOrLink config) =
-    button
-        { onClick = config.onClick
-        , size = config.size
-        , style = config.style
-        , width = config.width
-        }
-        { label = config.label
-        , state = config.state
-        , icon = config.icon
-        }
-
-
 type Link
     = Default
     | WithTracking
@@ -245,8 +230,8 @@ linkExternalWithTracking (ButtonOrLink config) =
 
 
 {-| -}
-renderLink : List (Attribute msg) -> ButtonOrLink msg -> Html msg
-renderLink attributes (ButtonOrLink config) =
+renderLink : ButtonOrLink msg -> Html msg
+renderLink (ButtonOrLink config) =
     let
         linkBase linkFunctionName extraAttrs =
             Nri.Ui.styled Styled.a
@@ -258,18 +243,18 @@ renderLink attributes (ButtonOrLink config) =
     case config.linkType of
         Default ->
             linkBase "link"
-                (Attributes.target "_self" :: attributes)
+                (Attributes.target "_self" :: config.customAttributes)
 
         SinglePageApp ->
             linkBase "linkSpa"
                 (EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
-                    :: attributes
+                    :: config.customAttributes
                 )
 
         WithMethod method ->
             linkBase "linkWithMethod"
                 (Attributes.attribute "data-method" method
-                    :: attributes
+                    :: config.customAttributes
                 )
 
         WithTracking ->
@@ -277,12 +262,12 @@ renderLink attributes (ButtonOrLink config) =
                 "linkWithTracking"
                 (Events.preventDefaultOn "click"
                     (Json.Decode.succeed ( config.onClick, True ))
-                    :: attributes
+                    :: config.customAttributes
                 )
 
         External ->
             linkBase "linkExternal"
-                (Attributes.target "_blank" :: attributes)
+                (Attributes.target "_blank" :: config.customAttributes)
 
         ExternalWithTracking ->
             linkBase "linkExternalWithTracking"
@@ -290,7 +275,7 @@ renderLink attributes (ButtonOrLink config) =
                     [ Attributes.target "_blank"
                     , EventExtras.onClickForLinkWithHref config.onClick
                     ]
-                    attributes
+                    config.customAttributes
                 )
 
 
@@ -475,73 +460,29 @@ type ButtonState
 
 
 {-| A delightful button which can trigger an effect when clicked!
-
-This button will trigger the passed-in message if the button state is:
-
-  - Enabled
-  - Unfulfilled
-
-This button will be Disabled if the button state is:
-
-  - Disabled
-  - Error
-  - Loading
-  - Success
-
 -}
-button :
-    { onClick : msg
-    , size : ButtonSize
-    , style : ButtonStyle
-    , width : ButtonWidth
-    }
-    ->
-        { label : String
-        , state : ButtonState
-        , icon : Maybe Svg
-        }
-    -> Html msg
-button config content =
+renderButton : ButtonOrLink msg -> Html msg
+renderButton (ButtonOrLink config) =
     let
-        buttonStyle_ =
-            case content.state of
+        ( buttonStyle_, isDisabled ) =
+            case config.state of
                 Enabled ->
-                    styleToColorPalette config.style
+                    ( styleToColorPalette config.style, False )
 
                 Disabled ->
-                    InactiveColors
+                    ( InactiveColors, True )
 
                 Error ->
-                    ErrorColors
+                    ( ErrorColors, True )
 
                 Unfulfilled ->
-                    InactiveColors
+                    ( InactiveColors, False )
 
                 Loading ->
-                    LoadingColors
+                    ( LoadingColors, True )
 
                 Success ->
-                    SuccessColors
-
-        isDisabled =
-            case content.state of
-                Enabled ->
-                    False
-
-                Disabled ->
-                    True
-
-                Error ->
-                    True
-
-                Unfulfilled ->
-                    False
-
-                Loading ->
-                    True
-
-                Success ->
-                    True
+                    ( SuccessColors, True )
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
@@ -550,7 +491,7 @@ button config content =
         , Attributes.disabled isDisabled
         , Attributes.type_ "button"
         ]
-        [ viewLabel content.icon content.label ]
+        [ viewLabel config.icon config.label ]
 
 
 

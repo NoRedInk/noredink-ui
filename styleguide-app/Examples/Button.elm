@@ -153,7 +153,7 @@ viewButtonExamples messages (State control) =
         |> Button.secondary
         |> Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
         |> Button.linkExternalWithTracking
-        |> Button.renderLink []
+        |> Button.renderLink
     ]
         |> div []
 
@@ -208,10 +208,10 @@ buttons messages model =
                 |> Button.onClick (messages.showItWorked "Button clicked!")
                 |> (case model.buttonType of
                         Link ->
-                            Button.renderLink []
+                            Button.renderLink
 
                         Button ->
-                            Button.renderButton []
+                            Button.renderButton
                    )
             )
                 |> List.singleton
