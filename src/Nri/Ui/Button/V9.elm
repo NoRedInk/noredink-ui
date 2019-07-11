@@ -230,7 +230,18 @@ linkExternalWithTracking (ButtonOrLink config) =
     ButtonOrLink { config | linkType = ExternalWithTracking }
 
 
-{-| -}
+{-|
+
+    Button.build
+        |> Button.withLabel "My Link"
+        |> Button.unboundedWidth
+        |> Button.secondary
+        |> Button.onClick TrackThisEvent
+        |> Button.linkExternalWithTracking
+        |> Button.href "#"
+        |> Button.renderLink
+
+-}
 renderLink : ButtonOrLink msg -> Html msg
 renderLink (ButtonOrLink config) =
     let
@@ -476,6 +487,14 @@ type ButtonState
 
 
 {-| A delightful button which can trigger an effect when clicked!
+
+    Button.build
+        |> Button.withLabel model.label
+        |> Button.small
+        |> Button.withCustomAttributes [ Html.Styled.Attributes.class "my-best-button" ]
+        |> Button.onClick DoSomething
+        |> Button.renderButton
+
 -}
 renderButton : ButtonOrLink msg -> Html msg
 renderButton (ButtonOrLink config) =
