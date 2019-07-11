@@ -684,91 +684,74 @@ buttonStyle =
 colorStyle : ColorPalette -> Style
 colorStyle colorPalette =
     let
-        ( config, additionalStyles ) =
+        config =
             case colorPalette of
                 PrimaryColors ->
-                    ( { background = Colors.azure
-                      , hover = Colors.azureDark
-                      , text = Colors.white
-                      , border = Nothing
-                      , shadow = Colors.azureDark
-                      }
-                    , []
-                    )
+                    { background = Colors.azure
+                    , hover = Colors.azureDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.azureDark
+                    }
 
                 SecondaryColors ->
-                    ( { background = Colors.white
-                      , hover = Colors.glacier
-                      , text = Colors.azure
-                      , border = Just <| Colors.azure
-                      , shadow = Colors.azure
-                      }
-                    , []
-                    )
+                    { background = Colors.white
+                    , hover = Colors.glacier
+                    , text = Colors.azure
+                    , border = Just <| Colors.azure
+                    , shadow = Colors.azure
+                    }
 
                 DangerColors ->
-                    ( { background = Colors.red
-                      , hover = Colors.redDark
-                      , text = Colors.white
-                      , border = Nothing
-                      , shadow = Colors.redDark
-                      }
-                    , []
-                    )
+                    { background = Colors.red
+                    , hover = Colors.redDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.redDark
+                    }
 
                 PremiumColors ->
-                    ( { background = Colors.yellow
-                      , hover = Colors.ochre
-                      , text = Colors.navy
-                      , border = Nothing
-                      , shadow = Colors.ochre
-                      }
-                    , []
-                    )
+                    { background = Colors.yellow
+                    , hover = Colors.ochre
+                    , text = Colors.navy
+                    , border = Nothing
+                    , shadow = Colors.ochre
+                    }
 
                 InactiveColors ->
-                    ( { background = Colors.gray92
-                      , hover = Colors.gray92
-                      , text = Colors.gray45
-                      , border = Nothing
-                      , shadow = Colors.gray92
-                      }
-                    , []
-                    )
+                    { background = Colors.gray92
+                    , hover = Colors.gray92
+                    , text = Colors.gray45
+                    , border = Nothing
+                    , shadow = Colors.gray92
+                    }
 
                 LoadingColors ->
-                    ( { background = Colors.glacier
-                      , hover = Colors.glacier
-                      , text = Colors.navy
-                      , border = Nothing
-                      , shadow = Colors.glacier
-                      }
-                    , []
-                    )
+                    { background = Colors.glacier
+                    , hover = Colors.glacier
+                    , text = Colors.navy
+                    , border = Nothing
+                    , shadow = Colors.glacier
+                    }
 
                 SuccessColors ->
-                    ( { background = Colors.greenDark
-                      , hover = Colors.greenDark
-                      , text = Colors.white
-                      , border = Nothing
-                      , shadow = Colors.greenDark
-                      }
-                    , []
-                    )
+                    { background = Colors.greenDark
+                    , hover = Colors.greenDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.greenDark
+                    }
 
                 ErrorColors ->
-                    ( { background = Colors.purple
-                      , hover = Colors.purple
-                      , text = Colors.white
-                      , border = Nothing
-                      , shadow = Colors.purple
-                      }
-                    , []
-                    )
+                    { background = Colors.purple
+                    , hover = Colors.purple
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.purple
+                    }
     in
     Css.batch
-        [ Css.batch additionalStyles
-        , Css.color config.text
+        [ Css.color config.text
         , Css.backgroundColor config.background
         , Css.fontWeight (Css.int 700)
         , Css.textAlign Css.center
