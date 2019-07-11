@@ -1,7 +1,7 @@
 module Nri.Ui.Heading.V1 exposing
     ( Heading, heading
-    , VisualLevel(..), withVisualLevel
-    , DocumentLevel(..), withDocumentLevel
+    , withVisualLevel, VisualLevel(..)
+    , withDocumentLevel, DocumentLevel(..)
     , view
     )
 
@@ -10,9 +10,9 @@ accessibility.
 
 @docs Heading, heading
 
-@docs VisualLevel, withVisualLevel
+@docs withVisualLevel, VisualLevel
 
-@docs DocumentLevel, withDocumentLevel
+@docs withDocumentLevel, DocumentLevel
 
 @docs view
 
@@ -25,7 +25,7 @@ import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 
 
-{-| a custom heading
+{-| start a heading. Render it with `view`.
 -}
 type Heading msg
     = Heading (List (Html msg)) VisualLevel DocumentLevel
@@ -40,8 +40,7 @@ heading content =
 -- VISUAL LEVEL
 
 
-{-| Customize the heading level for visual reasons.
--}
+{-| -}
 type VisualLevel
     = Top
     | Tagline
@@ -49,6 +48,14 @@ type VisualLevel
     | Small
 
 
+{-| Customize how the heading looks. The visual hierarchy should go Top ->
+Tagline -> Subhead -> Small.
+
+    heading [ text "Hello, World!" ]
+        |> withVisualLevel Top
+        |> view
+
+-}
 withVisualLevel : VisualLevel -> Heading msg -> Heading msg
 withVisualLevel visualLevel (Heading content _ documentLevel) =
     Heading content visualLevel documentLevel
@@ -122,7 +129,14 @@ headingStyles config =
 -- DOCUMENT LEVEL
 
 
-{-| Customize the heading level for accessibility reasons.
+{-| Customize the document level of the heading. For accessibility reasons, you
+should have exactly one H1, and only increase the level by one. You can use a
+tool like [axe](https://www.deque.com/axe/) to check this.
+
+    heading [ text "Hello, World!" ]
+        |> withDocumentLevel H1
+        |> view
+
 -}
 type DocumentLevel
     = H1
@@ -164,6 +178,9 @@ getTag documentLevel =
 -- VIEW
 
 
+{-| render a Heading to Html. See the other docs in this module for
+customizations.
+-}
 view : Heading msg -> Html msg
 view (Heading content visualLevel documentLevel) =
     getTag documentLevel

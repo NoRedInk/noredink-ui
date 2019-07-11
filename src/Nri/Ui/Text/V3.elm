@@ -24,6 +24,9 @@ module Nri.Ui.Text.V3 exposing
 
 ## Heading styles
 
+Please use `Nri.Ui.Heading.V1` instead of these in new code. If you're here to
+make a new Text version, please remove them.
+
 @docs heading, subHeading, smallHeading, tagline
 
 
