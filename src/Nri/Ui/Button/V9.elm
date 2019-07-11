@@ -236,7 +236,7 @@ renderLink (ButtonOrLink config) =
         linkBase linkFunctionName extraAttrs =
             Nri.Ui.styled Styled.a
                 (styledName linkFunctionName)
-                [ buttonStyles config.size config.width (styleToColorPalette config.style) ]
+                [ buttonStyles config.size config.width config.style ]
                 (Attributes.href config.url :: extraAttrs)
                 [ viewLabel config.icon config.label ]
     in
@@ -399,6 +399,12 @@ type ButtonStyle
     | Secondary
     | Danger
     | Premium
+      -- The following styles cannot be set directly.
+      -- Use a helper like `unfulfilled` to change the state instead.
+    | InactiveColors
+    | LoadingColors
+    | SuccessColors
+    | ErrorColors
 
 
 {-| An enabled button. Takes the appearance of ButtonStyle.
@@ -467,7 +473,7 @@ renderButton (ButtonOrLink config) =
         ( buttonStyle_, isDisabled ) =
             case config.state of
                 Enabled ->
-                    ( styleToColorPalette config.style, False )
+                    ( config.style, False )
 
                 Disabled ->
                     ( InactiveColors, True )
@@ -566,7 +572,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium WidthUnbounded SecondaryColors
+        [ buttonStyles Medium WidthUnbounded Secondary
         , toggledStyles
         ]
         [ Events.onClick
@@ -589,39 +595,77 @@ toggleButton config =
         [ viewLabel Nothing config.label ]
 
 
-type ColorPalette
-    = PrimaryColors
-    | SecondaryColors
-    | DangerColors
-    | PremiumColors
-    | InactiveColors
-    | LoadingColors
-    | SuccessColors
-    | ErrorColors
-
-
-styleToColorPalette : ButtonStyle -> ColorPalette
-styleToColorPalette style =
-    case style of
-        Primary ->
-            PrimaryColors
-
-        Secondary ->
-            SecondaryColors
-
-        Danger ->
-            DangerColors
-
-        Premium ->
-            PremiumColors
-
-
-buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> Style
-buttonStyles size width colorPalette =
+buttonStyles : ButtonSize -> ButtonWidth -> ButtonStyle -> Style
+buttonStyles size width colors =
     Css.batch
         [ buttonStyle
-        , colorStyle colorPalette
         , sizeStyle size width
+        , colorStyle
+            (case colors of
+                Primary ->
+                    { background = Colors.azure
+                    , hover = Colors.azureDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.azureDark
+                    }
+
+                Secondary ->
+                    { background = Colors.white
+                    , hover = Colors.glacier
+                    , text = Colors.azure
+                    , border = Just <| Colors.azure
+                    , shadow = Colors.azure
+                    }
+
+                Danger ->
+                    { background = Colors.red
+                    , hover = Colors.redDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.redDark
+                    }
+
+                Premium ->
+                    { background = Colors.yellow
+                    , hover = Colors.ochre
+                    , text = Colors.navy
+                    , border = Nothing
+                    , shadow = Colors.ochre
+                    }
+
+                InactiveColors ->
+                    { background = Colors.gray92
+                    , hover = Colors.gray92
+                    , text = Colors.gray45
+                    , border = Nothing
+                    , shadow = Colors.gray92
+                    }
+
+                LoadingColors ->
+                    { background = Colors.glacier
+                    , hover = Colors.glacier
+                    , text = Colors.navy
+                    , border = Nothing
+                    , shadow = Colors.glacier
+                    }
+
+                SuccessColors ->
+                    { background = Colors.greenDark
+                    , hover = Colors.greenDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.greenDark
+                    }
+
+                ErrorColors ->
+                    { background = Colors.purple
+                    , hover = Colors.purple
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.purple
+                    }
+            )
         ]
 
 
@@ -681,81 +725,23 @@ buttonStyle =
         ]
 
 
+type alias ColorPalette =
+    { background : Css.Color
+    , hover : Css.Color
+    , text : Css.Color
+    , border : Maybe Css.Color
+    , shadow : Css.Color
+    }
+
+
 colorStyle : ColorPalette -> Style
 colorStyle colorPalette =
-    let
-        config =
-            case colorPalette of
-                PrimaryColors ->
-                    { background = Colors.azure
-                    , hover = Colors.azureDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.azureDark
-                    }
-
-                SecondaryColors ->
-                    { background = Colors.white
-                    , hover = Colors.glacier
-                    , text = Colors.azure
-                    , border = Just <| Colors.azure
-                    , shadow = Colors.azure
-                    }
-
-                DangerColors ->
-                    { background = Colors.red
-                    , hover = Colors.redDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.redDark
-                    }
-
-                PremiumColors ->
-                    { background = Colors.yellow
-                    , hover = Colors.ochre
-                    , text = Colors.navy
-                    , border = Nothing
-                    , shadow = Colors.ochre
-                    }
-
-                InactiveColors ->
-                    { background = Colors.gray92
-                    , hover = Colors.gray92
-                    , text = Colors.gray45
-                    , border = Nothing
-                    , shadow = Colors.gray92
-                    }
-
-                LoadingColors ->
-                    { background = Colors.glacier
-                    , hover = Colors.glacier
-                    , text = Colors.navy
-                    , border = Nothing
-                    , shadow = Colors.glacier
-                    }
-
-                SuccessColors ->
-                    { background = Colors.greenDark
-                    , hover = Colors.greenDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.greenDark
-                    }
-
-                ErrorColors ->
-                    { background = Colors.purple
-                    , hover = Colors.purple
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.purple
-                    }
-    in
     Css.batch
-        [ Css.color config.text
-        , Css.backgroundColor config.background
+        [ Css.color colorPalette.text
+        , Css.backgroundColor colorPalette.background
         , Css.fontWeight (Css.int 700)
         , Css.textAlign Css.center
-        , case config.border of
+        , case colorPalette.border of
             Nothing ->
                 Css.borderStyle Css.none
 
@@ -765,14 +751,14 @@ colorStyle colorPalette =
                     , Css.borderStyle Css.solid
                     ]
         , Css.borderBottomStyle Css.solid
-        , Css.borderBottomColor config.shadow
+        , Css.borderBottomColor colorPalette.shadow
         , Css.fontStyle Css.normal
         , Css.hover
-            [ Css.color config.text
-            , Css.backgroundColor config.hover
-            , Css.disabled [ Css.backgroundColor config.background ]
+            [ Css.color colorPalette.text
+            , Css.backgroundColor colorPalette.hover
+            , Css.disabled [ Css.backgroundColor colorPalette.background ]
             ]
-        , Css.visited [ Css.color config.text ]
+        , Css.visited [ Css.color colorPalette.text ]
         ]
 
 
