@@ -14,6 +14,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Text.V2 as Text
 
 
 {-| -}
@@ -29,7 +30,8 @@ example parentMessage state =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , category = Widgets
     , content =
-        [ viewExample ToggleLarge
+        [ Text.smallBodyGray [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
+        , viewExample ToggleLarge
             state.largeState
             (Css.px 17)
             (DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState)
