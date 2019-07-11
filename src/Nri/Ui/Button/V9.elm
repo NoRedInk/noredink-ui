@@ -83,6 +83,11 @@ import Svg
 import Svg.Attributes
 
 
+styledName : String -> String
+styledName suffix =
+    "Nri-Ui-Button-V9-" ++ suffix
+
+
 {-| -}
 type ButtonOrLink msg
     = ButtonOrLink
@@ -930,8 +935,3 @@ sizeStyle size width =
                 ]
             ]
         ]
-
-
-styledName : String -> String
-styledName suffix =
-    "Nri-Ui-Button-V7-" ++ suffix
