@@ -25,12 +25,13 @@ import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 
 
-{-| start a heading. Render it with `view`.
--}
+{-| -}
 type Heading msg
     = Heading (List (Html msg)) VisualLevel DocumentLevel
 
 
+{-| start a heading. Render it with `view`.
+-}
 heading : List (Html msg) -> Heading msg
 heading content =
     Heading content Top H1
