@@ -130,15 +130,7 @@ headingStyles config =
 -- DOCUMENT LEVEL
 
 
-{-| Customize the document level of the heading. For accessibility reasons, you
-should have exactly one H1, and only increase the level by one. You can use a
-tool like [axe](https://www.deque.com/axe/) to check this.
-
-    heading [ text "Hello, World!" ]
-        |> withDocumentLevel H1
-        |> view
-
--}
+{-| -}
 type DocumentLevel
     = H1
     | H2
@@ -148,6 +140,15 @@ type DocumentLevel
     | H6
 
 
+{-| Customize the document level of the heading. For accessibility reasons, you
+should have exactly one H1, and only increase the level by one. You can use a
+tool like [axe](https://www.deque.com/axe/) to check this.
+
+    heading [ text "Hello, World!" ]
+        |> withDocumentLevel H1
+        |> view
+
+-}
 withDocumentLevel : DocumentLevel -> Heading msg -> Heading msg
 withDocumentLevel documentLevel (Heading content visualLevel _) =
     Heading content visualLevel documentLevel
