@@ -229,7 +229,7 @@ type alias LinkConfig msg =
 links : LinkConfig msg -> Html msg
 links config =
     Nri.Ui.styled Html.div
-        (styledName "links-container")
+        (styledName "container")
         []
         []
         [ Html.styled Html.nav
