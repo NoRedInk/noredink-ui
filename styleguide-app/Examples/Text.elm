@@ -15,7 +15,7 @@ import Nri.Ui.Text.V3 as Text
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Text.V3"
+    { name = "Nri.Ui.Text.V3 (with headers from Nri.Ui.Heading.V1)"
     , category = Text
     , content =
         let
