@@ -39,6 +39,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
 import List.Zipper exposing (Zipper(..))
+import Nri.Ui
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
@@ -92,7 +93,9 @@ viewCustom config viewInnerTab =
             List.Zipper.toList config.tabs
                 |> List.map (viewTab config viewInnerTab selected)
     in
-    Html.div
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Tabs-V4-container"
+        []
         []
         [ Html.styled Html.div
             [ Css.displayFlex
@@ -225,7 +228,10 @@ type alias LinkConfig msg =
 -}
 links : LinkConfig msg -> Html msg
 links config =
-    Html.div []
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Tabs-V4-links-container"
+        []
+        []
         [ Html.styled Html.nav
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd
