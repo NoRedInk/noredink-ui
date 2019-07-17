@@ -94,7 +94,7 @@ viewCustom config viewInnerTab =
                 |> List.map (viewTab config viewInnerTab selected)
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Tabs-V4-container"
+        (styledName "container")
         []
         []
         [ Html.styled Html.div
@@ -229,7 +229,7 @@ type alias LinkConfig msg =
 links : LinkConfig msg -> Html msg
 links config =
     Nri.Ui.styled Html.div
-        "Nri-Ui-Tabs-V4-links-container"
+        (styledName "links-container")
         []
         []
         [ Html.styled Html.nav
@@ -336,6 +336,11 @@ mapWithCurrent fn (Zipper before current after) =
         (List.map (fn False) before)
         (fn True current)
         (List.map (fn False) after)
+
+
+styledName : String -> String
+styledName suffix =
+    "Nri-Ui-Tabs-V4-" ++ suffix
 
 
 
