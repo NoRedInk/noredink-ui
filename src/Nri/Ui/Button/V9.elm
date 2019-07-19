@@ -140,35 +140,13 @@ custom attribute (ButtonOrLink config) =
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg (ButtonOrLink config) =
-    ButtonOrLink
-        { onClick = Just msg
-        , url = config.url
-        , linkType = config.linkType
-        , size = config.size
-        , style = config.style
-        , width = config.width
-        , label = config.label
-        , state = config.state
-        , icon = config.icon
-        , customAttributes = config.customAttributes
-        }
+    ButtonOrLink { config | onClick = Just msg }
 
 
 {-| -}
 href : String -> Attribute msg
 href url (ButtonOrLink config) =
-    ButtonOrLink
-        { onClick = config.onClick
-        , url = url
-        , linkType = config.linkType
-        , size = config.size
-        , style = config.style
-        , width = config.width
-        , label = config.label
-        , state = config.state
-        , icon = config.icon
-        , customAttributes = config.customAttributes
-        }
+    ButtonOrLink { config | url = url }
 
 
 type Link
