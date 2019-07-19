@@ -17,6 +17,7 @@ import Examples.SegmentedControl
 import Examples.Select
 import Examples.Slide
 import Examples.SlideModal
+import Examples.SortableTable
 import Examples.Table
 import Examples.Tabs
 import Examples.Text
@@ -44,6 +45,7 @@ type alias ModuleStates =
     , modalExampleState : Examples.Modal.State
     , slideModalExampleState : Examples.SlideModal.State
     , slideExampleState : Examples.Slide.State
+    , sortableTableState : Examples.SortableTable.State
     , tabsExampleState : Examples.Tabs.Tab
     }
 
@@ -64,6 +66,7 @@ init =
     , modalExampleState = Examples.Modal.init
     , slideModalExampleState = Examples.SlideModal.init
     , slideExampleState = Examples.Slide.init
+    , sortableTableState = Examples.SortableTable.init
     , tabsExampleState = Examples.Tabs.First
     }
 
@@ -84,6 +87,7 @@ type Msg
     | ModalExampleMsg Examples.Modal.Msg
     | SlideModalExampleMsg Examples.SlideModal.Msg
     | SlideExampleMsg Examples.Slide.Msg
+    | SortableTableMsg Examples.SortableTable.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | NoOp
 
@@ -221,6 +225,15 @@ update outsideMsg moduleStates =
             , Cmd.map SlideExampleMsg cmd
             )
 
+        SortableTableMsg msg ->
+            let
+                ( sortableTableState, cmd ) =
+                    Examples.SortableTable.update msg moduleStates.sortableTableState
+            in
+            ( { moduleStates | sortableTableState = sortableTableState }
+            , Cmd.map SortableTableMsg cmd
+            )
+
         TabsExampleMsg tab ->
             ( { moduleStates | tabsExampleState = tab }
             , Cmd.none
@@ -272,6 +285,7 @@ nriThemedModules model =
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
+    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     ]
 
