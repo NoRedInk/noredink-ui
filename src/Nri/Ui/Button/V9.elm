@@ -268,41 +268,46 @@ fillContainerWidth (ButtonOrLink config) =
 -- COLOR SCHEMES
 
 
-type ButtonStyle
-    = Primary
-    | Secondary
-    | Danger
-    | Premium
-      -- The following styles cannot be set directly.
-      -- Use a helper like `unfulfilled` to change the state instead.
-    | InactiveColors
-    | LoadingColors
-    | SuccessColors
-    | ErrorColors
-
-
 {-| -}
 primary : Attribute msg
 primary (ButtonOrLink config) =
-    ButtonOrLink { config | style = Primary }
+    ButtonOrLink { config | style = primaryColors }
 
 
 {-| -}
 secondary : Attribute msg
 secondary (ButtonOrLink config) =
-    ButtonOrLink { config | style = Secondary }
+    ButtonOrLink { config | style = secondaryColors }
 
 
 {-| -}
 danger : Attribute msg
 danger (ButtonOrLink config) =
-    ButtonOrLink { config | style = Danger }
+    ButtonOrLink
+        { config
+            | style =
+                { background = Colors.red
+                , hover = Colors.redDark
+                , text = Colors.white
+                , border = Nothing
+                , shadow = Colors.redDark
+                }
+        }
 
 
 {-| -}
 premium : Attribute msg
 premium (ButtonOrLink config) =
-    ButtonOrLink { config | style = Premium }
+    ButtonOrLink
+        { config
+            | style =
+                { background = Colors.yellow
+                , hover = Colors.ochre
+                , text = Colors.navy
+                , border = Nothing
+                , shadow = Colors.ochre
+                }
+        }
 
 
 
@@ -376,7 +381,7 @@ build =
         , url = "#"
         , linkType = Default
         , size = Medium
-        , style = Primary
+        , style = primaryColors
         , width = WidthUnbounded
         , label = ""
         , state = Enabled
@@ -391,7 +396,7 @@ type ButtonOrLink msg
         , url : String
         , linkType : Link
         , size : ButtonSize
-        , style : ButtonStyle
+        , style : ColorPalette
         , width : ButtonWidth
         , label : String
         , state : ButtonState
@@ -401,27 +406,30 @@ type ButtonOrLink msg
 
 
 renderButton : ButtonOrLink msg -> Html msg
-renderButton (ButtonOrLink config) =
+renderButton ((ButtonOrLink config) as button_) =
     let
-        ( buttonStyle_, isDisabled ) =
+        buttonStyle_ =
+            getColorPalette button_
+
+        isDisabled =
             case config.state of
                 Enabled ->
-                    ( config.style, False )
+                    False
 
                 Disabled ->
-                    ( InactiveColors, True )
+                    True
 
                 Error ->
-                    ( ErrorColors, True )
+                    True
 
                 Unfulfilled ->
-                    ( InactiveColors, False )
+                    False
 
                 Loading ->
-                    ( LoadingColors, True )
+                    True
 
                 Success ->
-                    ( SuccessColors, True )
+                    True
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
@@ -565,7 +573,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium WidthUnbounded Secondary
+        [ buttonStyles Medium WidthUnbounded secondaryColors
         , toggledStyles
         ]
         [ Events.onClick
@@ -588,77 +596,12 @@ toggleButton config =
         [ viewLabel Nothing config.label ]
 
 
-buttonStyles : ButtonSize -> ButtonWidth -> ButtonStyle -> Style
+buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> Style
 buttonStyles size width colors =
     Css.batch
         [ buttonStyle
         , sizeStyle size width
-        , colorStyle
-            (case colors of
-                Primary ->
-                    { background = Colors.azure
-                    , hover = Colors.azureDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.azureDark
-                    }
-
-                Secondary ->
-                    { background = Colors.white
-                    , hover = Colors.glacier
-                    , text = Colors.azure
-                    , border = Just <| Colors.azure
-                    , shadow = Colors.azure
-                    }
-
-                Danger ->
-                    { background = Colors.red
-                    , hover = Colors.redDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.redDark
-                    }
-
-                Premium ->
-                    { background = Colors.yellow
-                    , hover = Colors.ochre
-                    , text = Colors.navy
-                    , border = Nothing
-                    , shadow = Colors.ochre
-                    }
-
-                InactiveColors ->
-                    { background = Colors.gray92
-                    , hover = Colors.gray92
-                    , text = Colors.gray45
-                    , border = Nothing
-                    , shadow = Colors.gray92
-                    }
-
-                LoadingColors ->
-                    { background = Colors.glacier
-                    , hover = Colors.glacier
-                    , text = Colors.navy
-                    , border = Nothing
-                    , shadow = Colors.glacier
-                    }
-
-                SuccessColors ->
-                    { background = Colors.greenDark
-                    , hover = Colors.greenDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.greenDark
-                    }
-
-                ErrorColors ->
-                    { background = Colors.purple
-                    , hover = Colors.purple
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.purple
-                    }
-            )
+        , colorStyle colors
         ]
 
 
@@ -718,6 +661,10 @@ buttonStyle =
         ]
 
 
+
+-- COLORS
+
+
 type alias ColorPalette =
     { background : Css.Color
     , hover : Css.Color
@@ -725,6 +672,73 @@ type alias ColorPalette =
     , border : Maybe Css.Color
     , shadow : Css.Color
     }
+
+
+primaryColors : ColorPalette
+primaryColors =
+    { background = Colors.azure
+    , hover = Colors.azureDark
+    , text = Colors.white
+    , border = Nothing
+    , shadow = Colors.azureDark
+    }
+
+
+secondaryColors : ColorPalette
+secondaryColors =
+    { background = Colors.white
+    , hover = Colors.glacier
+    , text = Colors.azure
+    , border = Just <| Colors.azure
+    , shadow = Colors.azure
+    }
+
+
+getColorPalette : ButtonOrLink msg -> ColorPalette
+getColorPalette (ButtonOrLink config) =
+    case config.state of
+        Enabled ->
+            config.style
+
+        Disabled ->
+            { background = Colors.gray92
+            , hover = Colors.gray92
+            , text = Colors.gray45
+            , border = Nothing
+            , shadow = Colors.gray92
+            }
+
+        Error ->
+            { background = Colors.purple
+            , hover = Colors.purple
+            , text = Colors.white
+            , border = Nothing
+            , shadow = Colors.purple
+            }
+
+        Unfulfilled ->
+            { background = Colors.gray92
+            , hover = Colors.gray92
+            , text = Colors.gray45
+            , border = Nothing
+            , shadow = Colors.gray92
+            }
+
+        Loading ->
+            { background = Colors.glacier
+            , hover = Colors.glacier
+            , text = Colors.navy
+            , border = Nothing
+            , shadow = Colors.glacier
+            }
+
+        Success ->
+            { background = Colors.greenDark
+            , hover = Colors.greenDark
+            , text = Colors.white
+            , border = Nothing
+            , shadow = Colors.greenDark
+            }
 
 
 colorStyle : ColorPalette -> Style
