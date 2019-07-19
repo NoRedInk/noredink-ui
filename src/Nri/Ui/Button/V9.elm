@@ -1,6 +1,5 @@
 module Nri.Ui.Button.V9 exposing
-    ( ButtonOrLink, build
-    , renderButton, renderLink
+    ( button, link, Attribute
     , withLabel
     , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -24,15 +23,7 @@ module Nri.Ui.Button.V9 exposing
 
 # Create and render a button or link
 
-
-## Begin building a button or link
-
-@docs ButtonOrLink, build
-
-
-## Render a button or link
-
-@docs renderButton, renderLink
+@docs button, link, Attribute
 
 
 ## Label the button
@@ -125,6 +116,25 @@ type ButtonOrLink msg
 
 
 {-| -}
+button : List (Attribute msg) -> Html msg
+button attributes =
+    List.foldl (\attribute b -> attribute b) build attributes
+        |> renderButton
+
+
+{-| -}
+link : List (Attribute msg) -> Html msg
+link attributes =
+    List.foldl (\attribute l -> attribute l) build attributes
+        |> renderLink
+
+
+{-| -}
+type alias Attribute msg =
+    ButtonOrLink msg -> ButtonOrLink msg
+
+
+{-| -}
 build : ButtonOrLink msg
 build =
     ButtonOrLink
@@ -142,7 +152,7 @@ build =
 
 
 {-| -}
-onClick : msg -> ButtonOrLink msg -> ButtonOrLink msg
+onClick : msg -> Attribute msg
 onClick msg (ButtonOrLink config) =
     ButtonOrLink
         { onClick = Just msg
@@ -159,7 +169,7 @@ onClick msg (ButtonOrLink config) =
 
 
 {-| -}
-href : String -> ButtonOrLink msg -> ButtonOrLink msg
+href : String -> Attribute msg
 href url (ButtonOrLink config) =
     ButtonOrLink
         { onClick = config.onClick
@@ -191,7 +201,7 @@ This will make a normal <a> tag, but change the Events.onClick behavior to avoid
 See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
 
 -}
-linkSpa : ButtonOrLink msg -> ButtonOrLink msg
+linkSpa : Attribute msg
 linkSpa buttonOrLink =
     buttonOrLink
 
@@ -199,7 +209,7 @@ linkSpa buttonOrLink =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
 -}
-linkWithMethod : String -> ButtonOrLink msg -> ButtonOrLink msg
+linkWithMethod : String -> Attribute msg
 linkWithMethod method (ButtonOrLink config) =
     ButtonOrLink { config | linkType = WithMethod method }
 
@@ -207,7 +217,7 @@ linkWithMethod method (ButtonOrLink config) =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
 This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
 -}
-linkWithTracking : ButtonOrLink msg -> ButtonOrLink msg
+linkWithTracking : Attribute msg
 linkWithTracking (ButtonOrLink config) =
     ButtonOrLink { config | linkType = WithTracking }
 
@@ -215,7 +225,7 @@ linkWithTracking (ButtonOrLink config) =
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url and have it open to an external site
 -}
-linkExternal : ButtonOrLink msg -> ButtonOrLink msg
+linkExternal : Attribute msg
 linkExternal (ButtonOrLink config) =
     ButtonOrLink { config | linkType = External }
 
@@ -225,7 +235,7 @@ linkExternal (ButtonOrLink config) =
 This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
 
 -}
-linkExternalWithTracking : ButtonOrLink msg -> ButtonOrLink msg
+linkExternalWithTracking : Attribute msg
 linkExternalWithTracking (ButtonOrLink config) =
     ButtonOrLink { config | linkType = ExternalWithTracking }
 
@@ -301,44 +311,44 @@ renderLink (ButtonOrLink config) =
 
 
 {-| -}
-withCustomAttributes : List (Html.Attribute msg) -> ButtonOrLink msg -> ButtonOrLink msg
+withCustomAttributes : List (Html.Attribute msg) -> Attribute msg
 withCustomAttributes customAttributes (ButtonOrLink config) =
     ButtonOrLink { config | customAttributes = customAttributes }
 
 
 {-| -}
-withLabel : String -> ButtonOrLink msg -> ButtonOrLink msg
+withLabel : String -> Attribute msg
 withLabel label (ButtonOrLink config) =
     ButtonOrLink { config | label = label }
 
 
 {-| -}
-small : ButtonOrLink msg -> ButtonOrLink msg
+small : Attribute msg
 small =
     setSize Small
 
 
 {-| -}
-medium : ButtonOrLink msg -> ButtonOrLink msg
+medium : Attribute msg
 medium =
     setSize Medium
 
 
 {-| -}
-large : ButtonOrLink msg -> ButtonOrLink msg
+large : Attribute msg
 large =
     setSize Large
 
 
-setSize : ButtonSize -> ButtonOrLink msg -> ButtonOrLink msg
+setSize : ButtonSize -> Attribute msg
 setSize size (ButtonOrLink config) =
     ButtonOrLink { config | size = size }
 
 
 {-| -}
-withIcon : Svg -> ButtonOrLink msg -> ButtonOrLink msg
+withIcon : Maybe Svg -> Attribute msg
 withIcon icon (ButtonOrLink config) =
-    ButtonOrLink { config | icon = Just icon }
+    ButtonOrLink { config | icon = icon }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -350,24 +360,24 @@ type ButtonSize
 
 
 {-| -}
-exactWidth : Int -> ButtonOrLink msg -> ButtonOrLink msg
+exactWidth : Int -> Attribute msg
 exactWidth inPx =
     setWidth (WidthExact inPx)
 
 
 {-| -}
-unboundedWidth : ButtonOrLink msg -> ButtonOrLink msg
+unboundedWidth : Attribute msg
 unboundedWidth =
     setWidth WidthUnbounded
 
 
 {-| -}
-fillContainerWidth : ButtonOrLink msg -> ButtonOrLink msg
+fillContainerWidth : Attribute msg
 fillContainerWidth =
     setWidth WidthFillContainer
 
 
-setWidth : ButtonWidth -> ButtonOrLink msg -> ButtonOrLink msg
+setWidth : ButtonWidth -> Attribute msg
 setWidth width (ButtonOrLink config) =
     ButtonOrLink { config | width = width }
 
@@ -385,30 +395,30 @@ type ButtonWidth
 
 
 {-| -}
-primary : ButtonOrLink msg -> ButtonOrLink msg
+primary : Attribute msg
 primary =
     setStyle Primary
 
 
 {-| -}
-secondary : ButtonOrLink msg -> ButtonOrLink msg
+secondary : Attribute msg
 secondary =
     setStyle Secondary
 
 
 {-| -}
-danger : ButtonOrLink msg -> ButtonOrLink msg
+danger : Attribute msg
 danger =
     setStyle Danger
 
 
 {-| -}
-premium : ButtonOrLink msg -> ButtonOrLink msg
+premium : Attribute msg
 premium =
     setStyle Premium
 
 
-setStyle : ButtonStyle -> ButtonOrLink msg -> ButtonOrLink msg
+setStyle : ButtonStyle -> Attribute msg
 setStyle style (ButtonOrLink config) =
     ButtonOrLink { config | style = style }
 
@@ -430,47 +440,47 @@ type ButtonStyle
 
 {-| An enabled button. Takes the appearance of ButtonStyle.
 -}
-enabled : ButtonOrLink msg -> ButtonOrLink msg
+enabled : Attribute msg
 enabled =
     setButtonState Enabled
 
 
 {-| A button which appears with the InactiveColors palette but is not disabled.
 -}
-unfulfilled : ButtonOrLink msg -> ButtonOrLink msg
+unfulfilled : Attribute msg
 unfulfilled =
     setButtonState Unfulfilled
 
 
 {-| A button which appears with the InactiveColors palette and is disabled.
 -}
-disabled : ButtonOrLink msg -> ButtonOrLink msg
+disabled : Attribute msg
 disabled =
     setButtonState Disabled
 
 
 {-| A button which appears with the ErrorColors palette and is disabled.
 -}
-error : ButtonOrLink msg -> ButtonOrLink msg
+error : Attribute msg
 error =
     setButtonState Error
 
 
 {-| A button which appears with the LoadingColors palette and is disabled.
 -}
-loading : ButtonOrLink msg -> ButtonOrLink msg
+loading : Attribute msg
 loading =
     setButtonState Loading
 
 
 {-| A button which appears with the SuccessColors palette and is disabled .
 -}
-success : ButtonOrLink msg -> ButtonOrLink msg
+success : Attribute msg
 success =
     setButtonState Success
 
 
-setButtonState : ButtonState -> ButtonOrLink msg -> ButtonOrLink msg
+setButtonState : ButtonState -> Attribute msg
 setButtonState buttonState (ButtonOrLink config) =
     ButtonOrLink { config | state = buttonState }
 

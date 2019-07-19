@@ -13,7 +13,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
-import Nri.Ui.Button.V9 as Button exposing (ButtonOrLink)
+import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V3 as Text
@@ -71,8 +71,8 @@ type alias Model msg =
     { label : String
     , icon : Maybe Svg
     , buttonType : ButtonType
-    , width : ButtonOrLink msg -> ButtonOrLink msg
-    , state : ButtonOrLink msg -> ButtonOrLink msg
+    , width : Button.Attribute msg
+    , state : Button.Attribute msg
     }
 
 
@@ -147,13 +147,13 @@ viewButtonExamples messages (State control) =
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
-    , Button.build
-        |> Button.withLabel "linkExternalWithTracking"
-        |> Button.unboundedWidth
-        |> Button.secondary
-        |> Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
-        |> Button.linkExternalWithTracking
-        |> Button.renderLink
+    , Button.link
+        [ Button.withLabel "linkExternalWithTracking"
+        , Button.unboundedWidth
+        , Button.secondary
+        , Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
+        , Button.linkExternalWithTracking
+        ]
     ]
         |> div []
 
@@ -190,31 +190,26 @@ buttons messages model =
                 ]
                 |> tr []
 
-        addAttributes button =
-            [ Maybe.map Button.withIcon model.icon
-            ]
-                |> List.filterMap identity
-                |> List.foldl (\addAttr b -> addAttr b) button
+        buttonOrLink =
+            case model.buttonType of
+                Link ->
+                    Button.link
+
+                Button ->
+                    Button.button
 
         exampleCell setStyle setSize =
-            (Button.build
-                |> addAttributes
-                |> setSize
-                |> setStyle
-                |> Button.withLabel model.label
-                |> model.width
-                |> model.state
-                |> Button.withCustomAttributes [ Html.Styled.Attributes.class "styleguide-button" ]
-                |> Button.href ""
-                |> Button.onClick (messages.showItWorked "Button clicked!")
-                |> (case model.buttonType of
-                        Link ->
-                            Button.renderLink
-
-                        Button ->
-                            Button.renderButton
-                   )
-            )
+            buttonOrLink
+                [ setSize
+                , setStyle
+                , Button.withLabel model.label
+                , model.width
+                , model.state
+                , Button.withCustomAttributes [ Html.Styled.Attributes.class "styleguide-button" ]
+                , Button.href ""
+                , Button.onClick (messages.showItWorked "Button clicked!")
+                , Button.withIcon model.icon
+                ]
                 |> List.singleton
                 |> td
                     [ css
