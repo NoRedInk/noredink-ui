@@ -1,13 +1,13 @@
 module Nri.Ui.Button.V9 exposing
-    ( button, link, Attribute
-    , label
+    ( button, link
+    , Attribute
+    , label, icon, custom
     , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
-    , icon, custom
     , delete
     , toggleButton
     )
@@ -20,20 +20,20 @@ module Nri.Ui.Button.V9 exposing
   - Changes API to be attribute-based, rather than config-based
 
 
-# Create and render a button or link
+# Create a button or link
 
-@docs button, link, Attribute
+@docs button, link
+@docs Attribute
+@docs label, icon, custom
 
-@docs label
 
-
-## Add event listeners and links
+## Add event listeners and hrefs
 
 @docs onClick, href
 @docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
-## Size the button
+## Sizing
 
 @docs small, medium, large
 @docs exactWidth, unboundedWidth, fillContainerWidth
@@ -47,11 +47,6 @@ module Nri.Ui.Button.V9 exposing
 ## Change the state (buttons only)
 
 @docs enabled, unfulfilled, disabled, error, loading, success
-
-
-## Or even more!
-
-@docs icon, custom
 
 
 # Commonly-used buttons
@@ -90,30 +85,30 @@ styledName suffix =
     "Nri-Ui-Button-V9-" ++ suffix
 
 
-{-| -}
-type ButtonOrLink msg
-    = ButtonOrLink
-        { onClick : Maybe msg
-        , url : String
-        , linkType : Link
-        , size : ButtonSize
-        , style : ButtonStyle
-        , width : ButtonWidth
-        , label : String
-        , state : ButtonState
-        , icon : Maybe Svg
-        , customAttributes : List (Html.Attribute msg)
-        }
+{-|
 
+    Button.button
+        [ Button.label "My great button!"
+        , Button.onClick ()
+        , Button.enabled
+        ]
 
-{-| -}
+-}
 button : List (Attribute msg) -> Html msg
 button attributes =
     List.foldl (\attribute b -> attribute b) build attributes
         |> renderButton
 
 
-{-| -}
+{-|
+
+    Button.link
+        [ Button.label "My great link!"
+        , Button.href "My href"
+        , Button.secondary
+        ]
+
+-}
 link : List (Attribute msg) -> Html msg
 link attributes =
     List.foldl (\attribute l -> attribute l) build attributes
@@ -121,25 +116,25 @@ link attributes =
 
 
 {-| -}
-type alias Attribute msg =
-    ButtonOrLink msg -> ButtonOrLink msg
+label : String -> Attribute msg
+label label_ (ButtonOrLink config) =
+    ButtonOrLink { config | label = label_ }
 
 
 {-| -}
-build : ButtonOrLink msg
-build =
-    ButtonOrLink
-        { onClick = Nothing
-        , url = "#"
-        , linkType = Default
-        , size = Medium
-        , style = Primary
-        , width = WidthUnbounded
-        , label = ""
-        , state = Enabled
-        , icon = Nothing
-        , customAttributes = []
-        }
+icon : Svg -> Attribute msg
+icon icon_ (ButtonOrLink config) =
+    ButtonOrLink { config | icon = Just icon_ }
+
+
+{-| -}
+custom : Html.Attribute msg -> Attribute msg
+custom attribute (ButtonOrLink config) =
+    ButtonOrLink { config | customAttributes = attribute :: config.customAttributes }
+
+
+
+-- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
 {-| -}
@@ -231,18 +226,258 @@ linkExternalWithTracking (ButtonOrLink config) =
     ButtonOrLink { config | linkType = ExternalWithTracking }
 
 
-{-|
 
-    Button.build
-        |> Button.label "My Link"
-        |> Button.unboundedWidth
-        |> Button.secondary
-        |> Button.onClick TrackThisEvent
-        |> Button.linkExternalWithTracking
-        |> Button.href "#"
-        |> Button.renderLink
+-- BUTTON SIZING
 
+
+{-| -}
+small : Attribute msg
+small =
+    setSize Small
+
+
+{-| -}
+medium : Attribute msg
+medium =
+    setSize Medium
+
+
+{-| -}
+large : Attribute msg
+large =
+    setSize Large
+
+
+setSize : ButtonSize -> Attribute msg
+setSize size (ButtonOrLink config) =
+    ButtonOrLink { config | size = size }
+
+
+
+-- BUTTON WIDTH
+
+
+type ButtonWidth
+    = WidthExact Int
+    | WidthUnbounded
+    | WidthFillContainer
+
+
+{-| Sizes for buttons and links that have button classes
 -}
+type ButtonSize
+    = Small
+    | Medium
+    | Large
+
+
+{-| Define a size in `px` for the button's total width.
+-}
+exactWidth : Int -> Attribute msg
+exactWidth inPx =
+    setWidth (WidthExact inPx)
+
+
+{-| Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidth : Attribute msg
+unboundedWidth =
+    setWidth WidthUnbounded
+
+
+{-| -}
+fillContainerWidth : Attribute msg
+fillContainerWidth =
+    setWidth WidthFillContainer
+
+
+setWidth : ButtonWidth -> Attribute msg
+setWidth width (ButtonOrLink config) =
+    ButtonOrLink { config | width = width }
+
+
+
+-- COLOR SCHEMES
+
+
+type ButtonStyle
+    = Primary
+    | Secondary
+    | Danger
+    | Premium
+      -- The following styles cannot be set directly.
+      -- Use a helper like `unfulfilled` to change the state instead.
+    | InactiveColors
+    | LoadingColors
+    | SuccessColors
+    | ErrorColors
+
+
+{-| -}
+primary : Attribute msg
+primary =
+    setStyle Primary
+
+
+{-| -}
+secondary : Attribute msg
+secondary =
+    setStyle Secondary
+
+
+{-| -}
+danger : Attribute msg
+danger =
+    setStyle Danger
+
+
+{-| -}
+premium : Attribute msg
+premium =
+    setStyle Premium
+
+
+setStyle : ButtonStyle -> Attribute msg
+setStyle style (ButtonOrLink config) =
+    ButtonOrLink { config | style = style }
+
+
+
+-- BUTTON STATE
+
+
+type ButtonState
+    = Enabled
+    | Unfulfilled
+    | Disabled
+    | Error
+    | Loading
+    | Success
+
+
+{-| An enabled button. Takes the appearance of ButtonStyle.
+-}
+enabled : Attribute msg
+enabled =
+    setButtonState Enabled
+
+
+{-| A button which appears with the InactiveColors palette but is not disabled.
+-}
+unfulfilled : Attribute msg
+unfulfilled =
+    setButtonState Unfulfilled
+
+
+{-| A button which appears with the InactiveColors palette and is disabled.
+-}
+disabled : Attribute msg
+disabled =
+    setButtonState Disabled
+
+
+{-| A button which appears with the ErrorColors palette and is disabled.
+-}
+error : Attribute msg
+error =
+    setButtonState Error
+
+
+{-| A button which appears with the LoadingColors palette and is disabled.
+-}
+loading : Attribute msg
+loading =
+    setButtonState Loading
+
+
+{-| A button which appears with the SuccessColors palette and is disabled .
+-}
+success : Attribute msg
+success =
+    setButtonState Success
+
+
+setButtonState : ButtonState -> Attribute msg
+setButtonState buttonState (ButtonOrLink config) =
+    ButtonOrLink { config | state = buttonState }
+
+
+
+-- INTERNALS
+
+
+{-| -}
+type alias Attribute msg =
+    ButtonOrLink msg -> ButtonOrLink msg
+
+
+build : ButtonOrLink msg
+build =
+    ButtonOrLink
+        { onClick = Nothing
+        , url = "#"
+        , linkType = Default
+        , size = Medium
+        , style = Primary
+        , width = WidthUnbounded
+        , label = ""
+        , state = Enabled
+        , icon = Nothing
+        , customAttributes = []
+        }
+
+
+type ButtonOrLink msg
+    = ButtonOrLink
+        { onClick : Maybe msg
+        , url : String
+        , linkType : Link
+        , size : ButtonSize
+        , style : ButtonStyle
+        , width : ButtonWidth
+        , label : String
+        , state : ButtonState
+        , icon : Maybe Svg
+        , customAttributes : List (Html.Attribute msg)
+        }
+
+
+renderButton : ButtonOrLink msg -> Html msg
+renderButton (ButtonOrLink config) =
+    let
+        ( buttonStyle_, isDisabled ) =
+            case config.state of
+                Enabled ->
+                    ( config.style, False )
+
+                Disabled ->
+                    ( InactiveColors, True )
+
+                Error ->
+                    ( ErrorColors, True )
+
+                Unfulfilled ->
+                    ( InactiveColors, False )
+
+                Loading ->
+                    ( LoadingColors, True )
+
+                Success ->
+                    ( SuccessColors, True )
+    in
+    Nri.Ui.styled Html.button
+        (styledName "customButton")
+        [ buttonStyles config.size config.width buttonStyle_ ]
+        ((Maybe.map Events.onClick config.onClick
+            |> Maybe.withDefault AttributesExtra.none
+         )
+            :: Attributes.disabled isDisabled
+            :: Attributes.type_ "button"
+            :: config.customAttributes
+        )
+        [ viewLabel config.icon config.label ]
+
+
 renderLink : ButtonOrLink msg -> Html msg
 renderLink (ButtonOrLink config) =
     let
@@ -299,238 +534,6 @@ renderLink (ButtonOrLink config) =
                     ]
                     config.customAttributes
                 )
-
-
-{-| -}
-custom : Html.Attribute msg -> Attribute msg
-custom attribute (ButtonOrLink config) =
-    ButtonOrLink { config | customAttributes = attribute :: config.customAttributes }
-
-
-{-| -}
-label : String -> Attribute msg
-label label_ (ButtonOrLink config) =
-    ButtonOrLink { config | label = label_ }
-
-
-{-| -}
-small : Attribute msg
-small =
-    setSize Small
-
-
-{-| -}
-medium : Attribute msg
-medium =
-    setSize Medium
-
-
-{-| -}
-large : Attribute msg
-large =
-    setSize Large
-
-
-setSize : ButtonSize -> Attribute msg
-setSize size (ButtonOrLink config) =
-    ButtonOrLink { config | size = size }
-
-
-{-| -}
-icon : Svg -> Attribute msg
-icon icon_ (ButtonOrLink config) =
-    ButtonOrLink { config | icon = Just icon_ }
-
-
-{-| Sizes for buttons and links that have button classes
--}
-type ButtonSize
-    = Small
-    | Medium
-    | Large
-
-
-{-| -}
-exactWidth : Int -> Attribute msg
-exactWidth inPx =
-    setWidth (WidthExact inPx)
-
-
-{-| -}
-unboundedWidth : Attribute msg
-unboundedWidth =
-    setWidth WidthUnbounded
-
-
-{-| -}
-fillContainerWidth : Attribute msg
-fillContainerWidth =
-    setWidth WidthFillContainer
-
-
-setWidth : ButtonWidth -> Attribute msg
-setWidth width (ButtonOrLink config) =
-    ButtonOrLink { config | width = width }
-
-
-{-| Width sizing behavior for buttons.
-
-`WidthExact Int` defines a size in `px` for the button's total width, and
-`WidthUnbounded` leaves the maxiumum width unbounded (there is a minimum width).
-
--}
-type ButtonWidth
-    = WidthExact Int
-    | WidthUnbounded
-    | WidthFillContainer
-
-
-{-| -}
-primary : Attribute msg
-primary =
-    setStyle Primary
-
-
-{-| -}
-secondary : Attribute msg
-secondary =
-    setStyle Secondary
-
-
-{-| -}
-danger : Attribute msg
-danger =
-    setStyle Danger
-
-
-{-| -}
-premium : Attribute msg
-premium =
-    setStyle Premium
-
-
-setStyle : ButtonStyle -> Attribute msg
-setStyle style (ButtonOrLink config) =
-    ButtonOrLink { config | style = style }
-
-
-{-| Styleguide-approved styles for your buttons!
--}
-type ButtonStyle
-    = Primary
-    | Secondary
-    | Danger
-    | Premium
-      -- The following styles cannot be set directly.
-      -- Use a helper like `unfulfilled` to change the state instead.
-    | InactiveColors
-    | LoadingColors
-    | SuccessColors
-    | ErrorColors
-
-
-{-| An enabled button. Takes the appearance of ButtonStyle.
--}
-enabled : Attribute msg
-enabled =
-    setButtonState Enabled
-
-
-{-| A button which appears with the InactiveColors palette but is not disabled.
--}
-unfulfilled : Attribute msg
-unfulfilled =
-    setButtonState Unfulfilled
-
-
-{-| A button which appears with the InactiveColors palette and is disabled.
--}
-disabled : Attribute msg
-disabled =
-    setButtonState Disabled
-
-
-{-| A button which appears with the ErrorColors palette and is disabled.
--}
-error : Attribute msg
-error =
-    setButtonState Error
-
-
-{-| A button which appears with the LoadingColors palette and is disabled.
--}
-loading : Attribute msg
-loading =
-    setButtonState Loading
-
-
-{-| A button which appears with the SuccessColors palette and is disabled .
--}
-success : Attribute msg
-success =
-    setButtonState Success
-
-
-setButtonState : ButtonState -> Attribute msg
-setButtonState buttonState (ButtonOrLink config) =
-    ButtonOrLink { config | state = buttonState }
-
-
-{-| Describes the state of a button. Has consequences for appearance and disabled attribute.
--}
-type ButtonState
-    = Enabled
-    | Unfulfilled
-    | Disabled
-    | Error
-    | Loading
-    | Success
-
-
-{-| A delightful button which can trigger an effect when clicked!
-
-    Button.build
-        |> Button.label model.label
-        |> Button.small
-        |> Button.withCustomAttributes [ Html.Styled.Attributes.class "my-best-button" ]
-        |> Button.onClick DoSomething
-        |> Button.renderButton
-
--}
-renderButton : ButtonOrLink msg -> Html msg
-renderButton (ButtonOrLink config) =
-    let
-        ( buttonStyle_, isDisabled ) =
-            case config.state of
-                Enabled ->
-                    ( config.style, False )
-
-                Disabled ->
-                    ( InactiveColors, True )
-
-                Error ->
-                    ( ErrorColors, True )
-
-                Unfulfilled ->
-                    ( InactiveColors, False )
-
-                Loading ->
-                    ( LoadingColors, True )
-
-                Success ->
-                    ( SuccessColors, True )
-    in
-    Nri.Ui.styled Html.button
-        (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ ]
-        ((Maybe.map Events.onClick config.onClick
-            |> Maybe.withDefault AttributesExtra.none
-         )
-            :: Attributes.disabled isDisabled
-            :: Attributes.type_ "button"
-            :: config.customAttributes
-        )
-        [ viewLabel config.icon config.label ]
 
 
 
