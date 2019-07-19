@@ -31,7 +31,7 @@ styleguide-app/bundle.js: lib/index.js styleguide-app/manifest.js styleguide-app
 	npx browserify --entry styleguide-app/manifest.js --outfile styleguide-app/bundle.js
 
 styleguide-app/elm.js: styleguide-app/bundle.js $(shell find src styleguide-app -type f -name '*.elm')
-	cd styleguide-app; npx elm make Main.elm --output=$(@F)
+	cd styleguide-app && npx elm make Main.elm --output=$(@F)
 
 # for publishing styleguide
 
