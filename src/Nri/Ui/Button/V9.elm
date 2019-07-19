@@ -93,6 +93,8 @@ styledName suffix =
         , Button.enabled
         ]
 
+By default, the button is enabled, Medium sized, with primary colors, and an unbounded width.
+
 -}
 button : List (Attribute msg) -> Html msg
 button attributes =
@@ -107,6 +109,8 @@ button attributes =
         , Button.href "My href"
         , Button.secondary
         ]
+
+By default, the link is Medium sized, with primary colors, and an unbounded width.
 
 -}
 link : List (Attribute msg) -> Html msg
