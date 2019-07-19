@@ -323,42 +323,41 @@ type ButtonState
     | Success
 
 
-{-| An enabled button. Takes the appearance of ButtonStyle.
--}
+{-| -}
 enabled : Attribute msg
 enabled (ButtonOrLink config) =
     ButtonOrLink { config | state = Enabled }
 
 
-{-| A button which appears with the InactiveColors palette but is not disabled.
+{-| Shows inactive styles.
 -}
 unfulfilled : Attribute msg
 unfulfilled (ButtonOrLink config) =
     ButtonOrLink { config | state = Unfulfilled }
 
 
-{-| A button which appears with the InactiveColors palette and is disabled.
+{-| Shows inactive styling. If a button, this attribute will disable it.
 -}
 disabled : Attribute msg
 disabled (ButtonOrLink config) =
     ButtonOrLink { config | state = Disabled }
 
 
-{-| A button which appears with the ErrorColors palette and is disabled.
+{-| Shows error styling. If a button, this attribute will disable it.
 -}
 error : Attribute msg
 error (ButtonOrLink config) =
     ButtonOrLink { config | state = Error }
 
 
-{-| A button which appears with the LoadingColors palette and is disabled.
+{-| Shows loading styling. If a button, this attribute will disable it.
 -}
 loading : Attribute msg
 loading (ButtonOrLink config) =
     ButtonOrLink { config | state = Loading }
 
 
-{-| A button which appears with the SuccessColors palette and is disabled .
+{-| Shows success styling. If a button, this attribute will disable it.
 -}
 success : Attribute msg
 success (ButtonOrLink config) =
@@ -445,12 +444,15 @@ renderButton ((ButtonOrLink config) as button_) =
 
 
 renderLink : ButtonOrLink msg -> Html msg
-renderLink (ButtonOrLink config) =
+renderLink ((ButtonOrLink config) as link_) =
     let
+        colorPalette =
+            getColorPalette link_
+
         linkBase linkFunctionName extraAttrs =
             Nri.Ui.styled Styled.a
                 (styledName linkFunctionName)
-                [ buttonStyles config.size config.width config.style ]
+                [ buttonStyles config.size config.width colorPalette ]
                 (Attributes.href config.url :: extraAttrs)
                 [ viewLabel config.icon config.label ]
     in
