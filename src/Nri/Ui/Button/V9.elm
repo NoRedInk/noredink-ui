@@ -132,9 +132,9 @@ icon icon_ (ButtonOrLink config) =
 
 
 {-| -}
-custom : Html.Attribute msg -> Attribute msg
-custom attribute (ButtonOrLink config) =
-    ButtonOrLink { config | customAttributes = attribute :: config.customAttributes }
+custom : List (Html.Attribute msg) -> Attribute msg
+custom attributes (ButtonOrLink config) =
+    ButtonOrLink { config | customAttributes = List.append config.customAttributes attributes }
 
 
 
