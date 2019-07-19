@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V9 as Button
+import Nri.Ui.Html.Attributes.V2
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V3 as Text
@@ -148,7 +149,7 @@ viewButtonExamples messages (State control) =
         , onClick = messages.showItWorked "delete"
         }
     , Button.link
-        [ Button.withLabel "linkExternalWithTracking"
+        [ Button.label "linkExternalWithTracking"
         , Button.unboundedWidth
         , Button.secondary
         , Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
@@ -202,13 +203,18 @@ buttons messages model =
             buttonOrLink
                 [ setSize
                 , setStyle
-                , Button.withLabel model.label
+                , Button.label model.label
                 , model.width
                 , model.state
-                , Button.withCustomAttributes [ Html.Styled.Attributes.class "styleguide-button" ]
+                , Button.custom (Html.Styled.Attributes.class "styleguide-button")
                 , Button.href ""
                 , Button.onClick (messages.showItWorked "Button clicked!")
-                , Button.withIcon model.icon
+                , case model.icon of
+                    Just icon ->
+                        Button.icon icon
+
+                    Nothing ->
+                        Button.custom Nri.Ui.Html.Attributes.V2.none
                 ]
                 |> List.singleton
                 |> td

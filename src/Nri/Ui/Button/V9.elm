@@ -1,14 +1,13 @@
 module Nri.Ui.Button.V9 exposing
     ( button, link, Attribute
-    , withLabel
+    , label
     , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
-    , withIcon
-    , withCustomAttributes
+    , icon, custom
     , delete
     , toggleButton
     )
@@ -25,10 +24,7 @@ module Nri.Ui.Button.V9 exposing
 
 @docs button, link, Attribute
 
-
-## Label the button
-
-@docs withLabel
+@docs label
 
 
 ## Add event listeners and links
@@ -53,14 +49,9 @@ module Nri.Ui.Button.V9 exposing
 @docs enabled, unfulfilled, disabled, error, loading, success
 
 
-## Add an icon
+## Or even more!
 
-@docs withIcon
-
-
-## Add custom attributes
-
-@docs withCustomAttributes
+@docs icon, custom
 
 
 # Commonly-used buttons
@@ -243,7 +234,7 @@ linkExternalWithTracking (ButtonOrLink config) =
 {-|
 
     Button.build
-        |> Button.withLabel "My Link"
+        |> Button.label "My Link"
         |> Button.unboundedWidth
         |> Button.secondary
         |> Button.onClick TrackThisEvent
@@ -311,15 +302,15 @@ renderLink (ButtonOrLink config) =
 
 
 {-| -}
-withCustomAttributes : List (Html.Attribute msg) -> Attribute msg
-withCustomAttributes customAttributes (ButtonOrLink config) =
-    ButtonOrLink { config | customAttributes = customAttributes }
+custom : Html.Attribute msg -> Attribute msg
+custom attribute (ButtonOrLink config) =
+    ButtonOrLink { config | customAttributes = attribute :: config.customAttributes }
 
 
 {-| -}
-withLabel : String -> Attribute msg
-withLabel label (ButtonOrLink config) =
-    ButtonOrLink { config | label = label }
+label : String -> Attribute msg
+label label_ (ButtonOrLink config) =
+    ButtonOrLink { config | label = label_ }
 
 
 {-| -}
@@ -346,9 +337,9 @@ setSize size (ButtonOrLink config) =
 
 
 {-| -}
-withIcon : Maybe Svg -> Attribute msg
-withIcon icon (ButtonOrLink config) =
-    ButtonOrLink { config | icon = icon }
+icon : Svg -> Attribute msg
+icon icon_ (ButtonOrLink config) =
+    ButtonOrLink { config | icon = Just icon_ }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -499,7 +490,7 @@ type ButtonState
 {-| A delightful button which can trigger an effect when clicked!
 
     Button.build
-        |> Button.withLabel model.label
+        |> Button.label model.label
         |> Button.small
         |> Button.withCustomAttributes [ Html.Styled.Attributes.class "my-best-button" ]
         |> Button.onClick DoSomething
@@ -711,7 +702,7 @@ buttonStyles size width colors =
 
 
 viewLabel : Maybe Svg -> String -> Html msg
-viewLabel maybeSvg label =
+viewLabel maybeSvg label_ =
     Nri.Ui.styled Html.span
         "button-label-span"
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
@@ -721,10 +712,10 @@ viewLabel maybeSvg label =
         []
         (case maybeSvg of
             Nothing ->
-                renderMarkdown label
+                renderMarkdown label_
 
             Just svg ->
-                NriSvg.toHtml svg :: renderMarkdown label
+                NriSvg.toHtml svg :: renderMarkdown label_
         )
 
 
