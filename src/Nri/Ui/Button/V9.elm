@@ -232,25 +232,20 @@ linkExternalWithTracking (ButtonOrLink config) =
 
 {-| -}
 small : Attribute msg
-small =
-    setSize Small
+small (ButtonOrLink config) =
+    ButtonOrLink { config | size = Small }
 
 
 {-| -}
 medium : Attribute msg
-medium =
-    setSize Medium
+medium (ButtonOrLink config) =
+    ButtonOrLink { config | size = Medium }
 
 
 {-| -}
 large : Attribute msg
-large =
-    setSize Large
-
-
-setSize : ButtonSize -> Attribute msg
-setSize size (ButtonOrLink config) =
-    ButtonOrLink { config | size = size }
+large (ButtonOrLink config) =
+    ButtonOrLink { config | size = Large }
 
 
 
@@ -274,26 +269,21 @@ type ButtonSize
 {-| Define a size in `px` for the button's total width.
 -}
 exactWidth : Int -> Attribute msg
-exactWidth inPx =
-    setWidth (WidthExact inPx)
+exactWidth inPx (ButtonOrLink config) =
+    ButtonOrLink { config | width = WidthExact inPx }
 
 
 {-| Leave the maxiumum width unbounded (there is a minimum width).
 -}
 unboundedWidth : Attribute msg
-unboundedWidth =
-    setWidth WidthUnbounded
+unboundedWidth (ButtonOrLink config) =
+    ButtonOrLink { config | width = WidthUnbounded }
 
 
 {-| -}
 fillContainerWidth : Attribute msg
-fillContainerWidth =
-    setWidth WidthFillContainer
-
-
-setWidth : ButtonWidth -> Attribute msg
-setWidth width (ButtonOrLink config) =
-    ButtonOrLink { config | width = width }
+fillContainerWidth (ButtonOrLink config) =
+    ButtonOrLink { config | width = WidthFillContainer }
 
 
 
@@ -315,31 +305,26 @@ type ButtonStyle
 
 {-| -}
 primary : Attribute msg
-primary =
-    setStyle Primary
+primary (ButtonOrLink config) =
+    ButtonOrLink { config | style = Primary }
 
 
 {-| -}
 secondary : Attribute msg
-secondary =
-    setStyle Secondary
+secondary (ButtonOrLink config) =
+    ButtonOrLink { config | style = Secondary }
 
 
 {-| -}
 danger : Attribute msg
-danger =
-    setStyle Danger
+danger (ButtonOrLink config) =
+    ButtonOrLink { config | style = Danger }
 
 
 {-| -}
 premium : Attribute msg
-premium =
-    setStyle Premium
-
-
-setStyle : ButtonStyle -> Attribute msg
-setStyle style (ButtonOrLink config) =
-    ButtonOrLink { config | style = style }
+premium (ButtonOrLink config) =
+    ButtonOrLink { config | style = Premium }
 
 
 
@@ -358,48 +343,43 @@ type ButtonState
 {-| An enabled button. Takes the appearance of ButtonStyle.
 -}
 enabled : Attribute msg
-enabled =
-    setButtonState Enabled
+enabled (ButtonOrLink config) =
+    ButtonOrLink { config | state = Enabled }
 
 
 {-| A button which appears with the InactiveColors palette but is not disabled.
 -}
 unfulfilled : Attribute msg
-unfulfilled =
-    setButtonState Unfulfilled
+unfulfilled (ButtonOrLink config) =
+    ButtonOrLink { config | state = Unfulfilled }
 
 
 {-| A button which appears with the InactiveColors palette and is disabled.
 -}
 disabled : Attribute msg
-disabled =
-    setButtonState Disabled
+disabled (ButtonOrLink config) =
+    ButtonOrLink { config | state = Disabled }
 
 
 {-| A button which appears with the ErrorColors palette and is disabled.
 -}
 error : Attribute msg
-error =
-    setButtonState Error
+error (ButtonOrLink config) =
+    ButtonOrLink { config | state = Error }
 
 
 {-| A button which appears with the LoadingColors palette and is disabled.
 -}
 loading : Attribute msg
-loading =
-    setButtonState Loading
+loading (ButtonOrLink config) =
+    ButtonOrLink { config | state = Loading }
 
 
 {-| A button which appears with the SuccessColors palette and is disabled .
 -}
 success : Attribute msg
-success =
-    setButtonState Success
-
-
-setButtonState : ButtonState -> Attribute msg
-setButtonState buttonState (ButtonOrLink config) =
-    ButtonOrLink { config | state = buttonState }
+success (ButtonOrLink config) =
+    ButtonOrLink { config | state = Success }
 
 
 
