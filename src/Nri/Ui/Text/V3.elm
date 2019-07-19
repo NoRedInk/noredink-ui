@@ -24,6 +24,9 @@ module Nri.Ui.Text.V3 exposing
 
 ## Heading styles
 
+Please use `Nri.Ui.Heading.V1` instead of these in new code. If you're here to
+make a new Text version, please remove them.
+
 @docs heading, subHeading, smallHeading, tagline
 
 
@@ -48,73 +51,47 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V1 as Heading
 
 
 {-| This is a Page Heading.
 -}
 heading : List (Html msg) -> Html msg
 heading content =
-    h1
-        [ headingStyles
-            { font = Fonts.baseFont
-            , color = navy
-            , size = 30
-            , lineHeight = 38
-            , weight = 700
-            }
-        ]
-        content
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Top
+        |> Heading.withDocumentLevel Heading.H1
+        |> Heading.view
 
 
 {-| This is a tagline for a page heading.
 -}
 tagline : List (Html msg) -> Html msg
 tagline content =
-    h2
-        [ headingStyles
-            { font = Fonts.baseFont
-            , color = gray45
-            , size = 20
-            , lineHeight = 30
-            , weight = 400
-            }
-        ]
-        content
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Tagline
+        |> Heading.withDocumentLevel Heading.H2
+        |> Heading.view
 
 
 {-| This is a subhead.
 -}
 subHeading : List (Html msg) -> Html msg
 subHeading content =
-    h3
-        [ headingStyles
-            { font = Fonts.baseFont
-            , color = navy
-            , size = 20
-            , lineHeight = 26
-            , weight = 700
-            }
-        ]
-        content
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Subhead
+        |> Heading.withDocumentLevel Heading.H3
+        |> Heading.view
 
 
 {-| This is a small Page Heading.
 -}
 smallHeading : List (Html msg) -> Html msg
 smallHeading content =
-    h4
-        [ headingStyles
-            { font = Fonts.baseFont
-            , color = gray20
-            , size = 16
-            , lineHeight = 21
-            , weight = 700
-            }
-        , css
-            [ letterSpacing (px -0.13)
-            ]
-        ]
-        content
+    Heading.heading content
+        |> Heading.withVisualLevel Heading.Small
+        |> Heading.withDocumentLevel Heading.H4
+        |> Heading.view
 
 
 {-| This is some medium body copy.
@@ -166,19 +143,6 @@ smallBodyGray content =
             }
         ]
         content
-
-
-headingStyles config =
-    css
-        [ config.font
-        , fontSize (px config.size)
-        , color config.color
-        , lineHeight (px config.lineHeight)
-        , fontWeight (int config.weight)
-        , padding zero
-        , textAlign left
-        , margin zero
-        ]
 
 
 paragraphStyles config =
