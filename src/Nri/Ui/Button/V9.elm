@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V9 exposing
     ( button, link
     , Attribute
-    , label, icon, custom
+    , icon, custom
     , onClick, href
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
@@ -24,7 +24,7 @@ module Nri.Ui.Button.V9 exposing
 
 @docs button, link
 @docs Attribute
-@docs label, icon, custom
+@docs icon, custom
 
 
 ## Add event listeners and hrefs
@@ -87,35 +87,37 @@ styledName suffix =
 
 {-|
 
-    Button.button
-        [ Button.label "My great button!"
-        , Button.onClick ()
+    Button.button "My great button!"
+        [ Button.onClick ()
         , Button.enabled
         ]
 
 By default, the button is enabled, Medium sized, with primary colors, and an unbounded width.
 
 -}
-button : List (Attribute msg) -> Html msg
-button attributes =
-    List.foldl (\attribute b -> attribute b) build attributes
+button : String -> List (Attribute msg) -> Html msg
+button name attributes =
+    List.foldl (\attribute b -> attribute b)
+        build
+        (label name :: attributes)
         |> renderButton
 
 
 {-|
 
-    Button.link
-        [ Button.label "My great link!"
-        , Button.href "My href"
+    Button.link "My great link!"
+        [ Button.href "My href"
         , Button.secondary
         ]
 
 By default, the link is Medium sized, with primary colors, and an unbounded width.
 
 -}
-link : List (Attribute msg) -> Html msg
-link attributes =
-    List.foldl (\attribute l -> attribute l) build attributes
+link : String -> List (Attribute msg) -> Html msg
+link name attributes =
+    List.foldl (\attribute l -> attribute l)
+        build
+        (label name :: attributes)
         |> renderLink
 
 

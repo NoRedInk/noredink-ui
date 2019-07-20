@@ -147,9 +147,8 @@ viewButtonExamples messages (State control) =
         { label = "Delete Something"
         , onClick = messages.showItWorked "delete"
         }
-    , Button.link
-        [ Button.label "linkExternalWithTracking"
-        , Button.unboundedWidth
+    , Button.link "linkExternalWithTracking"
+        [ Button.unboundedWidth
         , Button.secondary
         , Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
         , Button.linkExternalWithTracking
@@ -199,10 +198,9 @@ buttons messages model =
                     Button.button
 
         exampleCell setStyle setSize =
-            buttonOrLink
+            buttonOrLink model.label
                 [ setSize
                 , setStyle
-                , Button.label model.label
                 , model.width
                 , model.state
                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
