@@ -2,7 +2,7 @@ module Nri.Ui.Button.V9 exposing
     ( button, link
     , Attribute
     , icon, custom
-    , onClick, href
+    , onClick
     , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
@@ -27,9 +27,9 @@ module Nri.Ui.Button.V9 exposing
 @docs icon, custom
 
 
-## Add event listeners and hrefs
+## Behavior
 
-@docs onClick, href
+@docs onClick
 @docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -149,12 +149,6 @@ onClick msg (ButtonOrLink config) =
     ButtonOrLink { config | onClick = Just msg }
 
 
-{-| -}
-href : String -> Attribute msg
-href url (ButtonOrLink config) =
-    ButtonOrLink { config | url = url }
-
-
 type Link
     = Default
     | WithTracking
@@ -171,43 +165,51 @@ This will make a normal <a> tag, but change the Events.onClick behavior to avoid
 See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
 
 -}
-linkSpa : Attribute msg
-linkSpa buttonOrLink =
-    buttonOrLink
+linkSpa : String -> Attribute msg
+linkSpa url =
+    setLink SinglePageApp >> href url
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
 -}
-linkWithMethod : String -> Attribute msg
-linkWithMethod method (ButtonOrLink config) =
-    ButtonOrLink { config | linkType = WithMethod method }
+linkWithMethod : { method : String, url : String } -> Attribute msg
+linkWithMethod { method, url } =
+    setLink (WithMethod method) >> href url
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
-This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect. For buttons that trigger other effects on the page, please use Nri.Button.button instead
+This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect.
+For buttons that trigger other effects on the page, please use Nri.Button.button instead.
 -}
-linkWithTracking : Attribute msg
-linkWithTracking (ButtonOrLink config) =
-    ButtonOrLink { config | linkType = WithTracking }
+linkWithTracking : { track : msg, url : String } -> Attribute msg
+linkWithTracking { track, url } =
+    setLink WithTracking >> href url >> onClick track
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
 some url and have it open to an external site
 -}
-linkExternal : Attribute msg
-linkExternal (ButtonOrLink config) =
-    ButtonOrLink { config | linkType = External }
+linkExternal : String -> Attribute msg
+linkExternal url =
+    setLink External >> href url
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site
-
-This should only take in messages that result in tracking events. For buttons that trigger other effects on the page, please use Nri.Ui.Button.V2.button instead
-
+{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site.
 -}
-linkExternalWithTracking : Attribute msg
-linkExternalWithTracking (ButtonOrLink config) =
-    ButtonOrLink { config | linkType = ExternalWithTracking }
+linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
+linkExternalWithTracking { track, url } =
+    setLink ExternalWithTracking >> href url >> onClick track
+
+
+setLink : Link -> Attribute msg
+setLink linkType (ButtonOrLink config) =
+    ButtonOrLink { config | linkType = linkType }
+
+
+href : String -> Attribute msg
+href url (ButtonOrLink config) =
+    ButtonOrLink { config | url = url }
 
 
 

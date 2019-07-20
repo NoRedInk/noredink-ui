@@ -150,8 +150,10 @@ viewButtonExamples messages (State control) =
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
-        , Button.onClick (messages.showItWorked "linkExternalWithTracking clicked")
         , Button.linkExternalWithTracking
+            { url = "#"
+            , track = messages.showItWorked "linkExternalWithTracking clicked"
+            }
         ]
     ]
         |> div []
@@ -204,7 +206,6 @@ buttons messages model =
                 , model.width
                 , model.state
                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                , Button.href ""
                 , Button.onClick (messages.showItWorked "Button clicked!")
                 , case model.icon of
                     Just icon ->
