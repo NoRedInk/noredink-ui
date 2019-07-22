@@ -97,9 +97,8 @@ By default, the button is enabled, Medium sized, with primary colors, and an unb
 -}
 button : String -> List (Attribute msg) -> Html msg
 button name attributes =
-    List.foldl (\attribute b -> attribute b)
-        build
-        (label name :: attributes)
+    (label name :: attributes)
+        |> List.foldl (\(Attribute attribute) b -> attribute b) build
         |> renderButton
 
 
@@ -115,28 +114,32 @@ By default, the link is Medium sized, with primary colors, and an unbounded widt
 -}
 link : String -> List (Attribute msg) -> Html msg
 link name attributes =
-    List.foldl (\attribute l -> attribute l)
-        build
-        (label name :: attributes)
+    (label name :: attributes)
+        |> List.foldl (\(Attribute attribute) l -> attribute l) build
         |> renderLink
 
 
 {-| -}
 label : String -> Attribute msg
-label label_ (ButtonOrLink config) =
-    ButtonOrLink { config | label = label_ }
+label label_ =
+    set (\attributes -> { attributes | label = label_ })
 
 
 {-| -}
 icon : Svg -> Attribute msg
-icon icon_ (ButtonOrLink config) =
-    ButtonOrLink { config | icon = Just icon_ }
+icon icon_ =
+    set (\attributes -> { attributes | icon = Just icon_ })
 
 
 {-| -}
 custom : List (Html.Attribute msg) -> Attribute msg
-custom attributes (ButtonOrLink config) =
-    ButtonOrLink { config | customAttributes = List.append config.customAttributes attributes }
+custom attributes =
+    set
+        (\config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+        )
 
 
 
@@ -145,8 +148,8 @@ custom attributes (ButtonOrLink config) =
 
 {-| -}
 onClick : msg -> Attribute msg
-onClick msg (ButtonOrLink config) =
-    ButtonOrLink { config | onClick = Just msg }
+onClick msg =
+    set (\attributes -> { attributes | onClick = Just msg })
 
 
 type Link
@@ -167,7 +170,13 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    setLink SinglePageApp >> href url
+    set
+        (\attributes ->
+            { attributes
+                | linkType = SinglePageApp
+                , url = url
+            }
+        )
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
@@ -175,7 +184,13 @@ some url, and it's an HTTP request (Rails includes JS to make this use the given
 -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
 linkWithMethod { method, url } =
-    setLink (WithMethod method) >> href url
+    set
+        (\attributes ->
+            { attributes
+                | linkType = WithMethod method
+                , url = url
+            }
+        )
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
@@ -184,7 +199,14 @@ For buttons that trigger other effects on the page, please use Nri.Button.button
 -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
 linkWithTracking { track, url } =
-    setLink WithTracking >> href url >> onClick track
+    set
+        (\attributes ->
+            { attributes
+                | linkType = WithTracking
+                , url = url
+                , onClick = Just track
+            }
+        )
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
@@ -192,24 +214,27 @@ some url and have it open to an external site
 -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    setLink External >> href url
+    set
+        (\attributes ->
+            { attributes
+                | linkType = External
+                , url = url
+            }
+        )
 
 
 {-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site.
 -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking { track, url } =
-    setLink ExternalWithTracking >> href url >> onClick track
-
-
-setLink : Link -> Attribute msg
-setLink linkType (ButtonOrLink config) =
-    ButtonOrLink { config | linkType = linkType }
-
-
-href : String -> Attribute msg
-href url (ButtonOrLink config) =
-    ButtonOrLink { config | url = url }
+    set
+        (\attributes ->
+            { attributes
+                | linkType = ExternalWithTracking
+                , url = url
+                , onClick = Just track
+            }
+        )
 
 
 
@@ -218,20 +243,20 @@ href url (ButtonOrLink config) =
 
 {-| -}
 small : Attribute msg
-small (ButtonOrLink config) =
-    ButtonOrLink { config | size = Small }
+small =
+    set (\attributes -> { attributes | size = Small })
 
 
 {-| -}
 medium : Attribute msg
-medium (ButtonOrLink config) =
-    ButtonOrLink { config | size = Medium }
+medium =
+    set (\attributes -> { attributes | size = Medium })
 
 
 {-| -}
 large : Attribute msg
-large (ButtonOrLink config) =
-    ButtonOrLink { config | size = Large }
+large =
+    set (\attributes -> { attributes | size = Large })
 
 
 
@@ -255,21 +280,21 @@ type ButtonSize
 {-| Define a size in `px` for the button's total width.
 -}
 exactWidth : Int -> Attribute msg
-exactWidth inPx (ButtonOrLink config) =
-    ButtonOrLink { config | width = WidthExact inPx }
+exactWidth inPx =
+    set (\attributes -> { attributes | width = WidthExact inPx })
 
 
 {-| Leave the maxiumum width unbounded (there is a minimum width).
 -}
 unboundedWidth : Attribute msg
-unboundedWidth (ButtonOrLink config) =
-    ButtonOrLink { config | width = WidthUnbounded }
+unboundedWidth =
+    set (\attributes -> { attributes | width = WidthUnbounded })
 
 
 {-| -}
 fillContainerWidth : Attribute msg
-fillContainerWidth (ButtonOrLink config) =
-    ButtonOrLink { config | width = WidthFillContainer }
+fillContainerWidth =
+    set (\attributes -> { attributes | width = WidthFillContainer })
 
 
 
@@ -278,44 +303,54 @@ fillContainerWidth (ButtonOrLink config) =
 
 {-| -}
 primary : Attribute msg
-primary (ButtonOrLink config) =
-    ButtonOrLink { config | style = primaryColors }
+primary =
+    set
+        (\attributes ->
+            { attributes | style = primaryColors }
+        )
 
 
 {-| -}
 secondary : Attribute msg
-secondary (ButtonOrLink config) =
-    ButtonOrLink { config | style = secondaryColors }
+secondary =
+    set
+        (\attributes ->
+            { attributes | style = secondaryColors }
+        )
 
 
 {-| -}
 danger : Attribute msg
-danger (ButtonOrLink config) =
-    ButtonOrLink
-        { config
-            | style =
-                { background = Colors.red
-                , hover = Colors.redDark
-                , text = Colors.white
-                , border = Nothing
-                , shadow = Colors.redDark
-                }
-        }
+danger =
+    set
+        (\attributes ->
+            { attributes
+                | style =
+                    { background = Colors.red
+                    , hover = Colors.redDark
+                    , text = Colors.white
+                    , border = Nothing
+                    , shadow = Colors.redDark
+                    }
+            }
+        )
 
 
 {-| -}
 premium : Attribute msg
-premium (ButtonOrLink config) =
-    ButtonOrLink
-        { config
-            | style =
-                { background = Colors.yellow
-                , hover = Colors.ochre
-                , text = Colors.navy
-                , border = Nothing
-                , shadow = Colors.ochre
-                }
-        }
+premium =
+    set
+        (\attributes ->
+            { attributes
+                | style =
+                    { background = Colors.yellow
+                    , hover = Colors.ochre
+                    , text = Colors.navy
+                    , border = Nothing
+                    , shadow = Colors.ochre
+                    }
+            }
+        )
 
 
 
@@ -333,52 +368,59 @@ type ButtonState
 
 {-| -}
 enabled : Attribute msg
-enabled (ButtonOrLink config) =
-    ButtonOrLink { config | state = Enabled }
+enabled =
+    set (\attributes -> { attributes | state = Enabled })
 
 
 {-| Shows inactive styles.
 -}
 unfulfilled : Attribute msg
-unfulfilled (ButtonOrLink config) =
-    ButtonOrLink { config | state = Unfulfilled }
+unfulfilled =
+    set (\attributes -> { attributes | state = Unfulfilled })
 
 
 {-| Shows inactive styling. If a button, this attribute will disable it.
 -}
 disabled : Attribute msg
-disabled (ButtonOrLink config) =
-    ButtonOrLink { config | state = Disabled }
+disabled =
+    set (\attributes -> { attributes | state = Disabled })
 
 
 {-| Shows error styling. If a button, this attribute will disable it.
 -}
 error : Attribute msg
-error (ButtonOrLink config) =
-    ButtonOrLink { config | state = Error }
+error =
+    set (\attributes -> { attributes | state = Error })
 
 
 {-| Shows loading styling. If a button, this attribute will disable it.
 -}
 loading : Attribute msg
-loading (ButtonOrLink config) =
-    ButtonOrLink { config | state = Loading }
+loading =
+    set (\attributes -> { attributes | state = Loading })
 
 
 {-| Shows success styling. If a button, this attribute will disable it.
 -}
 success : Attribute msg
-success (ButtonOrLink config) =
-    ButtonOrLink { config | state = Success }
+success =
+    set (\attributes -> { attributes | state = Success })
+
+
+{-| -}
+type Attribute msg
+    = Attribute (ButtonOrLink msg -> ButtonOrLink msg)
 
 
 
 -- INTERNALS
 
 
-{-| -}
-type alias Attribute msg =
-    ButtonOrLink msg -> ButtonOrLink msg
+set :
+    (ButtonOrLinkAttributes msg -> ButtonOrLinkAttributes msg)
+    -> Attribute msg
+set with =
+    Attribute (\(ButtonOrLink config) -> ButtonOrLink (with config))
 
 
 build : ButtonOrLink msg
@@ -398,18 +440,21 @@ build =
 
 
 type ButtonOrLink msg
-    = ButtonOrLink
-        { onClick : Maybe msg
-        , url : String
-        , linkType : Link
-        , size : ButtonSize
-        , style : ColorPalette
-        , width : ButtonWidth
-        , label : String
-        , state : ButtonState
-        , icon : Maybe Svg
-        , customAttributes : List (Html.Attribute msg)
-        }
+    = ButtonOrLink (ButtonOrLinkAttributes msg)
+
+
+type alias ButtonOrLinkAttributes msg =
+    { onClick : Maybe msg
+    , url : String
+    , linkType : Link
+    , size : ButtonSize
+    , style : ColorPalette
+    , width : ButtonWidth
+    , label : String
+    , state : ButtonState
+    , icon : Maybe Svg
+    , customAttributes : List (Html.Attribute msg)
+    }
 
 
 renderButton : ButtonOrLink msg -> Html msg
