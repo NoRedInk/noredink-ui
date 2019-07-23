@@ -76,4 +76,4 @@ node_modules: package.json
 setup: node_modules
 
 .PHONY: ci
-ci: checks test format documentation.json diff styleguide-app/elm.js
+ci: checks test format documentation.json diff styleguide-app/elm.js tests/axe-report.log
