@@ -6,7 +6,7 @@ module Nri.Ui.Text.V4 exposing
 
 {-| Changes from V3:
 
-  - Removes Headings (they now live in Nri.Ui.Heading.V1)
+  - Removes Headings (they now live in Nri.Ui.Heading.V2)
 
 
 ## Understanding spacing
