@@ -6,11 +6,11 @@ module Examples.Fonts exposing (example)
 
 -}
 
-import Headings
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 
 
 {-| -}
@@ -19,13 +19,13 @@ example =
     { name = "Nri.Ui.Fonts.V1"
     , category = Text
     , content =
-        [ Headings.h3 [ Html.text "baseFont" ]
+        [ Heading.h3 [] [ Html.text "baseFont" ]
         , Html.p [ css [ Fonts.baseFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-        , Headings.h3 [ Html.text "quizFont" ]
+        , Heading.h3 [] [ Html.text "quizFont" ]
         , Html.p [ css [ Fonts.quizFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-        , Headings.h3 [ Html.text "ugFont" ]
+        , Heading.h3 [] [ Html.text "ugFont" ]
         , Html.p [ css [ Fonts.ugFont ] ]
             [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
         ]

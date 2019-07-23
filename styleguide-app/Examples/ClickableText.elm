@@ -8,7 +8,6 @@ module Examples.ClickableText exposing (Msg, State, example, init, update)
 
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
-import Headings
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)

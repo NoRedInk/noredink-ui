@@ -5,10 +5,10 @@ module Examples.Table exposing (Msg, State, example, init, update)
 -}
 
 import Css exposing (..)
-import Headings
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Table.V4 as Table
 
 
@@ -67,13 +67,13 @@ example parentMessage state =
                 , { firstName = "First5", lastName = "Last5" }
                 ]
         in
-        [ Headings.h4 [ Html.text "With header" ]
+        [ Heading.h4 [] [ Html.text "With header" ]
         , Table.view columns data
-        , Headings.h4 [ Html.text "Without header" ]
+        , Heading.h4 [] [ Html.text "Without header" ]
         , Table.viewWithoutHeader columns data
-        , Headings.h4 [ Html.text "Loading" ]
+        , Heading.h4 [] [ Html.text "Loading" ]
         , Table.viewLoading columns
-        , Headings.h4 [ Html.text "Loading without header" ]
+        , Heading.h4 [] [ Html.text "Loading without header" ]
         , Table.viewLoadingWithoutHeader columns
         ]
             |> List.map (Html.map parentMessage)

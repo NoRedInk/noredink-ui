@@ -8,12 +8,12 @@ module Examples.Button exposing (Msg, State, example, init, update)
 
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
-import Headings
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V9 as Button
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
@@ -234,7 +234,7 @@ buttons messages model =
 toggleButtons : ModuleMessages (Msg parentMsg) parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
-        [ Headings.h3 [ text "Button toggle" ]
+        [ Heading.h3 [] [ text "Button toggle" ]
         , Button.toggleButton
             { onDeselect = messages.showItWorked "onDeselect"
             , onSelect = messages.showItWorked "onSelect"
