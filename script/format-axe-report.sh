@@ -16,5 +16,8 @@ jq -r -f script/axe-report.jq "$JSON_FILE"
 NUM_ERRORS="$(jq '.violations | map(.nodes | length) | add' "$JSON_FILE")"
 TARGET_ERRORS=155
 if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
-   echo "got $NUM_ERRORS, but expected $TARGET_ERRORS. Check out ${0:-} and change the count if it went down."
+    echo "got $NUM_ERRORS errors, but expected $TARGET_ERRORS."
+    echo
+    echo 'If it went down, hooray!'
+    echo "Check out ${0:-} and change the count to the reported value above."
 fi
