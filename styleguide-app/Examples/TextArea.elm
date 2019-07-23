@@ -11,7 +11,7 @@ import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Heading.V1 as Heading
 import Nri.Ui.TextArea.V4 as TextArea
 
 
@@ -38,7 +38,10 @@ example parentMessage state =
     { name = "Nri.Ui.TextArea.V4"
     , category = Inputs
     , content =
-        [ Text.heading [ Html.text "Textarea controls" ]
+        [ Heading.heading [ Html.text "Textarea controls" ]
+            |> Heading.withDocumentLevel Heading.H1
+            |> Heading.withVisualLevel Heading.Top
+            |> Heading.view
         , Html.div []
             [ Checkbox.viewWithLabel
                 { identifier = "show-textarea-label"

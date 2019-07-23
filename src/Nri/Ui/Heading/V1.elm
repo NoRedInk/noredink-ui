@@ -5,8 +5,7 @@ module Nri.Ui.Heading.V1 exposing
     , view
     )
 
-{-| Headings such as you'd find in Nri.Ui.Text.V3, but customization options for
-accessibility.
+{-| Headings with customization options for accessibility.
 
 @docs Heading, heading
 

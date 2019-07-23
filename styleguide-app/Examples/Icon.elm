@@ -13,8 +13,9 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Heading.V1 as Heading
 import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
@@ -128,7 +129,10 @@ viewIconSection :
     -> Html msg
 viewIconSection headerText icons =
     Html.section []
-        [ Text.subHeading [ Html.text headerText ]
+        [ Heading.heading [ Html.text headerText ]
+            |> Heading.withDocumentLevel Heading.H2
+            |> Heading.withVisualLevel Heading.Subhead
+            |> Heading.view
         , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             (List.map viewIcon icons)
         ]
