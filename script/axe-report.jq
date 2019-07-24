@@ -7,7 +7,7 @@ Agent information:
 
   \(.testEnvironment | to_entries | map("\(.key): \(.value)") | join("\n  "))
 
-Summary: \(.passes | length) passes | \(.violations | length) violations | \(.incomplete | length) incomplete | \(.inapplicable | length) inapplicable
+Summary: \(.passes | length) passes | \(.violations | map(.nodes | length) | add) violations | \(.incomplete | map(.nodes | length) | add) incomplete | \(.inapplicable | length) inapplicable
 
 Violations:
 
