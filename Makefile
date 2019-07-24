@@ -3,6 +3,7 @@ SHELL:=env PATH=${PATH} /bin/sh
 .PHONY: test
 test: node_modules
 	npx elm-test
+	make tests/axe-report.log
 
 tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
 	script/run-axe.sh > $@
@@ -76,4 +77,4 @@ node_modules: package.json
 setup: node_modules
 
 .PHONY: ci
-ci: checks test format documentation.json diff styleguide-app/elm.js tests/axe-report.log
+ci: checks test format documentation.json diff styleguide-app/elm.js
