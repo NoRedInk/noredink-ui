@@ -21,7 +21,7 @@ if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo 'If it went down, hooray!'
     echo "Check out ${0:-} and change the count to the reported value above."
     echo
-    echo "Did it go up? That's OK too."
+    echo "If it went up, let's fix it instead."
     echo "Since there are so many errors right now, a decent debugging strategy is:"
     echo
     echo " 1. save tests/axe-report.log somewhere ('mv tests/axe-report.log tests/axe-report.log.failing' is one way)"
