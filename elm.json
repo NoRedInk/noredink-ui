@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "6.25.0",
+    "version": "6.26.1",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
@@ -54,6 +54,7 @@
         "Nri.Ui.PremiumCheckbox.V3",
         "Nri.Ui.PremiumCheckbox.V4",
         "Nri.Ui.PremiumCheckbox.V5",
+        "Nri.Ui.PremiumCheckbox.V6",
         "Nri.Ui.SegmentedControl.V6",
         "Nri.Ui.SegmentedControl.V7",
         "Nri.Ui.Select.V5",
