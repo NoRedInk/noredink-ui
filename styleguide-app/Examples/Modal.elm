@@ -14,7 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V5 as Modal
+import Nri.Ui.Modal.V6 as Modal
 
 
 {-| -}
@@ -45,7 +45,7 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Modal.V5"
+    { name = "Nri.Ui.Modal.V6"
     , category = Modals
     , content =
         [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
