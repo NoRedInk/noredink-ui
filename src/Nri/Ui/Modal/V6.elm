@@ -7,10 +7,9 @@ module Nri.Ui.Modal.V6 exposing
     , closeButton
     )
 
-{-| Changes from V4:
+{-| Changes from V5:
 
-  - Remove dependence on Assets
-  - Adds keyboard support (escape key to exit, tabs contained within the modal)
+  - Removes button helpers, now that we can use Nri.Ui.Button.V9 directly
 
 These changes have required major API changes. Be sure to wire up subscriptions!
 
