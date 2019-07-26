@@ -99,47 +99,101 @@ viewContent :
     -> Modal.FocusableElementAttrs Msg
     -> Html Msg
 viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAttrs =
-    div []
-        [ if state.showX then
-            Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-
-          else
-            text ""
-        , Modal.viewContent [ viewSettings state ]
-        , if state.showContinue && state.showSecondary then
-            Modal.viewFooter
-                [ Button.button "Continue"
-                    [ firstButtonStyle
-                    , Button.onClick ForceClose
-                    ]
-                , Button.button "Close"
-                    [ secondButtonStyle
-                    , Button.onClick ForceClose
-                    , Button.custom focusableElementAttrs.lastFocusableElement
+    case ( state.showX, state.showContinue, state.showSecondary ) of
+        ( True, True, True ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        ]
+                    , Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
                     ]
                 ]
 
-          else if state.showContinue then
-            Modal.viewFooter
-                [ Button.button "Continue"
-                    [ firstButtonStyle
-                    , Button.onClick ForceClose
-                    , Button.custom focusableElementAttrs.lastFocusableElement
+        ( True, False, True ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
                     ]
                 ]
 
-          else if state.showSecondary then
-            Modal.viewFooter
-                [ Button.button "Close"
-                    [ secondButtonStyle
-                    , Button.onClick ForceClose
-                    , Button.custom focusableElementAttrs.lastFocusableElement
+        ( True, False, False ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                ]
+
+        ( True, True, False ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
                     ]
                 ]
 
-          else
-            text ""
-        ]
+        ( False, True, True ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.firstFocusableElement
+                        ]
+                    , Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, False, True ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, True, False ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, False, False ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                ]
 
 
 viewSettings : State -> Html Msg
