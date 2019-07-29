@@ -21,6 +21,22 @@ module Nri.Ui.Text.V4 exposing
   - **User-authored content blocks** preserve line breaks and do not have margin.
 
 
+## Headings
+
+Headings now live in Nri.Ui.Heading.V2. Here's a mapping to help with upgrades:
+
+    | Nri.Ui.Text.V3    | Nri.Ui.Heading.V2 |
+    |===================|===================|
+    | Text.heading      | Heading.h1        |
+    | Text.tagline      | Heading.h2        |
+    | Text.subHeading   | Heading.h3        |
+    | Text.smallHeading | Heading.h4        |
+
+If you look at your new code and go "hmm, those shouldn't be at this level of
+heading" then you can customize the tag apart from the style using the new
+API. See the Nri.Ui.Heading.V2 docs for details.
+
+
 ## Paragraph styles
 
 @docs caption, mediumBody, smallBody, smallBodyGray
