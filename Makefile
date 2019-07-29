@@ -3,6 +3,13 @@ SHELL:=env PATH=${PATH} /bin/sh
 .PHONY: test
 test: node_modules
 	npx elm-test
+	make tests/axe-report.log
+
+tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
+	script/run-axe.sh > $@
+
+tests/axe-report.log: tests/axe-report.json script/format-axe-report.sh script/axe-report.jq
+	script/format-axe-report.sh $< | tee $@
 
 .PHONY: checks
 checks:
@@ -31,7 +38,7 @@ styleguide-app/bundle.js: lib/index.js styleguide-app/manifest.js styleguide-app
 	npx browserify --entry styleguide-app/manifest.js --outfile styleguide-app/bundle.js
 
 styleguide-app/elm.js: styleguide-app/bundle.js $(shell find src styleguide-app -type f -name '*.elm')
-	cd styleguide-app; npx elm make Main.elm --output=$(@F)
+	cd styleguide-app && npx elm make Main.elm --output=$(@F)
 
 # for publishing styleguide
 
