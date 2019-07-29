@@ -24,9 +24,9 @@ if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo "If it went up, let's fix it instead."
     echo "Since there are so many errors right now, a decent debugging strategy is:"
     echo
-    echo " 1. save tests/axe-report.log somewhere ('mv tests/axe-report.log tests/axe-report.log.failing' is one way)"
+    echo " 1. save this output somewhere ('make axe-report > errors.new')"
     echo " 2. undo your changes ('git stash' or 'checkout master')"
-    echo " 3. regenerate the log with 'make tests/axe-report.log'"
-    echo " 4. compare the output with 'diff -u tests/axe-report.log tests/axe-report.log.failing'"
+    echo " 3. regenerate the log with 'make axe-report > errors.old'"
+    echo " 4. see waht's new with 'diff -u errors.old errors.new'"
     exit 1
 fi
