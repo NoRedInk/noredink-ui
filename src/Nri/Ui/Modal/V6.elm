@@ -17,10 +17,11 @@ These changes have required major API changes. Be sure to wire up subscriptions!
     import Nri.Ui.Button.V9 as Button
     import Nri.Ui.Modal.V6 as Modal
 
-    view : Modal.State -> Html Msg
+    view : Modal.Model -> Html Msg
     view state =
         Modal.info
-            { title = { title = "Modal Header", visibleTitle = True }
+            { title = "Modal Header"
+            , visibleTitle = True
             , wrapMsg = ModalMsg
             , content =
                 \{ onlyFocusableElement } ->
@@ -38,7 +39,7 @@ These changes have required major API changes. Be sure to wire up subscriptions!
             }
             state
 
-    subscriptions : Modal.State -> Sub Msg
+    subscriptions : Modal.Model -> Sub Msg
     subscriptions state =
         Modal.subscriptions state
 
