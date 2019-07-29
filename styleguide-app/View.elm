@@ -2,7 +2,6 @@ module View exposing (view)
 
 import Browser exposing (Document)
 import Css exposing (..)
-import Headings
 import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
@@ -12,6 +11,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, cat
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import NriModules as NriModules exposing (nriThemedModules)
 import Routes as Routes exposing (Route)
 import Update exposing (..)
@@ -41,7 +41,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ Headings.h2 [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
+                        [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\m -> m.name == doodad)
                             |> List.map (ModuleExample.view False)
@@ -54,7 +54,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ Headings.h2 [ Html.text (categoryForDisplay category) ]
+                        [ Heading.h2 [] [ Html.text (categoryForDisplay category) ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
@@ -67,7 +67,7 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ Headings.h2 [ Html.text "All" ]
+                        [ Heading.h2 [] [ Html.text "All" ]
                         , nriThemedModules model.moduleStates
                             |> List.map (ModuleExample.view True)
                             |> Html.div []
@@ -129,8 +129,7 @@ navigation route =
         , flexShrink zero
         ]
         []
-        [ Headings.h4
-            [ Html.text "Categories" ]
+        [ Heading.h4 [] [ Html.text "Categories" ]
         , (categoryLink (route == Routes.All) "#" "All"
             :: List.map
                 navLink

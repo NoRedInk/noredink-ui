@@ -24,7 +24,7 @@ module Nri.Ui.Text.V3 exposing
 
 ## Heading styles
 
-Please use `Nri.Ui.Heading.V1` instead of these in new code. If you're here to
+Please use `Nri.Ui.Heading.V2` instead of these in new code. If you're here to
 make a new Text version, please remove them.
 
 @docs heading, subHeading, smallHeading, tagline
@@ -47,7 +47,7 @@ make a new Text version, please remove them.
 -}
 
 import Html.Styled exposing (Html)
-import Nri.Ui.Heading.V1 as Heading
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as V4
 
 
@@ -55,40 +55,28 @@ import Nri.Ui.Text.V4 as V4
 -}
 heading : List (Html msg) -> Html msg
 heading content =
-    Heading.heading content
-        |> Heading.withVisualLevel Heading.Top
-        |> Heading.withDocumentLevel Heading.H1
-        |> Heading.view
+    Heading.h1 [] content
 
 
 {-| This is a tagline for a page heading.
 -}
 tagline : List (Html msg) -> Html msg
 tagline content =
-    Heading.heading content
-        |> Heading.withVisualLevel Heading.Tagline
-        |> Heading.withDocumentLevel Heading.H2
-        |> Heading.view
+    Heading.h2 [] content
 
 
 {-| This is a subhead.
 -}
 subHeading : List (Html msg) -> Html msg
 subHeading content =
-    Heading.heading content
-        |> Heading.withVisualLevel Heading.Subhead
-        |> Heading.withDocumentLevel Heading.H3
-        |> Heading.view
+    Heading.h3 [] content
 
 
 {-| This is a small Page Heading.
 -}
 smallHeading : List (Html msg) -> Html msg
 smallHeading content =
-    Heading.heading content
-        |> Heading.withVisualLevel Heading.Small
-        |> Heading.withDocumentLevel Heading.H4
-        |> Heading.view
+    Heading.h4 [] content
 
 
 {-| This is some medium body copy.

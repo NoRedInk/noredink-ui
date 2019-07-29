@@ -5,9 +5,9 @@ module Examples.TextInput exposing (Msg, State, example, init, update)
 -}
 
 import Dict exposing (Dict)
-import Headings
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V4 as TextInput
 
 
@@ -67,7 +67,7 @@ example parentMessage state =
                     , type_ = TextInput.number
                     , showLabel = True
                     }
-                , Headings.h3 [ Html.text "invisible label" ]
+                , Heading.h3 [] [ Html.text "invisible label" ]
                 , TextInput.view
                     { label = "Criterion"
                     , isInError = False
@@ -91,7 +91,7 @@ example parentMessage state =
                     , type_ = TextInput.text
                     , showLabel = False
                     }
-                , Headings.h3 [ Html.text "Writing Style" ]
+                , Heading.h3 [] [ Html.text "Writing Style" ]
                 , TextInput.writing
                     { label = "Writing!"
                     , isInError = False
