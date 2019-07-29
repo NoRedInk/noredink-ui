@@ -16,7 +16,6 @@ import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
-import Nri.Ui.Text.V3 as Text
 
 
 {-| -}

@@ -9,13 +9,13 @@ module Examples.Text exposing (example)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V1 as Heading exposing (DocumentLevel(..), VisualLevel(..), heading, withDocumentLevel, withVisualLevel)
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Text.V3 (with headers from Nri.Ui.Heading.V1)"
+    { name = "Nri.Ui.Text.V4 (with headers from Nri.Ui.Heading.V1)"
     , category = Text
     , content =
         let
@@ -44,13 +44,19 @@ example =
             |> withDocumentLevel H4
             |> Heading.view
         , Html.hr [] []
-        , Text.heading [ Html.text "Paragraph styles" ]
+        , heading [ Html.text "Paragraph styles" ]
+            |> withVisualLevel Top
+            |> withDocumentLevel H2
+            |> Heading.view
         , Text.mediumBody [ Html.text <| "This is a mediumBody. " ++ longerBody ]
         , Text.smallBody [ Html.text <| "This is a smallBody. " ++ longerBody ]
         , Text.smallBodyGray [ Html.text <| "This is a smallBodyGray. " ++ longerBody ]
         , Text.caption [ Html.text <| "This is a caption. " ++ longerBody ]
         , Html.hr [] []
-        , Text.heading [ Html.text "Paragraph styles for user-authored content" ]
+        , heading [ Html.text "Paragraph styles for user-authored content" ]
+            |> withVisualLevel Top
+            |> withDocumentLevel H2
+            |> Heading.view
         , Text.ugMediumBody [ Html.text <| "This is an ugMediumBody. " ++ longerBody ]
         , Text.ugSmallBody [ Html.text <| "This is an ugSmallBody. " ++ longerBody ]
         ]
