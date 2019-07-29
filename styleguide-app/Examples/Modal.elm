@@ -12,9 +12,10 @@ import Css.Global
 import Html as Root
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V5 as Modal
+import Nri.Ui.Modal.V6 as Modal
 
 
 {-| -}
@@ -45,29 +46,44 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Modal.V5"
+    { name = "Nri.Ui.Modal.V6"
     , category = Modals
     , content =
-        [ Modal.launchButton InfoModalMsg [] "Launch Info Modal"
-        , Modal.launchButton WarningModalMsg [] "Launch Warning Modal"
+        [ Button.button "Launch Info Modal"
+            [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
+            , Button.custom
+                [ Html.Styled.Attributes.id "launch-info-modal"
+                , css [ Css.marginRight (Css.px 16) ]
+                ]
+            , Button.secondary
+            , Button.medium
+            ]
+        , Button.button "Launch Warning Modal"
+            [ Button.onClick (WarningModalMsg (Modal.open "launch-warning-modal"))
+            , Button.custom [ Html.Styled.Attributes.id "launch-warning-modal" ]
+            , Button.secondary
+            , Button.medium
+            ]
         , Modal.info
-            { title = { title = "Modal.info", visibleTitle = state.visibleTitle }
+            { title = "Modal.info"
+            , visibleTitle = state.visibleTitle
             , wrapMsg = InfoModalMsg
             , content =
                 viewContent state
                     InfoModalMsg
-                    (Modal.primaryButton ForceClose "Continue")
-                    (Modal.secondaryButton ForceClose "Close")
+                    Button.primary
+                    Button.secondary
             }
             state.infoModal
         , Modal.warning
-            { title = { title = "Modal.warning", visibleTitle = state.visibleTitle }
+            { title = "Modal.warning"
+            , visibleTitle = state.visibleTitle
             , wrapMsg = WarningModalMsg
             , content =
                 viewContent state
                     WarningModalMsg
-                    (Modal.dangerButton ForceClose "Continue")
-                    (Modal.secondaryButton ForceClose "Close")
+                    Button.danger
+                    Button.secondary
             }
             state.warningModal
         ]
@@ -78,37 +94,106 @@ example parentMessage state =
 viewContent :
     State
     -> (Modal.Msg -> Msg)
-    -> (List (Root.Attribute Msg) -> Html Msg)
-    -> (List (Root.Attribute Msg) -> Html Msg)
+    -> Button.Attribute Msg
+    -> Button.Attribute Msg
     -> Modal.FocusableElementAttrs Msg
     -> Html Msg
-viewContent state wrapMsg primaryButton secondaryButton focusableElementAttrs =
-    div []
-        [ if state.showX then
-            Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-
-          else
-            text ""
-        , Modal.viewContent [ viewSettings state ]
-        , if state.showContinue && state.showSecondary then
-            Modal.viewFooter
-                [ primaryButton []
-                , secondaryButton focusableElementAttrs.lastFocusableElement
+viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAttrs =
+    case ( state.showX, state.showContinue, state.showSecondary ) of
+        ( True, True, True ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        ]
+                    , Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
                 ]
 
-          else if state.showContinue then
-            Modal.viewFooter
-                [ primaryButton focusableElementAttrs.lastFocusableElement
+        ( True, False, True ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
                 ]
 
-          else if state.showSecondary then
-            Modal.viewFooter
-                [ secondaryButton focusableElementAttrs.lastFocusableElement
+        ( True, False, False ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
                 ]
 
-          else
-            text ""
-        ]
+        ( True, True, False ) ->
+            div []
+                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                , Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, True, True ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.firstFocusableElement
+                        ]
+                    , Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, False, True ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Close"
+                        [ secondButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, True, False ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                , Modal.viewFooter
+                    [ Button.button "Continue"
+                        [ firstButtonStyle
+                        , Button.onClick ForceClose
+                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        ]
+                    ]
+                ]
+
+        ( False, False, False ) ->
+            div []
+                [ Modal.viewContent [ viewSettings state ]
+                ]
 
 
 viewSettings : State -> Html Msg
