@@ -17,6 +17,10 @@ These changes have required major API changes. Be sure to wire up subscriptions!
     import Nri.Ui.Button.V9 as Button
     import Nri.Ui.Modal.V6 as Modal
 
+    type Msg
+        = ModalMsg Modal.Msg
+        | DoSomthing
+
     view : Modal.Model -> Html Msg
     view state =
         Modal.info
@@ -42,6 +46,9 @@ These changes have required major API changes. Be sure to wire up subscriptions!
     subscriptions : Modal.Model -> Sub Msg
     subscriptions state =
         Modal.subscriptions state
+
+    view init
+    --> text ""  -- a closed modal
 
 
 ## State and updates
