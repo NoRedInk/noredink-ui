@@ -107,9 +107,18 @@ viewExamples messages (State control) =
     , buttons messages model
     , Text.smallBody
         [ text "Sometimes, we'll want our clickable links: "
-        , linkView model ( ClickableText.small, "small" )
+        , ClickableText.link model.label
+            [ ClickableText.small
+            , Maybe.map ClickableText.icon model.icon
+                |> Maybe.withDefault (ClickableText.custom [])
+            ]
         , text " and clickable buttons: "
-        , buttonView messages model ( ClickableText.small, "small" )
+        , ClickableText.button model.label
+            [ ClickableText.small
+            , ClickableText.onClick (messages.showItWorked "in-line button")
+            , Maybe.map ClickableText.icon model.icon
+                |> Maybe.withDefault (ClickableText.custom [])
+            ]
         , text " to show up in-line."
         ]
     ]
@@ -130,43 +139,38 @@ buttons :
     -> Html parentMsg
 buttons messages model =
     let
-        exampleCell view =
-            view
-                |> List.singleton
-                |> td
-                    [ css
-                        [ verticalAlign middle
-                        , Css.width (Css.px 200)
-                        ]
-                    ]
+        sizeRow label render =
+            row label (List.map render sizes)
     in
-    [ sizes
-        |> List.map (\( size, sizeLabel ) -> th [] [ text sizeLabel ])
-        |> (\sizeHeadings -> tr [] (th [] [ td [] [] ] :: sizeHeadings))
-    , sizes
-        |> List.map (linkView model >> exampleCell)
-        |> (\linkViews -> tr [] (td [] [ text ".link" ] :: linkViews))
-    , sizes
-        |> List.map (buttonView messages model >> exampleCell)
-        |> (\buttonViews -> tr [] (td [] [ text ".button" ] :: buttonViews))
-    ]
-        |> table []
-
-
-linkView : Model -> ( ClickableText.Attribute msg, String ) -> Html msg
-linkView model ( size, _ ) =
-    ClickableText.link model.label
-        [ size
-        , Maybe.map ClickableText.icon model.icon
-            |> Maybe.withDefault (ClickableText.custom [])
+    table []
+        [ sizeRow "" (\( size, sizeLabel ) -> th [] [ text sizeLabel ])
+        , sizeRow ".link"
+            (\( size, sizeLabel ) ->
+                ClickableText.link model.label
+                    [ size
+                    , Maybe.map ClickableText.icon model.icon
+                        |> Maybe.withDefault (ClickableText.custom [])
+                    ]
+                    |> exampleCell
+            )
+        , sizeRow ".button"
+            (\( size, sizeLabel ) ->
+                ClickableText.button model.label
+                    [ size
+                    , ClickableText.onClick (messages.showItWorked sizeLabel)
+                    , Maybe.map ClickableText.icon model.icon
+                        |> Maybe.withDefault (ClickableText.custom [])
+                    ]
+                    |> exampleCell
+            )
         ]
 
 
-buttonView : ModuleMessages Msg parentMsg -> Model -> ( ClickableText.Attribute parentMsg, String ) -> Html parentMsg
-buttonView messages model ( size, sizeLabel ) =
-    ClickableText.button model.label
-        [ size
-        , ClickableText.onClick (messages.showItWorked sizeLabel)
-        , Maybe.map ClickableText.icon model.icon
-            |> Maybe.withDefault (ClickableText.custom [])
-        ]
+row : String -> List (Html msg) -> Html msg
+row label tds =
+    tr [] (th [] [ td [] [ text label ] ] :: tds)
+
+
+exampleCell : Html msg -> Html msg
+exampleCell view =
+    td [ css [ verticalAlign middle, Css.width (Css.px 200) ] ] [ view ]
