@@ -1,17 +1,20 @@
 module Nri.Ui.ClickableText.V3 exposing
     ( button
     , link
-    , Size(..)
+    , Attribute
+    , small, medium, large
+    , href, onClick
+    , icon
+    , custom
     )
 
 {-|
 
 
-# Changes from V1
+# Changes from V2
 
-  - Removes dependency on Icon that makes versioned assets hard to work with
-  - Fixes vertical alignment of icons
-  - Inlines configs to make parsing documentation easier
+  - Changes API to be attributes-based rather than config-based
+  - Makes a hole for custom attributes (like ids and styles)
 
 
 # About:
@@ -34,9 +37,13 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs link
 
 
-# Config
+# Attributes
 
-@docs Size
+@docs Attribute
+@docs small, medium, large
+@docs href, onClick
+@docs icon
+@docs custom
 
 -}
 
@@ -47,50 +54,109 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
-{-| Sizes for the button
--}
+label : String -> Attribute msg
+label label_ =
+    set (\attributes -> { attributes | label = label_ })
+
+
+{-| -}
+small : Attribute msg
+small =
+    set (\attributes -> { attributes | size = Small })
+
+
+{-| -}
+medium : Attribute msg
+medium =
+    set (\attributes -> { attributes | size = Medium })
+
+
+{-| -}
+large : Attribute msg
+large =
+    set (\attributes -> { attributes | size = Large })
+
+
 type Size
     = Small
     | Medium
     | Large
 
 
+{-| -}
+icon : Svg -> Attribute msg
+icon icon_ =
+    set (\attributes -> { attributes | icon = Just icon_ })
+
+
+{-| -}
+custom : List (Html.Attribute msg) -> Attribute msg
+custom attributes =
+    set
+        (\config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+        )
+
+
+{-| -}
+onClick : msg -> Attribute msg
+onClick msg =
+    set (\attributes -> { attributes | onClick = Just msg })
+
+
+{-| -}
+href : String -> Attribute msg
+href url =
+    set (\attributes -> { attributes | url = url })
+
+
 {-| Creates a `<button>` element
 -}
 button :
-    { label : String
-    , size : Size
-    , icon : Maybe Svg
-    , onClick : msg
-    }
+    String
+    -> List (Attribute msg)
     -> Html msg
-button config =
+button label_ attributes =
+    let
+        config =
+            (label label_ :: attributes)
+                |> List.foldl (\(Attribute attribute) b -> attribute b) defaults
+                |> (\(ClickableText a) -> a)
+    in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
         clickableTextStyles
-        [ Events.onClick config.onClick
-        ]
+        ((Maybe.map Events.onClick config.onClick
+            |> Maybe.withDefault AttributesExtra.none
+         )
+            :: config.customAttributes
+        )
         [ viewContent config ]
 
 
 {-| Creates a `<a>` element
 -}
 link :
-    { label : String
-    , size : Size
-    , icon : Maybe Svg
-    , url : String
-    }
+    String
     -> List (Attribute msg)
     -> Html msg
-link config additionalAttributes =
+link label_ attributes =
+    let
+        config =
+            (label label_ :: attributes)
+                |> List.foldl (\(Attribute attribute) l -> attribute l) defaults
+                |> (\(ClickableText a) -> a)
+    in
     Nri.Ui.styled Html.a
         (dataDescriptor "link")
         clickableTextStyles
-        (Attributes.href config.url :: additionalAttributes)
+        (Attributes.href config.url :: config.customAttributes)
         [ viewContent config ]
 
 
@@ -102,7 +168,7 @@ viewContent config =
     in
     span [ Attributes.css [ Css.fontSize fontSize ] ]
         (case config.icon of
-            Just icon ->
+            Just icon_ ->
                 [ div
                     [ Attributes.css
                         [ Css.displayFlex
@@ -126,7 +192,7 @@ viewContent config =
                                     Css.marginRight (Css.px 4)
                             ]
                         ]
-                        [ NriSvg.toHtml icon ]
+                        [ NriSvg.toHtml icon_ ]
                     , span [] [ text config.label ]
                     ]
                 ]
@@ -174,3 +240,45 @@ sizeToPx size =
 dataDescriptor : String -> String
 dataDescriptor descriptor =
     "clickable-text-v2-" ++ descriptor
+
+
+
+--  Internals
+
+
+type ClickableText msg
+    = ClickableText (ClickableTextAttributes msg)
+
+
+type alias ClickableTextAttributes msg =
+    { label : String
+    , size : Size
+    , icon : Maybe Svg
+    , onClick : Maybe msg
+    , url : String
+    , customAttributes : List (Html.Attribute msg)
+    }
+
+
+defaults : ClickableText msg
+defaults =
+    ClickableText
+        { onClick = Nothing
+        , url = "#"
+        , size = Medium
+        , label = ""
+        , icon = Nothing
+        , customAttributes = []
+        }
+
+
+{-| -}
+type Attribute msg
+    = Attribute (ClickableText msg -> ClickableText msg)
+
+
+set :
+    (ClickableTextAttributes msg -> ClickableTextAttributes msg)
+    -> Attribute msg
+set with =
+    Attribute (\(ClickableText config) -> ClickableText (with config))

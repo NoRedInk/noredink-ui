@@ -11,7 +11,7 @@ import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.ClickableText.V3 as ClickableText exposing (Size(..))
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
@@ -107,20 +107,20 @@ viewExamples messages (State control) =
     , buttons messages model
     , Text.smallBody
         [ text "Sometimes, we'll want our clickable links: "
-        , linkView model Small
+        , linkView model ( ClickableText.small, "small" )
         , text " and clickable buttons: "
-        , buttonView messages model Small
+        , buttonView messages model ( ClickableText.small, "small" )
         , text " to show up in-line."
         ]
     ]
         |> div []
 
 
-sizes : List Size
+sizes : List ( ClickableText.Attribute msg, String )
 sizes =
-    [ Small
-    , Medium
-    , Large
+    [ ( ClickableText.small, "small" )
+    , ( ClickableText.medium, "medium" )
+    , ( ClickableText.large, "large" )
     ]
 
 
@@ -141,7 +141,7 @@ buttons messages model =
                     ]
     in
     [ sizes
-        |> List.map (\size -> th [] [ text <| Debug.toString size ])
+        |> List.map (\( size, sizeLabel ) -> th [] [ text sizeLabel ])
         |> (\sizeHeadings -> tr [] (th [] [ td [] [] ] :: sizeHeadings))
     , sizes
         |> List.map (linkView model >> exampleCell)
@@ -153,22 +153,20 @@ buttons messages model =
         |> table []
 
 
-linkView : Model -> ClickableText.Size -> Html msg
-linkView model size =
-    ClickableText.link
-        { size = size
-        , label = model.label
-        , icon = model.icon
-        , url = "#"
-        }
-        []
+linkView : Model -> ( ClickableText.Attribute msg, String ) -> Html msg
+linkView model ( size, _ ) =
+    ClickableText.link model.label
+        [ size
+        , Maybe.map ClickableText.icon model.icon
+            |> Maybe.withDefault (ClickableText.custom [])
+        ]
 
 
-buttonView : ModuleMessages Msg parentMsg -> Model -> ClickableText.Size -> Html parentMsg
-buttonView messages model size =
-    ClickableText.button
-        { size = size
-        , onClick = messages.showItWorked (Debug.toString size)
-        , label = model.label
-        , icon = model.icon
-        }
+buttonView : ModuleMessages Msg parentMsg -> Model -> ( ClickableText.Attribute parentMsg, String ) -> Html parentMsg
+buttonView messages model ( size, sizeLabel ) =
+    ClickableText.button model.label
+        [ size
+        , ClickableText.onClick (messages.showItWorked sizeLabel)
+        , Maybe.map ClickableText.icon model.icon
+            |> Maybe.withDefault (ClickableText.custom [])
+        ]
