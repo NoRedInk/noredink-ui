@@ -83,22 +83,22 @@ init assets =
         |> Control.field "icon" (iconChoice assets)
         |> Control.field "button type"
             (Control.choice
-                ( "button", Control.value Button )
-                [ ( "link", Control.value Link )
+                [ ( "button", Control.value Button )
+                , ( "link", Control.value Link )
                 ]
             )
         |> Control.field "width"
             (Control.choice
-                ( "exactWidth 120", Control.value (Button.exactWidth 120) )
-                [ ( "exactWidth 70", Control.value (Button.exactWidth 70) )
+                [ ( "exactWidth 120", Control.value (Button.exactWidth 120) )
+                , ( "exactWidth 70", Control.value (Button.exactWidth 70) )
                 , ( "unboundedWidth", Control.value Button.unboundedWidth )
                 , ( "fillContainerWidth", Control.value Button.fillContainerWidth )
                 ]
             )
         |> Control.field "state (button only)"
             (Control.choice
-                ( "enabled", Control.value Button.enabled )
-                [ ( "disabled", Control.value Button.disabled )
+                [ ( "enabled", Control.value Button.enabled )
+                , ( "disabled", Control.value Button.disabled )
                 , ( "error", Control.value Button.error )
                 , ( "unfulfilled", Control.value Button.unfulfilled )
                 , ( "loading", Control.value Button.loading )
@@ -111,8 +111,10 @@ init assets =
 iconChoice : { r | performance : String, lock : String } -> Control.Control (Maybe Svg)
 iconChoice assets =
     Control.choice
-        ( "Nothing", Control.value Nothing )
-        [ ( "Just Performance"
+        [ ( "Nothing"
+          , Control.value Nothing
+          )
+        , ( "Just Performance"
           , Icon.performance assets
                 |> Icon.decorativeIcon
                 |> NriSvg.fromHtml
