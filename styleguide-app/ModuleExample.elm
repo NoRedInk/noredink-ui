@@ -124,7 +124,10 @@ categoryForDisplay category =
 view : Bool -> ModuleExample msg -> Html msg
 view showFocusLink { name, content } =
     Html.div
-        []
+        [ String.replace "." "-" name
+            |> (++) "module-example__"
+            |> Attributes.class
+        ]
         [ Html.styled Html.div
             [ display block
             , backgroundColor glacier
