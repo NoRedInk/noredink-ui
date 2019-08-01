@@ -127,7 +127,6 @@ button label_ attributes =
         config =
             (label label_ :: attributes)
                 |> List.foldl (\(Attribute attribute) b -> attribute b) defaults
-                |> (\(ClickableText a) -> a)
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
@@ -151,7 +150,6 @@ link label_ attributes =
         config =
             (label label_ :: attributes)
                 |> List.foldl (\(Attribute attribute) l -> attribute l) defaults
-                |> (\(ClickableText a) -> a)
     in
     Nri.Ui.styled Html.a
         (dataDescriptor "link")
@@ -246,10 +244,6 @@ dataDescriptor descriptor =
 --  Internals
 
 
-type ClickableText msg
-    = ClickableText (ClickableTextAttributes msg)
-
-
 type alias ClickableTextAttributes msg =
     { label : String
     , size : Size
@@ -260,25 +254,24 @@ type alias ClickableTextAttributes msg =
     }
 
 
-defaults : ClickableText msg
+defaults : ClickableTextAttributes msg
 defaults =
-    ClickableText
-        { onClick = Nothing
-        , url = "#"
-        , size = Medium
-        , label = ""
-        , icon = Nothing
-        , customAttributes = []
-        }
+    { onClick = Nothing
+    , url = "#"
+    , size = Medium
+    , label = ""
+    , icon = Nothing
+    , customAttributes = []
+    }
 
 
 {-| -}
 type Attribute msg
-    = Attribute (ClickableText msg -> ClickableText msg)
+    = Attribute (ClickableTextAttributes msg -> ClickableTextAttributes msg)
 
 
 set :
     (ClickableTextAttributes msg -> ClickableTextAttributes msg)
     -> Attribute msg
 set with =
-    Attribute (\(ClickableText config) -> ClickableText (with config))
+    Attribute (\config -> with config)
