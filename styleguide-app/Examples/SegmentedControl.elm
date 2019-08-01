@@ -99,15 +99,17 @@ init assets =
         Control.record Options
             |> Control.field "width"
                 (Control.choice
-                    ( "FitContent", Control.value SegmentedControl.FitContent )
-                    [ ( "FillContainer", Control.value SegmentedControl.FillContainer ) ]
+                    [ ( "FitContent", Control.value SegmentedControl.FitContent )
+                    , ( "FillContainer", Control.value SegmentedControl.FillContainer )
+                    ]
                 )
             |> Control.field "icon"
                 (Control.maybe False (Control.value { alt = "Help", icon = Icon.helpSvg assets }))
             |> Control.field "which view function"
                 (Control.choice
-                    ( "view", Control.value False )
-                    [ ( "viewSpa", Control.value True ) ]
+                    [ ( "view", Control.value False )
+                    , ( "viewSpa", Control.value True )
+                    ]
                 )
     }
 

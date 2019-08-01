@@ -52,13 +52,13 @@ init assets =
         |> Control.field "icon"
             (Control.maybe True <|
                 Control.choice
-                    ( "Help"
-                    , Icon.helpSvg assets
-                        |> Icon.decorativeIcon
-                        |> NriSvg.fromHtml
-                        |> Control.value
-                    )
-                    [ ( "Performance"
+                    [ ( "Help"
+                      , Icon.helpSvg assets
+                            |> Icon.decorativeIcon
+                            |> NriSvg.fromHtml
+                            |> Control.value
+                      )
+                    , ( "Performance"
                       , Icon.performance assets
                             |> Icon.decorativeIcon
                             |> NriSvg.fromHtml

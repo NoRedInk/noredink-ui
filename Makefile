@@ -3,6 +3,7 @@ SHELL:=env PATH=${PATH} /bin/sh
 .PHONY: test
 test: node_modules
 	npx elm-test
+	npx elm-verify-examples --run-tests
 	make axe-report
 
 tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
