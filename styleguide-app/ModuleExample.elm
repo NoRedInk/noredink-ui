@@ -124,7 +124,11 @@ categoryForDisplay category =
 view : Bool -> ModuleExample msg -> Html msg
 view showFocusLink { name, content } =
     Html.div
-        []
+        [ -- this class makes the axe accessibility checking output easier to parse
+          String.replace "." "-" name
+            |> (++) "module-example__"
+            |> Attributes.class
+        ]
         [ Html.styled Html.div
             [ display block
             , backgroundColor glacier
