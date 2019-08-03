@@ -1,14 +1,16 @@
 module Examples.TextInput exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Dict exposing (Dict)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.TextInput.V4 as TextInput
+import Nri.Ui.TextInput.V5 as TextInput
 
 
 {-| -}
