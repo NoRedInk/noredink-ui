@@ -4,7 +4,7 @@ module Nri.Ui.Table.V5 exposing
     , viewLoading, viewLoadingWithoutHeader
     )
 
-{-| Upgrading from V5:
+{-| Upgrading from V4:
 
   - The columns take an additional `cellStyles` property that allow
     you to specify additional styles such as cell background color
