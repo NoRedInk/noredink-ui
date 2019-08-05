@@ -26,7 +26,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Table.V4"
+    { name = "Nri.Ui.Table.V5"
     , category = Tables
     , content =
         let
