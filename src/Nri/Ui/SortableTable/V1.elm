@@ -1,4 +1,4 @@
-module Nri.Ui.SortableTable.V2 exposing
+module Nri.Ui.SortableTable.V1 exposing
     ( Column, Config, Sorter, State
     , init, initDescending
     , custom, string, view, viewLoading
@@ -23,7 +23,7 @@ import Html.Styled.Events
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
-import Nri.Ui.Table.V5
+import Nri.Ui.Table.V4
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as SvgAttributes
 
@@ -46,7 +46,6 @@ type Column id entry msg
         , view : entry -> Html msg
         , sorter : Sorter entry
         , width : Int
-        , cellStyles : entry -> List Style
         }
 
 
@@ -86,17 +85,15 @@ string :
     , header : String
     , value : entry -> String
     , width : Int
-    , cellStyles : entry -> List Style
     }
     -> Column id entry msg
-string { id, header, value, width, cellStyles } =
+string { id, header, value, width } =
     Column
         { id = id
         , header = Html.text header
         , view = value >> Html.text
         , sorter = simpleSort value
         , width = width
-        , cellStyles = cellStyles
         }
 
 
@@ -107,7 +104,6 @@ custom :
     , view : entry -> Html msg
     , sorter : Sorter entry
     , width : Int
-    , cellStyles : entry -> List Style
     }
     -> Column id entry msg
 custom config =
@@ -117,7 +113,6 @@ custom config =
         , view = config.view
         , sorter = config.sorter
         , width = config.width
-        , cellStyles = config.cellStyles
         }
 
 
@@ -186,7 +181,7 @@ viewLoading config state =
         tableColumns =
             List.map (buildTableColumn config.updateMsg state) config.columns
     in
-    Nri.Ui.Table.V5.viewLoading
+    Nri.Ui.Table.V4.viewLoading
         tableColumns
 
 
@@ -200,7 +195,7 @@ view config state entries =
         sorter =
             findSorter config.columns state.column
     in
-    Nri.Ui.Table.V5.view
+    Nri.Ui.Table.V4.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
 
@@ -235,13 +230,12 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
+buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V4.Column entry msg
 buildTableColumn updateMsg state (Column column) =
-    Nri.Ui.Table.V5.custom
+    Nri.Ui.Table.V4.custom
         { header = viewSortHeader column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
-        , cellStyles = column.cellStyles
         }
 
 

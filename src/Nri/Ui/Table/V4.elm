@@ -1,4 +1,4 @@
-module Nri.Ui.Table.V5 exposing
+module Nri.Ui.Table.V4 exposing
     ( Column, custom, string
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
@@ -39,7 +39,7 @@ import Nri.Ui.Fonts.V1 exposing (baseFont)
 in the table
 -}
 type Column data msg
-    = Column (Html msg) (data -> Html msg) Style (data -> List Style)
+    = Column (Html msg) (data -> Html msg) Style
 
 
 {-| A column that renders some aspect of a value as text
@@ -48,11 +48,10 @@ string :
     { header : String
     , value : data -> String
     , width : LengthOrAuto compatible
-    , cellStyles : data -> List Style
     }
     -> Column data msg
-string { header, value, width, cellStyles } =
-    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles
+string { header, value, width } =
+    Column (Html.text header) (value >> Html.text) (Css.width width)
 
 
 {-| A column that renders however you want it to
@@ -61,11 +60,10 @@ custom :
     { header : Html msg
     , view : data -> Html msg
     , width : LengthOrAuto compatible
-    , cellStyles : data -> List Style
     }
     -> Column data msg
 custom options =
-    Column options.header options.view (Css.width options.width) options.cellStyles
+    Column options.header options.view (Css.width options.width)
 
 
 
@@ -94,9 +92,9 @@ viewRow columns data =
 
 
 viewColumn : data -> Column data msg -> Html msg
-viewColumn data (Column _ renderer width cellStyles) =
+viewColumn data (Column _ renderer width) =
     td
-        [ css ([ width, verticalAlign middle ] ++ cellStyles data)
+        [ css (width :: cellStyles)
         ]
         [ renderer data ]
 
@@ -129,9 +127,9 @@ viewLoadingRow columns index =
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
-viewLoadingColumn rowIndex colIndex (Column _ _ width _) =
+viewLoadingColumn rowIndex colIndex (Column _ _ width) =
     td
-        [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
+        [ css (stylesLoadingColumn rowIndex colIndex width ++ cellStyles ++ loadingCellStyles)
         ]
         [ span [ css loadingContentStyles ] [] ]
 
@@ -176,7 +174,7 @@ tableHeader columns =
 
 
 tableRowHeader : Column data msg -> Html msg
-tableRowHeader (Column header _ width _) =
+tableRowHeader (Column header _ width) =
     th
         [ css (width :: headerStyles)
         ]
@@ -215,6 +213,12 @@ rowStyles =
     , color gray20
     , pseudoClass "nth-child(odd)"
         [ backgroundColor gray96 ]
+    ]
+
+
+cellStyles : List Style
+cellStyles =
+    [ verticalAlign middle
     ]
 
 
