@@ -2,8 +2,7 @@ module Nri.Ui.TextInput.V5 exposing
     ( Model
     , view, writing
     , generateId
-    , number
-    , text
+    , number, text, password
     )
 
 {-|
@@ -20,8 +19,7 @@ module Nri.Ui.TextInput.V5 exposing
 
 ## Input types
 
-@docs number
-@docs text
+@docs number, text, password
 
 -}
 
@@ -78,6 +76,17 @@ number =
         { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
         , fromString = String.toInt
         , fieldType = "number"
+        }
+
+
+{-| An input that allows password entry
+-}
+password : InputType String
+password =
+    InputType
+        { toString = identity
+        , fromString = identity
+        , fieldType = "password"
         }
 
 
