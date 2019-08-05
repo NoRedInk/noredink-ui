@@ -79,6 +79,7 @@
         "Nri.Ui.TextArea.V4",
         "Nri.Ui.TextInput.V3",
         "Nri.Ui.TextInput.V4",
+        "Nri.Ui.TextInput.V5",
         "Nri.Ui"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
