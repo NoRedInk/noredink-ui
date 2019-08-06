@@ -1,26 +1,30 @@
 module Examples.TextInput exposing (Msg, State, example, init, update)
 
-{- \
-   @docs Msg, State, example, init, update,
+{-|
+
+@docs Msg, State, example, init, update
+
 -}
 
 import Dict exposing (Dict)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.TextInput.V4 as TextInput
+import Nri.Ui.TextInput.V5 as TextInput
 
 
 {-| -}
 type Msg
     = SetTextInput Id String
     | SetNumberInput (Maybe Int)
+    | SetPassword String
 
 
 {-| -}
 type alias State =
     { numberInputValue : Maybe Int
     , textInputValues : Dict Id String
+    , passwordInputValue : String
     }
 
 
@@ -53,6 +57,18 @@ example parentMessage state =
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.number
+                    , showLabel = True
+                    }
+                , Html.br [] []
+                , TextInput.view
+                    { label = "Password"
+                    , isInError = False
+                    , placeholder = ""
+                    , value = state.passwordInputValue
+                    , onInput = SetPassword
+                    , onBlur = Nothing
+                    , autofocus = False
+                    , type_ = TextInput.password
                     , showLabel = True
                     }
                 , Html.br [] []
@@ -149,6 +165,7 @@ init : State
 init =
     { numberInputValue = Nothing
     , textInputValues = Dict.empty
+    , passwordInputValue = ""
     }
 
 
@@ -161,6 +178,9 @@ update msg state =
 
         SetNumberInput numberInputValue ->
             ( { state | numberInputValue = numberInputValue }, Cmd.none )
+
+        SetPassword password ->
+            ( { state | passwordInputValue = password }, Cmd.none )
 
 
 
