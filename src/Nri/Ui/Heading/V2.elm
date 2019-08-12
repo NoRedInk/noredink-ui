@@ -1,6 +1,6 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
-    , style, Style, css
+    , style, Style(..), css
     , customAttr
     )
 
