@@ -41,7 +41,7 @@ This means:
   - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
     - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
   - You can delete an old version of a widget when there are no usages left
-    - Currently, `noredink-ui` is used by the monolith and by CCS
+    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
     - Note: this will be a major version bump, so you may want to batch deletions together
 
 
