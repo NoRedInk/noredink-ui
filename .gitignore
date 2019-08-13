@@ -239,3 +239,4 @@ documentation.json
 .envrc
 
 /public
+/tests/axe-report.json

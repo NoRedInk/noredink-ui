@@ -17,6 +17,7 @@ import Examples.SegmentedControl
 import Examples.Select
 import Examples.Slide
 import Examples.SlideModal
+import Examples.SortableTable
 import Examples.Table
 import Examples.Tabs
 import Examples.Text
@@ -30,7 +31,7 @@ import Url exposing (Url)
 
 
 type alias ModuleStates =
-    { buttonExampleState : Examples.Button.State
+    { buttonExampleState : Examples.Button.State Msg
     , bannerAlertExampleState : Examples.BannerAlert.State
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
@@ -44,6 +45,7 @@ type alias ModuleStates =
     , modalExampleState : Examples.Modal.State
     , slideModalExampleState : Examples.SlideModal.State
     , slideExampleState : Examples.Slide.State
+    , sortableTableState : Examples.SortableTable.State
     , tabsExampleState : Examples.Tabs.Tab
     }
 
@@ -55,7 +57,7 @@ init =
     , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
-    , segmentedControlState = Examples.SegmentedControl.init
+    , segmentedControlState = Examples.SegmentedControl.init assets
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
@@ -64,12 +66,13 @@ init =
     , modalExampleState = Examples.Modal.init
     , slideModalExampleState = Examples.SlideModal.init
     , slideExampleState = Examples.Slide.init
+    , sortableTableState = Examples.SortableTable.init
     , tabsExampleState = Examples.Tabs.First
     }
 
 
 type Msg
-    = ButtonExampleMsg Examples.Button.Msg
+    = ButtonExampleMsg (Examples.Button.Msg Msg)
     | BannerAlertExampleMsg Examples.BannerAlert.Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
@@ -84,6 +87,7 @@ type Msg
     | ModalExampleMsg Examples.Modal.Msg
     | SlideModalExampleMsg Examples.SlideModal.Msg
     | SlideExampleMsg Examples.Slide.Msg
+    | SortableTableMsg Examples.SortableTable.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | NoOp
 
@@ -221,6 +225,15 @@ update outsideMsg moduleStates =
             , Cmd.map SlideExampleMsg cmd
             )
 
+        SortableTableMsg msg ->
+            let
+                ( sortableTableState, cmd ) =
+                    Examples.SortableTable.update msg moduleStates.sortableTableState
+            in
+            ( { moduleStates | sortableTableState = sortableTableState }
+            , Cmd.map SortableTableMsg cmd
+            )
+
         TabsExampleMsg tab ->
             ( { moduleStates | tabsExampleState = tab }
             , Cmd.none
@@ -233,7 +246,8 @@ update outsideMsg moduleStates =
 subscriptions : ModuleStates -> Sub Msg
 subscriptions moduleStates =
     Sub.batch
-        []
+        [ Sub.map ModalExampleMsg (Examples.Modal.subscriptions moduleStates.modalExampleState)
+        ]
 
 
 {-| A container with a visually-apparent size for demonstrating how style guide components
@@ -271,6 +285,7 @@ nriThemedModules model =
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
+    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     ]
 

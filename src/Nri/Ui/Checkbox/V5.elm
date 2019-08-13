@@ -209,7 +209,6 @@ viewEnabledLabel model labelView icon =
         , css
             [ positioning
             , textStyle
-            , outline none
             , cursor pointer
             ]
         ]

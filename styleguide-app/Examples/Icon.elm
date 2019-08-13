@@ -13,8 +13,9 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 exposing (..)
-import Nri.Ui.Icon.V4 as Icon
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Icon.V5 as Icon
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
@@ -46,8 +47,6 @@ example =
             , { icon = Icon.submitting, background = Light, alt = "Submitting" }
             , { icon = Icon.rating, background = Light, alt = "Rating" }
             , { icon = Icon.revising, background = Light, alt = "Revising" }
-
-            --, { icon = Icon.guidedWrite, background = Light, alt = "GuidedWrite" }
             , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
             , { icon = Icon.writingAssignment, background = Light, alt = "WritingAssignment" }
             ]
@@ -116,6 +115,9 @@ example =
             , { icon = Icon.newspaper, background = Light, alt = "Newspaper" }
             , { icon = Icon.sort, background = Light, alt = "Sort" }
             , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }
+            , { icon = Icon.skip, background = Light, alt = "Skip" }
+            , { icon = Icon.equalitySign, background = Light, alt = "EqualitySign" }
+            , { icon = Icon.logo, background = Light, alt = "Logo" }
             ]
         ]
     }
@@ -127,7 +129,7 @@ viewIconSection :
     -> Html msg
 viewIconSection headerText icons =
     Html.section []
-        [ Text.subHeading [ Html.text headerText ]
+        [ Heading.h2 [] [ Html.text headerText ]
         , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             (List.map viewIcon icons)
         ]
