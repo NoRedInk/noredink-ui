@@ -27,17 +27,22 @@ We should change this process if we feel it's not working for us!
 If you are moving in a widget from the monolith:
 - Copy the contents of `Nri.SomeModule` and its tests to `Nri.Ui.SomeModule.V1` in `noredink-ui`
 - Publish!
-- If `Nri.Ui.SomeModule.V1` is a direct copy of `Nri.SomeModule`, switch over to it everywhere!
-- If `Nri.Ui.SomeModule.V1` makes changes, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
+- If you feel confident upgrading pre-existing usages of the widget, switch over to it everywhere!
+- If the new version introduces big changes and you'd rather keep the old one around for now, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
 
 
 ## Phasing out old versions
 
 Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
 
-Currently, `noredink-ui` is used by the monolith and by CCS. When neither of these repos use a version of a widget, it can be deleted. (Note: this will be a major version bump, so you may want to batch deletions together.)
-
-When touching code that uses a widget, prefer upgrading to the latest version.
+This means:
+  - We should avoid introducing new references to old versions of a widget
+  - When touching code that uses a widget, prefer upgrading to the latest version
+  - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
+    - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
+  - You can delete an old version of a widget when there are no usages left
+    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
+    - Note: this will be a major version bump, so you may want to batch deletions together
 
 
 ## Examples
