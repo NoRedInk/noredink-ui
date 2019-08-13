@@ -5,8 +5,17 @@ module Nri.Ui.Heading.V1 exposing
     , view
     )
 
-{-| Headings such as you'd find in Nri.Ui.Text.V3, but customization options for
-accessibility.
+{-| Headings with customization options for accessibility.
+
+
+## Understanding spacing
+
+  - All text styles have a specific line-height. This is set so that when text
+    in the given style is long enough to wrap, the spacing between wrapped lines
+    looks good.
+  - No heading styles have padding.
+  - **Heading styles** do not have margin. It is up to the caller to add
+    appropriate margin to the layout.
 
 @docs Heading, heading
 

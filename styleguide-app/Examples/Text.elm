@@ -8,14 +8,14 @@ module Examples.Text exposing (example)
 
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Heading.V1 as Heading exposing (DocumentLevel(..), VisualLevel(..), heading, withDocumentLevel, withVisualLevel)
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Text.V3 (with headers from Nri.Ui.Heading.V1)"
+    { name = "Nri.Ui.Text.V4 (with headers from Nri.Ui.Heading.V2)"
     , category = Text
     , content =
         let
@@ -27,30 +27,18 @@ example =
                 """
         in
         [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\""
-        , heading [ Html.text "This is the main page heading." ]
-            |> withVisualLevel Top
-            |> withDocumentLevel H1
-            |> Heading.view
-        , heading [ Html.text "This is a tagline" ]
-            |> withVisualLevel Tagline
-            |> withDocumentLevel H2
-            |> Heading.view
-        , heading [ Html.text "This is a subHeading" ]
-            |> withVisualLevel Subhead
-            |> withDocumentLevel H3
-            |> Heading.view
-        , heading [ Html.text "This is a smallHeading" ]
-            |> withVisualLevel Small
-            |> withDocumentLevel H4
-            |> Heading.view
+        , Heading.h1 [] [ Html.text "This is the main page heading." ]
+        , Heading.h2 [] [ Html.text "This is a tagline" ]
+        , Heading.h3 [] [ Html.text "This is a subHeading" ]
+        , Heading.h4 [] [ Html.text "This is a smallHeading" ]
         , Html.hr [] []
-        , Text.heading [ Html.text "Paragraph styles" ]
+        , Heading.h2 [] [ Html.text "Paragraph styles" ]
         , Text.mediumBody [ Html.text <| "This is a mediumBody. " ++ longerBody ]
         , Text.smallBody [ Html.text <| "This is a smallBody. " ++ longerBody ]
         , Text.smallBodyGray [ Html.text <| "This is a smallBodyGray. " ++ longerBody ]
         , Text.caption [ Html.text <| "This is a caption. " ++ longerBody ]
         , Html.hr [] []
-        , Text.heading [ Html.text "Paragraph styles for user-authored content" ]
+        , Heading.h2 [] [ Html.text "Paragraph styles for user-authored content" ]
         , Text.ugMediumBody [ Html.text <| "This is an ugMediumBody. " ++ longerBody ]
         , Text.ugSmallBody [ Html.text <| "This is an ugSmallBody. " ++ longerBody ]
         ]

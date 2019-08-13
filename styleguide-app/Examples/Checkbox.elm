@@ -12,7 +12,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V5 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -74,13 +74,6 @@ update msg state =
 
 
 -- INTERNAL
-
-
-type alias PremiumExampleConfig =
-    { disabled : Bool
-    , teacherPremiumLevel : PremiumLevel
-    , pennant : PremiumCheckbox.Pennant
-    }
 
 
 viewInteractableCheckbox : Id -> State -> Html Msg
@@ -186,7 +179,7 @@ viewPremiumCheckboxes state =
                         Checkbox.NotSelected
                 , disabled = config.disabled
                 , isLocked = config.isLocked
-                , pennant = config.pennant
+                , isPremium = config.isPremium
                 , onChange = ToggleCheck config.label
                 , onLockedClick = NoOp
                 }
@@ -196,19 +189,19 @@ viewPremiumCheckboxes state =
             { label = "Identify Adjectives 2 (Premium)"
             , disabled = False
             , isLocked = False
-            , pennant = PremiumCheckbox.Premium
+            , isPremium = True
             }
         , checkbox
-            { label = "Revising Wordy Phrases 1 (Writing)"
+            { label = "Identify Adjectives 2 (Free)"
             , disabled = False
-            , isLocked = True
-            , pennant = PremiumCheckbox.PremiumWithWriting
+            , isLocked = False
+            , isPremium = False
             }
         , checkbox
-            { label = "Revising Wordy Phrases 2 (Writing) (Disabled)"
+            { label = "Revising Wordy Phrases 2 (Premium, Disabled)"
             , disabled = True
             , isLocked = True
-            , pennant = PremiumCheckbox.PremiumWithWriting
+            , isPremium = True
             }
         ]
 

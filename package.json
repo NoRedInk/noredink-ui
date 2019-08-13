@@ -30,6 +30,11 @@
     "elm": "^0.19.0-no-deps",
     "elm-format": "0.8.1",
     "elm-test": "0.19.0-rev6",
+    "elm-verify-examples": "^4.0.0",
     "request": "^2.88.0"
+  },
+  "dependencies": {
+    "axe-core": "^3.3.0",
+    "puppeteer": "^1.19.0"
   }
 }

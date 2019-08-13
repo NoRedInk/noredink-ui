@@ -31,7 +31,7 @@ import Url exposing (Url)
 
 
 type alias ModuleStates =
-    { buttonExampleState : Examples.Button.State
+    { buttonExampleState : Examples.Button.State Msg
     , bannerAlertExampleState : Examples.BannerAlert.State
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
@@ -72,7 +72,7 @@ init =
 
 
 type Msg
-    = ButtonExampleMsg Examples.Button.Msg
+    = ButtonExampleMsg (Examples.Button.Msg Msg)
     | BannerAlertExampleMsg Examples.BannerAlert.Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
