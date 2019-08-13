@@ -36,7 +36,7 @@ If you are moving in a widget from the monolith:
 Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
 
 This means:
-  - We should avoid introduce new references to old versions of a widget
+  - We should avoid introducing new references to old versions of a widget
   - When touching code that uses a widget, prefer upgrading to the latest version
   - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
     - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
