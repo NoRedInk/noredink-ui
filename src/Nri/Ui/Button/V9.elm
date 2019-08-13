@@ -3,7 +3,7 @@ module Nri.Ui.Button.V9 exposing
     , Attribute
     , icon, custom
     , onClick
-    , linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
     , exactWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
@@ -30,7 +30,7 @@ module Nri.Ui.Button.V9 exposing
 ## Behavior
 
 @docs onClick
-@docs linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
 ## Sizing
@@ -159,6 +159,12 @@ type Link
     | WithMethod String
     | External
     | ExternalWithTracking
+
+
+{-| -}
+href : String -> Attribute msg
+href url =
+    set (\attributes -> { attributes | url = url })
 
 
 {-| Use this link for routing within a single page app.
