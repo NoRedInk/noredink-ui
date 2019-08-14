@@ -1,28 +1,40 @@
-module Nri.Ui.Colors.Extra exposing (toCoreColor, withAlpha)
+module Nri.Ui.Colors.Extra exposing
+    ( toCssColor, fromCssColor
+    , withAlpha
+    )
 
 {-| Helpers for working with colors.
 
 
 # Conversions
 
-@docs toCoreColor, withAlpha
+@docs toCssColor, fromCssColor
+@docs withAlpha
 
 -}
 
 import Color
-import Css exposing (..)
+import Css
 
 
-{-| Convert a Css.Color into a Color.Color
-toCoreColor (Css.hex "#FFFFFF") -- "RGBA 255 255 255 1 : Color.Color"
--}
-toCoreColor : Css.Color -> Color.Color
-toCoreColor cssColor =
-    Color.rgba
-        (toFloat cssColor.red / 255)
-        (toFloat cssColor.green / 255)
-        (toFloat cssColor.blue / 255)
-        cssColor.alpha
+{-| -}
+fromCssColor : Css.Color -> Color.Color
+fromCssColor color =
+    Color.fromRGB
+        ( toFloat color.red
+        , toFloat color.green
+        , toFloat color.blue
+        )
+
+
+{-| -}
+toCssColor : Color.Color -> Css.Color
+toCssColor color =
+    let
+        ( red, green, blue ) =
+            Color.toRGB color
+    in
+    Css.rgb (round red) (round green) (round blue)
 
 
 {-| Add an alpha property to a Css.Color
