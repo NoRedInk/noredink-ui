@@ -7,12 +7,11 @@ module Nri.Ui.Modal.V7 exposing
     , closeButton
     )
 
-{-| Changes from V5:
+{-| Changes from V6:
 
-  - Removes button helpers, now that we can use Nri.Ui.Button.V9 directly
+  - Modal starts a new stacking context, to prevent non-normal-flow elements from showing through the backdrop
 
-These changes have required major API changes. Be sure to wire up subscriptions!
-
+```
     import Html.Styled exposing (..)
     import Nri.Ui.Button.V9 as Button
     import Nri.Ui.Modal.V7 as Modal
@@ -49,6 +48,7 @@ These changes have required major API changes. Be sure to wire up subscriptions!
 
     view init
     --> text ""  -- a closed modal
+```
 
 
 ## State and updates
@@ -202,6 +202,8 @@ view { overlayColor, titleColor } config model =
         }
         model
         |> fromUnstyled
+        |> List.singleton
+        |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
 
 
 toOverlayColor : Css.Color -> String

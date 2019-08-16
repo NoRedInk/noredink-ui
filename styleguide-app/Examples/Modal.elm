@@ -15,7 +15,7 @@ import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V6 as Modal
+import Nri.Ui.Modal.V7 as Modal
 
 
 {-| -}
@@ -46,7 +46,7 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Modal.V6"
+    { name = "Nri.Ui.Modal.V7"
     , category = Modals
     , content =
         [ Button.button "Launch Info Modal"
