@@ -90,7 +90,7 @@ import Css
 import Css.Global
 import Html as Root
 import Html.Attributes exposing (style)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
 import Nri.Ui.Colors.Extra
@@ -150,6 +150,19 @@ type alias FocusableElementAttrs msg =
     }
 
 
+fromUnstyledFocusableElementAttrs :
+    { onlyFocusableElement : List (Root.Attribute msg)
+    , firstFocusableElement : List (Root.Attribute msg)
+    , lastFocusableElement : List (Root.Attribute msg)
+    }
+    -> FocusableElementAttrs msg
+fromUnstyledFocusableElementAttrs { onlyFocusableElement, firstFocusableElement, lastFocusableElement } =
+    { onlyFocusableElement = List.map Attributes.fromUnstyled onlyFocusableElement
+    , firstFocusableElement = List.map Attributes.fromUnstyled firstFocusableElement
+    , lastFocusableElement = List.map Attributes.fromUnstyled lastFocusableElement
+    }
+
+
 {-| -}
 info :
     { visibleTitle : Bool
@@ -193,11 +206,8 @@ view { overlayColor, titleColor } config model =
         , modalAttributes = modalStyles
         , title = viewTitle titleColor { title = config.title, visibleTitle = config.visibleTitle }
         , content =
-            \{ onlyFocusableElement, firstFocusableElement, lastFocusableElement } ->
-                { onlyFocusableElement = List.map Html.Styled.Attributes.fromUnstyled onlyFocusableElement
-                , firstFocusableElement = List.map Html.Styled.Attributes.fromUnstyled firstFocusableElement
-                , lastFocusableElement = List.map Html.Styled.Attributes.fromUnstyled lastFocusableElement
-                }
+            \focusableElementAttrs ->
+                fromUnstyledFocusableElementAttrs focusableElementAttrs
                     |> config.content
                     |> toUnstyled
         }
@@ -314,7 +324,7 @@ closeButton wrapMsg focusableElementAttrs =
         , Css.property "transition" "color 0.1s"
         ]
         (Widget.label "Close modal"
-            :: Html.Styled.Attributes.map wrapMsg (onClick Modal.close)
+            :: Attributes.map wrapMsg (onClick Modal.close)
             :: focusableElementAttrs
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
