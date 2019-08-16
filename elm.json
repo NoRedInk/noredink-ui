@@ -95,7 +95,7 @@
         "rtfeldman/elm-css": "16.0.0 <= v < 17.0.0",
         "tesk9/accessible-html": "4.0.0 <= v < 5.0.0",
         "tesk9/accessible-html-with-css": "2.1.1 <= v < 3.0.0",
-        "tesk9/modal": "5.0.1 <= v < 6.0.0",
+        "tesk9/modal": "6.0.0 <= v < 7.0.0",
         "tesk9/palette": "2.0.0 <= v < 3.0.0",
         "wernerdegroot/listzipper": "3.1.1 <= v < 4.0.0"
     },
