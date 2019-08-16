@@ -219,16 +219,10 @@ toggleTip =
     view
 
 
-{-| Here's what the fields in the configuration record do:
 
-  - `trigger`: How do you open this tooltip?
-  - `triggerHtml`: What element do you interact with to open the tooltip?
-  - `onTrigger`: What `msg` should I send when the tooltip should open and
-    close? The `Bool` represents the next `isOpen` value.
-  - `isOpen`: Is the tooltip open now? (keep track of this in your model
-    somewhere)
+-- INTERNALS
 
--}
+
 view :
     { trigger : Trigger
     , triggerHtml : Html msg
@@ -238,17 +232,28 @@ view :
     -> Tooltip msg
     -> Html msg
 view { trigger, triggerHtml, onTrigger, isOpen } tooltip_ =
-    Html.button
-        ([ css
-            [ Css.display Css.inlineBlock
-            , Css.textAlign Css.left
-            , Css.position Css.relative
-            ]
-         ]
-            ++ eventsForTrigger trigger onTrigger
-        )
-        [ Html.div
-            [ css [ Css.cursor Css.pointer, Css.displayFlex ] ]
+    Html.div []
+        [ Html.button
+            ([ css
+                [ Css.cursor Css.pointer
+                , Css.displayFlex
+                , Css.border Css.zero
+                , Css.backgroundColor Css.transparent
+                , Css.fontSize Css.inherit
+                , Css.fontFamily Css.inherit
+                , Css.color Css.inherit
+                , Css.margin Css.zero
+                , Css.padding Css.zero
+                , Css.focus
+                    [ -- TODO: Removing focus outline is poor accessibility practice
+                      -- Consider fixing this by making focus outlines appear site-wide only on keyboard
+                      -- navigation to meet design's needs -- hackday project, perhaps?
+                      Css.outline Css.none
+                    ]
+                ]
+             ]
+                ++ eventsForTrigger trigger onTrigger
+            )
             [ triggerHtml ]
 
         -- if we display the click-to-close overlay on hover, you will have to
@@ -271,10 +276,6 @@ viewIf viewFn condition =
 
         False ->
             Html.text ""
-
-
-
--- INTERNALS
 
 
 viewTooltip : Tooltip msg -> Html msg
