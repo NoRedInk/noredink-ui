@@ -280,7 +280,7 @@ viewContent =
         "modal-content"
         [ Css.overflowY Css.auto
         , Css.minHeight (Css.px 150)
-        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 300))
+        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
         , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.boxSizing Css.borderBox
