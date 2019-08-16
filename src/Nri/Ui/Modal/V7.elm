@@ -30,8 +30,9 @@ module Nri.Ui.Modal.V7 exposing
             { title = "Modal Header"
             , visibleTitle = True
             , wrapMsg = ModalMsg
-            , content =
-                \{ onlyFocusableElement } ->
+            }
+            [ Modal.onlyFocusableElementView
+                (\{ onlyFocusableElement } ->
                     div []
                         [ Modal.viewContent [ text "Content goes here!" ]
                         , Modal.viewFooter
@@ -43,7 +44,8 @@ module Nri.Ui.Modal.V7 exposing
                             , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
                             ]
                         ]
-            }
+                )
+            ]
             state
 
     subscriptions : Modal.Model -> Sub Msg
