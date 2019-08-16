@@ -108,6 +108,7 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                     [ Button.button "Continue"
                         [ firstButtonStyle
                         , Button.onClick ForceClose
+                        , Button.large
                         ]
                     , Button.button "Close"
                         [ secondButtonStyle
@@ -145,6 +146,7 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                         [ firstButtonStyle
                         , Button.onClick ForceClose
                         , Button.custom focusableElementAttrs.lastFocusableElement
+                        , Button.large
                         ]
                     ]
                 ]
@@ -157,6 +159,7 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                         [ firstButtonStyle
                         , Button.onClick ForceClose
                         , Button.custom focusableElementAttrs.firstFocusableElement
+                        , Button.large
                         ]
                     , Button.button "Close"
                         [ secondButtonStyle
@@ -186,6 +189,7 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                         [ firstButtonStyle
                         , Button.onClick ForceClose
                         , Button.custom focusableElementAttrs.lastFocusableElement
+                        , Button.large
                         ]
                     ]
                 ]
