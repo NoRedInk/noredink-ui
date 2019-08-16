@@ -148,7 +148,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, True, False ) ->
-            [ Modal.multipleFocusableElementView
+            [ Modal.autofocusOnLastElement
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
@@ -157,10 +158,7 @@ viewContent state wrapMsg firstButtonStyle =
                             [ Button.button "Continue"
                                 [ firstButtonStyle
                                 , Button.onClick ForceClose
-                                , Button.custom
-                                    (focusableElementAttrs.autofocusElement
-                                        :: focusableElementAttrs.lastFocusableElement
-                                    )
+                                , Button.custom focusableElementAttrs.lastFocusableElement
                                 , Button.large
                                 ]
                             ]
@@ -194,7 +192,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, False, True ) ->
-            [ Modal.multipleFocusableElementView
+            [ Modal.autofocusOnLastElement
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.viewContent [ viewSettings state ]
@@ -216,7 +215,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, True, False ) ->
-            [ Modal.multipleFocusableElementView
+            [ Modal.autofocusOnLastElement
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.viewContent [ viewSettings state ]
@@ -224,10 +224,7 @@ viewContent state wrapMsg firstButtonStyle =
                             [ Button.button "Continue"
                                 [ firstButtonStyle
                                 , Button.onClick ForceClose
-                                , Button.custom
-                                    (focusableElementAttrs.autofocusElement
-                                        :: focusableElementAttrs.lastFocusableElement
-                                    )
+                                , Button.custom [ focusableElementAttrs.autofocusElement ]
                                 , Button.large
                                 ]
                             ]
