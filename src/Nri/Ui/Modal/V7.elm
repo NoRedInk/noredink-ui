@@ -70,7 +70,7 @@ module Nri.Ui.Modal.V7 exposing
 
 ### Modals
 
-@docs info, warning, FocusableElementAttrs
+@docs info, warning
 
 
 ### View containers
