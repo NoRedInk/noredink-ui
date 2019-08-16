@@ -326,6 +326,8 @@ eventsForTrigger trigger msg =
         OnHover ->
             [ Events.onMouseEnter (msg True)
             , Events.onMouseLeave (msg False)
+            , Events.onFocus (msg True)
+            , Events.onBlur (msg False)
             ]
 
 
