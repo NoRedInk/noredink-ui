@@ -261,11 +261,13 @@ viewContent =
             """
             /* TOP shadow */
 
-            top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) local,
+            top linear-gradient(to top, rgb(255, 0, 0), rgb(255, 0, 0)) local,
+            top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll,
 
             /* BOTTOM shadow */
 
-            bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) local
+            bottom linear-gradient(to bottom, rgb(255, 0, 0), rgb(255, 0, 0)) local,
+            bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll
             """
         , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
         , Css.backgroundRepeat Css.noRepeat
