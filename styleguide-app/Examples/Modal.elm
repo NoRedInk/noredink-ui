@@ -74,7 +74,7 @@ example parentMessage state =
             , visibleTitle = state.visibleTitle
             , wrapMsg = InfoModalMsg
             }
-            (viewContent state InfoModalMsg Button.danger)
+            (viewContent state InfoModalMsg Button.primary)
             state.infoModal
         , Modal.warning
             { title = "Modal.warning"
