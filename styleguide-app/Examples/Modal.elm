@@ -6,7 +6,7 @@ module Examples.Modal exposing (Msg, State, example, init, update, subscriptions
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, text)
+import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import Css exposing (..)
 import Css.Global
 import Html as Root
@@ -17,6 +17,7 @@ import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V7 as Modal
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
@@ -50,7 +51,8 @@ example parentMessage state =
     { name = "Nri.Ui.Modal.V7"
     , category = Modals
     , content =
-        [ Button.button "Launch Info Modal"
+        [ viewSettings state
+        , Button.button "Launch Info Modal"
             [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
             , Button.custom
                 [ Html.Styled.Attributes.id "launch-info-modal"
@@ -96,7 +98,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -122,7 +124,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -142,7 +144,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewContent [ viewModalContent ]
                         ]
                 )
             ]
@@ -153,7 +155,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -170,7 +172,7 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewSettings state ]
+                        [ Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -196,7 +198,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewSettings state ]
+                        [ Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -219,7 +221,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewSettings state ]
+                        [ Modal.viewContent [ viewModalContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -236,10 +238,26 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewSettings state ]
+                        [ Modal.viewContent [ viewModalContent ]
                         ]
                 )
             ]
+
+
+viewModalContent : Html msg
+viewModalContent =
+    Text.mediumBody
+        [ span [ css [ whiteSpace preLine ] ]
+            [ text
+                """
+                Soufflé pastry chocolate cake danish muffin. Candy wafer pastry ice cream cheesecake toffee cookie cake carrot cake. Macaroon pie jujubes gummies cookie pie. Gummi bears brownie pastry carrot cake cotton candy. Jelly-o sweet roll biscuit cake soufflé lemon drops tiramisu marshmallow macaroon. Chocolate jelly halvah marzipan macaroon cupcake sweet cheesecake carrot cake.
+
+                Sesame snaps pastry muffin cookie. Powder powder sweet roll toffee cake icing. Chocolate cake sweet roll gingerbread icing chupa chups sweet roll sesame snaps. Chocolate croissant chupa chups jelly beans toffee. Jujubes sweet wafer marshmallow halvah jelly. Liquorice sesame snaps sweet.
+
+                Tootsie roll icing jelly danish ice cream tiramisu sweet roll. Fruitcake ice cream dragée. Bear claw sugar plum sweet jelly beans bonbon dragée tart. Gingerbread chocolate sweet. Apple pie danish toffee sugar plum jelly beans donut. Chocolate cake croissant caramels chocolate bar. Jelly beans caramels toffee chocolate cake liquorice. Toffee pie sugar plum cookie toffee muffin. Marzipan marshmallow marzipan liquorice tiramisu.
+                """
+            ]
+        ]
 
 
 viewSettings : State -> Html Msg
