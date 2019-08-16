@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V7 as Modal
 
@@ -68,22 +69,14 @@ example parentMessage state =
             { title = "Modal.info"
             , visibleTitle = state.visibleTitle
             , wrapMsg = InfoModalMsg
-            , content =
-                viewContent state
-                    InfoModalMsg
-                    Button.primary
-                    Button.secondary
+            , content = viewContent state InfoModalMsg Button.primary
             }
             state.infoModal
         , Modal.warning
             { title = "Modal.warning"
             , visibleTitle = state.visibleTitle
             , wrapMsg = WarningModalMsg
-            , content =
-                viewContent state
-                    WarningModalMsg
-                    Button.danger
-                    Button.secondary
+            , content = viewContent state WarningModalMsg Button.danger
             }
             state.warningModal
         ]
@@ -95,10 +88,9 @@ viewContent :
     State
     -> (Modal.Msg -> Msg)
     -> Button.Attribute Msg
-    -> Button.Attribute Msg
     -> Modal.FocusableElementAttrs Msg
     -> Html Msg
-viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAttrs =
+viewContent state wrapMsg firstButtonStyle focusableElementAttrs =
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
             div []
@@ -110,10 +102,13 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                         , Button.onClick ForceClose
                         , Button.large
                         ]
-                    , Button.button "Close"
-                        [ secondButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                    , ClickableText.button "Close"
+                        [ ClickableText.onClick ForceClose
+                        , ClickableText.large
+                        , ClickableText.custom
+                            (css [ Css.marginTop (Css.px 20) ]
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         ]
                     ]
                 ]
@@ -123,10 +118,13 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                 [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
                 , Modal.viewContent [ viewSettings state ]
                 , Modal.viewFooter
-                    [ Button.button "Close"
-                        [ secondButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                    [ ClickableText.button "Close"
+                        [ ClickableText.onClick ForceClose
+                        , ClickableText.large
+                        , ClickableText.custom
+                            (css [ Css.marginTop (Css.px 20) ]
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         ]
                     ]
                 ]
@@ -161,10 +159,13 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
                         , Button.custom focusableElementAttrs.firstFocusableElement
                         , Button.large
                         ]
-                    , Button.button "Close"
-                        [ secondButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                    , ClickableText.button "Close"
+                        [ ClickableText.onClick ForceClose
+                        , ClickableText.large
+                        , ClickableText.custom
+                            (css [ Css.marginTop (Css.px 20) ]
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         ]
                     ]
                 ]
@@ -173,10 +174,16 @@ viewContent state wrapMsg firstButtonStyle secondButtonStyle focusableElementAtt
             div []
                 [ Modal.viewContent [ viewSettings state ]
                 , Modal.viewFooter
-                    [ Button.button "Close"
-                        [ secondButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                    [ ClickableText.button "Close"
+                        [ ClickableText.onClick ForceClose
+                        , ClickableText.large
+                        , ClickableText.custom
+                            (css
+                                [ Css.marginTop
+                                    (Css.px 20)
+                                ]
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         ]
                     ]
                 ]
