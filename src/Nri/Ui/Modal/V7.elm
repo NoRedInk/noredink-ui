@@ -147,6 +147,7 @@ type alias FocusableElementAttrs msg =
     { onlyFocusableElement : List (Attribute msg)
     , firstFocusableElement : List (Attribute msg)
     , lastFocusableElement : List (Attribute msg)
+    , autofocusOn : Attribute msg
     }
 
 
@@ -154,12 +155,14 @@ fromUnstyledFocusableElementAttrs :
     { onlyFocusableElement : List (Root.Attribute msg)
     , firstFocusableElement : List (Root.Attribute msg)
     , lastFocusableElement : List (Root.Attribute msg)
+    , autofocusOn : Root.Attribute msg
     }
     -> FocusableElementAttrs msg
-fromUnstyledFocusableElementAttrs { onlyFocusableElement, firstFocusableElement, lastFocusableElement } =
-    { onlyFocusableElement = List.map Attributes.fromUnstyled onlyFocusableElement
-    , firstFocusableElement = List.map Attributes.fromUnstyled firstFocusableElement
-    , lastFocusableElement = List.map Attributes.fromUnstyled lastFocusableElement
+fromUnstyledFocusableElementAttrs elements =
+    { onlyFocusableElement = List.map Attributes.fromUnstyled elements.onlyFocusableElement
+    , firstFocusableElement = List.map Attributes.fromUnstyled elements.firstFocusableElement
+    , lastFocusableElement = List.map Attributes.fromUnstyled elements.lastFocusableElement
+    , autofocusOn = Attributes.fromUnstyled elements.autofocusOn
     }
 
 

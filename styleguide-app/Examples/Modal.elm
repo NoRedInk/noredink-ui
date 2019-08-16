@@ -101,6 +101,7 @@ viewContent state wrapMsg firstButtonStyle focusableElementAttrs =
                         [ firstButtonStyle
                         , Button.onClick ForceClose
                         , Button.large
+                        , Button.custom [ focusableElementAttrs.autofocusOn ]
                         ]
                     , ClickableText.button "Close"
                         [ ClickableText.onClick ForceClose
@@ -143,7 +144,10 @@ viewContent state wrapMsg firstButtonStyle focusableElementAttrs =
                     [ Button.button "Continue"
                         [ firstButtonStyle
                         , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        , Button.custom
+                            (focusableElementAttrs.autofocusOn
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         , Button.large
                         ]
                     ]
@@ -195,7 +199,10 @@ viewContent state wrapMsg firstButtonStyle focusableElementAttrs =
                     [ Button.button "Continue"
                         [ firstButtonStyle
                         , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.lastFocusableElement
+                        , Button.custom
+                            (focusableElementAttrs.autofocusOn
+                                :: focusableElementAttrs.lastFocusableElement
+                            )
                         , Button.large
                         ]
                     ]
