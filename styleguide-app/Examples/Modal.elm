@@ -29,6 +29,7 @@ type alias State =
     , showContinue : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
+    , longContent : Bool
     }
 
 
@@ -40,8 +41,9 @@ init =
     , visibleTitle = True
     , showX = True
     , showContinue = True
-    , showSecondary = False
+    , showSecondary = True
     , dismissOnEscAndOverlayClick = True
+    , longContent = True
     }
 
 
@@ -98,7 +100,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -124,7 +126,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -144,7 +146,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ]
                         ]
                 )
             ]
@@ -155,7 +157,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -172,7 +174,7 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -198,7 +200,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -221,7 +223,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -238,17 +240,17 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ]
                         ]
                 )
             ]
 
 
-viewModalContent : Html msg
-viewModalContent =
+viewModalContent : Bool -> Html msg
+viewModalContent longContent =
     Text.mediumBody
         [ span [ css [ whiteSpace preLine ] ]
-            [ text
+            [ if longContent then
                 """
                 Soufflé pastry chocolate cake danish muffin. Candy wafer pastry ice cream cheesecake toffee cookie cake carrot cake. Macaroon pie jujubes gummies cookie pie. Gummi bears brownie pastry carrot cake cotton candy. Jelly-o sweet roll biscuit cake soufflé lemon drops tiramisu marshmallow macaroon. Chocolate jelly halvah marzipan macaroon cupcake sweet cheesecake carrot cake.
 
@@ -256,6 +258,11 @@ viewModalContent =
 
                 Tootsie roll icing jelly danish ice cream tiramisu sweet roll. Fruitcake ice cream dragée. Bear claw sugar plum sweet jelly beans bonbon dragée tart. Gingerbread chocolate sweet. Apple pie danish toffee sugar plum jelly beans donut. Chocolate cake croissant caramels chocolate bar. Jelly beans caramels toffee chocolate cake liquorice. Toffee pie sugar plum cookie toffee muffin. Marzipan marshmallow marzipan liquorice tiramisu.
                 """
+                    |> text
+
+              else
+                "Ice cream tootsie roll donut sweet cookie liquorice sweet donut. Sugar plum danish apple pie sesame snaps chocolate bar biscuit. Caramels macaroon jelly gummies sweet tootsie roll tiramisu apple pie. Dessert chocolate bar lemon drops dragée jelly powder cheesecake chocolate."
+                    |> text
             ]
         ]
 
@@ -303,6 +310,14 @@ viewSettings state =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "long-content"
+            , label = "Display longer content"
+            , selected = Checkbox.selectedFromBool state.longContent
+            , setterMsg = SetLongContent
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         ]
 
 
@@ -316,6 +331,7 @@ type Msg
     | SetShowContinue Bool
     | SetShowSecondary Bool
     | SetDismissOnEscAndOverlayClick Bool
+    | SetLongContent Bool
 
 
 {-| -}
@@ -362,6 +378,9 @@ update msg state =
 
         SetDismissOnEscAndOverlayClick value ->
             ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
+
+        SetLongContent value ->
+            ( { state | longContent = value }, Cmd.none )
 
 
 {-| -}
