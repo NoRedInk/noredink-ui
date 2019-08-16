@@ -217,7 +217,6 @@ toOverlayColor color =
 modalStyles : List (Root.Attribute Never)
 modalStyles =
     [ style "width" "600px"
-    , style "max-height" "calc(100vh - 100px)"
     , style "padding" "40px 0 40px 0"
     , style "margin" "75px auto"
     , style "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
@@ -252,6 +251,7 @@ viewContent =
         "modal-content"
         [ Css.overflowY Css.auto
         , Css.minHeight (Css.px 150)
+        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 300))
         , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.boxSizing Css.borderBox
