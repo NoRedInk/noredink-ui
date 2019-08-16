@@ -69,15 +69,15 @@ example parentMessage state =
             { title = "Modal.info"
             , visibleTitle = state.visibleTitle
             , wrapMsg = InfoModalMsg
-            , content = viewContent state InfoModalMsg Button.primary
             }
+            (viewContent state InfoModalMsg Button.danger)
             state.infoModal
         , Modal.warning
             { title = "Modal.warning"
             , visibleTitle = state.visibleTitle
             , wrapMsg = WarningModalMsg
-            , content = viewContent state WarningModalMsg Button.danger
             }
+            (viewContent state WarningModalMsg Button.danger)
             state.warningModal
         ]
             |> List.map (Html.map parentMessage)
@@ -88,130 +88,161 @@ viewContent :
     State
     -> (Modal.Msg -> Msg)
     -> Button.Attribute Msg
-    -> Modal.FocusableElementAttrs Msg
-    -> Html Msg
-viewContent state wrapMsg firstButtonStyle focusableElementAttrs =
+    -> List (Modal.Attribute Msg)
+viewContent state wrapMsg firstButtonStyle =
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
-            div []
-                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                , Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ Button.button "Continue"
-                        [ firstButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.large
-                        , Button.custom [ focusableElementAttrs.autofocusOn ]
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ Button.button "Continue"
+                                [ firstButtonStyle
+                                , Button.onClick ForceClose
+                                , Button.large
+                                , Button.custom [ focusableElementAttrs.autofocusElement ]
+                                ]
+                            , ClickableText.button "Close"
+                                [ ClickableText.onClick ForceClose
+                                , ClickableText.large
+                                , ClickableText.custom
+                                    (css [ Css.marginTop (Css.px 20) ]
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
+                                ]
+                            ]
                         ]
-                    , ClickableText.button "Close"
-                        [ ClickableText.onClick ForceClose
-                        , ClickableText.large
-                        , ClickableText.custom
-                            (css [ Css.marginTop (Css.px 20) ]
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
-                        ]
-                    ]
-                ]
+                )
+            ]
 
         ( True, False, True ) ->
-            div []
-                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                , Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ ClickableText.button "Close"
-                        [ ClickableText.onClick ForceClose
-                        , ClickableText.large
-                        , ClickableText.custom
-                            (css [ Css.marginTop (Css.px 20) ]
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ ClickableText.button "Close"
+                                [ ClickableText.onClick ForceClose
+                                , ClickableText.large
+                                , ClickableText.custom
+                                    (css [ Css.marginTop (Css.px 20) ]
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
+                                ]
+                            ]
                         ]
-                    ]
-                ]
+                )
+            ]
 
         ( True, False, False ) ->
-            div []
-                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                , Modal.viewContent [ viewSettings state ]
-                ]
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                        , Modal.viewContent [ viewSettings state ]
+                        ]
+                )
+            ]
 
         ( True, True, False ) ->
-            div []
-                [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                , Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ Button.button "Continue"
-                        [ firstButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom
-                            (focusableElementAttrs.autofocusOn
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
-                        , Button.large
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
+                        , Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ Button.button "Continue"
+                                [ firstButtonStyle
+                                , Button.onClick ForceClose
+                                , Button.custom
+                                    (focusableElementAttrs.autofocusElement
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
+                                , Button.large
+                                ]
+                            ]
                         ]
-                    ]
-                ]
+                )
+            ]
 
         ( False, True, True ) ->
-            div []
-                [ Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ Button.button "Continue"
-                        [ firstButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom focusableElementAttrs.firstFocusableElement
-                        , Button.large
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ Button.button "Continue"
+                                [ firstButtonStyle
+                                , Button.onClick ForceClose
+                                , Button.custom focusableElementAttrs.firstFocusableElement
+                                , Button.large
+                                ]
+                            , ClickableText.button "Close"
+                                [ ClickableText.onClick ForceClose
+                                , ClickableText.large
+                                , ClickableText.custom
+                                    (css [ Css.marginTop (Css.px 20) ]
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
+                                ]
+                            ]
                         ]
-                    , ClickableText.button "Close"
-                        [ ClickableText.onClick ForceClose
-                        , ClickableText.large
-                        , ClickableText.custom
-                            (css [ Css.marginTop (Css.px 20) ]
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
-                        ]
-                    ]
-                ]
+                )
+            ]
 
         ( False, False, True ) ->
-            div []
-                [ Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ ClickableText.button "Close"
-                        [ ClickableText.onClick ForceClose
-                        , ClickableText.large
-                        , ClickableText.custom
-                            (css
-                                [ Css.marginTop
-                                    (Css.px 20)
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ ClickableText.button "Close"
+                                [ ClickableText.onClick ForceClose
+                                , ClickableText.large
+                                , ClickableText.custom
+                                    (css
+                                        [ Css.marginTop
+                                            (Css.px 20)
+                                        ]
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
                                 ]
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
+                            ]
                         ]
-                    ]
-                ]
+                )
+            ]
 
         ( False, True, False ) ->
-            div []
-                [ Modal.viewContent [ viewSettings state ]
-                , Modal.viewFooter
-                    [ Button.button "Continue"
-                        [ firstButtonStyle
-                        , Button.onClick ForceClose
-                        , Button.custom
-                            (focusableElementAttrs.autofocusOn
-                                :: focusableElementAttrs.lastFocusableElement
-                            )
-                        , Button.large
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.viewContent [ viewSettings state ]
+                        , Modal.viewFooter
+                            [ Button.button "Continue"
+                                [ firstButtonStyle
+                                , Button.onClick ForceClose
+                                , Button.custom
+                                    (focusableElementAttrs.autofocusElement
+                                        :: focusableElementAttrs.lastFocusableElement
+                                    )
+                                , Button.large
+                                ]
+                            ]
                         ]
-                    ]
-                ]
+                )
+            ]
 
         ( False, False, False ) ->
-            div []
-                [ Modal.viewContent [ viewSettings state ]
-                ]
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs ->
+                    div []
+                        [ Modal.viewContent [ viewSettings state ]
+                        ]
+                )
+            ]
 
 
 viewSettings : State -> Html Msg

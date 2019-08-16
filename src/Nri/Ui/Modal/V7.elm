@@ -2,8 +2,11 @@ module Nri.Ui.Modal.V7 exposing
     ( Model, init
     , Msg, update, subscriptions
     , open, close
-    , info, warning, FocusableElementAttrs
+    , info, warning
     , viewContent, viewFooter
+    , Attribute
+    , multipleFocusableElementView, onlyFocusableElementView
+    , autofocusOnLastElement
     , closeButton
     )
 
@@ -73,16 +76,22 @@ module Nri.Ui.Modal.V7 exposing
 @docs viewContent, viewFooter
 
 
+### Attributes
+
+@docs Attribute
+@docs multipleFocusableElementView, onlyFocusableElementView
+@docs autofocusOnLastElement
+
+
 ## X icon
 
 @docs closeButton
 
 -}
 
-import Accessibility.Modal as Modal
+import Accessibility.Modal.Copy as Modal
 import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
-import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Color
 import Color.Transparent
@@ -143,36 +152,12 @@ open =
 
 
 {-| -}
-type alias FocusableElementAttrs msg =
-    { onlyFocusableElement : List (Attribute msg)
-    , firstFocusableElement : List (Attribute msg)
-    , lastFocusableElement : List (Attribute msg)
-    , autofocusOn : Attribute msg
-    }
-
-
-fromUnstyledFocusableElementAttrs :
-    { onlyFocusableElement : List (Root.Attribute msg)
-    , firstFocusableElement : List (Root.Attribute msg)
-    , lastFocusableElement : List (Root.Attribute msg)
-    , autofocusOn : Root.Attribute msg
-    }
-    -> FocusableElementAttrs msg
-fromUnstyledFocusableElementAttrs elements =
-    { onlyFocusableElement = List.map Attributes.fromUnstyled elements.onlyFocusableElement
-    , firstFocusableElement = List.map Attributes.fromUnstyled elements.firstFocusableElement
-    , lastFocusableElement = List.map Attributes.fromUnstyled elements.lastFocusableElement
-    , autofocusOn = Attributes.fromUnstyled elements.autofocusOn
-    }
-
-
-{-| -}
 info :
     { visibleTitle : Bool
     , title : String
-    , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
+    -> List (Modal.Attribute msg)
     -> Model
     -> Html msg
 info config model =
@@ -183,13 +168,43 @@ info config model =
 warning :
     { visibleTitle : Bool
     , title : String
-    , content : FocusableElementAttrs msg -> Html msg
     , wrapMsg : Msg -> msg
     }
+    -> List (Modal.Attribute msg)
     -> Model
     -> Html msg
 warning config model =
     view { overlayColor = Colors.gray20, titleColor = Colors.red } config model
+
+
+{-| -}
+type alias Attribute msg =
+    Modal.Attribute msg
+
+
+{-| -}
+autofocusOnLastElement : Modal.Attribute msg
+autofocusOnLastElement =
+    Modal.autofocusOnLastElement
+
+
+{-| -}
+multipleFocusableElementView :
+    ({ firstFocusableElement : List (Html.Attribute msg)
+     , lastFocusableElement : List (Html.Attribute msg)
+     , autofocusElement : Html.Attribute msg
+     }
+     -> Html msg
+    )
+    -> Modal.Attribute msg
+multipleFocusableElementView =
+    Modal.multipleFocusableElementView
+
+
+{-| -}
+onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Modal.Attribute msg
+onlyFocusableElementView =
+    Modal.onlyFocusableElementView
 
 
 view :
@@ -197,65 +212,65 @@ view :
     ->
         { visibleTitle : Bool
         , title : String
-        , content : FocusableElementAttrs msg -> Html msg
         , wrapMsg : Msg -> msg
         }
+    -> List (Modal.Attribute msg)
     -> Model
     -> Html msg
-view { overlayColor, titleColor } config model =
-    Modal.view
-        { overlayColor = toOverlayColor overlayColor
-        , wrapMsg = config.wrapMsg
-        , modalAttributes = modalStyles
-        , title = viewTitle titleColor { title = config.title, visibleTitle = config.visibleTitle }
-        , content =
-            \focusableElementAttrs ->
-                fromUnstyledFocusableElementAttrs focusableElementAttrs
-                    |> config.content
-                    |> toUnstyled
-        }
+view { overlayColor, titleColor } config attributes model =
+    Modal.view config.wrapMsg
+        config.title
+        ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 overlayColor)
+         , Modal.titleStyles
+            (if config.visibleTitle then
+                titleStyles titleColor
+
+             else
+                invisibleTitleStyles
+            )
+         , Modal.custom modalStyles
+         ]
+            ++ attributes
+        )
         model
-        |> fromUnstyled
         |> List.singleton
         |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
 
 
-toOverlayColor : Css.Color -> String
-toOverlayColor color =
-    color
-        |> Nri.Ui.Colors.Extra.fromCssColor
-        |> Color.Transparent.fromColor (Color.Transparent.customOpacity 0.9)
-        |> Color.Transparent.toRGBAString
-
-
-modalStyles : List (Root.Attribute Never)
+modalStyles : List Css.Style
 modalStyles =
-    [ style "width" "600px"
-    , style "padding" "40px 0 40px 0"
-    , style "margin" "75px auto"
-    , style "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
-    , style "border-radius" "20px"
-    , style "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-    , style "position" "relative" -- required for closeButtonContainer
+    [ Css.property "width" "600px"
+    , Css.property "padding" "40px 0 40px 0"
+    , Css.property "margin" "75px auto"
+    , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
+    , Css.property "border-radius" "20px"
+    , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+    , Css.property "position" "relative" -- required for closeButtonContainer
     ]
 
 
-{-| -}
-viewTitle : Css.Color -> { visibleTitle : Bool, title : String } -> ( String, List (Root.Attribute Never) )
-viewTitle color { visibleTitle, title } =
-    ( title
-    , if visibleTitle then
-        [ style "font-weight" "700"
-        , style "line-height" "27px"
-        , style "margin" "0 49px"
-        , style "font-size" "20px"
-        , style "text-align" "center"
-        , style "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
-        ]
+titleStyles : Css.Color -> List Css.Style
+titleStyles color =
+    [ Css.property "font-weight" "700"
+    , Css.property "line-height" "27px"
+    , Css.property "margin" "0 49px"
+    , Css.property "font-size" "20px"
+    , Css.property "text-align" "center"
+    , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
+    ]
 
-      else
-        Accessibility.Style.invisible
-    )
+
+invisibleTitleStyles : List Css.Style
+invisibleTitleStyles =
+    [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
+    , Css.property "position" "absolute"
+    , Css.property "height" "1px"
+    , Css.property "width" "1px"
+    , Css.property "overflow" "hidden"
+    , Css.property "margin" "-1px"
+    , Css.property "padding" "0"
+    , Css.property "border" "0"
+    ]
 
 
 {-| -}
@@ -310,7 +325,7 @@ viewFooter =
 
 
 {-| -}
-closeButton : (Msg -> msg) -> List (Attribute msg) -> Html msg
+closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
     Nri.Ui.styled button
         "close-button-container"
