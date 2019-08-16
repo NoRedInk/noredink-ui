@@ -1,4 +1,4 @@
-module Nri.Tooltip.V1 exposing
+module Nri.Ui.Tooltip.V1 exposing
     ( Tooltip, tooltip
     , Position(..), withPosition
     , Width(..), withWidth
@@ -14,7 +14,7 @@ These tooltips follow the accessibility recommendations from: <https://inclusive
 
 Example usage:
 
-        tooltip
+        tooltip [ Html.text "Gradebook" ]
         |> withPadding SmallPadding
         |> withWidth FitToContent
         |> asPrimaryLabel {
@@ -232,7 +232,13 @@ view :
     -> Tooltip msg
     -> Html msg
 view { trigger, triggerHtml, onTrigger, isOpen } tooltip_ =
-    Html.div []
+    Html.div
+        [ css
+            [ Css.display Css.inlineBlock
+            , Css.textAlign Css.left
+            , Css.position Css.relative
+            ]
+        ]
         [ Html.button
             ([ css
                 [ Css.cursor Css.pointer
@@ -291,8 +297,8 @@ viewTooltip (Tooltip config) =
                     FitToContent ->
                         Css.whiteSpace Css.noWrap
                  , paddingToStyle config.padding
-
-                 -- , Nri.ZIndex.global Css.absolute .tooltip -- TODO: copy this over
+                 , Css.position Css.absolute
+                 , Css.zIndex (Css.int 100)
                  ]
                     ++ config.tooltipStyleOverrides
                 )
@@ -402,6 +408,7 @@ viewCloseTooltipOverlay msg =
             , Css.cursor Css.pointer
             , Css.position Css.fixed
             , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
+            , Css.backgroundColor Css.transparent
             ]
         , Events.onClickStopPropagation msg
         ]
