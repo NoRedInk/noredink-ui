@@ -255,6 +255,20 @@ viewContent =
         , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.boxSizing Css.borderBox
+
+        -- Shadows for indicating that the content is scrollable
+        , Css.property "background"
+            """
+            /* TOP shadow */
+
+            top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) local,
+
+            /* BOTTOM shadow */
+
+            bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) local
+            """
+        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+        , Css.backgroundRepeat Css.noRepeat
         ]
         []
 
