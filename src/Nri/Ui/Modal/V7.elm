@@ -253,7 +253,8 @@ modalStyles =
 
 titleStyles : Css.Color -> List Css.Style
 titleStyles color =
-    [ Css.property "font-weight" "700"
+    [ Fonts.baseFont
+    , Css.property "font-weight" "700"
     , Css.property "line-height" "27px"
     , Css.property "margin" "0 49px"
     , Css.property "font-size" "20px"
