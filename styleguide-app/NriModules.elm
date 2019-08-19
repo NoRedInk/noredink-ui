@@ -9,6 +9,7 @@ import Examples.ClickableText
 import Examples.Colors
 import Examples.DisclosureIndicator
 import Examples.Dropdown
+import Examples.Fade
 import Examples.Fonts
 import Examples.Icon
 import Examples.Modal
@@ -36,6 +37,7 @@ type alias ModuleStates =
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
+    , fadeExampleState : Examples.Fade.State
     , segmentedControlState : Examples.SegmentedControl.State
     , selectState : Examples.Select.State Examples.Select.Value
     , tableExampleState : Examples.Table.State
@@ -57,6 +59,7 @@ init =
     , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
+    , fadeExampleState = Examples.Fade.init
     , segmentedControlState = Examples.SegmentedControl.init assets
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
@@ -77,6 +80,7 @@ type Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
     | DropdownMsg Examples.Dropdown.Msg
+    | FadeMsg Examples.Fade.Msg
     | SegmentedControlMsg Examples.SegmentedControl.Msg
     | SelectMsg Examples.Select.Msg
     | ShowItWorked String String
@@ -135,6 +139,15 @@ update outsideMsg moduleStates =
             in
             ( { moduleStates | dropdownState = dropdownState }
             , Cmd.map DropdownMsg cmd
+            )
+
+        FadeMsg msg ->
+            let
+                ( fadeExampleState, cmd ) =
+                    Examples.Fade.update msg moduleStates.fadeExampleState
+            in
+            ( { moduleStates | fadeExampleState = fadeExampleState }
+            , Cmd.map FadeMsg cmd
             )
 
         SegmentedControlMsg msg ->
@@ -270,6 +283,7 @@ nriThemedModules model =
     , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
+    , Examples.Fade.example FadeMsg model.fadeExampleState
     , Examples.Icon.example
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
