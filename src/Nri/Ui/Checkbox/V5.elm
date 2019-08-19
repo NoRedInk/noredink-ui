@@ -355,8 +355,7 @@ checkboxUnchecked =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
@@ -433,8 +432,7 @@ checkboxChecked =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
@@ -519,8 +517,7 @@ checkboxCheckedPartially =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
@@ -607,8 +604,7 @@ checkboxLockOnInside =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
