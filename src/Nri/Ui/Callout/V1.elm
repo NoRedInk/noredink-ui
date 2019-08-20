@@ -184,7 +184,7 @@ callout attrs children =
                  -- children
                  , Css.Global.descendants
                     [ Css.Global.a
-                        [ Css.color (Css.hex "0A64FF")
+                        [ Css.color Colors.azure
                         , Css.textDecoration Css.none
                         ]
                     ]
