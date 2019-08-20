@@ -98,7 +98,7 @@ aquaLight =
 -}
 azure : Css.Color
 azure =
-    hex "#146aff"
+    hex "#0A64FF"
 
 
 {-|
