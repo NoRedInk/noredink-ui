@@ -1,6 +1,6 @@
 module Nri.Ui.Callout.V1 exposing
     ( Attribute, callout
-    , sideText
+    , label
     , containerCss, contentCss
     , custom
     )
@@ -9,7 +9,7 @@ module Nri.Ui.Callout.V1 exposing
 
 @docs Attribute, callout
 
-@docs sideText
+@docs label
 
 @docs containerCss, contentCss
 
@@ -25,11 +25,11 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
 
-{-| Attributes of callouts. Use functions like [`sideText`](#sideText) and
+{-| Attributes of callouts. Use functions like [`label`](#label) and
 [`containerCss`](#containerCss) to construct these.
 -}
 type Attribute msg
-    = SideText (Maybe (Html msg))
+    = Label (Maybe (Html msg))
     | ContentCss (List Css.Style)
     | ContainerCss (List Css.Style)
     | Custom (Html.Attribute msg)
@@ -37,12 +37,12 @@ type Attribute msg
 
 {-| Label the callout.
 
-    sideText (Html.text "Hello, World")
+    label (Html.text "Hello, World")
 
 -}
-sideText : Html msg -> Attribute msg
-sideText =
-    SideText << Just
+label : Html msg -> Attribute msg
+label =
+    Label << Just
 
 
 {-| Customize styles for the outermost element of the callout. Use this to
@@ -89,7 +89,7 @@ custom =
 
 
 type alias Attrs msg =
-    { sideText : Maybe (Html msg)
+    { label : Maybe (Html msg)
     , containerCss : List Css.Style
     , contentCss : List Css.Style
     , customAttrs : List (Html.Attribute msg)
@@ -98,7 +98,7 @@ type alias Attrs msg =
 
 defaultAttrs : Attrs msg
 defaultAttrs =
-    { sideText = Nothing
+    { label = Nothing
     , containerCss = []
     , contentCss = []
     , customAttrs = []
@@ -108,8 +108,8 @@ defaultAttrs =
 customize : Attribute msg -> Attrs msg -> Attrs msg
 customize attr attrs =
     case attr of
-        SideText text ->
-            { attrs | sideText = text }
+        Label text ->
+            { attrs | label = text }
 
         ContentCss css ->
             { attrs | contentCss = css }
@@ -125,7 +125,7 @@ customize attr attrs =
 attribute constructors.
 
     callout
-        [ sideText (Html.text "BETA") ]
+        [ label (Html.text "BETA") ]
         [ Html.text "This feature is still in beta. Careful of sharp edges." ]
 
 -}
@@ -150,7 +150,7 @@ callout attrs children =
             )
             :: finalAttrs.customAttrs
         )
-        [ case finalAttrs.sideText of
+        [ case finalAttrs.label of
             Just text ->
                 Html.div
                     [ css

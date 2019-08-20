@@ -21,7 +21,7 @@ example =
         [ -- PLAIN
           Html.h3 [] [ Html.text "Originally Designed Use Case" ]
         , callout
-            [ Callout.sideText (Html.text "BETA")
+            [ Callout.label (Html.text "BETA")
             , Callout.custom (title "beta warning")
             ]
             [ Html.text "This tab is still a work in progress; some of your student's information may be missing."
@@ -41,13 +41,13 @@ example =
         , Html.h3 [] [ Html.text "With CSS customizations" ]
         , callout
             [ Callout.containerCss [ Css.margin (Css.px 20) ]
-            , Callout.sideText (Html.text "HMMM")
+            , Callout.label (Html.text "HMMM")
             , Callout.custom (title "margin")
             ]
             [ Html.text "My container styles are customized to add margin around the callout" ]
         , callout
             [ Callout.contentCss [ Css.textTransform Css.uppercase ]
-            , Callout.sideText (Html.text "WOW!")
+            , Callout.label (Html.text "WOW!")
             , Callout.custom (title "yelling")
             ]
             [ Html.text "My content styles are customized to yell about everything" ]
