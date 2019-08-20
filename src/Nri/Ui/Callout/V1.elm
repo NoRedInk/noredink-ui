@@ -51,7 +51,8 @@ default, but it does set `box-size: border-box` on itself).
 
     containerCss [ Css.marginBottom (Css.px 20) ]
 
-These styles are applied after the default styles.
+These styles are applied after the default styles so you can override the
+defaults when necessary without using `!important`
 
 -}
 containerCss : List Css.Style -> Attribute msg
@@ -78,9 +79,6 @@ callout however you want, so be careful! If you find yourself doing this a lot,
 please consider adding another `Attribute` constructor to the module.
 
     custom (title "beta warning")
-
-These styles are applied after the default styles so you can override the
-defaults when necessary without using `!important`
 
 -}
 custom : Html.Attribute msg -> Attribute msg
