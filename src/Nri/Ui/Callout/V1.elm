@@ -25,6 +25,9 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
 
+{-| Attributes of callouts. Use functions like [`sideText`](#sideText) and
+[`containerCss`](#containerCss) to construct these.
+-}
 type Attribute msg
     = SideText (Maybe (Html msg))
     | ContentCss (List Css.Style)
@@ -32,21 +35,54 @@ type Attribute msg
     | Custom (Html.Attribute msg)
 
 
+{-| Label the callout.
+
+    sideText (Html.text "Hello, World")
+
+-}
 sideText : Html msg -> Attribute msg
 sideText =
     SideText << Just
 
 
+{-| Customize styles for the outermost element of the callout. Use this to
+adjust margin and padding around the callout (it does not have any of either by
+default, but it does set `box-size: border-box` on itself).
+
+    containerCss [ Css.marginBottom (Css.px 20) ]
+
+These styles are applied after the default styles.
+
+-}
 containerCss : List Css.Style -> Attribute msg
 containerCss =
     ContainerCss
 
 
+{-| Customize styles for the parent element of the content you provide. Use
+this to override spacing inside the callout, if necessary.
+
+    contentCss [ Css.textTransform Css.uppercase ]
+
+These styles are applied after the default styles so you can override the
+defaults when necessary without using `!important`
+
+-}
 contentCss : List Css.Style -> Attribute msg
 contentCss =
     ContentCss
 
 
+{-| Add custom attributes. This is your gateway to customize (or break) the
+callout however you want, so be careful! If you find yourself doing this a lot,
+please consider adding another `Attribute` constructor to the module.
+
+    custom (title "beta warning")
+
+These styles are applied after the default styles so you can override the
+defaults when necessary without using `!important`
+
+-}
 custom : Html.Attribute msg -> Attribute msg
 custom =
     Custom
@@ -85,6 +121,14 @@ customize attr attrs =
             { attrs | customAttrs = custom_ :: attrs.customAttrs }
 
 
+{-| Render a callout. Use this like any other HTML node, but with specific
+attribute constructors.
+
+    callout
+        [ sideText (Html.text "BETA") ]
+        [ Html.text "This feature is still in beta. Careful of sharp edges." ]
+
+-}
 callout : List (Attribute msg) -> List (Html msg) -> Html msg
 callout attrs children =
     let
