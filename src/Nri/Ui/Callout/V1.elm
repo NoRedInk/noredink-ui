@@ -2,7 +2,7 @@ module Nri.Ui.Callout.V1 exposing
     ( Attribute, callout
     , sideText
     , containerCss, contentCss
-    , Attrs, defaultAttrs
+    , custom
     )
 
 {-|
@@ -12,6 +12,8 @@ module Nri.Ui.Callout.V1 exposing
 @docs sideText
 
 @docs containerCss, contentCss
+
+@docs custom
 
 -}
 
@@ -27,6 +29,7 @@ type Attribute msg
     = SideText (Maybe (Html msg))
     | ContentCss (List Css.Style)
     | ContainerCss (List Css.Style)
+    | Custom (Html.Attribute msg)
 
 
 sideText : Html msg -> Attribute msg
@@ -44,17 +47,25 @@ contentCss =
     ContentCss
 
 
+custom : Html.Attribute msg -> Attribute msg
+custom =
+    Custom
+
+
 type alias Attrs msg =
     { sideText : Maybe (Html msg)
     , containerCss : List Css.Style
     , contentCss : List Css.Style
+    , customAttrs : List (Html.Attribute msg)
     }
 
 
+defaultAttrs : Attrs msg
 defaultAttrs =
     { sideText = Nothing
     , containerCss = []
     , contentCss = []
+    , customAttrs = []
     }
 
 
@@ -70,6 +81,9 @@ customize attr attrs =
         ContainerCss css ->
             { attrs | containerCss = css }
 
+        Custom custom_ ->
+            { attrs | customAttrs = custom_ :: attrs.customAttrs }
+
 
 callout : List (Attribute msg) -> List (Html msg) -> Html msg
 callout attrs children =
@@ -78,8 +92,8 @@ callout attrs children =
             List.foldl customize defaultAttrs attrs
     in
     Html.aside
-        [ css finalAttrs.containerCss
-        , css
+        ([ css finalAttrs.containerCss
+         , css
             [ Css.boxSizing Css.borderBox
             , Css.backgroundColor Colors.sunshine
             , Css.displayFlex
@@ -89,7 +103,9 @@ callout attrs children =
             , Css.border3 (Css.px 1) Css.solid Colors.highlightYellow
             , Css.borderRadius (Css.px 4)
             ]
-        ]
+         ]
+            ++ finalAttrs.customAttrs
+        )
         [ case finalAttrs.sideText of
             Just text ->
                 Html.div
