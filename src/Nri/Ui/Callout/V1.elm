@@ -92,19 +92,19 @@ callout attrs children =
             List.foldl customize defaultAttrs attrs
     in
     Html.aside
-        ([ css finalAttrs.containerCss
-         , css
-            [ Css.boxSizing Css.borderBox
-            , Css.backgroundColor Colors.sunshine
-            , Css.displayFlex
-            , Css.flexDirection Css.row
-            , Css.minHeight (Css.px 42)
-            , Css.alignItems Css.stretch
-            , Css.border3 (Css.px 1) Css.solid Colors.highlightYellow
-            , Css.borderRadius (Css.px 4)
-            ]
-         ]
-            ++ finalAttrs.customAttrs
+        (css
+            ([ Css.boxSizing Css.borderBox
+             , Css.backgroundColor Colors.sunshine
+             , Css.displayFlex
+             , Css.flexDirection Css.row
+             , Css.minHeight (Css.px 42)
+             , Css.alignItems Css.stretch
+             , Css.border3 (Css.px 1) Css.solid Colors.highlightYellow
+             , Css.borderRadius (Css.px 4)
+             ]
+                ++ finalAttrs.containerCss
+            )
+            :: finalAttrs.customAttrs
         )
         [ case finalAttrs.sideText of
             Just text ->
@@ -128,26 +128,27 @@ callout attrs children =
             Nothing ->
                 Html.text ""
         , Html.div
-            [ css finalAttrs.contentCss
-            , css
-                [ -- position
-                  Css.padding2 (Css.px 6) (Css.px 14)
-                , Css.displayFlex
-                , Css.alignItems Css.center
+            [ css
+                ([ -- position
+                   Css.padding2 (Css.px 6) (Css.px 14)
+                 , Css.displayFlex
+                 , Css.alignItems Css.center
 
-                -- text
-                , Css.fontSize (Css.px 12)
-                , Css.color Colors.gray20
-                , Fonts.baseFont
+                 -- text
+                 , Css.fontSize (Css.px 12)
+                 , Css.color Colors.gray20
+                 , Fonts.baseFont
 
-                -- children
-                , Css.Global.descendants
+                 -- children
+                 , Css.Global.descendants
                     [ Css.Global.a
                         [ Css.color Colors.azure
                         , Css.textDecoration Css.none
                         ]
                     ]
-                ]
+                 ]
+                    ++ finalAttrs.contentCss
+                )
             ]
             [ Html.p [ css [ Css.margin Css.zero ] ] children ]
         ]
