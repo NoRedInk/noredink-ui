@@ -133,5 +133,5 @@ callout attrs children =
                     ]
                 ]
             ]
-            children
+            [ Html.p [ css [ Css.margin Css.zero ] ] children ]
         ]
