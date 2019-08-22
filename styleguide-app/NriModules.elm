@@ -4,6 +4,7 @@ import Assets exposing (assets)
 import Examples.Alert
 import Examples.BannerAlert
 import Examples.Button
+import Examples.Callout
 import Examples.Checkbox
 import Examples.ClickableText
 import Examples.Colors
@@ -267,6 +268,7 @@ nriThemedModules model =
     [ Examples.Alert.example
     , Examples.BannerAlert.example BannerAlertExampleMsg model.bannerAlertExampleState
     , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
+    , Examples.Callout.example
     , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
