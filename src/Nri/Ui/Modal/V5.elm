@@ -200,7 +200,7 @@ viewTitle color { visibleTitle, title } =
 
 toCssString : Css.Color -> String
 toCssString =
-    Nri.Ui.Colors.Extra.fromCssColor >> Color.toRGBString
+    Color.toCssString << Nri.Ui.Colors.Extra.fromCssColor
 
 
 {-| -}

@@ -1,40 +1,43 @@
-module Nri.Ui.Colors.Extra exposing
-    ( toCssColor, fromCssColor
-    , withAlpha
-    )
+module Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor, withAlpha)
 
 {-| Helpers for working with colors.
 
 
 # Conversions
 
-@docs toCssColor, fromCssColor
-@docs withAlpha
+@docs fromCssColor, toCssColor, withAlpha
 
 -}
 
 import Color
-import Css
+import Css exposing (..)
 
 
-{-| -}
+{-| Convert a Css.Color into a Color.Color
+fromCssColor (Css.hex "#FFFFFF") -- "RgbaSpace 1 1 1 1 : Color.Color"
+-}
 fromCssColor : Css.Color -> Color.Color
-fromCssColor color =
-    Color.fromRGB
-        ( toFloat color.red
-        , toFloat color.green
-        , toFloat color.blue
-        )
+fromCssColor cssColor =
+    Color.rgba
+        (toFloat cssColor.red / 255)
+        (toFloat cssColor.green / 255)
+        (toFloat cssColor.blue / 255)
+        cssColor.alpha
 
 
-{-| -}
+{-| Convert a Color.Color into a Css.Color
+toCssColor (Color.rgba 1.0 1.0 1.0 1.0) -- "{ alpha = 1, blue = 255, color = Compatible, green = 255, red = 255, value = "rgba(255, 255, 255, 1)" } : Css.Color"
+-}
 toCssColor : Color.Color -> Css.Color
 toCssColor color =
     let
-        ( red, green, blue ) =
-            Color.toRGB color
+        { red, green, blue, alpha } =
+            Color.toRgba color
     in
-    Css.rgb (round red) (round green) (round blue)
+    Css.rgba (Basics.round (red * 255))
+        (Basics.round (green * 255))
+        (Basics.round (blue * 255))
+        alpha
 
 
 {-| Add an alpha property to a Css.Color
