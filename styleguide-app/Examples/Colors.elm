@@ -6,7 +6,7 @@ module Examples.Colors exposing (example)
 
 -}
 
-import Color exposing (highContrast)
+import Color.Generator exposing (highContrast)
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
