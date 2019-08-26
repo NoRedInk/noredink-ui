@@ -353,4 +353,4 @@ closeButton wrapMsg focusableElementAttrs =
 
 toCssString : Css.Color -> String
 toCssString =
-    Color.toCssString << Nri.Ui.Colors.Extra.toCoreColor
+    Color.toCssString << Nri.Ui.Colors.Extra.fromCssColor
