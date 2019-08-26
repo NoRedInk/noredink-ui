@@ -385,8 +385,8 @@ dot type_ =
                 ]
 
         animateBackgroundColor color =
-            Nri.Ui.Colors.Extra.fromCssColor color
-                |> Color.toRGBString
+            Nri.Ui.Colors.Extra.toCoreColor color
+                |> Color.toCssString
                 |> Css.Animations.property "background-color"
     in
     case type_ of
