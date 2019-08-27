@@ -24,58 +24,74 @@ import Nri.Ui.Fonts.V1 as Fonts
 {-| Make a first-level heading (styled like a top-level heading by default.)
 -}
 h1 : List (Attribute msg) -> List (Html msg) -> Html msg
-h1 attrs content =
-    view Html.Styled.h1 (style Top :: attrs) content
+h1 =
+    view Html.Styled.h1
+        { style = Top
+        , css = []
+        , attributes = []
+        }
 
 
 {-| Make a second-level heading (styled like a tagline by default.)
 -}
 h2 : List (Attribute msg) -> List (Html msg) -> Html msg
-h2 attrs content =
-    view Html.Styled.h2 (style Tagline :: attrs) content
+h2 =
+    view Html.Styled.h2
+        { style = Tagline
+        , css = []
+        , attributes = []
+        }
 
 
 {-| Make a third-level heading (styled like a subhead by default.)
 -}
 h3 : List (Attribute msg) -> List (Html msg) -> Html msg
-h3 attrs content =
-    view Html.Styled.h3 (style Subhead :: attrs) content
+h3 =
+    view Html.Styled.h3
+        { style = Subhead
+        , css = []
+        , attributes = []
+        }
 
 
 {-| Make a fourth-level heading (styled like a small heading by default.)
 -}
 h4 : List (Attribute msg) -> List (Html msg) -> Html msg
-h4 attrs content =
-    view Html.Styled.h4 (style Small :: attrs) content
+h4 =
+    view Html.Styled.h4
+        { style = Small
+        , css = []
+        , attributes = []
+        }
 
 
 {-| Make a fifth-level heading (styled like a small heading by default.)
 -}
 h5 : List (Attribute msg) -> List (Html msg) -> Html msg
-h5 attrs content =
-    view Html.Styled.h5 (style Small :: attrs) content
+h5 =
+    view Html.Styled.h5
+        { style = Small
+        , css = []
+        , attributes = []
+        }
 
 
-view : (List (Html.Styled.Attribute msg) -> List (Html msg) -> Html msg) -> List (Attribute msg) -> List (Html msg) -> Html msg
-view tag customizations content =
+view :
+    (List (Html.Styled.Attribute msg) -> List (Html msg) -> Html msg)
+    -> Customizations msg
+    -> List (Attribute msg)
+    -> List (Html msg)
+    -> Html msg
+view tag customizations attrs content =
     let
-        ( finalStyle, attributes ) =
-            List.foldr
-                (\wrapped ( style_, attrs ) ->
-                    case wrapped of
-                        Style_ newStyle ->
-                            ( newStyle, attrs )
-
-                        Css css_ ->
-                            ( style_, Html.Styled.Attributes.css css_ :: attrs )
-
-                        Attribute_ attribute ->
-                            ( style_, attribute :: attrs )
-                )
-                ( Top, [] )
-                customizations
+        final =
+            List.foldl customize customizations attrs
     in
-    tag (Html.Styled.Attributes.css [ getStyles finalStyle ] :: attributes) content
+    tag
+        (Html.Styled.Attributes.css [ getStyles final.style, Css.batch final.css ]
+            :: final.attributes
+        )
+        content
 
 
 type Attribute msg
@@ -115,6 +131,26 @@ reader users can use the site too.
 customAttr : Html.Styled.Attribute msg -> Attribute msg
 customAttr =
     Attribute_
+
+
+type alias Customizations msg =
+    { style : Style
+    , css : List Css.Style
+    , attributes : List (Html.Styled.Attribute msg)
+    }
+
+
+customize : Attribute msg -> Customizations msg -> Customizations msg
+customize attr customizations =
+    case attr of
+        Style_ newStyle ->
+            { customizations | style = newStyle }
+
+        Css css_ ->
+            { customizations | css = customizations.css ++ css_ }
+
+        Attribute_ attribute ->
+            { customizations | attributes = customizations.attributes ++ [ attribute ] }
 
 
 
