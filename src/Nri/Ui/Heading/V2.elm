@@ -2,7 +2,6 @@ module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
     , style, Style(..), css
     , customAttr
-    , top, tagline, subHeading, smallHeading
     )
 
 {-| Headings with customization options for accessibility.
@@ -12,11 +11,6 @@ module Nri.Ui.Heading.V2 exposing
 @docs style, Style, css
 
 @docs customAttr
-
-
-# Aliases
-
-@docs top, tagline, subHeading, smallHeading
 
 -}
 
@@ -28,6 +22,9 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 
 {-| Make a first-level heading (styled like a top-level heading by default.)
+
+Use this to upgrade from `Nri.Ui.Text.V2.heading`.
+
 -}
 h1 : List (Attribute msg) -> List (Html msg) -> Html msg
 h1 =
@@ -38,18 +35,10 @@ h1 =
         }
 
 
-{-| Make a top-level heading.
-
-This is an alias of [`h1`](#h1) to make transitioning from old versions of
-`Nri.Ui.Text` easier.
-
--}
-top : List (Attribute msg) -> List (Html msg) -> Html msg
-top =
-    h1
-
-
 {-| Make a second-level heading (styled like a tagline by default.)
+
+Use this to upgrade from `Nri.Ui.Text.V2.tagline`.
+
 -}
 h2 : List (Attribute msg) -> List (Html msg) -> Html msg
 h2 =
@@ -60,18 +49,10 @@ h2 =
         }
 
 
-{-| Make a tagline heading.
-
-This is an alias of [`h2`](#h2) to make transitioning from old versions of
-`Nri.Ui.Text` easier.
-
--}
-tagline : List (Attribute msg) -> List (Html msg) -> Html msg
-tagline =
-    h2
-
-
 {-| Make a third-level heading (styled like a subhead by default.)
+
+Use this to upgrade from `Nri.Ui.Text.V2.subHeading`.
+
 -}
 h3 : List (Attribute msg) -> List (Html msg) -> Html msg
 h3 =
@@ -82,18 +63,10 @@ h3 =
         }
 
 
-{-| Make a subhead.
-
-This is an alias of [`h3`](#h3) to make transitioning from old versions of
-`Nri.Ui.Text` easier.
-
--}
-subHeading : List (Attribute msg) -> List (Html msg) -> Html msg
-subHeading =
-    h3
-
-
 {-| Make a fourth-level heading (styled like a small heading by default.)
+
+Use this to upgrade from `Nri.Ui.Text.V2.smallHeading`.
+
 -}
 h4 : List (Attribute msg) -> List (Html msg) -> Html msg
 h4 =
@@ -102,17 +75,6 @@ h4 =
         , css = []
         , attributes = []
         }
-
-
-{-| Make a small heading.
-
-This is an alias of [`h4`](#h4) to make transitioning from old versions of
-`Nri.Ui.Text` easier.
-
--}
-smallHeading : List (Attribute msg) -> List (Html msg) -> Html msg
-smallHeading =
-    h4
 
 
 {-| Make a fifth-level heading (styled like a small heading by default.)
