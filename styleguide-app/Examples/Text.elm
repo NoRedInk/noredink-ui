@@ -6,8 +6,10 @@ module Examples.Text exposing (example)
 
 -}
 
+import Css
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 
@@ -41,5 +43,15 @@ example =
         , Heading.h2 [] [ Html.text "Paragraph styles for user-authored content" ]
         , Text.ugMediumBody [ Html.text <| "This is an ugMediumBody. " ++ longerBody ]
         , Text.ugSmallBody [ Html.text <| "This is an ugSmallBody. " ++ longerBody ]
+
+        ---------------
+        , Html.hr [] []
+        , Heading.h2 [] [ Html.text "Headings with overrides" ]
+        , Heading.h2
+            [ Heading.style Heading.Top ]
+            [ Html.text "I'm an H2 with the top style!" ]
+        , Heading.h2
+            [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]
+            [ Html.text "I have a custom color!" ]
         ]
     }
