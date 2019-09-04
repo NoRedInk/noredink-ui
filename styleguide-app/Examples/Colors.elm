@@ -6,10 +6,12 @@ module Examples.Colors exposing (example)
 
 -}
 
+import Color exposing (highContrast)
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 
 
@@ -103,8 +105,10 @@ viewColor ( name, color, description ) =
 
             -- Colors
             , Css.backgroundColor color
-            , Css.color Colors.gray20
-            , Css.textShadow4 Css.zero Css.zero (Css.px 6) Colors.white
+            , Nri.Ui.Colors.Extra.fromCssColor color
+                |> highContrast
+                |> Nri.Ui.Colors.Extra.toCssColor
+                |> Css.color
             ]
         ]
         [ Html.div

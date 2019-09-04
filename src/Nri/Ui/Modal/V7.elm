@@ -96,6 +96,7 @@ import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Widget as Widget
 import Color
+import Color.Transparent
 import Css
 import Css.Global
 import Html as Root
@@ -243,7 +244,7 @@ modalStyles =
     [ Css.property "width" "600px"
     , Css.property "padding" "40px 0 40px 0"
     , Css.property "margin" "75px auto"
-    , Css.property "background-color" (toCssString Colors.white)
+    , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
     , Css.property "border-radius" "20px"
     , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
     , Css.property "position" "relative" -- required for closeButtonContainer
@@ -258,7 +259,7 @@ titleStyles color =
     , Css.property "margin" "0 49px"
     , Css.property "font-size" "20px"
     , Css.property "text-align" "center"
-    , Css.property "color" (toCssString color)
+    , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
     ]
 
 
@@ -349,8 +350,3 @@ closeButton wrapMsg focusableElementAttrs =
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
-
-
-toCssString : Css.Color -> String
-toCssString =
-    Color.toCssString << Nri.Ui.Colors.Extra.fromCssColor
