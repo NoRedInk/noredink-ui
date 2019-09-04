@@ -84,6 +84,7 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Color
+import Color.Transparent
 import Css
 import Css.Global
 import Html as Root
@@ -205,7 +206,10 @@ view { overlayColor, titleColor } config model =
 
 toOverlayColor : Css.Color -> String
 toOverlayColor color =
-    toCssString (Nri.Ui.Colors.Extra.withAlpha 0.9 color)
+    color
+        |> Nri.Ui.Colors.Extra.fromCssColor
+        |> Color.Transparent.fromColor (Color.Transparent.customOpacity 0.9)
+        |> Color.Transparent.toRGBAString
 
 
 modalStyles : List (Root.Attribute Never)
@@ -214,7 +218,7 @@ modalStyles =
     , style "max-height" "calc(100vh - 100px)"
     , style "padding" "40px 0 40px 0"
     , style "margin" "75px auto"
-    , style "background-color" (toCssString Colors.white)
+    , style "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
     , style "border-radius" "20px"
     , style "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
     , style "position" "relative" -- required for closeButtonContainer
@@ -231,17 +235,12 @@ viewTitle color { visibleTitle, title } =
         , style "margin" "0 49px"
         , style "font-size" "20px"
         , style "text-align" "center"
-        , style "color" (toCssString color)
+        , style "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
         ]
 
       else
         Accessibility.Style.invisible
     )
-
-
-toCssString : Css.Color -> String
-toCssString =
-    Color.toCssString << Nri.Ui.Colors.Extra.fromCssColor
 
 
 {-| -}

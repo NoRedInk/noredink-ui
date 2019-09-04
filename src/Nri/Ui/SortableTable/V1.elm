@@ -359,4 +359,4 @@ sortArrow direction active =
 
 toCssString : Css.Color -> String
 toCssString =
-    Color.toCssString << Nri.Ui.Colors.Extra.fromCssColor
+    Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor
