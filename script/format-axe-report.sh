@@ -14,7 +14,7 @@ jq -r -f script/axe-report.jq "$JSON_FILE"
 # expect. This failure reminds us to come back and ratchet down the number of
 # failures to the correct value.
 NUM_ERRORS="$(jq '.violations | map(.nodes | length) | add' "$JSON_FILE")"
-TARGET_ERRORS=162
+TARGET_ERRORS=99
 if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo "got $NUM_ERRORS errors, but expected $TARGET_ERRORS."
     echo
