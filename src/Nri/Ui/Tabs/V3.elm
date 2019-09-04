@@ -37,7 +37,8 @@ import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import List.Zipper exposing (Zipper(..))
+import List.Zipper exposing (Zipper)
+import List.Zipper.Extra
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
@@ -290,11 +291,11 @@ tabToBodyId tab =
 
 
 mapWithCurrent : (Bool -> a -> b) -> Zipper a -> Zipper b
-mapWithCurrent fn (Zipper before current after) =
-    Zipper
-        (List.map (fn False) before)
-        (fn True current)
-        (List.map (fn False) after)
+mapWithCurrent fn zipper =
+    List.Zipper.Extra.from
+        (List.map (fn False) (List.Zipper.before zipper))
+        (fn True (List.Zipper.current zipper))
+        (List.map (fn False) (List.Zipper.after zipper))
 
 
 
