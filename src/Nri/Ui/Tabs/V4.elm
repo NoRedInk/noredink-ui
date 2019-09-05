@@ -334,7 +334,7 @@ tabToBodyId tab =
 mapWithCurrent : (Bool -> a -> b) -> Zipper a -> Zipper b
 mapWithCurrent fn zipper =
     List.Zipper.Extra.from
-        (List.map (fn False) (List.Zipper.before zipper))
+        (List.reverse (List.map (fn False) (List.Zipper.before zipper)))
         (fn True (List.Zipper.current zipper))
         (List.map (fn False) (List.Zipper.after zipper))
 
