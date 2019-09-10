@@ -169,7 +169,10 @@ viewModalContent config summary styles =
             styles
             [ viewIcon summary.current.icon
             , Text.subHeading
-                [ span [ Html.Styled.Attributes.id (panelId summary.current) ]
+                [ span
+                    [ Html.Styled.Attributes.id (panelId summary.current)
+                    , css [ Css.margin2 Css.zero (Css.px 21) ]
+                    ]
                     [ Html.text summary.current.title ]
                 ]
             , viewContent summary.current.content
@@ -231,7 +234,6 @@ panelContainer height animationStyles panel =
             , Css.maxHeight <| Css.calc (Css.vh 100) Css.minus (Css.px 100)
             , Css.height height
             , Css.width (Css.px 600)
-            , Css.margin3 (Css.px 35) (Css.px 21) Css.zero
 
             -- Interior positioning
             , Css.displayFlex
@@ -257,10 +259,28 @@ viewContent content =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
+        , Css.margin2 Css.zero (Css.px 21)
         , Css.padding2 (Css.px 30) (Css.px 40)
         , Css.width (Css.pct 100)
+        , Css.height (Css.pct 100)
         , Css.marginBottom Css.auto
         , Css.boxSizing Css.borderBox
+
+        -- Shadows for indicating that the content is scrollable
+        , Css.property "background"
+            """
+            /* TOP shadow */
+
+            top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,
+            top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll,
+
+            /* BOTTOM shadow */
+
+            bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,
+            bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll
+            """
+        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+        , Css.backgroundRepeat Css.noRepeat
         ]
         []
         [ Html.map never content ]
@@ -272,6 +292,7 @@ viewIcon svg =
         [ css
             [ Css.width (Css.px 100)
             , Css.height (Css.px 100)
+            , Css.marginTop (Css.px 35)
             , Css.flexShrink Css.zero
             , Css.displayFlex
             , Css.alignItems Css.center
