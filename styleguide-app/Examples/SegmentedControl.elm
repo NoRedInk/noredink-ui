@@ -55,15 +55,16 @@ type alias Options =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
+    let
+        options =
+            Control.currentValue state.optionsControl
+    in
     { name = "Nri.Ui.SegmentedControl.V7"
     , category = Widgets
     , content =
         [ Control.view ChangeOptions state.optionsControl
             |> Html.fromUnstyled
         , let
-            options =
-                Control.currentValue state.optionsControl
-
             viewFn =
                 if options.useSpa then
                     SegmentedControl.viewSpa Debug.toString
@@ -85,6 +86,22 @@ example parentMessage state =
             , selected = state.selected
             , width = options.width
             , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
+            }
+        , Html.h3 [] [ Html.text "Toggle only view" ]
+        , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
+        , SegmentedControl.viewToggle
+            { onClick = Select
+            , options =
+                [ A, B, C ]
+                    |> List.map
+                        (\i ->
+                            { icon = options.icon
+                            , label = "Option " ++ Debug.toString i
+                            , value = i
+                            }
+                        )
+            , selected = state.selected
+            , width = options.width
             }
         ]
             |> List.map (Html.map parentMessage)
