@@ -1,8 +1,8 @@
-module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view, viewSpa)
+module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle)
 
 {-|
 
-@docs Config, Icon, Option, Width, view, viewSpa
+@docs Config, Icon, Option, Width, view, viewSpa, ToggleConfig, viewToggle
 
 -}
 
@@ -37,6 +37,16 @@ type alias Config a msg =
     , selected : a
     , width : Width
     , content : Html msg
+    }
+
+
+{-| Same shape as Config but without the content
+-}
+type alias ToggleConfig a msg =
+    { onClick : a -> msg
+    , options : List (Option a)
+    , selected : a
+    , width : Width
     }
 
 
@@ -79,6 +89,19 @@ viewSpa toUrl config =
     viewHelper (Just toUrl) config
 
 
+{-| Creates _just the toggle_ when need the ui element itself and not a page control
+-}
+viewToggle : ToggleConfig a msg -> Html.Html msg
+viewToggle config =
+    tabList
+        [ css
+            [ displayFlex
+            , cursor pointer
+            ]
+        ]
+        (List.map (viewTab Nothing False config) config.options)
+
+
 viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
 viewHelper maybeToUrl config =
     let
@@ -94,7 +117,7 @@ viewHelper maybeToUrl config =
                 , cursor pointer
                 ]
             ]
-            (List.map (viewTab maybeToUrl config) config.options)
+            (List.map (viewTab maybeToUrl True config) config.options)
         , tabPanel
             (List.filterMap identity
                 [ Maybe.map (Attr.id << panelIdFor) selected
@@ -117,8 +140,18 @@ panelIdFor option =
     "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
-viewTab : Maybe (a -> String) -> Config a msg -> Option a -> Html.Html msg
-viewTab maybeToUrl config option =
+viewTab :
+    Maybe (a -> String)
+    -> Bool
+    ->
+        { x
+            | onClick : a -> msg
+            , selected : a
+            , width : Width
+        }
+    -> Option a
+    -> Html.Html msg
+viewTab maybeToUrl forPage config option =
     let
         idValue =
             tabIdFor option
@@ -142,6 +175,13 @@ viewTab maybeToUrl config option =
                             :: attrs
                         )
                         children
+
+        ariaCurrent =
+            if forPage then
+                Aria.currentPage
+
+            else
+                Aria.currentItem True
     in
     element
         (List.concat
@@ -152,7 +192,7 @@ viewTab maybeToUrl config option =
               ]
             , if option.value == config.selected then
                 [ css focusedTabStyles
-                , Aria.currentPage
+                , ariaCurrent
                 ]
 
               else
