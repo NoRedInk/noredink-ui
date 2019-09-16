@@ -44,7 +44,7 @@ spec =
                         { options = [ 1, 2, 3 ]
                         , selected = 2
                         }
-                        |> Query.findAll [ Selector.attribute (Aria.controls "Nri-Ui-SegmentedControl-Panel-a-label") ]
+                        |> Query.findAll [ Selector.id "Nri-Ui-SegmentedControl-Tab-a-label" ]
                         |> Query.index 1
                         |> Query.has [ Selector.attribute (Widget.selected True) ]
             , test "always has one item selected" <|
