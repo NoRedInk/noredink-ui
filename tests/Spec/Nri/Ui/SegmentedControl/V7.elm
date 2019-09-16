@@ -1,6 +1,7 @@
 module Spec.Nri.Ui.SegmentedControl.V7 exposing (spec)
 
 import Accessibility.Aria as Aria
+import Accessibility.Widget as Widget
 import Expect
 import Html.Attributes
 import Html.Styled
@@ -45,14 +46,14 @@ spec =
                         }
                         |> Query.findAll [ Selector.attribute (Aria.controls "Nri-Ui-SegmentedControl-Panel-a-label") ]
                         |> Query.index 1
-                        |> Query.has [ Selector.attribute (Aria.currentItem True) ]
+                        |> Query.has [ Selector.attribute (Widget.selected True) ]
             , test "always has one item selected" <|
                 \() ->
                     toggleView
                         { options = [ 1, 2, 3 ]
                         , selected = 2
                         }
-                        |> Query.findAll [ Selector.attribute (Aria.currentItem True) ]
+                        |> Query.findAll [ Selector.attribute (Widget.selected True) ]
                         |> Query.count (Expect.equal 1)
             ]
         ]

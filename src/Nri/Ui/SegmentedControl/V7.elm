@@ -9,6 +9,7 @@ module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), vie
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
@@ -181,7 +182,7 @@ viewTab maybeToUrl forPage config option =
                 Aria.currentPage
 
             else
-                Aria.currentItem True
+                Widget.selected True
     in
     element
         (List.concat
