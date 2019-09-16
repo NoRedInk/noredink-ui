@@ -121,8 +121,7 @@ viewHelper maybeToUrl config =
             (List.map (viewTab maybeToUrl True config) config.options)
         , tabPanel
             (List.filterMap identity
-                [ Maybe.map (Attr.id << panelIdFor) selected
-                , Maybe.map (Aria.labelledBy << tabIdFor) selected
+                [ Maybe.map (Aria.labelledBy << tabIdFor) selected
                 , Just <| css [ paddingTop (px 10) ]
                 ]
             )
@@ -188,7 +187,6 @@ viewTab maybeToUrl forPage config option =
         (List.concat
             [ [ Attr.id idValue
               , Role.tab
-              , Aria.controls (panelIdFor option)
               , css sharedTabStyles
               ]
             , if option.value == config.selected then

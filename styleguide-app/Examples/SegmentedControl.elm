@@ -96,7 +96,7 @@ example parentMessage state =
                     |> List.map
                         (\i ->
                             { icon = options.icon
-                            , label = "Option " ++ Debug.toString i
+                            , label = "Choice " ++ Debug.toString i
                             , value = i
                             }
                         )
