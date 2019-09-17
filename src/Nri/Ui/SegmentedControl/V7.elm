@@ -100,7 +100,7 @@ viewToggle config =
             , cursor pointer
             ]
         ]
-        (List.map (viewTab Nothing False config) config.options)
+        (List.map (viewTab Nothing (Widget.selected True) config) config.options)
 
 
 viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
@@ -118,7 +118,7 @@ viewHelper maybeToUrl config =
                 , cursor pointer
                 ]
             ]
-            (List.map (viewTab maybeToUrl True config) config.options)
+            (List.map (viewTab maybeToUrl Aria.currentPage config) config.options)
         , tabPanel
             (List.filterMap identity
                 [ Maybe.map (Aria.labelledBy << tabIdFor) selected
@@ -142,7 +142,7 @@ panelIdFor option =
 
 viewTab :
     Maybe (a -> String)
-    -> Bool
+    -> Html.Attribute msg
     ->
         { x
             | onClick : a -> msg
@@ -151,7 +151,7 @@ viewTab :
         }
     -> Option a
     -> Html.Html msg
-viewTab maybeToUrl forPage config option =
+viewTab maybeToUrl selectedAttribute config option =
     let
         idValue =
             tabIdFor option
@@ -175,13 +175,6 @@ viewTab maybeToUrl forPage config option =
                             :: attrs
                         )
                         children
-
-        ariaCurrent =
-            if forPage then
-                Aria.currentPage
-
-            else
-                Widget.selected True
     in
     element
         (List.concat
@@ -191,7 +184,7 @@ viewTab maybeToUrl forPage config option =
               ]
             , if option.value == config.selected then
                 [ css focusedTabStyles
-                , ariaCurrent
+                , selectedAttribute
                 ]
 
               else
