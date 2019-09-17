@@ -100,7 +100,17 @@ viewToggle config =
             , cursor pointer
             ]
         ]
-        (List.map (viewTab Nothing (Widget.selected True) config) config.options)
+        (List.map
+            (viewTab
+                { onClick = config.onClick
+                , selected = config.selected
+                , width = config.width
+                , selectedAttribute = Widget.selected True
+                , maybeToUrl = Nothing
+                }
+            )
+            config.options
+        )
 
 
 viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
@@ -118,7 +128,17 @@ viewHelper maybeToUrl config =
                 , cursor pointer
                 ]
             ]
-            (List.map (viewTab maybeToUrl Aria.currentPage config) config.options)
+            (List.map
+                (viewTab
+                    { onClick = config.onClick
+                    , selected = config.selected
+                    , width = config.width
+                    , selectedAttribute = Aria.currentPage
+                    , maybeToUrl = maybeToUrl
+                    }
+                )
+                config.options
+            )
         , tabPanel
             (List.filterMap identity
                 [ Maybe.map (Aria.labelledBy << tabIdFor) selected
@@ -141,23 +161,21 @@ panelIdFor option =
 
 
 viewTab :
-    Maybe (a -> String)
-    -> Html.Attribute msg
-    ->
-        { x
-            | onClick : a -> msg
-            , selected : a
-            , width : Width
-        }
+    { onClick : a -> msg
+    , selected : a
+    , width : Width
+    , selectedAttribute : Html.Attribute msg
+    , maybeToUrl : Maybe (a -> String)
+    }
     -> Option a
     -> Html.Html msg
-viewTab maybeToUrl selectedAttribute config option =
+viewTab config option =
     let
         idValue =
             tabIdFor option
 
         element attrs children =
-            case maybeToUrl of
+            case config.maybeToUrl of
                 Nothing ->
                     -- This is for a non-SPA view
                     Html.button
@@ -184,7 +202,7 @@ viewTab maybeToUrl selectedAttribute config option =
               ]
             , if option.value == config.selected then
                 [ css focusedTabStyles
-                , selectedAttribute
+                , config.selectedAttribute
                 ]
 
               else
