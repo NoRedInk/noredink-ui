@@ -8,14 +8,19 @@ import Html.Styled
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.SegmentedControl.V7 as SegmentedControl
 import Test exposing (..)
+import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
-toggleView : { options : List a, selected : a } -> Query.Single ()
+type Msg a
+    = Selected a
+
+
+toggleView : { options : List a, selected : a } -> Query.Single (Msg a)
 toggleView config =
     SegmentedControl.viewToggle
-        { onClick = \_ -> ()
+        { onClick = \new -> Selected new
         , options =
             config.options
                 |> List.map (\o -> { value = o, icon = Nothing, label = "a label" })
@@ -55,5 +60,15 @@ spec =
                         }
                         |> Query.findAll [ Selector.attribute (Widget.selected True) ]
                         |> Query.count (Expect.equal 1)
+            , test "shows the correct item as selected when the button was clicked" <|
+                \() ->
+                    toggleView
+                        { options = [ 1, 2, 3 ]
+                        , selected = 1
+                        }
+                        |> Query.findAll [ Selector.id "Nri-Ui-SegmentedControl-Tab-a-label" ]
+                        |> Query.index 1
+                        |> Event.simulate Event.click
+                        |> Event.expect (Selected 2)
             ]
         ]
