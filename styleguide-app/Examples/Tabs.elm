@@ -31,10 +31,14 @@ example changeTab tab =
             , tabs =
                 case tab of
                     First ->
-                        List.Zipper.Zipper [] (Tabs.Tab "First tab" First) [ Tabs.Tab "Second tab" Second ]
+                        List.Zipper.from []
+                            (Tabs.Tab "First tab" First)
+                            [ Tabs.Tab "Second tab" Second ]
 
                     Second ->
-                        List.Zipper.Zipper [ Tabs.Tab "First tab" First ] (Tabs.Tab "Second tab" Second) []
+                        List.Zipper.from []
+                            (Tabs.Tab "Second tab" Second)
+                            [ Tabs.Tab "First tab" First ]
             , content =
                 \id ->
                     case id of
@@ -50,7 +54,7 @@ example changeTab tab =
             , content = Html.text "Links"
             , alignment = Tabs.Left
             , tabs =
-                List.Zipper.Zipper
+                List.Zipper.from
                     []
                     (Tabs.NormalLink { label = "Nowhere", href = Nothing })
                     [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" }

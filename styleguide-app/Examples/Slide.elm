@@ -10,7 +10,7 @@ import Accessibility.Styled as Html
 import Css
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
-import List.Zipper as Zipper exposing (Zipper(..))
+import List.Zipper as Zipper exposing (Zipper)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -74,7 +74,7 @@ example parentMessage state =
 init : State
 init =
     { direction = Slide.FromRTL
-    , panels = Zipper [] One [ Two, Three ]
+    , panels = Zipper.from [] One [ Two, Three ]
     , previous = Nothing
     }
 
