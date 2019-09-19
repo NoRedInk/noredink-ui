@@ -314,16 +314,7 @@ checkboxUnchecked =
         , Svg.Attributes.viewBox "0 0 27 27"
         ]
         [ Svg.defs []
-            [ Svg.rect
-                [ Svg.Attributes.id "path-1"
-                , Svg.Attributes.x "0"
-                , Svg.Attributes.y "0"
-                , Svg.Attributes.width "27"
-                , Svg.Attributes.height "27"
-                , Svg.Attributes.rx "4"
-                ]
-                []
-            , Svg.filter
+            [ Svg.filter
                 [ Svg.Attributes.x "-3.7%"
                 , Svg.Attributes.y "-3.7%"
                 , Svg.Attributes.width "107.4%"
@@ -355,28 +346,22 @@ checkboxUnchecked =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
             ]
             [ Svg.g
-                [ Svg.Attributes.id "checkbox_unchecked"
-                ]
-                [ Svg.use
+                []
+                [ checkboxBackground
                     [ Svg.Attributes.fill "#EBEBEB"
                     , Svg.Attributes.fillRule "evenodd"
-                    , Svg.Attributes.xlinkHref "#path-1"
                     ]
-                    []
-                , Svg.use
+                , checkboxBackground
                     [ Svg.Attributes.fill "black"
                     , Svg.Attributes.fillOpacity "1"
                     , Svg.Attributes.filter "url(#filter-2)"
-                    , Svg.Attributes.xlinkHref "#path-1"
                     ]
-                    []
                 ]
             ]
         ]
@@ -392,16 +377,7 @@ checkboxChecked =
         , Svg.Attributes.viewBox "0 0 27 27"
         ]
         [ Svg.defs []
-            [ Svg.rect
-                [ Svg.Attributes.id "path-1"
-                , Svg.Attributes.x "0"
-                , Svg.Attributes.y "0"
-                , Svg.Attributes.width "27"
-                , Svg.Attributes.height "27"
-                , Svg.Attributes.rx "4"
-                ]
-                []
-            , Svg.filter
+            [ Svg.filter
                 [ Svg.Attributes.x "-3.7%"
                 , Svg.Attributes.y "-3.7%"
                 , Svg.Attributes.width "107.4%"
@@ -433,33 +409,26 @@ checkboxChecked =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
             ]
             [ Svg.g
-                [ Svg.Attributes.id "checkbox_checked"
-                ]
+                []
                 [ Svg.g []
-                    [ Svg.use
+                    [ checkboxBackground
                         [ Svg.Attributes.fill "#D4F0FF"
                         , Svg.Attributes.fillRule "evenodd"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
-                    , Svg.use
+                    , checkboxBackground
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
                     ]
                 , Svg.g
-                    [ Svg.Attributes.id "icon/check-blue"
-                    , Svg.Attributes.transform "translate(3.600000, 3.600000)"
+                    [ Svg.Attributes.transform "translate(3.600000, 3.600000)"
                     , Svg.Attributes.fill "#146AFF"
                     ]
                     [ Svg.path
@@ -482,16 +451,7 @@ checkboxCheckedPartially =
         , Svg.Attributes.viewBox "0 0 27 27"
         ]
         [ Svg.defs []
-            [ Svg.rect
-                [ Svg.Attributes.id "path-1"
-                , Svg.Attributes.x "0"
-                , Svg.Attributes.y "0"
-                , Svg.Attributes.width "27"
-                , Svg.Attributes.height "27"
-                , Svg.Attributes.rx "4"
-                ]
-                []
-            , Svg.filter
+            [ Svg.filter
                 [ Svg.Attributes.x "-3.7%"
                 , Svg.Attributes.y "-3.7%"
                 , Svg.Attributes.width "107.4%"
@@ -519,35 +479,27 @@ checkboxCheckedPartially =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
             ]
             [ Svg.g
-                [ Svg.Attributes.id "checkbox_checkedPartially"
-                ]
+                []
                 [ Svg.g
-                    [ Svg.Attributes.id "checkbox_checked"
-                    ]
-                    [ Svg.use
+                    []
+                    [ checkboxBackground
                         [ Svg.Attributes.fill "#EBEBEB"
                         , Svg.Attributes.fillRule "evenodd"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
-                    , Svg.use
+                    , checkboxBackground
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
                     ]
                 , Svg.path
                     [ Svg.Attributes.d "M22.2879231,10.8937777 C22.4823276,11.0881822 22.5430781,11.3676344 22.4701764,11.7321429 C22.1785697,13.2630784 21.6196651,14.4294879 20.793446,15.2314064 C19.9672268,16.033325 18.9830688,16.4342783 17.8409423,16.4342783 C16.9175209,16.4342783 16.073089,16.3006272 15.3076213,16.033321 C14.5421536,15.7660148 13.612671,15.3772116 12.5191457,14.8668998 C11.668626,14.4537903 10.9821454,14.1500378 10.4596833,13.9556333 C9.93722115,13.7612288 9.40869184,13.664028 8.87407945,13.664028 C7.53754849,13.664028 6.68704155,14.3201333 6.32253311,15.6323637 C6.27393198,15.8267682 6.17065614,15.9907946 6.01270248,16.1244477 C5.85474882,16.2581008 5.66642228,16.3249263 5.44771721,16.3249263 C5.20471159,16.3249263 4.9860098,16.2277255 4.7916053,16.033321 C4.59720079,15.8389165 4.5,15.6202147 4.5,15.3772091 C4.5,14.6238916 4.71262674,13.8705855 5.13788659,13.117268 C5.56314644,12.3639506 6.1342011,11.7503706 6.85106771,11.2765096 C7.56793431,10.8026486 8.32731551,10.5657217 9.12923409,10.5657217 C10.076956,10.5657217 10.933538,10.6993728 11.6990058,10.966679 C12.4644735,11.2339852 13.3939561,11.6227884 14.4874814,12.1331002 C15.3380011,12.5462097 16.0244817,12.8499622 16.5469438,13.0443667 C17.0694059,13.2387712 17.5979352,13.335972 18.1325476,13.335972 C18.8129634,13.335972 19.2868173,13.2266211 19.5541234,13.0079161 C19.8214296,12.789211 20.1008819,12.4004078 20.3924887,11.8414949 C20.4653904,11.6470904 20.5747413,11.4162385 20.7205446,11.1489323 C20.9149491,10.7844239 21.2065515,10.6021724 21.5953605,10.6021724 C21.8626667,10.6021724 22.0935186,10.6993732 22.2879231,10.8937777 Z"
-                    , Svg.Attributes.id "~"
                     , Svg.Attributes.fill "#146AFF"
                     ]
                     []
@@ -558,6 +510,19 @@ checkboxCheckedPartially =
         |> Icon
 
 
+checkboxBackground attrs =
+    Svg.rect
+        ([ Svg.Attributes.x "0"
+         , Svg.Attributes.y "0"
+         , Svg.Attributes.width "27"
+         , Svg.Attributes.height "27"
+         , Svg.Attributes.rx "4"
+         ]
+            ++ attrs
+        )
+        []
+
+
 checkboxLockOnInside : Icon
 checkboxLockOnInside =
     Svg.svg
@@ -566,16 +531,7 @@ checkboxLockOnInside =
         , Svg.Attributes.viewBox "0 0 27 27"
         ]
         [ Svg.defs []
-            [ Svg.rect
-                [ Svg.Attributes.id "path-1"
-                , Svg.Attributes.x "0"
-                , Svg.Attributes.y "0"
-                , Svg.Attributes.width "27"
-                , Svg.Attributes.height "27"
-                , Svg.Attributes.rx "4"
-                ]
-                []
-            , Svg.filter
+            [ Svg.filter
                 [ Svg.Attributes.x "-3.7%"
                 , Svg.Attributes.y "-3.7%"
                 , Svg.Attributes.width "107.4%"
@@ -607,49 +563,38 @@ checkboxLockOnInside =
                 ]
             ]
         , Svg.g
-            [ Svg.Attributes.id "Page-1"
-            , Svg.Attributes.stroke "none"
+            [ Svg.Attributes.stroke "none"
             , Svg.Attributes.strokeWidth "1"
             , Svg.Attributes.fill "none"
             , Svg.Attributes.fillRule "evenodd"
             ]
             [ Svg.g
-                [ Svg.Attributes.id "checkbox_lock_on_inside"
-                ]
+                []
                 [ Svg.g
-                    [ Svg.Attributes.id "checkbox_checked"
-                    ]
-                    [ Svg.use
+                    []
+                    [ checkboxBackground
                         [ Svg.Attributes.fill "#EBEBEB"
                         , Svg.Attributes.fillRule "evenodd"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
-                    , Svg.use
+                    , checkboxBackground
                         [ Svg.Attributes.fill "black"
                         , Svg.Attributes.fillOpacity "1"
                         , Svg.Attributes.filter "url(#filter-2)"
-                        , Svg.Attributes.xlinkHref "#path-1"
                         ]
-                        []
                     ]
                 , Svg.g
-                    [ Svg.Attributes.id "icon/premium-lock-shadow"
-                    , Svg.Attributes.transform "translate(4.050000, 4.050000)"
+                    [ Svg.Attributes.transform "translate(4.050000, 4.050000)"
                     ]
                     [ Svg.g
-                        [ Svg.Attributes.id "icon_premium_locked"
-                        , Svg.Attributes.transform "translate(3.040000, 0.271429)"
+                        [ Svg.Attributes.transform "translate(3.040000, 0.271429)"
                         ]
                         [ Svg.path
                             [ Svg.Attributes.d "M10.8889406,8.4420254 L10.8889406,5.41406583 C10.8889406,2.93752663 8.90203465,0.922857143 6.46010875,0.922857143 C4.01774785,0.922857143 2.03105941,2.93752663 2.03105941,5.41406583 L2.03105941,8.4420254 L1.39812057,8.4420254 C0.626196192,8.4420254 0,9.0763794 0,9.85917577 L0,17.0399925 C0,17.8227889 0.626196192,18.4571429 1.39812057,18.4571429 L11.5223144,18.4571429 C12.2942388,18.4571429 12.92,17.8227889 12.92,17.0399925 L12.92,9.85939634 C12.92,9.07659997 12.2942388,8.4420254 11.5223144,8.4420254 L10.8889406,8.4420254 Z M6.8875056,13.8949112 L6.8875056,15.5789491 C6.8875056,15.8187066 6.69588391,16.0128066 6.46010875,16.0128066 C6.22389859,16.0128066 6.0322769,15.8187066 6.0322769,15.5789491 L6.0322769,13.8949112 C5.54876383,13.7173539 5.20271376,13.2490877 5.20271376,12.6972262 C5.20271376,11.9933932 5.76561607,11.4221217 6.46010875,11.4221217 C7.15394892,11.4221217 7.71772125,11.9933932 7.71772125,12.6972262 C7.71772125,13.2497494 7.37101867,13.7180156 6.8875056,13.8949112 L6.8875056,13.8949112 Z M9.21176142,8.4420254 L3.70823858,8.4420254 L3.70823858,5.41406583 C3.70823858,3.87538241 4.94279558,2.62343759 6.46010875,2.62343759 C7.97720442,2.62343759 9.21176142,3.87538241 9.21176142,5.41406583 L9.21176142,8.4420254 L9.21176142,8.4420254 Z"
-                            , Svg.Attributes.id "icon_premium_locked-copy"
                             , Svg.Attributes.fill "#E68900"
                             ]
                             []
                         , Svg.rect
-                            [ Svg.Attributes.id "Rectangle-9"
-                            , Svg.Attributes.fill "#FFFFFF"
+                            [ Svg.Attributes.fill "#FFFFFF"
                             , Svg.Attributes.x "0.922857143"
                             , Svg.Attributes.y "10.1514286"
                             , Svg.Attributes.width "10.1514286"
