@@ -260,7 +260,13 @@ viewContent content =
         "modal-content"
         [ Css.overflowY Css.auto
         , Css.margin2 Css.zero (Css.px 21)
-        , Css.padding2 (Css.px 30) (Css.px 40)
+        , Css.paddingTop (Css.px 30)
+        , Css.paddingRight (Css.px 40)
+        , Css.paddingLeft (Css.px 40)
+
+        -- , Css.paddingBottom Css.zero
+        -- padding bottom used to be 30px. We removed it because it caused
+        -- scrolling where we didn't want any
         , Css.width (Css.pct 100)
         , Css.height (Css.pct 100)
         , Css.marginBottom Css.auto
