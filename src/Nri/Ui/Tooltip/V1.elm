@@ -192,7 +192,7 @@ primaryLabel :
     -> Tooltip msg
     -> Html msg
 primaryLabel =
-    view
+    view PrimaryLabel
 
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
@@ -207,7 +207,7 @@ auxillaryDescription :
     -> Tooltip msg
     -> Html msg
 auxillaryDescription =
-    view
+    view AuxillaryDescription
 
 
 {-| Supplementary information triggered by a "?" icon
@@ -222,23 +222,30 @@ toggleTip :
     -> Tooltip msg
     -> Html msg
 toggleTip =
-    view
+    view PrimaryLabel
 
 
 
 -- INTERNALS
 
 
+type Purpose
+    = PrimaryLabel
+    | AuxillaryDescription
+
+
 view :
-    { trigger : Trigger
-    , triggerHtml : Html msg
-    , onTrigger : Bool -> msg
-    , isOpen : Bool
-    , id : String -- Accessibility: Used to match tooltip to trigger
-    }
+    Purpose
+    ->
+        { trigger : Trigger
+        , triggerHtml : Html msg
+        , onTrigger : Bool -> msg
+        , isOpen : Bool
+        , id : String -- Accessibility: Used to match tooltip to trigger
+        }
     -> Tooltip msg
     -> Html msg
-view { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
+view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1"
         [ Css.display Css.inlineBlock
@@ -247,7 +254,12 @@ view { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
         ]
         []
         [ Html.button
-            ([ Aria.labeledBy id
+            ([ case purpose of
+                PrimaryLabel ->
+                    Aria.labeledBy id
+
+                AuxillaryDescription ->
+                    Aria.describedBy [ id ]
              , css
                 [ Css.cursor Css.pointer
                 , Css.displayFlex
