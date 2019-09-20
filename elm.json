@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "7.0.0",
+    "version": "7.2.1",
     "exposed-modules": [
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
@@ -13,6 +13,7 @@
         "Nri.Ui.BannerAlert.V3",
         "Nri.Ui.BannerAlert.V4",
         "Nri.Ui.BannerAlert.V5",
+        "Nri.Ui.Callout.V1",
         "Nri.Ui.ClickableText.V1",
         "Nri.Ui.ClickableText.V2",
         "Nri.Ui.ClickableText.V3",
@@ -48,6 +49,7 @@
         "Nri.Ui.Modal.V4",
         "Nri.Ui.Modal.V5",
         "Nri.Ui.Modal.V6",
+        "Nri.Ui.Modal.V7",
         "Nri.Ui.Outline.V2",
         "Nri.Ui.Page.V2",
         "Nri.Ui.Page.V3",
@@ -97,7 +99,7 @@
         "tesk9/accessible-html-with-css": "2.1.1 <= v < 3.0.0",
         "tesk9/modal": "5.0.1 <= v < 6.0.0",
         "tesk9/palette": "2.0.0 <= v < 3.0.0",
-        "wernerdegroot/listzipper": "3.1.1 <= v < 4.0.0"
+        "wernerdegroot/listzipper": "3.1.1 <= v < 5.0.0"
     },
     "test-dependencies": {
         "elm-explorations/test": "1.2.0 <= v < 2.0.0"

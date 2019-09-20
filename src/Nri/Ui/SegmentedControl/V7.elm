@@ -1,14 +1,15 @@
-module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view, viewSpa)
+module Nri.Ui.SegmentedControl.V7 exposing (Config, Icon, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle)
 
 {-|
 
-@docs Config, Icon, Option, Width, view, viewSpa
+@docs Config, Icon, Option, Width, view, viewSpa, ToggleConfig, viewToggle
 
 -}
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
@@ -37,6 +38,16 @@ type alias Config a msg =
     , selected : a
     , width : Width
     , content : Html msg
+    }
+
+
+{-| Same shape as Config but without the content
+-}
+type alias ToggleConfig a msg =
+    { onClick : a -> msg
+    , options : List (Option a)
+    , selected : a
+    , width : Width
     }
 
 
@@ -79,6 +90,29 @@ viewSpa toUrl config =
     viewHelper (Just toUrl) config
 
 
+{-| Creates _just the toggle_ when need the ui element itself and not a page control
+-}
+viewToggle : ToggleConfig a msg -> Html.Html msg
+viewToggle config =
+    tabList
+        [ css
+            [ displayFlex
+            , cursor pointer
+            ]
+        ]
+        (List.map
+            (viewTab
+                { onClick = config.onClick
+                , selected = config.selected
+                , width = config.width
+                , selectedAttribute = Widget.selected True
+                , maybeToUrl = Nothing
+                }
+            )
+            config.options
+        )
+
+
 viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
 viewHelper maybeToUrl config =
     let
@@ -94,11 +128,20 @@ viewHelper maybeToUrl config =
                 , cursor pointer
                 ]
             ]
-            (List.map (viewTab maybeToUrl config) config.options)
+            (List.map
+                (viewTab
+                    { onClick = config.onClick
+                    , selected = config.selected
+                    , width = config.width
+                    , selectedAttribute = Aria.currentPage
+                    , maybeToUrl = maybeToUrl
+                    }
+                )
+                config.options
+            )
         , tabPanel
             (List.filterMap identity
-                [ Maybe.map (Attr.id << panelIdFor) selected
-                , Maybe.map (Aria.labelledBy << tabIdFor) selected
+                [ Maybe.map (Aria.labelledBy << tabIdFor) selected
                 , Just <| css [ paddingTop (px 10) ]
                 ]
             )
@@ -117,14 +160,22 @@ panelIdFor option =
     "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
-viewTab : Maybe (a -> String) -> Config a msg -> Option a -> Html.Html msg
-viewTab maybeToUrl config option =
+viewTab :
+    { onClick : a -> msg
+    , selected : a
+    , width : Width
+    , selectedAttribute : Html.Attribute msg
+    , maybeToUrl : Maybe (a -> String)
+    }
+    -> Option a
+    -> Html.Html msg
+viewTab config option =
     let
         idValue =
             tabIdFor option
 
         element attrs children =
-            case maybeToUrl of
+            case config.maybeToUrl of
                 Nothing ->
                     -- This is for a non-SPA view
                     Html.button
@@ -147,12 +198,11 @@ viewTab maybeToUrl config option =
         (List.concat
             [ [ Attr.id idValue
               , Role.tab
-              , Aria.controls (panelIdFor option)
               , css sharedTabStyles
               ]
             , if option.value == config.selected then
                 [ css focusedTabStyles
-                , Aria.currentPage
+                , config.selectedAttribute
                 ]
 
               else
