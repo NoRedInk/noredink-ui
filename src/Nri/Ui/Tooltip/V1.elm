@@ -47,12 +47,14 @@ Example usage:
 -}
 
 import Accessibility.Styled as Html exposing (Attribute, Html, text)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
 import EventExtras.Styled as Events
-import Html.Styled.Attributes as Attrs exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -166,8 +168,9 @@ type Trigger
     | OnClick
 
 
-{-| Used when the content of the tooltip is the "primary label" for its content. The tooltip content
-will supercede the content of the trigger HTML for screen readers.
+{-| Used when the content of the tooltip is the "primary label" for its content, for example,
+when the trigger content is an icon. The tooltip content will supercede the content of the trigger
+HTML for screen readers.
 
 Here's what the fields in the configuration record do:
 
@@ -184,6 +187,7 @@ primaryLabel :
     , triggerHtml : Html msg
     , onTrigger : Bool -> msg
     , isOpen : Bool
+    , id : String
     }
     -> Tooltip msg
     -> Html msg
@@ -198,6 +202,7 @@ auxillaryDescription :
     , triggerHtml : Html msg
     , onTrigger : Bool -> msg
     , isOpen : Bool
+    , id : String
     }
     -> Tooltip msg
     -> Html msg
@@ -212,6 +217,7 @@ toggleTip :
     , triggerHtml : Html msg
     , onTrigger : Bool -> msg
     , isOpen : Bool
+    , id : String
     }
     -> Tooltip msg
     -> Html msg
@@ -228,19 +234,21 @@ view :
     , triggerHtml : Html msg
     , onTrigger : Bool -> msg
     , isOpen : Bool
+    , id : String -- Accessibility: Used to match tooltip to trigger
     }
     -> Tooltip msg
     -> Html msg
-view { trigger, triggerHtml, onTrigger, isOpen } tooltip_ =
-    Html.div
-        [ css
-            [ Css.display Css.inlineBlock
-            , Css.textAlign Css.left
-            , Css.position Css.relative
-            ]
+view { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Tooltip-V1"
+        [ Css.display Css.inlineBlock
+        , Css.textAlign Css.left
+        , Css.position Css.relative
         ]
+        []
         [ Html.button
-            ([ css
+            ([ Aria.labeledBy id
+             , css
                 [ Css.cursor Css.pointer
                 , Css.displayFlex
                 , Css.border Css.zero
@@ -268,7 +276,7 @@ view { trigger, triggerHtml, onTrigger, isOpen } tooltip_ =
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewIf (\_ -> viewTooltip tooltip_) isOpen
+        , viewIf (\_ -> viewTooltip id tooltip_) isOpen
         ]
 
 
@@ -284,10 +292,10 @@ viewIf viewFn condition =
             Html.text ""
 
 
-viewTooltip : Tooltip msg -> Html msg
-viewTooltip (Tooltip config) =
+viewTooltip : String -> Tooltip msg -> Html msg
+viewTooltip tooltipId (Tooltip config) =
     Html.div (containerPositioningForArrowPosition config.position)
-        [ Html.aside
+        [ Html.div
             [ css
                 ([ Css.borderRadius (Css.px 8)
                  , case config.width of
@@ -303,11 +311,12 @@ viewTooltip (Tooltip config) =
                     ++ config.tooltipStyleOverrides
                 )
             , pointerBox config.position
+            , Attributes.id tooltipId
 
             -- We need to keep this animation in tests to make it pass: check out
             -- the NoAnimations middleware. So if you change the name here, please
             -- change that as well
-            , Attrs.class "dont-disable-animation"
+            , Attributes.class "dont-disable-animation"
             , Role.toolTip
             ]
             config.content
@@ -352,7 +361,7 @@ tooltipColor =
 -}
 containerPositioningForArrowPosition : Position -> List (Attribute msg)
 containerPositioningForArrowPosition arrowPosition =
-    List.map (\( k, v ) -> Attrs.style k v) <|
+    List.map (\( k, v ) -> Attributes.style k v) <|
         case arrowPosition of
             OnTop ->
                 [ ( "left", "50%" )
