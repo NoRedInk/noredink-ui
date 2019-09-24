@@ -5,7 +5,8 @@ module Nri.Ui.Page.V3 exposing
 
 {-| A styled NRI issue page!
 
-@docs DefaultPage, broken, blocked, notFound, noPermission, RecoveryText(..)
+@docs DefaultPage, broken, blocked, notFound, noPermission
+@docs RecoveryText
 
 -}
 
