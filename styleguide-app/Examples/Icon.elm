@@ -12,6 +12,7 @@ import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Icon.V5 as Icon
@@ -36,6 +37,8 @@ example =
             , { icon = Icon.notStarred, background = Light, alt = "NotStarred" }
             , { icon = Icon.flag, background = Light, alt = "Flag" }
             ]
+        , viewAssignmentIconSection "Assignment Types"
+            [ AssignmentIcon.diagnostic ]
         , viewIconSection "Assignment Types"
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
@@ -185,4 +188,48 @@ viewIcon { alt, background, icon } =
             [ Icon.icon { alt = alt, icon = icon assets }
             ]
         , Text.mediumBody [ Html.text alt ]
+        ]
+
+
+viewAssignmentIconSection : String -> List (Html msg) -> Html msg
+viewAssignmentIconSection headerText icons =
+    Html.section []
+        [ Heading.h2 [] [ Html.text headerText ]
+        , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
+            (List.map viewAssignmentIcon icons)
+        ]
+
+
+viewAssignmentIcon : Html msg -> Html msg
+viewAssignmentIcon assignmentIcon =
+    Html.div
+        [ css
+            [ Css.margin (Css.px 10)
+            , Css.width (Css.px 160)
+            , Css.boxShadow4 (Css.px 10) (Css.px 5) (Css.px 5) navy
+            , Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.flexStart
+            ]
+        ]
+        [ Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.center
+                , Css.height (Css.px 80)
+                , Css.width (Css.px 80)
+                , Css.margin (Css.px 10)
+                , Css.color green
+                , Css.Global.descendants
+                    [ Css.Global.img
+                        [ Css.maxWidth (Css.pct 100)
+                        , Css.maxHeight (Css.pct 100)
+                        ]
+                    ]
+                ]
+            ]
+            [ assignmentIcon
+            ]
         ]
