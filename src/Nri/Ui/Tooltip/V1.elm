@@ -221,11 +221,10 @@ A toggle tip is always triggered by a click.
 toggleTip :
     { onTrigger : Bool -> msg
     , isOpen : Bool
-    , id : String -- TODO: We might not need this here
     }
     -> Tooltip msg
     -> Html msg
-toggleTip { isOpen, onTrigger, id } tooltip_ =
+toggleTip { isOpen, onTrigger } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1-ToggleTip"
         tooltipContainerStyles
@@ -249,7 +248,7 @@ toggleTip { isOpen, onTrigger, id } tooltip_ =
             ]
             [ -- Popout is rendered after the overlay, to allow client code to give it
               -- priority when clicking by setting its position
-              viewIf (\_ -> viewTooltip id tooltip_) isOpen
+              viewIf (\_ -> viewTooltip Nothing tooltip_) isOpen
             ]
         ]
 
@@ -311,7 +310,7 @@ view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewIf (\_ -> viewTooltip id tooltip_) isOpen
+        , viewIf (\_ -> viewTooltip (Just id) tooltip_) isOpen
         ]
 
 
@@ -327,11 +326,11 @@ viewIf viewFn condition =
             Html.text ""
 
 
-viewTooltip : String -> Tooltip msg -> Html msg
-viewTooltip tooltipId (Tooltip config) =
+viewTooltip : Maybe String -> Tooltip msg -> Html msg
+viewTooltip maybeTooltipId (Tooltip config) =
     Html.div (containerPositioningForArrowPosition config.position)
         [ Html.div
-            [ css
+            ([ css
                 ([ Css.borderRadius (Css.px 8)
                  , case config.width of
                     Exactly width ->
@@ -345,15 +344,22 @@ viewTooltip tooltipId (Tooltip config) =
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-            , pointerBox config.position
-            , Attributes.id tooltipId
+             , pointerBox config.position
 
-            -- We need to keep this animation in tests to make it pass: check out
-            -- the NoAnimations middleware. So if you change the name here, please
-            -- change that as well
-            , Attributes.class "dont-disable-animation"
-            , Role.toolTip
-            ]
+             -- We need to keep this animation in tests to make it pass: check out
+             -- the NoAnimations middleware. So if you change the name here, please
+             -- change that as well
+             , Attributes.class "dont-disable-animation"
+             , Role.toolTip
+             ]
+                ++ (case maybeTooltipId of
+                        Just tooltipId ->
+                            [ Attributes.id tooltipId ]
+
+                        Nothing ->
+                            []
+                   )
+            )
             config.content
         ]
 
