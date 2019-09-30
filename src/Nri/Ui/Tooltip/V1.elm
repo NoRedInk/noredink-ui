@@ -243,7 +243,7 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
                  ]
                     ++ buttonStyleOverrides
                 )
-             , Events.onClickStopPropagation (onTrigger True)
+             , Events.onClick (onTrigger True)
              , Events.onBlur (onTrigger False)
              ]
                 ++ extraButtonAttrs
@@ -388,7 +388,7 @@ eventsForTrigger : Trigger -> (Bool -> msg) -> List (Attribute msg)
 eventsForTrigger trigger msg =
     case trigger of
         OnClick ->
-            [ Events.onClickStopPropagation (msg True)
+            [ Events.onClick (msg True)
             , Events.onFocus (msg True)
             , Events.onBlur (msg False)
             ]
@@ -473,7 +473,7 @@ viewCloseTooltipOverlay msg =
             , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
             , Css.backgroundColor Css.transparent
             ]
-        , Events.onClickStopPropagation msg
+        , Events.onClick msg
         ]
         []
 
