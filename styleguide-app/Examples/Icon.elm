@@ -37,7 +37,7 @@ example =
             , { icon = Icon.notStarred, background = Light, alt = "NotStarred" }
             , { icon = Icon.flag, background = Light, alt = "Flag" }
             ]
-        , viewAssignmentIconSection "Assignment Types"
+        , viewAssignmentIconSection "Nri.Ui.AssignmentIcon.V1."
             [ ( "diagnostic", AssignmentIcon.diagnostic )
             , ( "practice", AssignmentIcon.practice )
             , ( "quiz", AssignmentIcon.quiz )
