@@ -40,6 +40,7 @@ example =
         , viewAssignmentIconSection "Assignment Types"
             [ ( "diagnostic", AssignmentIcon.diagnostic )
             , ( "practice", AssignmentIcon.practice )
+            , ( "quiz", AssignmentIcon.quiz )
             , ( "peerReview", AssignmentIcon.peerReview )
             ]
         , viewIconSection "Assignment Types"
