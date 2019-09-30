@@ -180,10 +180,11 @@ Here's what the fields in the configuration record do:
 
   - `trigger`: How do you open this tooltip?
   - `triggerHtml`: What element do you interact with to open the tooltip?
+  - `extraButtonAttrs`: Adds attributes to the trigger button. Useful for things like focus management, like with Accessible Modal
   - `onTrigger`: What `msg` should I send when the tooltip should open and
     close? The `Bool` represents the next `isOpen` value.
-  - `isOpen`: Is the tooltip open now? (keep track of this in your model
-    somewhere)
+  - `isOpen`: Is the tooltip open now? (keep track of this in your model somewhere)
+  - `id`: A unique identifier used to associate the trigger with its content
 
 -}
 primaryLabel :
