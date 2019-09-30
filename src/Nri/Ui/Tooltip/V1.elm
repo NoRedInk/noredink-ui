@@ -195,7 +195,7 @@ primaryLabel :
     -> Tooltip msg
     -> Html msg
 primaryLabel =
-    view PrimaryLabel
+    viewTooltip_ PrimaryLabel
 
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
@@ -210,7 +210,7 @@ auxillaryDescription :
     -> Tooltip msg
     -> Html msg
 auxillaryDescription =
-    view AuxillaryDescription
+    viewTooltip_ AuxillaryDescription
 
 
 {-| Supplementary information triggered by a "?" icon
@@ -275,7 +275,7 @@ type Purpose
     | AuxillaryDescription
 
 
-view :
+viewTooltip_ :
     Purpose
     ->
         { trigger : Trigger
@@ -286,7 +286,7 @@ view :
         }
     -> Tooltip msg
     -> Html msg
-view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
+viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1"
         tooltipContainerStyles
