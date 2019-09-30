@@ -386,7 +386,10 @@ eventsForTrigger : Trigger -> (Bool -> msg) -> List (Attribute msg)
 eventsForTrigger trigger msg =
     case trigger of
         OnClick ->
-            [ Events.onClickStopPropagation (msg True) ]
+            [ Events.onClickStopPropagation (msg True)
+            , Events.onFocus (msg True)
+            , Events.onBlur (msg False)
+            ]
 
         OnHover ->
             [ Events.onMouseEnter (msg True)
