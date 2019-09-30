@@ -18,10 +18,11 @@ Example usage:
         |> withPadding SmallPadding
         |> withWidth FitToContent
         |> primaryLabel {
-            trigger : OnClick
-            , triggerHtml : someTriggerHtml
-            , onTrigger : MyOnTriggerMsg
-            , isOpen : True
+            trigger = OnClick
+            , triggerHtml = someTriggerHtml
+            , onTrigger = MyOnTriggerMsg
+            , isOpen = True
+            , extraButtonAttrs = modalV9LastFocusableElement
         }
 
 
@@ -188,6 +189,7 @@ Here's what the fields in the configuration record do:
 primaryLabel :
     { trigger : Trigger
     , triggerHtml : Html msg
+    , extraButtonAttrs : List (Attribute msg)
     , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String
@@ -203,6 +205,7 @@ primaryLabel =
 auxillaryDescription :
     { trigger : Trigger
     , triggerHtml : Html msg
+    , extraButtonAttrs : List (Attribute msg)
     , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String
@@ -221,25 +224,28 @@ A toggle tip is always triggered by a click.
 toggleTip :
     { onTrigger : Bool -> msg
     , isOpen : Bool
+    , extraButtonAttrs : List (Attribute msg)
     }
     -> Tooltip msg
     -> Html msg
-toggleTip { isOpen, onTrigger } tooltip_ =
+toggleTip { isOpen, onTrigger, extraButtonAttrs } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1-ToggleTip"
         tooltipContainerStyles
         []
         [ Html.button
-            [ Widget.label "More information"
-            , css
+            ([ Widget.label "More information"
+             , css
                 ([ Css.width (Css.px 20)
                  , Css.height (Css.px 20)
                  , Css.color Colors.azure
                  ]
                     ++ buttonStyleOverrides
                 )
-            , Events.onClickStopPropagation (onTrigger True)
-            ]
+             , Events.onClickStopPropagation (onTrigger True)
+             ]
+                ++ extraButtonAttrs
+            )
             [ iconHelp ]
         , viewIf (\_ -> viewCloseTooltipOverlay (onTrigger False)) isOpen
         , Html.span
@@ -283,10 +289,11 @@ viewTooltip_ :
         , onTrigger : Bool -> msg
         , isOpen : Bool
         , id : String -- Accessibility: Used to match tooltip to trigger
+        , extraButtonAttrs : List (Attribute msg)
         }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
+viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1"
         tooltipContainerStyles
@@ -301,6 +308,7 @@ viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
              , css buttonStyleOverrides
              ]
                 ++ eventsForTrigger trigger onTrigger
+                ++ extraButtonAttrs
             )
             [ triggerHtml ]
 

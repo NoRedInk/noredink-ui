@@ -61,6 +61,7 @@ example msg model =
                 , onTrigger = ToggleTooltip PrimaryLabel >> msg
                 , isOpen = model.openTooltip == Just PrimaryLabel
                 , id = "primary label tooltip"
+                , extraButtonAttrs = []
                 }
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "auxillaryDescription" ]
@@ -72,6 +73,7 @@ example msg model =
                 , onTrigger = ToggleTooltip AuxillaryDescription >> msg
                 , isOpen = model.openTooltip == Just AuxillaryDescription
                 , id = "Auxillary description"
+                , extraButtonAttrs = []
                 }
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "toggleTip" ]
@@ -80,6 +82,7 @@ example msg model =
             |> Tooltip.toggleTip
                 { onTrigger = ToggleTooltip ToggleTip >> msg
                 , isOpen = model.openTooltip == Just ToggleTip
+                , extraButtonAttrs = []
                 }
         ]
     }
