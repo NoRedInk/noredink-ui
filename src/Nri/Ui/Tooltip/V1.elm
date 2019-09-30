@@ -315,7 +315,7 @@ view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
         ]
 
 
-{-| TODO: move me somewhere?
+{-| TODO: Move this somewhere if it becomes useful in other modules here
 -}
 viewIf : (() -> Html msg) -> Bool -> Html msg
 viewIf viewFn condition =
