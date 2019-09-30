@@ -42,6 +42,7 @@ example =
             , ( "practice", AssignmentIcon.practice )
             , ( "quiz", AssignmentIcon.quiz )
             , ( "quickWrite", AssignmentIcon.quickWrite )
+            , ( "guidedDraft", AssignmentIcon.guidedDraft )
             , ( "peerReview", AssignmentIcon.peerReview )
             ]
         , viewIconSection "Assignment Types"
