@@ -1,6 +1,7 @@
 module Spec.Nri.Ui.Tooltip.V1 exposing (spec)
 
 import Accessibility.Aria as Aria
+import Accessibility.Widget as Widget
 import Expect
 import Html
 import Html.Styled as HtmlStyled
@@ -35,54 +36,104 @@ update msg model =
 spec : Test
 spec =
     describe "Nri.Ui.Tooltip.V1"
-        ([ Tooltip.OnClick, Tooltip.OnHover ]
-            |> List.map
-                (\trigger ->
-                    test ("Tooltip with " ++ Debug.toString trigger ++ " trigger is available on focus") <|
-                        \() ->
-                            ProgramTest.createSandbox
-                                { init = init
-                                , update = update
-                                , view =
-                                    \model ->
-                                        Tooltip.tooltip [ HtmlStyled.text "This will be the primary label" ]
-                                            |> Tooltip.primaryLabel
-                                                { trigger = trigger
-                                                , triggerHtml = HtmlStyled.text "label-less icon"
-                                                , onTrigger = ToggleTooltip
-                                                , isOpen = model.tooltipOpen
-                                                , extraButtonAttrs = []
-                                                , id = "primary-label"
-                                                }
-                                            |> HtmlStyled.toUnstyled
-                                }
-                                |> ProgramTest.start ()
-                                |> ProgramTest.simulateDomEvent
-                                    (Query.find
-                                        [ Selector.tag "button"
-                                        , Selector.containing [ Selector.text "label-less icon" ]
+        [ describe "toggleTip"
+            [ test "Toggletip is available on click and hides on blur" <|
+                \() ->
+                    ProgramTest.createSandbox
+                        { init = init
+                        , update = update
+                        , view = viewToggleTip
+                        }
+                        |> ProgramTest.start ()
+                        |> ProgramTest.simulateDomEvent
+                            (Query.find
+                                [ Selector.tag "button"
+                                , Selector.attribute
+                                    (Widget.label "More info")
+                                ]
+                            )
+                            Event.click
+                        |> ProgramTest.ensureViewHas
+                            [ Selector.text "Toggly"
+                            ]
+                        |> ProgramTest.simulateDomEvent
+                            (Query.find
+                                [ Selector.tag "button"
+                                , Selector.attribute
+                                    (Widget.label "More info")
+                                ]
+                            )
+                            Event.blur
+                        |> ProgramTest.ensureViewHasNot
+                            [ Selector.text "Toggly"
+                            ]
+                        |> ProgramTest.done
+            ]
+        , describe "tooltips"
+            ([ Tooltip.OnClick, Tooltip.OnHover ]
+                |> List.map
+                    (\trigger ->
+                        test ("Tooltip with " ++ Debug.toString trigger ++ " trigger is available on focus") <|
+                            \() ->
+                                ProgramTest.createSandbox
+                                    { init = init
+                                    , update = update
+                                    , view = viewTooltip trigger
+                                    }
+                                    |> ProgramTest.start ()
+                                    |> ProgramTest.simulateDomEvent
+                                        (Query.find
+                                            [ Selector.tag "button"
+                                            , Selector.containing [ Selector.text "label-less icon" ]
+                                            ]
+                                        )
+                                        Event.focus
+                                    |> ProgramTest.ensureViewHas
+                                        [ tag "button"
+                                        , Selector.attribute (Aria.labeledBy "primary-label")
                                         ]
-                                    )
-                                    Event.focus
-                                |> ProgramTest.ensureViewHas
-                                    [ tag "button"
-                                    , Selector.attribute (Aria.labeledBy "primary-label")
-                                    ]
-                                |> ProgramTest.ensureViewHas
-                                    [ id "primary-label"
-                                    , Selector.text "This will be the primary label"
-                                    ]
-                                |> ProgramTest.simulateDomEvent
-                                    (Query.find
-                                        [ Selector.tag "button"
-                                        , Selector.containing [ Selector.text "label-less icon" ]
+                                    |> ProgramTest.ensureViewHas
+                                        [ id "primary-label"
+                                        , Selector.text "This will be the primary label"
                                         ]
-                                    )
-                                    Event.blur
-                                |> ProgramTest.ensureViewHasNot
-                                    [ id "primary-label"
-                                    , Selector.text "This will be the primary label"
-                                    ]
-                                |> ProgramTest.done
-                )
-        )
+                                    |> ProgramTest.simulateDomEvent
+                                        (Query.find
+                                            [ Selector.tag "button"
+                                            , Selector.containing [ Selector.text "label-less icon" ]
+                                            ]
+                                        )
+                                        Event.blur
+                                    |> ProgramTest.ensureViewHasNot
+                                        [ id "primary-label"
+                                        , Selector.text "This will be the primary label"
+                                        ]
+                                    |> ProgramTest.done
+                    )
+            )
+        ]
+
+
+viewTooltip : Tooltip.Trigger -> Model -> Html.Html Msg
+viewTooltip trigger model =
+    Tooltip.tooltip [ HtmlStyled.text "This will be the primary label" ]
+        |> Tooltip.primaryLabel
+            { trigger = trigger
+            , triggerHtml = HtmlStyled.text "label-less icon"
+            , onTrigger = ToggleTooltip
+            , isOpen = model.tooltipOpen
+            , extraButtonAttrs = []
+            , id = "primary-label"
+            }
+        |> HtmlStyled.toUnstyled
+
+
+viewToggleTip : Model -> Html.Html Msg
+viewToggleTip model =
+    Tooltip.tooltip [ HtmlStyled.text "Toggly!" ]
+        |> Tooltip.toggleTip
+            { onTrigger = ToggleTooltip
+            , isOpen = model.tooltipOpen
+            , extraButtonAttrs = []
+            , label = "More info"
+            }
+        |> HtmlStyled.toUnstyled

@@ -93,6 +93,7 @@ example msg model =
             |> Tooltip.toggleTip
                 { onTrigger = ToggleTooltip ToggleTip >> msg
                 , isOpen = model.openTooltip == Just ToggleTip
+                , label = "More info"
                 , extraButtonAttrs = []
                 }
         ]

@@ -224,17 +224,18 @@ A toggle tip is always triggered by a click.
 toggleTip :
     { onTrigger : Bool -> msg
     , isOpen : Bool
+    , label : String
     , extraButtonAttrs : List (Attribute msg)
     }
     -> Tooltip msg
     -> Html msg
-toggleTip { isOpen, onTrigger, extraButtonAttrs } tooltip_ =
+toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1-ToggleTip"
         tooltipContainerStyles
         []
         [ Html.button
-            ([ Widget.label "More information"
+            ([ Widget.label label
              , css
                 ([ Css.width (Css.px 20)
                  , Css.height (Css.px 20)
@@ -243,6 +244,7 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs } tooltip_ =
                     ++ buttonStyleOverrides
                 )
              , Events.onClickStopPropagation (onTrigger True)
+             , Events.onBlur (onTrigger False)
              ]
                 ++ extraButtonAttrs
             )
