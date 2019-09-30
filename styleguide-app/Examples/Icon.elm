@@ -44,6 +44,7 @@ example =
             , ( "quickWrite", AssignmentIcon.quickWrite )
             , ( "guidedDraft", AssignmentIcon.guidedDraft )
             , ( "peerReview", AssignmentIcon.peerReview )
+            , ( "selfReview", AssignmentIcon.selfReview )
             ]
         , viewIconSection "Assignment Types"
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
