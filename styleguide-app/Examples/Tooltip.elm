@@ -16,7 +16,8 @@ import Nri.Ui.Tooltip.V1 as Tooltip
 
 
 type TooltipType
-    = PrimaryLabel
+    = PrimaryLabelOnClick
+    | PrimaryLabelOnHover
     | AuxillaryDescription
     | ToggleTip
 
@@ -57,9 +58,19 @@ example msg model =
         , Tooltip.tooltip [ Html.text "Tooltip" ]
             |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnClick
-                , triggerHtml = Html.text "Primary Label Trigger"
-                , onTrigger = ToggleTooltip PrimaryLabel >> msg
-                , isOpen = model.openTooltip == Just PrimaryLabel
+                , triggerHtml = Html.text "Primary Label - OnClick Trigger"
+                , onTrigger = ToggleTooltip PrimaryLabelOnClick >> msg
+                , isOpen = model.openTooltip == Just PrimaryLabelOnClick
+                , id = "primary label tooltip"
+                , extraButtonAttrs = []
+                }
+        , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
+        , Tooltip.tooltip [ Html.text "Tooltip" ]
+            |> Tooltip.primaryLabel
+                { trigger = Tooltip.OnHover
+                , triggerHtml = Html.text "Primary Label - OnHover Trigger"
+                , onTrigger = ToggleTooltip PrimaryLabelOnHover >> msg
+                , isOpen = model.openTooltip == Just PrimaryLabelOnHover
                 , id = "primary label tooltip"
                 , extraButtonAttrs = []
                 }
