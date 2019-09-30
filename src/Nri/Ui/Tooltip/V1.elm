@@ -49,6 +49,7 @@ Example usage:
 import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
 import EventExtras.Styled as Events
@@ -57,6 +58,8 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Svg.Styled as Svg exposing (Svg, circle, g, svg)
+import Svg.Styled.Attributes exposing (cx, cy, d, fill, fillRule, height, r, stroke, strokeWidth, viewBox, width)
 
 
 {-| A standard NoRedInk tooltip, which appears around its parent element.
@@ -211,18 +214,57 @@ auxillaryDescription =
 
 
 {-| Supplementary information triggered by a "?" icon
+
+A toggle tip is always triggered by a click.
+
 -}
 toggleTip :
-    { trigger : Trigger
-    , triggerHtml : Html msg
-    , onTrigger : Bool -> msg
+    { onTrigger : Bool -> msg
     , isOpen : Bool
-    , id : String
+    , id : String -- TODO: We might not need this here
     }
     -> Tooltip msg
     -> Html msg
-toggleTip =
-    view PrimaryLabel
+toggleTip { isOpen, onTrigger, id } tooltip_ =
+    Nri.Ui.styled Html.div
+        "Nri-Ui-Tooltip-V1-ToggleTip"
+        tooltipContainerStyles
+        []
+        [ Html.button
+            [ Widget.label "More information"
+            , css
+                ([ Css.width (Css.px 20)
+                 , Css.height (Css.px 20)
+                 , Css.color Colors.azure
+                 ]
+                    ++ buttonStyleOverrides
+                )
+            , Events.onClickStopPropagation (onTrigger True)
+            ]
+            [ iconHelp ]
+        , viewIf (\_ -> viewCloseTooltipOverlay (onTrigger False)) isOpen
+        , Html.span
+            [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
+              Role.status
+            ]
+            [ -- Popout is rendered after the overlay, to allow client code to give it
+              -- priority when clicking by setting its position
+              viewIf (\_ -> viewTooltip id tooltip_) isOpen
+            ]
+        ]
+
+
+{-| Made with <https://levelteams.com/svg-to-elm>
+-}
+iconHelp : Svg msg
+iconHelp =
+    svg [ width "20px", height "20px", viewBox "0 0 25 25" ]
+        [ g [ stroke "none", strokeWidth "1", fill "none", fillRule "evenodd" ]
+            [ circle [ stroke "#146AFF", strokeWidth "2", cx "12.5", cy "12.5", r "11.5" ] []
+            , Svg.path [ d "M12.6825,6.6275 C13.3866702,6.6275 14.0095806,6.74395717 14.55125,6.976875 C15.0929194,7.20979283 15.5154151,7.53749789 15.81875,7.96 C16.1220849,8.38250211 16.27375,8.86458063 16.27375,9.40625 C16.27375,9.98041954 16.1329181,10.470623 15.85125,10.876875 C15.5695819,11.283127 15.1579194,11.7408308 14.61625,12.25 C14.1937479,12.6508353 13.8768761,12.9866653 13.665625,13.2575 C13.4543739,13.5283347 13.3216669,13.8262484 13.2675,14.15125 L13.18625,14.6875 L11.74,14.6875 L11.74,13.875 C11.74,13.3116639 11.8402073,12.8458352 12.040625,12.4775 C12.2410427,12.1091648 12.5362481,11.6975023 12.92625,11.2425 C13.2079181,10.9174984 13.419166,10.6385428 13.56,10.405625 C13.700834,10.1727072 13.77125,9.91541808 13.77125,9.63375 C13.77125,9.30874838 13.6602094,9.0595842 13.438125,8.88625 C13.2160406,8.7129158 12.8991687,8.62625 12.4875,8.62625 C11.7074961,8.62625 10.9437537,8.85916434 10.19625,9.325 L10.19625,7.29375 C10.9112536,6.84958111 11.7399953,6.6275 12.6825,6.6275 Z M11.17125,18.34375 L11.17125,15.7275 L13.82,15.7275 L13.82,18.34375 L11.17125,18.34375 Z", fill "#146AFF" ]
+                []
+            ]
+        ]
 
 
 
@@ -248,10 +290,7 @@ view :
 view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1"
-        [ Css.display Css.inlineBlock
-        , Css.textAlign Css.left
-        , Css.position Css.relative
-        ]
+        tooltipContainerStyles
         []
         [ Html.button
             ([ case purpose of
@@ -260,23 +299,7 @@ view purpose { trigger, triggerHtml, onTrigger, isOpen, id } tooltip_ =
 
                 AuxillaryDescription ->
                     Aria.describedBy [ id ]
-             , css
-                [ Css.cursor Css.pointer
-                , Css.displayFlex
-                , Css.border Css.zero
-                , Css.backgroundColor Css.transparent
-                , Css.fontSize Css.inherit
-                , Css.fontFamily Css.inherit
-                , Css.color Css.inherit
-                , Css.margin Css.zero
-                , Css.padding Css.zero
-                , Css.focus
-                    [ -- TODO: Removing focus outline is poor accessibility practice
-                      -- Consider fixing this by making focus outlines appear site-wide only on keyboard
-                      -- navigation to meet design's needs -- hackday project, perhaps?
-                      Css.outline Css.none
-                    ]
-                ]
+             , css buttonStyleOverrides
              ]
                 ++ eventsForTrigger trigger onTrigger
             )
@@ -434,6 +457,33 @@ viewCloseTooltipOverlay msg =
         , Events.onClickStopPropagation msg
         ]
         []
+
+
+tooltipContainerStyles : List Style
+tooltipContainerStyles =
+    [ Css.display Css.inlineBlock
+    , Css.textAlign Css.left
+    , Css.position Css.relative
+    ]
+
+
+buttonStyleOverrides : List Style
+buttonStyleOverrides =
+    [ Css.cursor Css.pointer
+    , Css.border Css.zero
+    , Css.backgroundColor Css.transparent
+    , Css.fontSize Css.inherit
+    , Css.fontFamily Css.inherit
+    , Css.color Css.inherit
+    , Css.margin Css.zero
+    , Css.padding Css.zero
+    , Css.focus
+        [ -- TODO: Removing focus outline is poor accessibility practice
+          -- Consider fixing this by making focus outlines appear site-wide only on keyboard
+          -- navigation to meet design's needs -- hackday project, perhaps?
+          Css.outline Css.none
+        ]
+    ]
 
 
 
