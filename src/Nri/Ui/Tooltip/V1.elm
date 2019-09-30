@@ -17,11 +17,11 @@ Example usage:
         tooltip [ Html.text "Gradebook" ]
         |> withPadding SmallPadding
         |> withWidth FitToContent
-        |> asPrimaryLabel {
-            trigger : Trigger
-            , triggerHtml : Html msg
-            , onTrigger : Bool -> msg
-            , isOpen : Bool
+        |> primaryLabel {
+            trigger : OnClick
+            , triggerHtml : someTriggerHtml
+            , onTrigger : MyOnTriggerMsg
+            , isOpen : True
         }
 
 
