@@ -41,6 +41,7 @@ example =
             [ ( "diagnostic", AssignmentIcon.diagnostic )
             , ( "practice", AssignmentIcon.practice )
             , ( "quiz", AssignmentIcon.quiz )
+            , ( "quickWrite", AssignmentIcon.quickWrite )
             , ( "peerReview", AssignmentIcon.peerReview )
             ]
         , viewIconSection "Assignment Types"
