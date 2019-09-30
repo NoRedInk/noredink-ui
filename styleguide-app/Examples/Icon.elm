@@ -38,7 +38,9 @@ example =
             , { icon = Icon.flag, background = Light, alt = "Flag" }
             ]
         , viewAssignmentIconSection "Assignment Types"
-            [ AssignmentIcon.diagnostic ]
+            [ ( "diagnostic", AssignmentIcon.diagnostic )
+            , ( "peerReview", AssignmentIcon.peerReview )
+            ]
         , viewIconSection "Assignment Types"
             [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
             , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
@@ -191,7 +193,7 @@ viewIcon { alt, background, icon } =
         ]
 
 
-viewAssignmentIconSection : String -> List (Html msg) -> Html msg
+viewAssignmentIconSection : String -> List ( String, Html msg ) -> Html msg
 viewAssignmentIconSection headerText icons =
     Html.section []
         [ Heading.h2 [] [ Html.text headerText ]
@@ -200,8 +202,8 @@ viewAssignmentIconSection headerText icons =
         ]
 
 
-viewAssignmentIcon : Html msg -> Html msg
-viewAssignmentIcon assignmentIcon =
+viewAssignmentIcon : ( String, Html msg ) -> Html msg
+viewAssignmentIcon ( name, assignmentIcon ) =
     Html.div
         [ css
             [ Css.margin (Css.px 10)
@@ -215,21 +217,13 @@ viewAssignmentIcon assignmentIcon =
         ]
         [ Html.div
             [ css
-                [ Css.displayFlex
-                , Css.alignItems Css.center
-                , Css.justifyContent Css.center
-                , Css.height (Css.px 80)
+                [ Css.height (Css.px 80)
                 , Css.width (Css.px 80)
                 , Css.margin (Css.px 10)
                 , Css.color green
-                , Css.Global.descendants
-                    [ Css.Global.img
-                        [ Css.maxWidth (Css.pct 100)
-                        , Css.maxHeight (Css.pct 100)
-                        ]
-                    ]
                 ]
             ]
             [ assignmentIcon
             ]
+        , Text.mediumBody [ Html.text name ]
         ]
