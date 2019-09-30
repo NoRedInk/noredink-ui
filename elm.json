@@ -104,6 +104,6 @@
     },
     "test-dependencies": {
         "elm-explorations/test": "1.2.0 <= v < 2.0.0",
-        "avh4/elm-program-test": "3.1.0 <= 4.0.0"
+        "avh4/elm-program-test": "3.1.0 <= v < 4.0.0"
     }
 }
