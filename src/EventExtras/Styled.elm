@@ -1,4 +1,4 @@
-module EventExtras.Styled exposing (onClickForLinkWithHref, onClickPreventDefaultForLinkWithHref, onClickStopPropagation)
+module EventExtras.Styled exposing (onClickForLinkWithHref, onClickPreventDefaultForLinkWithHref)
 
 import Html.Styled as Html
 import Html.Styled.Events as Events
@@ -70,16 +70,3 @@ onClickForLinkWithHref msg =
         (isSpecialClick
             |> Json.Decode.andThen (succeedIfFalse msg)
         )
-
-
-{-| -}
-onClickStopPropagation : msg -> Html.Attribute msg
-onClickStopPropagation msg =
-    onWithStopPropagation "click" msg
-
-
-{-| -}
-onWithStopPropagation : String -> msg -> Html.Attribute msg
-onWithStopPropagation name msg =
-    Events.stopPropagationOn name
-        (Json.Decode.succeed ( msg, True ))
