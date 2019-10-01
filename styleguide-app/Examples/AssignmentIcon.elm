@@ -32,6 +32,7 @@ example =
         , viewIconSection "Peer Review"
             [ ( "submitting", Svg.toHtml AssignmentIcon.submitting )
             , ( "rating", Svg.toHtml AssignmentIcon.rating )
+            , ( "revising", Svg.toHtml AssignmentIcon.revising )
             ]
         ]
     }
