@@ -29,5 +29,8 @@ example =
             , ( "peerReview", Svg.toHtml AssignmentIcon.peerReview )
             , ( "selfReview", Svg.toHtml AssignmentIcon.selfReview )
             ]
+        , viewIconSection "Peer Review"
+            [ ( "submitting", Svg.toHtml AssignmentIcon.submitting )
+            ]
         ]
     }
