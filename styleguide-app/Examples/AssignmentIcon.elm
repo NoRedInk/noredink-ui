@@ -6,7 +6,7 @@ module Examples.AssignmentIcon exposing (example)
 
 -}
 
-import Examples.IconHelpers exposing (viewIconSection)
+import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
 import Nri.Ui.Colors.V1 as Colors
@@ -20,7 +20,7 @@ example =
     { name = "Nri.Ui.AssignmentIcon.V1"
     , category = Icons
     , content =
-        [ (viewIconSection "Assignment Icons" << List.map (Tuple.mapSecond Svg.toHtml))
+        [ (IconExamples.view "Assignment Icons" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "diagnostic", AssignmentIcon.diagnostic )
             , ( "practice", AssignmentIcon.practice )
             , ( "quiz", AssignmentIcon.quiz )

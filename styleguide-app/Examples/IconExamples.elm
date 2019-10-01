@@ -1,4 +1,4 @@
-module Examples.IconHelpers exposing (viewIconSection)
+module Examples.IconExamples exposing (view)
 
 import Css
 import Html.Styled as Html exposing (Html)
@@ -8,11 +8,11 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 
 
-viewIconSection :
+view :
     String
     -> List ( String, Html msg )
     -> Html msg
-viewIconSection headerText icons =
+view headerText icons =
     Html.section [ css [ Css.marginTop (Css.px 16) ] ]
         [ Heading.h2 [] [ Html.text headerText ]
         , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
