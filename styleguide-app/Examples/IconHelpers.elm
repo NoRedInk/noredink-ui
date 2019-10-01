@@ -1,38 +1,11 @@
-module Examples.IconHelpers exposing (deprecatedIcon, viewIcon, viewIconSection)
+module Examples.IconHelpers exposing (viewIconSection)
 
-import Assets exposing (Assets, assets)
 import Css
-import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Text.V4 as Text
-
-
-deprecatedIcon : { alt : String, background : Css.Color, icon : Assets -> Icon.IconType } -> ( String, Html msg )
-deprecatedIcon { alt, background, icon } =
-    ( alt
-    , Html.div
-        [ css
-            [ Css.backgroundColor background
-            , Css.height (Css.px 80)
-            , Css.width (Css.px 80)
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.center
-            , Css.Global.descendants
-                [ Css.Global.img
-                    [ Css.maxWidth (Css.pct 100)
-                    , Css.maxHeight (Css.pct 100)
-                    ]
-                ]
-            ]
-        ]
-        [ Icon.icon { alt = alt, icon = icon assets }
-        ]
-    )
 
 
 viewIconSection :

@@ -6,12 +6,15 @@ module Examples.Icon exposing (example)
 
 -}
 
-import Examples.IconHelpers exposing (deprecatedIcon, viewIcon, viewIconSection)
+import Assets exposing (Assets, assets)
+import Css
+import Css.Global
+import Examples.IconHelpers exposing (viewIconSection)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}
@@ -31,15 +34,6 @@ example =
             [ deprecatedIcon { icon = Icon.starred, background = Colors.frost, alt = "Starred" }
             , deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
             , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
-            ]
-        , viewIconSection "Nri.Ui.AssignmentIcon.V1."
-            [ ( "diagnostic", Svg.toHtml AssignmentIcon.diagnostic )
-            , ( "practice", Svg.toHtml AssignmentIcon.practice )
-            , ( "quiz", Svg.toHtml AssignmentIcon.quiz )
-            , ( "quickWrite", Svg.toHtml AssignmentIcon.quickWrite )
-            , ( "guidedDraft", Svg.toHtml AssignmentIcon.guidedDraft )
-            , ( "peerReview", Svg.toHtml AssignmentIcon.peerReview )
-            , ( "selfReview", Svg.toHtml AssignmentIcon.selfReview )
             ]
         , viewIconSection "Assignment Types"
             [ deprecatedIcon { icon = Icon.submitting, background = Colors.frost, alt = "Submitting" }
@@ -119,3 +113,27 @@ example =
             ]
         ]
     }
+
+
+deprecatedIcon : { alt : String, background : Css.Color, icon : Assets -> Icon.IconType } -> ( String, Html msg )
+deprecatedIcon { alt, background, icon } =
+    ( alt
+    , Html.div
+        [ css
+            [ Css.backgroundColor background
+            , Css.height (Css.px 80)
+            , Css.width (Css.px 80)
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.center
+            , Css.Global.descendants
+                [ Css.Global.img
+                    [ Css.maxWidth (Css.pct 100)
+                    , Css.maxHeight (Css.pct 100)
+                    ]
+                ]
+            ]
+        ]
+        [ Icon.icon { alt = alt, icon = icon assets }
+        ]
+    )

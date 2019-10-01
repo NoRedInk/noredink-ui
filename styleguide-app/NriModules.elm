@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
+import Examples.AssignmentIcon
 import Examples.BannerAlert
 import Examples.Button
 import Examples.Callout
@@ -272,6 +273,7 @@ nriThemedModules model =
     , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
+    , Examples.AssignmentIcon.example
     , Examples.Icon.example
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
