@@ -16,6 +16,7 @@ import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Icon.V5 as Icon
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V4 as Text
 
 
@@ -38,13 +39,13 @@ example =
             , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
             ]
         , viewIconSection "Nri.Ui.AssignmentIcon.V1."
-            [ ( "diagnostic", AssignmentIcon.diagnostic )
-            , ( "practice", AssignmentIcon.practice )
-            , ( "quiz", AssignmentIcon.quiz )
-            , ( "quickWrite", AssignmentIcon.quickWrite )
-            , ( "guidedDraft", AssignmentIcon.guidedDraft )
-            , ( "peerReview", AssignmentIcon.peerReview )
-            , ( "selfReview", AssignmentIcon.selfReview )
+            [ ( "diagnostic", Svg.toHtml AssignmentIcon.diagnostic )
+            , ( "practice", Svg.toHtml AssignmentIcon.practice )
+            , ( "quiz", Svg.toHtml AssignmentIcon.quiz )
+            , ( "quickWrite", Svg.toHtml AssignmentIcon.quickWrite )
+            , ( "guidedDraft", Svg.toHtml AssignmentIcon.guidedDraft )
+            , ( "peerReview", Svg.toHtml AssignmentIcon.peerReview )
+            , ( "selfReview", Svg.toHtml AssignmentIcon.selfReview )
             ]
         , viewIconSection "Assignment Types"
             [ deprecatedIcon { icon = Icon.submitting, background = Colors.frost, alt = "Submitting" }
