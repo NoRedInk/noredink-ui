@@ -156,7 +156,7 @@ viewIconSection :
     -> List ( String, Html msg )
     -> Html msg
 viewIconSection headerText icons =
-    Html.section []
+    Html.section [ css [ Css.marginTop (Css.px 16) ] ]
         [ Heading.h2 [] [ Html.text headerText ]
         , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             (List.map viewIcon icons)
