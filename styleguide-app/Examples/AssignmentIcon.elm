@@ -20,14 +20,14 @@ example =
     { name = "Nri.Ui.AssignmentIcon.V1"
     , category = Icons
     , content =
-        [ viewIconSection "Assignment Icons"
-            [ ( "diagnostic", Svg.toHtml AssignmentIcon.diagnostic )
-            , ( "practice", Svg.toHtml AssignmentIcon.practice )
-            , ( "quiz", Svg.toHtml AssignmentIcon.quiz )
-            , ( "quickWrite", Svg.toHtml AssignmentIcon.quickWrite )
-            , ( "guidedDraft", Svg.toHtml AssignmentIcon.guidedDraft )
-            , ( "peerReview", Svg.toHtml AssignmentIcon.peerReview )
-            , ( "selfReview", Svg.toHtml AssignmentIcon.selfReview )
+        [ (viewIconSection "Assignment Icons" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "diagnostic", AssignmentIcon.diagnostic )
+            , ( "practice", AssignmentIcon.practice )
+            , ( "quiz", AssignmentIcon.quiz )
+            , ( "quickWrite", AssignmentIcon.quickWrite )
+            , ( "guidedDraft", AssignmentIcon.guidedDraft )
+            , ( "peerReview", AssignmentIcon.peerReview )
+            , ( "selfReview", AssignmentIcon.selfReview )
             ]
         ]
     }
