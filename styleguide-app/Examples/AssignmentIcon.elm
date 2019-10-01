@@ -6,7 +6,7 @@ module Examples.AssignmentIcon exposing (example)
 
 -}
 
-import Examples.IconHelpers exposing (viewIconSection)
+import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
 import Nri.Ui.Colors.V1 as Colors
@@ -20,21 +20,21 @@ example =
     { name = "Nri.Ui.AssignmentIcon.V1"
     , category = Icons
     , content =
-        [ viewIconSection "Quiz engine icons"
-            [ ( "diagnostic", Svg.toHtml AssignmentIcon.diagnostic )
-            , ( "practice", Svg.toHtml AssignmentIcon.practice )
-            , ( "quiz", Svg.toHtml AssignmentIcon.quiz )
+        [ (IconExamples.view "Quiz engine icons" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "diagnostic", AssignmentIcon.diagnostic )
+            , ( "practice", AssignmentIcon.practice )
+            , ( "quiz", AssignmentIcon.quiz )
             ]
-        , viewIconSection "Writing assignment icons"
-            [ ( "quickWrite", Svg.toHtml AssignmentIcon.quickWrite )
-            , ( "guidedDraft", Svg.toHtml AssignmentIcon.guidedDraft )
-            , ( "peerReview", Svg.toHtml AssignmentIcon.peerReview )
-            , ( "selfReview", Svg.toHtml AssignmentIcon.selfReview )
+        , (IconExamples.view "Writing assignment icons" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "quickWrite", AssignmentIcon.quickWrite )
+            , ( "guidedDraft", AssignmentIcon.guidedDraft )
+            , ( "peerReview", AssignmentIcon.peerReview )
+            , ( "selfReview", AssignmentIcon.selfReview )
             ]
-        , viewIconSection "Peer Review sub-assignment icons"
-            [ ( "submitting", Svg.toHtml AssignmentIcon.submitting )
-            , ( "rating", Svg.toHtml AssignmentIcon.rating )
-            , ( "revising", Svg.toHtml AssignmentIcon.revising )
+        , (IconExamples.view "Peer Review sub-assignment icons" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "submitting", AssignmentIcon.submitting )
+            , ( "rating", AssignmentIcon.rating )
+            , ( "revising", AssignmentIcon.revising )
             ]
         ]
     }
