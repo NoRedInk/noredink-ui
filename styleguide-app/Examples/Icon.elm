@@ -17,7 +17,7 @@ import Nri.Ui.Svg.V1 as Svg
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Icon.V4"
+    { name = "Nri.Ui.Icon.V5"
     , category = Icons
     , content =
         [ viewIconSection "Mastery Icons"
