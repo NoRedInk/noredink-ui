@@ -36,8 +36,7 @@ example =
             , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
             ]
         , viewIconSection "Assignment Types"
-            [ deprecatedIcon { icon = Icon.rating, background = Colors.frost, alt = "Rating" }
-            , deprecatedIcon { icon = Icon.revising, background = Colors.frost, alt = "Revising" }
+            [ deprecatedIcon { icon = Icon.revising, background = Colors.frost, alt = "Revising" }
             , deprecatedIcon { icon = Icon.assignmentTypeWritingCycle, background = Colors.frost, alt = "WritingCycle" }
             , deprecatedIcon { icon = Icon.writingAssignment, background = Colors.frost, alt = "WritingAssignment" }
             ]
