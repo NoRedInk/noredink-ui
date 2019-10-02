@@ -247,7 +247,8 @@ links config =
                 |> Maybe.withDefault (Html.text "")
             , Html.styled Html.ul
                 (stylesTabsAligned config.alignment)
-                []
+                [ Attributes.fromUnstyled <| Accessibility.Role.tabList
+                ]
                 (config.tabs
                     |> mapWithCurrent (viewTabLink config)
                     |> List.Zipper.toList
@@ -297,7 +298,14 @@ viewTabLink config isSelected tabConfig =
                         [ textDecoration none
                         ]
                     ]
-                    ([ Attributes.href href ] ++ preventDefault ++ currentPage)
+                    (List.concat
+                        [ [ Attributes.href href
+                          , Attributes.fromUnstyled <| Accessibility.Role.tab
+                          ]
+                        , preventDefault
+                        , currentPage
+                        ]
+                    )
                     [ Html.text tabLabel ]
 
             Nothing ->
@@ -312,7 +320,11 @@ viewTabLink config isSelected tabConfig =
                     , Css.property "background" "none"
                     , Css.lineHeight (Css.num 1)
                     ]
-                    currentPage
+                    (List.concat
+                        [ [ Attributes.fromUnstyled <| Accessibility.Role.tab ]
+                        , currentPage
+                        ]
+                    )
                     [ Html.text tabLabel ]
         ]
 
