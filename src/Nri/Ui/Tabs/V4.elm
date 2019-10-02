@@ -28,10 +28,10 @@ module Nri.Ui.Tabs.V4 exposing
 
 -}
 
-import Accessibility.Aria
-import Accessibility.Key
-import Accessibility.Role
-import Accessibility.Widget
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
@@ -112,14 +112,14 @@ viewCustom config viewInnerTab =
                 |> Maybe.withDefault (Html.text "")
             , Html.styled Html.ul
                 (stylesTabsAligned config.alignment)
-                [ Attributes.fromUnstyled <| Accessibility.Role.tabList
+                [ Role.tabList
                 ]
                 viewTabs
             ]
         , Html.div
-            [ Attributes.fromUnstyled <| Accessibility.Role.tabPanel
-            , Attributes.fromUnstyled <| Accessibility.Aria.labelledBy (tabToId selected)
-            , Attributes.fromUnstyled <| Accessibility.Widget.hidden False
+            [ Role.tabPanel
+            , Aria.labelledBy (tabToId selected)
+            , Widget.hidden False
             , Attributes.id (tabToBodyId selected)
             ]
             [ config.content selected.id ]
@@ -151,13 +151,13 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
     Html.styled Html.li
         (stylesTabSelectable isSelected)
         [ Events.onClick (onSelect tab.id)
-        , Attributes.fromUnstyled <| Accessibility.Key.onKeyDown [ Accessibility.Key.enter (onSelect tab.id) ]
+        , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
         , Events.onFocus (onSelect tab.id)
         , Attributes.tabindex 0
-        , Attributes.fromUnstyled <| Accessibility.Role.presentation
+        , Role.presentation
         , Attributes.id (tabToId tab)
-        , Attributes.fromUnstyled <| Accessibility.Aria.controls (tabToBodyId tab)
-        , Attributes.fromUnstyled <| Accessibility.Widget.selected (selected.id == tab.id)
+        , Aria.controls (tabToBodyId tab)
+        , Widget.selected (selected.id == tab.id)
         , Events.on "keyup" <|
             Json.Decode.andThen
                 (\keyCode ->
@@ -189,7 +189,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Css.fontSize Css.inherit
             , Css.cursor Css.pointer
             ]
-            [ Attributes.fromUnstyled <| Accessibility.Role.tab
+            [ Role.tab
             , Attributes.tabindex -1
             ]
             [ viewInnerTab tab ]
@@ -247,7 +247,8 @@ links config =
                 |> Maybe.withDefault (Html.text "")
             , Html.styled Html.ul
                 (stylesTabsAligned config.alignment)
-                []
+                [ Role.tabList
+                ]
                 (config.tabs
                     |> mapWithCurrent (viewTabLink config)
                     |> List.Zipper.toList
@@ -273,14 +274,14 @@ viewTabLink config isSelected tabConfig =
 
         currentPage =
             if isSelected then
-                [ Attributes.fromUnstyled <| Accessibility.Aria.currentPage ]
+                [ Aria.currentPage ]
 
             else
                 []
     in
     Html.styled Html.li
         (stylesTabSelectable isSelected)
-        [ Attributes.fromUnstyled <| Accessibility.Role.presentation
+        [ Role.presentation
         , Attributes.id (tabToId { label = tabLabel })
         ]
         [ case tabHref of
@@ -297,7 +298,14 @@ viewTabLink config isSelected tabConfig =
                         [ textDecoration none
                         ]
                     ]
-                    ([ Attributes.href href ] ++ preventDefault ++ currentPage)
+                    (List.concat
+                        [ [ Attributes.href href
+                          , Role.tab
+                          ]
+                        , preventDefault
+                        , currentPage
+                        ]
+                    )
                     [ Html.text tabLabel ]
 
             Nothing ->
@@ -312,7 +320,11 @@ viewTabLink config isSelected tabConfig =
                     , Css.property "background" "none"
                     , Css.lineHeight (Css.num 1)
                     ]
-                    currentPage
+                    (List.concat
+                        [ [ Role.tab ]
+                        , currentPage
+                        ]
+                    )
                     [ Html.text tabLabel ]
         ]
 
