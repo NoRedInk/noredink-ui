@@ -40,8 +40,7 @@ example =
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
             ]
         , IconExamples.view "Teacher Assignment Actions"
-            [ deprecatedIcon { icon = Icon.unarchive, background = Colors.frost, alt = "Unarchive" }
-            , deprecatedIcon { icon = Icon.share, background = Colors.frost, alt = "Share" }
+            [ deprecatedIcon { icon = Icon.share, background = Colors.frost, alt = "Share" }
             , deprecatedIcon { icon = Icon.seeMore, background = Colors.frost, alt = "See More" }
             , deprecatedIcon { icon = Icon.preview, background = Colors.frost, alt = "Preview" }
             , deprecatedIcon { icon = Icon.performance, background = Colors.frost, alt = "Performance" }

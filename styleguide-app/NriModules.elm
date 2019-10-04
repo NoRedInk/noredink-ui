@@ -26,6 +26,7 @@ import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
 import Examples.TextInput as TextInputExample
+import Examples.UiIcon
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -274,6 +275,7 @@ nriThemedModules model =
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.AssignmentIcon.example
+    , Examples.UiIcon.example
     , Examples.Icon.example
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
