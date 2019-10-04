@@ -39,9 +39,6 @@ example =
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
             ]
-        , IconExamples.view "Edit"
-            [ deprecatedIcon { icon = Icon.edit, background = Colors.frost, alt = "Edit" }
-            ]
         , IconExamples.view "Humans"
             [ deprecatedIcon { icon = Icon.class, background = Colors.frost, alt = "Class" }
             , deprecatedIcon { icon = Icon.leaderboard, background = Colors.frost, alt = "Leaderboard" }

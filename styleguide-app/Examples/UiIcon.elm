@@ -29,5 +29,8 @@ example =
             , ( "openClose", UiIcon.openClose )
             , ( "download", UiIcon.download )
             ]
+        , (IconExamples.view "Edit" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "edit", UiIcon.edit )
+            ]
         ]
     }

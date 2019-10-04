@@ -1,8 +1,12 @@
-module Nri.Ui.UiIcon.V1 exposing (unarchive, share, seeMore, preview, performance, openClose, download)
+module Nri.Ui.UiIcon.V1 exposing
+    ( unarchive, share, seeMore, preview, performance, openClose, download
+    , edit
+    )
 
 {-|
 
 @docs unarchive, share, seeMore, preview, performance, openClose, download
+@docs edit
 
     import Css
     import Html.Styled exposing (..)
@@ -152,5 +156,21 @@ download =
             , Attributes.d "M17.719 12.467H21v5.25a1.968 1.968 0 0 1-1.969 1.97H1.97A1.968 1.968 0 0 1 0 17.716v-5.25h3.281v3.938H17.72v-3.938zM5.647 9.17h.001a1.024 1.024 0 0 1-.082-.332.967.967 0 0 1 .046-.352A1.037 1.037 0 0 1 6 7.962c.08-.057.166-.104.257-.14a1.642 1.642 0 0 1 .597-.115h1.462l-.167-5.163a1.148 1.148 0 0 1 .347-.865 1.307 1.307 0 0 1 .906-.365h2.18c.172 0 .343.034.503.1.15.06.287.151.404.265a1.148 1.148 0 0 1 .347.865l-.168 5.165h1.529c.12 0 .24.015.354.043.114.027.225.07.328.127a1.058 1.058 0 0 1 .45.453.985.985 0 0 1 .076.69 1.065 1.065 0 0 1-.06.166 1.01 1.01 0 0 1-.2.302l-3.676 4.064a1.05 1.05 0 0 1-.194.17 1.432 1.432 0 0 1-1.326.126 1.29 1.29 0 0 1-.236-.126 1.073 1.073 0 0 1-.197-.17L5.845 9.5a1.183 1.183 0 0 1-.207-.318l.009-.013z"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+edit : Nri.Ui.Svg.V1.Svg
+edit =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 30 30"
+        ]
+        [ Svg.path [ Attributes.d "M27.3,7.9l-5.2-5.2l2.3-2.3c0.5-0.5,1.2-0.5,1.7,0L29.7,4c0.5,0.5,0.5,1.2,0,1.7L27.3,7.9z M25.9,9.4L8.6,26.6l-5.2-5.2L20.6,4.1L25.9,9.4z M0,30l1.9-7L7,28.1L0,30z" ] []
+        , Svg.path [ Attributes.fill "none", Attributes.d "M-753.8-401V715h1024V-401H-753.8z" ] []
+        , Svg.path [ Attributes.fill "none", Attributes.d "M-775.9-385.9v1116h1024v-1116L-775.9-385.9L-775.9-385.9z" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
