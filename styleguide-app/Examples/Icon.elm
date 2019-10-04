@@ -35,10 +35,6 @@ example =
             , deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
             , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
             ]
-        , IconExamples.view "Assignment Types"
-            [ deprecatedIcon { icon = Icon.assignmentTypeWritingCycle, background = Colors.frost, alt = "WritingCycle" }
-            , deprecatedIcon { icon = Icon.writingAssignment, background = Colors.frost, alt = "WritingAssignment" }
-            ]
         , IconExamples.view "Student Assignment Actions"
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
