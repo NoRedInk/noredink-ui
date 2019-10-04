@@ -1,8 +1,8 @@
-module Nri.Ui.UiIcon.V1 exposing (unarchive)
+module Nri.Ui.UiIcon.V1 exposing (unarchive, share, seeMore, preview, performance, openClose, download)
 
 {-|
 
-@docs unarchive
+@docs unarchive, share, seeMore, preview, performance, openClose, download
 
     import Css
     import Html.Styled exposing (..)
@@ -38,4 +38,96 @@ unarchive =
             ]
             []
         ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+share : Nri.Ui.Svg.V1.Svg
+share =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 30 30"
+        ]
+        [ Svg.path
+            [ Attributes.d "M18.5,0.1H1.8C0.3,0.1,0,0.5,0,1.9v26.2C0,29.7,0.4,30,1.8,30h26.3c1.5,0,1.8-0.3,1.8-1.8V12.3l-3.1,2.6v12H3.1V3.2h12.4L18.5,0.1z M23,9.9v4.2l7-7l-7-7v3.5C6.8,4.2,6.8,19.7,6.8,19.7S11.6,10.6,23,9.9z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.fill "none"
+            , Attributes.d "M18.5,0.1H1.8C0.3,0.1,0,0.5,0,1.9v26.2C0,29.7,0.4,30,1.8,30h26.3c1.5,0,1.8-0.3,1.8-1.8V12.3l-3.1,2.6v12H3.1V3.2h12.4L18.5,0.1z M23,9.9v4.2l7-7l-7-7v3.5C6.8,4.2,6.8,19.7,6.8,19.7S11.6,10.6,23,9.9z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.fill "none"
+            , Attributes.d "M-793.3-401V715h1024V-401H-793.3z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.fill "none"
+            , Attributes.d "M-815.4-385.9v1116h1024v-1116L-815.4-385.9L-815.4-385.9z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+seeMore : Nri.Ui.Svg.V1.Svg
+seeMore =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        ]
+        []
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+preview : Nri.Ui.Svg.V1.Svg
+preview =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        ]
+        []
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+performance : Nri.Ui.Svg.V1.Svg
+performance =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        ]
+        []
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+openClose : Nri.Ui.Svg.V1.Svg
+openClose =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        ]
+        []
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+download : Nri.Ui.Svg.V1.Svg
+download =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        ]
+        []
         |> Nri.Ui.Svg.V1.fromHtml

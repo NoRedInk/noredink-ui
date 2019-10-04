@@ -22,6 +22,12 @@ example =
     , content =
         [ (IconExamples.view "Actions" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "unarchive", UiIcon.unarchive )
+            , ( "share", UiIcon.share )
+            , ( "seeMore", UiIcon.seeMore )
+            , ( "preview", UiIcon.preview )
+            , ( "performance", UiIcon.performance )
+            , ( "openClose", UiIcon.openClose )
+            , ( "download", UiIcon.download )
             ]
         ]
     }
