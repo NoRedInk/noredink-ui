@@ -41,7 +41,6 @@ example =
             ]
         , IconExamples.view "Edit"
             [ deprecatedIcon { icon = Icon.edit, background = Colors.frost, alt = "Edit" }
-            , deprecatedIcon { icon = Icon.editWriting, background = Colors.frost, alt = "EditWriting" }
             ]
         , IconExamples.view "Humans"
             [ deprecatedIcon { icon = Icon.class, background = Colors.frost, alt = "Class" }
