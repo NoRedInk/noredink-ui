@@ -35,26 +35,9 @@ example =
             , deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
             , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
             ]
-        , IconExamples.view "Assignment Types"
-            [ deprecatedIcon { icon = Icon.assignmentTypeWritingCycle, background = Colors.frost, alt = "WritingCycle" }
-            , deprecatedIcon { icon = Icon.writingAssignment, background = Colors.frost, alt = "WritingAssignment" }
-            ]
         , IconExamples.view "Student Assignment Actions"
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
-            ]
-        , IconExamples.view "Teacher Assignment Actions"
-            [ deprecatedIcon { icon = Icon.unarchive, background = Colors.frost, alt = "Unarchive" }
-            , deprecatedIcon { icon = Icon.share, background = Colors.frost, alt = "Share" }
-            , deprecatedIcon { icon = Icon.seeMore, background = Colors.frost, alt = "See More" }
-            , deprecatedIcon { icon = Icon.preview, background = Colors.frost, alt = "Preview" }
-            , deprecatedIcon { icon = Icon.performance, background = Colors.frost, alt = "Performance" }
-            , deprecatedIcon { icon = Icon.openClose, background = Colors.frost, alt = "OpenClose" }
-            , deprecatedIcon { icon = Icon.download, background = Colors.frost, alt = "Download" }
-            ]
-        , IconExamples.view "Edit"
-            [ deprecatedIcon { icon = Icon.edit, background = Colors.frost, alt = "Edit" }
-            , deprecatedIcon { icon = Icon.editWriting, background = Colors.frost, alt = "EditWriting" }
             ]
         , IconExamples.view "Humans"
             [ deprecatedIcon { icon = Icon.class, background = Colors.frost, alt = "Class" }
