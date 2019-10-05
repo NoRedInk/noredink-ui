@@ -12,6 +12,7 @@ import Examples.Colors
 import Examples.DisclosureIndicator
 import Examples.Dropdown
 import Examples.Fonts
+import Examples.Heading
 import Examples.Icon
 import Examples.Modal
 import Examples.Page
@@ -280,6 +281,7 @@ nriThemedModules model =
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
+    , Examples.Heading.example
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example
