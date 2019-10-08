@@ -10,9 +10,10 @@ import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V7 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -31,10 +32,11 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Checkbox.V5"
+    { name = "Nri.Ui.Checkbox.V6"
     , category = Inputs
     , content =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
+        , viewHighlightedCheckbox "styleguide-checkbox-highlighted" state
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
@@ -86,6 +88,30 @@ viewInteractableCheckbox id state =
         , disabled = False
         , theme = Checkbox.Square
         }
+
+
+viewHighlightedCheckbox : Id -> State -> Html Msg
+viewHighlightedCheckbox id state =
+    div
+        [ css
+            [ Css.backgroundColor <|
+                if Set.member id state.isChecked then
+                    Colors.glacier
+
+                else
+                    Colors.white
+            , Css.padding (Css.px 20)
+            ]
+        ]
+        [ Checkbox.viewWithLabel
+            { identifier = id
+            , label = "I'm a checkbox on a highlighted background!"
+            , setterMsg = ToggleCheck id
+            , selected = isSelected id state
+            , disabled = False
+            , theme = Checkbox.Highlighted
+            }
+        ]
 
 
 viewIndeterminateCheckbox : Id -> State -> Html Msg
