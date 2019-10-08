@@ -1,4 +1,4 @@
-module Nri.Ui.Checkbox.V5 exposing
+module Nri.Ui.Checkbox.V6 exposing
     ( Model, Theme(..), IsSelected(..)
     , view, viewWithLabel
     , selectedFromBool
@@ -7,10 +7,9 @@ module Nri.Ui.Checkbox.V5 exposing
 {-|
 
 
-# Changes from V5:
+# Changes from V6:
 
-  - Removes `noOpMsg` from Model
-  - Removes dependency on external assets
+  - Adds `Highlighted` constructor to `Theme`.
 
 @docs Model, Theme, IsSelected
 
@@ -62,9 +61,17 @@ type IsSelected
     | PartiallySelected
 
 
-{-| -}
+{-|
+
+  - `Square`: You're standard square checkbox
+  - `Highlighted`: Similar to `Square`, but suitable to be rendered on a highlighted background
+    when it has been checked.
+  - `Locked`: A checkbox that shows a lock, representing that it cannot be checked.
+
+-}
 type Theme
     = Square
+    | Highlighted
     | Locked
 
 
@@ -117,34 +124,31 @@ viewWithLabel model =
 
 buildCheckbox : Model msg -> (String -> Html.Html msg) -> Html.Html msg
 buildCheckbox model labelView =
+    let
+        icon =
+            case ( model.theme, model.selected ) of
+                ( Locked, _ ) ->
+                    checkboxLockOnInside
+
+                ( Square, Selected ) ->
+                    checkboxChecked
+
+                ( Highlighted, Selected ) ->
+                    checkboxCheckedHighlighted
+
+                ( _, NotSelected ) ->
+                    checkboxUnchecked
+
+                ( _, PartiallySelected ) ->
+                    checkboxCheckedPartially
+    in
     checkboxContainer model
         [ viewCheckbox model
-        , case model.theme of
-            Square ->
-                let
-                    icon =
-                        case model.selected of
-                            Selected ->
-                                checkboxChecked
+        , if model.disabled then
+            viewDisabledLabel model labelView icon
 
-                            NotSelected ->
-                                checkboxUnchecked
-
-                            PartiallySelected ->
-                                checkboxCheckedPartially
-                in
-                if model.disabled then
-                    viewDisabledLabel model labelView icon
-
-                else
-                    viewEnabledLabel model labelView icon
-
-            Locked ->
-                if model.disabled then
-                    viewDisabledLabel model labelView checkboxLockOnInside
-
-                else
-                    viewEnabledLabel model labelView checkboxLockOnInside
+          else
+            viewEnabledLabel model labelView icon
         ]
 
 
@@ -264,7 +268,7 @@ labelClass isSelected =
 
 toClassList : List String -> Html.Styled.Attribute msg
 toClassList =
-    List.map (\a -> ( "checkbox-V5__" ++ a, True )) >> Attributes.classList
+    List.map (\a -> ( "checkbox-V6__" ++ a, True )) >> Attributes.classList
 
 
 positioning : Style
@@ -361,6 +365,100 @@ checkboxUnchecked =
                     [ Svg.Attributes.fill "black"
                     , Svg.Attributes.fillOpacity "1"
                     , Svg.Attributes.filter "url(#filter-2)"
+                    ]
+                ]
+            ]
+        ]
+        |> Html.Styled.fromUnstyled
+        |> Icon
+
+
+checkboxCheckedHighlighted : Icon
+checkboxCheckedHighlighted =
+    Svg.svg
+        [ Svg.Attributes.width "30px"
+        , Svg.Attributes.height "30px"
+        , Svg.Attributes.viewBox "0 0 30 30"
+        ]
+        [ Svg.defs []
+            [ Svg.path
+                [ Svg.Attributes.d "M0,3.9992748 C0,1.79053632 1.78679466,0 3.9992748,0 L26.0007252,0 C28.2094637,0 30,1.78679466 30,3.9992748 L30,26.0007252 C30,28.2094637 28.2132053,30 26.0007252,30 L3.9992748,30 C1.79053632,30 0,28.2132053 0,26.0007252 L0,3.9992748 Z"
+                , Svg.Attributes.id "path-1"
+                ]
+                []
+            , Svg.filter
+                [ Svg.Attributes.x "-5.0%"
+                , Svg.Attributes.y "-5.0%"
+                , Svg.Attributes.width "110.0%"
+                , Svg.Attributes.height "110.0%"
+                , Svg.Attributes.filterUnits "objectBoundingBox"
+                , Svg.Attributes.id "filter-2"
+                ]
+                [ Svg.feOffset
+                    [ Svg.Attributes.dx "0"
+                    , Svg.Attributes.dy "3"
+                    , Svg.Attributes.in_ "SourceAlpha"
+                    , Svg.Attributes.result "shadowOffsetInner1"
+                    ]
+                    []
+                , Svg.feComposite
+                    [ Svg.Attributes.in_ "shadowOffsetInner1"
+                    , Svg.Attributes.in2 "SourceAlpha"
+                    , Svg.Attributes.operator "arithmetic"
+                    , Svg.Attributes.k2 "-1"
+                    , Svg.Attributes.k3 "1"
+                    , Svg.Attributes.result "shadowInnerInner1"
+                    ]
+                    []
+                , Svg.feColorMatrix
+                    [ Svg.Attributes.values "0 0 0 0 0.2   0 0 0 0 0.2   0 0 0 0 0.2  0 0 0 0.1 0"
+                    , Svg.Attributes.in_ "shadowInnerInner1"
+                    ]
+                    []
+                ]
+            ]
+        , Svg.g
+            [ Svg.Attributes.id "Symbols"
+            , Svg.Attributes.stroke "none"
+            , Svg.Attributes.strokeWidth "1"
+            , Svg.Attributes.fill "none"
+            , Svg.Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Svg.Attributes.id "checkbox/checked" ]
+                [ Svg.g
+                    [ Svg.Attributes.id "checkbox-checked" ]
+                    [ Svg.g [ Svg.Attributes.id "checkbox_checked" ]
+                        [ Svg.use
+                            [ Svg.Attributes.fill "#D4F0FF"
+                            , Svg.Attributes.fillRule "evenodd"
+                            ]
+                            []
+                        , Svg.use
+                            [ Svg.Attributes.fill "black"
+                            , Svg.Attributes.fillOpacity "1"
+                            , Svg.Attributes.filter "url(#filter-2)"
+                            ]
+                            []
+                        , Svg.path
+                            [ Svg.Attributes.stroke "#146AFF"
+                            , Svg.Attributes.strokeWidth "1"
+                            , Svg.Attributes.d "M0.5,3.9992748 L0.5,26.0007252 C0.5,27.9356983 2.06531326,29.5 3.9992748,29.5 L26.0007252,29.5 C27.9356983,29.5 29.5,27.9346867 29.5,26.0007252 L29.5,3.9992748 C29.5,2.06430168 27.9346867,0.5 26.0007252,0.5 L3.9992748,0.5 C2.06430168,0.5 0.5,2.06531326 0.5,3.9992748 Z"
+                            , Svg.Attributes.strokeLinejoin "square"
+                            ]
+                            []
+                        ]
+                    , Svg.g
+                        [ Svg.Attributes.id "icon/check/check-blue"
+                        , Svg.Attributes.transform "translate(4.000000, 4.000000)"
+                        , Svg.Attributes.fill "#146AFF"
+                        ]
+                        [ Svg.path
+                            [ Svg.Attributes.d "M7.75478703,19.6512686 C7.23170345,19.6512686 6.72693797,19.4497694 6.34836386,19.0864604 L0.629045293,13.6164716 C-0.184074908,12.8399876 -0.212569734,11.5516144 0.564931936,10.7395119 C1.33938059,9.92740933 2.62877145,9.89789683 3.44189165,10.6753985 L7.66421419,14.7125047 L18.4708768,3.00621973 C19.234131,2.17885212 20.5214866,2.1279685 21.3468188,2.89020508 C22.1731688,3.65345934 22.2250701,4.94081485 21.4628335,5.76614712 L9.25076537,18.9958876 C8.87931497,19.3978681 8.36437276,19.6329505 7.81788272,19.6502509 C7.79752927,19.6512686 7.77615815,19.6512686 7.75478703,19.6512686"
+                            , Svg.Attributes.id "icon/check-blue"
+                            ]
+                            []
+                        ]
                     ]
                 ]
             ]
