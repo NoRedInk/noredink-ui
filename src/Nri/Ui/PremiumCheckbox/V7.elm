@@ -8,10 +8,9 @@ This module is used when there may or may not be Premium
 content to be "checked"!
 
 
-# Changes from V5
+# Changes from V6
 
-  - Allow checkbox to show pennant, or not, based on bool
-  - Remove PremiumWithWriting, it's only Premium now
+  - Compatibility with Nri.Ui.Checkbox.V6
 
 -}
 
@@ -19,7 +18,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Css exposing (..)
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
