@@ -50,9 +50,9 @@ type alias Model msg =
 
 {-|
 
-    = Selected --  Checked (rendered with a checkmark)
-    | NotSelected -- Not Checked (rendered blank)
-    | PartiallySelected -- Indeterminate (rendered dash)
+  - `Selected`: Checked (rendered with a checkmark)
+  - `NotSelected`: Not Checked (rendered blank)
+  - `PartiallySelected`: Indeterminate (rendered dash)
 
 -}
 type IsSelected
