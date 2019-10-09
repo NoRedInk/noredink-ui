@@ -204,14 +204,14 @@ themeToTitleColor theme =
 
 
 {-| -}
-type alias Attribute msg =
-    Theme -> Modal.Attribute msg
+type Attribute msg
+    = Attribute (Theme -> Modal.Attribute msg)
 
 
 {-| -}
 autofocusOnLastElement : Attribute msg
-autofocusOnLastElement theme =
-    Modal.autofocusOnLastElement
+autofocusOnLastElement =
+    Attribute (\_ -> Modal.autofocusOnLastElement)
 
 
 {-| -}
@@ -223,48 +223,54 @@ multipleFocusableElementView :
      -> Html msg
     )
     -> Attribute msg
-multipleFocusableElementView f theme =
-    Modal.multipleFocusableElementView f
+multipleFocusableElementView f =
+    Attribute (\_ -> Modal.multipleFocusableElementView f)
 
 
 {-| -}
 onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
-onlyFocusableElementView f theme =
-    Modal.onlyFocusableElementView f
+onlyFocusableElementView f =
+    Attribute (\_ -> Modal.onlyFocusableElementView f)
 
 
 {-| -}
 invisibleTitle : Attribute msg
-invisibleTitle theme =
-    Modal.titleStyles
-        [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
-        , Css.property "position" "absolute"
-        , Css.property "height" "1px"
-        , Css.property "width" "1px"
-        , Css.property "overflow" "hidden"
-        , Css.property "margin" "-1px"
-        , Css.property "padding" "0"
-        , Css.property "border" "0"
-        ]
+invisibleTitle =
+    Attribute
+        (\_ ->
+            Modal.titleStyles
+                [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
+                , Css.property "position" "absolute"
+                , Css.property "height" "1px"
+                , Css.property "width" "1px"
+                , Css.property "overflow" "hidden"
+                , Css.property "margin" "-1px"
+                , Css.property "padding" "0"
+                , Css.property "border" "0"
+                ]
+        )
 
 
 {-| -}
 visibleTitle : Attribute msg
-visibleTitle theme =
-    Modal.titleStyles
-        [ Fonts.baseFont
-        , Css.fontWeight (Css.int 700)
-        , Css.paddingTop (Css.px 40)
-        , Css.paddingBottom (Css.px 20)
-        , Css.margin Css.zero
-        , Css.property "line-height" "27px"
-        , Css.property "font-size" "20px"
-        , Css.property "text-align" "center"
-        , Css.property "color"
-            ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor)
-                (themeToTitleColor theme)
-            )
-        ]
+visibleTitle =
+    Attribute
+        (\theme ->
+            Modal.titleStyles
+                [ Fonts.baseFont
+                , Css.fontWeight (Css.int 700)
+                , Css.paddingTop (Css.px 40)
+                , Css.paddingBottom (Css.px 20)
+                , Css.margin Css.zero
+                , Css.property "line-height" "27px"
+                , Css.property "font-size" "20px"
+                , Css.property "text-align" "center"
+                , Css.property "color"
+                    ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor)
+                        (themeToTitleColor theme)
+                    )
+                ]
+        )
 
 
 view :
@@ -274,7 +280,8 @@ view :
     -> Model
     -> Html msg
 view theme config attributes model =
-    Modal.view config.wrapMsg
+    Modal.view
+        config.wrapMsg
         config.title
         ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
          , Modal.custom
@@ -286,7 +293,13 @@ view theme config attributes model =
             , Css.property "position" "relative" -- required for closeButtonContainer
             ]
          ]
-            ++ List.map (\f -> f theme) attributes
+            ++ List.map
+                (\attribute ->
+                    case attribute of
+                        Attribute f ->
+                            f theme
+                )
+                attributes
         )
         model
         |> List.singleton
