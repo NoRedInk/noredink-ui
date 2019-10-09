@@ -30,7 +30,8 @@ module Nri.Ui.Modal.V8 exposing
             { title = "Modal Header"
             , wrapMsg = ModalMsg
             }
-            [ Modal.onlyFocusableElementView
+            [ Modal.visibleTitle
+            , Modal.onlyFocusableElementView
                 (\{ onlyFocusableElement } ->
                     div []
                         [ Modal.viewContent [ text "Content goes here!" ]
@@ -70,6 +71,7 @@ module Nri.Ui.Modal.V8 exposing
 ### Modals
 
 @docs info, warning
+@docs view
 
 
 ### View containers
@@ -157,11 +159,11 @@ info :
     { title : String
     , wrapMsg : Msg -> msg
     }
-    -> List (Modal.Attribute msg)
+    -> List (Attribute msg)
     -> Model
     -> Html msg
 info config model =
-    view { overlayColor = Colors.navy, titleColor = Colors.navy } config model
+    view Info config model
 
 
 {-| -}
@@ -169,21 +171,46 @@ warning :
     { title : String
     , wrapMsg : Msg -> msg
     }
-    -> List (Modal.Attribute msg)
+    -> List (Attribute msg)
     -> Model
     -> Html msg
 warning config model =
-    view { overlayColor = Colors.gray20, titleColor = Colors.red } config model
+    view Warning config model
+
+
+type Theme
+    = Info
+    | Warning
+
+
+themeToOverlayColor : Theme -> Css.Color
+themeToOverlayColor theme =
+    case theme of
+        Info ->
+            Colors.navy
+
+        Warning ->
+            Colors.gray20
+
+
+themeToTitleColor : Theme -> Css.Color
+themeToTitleColor theme =
+    case theme of
+        Info ->
+            Colors.navy
+
+        Warning ->
+            Colors.red
 
 
 {-| -}
 type alias Attribute msg =
-    Modal.Attribute msg
+    Theme -> Modal.Attribute msg
 
 
 {-| -}
-autofocusOnLastElement : Modal.Attribute msg
-autofocusOnLastElement =
+autofocusOnLastElement : Attribute msg
+autofocusOnLastElement theme =
     Modal.autofocusOnLastElement
 
 
@@ -195,20 +222,20 @@ multipleFocusableElementView :
      }
      -> Html msg
     )
-    -> Modal.Attribute msg
-multipleFocusableElementView =
-    Modal.multipleFocusableElementView
+    -> Attribute msg
+multipleFocusableElementView f theme =
+    Modal.multipleFocusableElementView f
 
 
 {-| -}
-onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Modal.Attribute msg
-onlyFocusableElementView =
-    Modal.onlyFocusableElementView
+onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
+onlyFocusableElementView f theme =
+    Modal.onlyFocusableElementView f
 
 
 {-| -}
-invisibleTitle : Modal.Attribute msg
-invisibleTitle =
+invisibleTitle : Attribute msg
+invisibleTitle theme =
     Modal.titleStyles
         [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
         , Css.property "position" "absolute"
@@ -222,13 +249,8 @@ invisibleTitle =
 
 
 {-| -}
-visibleTitle : Modal.Attribute msg
-visibleTitle =
-    let
-        --TODO: don't hardcode this!
-        color =
-            Colors.red
-    in
+visibleTitle : Attribute msg
+visibleTitle theme =
     Modal.titleStyles
         [ Fonts.baseFont
         , Css.fontWeight (Css.int 700)
@@ -238,20 +260,23 @@ visibleTitle =
         , Css.property "line-height" "27px"
         , Css.property "font-size" "20px"
         , Css.property "text-align" "center"
-        , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
+        , Css.property "color"
+            ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor)
+                (themeToTitleColor theme)
+            )
         ]
 
 
 view :
-    { overlayColor : Css.Color, titleColor : Css.Color }
+    Theme
     -> { title : String, wrapMsg : Msg -> msg }
-    -> List (Modal.Attribute msg)
+    -> List (Attribute msg)
     -> Model
     -> Html msg
-view { overlayColor, titleColor } config attributes model =
+view theme config attributes model =
     Modal.view config.wrapMsg
         config.title
-        ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 overlayColor)
+        ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
          , Modal.custom
             [ Css.property "width" "600px"
             , Css.property "margin" "75px auto"
@@ -261,7 +286,7 @@ view { overlayColor, titleColor } config attributes model =
             , Css.property "position" "relative" -- required for closeButtonContainer
             ]
          ]
-            ++ attributes
+            ++ List.map (\f -> f theme) attributes
         )
         model
         |> List.singleton
