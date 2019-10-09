@@ -50,7 +50,7 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Modal.V7"
+    { name = "Nri.Ui.Modal.V8"
     , category = Modals
     , content =
         [ viewSettings state
