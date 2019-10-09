@@ -334,9 +334,10 @@ closeButton wrapMsg focusableElementAttrs =
         [ Css.position Css.absolute
         , Css.top Css.zero
         , Css.right Css.zero
-        , Css.padding (Css.px 25)
+        , Css.margin (Css.px 25)
+        , Css.padding Css.zero
         , Css.borderWidth Css.zero
-        , Css.width (Css.px 75)
+        , Css.width (Css.px 18)
         , Css.backgroundColor Css.transparent
         , Css.cursor Css.pointer
         , Css.color Colors.azure
