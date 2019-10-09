@@ -149,7 +149,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewFooterlessContent [ viewModalContent state.longContent ]
                         ]
                 )
             ]

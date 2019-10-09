@@ -313,7 +313,10 @@ view theme config attributes model =
 viewContent : List (Html msg) -> Html msg
 viewContent children =
     div [ css [ Css.paddingBottom (Css.px 20) ] ]
-        [ viewContent_ [] children
+        [ viewContent_
+            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360)) ]
+            ]
+            children
         ]
 
 
@@ -328,7 +331,7 @@ viewFooterlessContent children =
             ]
         ]
         [ viewContent_
-            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 230)) ]
+            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 100)) ]
             ]
             children
         ]
@@ -340,7 +343,6 @@ viewContent_ attributes children =
         "modal-content"
         [ Css.overflowY Css.auto
         , Css.minHeight (Css.px 150)
-        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
         , Css.padding2 (Css.px 10) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.boxSizing Css.borderBox
