@@ -247,7 +247,7 @@ view theme config attributes model =
         ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
          , Modal.custom
             [ Css.width (Css.px 600)
-            , Css.margin2 (Css.px 75) Css.auto
+            , Css.margin2 (Css.px 50) Css.auto
             , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
@@ -313,7 +313,22 @@ viewContent children visibleTitle =
                     ]
             ]
         ]
-        [ viewContent_ (Css.px 360) children
+        [ viewContent_
+            (Css.px
+                (180
+                    -- footer height
+                    + (if visibleTitle then
+                        90
+
+                       else
+                        0
+                       -- title height
+                      )
+                    + 100
+                 -- desired surrounding whitespace
+                )
+            )
+            children
         ]
 
 
@@ -336,7 +351,22 @@ viewFooterlessContent children visibleTitle =
                     ]
             ]
         ]
-        [ viewContent_ (Css.px 100) children
+        [ viewContent_
+            (Css.px
+                (0
+                    -- footer height
+                    + (if visibleTitle then
+                        90
+
+                       else
+                        0
+                       -- title height
+                      )
+                    + 100
+                 -- desired surrounding whitespace
+                )
+            )
+            children
         ]
 
 
