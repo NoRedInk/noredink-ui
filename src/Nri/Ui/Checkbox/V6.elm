@@ -376,8 +376,8 @@ checkboxUnchecked =
 checkboxCheckedHighlighted : Icon
 checkboxCheckedHighlighted =
     Svg.svg
-        [ Svg.Attributes.width "30px"
-        , Svg.Attributes.height "30px"
+        [ Svg.Attributes.width "27px"
+        , Svg.Attributes.height "27px"
         , Svg.Attributes.viewBox "0 0 30 30"
         ]
         [ Svg.defs []
