@@ -5,6 +5,7 @@ module Nri.Ui.Modal.V8 exposing
     , info, warning
     , viewContent, viewFooter
     , Attribute
+    , visibleTitle, invisibleTitle
     , multipleFocusableElementView, onlyFocusableElementView
     , autofocusOnLastElement
     , closeButton
@@ -27,7 +28,6 @@ module Nri.Ui.Modal.V8 exposing
     view state =
         Modal.info
             { title = "Modal Header"
-            , visibleTitle = True
             , wrapMsg = ModalMsg
             }
             [ Modal.onlyFocusableElementView
@@ -80,6 +80,9 @@ module Nri.Ui.Modal.V8 exposing
 ### Attributes
 
 @docs Attribute
+
+@docs visibleTitle, invisibleTitle
+
 @docs multipleFocusableElementView, onlyFocusableElementView
 @docs autofocusOnLastElement
 
@@ -151,8 +154,7 @@ open =
 
 {-| -}
 info :
-    { visibleTitle : Bool
-    , title : String
+    { title : String
     , wrapMsg : Msg -> msg
     }
     -> List (Modal.Attribute msg)
@@ -164,8 +166,7 @@ info config model =
 
 {-| -}
 warning :
-    { visibleTitle : Bool
-    , title : String
+    { title : String
     , wrapMsg : Msg -> msg
     }
     -> List (Modal.Attribute msg)
@@ -205,13 +206,43 @@ onlyFocusableElementView =
     Modal.onlyFocusableElementView
 
 
+{-| -}
+invisibleTitle : Modal.Attribute msg
+invisibleTitle =
+    Modal.titleStyles
+        [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
+        , Css.property "position" "absolute"
+        , Css.property "height" "1px"
+        , Css.property "width" "1px"
+        , Css.property "overflow" "hidden"
+        , Css.property "margin" "-1px"
+        , Css.property "padding" "0"
+        , Css.property "border" "0"
+        ]
+
+
+{-| -}
+visibleTitle : Modal.Attribute msg
+visibleTitle =
+    let
+        --TODO: don't hardcode this!
+        color =
+            Colors.red
+    in
+    Modal.titleStyles
+        [ Fonts.baseFont
+        , Css.property "font-weight" "700"
+        , Css.property "line-height" "27px"
+        , Css.property "margin" "0 49px"
+        , Css.property "font-size" "20px"
+        , Css.property "text-align" "center"
+        , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
+        ]
+
+
 view :
     { overlayColor : Css.Color, titleColor : Css.Color }
-    ->
-        { visibleTitle : Bool
-        , title : String
-        , wrapMsg : Msg -> msg
-        }
+    -> { title : String, wrapMsg : Msg -> msg }
     -> List (Modal.Attribute msg)
     -> Model
     -> Html msg
@@ -219,14 +250,15 @@ view { overlayColor, titleColor } config attributes model =
     Modal.view config.wrapMsg
         config.title
         ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 overlayColor)
-         , Modal.titleStyles
-            (if config.visibleTitle then
-                titleStyles titleColor
-
-             else
-                invisibleTitleStyles
-            )
-         , Modal.custom modalStyles
+         , Modal.custom
+            [ Css.property "width" "600px"
+            , Css.paddingTop (Css.px 40)
+            , Css.property "margin" "75px auto"
+            , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
+            , Css.borderRadius borderRadius
+            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+            , Css.property "position" "relative" -- required for closeButtonContainer
+            ]
          ]
             ++ attributes
         )
@@ -238,43 +270,6 @@ view { overlayColor, titleColor } config attributes model =
 borderRadius : Css.Px
 borderRadius =
     Css.px 20
-
-
-modalStyles : List Css.Style
-modalStyles =
-    [ Css.property "width" "600px"
-    , Css.paddingTop (Css.px 40)
-    , Css.property "margin" "75px auto"
-    , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
-    , Css.borderRadius borderRadius
-    , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-    , Css.property "position" "relative" -- required for closeButtonContainer
-    ]
-
-
-titleStyles : Css.Color -> List Css.Style
-titleStyles color =
-    [ Fonts.baseFont
-    , Css.property "font-weight" "700"
-    , Css.property "line-height" "27px"
-    , Css.property "margin" "0 49px"
-    , Css.property "font-size" "20px"
-    , Css.property "text-align" "center"
-    , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
-    ]
-
-
-invisibleTitleStyles : List Css.Style
-invisibleTitleStyles =
-    [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
-    , Css.property "position" "absolute"
-    , Css.property "height" "1px"
-    , Css.property "width" "1px"
-    , Css.property "overflow" "hidden"
-    , Css.property "margin" "-1px"
-    , Css.property "padding" "0"
-    , Css.property "border" "0"
-    ]
 
 
 {-| -}

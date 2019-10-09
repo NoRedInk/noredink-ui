@@ -69,18 +69,10 @@ example parentMessage state =
             , Button.secondary
             , Button.medium
             ]
-        , Modal.info
-            { title = "Modal.info"
-            , visibleTitle = state.visibleTitle
-            , wrapMsg = InfoModalMsg
-            }
+        , Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
             (viewContent state InfoModalMsg Button.primary)
             state.infoModal
-        , Modal.warning
-            { title = "Modal.warning"
-            , visibleTitle = state.visibleTitle
-            , wrapMsg = WarningModalMsg
-            }
+        , Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
             (viewContent state WarningModalMsg Button.danger)
             state.warningModal
         ]
@@ -94,9 +86,18 @@ viewContent :
     -> Button.Attribute Msg
     -> List (Modal.Attribute Msg)
 viewContent state wrapMsg firstButtonStyle =
+    let
+        title =
+            if state.visibleTitle then
+                Modal.visibleTitle
+
+            else
+                Modal.invisibleTitle
+    in
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
-            [ Modal.multipleFocusableElementView
+            [ title
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
@@ -122,7 +123,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, False, True ) ->
-            [ Modal.multipleFocusableElementView
+            [ title
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
@@ -142,7 +144,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, False, False ) ->
-            [ Modal.multipleFocusableElementView
+            [ title
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
@@ -155,7 +158,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, True, False ) ->
-            [ Modal.autofocusOnLastElement
+            [ title
+            , Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
@@ -174,7 +178,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, True, True ) ->
-            [ Modal.multipleFocusableElementView
+            [ title
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.viewContent [] [ viewModalContent state.longContent ]
@@ -199,7 +204,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, False, True ) ->
-            [ Modal.autofocusOnLastElement
+            [ title
+            , Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
@@ -222,7 +228,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, True, False ) ->
-            [ Modal.autofocusOnLastElement
+            [ title
+            , Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
@@ -240,7 +247,8 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, False, False ) ->
-            [ Modal.multipleFocusableElementView
+            [ title
+            , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.viewContent [] [ viewModalContent state.longContent ]
