@@ -3,7 +3,7 @@ module Nri.Ui.Modal.V8 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , viewContent, viewFooter
+    , viewContent, viewFooterlessContent, viewFooter
     , Attribute
     , visibleTitle, invisibleTitle
     , multipleFocusableElementView, onlyFocusableElementView
@@ -74,7 +74,7 @@ module Nri.Ui.Modal.V8 exposing
 
 ### View containers
 
-@docs viewContent, viewFooter
+@docs viewContent, viewFooterlessContent, viewFooter
 
 
 ### Attributes
@@ -231,9 +231,11 @@ visibleTitle =
     in
     Modal.titleStyles
         [ Fonts.baseFont
-        , Css.property "font-weight" "700"
+        , Css.fontWeight (Css.int 700)
+        , Css.paddingTop (Css.px 40)
+        , Css.paddingBottom (Css.px 20)
+        , Css.margin Css.zero
         , Css.property "line-height" "27px"
-        , Css.property "margin" "0 49px"
         , Css.property "font-size" "20px"
         , Css.property "text-align" "center"
         , Css.property "color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) color)
@@ -252,10 +254,9 @@ view { overlayColor, titleColor } config attributes model =
         ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 overlayColor)
          , Modal.custom
             [ Css.property "width" "600px"
-            , Css.paddingTop (Css.px 40)
             , Css.property "margin" "75px auto"
             , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
-            , Css.borderRadius borderRadius
+            , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
             , Css.property "position" "relative" -- required for closeButtonContainer
             ]
@@ -267,33 +268,45 @@ view { overlayColor, titleColor } config attributes model =
         |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
 
 
-borderRadius : Css.Px
-borderRadius =
-    Css.px 20
+{-| -}
+viewContent : List (Html msg) -> Html msg
+viewContent children =
+    div [ css [ Css.paddingBottom (Css.px 20) ] ]
+        [ viewContent_ [] children
+        ]
 
 
 {-| -}
-viewContent : List (Html.Attribute Never) -> List (Html msg) -> Html msg
-viewContent attributes children =
+viewFooterlessContent : List (Html msg) -> Html msg
+viewFooterlessContent children =
     div
         [ css
-            [ Css.borderBottomLeftRadius borderRadius
-            , Css.borderBottomRightRadius borderRadius
+            [ Css.borderBottomLeftRadius (Css.px 20)
+            , Css.borderBottomRightRadius (Css.px 20)
             , Css.overflowY Css.hidden
             ]
         ]
-        [ Nri.Ui.styled div
-            "modal-content"
-            [ Css.overflowY Css.auto
-            , Css.minHeight (Css.px 150)
-            , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
-            , Css.padding2 (Css.px 30) (Css.px 40)
-            , Css.width (Css.pct 100)
-            , Css.boxSizing Css.borderBox
+        [ viewContent_
+            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 230)) ]
+            ]
+            children
+        ]
 
-            -- Shadows for indicating that the content is scrollable
-            , Css.property "background"
-                """
+
+viewContent_ : List (Html.Attribute Never) -> List (Html msg) -> Html msg
+viewContent_ attributes children =
+    Nri.Ui.styled div
+        "modal-content"
+        [ Css.overflowY Css.auto
+        , Css.minHeight (Css.px 150)
+        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
+        , Css.padding2 (Css.px 10) (Css.px 40)
+        , Css.width (Css.pct 100)
+        , Css.boxSizing Css.borderBox
+
+        -- Shadows for indicating that the content is scrollable
+        , Css.property "background"
+            """
             /* TOP shadow */
 
             top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,
@@ -304,12 +317,11 @@ viewContent attributes children =
             bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,
             bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll
             """
-            , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
-            , Css.backgroundRepeat Css.noRepeat
-            ]
-            attributes
-            children
+        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+        , Css.backgroundRepeat Css.noRepeat
         ]
+        attributes
+        children
 
 
 {-| -}
