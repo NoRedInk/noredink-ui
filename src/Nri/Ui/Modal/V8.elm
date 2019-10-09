@@ -276,8 +276,8 @@ invisibleTitleStyles =
 
 
 {-| -}
-viewContent : List (Html msg) -> Html msg
-viewContent =
+viewContent : List (Html.Attribute Never) -> List (Html msg) -> Html msg
+viewContent attributes =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
@@ -303,7 +303,7 @@ viewContent =
         , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
         , Css.backgroundRepeat Css.noRepeat
         ]
-        []
+        attributes
 
 
 {-| -}

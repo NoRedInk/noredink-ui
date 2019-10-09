@@ -100,7 +100,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -126,7 +126,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -146,7 +146,10 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent
+                            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 230)) ]
+                            ]
+                            [ viewModalContent state.longContent ]
                         ]
                 )
             ]
@@ -157,7 +160,7 @@ viewContent state wrapMsg firstButtonStyle =
                 (\focusableElementAttrs ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -174,7 +177,7 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -200,7 +203,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -223,7 +226,7 @@ viewContent state wrapMsg firstButtonStyle =
             , Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [] [ viewModalContent state.longContent ]
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -240,7 +243,7 @@ viewContent state wrapMsg firstButtonStyle =
             [ Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [] [ viewModalContent state.longContent ]
                         ]
                 )
             ]
