@@ -205,13 +205,14 @@ themeToTitleColor theme =
 
 {-| -}
 type Attribute msg
-    = Attribute (Theme -> Modal.Attribute msg)
+    = WithTheme (Theme -> Modal.Attribute msg)
+    | Attribute (Modal.Attribute msg)
 
 
 {-| -}
 autofocusOnLastElement : Attribute msg
 autofocusOnLastElement =
-    Attribute (\_ -> Modal.autofocusOnLastElement)
+    Attribute Modal.autofocusOnLastElement
 
 
 {-| -}
@@ -224,37 +225,36 @@ multipleFocusableElementView :
     )
     -> Attribute msg
 multipleFocusableElementView f =
-    Attribute (\_ -> Modal.multipleFocusableElementView f)
+    Attribute (Modal.multipleFocusableElementView f)
 
 
 {-| -}
 onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
 onlyFocusableElementView f =
-    Attribute (\_ -> Modal.onlyFocusableElementView f)
+    Attribute (Modal.onlyFocusableElementView f)
 
 
 {-| -}
 invisibleTitle : Attribute msg
 invisibleTitle =
     Attribute
-        (\_ ->
-            Modal.titleStyles
-                [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
-                , Css.property "position" "absolute"
-                , Css.property "height" "1px"
-                , Css.property "width" "1px"
-                , Css.property "overflow" "hidden"
-                , Css.property "margin" "-1px"
-                , Css.property "padding" "0"
-                , Css.property "border" "0"
-                ]
+        (Modal.titleStyles
+            [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
+            , Css.property "position" "absolute"
+            , Css.property "height" "1px"
+            , Css.property "width" "1px"
+            , Css.property "overflow" "hidden"
+            , Css.property "margin" "-1px"
+            , Css.property "padding" "0"
+            , Css.property "border" "0"
+            ]
         )
 
 
 {-| -}
 visibleTitle : Attribute msg
 visibleTitle =
-    Attribute
+    WithTheme
         (\theme ->
             Modal.titleStyles
                 [ Fonts.baseFont
@@ -296,8 +296,11 @@ view theme config attributes model =
             ++ List.map
                 (\attribute ->
                     case attribute of
-                        Attribute f ->
+                        WithTheme f ->
                             f theme
+
+                        Attribute a ->
+                            a
                 )
                 attributes
         )
