@@ -1,4 +1,4 @@
-module Nri.Ui.Modal.V7 exposing
+module Nri.Ui.Modal.V8 exposing
     ( Model, init
     , Msg, update, subscriptions
     , open, close
@@ -10,10 +10,9 @@ module Nri.Ui.Modal.V7 exposing
     , closeButton
     )
 
-{-| Changes from V6:
+{-| Changes from V7:
 
-  - Modal starts a new stacking context, to prevent non-normal-flow elements from showing through the backdrop
-  - Scrollable content shows a shadow
+  - More customizable attributes
 
 ```
     import Html.Styled exposing (..)

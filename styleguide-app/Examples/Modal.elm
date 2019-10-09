@@ -16,7 +16,7 @@ import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V7 as Modal
+import Nri.Ui.Modal.V8 as Modal
 import Nri.Ui.Text.V4 as Text
 
 
