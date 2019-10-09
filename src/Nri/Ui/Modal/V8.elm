@@ -97,9 +97,6 @@ import Accessibility.Styled.Widget as Widget
 import Color
 import Color.Transparent
 import Css
-import Css.Global
-import Html as Root
-import Html.Attributes exposing (style)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
@@ -238,13 +235,18 @@ view { overlayColor, titleColor } config attributes model =
         |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
 
 
+borderRadius : Css.Px
+borderRadius =
+    Css.px 20
+
+
 modalStyles : List Css.Style
 modalStyles =
     [ Css.property "width" "600px"
-    , Css.property "padding" "40px 0 40px 0"
+    , Css.paddingTop (Css.px 40)
     , Css.property "margin" "75px auto"
     , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
-    , Css.property "border-radius" "20px"
+    , Css.borderRadius borderRadius
     , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
     , Css.property "position" "relative" -- required for closeButtonContainer
     ]
@@ -277,19 +279,26 @@ invisibleTitleStyles =
 
 {-| -}
 viewContent : List (Html.Attribute Never) -> List (Html msg) -> Html msg
-viewContent attributes =
-    Nri.Ui.styled div
-        "modal-content"
-        [ Css.overflowY Css.auto
-        , Css.minHeight (Css.px 150)
-        , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
-        , Css.padding2 (Css.px 30) (Css.px 40)
-        , Css.width (Css.pct 100)
-        , Css.boxSizing Css.borderBox
+viewContent attributes children =
+    div
+        [ css
+            [ Css.borderBottomLeftRadius borderRadius
+            , Css.borderBottomRightRadius borderRadius
+            , Css.overflowY Css.hidden
+            ]
+        ]
+        [ Nri.Ui.styled div
+            "modal-content"
+            [ Css.overflowY Css.auto
+            , Css.minHeight (Css.px 150)
+            , Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360))
+            , Css.padding2 (Css.px 30) (Css.px 40)
+            , Css.width (Css.pct 100)
+            , Css.boxSizing Css.borderBox
 
-        -- Shadows for indicating that the content is scrollable
-        , Css.property "background"
-            """
+            -- Shadows for indicating that the content is scrollable
+            , Css.property "background"
+                """
             /* TOP shadow */
 
             top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,
@@ -300,10 +309,12 @@ viewContent attributes =
             bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,
             bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll
             """
-        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
-        , Css.backgroundRepeat Css.noRepeat
+            , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+            , Css.backgroundRepeat Css.noRepeat
+            ]
+            attributes
+            children
         ]
-        attributes
 
 
 {-| -}
@@ -317,6 +328,7 @@ viewFooter =
         , Css.flexGrow (Css.int 2)
         , Css.flexWrap Css.noWrap
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+        , Css.paddingBottom (Css.px 40)
         , Css.width (Css.pct 100)
         ]
         []
