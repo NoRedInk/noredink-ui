@@ -5,7 +5,6 @@ module Nri.Ui.Modal.V8 exposing
     , info, warning
     , viewContent, viewFooterlessContent, viewFooter
     , Attribute
-    , visibleTitle, invisibleTitle
     , multipleFocusableElementView, onlyFocusableElementView
     , autofocusOnLastElement
     , closeButton
@@ -83,8 +82,6 @@ module Nri.Ui.Modal.V8 exposing
 
 @docs Attribute
 
-@docs visibleTitle, invisibleTitle
-
 @docs multipleFocusableElementView, onlyFocusableElementView
 @docs autofocusOnLastElement
 
@@ -157,6 +154,7 @@ open =
 {-| -}
 info :
     { title : String
+    , visibleTitle : Bool
     , wrapMsg : Msg -> msg
     }
     -> List (Attribute msg)
@@ -169,6 +167,7 @@ info config model =
 {-| -}
 warning :
     { title : String
+    , visibleTitle : Bool
     , wrapMsg : Msg -> msg
     }
     -> List (Attribute msg)
@@ -205,8 +204,8 @@ themeToTitleColor theme =
 
 {-| -}
 type Attribute msg
-    = WithTheme (Theme -> Modal.Attribute msg)
-    | Attribute (Modal.Attribute msg)
+    = Attribute (Modal.Attribute msg)
+    | WithTitleVisibility (Bool -> Modal.Attribute msg)
 
 
 {-| -}
@@ -221,41 +220,39 @@ multipleFocusableElementView :
      , lastFocusableElement : List (Html.Attribute msg)
      , autofocusElement : Html.Attribute msg
      }
+     -> Bool
      -> Html msg
     )
     -> Attribute msg
 multipleFocusableElementView f =
-    Attribute (Modal.multipleFocusableElementView f)
+    WithTitleVisibility (\visibleTitle -> Modal.multipleFocusableElementView (\attributes -> f attributes visibleTitle))
 
 
 {-| -}
-onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
+onlyFocusableElementView : (List (Html.Attribute msg) -> Bool -> Html msg) -> Attribute msg
 onlyFocusableElementView f =
-    Attribute (Modal.onlyFocusableElementView f)
+    WithTitleVisibility (\visibleTitle -> Modal.onlyFocusableElementView (\attributes -> f attributes visibleTitle))
 
 
-{-| -}
-invisibleTitle : Attribute msg
-invisibleTitle =
-    Attribute
-        (Modal.titleStyles
-            [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
-            , Css.property "position" "absolute"
-            , Css.property "height" "1px"
-            , Css.property "width" "1px"
-            , Css.property "overflow" "hidden"
-            , Css.property "margin" "-1px"
-            , Css.property "padding" "0"
-            , Css.property "border" "0"
+view :
+    Theme
+    -> { title : String, visibleTitle : Bool, wrapMsg : Msg -> msg }
+    -> List (Attribute msg)
+    -> Model
+    -> Html msg
+view theme config attributes model =
+    Modal.view
+        config.wrapMsg
+        config.title
+        ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
+         , Modal.custom
+            [ Css.width (Css.px 600)
+            , Css.margin2 (Css.px 75) Css.auto
+            , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
+            , Css.borderRadius (Css.px 20)
+            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
             ]
-        )
-
-
-{-| -}
-visibleTitle : Attribute msg
-visibleTitle =
-    WithTheme
-        (\theme ->
+         , if config.visibleTitle then
             Modal.titleStyles
                 [ Fonts.baseFont
                 , Css.fontWeight (Css.int 700)
@@ -270,37 +267,27 @@ visibleTitle =
                         (themeToTitleColor theme)
                     )
                 ]
-        )
 
-
-view :
-    Theme
-    -> { title : String, wrapMsg : Msg -> msg }
-    -> List (Attribute msg)
-    -> Model
-    -> Html msg
-view theme config attributes model =
-    Modal.view
-        config.wrapMsg
-        config.title
-        ([ Modal.overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
-         , Modal.custom
-            [ Css.property "width" "600px"
-            , Css.property "margin" "75px auto"
-            , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
-            , Css.borderRadius (Css.px 20)
-            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
-            , Css.property "position" "relative" -- required for closeButtonContainer
-            ]
+           else
+            Modal.titleStyles
+                [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
+                , Css.property "position" "absolute"
+                , Css.property "height" "1px"
+                , Css.property "width" "1px"
+                , Css.property "overflow" "hidden"
+                , Css.property "margin" "-1px"
+                , Css.property "padding" "0"
+                , Css.property "border" "0"
+                ]
          ]
             ++ List.map
                 (\attribute ->
                     case attribute of
-                        WithTheme f ->
-                            f theme
-
                         Attribute a ->
                             a
+
+                        WithTitleVisibility f ->
+                            f config.visibleTitle
                 )
                 attributes
         )
@@ -310,35 +297,51 @@ view theme config attributes model =
 
 
 {-| -}
-viewContent : List (Html msg) -> Html msg
-viewContent children =
-    div [ css [ Css.paddingBottom (Css.px 20) ] ]
-        [ viewContent_
-            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 360)) ]
+viewContent : List (Html msg) -> Bool -> Html msg
+viewContent children visibleTitle =
+    div
+        [ css
+            [ Css.paddingBottom (Css.px 20)
+            , if visibleTitle then
+                Css.batch []
+
+              else
+                Css.batch
+                    [ Css.borderTopLeftRadius (Css.px 20)
+                    , Css.borderTopRightRadius (Css.px 20)
+                    , Css.overflowY Css.hidden
+                    ]
             ]
-            children
+        ]
+        [ viewContent_ (Css.px 360) children
         ]
 
 
 {-| -}
-viewFooterlessContent : List (Html msg) -> Html msg
-viewFooterlessContent children =
+viewFooterlessContent : List (Html msg) -> Bool -> Html msg
+viewFooterlessContent children visibleTitle =
     div
         [ css
             [ Css.borderBottomLeftRadius (Css.px 20)
             , Css.borderBottomRightRadius (Css.px 20)
             , Css.overflowY Css.hidden
+            , if visibleTitle then
+                Css.batch []
+
+              else
+                Css.batch
+                    [ Css.borderTopLeftRadius (Css.px 20)
+                    , Css.borderTopRightRadius (Css.px 20)
+                    , Css.overflowY Css.hidden
+                    ]
             ]
         ]
-        [ viewContent_
-            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus (Css.px 100)) ]
-            ]
-            children
+        [ viewContent_ (Css.px 100) children
         ]
 
 
-viewContent_ : List (Html.Attribute Never) -> List (Html msg) -> Html msg
-viewContent_ attributes children =
+viewContent_ : Css.Px -> List (Html msg) -> Html msg
+viewContent_ extraHeight children =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
@@ -363,7 +366,7 @@ viewContent_ attributes children =
         , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
         , Css.backgroundRepeat Css.noRepeat
         ]
-        attributes
+        [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
         children
 
 

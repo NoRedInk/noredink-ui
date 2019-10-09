@@ -69,10 +69,10 @@ example parentMessage state =
             , Button.secondary
             , Button.medium
             ]
-        , Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
+        , Modal.info { title = "Modal.info", visibleTitle = state.visibleTitle, wrapMsg = InfoModalMsg }
             (viewContent state InfoModalMsg Button.primary)
             state.infoModal
-        , Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
+        , Modal.warning { title = "Modal.warning", visibleTitle = state.visibleTitle, wrapMsg = WarningModalMsg }
             (viewContent state WarningModalMsg Button.danger)
             state.warningModal
         ]
@@ -86,22 +86,13 @@ viewContent :
     -> Button.Attribute Msg
     -> List (Modal.Attribute Msg)
 viewContent state wrapMsg firstButtonStyle =
-    let
-        title =
-            if state.visibleTitle then
-                Modal.visibleTitle
-
-            else
-                Modal.invisibleTitle
-    in
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
-            [ title
-            , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs visibleTitle ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -123,12 +114,11 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, False, True ) ->
-            [ title
-            , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs visibleTitle ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -144,24 +134,22 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( True, False, False ) ->
-            [ title
-            , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs visibleTitle ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewFooterlessContent [ viewModalContent state.longContent ]
+                        , Modal.viewFooterlessContent [ viewModalContent state.longContent ] visibleTitle
                         ]
                 )
             ]
 
         ( True, True, False ) ->
-            [ title
-            , Modal.autofocusOnLastElement
+            [ Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\focusableElementAttrs visibleTitle ->
                     div []
                         [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent [ viewModalContent state.longContent ]
+                        , Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -175,11 +163,10 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, True, True ) ->
-            [ title
-            , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs visibleTitle ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -201,12 +188,11 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, False, True ) ->
-            [ title
-            , Modal.autofocusOnLastElement
+            [ Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\focusableElementAttrs visibleTitle ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ ClickableText.button "Close"
                                 [ ClickableText.onClick ForceClose
@@ -225,12 +211,11 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, True, False ) ->
-            [ title
-            , Modal.autofocusOnLastElement
+            [ Modal.autofocusOnLastElement
             , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\focusableElementAttrs visibleTitle ->
                     div []
-                        [ Modal.viewContent [ viewModalContent state.longContent ]
+                        [ Modal.viewContent [ viewModalContent state.longContent ] visibleTitle
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ firstButtonStyle
@@ -244,11 +229,10 @@ viewContent state wrapMsg firstButtonStyle =
             ]
 
         ( False, False, False ) ->
-            [ title
-            , Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            [ Modal.multipleFocusableElementView
+                (\focusableElementAttrs visibleTitle ->
                     div []
-                        [ Modal.viewFooterlessContent [ viewModalContent state.longContent ]
+                        [ Modal.viewFooterlessContent [ viewModalContent state.longContent ] visibleTitle
                         ]
                 )
             ]
