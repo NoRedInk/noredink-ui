@@ -941,4 +941,9 @@ svgStyle =
     [ RootAttr.style "fill" "currentColor"
     , RootAttr.style "width" "100%"
     , RootAttr.style "height" "100%"
+
+    -- don't allow SVG to capture pointer events. This means that we can use it
+    -- in links. See https://css-tricks.com/links-inline-svg-staying-target-events/
+    -- for more details.
+    , RootAttr.style "pointer-events" "none"
     ]
