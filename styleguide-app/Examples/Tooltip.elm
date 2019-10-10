@@ -54,7 +54,11 @@ example msg model =
     , content =
         [ Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
         , Heading.h3 [] [ Html.text "primaryLabel" ]
-        , Text.smallBody [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content, e.g. when the trigger content is an icon." ]
+        , Text.smallBody
+            [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is an icon with no text."
+            ]
         , Tooltip.tooltip [ Html.text "Tooltip" ]
             |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnClick
@@ -76,7 +80,11 @@ example msg model =
                 }
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "auxillaryDescription" ]
-        , Text.smallBody [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content." ]
+        , Text.smallBody
+            [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
+            ]
         , Tooltip.tooltip [ Html.text "Tooltip" ]
             |> Tooltip.auxillaryDescription
                 { trigger = Tooltip.OnClick

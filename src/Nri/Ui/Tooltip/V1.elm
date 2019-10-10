@@ -163,8 +163,11 @@ withPadding padding (Tooltip config) =
   - `OnClick`: the tooltip opens when clicking the root element, and closes when
     anything but the tooltip is clicked again.
 
-You should probably use `OnHover` unless your tooltip has a link that someone
-needs to click.
+Note: design typically prefers `OnHover`. However, if your tooltip has a link that someone
+needs to click, use `OnClick` because hover tooltips will currently close when you try
+to click the link.
+
+FIXME: Make it so you can click on links in hover tooltips.
 
 -}
 type Trigger
