@@ -372,7 +372,7 @@ shadow opacity =
         [ -- Shadows for indicating that the content is scrollable
           [ "/* TOP shadow */"
           , "top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
-          , "top linear-gradient(to top, rgba(255, 255, 255, 0), " ++ to ++ ") scroll,"
+          , "top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll,"
           , ""
           , "/* BOTTOM shadow */"
           , "bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
