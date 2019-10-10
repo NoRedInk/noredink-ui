@@ -367,7 +367,7 @@ viewFooterlessContent children visibleTitle =
                  -- desired surrounding whitespace
                 )
             )
-            (Transparent.customOpacity 0.25)
+            (Transparent.customOpacity 0.4)
             children
         ]
 
