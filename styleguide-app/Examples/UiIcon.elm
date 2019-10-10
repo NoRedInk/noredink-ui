@@ -32,5 +32,8 @@ example =
         , (IconExamples.view "Edit" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "edit", UiIcon.edit )
             ]
+        , (IconExamples.view "Settings" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "gear", UiIcon.gear )
+            ]
         ]
     }

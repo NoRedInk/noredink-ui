@@ -82,7 +82,6 @@ example =
             , deprecatedIcon { icon = Icon.document, background = Colors.frost, alt = "Document" }
             , deprecatedIcon { icon = Icon.flipper, background = Colors.frost, alt = "Flipper" }
             , deprecatedIcon { icon = Icon.footsteps, background = Colors.frost, alt = "Footsteps" }
-            , deprecatedIcon { icon = Icon.gear, background = Colors.frost, alt = "Gear" }
             , deprecatedIcon { icon = Icon.pen, background = Colors.frost, alt = "Pen" }
             , deprecatedIcon { icon = Icon.newspaper, background = Colors.frost, alt = "Newspaper" }
             , deprecatedIcon { icon = Icon.sort, background = Colors.frost, alt = "Sort" }
