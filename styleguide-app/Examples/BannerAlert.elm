@@ -8,12 +8,12 @@ module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 import Html.Styled exposing (div, h3, text)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.BannerAlert.V5 as BannerAlert
+import Nri.Ui.BannerAlert.V6 as BannerAlert
 
 
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMsg state =
-    { name = "Nri.Ui.BannerAlert.V5"
+    { name = "Nri.Ui.BannerAlert.V6"
     , category = Messaging
     , content =
         [ if state.show then

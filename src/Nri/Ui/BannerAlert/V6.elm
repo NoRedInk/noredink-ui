@@ -1,8 +1,12 @@
-module Nri.Ui.BannerAlert.V5 exposing (alert, error, neutral, success, LinkConfig, BannerContent(..), Target(..))
+module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success, LinkConfig, BannerContent(..), Target(..))
 
 {-|
 
 @docs alert, error, neutral, success, LinkConfig, BannerContent, Target
+
+Changes from V5:
+
+  - takes HTML rather than BannerContent
 
 -}
 
