@@ -12,6 +12,8 @@ import Html.Styled.Attributes as Attributes
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 example : (Msg -> msg) -> State -> ModuleExample msg
@@ -56,7 +58,14 @@ example parentMsg state =
                     [ Attributes.href "http://www.noredink.com"
                     , Attributes.target "_blank"
                     ]
-                    [ Html.Styled.text "here" ]
+                    [ Html.Styled.text "here " ]
+                , Html.Styled.div
+                    [ Attributes.css
+                        [ Css.display Css.inlineBlock
+                        , Css.width (Css.px 20)
+                        ]
+                    ]
+                    [ Svg.toHtml UiIcon.gear ]
                 , Html.Styled.text " to check out NoRedInk."
                 ]
             ]
