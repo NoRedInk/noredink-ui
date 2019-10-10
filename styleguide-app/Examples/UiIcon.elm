@@ -25,6 +25,7 @@ example =
             , ( "openClose", UiIcon.openClose )
             , ( "download", UiIcon.download )
             , ( "sort", UiIcon.sort )
+            , ( "gear", UiIcon.gear )
             ]
         , (IconExamples.view "Actions" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "unarchive", UiIcon.unarchive )

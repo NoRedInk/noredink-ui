@@ -1,5 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort
+    ( seeMore, openClose, download, sort, gear
     , unarchive, share, preview, edit
     , class, leaderboard, performance
     , calendar
@@ -11,7 +11,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 ### Interface
 
-@docs seeMore, openClose, download, sort
+@docs seeMore, openClose, download, sort, gear
 
 
 ### Actions
@@ -197,6 +197,24 @@ edit =
         [ Svg.path [ Attributes.d "M27.3,7.9l-5.2-5.2l2.3-2.3c0.5-0.5,1.2-0.5,1.7,0L29.7,4c0.5,0.5,0.5,1.2,0,1.7L27.3,7.9z M25.9,9.4L8.6,26.6l-5.2-5.2L20.6,4.1L25.9,9.4z M0,30l1.9-7L7,28.1L0,30z" ] []
         , Svg.path [ Attributes.fill "none", Attributes.d "M-753.8-401V715h1024V-401H-753.8z" ] []
         , Svg.path [ Attributes.fill "none", Attributes.d "M-775.9-385.9v1116h1024v-1116L-775.9-385.9L-775.9-385.9z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+gear : Nri.Ui.Svg.V1.Svg
+gear =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 25"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.d "M3.282 14.744A9.583 9.583 0 0 0 4.52 17.62l-1.557 1.565c-.7.699-.693 1.115-.077 1.73l1.519 1.52c.62.623 1.045.61 1.73-.077l1.635-1.641c.77.443 1.603.782 2.487 1v2c0 .993.3 1.282 1.167 1.282h2.154c.878 0 1.167-.309 1.167-1.282v-2a9.582 9.582 0 0 0 2.487-1l1.672 1.68c.693.686 1.109.699 1.73.083l1.526-1.526c.607-.608.62-1.025-.084-1.73l-1.602-1.602a9.417 9.417 0 0 0 1.243-2.878h2.116c.88-.001 1.168-.31 1.168-1.283v-1.924c0-.95-.25-1.282-1.167-1.282h-2.115a9.582 9.582 0 0 0-1-2.487l1.526-1.519c.673-.673.731-1.09.083-1.731l-1.525-1.526c-.61-.61-1.046-.602-1.731.083L17.62 4.52a9.583 9.583 0 0 0-2.877-1.237v-2c0-.95-.25-1.282-1.167-1.282h-2.154c-.866 0-1.167.314-1.167 1.282v2A9.583 9.583 0 0 0 7.38 4.52l-1.45-1.443c-.685-.685-1.121-.692-1.73-.083L2.672 4.52c-.648.64-.59 1.058.083 1.731l1.52 1.52a9.765 9.765 0 0 0-.994 2.486H1.167C.3 10.256 0 10.57 0 11.538v1.924c0 .993.3 1.282 1.167 1.282h2.115zm5.55-2.244a3.666 3.666 0 0 1 7.334 0 3.667 3.667 0 1 1-7.334 0z"
+            ]
+            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
