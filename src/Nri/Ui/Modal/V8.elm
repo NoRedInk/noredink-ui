@@ -249,9 +249,9 @@ view theme config attributes model =
             [ Css.width (Css.px 600)
             , Css.margin2 (Css.px 50) Css.auto
             , Css.paddingTop (Css.px 40)
-            , Css.backgroundColor Colors.cyan
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+            , Css.backgroundColor Colors.white
             ]
          , if config.visibleTitle then
             Modal.titleStyles
@@ -262,7 +262,6 @@ view theme config attributes model =
                 , Css.fontSize (Css.px 20)
                 , Css.textAlign Css.center
                 , Css.color (themeToTitleColor theme)
-                , Css.backgroundColor Colors.lichen
                 ]
 
            else
@@ -399,7 +398,6 @@ viewFooter =
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         , Css.paddingBottom (Css.px 40)
         , Css.width (Css.pct 100)
-        , Css.backgroundColor Colors.glacier
         ]
         []
 
