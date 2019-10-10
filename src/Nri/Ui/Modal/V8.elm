@@ -97,7 +97,7 @@ import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Widget as Widget
 import Color
-import Color.Transparent
+import Color.Transparent as Transparent
 import Css
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
@@ -328,6 +328,7 @@ viewContent children visibleTitle =
                  -- desired surrounding whitespace
                 )
             )
+            (Transparent.customOpacity 0.15)
             children
         ]
 
@@ -366,12 +367,13 @@ viewFooterlessContent children visibleTitle =
                  -- desired surrounding whitespace
                 )
             )
+            (Transparent.customOpacity 0.25)
             children
         ]
 
 
-viewContent_ : Css.Px -> List (Html msg) -> Html msg
-viewContent_ extraHeight children =
+viewContent_ : Css.Px -> Transparent.Opacity -> List (Html msg) -> Html msg
+viewContent_ extraHeight opacity children =
     Nri.Ui.styled div
         "modal-content"
         [ Css.overflowY Css.auto
@@ -379,25 +381,34 @@ viewContent_ extraHeight children =
         , Css.padding2 (Css.px 10) (Css.px 40)
         , Css.width (Css.pct 100)
         , Css.boxSizing Css.borderBox
-
-        -- Shadows for indicating that the content is scrollable
-        , Css.property "background"
-            """
-            /* TOP shadow */
-
-            top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,
-            top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll,
-
-            /* BOTTOM shadow */
-
-            bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,
-            bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll
-            """
-        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
-        , Css.backgroundRepeat Css.noRepeat
+        , shadow opacity
         ]
         [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
         children
+
+
+shadow : Transparent.Opacity -> Css.Style
+shadow opacity =
+    let
+        to =
+            Transparent.fromRGBA { red = 0, green = 0, blue = 0, alpha = opacity }
+                |> Transparent.toRGBAString
+    in
+    Css.batch
+        [ -- Shadows for indicating that the content is scrollable
+          [ "/* TOP shadow */"
+          , "top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
+          , "top linear-gradient(to top, rgba(255, 255, 255, 0), " ++ to ++ ") scroll,"
+          , ""
+          , "/* BOTTOM shadow */"
+          , "bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
+          , "bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), " ++ to ++ ") scroll"
+          ]
+            |> String.join "\n"
+            |> Css.property "background"
+        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+        , Css.backgroundRepeat Css.noRepeat
+        ]
 
 
 {-| -}
