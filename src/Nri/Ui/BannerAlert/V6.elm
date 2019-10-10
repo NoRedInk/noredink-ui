@@ -1,12 +1,155 @@
-module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success, LinkConfig, BannerContent(..), Target(..))
+module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success)
 
 {-|
 
-@docs alert, error, neutral, success, LinkConfig, BannerContent, Target
+@docs alert, error, neutral, success
 
 Changes from V5:
 
   - takes HTML rather than BannerContent
+
+<summary>
+<details>elm-refactor upgrade script</details>
+
+    import Css
+    import Html.Styled as Html
+    import Html.Styled.Attributes as Attributes
+    import Nri.Ui.BannerAlert.V6 as BannerAlert
+    import Nri.Ui.Fonts.V1 as Fonts
+
+    upgrade_Nri_Ui_BannerAlert_V5_alert bannerContent maybeMsg =
+        BannerAlert.alert
+            (case bannerContent of
+                Nri.Ui.BannerAlert.V5.Plain string ->
+                    [ Html.text string ]
+
+                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
+                    [ Html.div
+                        [ Attributes.css
+                            [ Css.fontSize (Css.px 20)
+                            , Css.fontWeight (Css.int 700)
+                            , Css.lineHeight (Css.px 25)
+                            , Css.maxWidth (Css.px 600)
+                            , Fonts.baseFont
+                            ]
+                        ]
+                        [ Html.text prefixText
+                        , Html.a
+                            [ Attributes.href linkUrl
+                            , case target of
+                                Nri.Ui.BannerAlert.V5.Blank ->
+                                    Attributes.target "_blank"
+
+                                Nri.Ui.BannerAlert.V5.Self ->
+                                    Attributes.target "_self"
+                            ]
+                            [ Html.text linkText ]
+                        , Html.text postfixText
+                        ]
+                    ]
+            )
+            maybeMsg
+
+    upgrade_Nri_Ui_BannerAlert_V5_error bannerContent maybeMsg =
+        BannerAlert.error
+            (case bannerContent of
+                Nri.Ui.BannerAlert.V5.Plain string ->
+                    [ Html.text string ]
+
+                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
+                    [ Html.div
+                        [ Attributes.css
+                            [ Css.fontSize (Css.px 20)
+                            , Css.fontWeight (Css.int 700)
+                            , Css.lineHeight (Css.px 25)
+                            , Css.maxWidth (Css.px 600)
+                            , Fonts.baseFont
+                            ]
+                        ]
+                        [ Html.text prefixText
+                        , Html.a
+                            [ Attributes.href linkUrl
+                            , case target of
+                                Nri.Ui.BannerAlert.V5.Blank ->
+                                    Attributes.target "_blank"
+
+                                Nri.Ui.BannerAlert.V5.Self ->
+                                    Attributes.target "_self"
+                            ]
+                            [ Html.text linkText ]
+                        , Html.text postfixText
+                        ]
+                    ]
+            )
+            maybeMsg
+
+    upgrade_Nri_Ui_BannerAlert_V5_neutral bannerContent maybeMsg =
+        BannerAlert.neutral
+            (case bannerContent of
+                Nri.Ui.BannerAlert.V5.Plain string ->
+                    [ Html.text string ]
+
+                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
+                    [ Html.div
+                        [ Attributes.css
+                            [ Css.fontSize (Css.px 20)
+                            , Css.fontWeight (Css.int 700)
+                            , Css.lineHeight (Css.px 25)
+                            , Css.maxWidth (Css.px 600)
+                            , Fonts.baseFont
+                            ]
+                        ]
+                        [ Html.text prefixText
+                        , Html.a
+                            [ Attributes.href linkUrl
+                            , case target of
+                                Nri.Ui.BannerAlert.V5.Blank ->
+                                    Attributes.target "_blank"
+
+                                Nri.Ui.BannerAlert.V5.Self ->
+                                    Attributes.target "_self"
+                            ]
+                            [ Html.text linkText ]
+                        , Html.text postfixText
+                        ]
+                    ]
+            )
+            maybeMsg
+
+    upgrade_Nri_Ui_BannerAlert_V5_success bannerContent maybeMsg =
+        BannerAlert.success
+            (case bannerContent of
+                Nri.Ui.BannerAlert.V5.Plain string ->
+                    [ Html.text string ]
+
+                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
+                    [ Html.div
+                        [ Attributes.css
+                            [ Css.fontSize (Css.px 20)
+                            , Css.fontWeight (Css.int 700)
+                            , Css.lineHeight (Css.px 25)
+                            , Css.maxWidth (Css.px 600)
+                            , Fonts.baseFont
+                            ]
+                        ]
+                        [ Html.text prefixText
+                        , Html.a
+                            [ Attributes.href linkUrl
+                            , case target of
+                                Nri.Ui.BannerAlert.V5.Blank ->
+                                    Attributes.target "_blank"
+
+                                Nri.Ui.BannerAlert.V5.Self ->
+                                    Attributes.target "_self"
+                            ]
+                            [ Html.text linkText ]
+                        , Html.text postfixText
+                        ]
+                    ]
+            )
+            maybeMsg
+
+</summary>
 
 -}
 
@@ -23,16 +166,9 @@ import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark, xSvg)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
-{-| A type to capture either plain content, or a string which will include a url link.
--}
-type BannerContent
-    = Plain String
-    | WithLink LinkConfig
-
-
 {-| A banner to show error alerts
 -}
-alert : BannerContent -> Maybe msg -> Html msg
+alert : List (Html msg) -> Maybe msg -> Html msg
 alert =
     banner
         { backgroundColor = Colors.sunshine
@@ -47,7 +183,7 @@ alert =
 
 {-| A banner to show error alerts
 -}
-error : BannerContent -> Maybe msg -> Html msg
+error : List (Html msg) -> Maybe msg -> Html msg
 error =
     banner
         { backgroundColor = Colors.purpleLight
@@ -62,7 +198,7 @@ error =
 
 {-| A banner to show neutral alerts
 -}
-neutral : BannerContent -> Maybe msg -> Html msg
+neutral : List (Html msg) -> Maybe msg -> Html msg
 neutral =
     banner
         { backgroundColor = Colors.frost
@@ -77,7 +213,7 @@ neutral =
 
 {-| A banner for success alerts
 -}
-success : BannerContent -> Maybe msg -> Html msg
+success : List (Html msg) -> Maybe msg -> Html msg
 success =
     banner
         { backgroundColor = Colors.greenLightest
@@ -97,7 +233,7 @@ type alias StyleConfig =
     }
 
 
-banner : StyleConfig -> BannerContent -> Maybe msg -> Html msg
+banner : StyleConfig -> List (Html msg) -> Maybe msg -> Html msg
 banner config bannerContent dismissMsg =
     let
         maybeDismissButton =
@@ -107,30 +243,6 @@ banner config bannerContent dismissMsg =
 
                 Just msg ->
                     dismissButton msg
-
-        alertMessage =
-            case bannerContent of
-                Plain string ->
-                    Html.text string
-
-                WithLink linkConfig ->
-                    Html.div
-                        [ css
-                            [ Css.fontSize (Css.px 20)
-                            , Css.fontWeight (Css.int 700)
-                            , Css.lineHeight (Css.px 25)
-                            , Css.maxWidth (Css.px 600)
-                            , Nri.Ui.Fonts.V1.baseFont
-                            ]
-                        ]
-                        [ Html.text linkConfig.prefixText
-                        , Html.a
-                            [ Attributes.href <| linkConfig.linkUrl
-                            , targetToAttribute linkConfig.target
-                            ]
-                            [ Html.text linkConfig.linkText ]
-                        , Html.text linkConfig.postfixText
-                        ]
     in
     Html.div
         [ css
@@ -157,7 +269,7 @@ banner config bannerContent dismissMsg =
                 ]
             ]
             [ icon config.icon
-            , notification alertMessage
+            , notification bannerContent
             ]
         , maybeDismissButton
         ]
@@ -220,8 +332,8 @@ icon config =
         ]
 
 
-notification : Html msg -> Html msg
-notification message =
+notification : List (Html msg) -> Html msg
+notification =
     Nri.Ui.styled Html.div
         "banner-alert-notification"
         [ Css.fontSize (Css.px 20)
@@ -231,32 +343,3 @@ notification message =
         , Nri.Ui.Fonts.V1.baseFont
         ]
         []
-        [ message ]
-
-
-{-| Config describing a message containing an embedded link.
--}
-type alias LinkConfig =
-    { prefixText : String
-    , linkText : String
-    , linkUrl : String
-    , postfixText : String
-    , target : Target
-    }
-
-
-{-| The link target. Corresponds to values of "_blank" and "_self"
--}
-type Target
-    = Blank
-    | Self
-
-
-targetToAttribute : Target -> Html.Attribute msg
-targetToAttribute linkTarget =
-    case linkTarget of
-        Blank ->
-            Attributes.target "_blank"
-
-        Self ->
-            Attributes.target "_self"
