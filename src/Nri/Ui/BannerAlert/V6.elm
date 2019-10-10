@@ -8,8 +8,8 @@ Changes from V5:
 
   - takes HTML rather than BannerContent
 
-<summary>
-<details>elm-refactor upgrade script</details>
+<details>
+<summary>elm-refactor upgrade script</summary>
 
     import Css
     import Html.Styled as Html
@@ -149,7 +149,7 @@ Changes from V5:
             )
             maybeMsg
 
-</summary>
+</details>
 
 -}
 
