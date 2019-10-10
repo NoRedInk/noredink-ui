@@ -104,7 +104,7 @@ viewContent state wrapMsg firstButtonStyle =
                                 [ ClickableText.onClick ForceClose
                                 , ClickableText.large
                                 , ClickableText.custom
-                                    (css [ Css.marginTop (Css.px 20) ]
+                                    (css [ Css.marginTop (Css.px 12) ]
                                         :: focusableElementAttrs.lastFocusableElement
                                     )
                                 ]
@@ -124,7 +124,7 @@ viewContent state wrapMsg firstButtonStyle =
                                 [ ClickableText.onClick ForceClose
                                 , ClickableText.large
                                 , ClickableText.custom
-                                    (css [ Css.marginTop (Css.px 20) ]
+                                    (css [ Css.marginTop (Css.px 12) ]
                                         :: focusableElementAttrs.lastFocusableElement
                                     )
                                 ]
@@ -178,7 +178,7 @@ viewContent state wrapMsg firstButtonStyle =
                                 [ ClickableText.onClick ForceClose
                                 , ClickableText.large
                                 , ClickableText.custom
-                                    (css [ Css.marginTop (Css.px 20) ]
+                                    (css [ Css.marginTop (Css.px 12) ]
                                         :: focusableElementAttrs.lastFocusableElement
                                     )
                                 ]
@@ -198,10 +198,7 @@ viewContent state wrapMsg firstButtonStyle =
                                 [ ClickableText.onClick ForceClose
                                 , ClickableText.large
                                 , ClickableText.custom
-                                    (css
-                                        [ Css.marginTop
-                                            (Css.px 20)
-                                        ]
+                                    (css [ Css.marginTop (Css.px 12) ]
                                         :: focusableElementAttrs.lastFocusableElement
                                     )
                                 ]
