@@ -248,7 +248,8 @@ view theme config attributes model =
          , Modal.custom
             [ Css.width (Css.px 600)
             , Css.margin2 (Css.px 50) Css.auto
-            , Css.property "background-color" ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor) Colors.white)
+            , Css.paddingTop (Css.px 40)
+            , Css.backgroundColor Colors.cyan
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
             ]
@@ -256,16 +257,12 @@ view theme config attributes model =
             Modal.titleStyles
                 [ Fonts.baseFont
                 , Css.fontWeight (Css.int 700)
-                , Css.paddingTop (Css.px 40)
                 , Css.paddingBottom (Css.px 20)
                 , Css.margin Css.zero
-                , Css.property "line-height" "27px"
-                , Css.property "font-size" "20px"
-                , Css.property "text-align" "center"
-                , Css.property "color"
-                    ((Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor)
-                        (themeToTitleColor theme)
-                    )
+                , Css.fontSize (Css.px 20)
+                , Css.textAlign Css.center
+                , Css.color (themeToTitleColor theme)
+                , Css.backgroundColor Colors.lichen
                 ]
 
            else
@@ -300,18 +297,7 @@ view theme config attributes model =
 viewContent : List (Html msg) -> Bool -> Html msg
 viewContent children visibleTitle =
     div
-        [ css
-            [ Css.paddingBottom (Css.px 20)
-            , if visibleTitle then
-                Css.batch []
-
-              else
-                Css.batch
-                    [ Css.borderTopLeftRadius (Css.px 20)
-                    , Css.borderTopRightRadius (Css.px 20)
-                    , Css.overflowY Css.hidden
-                    ]
-            ]
+        [ css [ Css.paddingBottom (Css.px 20) ]
         ]
         [ viewContent_
             (Css.px
@@ -321,7 +307,7 @@ viewContent children visibleTitle =
                         90
 
                        else
-                        0
+                        45
                        -- title height
                       )
                     + 100
@@ -341,15 +327,6 @@ viewFooterlessContent children visibleTitle =
             [ Css.borderBottomLeftRadius (Css.px 20)
             , Css.borderBottomRightRadius (Css.px 20)
             , Css.overflowY Css.hidden
-            , if visibleTitle then
-                Css.batch []
-
-              else
-                Css.batch
-                    [ Css.borderTopLeftRadius (Css.px 20)
-                    , Css.borderTopRightRadius (Css.px 20)
-                    , Css.overflowY Css.hidden
-                    ]
             ]
         ]
         [ viewContent_
@@ -360,7 +337,7 @@ viewFooterlessContent children visibleTitle =
                         90
 
                        else
-                        0
+                        45
                        -- title height
                       )
                     + 100

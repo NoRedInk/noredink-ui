@@ -257,6 +257,8 @@ viewModalContent longContent =
                     |> text
             ]
         ]
+        |> List.singleton
+        |> div [ css [ backgroundColor Colors.white ] ]
 
 
 viewSettings : State -> Html Msg
