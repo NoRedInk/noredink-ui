@@ -2,6 +2,7 @@ module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscript
 
 import Assets exposing (assets)
 import Examples.Alert
+import Examples.AssignmentIcon
 import Examples.BannerAlert
 import Examples.Button
 import Examples.Callout
@@ -11,6 +12,7 @@ import Examples.Colors
 import Examples.DisclosureIndicator
 import Examples.Dropdown
 import Examples.Fonts
+import Examples.Heading
 import Examples.Icon
 import Examples.Modal
 import Examples.Page
@@ -26,6 +28,7 @@ import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
 import Examples.TextInput as TextInputExample
 import Examples.Tooltip
+import Examples.UiIcon
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -287,10 +290,13 @@ nriThemedModules model =
     , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
+    , Examples.AssignmentIcon.example
+    , Examples.UiIcon.example
     , Examples.Icon.example
     , Examples.Page.example NoOp
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
+    , Examples.Heading.example
     , Examples.Text.example
     , Examples.Text.Writing.example
     , Examples.Fonts.example

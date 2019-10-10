@@ -9,180 +9,111 @@ module Examples.Icon exposing (example)
 import Assets exposing (Assets, assets)
 import Css
 import Css.Global
+import Examples.IconExamples as IconExamples
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css, style, title)
+import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Colors.V1 exposing (..)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
 example : ModuleExample msg
 example =
-    { name = "Nri.Ui.Icon.V4"
+    { name = "Nri.Ui.Icon.V5"
     , category = Icons
     , content =
-        [ viewIconSection "Mastery Icons"
-            [ { icon = Icon.gardening, background = Dark, alt = "Gardening" }
-            , { icon = Icon.highFive, background = Dark, alt = "HighFive" }
-            , { icon = Icon.okay, background = Dark, alt = "Okay" }
-            , { icon = Icon.thumbsUp, background = Dark, alt = "ThumbsUp" }
-            , { icon = Icon.masteryBadge, background = Light, alt = "Badge " }
+        [ IconExamples.view "Mastery Icons"
+            [ deprecatedIcon { icon = Icon.gardening, background = Colors.blue, alt = "Gardening" }
+            , deprecatedIcon { icon = Icon.highFive, background = Colors.blue, alt = "HighFive" }
+            , deprecatedIcon { icon = Icon.okay, background = Colors.blue, alt = "Okay" }
+            , deprecatedIcon { icon = Icon.thumbsUp, background = Colors.blue, alt = "ThumbsUp" }
+            , deprecatedIcon { icon = Icon.masteryBadge, background = Colors.frost, alt = "Badge " }
             ]
-        , viewIconSection "Stars and Flags"
-            [ { icon = Icon.starred, background = Light, alt = "Starred" }
-            , { icon = Icon.notStarred, background = Light, alt = "NotStarred" }
-            , { icon = Icon.flag, background = Light, alt = "Flag" }
+        , IconExamples.view "Stars and Flags"
+            [ deprecatedIcon { icon = Icon.starred, background = Colors.frost, alt = "Starred" }
+            , deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
+            , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
             ]
-        , viewIconSection "Assignment Types"
-            [ { icon = Icon.assignmentTypeDiagnostic, background = Light, alt = "Diagnostic" }
-            , { icon = Icon.assignmentTypePractice, background = Light, alt = "Practice" }
-            , { icon = Icon.assignmentTypeQuiz, background = Light, alt = "Quiz" }
-            , { icon = Icon.assignmentTypeQuickWrite, background = Light, alt = "QuickWrite" }
-            , { icon = Icon.assignmentTypeGuidedDraft, background = Light, alt = "GuidedDraft" }
-            , { icon = Icon.assignmentTypePeerReview, background = Light, alt = "PeerReview" }
-            , { icon = Icon.assignmentTypeSelfReview, background = Light, alt = "SelfReview" }
-            , { icon = Icon.submitting, background = Light, alt = "Submitting" }
-            , { icon = Icon.rating, background = Light, alt = "Rating" }
-            , { icon = Icon.revising, background = Light, alt = "Revising" }
-            , { icon = Icon.assignmentTypeWritingCycle, background = Light, alt = "WritingCycle" }
-            , { icon = Icon.writingAssignment, background = Light, alt = "WritingAssignment" }
+        , IconExamples.view "Student Assignment Actions"
+            [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
+            , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
             ]
-        , viewIconSection "Student Assignment Actions"
-            [ { icon = Icon.assignmentStartButtonPrimary, background = Light, alt = "Start primary" }
-            , { icon = Icon.assignmentStartButtonSecondary, background = Light, alt = "Start secondary" }
+        , IconExamples.view "Humans"
+            [ deprecatedIcon { icon = Icon.class, background = Colors.frost, alt = "Class" }
+            , deprecatedIcon { icon = Icon.leaderboard, background = Colors.frost, alt = "Leaderboard" }
+            , deprecatedIcon { icon = Icon.personBlue, background = Colors.frost, alt = "PersonBlue" }
             ]
-        , viewIconSection "Teacher Assignment Actions"
-            [ { icon = Icon.unarchive, background = Light, alt = "Unarchive" }
-            , { icon = Icon.share, background = Light, alt = "Share" }
-            , { icon = Icon.seeMore, background = Light, alt = "See More" }
-            , { icon = Icon.preview, background = Light, alt = "Preview" }
-            , { icon = Icon.performance, background = Light, alt = "Performance" }
-            , { icon = Icon.openClose, background = Light, alt = "OpenClose" }
-            , { icon = Icon.download, background = Light, alt = "Download" }
+        , IconExamples.view "Social Media"
+            [ deprecatedIcon { icon = Icon.facebook, background = Colors.frost, alt = "Facebook" }
+            , deprecatedIcon { icon = Icon.twitter, background = Colors.frost, alt = "Twitter" }
+            , deprecatedIcon { icon = Icon.clever, background = Colors.frost, alt = "Clever" }
             ]
-        , viewIconSection "Edit"
-            [ { icon = Icon.edit, background = Light, alt = "Edit" }
-            , { icon = Icon.editWriting, background = Light, alt = "EditWriting" }
+        , IconExamples.view "Arrows and Carets"
+            [ deprecatedIcon { icon = Icon.arrowDown, background = Colors.frost, alt = "ArrowDown" }
+            , deprecatedIcon { icon = Icon.sortArrow, background = Colors.frost, alt = "SortArrow" }
             ]
-        , viewIconSection "Humans"
-            [ { icon = Icon.class, background = Light, alt = "Class" }
-            , { icon = Icon.leaderboard, background = Light, alt = "Leaderboard" }
-            , { icon = Icon.personBlue, background = Light, alt = "PersonBlue" }
+        , IconExamples.view "Checkmarks"
+            [ deprecatedIcon { icon = Icon.checkMarkSvg, background = Colors.frost, alt = "CheckMarkSvg" }
             ]
-        , viewIconSection "Social Media"
-            [ { icon = Icon.facebook, background = Light, alt = "Facebook" }
-            , { icon = Icon.twitter, background = Light, alt = "Twitter" }
-            , { icon = Icon.clever, background = Light, alt = "Clever" }
+        , IconExamples.view "Xs"
+            [ deprecatedIcon { icon = Icon.xSvg, background = Colors.frost, alt = "XSvg" }
             ]
-        , viewIconSection "Arrows and Carets"
-            [ { icon = Icon.arrowDown, background = Light, alt = "ArrowDown" }
-            , { icon = Icon.sortArrow, background = Light, alt = "SortArrow" }
+        , IconExamples.view "Bangs"
+            [ deprecatedIcon { icon = Icon.exclamation, background = Colors.frost, alt = "Exclamation" }
+            , deprecatedIcon { icon = Icon.attention, background = Colors.blue, alt = "Attention" }
             ]
-        , viewIconSection "Checkmarks"
-            [ { icon = Icon.checkMarkSvg, background = Light, alt = "CheckMarkSvg" }
+        , IconExamples.view "Bulbs and Tips"
+            [ deprecatedIcon { icon = Icon.bulb, background = Colors.frost, alt = "Bulb" }
+            , deprecatedIcon { icon = Icon.lightBulb, background = Colors.frost, alt = "LightBulb" }
+            , deprecatedIcon { icon = Icon.helpSvg, background = Colors.frost, alt = "Help" }
             ]
-        , viewIconSection "Xs"
-            [ { icon = Icon.xSvg, background = Light, alt = "XSvg" }
+        , IconExamples.view "Locks and keys"
+            [ deprecatedIcon { icon = Icon.key, background = Colors.frost, alt = "Key" }
+            , deprecatedIcon { icon = Icon.lock, background = Colors.frost, alt = "Lock" }
             ]
-        , viewIconSection "Bangs"
-            [ { icon = Icon.exclamation, background = Light, alt = "Exclamation" }
-            , { icon = Icon.attention, background = Dark, alt = "Attention" }
+        , IconExamples.view "Time"
+            [ deprecatedIcon { icon = Icon.calendar, background = Colors.frost, alt = "Calendar" }
+            , deprecatedIcon { icon = Icon.clock, background = Colors.frost, alt = "Clock" }
             ]
-        , viewIconSection "Bulbs and Tips"
-            [ { icon = Icon.bulb, background = Light, alt = "Bulb" }
-            , { icon = Icon.lightBulb, background = Light, alt = "LightBulb" }
-            , { icon = Icon.helpSvg, background = Light, alt = "Help" }
-            ]
-        , viewIconSection "Locks and keys"
-            [ { icon = Icon.key, background = Light, alt = "Key" }
-            , { icon = Icon.lock, background = Light, alt = "Lock" }
-            ]
-        , viewIconSection "Time"
-            [ { icon = Icon.calendar, background = Light, alt = "Calendar" }
-            , { icon = Icon.clock, background = Light, alt = "Clock" }
-            ]
-        , viewIconSection "Uncategorized (SVGs)"
-            [ { icon = Icon.activity, background = Light, alt = "Activity" }
-            , { icon = Icon.compassSvg, background = Light, alt = "CompassSvg" }
-            , { icon = Icon.document, background = Light, alt = "Document" }
-            , { icon = Icon.flipper, background = Light, alt = "Flipper" }
-            , { icon = Icon.footsteps, background = Light, alt = "Footsteps" }
-            , { icon = Icon.gear, background = Light, alt = "Gear" }
-            , { icon = Icon.pen, background = Light, alt = "Pen" }
-            , { icon = Icon.newspaper, background = Light, alt = "Newspaper" }
-            , { icon = Icon.sort, background = Light, alt = "Sort" }
-            , { icon = Icon.speedometer, background = Light, alt = "Speedometer" }
-            , { icon = Icon.skip, background = Light, alt = "Skip" }
-            , { icon = Icon.equalitySign, background = Light, alt = "EqualitySign" }
-            , { icon = Icon.logo, background = Light, alt = "Logo" }
+        , IconExamples.view "Uncategorized (SVGs)"
+            [ deprecatedIcon { icon = Icon.activity, background = Colors.frost, alt = "Activity" }
+            , deprecatedIcon { icon = Icon.compassSvg, background = Colors.frost, alt = "CompassSvg" }
+            , deprecatedIcon { icon = Icon.document, background = Colors.frost, alt = "Document" }
+            , deprecatedIcon { icon = Icon.flipper, background = Colors.frost, alt = "Flipper" }
+            , deprecatedIcon { icon = Icon.footsteps, background = Colors.frost, alt = "Footsteps" }
+            , deprecatedIcon { icon = Icon.gear, background = Colors.frost, alt = "Gear" }
+            , deprecatedIcon { icon = Icon.pen, background = Colors.frost, alt = "Pen" }
+            , deprecatedIcon { icon = Icon.newspaper, background = Colors.frost, alt = "Newspaper" }
+            , deprecatedIcon { icon = Icon.sort, background = Colors.frost, alt = "Sort" }
+            , deprecatedIcon { icon = Icon.speedometer, background = Colors.frost, alt = "Speedometer" }
+            , deprecatedIcon { icon = Icon.skip, background = Colors.frost, alt = "Skip" }
+            , deprecatedIcon { icon = Icon.equalitySign, background = Colors.frost, alt = "EqualitySign" }
+            , deprecatedIcon { icon = Icon.logo, background = Colors.frost, alt = "Logo" }
             ]
         ]
     }
 
 
-viewIconSection :
-    String
-    -> List { alt : String, background : Background, icon : Assets -> Icon.IconType }
-    -> Html msg
-viewIconSection headerText icons =
-    Html.section []
-        [ Heading.h2 [] [ Html.text headerText ]
-        , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-            (List.map viewIcon icons)
-        ]
-
-
-type Background
-    = Light
-    | Dark
-
-
-toColor : Background -> Css.Color
-toColor background =
-    case background of
-        Dark ->
-            blue
-
-        Light ->
-            frost
-
-
-viewIcon : { alt : String, background : Background, icon : Assets -> Icon.IconType } -> Html msg
-viewIcon { alt, background, icon } =
-    Html.div
+deprecatedIcon : { alt : String, background : Css.Color, icon : Assets -> Icon.IconType } -> ( String, Html msg )
+deprecatedIcon { alt, background, icon } =
+    ( alt
+    , Html.div
         [ css
-            [ Css.margin (Css.px 10)
-            , Css.width (Css.px 160)
-            , Css.boxShadow4 (Css.px 10) (Css.px 5) (Css.px 5) navy
+            [ Css.backgroundColor background
+            , Css.height (Css.px 80)
+            , Css.width (Css.px 80)
             , Css.displayFlex
-            , Css.flexDirection Css.column
             , Css.alignItems Css.center
-            , Css.justifyContent Css.flexStart
-            ]
-        ]
-        [ Html.div
-            [ css
-                [ Css.displayFlex
-                , Css.alignItems Css.center
-                , Css.justifyContent Css.center
-                , Css.backgroundColor (toColor background)
-                , Css.height (Css.px 80)
-                , Css.width (Css.px 80)
-                , Css.margin (Css.px 10)
-                , Css.color green
-                , Css.Global.descendants
-                    [ Css.Global.img
-                        [ Css.maxWidth (Css.pct 100)
-                        , Css.maxHeight (Css.pct 100)
-                        ]
+            , Css.justifyContent Css.center
+            , Css.Global.descendants
+                [ Css.Global.img
+                    [ Css.maxWidth (Css.pct 100)
+                    , Css.maxHeight (Css.pct 100)
                     ]
                 ]
-            , title alt
             ]
-            [ Icon.icon { alt = alt, icon = icon assets }
-            ]
-        , Text.mediumBody [ Html.text alt ]
         ]
+        [ Icon.icon { alt = alt, icon = icon assets }
+        ]
+    )
