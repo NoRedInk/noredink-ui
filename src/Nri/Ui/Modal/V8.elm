@@ -296,9 +296,7 @@ view theme config attributes model =
 {-| -}
 viewContent : List (Html msg) -> Bool -> Html msg
 viewContent children visibleTitle =
-    div
-        [ css [ Css.paddingBottom (Css.px 20) ]
-        ]
+    div []
         [ viewContent_
             (Css.px
                 (180
@@ -401,6 +399,7 @@ viewFooter =
         , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
         , Css.paddingBottom (Css.px 40)
         , Css.width (Css.pct 100)
+        , Css.backgroundColor Colors.glacier
         ]
         []
 
