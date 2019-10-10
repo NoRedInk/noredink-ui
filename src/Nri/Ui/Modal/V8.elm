@@ -437,13 +437,18 @@ closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
     Nri.Ui.styled button
         "close-button-container"
-        [ Css.position Css.absolute
+        [ -- in the upper-right corner of the modal
+          Css.position Css.absolute
         , Css.top Css.zero
         , Css.right Css.zero
-        , Css.margin (Css.px 25)
-        , Css.padding Css.zero
+
+        -- make the hitspace extend all the way to the corner
+        , Css.width (Css.px 40)
+        , Css.height (Css.px 40)
+        , Css.padding4 (Css.px 20) (Css.px 20) Css.zero Css.zero
+
+        -- apply button styles
         , Css.borderWidth Css.zero
-        , Css.width (Css.px 18)
         , Css.backgroundColor Css.transparent
         , Css.cursor Css.pointer
         , Css.color Colors.azure
