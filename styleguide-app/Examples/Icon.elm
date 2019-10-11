@@ -39,11 +39,6 @@ example =
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }
             ]
-        , IconExamples.view "Humans"
-            [ deprecatedIcon { icon = Icon.class, background = Colors.frost, alt = "Class" }
-            , deprecatedIcon { icon = Icon.leaderboard, background = Colors.frost, alt = "Leaderboard" }
-            , deprecatedIcon { icon = Icon.personBlue, background = Colors.frost, alt = "PersonBlue" }
-            ]
         , IconExamples.view "Social Media"
             [ deprecatedIcon { icon = Icon.facebook, background = Colors.frost, alt = "Facebook" }
             , deprecatedIcon { icon = Icon.twitter, background = Colors.frost, alt = "Twitter" }
@@ -73,18 +68,15 @@ example =
             , deprecatedIcon { icon = Icon.lock, background = Colors.frost, alt = "Lock" }
             ]
         , IconExamples.view "Time"
-            [ deprecatedIcon { icon = Icon.calendar, background = Colors.frost, alt = "Calendar" }
-            , deprecatedIcon { icon = Icon.clock, background = Colors.frost, alt = "Clock" }
+            [ deprecatedIcon { icon = Icon.clock, background = Colors.frost, alt = "Clock" }
             ]
         , IconExamples.view "Uncategorized (SVGs)"
             [ deprecatedIcon { icon = Icon.activity, background = Colors.frost, alt = "Activity" }
             , deprecatedIcon { icon = Icon.compassSvg, background = Colors.frost, alt = "CompassSvg" }
-            , deprecatedIcon { icon = Icon.document, background = Colors.frost, alt = "Document" }
             , deprecatedIcon { icon = Icon.flipper, background = Colors.frost, alt = "Flipper" }
             , deprecatedIcon { icon = Icon.footsteps, background = Colors.frost, alt = "Footsteps" }
             , deprecatedIcon { icon = Icon.pen, background = Colors.frost, alt = "Pen" }
             , deprecatedIcon { icon = Icon.newspaper, background = Colors.frost, alt = "Newspaper" }
-            , deprecatedIcon { icon = Icon.sort, background = Colors.frost, alt = "Sort" }
             , deprecatedIcon { icon = Icon.speedometer, background = Colors.frost, alt = "Speedometer" }
             , deprecatedIcon { icon = Icon.skip, background = Colors.frost, alt = "Skip" }
             , deprecatedIcon { icon = Icon.equalitySign, background = Colors.frost, alt = "EqualitySign" }
