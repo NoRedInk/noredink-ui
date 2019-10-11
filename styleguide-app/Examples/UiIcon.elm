@@ -20,17 +20,28 @@ example =
     { name = "Nri.Ui.UiIcon.V1"
     , category = Icons
     , content =
-        [ (IconExamples.view "Actions" << List.map (Tuple.mapSecond Svg.toHtml))
-            [ ( "unarchive", UiIcon.unarchive )
-            , ( "share", UiIcon.share )
-            , ( "seeMore", UiIcon.seeMore )
-            , ( "preview", UiIcon.preview )
-            , ( "performance", UiIcon.performance )
+        [ (IconExamples.view "Interface" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "seeMore", UiIcon.seeMore )
             , ( "openClose", UiIcon.openClose )
             , ( "download", UiIcon.download )
+            , ( "sort", UiIcon.sort )
             ]
-        , (IconExamples.view "Edit" << List.map (Tuple.mapSecond Svg.toHtml))
-            [ ( "edit", UiIcon.edit )
+        , (IconExamples.view "Actions" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "unarchive", UiIcon.unarchive )
+            , ( "share", UiIcon.share )
+            , ( "preview", UiIcon.preview )
+            , ( "edit", UiIcon.edit )
+            ]
+        , (IconExamples.view "Class" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "class", UiIcon.class )
+            , ( "leaderboard", UiIcon.leaderboard )
+            , ( "performance", UiIcon.performance )
+            ]
+        , (IconExamples.view "Time" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "calendar", UiIcon.calendar )
+            ]
+        , (IconExamples.view "Other" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "document", UiIcon.document )
             ]
         ]
     }
