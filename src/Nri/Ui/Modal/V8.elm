@@ -427,7 +427,7 @@ closeButton wrapMsg focusableElementAttrs =
         -- make the hitspace extend all the way to the corner
         , Css.width (Css.px 40)
         , Css.height (Css.px 40)
-        , Css.padding4 (Css.px 20) (Css.px 20) Css.zero Css.zero
+        , Css.padding4 (Css.px 20) (Css.px 20) (Css.px 2) Css.zero
 
         -- apply button styles
         , Css.borderWidth Css.zero
