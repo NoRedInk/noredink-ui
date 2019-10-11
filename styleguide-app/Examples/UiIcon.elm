@@ -26,15 +26,12 @@ example =
             , ( "download", UiIcon.download )
             , ( "sort", UiIcon.sort )
             , ( "gear", UiIcon.gear )
+            , ( "sortArrow", UiIcon.sortArrow )
             ]
         , (IconExamples.view "Actions" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "unarchive", UiIcon.unarchive )
             , ( "share", UiIcon.share )
             , ( "preview", UiIcon.preview )
-            ]
-        , (IconExamples.view "Writing Utensils" << List.map (Tuple.mapSecond Svg.toHtml))
-            [ ( "edit", UiIcon.edit )
-            , ( "pen", UiIcon.pen )
             ]
         , (IconExamples.view "Class" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "class", UiIcon.class )
@@ -44,8 +41,20 @@ example =
         , (IconExamples.view "Time" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "calendar", UiIcon.calendar )
             ]
-        , (IconExamples.view "Other" << List.map (Tuple.mapSecond Svg.toHtml))
+        , (IconExamples.view "Writing Utensils" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "edit", UiIcon.edit )
+            , ( "pen", UiIcon.pen )
+            ]
+        , (IconExamples.view "Writing" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "document", UiIcon.document )
+            , ( "newspaper", UiIcon.newspaper )
+            ]
+        , (IconExamples.view "Sticky things" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "arrowDown", UiIcon.arrowDown )
+            , ( "checkmark", UiIcon.checkmark )
+            , ( "x", UiIcon.x )
+            , ( "attention", UiIcon.attention )
+            , ( "exclamation", UiIcon.exclamation )
             ]
         ]
     }

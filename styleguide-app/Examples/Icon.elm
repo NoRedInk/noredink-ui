@@ -44,20 +44,6 @@ example =
             , deprecatedIcon { icon = Icon.twitter, background = Colors.frost, alt = "Twitter" }
             , deprecatedIcon { icon = Icon.clever, background = Colors.frost, alt = "Clever" }
             ]
-        , IconExamples.view "Arrows and Carets"
-            [ deprecatedIcon { icon = Icon.arrowDown, background = Colors.frost, alt = "ArrowDown" }
-            , deprecatedIcon { icon = Icon.sortArrow, background = Colors.frost, alt = "SortArrow" }
-            ]
-        , IconExamples.view "Checkmarks"
-            [ deprecatedIcon { icon = Icon.checkMarkSvg, background = Colors.frost, alt = "CheckMarkSvg" }
-            ]
-        , IconExamples.view "Xs"
-            [ deprecatedIcon { icon = Icon.xSvg, background = Colors.frost, alt = "XSvg" }
-            ]
-        , IconExamples.view "Bangs"
-            [ deprecatedIcon { icon = Icon.exclamation, background = Colors.frost, alt = "Exclamation" }
-            , deprecatedIcon { icon = Icon.attention, background = Colors.blue, alt = "Attention" }
-            ]
         , IconExamples.view "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.bulb, background = Colors.frost, alt = "Bulb" }
             , deprecatedIcon { icon = Icon.lightBulb, background = Colors.frost, alt = "LightBulb" }

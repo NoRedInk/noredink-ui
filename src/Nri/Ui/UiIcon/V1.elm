@@ -1,31 +1,25 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper
+    ( seeMore, openClose, download, sort, gear, flipper, sortArrow
     , unarchive, share, preview
-    , edit, pen
     , class, leaderboard, performance
     , calendar, clock
+    , edit, pen
     , document, newspaper
+    , arrowDown
+    , checkmark, x
+    , attention, exclamation
     )
 
 {-|
 
 
-### Interface
+### Interface and actions
 
-@docs seeMore, openClose, download, sort, gear, flipper
-
-
-### Actions
-
+@docs seeMore, openClose, download, sort, gear, flipper, sortArrow
 @docs unarchive, share, preview
 
 
-### Writing utensils
-
-@docs edit, pen
-
-
-### Class
+### Humans & class
 
 @docs class, leaderboard, performance
 
@@ -35,9 +29,17 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 
 
-### Other
+### Writing utensils and docs
 
+@docs edit, pen
 @docs document, newspaper
+
+
+### Sticky things
+
+@docs arrowDown
+@docs checkmark, x
+@docs attention, exclamation
 
     import Css
     import Html.Styled exposing (..)
@@ -377,5 +379,101 @@ pen =
         , Attributes.viewBox "0 0 63 63"
         ]
         [ Svg.path [ Attributes.d "M39.8,0L31,13.8l17.6,17.6l13.8-8.8L39.8,0z M27.9,16.4l-17.1,7L0,59.6l17.5-17.5 c-0.7-1.8-0.3-3.9,1.1-5.3c2-2,5.1-2,7.1,0s2,5.1,0,7.1c-1.4,1.4-3.6,1.8-5.3,1.1L2.8,62.4l36.3-10.8l7-17.1L27.9,16.4z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+arrowDown : Nri.Ui.Svg.V1.Svg
+arrowDown =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 15"
+        ]
+        [ Svg.path
+            [ Attributes.transform "rotate(270) translate(-20)"
+            , Attributes.fillRule "evenodd"
+            , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+sortArrow : Nri.Ui.Svg.V1.Svg
+sortArrow =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 8 6"
+        ]
+        [ Svg.polygon [ Attributes.points "0 6 4 0 8 6 0 6" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checkmark : Nri.Ui.Svg.V1.Svg
+checkmark =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 21.7 17.1"
+        ]
+        [ Svg.path [ Attributes.d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+x : Nri.Ui.Svg.V1.Svg
+x =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 25"
+        ]
+        [ Svg.path [ Attributes.d "M1.067 6.015c-1.423-1.422-1.423-3.526 0-4.948 1.422-1.423 3.526-1.423 4.948 0l6.371 6.37 6.371-6.37c1.422-1.423 3.783-1.423 5.176 0 1.423 1.422 1.423 3.782 0 5.176l-6.37 6.37 6.37 6.372c1.423 1.422 1.423 3.526 0 4.948-1.422 1.423-3.526 1.423-4.948 0l-6.371-6.37-6.371 6.37c-1.422 1.423-3.783 1.423-5.176 0-1.423-1.422-1.423-3.782 0-5.176l6.37-6.143-6.37-6.599z" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+exclamation : Nri.Ui.Svg.V1.Svg
+exclamation =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 15 15"
+        ]
+        [ Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M15,7.5 C15,3.35786438 11.6421356,0 7.5,0 C3.35786438,0 0,3.35786438 0,7.5 C0,11.6421357 3.35786438,15 7.5,15 C11.6421356,15 15,11.6421357 15,7.5 Z M7.488,3.00005693 C6.6910533,2.99332411 6.03236555,3.58464547 6,4.33587376 C6,4.65284725 6.66,8.34332427 6.66,8.34332427 C6.73077084,8.72726384 7.08695202,9.00567371 7.5,8.9999122 L7.536,8.9999122 C7.94904798,9.00567371 8.30522916,8.72726384 8.376,8.34332427 C8.44677084,7.9593847 9,4.65850749 9,4.33587376 C8.96812494,3.59558162 8.32732494,3.00848187 7.542,3.00005693 L7.488,3.00005693 Z M7.5,12 C8.05228477,12 8.5,11.5522847 8.5,11 C8.5,10.4477153 8.05228477,10 7.5,10 C6.94771523,10 6.5,10.4477153 6.5,11 C6.5,11.5522847 6.94771523,12 7.5,12 L7.5,12 Z" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+attention : Nri.Ui.Svg.V1.Svg
+attention =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 5.05 15.43"
+        ]
+        [ Svg.ellipse
+            [ Attributes.cx "2.52"
+            , Attributes.cy "13.71"
+            , Attributes.rx "1.76"
+            , Attributes.ry "1.71"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M2.57,0H2.48A2.46,2.46,0,0,0,0,2.36c0,.56,1.1,7.08,1.1,7.08a1.4,1.4,0,0,0,1.4,1.16h.06a1.4,1.4,0,0,0,1.4-1.16S5,2.93,5,2.36A2.46,2.46,0,0,0,2.57,0Z"
+            ]
+            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
