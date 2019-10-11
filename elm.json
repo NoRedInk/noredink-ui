@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "7.4.1",
+    "version": "7.5.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Alert.V2",
@@ -105,7 +105,7 @@
         "wernerdegroot/listzipper": "3.1.1 <= v < 5.0.0"
     },
     "test-dependencies": {
-        "elm-explorations/test": "1.2.0 <= v < 2.0.0",
-        "avh4/elm-program-test": "3.1.0 <= v < 4.0.0"
+        "avh4/elm-program-test": "3.1.0 <= v < 4.0.0",
+        "elm-explorations/test": "1.2.0 <= v < 2.0.0"
     }
 }
