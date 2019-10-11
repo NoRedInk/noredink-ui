@@ -295,9 +295,9 @@ view theme config attributes model =
 {-| -}
 viewContent : List (Html msg) -> Bool -> Html msg
 viewContent children visibleTitle =
-    div []
-        [ viewContent_
-            (Css.px
+    let
+        extraHeight =
+            Css.px
                 (180
                     -- footer height
                     + (if visibleTitle then
@@ -310,8 +310,18 @@ viewContent children visibleTitle =
                     + 100
                  -- desired surrounding whitespace
                 )
-            )
-            (Transparent.customOpacity 0.15)
+    in
+    div []
+        [ Nri.Ui.styled div
+            "modal-content"
+            [ Css.overflowY Css.auto
+            , Css.minHeight (Css.px 150)
+            , Css.padding2 (Css.px 10) (Css.px 40)
+            , Css.width (Css.pct 100)
+            , Css.boxSizing Css.borderBox
+            , shadow (Transparent.customOpacity 0.15)
+            ]
+            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
             children
         ]
 
@@ -319,15 +329,9 @@ viewContent children visibleTitle =
 {-| -}
 viewFooterlessContent : List (Html msg) -> Bool -> Html msg
 viewFooterlessContent children visibleTitle =
-    div
-        [ css
-            [ Css.borderBottomLeftRadius (Css.px 20)
-            , Css.borderBottomRightRadius (Css.px 20)
-            , Css.overflowY Css.hidden
-            ]
-        ]
-        [ viewContent_
-            (Css.px
+    let
+        extraHeight =
+            Css.px
                 (0
                     -- footer height
                     + (if visibleTitle then
@@ -340,25 +344,26 @@ viewFooterlessContent children visibleTitle =
                     + 100
                  -- desired surrounding whitespace
                 )
-            )
-            (Transparent.customOpacity 0.4)
+    in
+    div
+        [ css
+            [ Css.borderBottomLeftRadius (Css.px 20)
+            , Css.borderBottomRightRadius (Css.px 20)
+            , Css.overflowY Css.hidden
+            ]
+        ]
+        [ Nri.Ui.styled div
+            "footerless-modal-content"
+            [ Css.overflowY Css.auto
+            , Css.minHeight (Css.px 150)
+            , Css.padding2 (Css.px 10) (Css.px 40)
+            , Css.width (Css.pct 100)
+            , Css.boxSizing Css.borderBox
+            , shadow (Transparent.customOpacity 0.4)
+            ]
+            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
             children
         ]
-
-
-viewContent_ : Css.Px -> Transparent.Opacity -> List (Html msg) -> Html msg
-viewContent_ extraHeight opacity children =
-    Nri.Ui.styled div
-        "modal-content"
-        [ Css.overflowY Css.auto
-        , Css.minHeight (Css.px 150)
-        , Css.padding2 (Css.px 10) (Css.px 40)
-        , Css.width (Css.pct 100)
-        , Css.boxSizing Css.borderBox
-        , shadow opacity
-        ]
-        [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
-        children
 
 
 shadow : Transparent.Opacity -> Css.Style
