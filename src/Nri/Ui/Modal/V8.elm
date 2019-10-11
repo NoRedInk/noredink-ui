@@ -27,13 +27,14 @@ module Nri.Ui.Modal.V8 exposing
     view state =
         Modal.info
             { title = "Modal Header"
+            , visibleTitle = True
             , wrapMsg = ModalMsg
             }
             [ Modal.visibleTitle
             , Modal.onlyFocusableElementView
-                (\{ onlyFocusableElement } ->
+                (\{ onlyFocusableElement } visibleTitle ->
                     div []
-                        [ Modal.viewContent [ text "Content goes here!" ]
+                        [ Modal.viewContent [ text "Content goes here!" ] visibleTitle
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ Button.primary
