@@ -70,7 +70,6 @@ module Nri.Ui.Modal.V8 exposing
 ### Modals
 
 @docs info, warning
-@docs view
 
 
 ### View containers
@@ -248,7 +247,6 @@ view theme config attributes model =
          , Modal.custom
             [ Css.width (Css.px 600)
             , Css.margin2 (Css.px 50) Css.auto
-            , Css.paddingTop (Css.px 40)
             , Css.borderRadius (Css.px 20)
             , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
             , Css.backgroundColor Colors.white
@@ -257,6 +255,7 @@ view theme config attributes model =
             Modal.titleStyles
                 [ Fonts.baseFont
                 , Css.fontWeight (Css.int 700)
+                , Css.paddingTop (Css.px 40)
                 , Css.paddingBottom (Css.px 20)
                 , Css.margin Css.zero
                 , Css.fontSize (Css.px 20)
@@ -311,7 +310,19 @@ viewContent children visibleTitle =
                  -- desired surrounding whitespace
                 )
     in
-    div []
+    div
+        [ css
+            [ if visibleTitle then
+                Css.batch []
+
+              else
+                Css.batch
+                    [ Css.borderTopLeftRadius (Css.px 20)
+                    , Css.borderTopRightRadius (Css.px 20)
+                    , Css.overflowY Css.hidden
+                    ]
+            ]
+        ]
         [ Nri.Ui.styled div
             "modal-content"
             [ Css.overflowY Css.auto
@@ -320,7 +331,11 @@ viewContent children visibleTitle =
             , Css.boxSizing Css.borderBox
             , Css.paddingLeft (Css.px 40)
             , Css.paddingRight (Css.px 40)
-            , Css.paddingTop (Css.px 10)
+            , if visibleTitle then
+                Css.paddingTop Css.zero
+
+              else
+                Css.paddingTop (Css.px 40)
             , shadow (Transparent.customOpacity 0.15) (Css.px 16)
             ]
             [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
@@ -352,6 +367,15 @@ viewFooterlessContent children visibleTitle =
             [ Css.borderBottomLeftRadius (Css.px 20)
             , Css.borderBottomRightRadius (Css.px 20)
             , Css.overflowY Css.hidden
+            , if visibleTitle then
+                Css.batch []
+
+              else
+                Css.batch
+                    [ Css.borderTopLeftRadius (Css.px 20)
+                    , Css.borderTopRightRadius (Css.px 20)
+                    , Css.overflowY Css.hidden
+                    ]
             ]
         ]
         [ Nri.Ui.styled div
@@ -362,6 +386,11 @@ viewFooterlessContent children visibleTitle =
             , Css.boxSizing Css.borderBox
             , Css.paddingLeft (Css.px 40)
             , Css.paddingRight (Css.px 40)
+            , if visibleTitle then
+                Css.paddingTop Css.zero
+
+              else
+                Css.paddingTop (Css.px 40)
             , shadow (Transparent.customOpacity 0.4) (Css.px 30)
             ]
             [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
