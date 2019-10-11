@@ -31,7 +31,10 @@ example =
             [ ( "unarchive", UiIcon.unarchive )
             , ( "share", UiIcon.share )
             , ( "preview", UiIcon.preview )
-            , ( "edit", UiIcon.edit )
+            ]
+        , (IconExamples.view "Writing Utensils" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "edit", UiIcon.edit )
+            , ( "pen", UiIcon.pen )
             ]
         , (IconExamples.view "Class" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "class", UiIcon.class )

@@ -1,9 +1,10 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear
-    , unarchive, share, preview, edit
+    ( seeMore, openClose, download, sort, gear, flipper
+    , unarchive, share, preview
+    , edit, pen
     , class, leaderboard, performance
-    , calendar
-    , document
+    , calendar, clock
+    , document, newspaper
     )
 
 {-|
@@ -11,12 +12,17 @@ module Nri.Ui.UiIcon.V1 exposing
 
 ### Interface
 
-@docs seeMore, openClose, download, sort, gear
+@docs seeMore, openClose, download, sort, gear, flipper
 
 
 ### Actions
 
-@docs unarchive, share, preview, edit
+@docs unarchive, share, preview
+
+
+### Writing utensils
+
+@docs edit, pen
 
 
 ### Class
@@ -26,12 +32,12 @@ module Nri.Ui.UiIcon.V1 exposing
 
 ### Time
 
-@docs calendar
+@docs calendar, clock
 
 
 ### Other
 
-@docs document
+@docs document, newspaper
 
     import Css
     import Html.Styled exposing (..)
@@ -312,4 +318,64 @@ class =
         , Attributes.viewBox "0 0 21 21"
         ]
         [ Svg.path [ Attributes.d "M2.66 20.576v-7.1l.002-.063V10.878l-.847 1.65c-.25.487-.834.689-1.304.447-.47-.24-.648-.833-.398-1.32l1.66-3.236c.03-.056.062-.109.099-.156.149-.432.56-.744 1.044-.744h2.95l-1.487 2.896c-.485.949-.16 2.151.823 2.657a1.92 1.92 0 0 0 1.85-.053l.037-.024v7.581H5.153v-6.095H4.65v6.095H2.66zm5.32 0v-7.743l.001-.072V9.968l-.933 1.817c-.276.54-.92.76-1.439.495-.518-.266-.713-.92-.438-1.457l1.83-3.566c.032-.062.068-.119.109-.172.164-.477.618-.82 1.15-.82h4.385c.534 0 .987.343 1.15.82.04.053.077.11.11.172l1.829 3.566c.277.538.08 1.191-.438 1.457-.519.265-1.162.044-1.438-.495l-.933-1.816v2.751c0 .037-.001.071-.005.106v7.75h-2.207v-6.638h-.527v6.638H7.98zm5.831 0V12.99l.043.03a1.92 1.92 0 0 0 1.85.052c.984-.506 1.308-1.708.822-2.657L15.04 7.52h2.949c.484 0 .895.312 1.044.744.036.049.07.1.099.156l1.66 3.235c.25.488.072 1.08-.398 1.321-.47.242-1.054.04-1.305-.448l-.846-1.649v2.497c0 .032-.001.064-.004.097V20.577h-1.99V14.48h-.502v6.095H13.81zM10.491 1a2.182 2.182 0 0 0 .001 4.363A2.182 2.182 0 0 0 10.494 1h-.004zM2.961 4.722a1.978 1.978 0 1 1 3.957 0 1.978 1.978 0 0 1-3.957 0zm11.096 0a1.978 1.978 0 1 1 3.957 0 1.978 1.978 0 0 1-3.957 0z" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+clock : Nri.Ui.Svg.V1.Svg
+clock =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 15 15"
+        ]
+        [ Svg.path [ Attributes.d "M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z" ] []
+        , Svg.path [ Attributes.d "M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z" ] []
+        , Svg.path [ Attributes.d "M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+flipper : Nri.Ui.Svg.V1.Svg
+flipper =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 21 18"
+        ]
+        [ Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M6 12.59h8.59V4H6v8.59zm.955-.954h6.681V4.955H6.955v6.681zM6.682 16.204a.477.477 0 1 1 0 .955H5.25a3.345 3.345 0 0 1-3.341-3.34v-2.19L.815 12.724a.477.477 0 1 1-.675-.675l1.909-1.91a.477.477 0 0 1 .675 0l1.909 1.91a.477.477 0 1 1-.675.675l-1.094-1.095v2.19a2.388 2.388 0 0 0 2.386 2.385h1.432zM20.86 4.435a.477.477 0 0 0-.675 0L19.091 5.53V3.34A3.345 3.345 0 0 0 15.75 0h-1.432a.477.477 0 1 0 0 .955h1.432a2.388 2.388 0 0 1 2.386 2.386V5.53l-1.094-1.095a.477.477 0 1 0-.675.675l1.91 1.91a.475.475 0 0 0 .674 0l1.91-1.91a.477.477 0 0 0 0-.675" ] []
+        , Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M10 12h.716V4H10z" ] []
+        , Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M6.92 8.716h7.16V8H6.92z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+newspaper : Nri.Ui.Svg.V1.Svg
+newspaper =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 25"
+        ]
+        [ Svg.path [ Attributes.d "M20.9,0.5v21.6c0,1.3,1.1,2.4,2.4,2.4H2.4c-1.3,0-2.4-1.1-2.4-2.4V0.5H20.9z M17.6,3.9h-6.8v4.8h6.8V3.9z M8.1,3.9H3.4C3,3.9,2.7,4.2,2.7,4.6C2.7,5,3,5.3,3.4,5.3h4.7c0.4,0,0.7-0.3,0.7-0.7C8.8,4.2,8.5,3.9,8.1,3.9L8.1,3.9z M25,8.7v13.4 c0,1-0.7,1.7-1.7,1.7c-0.9,0-1.7-0.8-1.7-1.7V8.7H25z M8.1,7.4H3.4C3,7.4,2.7,7.7,2.7,8c0,0.4,0.3,0.7,0.7,0.7h4.7 c0.4,0,0.7-0.3,0.7-0.7C8.8,7.7,8.5,7.4,8.1,7.4L8.1,7.4z M17.6,11.5H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7h14.2 c0.4,0,0.7-0.3,0.7-0.7C18.2,11.8,17.9,11.5,17.6,11.5L17.6,11.5z M17.6,15.2H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7 h14.2c0.4,0,0.7-0.3,0.7-0.7C18.2,15.5,17.9,15.2,17.6,15.2L17.6,15.2z M17.6,19H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7 h14.2c0.4,0,0.7-0.3,0.7-0.7C18.2,19.3,17.9,19,17.6,19L17.6,19z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+pen : Nri.Ui.Svg.V1.Svg
+pen =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 63 63"
+        ]
+        [ Svg.path [ Attributes.d "M39.8,0L31,13.8l17.6,17.6l13.8-8.8L39.8,0z M27.9,16.4l-17.1,7L0,59.6l17.5-17.5 c-0.7-1.8-0.3-3.9,1.1-5.3c2-2,5.1-2,7.1,0s2,5.1,0,7.1c-1.4,1.4-3.6,1.8-5.3,1.1L2.8,62.4l36.3-10.8l7-17.1L27.9,16.4z" ] []
+        ]
         |> Nri.Ui.Svg.V1.fromHtml
