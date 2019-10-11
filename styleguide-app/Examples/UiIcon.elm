@@ -33,8 +33,9 @@ example =
             , ( "share", UiIcon.share )
             , ( "preview", UiIcon.preview )
             ]
-        , (IconExamples.view "Class" << List.map (Tuple.mapSecond Svg.toHtml))
-            [ ( "class", UiIcon.class )
+        , (IconExamples.view "Humans & Class" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "person", UiIcon.person )
+            , ( "class", UiIcon.class )
             , ( "leaderboard", UiIcon.leaderboard )
             , ( "performance", UiIcon.performance )
             ]
