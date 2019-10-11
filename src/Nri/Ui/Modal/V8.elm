@@ -316,10 +316,12 @@ viewContent children visibleTitle =
             "modal-content"
             [ Css.overflowY Css.auto
             , Css.minHeight (Css.px 150)
-            , Css.padding2 (Css.px 10) (Css.px 40)
             , Css.width (Css.pct 100)
             , Css.boxSizing Css.borderBox
-            , shadow (Transparent.customOpacity 0.15)
+            , Css.paddingLeft (Css.px 40)
+            , Css.paddingRight (Css.px 40)
+            , Css.paddingTop (Css.px 10)
+            , shadow (Transparent.customOpacity 0.15) (Css.px 16)
             ]
             [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
             children
@@ -356,18 +358,19 @@ viewFooterlessContent children visibleTitle =
             "footerless-modal-content"
             [ Css.overflowY Css.auto
             , Css.minHeight (Css.px 150)
-            , Css.padding2 (Css.px 10) (Css.px 40)
             , Css.width (Css.pct 100)
             , Css.boxSizing Css.borderBox
-            , shadow (Transparent.customOpacity 0.4)
+            , Css.paddingLeft (Css.px 40)
+            , Css.paddingRight (Css.px 40)
+            , shadow (Transparent.customOpacity 0.4) (Css.px 30)
             ]
             [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
             children
         ]
 
 
-shadow : Transparent.Opacity -> Css.Style
-shadow opacity =
+shadow : Transparent.Opacity -> Css.Px -> Css.Style
+shadow opacity bottomShadowHeight =
     let
         to =
             Transparent.fromRGBA { red = 0, green = 0, blue = 0, alpha = opacity }
@@ -385,7 +388,7 @@ shadow opacity =
           ]
             |> String.join "\n"
             |> Css.property "background"
-        , Css.backgroundSize2 (Css.pct 100) (Css.px 10)
+        , Css.backgroundSize2 (Css.pct 100) bottomShadowHeight
         , Css.backgroundRepeat Css.noRepeat
         ]
 
