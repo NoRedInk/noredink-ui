@@ -53,7 +53,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
-import EventExtras.Styled as Events
+import EventExtras.Styled as EventExtras
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Nri.Ui
@@ -247,7 +247,7 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
                  ]
                     ++ buttonStyleOverrides
                 )
-             , Events.onClick (onTrigger True)
+             , EventExtras.onClickStopPropagation (onTrigger True)
              , Events.onBlur (onTrigger False)
              ]
                 ++ extraButtonAttrs
@@ -392,7 +392,7 @@ eventsForTrigger : Trigger -> (Bool -> msg) -> List (Attribute msg)
 eventsForTrigger trigger msg =
     case trigger of
         OnClick ->
-            [ Events.onClick (msg True)
+            [ EventExtras.onClickStopPropagation (msg True)
             , Events.onFocus (msg True)
             , Events.onBlur (msg False)
             ]
@@ -477,7 +477,7 @@ viewCloseTooltipOverlay msg =
             , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
             , Css.backgroundColor Css.transparent
             ]
-        , Events.onClick msg
+        , EventExtras.onClickStopPropagation msg
         ]
         []
 
