@@ -500,12 +500,6 @@ buttonStyleOverrides =
     , Css.color Css.inherit
     , Css.margin Css.zero
     , Css.padding Css.zero
-    , Css.focus
-        [ -- TODO: Removing focus outline is poor accessibility practice
-          -- Consider fixing this by making focus outlines appear site-wide only on keyboard
-          -- navigation to meet design's needs -- hackday project, perhaps?
-          Css.outline Css.none
-        ]
     ]
 
 
