@@ -41,6 +41,7 @@ example =
             ]
         , (IconExamples.view "Time" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "calendar", UiIcon.calendar )
+            , ( "clock", UiIcon.clock )
             ]
         , (IconExamples.view "Writing Utensils" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "edit", UiIcon.edit )
