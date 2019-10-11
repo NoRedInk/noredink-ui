@@ -27,6 +27,7 @@ import Examples.Text
 import Examples.Text.Writing
 import Examples.TextArea as TextAreaExample
 import Examples.TextInput as TextInputExample
+import Examples.Tooltip
 import Examples.UiIcon
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
@@ -51,6 +52,7 @@ type alias ModuleStates =
     , slideExampleState : Examples.Slide.State
     , sortableTableState : Examples.SortableTable.State
     , tabsExampleState : Examples.Tabs.Tab
+    , tooltipExampleState : Examples.Tooltip.State
     }
 
 
@@ -72,6 +74,7 @@ init =
     , slideExampleState = Examples.Slide.init
     , sortableTableState = Examples.SortableTable.init
     , tabsExampleState = Examples.Tabs.First
+    , tooltipExampleState = Examples.Tooltip.init
     }
 
 
@@ -93,6 +96,7 @@ type Msg
     | SlideExampleMsg Examples.Slide.Msg
     | SortableTableMsg Examples.SortableTable.Msg
     | TabsExampleMsg Examples.Tabs.Tab
+    | TooltipExampleMsg Examples.Tooltip.Msg
     | NoOp
 
 
@@ -243,6 +247,17 @@ update outsideMsg moduleStates =
             , Cmd.none
             )
 
+        TooltipExampleMsg msg ->
+            let
+                newState =
+                    Examples.Tooltip.update msg moduleStates.tooltipExampleState
+            in
+            ( { moduleStates
+                | tooltipExampleState = newState
+              }
+            , Cmd.none
+            )
+
         NoOp ->
             ( moduleStates, Cmd.none )
 
@@ -295,6 +310,7 @@ nriThemedModules model =
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
     , Examples.SortableTable.example SortableTableMsg model.sortableTableState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
+    , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
     ]
 
 
