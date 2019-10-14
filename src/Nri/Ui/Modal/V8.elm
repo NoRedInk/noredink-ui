@@ -102,6 +102,7 @@ import Accessibility.Styled.Widget as Widget
 import Color
 import Color.Transparent as Transparent
 import Css
+import Css.Transitions
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui
@@ -252,7 +253,7 @@ view theme config attributes model =
             [ Css.width (Css.px 600)
             , Css.margin2 (Css.px 50) Css.auto
             , Css.borderRadius (Css.px 20)
-            , Css.property "box-shadow" "0 1px 10px 0 rgba(0, 0, 0, 0.35)"
+            , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
             , Css.backgroundColor Colors.white
             ]
          , if config.visibleTitle then
@@ -269,14 +270,15 @@ view theme config attributes model =
 
            else
             Modal.titleStyles
-                [ Css.property "property" "clip rect(1px, 1px, 1px, 1px)"
-                , Css.property "position" "absolute"
-                , Css.property "height" "1px"
-                , Css.property "width" "1px"
-                , Css.property "overflow" "hidden"
-                , Css.property "margin" "-1px"
-                , Css.property "padding" "0"
-                , Css.property "border" "0"
+                [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+                  Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+                , Css.position Css.absolute
+                , Css.height (Css.px 1)
+                , Css.width (Css.px 1)
+                , Css.overflow Css.hidden
+                , Css.margin (Css.px -1)
+                , Css.padding Css.zero
+                , Css.border Css.zero
                 ]
          ]
             ++ List.map
@@ -447,7 +449,7 @@ closeButton wrapMsg focusableElementAttrs =
         , Css.cursor Css.pointer
         , Css.color Colors.azure
         , Css.hover [ Css.color Colors.azureDark ]
-        , Css.property "transition" "color 0.1s"
+        , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
         ]
         (Widget.label "Close modal"
             :: Attributes.map wrapMsg (onClick Modal.close)
