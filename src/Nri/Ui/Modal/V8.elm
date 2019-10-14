@@ -21,7 +21,7 @@ module Nri.Ui.Modal.V8 exposing
 
     type Msg
         = ModalMsg Modal.Msg
-        | DoSomthing
+        | DoSomething
 
     view : Modal.Model -> Html Msg
     view state =
@@ -38,7 +38,7 @@ module Nri.Ui.Modal.V8 exposing
                         , Modal.viewFooter
                             [ Button.button "Continue"
                                 [ Button.primary
-                                , Button.onClick DoSomthing
+                                , Button.onClick DoSomething
                                 , Button.custom onlyFocusableElement
                                 ]
                             , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
