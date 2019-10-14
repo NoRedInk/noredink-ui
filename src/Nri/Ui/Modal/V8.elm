@@ -3,7 +3,7 @@ module Nri.Ui.Modal.V8 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , viewContent, viewFooterlessContent, viewFooter
+    , viewContent, viewFooterlessContent
     , Attribute
     , multipleFocusableElementView, onlyFocusableElementView
     , autofocusOnLastElement
@@ -34,15 +34,18 @@ module Nri.Ui.Modal.V8 exposing
             , Modal.onlyFocusableElementView
                 (\{ onlyFocusableElement } visibleTitle ->
                     div []
-                        [ Modal.viewContent [ text "Content goes here!" ] visibleTitle
-                        , Modal.viewFooter
-                            [ Button.button "Continue"
-                                [ Button.primary
-                                , Button.onClick DoSomething
-                                , Button.custom onlyFocusableElement
+                        [ Modal.viewContent {
+                            , content = [ text "Content goes here!" ]
+                            , footer =
+                                [ Button.button "Continue"
+                                    [ Button.primary
+                                    , Button.onClick DoSomething
+                                    , Button.custom onlyFocusableElement
+                                    ]
+                                , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
                                 ]
-                            , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
-                            ]
+                            }
+                            visibleTitle
                         ]
                 )
             ]
@@ -75,7 +78,7 @@ module Nri.Ui.Modal.V8 exposing
 
 ### View containers
 
-@docs viewContent, viewFooterlessContent, viewFooter
+@docs viewContent, viewFooterlessContent
 
 
 ### Attributes
@@ -293,8 +296,17 @@ view theme config attributes model =
 
 
 {-| -}
-viewContent : List (Html msg) -> Bool -> Html msg
-viewContent children visibleTitle =
+viewContent : { content : List (Html msg), footer : List (Html msg) } -> Bool -> Html msg
+viewContent { content, footer } visibleTitle =
+    div []
+        [ viewInnerContent content visibleTitle
+        , viewFooter footer
+        ]
+
+
+{-| -}
+viewInnerContent : List (Html msg) -> Bool -> Html msg
+viewInnerContent children visibleTitle =
     let
         extraHeight =
             Css.px
