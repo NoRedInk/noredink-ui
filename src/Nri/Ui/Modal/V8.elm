@@ -3,7 +3,7 @@ module Nri.Ui.Modal.V8 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , viewContent, viewFooterlessContent
+    , viewContent
     , Attribute
     , multipleFocusableElementView, onlyFocusableElementView
     , autofocusOnLastElement
@@ -78,7 +78,7 @@ module Nri.Ui.Modal.V8 exposing
 
 ### View containers
 
-@docs viewContent, viewFooterlessContent
+@docs viewContent
 
 
 ### Attributes
@@ -299,42 +299,51 @@ view theme config attributes model =
 viewContent : { content : List (Html msg), footer : List (Html msg) } -> Bool -> Html msg
 viewContent { content, footer } visibleTitle =
     div []
-        [ viewInnerContent content visibleTitle
+        [ viewInnerContent content visibleTitle (not (List.isEmpty footer))
         , viewFooter footer
         ]
 
 
 {-| -}
-viewInnerContent : List (Html msg) -> Bool -> Html msg
-viewInnerContent children visibleTitle =
+viewInnerContent : List (Html msg) -> Bool -> Bool -> Html msg
+viewInnerContent children visibleTitle visibleFooter =
     let
-        extraHeight =
-            Css.px
-                (180
-                    -- footer height
-                    + (if visibleTitle then
-                        90
+        titleHeight =
+            if visibleTitle then
+                45
 
-                       else
-                        45
-                       -- title height
-                      )
-                    + 100
-                 -- desired surrounding whitespace
-                )
+            else
+                0
+
+        footerHeight =
+            if visibleFooter then
+                180
+
+            else
+                0
+
+        modalTitleStyles =
+            if visibleTitle then
+                []
+
+            else
+                [ Css.borderTopLeftRadius (Css.px 20)
+                , Css.borderTopRightRadius (Css.px 20)
+                , Css.overflowY Css.hidden
+                ]
+
+        modalFooterStyles =
+            if visibleFooter then
+                []
+
+            else
+                [ Css.borderBottomLeftRadius (Css.px 20)
+                , Css.borderBottomRightRadius (Css.px 20)
+                , Css.overflowY Css.hidden
+                ]
     in
     div
-        [ css
-            [ if visibleTitle then
-                Css.batch []
-
-              else
-                Css.batch
-                    [ Css.borderTopLeftRadius (Css.px 20)
-                    , Css.borderTopRightRadius (Css.px 20)
-                    , Css.overflowY Css.hidden
-                    ]
-            ]
+        [ css (modalTitleStyles ++ modalFooterStyles)
         ]
         [ Nri.Ui.styled div
             "modal-content"
@@ -349,64 +358,20 @@ viewInnerContent children visibleTitle =
 
               else
                 Css.paddingTop (Css.px 40)
-            , shadow (Transparent.customOpacity 0.15) (Css.px 16)
-            ]
-            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
-            children
-        ]
-
-
-{-| -}
-viewFooterlessContent : List (Html msg) -> Bool -> Html msg
-viewFooterlessContent children visibleTitle =
-    let
-        extraHeight =
-            Css.px
-                (0
-                    -- footer height
-                    + (if visibleTitle then
-                        90
-
-                       else
-                        45
-                       -- title height
-                      )
-                    + 100
-                 -- desired surrounding whitespace
-                )
-    in
-    div
-        [ css
-            [ Css.borderBottomLeftRadius (Css.px 20)
-            , Css.borderBottomRightRadius (Css.px 20)
-            , Css.overflowY Css.hidden
-            , if visibleTitle then
-                Css.batch []
+            , if visibleFooter then
+                shadow (Transparent.customOpacity 0.15) (Css.px 16)
 
               else
-                Css.batch
-                    [ Css.borderTopLeftRadius (Css.px 20)
-                    , Css.borderTopRightRadius (Css.px 20)
-                    , Css.overflowY Css.hidden
-                    ]
+                shadow (Transparent.customOpacity 0.4) (Css.px 30)
             ]
-        ]
-        [ Nri.Ui.styled div
-            "footerless-modal-content"
-            [ Css.overflowY Css.auto
-            , Css.minHeight (Css.px 150)
-            , Css.width (Css.pct 100)
-            , Css.boxSizing Css.borderBox
-            , Css.paddingLeft (Css.px 40)
-            , Css.paddingRight (Css.px 40)
-            , if visibleTitle then
-                Css.paddingTop Css.zero
-
-              else
-                Css.paddingTop (Css.px 40)
-            , shadow (Transparent.customOpacity 0.4) (Css.px 30)
+            [ css
+                [ Css.maxHeight
+                    (Css.calc (Css.vh 100)
+                        Css.minus
+                        (Css.px (footerHeight + titleHeight + 145))
+                    )
+                ]
             ]
-            [ css [ Css.maxHeight (Css.calc (Css.vh 100) Css.minus extraHeight) ] ]
             children
         ]
 
@@ -437,19 +402,24 @@ shadow opacity bottomShadowHeight =
 
 {-| -}
 viewFooter : List (Html msg) -> Html msg
-viewFooter =
-    Nri.Ui.styled div
-        "modal-footer"
-        [ Css.alignItems Css.center
-        , Css.displayFlex
-        , Css.flexDirection Css.column
-        , Css.flexGrow (Css.int 2)
-        , Css.flexWrap Css.noWrap
-        , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-        , Css.paddingBottom (Css.px 40)
-        , Css.width (Css.pct 100)
-        ]
-        []
+viewFooter children =
+    if List.isEmpty children then
+        Html.text ""
+
+    else
+        Nri.Ui.styled div
+            "modal-footer"
+            [ Css.alignItems Css.center
+            , Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.flexGrow (Css.int 2)
+            , Css.flexWrap Css.noWrap
+            , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+            , Css.paddingBottom (Css.px 40)
+            , Css.width (Css.pct 100)
+            ]
+            []
+            children
 
 
 
