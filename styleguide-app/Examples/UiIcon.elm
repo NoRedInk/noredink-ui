@@ -58,8 +58,5 @@ example =
             , ( "attention", UiIcon.attention )
             , ( "exclamation", UiIcon.exclamation )
             ]
-        , (IconExamples.view "Settings" << List.map (Tuple.mapSecond Svg.toHtml))
-            [ ( "gear", UiIcon.gear )
-            ]
         ]
     }
