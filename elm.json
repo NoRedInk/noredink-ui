@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "7.4.1",
+    "version": "7.6.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Alert.V2",
@@ -86,14 +86,15 @@
         "Nri.Ui.TextInput.V3",
         "Nri.Ui.TextInput.V4",
         "Nri.Ui.TextInput.V5",
+        "Nri.Ui.Tooltip.V1",
         "Nri.Ui.UiIcon.V1"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {
         "elm/browser": "1.0.1 <= v < 2.0.0",
-        "elm/core": "1.0.0 <= v < 2.0.0",
+        "elm/core": "1.0.1 <= v < 2.0.0",
         "elm/html": "1.0.0 <= v < 2.0.0",
-        "elm/json": "1.0.0 <= v < 2.0.0",
+        "elm/json": "1.1.1 <= v < 2.0.0",
         "elm/regex": "1.0.0 <= v < 2.0.0",
         "elm/svg": "1.0.1 <= v < 2.0.0",
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
@@ -105,6 +106,7 @@
         "wernerdegroot/listzipper": "3.1.1 <= v < 5.0.0"
     },
     "test-dependencies": {
+        "avh4/elm-program-test": "3.1.0 <= v < 4.0.0",
         "elm-explorations/test": "1.2.0 <= v < 2.0.0"
     }
 }
