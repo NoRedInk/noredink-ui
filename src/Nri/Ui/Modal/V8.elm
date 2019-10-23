@@ -234,22 +234,22 @@ open =
 info :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Focusable msg)
+    -> Focusable msg
     -> Model
     -> Html msg
-info config optionalConfigs focusables model =
-    view Info config optionalConfigs focusables model
+info config optionalConfigs focusable model =
+    view Info config optionalConfigs focusable model
 
 
 {-| -}
 warning :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Focusable msg)
+    -> Focusable msg
     -> Model
     -> Html msg
-warning config optionalConfigs focusables model =
-    view Warning config optionalConfigs focusables model
+warning config optionalConfigs focusable model =
+    view Warning config optionalConfigs focusable model
 
 
 type Theme
@@ -305,10 +305,10 @@ view :
     Theme
     -> RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Focusable msg)
+    -> Focusable msg
     -> Model
     -> Html msg
-view theme requiredConfig optionalConfigs attributes model =
+view theme requiredConfig optionalConfigs (Focusable focusable) model =
     let
         config =
             makeConfig requiredConfig optionalConfigs
@@ -350,9 +350,7 @@ view theme requiredConfig optionalConfigs attributes model =
                 ]
          ]
             ++ modalAttributes optionalConfigs
-            ++ List.map
-                (\(Focusable f) -> f)
-                attributes
+            ++ [ focusable ]
         )
         model
         |> List.singleton
