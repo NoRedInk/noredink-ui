@@ -84,15 +84,9 @@ module Nri.Ui.Modal.V8 exposing
 @docs ViewFuncs
 
 
-### View containers
-
-@docs viewContent
-
-
 ### Focusable
 
 @docs Focusable
-
 @docs multipleFocusableElementView, onlyFocusableElementView
 
 
@@ -102,24 +96,16 @@ module Nri.Ui.Modal.V8 exposing
 @docs invisibleTitle
 @docs autofocusOnLastElement
 
-
-## X icon
-
-@docs closeButton
-
 -}
 
 import Accessibility.Modal.Copy as Modal
-import Accessibility.Style
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Widget as Widget
-import Color
 import Color.Transparent as Transparent
 import Css
 import Css.Transitions
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
-import Nri.Ui
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -430,31 +416,29 @@ viewInnerContent children visibleTitle visibleFooter =
     div
         [ css (modalTitleStyles ++ modalFooterStyles)
         ]
-        [ Nri.Ui.styled div
-            "modal-content"
-            [ Css.overflowY Css.auto
-            , Css.minHeight (Css.px 150)
-            , Css.width (Css.pct 100)
-            , Css.boxSizing Css.borderBox
-            , Css.paddingLeft (Css.px 40)
-            , Css.paddingRight (Css.px 40)
-            , if visibleTitle then
-                Css.paddingTop Css.zero
-
-              else
-                Css.paddingTop (Css.px 40)
-            , if visibleFooter then
-                shadow (Transparent.customOpacity 0.15) (Css.px 16)
-
-              else
-                shadow (Transparent.customOpacity 0.4) (Css.px 30)
-            ]
+        [ div
             [ css
-                [ Css.maxHeight
+                [ Css.overflowY Css.auto
+                , Css.minHeight (Css.px 150)
+                , Css.maxHeight
                     (Css.calc (Css.vh 100)
                         Css.minus
                         (Css.px (footerHeight + titleHeight + 145))
                     )
+                , Css.width (Css.pct 100)
+                , Css.boxSizing Css.borderBox
+                , Css.paddingLeft (Css.px 40)
+                , Css.paddingRight (Css.px 40)
+                , if visibleTitle then
+                    Css.paddingTop Css.zero
+
+                  else
+                    Css.paddingTop (Css.px 40)
+                , if visibleFooter then
+                    shadow (Transparent.customOpacity 0.15) (Css.px 16)
+
+                  else
+                    shadow (Transparent.customOpacity 0.4) (Css.px 30)
                 ]
             ]
             children
@@ -492,18 +476,18 @@ viewFooter children =
         Html.text ""
 
     else
-        Nri.Ui.styled div
-            "modal-footer"
-            [ Css.alignItems Css.center
-            , Css.displayFlex
-            , Css.flexDirection Css.column
-            , Css.flexGrow (Css.int 2)
-            , Css.flexWrap Css.noWrap
-            , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-            , Css.paddingBottom (Css.px 40)
-            , Css.width (Css.pct 100)
+        div
+            [ css
+                [ Css.alignItems Css.center
+                , Css.displayFlex
+                , Css.flexDirection Css.column
+                , Css.flexGrow (Css.int 2)
+                , Css.flexWrap Css.noWrap
+                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
+                , Css.paddingBottom (Css.px 40)
+                , Css.width (Css.pct 100)
+                ]
             ]
-            []
             children
 
 
@@ -514,28 +498,28 @@ viewFooter children =
 {-| -}
 closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
-    Nri.Ui.styled button
-        "close-button-container"
-        [ -- in the upper-right corner of the modal
-          Css.position Css.absolute
-        , Css.top Css.zero
-        , Css.right Css.zero
-
-        -- make the hitspace extend all the way to the corner
-        , Css.width (Css.px 40)
-        , Css.height (Css.px 40)
-        , Css.padding4 (Css.px 20) (Css.px 20) (Css.px 2) Css.zero
-
-        -- apply button styles
-        , Css.borderWidth Css.zero
-        , Css.backgroundColor Css.transparent
-        , Css.cursor Css.pointer
-        , Css.color Colors.azure
-        , Css.hover [ Css.color Colors.azureDark ]
-        , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
-        ]
+    button
         (Widget.label "Close modal"
             :: Attributes.map wrapMsg (onClick Modal.close)
+            :: css
+                [ -- in the upper-right corner of the modal
+                  Css.position Css.absolute
+                , Css.top Css.zero
+                , Css.right Css.zero
+
+                -- make the hitspace extend all the way to the corner
+                , Css.width (Css.px 40)
+                , Css.height (Css.px 40)
+                , Css.padding4 (Css.px 20) (Css.px 20) (Css.px 2) Css.zero
+
+                -- apply button styles
+                , Css.borderWidth Css.zero
+                , Css.backgroundColor Css.transparent
+                , Css.cursor Css.pointer
+                , Css.color Colors.azure
+                , Css.hover [ Css.color Colors.azureDark ]
+                , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
+                ]
             :: focusableElementAttrs
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
