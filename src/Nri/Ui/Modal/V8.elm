@@ -6,8 +6,9 @@ module Nri.Ui.Modal.V8 exposing
     , viewContent
     , Attribute
     , multipleFocusableElementView, onlyFocusableElementView
+    , OptionalConfig
+    , invisibleTitle
     , autofocusOnLastElement
-    , OptionalConfig, invisibleTitle
     , closeButton
     )
 
@@ -86,12 +87,13 @@ module Nri.Ui.Modal.V8 exposing
 @docs Attribute
 
 @docs multipleFocusableElementView, onlyFocusableElementView
-@docs autofocusOnLastElement
 
 
 ### Optional Config
 
-@docs OptionalConfig, invisibleTitle
+@docs OptionalConfig
+@docs invisibleTitle
+@docs autofocusOnLastElement
 
 
 ## X icon
@@ -127,6 +129,41 @@ type alias Model =
 -}
 type OptionalConfig msg
     = OptionalConfig (Config msg -> Config msg)
+    | Attribute (Modal.Attribute msg)
+
+
+configFuncs : List (OptionalConfig msg) -> List (Config msg -> Config msg)
+configFuncs configs =
+    List.filterMap
+        (\optionalConfig ->
+            case optionalConfig of
+                OptionalConfig f ->
+                    Just f
+
+                Attribute _ ->
+                    Nothing
+        )
+        configs
+
+
+modalAttributes : List (OptionalConfig msg) -> List (Modal.Attribute msg)
+modalAttributes configs =
+    List.filterMap
+        (\optionalConfig ->
+            case optionalConfig of
+                OptionalConfig _ ->
+                    Nothing
+
+                Attribute attrib ->
+                    Just attrib
+        )
+        configs
+
+
+{-| -}
+autofocusOnLastElement : OptionalConfig msg
+autofocusOnLastElement =
+    Attribute Modal.autofocusOnLastElement
 
 
 type alias Config msg =
@@ -149,10 +186,11 @@ invisibleTitle =
 
 makeConfig : RequiredConfig msg -> List (OptionalConfig msg) -> Config msg
 makeConfig { title, wrapMsg } optionalConfigs =
-    List.foldl
-        (\(OptionalConfig func) accum -> func accum)
-        (Config True title wrapMsg)
-        optionalConfigs
+    optionalConfigs
+        |> configFuncs
+        |> List.foldl
+            (\func accum -> func accum)
+            (Config True title wrapMsg)
 
 
 {-| -}
@@ -241,14 +279,7 @@ themeToTitleColor theme =
 
 {-| -}
 type Attribute msg
-    = Attribute (Modal.Attribute msg)
-    | WithTitleVisibility (Bool -> Modal.Attribute msg)
-
-
-{-| -}
-autofocusOnLastElement : Attribute msg
-autofocusOnLastElement =
-    Attribute Modal.autofocusOnLastElement
+    = WithTitleVisibility (Bool -> Modal.Attribute msg)
 
 
 {-| -}
@@ -319,15 +350,9 @@ view theme requiredConfig optionalConfigs attributes model =
                 , Css.border Css.zero
                 ]
          ]
+            ++ modalAttributes optionalConfigs
             ++ List.map
-                (\attribute ->
-                    case attribute of
-                        Attribute a ->
-                            a
-
-                        WithTitleVisibility f ->
-                            f config.visibleTitle
-                )
+                (\(WithTitleVisibility f) -> f config.visibleTitle)
                 attributes
         )
         model
