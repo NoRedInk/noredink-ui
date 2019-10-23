@@ -94,7 +94,7 @@ configAndAttributes :
     State
     -> (Modal.Msg -> Msg)
     -> Button.Attribute Msg
-    -> ( List (Modal.OptionalConfig Msg), List (Modal.Attribute Msg) )
+    -> ( List (Modal.OptionalConfig Msg), List (Modal.Focusable Msg) )
 configAndAttributes state wrapMsg firstButtonStyle =
     let
         defaultOptions =
@@ -108,7 +108,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( True, True, True ) ->
             ( defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
                             , Modal.viewContent
@@ -130,7 +130,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -139,7 +139,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( True, False, True ) ->
             ( defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
                             , Modal.viewContent
@@ -155,7 +155,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -164,14 +164,14 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( True, False, False ) ->
             ( defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
                             , Modal.viewContent
                                 { content = [ viewModalContent state.longContent ]
                                 , footer = []
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -180,7 +180,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( True, True, False ) ->
             ( Modal.autofocusOnLastElement :: defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
                             , Modal.viewContent
@@ -194,7 +194,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -203,7 +203,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( False, True, True ) ->
             ( defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.viewContent
                                 { content = [ viewModalContent state.longContent ]
@@ -224,7 +224,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -233,7 +233,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( False, False, True ) ->
             ( Modal.autofocusOnLastElement :: defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.viewContent
                                 { content = [ viewModalContent state.longContent ]
@@ -248,7 +248,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -257,7 +257,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( False, True, False ) ->
             ( Modal.autofocusOnLastElement :: defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.viewContent
                                 { content = [ viewModalContent state.longContent ]
@@ -270,7 +270,7 @@ configAndAttributes state wrapMsg firstButtonStyle =
                                         ]
                                     ]
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]
@@ -279,13 +279,13 @@ configAndAttributes state wrapMsg firstButtonStyle =
         ( False, False, False ) ->
             ( defaultOptions
             , [ Modal.multipleFocusableElementView
-                    (\focusableElementAttrs visibleTitle ->
+                    (\focusableElementAttrs ->
                         div []
                             [ Modal.viewContent
                                 { content = [ viewModalContent state.longContent ]
                                 , footer = []
                                 }
-                                visibleTitle
+                                state.visibleTitle
                             ]
                     )
               ]

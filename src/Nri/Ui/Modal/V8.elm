@@ -4,7 +4,7 @@ module Nri.Ui.Modal.V8 exposing
     , open, close
     , info, warning
     , viewContent
-    , Attribute
+    , Focusable
     , multipleFocusableElementView, onlyFocusableElementView
     , OptionalConfig
     , invisibleTitle
@@ -82,9 +82,9 @@ module Nri.Ui.Modal.V8 exposing
 @docs viewContent
 
 
-### Attributes
+### Focusable
 
-@docs Attribute
+@docs Focusable
 
 @docs multipleFocusableElementView, onlyFocusableElementView
 
@@ -234,22 +234,22 @@ open =
 info :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Attribute msg)
+    -> List (Focusable msg)
     -> Model
     -> Html msg
-info config model =
-    view Info config model
+info config optionalConfigs focusables model =
+    view Info config optionalConfigs focusables model
 
 
 {-| -}
 warning :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Attribute msg)
+    -> List (Focusable msg)
     -> Model
     -> Html msg
-warning config model =
-    view Warning config model
+warning config optionalConfigs focusables model =
+    view Warning config optionalConfigs focusables model
 
 
 type Theme
@@ -278,8 +278,8 @@ themeToTitleColor theme =
 
 
 {-| -}
-type Attribute msg
-    = WithTitleVisibility (Bool -> Modal.Attribute msg)
+type Focusable msg
+    = Focusable (Modal.Attribute msg)
 
 
 {-| -}
@@ -288,25 +288,24 @@ multipleFocusableElementView :
      , lastFocusableElement : List (Html.Attribute msg)
      , autofocusElement : Html.Attribute msg
      }
-     -> Bool
      -> Html msg
     )
-    -> Attribute msg
+    -> Focusable msg
 multipleFocusableElementView f =
-    WithTitleVisibility (\visibleTitle -> Modal.multipleFocusableElementView (\attributes -> f attributes visibleTitle))
+    Focusable (Modal.multipleFocusableElementView (\attributes -> f attributes))
 
 
 {-| -}
-onlyFocusableElementView : (List (Html.Attribute msg) -> Bool -> Html msg) -> Attribute msg
+onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Focusable msg
 onlyFocusableElementView f =
-    WithTitleVisibility (\visibleTitle -> Modal.onlyFocusableElementView (\attributes -> f attributes visibleTitle))
+    Focusable (Modal.onlyFocusableElementView (\attributes -> f attributes))
 
 
 view :
     Theme
     -> RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> List (Attribute msg)
+    -> List (Focusable msg)
     -> Model
     -> Html msg
 view theme requiredConfig optionalConfigs attributes model =
@@ -352,7 +351,7 @@ view theme requiredConfig optionalConfigs attributes model =
          ]
             ++ modalAttributes optionalConfigs
             ++ List.map
-                (\(WithTitleVisibility f) -> f config.visibleTitle)
+                (\(Focusable f) -> f)
                 attributes
         )
         model
