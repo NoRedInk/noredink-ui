@@ -3,13 +3,12 @@ module Nri.Ui.Modal.V8 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , viewContent
+    , ViewFuncs
     , Focusable
     , multipleFocusableElementView, onlyFocusableElementView
     , OptionalConfig
     , invisibleTitle
     , autofocusOnLastElement
-    , closeButton
     )
 
 {-| Changes from V7:
@@ -75,6 +74,7 @@ module Nri.Ui.Modal.V8 exposing
 ### Modals
 
 @docs info, warning
+@docs ViewFuncs
 
 
 ### View containers
@@ -234,22 +234,22 @@ open =
 info :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> Focusable msg
+    -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-info config optionalConfigs focusable model =
-    view Info config optionalConfigs focusable model
+info config optionalConfigs getFocusable model =
+    view Info config optionalConfigs getFocusable model
 
 
 {-| -}
 warning :
     RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> Focusable msg
+    -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-warning config optionalConfigs focusable model =
-    view Warning config optionalConfigs focusable model
+warning config optionalConfigs getFocusable model =
+    view Warning config optionalConfigs getFocusable model
 
 
 type Theme
@@ -301,17 +301,33 @@ onlyFocusableElementView f =
     Focusable (Modal.onlyFocusableElementView (\attributes -> f attributes))
 
 
+{-| -}
+type alias ViewFuncs msg =
+    { viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
+    , closeButton : List (Html.Attribute msg) -> Html msg
+    }
+
+
 view :
     Theme
     -> RequiredConfig msg
     -> List (OptionalConfig msg)
-    -> Focusable msg
+    -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-view theme requiredConfig optionalConfigs (Focusable focusable) model =
+view theme requiredConfig optionalConfigs getFocusable model =
     let
         config =
             makeConfig requiredConfig optionalConfigs
+
+        viewFuncs : ViewFuncs msg
+        viewFuncs =
+            { viewContent = viewContent config.visibleTitle
+            , closeButton = closeButton config.wrapMsg
+            }
+
+        (Focusable focusable) =
+            getFocusable viewFuncs
     in
     Modal.view
         config.wrapMsg
@@ -358,8 +374,8 @@ view theme requiredConfig optionalConfigs (Focusable focusable) model =
 
 
 {-| -}
-viewContent : { content : List (Html msg), footer : List (Html msg) } -> Bool -> Html msg
-viewContent { content, footer } visibleTitle =
+viewContent : Bool -> { content : List (Html msg), footer : List (Html msg) } -> Html msg
+viewContent visibleTitle { content, footer } =
     div []
         [ viewInnerContent content visibleTitle (not (List.isEmpty footer))
         , viewFooter footer

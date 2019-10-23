@@ -70,32 +70,30 @@ example parentMessage state =
             , Button.medium
             ]
         , let
-            ( options, focusable ) =
-                configAndFocusable state InfoModalMsg Button.primary
+            params =
+                ( state, InfoModalMsg, Button.primary )
           in
           Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
-            options
-            focusable
+            (config params)
+            (getFocusable params)
             state.infoModal
         , let
-            ( options, focusable ) =
-                configAndFocusable state WarningModalMsg Button.danger
+            params =
+                ( state, WarningModalMsg, Button.danger )
           in
           Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
-            options
-            focusable
+            (config params)
+            (getFocusable params)
             state.warningModal
         ]
             |> List.map (Html.map parentMessage)
     }
 
 
-configAndFocusable :
-    State
-    -> (Modal.Msg -> Msg)
-    -> Button.Attribute Msg
-    -> ( List (Modal.OptionalConfig Msg), Modal.Focusable Msg )
-configAndFocusable state wrapMsg firstButtonStyle =
+config :
+    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
+    -> List (Modal.OptionalConfig Msg)
+config ( state, wrapMsg, firstButtonStyle ) =
     let
         defaultOptions =
             if state.visibleTitle then
@@ -106,12 +104,50 @@ configAndFocusable state wrapMsg firstButtonStyle =
     in
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
-            ( defaultOptions
-            , Modal.multipleFocusableElementView
+            defaultOptions
+
+        ( True, False, True ) ->
+            defaultOptions
+
+        ( True, False, False ) ->
+            defaultOptions
+
+        ( True, True, False ) ->
+            Modal.autofocusOnLastElement :: defaultOptions
+
+        ( False, True, True ) ->
+            defaultOptions
+
+        ( False, False, True ) ->
+            Modal.autofocusOnLastElement :: defaultOptions
+
+        ( False, True, False ) ->
+            Modal.autofocusOnLastElement :: defaultOptions
+
+        ( False, False, False ) ->
+            defaultOptions
+
+
+getFocusable :
+    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
+    -> Modal.ViewFuncs Msg
+    -> Modal.Focusable Msg
+getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
+    let
+        defaultOptions =
+            if state.visibleTitle then
+                []
+
+            else
+                [ Modal.invisibleTitle ]
+    in
+    case ( state.showX, state.showContinue, state.showSecondary ) of
+        ( True, True, True ) ->
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent
+                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ Button.button "Continue"
@@ -130,18 +166,15 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( True, False, True ) ->
-            ( defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent
+                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ ClickableText.button "Close"
@@ -154,33 +187,27 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( True, False, False ) ->
-            ( defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent
+                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer = []
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( True, True, False ) ->
-            ( Modal.autofocusOnLastElement :: defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.closeButton wrapMsg focusableElementAttrs.firstFocusableElement
-                        , Modal.viewContent
+                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ Button.button "Continue"
@@ -191,17 +218,14 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( False, True, True ) ->
-            ( defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent
+                        [ viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ Button.button "Continue"
@@ -220,17 +244,14 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( False, False, True ) ->
-            ( Modal.autofocusOnLastElement :: defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent
+                        [ viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ ClickableText.button "Close"
@@ -243,17 +264,14 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( False, True, False ) ->
-            ( Modal.autofocusOnLastElement :: defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent
+                        [ viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ Button.button "Continue"
@@ -264,24 +282,19 @@ configAndFocusable state wrapMsg firstButtonStyle =
                                     ]
                                 ]
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
         ( False, False, False ) ->
-            ( defaultOptions
-            , Modal.multipleFocusableElementView
+            Modal.multipleFocusableElementView
                 (\focusableElementAttrs ->
                     div []
-                        [ Modal.viewContent
+                        [ viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer = []
                             }
-                            state.visibleTitle
                         ]
                 )
-            )
 
 
 viewModalContent : Bool -> Html msg
