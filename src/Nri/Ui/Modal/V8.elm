@@ -7,6 +7,7 @@ module Nri.Ui.Modal.V8 exposing
     , Attribute
     , multipleFocusableElementView, onlyFocusableElementView
     , autofocusOnLastElement
+    , OptionalConfig, invisibleTitle
     , closeButton
     )
 
@@ -30,8 +31,7 @@ module Nri.Ui.Modal.V8 exposing
             , visibleTitle = True
             , wrapMsg = ModalMsg
             }
-            [ Modal.visibleTitle
-            , Modal.onlyFocusableElementView
+            [ Modal.onlyFocusableElementView
                 (\{ onlyFocusableElement } visibleTitle ->
                     div []
                         [ Modal.viewContent {
@@ -89,6 +89,11 @@ module Nri.Ui.Modal.V8 exposing
 @docs autofocusOnLastElement
 
 
+### Optional Config
+
+@docs OptionalConfig, invisibleTitle
+
+
 ## X icon
 
 @docs closeButton
@@ -116,6 +121,38 @@ import Nri.Ui.Svg.V1
 {-| -}
 type alias Model =
     Modal.Model
+
+
+{-| expose intermediate type to make type signatures out of the library nicer
+-}
+type OptionalConfig msg
+    = OptionalConfig (Config msg -> Config msg)
+
+
+type alias Config msg =
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    }
+
+
+type alias RequiredConfig msg =
+    { title : String, wrapMsg : Msg -> msg }
+
+
+{-| This hides the modal's title
+-}
+invisibleTitle : OptionalConfig msg
+invisibleTitle =
+    OptionalConfig (\config -> { config | visibleTitle = False })
+
+
+makeConfig : RequiredConfig msg -> List (OptionalConfig msg) -> Config msg
+makeConfig { title, wrapMsg } optionalConfigs =
+    List.foldl
+        (\(OptionalConfig func) accum -> func accum)
+        (Config True title wrapMsg)
+        optionalConfigs
 
 
 {-| -}
@@ -157,10 +194,8 @@ open =
 
 {-| -}
 info :
-    { title : String
-    , visibleTitle : Bool
-    , wrapMsg : Msg -> msg
-    }
+    RequiredConfig msg
+    -> List (OptionalConfig msg)
     -> List (Attribute msg)
     -> Model
     -> Html msg
@@ -170,10 +205,8 @@ info config model =
 
 {-| -}
 warning :
-    { title : String
-    , visibleTitle : Bool
-    , wrapMsg : Msg -> msg
-    }
+    RequiredConfig msg
+    -> List (OptionalConfig msg)
     -> List (Attribute msg)
     -> Model
     -> Html msg
@@ -240,11 +273,16 @@ onlyFocusableElementView f =
 
 view :
     Theme
-    -> { title : String, visibleTitle : Bool, wrapMsg : Msg -> msg }
+    -> RequiredConfig msg
+    -> List (OptionalConfig msg)
     -> List (Attribute msg)
     -> Model
     -> Html msg
-view theme config attributes model =
+view theme requiredConfig optionalConfigs attributes model =
+    let
+        config =
+            makeConfig requiredConfig optionalConfigs
+    in
     Modal.view
         config.wrapMsg
         config.title

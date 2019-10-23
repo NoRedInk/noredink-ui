@@ -69,10 +69,22 @@ example parentMessage state =
             , Button.secondary
             , Button.medium
             ]
-        , Modal.info { title = "Modal.info", visibleTitle = state.visibleTitle, wrapMsg = InfoModalMsg }
+        , Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
+            (if state.visibleTitle then
+                []
+
+             else
+                [ Modal.invisibleTitle ]
+            )
             (viewContent state InfoModalMsg Button.primary)
             state.infoModal
-        , Modal.warning { title = "Modal.warning", visibleTitle = state.visibleTitle, wrapMsg = WarningModalMsg }
+        , Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
+            (if state.visibleTitle then
+                []
+
+             else
+                [ Modal.invisibleTitle ]
+            )
             (viewContent state WarningModalMsg Button.danger)
             state.warningModal
         ]
