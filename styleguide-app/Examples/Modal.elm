@@ -144,9 +144,9 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
             Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
                     div []
-                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        [ closeButton firstFocusableElement
                         , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
@@ -154,14 +154,14 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                     [ firstButtonStyle
                                     , Button.onClick ForceClose
                                     , Button.large
-                                    , Button.custom [ focusableElementAttrs.autofocusElement ]
+                                    , Button.custom [ autofocusElement ]
                                     ]
                                 , ClickableText.button "Close"
                                     [ ClickableText.onClick ForceClose
                                     , ClickableText.large
                                     , ClickableText.custom
                                         (css [ Css.marginTop (Css.px 12) ]
-                                            :: focusableElementAttrs.lastFocusableElement
+                                            :: lastFocusableElement
                                         )
                                     ]
                                 ]
@@ -171,9 +171,9 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( True, False, True ) ->
             Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
                     div []
-                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        [ closeButton firstFocusableElement
                         , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
@@ -182,7 +182,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                     , ClickableText.large
                                     , ClickableText.custom
                                         (css [ Css.marginTop (Css.px 12) ]
-                                            :: focusableElementAttrs.lastFocusableElement
+                                            :: autofocusElement
+                                            :: lastFocusableElement
                                         )
                                     ]
                                 ]
@@ -191,10 +192,10 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                 )
 
         ( True, False, False ) ->
-            Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            Modal.onlyFocusableElementView
+                (\onlyFocusableElement ->
                     div []
-                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        [ closeButton onlyFocusableElement
                         , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer = []
@@ -204,16 +205,16 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( True, True, False ) ->
             Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
                     div []
-                        [ closeButton focusableElementAttrs.firstFocusableElement
+                        [ closeButton firstFocusableElement
                         , viewContent
                             { content = [ viewModalContent state.longContent ]
                             , footer =
                                 [ Button.button "Continue"
                                     [ firstButtonStyle
                                     , Button.onClick ForceClose
-                                    , Button.custom focusableElementAttrs.lastFocusableElement
+                                    , Button.custom (autofocusElement :: lastFocusableElement)
                                     , Button.large
                                     ]
                                 ]
@@ -223,7 +224,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( False, True, True ) ->
             Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
@@ -231,7 +232,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 [ Button.button "Continue"
                                     [ firstButtonStyle
                                     , Button.onClick ForceClose
-                                    , Button.custom focusableElementAttrs.firstFocusableElement
+                                    , Button.custom (autofocusElement :: firstFocusableElement)
                                     , Button.large
                                     ]
                                 , ClickableText.button "Close"
@@ -239,7 +240,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                     , ClickableText.large
                                     , ClickableText.custom
                                         (css [ Css.marginTop (Css.px 12) ]
-                                            :: focusableElementAttrs.lastFocusableElement
+                                            :: lastFocusableElement
                                         )
                                     ]
                                 ]
@@ -248,8 +249,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                 )
 
         ( False, False, True ) ->
-            Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            Modal.onlyFocusableElementView
+                (\onlyFocusableElement ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
@@ -259,7 +260,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                     , ClickableText.large
                                     , ClickableText.custom
                                         (css [ Css.marginTop (Css.px 12) ]
-                                            :: focusableElementAttrs.lastFocusableElement
+                                            :: onlyFocusableElement
                                         )
                                     ]
                                 ]
@@ -268,8 +269,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                 )
 
         ( False, True, False ) ->
-            Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            Modal.onlyFocusableElementView
+                (\onlyFocusableElement ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
@@ -277,7 +278,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 [ Button.button "Continue"
                                     [ firstButtonStyle
                                     , Button.onClick ForceClose
-                                    , Button.custom [ focusableElementAttrs.autofocusElement ]
+                                    , Button.custom onlyFocusableElement
                                     , Button.large
                                     ]
                                 ]
@@ -286,8 +287,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                 )
 
         ( False, False, False ) ->
-            Modal.multipleFocusableElementView
-                (\focusableElementAttrs ->
+            Modal.onlyFocusableElementView
+                (\_ ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
