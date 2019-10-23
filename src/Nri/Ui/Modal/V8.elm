@@ -11,11 +11,9 @@ module Nri.Ui.Modal.V8 exposing
 {-| Changes from V7:
 
   - More customizable attributes
-  - title is, by default, visible
-  - wrather than accepting any number of attribs, accepts
-  - any number of optional configuration, plus one callback that returns a focusable
+  - wrather than accepting any number of attribs one callback that returns a focusable
   - viewFooter has been merged into viewContent
-  - viewFooter and closeButton are now callbacks that are pre-configured with settings
+  - viewContent and closeButton are now callbacks that are pre-configured with settings
     (previously you passed config through)
 
 ```
@@ -32,8 +30,8 @@ module Nri.Ui.Modal.V8 exposing
         Modal.info
             { title = "Modal Header"
             , wrapMsg = ModalMsg
+            , visibleTitle = True
             }
-            []
             (\{viewContent, closeButton} ->
                 Modal.onlyFocusableElementView
                     (\{ onlyFocusableElement } ->
@@ -85,12 +83,6 @@ module Nri.Ui.Modal.V8 exposing
 
 @docs Focusable
 @docs multipleFocusableElementView, onlyFocusableElementView
-
-
-### Optional Config
-
-@docs OptionalConfig
-@docs invisibleTitle
 
 -}
 
