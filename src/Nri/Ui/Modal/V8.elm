@@ -28,27 +28,28 @@ module Nri.Ui.Modal.V8 exposing
     view state =
         Modal.info
             { title = "Modal Header"
-            , visibleTitle = True
             , wrapMsg = ModalMsg
             }
-            [ Modal.onlyFocusableElementView
-                (\{ onlyFocusableElement } visibleTitle ->
-                    div []
-                        [ Modal.viewContent {
-                            , content = [ text "Content goes here!" ]
-                            , footer =
-                                [ Button.button "Continue"
-                                    [ Button.primary
-                                    , Button.onClick DoSomething
-                                    , Button.custom onlyFocusableElement
+            []
+            (\{viewContent, closeButton} ->
+                Modal.onlyFocusableElementView
+                    (\{ onlyFocusableElement } ->
+                        div []
+                            [ viewContent {
+                                , content = [ text "Content goes here!" ]
+                                , footer =
+                                    [ Button.button "Continue"
+                                        [ Button.primary
+                                        , Button.onClick DoSomething
+                                        , Button.custom onlyFocusableElement
+                                        ]
+                                    , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
                                     ]
-                                , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
-                                ]
-                            }
-                            visibleTitle
-                        ]
-                )
-            ]
+                                }
+                                visibleTitle
+                            ]
+                    )
+            )
             state
 
     subscriptions : Modal.Model -> Sub Msg
