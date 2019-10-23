@@ -50,14 +50,6 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    let
-        config =
-            if state.visibleTitle then
-                []
-
-            else
-                [ Modal.invisibleTitle ]
-    in
     { name = "Nri.Ui.Modal.V8"
     , category = Modals
     , content =
@@ -81,16 +73,14 @@ example parentMessage state =
             params =
                 ( state, InfoModalMsg, Button.primary )
           in
-          Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
-            config
+          Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg, visibleTitle = state.visibleTitle }
             (getFocusable params)
             state.infoModal
         , let
             params =
                 ( state, WarningModalMsg, Button.danger )
           in
-          Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
-            config
+          Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg, visibleTitle = state.visibleTitle }
             (getFocusable params)
             state.warningModal
         ]
@@ -103,14 +93,6 @@ getFocusable :
     -> Modal.ViewFuncs Msg
     -> Modal.Focusable Msg
 getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
-    let
-        defaultOptions =
-            if state.visibleTitle then
-                []
-
-            else
-                [ Modal.invisibleTitle ]
-    in
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
             Modal.multipleFocusableElementView

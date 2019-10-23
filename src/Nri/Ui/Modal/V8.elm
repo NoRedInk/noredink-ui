@@ -6,8 +6,6 @@ module Nri.Ui.Modal.V8 exposing
     , ViewFuncs
     , Focusable
     , multipleFocusableElementView, onlyFocusableElementView
-    , OptionalConfig
-    , invisibleTitle
     )
 
 {-| Changes from V7:
@@ -116,66 +114,11 @@ type alias Model =
     Modal.Model
 
 
-type alias RequiredConfig msg =
-    { title : String, wrapMsg : Msg -> msg }
-
-
 type alias Config msg =
     { visibleTitle : Bool
     , title : String
     , wrapMsg : Msg -> msg
     }
-
-
-{-| expose intermediate type to make type signatures out of the library nicer
--}
-type OptionalConfig msg
-    = OptionalConfig (Config msg -> Config msg)
-    | Attribute (Modal.Attribute msg)
-
-
-configFuncs : List (OptionalConfig msg) -> List (Config msg -> Config msg)
-configFuncs configs =
-    List.filterMap
-        (\optionalConfig ->
-            case optionalConfig of
-                OptionalConfig f ->
-                    Just f
-
-                Attribute _ ->
-                    Nothing
-        )
-        configs
-
-
-modalAttributes : List (OptionalConfig msg) -> List (Modal.Attribute msg)
-modalAttributes configs =
-    List.filterMap
-        (\optionalConfig ->
-            case optionalConfig of
-                OptionalConfig _ ->
-                    Nothing
-
-                Attribute attrib ->
-                    Just attrib
-        )
-        configs
-
-
-{-| This hides the modal's title
--}
-invisibleTitle : OptionalConfig msg
-invisibleTitle =
-    OptionalConfig (\config -> { config | visibleTitle = False })
-
-
-makeConfig : RequiredConfig msg -> List (OptionalConfig msg) -> Config msg
-makeConfig { title, wrapMsg } optionalConfigs =
-    optionalConfigs
-        |> configFuncs
-        |> List.foldl
-            (\func accum -> func accum)
-            (Config True title wrapMsg)
 
 
 {-| -}
@@ -217,24 +160,22 @@ open =
 
 {-| -}
 info :
-    RequiredConfig msg
-    -> List (OptionalConfig msg)
+    Config msg
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-info config optionalConfigs getFocusable model =
-    view Info config optionalConfigs getFocusable model
+info config getFocusable model =
+    view Info config getFocusable model
 
 
 {-| -}
 warning :
-    RequiredConfig msg
-    -> List (OptionalConfig msg)
+    Config msg
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-warning config optionalConfigs getFocusable model =
-    view Warning config optionalConfigs getFocusable model
+warning config getFocusable model =
+    view Warning config getFocusable model
 
 
 type Theme
@@ -295,16 +236,12 @@ type alias ViewFuncs msg =
 
 view :
     Theme
-    -> RequiredConfig msg
-    -> List (OptionalConfig msg)
+    -> Config msg
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
-view theme requiredConfig optionalConfigs getFocusable model =
+view theme config getFocusable model =
     let
-        config =
-            makeConfig requiredConfig optionalConfigs
-
         viewFuncs : ViewFuncs msg
         viewFuncs =
             { viewContent = viewContent config.visibleTitle
@@ -352,7 +289,6 @@ view theme requiredConfig optionalConfigs getFocusable model =
                 , Css.border Css.zero
                 ]
          ]
-            ++ modalAttributes optionalConfigs
             ++ focusables
         )
         model
