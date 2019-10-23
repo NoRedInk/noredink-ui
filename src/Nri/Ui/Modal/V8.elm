@@ -126,6 +126,17 @@ type alias Model =
     Modal.Model
 
 
+type alias RequiredConfig msg =
+    { title : String, wrapMsg : Msg -> msg }
+
+
+type alias Config msg =
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    }
+
+
 {-| expose intermediate type to make type signatures out of the library nicer
 -}
 type OptionalConfig msg
@@ -165,17 +176,6 @@ modalAttributes configs =
 autofocusOnLastElement : OptionalConfig msg
 autofocusOnLastElement =
     Attribute Modal.autofocusOnLastElement
-
-
-type alias Config msg =
-    { visibleTitle : Bool
-    , title : String
-    , wrapMsg : Msg -> msg
-    }
-
-
-type alias RequiredConfig msg =
-    { title : String, wrapMsg : Msg -> msg }
 
 
 {-| This hides the modal's title
