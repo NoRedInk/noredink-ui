@@ -14,6 +14,12 @@ module Nri.Ui.Modal.V8 exposing
 {-| Changes from V7:
 
   - More customizable attributes
+  - title is, by default, visible
+  - wrather than accepting any number of attribs, accepts
+  - any number of optional configuration, plus one callback that returns a focusable
+  - viewFooter has been merged into viewContent
+  - viewFooter and closeButton are now callbacks that are pre-configured with settings
+    (previously you passed config through)
 
 ```
     import Html.Styled exposing (..)
