@@ -357,6 +357,11 @@ viewInnerContent children visibleTitle visibleFooter =
                   else
                     Css.paddingTop (Css.px 40)
                 , if visibleFooter then
+                    Css.paddingBottom Css.zero
+
+                  else
+                    Css.paddingBottom (Css.px 40)
+                , if visibleFooter then
                     shadow (Transparent.customOpacity 0.15) (Css.px 16)
 
                   else
