@@ -50,6 +50,14 @@ init =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
+    let
+        config =
+            if state.visibleTitle then
+                []
+
+            else
+                [ Modal.invisibleTitle ]
+    in
     { name = "Nri.Ui.Modal.V8"
     , category = Modals
     , content =
@@ -74,7 +82,7 @@ example parentMessage state =
                 ( state, InfoModalMsg, Button.primary )
           in
           Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg }
-            (config params)
+            config
             (getFocusable params)
             state.infoModal
         , let
@@ -82,50 +90,12 @@ example parentMessage state =
                 ( state, WarningModalMsg, Button.danger )
           in
           Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg }
-            (config params)
+            config
             (getFocusable params)
             state.warningModal
         ]
             |> List.map (Html.map parentMessage)
     }
-
-
-config :
-    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
-    -> List (Modal.OptionalConfig Msg)
-config ( state, wrapMsg, firstButtonStyle ) =
-    let
-        defaultOptions =
-            if state.visibleTitle then
-                []
-
-            else
-                [ Modal.invisibleTitle ]
-    in
-    case ( state.showX, state.showContinue, state.showSecondary ) of
-        ( True, True, True ) ->
-            defaultOptions
-
-        ( True, False, True ) ->
-            defaultOptions
-
-        ( True, False, False ) ->
-            defaultOptions
-
-        ( True, True, False ) ->
-            Modal.autofocusOnLastElement :: defaultOptions
-
-        ( False, True, True ) ->
-            defaultOptions
-
-        ( False, False, True ) ->
-            Modal.autofocusOnLastElement :: defaultOptions
-
-        ( False, True, False ) ->
-            Modal.autofocusOnLastElement :: defaultOptions
-
-        ( False, False, False ) ->
-            defaultOptions
 
 
 getFocusable :

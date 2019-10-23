@@ -8,7 +8,6 @@ module Nri.Ui.Modal.V8 exposing
     , multipleFocusableElementView, onlyFocusableElementView
     , OptionalConfig
     , invisibleTitle
-    , autofocusOnLastElement
     )
 
 {-| Changes from V7:
@@ -94,7 +93,6 @@ module Nri.Ui.Modal.V8 exposing
 
 @docs OptionalConfig
 @docs invisibleTitle
-@docs autofocusOnLastElement
 
 -}
 
@@ -162,12 +160,6 @@ modalAttributes configs =
                     Just attrib
         )
         configs
-
-
-{-| -}
-autofocusOnLastElement : OptionalConfig msg
-autofocusOnLastElement =
-    Attribute Modal.autofocusOnLastElement
 
 
 {-| This hides the modal's title
@@ -272,7 +264,7 @@ themeToTitleColor theme =
 
 {-| -}
 type Focusable msg
-    = Focusable (Modal.Attribute msg)
+    = Focusable (Modal.Attribute msg) (List (Modal.Attribute msg))
 
 
 {-| -}
@@ -285,13 +277,13 @@ multipleFocusableElementView :
     )
     -> Focusable msg
 multipleFocusableElementView f =
-    Focusable (Modal.multipleFocusableElementView (\attributes -> f attributes))
+    Focusable (Modal.multipleFocusableElementView (\attributes -> f attributes)) []
 
 
 {-| -}
 onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Focusable msg
 onlyFocusableElementView f =
-    Focusable (Modal.onlyFocusableElementView (\attributes -> f attributes))
+    Focusable (Modal.onlyFocusableElementView (\attributes -> f attributes)) [ Modal.autofocusOnLastElement ]
 
 
 {-| -}
@@ -319,8 +311,10 @@ view theme requiredConfig optionalConfigs getFocusable model =
             , closeButton = closeButton config.wrapMsg
             }
 
-        (Focusable focusable) =
-            getFocusable viewFuncs
+        focusables =
+            case getFocusable viewFuncs of
+                Focusable fst rst ->
+                    fst :: rst
     in
     Modal.view
         config.wrapMsg
@@ -359,7 +353,7 @@ view theme requiredConfig optionalConfigs getFocusable model =
                 ]
          ]
             ++ modalAttributes optionalConfigs
-            ++ [ focusable ]
+            ++ focusables
         )
         model
         |> List.singleton
