@@ -11,7 +11,7 @@ module Nri.Ui.Modal.V8 exposing
 {-| Changes from V7:
 
   - More customizable attributes
-  - wrather than accepting any number of attribs one callback that returns a focusable
+  - Rather than accepting any number of attributes, Modal provides one callback that returns a focusable
   - viewFooter has been merged into viewContent
   - viewContent and closeButton are now callbacks that are pre-configured with settings
     (previously you passed config through)
