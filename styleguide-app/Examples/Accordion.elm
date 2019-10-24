@@ -16,6 +16,9 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Accordion.V1 as Accordion
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
@@ -24,7 +27,7 @@ example parentMessage model =
     { name = "Nri.Ui.Accordion.V1"
     , category = Layout
     , content =
-        [ Html.h5 [] [ Html.text "Accordion.view with default styles" ]
+        [ Heading.h5 [] [ Html.text "Accordion.view with default styles" ]
         , Accordion.view
             { entries =
                 [ { id = 1, title = "Entry 1", content = "Content for the first accordion" }
@@ -36,23 +39,28 @@ example parentMessage model =
                             ( entry, Dict.get entry.id model |> Maybe.withDefault False )
                         )
             , viewHeader = .title >> Html.text
-            , viewContent = .content >> Html.text
+            , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
             , customStyles = Nothing
             , toggle = \entry toExpand -> Toggle entry.id toExpand
             , caret = Accordion.DefaultCaret
             }
-        , Html.h5 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
+        , Heading.h5 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
         , Accordion.view
             { entries =
                 [ { id = 4
                   , title = "Firstname Lastname"
                   , content =
-                        Html.div [ css [ fontSize (px 13) ] ] [ Html.text "has not started writing" ]
+                        Html.div
+                            [ css [ Fonts.baseFont, fontSize (px 13) ]
+                            ]
+                            [ Html.text "has not started writing" ]
                   }
                 , { id = 5
                   , title = "LongFirstnameAnd EvenLongerLastname"
                   , content =
-                        Html.div [ css [ fontSize (px 13) ] ] [ Html.text "has started writing" ]
+                        Html.div
+                            [ css [ Fonts.baseFont, fontSize (px 13) ] ]
+                            [ Html.text "has started writing" ]
                   }
                 ]
                     |> List.map
