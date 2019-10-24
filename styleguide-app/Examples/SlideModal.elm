@@ -7,7 +7,6 @@ module Examples.SlideModal exposing (Msg, State, example, init, update)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
-import Assets
 import Css
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
