@@ -12,10 +12,10 @@ module Nri.Ui.Accordion.V1 exposing
 
 -}
 
+import Accessibility.Styled exposing (Attribute, Html, button, div, text)
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Css.Global
-import Html.Styled exposing (Attribute, Html, div, text)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed
@@ -63,10 +63,16 @@ defaultStyleOptions =
         , overflow hidden
         , padding2 (px 8) (px 15)
         , backgroundColor Colors.gray96
+
+        -- button resets
+        , cursor pointer
+        , borderWidth Css.zero
+
+        -- fonts & text
+        , textAlign left
         , Fonts.baseFont
         , fontSize (px 16)
         , fontWeight (int 600)
-        , cursor pointer
         , lineHeight (num 1.2)
         ]
     , headerExpandedStyles =
@@ -191,12 +197,10 @@ entryHeader :
     -> entry
     -> Html msg
 entryHeader expanded viewHeader styles caret toggle entry =
-    div
+    button
         [ Attributes.class "accordion-entry-header"
         , onClick (toggle entry (not expanded))
         , Attributes.css styles
-        , Role.button
-        , Attributes.tabindex 0
         ]
         [ viewCaret expanded caret
         , viewHeader entry
