@@ -31,9 +31,7 @@ example =
             , deprecatedIcon { icon = Icon.masteryBadge, background = Colors.frost, alt = "Badge " }
             ]
         , IconExamples.view "Stars and Flags"
-            [ deprecatedIcon { icon = Icon.starred, background = Colors.frost, alt = "Starred" }
-            , deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
-            , deprecatedIcon { icon = Icon.flag, background = Colors.frost, alt = "Flag" }
+            [ deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
             ]
         , IconExamples.view "Student Assignment Actions"
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
