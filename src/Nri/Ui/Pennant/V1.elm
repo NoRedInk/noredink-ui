@@ -1,6 +1,9 @@
 module Nri.Ui.Pennant.V1 exposing (premiumFlag)
 
 {-| Used for indicating Premium content
+
+@docs premiumFlag
+
 -}
 
 import Accessibility.Styled exposing (Html)
