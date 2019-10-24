@@ -1,6 +1,7 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
 import Assets exposing (assets)
+import Examples.Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
 import Examples.BannerAlert
@@ -36,7 +37,8 @@ import Url exposing (Url)
 
 
 type alias ModuleStates =
-    { buttonExampleState : Examples.Button.State Msg
+    { accordionExampleState : Examples.Accordion.State
+    , buttonExampleState : Examples.Button.State Msg
     , bannerAlertExampleState : Examples.BannerAlert.State
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
@@ -58,7 +60,8 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { buttonExampleState = Examples.Button.init assets
+    { accordionExampleState = Examples.Accordion.init
+    , buttonExampleState = Examples.Button.init assets
     , bannerAlertExampleState = Examples.BannerAlert.init
     , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
@@ -79,7 +82,8 @@ init =
 
 
 type Msg
-    = ButtonExampleMsg (Examples.Button.Msg Msg)
+    = AccordionExampleMsg Examples.Accordion.Msg
+    | ButtonExampleMsg (Examples.Button.Msg Msg)
     | BannerAlertExampleMsg Examples.BannerAlert.Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
@@ -103,6 +107,14 @@ type Msg
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update outsideMsg moduleStates =
     case outsideMsg of
+        AccordionExampleMsg msg ->
+            ( { moduleStates
+                | accordionExampleState =
+                    Examples.Accordion.update msg moduleStates.accordionExampleState
+              }
+            , Cmd.none
+            )
+
         ButtonExampleMsg msg ->
             let
                 ( buttonExampleState, cmd ) =
@@ -284,6 +296,7 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
+    , Examples.Accordion.example AccordionExampleMsg model.accordionExampleState
     , Examples.BannerAlert.example BannerAlertExampleMsg model.bannerAlertExampleState
     , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.Callout.example

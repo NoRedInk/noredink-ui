@@ -133,17 +133,18 @@ navigation route =
         , (categoryLink (route == Routes.All) "#" "All"
             :: List.map
                 navLink
-                [ Messaging
-                , Animations
+                [ Animations
                 , Buttons
                 , Colors
-                , Pages
                 , Icons
                 , Inputs
+                , Layout
                 , Modals
+                , Pages
                 , Tables
                 , Text
                 , Widgets
+                , Messaging
                 ]
           )
             |> List.map toNavLi
