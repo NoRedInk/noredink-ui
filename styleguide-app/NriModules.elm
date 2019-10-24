@@ -60,7 +60,7 @@ init : ModuleStates
 init =
     { buttonExampleState = Examples.Button.init
     , bannerAlertExampleState = Examples.BannerAlert.init
-    , clickableTextExampleState = Examples.ClickableText.init assets
+    , clickableTextExampleState = Examples.ClickableText.init
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
     , segmentedControlState = Examples.SegmentedControl.init assets
