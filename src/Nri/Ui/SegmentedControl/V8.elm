@@ -5,8 +5,9 @@ module Nri.Ui.SegmentedControl.V8 exposing (Config, Option, Width(..), view, vie
 @docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle
 
 Changes from V7:
-- remove dependence on Nri.Ui.Icon.V5
-- fix icons overlowing the segmented control
+
+  - remove dependence on Nri.Ui.Icon.V5
+  - fix icons overlowing the segmented control
 
 -}
 
@@ -220,6 +221,7 @@ viewTab config option =
                 span
                     [ css
                         [ maxWidth (px 18)
+                        , maxHeight (px 18)
                         , display inlineBlock
                         , verticalAlign middle
                         , lineHeight (px 15)

@@ -22,6 +22,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V8 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -121,7 +122,7 @@ init =
                     , ( "FillContainer", Control.value SegmentedControl.FillContainer )
                     ]
                 )
-            |> Control.field "icon" (Control.maybe False (Control.value UiIcon.performance))
+            |> Control.field "icon" (Control.maybe False redFlagControl)
             |> Control.field "which view function"
                 (Control.choice
                     [ ( "view", Control.value False )
@@ -129,6 +130,11 @@ init =
                     ]
                 )
     }
+
+
+redFlagControl : Control Svg
+redFlagControl =
+    Control.value (Svg.withColor Colors.red UiIcon.flag)
 
 
 {-| -}

@@ -8,6 +8,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , arrowDown
     , checkmark, x
     , attention, exclamation
+    , flag
     )
 
 {-|
@@ -41,17 +42,19 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs checkmark, x
 @docs attention, exclamation
 
-    import Css
     import Html.Styled exposing (..)
-    import Html.Styled.Attrbutes exposing (css)
     import Nri.Ui.Colors.V1 as Colors
     import Nri.Ui.Svg.V1 as Svg
     import Nri.Ui.UiIcon.V1 as UiIcon
 
     view : Html msg
     view =
-        div [ css [ Css.color Colors.lichen ] ]
-            [ Svg.toHtml UiIcon.unarchive ]
+        Svg.toHtml (Svg.withColor Colors.lichen UiIcon.unarchive)
+
+
+### Notifs
+
+@docs flag
 
 -}
 
@@ -487,6 +490,24 @@ attention =
             []
         , Svg.path
             [ Attributes.d "M2.57,0H2.48A2.46,2.46,0,0,0,0,2.36c0,.56,1.1,7.08,1.1,7.08a1.4,1.4,0,0,0,1.4,1.16h.06a1.4,1.4,0,0,0,1.4-1.16S5,2.93,5,2.36A2.46,2.46,0,0,0,2.57,0Z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+flag : Nri.Ui.Svg.V1.Svg
+flag =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 25"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.d "M21.36 1.25C20.064.414 17.107-.368 13.036.324 9.688.894 6.155.308 5 .081a.965.965 0 0 0-1.36.895v23.051c0 .538.427.973.967.973.542 0 .98-.437.98-.973V12.933c1.242.414 3.589.931 6.564.35 4.043-.794 7.36.229 7.36.229 1.02-1.017 1.808-3.482 1.435-6.203-.407-2.958.414-6.06.414-6.06z"
             ]
             []
         ]
