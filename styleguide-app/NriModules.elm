@@ -17,6 +17,7 @@ import Examples.Heading
 import Examples.Icon
 import Examples.Modal
 import Examples.Page
+import Examples.Pennant
 import Examples.SegmentedControl
 import Examples.Select
 import Examples.Slide
@@ -324,6 +325,7 @@ nriThemedModules model =
     , Examples.SortableTable.example SortableTableMsg model.sortableTableState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
+    , Examples.Pennant.example
     ]
 
 
