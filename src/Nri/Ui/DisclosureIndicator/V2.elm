@@ -51,8 +51,10 @@ view { styles, size, isOpen } =
         [ css
             ([ Css.display Css.inlineBlock
              , cursor pointer
-             , width size
-             , height size
+             , minWidth size
+             , minHeight size
+             , maxWidth size
+             , maxHeight size
              ]
                 ++ styles
             )
