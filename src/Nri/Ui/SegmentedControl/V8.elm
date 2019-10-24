@@ -221,9 +221,11 @@ viewTab config option =
                 span
                     [ css
                         [ maxWidth (px 18)
+                        , width (px 18)
                         , maxHeight (px 18)
+                        , height (px 18)
                         , display inlineBlock
-                        , verticalAlign middle
+                        , verticalAlign textTop
                         , lineHeight (px 15)
                         , marginRight (px 8)
                         ]

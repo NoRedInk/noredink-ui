@@ -24,34 +24,8 @@ import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V8 as SegmentedControl
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-{-| -}
-type Msg
-    = Select ExampleOption
-    | ChangeOptions (Control Options)
-
-
-type ExampleOption
-    = A
-    | B
-    | C
-
-
-{-| -}
-type alias State =
-    { selected : ExampleOption
-    , optionsControl : Control Options
-    }
-
-
-type alias Options =
-    { width : SegmentedControl.Width
-    , icon : Maybe Svg
-    , useSpa : Bool
-    }
 
 
 {-| -}
@@ -76,15 +50,7 @@ example parentMessage state =
           in
           viewFn
             { onClick = Select
-            , options =
-                [ A, B, C ]
-                    |> List.map
-                        (\i ->
-                            { icon = options.icon
-                            , label = "Option " ++ Debug.toString i
-                            , value = i
-                            }
-                        )
+            , options = buildOptions options
             , selected = state.selected
             , width = options.width
             , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
@@ -93,15 +59,7 @@ example parentMessage state =
         , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
         , SegmentedControl.viewToggle
             { onClick = Select
-            , options =
-                [ A, B, C ]
-                    |> List.map
-                        (\i ->
-                            { icon = options.icon
-                            , label = "Choice " ++ Debug.toString i
-                            , value = i
-                            }
-                        )
+            , options = buildOptions options
             , selected = state.selected
             , width = options.width
             }
@@ -110,31 +68,77 @@ example parentMessage state =
     }
 
 
+buildOptions : Options -> List (SegmentedControl.Option ExampleOption)
+buildOptions options =
+    let
+        buildOption ( icon, option ) =
+            { icon =
+                if options.icon then
+                    Just icon
+
+                else
+                    Nothing
+            , label = "Choice " ++ Debug.toString option
+            , value = option
+            }
+    in
+    List.map buildOption
+        [ ( UiIcon.flag, A )
+        , ( UiIcon.star, B )
+        , ( Svg.withColor Colors.greenDark UiIcon.attention, C )
+        ]
+
+
+type ExampleOption
+    = A
+    | B
+    | C
+
+
+{-| -}
+type alias State =
+    { selected : ExampleOption
+    , optionsControl : Control Options
+    }
+
+
 {-| -}
 init : State
 init =
     { selected = A
-    , optionsControl =
-        Control.record Options
-            |> Control.field "width"
-                (Control.choice
-                    [ ( "FitContent", Control.value SegmentedControl.FitContent )
-                    , ( "FillContainer", Control.value SegmentedControl.FillContainer )
-                    ]
-                )
-            |> Control.field "icon" (Control.maybe False redFlagControl)
-            |> Control.field "which view function"
-                (Control.choice
-                    [ ( "view", Control.value False )
-                    , ( "viewSpa", Control.value True )
-                    ]
-                )
+    , optionsControl = optionsControl
     }
 
 
-redFlagControl : Control Svg
-redFlagControl =
-    Control.value (Svg.withColor Colors.red UiIcon.flag)
+type alias Options =
+    { width : SegmentedControl.Width
+    , icon : Bool
+    , useSpa : Bool
+    }
+
+
+optionsControl : Control Options
+optionsControl =
+    Control.record Options
+        |> Control.field "width"
+            (Control.choice
+                [ ( "FitContent", Control.value SegmentedControl.FitContent )
+                , ( "FillContainer", Control.value SegmentedControl.FillContainer )
+                ]
+            )
+        |> Control.field "icon" (Control.bool False)
+        |> Control.field "which view function"
+            (Control.choice
+                [ ( "view", Control.value False )
+                , ( "viewSpa", Control.value True )
+                ]
+            )
+
+
+{-| -}
+type Msg
+    = Select ExampleOption
+    | ChangeOptions (Control Options)
 
 
 {-| -}
