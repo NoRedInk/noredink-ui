@@ -24,7 +24,7 @@ import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V8 as SegmentedControl
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -50,7 +50,7 @@ example parentMessage state =
           in
           viewFn
             { onClick = Select
-            , options = buildOptions options
+            , options = buildOptions options [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
             , selected = state.selected
             , width = options.width
             , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
@@ -59,7 +59,7 @@ example parentMessage state =
         , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
         , SegmentedControl.viewToggle
             { onClick = Select
-            , options = buildOptions options
+            , options = buildOptions options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
             , selected = state.selected
             , width = options.width
             }
@@ -68,10 +68,10 @@ example parentMessage state =
     }
 
 
-buildOptions : Options -> List (SegmentedControl.Option ExampleOption)
+buildOptions : Options -> List Svg -> List (SegmentedControl.Option ExampleOption)
 buildOptions options =
     let
-        buildOption ( icon, option ) =
+        buildOption option icon =
             { icon =
                 if options.icon then
                     Just icon
@@ -82,11 +82,7 @@ buildOptions options =
             , value = option
             }
     in
-    List.map buildOption
-        [ ( UiIcon.flag, A )
-        , ( UiIcon.star, B )
-        , ( Svg.withColor Colors.greenDark UiIcon.attention, C )
-        ]
+    List.map2 buildOption [ A, B, C ]
 
 
 type ExampleOption
