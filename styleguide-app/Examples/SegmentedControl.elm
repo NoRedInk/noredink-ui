@@ -22,8 +22,9 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.SegmentedControl.V7 as SegmentedControl
+import Nri.Ui.SegmentedControl.V8 as SegmentedControl
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -47,7 +48,7 @@ type alias State =
 
 type alias Options =
     { width : SegmentedControl.Width
-    , icon : Maybe SegmentedControl.Icon
+    , icon : Maybe Svg
     , useSpa : Bool
     }
 
@@ -59,7 +60,7 @@ example parentMessage state =
         options =
             Control.currentValue state.optionsControl
     in
-    { name = "Nri.Ui.SegmentedControl.V7"
+    { name = "Nri.Ui.SegmentedControl.V8"
     , category = Widgets
     , content =
         [ Control.view ChangeOptions state.optionsControl
@@ -109,8 +110,8 @@ example parentMessage state =
 
 
 {-| -}
-init : { r | help : String } -> State
-init assets =
+init : State
+init =
     { selected = A
     , optionsControl =
         Control.record Options
@@ -120,8 +121,7 @@ init assets =
                     , ( "FillContainer", Control.value SegmentedControl.FillContainer )
                     ]
                 )
-            |> Control.field "icon"
-                (Control.maybe False (Control.value { alt = "Help", icon = Icon.helpSvg assets }))
+            |> Control.field "icon" (Control.maybe False (Control.value UiIcon.performance))
             |> Control.field "which view function"
                 (Control.choice
                     [ ( "view", Control.value False )
