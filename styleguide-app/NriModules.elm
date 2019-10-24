@@ -58,7 +58,7 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { buttonExampleState = Examples.Button.init assets
+    { buttonExampleState = Examples.Button.init
     , bannerAlertExampleState = Examples.BannerAlert.init
     , clickableTextExampleState = Examples.ClickableText.init assets
     , checkboxExampleState = Examples.Checkbox.init
