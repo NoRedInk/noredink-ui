@@ -220,14 +220,12 @@ viewCaret expanded caret =
         DefaultCaret ->
             DisclosureIndicator.large
                 [ marginRight (px 8)
-                , minWidth (px 17)
                 ]
                 expanded
 
         WhiteCaret ->
             DisclosureIndicator.large
                 [ marginRight (px 8)
-                , minWidth (px 17)
                 , Css.Global.descendants
                     [ Css.Global.everything [ color Colors.white ] ]
                 ]
