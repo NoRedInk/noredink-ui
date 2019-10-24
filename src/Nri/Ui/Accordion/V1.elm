@@ -1,8 +1,14 @@
-module Nri.Ui.Accordion.V1 exposing (view, viewKeyed, viewCaret, AccordionOptions, StyleOptions, Caret(..))
+module Nri.Ui.Accordion.V1 exposing
+    ( view, viewKeyed
+    , viewCaret, Caret(..)
+    , AccordionOptions, StyleOptions
+    )
 
 {-|
 
-@docs view, viewKeyed, viewCaret, AccordionOptions, StyleOptions, Caret
+@docs view, viewKeyed
+@docs viewCaret, Caret
+@docs AccordionOptions, StyleOptions
 
 -}
 
