@@ -8,7 +8,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , arrowDown
     , checkmark, x
     , attention, exclamation
-    , flag
+    , flag, star
     )
 
 {-|
@@ -54,7 +54,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 ### Notifs
 
-@docs flag
+@docs flag, star
 
 -}
 
@@ -502,7 +502,7 @@ flag =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
+        , Attributes.fill "#F3336C"
         , Attributes.viewBox "0 0 25 25"
         ]
         [ Svg.path
@@ -510,5 +510,77 @@ flag =
             , Attributes.d "M21.36 1.25C20.064.414 17.107-.368 13.036.324 9.688.894 6.155.308 5 .081a.965.965 0 0 0-1.36.895v23.051c0 .538.427.973.967.973.542 0 .98-.437.98-.973V12.933c1.242.414 3.589.931 6.564.35 4.043-.794 7.36.229 7.36.229 1.02-1.017 1.808-3.482 1.435-6.203-.407-2.958.414-6.06.414-6.06z"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+star : Nri.Ui.Svg.V1.Svg
+star =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 25 24"
+        ]
+        [ Svg.defs []
+            [ Svg.path
+                [ Attributes.id "stara"
+                , Attributes.d "M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z"
+                ]
+                []
+            , Svg.filter
+                [ Attributes.id "starb"
+                , Attributes.x "-8%"
+                , Attributes.y "-8.3%"
+                , Attributes.width "116%"
+                , Attributes.height "116.7%"
+                ]
+                [ Svg.feGaussianBlur
+                    [ Attributes.in_ "SourceAlpha"
+                    , Attributes.result "shadowBlurInner1"
+                    , Attributes.stdDeviation "1.5"
+                    ]
+                    []
+                , Svg.feOffset
+                    [ Attributes.dy "1"
+                    , Attributes.in_ "shadowBlurInner1"
+                    , Attributes.result "shadowOffsetInner1"
+                    ]
+                    []
+                , Svg.feComposite
+                    [ Attributes.in_ "shadowOffsetInner1"
+                    , Attributes.in2 "SourceAlpha"
+                    , Attributes.k2 "-1"
+                    , Attributes.k3 "1"
+                    , Attributes.operator "arithmetic"
+                    , Attributes.result "shadowInnerInner1"
+                    ]
+                    []
+                , Svg.feColorMatrix
+                    [ Attributes.in_ "shadowInnerInner1"
+                    , Attributes.values
+                        """
+                        0 0 0 0 1
+                        0 0 0 0 0.3
+                        0 0 0 0 0
+                        0 0 0 1 0
+                        """
+                    ]
+                    []
+                ]
+            ]
+        , Svg.g [ Attributes.fillRule "evenodd" ]
+            [ Svg.use
+                [ Attributes.fill "#FEC709"
+                , Attributes.xlinkHref "#stara"
+                ]
+                []
+            , Svg.use
+                [ Attributes.fill "#000"
+                , Attributes.filter "url(#starb)"
+                , Attributes.xlinkHref "#stara"
+                ]
+                []
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml

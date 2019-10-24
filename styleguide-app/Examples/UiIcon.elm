@@ -60,6 +60,7 @@ example =
             ]
         , (IconExamples.view "Notifs" << List.map (Tuple.mapSecond Svg.toHtml))
             [ ( "flag", UiIcon.flag )
+            , ( "star", UiIcon.star )
             ]
         ]
     }
