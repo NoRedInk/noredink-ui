@@ -23,7 +23,7 @@ type Tab
 example : (Tab -> msg) -> Tab -> ModuleExample msg
 example changeTab tab =
     { name = "Nri.Ui.Tabs.V4"
-    , category = Widgets
+    , category = Layout
     , content =
         [ Tabs.view
             { title = Nothing
@@ -58,7 +58,7 @@ example changeTab tab =
                     []
                     (Tabs.NormalLink { label = "Nowhere", href = Nothing })
                     [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" }
-                    , Tabs.SpaLink { label = "Spa", href = "/#category/Widgets", msg = changeTab Second }
+                    , Tabs.SpaLink { label = "Spa", href = "/#category/Layout", msg = changeTab Second }
                     ]
             }
         ]
