@@ -30,9 +30,6 @@ example =
             , deprecatedIcon { icon = Icon.thumbsUp, background = Colors.blue, alt = "ThumbsUp" }
             , deprecatedIcon { icon = Icon.masteryBadge, background = Colors.frost, alt = "Badge " }
             ]
-        , IconExamples.view "Stars and Flags"
-            [ deprecatedIcon { icon = Icon.notStarred, background = Colors.frost, alt = "NotStarred" }
-            ]
         , IconExamples.view "Student Assignment Actions"
             [ deprecatedIcon { icon = Icon.assignmentStartButtonPrimary, background = Colors.frost, alt = "Start primary" }
             , deprecatedIcon { icon = Icon.assignmentStartButtonSecondary, background = Colors.frost, alt = "Start secondary" }

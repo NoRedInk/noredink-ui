@@ -8,7 +8,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , arrowDown
     , checkmark, x
     , attention, exclamation
-    , flag, star
+    , flag, star, starOutline
     )
 
 {-|
@@ -54,7 +54,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 ### Notifs
 
-@docs flag, star
+@docs flag, star, starOutline
 
 -}
 
@@ -582,5 +582,25 @@ star =
                 ]
                 []
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+starOutline : Nri.Ui.Svg.V1.Svg
+starOutline =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 25 24"
+        ]
+        [ Svg.path
+            [ Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            , Attributes.stroke "currentcolor"
+            , Attributes.strokeWidth "2"
+            , Attributes.d "M12.501 1L9.378 7.26A2 2 0 0 1 7.89 8.344L1 9.398l4.966 4.936a2 2 0 0 1 .564 1.742L5.397 23l6.18-3.216a2 2 0 0 1 1.846 0L19.603 23l-1.133-6.924a2 2 0 0 1 .564-1.742L24 9.398l-6.89-1.054a2 2 0 0 1-1.488-1.085L12.502 1z"
+            ]
+            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
