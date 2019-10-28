@@ -12,9 +12,9 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -45,31 +45,16 @@ example unnamedMessages state =
 
 
 {-| -}
-init : { r | performance : String, lock : String, help : String } -> State
-init assets =
+init : State
+init =
     Control.record Model
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "icon"
             (Control.maybe True <|
                 Control.choice
-                    [ ( "Help"
-                      , Icon.helpSvg assets
-                            |> Icon.decorativeIcon
-                            |> NriSvg.fromHtml
-                            |> Control.value
-                      )
-                    , ( "Performance"
-                      , Icon.performance assets
-                            |> Icon.decorativeIcon
-                            |> NriSvg.fromHtml
-                            |> Control.value
-                      )
-                    , ( "Lock"
-                      , Icon.lock assets
-                            |> Icon.decorativeIcon
-                            |> NriSvg.fromHtml
-                            |> Control.value
-                      )
+                    [ ( "Preview", Control.value UiIcon.preview )
+                    , ( "Performance", Control.value UiIcon.performance )
+                    , ( "Edit", Control.value UiIcon.edit )
                     ]
             )
         |> State

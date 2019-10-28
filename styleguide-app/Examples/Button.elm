@@ -11,11 +11,10 @@ import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.AssetPath exposing (Asset)
 import Nri.Ui.Button.V9 as Button
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Icon.V5 as Icon
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -76,11 +75,11 @@ type alias Model msg =
 
 
 {-| -}
-init : { r | performance : String, lock : String } -> State msg
-init assets =
+init : State msg
+init =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
-        |> Control.field "icon" (iconChoice assets)
+        |> Control.field "icon" iconChoice
         |> Control.field "button type"
             (Control.choice
                 [ ( "button", Control.value Button )
@@ -108,26 +107,13 @@ init assets =
         |> State
 
 
-iconChoice : { r | performance : String, lock : String } -> Control.Control (Maybe Svg)
-iconChoice assets =
+iconChoice : Control.Control (Maybe Svg)
+iconChoice =
     Control.choice
-        [ ( "Nothing"
-          , Control.value Nothing
-          )
-        , ( "Just Performance"
-          , Icon.performance assets
-                |> Icon.decorativeIcon
-                |> NriSvg.fromHtml
-                |> Just
-                |> Control.value
-          )
-        , ( "Just Lock"
-          , Icon.lock assets
-                |> Icon.decorativeIcon
-                |> NriSvg.fromHtml
-                |> Just
-                |> Control.value
-          )
+        [ ( "Nothing", Control.value Nothing )
+        , ( "Just Performance", Control.value (Just UiIcon.performance) )
+        , ( "Just Share", Control.value (Just UiIcon.share) )
+        , ( "Just Download", Control.value (Just UiIcon.download) )
         ]
 
 

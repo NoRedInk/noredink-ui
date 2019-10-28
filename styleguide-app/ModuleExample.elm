@@ -34,6 +34,7 @@ type Category
     | Buttons
     | Icons
     | Widgets
+    | Layout
     | Messaging
     | Modals
     | Colors
@@ -55,6 +56,9 @@ categoryFromString string =
 
         "Widgets" ->
             Ok Widgets
+
+        "Layout" ->
+            Ok Layout
 
         "Buttons" ->
             Ok Buttons
@@ -95,6 +99,9 @@ categoryForDisplay category =
 
         Widgets ->
             "Widgets"
+
+        Layout ->
+            "Layout"
 
         Buttons ->
             "Buttons and Links"
