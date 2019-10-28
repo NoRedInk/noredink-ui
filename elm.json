@@ -6,6 +6,7 @@
     "version": "7.10.0",
     "exposed-modules": [
         "Nri.Ui",
+        "Nri.Ui.Accordion.V1",
         "Nri.Ui.Alert.V2",
         "Nri.Ui.Alert.V3",
         "Nri.Ui.Alert.V4",
