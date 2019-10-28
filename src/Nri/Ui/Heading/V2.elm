@@ -1,6 +1,6 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
-    , style, Style(..), css
+    , style, Style(..), css, error, errorIf
     , customAttr
     )
 
@@ -8,7 +8,7 @@ module Nri.Ui.Heading.V2 exposing
 
 @docs h1, h2, h3, h4, h5
 
-@docs style, Style, css
+@docs style, Style, css, error, errorIf
 
 @docs customAttr
 
@@ -110,6 +110,7 @@ type Attribute msg
     = Style_ Style
     | Css (List Css.Style)
     | Attribute_ (Html.Styled.Attribute msg)
+    | Skip
 
 
 {-| -}
@@ -134,6 +135,29 @@ margins. Now you can!
 css : List Css.Style -> Attribute msg
 css =
     Css
+
+
+{-| Use this when the header is on top of a section in an error state.
+-}
+error : Attribute msg
+error =
+    css [ Css.color purple ]
+
+
+{-| Show an error if some condition is met.
+
+    Heading.h1
+        [ Heading.errorIf (model.errorMessage /= Nothing) ]
+        [ Html.text "Hello! ]
+
+-}
+errorIf : Bool -> Attribute msg
+errorIf cond =
+    if cond then
+        error
+
+    else
+        Skip
 
 
 {-| Set some custom attribute. You can do _anything_ here, but please don't make
@@ -163,6 +187,9 @@ customize attr customizations =
 
         Attribute_ attribute ->
             { customizations | attributes = customizations.attributes ++ [ attribute ] }
+
+        Skip ->
+            customizations
 
 
 

@@ -1,6 +1,5 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
-import Assets exposing (assets)
 import Examples.Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
@@ -62,12 +61,12 @@ type alias ModuleStates =
 init : ModuleStates
 init =
     { accordionExampleState = Examples.Accordion.init
-    , buttonExampleState = Examples.Button.init assets
+    , buttonExampleState = Examples.Button.init
     , bannerAlertExampleState = Examples.BannerAlert.init
-    , clickableTextExampleState = Examples.ClickableText.init assets
+    , clickableTextExampleState = Examples.ClickableText.init
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
-    , segmentedControlState = Examples.SegmentedControl.init assets
+    , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
