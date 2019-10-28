@@ -92,3 +92,30 @@ elm publish
 You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
 
 Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>.
+
+## Developing with Nix
+
+You can develop this package without installing anything globally by using Nix.
+To get started, install nix from [nixos.org/nix](https://nixos.org/nix/).
+
+After that's set up in your shell (just follow the instructions at the end of the installation script) you can run `nix-shell` to get a development environment with everything you need.
+
+If you find that inconvenient, try using [`direnv`](https://direnv.net/).
+Once that's set up, `echo use nix > .envrc` and then `direnv allow`.
+Anytime you enter the project your shell will automatically pick up the right dependencies.
+
+If you find that `direnv` loads too slow, [there are faster loading strategies than the default in their wiki](https://github.com/direnv/direnv/wiki/Nix).
+
+### Working with upstream dependencies
+
+We use `niv` to manage Nix dependencies.
+It is automatically loaded in the Nix environment.
+
+Here are some things you might need to do:
+
+| Task | Command |
+|------|---------|
+| Add a non-npm, non-Elm dependency packaged with Nix | Look if it's in nixpkgs, or `niv add github.com/user/repo` |
+| Update Nixpkgs | `niv update nixpkgs` |
+| See all our dependencies | Look in `shell.nix` |
+| See all our sources | `niv show` |
