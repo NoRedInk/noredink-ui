@@ -58,5 +58,10 @@ example =
             , ( "attention", UiIcon.attention )
             , ( "exclamation", UiIcon.exclamation )
             ]
+        , (IconExamples.view "Notifs" << List.map (Tuple.mapSecond Svg.toHtml))
+            [ ( "flag", UiIcon.flag )
+            , ( "star", UiIcon.star )
+            , ( "starOutline", UiIcon.starOutline )
+            ]
         ]
     }

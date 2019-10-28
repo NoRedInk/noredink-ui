@@ -12,17 +12,16 @@ module Nri.Ui.AssignmentIcon.V1 exposing
 @docs selfReview
 @docs peerReview, submitting, rating, revising
 
-    import Css
-    import Html.Styled exposing (..)
-    import Html.Styled.Attrbutes exposing (css)
+    import Html.Styled exposing (Html)
     import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
     import Nri.Ui.Colors.V1 as Colors
     import Nri.Ui.Svg.V1 as Svg
 
     view : Html msg
     view =
-        div [ css [ Css.color Colors.lichen ] ]
-            [ Svg.toHtml AssignmentIcon.diagnostic ]
+        AssignmentIcon.diagnostic
+            |> Svg.withColor Colors.lichen
+            |> Svg.toHtml
 
 -}
 
