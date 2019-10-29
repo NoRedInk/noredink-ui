@@ -67,5 +67,8 @@ example =
             , ( "star", UiIcon.star )
             , ( "starOutline", UiIcon.starOutline )
             ]
+        , IconExamples.view "Math"
+            [ ( "equals", UiIcon.equals )
+            ]
         ]
     }

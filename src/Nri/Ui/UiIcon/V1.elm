@@ -11,6 +11,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , checkmark, x
     , attention, exclamation
     , flag, star, starOutline
+    , equals
     )
 
 {-|
@@ -27,6 +28,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs checkmark, x
 @docs attention, exclamation
 @docs flag, star, starOutline
+@docs equals
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -675,5 +677,40 @@ skip =
         , Attributes.viewBox "0 0 25 25"
         ]
         [ Svg.path [ Attributes.d "M24.8 23.437c0 .416-.16.811-.447 1.104-.286.293-.676.46-1.08.46h-.882c-.845 0-1.53-.7-1.53-1.564v-8.874L4.406 24.58l-.23.14h-.105a2.158 2.158 0 0 1-.917.203c-1.134.035-2.088-.859-2.154-2.016V2.063C1.04.89 2.003-.034 3.154.001c.341.006.676.09.977.252h.106l.138.079L20.86 10.407V1.566C20.86.7 21.545 0 22.39 0h.882c.404 0 .794.167 1.08.46.287.293.447.689.447 1.105l.001 21.87z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+equals : Nri.Ui.Svg.V1.Svg
+equals =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 25 15"
+        ]
+        [ Svg.g
+            [ Attributes.transform "translate(-191.000000, -1433.000000)"
+            , Attributes.fill "currentcolor"
+            ]
+            [ Svg.g [ Attributes.transform "translate(191.000000, 1433.000000)" ]
+                [ Svg.rect
+                    [ Attributes.x "0"
+                    , Attributes.y "0"
+                    , Attributes.width "25"
+                    , Attributes.height "5"
+                    , Attributes.rx "2.5"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "0"
+                    , Attributes.y "10"
+                    , Attributes.width "25"
+                    , Attributes.height "5"
+                    , Attributes.rx "2.5"
+                    ]
+                    []
+                ]
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml

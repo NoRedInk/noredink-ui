@@ -50,8 +50,7 @@ example =
             , deprecatedIcon { icon = Icon.lock { lock = "icon-lock" }, background = Colors.frost, alt = "Lock" }
             ]
         , viewLarge "Uncategorized (SVGs)"
-            [ deprecatedIcon { icon = Icon.equalitySign { icons_equals_svg = Asset "assets/images/equals.svg" }, background = Colors.frost, alt = "EqualitySign" }
-            , deprecatedIcon { icon = Icon.logo { logoRedBlack_svg = Asset "assets/images/logo-red-black.svg" }, background = Colors.frost, alt = "Logo" }
+            [ deprecatedIcon { icon = Icon.logo { logoRedBlack_svg = Asset "assets/images/logo-red-black.svg" }, background = Colors.frost, alt = "Logo" }
             ]
         ]
     }
