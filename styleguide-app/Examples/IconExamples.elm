@@ -5,13 +5,11 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css, style, title)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V4 as Text
 
 
-view :
-    String
-    -> List ( String, Html msg )
-    -> Html msg
+view : String -> List ( String, Svg.Svg ) -> Html msg
 view headerText icons =
     Html.section [ css [ Css.marginTop (Css.px 16) ] ]
         [ Heading.h2 [] [ Html.text headerText ]
@@ -20,8 +18,8 @@ view headerText icons =
         ]
 
 
-viewIcon : ( String, Html msg ) -> Html msg
-viewIcon ( name, assignmentIcon ) =
+viewIcon : ( String, Svg.Svg ) -> Html msg
+viewIcon ( name, icon ) =
     Html.div
         [ css
             [ Css.margin (Css.px 10)
@@ -41,7 +39,7 @@ viewIcon ( name, assignmentIcon ) =
                 , Css.color Colors.green
                 ]
             ]
-            [ assignmentIcon
+            [ Svg.toHtml icon
             ]
-        , Text.mediumBody [ Html.text name ]
+        , Text.smallBody [ Html.text name ]
         ]
