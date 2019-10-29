@@ -11,10 +11,24 @@ import Nri.Ui.Text.V4 as Text
 
 view : String -> List ( String, Svg.Svg ) -> Html msg
 view headerText icons =
-    Html.section [ css [ Css.marginTop (Css.px 16) ] ]
-        [ Heading.h2 [] [ Html.text headerText ]
-        , Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
+    Html.section [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+        [ Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.flexWrap Css.wrap
+                ]
+            ]
             (List.map viewIcon icons)
+        , Heading.h2
+            [ Heading.css
+                [ Css.color Colors.gray75
+                , Css.marginLeft (Css.px 32)
+                , Css.paddingLeft (Css.px 32)
+                , Css.borderLeft3 (Css.px 2) Css.solid Colors.gray92
+                , Css.fontSize (Css.px 16)
+                ]
+            ]
+            [ Html.text headerText ]
         ]
 
 
@@ -22,21 +36,17 @@ viewIcon : ( String, Svg.Svg ) -> Html msg
 viewIcon ( name, icon ) =
     Html.div
         [ css
-            [ Css.margin (Css.px 10)
-            , Css.width (Css.px 160)
-            , Css.boxShadow4 (Css.px 10) (Css.px 5) (Css.px 5) Colors.navy
-            , Css.displayFlex
-            , Css.flexDirection Css.column
+            [ Css.displayFlex
             , Css.alignItems Css.center
-            , Css.justifyContent Css.flexStart
+            , Css.margin (Css.px 8)
             ]
         ]
         [ Html.div
             [ css
-                [ Css.height (Css.px 80)
-                , Css.width (Css.px 80)
-                , Css.margin (Css.px 10)
-                , Css.color Colors.green
+                [ Css.height (Css.px 25)
+                , Css.width (Css.px 25)
+                , Css.margin (Css.px 4)
+                , Css.color Colors.gray45
                 ]
             ]
             [ Svg.toHtml icon

@@ -18,18 +18,18 @@ example =
     { name = "Nri.Ui.AssignmentIcon.V1"
     , category = Icons
     , content =
-        [ IconExamples.view "Quiz engine icons"
+        [ IconExamples.view "Quiz engine"
             [ ( "diagnostic", AssignmentIcon.diagnostic )
             , ( "practice", AssignmentIcon.practice )
             , ( "quiz", AssignmentIcon.quiz )
             ]
-        , IconExamples.view "Writing assignment icons"
+        , IconExamples.view "Writing"
             [ ( "quickWrite", AssignmentIcon.quickWrite )
             , ( "guidedDraft", AssignmentIcon.guidedDraft )
             , ( "peerReview", AssignmentIcon.peerReview )
             , ( "selfReview", AssignmentIcon.selfReview )
             ]
-        , IconExamples.view "Peer Review sub-assignment icons"
+        , IconExamples.view "Stages"
             [ ( "submitting", AssignmentIcon.submitting )
             , ( "rating", AssignmentIcon.rating )
             , ( "revising", AssignmentIcon.revising )
