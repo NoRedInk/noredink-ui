@@ -31,6 +31,13 @@ example =
             [ ( "unarchive", UiIcon.unarchive )
             , ( "share", UiIcon.share )
             , ( "preview", UiIcon.preview )
+            , ( "activity", UiIcon.activity )
+            , ( "skip", UiIcon.skip )
+            ]
+        , IconExamples.view "Guidance"
+            [ ( "footsteps", UiIcon.footsteps )
+            , ( "compass", UiIcon.compass )
+            , ( "speedometer", UiIcon.speedometer )
             ]
         , IconExamples.view "Humans & Class"
             [ ( "person", UiIcon.person )
@@ -42,13 +49,11 @@ example =
             [ ( "calendar", UiIcon.calendar )
             , ( "clock", UiIcon.clock )
             ]
-        , IconExamples.view "Writing Utensils"
-            [ ( "edit", UiIcon.edit )
-            , ( "pen", UiIcon.pen )
-            ]
-        , IconExamples.view "Writing"
+        , IconExamples.view "Writing & Writing Utensils"
             [ ( "document", UiIcon.document )
             , ( "newspaper", UiIcon.newspaper )
+            , ( "edit", UiIcon.edit )
+            , ( "pen", UiIcon.pen )
             ]
         , IconExamples.view "Sticky things"
             [ ( "arrowDown", UiIcon.arrowDown )
