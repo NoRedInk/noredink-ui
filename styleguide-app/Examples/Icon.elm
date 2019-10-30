@@ -33,9 +33,6 @@ example =
         , viewLarge "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
             ]
-        , viewLarge "Uncategorized (SVGs)"
-            [ deprecatedIcon { icon = Icon.logo { logoRedBlack_svg = Asset "assets/images/logo-red-black.svg" }, background = Colors.frost, alt = "Logo" }
-            ]
         ]
     }
 

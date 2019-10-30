@@ -18,7 +18,10 @@ example =
     { name = "Nri.Ui.Logo.V1"
     , category = Icons
     , content =
-        [ IconExamples.view "Social Media & SSO"
+        [ IconExamples.view "NRI"
+            [ ( "noredink", Logo.noredink )
+            ]
+        , IconExamples.view "Social Media & SSO"
             [ ( "facebook", Logo.facebook )
             , ( "twitter", Logo.twitter )
             , ( "clever", Logo.clever )
