@@ -1,4 +1,4 @@
-module Examples.IconExamples exposing (view)
+module Examples.IconExamples exposing (view, viewWithCustomStyles)
 
 import Css
 import Html.Styled as Html exposing (Html)
@@ -11,6 +11,20 @@ import Nri.Ui.Text.V4 as Text
 
 view : String -> List ( String, Svg.Svg ) -> Html msg
 view headerText icons =
+    let
+        defaultStyles =
+            [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            , Css.color Colors.gray45
+            ]
+    in
+    viewWithCustomStyles headerText
+        (List.map (\( name, svg ) -> ( name, svg, defaultStyles )) icons)
+
+
+viewWithCustomStyles : String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
+viewWithCustomStyles headerText icons =
     Html.section [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
         [ Html.div
             [ css
@@ -32,8 +46,8 @@ view headerText icons =
         ]
 
 
-viewIcon : ( String, Svg.Svg ) -> Html msg
-viewIcon ( name, icon ) =
+viewIcon : ( String, Svg.Svg, List Css.Style ) -> Html msg
+viewIcon ( name, icon, style ) =
     Html.div
         [ css
             [ Css.displayFlex
@@ -41,15 +55,6 @@ viewIcon ( name, icon ) =
             , Css.margin (Css.px 8)
             ]
         ]
-        [ Html.div
-            [ css
-                [ Css.height (Css.px 25)
-                , Css.width (Css.px 25)
-                , Css.margin (Css.px 4)
-                , Css.color Colors.gray45
-                ]
-            ]
-            [ Svg.toHtml icon
-            ]
+        [ Html.div [ css style ] [ Svg.toHtml icon ]
         , Text.smallBody [ Html.text name ]
         ]

@@ -6,6 +6,7 @@ module Examples.Logo exposing (example)
 
 -}
 
+import Css
 import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
@@ -18,13 +19,38 @@ example =
     { name = "Nri.Ui.Logo.V1"
     , category = Icons
     , content =
-        [ IconExamples.view "NRI"
-            [ ( "noredink", Logo.noredink )
+        [ IconExamples.viewWithCustomStyles "NRI"
+            [ ( "noredink"
+              , Logo.noredink
+              , [ Css.height (Css.px 25)
+                , Css.width (Css.px 100)
+                , Css.margin (Css.px 4)
+                ]
+              )
             ]
-        , IconExamples.view "Social Media & SSO"
-            [ ( "facebook", Logo.facebook )
-            , ( "twitter", Logo.twitter )
-            , ( "clever", Logo.clever )
+        , IconExamples.viewWithCustomStyles "Social Media & SSO"
+            [ ( "facebook"
+              , Logo.facebook
+              , defaults
+              )
+            , ( "twitter", Logo.twitter, defaults )
+            , ( "clever"
+              , Logo.clever
+              , [ Css.height (Css.px 25)
+                , Css.width (Css.px 100)
+                , Css.margin (Css.px 4)
+                , Css.color Colors.azure
+                ]
+              )
             ]
         ]
     }
+
+
+defaults : List Css.Style
+defaults =
+    [ Css.height (Css.px 25)
+    , Css.width (Css.px 25)
+    , Css.margin (Css.px 4)
+    , Css.color Colors.azure
+    ]
