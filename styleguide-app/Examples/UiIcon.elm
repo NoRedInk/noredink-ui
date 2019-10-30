@@ -38,6 +38,8 @@ example =
             [ ( "footsteps", UiIcon.footsteps )
             , ( "compass", UiIcon.compass )
             , ( "speedometer", UiIcon.speedometer )
+            , ( "bulb", UiIcon.bulb )
+            , ( "help", UiIcon.help )
             ]
         , IconExamples.view "Humans & Class"
             [ ( "person", UiIcon.person )

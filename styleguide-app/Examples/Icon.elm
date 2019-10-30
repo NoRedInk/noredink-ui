@@ -37,9 +37,7 @@ example =
             , deprecatedIcon { icon = Icon.clever { clever = "icon-clever" }, background = Colors.frost, alt = "Clever" }
             ]
         , viewLarge "Bulbs and Tips"
-            [ deprecatedIcon { icon = Icon.bulb { bulb = "icon-bulb" }, background = Colors.frost, alt = "Bulb" }
-            , deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
-            , deprecatedIcon { icon = Icon.helpSvg { help = "icon-help" }, background = Colors.frost, alt = "Help" }
+            [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
             ]
         , viewLarge "Locks and keys"
             [ deprecatedIcon { icon = Icon.key { key = "icon-key" }, background = Colors.frost, alt = "Key" }
