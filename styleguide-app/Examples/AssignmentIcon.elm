@@ -34,5 +34,9 @@ example =
             , ( "rating", AssignmentIcon.rating )
             , ( "revising", AssignmentIcon.revising )
             ]
+        , IconExamples.view "Start"
+            [ ( "startPrimary", AssignmentIcon.startPrimary )
+            , ( "startSecondary", AssignmentIcon.startSecondary )
+            ]
         ]
     }
