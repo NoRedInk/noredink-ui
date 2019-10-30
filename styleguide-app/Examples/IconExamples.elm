@@ -35,8 +35,7 @@ viewWithCustomStyles headerText icons =
             (List.map viewIcon icons)
         , Heading.h2
             [ Heading.css
-                [ Css.color Colors.gray75
-                , Css.marginLeft (Css.px 32)
+                [ Css.marginLeft (Css.px 32)
                 , Css.paddingLeft (Css.px 32)
                 , Css.borderLeft3 (Css.px 2) Css.solid Colors.gray92
                 , Css.fontSize (Css.px 16)
