@@ -31,11 +31,6 @@ example =
             , deprecatedIcon { icon = Icon.thumbsUp { level1Badge_png = Asset "assets/images/level-1-badge.png" }, background = Colors.blue, alt = "ThumbsUp" }
             , deprecatedIcon { icon = Icon.masteryBadge { masteryBadge = "icon-mastery-badge" }, background = Colors.frost, alt = "Badge " }
             ]
-        , viewLarge "Social Media"
-            [ deprecatedIcon { icon = Icon.facebook { facebookBlue_svg = Asset "assets/images/facebook-blue.svg" }, background = Colors.frost, alt = "Facebook" }
-            , deprecatedIcon { icon = Icon.twitter { twitterBlue_svg = Asset "assets/images/twitter-blue.svg" }, background = Colors.frost, alt = "Twitter" }
-            , deprecatedIcon { icon = Icon.clever { clever = "icon-clever" }, background = Colors.frost, alt = "Clever" }
-            ]
         , viewLarge "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
             ]
