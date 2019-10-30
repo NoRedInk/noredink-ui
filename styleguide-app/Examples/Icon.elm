@@ -29,14 +29,9 @@ example =
             , deprecatedIcon { icon = Icon.highFive { level3Badge_png = Asset "assets/images/level-3-badge.png" }, background = Colors.blue, alt = "HighFive" }
             , deprecatedIcon { icon = Icon.okay { level2Badge_png = Asset "assets/images/level-2-badge.png" }, background = Colors.blue, alt = "Okay" }
             , deprecatedIcon { icon = Icon.thumbsUp { level1Badge_png = Asset "assets/images/level-1-badge.png" }, background = Colors.blue, alt = "ThumbsUp" }
-            , deprecatedIcon { icon = Icon.masteryBadge { masteryBadge = "icon-mastery-badge" }, background = Colors.frost, alt = "Badge " }
             ]
         , viewLarge "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
-            ]
-        , viewLarge "Locks and keys"
-            [ deprecatedIcon { icon = Icon.key { key = "icon-key" }, background = Colors.frost, alt = "Key" }
-            , deprecatedIcon { icon = Icon.lock { lock = "icon-lock" }, background = Colors.frost, alt = "Lock" }
             ]
         , viewLarge "Uncategorized (SVGs)"
             [ deprecatedIcon { icon = Icon.logo { logoRedBlack_svg = Asset "assets/images/logo-red-black.svg" }, background = Colors.frost, alt = "Logo" }

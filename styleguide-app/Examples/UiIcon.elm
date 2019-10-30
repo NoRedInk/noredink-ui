@@ -9,7 +9,6 @@ module Examples.UiIcon exposing (example)
 import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -71,6 +70,13 @@ example =
             ]
         , IconExamples.view "Math"
             [ ( "equals", UiIcon.equals )
+            ]
+        , IconExamples.view "Lock & Key"
+            [ ( "lock", UiIcon.lock )
+            , ( "key", UiIcon.key )
+            ]
+        , IconExamples.view "Badges & Levels"
+            [ ( "badge", UiIcon.badge )
             ]
         ]
     }
