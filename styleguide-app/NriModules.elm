@@ -14,6 +14,7 @@ import Examples.Dropdown
 import Examples.Fonts
 import Examples.Heading
 import Examples.Icon
+import Examples.Logo
 import Examples.Modal
 import Examples.Page
 import Examples.Pennant
@@ -297,34 +298,35 @@ nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
     , Examples.Accordion.example AccordionExampleMsg model.accordionExampleState
+    , Examples.AssignmentIcon.example
     , Examples.BannerAlert.example BannerAlertExampleMsg model.bannerAlertExampleState
     , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.Callout.example
-    , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
+    , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
+    , Examples.Colors.example
+    , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
-    , Examples.AssignmentIcon.example
-    , Examples.UiIcon.example
+    , Examples.Fonts.example
+    , Examples.Heading.example
     , Examples.Icon.example
+    , Examples.Logo.example
+    , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.Page.example NoOp
+    , Examples.Pennant.example
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
-    , Examples.Heading.example
+    , Examples.Slide.example SlideExampleMsg model.slideExampleState
+    , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
+    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
+    , Examples.Table.example TableExampleMsg model.tableExampleState
+    , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Text.example
     , Examples.Text.Writing.example
-    , Examples.Fonts.example
-    , Examples.Table.example TableExampleMsg model.tableExampleState
+    , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
+    , Examples.UiIcon.example
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     , TextInputExample.example TextInputExampleMsg model.textInputExampleState
-    , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
-    , Examples.Colors.example
-    , Examples.Modal.example ModalExampleMsg model.modalExampleState
-    , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
-    , Examples.Slide.example SlideExampleMsg model.slideExampleState
-    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
-    , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
-    , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
-    , Examples.Pennant.example
     ]
 
 
