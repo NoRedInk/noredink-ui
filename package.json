@@ -12,8 +12,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build-lib",
-    "build-lib": "npx browserify --entry lib/index.js --outfile dist.js"
+    "prepublish": "npm run snyk-protect && npm run build-lib",
+    "build-lib": "npx browserify --entry lib/index.js --outfile dist.js",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,8 @@
   },
   "dependencies": {
     "axe-core": "^3.3.0",
-    "puppeteer": "^1.20.0"
-  }
+    "puppeteer": "^1.20.0",
+    "snyk": "^1.242.3"
+  },
+  "snyk": true
 }
