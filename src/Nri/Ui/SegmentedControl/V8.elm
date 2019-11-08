@@ -239,6 +239,7 @@ sharedTabStyles : List Style
 sharedTabStyles =
     [ padding2 (px 6) (px 20)
     , height (px 45)
+    , overflow hidden
     , Fonts.baseFont
     , fontSize (px 15)
     , fontWeight bold
