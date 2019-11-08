@@ -85,7 +85,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ Html.text "invisible label" ]
                 , TextInput.view
-                    { label = "Criterion"
+                    { label = "Invisible label text input"
                     , isInError = False
                     , placeholder = "For example, \"Something!!\""
                     , value = Maybe.withDefault "" <| Dict.get 2 state.textInputValues
@@ -97,7 +97,7 @@ example parentMessage state =
                     }
                 , Html.br [] []
                 , TextInput.view
-                    { label = "Criterion"
+                    { label = "Invisible label text input with error"
                     , placeholder = "Everything you type is wrong!"
                     , value = Maybe.withDefault "" <| Dict.get 3 state.textInputValues
                     , onInput = SetTextInput 3
