@@ -244,6 +244,8 @@ view wrapMsg ti attributes model =
                     , left zero
                     , width (pct 100)
                     , height (pct 100)
+                    , displayFlex
+                    , alignItems center
                     ]
                 ]
                 [ viewBackdrop config
