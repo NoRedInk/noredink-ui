@@ -19,7 +19,9 @@ module Examples.Select exposing
 -}
 
 import Html.Styled
+import Html.Styled.Attributes
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V6 as Select
 
 
@@ -44,7 +46,10 @@ example parentMessage state =
     { name = "Nri.Ui.Select.V6"
     , category = Inputs
     , content =
-        [ Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
+        [ Html.Styled.label
+            [ Html.Styled.Attributes.for "tortilla-selector" ]
+            [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
+        , Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
         ]
     }
 
@@ -58,7 +63,7 @@ init =
         , { label = "Burritos", value = "Burritos" }
         , { label = "Enchiladas", value = "Enchiladas" }
         ]
-    , id = Nothing
+    , id = Just "tortilla-selector"
     , valueToString = identity
     , defaultDisplayText = Just "Select a tasty tortilla based treat!"
     }
