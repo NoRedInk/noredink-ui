@@ -9,6 +9,7 @@ module Examples.Alert exposing (example)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Alert.V4 as Alert
+import Nri.Ui.Heading.V2 as Heading
 
 
 example : ModuleExample msg
@@ -16,13 +17,13 @@ example =
     { name = "Nri.Ui.Alert.V4"
     , category = Messaging
     , content =
-        [ Html.h4 [] [ Html.text "Markdown-supporting:" ]
+        [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
         , Alert.error "This is an **error**"
         , Alert.warning "This is a **warning**"
         , Alert.tip "This is a **tip**"
         , Alert.success "This is a **success**"
         , Html.hr [] []
-        , Html.h4 [] [ Html.text "Stacktraces-supporting:" ]
+        , Heading.h3 [] [ Html.text "Stacktraces-supporting:" ]
         , Alert.somethingWentWrong exampleRailsError
         ]
     }

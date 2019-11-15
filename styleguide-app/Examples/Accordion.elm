@@ -27,7 +27,7 @@ example parentMessage model =
     { name = "Nri.Ui.Accordion.V1"
     , category = Layout
     , content =
-        [ Heading.h5 [] [ Html.text "Accordion.view with default styles" ]
+        [ Heading.h3 [] [ Html.text "Accordion.view with default styles" ]
         , Accordion.view
             { entries =
                 [ { id = 1, title = "Entry 1", content = "Content for the first accordion" }
@@ -44,7 +44,7 @@ example parentMessage model =
             , toggle = \entry toExpand -> Toggle entry.id toExpand
             , caret = Accordion.DefaultCaret
             }
-        , Heading.h5 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
+        , Heading.h3 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
         , Accordion.view
             { entries =
                 [ { id = 4

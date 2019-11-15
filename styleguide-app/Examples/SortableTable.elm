@@ -8,6 +8,7 @@ module Examples.SortableTable exposing (Msg, State, example, init, update)
 
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
 
 
@@ -68,9 +69,9 @@ example parentMessage { sortState } =
                 , { firstName = "First5", lastName = "Last5", coins = 5 }
                 ]
         in
-        [ Html.h4 [] [ Html.text "With sortable headers" ]
+        [ Heading.h3 [] [ Html.text "With sortable headers" ]
         , SortableTable.view config sortState data
-        , Html.h4 [] [ Html.text "Loading" ]
+        , Heading.h3 [] [ Html.text "Loading" ]
         , SortableTable.viewLoading config sortState
         ]
             |> List.map (Html.map parentMessage)
