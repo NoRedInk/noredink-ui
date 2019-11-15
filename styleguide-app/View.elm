@@ -33,7 +33,7 @@ view_ model =
         ]
         []
         [ navigation model.route
-        , Html.styled Html.div
+        , Html.styled Html.main_
             [ flexGrow (int 1) ]
             []
             (case model.route of
