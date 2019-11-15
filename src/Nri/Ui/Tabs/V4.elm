@@ -157,7 +157,6 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
         , Role.presentation
         , Attributes.id (tabToId tab)
         , Aria.controls (tabToBodyId tab)
-        , Widget.selected (selected.id == tab.id)
         , Events.on "keyup" <|
             Json.Decode.andThen
                 (\keyCode ->
@@ -191,6 +190,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             ]
             [ Role.tab
             , Attributes.tabindex -1
+            , Widget.selected (selected.id == tab.id)
             ]
             [ viewInnerTab tab ]
         ]
