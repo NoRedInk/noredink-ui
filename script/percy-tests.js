@@ -18,9 +18,7 @@ PercyScript.run(async (page, percySnapshot) => {
   await percySnapshot('Icons')
 
   await page.goto('http://localhost:8000/#category/Inputs')
-  await percySnapshot('Inputs Unchecked')
-  await page.click('[for="styleguide-checkbox-interactable"]')
-  await percySnapshot('Inputs Checked')
+  await percySnapshot('Inputs')
 
   await page.goto('http://localhost:8000/#category/Layout')
   await percySnapshot('Layout')
