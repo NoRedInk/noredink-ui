@@ -167,10 +167,13 @@ viewMultilineCheckboxes =
 viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     let
+        safeId =
+            String.replace " " "-"
+
         checkbox config =
             PremiumCheckbox.view
                 { label = config.label
-                , id = "premium-checkbox-" ++ config.label
+                , id = "premium-checkbox-" ++ safeId config.label
                 , selected =
                     if Set.member config.label state.isChecked then
                         Checkbox.Selected
