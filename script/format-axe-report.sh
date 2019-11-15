@@ -27,6 +27,6 @@ if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo " 1. save this output somewhere ('make axe-report > errors.new')"
     echo " 2. undo your changes ('git stash' or 'checkout master')"
     echo " 3. regenerate the log with 'make axe-report > errors.old'"
-    echo " 4. see waht's new with 'diff -u errors.old errors.new'"
+    echo " 4. see what's new with 'diff -u errors.old errors.new'"
     exit 1
 fi
