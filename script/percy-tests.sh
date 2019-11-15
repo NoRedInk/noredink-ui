@@ -9,4 +9,4 @@ cleanup() {
 }
 trap cleanup EXIT INT
 
-node script/percy-tests.js http://localhost:8000
+node script/percy-tests.js
