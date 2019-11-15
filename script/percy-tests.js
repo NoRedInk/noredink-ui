@@ -27,6 +27,12 @@ PercyScript.run(async (page, percySnapshot) => {
 
   await page.goto('http://localhost:8000/#category/Modals')
   await percySnapshot('Modals')
+  await page.click('#launch-info-modal')
+  await percySnapshot('Full Info Modal')
+  await page.click('[aria-label="Close modal"]')
+  await page.click('#launch-warning-modal')
+  await percySnapshot('Full Warning Modal')
+  await page.click('[aria-label="Close modal"]')
 
   await page.goto('http://localhost:8000/#category/Pages')
   await percySnapshot('Pages')
