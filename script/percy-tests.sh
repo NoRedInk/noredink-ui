@@ -9,4 +9,4 @@ cleanup() {
 }
 trap cleanup EXIT INT
 
-node script/percy-tests.js
+npx percy exec -- node percy-tests.js
