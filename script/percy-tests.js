@@ -5,5 +5,5 @@ PercyScript.run(async (page, percySnapshot) => {
   // ensure the page has loaded before capturing a snapshot
   await page.waitFor('.module-example__Nri-Ui-Alert-V4')
 
-  percySnapshot('NoRedInk-UI', {widths: [1280]})
+  percySnapshot('noredinkui', {widths: [1280]})
 })
