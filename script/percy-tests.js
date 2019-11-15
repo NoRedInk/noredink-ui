@@ -7,7 +7,7 @@ PercyScript.run(async (page, percySnapshot) => {
 
   const categories = Array.from(document.querySelectorAll('#categories a'))
 
-  categories.forEach((category) => {
+  categories.forEach(async (category) => {
     await page.click(category)
     await percySnapshot(category.innerText)
   })
