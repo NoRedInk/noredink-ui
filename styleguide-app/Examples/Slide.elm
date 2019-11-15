@@ -117,10 +117,10 @@ viewPanel panel animation =
         ( color, text, key ) =
             case panel of
                 One ->
-                    ( Colors.red, "Panel One", "panel-1" )
+                    ( Colors.redDark, "Panel One", "panel-1" )
 
                 Two ->
-                    ( Colors.yellow, "Panel Two", "panel-2" )
+                    ( Colors.ochre, "Panel Two", "panel-2" )
 
                 Three ->
                     ( Colors.green, "Panel Three", "panel-3" )
