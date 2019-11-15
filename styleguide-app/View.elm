@@ -128,7 +128,7 @@ navigation route =
         , top (px 150)
         , flexShrink zero
         ]
-        [ id "categories" ]
+        []
         [ Heading.h4 [] [ Html.text "Categories" ]
         , (categoryLink (route == Routes.All) "#" "All"
             :: List.map
