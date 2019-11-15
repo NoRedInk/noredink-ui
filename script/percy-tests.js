@@ -5,7 +5,7 @@ PercyScript.run(async (page, percySnapshot) => {
   // ensure the page has loaded before capturing a snapshot
   await page.waitFor('.module-example__Nri-Ui-Alert-V4')
 
-  const categories = Array.from(document.querySelectorAll('#categories a'))
+  const categories = Array.from(window.document.querySelectorAll('#categories a'))
 
   categories.forEach(async (category) => {
     await page.click(category)
