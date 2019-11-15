@@ -6,51 +6,81 @@ module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 -}
 
+import Css
 import Html.Styled exposing (div, h3, text)
+import Html.Styled.Attributes as Attributes
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.BannerAlert.V5 as BannerAlert
+import Nri.Ui.BannerAlert.V6 as BannerAlert
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMsg state =
-    { name = "Nri.Ui.BannerAlert.V5"
+    { name = "Nri.Ui.BannerAlert.V6"
     , category = Messaging
     , content =
         [ if state.show then
             div
                 []
                 [ h3 [] [ text "alert" ]
-                , BannerAlert.alert (BannerAlert.Plain "This is a dismissable alert message!") (Just Dismiss)
+                , BannerAlert.alert
+                    [ Html.Styled.text "This is a dismissable alert message!" ]
+                    (Just Dismiss)
                 ]
 
           else
             div
                 []
                 [ h3 [] [ text "success" ]
-                , BannerAlert.success (BannerAlert.Plain "The alert message was dismissed. 👍") Nothing
+                , BannerAlert.success
+                    [ Html.Styled.text "The alert message was dismissed. 👍" ]
+                    Nothing
                 ]
         , h3 [] [ text "error" ]
-        , BannerAlert.error (BannerAlert.Plain "This is an error message!") Nothing
+        , BannerAlert.error
+            [ Html.Styled.text "This is an error message!" ]
+            Nothing
         , h3 [] [ text "error with link" ]
         , BannerAlert.error
-            (BannerAlert.WithLink
-                { prefixText = "Click "
-                , linkText = "here"
-                , linkUrl = "http://www.noredink.com"
-                , postfixText = " to check out NoRedInk."
-                , target = BannerAlert.Blank
-                }
-            )
+            [ Html.Styled.div
+                [ Attributes.css
+                    [ Css.fontSize (Css.px 20)
+                    , Css.fontWeight (Css.int 700)
+                    , Css.lineHeight (Css.px 25)
+                    , Css.maxWidth (Css.px 600)
+                    , Fonts.baseFont
+                    ]
+                ]
+                [ Html.Styled.text "Click "
+                , Html.Styled.a
+                    [ Attributes.href "http://www.noredink.com"
+                    , Attributes.target "_blank"
+                    ]
+                    [ Html.Styled.text "here " ]
+                , Html.Styled.div
+                    [ Attributes.css
+                        [ Css.display Css.inlineBlock
+                        , Css.width (Css.px 20)
+                        ]
+                    ]
+                    [ Svg.toHtml UiIcon.gear ]
+                , Html.Styled.text " to check out NoRedInk."
+                ]
+            ]
             Nothing
         , h3 [] [ text "neutral" ]
-        , BannerAlert.neutral (BannerAlert.Plain "This is a neutral message!") Nothing
+        , BannerAlert.neutral
+            [ Html.Styled.text "This is a neutral message!" ]
+            Nothing
         , h3 [] [ text "success" ]
         , BannerAlert.success
-            (BannerAlert.Plain """This is a success message!
+            [ Html.Styled.text """This is a success message!
             Let's see what happens if there is a very long message!
             Wow, how successful! You're the biggest success I've ever seen!
             You should feel great about yourself! Give yourself a very big round of applause!
-            """)
+            """ ]
             Nothing
         ]
             |> List.map (Html.Styled.map parentMsg)

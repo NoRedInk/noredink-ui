@@ -121,29 +121,30 @@ navigation route =
     in
     Html.styled Html.div
         [ flexBasis (px 200)
-        , backgroundColor Colors.gray92
+        , backgroundColor Colors.gray96
         , marginRight (px 40)
         , padding (px 25)
         , VendorPrefixed.value "position" "sticky"
         , top (px 150)
         , flexShrink zero
         ]
-        []
+        [ id "categories" ]
         [ Heading.h4 [] [ Html.text "Categories" ]
         , (categoryLink (route == Routes.All) "#" "All"
             :: List.map
                 navLink
-                [ Messaging
-                , Animations
+                [ Animations
                 , Buttons
                 , Colors
-                , Pages
                 , Icons
                 , Inputs
+                , Layout
                 , Modals
+                , Pages
                 , Tables
                 , Text
                 , Widgets
+                , Messaging
                 ]
           )
             |> List.map toNavLi

@@ -3,6 +3,7 @@ module Nri.Ui.AssignmentIcon.V1 exposing
     , quickWrite, guidedDraft
     , selfReview
     , peerReview, submitting, rating, revising
+    , startPrimary, startSecondary
     )
 
 {-|
@@ -11,18 +12,18 @@ module Nri.Ui.AssignmentIcon.V1 exposing
 @docs quickWrite, guidedDraft
 @docs selfReview
 @docs peerReview, submitting, rating, revising
+@docs startPrimary, startSecondary
 
-    import Css
-    import Html.Styled exposing (..)
-    import Html.Styled.Attrbutes exposing (css)
+    import Html.Styled exposing (Html)
     import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
     import Nri.Ui.Colors.V1 as Colors
     import Nri.Ui.Svg.V1 as Svg
 
     view : Html msg
     view =
-        div [ css [ Css.color Colors.lichen ] ]
-            [ Svg.toHtml AssignmentIcon.diagnostic ]
+        AssignmentIcon.diagnostic
+            |> Svg.withColor Colors.lichen
+            |> Svg.toHtml
 
 -}
 
@@ -210,5 +211,69 @@ revising =
             [ Attributes.d "M19.382 6.173a.691.691 0 0 0-.308-.948l-.894-.458a.642.642 0 0 0-.537-.05.642.642 0 0 0-.406.356l-.363.717c-.135.044-.224-.002-.359.042a.642.642 0 0 0-.406.356l-.499.986-.715-.366a.341.341 0 0 0-.472.153l-2.268 4.482a.346.346 0 0 0 .154.474c.044.135.179.091.246.07.067-.022.202-.066.248-.156l2.065-4.19.357.183-4.129 8.156c-.045.09-.023.158-.068.247l-.468 3.148c-.046.315.11.564.4.769a.642.642 0 0 0 .537.05c.135-.044.202-.066.247-.156L14 17.808c.067-.022.112-.112.158-.201l4.99-9.86a.76.76 0 0 0-.129-.856l.363-.718zm-1.52-.779l.895.459-.363.717-.894-.459.363-.717zm-6.585 14.122l.442-2.765 1.61.826-2.052 1.94zm2.436-2.589l-1.787-.917 3.539-6.99 1.788.916-3.54 6.991zM17.57 9.31l-1.788-.917.953-1.883 1.788.917-.953 1.883z"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+startPrimary : Nri.Ui.Svg.V1.Svg
+startPrimary =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 50 50"
+        ]
+        [ Svg.g [ Attributes.transform "translate(-50.000000, -624.000000)" ]
+            [ Svg.g [ Attributes.transform "translate(50.000000, 50.000000)" ]
+                [ Svg.g [ Attributes.transform "translate(0.000000, 574.000000)" ]
+                    [ Svg.g []
+                        [ Svg.g []
+                            [ Svg.path [ Attributes.fill "currentcolor", Attributes.d "M0,24.9999988 C0,38.8087481 11.19375,50 25,50 C38.80875,50 50,38.8087481 50,24.9999988 C50,11.1937494 38.80625,0 25,0 C11.19375,0 0,11.1937494 0,24.9999988 Z" ] []
+                            , Svg.path [ Attributes.fill "#fff", Attributes.d "M21.0869565,33.8146977 C20.6577447,34.0617674 20.1248751,34.0617674 19.6956522,33.8146977 C19.2664403,33.5683165 19,33.1074898 19,32.61405 L19,17.38595 C19,16.889723 19.2664403,16.4316724 19.6956522,16.1853023 C20.1248751,15.9382326 20.6577447,15.9382326 21.0869565,16.1853023 L34.3043478,23.8007347 C34.7335708,24.0478044 35,24.5051666 35,25.002082 C35,25.4955219 34.7363534,25.9535725 34.3043478,26.1999537 L21.0869565,33.8146977 Z" ] []
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+startSecondary : Nri.Ui.Svg.V1.Svg
+startSecondary =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 60 50 51"
+        , Attributes.fill "#fff"
+        ]
+        [ Svg.g [ Attributes.transform "translate(-50.000000, -624.000000)" ]
+            [ Svg.g [ Attributes.transform "translate(50.000000, 50.000000)" ]
+                [ Svg.g [ Attributes.transform "translate(0.000000, 574.000000)" ]
+                    [ Svg.g []
+                        [ Svg.g [ Attributes.transform "translate(0.000000, 60.000000)" ]
+                            [ Svg.g []
+                                [ Svg.path
+                                    [ Attributes.d "M0,25.3650791 C0,39.1738284 11.19375,50.3650803 25,50.3650803 C38.80875,50.3650803 50,39.1738284 50,25.3650791 C50,11.5588298 38.80625,0.365080324 25,0.365080324 C11.19375,0.365080324 0,11.5588298 0,25.3650791 Z"
+                                    ]
+                                    []
+                                , Svg.path
+                                    [ Attributes.stroke "currentcolor"
+                                    , Attributes.strokeWidth "3"
+                                    , Attributes.d "M1.5,25.3650791 C1.5,38.3445152 12.021291,48.8650803 25,48.8650803 C37.9803224,48.8650803 48.5,38.3454018 48.5,25.3650791 C48.5,12.3872569 37.9778229,1.86508032 25,1.86508032 C12.0221771,1.86508032 1.5,12.3872569 1.5,25.3650791 Z"
+                                    ]
+                                    []
+                                ]
+                            , Svg.path
+                                [ Attributes.fill "currentcolor"
+                                , Attributes.d "M20.946522,34.4104003 C20.5071165,34.6639342 19.9615913,34.6639342 19.5221743,34.4104003 C19.0827687,34.1575729 18.8100004,33.6846894 18.8100004,33.1783395 L18.8100004,17.5518211 C18.8100004,17.0426111 19.0827687,16.5725764 19.5221743,16.3197604 C19.9615913,16.0662265 20.5071165,16.0662265 20.946522,16.3197604 L34.4778257,24.1344382 C34.9172427,24.3879721 35.1899996,24.8573004 35.1899996,25.3672168 C35.1899996,25.8735667 34.9200914,26.3436015 34.4778257,26.5964289 L20.946522,34.4104003 Z"
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml

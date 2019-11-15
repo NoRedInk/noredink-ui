@@ -1,6 +1,6 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
-import Assets exposing (assets)
+import Examples.Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
 import Examples.BannerAlert
@@ -14,8 +14,10 @@ import Examples.Dropdown
 import Examples.Fonts
 import Examples.Heading
 import Examples.Icon
+import Examples.Logo
 import Examples.Modal
 import Examples.Page
+import Examples.Pennant
 import Examples.SegmentedControl
 import Examples.Select
 import Examples.Slide
@@ -36,7 +38,8 @@ import Url exposing (Url)
 
 
 type alias ModuleStates =
-    { buttonExampleState : Examples.Button.State Msg
+    { accordionExampleState : Examples.Accordion.State
+    , buttonExampleState : Examples.Button.State Msg
     , bannerAlertExampleState : Examples.BannerAlert.State
     , clickableTextExampleState : Examples.ClickableText.State
     , checkboxExampleState : Examples.Checkbox.State
@@ -58,12 +61,13 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { buttonExampleState = Examples.Button.init assets
+    { accordionExampleState = Examples.Accordion.init
+    , buttonExampleState = Examples.Button.init
     , bannerAlertExampleState = Examples.BannerAlert.init
-    , clickableTextExampleState = Examples.ClickableText.init assets
+    , clickableTextExampleState = Examples.ClickableText.init
     , checkboxExampleState = Examples.Checkbox.init
     , dropdownState = Examples.Dropdown.init
-    , segmentedControlState = Examples.SegmentedControl.init assets
+    , segmentedControlState = Examples.SegmentedControl.init
     , selectState = Examples.Select.init
     , tableExampleState = Examples.Table.init
     , textAreaExampleState = TextAreaExample.init
@@ -79,7 +83,8 @@ init =
 
 
 type Msg
-    = ButtonExampleMsg (Examples.Button.Msg Msg)
+    = AccordionExampleMsg Examples.Accordion.Msg
+    | ButtonExampleMsg (Examples.Button.Msg Msg)
     | BannerAlertExampleMsg Examples.BannerAlert.Msg
     | ClickableTextExampleMsg Examples.ClickableText.Msg
     | CheckboxExampleMsg Examples.Checkbox.Msg
@@ -103,6 +108,14 @@ type Msg
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update outsideMsg moduleStates =
     case outsideMsg of
+        AccordionExampleMsg msg ->
+            ( { moduleStates
+                | accordionExampleState =
+                    Examples.Accordion.update msg moduleStates.accordionExampleState
+              }
+            , Cmd.none
+            )
+
         ButtonExampleMsg msg ->
             let
                 ( buttonExampleState, cmd ) =
@@ -284,33 +297,36 @@ container width children =
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
+    , Examples.Accordion.example AccordionExampleMsg model.accordionExampleState
+    , Examples.AssignmentIcon.example
     , Examples.BannerAlert.example BannerAlertExampleMsg model.bannerAlertExampleState
     , Examples.Button.example (exampleMessages ButtonExampleMsg) model.buttonExampleState
     , Examples.Callout.example
-    , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
     , Examples.Checkbox.example CheckboxExampleMsg model.checkboxExampleState
+    , Examples.ClickableText.example (exampleMessages ClickableTextExampleMsg) model.clickableTextExampleState
+    , Examples.Colors.example
+    , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
     , Examples.Dropdown.example DropdownMsg model.dropdownState
-    , Examples.AssignmentIcon.example
-    , Examples.UiIcon.example
+    , Examples.Fonts.example
+    , Examples.Heading.example
     , Examples.Icon.example
+    , Examples.Logo.example
+    , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.Page.example NoOp
+    , Examples.Pennant.example
     , Examples.SegmentedControl.example SegmentedControlMsg model.segmentedControlState
     , Examples.Select.example SelectMsg model.selectState
-    , Examples.Heading.example
+    , Examples.Slide.example SlideExampleMsg model.slideExampleState
+    , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
+    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
+    , Examples.Table.example TableExampleMsg model.tableExampleState
+    , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Text.example
     , Examples.Text.Writing.example
-    , Examples.Fonts.example
-    , Examples.Table.example TableExampleMsg model.tableExampleState
+    , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
+    , Examples.UiIcon.example
     , TextAreaExample.example TextAreaExampleMsg model.textAreaExampleState
     , TextInputExample.example TextInputExampleMsg model.textInputExampleState
-    , Examples.DisclosureIndicator.example DisclosureIndicatorExampleMsg model.disclosureIndicatorExampleState
-    , Examples.Colors.example
-    , Examples.Modal.example ModalExampleMsg model.modalExampleState
-    , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
-    , Examples.Slide.example SlideExampleMsg model.slideExampleState
-    , Examples.SortableTable.example SortableTableMsg model.sortableTableState
-    , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
-    , Examples.Tooltip.example TooltipExampleMsg model.tooltipExampleState
     ]
 
 
