@@ -9,6 +9,6 @@ PercyScript.run(async (page, percySnapshot) => {
     let categories = Array.from(document.querySelectorAll('#categories a'))
     for (let category of categories)
       category.click()
-      await percySnapshot(category.innerText)
+      percySnapshot(category.innerText)
   })
 })
