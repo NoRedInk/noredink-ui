@@ -5,6 +5,7 @@ test: node_modules
 	npx elm-test
 	npx elm-verify-examples --run-tests
 	make axe-report
+	make percy-tests
 
 tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
 	script/run-axe.sh > $@
