@@ -558,7 +558,7 @@ purpleDark =
 -}
 red : Css.Color
 red =
-    hex "#f3336c"
+    hex "#e70d4f"
 
 
 {-|
