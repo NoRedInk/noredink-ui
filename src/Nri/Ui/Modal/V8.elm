@@ -255,6 +255,9 @@ view theme config getFocusable model =
             , Css.borderRadius (Css.px 20)
             , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
             , Css.backgroundColor Colors.white
+
+            -- the modal should grow up to the viewport minus a 50px margin
+            , Css.maxHeight (Css.calc (Css.pct 100) Css.minus (Css.px 100))
             ]
          , if config.visibleTitle then
             Modal.titleStyles
