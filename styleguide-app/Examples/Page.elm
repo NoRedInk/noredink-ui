@@ -26,17 +26,17 @@ example noOp =
                 , Css.flexWrap Css.wrap
                 ]
             ]
-        , Heading.h4 [] [ Html.text "Page: Not Found, recovery text: ReturnTo" ]
+        , Heading.h3 [] [ Html.text "Page: Not Found, recovery text: ReturnTo" ]
         , Page.notFound
             { link = noOp
             , recoveryText = Page.ReturnTo "the main page"
             }
-        , Heading.h4 [] [ Html.text "Page: Broken, recovery text: Reload" ]
+        , Heading.h3 [] [ Html.text "Page: Broken, recovery text: Reload" ]
         , Page.broken
             { link = noOp
             , recoveryText = Page.Reload
             }
-        , Heading.h4 [] [ Html.text "Page: No Permission, recovery text: Custom" ]
+        , Heading.h3 [] [ Html.text "Page: No Permission, recovery text: Custom" ]
         , Page.noPermission
             { link = noOp
             , recoveryText = Page.Custom "Hit the road, Jack"

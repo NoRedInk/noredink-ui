@@ -156,8 +156,6 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
         , Attributes.tabindex 0
         , Role.presentation
         , Attributes.id (tabToId tab)
-        , Aria.controls (tabToBodyId tab)
-        , Widget.selected (selected.id == tab.id)
         , Events.on "keyup" <|
             Json.Decode.andThen
                 (\keyCode ->
@@ -191,6 +189,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             ]
             [ Role.tab
             , Attributes.tabindex -1
+            , Widget.selected (selected.id == tab.id)
             ]
             [ viewInnerTab tab ]
         ]
@@ -335,12 +334,12 @@ viewTabLink config isSelected tabConfig =
 
 tabToId : { a | label : String } -> String
 tabToId tab =
-    tab.label
+    String.replace " " "-" tab.label
 
 
 tabToBodyId : { a | label : String } -> String
 tabToBodyId tab =
-    "tab-body-" ++ tab.label
+    "tab-body-" ++ tabToId tab
 
 
 mapWithCurrent : (Bool -> a -> b) -> Zipper a -> Zipper b

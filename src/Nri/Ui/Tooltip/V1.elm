@@ -56,6 +56,7 @@ import Css.Global as Global
 import EventExtras.Styled as EventExtras
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import Json.Encode as Encode
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -305,12 +306,20 @@ viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonA
         tooltipContainerStyles
         []
         [ Html.button
-            ([ case purpose of
-                PrimaryLabel ->
-                    Aria.labeledBy id
+            ([ if isOpen then
+                case purpose of
+                    PrimaryLabel ->
+                        Aria.labeledBy id
 
-                AuxillaryDescription ->
-                    Aria.describedBy [ id ]
+                    AuxillaryDescription ->
+                        Aria.describedBy [ id ]
+
+               else
+                -- when our tooltips are closed, they're not rendered in the
+                -- DOM. This means that the ID references above would be
+                -- invalid and jumping to a reference would not work, so we
+                -- skip labels and descriptions if the tooltip is closed.
+                Attributes.property "data-closed-tooltip" Encode.null
              , css buttonStyleOverrides
              ]
                 ++ eventsForTrigger trigger onTrigger

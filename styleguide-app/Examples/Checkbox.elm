@@ -130,15 +130,15 @@ viewMultilineCheckboxes =
         [ css [ Css.width (Css.px 500) ] ]
         [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
         , Checkbox.viewWithLabel
-            { identifier = "fake"
+            { identifier = "fake-not-selected"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
+            , setterMsg = ToggleCheck "fake-not-selected"
             , selected = Checkbox.NotSelected
             , disabled = False
             , theme = Checkbox.Square
             }
         , Checkbox.viewWithLabel
-            { identifier = "fake"
+            { identifier = "fake-partially-selected"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
             , selected = Checkbox.PartiallySelected
@@ -146,7 +146,7 @@ viewMultilineCheckboxes =
             , theme = Checkbox.Square
             }
         , Checkbox.viewWithLabel
-            { identifier = "fake"
+            { identifier = "fake-not-selected-locked"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
             , selected = Checkbox.NotSelected
@@ -154,7 +154,7 @@ viewMultilineCheckboxes =
             , theme = Checkbox.Locked
             }
         , Checkbox.viewWithLabel
-            { identifier = "fake"
+            { identifier = "fake-not-selected-square"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
             , setterMsg = ToggleCheck "fake"
             , selected = Checkbox.NotSelected
@@ -167,10 +167,13 @@ viewMultilineCheckboxes =
 viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     let
+        safeId =
+            String.replace " " "-"
+
         checkbox config =
             PremiumCheckbox.view
                 { label = config.label
-                , id = "premium-checkbox-" ++ config.label
+                , id = "premium-checkbox-" ++ safeId config.label
                 , selected =
                     if Set.member config.label state.isChecked then
                         Checkbox.Selected

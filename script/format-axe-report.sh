@@ -9,12 +9,16 @@ fi
 
 jq -r -f script/axe-report.jq "$JSON_FILE"
 
+# Hey there! Did this script tell you to check out this file because the
+# expected error count went down? Well done! Just change this number to the new
+# value.
+TARGET_ERRORS=31
+
 # ideally we'd fail on any failures, but we have had a bunch build up over time!
 # So right now, we need to fail if the error count is not exactly what we
 # expect. This failure reminds us to come back and ratchet down the number of
 # failures to the correct value.
 NUM_ERRORS="$(jq '.violations | map(.nodes | length) | add' "$JSON_FILE")"
-TARGET_ERRORS=62
 if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo "got $NUM_ERRORS errors, but expected $TARGET_ERRORS."
     echo
@@ -27,6 +31,6 @@ if test "$NUM_ERRORS" -ne "$TARGET_ERRORS"; then
     echo " 1. save this output somewhere ('make axe-report > errors.new')"
     echo " 2. undo your changes ('git stash' or 'checkout master')"
     echo " 3. regenerate the log with 'make axe-report > errors.old'"
-    echo " 4. see waht's new with 'diff -u errors.old errors.new'"
+    echo " 4. see what's new with 'diff -u errors.old errors.new'"
     exit 1
 fi

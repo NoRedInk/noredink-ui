@@ -33,7 +33,7 @@ view_ model =
         ]
         []
         [ navigation model.route
-        , Html.styled Html.div
+        , Html.styled Html.main_
             [ flexGrow (int 1) ]
             []
             (case model.route of
@@ -119,7 +119,7 @@ navigation route =
                 ]
                 [ element ]
     in
-    Html.styled Html.div
+    Html.styled Html.nav
         [ flexBasis (px 200)
         , backgroundColor Colors.gray96
         , marginRight (px 40)
@@ -128,7 +128,9 @@ navigation route =
         , top (px 150)
         , flexShrink zero
         ]
-        [ id "categories" ]
+        [ id "categories"
+        , attribute "aria-label" "Main Navigation"
+        ]
         [ Heading.h4 [] [ Html.text "Categories" ]
         , (categoryLink (route == Routes.All) "#" "All"
             :: List.map

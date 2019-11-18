@@ -50,7 +50,7 @@ example parentMessage state =
           in
           viewFn
             { onClick = Select
-            , options = buildOptions options [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
+            , options = buildOptions "" options [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
             , selected = state.selected
             , width = options.width
             , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
@@ -59,7 +59,7 @@ example parentMessage state =
         , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
         , SegmentedControl.viewToggle
             { onClick = Select
-            , options = buildOptions options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+            , options = buildOptions "Toggle-Only " options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
             , selected = state.selected
             , width = options.width
             }
@@ -68,8 +68,8 @@ example parentMessage state =
     }
 
 
-buildOptions : Options -> List Svg -> List (SegmentedControl.Option ExampleOption)
-buildOptions options =
+buildOptions : String -> Options -> List Svg -> List (SegmentedControl.Option ExampleOption)
+buildOptions prefix options =
     let
         buildOption option icon =
             { icon =
@@ -78,7 +78,7 @@ buildOptions options =
 
                 else
                     Nothing
-            , label = "Choice " ++ Debug.toString option
+            , label = prefix ++ "Choice " ++ Debug.toString option
             , value = option
             }
     in

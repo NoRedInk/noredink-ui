@@ -133,7 +133,7 @@ callout attrs children =
         finalAttrs =
             List.foldl customize defaultAttrs attrs
     in
-    Html.aside
+    Html.div
         (css
             ([ Css.boxSizing Css.borderBox
              , Css.backgroundColor Colors.sunshine

@@ -1,5 +1,5 @@
-def node: "    at \(.target | join(" ")):\n\n      \(.failureSummary | gsub("\n"; "\n      "))";
-def violation: "  \(.id): \(.impact) violation with \(.nodes | length) instances.\n\n  \(.help) (\(.helpUrl))\n\n\(.nodes | map(node) | join("\n\n"))";
+def node: "  at \(.target | join(" ")):\n\n    \(.failureSummary | gsub("\n"; "\n    "))";
+def violation: "\(.id): \(.impact) violation with \(.nodes | length) instances.\n\n\(.help) (\(.helpUrl))\n\n\(.nodes | map(node) | join("\n\n"))";
 
 "Tested \(.url) with \(.testEngine.name) \(.testEngine.version) at \(.timestamp)
 
@@ -11,5 +11,7 @@ Summary: \(.passes | length) passes | \(.violations | map(.nodes | length) | add
 
 Violations:
 
-\(.violations | map(violation) | join("\n\n"))
+----------
+
+\(.violations | map(violation) | join("\n\n----------\n\n"))
 "
