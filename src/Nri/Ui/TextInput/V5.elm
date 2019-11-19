@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V5 exposing
     ( Model
     , view, writing
     , generateId
-    , number, text, password
+    , number, float, text, password
     )
 
 {-|
@@ -19,7 +19,7 @@ module Nri.Ui.TextInput.V5 exposing
 
 ## Input types
 
-@docs number, text, password
+@docs number, float, text, password
 
 -}
 
@@ -68,13 +68,24 @@ text =
         }
 
 
-{-| An input that allows number entry
+{-| An input that allows integer entry
 -}
 number : InputType (Maybe Int)
 number =
     InputType
         { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
         , fromString = String.toInt
+        , fieldType = "number"
+        }
+
+
+{-| An input that allows float entry
+-}
+float : InputType (Maybe Float)
+float =
+    InputType
+        { toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
+        , fromString = String.toFloat
         , fieldType = "number"
         }
 
@@ -110,39 +121,48 @@ view_ theme model =
 
         (InputType inputType) =
             model.type_
+
+        maybeStep =
+            if inputType.fieldType == "number" then
+                [ step "any" ]
+
+            else
+                []
     in
     div
         [ Attributes.css [ position relative ]
         ]
         [ input
-            [ Attributes.id idValue
-            , css
-                [ InputStyles.input theme model.isInError
-                , if theme == InputStyles.Writing then
-                    Css.Global.withClass "override-sass-styles"
-                        [ textAlign center
-                        , Css.height Css.auto
-                        ]
+            (maybeStep
+                ++ [ Attributes.id idValue
+                   , css
+                        [ InputStyles.input theme model.isInError
+                        , if theme == InputStyles.Writing then
+                            Css.Global.withClass "override-sass-styles"
+                                [ textAlign center
+                                , Css.height Css.auto
+                                ]
 
-                  else
-                    Css.Global.withClass "override-sass-styles"
-                        [ Css.height (px 45)
+                          else
+                            Css.Global.withClass "override-sass-styles"
+                                [ Css.height (px 45)
+                                ]
                         ]
-                ]
-            , placeholder model.placeholder
-            , value (inputType.toString model.value)
-            , onInput (inputType.fromString >> model.onInput)
-            , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
-            , autofocus model.autofocus
-            , type_ inputType.fieldType
-            , class "override-sass-styles"
-            , Attributes.attribute "aria-invalid" <|
-                if model.isInError then
-                    "true"
+                   , placeholder model.placeholder
+                   , value (inputType.toString model.value)
+                   , onInput (inputType.fromString >> model.onInput)
+                   , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
+                   , autofocus model.autofocus
+                   , type_ inputType.fieldType
+                   , class "override-sass-styles"
+                   , Attributes.attribute "aria-invalid" <|
+                        if model.isInError then
+                            "true"
 
-                else
-                    "false"
-            ]
+                        else
+                            "false"
+                   ]
+            )
             []
         , if model.showLabel then
             Html.label

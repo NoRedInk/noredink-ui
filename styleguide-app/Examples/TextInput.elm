@@ -17,12 +17,14 @@ import Nri.Ui.TextInput.V5 as TextInput
 type Msg
     = SetTextInput Id String
     | SetNumberInput (Maybe Int)
+    | SetFloatInput (Maybe Float)
     | SetPassword String
 
 
 {-| -}
 type alias State =
     { numberInputValue : Maybe Int
+    , floatInputValue : Maybe Float
     , textInputValues : Dict Id String
     , passwordInputValue : String
     }
@@ -31,7 +33,7 @@ type alias State =
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.TextInput.V4"
+    { name = "Nri.Ui.TextInput.V5"
     , category = Inputs
     , content =
         [ Html.map parentMessage <|
@@ -57,6 +59,18 @@ example parentMessage state =
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.number
+                    , showLabel = True
+                    }
+                , Html.br [] []
+                , TextInput.view
+                    { label = "Points (decimal)"
+                    , isInError = False
+                    , placeholder = "enter a decimal"
+                    , value = state.floatInputValue
+                    , onInput = SetFloatInput
+                    , onBlur = Nothing
+                    , autofocus = False
+                    , type_ = TextInput.float
                     , showLabel = True
                     }
                 , Html.br [] []
@@ -164,6 +178,7 @@ example parentMessage state =
 init : State
 init =
     { numberInputValue = Nothing
+    , floatInputValue = Nothing
     , textInputValues = Dict.empty
     , passwordInputValue = ""
     }
@@ -178,6 +193,9 @@ update msg state =
 
         SetNumberInput numberInputValue ->
             ( { state | numberInputValue = numberInputValue }, Cmd.none )
+
+        SetFloatInput floatInputValue ->
+            ( { state | floatInputValue = floatInputValue }, Cmd.none )
 
         SetPassword password ->
             ( { state | passwordInputValue = password }, Cmd.none )
