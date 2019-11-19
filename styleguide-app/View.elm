@@ -58,7 +58,7 @@ view_ model =
                         , nriThemedModules model.moduleStates
                             |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
-                            |> Html.div []
+                            |> Html.div [ class (categoryForDisplay category) ]
                             |> Html.map UpdateModuleStates
                         ]
                     ]
