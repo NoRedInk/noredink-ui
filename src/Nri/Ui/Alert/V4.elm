@@ -127,7 +127,7 @@ warning : String -> Html msg
 warning content =
     alert
         [ exclamation Colors.red
-        , alertString Colors.red content
+        , alertString Colors.redDark content
         ]
 
 
