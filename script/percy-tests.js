@@ -33,9 +33,11 @@ PercyScript.run(async (page, percySnapshot) => {
   await page.waitFor('.Modals')
   await percySnapshot('Modals')
   await page.click('#launch-info-modal')
+  await page.waitFor('[role="dialog"]')
   await percySnapshot('Full Info Modal')
   await page.click('[aria-label="Close modal"]')
   await page.click('#launch-warning-modal')
+  await page.waitFor('[role="dialog"]')
   await percySnapshot('Full Warning Modal')
   await page.click('[aria-label="Close modal"]')
 
