@@ -7,7 +7,7 @@ import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Model exposing (..)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay)
+import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay, categoryForId)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
@@ -58,7 +58,7 @@ view_ model =
                         , nriThemedModules model.moduleStates
                             |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
-                            |> Html.div [ class (categoryForDisplay category) ]
+                            |> Html.div [ id (categoryForId category) ]
                             |> Html.map UpdateModuleStates
                         ]
                     ]
