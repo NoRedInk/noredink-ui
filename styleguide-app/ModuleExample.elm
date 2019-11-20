@@ -3,6 +3,7 @@ module ModuleExample exposing
     , ModuleExample
     , ModuleMessages
     , categoryForDisplay
+    , categoryForId
     , categoryFromString
     , view
     )
@@ -126,6 +127,46 @@ categoryForDisplay category =
 
         Animations ->
             "Animations"
+
+
+categoryForId : Category -> String
+categoryForId category =
+    case category of
+        Tables ->
+            "tables"
+
+        Inputs ->
+            "inputs"
+
+        Widgets ->
+            "widgets"
+
+        Layout ->
+            "layout"
+
+        Buttons ->
+            "buttons-and-links"
+
+        Icons ->
+            "icons"
+
+        Messaging ->
+            "alerts-and-messages"
+
+        Modals ->
+            "modals"
+
+        Colors ->
+            "colors"
+
+        Text ->
+            "text-and-fonts"
+
+        Pages ->
+            "error-pages"
+
+        Animations ->
+            "animations"
 
 
 view : Bool -> ModuleExample msg -> Html msg
