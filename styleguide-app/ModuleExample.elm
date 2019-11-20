@@ -128,6 +128,7 @@ categoryForDisplay category =
         Animations ->
             "Animations"
 
+
 categoryForId : Category -> String
 categoryForId category =
     case category of
