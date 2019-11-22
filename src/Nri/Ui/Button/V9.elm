@@ -56,7 +56,7 @@ module Nri.Ui.Button.V9 exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (Attribute, Html)
+import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Style)
@@ -550,17 +550,34 @@ renderLink ((ButtonOrLink config) as link_) =
 
         External ->
             linkBase "linkExternal"
-                (Attributes.target "_blank" :: config.customAttributes)
+                (targetBlankAttributes ++ config.customAttributes)
 
         ExternalWithTracking ->
             linkBase "linkExternalWithTracking"
-                (List.append
-                    [ Attributes.target "_blank"
-                    , Maybe.map EventExtras.onClickForLinkWithHref config.onClick
-                        |> Maybe.withDefault AttributesExtra.none
+                (List.concat
+                    [ targetBlankAttributes
+                    , [ Maybe.map EventExtras.onClickForLinkWithHref config.onClick
+                            |> Maybe.withDefault AttributesExtra.none
+                      ]
+                    , config.customAttributes
                     ]
-                    config.customAttributes
                 )
+
+
+{-| Use this list of attributes instead of applying `Attributes.target "_blank"`
+directly. This prevents an exploits like "tabnabbing", among other things.
+
+See these resources:
+
+  - <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#Security_and_privacy_concerns>
+  - <https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever>
+
+-}
+targetBlankAttributes : List (Html.Attribute msg)
+targetBlankAttributes =
+    [ Attributes.target "_blank"
+    , Attributes.rel "noopener noreferrer"
+    ]
 
 
 
