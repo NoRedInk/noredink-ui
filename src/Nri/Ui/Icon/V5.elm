@@ -139,6 +139,7 @@ module Nri.Ui.Icon.V5 exposing
 
 import Accessibility.Role as Role
 import Accessibility.Styled exposing (..)
+import AttributeExtras
 import Css exposing (..)
 import EventExtras
 import Html as RootHtml
@@ -293,7 +294,7 @@ Uses our default icon styles (25 x 25 px, azure)
 -}
 linkExternal : IconLinkModel -> Html msg
 linkExternal =
-    linkBase [ Attributes.target "_blank" ]
+    linkBase AttributeExtras.targetBlank
 
 
 linkBase : List (Attribute msg) -> IconLinkModel -> Html msg
