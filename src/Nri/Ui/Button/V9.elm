@@ -56,9 +56,10 @@ module Nri.Ui.Button.V9 exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (Attribute, Html)
+import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
+import AttributeExtras exposing (targetBlank)
 import Css exposing (Style)
 import Css.Global
 import EventExtras.Styled as EventExtras
@@ -550,16 +551,17 @@ renderLink ((ButtonOrLink config) as link_) =
 
         External ->
             linkBase "linkExternal"
-                (Attributes.target "_blank" :: config.customAttributes)
+                (targetBlank ++ config.customAttributes)
 
         ExternalWithTracking ->
             linkBase "linkExternalWithTracking"
-                (List.append
-                    [ Attributes.target "_blank"
-                    , Maybe.map EventExtras.onClickForLinkWithHref config.onClick
-                        |> Maybe.withDefault AttributesExtra.none
+                (List.concat
+                    [ targetBlank
+                    , [ Maybe.map EventExtras.onClickForLinkWithHref config.onClick
+                            |> Maybe.withDefault AttributesExtra.none
+                      ]
+                    , config.customAttributes
                     ]
-                    config.customAttributes
                 )
 
 
