@@ -7,7 +7,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , document, newspaper
     , edit, pen
-    , arrowDown
+    , arrowTop, arrowRight, arrowDown, arrowLeft
     , checkmark, x
     , attention, exclamation
     , flag, star, starOutline
@@ -26,7 +26,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs document, newspaper
 @docs edit, pen
-@docs arrowDown
+@docs arrowTop, arrowRight, arrowDown, arrowLeft
 @docs checkmark, x
 @docs attention, exclamation
 @docs flag, star, starOutline
@@ -388,6 +388,44 @@ pen =
 
 
 {-| -}
+arrowTop : Nri.Ui.Svg.V1.Svg
+arrowTop =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "-25 05 25 10"
+        ]
+        [ Svg.path
+            [ Attributes.transform "rotate(90)"
+            , Attributes.fillRule "evenodd"
+            , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+arrowRight : Nri.Ui.Svg.V1.Svg
+arrowRight =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 5 25 15"
+        ]
+        [ Svg.path
+            [ Attributes.transform "rotate(180) translate(-25, -25)"
+            , Attributes.fillRule "evenodd"
+            , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
 arrowDown : Nri.Ui.Svg.V1.Svg
 arrowDown =
     Svg.svg
@@ -399,6 +437,24 @@ arrowDown =
         [ Svg.path
             [ Attributes.transform "rotate(270) translate(-20)"
             , Attributes.fillRule "evenodd"
+            , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+arrowLeft : Nri.Ui.Svg.V1.Svg
+arrowLeft =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 5 25 15"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
             , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
             ]
             []
