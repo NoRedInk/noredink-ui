@@ -177,13 +177,15 @@ view showFocusLink { name, content } =
             |> (++) "module-example__"
             |> Attributes.class
         ]
-        [ Html.styled Html.div
-            [ display block
-            , backgroundColor glacier
-            , padding (px 20)
-            , marginTop (px 20)
+        [ Html.div
+            [ Attributes.css
+                [ displayFlex
+                , alignItems center
+                , justifyContent flexStart
+                , padding (px 4)
+                , backgroundColor glacier
+                ]
             ]
-            []
             [ Html.styled Html.h2
                 [ color gray20
                 , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
@@ -193,19 +195,16 @@ view showFocusLink { name, content } =
                 ]
                 []
                 [ Html.text name ]
+            , String.replace "." "-" name
+                |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
+                |> viewLink "view docs"
             , if showFocusLink then
                 viewLink "see only this" ("#doodad/" ++ name)
 
               else
                 Html.text ""
-            , String.replace "." "-" name
-                |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                |> viewLink "view docs"
             ]
-        , Html.styled Html.div
-            [ padding2 (px 20) zero ]
-            []
-            content
+        , Html.div [ Attributes.css [ padding2 (px 20) zero ] ] content
         ]
 
 
@@ -213,7 +212,7 @@ viewLink : String -> String -> Html msg
 viewLink text href =
     Html.a
         [ Attributes.href href
-        , Attributes.css [ Css.display Css.block ]
+        , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
         ]
         [ Html.text text
         ]
