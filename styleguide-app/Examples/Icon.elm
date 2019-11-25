@@ -26,9 +26,9 @@ example =
     , content =
         [ viewLarge "Mastery Icons"
             [ deprecatedIcon { icon = Icon.gardening { startingOffBadge_png = Asset "assets/images/starting-off-badge.png" }, background = Colors.blue, alt = "Gardening" }
-            , deprecatedIcon { icon = Icon.highFive { level3Badge_png = Asset "assets/images/level-3-badge.png" }, background = Colors.blue, alt = "HighFive" }
-            , deprecatedIcon { icon = Icon.okay { level2Badge_png = Asset "assets/images/level-2-badge.png" }, background = Colors.blue, alt = "Okay" }
             , deprecatedIcon { icon = Icon.thumbsUp { level1Badge_png = Asset "assets/images/level-1-badge.png" }, background = Colors.blue, alt = "ThumbsUp" }
+            , deprecatedIcon { icon = Icon.okay { level2Badge_png = Asset "assets/images/level-2-badge.png" }, background = Colors.blue, alt = "Okay" }
+            , deprecatedIcon { icon = Icon.highFive { level3Badge_png = Asset "assets/images/level-3-badge.png" }, background = Colors.blue, alt = "HighFive" }
             ]
         , viewLarge "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
