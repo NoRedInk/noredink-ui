@@ -394,7 +394,7 @@ arrowTop =
         [ Attributes.width "100%"
         , Attributes.height "100%"
         , Attributes.fill "currentcolor"
-        , Attributes.viewBox "-25 05 25 10"
+        , Attributes.viewBox "-25 05 25 15"
         ]
         [ Svg.path
             [ Attributes.transform "rotate(90)"
