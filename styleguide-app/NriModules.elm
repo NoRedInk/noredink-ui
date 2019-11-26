@@ -24,6 +24,7 @@ import Examples.Select
 import Examples.Slide
 import Examples.SlideModal
 import Examples.SortableTable
+import Examples.Svg
 import Examples.Table
 import Examples.Tabs
 import Examples.Text
@@ -55,6 +56,7 @@ type alias ModuleStates =
     , slideModalExampleState : Examples.SlideModal.State
     , slideExampleState : Examples.Slide.State
     , sortableTableState : Examples.SortableTable.State
+    , svgState : Examples.Svg.State
     , tabsExampleState : Examples.Tabs.Tab
     , tooltipExampleState : Examples.Tooltip.State
     }
@@ -78,6 +80,7 @@ init =
     , slideModalExampleState = Examples.SlideModal.init
     , slideExampleState = Examples.Slide.init
     , sortableTableState = Examples.SortableTable.init
+    , svgState = Examples.Svg.init
     , tabsExampleState = Examples.Tabs.First
     , tooltipExampleState = Examples.Tooltip.init
     }
@@ -101,6 +104,7 @@ type Msg
     | SlideModalExampleMsg Examples.SlideModal.Msg
     | SlideExampleMsg Examples.Slide.Msg
     | SortableTableMsg Examples.SortableTable.Msg
+    | SvgMsg Examples.Svg.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | TooltipExampleMsg Examples.Tooltip.Msg
     | NoOp
@@ -183,6 +187,15 @@ update outsideMsg moduleStates =
                     Debug.log group message
             in
             ( moduleStates, Cmd.none )
+
+        SvgMsg msg ->
+            let
+                ( svgState, cmd ) =
+                    Examples.Svg.update msg moduleStates.svgState
+            in
+            ( { moduleStates | svgState = svgState }
+            , Cmd.map SvgMsg cmd
+            )
 
         TableExampleMsg msg ->
             let
@@ -321,6 +334,7 @@ nriThemedModules model =
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.SortableTable.example SortableTableMsg model.sortableTableState
+    , Examples.Svg.example SvgMsg model.svgState
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Text.example
