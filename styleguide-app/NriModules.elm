@@ -15,6 +15,7 @@ import Examples.Fonts
 import Examples.Heading
 import Examples.Icon
 import Examples.Logo
+import Examples.MasteryIcon
 import Examples.Modal
 import Examples.Page
 import Examples.Pennant
@@ -311,6 +312,7 @@ nriThemedModules model =
     , Examples.Heading.example
     , Examples.Icon.example
     , Examples.Logo.example
+    , Examples.MasteryIcon.example
     , Examples.Modal.example ModalExampleMsg model.modalExampleState
     , Examples.Page.example NoOp
     , Examples.Pennant.example
