@@ -182,6 +182,7 @@ view showFocusLink { name, content } =
                 [ displayFlex
                 , alignItems center
                 , justifyContent flexStart
+                , flexWrap wrap
                 , padding (px 4)
                 , backgroundColor glacier
                 ]
