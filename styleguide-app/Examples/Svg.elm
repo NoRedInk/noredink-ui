@@ -17,6 +17,7 @@ module Examples.Svg exposing
 -}
 
 import Color exposing (Color)
+import Css
 import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
@@ -31,22 +32,35 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-type Msg
-    = SetColor (Result String Color)
-
-
-{-| -}
-type alias State =
-    { color : Color
-    }
-
-
-{-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Svg.V1"
     , category = Icons
     , content =
+        [ viewSettings state
+            |> Html.map parentMessage
+        , Html.pre []
+            [ [ "UiIcon.newspaper"
+              , "   |> Svg.withColor " ++ Debug.toString (toCssColor state.color)
+              , "   |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+              , "   |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+              , "   |> Svg.toHtml"
+              ]
+                |> String.join "\n"
+                |> Html.text
+            ]
+        , UiIcon.newspaper
+            |> Svg.withColor (toCssColor state.color)
+            |> Svg.withWidth (Css.px state.width)
+            |> Svg.withHeight (Css.px state.height)
+            |> Svg.toHtml
+        ]
+    }
+
+
+viewSettings : State -> Html.Html Msg
+viewSettings state =
+    Html.div []
         [ Html.label []
             [ Html.text "Color: "
             , Html.input
@@ -55,20 +69,54 @@ example parentMessage state =
                 , Events.onInput (SetColor << Color.fromHex)
                 ]
                 []
-                |> Html.map parentMessage
             ]
-        , UiIcon.newspaper
-            |> Svg.withColor (toCssColor state.color)
-            |> Svg.toHtml
+        , Html.label []
+            [ Html.text "Width: "
+            , Html.input
+                [ Attributes.type_ "range"
+                , Attributes.min "0"
+                , Attributes.max "200"
+                , Attributes.value (String.fromFloat state.width)
+                , Events.onInput (SetWidth << String.toFloat)
+                ]
+                []
+            ]
+        , Html.label []
+            [ Html.text "Height: "
+            , Html.input
+                [ Attributes.type_ "range"
+                , Attributes.min "0"
+                , Attributes.max "200"
+                , Attributes.value (String.fromFloat state.height)
+                , Events.onInput (SetHeight << String.toFloat)
+                ]
+                []
+            ]
         ]
-    }
 
 
 {-| -}
 init : State
 init =
     { color = fromCssColor Colors.blue
+    , width = 30
+    , height = 30
     }
+
+
+{-| -}
+type alias State =
+    { color : Color
+    , width : Float
+    , height : Float
+    }
+
+
+{-| -}
+type Msg
+    = SetColor (Result String Color)
+    | SetWidth (Maybe Float)
+    | SetHeight (Maybe Float)
 
 
 {-| -}
@@ -81,4 +129,16 @@ update msg state =
             )
 
         SetColor (Err err) ->
+            ( state, Cmd.none )
+
+        SetWidth (Just width) ->
+            ( { state | width = width }, Cmd.none )
+
+        SetWidth Nothing ->
+            ( state, Cmd.none )
+
+        SetHeight (Just height) ->
+            ( { state | height = height }, Cmd.none )
+
+        SetHeight Nothing ->
             ( state, Cmd.none )
