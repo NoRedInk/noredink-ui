@@ -83,32 +83,20 @@ toHtml (Svg record) =
                 , Maybe.map Css.width record.width
                 , Maybe.map Css.height record.height
                 ]
+
+        attributes =
+            List.filterMap identity
+                [ if List.isEmpty css then
+                    Nothing
+
+                  else
+                    Just (Attributes.css (Css.display Css.inlineBlock :: css))
+                , Maybe.map Widget.label record.label
+                ]
     in
-    case ( css, record.label ) of
-        ( x :: xs, Just label ) ->
-            Html.div
-                [ Attributes.css
-                    (css ++ [ Css.display Css.inlineBlock ])
-                , Widget.label label
-                ]
-                [ Html.map never record.icon
-                ]
-
-        ( x :: xs, Nothing ) ->
-            Html.div
-                [ Attributes.css
-                    (css ++ [ Css.display Css.inlineBlock ])
-                ]
-                [ Html.map never record.icon
-                ]
-
-        ( [], Just label ) ->
-            Html.div
-                [ Widget.label label
-                , Attributes.css [ Css.display Css.inlineBlock ]
-                ]
-                [ Html.map never record.icon
-                ]
-
-        ( [], Nothing ) ->
+    case attributes of
+        [] ->
             Html.map never record.icon
+
+        _ ->
+            Html.div attributes [ Html.map never record.icon ]
