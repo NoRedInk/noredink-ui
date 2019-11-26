@@ -39,30 +39,19 @@ example parentMessage state =
     , content =
         [ viewSettings state
             |> Html.map parentMessage
-        , Html.pre []
-            [ [ "UiIcon.newspaper"
-              , "   |> Svg.withColor " ++ Debug.toString (toCssColor state.color)
-              , "   |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
-              , "   |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
-              , "   |> Svg.withLabel \"" ++ state.label ++ "\""
-              , "   |> Svg.toHtml"
-              ]
-                |> String.join "\n"
-                |> Html.text
-            ]
-        , UiIcon.newspaper
-            |> Svg.withColor (toCssColor state.color)
-            |> Svg.withWidth (Css.px state.width)
-            |> Svg.withHeight (Css.px state.height)
-            |> Svg.withLabel state.label
-            |> Svg.toHtml
+        , viewResults state
         ]
     }
 
 
 viewSettings : State -> Html.Html Msg
 viewSettings state =
-    Html.div []
+    Html.div
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.justifyContent Css.spaceBetween
+            ]
+        ]
         [ Html.label []
             [ Html.text "Color: "
             , Html.input
@@ -101,6 +90,42 @@ viewSettings state =
                 , Events.onInput SetLabel
                 ]
                 []
+            ]
+        ]
+
+
+viewResults : State -> Html.Html msg
+viewResults state =
+    Html.div [ Attributes.css [ Css.displayFlex ] ]
+        [ Html.pre
+            [ Attributes.css
+                [ Css.width (Css.px 400)
+                , Css.marginRight (Css.px 20)
+                , Css.overflow Css.scroll
+                ]
+            ]
+            [ [ "UiIcon.newspaper"
+              , "   |> Svg.withColor " ++ Debug.toString (toCssColor state.color)
+              , "   |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+              , "   |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+              , "   |> Svg.withLabel \"" ++ state.label ++ "\""
+              , "   |> Svg.toHtml"
+              ]
+                |> String.join "\n"
+                |> Html.text
+            ]
+        , Html.div
+            [ Attributes.css
+                [ Css.backgroundColor Colors.gray92
+                , Css.flexGrow (Css.int 2)
+                ]
+            ]
+            [ UiIcon.newspaper
+                |> Svg.withColor (toCssColor state.color)
+                |> Svg.withWidth (Css.px state.width)
+                |> Svg.withHeight (Css.px state.height)
+                |> Svg.withLabel state.label
+                |> Svg.toHtml
             ]
         ]
 
