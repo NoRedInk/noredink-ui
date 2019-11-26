@@ -49,7 +49,12 @@ withColor color (Svg record) =
     Svg { record | color = Just color }
 
 
-{-| -}
+{-| Add a string aria-label property to the element.
+
+See [Using the aria-label attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for
+guidelines of when and how to use this attribute.
+
+-}
 withLabel : String -> Svg -> Svg
 withLabel label (Svg record) =
     Svg { record | label = Just label }
