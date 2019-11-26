@@ -12,6 +12,7 @@ module Nri.Ui.Svg.V1 exposing
 
 -}
 
+import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -78,17 +79,31 @@ toHtml (Svg record) =
                 , Maybe.map Css.height record.height
                 ]
     in
-    case css of
-        x :: xs ->
+    case ( css, record.label ) of
+        ( x :: xs, Just label ) ->
             Html.div
                 [ Attributes.css
-                    (css
-                        ++ [ Css.display Css.inlineBlock
-                           ]
-                    )
+                    (css ++ [ Css.display Css.inlineBlock ])
+                , Widget.label label
                 ]
                 [ Html.map never record.icon
                 ]
 
-        [] ->
+        ( x :: xs, Nothing ) ->
+            Html.div
+                [ Attributes.css
+                    (css ++ [ Css.display Css.inlineBlock ])
+                ]
+                [ Html.map never record.icon
+                ]
+
+        ( [], Just label ) ->
+            Html.div
+                [ Widget.label label
+                , Attributes.css [ Css.display Css.inlineBlock ]
+                ]
+                [ Html.map never record.icon
+                ]
+
+        ( [], Nothing ) ->
             Html.map never record.icon

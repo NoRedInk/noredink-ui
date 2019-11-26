@@ -44,6 +44,7 @@ example parentMessage state =
               , "   |> Svg.withColor " ++ Debug.toString (toCssColor state.color)
               , "   |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
               , "   |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+              , "   |> Svg.withLabel \"" ++ state.label ++ "\""
               , "   |> Svg.toHtml"
               ]
                 |> String.join "\n"
@@ -53,6 +54,7 @@ example parentMessage state =
             |> Svg.withColor (toCssColor state.color)
             |> Svg.withWidth (Css.px state.width)
             |> Svg.withHeight (Css.px state.height)
+            |> Svg.withLabel state.label
             |> Svg.toHtml
         ]
     }
@@ -92,7 +94,24 @@ viewSettings state =
                 ]
                 []
             ]
+        , Html.label []
+            [ Html.text "Aria-label: "
+            , Html.input
+                [ Attributes.value state.label
+                , Events.onInput SetLabel
+                ]
+                []
+            ]
         ]
+
+
+{-| -}
+type alias State =
+    { color : Color
+    , width : Float
+    , height : Float
+    , label : String
+    }
 
 
 {-| -}
@@ -101,14 +120,7 @@ init =
     { color = fromCssColor Colors.blue
     , width = 30
     , height = 30
-    }
-
-
-{-| -}
-type alias State =
-    { color : Color
-    , width : Float
-    , height : Float
+    , label = "Newspaper"
     }
 
 
@@ -117,6 +129,7 @@ type Msg
     = SetColor (Result String Color)
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
+    | SetLabel String
 
 
 {-| -}
@@ -142,3 +155,6 @@ update msg state =
 
         SetHeight Nothing ->
             ( state, Cmd.none )
+
+        SetLabel label ->
+            ( { state | label = label }, Cmd.none )
