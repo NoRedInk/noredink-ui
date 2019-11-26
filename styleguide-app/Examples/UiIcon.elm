@@ -56,9 +56,14 @@ example =
             , ( "edit", UiIcon.edit )
             , ( "pen", UiIcon.pen )
             ]
+        , IconExamples.view "Arrows"
+            [ ( "arrowTop", UiIcon.arrowTop )
+            , ( "arrowRight", UiIcon.arrowRight )
+            , ( "arrowDown", UiIcon.arrowDown )
+            , ( "arrowLeft", UiIcon.arrowLeft )
+            ]
         , IconExamples.view "Sticky things"
-            [ ( "arrowDown", UiIcon.arrowDown )
-            , ( "checkmark", UiIcon.checkmark )
+            [ ( "checkmark", UiIcon.checkmark )
             , ( "x", UiIcon.x )
             , ( "attention", UiIcon.attention )
             , ( "exclamation", UiIcon.exclamation )
