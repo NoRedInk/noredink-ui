@@ -75,6 +75,7 @@ example =
             ]
         , IconExamples.view "Math"
             [ ( "equals", UiIcon.equals )
+            , ( "plus", UiIcon.plus )
             ]
         , IconExamples.view "Lock & Key"
             [ ( "lock", UiIcon.lock )
