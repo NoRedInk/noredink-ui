@@ -2,12 +2,19 @@ const PercyScript = require('@percy/script')
 
 PercyScript.run(async (page, percySnapshot) => {
   await page.goto('http://localhost:8000')
-  await page.waitFor('#categories')
-  await page.evaluate (() => {
-    let categories = Array.from(document.querySelectorAll('#categories a'))
+  await page.waitFor('#categories').then(x => {
+    console.log(x)
+    const categories = Array.from(document.querySelectorAll('#categories a'))
     console.log(categories)
-    console.log('test')
   })
+
+
+  //
+  // await page.evaluate (() => {
+  //   let categories = Array.from(document.querySelectorAll('#categories a'))
+  //   console.log(categories)
+  //   console.log('test')
+  // })
 
 
   await page.goto('http://localhost:8000/#category/Animations')
