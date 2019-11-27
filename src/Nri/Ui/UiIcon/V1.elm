@@ -7,7 +7,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , document, newspaper
     , edit, pen
-    , arrowTop, arrowRight, arrowDown, arrowLeft
+    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
     , checkmark, x
     , attention, exclamation
     , flag, star, starOutline
@@ -26,7 +26,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs document, newspaper
 @docs edit, pen
-@docs arrowTop, arrowRight, arrowDown, arrowLeft
+@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
 @docs checkmark, x
 @docs attention, exclamation
 @docs flag, star, starOutline
@@ -458,6 +458,20 @@ arrowLeft =
             , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+arrowPointingRight : Nri.Ui.Svg.V1.Svg
+arrowPointingRight =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 20"
+        ]
+        [ Svg.path [ Attributes.d "M24.48 11.136l-8.093 8.092a1.784 1.784 0 0 1-2.522 0 1.781 1.781 0 0 1 0-2.52l5.05-5.05H1.782a1.782 1.782 0 1 1 0-3.565h17.133l-5.05-5.05A1.781 1.781 0 0 1 15.126 0c.457 0 .913.174 1.26.522l8.094 8.092a1.784 1.784 0 0 1 0 2.522z" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 

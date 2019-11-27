@@ -61,6 +61,7 @@ example =
             , ( "arrowRight", UiIcon.arrowRight )
             , ( "arrowDown", UiIcon.arrowDown )
             , ( "arrowLeft", UiIcon.arrowLeft )
+            , ( "arrowPointingRight", UiIcon.arrowPointingRight )
             ]
         , IconExamples.view "Sticky things"
             [ ( "checkmark", UiIcon.checkmark )
