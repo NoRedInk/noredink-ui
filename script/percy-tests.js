@@ -8,7 +8,7 @@ PercyScript.run(async (page, percySnapshot) => {
     console.log(categories)
   })
 
-  const page = await page.evaluate (() => {
+  const homepage = await page.evaluate (() => {
     let categories = Array.from(document.querySelectorAll('#categories a'))
     console.log(categories)
     console.log('test')
