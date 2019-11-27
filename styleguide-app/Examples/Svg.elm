@@ -96,20 +96,30 @@ viewSettings state =
 
 viewResults : State -> Html.Html msg
 viewResults state =
+    let
+        ( red, green, blue ) =
+            Color.toRGB state.color
+    in
     Html.div [ Attributes.css [ Css.displayFlex ] ]
         [ Html.pre
             [ Attributes.css
                 [ Css.width (Css.px 400)
                 , Css.marginRight (Css.px 20)
-                , Css.overflow Css.scroll
                 ]
             ]
-            [ [ "UiIcon.newspaper"
-              , "   |> Svg.withColor " ++ Debug.toString (toCssColor state.color)
-              , "   |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
-              , "   |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
-              , "   |> Svg.withLabel \"" ++ state.label ++ "\""
-              , "   |> Svg.toHtml"
+            [ [ "color : Css.Color"
+              , "color ="
+              , "    Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue
+              , ""
+              , ""
+              , "renderedSvg : Svg "
+              , "renderedSvg = "
+              , "   UiIcon.newspaper"
+              , "       |> Svg.withColor color"
+              , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+              , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+              , "       |> Svg.withLabel \"" ++ state.label ++ "\""
+              , "       |> Svg.toHtml"
               ]
                 |> String.join "\n"
                 |> Html.text
