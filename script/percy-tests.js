@@ -8,13 +8,11 @@ PercyScript.run(async (page, percySnapshot) => {
     console.log(categories)
   })
 
-
-  //
-  // await page.evaluate (() => {
-  //   let categories = Array.from(document.querySelectorAll('#categories a'))
-  //   console.log(categories)
-  //   console.log('test')
-  // })
+  const page = await page.evaluate (() => {
+    let categories = Array.from(document.querySelectorAll('#categories a'))
+    console.log(categories)
+    console.log('test')
+ })
 
 
   await page.goto('http://localhost:8000/#category/Animations')
