@@ -223,7 +223,7 @@ auxillaryDescription =
 
 {-| Supplementary information triggered by a "?" icon
 
-A toggle tip is always triggered by a click.
+A toggle tip is always triggered by a hover (or focus, for keyboard users)
 
 -}
 toggleTip :
@@ -242,26 +242,29 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
         [ Html.button
             ([ Widget.label label
              , css
-                ([ Css.width (Css.px 20)
-                 , Css.height (Css.px 20)
-                 , Css.color Colors.azure
-                 ]
-                    ++ buttonStyleOverrides
+                (buttonStyleOverrides
+                    ++ [ Css.padding (Css.px 10) -- This is needed to provide a "hover bridge", so the tooltip won't close when trying to click a link
+                       ]
                 )
-             , EventExtras.onClickStopPropagation (onTrigger True)
-             , Events.onBlur (onTrigger False)
              ]
+                ++ eventsForTrigger OnHover onTrigger
                 ++ extraButtonAttrs
             )
-            [ iconHelp ]
-        , viewIf (\_ -> viewCloseTooltipOverlay (onTrigger False)) isOpen
-        , Html.span
-            [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
-              Role.status
-            ]
-            [ -- Popout is rendered after the overlay, to allow client code to give it
-              -- priority when clicking by setting its position
-              viewIf (\_ -> viewTooltip Nothing tooltip_) isOpen
+            [ Html.div
+                [ css
+                    [ Css.position Css.relative
+                    , Css.width (Css.px 20)
+                    , Css.height (Css.px 20)
+                    , Css.color Colors.azure
+                    ]
+                ]
+                [ iconHelp
+                , Html.span
+                    [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
+                      Role.status
+                    ]
+                    [ viewIf (\_ -> viewTooltip Nothing OnHover tooltip_) isOpen ]
+                ]
             ]
         ]
 
@@ -333,7 +336,7 @@ viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonA
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewIf (\_ -> viewTooltip (Just id) tooltip_) isOpen
+        , viewIf (\_ -> viewTooltip (Just id) trigger tooltip_) isOpen
         ]
 
 
@@ -349,10 +352,9 @@ viewIf viewFn condition =
             Html.text ""
 
 
-viewTooltip : Maybe String -> Tooltip msg -> Html msg
-viewTooltip maybeTooltipId (Tooltip config) =
-    Html.div (containerPositioningForArrowPosition config.position)
-    Html.div [ css <| containerPositioningForArrowPosition config.position ]
+viewTooltip : Maybe String -> Trigger -> Tooltip msg -> Html msg
+viewTooltip maybeTooltipId trigger (Tooltip config) =
+    Html.div [ css (containerPositioningForArrowPosition config.position) ]
         [ Html.div
             ([ css
                 ([ Css.borderRadius (Css.px 8)

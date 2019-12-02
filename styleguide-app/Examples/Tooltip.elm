@@ -19,7 +19,10 @@ type TooltipType
     = PrimaryLabelOnClick
     | PrimaryLabelOnHover
     | AuxillaryDescription
-    | ToggleTip
+    | ToggleTipTop
+    | ToggleTipRight
+    | ToggleTipBottom
+    | ToggleTipLeft
 
 
 type alias State =
@@ -97,10 +100,34 @@ example msg model =
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "toggleTip" ]
         , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
-        , Tooltip.tooltip [ Html.text "Tooltip" ]
+        , Tooltip.tooltip [ Html.text "Tooltip On Top" ]
             |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTip >> msg
-                , isOpen = model.openTooltip == Just ToggleTip
+                { onTrigger = ToggleTooltip ToggleTipTop >> msg
+                , isOpen = model.openTooltip == Just ToggleTipTop
+                , label = "More info"
+                , extraButtonAttrs = []
+                }
+        , Tooltip.tooltip [ Html.text "Tooltip On Left" ]
+            |> Tooltip.withPosition Tooltip.OnLeft
+            |> Tooltip.toggleTip
+                { onTrigger = ToggleTooltip ToggleTipLeft >> msg
+                , isOpen = model.openTooltip == Just ToggleTipLeft
+                , label = "More info"
+                , extraButtonAttrs = []
+                }
+        , Tooltip.tooltip [ Html.text "Tooltip On Right" ]
+            |> Tooltip.withPosition Tooltip.OnRight
+            |> Tooltip.toggleTip
+                { onTrigger = ToggleTooltip ToggleTipRight >> msg
+                , isOpen = model.openTooltip == Just ToggleTipRight
+                , label = "More info"
+                , extraButtonAttrs = []
+                }
+        , Tooltip.tooltip [ Html.text "Tooltip On Bottom" ]
+            |> Tooltip.withPosition Tooltip.OnBottom
+            |> Tooltip.toggleTip
+                { onTrigger = ToggleTooltip ToggleTipBottom >> msg
+                , isOpen = model.openTooltip == Just ToggleTipBottom
                 , label = "More info"
                 , extraButtonAttrs = []
                 }
