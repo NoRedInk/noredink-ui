@@ -352,6 +352,7 @@ viewIf viewFn condition =
 viewTooltip : Maybe String -> Tooltip msg -> Html msg
 viewTooltip maybeTooltipId (Tooltip config) =
     Html.div (containerPositioningForArrowPosition config.position)
+    Html.div [ css <| containerPositioningForArrowPosition config.position ]
         [ Html.div
             ([ css
                 ([ Css.borderRadius (Css.px 8)
@@ -426,33 +427,32 @@ tooltipColor =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Position -> List (Attribute msg)
+containerPositioningForArrowPosition : Position -> List Style
 containerPositioningForArrowPosition arrowPosition =
-    List.map (\( k, v ) -> Attributes.style k v) <|
-        case arrowPosition of
-            OnTop ->
-                [ ( "left", "50%" )
-                , ( "top", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+    case arrowPosition of
+        OnTop ->
+            [ Css.left (Css.pct 50)
+            , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnBottom ->
-                [ ( "left", "50%" )
-                , ( "bottom", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnBottom ->
+            [ Css.left (Css.pct 50)
+            , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnLeft ->
-                [ ( "top", "50%" )
-                , ( "left", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnLeft ->
+            [ Css.top (Css.pct 50)
+            , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnRight ->
-                [ ( "top", "50%" )
-                , ( "right", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnRight ->
+            [ Css.top (Css.pct 50)
+            , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
 
 pointerBox : Position -> Attribute msg
