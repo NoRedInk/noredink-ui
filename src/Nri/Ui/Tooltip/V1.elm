@@ -243,38 +243,71 @@ toggleTip :
     -> Tooltip msg
     -> Html msg
 toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
+    let
+        contentSize =
+            20
+    in
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1-ToggleTip"
-        tooltipContainerStyles
+        (tooltipContainerStyles
+            ++ [ -- Take up enough room within the document flow
+                 Css.width (Css.px contentSize)
+               , Css.height (Css.px contentSize)
+               , Css.margin (Css.px 5)
+               ]
+        )
         []
         [ Html.button
             ([ Widget.label label
-             , css
-                (buttonStyleOverrides
-                    ++ [ Css.padding (Css.px 10) -- This is needed to provide a "hover bridge", so the tooltip won't close when trying to click a link
-                       ]
-                )
+             , css buttonStyleOverrides
              ]
                 ++ eventsForTrigger OnHover onTrigger
                 ++ extraButtonAttrs
             )
-            [ Html.div
-                [ css
-                    [ Css.position Css.relative
-                    , Css.width (Css.px 20)
-                    , Css.height (Css.px 20)
-                    , Css.color Colors.azure
+            [ hoverBridge contentSize
+                [ Html.div
+                    [ css
+                        [ Css.position Css.relative
+                        , Css.width (Css.px contentSize)
+                        , Css.height (Css.px contentSize)
+                        , Css.color Colors.azure
+                        ]
                     ]
-                ]
-                [ iconHelp
-                , Html.span
-                    [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
-                      Role.status
+                    [ iconHelp
+                    , Html.span
+                        [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
+                          Role.status
+                        ]
+                        [ viewIf (\_ -> viewTooltip Nothing OnHover tooltip_) isOpen ]
                     ]
-                    [ viewIf (\_ -> viewTooltip Nothing OnHover tooltip_) isOpen ]
                 ]
             ]
         ]
+
+
+{-| Provides a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
+
+Works by being larger than the trigger content & overlaying it, but is removed from the flow of the page (position: absolute), so that it looks ok visually.
+
+-}
+hoverBridge : Float -> List (Html msg) -> Html msg
+hoverBridge contentSize =
+    let
+        padding =
+            -- enough to cover the empty gap between tooltip and trigger content
+            10
+    in
+    Nri.Ui.styled Html.div
+        "tooltip-hover-bridge"
+        [ Css.boxSizing Css.borderBox
+        , Css.padding (Css.px padding)
+        , Css.width (Css.px <| contentSize + padding * 2)
+        , Css.height (Css.px <| contentSize + padding * 2)
+        , Css.position Css.absolute
+        , Css.top (Css.px <| negate padding)
+        , Css.left (Css.px <| negate padding)
+        ]
+        []
 
 
 {-| Made with <https://levelteams.com/svg-to-elm>

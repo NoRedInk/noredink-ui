@@ -11,7 +11,7 @@ import Css
 import Html.Styled.Attributes exposing (css, href)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V1 as Tooltip
 
 
@@ -100,56 +100,40 @@ example msg model =
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "toggleTip" ]
         , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
-        , Tooltip.tooltip
-            [ Html.text "Tooltip On Top! "
-            , Html.a
-                [ href "/" ]
-                [ Html.text "Links work!" ]
+        , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ Tooltip.tooltip
+                [ Html.text "Tooltip On Top! "
+                , Html.a
+                    [ href "/" ]
+                    [ Html.text "Links work!" ]
+                ]
+                |> Tooltip.toggleTip
+                    { onTrigger = ToggleTooltip ToggleTipTop >> msg
+                    , isOpen = model.openTooltip == Just ToggleTipTop
+                    , label = "More info"
+                    , extraButtonAttrs = []
+                    }
+            , Text.mediumBody
+                [ Html.text "This toggletip will open on top"
+                ]
             ]
-            |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTipTop >> msg
-                , isOpen = model.openTooltip == Just ToggleTipTop
-                , label = "More info"
-                , extraButtonAttrs = []
-                }
-        , Tooltip.tooltip
-            [ Html.text "Tooltip On Left! "
-            , Html.a
-                [ href "/" ]
-                [ Html.text "Links work!" ]
+        , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ Tooltip.tooltip
+                [ Html.text "Tooltip On Left! "
+                , Html.a
+                    [ href "/" ]
+                    [ Html.text "Links work!" ]
+                ]
+                |> Tooltip.withPosition Tooltip.OnLeft
+                |> Tooltip.toggleTip
+                    { onTrigger = ToggleTooltip ToggleTipLeft >> msg
+                    , isOpen = model.openTooltip == Just ToggleTipLeft
+                    , label = "More info"
+                    , extraButtonAttrs = []
+                    }
+            , Text.mediumBody
+                [ Html.text "This toggletip will open on the left"
+                ]
             ]
-            |> Tooltip.withPosition Tooltip.OnLeft
-            |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTipLeft >> msg
-                , isOpen = model.openTooltip == Just ToggleTipLeft
-                , label = "More info"
-                , extraButtonAttrs = []
-                }
-        , Tooltip.tooltip
-            [ Html.text "Tooltip On Right! "
-            , Html.a
-                [ href "/" ]
-                [ Html.text "Links work!" ]
-            ]
-            |> Tooltip.withPosition Tooltip.OnRight
-            |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTipRight >> msg
-                , isOpen = model.openTooltip == Just ToggleTipRight
-                , label = "More info"
-                , extraButtonAttrs = []
-                }
-        , Tooltip.tooltip
-            [ Html.text "Tooltip On Bottom! "
-            , Html.a
-                [ href "/" ]
-                [ Html.text "Links work!" ]
-            ]
-            |> Tooltip.withPosition Tooltip.OnBottom
-            |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTipBottom >> msg
-                , isOpen = model.openTooltip == Just ToggleTipBottom
-                , label = "More info"
-                , extraButtonAttrs = []
-                }
         ]
     }
