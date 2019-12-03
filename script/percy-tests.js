@@ -1,9 +1,5 @@
 const PercyScript = require('@percy/script')
 
-async function openLink(target) {
-  return target.click();
-}
-
 PercyScript.run(async (page, percySnapshot) => {
   const defaultProcessing = async (name, id, location) => {
     await page.goto(location)
