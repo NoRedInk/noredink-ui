@@ -26,6 +26,14 @@ Example usage:
         }
 
 
+## Suggested Improvements for V2
+
+  - The toggle tip does not currently manage focus correctly for keyboard users - if a
+    user tries to click on a link in the toggle tip, the tip will disappear as focus moves
+    to the next item in the page. This should be improved in the next release.
+  - Currently, only toggle tip supports links on hover - generalize this to all tooltips
+
+
 ## Tooltip Construction
 
 @docs Tooltip, tooltip
@@ -223,7 +231,7 @@ auxillaryDescription =
 
 {-| Supplementary information triggered by a "?" icon
 
-A toggle tip is always triggered by a click.
+A toggle tip is always triggered by a hover (or focus, for keyboard users)
 
 -}
 toggleTip :
@@ -235,35 +243,71 @@ toggleTip :
     -> Tooltip msg
     -> Html msg
 toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
+    let
+        contentSize =
+            20
+    in
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V1-ToggleTip"
-        tooltipContainerStyles
+        (tooltipContainerStyles
+            ++ [ -- Take up enough room within the document flow
+                 Css.width (Css.px contentSize)
+               , Css.height (Css.px contentSize)
+               , Css.margin (Css.px 5)
+               ]
+        )
         []
         [ Html.button
             ([ Widget.label label
-             , css
-                ([ Css.width (Css.px 20)
-                 , Css.height (Css.px 20)
-                 , Css.color Colors.azure
-                 ]
-                    ++ buttonStyleOverrides
-                )
-             , EventExtras.onClickStopPropagation (onTrigger True)
-             , Events.onBlur (onTrigger False)
+             , css buttonStyleOverrides
              ]
+                ++ eventsForTrigger OnHover onTrigger
                 ++ extraButtonAttrs
             )
-            [ iconHelp ]
-        , viewIf (\_ -> viewCloseTooltipOverlay (onTrigger False)) isOpen
-        , Html.span
-            [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
-              Role.status
-            ]
-            [ -- Popout is rendered after the overlay, to allow client code to give it
-              -- priority when clicking by setting its position
-              viewIf (\_ -> viewTooltip Nothing tooltip_) isOpen
+            [ hoverBridge contentSize
+                [ Html.div
+                    [ css
+                        [ Css.position Css.relative
+                        , Css.width (Css.px contentSize)
+                        , Css.height (Css.px contentSize)
+                        , Css.color Colors.azure
+                        ]
+                    ]
+                    [ iconHelp
+                    , Html.span
+                        [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
+                          Role.status
+                        ]
+                        [ viewIf (\_ -> viewTooltip Nothing OnHover tooltip_) isOpen ]
+                    ]
+                ]
             ]
         ]
+
+
+{-| Provides a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
+
+Works by being larger than the trigger content & overlaying it, but is removed from the flow of the page (position: absolute), so that it looks ok visually.
+
+-}
+hoverBridge : Float -> List (Html msg) -> Html msg
+hoverBridge contentSize =
+    let
+        padding =
+            -- enough to cover the empty gap between tooltip and trigger content
+            10
+    in
+    Nri.Ui.styled Html.div
+        "tooltip-hover-bridge"
+        [ Css.boxSizing Css.borderBox
+        , Css.padding (Css.px padding)
+        , Css.width (Css.px <| contentSize + padding * 2)
+        , Css.height (Css.px <| contentSize + padding * 2)
+        , Css.position Css.absolute
+        , Css.top (Css.px <| negate padding)
+        , Css.left (Css.px <| negate padding)
+        ]
+        []
 
 
 {-| Made with <https://levelteams.com/svg-to-elm>
@@ -333,7 +377,7 @@ viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonA
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewIf (\_ -> viewTooltip (Just id) tooltip_) isOpen
+        , viewIf (\_ -> viewTooltip (Just id) trigger tooltip_) isOpen
         ]
 
 
@@ -349,9 +393,9 @@ viewIf viewFn condition =
             Html.text ""
 
 
-viewTooltip : Maybe String -> Tooltip msg -> Html msg
-viewTooltip maybeTooltipId (Tooltip config) =
-    Html.div (containerPositioningForArrowPosition config.position)
+viewTooltip : Maybe String -> Trigger -> Tooltip msg -> Html msg
+viewTooltip maybeTooltipId trigger (Tooltip config) =
+    Html.div [ css (containerPositioningForArrowPosition config.position) ]
         [ Html.div
             ([ css
                 ([ Css.borderRadius (Css.px 8)
@@ -426,33 +470,32 @@ tooltipColor =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Position -> List (Attribute msg)
+containerPositioningForArrowPosition : Position -> List Style
 containerPositioningForArrowPosition arrowPosition =
-    List.map (\( k, v ) -> Attributes.style k v) <|
-        case arrowPosition of
-            OnTop ->
-                [ ( "left", "50%" )
-                , ( "top", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+    case arrowPosition of
+        OnTop ->
+            [ Css.left (Css.pct 50)
+            , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnBottom ->
-                [ ( "left", "50%" )
-                , ( "bottom", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnBottom ->
+            [ Css.left (Css.pct 50)
+            , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnLeft ->
-                [ ( "top", "50%" )
-                , ( "left", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnLeft ->
+            [ Css.top (Css.pct 50)
+            , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
-            OnRight ->
-                [ ( "top", "50%" )
-                , ( "right", "calc(-" ++ String.fromFloat arrowSize ++ "px - 2px)" )
-                , ( "position", "absolute" )
-                ]
+        OnRight ->
+            [ Css.top (Css.pct 50)
+            , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+            , Css.position Css.absolute
+            ]
 
 
 pointerBox : Position -> Attribute msg
