@@ -37,7 +37,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Tooltip.V1"
         [ describe "toggleTip"
-            [ test "Toggletip is available on click and hides on blur" <|
+            [ test "Toggletip is available on hover and hides on blur" <|
                 \() ->
                     ProgramTest.createSandbox
                         { init = init
@@ -52,7 +52,7 @@ spec =
                                     (Widget.label "More info")
                                 ]
                             )
-                            Event.click
+                            Event.mouseEnter
                         |> ProgramTest.ensureViewHas
                             [ Selector.text "Toggly"
                             ]
