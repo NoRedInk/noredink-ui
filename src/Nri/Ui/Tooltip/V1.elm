@@ -26,6 +26,14 @@ Example usage:
         }
 
 
+## Suggested Improvements for V2
+
+  - The toggle tip does not currently manage focus correctly for keyboard users - if a
+    user tries to click on a link in the toggle tip, the tip will disappear as focus moves
+    to the next item in the page. This should be improved in the next release.
+  - Currently, only toggle tip supports links on hover - generalize this to all tooltips
+
+
 ## Tooltip Construction
 
 @docs Tooltip, tooltip
