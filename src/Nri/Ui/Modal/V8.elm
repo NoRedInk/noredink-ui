@@ -344,6 +344,7 @@ viewInnerContent children visibleTitle visibleFooter =
         [ div
             [ css
                 [ Css.overflowY Css.auto
+                , Css.overflowX Css.hidden
                 , Css.minHeight (Css.px 150)
                 , Css.maxHeight
                     (Css.calc (Css.vh 100)
