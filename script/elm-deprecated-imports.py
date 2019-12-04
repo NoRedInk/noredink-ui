@@ -25,12 +25,7 @@ class ElmJson:
             self.data = json.load(fh)
 
         self.elm_version = self.data["elm-version"]
-        self.source_directories = self.data["source-directories"]
-
-    def package_version(self, package):
-        return self.data["dependencies"]["direct"].get(
-            package, self.data["dependencies"]["indirect"].get(package, None)
-        )
+        self.source_directories = ["src"]
 
 
 class NriUiModules:
@@ -41,11 +36,8 @@ class NriUiModules:
 
     MODULE_RE = "(?P<name>Nri\.Ui\.\w+).V(?P<version>\d+)"
 
-    def __init__(self, elm_home, elm_version, package_name, package_version):
-        package_elm_json = os.path.join(
-            elm_home, elm_version, "package", package_name, package_version, "elm.json"
-        )
-        with open(package_elm_json, "r") as fh:
+    def __init__(self):
+        with open("elm.json", "r") as fh:
             self.module_list = json.load(fh)["exposed-modules"]
 
         self.versions = defaultdict(list)
@@ -67,18 +59,11 @@ class NriUiModules:
 
 
 class Import:
-    """a single import, with special handling for unversioned deprecated modules."""
-
-    DEPRECATED = "DEPRECATED"
-
+    """a single import."""
     def __init__(self, filename, name, version):
         self.filename = filename
         self.name = name
-
-        try:
-            self.version = int(version)
-        except ValueError:  # "DEPRECATED"
-            self.version = version
+        self.version = int(version)
 
     def to_dict(self):
         return {"filename": self.filename, "name": self.name, "version": self.version}
@@ -200,7 +185,7 @@ class Imports(list):
 class Main:
     def __init__(self, args):
         self.args = args
-        self.elm_json = ElmJson(args.elm_json)
+        self.elm_json = ElmJson("elm.json")
 
         self.deprecated = set(args.deprecate)
 
@@ -252,7 +237,7 @@ class Main:
                     "{} (latest version: {})".format(
                         entry,
                         self.modules().latest_version(entry.name)
-                        or "completely deprecated. Check noredink-ui?",
+                        or "completely deprecated.",
                     )
                     for entry in new_deprecated_imports
                 )
@@ -337,7 +322,7 @@ class Main:
         if self._current_imports is None:
             self._current_imports = Imports.from_source_directories(
                 [
-                    os.path.join(os.path.dirname(self.args.elm_json), directory)
+                    os.path.join(os.path.dirname("elm.json"), directory)
                     for directory in self.elm_json.source_directories
                 ],
                 self.deprecated
@@ -347,21 +332,7 @@ class Main:
 
     def modules(self):
         if self._modules is None:
-            try:
-                self._modules = NriUiModules(
-                    self.args.elm_home,
-                    self.elm_json.elm_version,
-                    self.args.package,
-                    self.elm_json.package_version(self.args.package),
-                )
-            except FileNotFoundError:
-                print(
-                    "elm.json for {} {} not found. Maybe run `elm make`?".format(
-                        self.args.package,
-                        self.elm_json.package_version(self.args.package),
-                    )
-                )
-                sys.exit(1)
+            self._modules = NriUiModules()
 
         return self._modules
 
@@ -374,27 +345,14 @@ def parser():
     out.add_argument(
         "--check-message-fix-command",
         help="update command to show in check error messages",
-        default=" ".join(sys.argv)
-        .replace("check", "update")
-        .replace("report", "update"),
-    )
-    out.add_argument("--elm-json", help="which elm.json to use", default="ui/elm.json")
-    out.add_argument(
-        "--package",
-        help="which package to look for deprecations in",
-        default="NoRedInk/noredink-ui",
-    )
-    out.add_argument(
-        "--elm-home",
-        help="where to look for package manifest",
-        default=os.environ.get("ELM_HOME", os.path.expanduser("~/.elm")),
+        default=" ".join(sys.argv).replace("check", "update").replace("report", "update"),
     )
     out.add_argument(
         "--imports-file",
         help="where do we store acceptable deprecated imports?",
         default=os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            os.path.basename(__file__).replace(".py", ".import.csv"),
+            os.path.basename(__file__).replace(".py", ".csv"),
         ),
     )
     out.add_argument(
