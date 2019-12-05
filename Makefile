@@ -6,6 +6,7 @@ test: node_modules
 	npx elm-verify-examples --run-tests
 	make axe-report
 	make percy-tests
+	make deprecated-imports-report
 
 tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
 	script/run-axe.sh > $@
@@ -17,6 +18,14 @@ axe-report: tests/axe-report.json script/format-axe-report.sh script/axe-report.
 .PHONY: percy-tests
 percy-tests:
 	script/percy-tests.sh
+
+tests/deprecated-imports-report.txt: $(shell find src -type f) script/deprecated-imports.py
+	script/deprecated-imports.py report > $@
+
+.PHONY: deprecated-imports-report
+deprecated-imports-report: tests/deprecated-imports-report.txt script/deprecated-imports.py
+	@cat tests/deprecated-imports-report.txt
+	@script/deprecated-imports.py check
 
 .PHONY: checks
 checks:
