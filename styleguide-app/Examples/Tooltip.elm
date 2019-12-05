@@ -8,10 +8,10 @@ module Examples.Tooltip exposing (example, init, update, State, Msg)
 
 import Accessibility.Styled as Html
 import Css
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, href)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V3 as Text
+import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V1 as Tooltip
 
 
@@ -19,7 +19,10 @@ type TooltipType
     = PrimaryLabelOnClick
     | PrimaryLabelOnHover
     | AuxillaryDescription
-    | ToggleTip
+    | ToggleTipTop
+    | ToggleTipRight
+    | ToggleTipBottom
+    | ToggleTipLeft
 
 
 type alias State =
@@ -97,12 +100,40 @@ example msg model =
         , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
         , Heading.h3 [] [ Html.text "toggleTip" ]
         , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
-        , Tooltip.tooltip [ Html.text "Tooltip" ]
-            |> Tooltip.toggleTip
-                { onTrigger = ToggleTooltip ToggleTip >> msg
-                , isOpen = model.openTooltip == Just ToggleTip
-                , label = "More info"
-                , extraButtonAttrs = []
-                }
+        , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ Tooltip.tooltip
+                [ Html.text "Tooltip On Top! "
+                , Html.a
+                    [ href "/" ]
+                    [ Html.text "Links work!" ]
+                ]
+                |> Tooltip.toggleTip
+                    { onTrigger = ToggleTooltip ToggleTipTop >> msg
+                    , isOpen = model.openTooltip == Just ToggleTipTop
+                    , label = "More info"
+                    , extraButtonAttrs = []
+                    }
+            , Text.mediumBody
+                [ Html.text "This toggletip will open on top"
+                ]
+            ]
+        , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ Tooltip.tooltip
+                [ Html.text "Tooltip On Left! "
+                , Html.a
+                    [ href "/" ]
+                    [ Html.text "Links work!" ]
+                ]
+                |> Tooltip.withPosition Tooltip.OnLeft
+                |> Tooltip.toggleTip
+                    { onTrigger = ToggleTooltip ToggleTipLeft >> msg
+                    , isOpen = model.openTooltip == Just ToggleTipLeft
+                    , label = "More info"
+                    , extraButtonAttrs = []
+                    }
+            , Text.mediumBody
+                [ Html.text "This toggletip will open on the left"
+                ]
+            ]
         ]
     }
