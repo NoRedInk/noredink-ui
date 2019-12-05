@@ -240,3 +240,4 @@ documentation.json
 
 /public
 /tests/axe-report.json
+/tests/deprecated-imports-report.txt
