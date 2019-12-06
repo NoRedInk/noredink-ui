@@ -1,4 +1,5 @@
 SHELL:=env PATH=${PATH} /bin/sh
+export DEPRECATED_MODULES=Html,Accessibility,Accessibility.Aria,Accessibility.Key,Accessibility.Landmark,Accessibility.Live,Accessibility.Role,Accessibility.Style,Accessibility.Widget
 
 .PHONY: test
 test: node_modules
@@ -22,10 +23,13 @@ percy-tests:
 tests/deprecated-imports-report.txt: $(shell find src -type f) script/deprecated-imports.py
 	script/deprecated-imports.py report > $@
 
+script/deprecated-imports.csv: $(shell find src -type f) script/deprecated-imports.py
+	script/deprecated-imports.py --imports-file $@ update 
+
 .PHONY: deprecated-imports-report
 deprecated-imports-report: tests/deprecated-imports-report.txt script/deprecated-imports.py
 	@cat tests/deprecated-imports-report.txt
-	@script/deprecated-imports.py check
+	@script/deprecated-imports.py --check-message-fix-command='make script/deprecated-imports.csv' check
 
 .PHONY: checks
 checks:
