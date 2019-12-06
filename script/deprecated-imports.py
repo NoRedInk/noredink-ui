@@ -60,10 +60,15 @@ class NriUiModules:
 
 class Import:
     """a single import."""
+    DEPRECATED = "DEPRECATED"
+
     def __init__(self, filename, name, version):
         self.filename = filename
         self.name = name
-        self.version = int(version)
+        try:
+            self.version = int(version)
+        except ValueError:  # DEPRECATED
+            self.version = self.DEPRECATED
 
     def to_dict(self):
         return {"filename": self.filename, "name": self.name, "version": self.version}
@@ -359,7 +364,7 @@ def parser():
         '--deprecate',
         help="explicitly deprecate a module by name",
         action="append",
-        default=[],
+        default=[m for m in os.environ.get("DEPRECATED_MODULES", "").split(",") if m],
     )
 
     sub = out.add_subparsers()
