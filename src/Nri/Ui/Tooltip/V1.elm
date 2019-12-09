@@ -455,6 +455,7 @@ eventsForTrigger trigger msg =
             , Events.onMouseLeave (msg False)
             , Events.onFocus (msg True)
             , Events.onBlur (msg False)
+            , EventExtras.onClickStopPropagation (msg True)
             ]
 
 
@@ -552,6 +553,7 @@ buttonStyleOverrides =
     , Css.color Css.inherit
     , Css.margin Css.zero
     , Css.padding Css.zero
+    , Css.textAlign Css.left
     ]
 
 
