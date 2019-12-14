@@ -17,7 +17,7 @@ module Nri.Ui.Colors.V1 exposing
     , lichen
     , magenta
     , navy
-    , orange, ochre
+    , orange, ochre, ochreDark
     , purple, purpleDark, purpleLight
     , red, redDark, redLight
     , sunshine
@@ -48,7 +48,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs lichen
 @docs magenta
 @docs navy
-@docs orange, ochre
+@docs orange, ochre, ochreDark
 @docs purple, purpleDark, purpleLight
 @docs red, redDark, redLight
 @docs sunshine
@@ -513,12 +513,22 @@ orange =
 
 {-|
 
-<p style="font-size:2em; color: #e68800">#e68800</p>
+<p style="font-size:2em; color: #f28f00">#f28f00</p>
 
 -}
 ochre : Css.Color
 ochre =
-    hex "#e68800"
+    hex "#f28f00"
+
+
+{-|
+
+<p style="font-size:2em; color: #ad6500">#ad6500</p>
+
+-}
+ochreDark : Css.Color
+ochreDark =
+    hex "#ad6500"
 
 
 {-|
