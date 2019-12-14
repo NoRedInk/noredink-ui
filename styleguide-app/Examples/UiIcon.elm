@@ -61,6 +61,7 @@ example =
             , ( "arrowRight", UiIcon.arrowRight )
             , ( "arrowDown", UiIcon.arrowDown )
             , ( "arrowLeft", UiIcon.arrowLeft )
+            , ( "arrowPointingRight", UiIcon.arrowPointingRight )
             ]
         , IconExamples.view "Sticky things"
             [ ( "checkmark", UiIcon.checkmark )
@@ -75,6 +76,7 @@ example =
             ]
         , IconExamples.view "Math"
             [ ( "equals", UiIcon.equals )
+            , ( "plus", UiIcon.plus )
             ]
         , IconExamples.view "Lock & Key"
             [ ( "lock", UiIcon.lock )

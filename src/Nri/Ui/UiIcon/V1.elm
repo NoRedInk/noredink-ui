@@ -7,11 +7,11 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , document, newspaper
     , edit, pen
-    , arrowTop, arrowRight, arrowDown, arrowLeft
+    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
     , checkmark, x
     , attention, exclamation
     , flag, star, starOutline
-    , equals
+    , equals, plus
     , key, lock
     , badge
     )
@@ -26,11 +26,11 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs document, newspaper
 @docs edit, pen
-@docs arrowTop, arrowRight, arrowDown, arrowLeft
+@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
 @docs checkmark, x
 @docs attention, exclamation
 @docs flag, star, starOutline
-@docs equals
+@docs equals, plus
 @docs key, lock
 @docs badge
 
@@ -463,6 +463,20 @@ arrowLeft =
 
 
 {-| -}
+arrowPointingRight : Nri.Ui.Svg.V1.Svg
+arrowPointingRight =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 20"
+        ]
+        [ Svg.path [ Attributes.d "M24.48 11.136l-8.093 8.092a1.784 1.784 0 0 1-2.522 0 1.781 1.781 0 0 1 0-2.52l5.05-5.05H1.782a1.782 1.782 0 1 1 0-3.565h17.133l-5.05-5.05A1.781 1.781 0 0 1 15.126 0c.457 0 .913.174 1.26.522l8.094 8.092a1.784 1.784 0 0 1 0 2.522z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
 sortArrow : Nri.Ui.Svg.V1.Svg
 sortArrow =
     Svg.svg
@@ -772,6 +786,20 @@ equals =
                     []
                 ]
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+plus : Nri.Ui.Svg.V1.Svg
+plus =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 25 25"
+        ]
+        [ Svg.path [ Attributes.d "M9.84 2.87c0-1.528 1.132-2.659 2.66-2.659 1.528 0 2.66 1.131 2.66 2.66v6.847h6.847c1.528 0 2.797 1.269 2.782 2.782 0 1.528-1.269 2.797-2.782 2.782h-6.848v6.847c0 1.529-1.13 2.66-2.659 2.66-1.528 0-2.66-1.131-2.66-2.66v-6.847H2.994c-1.528 0-2.797-1.269-2.782-2.782 0-1.528 1.269-2.797 2.782-2.782l6.725.123.123-6.97z" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
