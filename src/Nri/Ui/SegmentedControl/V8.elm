@@ -243,6 +243,7 @@ sharedTabStyles =
     , fontSize (px 15)
     , fontWeight bold
     , lineHeight (px 30)
+    , margin zero
     , firstOfType
         [ borderTopLeftRadius (px 8)
         , borderBottomLeftRadius (px 8)
