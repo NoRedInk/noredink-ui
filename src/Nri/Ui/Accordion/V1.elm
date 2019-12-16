@@ -67,6 +67,7 @@ defaultStyleOptions =
         -- button resets
         , cursor pointer
         , borderWidth Css.zero
+        , margin zero
 
         -- fonts & text
         , textAlign left
