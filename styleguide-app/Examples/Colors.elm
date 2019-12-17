@@ -16,6 +16,10 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 
 
+type alias ColorExample =
+    ( String, Css.Color, String )
+
+
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Colors.V1"
@@ -94,6 +98,7 @@ example =
     }
 
 
+viewColors : List ColorExample -> Html.Html msg
 viewColors colors =
     colors
         |> List.map viewColor
@@ -106,7 +111,7 @@ viewColors colors =
             ]
 
 
-viewColor : ( String, Css.Color, String ) -> Html.Html msg
+viewColor : ColorExample -> Html.Html msg
 viewColor ( name, color, description ) =
     Html.div
         [ css
