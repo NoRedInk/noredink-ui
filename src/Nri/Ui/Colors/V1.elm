@@ -14,6 +14,7 @@ module Nri.Ui.Colors.V1 exposing
     , highlightPurple, highlightPurpleDark
     , highlightYellow, highlightYellowDark
     , highlightBrown, highlightBrownDark
+    , textHighlightYellow, textHighlightCyan, textHighlightMagenta, textHighlightGreen, textHighlightBlue, textHighlightPurple, textHighlightBrown
     , lichen
     , magenta
     , navy
@@ -45,6 +46,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs highlightPurple, highlightPurpleDark
 @docs highlightYellow, highlightYellowDark
 @docs highlightBrown, highlightBrownDark
+@docs textHighlightYellow, textHighlightCyan, textHighlightMagenta, textHighlightGreen, textHighlightBlue, textHighlightPurple, textHighlightBrown
 @docs lichen
 @docs magenta
 @docs navy
@@ -61,590 +63,462 @@ import Css exposing (hex, rgba)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 
 
-{-|
-
-<p style="font-size:2em; color: #00cbeb">#00cbeb</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 aqua : Css.Color
 aqua =
     hex "#00cbeb"
 
 
-{-|
-
-<p style="font-size:2em; color: #008da3">#008da3</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 aquaDark : Css.Color
 aquaDark =
     hex "#008da3"
 
 
-{-|
-
-<p style="font-size:2em; color: #e6fcff">#e6fcff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 aquaLight : Css.Color
 aquaLight =
     hex "#e6fcff"
 
 
-{-|
-
-<p style="font-size:2em; color: #146aff">#146aff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 azure : Css.Color
 azure =
     hex "#0A64FF"
 
 
-{-|
-
-<p style="font-size:2em; color: #004cc9">#004cc9</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 azureDark : Css.Color
 azureDark =
     hex "#004cc9"
 
 
-{-| TODO
-
-<p style="font-size:2em; color: #40a8e4">#40a8e4</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 blue : Css.Color
 blue =
     hex "#40a8e4"
 
 
-{-| TODO
-
-<p style="font-size:2em; color: #4a79a7">#4a79a7</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 blueDeep : Css.Color
 blueDeep =
     hex "#4a79a7"
 
 
-{-|
-
-<p style="font-size:2em; color: #00aaff">#00aaff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 cornflower : Css.Color
 cornflower =
     hex "#00aaff"
 
 
-{-|
-
-<p style="font-size:2em; color: #0074ad">#0074ad</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 cornflowerDark : Css.Color
 cornflowerDark =
     hex "#0074ad"
 
 
-{-|
-
-<p style="font-size:2em; color: #e6f7ff">#e6f7ff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 cornflowerLight : Css.Color
 cornflowerLight =
     hex "#e6f7ff"
 
 
-{-|
-
-<p style="font-size:2em; color: #43dcff">#43dcff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 cyan : Css.Color
 cyan =
     hex "#43dcff"
 
 
-{-|
-
-<p style="font-size:2em; color: #eef9ff">#eef9ff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 frost : Css.Color
 frost =
     hex "#eef9ff"
 
 
-{-|
-
-<p style="font-size:2em; color: #d4f0ff">#d4f0ff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 glacier : Css.Color
 glacier =
     hex "#d4f0ff"
 
 
-{-|
-
-<p style="font-size:2em; color: #56bf74">#56bf74</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 grassland : Css.Color
 grassland =
     hex "#56bf74"
 
 
-{-|
-
-<p style="font-size:2em; color: #333333">#333333</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 gray20 : Css.Color
 gray20 =
     hex "#333333"
 
 
-{-|
-
-<p style="font-size:2em; color: #727272">#727272</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 gray45 : Css.Color
 gray45 =
     hex "#727272"
 
 
-{-|
-
-<p style="font-size:2em; color: #bfbfbf">#bfbfbf</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 gray75 : Css.Color
 gray75 =
     hex "#bfbfbf"
 
 
-{-|
-
-<p style="font-size:2em; color: #ebebeb">#ebebeb</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 gray92 : Css.Color
 gray92 =
     hex "#ebebeb"
 
 
-{-|
-
-<p style="font-size:2em; color: #f5f5f5">#f5f5f5</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 gray96 : Css.Color
 gray96 =
     hex "#f5f5f5"
 
 
-{-|
-
-<p style="font-size:2em; color: #00d93e">#00d93e</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 green : Css.Color
 green =
     hex "#00d93e"
 
 
-{-|
-
-<p style="font-size:2em; color: #26a300">#26a300</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 greenDark : Css.Color
 greenDark =
     hex "#26a300"
 
 
-{-|
-
-<p style="font-size:2em; color: #228000">#228000</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 greenDarkest : Css.Color
 greenDarkest =
     hex "#228000"
 
 
-{-|
-
-<p style="font-size:2em; color: #b3ffc9">#b3ffc9</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 greenLight : Css.Color
 greenLight =
     hex "#b3ffc9"
 
 
-{-|
-
-<p style="font-size:2em; color: #e6ffed; background-color: black;">#e6ffed</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 greenLightest : Css.Color
 greenLightest =
     hex "#e6ffed"
 
 
-{-| cyan with alpha of 0.75
-
-<p style="font-size:2em; color: rgba(66, 219, 255, 0.75)">rgba(66, 219, 255, 0.75)</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightLightBlue : Css.Color
 highlightLightBlue =
     withAlpha 0.75 cyan
 
 
-{-| magenta with alpha of 0.5
-
-<p style="font-size:2em; color: rgba(255, 0 ,189, 0.5)">rgba(255, 0 ,189, 0.5)</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightLightMagenta : Css.Color
 highlightLightMagenta =
     withAlpha 0.5 magenta
 
 
-{-| yellow with alpha of 0.75
-
-<p style="font-size:2em; color: rgba(254, 199 ,9, 0.75)">rgba(254, 199 ,9, 0.75)</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightLightYellow : Css.Color
 highlightLightYellow =
     withAlpha 0.75 yellow
 
 
-{-|
-
-<p style="font-size:2em; background-color: #fee798">#fee798</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightYellow : Css.Color
 highlightYellow =
     hex "#fee798"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #795d01">#795d01</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightYellowDark : Css.Color
 highlightYellowDark =
     hex "#795d01"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightYellow : Css.Color
+textHighlightYellow =
+    hex "#ab8403"
 
-<p style="font-size:2em; background-color: #b9fff7">#b9fff7</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightCyan : Css.Color
 highlightCyan =
     hex "#9BFFF4"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #006156">#006156</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightCyanDark : Css.Color
 highlightCyanDark =
     hex "#006156"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightCyan : Css.Color
+textHighlightCyan =
+    hex "#009e8e"
 
-<p style="font-size:2em; background-color: #ffb8f3">#ffb8f3</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightMagenta : Css.Color
 highlightMagenta =
     hex "#ffb8f3"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #a30088">#a30088</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightMagentaDark : Css.Color
 highlightMagentaDark =
     hex "#a30088"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightMagenta : Css.Color
+textHighlightMagenta =
+    hex "#ff33dd"
 
-<p style="font-size:2em; background-color: #8fffb3">#8fffb3</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightGreen : Css.Color
 highlightGreen =
     hex "#8fffb3"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #007025">#007025</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightGreenDark : Css.Color
 highlightGreenDark =
     hex "#007025"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightGreen : Css.Color
+textHighlightGreen =
+    hex "#00a336"
 
-<p style="font-size:2em; background-color: #ccdeff">#ccdeff</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightBlue : Css.Color
 highlightBlue =
     hex "#ccdeff"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #002e85">#002e85</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightBlueDark : Css.Color
 highlightBlueDark =
     hex "#002e85"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightBlue : Css.Color
+textHighlightBlue =
+    hex "#3d81ff"
 
-<p style="font-size:2em; background-color: #c9b0ff">#c9b0ff</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightPurple : Css.Color
 highlightPurple =
     hex "#e3d6ff"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #3c00bd">#3c00bd</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightPurpleDark : Css.Color
 highlightPurpleDark =
     hex "#3c00bd"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightPurple : Css.Color
+textHighlightPurple =
+    hex "#702eff"
 
-<p style="font-size:2em; background-color: #ffc6a1">#ffc6a1</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightBrown : Css.Color
 highlightBrown =
     hex "#ffc6a1"
 
 
-{-|
-
-<p style="font-size:2em; background-color: #943b00">#943b00</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 highlightBrownDark : Css.Color
 highlightBrownDark =
     hex "#943b00"
 
 
-{-|
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+textHighlightBrown : Css.Color
+textHighlightBrown =
+    hex "#e05a00"
 
-<p style="font-size:2em; color: #99bfa4">#99bfa4</p>
 
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 lichen : Css.Color
 lichen =
     hex "#99bfa4"
 
 
-{-|
-
-<p style="font-size:2em; color: #ff00bd">#ff00bd</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 magenta : Css.Color
 magenta =
     hex "#ff00bd"
 
 
-{-|
-
-<p style="font-size:2em; color: #004e95">#004e95</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 navy : Css.Color
 navy =
     hex "#004e95"
 
 
-{-| -- TODO
-
-<p style="font-size:2em; color: #f5a623">#f5a623</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 orange : Css.Color
 orange =
     hex "#f5a623"
 
 
-{-|
-
-<p style="font-size:2em; color: #f28f00">#f28f00</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 ochre : Css.Color
 ochre =
     hex "#f28f00"
 
 
-{-|
-
-<p style="font-size:2em; color: #ad6500">#ad6500</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 ochreDark : Css.Color
 ochreDark =
     hex "#ad6500"
 
 
-{-|
-
-<p style="font-size:2em; color: #a839e7">#a839e7</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 purple : Css.Color
 purple =
     hex "#a839e7"
 
 
-{-|
-
-<p style="font-size:2em; color: #f7ebff">#f7ebff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 purpleLight : Css.Color
 purpleLight =
     hex "#f7ebff"
 
 
-{-|
-
-<p style="font-size:2em; color: #7721a7">#7721a7</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 purpleDark : Css.Color
 purpleDark =
     hex "#7721a7"
 
 
-{-|
-
-<p style="font-size:2em; color: #f3336c">#f3336c</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 red : Css.Color
 red =
     hex "#e70d4f"
 
 
-{-|
-
-<p style="font-size:2em; color: #ffe0e6">#ffe0e6</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 redLight : Css.Color
 redLight =
     hex "#ffe0e6"
 
 
-{-|
-
-<p style="font-size:2em; color: #c2003a">#c2003a</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 redDark : Css.Color
 redDark =
     hex "#c2003a"
 
 
-{-|
-
-<p style="font-size:2em; color: #fffadc">#fffadc</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 sunshine : Css.Color
 sunshine =
     hex "#fffadc"
 
 
-{-|
-
-<p style="font-size:2em; color: #00cfbe">#00cfbe</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 turquoise : Css.Color
 turquoise =
     hex "#00cfbe"
 
 
-{-|
-
-<p style="font-size:2em; color: #00a39b">#00a39b</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 turquoiseDark : Css.Color
 turquoiseDark =
     hex "#00a39b"
 
 
-{-|
-
-<p style="font-size:2em; color: #e0fffe">#e0fffe</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 turquoiseLight : Css.Color
 turquoiseLight =
     hex "#e0fffe"
 
 
-{-|
-
-<p style="font-size:2em; color: #ffffff; background-color: black;">#ffffff</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 white : Css.Color
 white =
     hex "#ffffff"
 
 
-{-|
-
-<p style="font-size:2em; color: #fec709">#fec709</p>
-
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
 -}
 yellow : Css.Color
 yellow =
