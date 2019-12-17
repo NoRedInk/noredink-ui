@@ -55,7 +55,7 @@ example =
           , ( "redLight", Colors.redLight, "Red backgrounds" )
           , ( "cyan", Colors.cyan, "Blue Highlighter" )
           , ( "magenta", Colors.magenta, "Pink highlighter" )
-          , ( "yellow", Colors.yellow, "Yellow highlighter" )
+          , ( "mustard", Colors.mustard, "Practice assignments, some Premium elements" )
           , ( "ochre", Colors.ochre, "Practice assignments background color, some Premium elements" )
           , ( "ochreDark", Colors.ochreDark, "Practice assignments text color" )
           , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )

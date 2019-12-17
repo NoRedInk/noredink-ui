@@ -23,7 +23,7 @@ module Nri.Ui.Colors.V1 exposing
     , red, redDark, redLight
     , sunshine
     , turquoise, turquoiseDark, turquoiseLight
-    , yellow
+    , yellow, mustard
     )
 
 {-| Comprehensive list of named colors.
@@ -55,7 +55,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs red, redDark, redLight
 @docs sunshine
 @docs turquoise, turquoiseDark, turquoiseLight
-@docs yellow
+@docs yellow, mustard
 
 -}
 
@@ -519,7 +519,17 @@ white =
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>
+
+DEPRECATED: use [`mustard`](#mustard) instead. `yellow` will be removed in V2.
+
 -}
 yellow : Css.Color
 yellow =
+    mustard
+
+
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+mustard : Css.Color
+mustard =
     hex "#fec709"
