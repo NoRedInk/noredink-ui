@@ -13,6 +13,11 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V2 as Heading
+
+
+type alias ColorExample =
+    ( String, Css.Color, String )
 
 
 example : ModuleExample msg
@@ -54,11 +59,15 @@ example =
           , ( "redLight", Colors.redLight, "Red backgrounds" )
           , ( "cyan", Colors.cyan, "Blue Highlighter" )
           , ( "magenta", Colors.magenta, "Pink highlighter" )
-          , ( "yellow", Colors.yellow, "Yellow highlighter" )
+          , ( "mustard", Colors.mustard, "Practice assignments, some Premium elements" )
           , ( "ochre", Colors.ochre, "Practice assignments background color, some Premium elements" )
           , ( "ochreDark", Colors.ochreDark, "Practice assignments text color" )
           , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
-          , ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
+          ]
+            |> viewColors
+        , Heading.h3 [] [ Html.text "Background Highlight Colors" ]
+        , Html.p [] [ Html.text "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
+        , [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
           , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
           , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
           , ( "highlightCyanDark", Colors.highlightCyanDark, "Dark cyan background highlights" )
@@ -73,19 +82,36 @@ example =
           , ( "highlightBrown", Colors.highlightBrown, "Brown background highlights" )
           , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
           ]
-            |> List.map viewColor
-            |> Html.div
-                [ css
-                    [ Css.maxWidth (Css.px 12000)
-                    , Css.displayFlex
-                    , Css.flexWrap Css.wrap
-                    ]
-                ]
+            |> viewColors
+        , Heading.h3 [] [ Html.text "Text Highlight Colors" ]
+        , Html.p [] [ Html.text "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
+        , [ ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
+          , ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )
+          , ( "textHighlightMagenta", Colors.textHighlightMagenta, "Neutral text highlight #3" )
+          , ( "textHighlightGreen", Colors.textHighlightGreen, "Neutral text highlight #4, Positive text highlight #1" )
+          , ( "textHighlightBlue", Colors.textHighlightBlue, "Neutral text highlight #5, Positive text highlight #2" )
+          , ( "textHighlightPurple", Colors.textHighlightPurple, "Negative text highlight #1" )
+          , ( "textHighlightBrown", Colors.textHighlightBrown, "Negative text highlight #2" )
+          ]
+            |> viewColors
         ]
     }
 
 
-viewColor : ( String, Css.Color, String ) -> Html.Html msg
+viewColors : List ColorExample -> Html.Html msg
+viewColors colors =
+    colors
+        |> List.map viewColor
+        |> Html.div
+            [ css
+                [ Css.maxWidth (Css.px 12000)
+                , Css.displayFlex
+                , Css.flexWrap Css.wrap
+                ]
+            ]
+
+
+viewColor : ColorExample -> Html.Html msg
 viewColor ( name, color, description ) =
     Html.div
         [ css
