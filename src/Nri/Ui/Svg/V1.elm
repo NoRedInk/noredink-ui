@@ -18,6 +18,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
 
 
 {-| Opaque type describing a non-interactable Html element.
@@ -107,7 +108,17 @@ toHtml (Svg record) =
 {-| -}
 toHtmlAsButton : msg -> Svg -> Html msg
 toHtmlAsButton msg svg =
-    Html.button [] [ toHtml svg ]
+    Html.button
+        [ Attributes.css
+            [ Css.margin Css.zero
+            , Css.padding Css.zero
+            , Css.borderWidth Css.zero
+            , Css.backgroundColor Css.transparent
+            , Css.cursor Css.pointer
+            ]
+        , Events.onClick msg
+        ]
+        [ toHtml svg ]
 
 
 {-| -}
