@@ -334,7 +334,7 @@ nriThemedModules model =
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.SortableTable.example SortableTableMsg model.sortableTableState
-    , Examples.Svg.example SvgMsg model.svgState
+    , Examples.Svg.example (exampleMessages SvgMsg) model.svgState
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Text.example

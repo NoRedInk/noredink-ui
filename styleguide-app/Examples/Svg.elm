@@ -22,7 +22,7 @@ import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -32,14 +32,18 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example : (String -> ModuleMessages Msg msg) -> State -> ModuleExample msg
+example unnamedMessages state =
+    let
+        parentMessages =
+            unnamedMessages "Nri.Ui.Svg.V1"
+    in
     { name = "Nri.Ui.Svg.V1"
     , category = Icons
     , content =
         [ viewSettings state
-            |> Html.map parentMessage
-        , viewResults state
+            |> Html.map parentMessages.wrapper
+        , viewResults parentMessages.showItWorked state
         ]
     }
 
@@ -52,7 +56,46 @@ viewSettings state =
             , Css.justifyContent Css.spaceBetween
             ]
         ]
-        [ Html.label []
+        [ Html.fieldset []
+            [ Html.legend [] [ Html.text "Render strategy" ]
+            , Html.label [ Attributes.css [ Css.display Css.block ] ]
+                [ Html.input
+                    [ Attributes.type_ "radio"
+                    , Attributes.id "render-with-toHtml"
+                    , Attributes.name "render-with"
+                    , Attributes.value toHtml
+                    , Attributes.checked (state.renderStrategy == toHtml)
+                    , Events.onInput SetRenderStrategy
+                    ]
+                    []
+                , Html.span [] [ Html.text "toHtml" ]
+                ]
+            , Html.label [ Attributes.css [ Css.display Css.block ] ]
+                [ Html.input
+                    [ Attributes.type_ "radio"
+                    , Attributes.id "render-with-toHtmlAsButton"
+                    , Attributes.name "render-with"
+                    , Attributes.value toHtmlAsButton
+                    , Attributes.checked (state.renderStrategy == toHtmlAsButton)
+                    , Events.onInput SetRenderStrategy
+                    ]
+                    []
+                , Html.span [] [ Html.text "toHtmlAsButton" ]
+                ]
+            , Html.label [ Attributes.css [ Css.display Css.block ] ]
+                [ Html.input
+                    [ Attributes.type_ "radio"
+                    , Attributes.id "render-with-toHtmlAsLink"
+                    , Attributes.name "render-with"
+                    , Attributes.value toHtmlAsLink
+                    , Attributes.checked (state.renderStrategy == toHtmlAsLink)
+                    , Events.onInput SetRenderStrategy
+                    ]
+                    []
+                , Html.span [] [ Html.text "toHtmlAsLink" ]
+                ]
+            ]
+        , Html.label []
             [ Html.text "Color: "
             , Html.input
                 [ Attributes.type_ "color"
@@ -94,8 +137,8 @@ viewSettings state =
         ]
 
 
-viewResults : State -> Html.Html msg
-viewResults state =
+viewResults : (String -> msg) -> State -> Html.Html msg
+viewResults msg state =
     let
         ( red, green, blue ) =
             Color.toRGB state.color
@@ -119,7 +162,7 @@ viewResults state =
               , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
               , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
               , "       |> Svg.withLabel \"" ++ state.label ++ "\""
-              , "       |> Svg.toHtml"
+              , "       |> Svg." ++ state.renderStrategy
               ]
                 |> String.join "\n"
                 |> Html.text
@@ -135,7 +178,7 @@ viewResults state =
                 |> Svg.withWidth (Css.px state.width)
                 |> Svg.withHeight (Css.px state.height)
                 |> Svg.withLabel state.label
-                |> Svg.toHtml
+                |> render state.renderStrategy msg
             ]
         ]
 
@@ -146,6 +189,7 @@ type alias State =
     , width : Float
     , height : Float
     , label : String
+    , renderStrategy : String
     }
 
 
@@ -156,6 +200,7 @@ init =
     , width = 30
     , height = 30
     , label = "Newspaper"
+    , renderStrategy = toHtml
     }
 
 
@@ -165,6 +210,7 @@ type Msg
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
     | SetLabel String
+    | SetRenderStrategy String
 
 
 {-| -}
@@ -193,3 +239,33 @@ update msg state =
 
         SetLabel label ->
             ( { state | label = label }, Cmd.none )
+
+        SetRenderStrategy renderStrategy ->
+            ( { state | renderStrategy = renderStrategy }, Cmd.none )
+
+
+render : String -> (String -> msg) -> Svg.Svg -> Html.Html msg
+render strategy msg =
+    if strategy == toHtml then
+        Svg.toHtml
+
+    else if strategy == toHtmlAsButton then
+        Svg.toHtmlAsButton (msg "You clicked the 'toHtmlAsButton' button!")
+
+    else
+        Svg.toHtmlAsLink "/you_clicked_the_toHtmlAsLink_link"
+
+
+toHtml : String
+toHtml =
+    "toHtml"
+
+
+toHtmlAsButton : String
+toHtmlAsButton =
+    "toHtmlAsButton"
+
+
+toHtmlAsLink : String
+toHtmlAsLink =
+    "toHtmlAsLink"
