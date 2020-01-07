@@ -1,14 +1,16 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
     , withColor, withLabel, withWidth, withHeight
-    , fromHtml, toHtml
+    , fromHtml
+    , toHtml, toHtmlAsButton, toHtmlAsLink
     )
 
 {-|
 
 @docs Svg
 @docs withColor, withLabel, withWidth, withHeight
-@docs fromHtml, toHtml
+@docs fromHtml
+@docs toHtml, toHtmlAsButton, toHtmlAsLink
 
 -}
 
@@ -100,3 +102,15 @@ toHtml (Svg record) =
 
         _ ->
             Html.div attributes [ Html.map never record.icon ]
+
+
+{-| -}
+toHtmlAsButton : msg -> Svg -> Html msg
+toHtmlAsButton msg svg =
+    Html.button [] [ toHtml svg ]
+
+
+{-| -}
+toHtmlAsLink : String -> Svg -> Html msg
+toHtmlAsLink url svg =
+    Html.a [ Attributes.href url ] [ toHtml svg ]
