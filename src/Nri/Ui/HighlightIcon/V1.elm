@@ -56,7 +56,7 @@ highlighterCursor color =
             , leftBracket ++ "/svg" ++ rightBracket
             ]
     in
-    Css.property "cursor" ("url(\"data:image/svg+xml," ++ String.join "" svgString ++ "\"),auto")
+    Css.property "cursor" ("url(\"data:image/svg+xml," ++ String.join "" svgString ++ "\") 0 32,auto")
 
 
 {-| -}
