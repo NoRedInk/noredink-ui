@@ -6,8 +6,12 @@ module Examples.HighlightIcon exposing (example)
 
 -}
 
+import Css exposing (..)
 import Examples.IconExamples as IconExamples
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (Category(..), ModuleExample)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlightIcon.V1 as HighlightIcon
 
 
@@ -20,6 +24,16 @@ example =
         [ IconExamples.view "Highlight Icons"
             [ ( "highlighter", HighlightIcon.highlighter )
             , ( "eraser", HighlightIcon.eraser )
+            ]
+        , div
+            [ css
+                [ border3 (px 1) dashed Colors.gray92
+                , width (px 200)
+                , padding (px 20)
+                , HighlightIcon.highlighterCursor Colors.highlightPurpleDark
+                ]
+            ]
+            [ text "Hover me to see a custom highlighter cursor"
             ]
         ]
     }
