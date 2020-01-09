@@ -2,7 +2,7 @@ module Examples.AssignmentIcon exposing (example)
 
 {-|
 
-@docs example, styles
+@docs example
 
 -}
 

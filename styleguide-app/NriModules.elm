@@ -13,6 +13,7 @@ import Examples.DisclosureIndicator
 import Examples.Dropdown
 import Examples.Fonts
 import Examples.Heading
+import Examples.HighlightIcon
 import Examples.Icon
 import Examples.Logo
 import Examples.MasteryIcon
@@ -323,6 +324,7 @@ nriThemedModules model =
     , Examples.Dropdown.example DropdownMsg model.dropdownState
     , Examples.Fonts.example
     , Examples.Heading.example
+    , Examples.HighlightIcon.example
     , Examples.Icon.example
     , Examples.Logo.example
     , Examples.MasteryIcon.example
