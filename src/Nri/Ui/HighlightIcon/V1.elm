@@ -57,9 +57,7 @@ eraser =
         , Attributes.fill "currentcolor"
         , Attributes.viewBox "0 0 15 18"
         ]
-        [ Svg.g [ Attributes.transform "translate(-2.000000, 0.000000)" ]
-            [ Svg.path [ Attributes.d eraserD ] []
-            ]
+        [ Svg.path [ Attributes.d eraserD ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
