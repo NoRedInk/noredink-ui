@@ -25,15 +25,28 @@ example =
             [ ( "highlighter", HighlightIcon.highlighter )
             , ( "eraser", HighlightIcon.eraser )
             ]
-        , div
-            [ css
-                [ border3 (px 1) dashed Colors.gray92
-                , width (px 200)
-                , padding (px 20)
-                , HighlightIcon.highlighterCursor Colors.highlightPurpleDark
+        , div [ css [ displayFlex, alignItems center ] ]
+            [ text "Hover:"
+            , div
+                [ css
+                    [ border3 (px 1) dashed Colors.gray92
+                    , padding (px 20)
+                    , margin (px 8)
+                    , HighlightIcon.highlighterCursor Colors.highlightPurpleDark
+                    ]
                 ]
-            ]
-            [ text "Hover me to see a custom highlighter cursor"
+                [ text "highlightCursor"
+                ]
+            , div
+                [ css
+                    [ border3 (px 1) dashed Colors.gray92
+                    , padding (px 20)
+                    , margin (px 8)
+                    , HighlightIcon.eraserCursor Colors.highlightPurpleDark
+                    ]
+                ]
+                [ text "eraserCursor"
+                ]
             ]
         ]
     }
