@@ -9,7 +9,6 @@ module Examples.AssignmentIcon exposing (example)
 import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
-import Nri.Ui.Icon.V5 as Icon
 
 
 {-| -}

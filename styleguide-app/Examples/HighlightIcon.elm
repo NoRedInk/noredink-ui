@@ -9,7 +9,6 @@ module Examples.HighlightIcon exposing (example)
 import Examples.IconExamples as IconExamples
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.HighlightIcon.V1 as HighlightIcon
-import Nri.Ui.Icon.V5 as Icon
 
 
 {-| -}
