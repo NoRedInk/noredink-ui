@@ -557,9 +557,13 @@ renderLink ((ButtonOrLink config) as link_) =
             linkBase "linkExternalWithTracking"
                 (List.concat
                     [ targetBlank
-                    , [ Maybe.map EventExtras.onClickForLinkWithHref config.onClick
-                            |> Maybe.withDefault AttributesExtra.none
-                      ]
+                    , config.onClick
+                        |> Maybe.map
+                            (\onClickMsg ->
+                                [ Events.onClick onClickMsg
+                                ]
+                            )
+                        |> Maybe.withDefault []
                     , config.customAttributes
                     ]
                 )
