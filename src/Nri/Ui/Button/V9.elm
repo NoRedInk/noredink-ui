@@ -561,6 +561,7 @@ renderLink ((ButtonOrLink config) as link_) =
                         |> Maybe.map
                             (\onClickMsg ->
                                 [ Events.onClick onClickMsg
+                                , Events.on "auxclick" (Json.Decode.succeed onClickMsg)
                                 ]
                             )
                         |> Maybe.withDefault []
