@@ -22,7 +22,7 @@ import Html.Styled
 import Html.Styled.Attributes
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V6 as Select
+import Nri.Ui.Select.V7 as Select
 
 
 {-| -}
@@ -43,7 +43,7 @@ type alias State value =
 {-| -}
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
-    { name = "Nri.Ui.Select.V6"
+    { name = "Nri.Ui.Select.V7"
     , category = Inputs
     , content =
         [ Html.Styled.label
