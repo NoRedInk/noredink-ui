@@ -47,7 +47,7 @@ type alias ModuleStates =
     , checkboxExampleState : Examples.Checkbox.State
     , dropdownState : Examples.Dropdown.State Examples.Dropdown.Value
     , segmentedControlState : Examples.SegmentedControl.State
-    , selectState : Examples.Select.State Examples.Select.Value
+    , selectState : Examples.Select.State
     , tableExampleState : Examples.Table.State
     , textAreaExampleState : TextAreaExample.State
     , textInputExampleState : TextInputExample.State

@@ -1,8 +1,8 @@
-module Nri.Ui.Select.V7 exposing (Config, Choice, view)
+module Nri.Ui.Select.V7 exposing (Choice, view)
 
 {-| Build a select input.
 
-@docs Config, Choice, view
+@docs Choice, view
 
 -}
 
@@ -17,31 +17,22 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.Util
 
 
-{-| Configure a Select
--}
-type alias Config a =
-    { choices : List (Choice a)
-    , current : Maybe a
-    , id : Maybe String
-    , valueToString : a -> String
-    , defaultDisplayText : Maybe String
-    }
-
-
 {-| A single possible choice.
 -}
 type alias Choice a =
     { label : String, value : a }
 
 
-niceId : String -> String
-niceId x =
-    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
-
-
-{-| A select dropdown
+{-| A select dropdown. Remember to add a label!
 -}
-view : Config a -> Html a
+view :
+    { choices : List (Choice a)
+    , current : Maybe a
+    , id : Maybe String
+    , valueToString : a -> String
+    , defaultDisplayText : Maybe String
+    }
+    -> Html a
 view config =
     let
         valueLookup =
@@ -124,3 +115,8 @@ viewChoice current toString choice =
         , Attributes.selected isSelected
         ]
         [ Html.text choice.label ]
+
+
+niceId : String -> String
+niceId x =
+    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)

@@ -1,7 +1,6 @@
 module Examples.Select exposing
     ( Msg
     , State
-    , Value
     , example
     , init
     , update
@@ -11,7 +10,6 @@ module Examples.Select exposing
 
 @docs Msg
 @docs State
-@docs Value
 @docs example
 @docs init
 @docs update
@@ -26,8 +24,39 @@ import Nri.Ui.Select.V7 as Select
 
 
 {-| -}
-type alias Value =
-    String
+example : (Msg -> msg) -> State -> ModuleExample msg
+example parentMessage state =
+    { name = "Nri.Ui.Select.V7"
+    , category = Inputs
+    , content =
+        [ Html.Styled.label
+            [ Html.Styled.Attributes.for "tortilla-selector" ]
+            [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
+        , Select.view
+            { current = Nothing
+            , choices =
+                [ { label = "Tacos", value = "Tacos" }
+                , { label = "Burritos", value = "Burritos" }
+                , { label = "Enchiladas", value = "Enchiladas" }
+                ]
+            , id = Just "tortilla-selector"
+            , valueToString = identity
+            , defaultDisplayText = Just "Select a tasty tortilla based treat!"
+            }
+            |> Html.Styled.map (parentMessage << ConsoleLog)
+        ]
+    }
+
+
+{-| -}
+init : State
+init =
+    Nothing
+
+
+{-| -}
+type alias State =
+    Maybe String
 
 
 {-| -}
@@ -36,41 +65,7 @@ type Msg
 
 
 {-| -}
-type alias State value =
-    Select.Config value
-
-
-{-| -}
-example : (Msg -> msg) -> State Value -> ModuleExample msg
-example parentMessage state =
-    { name = "Nri.Ui.Select.V7"
-    , category = Inputs
-    , content =
-        [ Html.Styled.label
-            [ Html.Styled.Attributes.for "tortilla-selector" ]
-            [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
-        , Html.Styled.map (parentMessage << ConsoleLog) (Select.view state)
-        ]
-    }
-
-
-{-| -}
-init : State Value
-init =
-    { current = Nothing
-    , choices =
-        [ { label = "Tacos", value = "Tacos" }
-        , { label = "Burritos", value = "Burritos" }
-        , { label = "Enchiladas", value = "Enchiladas" }
-        ]
-    , id = Just "tortilla-selector"
-    , valueToString = identity
-    , defaultDisplayText = Just "Select a tasty tortilla based treat!"
-    }
-
-
-{-| -}
-update : Msg -> State Value -> ( State Value, Cmd Msg )
+update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ConsoleLog message ->
@@ -78,4 +73,4 @@ update msg state =
                 _ =
                     Debug.log "SelectExample" message
             in
-            ( state, Cmd.none )
+            ( Just message, Cmd.none )
