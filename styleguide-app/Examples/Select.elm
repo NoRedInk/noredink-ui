@@ -39,7 +39,7 @@ example parentMessage state =
                 , { label = "Burritos", value = "Burritos" }
                 , { label = "Enchiladas", value = "Enchiladas" }
                 ]
-            , id = Just "tortilla-selector"
+            , id = "tortilla-selector"
             , valueToString = identity
             , defaultDisplayText = Just "Select a tasty tortilla based treat!"
             }

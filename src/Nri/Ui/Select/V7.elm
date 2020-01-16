@@ -31,7 +31,7 @@ type alias Choice a =
 view :
     { choices : List (Choice a)
     , current : Maybe a
-    , id : Maybe String
+    , id : String
     , valueToString : a -> String
     , defaultDisplayText : Maybe String
     }
@@ -64,11 +64,6 @@ view config =
                 |> Maybe.map (viewDefaultChoice config.current >> List.singleton)
                 |> Maybe.withDefault []
 
-        extraAttrs =
-            config.id
-                |> Maybe.map (\id -> [ Attributes.id id ])
-                |> Maybe.withDefault []
-
         currentVal =
             if config.current == Nothing && config.defaultDisplayText == Nothing then
                 config.choices
@@ -92,7 +87,9 @@ view config =
             , Css.height (Css.px 45)
             , Css.width (Css.pct 100)
             ]
-            ([ onSelectHandler ] ++ extraAttrs)
+            [ onSelectHandler
+            , Attributes.id config.id
+            ]
 
 
 viewDefaultChoice : Maybe a -> String -> Html a
