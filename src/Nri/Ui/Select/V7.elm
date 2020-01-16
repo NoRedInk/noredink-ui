@@ -81,6 +81,7 @@ view config =
               Css.border3 (Css.px 1) Css.solid Colors.gray75
             , Css.borderBottomWidth (Css.px 4)
             , Css.borderRadius (Css.px 8)
+            , Css.focus [ Css.borderColor Colors.azure ]
 
             -- Font and color
             , Css.color Colors.gray20
