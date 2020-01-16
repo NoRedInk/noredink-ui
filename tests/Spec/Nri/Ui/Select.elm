@@ -45,9 +45,10 @@ spec =
                 (\config ->
                     { choices = config.choices
                     , current = config.current
-                    , id = Nothing
+                    , id = "fake-id"
                     , valueToString = identity
                     , defaultDisplayText = config.defaultDisplayText
+                    , isInError = False
                     }
                         |> Nri.Ui.Select.V7.view
                         |> Html.Styled.toUnstyled
