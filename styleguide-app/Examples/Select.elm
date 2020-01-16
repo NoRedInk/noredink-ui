@@ -42,6 +42,19 @@ example parentMessage state =
             , id = "tortilla-selector"
             , valueToString = identity
             , defaultDisplayText = Just "Select a tasty tortilla based treat!"
+            , isInError = False
+            }
+            |> Html.Styled.map (parentMessage << ConsoleLog)
+        , Html.Styled.label
+            [ Html.Styled.Attributes.for "errored-selector" ]
+            [ Heading.h3 [] [ Html.Styled.text "Errored Selector" ] ]
+        , Select.view
+            { current = Nothing
+            , choices = []
+            , id = "errored-selector"
+            , valueToString = identity
+            , defaultDisplayText = Just "Please select an option"
+            , isInError = True
             }
             |> Html.Styled.map (parentMessage << ConsoleLog)
         ]

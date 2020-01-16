@@ -33,6 +33,7 @@ view :
     , id : String
     , valueToString : a -> String
     , defaultDisplayText : Maybe String
+    , isInError : Bool
     }
     -> Html a
 view config =
@@ -78,7 +79,14 @@ view config =
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
             [ -- border
-              Css.border3 (Css.px 1) Css.solid Colors.gray75
+              Css.border3 (Css.px 1)
+                Css.solid
+                (if config.isInError then
+                    Colors.purple
+
+                 else
+                    Colors.gray75
+                )
             , Css.borderBottomWidth (Css.px 4)
             , Css.borderRadius (Css.px 8)
             , Css.focus [ Css.borderColor Colors.azure ]
