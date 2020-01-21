@@ -720,7 +720,7 @@ buttonStyle =
         , Css.property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
         , Css.boxShadow Css.none
         , Css.border Css.zero
-        , Css.marginBottom Css.zero
+        , Css.margin Css.zero
         , Css.hover [ Css.textDecoration Css.none ]
         , Css.disabled [ Css.cursor Css.notAllowed ]
         , Css.display Css.inlineFlex
