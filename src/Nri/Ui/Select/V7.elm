@@ -103,8 +103,9 @@ view config =
 
             -- Size and spacing
             , Css.height (Css.px 45)
-            , Css.width (Css.pct 100)
+            , Css.width (Css.calc (Css.pct 100) Css.minus (Css.px 30))
             , Css.paddingLeft (Css.px 20)
+            , Css.paddingRight (Css.px 30)
 
             -- Icons
             , selectArrowsCss
@@ -161,7 +162,7 @@ selectArrowsCss =
         -- "appearance: none" removes the default dropdown arrows
         , VendorPrefixed.property "appearance" "none"
         , Css.backgroundRepeat Css.noRepeat
-        , Css.property "background-position" "center right 10px"
+        , Css.property "background-position" "center right -20px"
         , Css.backgroundOrigin Css.contentBox
         ]
 
