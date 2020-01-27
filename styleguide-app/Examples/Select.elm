@@ -16,6 +16,7 @@ module Examples.Select exposing
 
 -}
 
+import Css
 import Html.Styled
 import Html.Styled.Attributes
 import ModuleExample exposing (Category(..), ModuleExample)
@@ -57,6 +58,21 @@ example parentMessage state =
             , isInError = True
             }
             |> Html.Styled.map (parentMessage << ConsoleLog)
+        , Html.Styled.label
+            [ Html.Styled.Attributes.for "overflowed-selector" ]
+            [ Heading.h3 [] [ Html.Styled.text "Selector with Overflowed Text" ] ]
+        , Html.Styled.div
+            [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
+            [ Select.view
+                { current = Nothing
+                , choices = []
+                , id = "overflowed-selector"
+                , valueToString = identity
+                , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
+                , isInError = False
+                }
+                |> Html.Styled.map (parentMessage << ConsoleLog)
+            ]
         ]
     }
 
