@@ -97,13 +97,16 @@ view config =
             , Css.color Colors.gray20
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
+            , Css.textOverflow Css.ellipsis
+            , Css.overflow Css.hidden
+            , Css.whiteSpace Css.noWrap
 
             -- Interaction
             , Css.cursor Css.pointer
 
             -- Size and spacing
             , Css.height (Css.px 45)
-            , Css.width (Css.calc (Css.pct 100) Css.minus (Css.px 30))
+            , Css.width (Css.pct 100)
             , Css.paddingLeft (Css.px 20)
             , Css.paddingRight (Css.px 30)
 
