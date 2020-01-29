@@ -58,7 +58,7 @@ example parentMessage state =
             [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
             , Button.custom
                 [ Html.Styled.Attributes.id "launch-info-modal"
-                , css [ Css.marginRight (Css.px 16) ]
+                , css [ Css.important (Css.marginRight (Css.px 16)) ]
                 ]
             , Button.secondary
             , Button.medium
