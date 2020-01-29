@@ -20,11 +20,6 @@ module Nri.Ui.Button.V10 exposing
   - Explicitly zeroes out all margin
 
 
-# Changes from V8:
-
-  - Changes API to be attribute-based, rather than config-based
-
-
 # Create a button or link
 
 @docs button, link
@@ -88,7 +83,7 @@ import Svg.Attributes
 
 styledName : String -> String
 styledName suffix =
-    "Nri-Ui-Button-V9-" ++ suffix
+    "Nri-Ui-Button-V10-" ++ suffix
 
 
 {-|
