@@ -35,7 +35,7 @@ label theme inError =
             batch
                 [ backgroundColor white
                 , left (px 10)
-                , top (px 0)
+                , top (px 1)
                 , fontSize (px 12)
                 , Nri.Ui.Fonts.V1.baseFont
                 , position absolute
@@ -109,21 +109,21 @@ input theme isInError =
                 , verticalAlign top
                 , marginBottom zero
                 , marginTop (px 9)
-                , boxShadow6 inset zero (px 2) zero zero gray92
+                , boxShadow6 inset zero (px 3) zero zero gray92
                 , property "transition" "all 0.4s ease"
                 , boxSizing borderBox
                 , focus
                     [ borderColor azure
                     , outline none
-                    , boxShadow6 inset zero (px 2) zero zero glacier
+                    , boxShadow6 inset zero (px 3) zero zero glacier
                     ]
                 , if isInError then
                     batch
                         [ borderColor purple
-                        , boxShadow6 inset zero (px 2) zero zero purpleLight
+                        , boxShadow6 inset zero (px 3) zero zero purpleLight
                         , focus
                             [ borderColor purple
-                            , boxShadow6 inset zero (px 2) zero zero purpleLight
+                            , boxShadow6 inset zero (px 3) zero zero purpleLight
                             ]
                         ]
 
@@ -137,7 +137,7 @@ input theme isInError =
                 Standard ->
                     batch
                         [ sharedStyles
-                        , padding2 inputPaddingVertical (px 14)
+                        , padding2 inputPaddingVertical (px 15)
                         , fontSize (px 15)
                         , Nri.Ui.Fonts.V1.baseFont
                         ]
@@ -173,7 +173,7 @@ input theme isInError =
                 ContentCreation ->
                     batch
                         [ sharedStyles
-                        , padding2 inputPaddingVertical (px 14)
+                        , padding2 inputPaddingVertical (px 15)
                         , fontSize (px 15)
                         , Nri.Ui.Fonts.V1.baseFont
                         ]

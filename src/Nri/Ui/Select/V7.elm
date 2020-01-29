@@ -89,7 +89,7 @@ view config =
                  else
                     Colors.gray75
                 )
-            , Css.borderBottomWidth (Css.px 4)
+            , Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
             , Css.focus [ Css.borderColor Colors.azure ]
 
@@ -107,7 +107,7 @@ view config =
             -- Size and spacing
             , Css.height (Css.px 45)
             , Css.width (Css.pct 100)
-            , Css.paddingLeft (Css.px 20)
+            , Css.paddingLeft (Css.px 15)
             , Css.paddingRight (Css.px 30)
 
             -- Icons
