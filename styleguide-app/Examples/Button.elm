@@ -223,16 +223,18 @@ toggleButtons : ModuleMessages (Msg parentMsg) parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
         [ Heading.h3 [] [ text "Button toggle" ]
-        , Button.toggleButton
-            { onDeselect = messages.showItWorked "onDeselect"
-            , onSelect = messages.showItWorked "onSelect"
-            , label = "5"
-            , pressed = False
-            }
-        , Button.toggleButton
-            { onDeselect = messages.showItWorked "onDeselect"
-            , onSelect = messages.showItWorked "onSelect"
-            , label = "5"
-            , pressed = True
-            }
+        , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
+            [ Button.toggleButton
+                { onDeselect = messages.showItWorked "onDeselect"
+                , onSelect = messages.showItWorked "onSelect"
+                , label = "5"
+                , pressed = False
+                }
+            , Button.toggleButton
+                { onDeselect = messages.showItWorked "onDeselect"
+                , onSelect = messages.showItWorked "onSelect"
+                , label = "5"
+                , pressed = True
+                }
+            ]
         ]
