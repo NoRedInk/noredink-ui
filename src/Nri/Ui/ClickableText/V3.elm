@@ -5,10 +5,15 @@ module Nri.Ui.ClickableText.V3 exposing
     , small, medium, large
     , href, onClick
     , icon
-    , custom
+    , custom, css
     )
 
 {-|
+
+
+# Post-release patches
+
+  - adds `css` helper
 
 
 # Changes from V2
@@ -43,11 +48,11 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs small, medium, large
 @docs href, onClick
 @docs icon
-@docs custom
+@docs custom, css
 
 -}
 
-import Css
+import Css exposing (Style)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -93,13 +98,30 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
-{-| -}
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying Button styles change.
+Instead, please use the `css` helper.
+
+-}
 custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     set
         (\config ->
             { config
                 | customAttributes = List.append config.customAttributes attributes
+            }
+        )
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    set
+        (\config ->
+            { config
+                | customStyles = List.append config.customStyles styles
             }
         )
 
@@ -130,7 +152,7 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        clickableTextStyles
+        (clickableTextStyles ++ config.customStyles)
         ((Maybe.map Events.onClick config.onClick
             |> Maybe.withDefault AttributesExtra.none
          )
@@ -153,7 +175,7 @@ link label_ attributes =
     in
     Nri.Ui.styled Html.a
         (dataDescriptor "link")
-        clickableTextStyles
+        (clickableTextStyles ++ config.customStyles)
         (Attributes.href config.url :: config.customAttributes)
         [ viewContent config ]
 
@@ -251,6 +273,7 @@ type alias ClickableTextAttributes msg =
     , onClick : Maybe msg
     , url : String
     , customAttributes : List (Html.Attribute msg)
+    , customStyles : List Style
     }
 
 
@@ -262,6 +285,7 @@ defaults =
     , label = ""
     , icon = Nothing
     , customAttributes = []
+    , customStyles = []
     }
 
 
