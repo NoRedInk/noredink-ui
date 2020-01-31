@@ -56,10 +56,8 @@ example parentMessage state =
         [ viewSettings state
         , Button.button "Launch Info Modal"
             [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
-            , Button.custom
-                [ Html.Styled.Attributes.id "launch-info-modal"
-                , css [ Css.important (Css.marginRight (Css.px 16)) ]
-                ]
+            , Button.custom [ Html.Styled.Attributes.id "launch-info-modal" ]
+            , Button.css [ Css.marginRight (Css.px 16) ]
             , Button.secondary
             , Button.medium
             ]
