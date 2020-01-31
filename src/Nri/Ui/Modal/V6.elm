@@ -14,7 +14,7 @@ module Nri.Ui.Modal.V6 exposing
 These changes have required major API changes. Be sure to wire up subscriptions!
 
     import Html.Styled exposing (..)
-    import Nri.Ui.Button.V9 as Button
+    import Nri.Ui.Button.V10 as Button
     import Nri.Ui.Modal.V6 as Modal
 
     type Msg

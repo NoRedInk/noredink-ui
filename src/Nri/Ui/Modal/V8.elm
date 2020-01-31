@@ -18,7 +18,7 @@ module Nri.Ui.Modal.V8 exposing
 
 ```
     import Html.Styled exposing (..)
-    import Nri.Ui.Button.V9 as Button
+    import Nri.Ui.Button.V10 as Button
     import Nri.Ui.Modal.V8 as Modal
 
     type Msg

@@ -11,7 +11,7 @@ import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.Button.V9 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -38,7 +38,7 @@ example unnamedMessages state =
         messages =
             unnamedMessages "ButtonExample"
     in
-    { name = "Nri.Ui.Button.V9"
+    { name = "Nri.Ui.Button.V10"
     , category = Buttons
     , content = [ viewButtonExamples messages state ]
     }
@@ -223,16 +223,18 @@ toggleButtons : ModuleMessages (Msg parentMsg) parentMsg -> Html parentMsg
 toggleButtons messages =
     div []
         [ Heading.h3 [] [ text "Button toggle" ]
-        , Button.toggleButton
-            { onDeselect = messages.showItWorked "onDeselect"
-            , onSelect = messages.showItWorked "onSelect"
-            , label = "5"
-            , pressed = False
-            }
-        , Button.toggleButton
-            { onDeselect = messages.showItWorked "onDeselect"
-            , onSelect = messages.showItWorked "onSelect"
-            , label = "5"
-            , pressed = True
-            }
+        , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
+            [ Button.toggleButton
+                { onDeselect = messages.showItWorked "onDeselect"
+                , onSelect = messages.showItWorked "onSelect"
+                , label = "5"
+                , pressed = False
+                }
+            , Button.toggleButton
+                { onDeselect = messages.showItWorked "onDeselect"
+                , onSelect = messages.showItWorked "onSelect"
+                , label = "5"
+                , pressed = True
+                }
+            ]
         ]
