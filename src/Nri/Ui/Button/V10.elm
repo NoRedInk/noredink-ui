@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , icon, custom
+    , icon, custom, css
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
@@ -18,13 +18,14 @@ module Nri.Ui.Button.V10 exposing
 # Changes from V9:
 
   - Explicitly zeroes out all margin
+  - adds `css` helper
 
 
 # Create a button or link
 
 @docs button, link
 @docs Attribute
-@docs icon, custom
+@docs icon, custom, css
 
 
 ## Behavior
@@ -132,13 +133,30 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
-{-| -}
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying Button styles change.
+Instead, please use the `css` helper.
+
+-}
 custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     set
         (\config ->
             { config
                 | customAttributes = List.append config.customAttributes attributes
+            }
+        )
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    set
+        (\config ->
+            { config
+                | customStyles = List.append config.customStyles styles
             }
         )
 
@@ -443,6 +461,7 @@ build =
         , state = Enabled
         , icon = Nothing
         , customAttributes = []
+        , customStyles = []
         }
 
 
@@ -461,6 +480,7 @@ type alias ButtonOrLinkAttributes msg =
     , state : ButtonState
     , icon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
+    , customStyles : List Style
     }
 
 
@@ -492,7 +512,7 @@ renderButton ((ButtonOrLink config) as button_) =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ ]
+        [ buttonStyles config.size config.width buttonStyle_ config.customStyles ]
         ((Maybe.map Events.onClick config.onClick
             |> Maybe.withDefault AttributesExtra.none
          )
@@ -512,7 +532,7 @@ renderLink ((ButtonOrLink config) as link_) =
         linkBase linkFunctionName extraAttrs =
             Nri.Ui.styled Styled.a
                 (styledName linkFunctionName)
-                [ buttonStyles config.size config.width colorPalette ]
+                [ buttonStyles config.size config.width colorPalette config.customStyles ]
                 (Attributes.href config.url :: extraAttrs)
                 [ viewLabel config.icon config.label ]
     in
@@ -641,7 +661,7 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium WidthUnbounded secondaryColors
+        [ buttonStyles Medium WidthUnbounded secondaryColors []
         , toggledStyles
         ]
         [ Events.onClick
@@ -664,12 +684,13 @@ toggleButton config =
         [ viewLabel Nothing config.label ]
 
 
-buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> Style
-buttonStyles size width colors =
+buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
+buttonStyles size width colors customStyles =
     Css.batch
         [ buttonStyle
         , sizeStyle size width
         , colorStyle colors
+        , Css.batch customStyles
         ]
 
 
