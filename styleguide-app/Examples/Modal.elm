@@ -10,11 +10,11 @@ import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import Css exposing (..)
 import Css.Global
 import Html as Root
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V8 as Modal
 import Nri.Ui.Text.V4 as Text
@@ -56,14 +56,14 @@ example parentMessage state =
         [ viewSettings state
         , Button.button "Launch Info Modal"
             [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
-            , Button.custom [ Html.Styled.Attributes.id "launch-info-modal" ]
+            , Button.custom [ Attributes.id "launch-info-modal" ]
             , Button.css [ Css.marginRight (Css.px 16) ]
             , Button.secondary
             , Button.medium
             ]
         , Button.button "Launch Warning Modal"
             [ Button.onClick (WarningModalMsg (Modal.open "launch-warning-modal"))
-            , Button.custom [ Html.Styled.Attributes.id "launch-warning-modal" ]
+            , Button.custom [ Attributes.id "launch-warning-modal" ]
             , Button.secondary
             , Button.medium
             ]
@@ -109,10 +109,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 , ClickableText.button "Close"
                                     [ ClickableText.onClick ForceClose
                                     , ClickableText.large
-                                    , ClickableText.custom
-                                        (css [ Css.marginTop (Css.px 12) ]
-                                            :: lastFocusableElement
-                                        )
+                                    , ClickableText.custom lastFocusableElement
+                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
                                     ]
                                 ]
                             }
@@ -130,11 +128,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 [ ClickableText.button "Close"
                                     [ ClickableText.onClick ForceClose
                                     , ClickableText.large
-                                    , ClickableText.custom
-                                        (css [ Css.marginTop (Css.px 12) ]
-                                            :: autofocusElement
-                                            :: lastFocusableElement
-                                        )
+                                    , ClickableText.custom (autofocusElement :: lastFocusableElement)
+                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
                                     ]
                                 ]
                             }
@@ -188,10 +183,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 , ClickableText.button "Close"
                                     [ ClickableText.onClick ForceClose
                                     , ClickableText.large
-                                    , ClickableText.custom
-                                        (css [ Css.marginTop (Css.px 12) ]
-                                            :: lastFocusableElement
-                                        )
+                                    , ClickableText.custom lastFocusableElement
+                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
                                     ]
                                 ]
                             }
@@ -208,10 +201,8 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
                                 [ ClickableText.button "Close"
                                     [ ClickableText.onClick ForceClose
                                     , ClickableText.large
-                                    , ClickableText.custom
-                                        (css [ Css.marginTop (Css.px 12) ]
-                                            :: onlyFocusableElement
-                                        )
+                                    , ClickableText.custom onlyFocusableElement
+                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
                                     ]
                                 ]
                             }
@@ -251,7 +242,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 viewModalContent : Bool -> Html msg
 viewModalContent longContent =
     Text.mediumBody
-        [ span [ css [ whiteSpace preLine ] ]
+        [ span [ Attributes.css [ whiteSpace preLine ] ]
             [ if longContent then
                 """Soufflé pastry chocolate cake danish muffin. Candy wafer pastry ice cream cheesecake toffee cookie cake carrot cake. Macaroon pie jujubes gummies cookie pie. Gummi bears brownie pastry carrot cake cotton candy. Jelly-o sweet roll biscuit cake soufflé lemon drops tiramisu marshmallow macaroon. Chocolate jelly halvah marzipan macaroon cupcake sweet cheesecake carrot cake.
 
