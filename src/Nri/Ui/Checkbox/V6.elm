@@ -9,6 +9,7 @@ module Nri.Ui.Checkbox.V6 exposing
 # Changes from V5:
 
   - Complete redo of the api for more precise data modeling.
+  - Adds an 0.4 opacity to the label of disabled checkbox.
 
 @docs checkbox, disabled, locked
 
