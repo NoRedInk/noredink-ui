@@ -10,7 +10,7 @@ import Dict exposing (Dict)
 import Html.Styled as Html
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextArea.V4 as TextArea
 
@@ -26,9 +26,9 @@ type Msg
 {-| -}
 type alias State =
     { textValues : Dict Int String
-    , showLabel : Checkbox.IsSelected
-    , isInError : Checkbox.IsSelected
-    , autoResize : Checkbox.IsSelected
+    , showLabel : Checkbox.Selected
+    , isInError : Checkbox.Selected
+    , autoResize : Checkbox.Selected
     }
 
 
@@ -40,29 +40,26 @@ example parentMessage state =
     , content =
         [ Heading.h1 [] [ Html.text "Textarea controls" ]
         , Html.div []
-            [ Checkbox.viewWithLabel
+            [ Checkbox.checkbox
                 { identifier = "show-textarea-label"
                 , label = "Show Label"
-                , setterMsg = ToggleLabel
+                , anonymous = True
+                , onChange = ToggleLabel
                 , selected = state.showLabel
-                , disabled = False
-                , theme = Checkbox.Square
                 }
-            , Checkbox.viewWithLabel
+            , Checkbox.checkbox
                 { identifier = "textarea-autoresize"
                 , label = "Autoresize"
-                , setterMsg = ToggleAutoResize
+                , anonymous = True
+                , onChange = ToggleAutoResize
                 , selected = state.autoResize
-                , disabled = False
-                , theme = Checkbox.Square
                 }
-            , Checkbox.viewWithLabel
+            , Checkbox.checkbox
                 { identifier = "textarea-isInError"
                 , label = "Show Error State"
-                , setterMsg = ToggleErrorState
+                , anonymous = True
+                , onChange = ToggleErrorState
                 , selected = state.isInError
-                , disabled = False
-                , theme = Checkbox.Square
                 }
             ]
         , TextArea.view

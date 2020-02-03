@@ -13,7 +13,7 @@ import Html as Root
 import Html.Styled.Attributes as Attributes
 import ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V8 as Modal
@@ -265,53 +265,47 @@ viewModalContent longContent =
 viewSettings : State -> Html Msg
 viewSettings state =
     div []
-        [ Checkbox.viewWithLabel
+        [ Checkbox.checkbox
             { identifier = "visible-title"
             , label = "Visible title"
-            , selected = Checkbox.selectedFromBool state.visibleTitle
-            , setterMsg = SetVisibleTitle
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.visibleTitle
+            , onChange = SetVisibleTitle
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "show-x"
             , label = "Show X button"
-            , selected = Checkbox.selectedFromBool state.showX
-            , setterMsg = SetShowX
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.showX
+            , onChange = SetShowX
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "show-continue"
             , label = "Show main button"
-            , selected = Checkbox.selectedFromBool state.showContinue
-            , setterMsg = SetShowContinue
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.showContinue
+            , onChange = SetShowContinue
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "show-secondary"
             , label = "Show secondary button"
-            , selected = Checkbox.selectedFromBool state.showSecondary
-            , setterMsg = SetShowSecondary
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.showSecondary
+            , onChange = SetShowSecondary
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "dismiss-on-click"
             , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
-            , setterMsg = SetDismissOnEscAndOverlayClick
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.dismissOnEscAndOverlayClick
+            , onChange = SetDismissOnEscAndOverlayClick
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "long-content"
             , label = "Display longer content"
-            , selected = Checkbox.selectedFromBool state.longContent
-            , setterMsg = SetLongContent
-            , disabled = False
-            , theme = Checkbox.Square
+            , anonymous = True
+            , selected = Checkbox.binary state.longContent
+            , onChange = SetLongContent
             }
         ]
 

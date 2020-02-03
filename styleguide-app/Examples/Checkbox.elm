@@ -10,7 +10,7 @@ import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Set exposing (Set)
@@ -38,6 +38,7 @@ example parentMessage state =
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
         , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
         , viewDisabledCheckbox "styleguide-checkbox-disabled" state
+        , viewDisabledIndeterminateCheckbox "styleguide-checkbox-indeterminate-disabled" state
         , viewMultilineCheckboxes
         , h3 [] [ text "Premium Checkboxes" ]
         , viewPremiumCheckboxes state
@@ -78,49 +79,53 @@ update msg state =
 
 viewInteractableCheckbox : Id -> State -> Html Msg
 viewInteractableCheckbox id state =
-    Checkbox.viewWithLabel
+    Checkbox.checkbox
         { identifier = id
         , label = "This is an interactable checkbox!"
-        , setterMsg = ToggleCheck id
+        , anonymous = True
+        , onChange = ToggleCheck id
         , selected = isSelected id state
-        , disabled = False
-        , theme = Checkbox.Square
         }
 
 
 viewIndeterminateCheckbox : Id -> State -> Html Msg
 viewIndeterminateCheckbox id state =
-    Checkbox.viewWithLabel
+    Checkbox.checkbox
         { identifier = id
-        , label = "This Checkbox is set in an indeterminate state"
-        , setterMsg = ToggleCheck id
+        , label =  "This Checkbox is set in an indeterminate state"
+        , anonymous = True
+        , onChange = ToggleCheck id
         , selected = Checkbox.PartiallySelected
-        , disabled = True
-        , theme = Checkbox.Square
         }
 
 
 viewLockedOnInsideCheckbox : Id -> State -> Html Msg
 viewLockedOnInsideCheckbox id state =
-    Checkbox.viewWithLabel
+    Checkbox.locked
         { identifier = id
         , label = "I'm a locked Checkbox"
-        , setterMsg = ToggleCheck id
-        , selected = Checkbox.NotSelected
-        , disabled = True
-        , theme = Checkbox.Locked
+        , anonymous = True
+        , onClick = NoOp
+        }
+
+
+viewDisabledIndeterminateCheckbox : Id -> State -> Html Msg
+viewDisabledIndeterminateCheckbox id state =
+    Checkbox.disabled
+        { identifier = id
+        , label = "This disabled Checkbox is set in an indeterminate state"
+        , anonymous = True
+        , selected = Checkbox.PartiallySelected
         }
 
 
 viewDisabledCheckbox : Id -> State -> Html Msg
 viewDisabledCheckbox id state =
-    Checkbox.viewWithLabel
+    Checkbox.disabled
         { identifier = id
         , label = "Disabled theme"
-        , setterMsg = ToggleCheck id
+        , anonymous = True
         , selected = isSelected id state
-        , disabled = True
-        , theme = Checkbox.Square
         }
 
 
@@ -129,37 +134,31 @@ viewMultilineCheckboxes =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
         [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "fake-not-selected"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake-not-selected"
+            , anonymous = True
+            , onChange = ToggleCheck "fake-not-selected"
             , selected = Checkbox.NotSelected
-            , disabled = False
-            , theme = Checkbox.Square
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.checkbox
             { identifier = "fake-partially-selected"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
+            , anonymous = True
+            , onChange = ToggleCheck "fake"
             , selected = Checkbox.PartiallySelected
-            , disabled = True
-            , theme = Checkbox.Square
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.locked
             { identifier = "fake-not-selected-locked"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
-            , selected = Checkbox.NotSelected
-            , disabled = True
-            , theme = Checkbox.Locked
+            , anonymous = True
+            , onClick = NoOp
             }
-        , Checkbox.viewWithLabel
+        , Checkbox.disabled
             { identifier = "fake-not-selected-square"
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
+            , anonymous = True
             , selected = Checkbox.NotSelected
-            , disabled = True
-            , theme = Checkbox.Square
             }
         ]
 
@@ -213,7 +212,7 @@ type alias Id =
     String
 
 
-isSelected : Id -> State -> Checkbox.IsSelected
+isSelected : Id -> State -> Checkbox.Selected
 isSelected id state =
     if Set.member id state.isChecked then
         Checkbox.Selected
