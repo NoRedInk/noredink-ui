@@ -18,7 +18,7 @@ content to be "checked"!
 import Accessibility.Styled as Html exposing (Html)
 import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Pennant.V1 exposing (premiumFlag)
 
 
@@ -32,7 +32,7 @@ import Nri.Ui.Pennant.V1 exposing (premiumFlag)
 view :
     { label : String
     , id : String
-    , selected : Checkbox.IsSelected
+    , selected : Checkbox.Selected
     , disabled : Bool
     , isLocked : Bool
     , isPremium : Bool
@@ -47,24 +47,28 @@ view config =
             , alignItems center
             ]
         ]
-        [ Checkbox.viewWithLabel
-            { identifier = config.id
-            , label = config.label
-            , setterMsg =
-                if config.isLocked then
-                    \_ -> config.onLockedClick
-
-                else
-                    config.onChange
-            , selected = config.selected
-            , disabled = config.disabled
-            , theme =
-                if config.isLocked then
-                    Checkbox.Locked
-
-                else
-                    Checkbox.Square
-            }
+        [ if config.isLocked then
+            Checkbox.locked
+                { identifier = config.id
+                , label = config.label
+                , anonymous = True
+                , onClick = config.onLockedClick
+                }
+          else if config.disabled then
+            Checkbox.disabled
+                { identifier = config.id
+                , label = config.label
+                , anonymous = True
+                , selected = config.selected
+                }
+          else
+            Checkbox.checkbox
+                { identifier = config.id
+                , label = config.label
+                , anonymous = True
+                , onChange = config.onChange
+                , selected = config.selected
+                }
         , if config.isPremium then
             premiumFlag
 
