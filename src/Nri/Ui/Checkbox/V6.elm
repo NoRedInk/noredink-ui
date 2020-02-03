@@ -122,7 +122,6 @@ disabled config =
     - `identifier` is a unique id for this checkbox.
     - `label` is the label of the checkbox.
     - `anonymous` is whether the label is shown or not.
-    - `selected` is the state of the checkbox.
     - `onClick` is the handler called a user clicks. Often
             this opens a modal prompting to buy a premium
             subscription.
