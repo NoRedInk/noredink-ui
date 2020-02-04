@@ -332,6 +332,7 @@ linkStyles =
         , fontFamily inherit
         , Css.property "cursor" "pointer"
         , padding zero
+        , displayFlex
         , visited [ color Nri.Ui.Colors.V1.azure ]
         ]
 
