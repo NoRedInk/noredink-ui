@@ -32,6 +32,7 @@ example =
             , ( "preview", UiIcon.preview )
             , ( "activity", UiIcon.activity )
             , ( "skip", UiIcon.skip )
+            , ( "copyToClipboard", UiIcon.copyToClipboard )
             ]
         , IconExamples.view "Guidance"
             [ ( "footsteps", UiIcon.footsteps )
