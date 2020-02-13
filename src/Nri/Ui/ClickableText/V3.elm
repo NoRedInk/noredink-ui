@@ -14,6 +14,7 @@ module Nri.Ui.ClickableText.V3 exposing
 # Post-release patches
 
   - adds `css` helper
+  - add bottom border on hover instead of text decoration
 
 
 # Changes from V2
