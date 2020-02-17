@@ -42,7 +42,7 @@ example parentMsg state =
         , BannerAlert.error
             [ Html.Styled.text "This is an error message!" ]
             Nothing
-        , h3 [] [ text "error with link" ]
+        , h3 [] [ text "with link and icon" ]
         , BannerAlert.error
             [ Html.Styled.div
                 [ Attributes.css
@@ -58,7 +58,8 @@ example parentMsg state =
                     [ Attributes.href "http://www.noredink.com"
                     , Attributes.target "_blank"
                     ]
-                    [ Html.Styled.text "here " ]
+                    [ Html.Styled.text "here" ]
+                , Html.Styled.text " "
                 , Html.Styled.div
                     [ Attributes.css
                         [ Css.display Css.inlineBlock
@@ -66,6 +67,27 @@ example parentMsg state =
                         ]
                     ]
                     [ Svg.toHtml UiIcon.gear ]
+                , Html.Styled.text " to check out NoRedInk."
+                ]
+            ]
+            Nothing
+        , h3 [] [ text "with multi-line link and" ]
+        , BannerAlert.error
+            [ Html.Styled.div
+                [ Attributes.css
+                    [ Css.fontSize (Css.px 20)
+                    , Css.fontWeight (Css.int 700)
+                    , Css.lineHeight (Css.px 25)
+                    , Css.maxWidth (Css.px 600)
+                    , Fonts.baseFont
+                    ]
+                ]
+                [ Html.Styled.text "Click "
+                , Html.Styled.a
+                    [ Attributes.href "http://www.noredink.com"
+                    , Attributes.target "_blank"
+                    ]
+                    [ Html.Styled.text "donec ullamcorper nulla non metus auctor fringilla donec ullamcorper nulla non metus auctor fringilla" ]
                 , Html.Styled.text " to check out NoRedInk."
                 ]
             ]
