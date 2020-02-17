@@ -54,6 +54,7 @@ API. See the Nri.Ui.Heading.V2 docs for details.
 -}
 
 import Css exposing (..)
+import Css.Global exposing (a, descendants)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
@@ -121,6 +122,15 @@ paragraphStyles config =
         , padding zero
         , textAlign left
         , margin4 (px 0) (px 0) (px config.margin) (px 0)
+        , Css.Global.descendants
+            [ Css.Global.a
+                [ textDecoration none
+                , color azure
+                , borderBottom3 (px 1) solid azure
+                , visited
+                    [ color azure ]
+                ]
+            ]
         , lastChild
             [ margin zero
             ]
