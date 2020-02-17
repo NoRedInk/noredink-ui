@@ -42,6 +42,10 @@ example =
                 , Css.color Colors.azure
                 ]
               )
+            , ( "google classroom"
+              , Logo.googleClassroom
+              , defaults
+              )
             ]
         ]
     }
