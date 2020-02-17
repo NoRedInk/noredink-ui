@@ -341,5 +341,14 @@ notification =
         , Css.lineHeight (Css.px 27)
         , Css.maxWidth (Css.px 600)
         , Nri.Ui.Fonts.V1.baseFont
+        , Css.Global.descendants
+            [ Css.Global.a
+                [ Css.textDecoration Css.none
+                , Css.color Colors.azure
+                , Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+                , Css.visited
+                    [ Css.color Colors.azure ]
+                ]
+            ]
         ]
         []
