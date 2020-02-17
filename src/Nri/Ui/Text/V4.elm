@@ -4,9 +4,7 @@ module Nri.Ui.Text.V4 exposing
     , noWidow
     )
 
- {-|
-
-Post-release patches
+{-| Post-release patches
 
   - adjusts link styles
 
