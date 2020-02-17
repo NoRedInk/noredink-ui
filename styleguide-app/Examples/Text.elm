@@ -7,6 +7,7 @@ module Examples.Text exposing (example)
 -}
 
 import Html.Styled as Html
+import Html.Styled.Attributes as Attributes
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
@@ -35,5 +36,14 @@ example =
         , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
         , Text.ugMediumBody [ Html.text <| "This is an ugMediumBody. " ++ longerBody ]
         , Text.ugSmallBody [ Html.text <| "This is an ugSmallBody. " ++ longerBody ]
+        , Text.mediumBody
+            [ Html.text "This is what text looks like with a link. "
+            , Html.a
+                [ Attributes.href "http://www.noredink.com"
+                , Attributes.target "_blank"
+                ]
+                [ Html.text "Praesent commodo cursus magna, vel scelerisque nisl consectetur \n                et. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam quis \n                risus eget urna mollis ornare vel eu leo." ]
+            , Html.text " Not bad, eh?"
+            ]
         ]
     }
