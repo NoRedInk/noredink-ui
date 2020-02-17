@@ -4,6 +4,11 @@ module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success)
 
 @docs alert, error, neutral, success
 
+
+# Post-release patches
+
+  - adjusts link styles
+
 Changes from V5:
 
   - takes HTML rather than BannerContent
