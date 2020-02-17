@@ -45,14 +45,7 @@ example parentMsg state =
         , h3 [] [ text "with link and icon" ]
         , BannerAlert.error
             [ Html.Styled.div
-                [ Attributes.css
-                    [ Css.fontSize (Css.px 20)
-                    , Css.fontWeight (Css.int 700)
-                    , Css.lineHeight (Css.px 25)
-                    , Css.maxWidth (Css.px 600)
-                    , Fonts.baseFont
-                    ]
-                ]
+                []
                 [ Html.Styled.text "Click "
                 , Html.Styled.a
                     [ Attributes.href "http://www.noredink.com"
@@ -71,17 +64,10 @@ example parentMsg state =
                 ]
             ]
             Nothing
-        , h3 [] [ text "with multi-line link and" ]
+        , h3 [] [ text "with multi-line link" ]
         , BannerAlert.error
             [ Html.Styled.div
-                [ Attributes.css
-                    [ Css.fontSize (Css.px 20)
-                    , Css.fontWeight (Css.int 700)
-                    , Css.lineHeight (Css.px 25)
-                    , Css.maxWidth (Css.px 600)
-                    , Fonts.baseFont
-                    ]
-                ]
+                []
                 [ Html.Styled.text "Click "
                 , Html.Styled.a
                     [ Attributes.href "http://www.noredink.com"
