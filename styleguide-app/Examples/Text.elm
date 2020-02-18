@@ -21,11 +21,12 @@ example =
     , content =
         let
             longerBody =
-                """Be on the lookout for a new and improved assignment
-                    creation form! Soon, you'll be able to easily see a summary
-                    of the content you're assigning, as well as an estimate for
-                    how long the assignment will take.
-                """
+                [ "Be on the lookout for a new and improved assignment"
+                , "creation form! Soon, you'll be able to easily see a summary"
+                , "of the content you're assigning, as well as an estimate for"
+                , "how long the assignment will take."
+                ]
+                    |> String.join " "
         in
         [ Text.caption [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
         , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
