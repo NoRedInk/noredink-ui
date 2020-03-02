@@ -1,0 +1,4 @@
+[build]
+base = "lib/noredink-ui"
+command = "make public"
+publish = "lib/noredink-ui/public"
