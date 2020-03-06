@@ -1,16 +1,14 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
     , withColor, withLabel, withWidth, withHeight
-    , fromHtml
-    , toHtml, toHtmlAsButton, toHtmlAsLink
+    , fromHtml, toHtml
     )
 
 {-|
 
 @docs Svg
 @docs withColor, withLabel, withWidth, withHeight
-@docs fromHtml
-@docs toHtml, toHtmlAsButton, toHtmlAsLink
+@docs fromHtml, toHtml
 
 -}
 
@@ -18,7 +16,6 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
 
 
 {-| Opaque type describing a non-interactable Html element.
@@ -103,25 +100,3 @@ toHtml (Svg record) =
 
         _ ->
             Html.div attributes [ Html.map never record.icon ]
-
-
-{-| -}
-toHtmlAsButton : msg -> Svg -> Html msg
-toHtmlAsButton msg svg =
-    Html.button
-        [ Attributes.css
-            [ Css.margin Css.zero
-            , Css.padding Css.zero
-            , Css.borderWidth Css.zero
-            , Css.backgroundColor Css.transparent
-            , Css.cursor Css.pointer
-            ]
-        , Events.onClick msg
-        ]
-        [ toHtml svg ]
-
-
-{-| -}
-toHtmlAsLink : String -> Svg -> Html msg
-toHtmlAsLink url svg =
-    Html.a [ Attributes.href url ] [ toHtml svg ]
