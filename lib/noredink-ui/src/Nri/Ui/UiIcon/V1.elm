@@ -1,6 +1,6 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper, sortArrow
-    , unarchive, share, preview, skip, copyToClipboard
+    , unarchive, share, preview, skip, copyToClipboard, gift
     , activity
     , footsteps, compass, speedometer, bulb, help
     , person, class, leaderboard, performance
@@ -19,7 +19,7 @@ module Nri.Ui.UiIcon.V1 exposing
 {-|
 
 @docs seeMore, openClose, download, sort, gear, flipper, sortArrow
-@docs unarchive, share, preview, skip, copyToClipboard
+@docs unarchive, share, preview, skip, copyToClipboard, gift
 @docs activity
 @docs footsteps, compass, speedometer, bulb, help
 @docs person, class, leaderboard, performance
@@ -917,5 +917,21 @@ badge =
             , Attributes.fillRule "evenodd"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+gift : Nri.Ui.Svg.V1.Svg
+gift =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 15 15"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none", Attributes.strokeWidth "1", Attributes.fillRule "evenodd" ]
+            [ Svg.path [ Attributes.d "M6.45,8.25 C6.57857143,8.25 6.70714286,8.36020408 6.74125364,8.4861516 L6.75,8.55 L6.75,14.7 C6.75,14.8285714 6.63979592,14.9571429 6.5138484,14.9912536 L6.45,15 L1.5,15 C1.0875,15 0.801041667,14.7479167 0.756163194,14.3592882 L0.75,14.25 L0.75,8.4 C0.75,8.34 0.798,8.28 0.8556,8.2584 L0.9,8.25 L6.45,8.25 Z M14.1,8.25 C14.16,8.25 14.22,8.298 14.2416,8.3556 L14.25,8.4 L14.25,14.25 C14.25,14.6625 13.9979167,14.9489583 13.6092882,14.9938368 L13.5,15 L8.55,15 C8.42142857,15 8.29285714,14.8897959 8.25874636,14.7638484 L8.25,14.7 L8.25,8.55 C8.25,8.42142857 8.36020408,8.29285714 8.4861516,8.25874636 L8.55,8.25 L14.1,8.25 Z M10.5,0 C11.775,0 12.75,0.975 12.75,2.25 C12.75,2.78333333 12.5722222,3.25740741 12.2693416,3.61954733 L12.15,3.75 L14.25,3.75 C14.6625,3.75 14.9489583,4.00208333 14.9938368,4.39071181 L15,4.5 L15,6.6 C15,6.66 14.952,6.72 14.8944,6.7416 L14.85,6.75 L8.55,6.75 C8.42142857,6.75 8.29285714,6.63979592 8.25874636,6.5138484 L8.25,6.45 L8.25,4.05 C8.25,3.92142857 8.13979592,3.79285714 8.0138484,3.75874636 L7.95,3.75 L7.05,3.75 C6.92142857,3.75 6.79285714,3.86020408 6.75874636,3.9861516 L6.75,4.05 L6.75,6.45 C6.75,6.57857143 6.63979592,6.70714286 6.5138484,6.74125364 L6.45,6.75 L0.15,6.75 C0.09,6.75 0.03,6.702 0.0084,6.6444 L0,6.6 L0,4.5 C0,4.0875 0.252083333,3.80104167 0.640711806,3.75616319 L0.75,3.75 L2.85,3.75 C2.475,3.375 2.25,2.85 2.25,2.25 C2.25,0.975 3.225,0 4.5,0 C5.25,0 6.6,0.675 7.5,1.575 C8.4,0.675 9.75,0 10.5,0 Z M4.5,1.5 C4.05,1.5 3.75,1.8 3.75,2.25 C3.75,2.7 4.05,3 4.5,3 C4.5,3 6.45,2.925 6.675,2.85 C6.3,2.4 4.95,1.5 4.5,1.5 Z M10.5,1.5 C10.05,1.5 8.775,2.325 8.325,2.85 C8.55,2.925 10.5,3 10.5,3 C10.95,3 11.25,2.7 11.25,2.25 C11.25,1.8 10.95,1.5 10.5,1.5 Z" ] [] ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
