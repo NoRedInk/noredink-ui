@@ -19,7 +19,6 @@ before_install:
       make && make install;
       cd ..;
     fi
-    cd lib/noredink-ui
 
 install:
   - travis_retry $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make -B setup
