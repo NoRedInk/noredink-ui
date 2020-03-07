@@ -23,6 +23,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
+import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -250,10 +251,10 @@ render strategy msg =
         Svg.toHtml
 
     else if strategy == toHtmlAsButton then
-        Svg.toHtmlAsButton (msg "You clicked the 'toHtmlAsButton' button!")
+        ClickableSvg.button (msg "You clicked the 'toHtmlAsButton' button!")
 
     else
-        Svg.toHtmlAsLink "/you_clicked_the_toHtmlAsLink_link"
+        ClickableSvg.link "/you_clicked_the_toHtmlAsLink_link"
 
 
 toHtml : String

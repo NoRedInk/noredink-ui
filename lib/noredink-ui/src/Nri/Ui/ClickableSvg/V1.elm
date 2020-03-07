@@ -6,8 +6,11 @@ module Nri.Ui.ClickableSvg.V1 exposing (button, link)
 
 -}
 
+import Css
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
 {-| -}
@@ -33,5 +36,5 @@ link url svg =
     Html.a
         [ Attributes.href url
         ]
-        [ toHtml Svg.svg
+        [ Svg.toHtml svg
         ]
