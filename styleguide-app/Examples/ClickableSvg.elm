@@ -42,95 +42,51 @@ example unnamedMessages state =
     { name = "Nri.Ui.ClickableSvg.V1"
     , category = Buttons
     , content =
-        [ viewSettings state
-            |> Html.map parentMessages.wrapper
-        , viewResults parentMessages.showItWorked state
+        [ Html.div [ Attributes.css [ Css.displayFlex ] ]
+            [ viewCode "ClickableSvg.button OnClickMsg"
+            , UiIcon.arrowLeft
+                |> Svg.withWidth (Css.px 100)
+                |> Svg.withHeight (Css.px 100)
+                |> ClickableSvg.button (parentMessages.showItWorked "You clicked the button!")
+            ]
+        , Html.div [ Attributes.css [ Css.displayFlex ] ]
+            [ viewCode "ClickableSvg.link \"#some_link\""
+            , UiIcon.arrowLeft
+                |> Svg.withWidth (Css.px 100)
+                |> Svg.withHeight (Css.px 100)
+                |> ClickableSvg.link "#some_link"
+            ]
         ]
     }
 
 
-viewSettings : State -> Html.Html Msg
-viewSettings state =
-    Html.div
+viewCode : String -> Html.Html msg
+viewCode renderStrategy =
+    Html.pre
         [ Attributes.css
-            [ Css.displayFlex
-            , Css.justifyContent Css.spaceBetween
+            [ Css.width (Css.px 400)
+            , Css.marginRight (Css.px 20)
             ]
         ]
-        [ Html.fieldset []
-            [ Html.legend [] [ Html.text "Render strategy" ]
-            , Html.label [ Attributes.css [ Css.display Css.block ] ]
-                [ Html.input
-                    [ Attributes.type_ "radio"
-                    , Attributes.id "render-with-ClickableSvg.button"
-                    , Attributes.name "render-with"
-                    , Attributes.value "ClickableSvg.button"
-                    , Attributes.checked (state.renderStrategy == "ClickableSvg.button")
-                    , Events.onInput SetRenderStrategy
-                    ]
-                    []
-                , Html.span [] [ Html.text "ClickableSvg.button" ]
-                ]
-            , Html.label [ Attributes.css [ Css.display Css.block ] ]
-                [ Html.input
-                    [ Attributes.type_ "radio"
-                    , Attributes.id "render-with-ClickableSvg.link"
-                    , Attributes.name "render-with"
-                    , Attributes.value "ClickableSvg.link"
-                    , Attributes.checked (state.renderStrategy == "ClickableSvg.link")
-                    , Events.onInput SetRenderStrategy
-                    ]
-                    []
-                , Html.span [] [ Html.text "ClickableSvg.link" ]
-                ]
-            ]
-        ]
-
-
-viewResults : (String -> msg) -> State -> Html.Html msg
-viewResults msg state =
-    Html.div [ Attributes.css [ Css.displayFlex ] ]
-        [ Html.pre
-            [ Attributes.css
-                [ Css.width (Css.px 400)
-                , Css.marginRight (Css.px 20)
-                ]
-            ]
-            [ [ "renderedSvg : Svg "
-              , "renderedSvg = "
-              , "   UiIcon.arrowLeft"
-              , "       |> Svg.withWidth (Css.px 100)"
-              , "       |> Svg.withHeight (Css.px 100)"
-              , "       |> " ++ state.renderStrategy
-              ]
-                |> String.join "\n"
-                |> Html.text
-            ]
-        , Html.div
-            [ Attributes.css
-                [ Css.backgroundColor Colors.gray92
-                , Css.flexGrow (Css.int 2)
-                ]
-            ]
-            [ UiIcon.arrowLeft
-                |> Svg.withWidth (Css.px 100)
-                |> Svg.withHeight (Css.px 100)
-                |> render state.renderStrategy msg
-            ]
+        [ [ "UiIcon.arrowLeft"
+          , "    |> Svg.withWidth (Css.px 100)"
+          , "    |> Svg.withHeight (Css.px 100)"
+          , "    |> " ++ renderStrategy
+          ]
+            |> String.join "\n"
+            |> Html.text
         ]
 
 
 {-| -}
 type alias State =
-    { renderStrategy : String
-    }
+    {}
 
 
 {-| -}
 init : State
 init =
-    { renderStrategy = "ClickableSvg.button"
-    }
+    {}
 
 
 {-| -}
@@ -141,15 +97,4 @@ type Msg
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    case msg of
-        SetRenderStrategy renderStrategy ->
-            ( { state | renderStrategy = renderStrategy }, Cmd.none )
-
-
-render : String -> (String -> msg) -> Svg.Svg -> Html.Html msg
-render strategy msg =
-    if strategy == "ClickableSvg.button" then
-        ClickableSvg.button (msg "You clicked the button!")
-
-    else
-        ClickableSvg.link "#you_clicked_the_link"
+    ( state, Cmd.none )
