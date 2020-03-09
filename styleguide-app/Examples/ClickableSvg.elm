@@ -42,41 +42,36 @@ example unnamedMessages state =
     { name = "Nri.Ui.ClickableSvg.V1"
     , category = Buttons
     , content =
-        [ Html.div [ Attributes.css [ Css.displayFlex ] ]
-            [ viewCode "ClickableSvg.button \"Back\" \n\t[ ClickableSvg.onClick OnClickMsg ]"
+        [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ viewCode
+                [ "UiIcon.arrowLeft"
+                , "    |>  ClickableSvg.button \"Back\" \n\t[ ClickableSvg.onClick OnClickMsg ]"
+                ]
             , UiIcon.arrowLeft
-                |> Svg.withWidth (Css.px 100)
-                |> Svg.withHeight (Css.px 100)
                 |> ClickableSvg.button "Back"
                     [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
             ]
-        , Html.div [ Attributes.css [ Css.displayFlex ] ]
-            [ viewCode "ClickableSvg.link \"Back\" \n\t[ ClickableSvg.href \"#some_link\" ]"
+        , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ viewCode
+                [ "UiIcon.arrowLeft"
+                , "    |> ClickableSvg.link \"Back\" \n\t[ ClickableSvg.href \"#some_link\" ]"
+                ]
             , UiIcon.arrowLeft
-                |> Svg.withWidth (Css.px 100)
-                |> Svg.withHeight (Css.px 100)
                 |> ClickableSvg.link "Back" [ ClickableSvg.href "#some_link" ]
             ]
         ]
     }
 
 
-viewCode : String -> Html.Html msg
+viewCode : List String -> Html.Html msg
 viewCode renderStrategy =
-    Html.pre
+    Html.code
         [ Attributes.css
             [ Css.width (Css.px 400)
             , Css.marginRight (Css.px 20)
             ]
         ]
-        [ [ "UiIcon.arrowLeft"
-          , "    |> Svg.withWidth (Css.px 100)"
-          , "    |> Svg.withHeight (Css.px 100)"
-          , "    |> " ++ renderStrategy
-          ]
-            |> String.join "\n"
-            |> Html.text
-        ]
+        [ Html.pre [] [ Html.text (String.join "\n" renderStrategy) ] ]
 
 
 {-| -}

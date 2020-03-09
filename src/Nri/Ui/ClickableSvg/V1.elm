@@ -20,6 +20,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 @docs onClick
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
+
+## Sizing
+
+@docs width, height
+
 -}
 
 import Accessibility.Styled.Widget as Widget
@@ -149,6 +154,24 @@ linkExternalWithTracking { track, url } =
 
 
 
+-- SIZING
+
+
+{-| Default width is 17px.
+-}
+width : Css.Px -> Attribute msg
+width px =
+    set (\attributes -> { attributes | width = px })
+
+
+{-| Default height is 17px.
+-}
+height : Css.Px -> Attribute msg
+height px =
+    set (\attributes -> { attributes | height = px })
+
+
+
 -- INTERNALS
 
 
@@ -167,6 +190,8 @@ build label icon =
         , linkType = Default
         , label = label
         , icon = icon
+        , height = Css.px 17
+        , width = Css.px 17
         , customAttributes = []
         , customStyles = []
         }
@@ -182,6 +207,8 @@ type alias ButtonOrLinkAttributes msg =
     , linkType : Link
     , label : String
     , icon : Svg
+    , height : Css.Px
+    , width : Css.Px
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -192,14 +219,18 @@ renderButton ((ButtonOrLink config) as button_) =
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.type_ "button"
-         , Attributes.css (buttonOrLinkStyles ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config.width config.height ++ config.customStyles)
          , Maybe.map Events.onClick config.onClick
             |> Maybe.withDefault AttributesExtra.none
          , Widget.label config.label
          ]
             ++ config.customAttributes
         )
-        [ Svg.toHtml config.icon ]
+        [ config.icon
+            |> Svg.withWidth config.width
+            |> Svg.withHeight config.height
+            |> Svg.toHtml
+        ]
 
 
 type Link
@@ -218,13 +249,17 @@ renderLink ((ButtonOrLink config) as link_) =
             Html.a
                 ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
                  , Attributes.href config.url
-                 , Attributes.css (buttonOrLinkStyles ++ config.customStyles)
+                 , Attributes.css (buttonOrLinkStyles config.width config.height ++ config.customStyles)
                  , Widget.label config.label
                  ]
                     ++ extraAttrs
                     ++ config.customAttributes
                 )
-                [ Svg.toHtml config.icon ]
+                [ config.icon
+                    |> Svg.withWidth config.width
+                    |> Svg.withHeight config.height
+                    |> Svg.toHtml
+                ]
     in
     case config.linkType of
         Default ->
@@ -267,8 +302,8 @@ renderLink ((ButtonOrLink config) as link_) =
                 )
 
 
-buttonOrLinkStyles : List Style
-buttonOrLinkStyles =
+buttonOrLinkStyles : Css.Px -> Css.Px -> List Style
+buttonOrLinkStyles w h =
     [ -- Colors, text decoration, cursor
       Css.cursor Css.pointer
     , Css.backgroundColor Css.transparent
@@ -285,4 +320,6 @@ buttonOrLinkStyles =
     -- Sizing
     , Css.boxSizing Css.borderBox
     , Css.lineHeight (Css.num 1)
+    , Css.width w
+    , Css.height h
     ]
