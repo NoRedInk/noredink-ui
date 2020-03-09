@@ -51,16 +51,16 @@ type Attribute msg
 
 
 {-| -}
-button : String -> List (Attribute msg) -> Svg -> Html msg
-button name attributes icon =
+button : String -> Svg -> List (Attribute msg) -> Html msg
+button name icon attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) (build name icon)
         |> renderButton
 
 
 {-| -}
-link : String -> List (Attribute msg) -> Svg -> Html msg
-link name attributes icon =
+link : String -> Svg -> List (Attribute msg) -> Html msg
+link name icon attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) (build name icon)
         |> renderLink

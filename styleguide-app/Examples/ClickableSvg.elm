@@ -43,27 +43,22 @@ example unnamedMessages state =
     , category = Buttons
     , content =
         [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-            [ viewCode
-                [ "UiIcon.arrowLeft"
-                , "    |>  ClickableSvg.button \"Back\" \n\t[ ClickableSvg.onClick OnClickMsg ]"
-                ]
-            , UiIcon.arrowLeft
-                |> ClickableSvg.button "Back"
-                    [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
+            [ ClickableSvg.button "Back"
+                UiIcon.arrowLeft
+                [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
+            , viewCode
+                "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]"
             ]
         , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-            [ viewCode
-                [ "UiIcon.arrowLeft"
-                , "    |> ClickableSvg.link \"Back\" \n\t[ ClickableSvg.href \"#some_link\" ]"
-                ]
-            , UiIcon.arrowLeft
-                |> ClickableSvg.link "Back" [ ClickableSvg.href "#some_link" ]
+            [ ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.href "#some_link" ]
+            , viewCode
+                "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.href \"#some_link\" ]"
             ]
         ]
     }
 
 
-viewCode : List String -> Html.Html msg
+viewCode : String -> Html.Html msg
 viewCode renderStrategy =
     Html.code
         [ Attributes.css
@@ -71,7 +66,7 @@ viewCode renderStrategy =
             , Css.marginRight (Css.px 20)
             ]
         ]
-        [ Html.pre [] [ Html.text (String.join "\n" renderStrategy) ] ]
+        [ Html.pre [] [ Html.text renderStrategy ] ]
 
 
 {-| -}
