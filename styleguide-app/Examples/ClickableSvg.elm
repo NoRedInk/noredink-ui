@@ -43,11 +43,12 @@ example unnamedMessages state =
     , category = Buttons
     , content =
         [ Html.div [ Attributes.css [ Css.displayFlex ] ]
-            [ viewCode "ClickableSvg.button OnClickMsg"
+            [ viewCode "ClickableSvg.button \"Back\" \n\t[ ClickableSvg.onClick OnClickMsg ]"
             , UiIcon.arrowLeft
                 |> Svg.withWidth (Css.px 100)
                 |> Svg.withHeight (Css.px 100)
-                |> ClickableSvg.button (parentMessages.showItWorked "You clicked the button!")
+                |> ClickableSvg.button "Back"
+                    [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
             ]
         , Html.div [ Attributes.css [ Css.displayFlex ] ]
             [ viewCode "ClickableSvg.link \"#some_link\""
