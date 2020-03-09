@@ -23,7 +23,6 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -57,46 +56,7 @@ viewSettings state =
             , Css.justifyContent Css.spaceBetween
             ]
         ]
-        [ Html.fieldset []
-            [ Html.legend [] [ Html.text "Render strategy" ]
-            , Html.label [ Attributes.css [ Css.display Css.block ] ]
-                [ Html.input
-                    [ Attributes.type_ "radio"
-                    , Attributes.id "render-with-toHtml"
-                    , Attributes.name "render-with"
-                    , Attributes.value toHtml
-                    , Attributes.checked (state.renderStrategy == toHtml)
-                    , Events.onInput SetRenderStrategy
-                    ]
-                    []
-                , Html.span [] [ Html.text "toHtml" ]
-                ]
-            , Html.label [ Attributes.css [ Css.display Css.block ] ]
-                [ Html.input
-                    [ Attributes.type_ "radio"
-                    , Attributes.id "render-with-toHtmlAsButton"
-                    , Attributes.name "render-with"
-                    , Attributes.value toHtmlAsButton
-                    , Attributes.checked (state.renderStrategy == toHtmlAsButton)
-                    , Events.onInput SetRenderStrategy
-                    ]
-                    []
-                , Html.span [] [ Html.text "toHtmlAsButton" ]
-                ]
-            , Html.label [ Attributes.css [ Css.display Css.block ] ]
-                [ Html.input
-                    [ Attributes.type_ "radio"
-                    , Attributes.id "render-with-toHtmlAsLink"
-                    , Attributes.name "render-with"
-                    , Attributes.value toHtmlAsLink
-                    , Attributes.checked (state.renderStrategy == toHtmlAsLink)
-                    , Events.onInput SetRenderStrategy
-                    ]
-                    []
-                , Html.span [] [ Html.text "toHtmlAsLink" ]
-                ]
-            ]
-        , Html.label []
+        [ Html.label []
             [ Html.text "Color: "
             , Html.input
                 [ Attributes.type_ "color"
@@ -163,7 +123,7 @@ viewResults msg state =
               , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
               , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
               , "       |> Svg.withLabel \"" ++ state.label ++ "\""
-              , "       |> Svg." ++ state.renderStrategy
+              , "       |> Svg.toHtml"
               ]
                 |> String.join "\n"
                 |> Html.text
@@ -179,7 +139,7 @@ viewResults msg state =
                 |> Svg.withWidth (Css.px state.width)
                 |> Svg.withHeight (Css.px state.height)
                 |> Svg.withLabel state.label
-                |> render state.renderStrategy msg
+                |> Svg.toHtml
             ]
         ]
 
@@ -190,7 +150,6 @@ type alias State =
     , width : Float
     , height : Float
     , label : String
-    , renderStrategy : String
     }
 
 
@@ -201,7 +160,6 @@ init =
     , width = 30
     , height = 30
     , label = "Newspaper"
-    , renderStrategy = toHtml
     }
 
 
@@ -211,7 +169,6 @@ type Msg
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
     | SetLabel String
-    | SetRenderStrategy String
 
 
 {-| -}
@@ -240,33 +197,3 @@ update msg state =
 
         SetLabel label ->
             ( { state | label = label }, Cmd.none )
-
-        SetRenderStrategy renderStrategy ->
-            ( { state | renderStrategy = renderStrategy }, Cmd.none )
-
-
-render : String -> (String -> msg) -> Svg.Svg -> Html.Html msg
-render strategy msg =
-    if strategy == toHtml then
-        Svg.toHtml
-
-    else if strategy == toHtmlAsButton then
-        ClickableSvg.button (msg "You clicked the 'toHtmlAsButton' button!")
-
-    else
-        ClickableSvg.link "/you_clicked_the_toHtmlAsLink_link"
-
-
-toHtml : String
-toHtml =
-    "toHtml"
-
-
-toHtmlAsButton : String
-toHtmlAsButton =
-    "toHtmlAsButton"
-
-
-toHtmlAsLink : String
-toHtmlAsLink =
-    "toHtmlAsLink"
