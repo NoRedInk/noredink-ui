@@ -50,9 +50,9 @@ example unnamedMessages state =
                 "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]"
             ]
         , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-            [ ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.href "#some_link" ]
+            [ ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.linkSpa "some_link" ]
             , viewCode
-                "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.href \"#some_link\" ]"
+                "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]"
             ]
         ]
     }
