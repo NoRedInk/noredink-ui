@@ -22,6 +22,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 -}
 
+import Accessibility.Styled.Widget as Widget
 import AttributeExtras exposing (targetBlank)
 import Css exposing (Style)
 import EventExtras.Styled as EventExtras
@@ -42,16 +43,16 @@ type Attribute msg
 {-| -}
 button : String -> List (Attribute msg) -> Svg -> Html msg
 button name attributes icon =
-    (set (\a -> { a | label = name }) :: attributes)
-        |> List.foldl (\(Attribute attribute) b -> attribute b) (build icon)
+    attributes
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (build name icon)
         |> renderButton
 
 
 {-| -}
 link : String -> List (Attribute msg) -> Svg -> Html msg
 link name attributes icon =
-    (set (\a -> { a | label = name }) :: attributes)
-        |> List.foldl (\(Attribute attribute) b -> attribute b) (build icon)
+    attributes
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (build name icon)
         |> renderLink
 
 
@@ -158,13 +159,13 @@ set with =
     Attribute (\(ButtonOrLink config) -> ButtonOrLink (with config))
 
 
-build : Svg -> ButtonOrLink msg
-build icon =
+build : String -> Svg -> ButtonOrLink msg
+build label icon =
     ButtonOrLink
         { onClick = Nothing
         , url = "#"
         , linkType = Default
-        , label = ""
+        , label = label
         , icon = icon
         , customAttributes = []
         , customStyles = []
@@ -194,13 +195,11 @@ renderButton ((ButtonOrLink config) as button_) =
          , Attributes.css (buttonOrLinkStyles ++ config.customStyles)
          , Maybe.map Events.onClick config.onClick
             |> Maybe.withDefault AttributesExtra.none
+         , Widget.label config.label
          ]
             ++ config.customAttributes
         )
-        [ config.icon
-            |> Svg.withLabel config.label
-            |> Svg.toHtml
-        ]
+        [ Svg.toHtml config.icon ]
 
 
 type Link
@@ -220,13 +219,11 @@ renderLink ((ButtonOrLink config) as link_) =
                 ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
                  , Attributes.href config.url
                  , Attributes.css (buttonOrLinkStyles ++ config.customStyles)
+                 , Widget.label config.label
                  ]
                     ++ extraAttrs
                 )
-                [ config.icon
-                    |> Svg.withLabel config.label
-                    |> Svg.toHtml
-                ]
+                [ Svg.toHtml config.icon ]
     in
     case config.linkType of
         Default ->
