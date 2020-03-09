@@ -3,6 +3,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , width, height
     , custom, css
     )
 

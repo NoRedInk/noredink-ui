@@ -45,7 +45,7 @@ example unnamedMessages state =
         [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
             [ ClickableSvg.button "Back"
                 UiIcon.arrowLeft
-                [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
+                [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the back button!") ]
             , viewCode
                 "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]"
             ]
@@ -53,6 +53,31 @@ example unnamedMessages state =
             [ ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.linkSpa "some_link" ]
             , viewCode
                 "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]"
+            ]
+        , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ ClickableSvg.button "Go to tutorial"
+                UiIcon.footsteps
+                [ ClickableSvg.width (Css.px 80)
+                , ClickableSvg.height (Css.px 80)
+                , ClickableSvg.onClick (parentMessages.showItWorked "You clicked the tutorials button!")
+                , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
+                , ClickableSvg.css
+                    [ Css.border3 (Css.px 3) Css.dashed Colors.purple
+                    ]
+                ]
+            , viewCode
+                """
+                    ClickableSvg.button "Go to tutorial"
+                        UiIcon.footsteps
+                        [ ClickableSvg.width (Css.px 80)
+                        , ClickableSvg.height (Css.px 80)
+                        , ClickableSvg.onClick (parentMessages.showItWorked "You clicked the tutorials button!")
+                        , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
+                        , ClickableSvg.css
+                            [ Css.border3 (Css.px 3) Css.dashed Colors.purple
+                            ]
+                        ]
+                """
             ]
         ]
     }
