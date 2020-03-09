@@ -222,45 +222,34 @@ renderLink ((ButtonOrLink config) as link_) =
                  , Widget.label config.label
                  ]
                     ++ extraAttrs
+                    ++ config.customAttributes
                 )
                 [ Svg.toHtml config.icon ]
     in
     case config.linkType of
         Default ->
-            linkBase "link"
-                (Attributes.target "_self" :: config.customAttributes)
+            linkBase "link" [ Attributes.target "_self" ]
 
         SinglePageApp ->
             linkBase "linkSpa"
-                ((Maybe.map EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
-                    |> Maybe.withDefault AttributesExtra.none
-                 )
-                    :: config.customAttributes
+                (config.onClick
+                    |> Maybe.map (\msg -> [ EventExtras.onClickPreventDefaultForLinkWithHref msg ])
+                    |> Maybe.withDefault []
                 )
 
         WithMethod method ->
-            linkBase "linkWithMethod"
-                (Attributes.attribute "data-method" method
-                    :: config.customAttributes
-                )
+            linkBase "linkWithMethod" [ Attributes.attribute "data-method" method ]
 
         WithTracking ->
             linkBase
                 "linkWithTracking"
-                ((Maybe.map
-                    (\msg ->
-                        Events.preventDefaultOn "click"
-                            (Json.Decode.succeed ( msg, True ))
-                    )
-                    config.onClick
-                    |> Maybe.withDefault AttributesExtra.none
-                 )
-                    :: config.customAttributes
+                (config.onClick
+                    |> Maybe.map (\msg -> [ Events.preventDefaultOn "click" (Json.Decode.succeed ( msg, True )) ])
+                    |> Maybe.withDefault []
                 )
 
         External ->
-            linkBase "linkExternal"
-                (targetBlank ++ config.customAttributes)
+            linkBase "linkExternal" targetBlank
 
         ExternalWithTracking ->
             linkBase "linkExternalWithTracking"
@@ -274,7 +263,6 @@ renderLink ((ButtonOrLink config) as link_) =
                                 ]
                             )
                         |> Maybe.withDefault []
-                    , config.customAttributes
                     ]
                 )
 
