@@ -48,13 +48,11 @@ button name attributes icon =
 
 
 {-| -}
-link : String -> Svg -> Html msg
-link url svg =
-    Html.a
-        [ Attributes.href url
-        ]
-        [ Svg.toHtml svg
-        ]
+link : String -> List (Attribute msg) -> Svg -> Html msg
+link name attributes icon =
+    (set (\a -> { a | label = name }) :: attributes)
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (build icon)
+        |> renderLink
 
 
 

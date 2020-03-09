@@ -51,11 +51,11 @@ example unnamedMessages state =
                     [ ClickableSvg.onClick (parentMessages.showItWorked "You clicked the button!") ]
             ]
         , Html.div [ Attributes.css [ Css.displayFlex ] ]
-            [ viewCode "ClickableSvg.link \"#some_link\""
+            [ viewCode "ClickableSvg.link \"Back\" \n\t[ ClickableSvg.href \"#some_link\" ]"
             , UiIcon.arrowLeft
                 |> Svg.withWidth (Css.px 100)
                 |> Svg.withHeight (Css.px 100)
-                |> ClickableSvg.link "#some_link"
+                |> ClickableSvg.link "Back" [ ClickableSvg.href "#some_link" ]
             ]
         ]
     }
