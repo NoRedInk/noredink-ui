@@ -29,6 +29,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
@@ -285,9 +286,20 @@ renderLink ((ButtonOrLink config) as link_) =
 
 buttonOrLinkStyles : List Style
 buttonOrLinkStyles =
-    [ Css.margin Css.zero
+    [ -- Colors, text decoration, cursor
+      Css.cursor Css.pointer
+    , Css.backgroundColor Css.transparent
+    , Css.color Colors.azure
+    , Css.textDecoration Css.none
+    , Css.hover [ Css.textDecoration Css.none, Css.color Colors.azure ]
+    , Css.visited [ Css.color Colors.azure ]
+
+    -- Margins, borders, padding
+    , Css.margin Css.zero
     , Css.padding Css.zero
     , Css.borderWidth Css.zero
-    , Css.backgroundColor Css.transparent
-    , Css.cursor Css.pointer
+
+    -- Sizing
+    , Css.boxSizing Css.borderBox
+    , Css.lineHeight (Css.num 1)
     ]
