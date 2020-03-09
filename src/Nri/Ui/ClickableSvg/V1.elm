@@ -3,6 +3,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , custom, css
     )
 
 {-|
@@ -12,7 +13,6 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 @docs button, link
 @docs Attribute
-@docs custom, css
 
 
 ## Behavior
@@ -24,6 +24,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 ## Sizing
 
 @docs width, height
+
+
+## Customization
+
+@docs custom, css
 
 -}
 
@@ -169,6 +174,38 @@ width px =
 height : Css.Px -> Attribute msg
 height px =
     set (\attributes -> { attributes | height = px })
+
+
+
+-- CUSTOMIZATION
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying Button styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute msg) -> Attribute msg
+custom attributes =
+    set
+        (\config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+        )
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    set
+        (\config ->
+            { config
+                | customStyles = List.append config.customStyles styles
+            }
+        )
 
 
 
