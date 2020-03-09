@@ -164,6 +164,10 @@ linkExternalWithTracking { track, url } =
 
 
 {-| Default width is 17px.
+
+Note: changing this width will change the width of the icon. The button or link
+may be wider if you add a border or margin to it.
+
 -}
 width : Css.Px -> Attribute msg
 width px =
@@ -171,6 +175,10 @@ width px =
 
 
 {-| Default height is 17px.
+
+Note: changing this height will change the height of the icon. The button or link
+may be taller if you add a border or margin to it.
+
 -}
 height : Css.Px -> Attribute msg
 height px =
@@ -356,7 +364,7 @@ buttonOrLinkStyles w h =
     , Css.borderWidth Css.zero
 
     -- Sizing
-    , Css.boxSizing Css.borderBox
+    , Css.boxSizing Css.contentBox
     , Css.lineHeight (Css.num 1)
     , Css.width w
     , Css.height h
