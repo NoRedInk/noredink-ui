@@ -355,8 +355,8 @@ buttonOrLinkStyles w h =
     , Css.backgroundColor Css.transparent
     , Css.color Colors.azure
     , Css.textDecoration Css.none
-    , Css.hover [ Css.textDecoration Css.none, Css.color Colors.azure ]
     , Css.visited [ Css.color Colors.azure ]
+    , Css.hover [ Css.textDecoration Css.none, Css.color Colors.azureDark ]
 
     -- Margins, borders, padding
     , Css.margin Css.zero
