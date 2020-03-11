@@ -22,7 +22,7 @@ import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -32,14 +32,18 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example : (String -> ModuleMessages Msg msg) -> State -> ModuleExample msg
+example unnamedMessages state =
+    let
+        parentMessages =
+            unnamedMessages "Nri.Ui.Svg.V1"
+    in
     { name = "Nri.Ui.Svg.V1"
     , category = Icons
     , content =
         [ viewSettings state
-            |> Html.map parentMessage
-        , viewResults state
+            |> Html.map parentMessages.wrapper
+        , viewResults parentMessages.showItWorked state
         ]
     }
 
@@ -94,8 +98,8 @@ viewSettings state =
         ]
 
 
-viewResults : State -> Html.Html msg
-viewResults state =
+viewResults : (String -> msg) -> State -> Html.Html msg
+viewResults msg state =
     let
         ( red, green, blue ) =
             Color.toRGB state.color

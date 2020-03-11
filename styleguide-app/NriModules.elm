@@ -7,6 +7,7 @@ import Examples.BannerAlert
 import Examples.Button
 import Examples.Callout
 import Examples.Checkbox
+import Examples.ClickableSvg
 import Examples.ClickableText
 import Examples.Colors
 import Examples.DisclosureIndicator
@@ -57,6 +58,7 @@ type alias ModuleStates =
     , slideExampleState : Examples.Slide.State
     , sortableTableState : Examples.SortableTable.State
     , svgState : Examples.Svg.State
+    , clickableSvgState : Examples.ClickableSvg.State
     , tabsExampleState : Examples.Tabs.Tab
     , tooltipExampleState : Examples.Tooltip.State
     }
@@ -81,6 +83,7 @@ init =
     , slideExampleState = Examples.Slide.init
     , sortableTableState = Examples.SortableTable.init
     , svgState = Examples.Svg.init
+    , clickableSvgState = Examples.ClickableSvg.init
     , tabsExampleState = Examples.Tabs.First
     , tooltipExampleState = Examples.Tooltip.init
     }
@@ -105,6 +108,7 @@ type Msg
     | SlideExampleMsg Examples.Slide.Msg
     | SortableTableMsg Examples.SortableTable.Msg
     | SvgMsg Examples.Svg.Msg
+    | ClickableSvgMsg Examples.ClickableSvg.Msg
     | TabsExampleMsg Examples.Tabs.Tab
     | TooltipExampleMsg Examples.Tooltip.Msg
     | NoOp
@@ -195,6 +199,15 @@ update outsideMsg moduleStates =
             in
             ( { moduleStates | svgState = svgState }
             , Cmd.map SvgMsg cmd
+            )
+
+        ClickableSvgMsg msg ->
+            let
+                ( clickableSvgState, cmd ) =
+                    Examples.ClickableSvg.update msg moduleStates.clickableSvgState
+            in
+            ( { moduleStates | clickableSvgState = clickableSvgState }
+            , Cmd.map ClickableSvgMsg cmd
             )
 
         TableExampleMsg msg ->
@@ -334,7 +347,8 @@ nriThemedModules model =
     , Examples.Slide.example SlideExampleMsg model.slideExampleState
     , Examples.SlideModal.example SlideModalExampleMsg model.slideModalExampleState
     , Examples.SortableTable.example SortableTableMsg model.sortableTableState
-    , Examples.Svg.example SvgMsg model.svgState
+    , Examples.Svg.example (exampleMessages SvgMsg) model.svgState
+    , Examples.ClickableSvg.example (exampleMessages ClickableSvgMsg) model.clickableSvgState
     , Examples.Table.example TableExampleMsg model.tableExampleState
     , Examples.Tabs.example TabsExampleMsg model.tabsExampleState
     , Examples.Text.example
