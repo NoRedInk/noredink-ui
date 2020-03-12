@@ -4,6 +4,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , width, height
+    , disabled
     , custom, css
     )
 
@@ -25,6 +26,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 ## Sizing
 
 @docs width, height
+
+
+## State
+
+@docs disabled
 
 
 ## Customization
@@ -186,6 +192,15 @@ height px =
 
 
 
+-- STATE
+
+
+disabled : Bool -> Attribute msg
+disabled disabled_ =
+    set (\attributes -> { attributes | disabled = disabled_ })
+
+
+
 -- CUSTOMIZATION
 
 
@@ -238,6 +253,7 @@ build label icon =
         , icon = icon
         , height = Css.px 17
         , width = Css.px 17
+        , disabled = False
         , customAttributes = []
         , customStyles = []
         }
@@ -255,6 +271,7 @@ type alias ButtonOrLinkAttributes msg =
     , icon : Svg
     , height : Css.Px
     , width : Css.Px
+    , disabled : Bool
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -265,7 +282,8 @@ renderButton ((ButtonOrLink config) as button_) =
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.type_ "button"
-         , Attributes.css (buttonOrLinkStyles config.width config.height ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
+         , Attributes.disabled config.disabled
          , Maybe.map Events.onClick config.onClick
             |> Maybe.withDefault AttributesExtra.none
          , Widget.label config.label
@@ -294,8 +312,13 @@ renderLink ((ButtonOrLink config) as link_) =
         linkBase linkFunctionName extraAttrs =
             Html.a
                 ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
-                 , Attributes.href config.url
-                 , Attributes.css (buttonOrLinkStyles config.width config.height ++ config.customStyles)
+                 , if not config.disabled then
+                    Attributes.href config.url
+
+                   else
+                    AttributesExtra.none
+                 , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
+                 , Widget.disabled config.disabled
                  , Widget.label config.label
                  ]
                     ++ extraAttrs
@@ -348,15 +371,32 @@ renderLink ((ButtonOrLink config) as link_) =
                 )
 
 
-buttonOrLinkStyles : Css.Px -> Css.Px -> List Style
-buttonOrLinkStyles w h =
+buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
+buttonOrLinkStyles config =
     [ -- Colors, text decoration, cursor
-      Css.cursor Css.pointer
-    , Css.backgroundColor Css.transparent
-    , Css.color Colors.azure
+      Css.backgroundColor Css.transparent
     , Css.textDecoration Css.none
-    , Css.visited [ Css.color Colors.azure ]
-    , Css.hover [ Css.textDecoration Css.none, Css.color Colors.azureDark ]
+    , if config.disabled then
+        Css.batch
+            [ Css.color Colors.gray75
+            , Css.visited [ Css.color Colors.gray75 ]
+            , Css.hover
+                [ Css.textDecoration Css.none
+                , Css.color Colors.gray75
+                , Css.cursor Css.notAllowed
+                ]
+            ]
+
+      else
+        Css.batch
+            [ Css.color Colors.azure
+            , Css.visited [ Css.color Colors.azure ]
+            , Css.hover
+                [ Css.textDecoration Css.none
+                , Css.color Colors.azureDark
+                , Css.cursor Css.pointer
+                ]
+            ]
 
     -- Margins, borders, padding
     , Css.margin Css.zero
@@ -366,6 +406,6 @@ buttonOrLinkStyles w h =
     -- Sizing
     , Css.boxSizing Css.contentBox
     , Css.lineHeight (Css.num 1)
-    , Css.width w
-    , Css.height h
+    , Css.width config.width
+    , Css.height config.height
     ]
