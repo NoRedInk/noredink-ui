@@ -41,6 +41,8 @@ example =
             , ( "speedometer", UiIcon.speedometer )
             , ( "bulb", UiIcon.bulb )
             , ( "help", UiIcon.help )
+            , ( "hat", UiIcon.hat )
+            , ( "keychain", UiIcon.keychain )
             ]
         , IconExamples.view "Humans & Class"
             [ ( "person", UiIcon.person )
