@@ -195,6 +195,7 @@ height px =
 -- STATE
 
 
+{-| -}
 disabled : Bool -> Attribute msg
 disabled disabled_ =
     set (\attributes -> { attributes | disabled = disabled_ })
