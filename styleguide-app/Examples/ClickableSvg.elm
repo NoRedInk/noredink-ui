@@ -55,6 +55,16 @@ example unnamedMessages state =
                 "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]"
             ]
         , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ ClickableSvg.button "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
+            , viewCode
+                "ClickableSvg.button \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]"
+            ]
+        , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+            [ ClickableSvg.link "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
+            , viewCode
+                "ClickableSvg.link \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]"
+            ]
+        , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
             [ ClickableSvg.button "Go to tutorial"
                 UiIcon.footsteps
                 [ ClickableSvg.width (Css.px 80)
