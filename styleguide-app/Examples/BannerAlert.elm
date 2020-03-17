@@ -48,8 +48,8 @@ example parentMsg state =
         , BannerAlert.custom
             { color = Colors.aquaDark
             , backgroundColor = Colors.gray92
-            , icon = Svg.toHtml (Svg.withHeight (Css.px 50) <| Svg.withWidth (Css.px 50) <| Pennant.premiumFlag)
-            , content = [ text "I'm a custom banner!" ]
+            , icon = Svg.toHtml Pennant.premiumFlag
+            , content = [ text "This is a a custom message!" ]
             , dismiss = Nothing
             }
         , pre [] [ text "TODO" ]

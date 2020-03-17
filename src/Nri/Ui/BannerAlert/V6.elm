@@ -41,10 +41,11 @@ alert content maybeDismiss =
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
-            icon
+            inCircle
                 { backgroundColor = Colors.ochre
+                , color = Colors.white
                 , height = Css.px 25
-                , asset = UiIcon.attention
+                , icon = UiIcon.attention
                 }
         , content = content
         , dismiss = maybeDismiss
@@ -59,10 +60,11 @@ error content maybeDismiss =
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
-            icon
+            inCircle
                 { backgroundColor = Colors.purple
+                , color = Colors.white
                 , height = Css.px 25
-                , asset = UiIcon.attention
+                , icon = UiIcon.attention
                 }
         , content = content
         , dismiss = maybeDismiss
@@ -77,14 +79,11 @@ neutral content maybeDismiss =
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
-            icon
+            inCircle
                 { backgroundColor = Colors.navy
+                , color = Colors.mustard
                 , height = Css.px 32
-                , asset =
-                    UiIcon.bulb
-                        |> Svg.withColor Colors.mustard
-                        |> Svg.withWidth (Css.px 34)
-                        |> Svg.withHeight (Css.px 32)
+                , icon = UiIcon.bulb
                 }
         , content = content
         , dismiss = maybeDismiss
@@ -99,10 +98,11 @@ success content maybeDismiss =
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
-            icon
+            inCircle
                 { backgroundColor = Colors.green
+                , color = Colors.white
                 , height = Css.px 20
-                , asset = UiIcon.checkmark
+                , icon = UiIcon.checkmark
                 }
         , content = content
         , dismiss = maybeDismiss
@@ -153,7 +153,8 @@ custom config =
                     ]
                 ]
             ]
-            [ Html.map never config.icon
+            [ iconContainer [ config.icon ]
+                |> Html.map never
             , notification config.content
             ]
         , maybeDismissButton
@@ -185,33 +186,38 @@ dismissButton msg =
         ]
 
 
-icon :
-    { backgroundColor : Css.Color
-    , height : Css.Px
-    , asset : Svg
-    }
-    -> Html Never
-icon config =
+iconContainer : List (Html msg) -> Html msg
+iconContainer =
     Html.div
         [ css
-            [ Css.boxSizing Css.borderBox
-            , Css.borderRadius (Css.pct 50)
-            , Css.color Colors.white
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.center
-            , Css.width (Css.px 50)
+            [ Css.width (Css.px 50)
             , Css.height (Css.px 50)
             , Css.marginRight (Css.px 20)
-            , Css.padding (Css.px 8)
-            , Css.flexShrink (Css.num 0)
-            , Css.backgroundColor config.backgroundColor
             ]
         ]
-        [ Html.div
-            [ css [ Css.height config.height ]
+
+
+inCircle :
+    { backgroundColor : Css.Color
+    , color : Css.Color
+    , height : Css.Px
+    , icon : Svg
+    }
+    -> Html msg
+inCircle config =
+    Html.div
+        [ css
+            [ Css.borderRadius (Css.pct 50)
+            , Css.height (Css.pct 100)
+            , Css.backgroundColor config.backgroundColor
+            , Css.displayFlex
+            , Css.alignItems Css.center
             ]
-            [ Svg.toHtml config.asset ]
+        ]
+        [ config.icon
+            |> Svg.withColor config.color
+            |> Svg.withHeight config.height
+            |> Svg.toHtml
         ]
 
 
