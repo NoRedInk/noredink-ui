@@ -13,7 +13,7 @@ import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Pennant.V1 as Pennant
+import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -48,7 +48,7 @@ example parentMsg state =
         , BannerAlert.custom
             { color = Colors.aquaDark
             , backgroundColor = Colors.gray92
-            , icon = Pennant.premiumFlag
+            , icon = Svg.toHtml (Svg.withHeight (Css.px 50) <| Svg.withWidth (Css.px 50) <| Pennant.premiumFlag)
             , content = [ text "I'm a custom banner!" ]
             , dismiss = Nothing
             }
