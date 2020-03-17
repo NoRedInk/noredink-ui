@@ -52,7 +52,17 @@ example parentMsg state =
             , content = [ text "This is a a custom message!" ]
             , dismiss = Nothing
             }
-        , pre [] [ text "TODO" ]
+        , pre []
+            [ text
+                """BannerAlert.custom
+    { color = Colors.aquaDark
+    , backgroundColor = Colors.gray92
+    , icon = Pennant.premiumFlag
+    , content = [ text "This is a a custom message!" ]
+    , dismiss = Nothing
+    }
+        """
+            ]
         , h3 [] [ text "with multi-line link and icon" ]
         , BannerAlert.success
             [ text "Click "
