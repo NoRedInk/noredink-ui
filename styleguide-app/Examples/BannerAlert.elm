@@ -48,7 +48,7 @@ example parentMsg state =
         , BannerAlert.custom
             { color = Colors.aquaDark
             , backgroundColor = Colors.gray92
-            , icon = Svg.toHtml Pennant.premiumFlag
+            , icon = Pennant.premiumFlag
             , content = [ text "This is a a custom message!" ]
             , dismiss = Nothing
             }

@@ -37,7 +37,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 -}
 alert : List (Html msg) -> Maybe msg -> Html msg
 alert content maybeDismiss =
-    custom
+    banner
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
@@ -56,7 +56,7 @@ alert content maybeDismiss =
 -}
 error : List (Html msg) -> Maybe msg -> Html msg
 error content maybeDismiss =
-    custom
+    banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
@@ -75,7 +75,7 @@ error content maybeDismiss =
 -}
 neutral : List (Html msg) -> Maybe msg -> Html msg
 neutral content maybeDismiss =
-    custom
+    banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
@@ -94,7 +94,7 @@ neutral content maybeDismiss =
 -}
 success : List (Html msg) -> Maybe msg -> Html msg
 success content maybeDismiss =
-    custom
+    banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
@@ -114,12 +114,30 @@ success content maybeDismiss =
 custom :
     { color : Css.Color
     , backgroundColor : Css.Color
-    , icon : Html Never
+    , icon : Svg
     , content : List (Html msg)
     , dismiss : Maybe msg
     }
     -> Html msg
 custom config =
+    banner
+        { color = config.color
+        , backgroundColor = config.backgroundColor
+        , icon = Svg.toHtml config.icon
+        , content = config.content
+        , dismiss = config.dismiss
+        }
+
+
+banner :
+    { color : Css.Color
+    , backgroundColor : Css.Color
+    , icon : Html Never
+    , content : List (Html msg)
+    , dismiss : Maybe msg
+    }
+    -> Html msg
+banner config =
     let
         maybeDismissButton =
             case config.dismiss of
