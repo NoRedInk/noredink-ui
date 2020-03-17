@@ -36,10 +36,11 @@ alert =
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.ochre
-            , height = Css.px 25
-            , asset = UiIcon.attention
-            }
+            icon
+                { backgroundColor = Colors.ochre
+                , height = Css.px 25
+                , asset = UiIcon.attention
+                }
         }
 
 
@@ -51,10 +52,11 @@ error =
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
-            { backgroundColor = Colors.purple
-            , height = Css.px 25
-            , asset = UiIcon.attention
-            }
+            icon
+                { backgroundColor = Colors.purple
+                , height = Css.px 25
+                , asset = UiIcon.attention
+                }
         }
 
 
@@ -66,14 +68,15 @@ neutral =
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.navy
-            , height = Css.px 32
-            , asset =
-                UiIcon.bulb
-                    |> Svg.withColor Colors.mustard
-                    |> Svg.withWidth (Css.px 34)
-                    |> Svg.withHeight (Css.px 32)
-            }
+            icon
+                { backgroundColor = Colors.navy
+                , height = Css.px 32
+                , asset =
+                    UiIcon.bulb
+                        |> Svg.withColor Colors.mustard
+                        |> Svg.withWidth (Css.px 34)
+                        |> Svg.withHeight (Css.px 32)
+                }
         }
 
 
@@ -85,21 +88,22 @@ success =
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
-            { backgroundColor = Colors.green
-            , height = Css.px 20
-            , asset = UiIcon.checkmark
-            }
+            icon
+                { backgroundColor = Colors.green
+                , height = Css.px 20
+                , asset = UiIcon.checkmark
+                }
         }
 
 
-type alias StyleConfig =
+banner :
     { color : Css.Color
     , backgroundColor : Css.Color
-    , icon : IconConfig
+    , icon : Html Never
     }
-
-
-banner : StyleConfig -> List (Html msg) -> Maybe msg -> Html msg
+    -> List (Html msg)
+    -> Maybe msg
+    -> Html msg
 banner config bannerContent dismissMsg =
     let
         maybeDismissButton =
@@ -134,7 +138,7 @@ banner config bannerContent dismissMsg =
                     ]
                 ]
             ]
-            [ icon config.icon
+            [ Html.map never config.icon
             , notification bannerContent
             ]
         , maybeDismissButton
@@ -166,14 +170,12 @@ dismissButton msg =
         ]
 
 
-type alias IconConfig =
+icon :
     { backgroundColor : Css.Color
     , height : Css.Px
     , asset : Svg
     }
-
-
-icon : IconConfig -> Html msg
+    -> Html Never
 icon config =
     Html.div
         [ css
