@@ -24,8 +24,8 @@ import Html.Styled.Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark, xSvg)
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| A banner to show error alerts
@@ -38,7 +38,7 @@ alert =
         , icon =
             { backgroundColor = Colors.ochre
             , height = Css.px 25
-            , asset = exclamationMark
+            , asset = UiIcon.attention
             }
         }
 
@@ -53,7 +53,7 @@ error =
         , icon =
             { backgroundColor = Colors.purple
             , height = Css.px 25
-            , asset = exclamationMark
+            , asset = UiIcon.attention
             }
         }
 
@@ -68,7 +68,11 @@ neutral =
         , icon =
             { backgroundColor = Colors.navy
             , height = Css.px 32
-            , asset = bulb
+            , asset =
+                UiIcon.bulb
+                    |> Svg.withColor Colors.mustard
+                    |> Svg.withWidth (Css.px 34)
+                    |> Svg.withHeight (Css.px 32)
             }
         }
 
@@ -83,7 +87,7 @@ success =
         , icon =
             { backgroundColor = Colors.green
             , height = Css.px 20
-            , asset = checkmark
+            , asset = UiIcon.checkmark
             }
         }
 
@@ -157,7 +161,7 @@ dismissButton msg =
                 , Css.cursor Css.pointer
                 ]
             ]
-            [ NriSvg.toHtml xSvg
+            [ Svg.toHtml UiIcon.x
             ]
         ]
 
@@ -190,7 +194,7 @@ icon config =
         [ Html.div
             [ css [ Css.height config.height ]
             ]
-            [ NriSvg.toHtml config.asset ]
+            [ Svg.toHtml config.asset ]
         ]
 
 
