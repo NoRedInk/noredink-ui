@@ -31,7 +31,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| A banner to show error alerts
 -}
 alert : List (Html msg) -> Maybe msg -> Html msg
-alert =
+alert content maybeDismiss =
     banner
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
@@ -41,13 +41,15 @@ alert =
                 , height = Css.px 25
                 , asset = UiIcon.attention
                 }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner to show error alerts
 -}
 error : List (Html msg) -> Maybe msg -> Html msg
-error =
+error content maybeDismiss =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
@@ -57,13 +59,15 @@ error =
                 , height = Css.px 25
                 , asset = UiIcon.attention
                 }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner to show neutral alerts
 -}
 neutral : List (Html msg) -> Maybe msg -> Html msg
-neutral =
+neutral content maybeDismiss =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
@@ -77,13 +81,15 @@ neutral =
                         |> Svg.withWidth (Css.px 34)
                         |> Svg.withHeight (Css.px 32)
                 }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner for success alerts
 -}
 success : List (Html msg) -> Maybe msg -> Html msg
-success =
+success content maybeDismiss =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
@@ -93,6 +99,8 @@ success =
                 , height = Css.px 20
                 , asset = UiIcon.checkmark
                 }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
@@ -100,14 +108,14 @@ banner :
     { color : Css.Color
     , backgroundColor : Css.Color
     , icon : Html Never
+    , content : List (Html msg)
+    , dismiss : Maybe msg
     }
-    -> List (Html msg)
-    -> Maybe msg
     -> Html msg
-banner config bannerContent dismissMsg =
+banner config =
     let
         maybeDismissButton =
-            case dismissMsg of
+            case config.dismiss of
                 Nothing ->
                     Html.text ""
 
@@ -139,7 +147,7 @@ banner config bannerContent dismissMsg =
                 ]
             ]
             [ Html.map never config.icon
-            , notification bannerContent
+            , notification config.content
             ]
         , maybeDismissButton
         ]
