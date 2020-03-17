@@ -1,13 +1,18 @@
-module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success)
+module Nri.Ui.BannerAlert.V6 exposing
+    ( alert, error, neutral, success
+    , custom
+    )
 
 {-|
 
 @docs alert, error, neutral, success
+@docs custom
 
 
 # Post-release patches
 
   - adjusts link styles
+  - exposes `custom` banner-maker
 
 Changes from V5:
 
@@ -32,7 +37,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 -}
 alert : List (Html msg) -> Maybe msg -> Html msg
 alert content maybeDismiss =
-    banner
+    custom
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
@@ -50,7 +55,7 @@ alert content maybeDismiss =
 -}
 error : List (Html msg) -> Maybe msg -> Html msg
 error content maybeDismiss =
-    banner
+    custom
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
@@ -68,7 +73,7 @@ error content maybeDismiss =
 -}
 neutral : List (Html msg) -> Maybe msg -> Html msg
 neutral content maybeDismiss =
-    banner
+    custom
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
@@ -90,7 +95,7 @@ neutral content maybeDismiss =
 -}
 success : List (Html msg) -> Maybe msg -> Html msg
 success content maybeDismiss =
-    banner
+    custom
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
@@ -104,7 +109,9 @@ success content maybeDismiss =
         }
 
 
-banner :
+{-| Use to construct a custom banner. Prefer to use a pre-made banner when possible.
+-}
+custom :
     { color : Css.Color
     , backgroundColor : Css.Color
     , icon : Html Never
@@ -112,7 +119,7 @@ banner :
     , dismiss : Maybe msg
     }
     -> Html msg
-banner config =
+custom config =
     let
         maybeDismissButton =
             case config.dismiss of

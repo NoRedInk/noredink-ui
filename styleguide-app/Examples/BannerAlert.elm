@@ -11,7 +11,9 @@ import Html.Styled exposing (a, div, h3, pre, text)
 import Html.Styled.Attributes as Attributes
 import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
 import Nri.Ui.BannerAlert.V6 as BannerAlert
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Pennant.V1 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -42,6 +44,15 @@ example parentMsg state =
         , h3 [] [ text "neutral" ]
         , BannerAlert.neutral [ text "This is a neutral message!" ] Nothing
         , pre [] [ text "BannerAlert.neutral [ text \"This is a neutral message!\" ] Nothing" ]
+        , h3 [] [ text "custom" ]
+        , BannerAlert.custom
+            { color = Colors.aquaDark
+            , backgroundColor = Colors.gray92
+            , icon = Pennant.premiumFlag
+            , content = [ text "I'm a custom banner!" ]
+            , dismiss = Nothing
+            }
+        , pre [] [ text "TODO" ]
         , h3 [] [ text "with multi-line link and icon" ]
         , BannerAlert.success
             [ text "Click "
