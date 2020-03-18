@@ -1,160 +1,22 @@
-module Nri.Ui.BannerAlert.V6 exposing (alert, error, neutral, success)
+module Nri.Ui.BannerAlert.V6 exposing
+    ( alert, error, neutral, success
+    , custom
+    )
 
 {-|
 
 @docs alert, error, neutral, success
+@docs custom
 
 
 # Post-release patches
 
   - adjusts link styles
+  - exposes `custom` banner-maker
 
 Changes from V5:
 
   - takes HTML rather than BannerContent
-
-<details>
-<summary>elm-refactor upgrade script</summary>
-
-    import Css
-    import Html.Styled as Html
-    import Html.Styled.Attributes as Attributes
-    import Nri.Ui.BannerAlert.V6 as BannerAlert
-    import Nri.Ui.Fonts.V1 as Fonts
-
-    upgrade_Nri_Ui_BannerAlert_V5_alert bannerContent maybeMsg =
-        BannerAlert.alert
-            (case bannerContent of
-                Nri.Ui.BannerAlert.V5.Plain string ->
-                    [ Html.text string ]
-
-                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
-                    [ Html.div
-                        [ Attributes.css
-                            [ Css.fontSize (Css.px 20)
-                            , Css.fontWeight (Css.int 700)
-                            , Css.lineHeight (Css.px 25)
-                            , Css.maxWidth (Css.px 600)
-                            , Fonts.baseFont
-                            ]
-                        ]
-                        [ Html.text prefixText
-                        , Html.a
-                            [ Attributes.href linkUrl
-                            , case target of
-                                Nri.Ui.BannerAlert.V5.Blank ->
-                                    Attributes.target "_blank"
-
-                                Nri.Ui.BannerAlert.V5.Self ->
-                                    Attributes.target "_self"
-                            ]
-                            [ Html.text linkText ]
-                        , Html.text postfixText
-                        ]
-                    ]
-            )
-            maybeMsg
-
-    upgrade_Nri_Ui_BannerAlert_V5_error bannerContent maybeMsg =
-        BannerAlert.error
-            (case bannerContent of
-                Nri.Ui.BannerAlert.V5.Plain string ->
-                    [ Html.text string ]
-
-                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
-                    [ Html.div
-                        [ Attributes.css
-                            [ Css.fontSize (Css.px 20)
-                            , Css.fontWeight (Css.int 700)
-                            , Css.lineHeight (Css.px 25)
-                            , Css.maxWidth (Css.px 600)
-                            , Fonts.baseFont
-                            ]
-                        ]
-                        [ Html.text prefixText
-                        , Html.a
-                            [ Attributes.href linkUrl
-                            , case target of
-                                Nri.Ui.BannerAlert.V5.Blank ->
-                                    Attributes.target "_blank"
-
-                                Nri.Ui.BannerAlert.V5.Self ->
-                                    Attributes.target "_self"
-                            ]
-                            [ Html.text linkText ]
-                        , Html.text postfixText
-                        ]
-                    ]
-            )
-            maybeMsg
-
-    upgrade_Nri_Ui_BannerAlert_V5_neutral bannerContent maybeMsg =
-        BannerAlert.neutral
-            (case bannerContent of
-                Nri.Ui.BannerAlert.V5.Plain string ->
-                    [ Html.text string ]
-
-                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
-                    [ Html.div
-                        [ Attributes.css
-                            [ Css.fontSize (Css.px 20)
-                            , Css.fontWeight (Css.int 700)
-                            , Css.lineHeight (Css.px 25)
-                            , Css.maxWidth (Css.px 600)
-                            , Fonts.baseFont
-                            ]
-                        ]
-                        [ Html.text prefixText
-                        , Html.a
-                            [ Attributes.href linkUrl
-                            , case target of
-                                Nri.Ui.BannerAlert.V5.Blank ->
-                                    Attributes.target "_blank"
-
-                                Nri.Ui.BannerAlert.V5.Self ->
-                                    Attributes.target "_self"
-                            ]
-                            [ Html.text linkText ]
-                        , Html.text postfixText
-                        ]
-                    ]
-            )
-            maybeMsg
-
-    upgrade_Nri_Ui_BannerAlert_V5_success bannerContent maybeMsg =
-        BannerAlert.success
-            (case bannerContent of
-                Nri.Ui.BannerAlert.V5.Plain string ->
-                    [ Html.text string ]
-
-                Nri.Ui.BannerAlert.V5.WithLink { target, prefixText, linkUrl, postfixText, linkText } ->
-                    [ Html.div
-                        [ Attributes.css
-                            [ Css.fontSize (Css.px 20)
-                            , Css.fontWeight (Css.int 700)
-                            , Css.lineHeight (Css.px 25)
-                            , Css.maxWidth (Css.px 600)
-                            , Fonts.baseFont
-                            ]
-                        ]
-                        [ Html.text prefixText
-                        , Html.a
-                            [ Attributes.href linkUrl
-                            , case target of
-                                Nri.Ui.BannerAlert.V5.Blank ->
-                                    Attributes.target "_blank"
-
-                                Nri.Ui.BannerAlert.V5.Self ->
-                                    Attributes.target "_self"
-                            ]
-                            [ Html.text linkText ]
-                        , Html.text postfixText
-                        ]
-                    ]
-            )
-            maybeMsg
-
-</details>
 
 -}
 
@@ -167,82 +29,118 @@ import Html.Styled.Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark, xSvg)
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| A banner to show error alerts
 -}
 alert : List (Html msg) -> Maybe msg -> Html msg
-alert =
+alert content maybeDismiss =
     banner
         { backgroundColor = Colors.sunshine
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.ochre
-            , height = Css.px 25
-            , asset = exclamationMark
-            }
+            inCircle
+                { backgroundColor = Colors.ochre
+                , color = Colors.white
+                , height = Css.px 25
+                , icon = UiIcon.attention
+                }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner to show error alerts
 -}
 error : List (Html msg) -> Maybe msg -> Html msg
-error =
+error content maybeDismiss =
     banner
         { backgroundColor = Colors.purpleLight
         , color = Colors.purpleDark
         , icon =
-            { backgroundColor = Colors.purple
-            , height = Css.px 25
-            , asset = exclamationMark
-            }
+            inCircle
+                { backgroundColor = Colors.purple
+                , color = Colors.white
+                , height = Css.px 25
+                , icon = UiIcon.attention
+                }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner to show neutral alerts
 -}
 neutral : List (Html msg) -> Maybe msg -> Html msg
-neutral =
+neutral content maybeDismiss =
     banner
         { backgroundColor = Colors.frost
         , color = Colors.navy
         , icon =
-            { backgroundColor = Colors.navy
-            , height = Css.px 32
-            , asset = bulb
-            }
+            inCircle
+                { backgroundColor = Colors.navy
+                , color = Colors.mustard
+                , height = Css.px 32
+                , icon = UiIcon.bulb
+                }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
 {-| A banner for success alerts
 -}
 success : List (Html msg) -> Maybe msg -> Html msg
-success =
+success content maybeDismiss =
     banner
         { backgroundColor = Colors.greenLightest
         , color = Colors.greenDarkest
         , icon =
-            { backgroundColor = Colors.green
-            , height = Css.px 20
-            , asset = checkmark
-            }
+            inCircle
+                { backgroundColor = Colors.green
+                , color = Colors.white
+                , height = Css.px 20
+                , icon = UiIcon.checkmark
+                }
+        , content = content
+        , dismiss = maybeDismiss
         }
 
 
-type alias StyleConfig =
+{-| Use to construct a custom banner. Prefer to use a pre-made banner when possible.
+-}
+custom :
     { color : Css.Color
     , backgroundColor : Css.Color
-    , icon : IconConfig
+    , icon : Svg
+    , content : List (Html msg)
+    , dismiss : Maybe msg
     }
+    -> Html msg
+custom config =
+    banner
+        { color = config.color
+        , backgroundColor = config.backgroundColor
+        , icon = Svg.toHtml config.icon
+        , content = config.content
+        , dismiss = config.dismiss
+        }
 
 
-banner : StyleConfig -> List (Html msg) -> Maybe msg -> Html msg
-banner config bannerContent dismissMsg =
+banner :
+    { color : Css.Color
+    , backgroundColor : Css.Color
+    , icon : Html Never
+    , content : List (Html msg)
+    , dismiss : Maybe msg
+    }
+    -> Html msg
+banner config =
     let
         maybeDismissButton =
-            case dismissMsg of
+            case config.dismiss of
                 Nothing ->
                     Html.text ""
 
@@ -273,8 +171,9 @@ banner config bannerContent dismissMsg =
                     ]
                 ]
             ]
-            [ icon config.icon
-            , notification bannerContent
+            [ iconContainer [ config.icon ]
+                |> Html.map never
+            , notification config.content
             ]
         , maybeDismissButton
         ]
@@ -300,40 +199,43 @@ dismissButton msg =
                 , Css.cursor Css.pointer
                 ]
             ]
-            [ NriSvg.toHtml xSvg
+            [ Svg.toHtml UiIcon.x
             ]
         ]
 
 
-type alias IconConfig =
-    { backgroundColor : Css.Color
-    , height : Css.Px
-    , asset : Svg
-    }
-
-
-icon : IconConfig -> Html msg
-icon config =
+iconContainer : List (Html msg) -> Html msg
+iconContainer =
     Html.div
         [ css
-            [ Css.boxSizing Css.borderBox
-            , Css.borderRadius (Css.pct 50)
-            , Css.color Colors.white
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.center
-            , Css.width (Css.px 50)
+            [ Css.width (Css.px 50)
             , Css.height (Css.px 50)
             , Css.marginRight (Css.px 20)
-            , Css.padding (Css.px 8)
-            , Css.flexShrink (Css.num 0)
-            , Css.backgroundColor config.backgroundColor
             ]
         ]
-        [ Html.div
-            [ css [ Css.height config.height ]
+
+
+inCircle :
+    { backgroundColor : Css.Color
+    , color : Css.Color
+    , height : Css.Px
+    , icon : Svg
+    }
+    -> Html msg
+inCircle config =
+    Html.div
+        [ css
+            [ Css.borderRadius (Css.pct 50)
+            , Css.height (Css.pct 100)
+            , Css.backgroundColor config.backgroundColor
+            , Css.displayFlex
+            , Css.alignItems Css.center
             ]
-            [ NriSvg.toHtml config.asset ]
+        ]
+        [ config.icon
+            |> Svg.withColor config.color
+            |> Svg.withHeight config.height
+            |> Svg.toHtml
         ]
 
 
