@@ -230,6 +230,7 @@ inCircle config =
             , Css.backgroundColor config.backgroundColor
             , Css.displayFlex
             , Css.alignItems Css.center
+            , Css.justifyContent Css.center
             ]
         ]
         [ config.icon
