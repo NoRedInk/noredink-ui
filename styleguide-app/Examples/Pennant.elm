@@ -21,13 +21,12 @@ example =
     { name = "Nri.Ui.Pennant.V2"
     , category = Icons
     , content =
-        [ Html.div [ css [ displayFlex, alignItems center ] ]
-            [ Html.span [ css [ Fonts.baseFont, Css.fontSize (Css.px 16) ] ]
-                [ Html.text "A premiumFlag indicates that content is Premium"
-                ]
-            , Pennant.premiumFlag
-                |> Svg.withWidth (Css.px 30)
-                |> Svg.withHeight (Css.px 16)
+        [ Html.div [ css [ Css.displayFlex, Css.width (Css.px 200) ] ]
+            [ Pennant.premiumFlag
+                |> Svg.withHeight (Css.px 60)
+                |> Svg.toHtml
+            , Pennant.disabledPremiumFlag
+                |> Svg.withHeight (Css.px 60)
                 |> Svg.toHtml
             ]
         ]

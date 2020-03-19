@@ -1,33 +1,55 @@
-module Nri.Ui.Pennant.V2 exposing (premiumFlag)
+module Nri.Ui.Pennant.V2 exposing (premiumFlag, disabledPremiumFlag)
 
 {-| Used for indicating Premium content
 
-@docs premiumFlag
+@docs premiumFlag, disabledPremiumFlag
 
 -}
 
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
-import Svg.Styled.Attributes as Attr
+import Svg.Styled.Attributes as Attributes
 
 
 {-| -}
 premiumFlag : Svg
 premiumFlag =
     Svg.svg
-        [ Attr.width "100%"
-        , Attr.height "100%"
-        , Attr.viewBox "0 0 25 19"
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 25 16"
         ]
         [ Svg.polygon
-            [ Attr.fill "#FEC709"
-            , Attr.points "12.7,0 0,0 0,13.8 0,15.8 0,17.5 7.3,17.5 24.8,17.5 19.4,8.1 24.8,0 "
+            [ Attributes.fill "#FEC709"
+            , Attributes.points "12.7,0 0,0 0,13.8 0,15.8 0,17.5 7.3,17.5 24.8,17.5 19.4,8.1 24.8,0 "
             ]
             []
         , Svg.path
-            [ Attr.fill "#146AFF"
-            , Attr.d "M7.5,3.8h4.2c1.1,0,1.9,0.3,2.5,0.8s0.9,1.2,0.9,2.1s-0.3,1.6-0.9,2.1c-0.6,0.5-1.4,0.8-2.5,0.8H9.3 v4.1H7.5V3.8z M11.5,8.1c0.6,0,1.1-0.1,1.4-0.4c0.3-0.3,0.5-0.6,0.5-1.1c0-0.5-0.2-0.9-0.5-1.1c-0.3-0.3-0.8-0.4-1.4-0.4H9.3v3 H11.5z"
+            [ Attributes.fill "#146AFF"
+            , Attributes.d "M7.5,3.8h4.2c1.1,0,1.9,0.3,2.5,0.8s0.9,1.2,0.9,2.1s-0.3,1.6-0.9,2.1c-0.6,0.5-1.4,0.8-2.5,0.8H9.3 v4.1H7.5V3.8z M11.5,8.1c0.6,0,1.1-0.1,1.4-0.4c0.3-0.3,0.5-0.6,0.5-1.1c0-0.5-0.2-0.9-0.5-1.1c-0.3-0.3-0.8-0.4-1.4-0.4H9.3v3 H11.5z"
             ]
             []
         ]
-        |> NriSvg.fromHtml
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+disabledPremiumFlag : Nri.Ui.Svg.V1.Svg
+disabledPremiumFlag =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 20 14"
+        ]
+        [ Svg.polygon
+            [ Attributes.fill "#aaaaaa"
+            , Attributes.points "0,0 0,14 20,14 15.7,6.5 20,0 "
+            ]
+            []
+        , Svg.path
+            [ Attributes.fill "#fafafa"
+            , Attributes.d "M6,3.2h3.1c0.8,0,1.4,0.2,1.9,0.6s0.7,0.9,0.7,1.6C11.7,6,11.4,6.6,11,7S9.9,7.6,9.1,7.6H6.9V11H6V3.2z M9,6.8 c0.6,0,1-0.1,1.3-0.4c0.3-0.2,0.4-0.6,0.4-1.1c0-0.5-0.1-0.8-0.4-1.1C10,4,9.6,3.9,9,3.9H6.9v2.9H9z"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
