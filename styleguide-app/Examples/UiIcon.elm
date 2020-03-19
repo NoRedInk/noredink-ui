@@ -83,8 +83,9 @@ example =
             , ( "plus", UiIcon.plus )
             ]
         , IconExamples.view "Lock & Key"
-            [ ( "lock", UiIcon.lock )
-            , ( "key", UiIcon.key )
+            [ ( "key", UiIcon.key )
+            , ( "lock", UiIcon.lock )
+            , ( "premiumLock", UiIcon.premiumLock )
             ]
         , IconExamples.view "Badges & Levels"
             [ ( "badge", UiIcon.badge )
