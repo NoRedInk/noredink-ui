@@ -41,8 +41,6 @@ example =
             , ( "speedometer", UiIcon.speedometer )
             , ( "bulb", UiIcon.bulb )
             , ( "help", UiIcon.help )
-            , ( "hat", UiIcon.hat )
-            , ( "keychain", UiIcon.keychain )
             ]
         , IconExamples.view "Humans & Class"
             [ ( "person", UiIcon.person )
@@ -88,6 +86,15 @@ example =
             ]
         , IconExamples.view "Badges & Levels"
             [ ( "badge", UiIcon.badge )
+            ]
+        , IconExamples.view "Tips & Tricks"
+            [ ( "hat", UiIcon.hat )
+            , ( "keychain", UiIcon.keychain )
+            ]
+        , IconExamples.view "Growth"
+            [ ( "sprout", UiIcon.sprout )
+            , ( "sapling", UiIcon.sapling )
+            , ( "tree", UiIcon.tree )
             ]
         ]
     }
