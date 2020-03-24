@@ -6,11 +6,12 @@ module Examples.Icon exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading

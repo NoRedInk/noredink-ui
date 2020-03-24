@@ -4,9 +4,10 @@ module Examples.Table exposing (Msg, State, example, init, update)
    @docs Msg, State, example, init, update
 -}
 
+import Category exposing (Category(..))
 import Css exposing (..)
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading

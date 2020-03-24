@@ -6,8 +6,9 @@ module Examples.SortableTable exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
 

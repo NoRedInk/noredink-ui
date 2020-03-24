@@ -6,8 +6,9 @@ module Examples.Dropdown exposing (Msg, State, Value, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Dropdown.V2
 
 

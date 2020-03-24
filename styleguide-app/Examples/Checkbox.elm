@@ -6,10 +6,11 @@ module Examples.Checkbox exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox

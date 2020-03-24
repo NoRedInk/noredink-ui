@@ -6,10 +6,11 @@ module Examples.Page exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Page.V3 as Page
 

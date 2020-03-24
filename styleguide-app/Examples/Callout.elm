@@ -6,10 +6,11 @@ module Examples.Callout exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (href, title)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 
 

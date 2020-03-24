@@ -1,5 +1,6 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
+import Category exposing (Category(..))
 import Examples.Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
@@ -36,7 +37,7 @@ import Examples.Tooltip
 import Examples.UiIcon
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Url exposing (Url)
 
 

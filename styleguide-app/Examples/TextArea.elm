@@ -6,9 +6,10 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Dict exposing (Dict)
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Heading.V2 as Heading

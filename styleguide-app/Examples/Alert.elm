@@ -6,8 +6,9 @@ module Examples.Alert exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Heading.V2 as Heading
 

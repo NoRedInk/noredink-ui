@@ -9,9 +9,10 @@ module Examples.Tabs exposing
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled as Html
 import List.Zipper
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Tabs.V4 as Tabs
 
 

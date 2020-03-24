@@ -2,12 +2,13 @@ module Main exposing (init, main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation exposing (Key)
+import Category exposing (Category(..))
 import Css exposing (..)
 import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, categoryForDisplay, categoryForId)
+import ModuleExample as ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
@@ -123,11 +124,11 @@ view_ model =
                     [ Html.styled Html.section
                         [ sectionStyles ]
                         []
-                        [ Heading.h2 [] [ Html.text (categoryForDisplay category) ]
+                        [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
                         , nriThemedModules model.moduleStates
                             |> List.filter (\doodad -> category == doodad.category)
                             |> List.map (ModuleExample.view True)
-                            |> Html.div [ id (categoryForId category) ]
+                            |> Html.div [ id (Category.forId category) ]
                             |> Html.map UpdateModuleStates
                         ]
                     ]
@@ -176,7 +177,7 @@ navigation route =
         navLink category =
             categoryLink (isActive category)
                 ("#category/" ++ Debug.toString category)
-                (categoryForDisplay category)
+                (Category.forDisplay category)
 
         toNavLi element =
             Html.li

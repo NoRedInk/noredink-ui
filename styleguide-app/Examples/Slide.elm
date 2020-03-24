@@ -7,11 +7,12 @@ module Examples.Slide exposing (Msg, State, example, init, update)
 -}
 
 import Accessibility.Styled as Html
+import Category exposing (Category(..))
 import Css
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
 import List.Zipper as Zipper exposing (Zipper)
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Slide.V1 as Slide

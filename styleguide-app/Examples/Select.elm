@@ -16,10 +16,11 @@ module Examples.Select exposing
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Html.Styled
 import Html.Styled.Attributes
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
 

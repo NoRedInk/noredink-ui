@@ -1,14 +1,14 @@
 module Routes exposing (Route(..), fromLocation)
 
 import Browser.Navigation as Navigation
-import ModuleExample exposing (categoryFromString)
+import Category
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
 
 
 type Route
     = Doodad String
-    | Category ModuleExample.Category
+    | Category Category.Category
     | All
 
 
@@ -30,9 +30,9 @@ restOfPath =
     Parser.getChompedString (Parser.chompWhile (always True))
 
 
-category : String -> Parser ModuleExample.Category
+category : String -> Parser Category.Category
 category string =
-    case categoryFromString string of
+    case Category.fromString string of
         Ok c ->
             Parser.succeed c
 

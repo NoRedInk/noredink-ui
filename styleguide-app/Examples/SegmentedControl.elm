@@ -17,11 +17,12 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled
+import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V8 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)

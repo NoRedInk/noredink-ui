@@ -6,9 +6,10 @@ module Examples.Heading exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 

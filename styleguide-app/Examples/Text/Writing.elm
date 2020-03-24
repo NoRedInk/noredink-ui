@@ -4,8 +4,9 @@ module Examples.Text.Writing exposing (example)
    @docs example
 -}
 
+import Category exposing (Category(..))
 import Html.Styled exposing (text)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
 

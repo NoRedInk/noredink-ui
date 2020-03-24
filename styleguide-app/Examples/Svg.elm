@@ -16,13 +16,14 @@ module Examples.Svg exposing
 
 -}
 
+import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
 import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
+import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading

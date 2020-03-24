@@ -6,8 +6,9 @@ module Examples.MasteryIcon exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Examples.IconExamples as IconExamples
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MasteryIcon.V1 as MasteryIcon
 

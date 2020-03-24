@@ -7,9 +7,10 @@ module Examples.Tooltip exposing (example, init, update, State, Msg)
 -}
 
 import Accessibility.Styled as Html
+import Category exposing (Category(..))
 import Css
 import Html.Styled.Attributes exposing (css, href)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V1 as Tooltip
