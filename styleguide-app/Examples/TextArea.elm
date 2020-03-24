@@ -6,13 +6,15 @@ module Examples.TextArea exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Dict exposing (Dict)
 import Html.Styled as Html
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextArea.V4 as TextArea
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -36,7 +38,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.TextArea.V4"
-    , category = Inputs
+    , categories = Set.fromList Category.sorter <| List.singleton Inputs
     , content =
         [ Heading.h1 [] [ Html.text "Textarea controls" ]
         , Html.div []

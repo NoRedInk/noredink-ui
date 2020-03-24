@@ -16,19 +16,21 @@ module Examples.Select exposing
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Html.Styled
 import Html.Styled.Attributes
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Select.V7"
-    , category = Inputs
+    , categories = Set.fromList Category.sorter <| List.singleton Inputs
     , content =
         [ Html.Styled.label
             [ Html.Styled.Attributes.for "tortilla-selector" ]

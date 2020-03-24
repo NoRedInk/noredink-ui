@@ -7,17 +7,19 @@ module Examples.Modal exposing (Msg, State, example, init, update, subscriptions
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
+import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
 import Html as Root
 import Html.Styled.Attributes as Attributes
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V8 as Modal
 import Nri.Ui.Text.V4 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -51,7 +53,7 @@ init =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Modal.V8"
-    , category = Modals
+    , categories = Set.fromList Category.sorter <| List.singleton Modals
     , content =
         [ viewSettings state
         , Button.button "Launch Info Modal"

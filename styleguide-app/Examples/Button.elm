@@ -6,15 +6,17 @@ module Examples.Button exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
+import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -39,7 +41,7 @@ example unnamedMessages state =
             unnamedMessages "ButtonExample"
     in
     { name = "Nri.Ui.Button.V10"
-    , category = Buttons
+    , categories = Set.fromList Category.sorter <| List.singleton Buttons
     , content = [ viewButtonExamples messages state ]
     }
 

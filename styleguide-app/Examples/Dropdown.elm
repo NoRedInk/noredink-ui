@@ -6,9 +6,11 @@ module Examples.Dropdown exposing (Msg, State, Value, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Dropdown.V2
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -30,7 +32,7 @@ type alias State value =
 example : (Msg -> msg) -> State Value -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Dropdown.V2"
-    , category = Inputs
+    , categories = Set.fromList Category.sorter <| List.singleton Inputs
     , content =
         [ Html.Styled.map parentMessage (Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog)
         ]

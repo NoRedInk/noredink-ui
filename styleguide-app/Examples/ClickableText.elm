@@ -6,15 +6,17 @@ module Examples.ClickableText exposing (Msg, State, example, init, update)
 
 -}
 
+import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample, ModuleMessages)
+import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -38,7 +40,7 @@ example unnamedMessages state =
             unnamedMessages "ClickableTextExample"
     in
     { name = "Nri.Ui.ClickableText.V3"
-    , category = Buttons
+    , categories = Set.fromList Category.sorter <| List.singleton Buttons
     , content =
         [ viewExamples messages state ]
     }

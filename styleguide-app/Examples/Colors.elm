@@ -6,14 +6,16 @@ module Examples.Colors exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Color exposing (highContrast)
 import Css
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Sort.Set as Set exposing (Set)
 
 
 type alias ColorExample =
@@ -23,7 +25,7 @@ type alias ColorExample =
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Colors.V1"
-    , category = Colors
+    , categories = Set.fromList Category.sorter <| List.singleton Colors
     , content =
         [ [ ( "gray20", Colors.gray20, "Main text" )
           , ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )

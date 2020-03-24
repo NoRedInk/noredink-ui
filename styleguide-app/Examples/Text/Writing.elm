@@ -1,19 +1,23 @@
 module Examples.Text.Writing exposing (example)
 
-{- \
-   @docs example
+{-|
+
+@docs example
+
 -}
 
+import Category exposing (Category(..))
 import Html.Styled exposing (text)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Text.Writing.V1 as TextWriting
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Text.Writing.V1"
-    , category = Text
+    , categories = Set.fromList Category.sorter <| List.singleton Text
     , content =
         let
             longerBody =

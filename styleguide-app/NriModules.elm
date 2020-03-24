@@ -1,5 +1,6 @@
 module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
+import Category exposing (Category(..))
 import Examples.Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
@@ -34,10 +35,8 @@ import Examples.TextArea as TextAreaExample
 import Examples.TextInput as TextInputExample
 import Examples.Tooltip
 import Examples.UiIcon
-import Html exposing (Html, img)
-import Html.Attributes exposing (..)
-import ModuleExample exposing (Category(..), ModuleExample)
-import Url exposing (Url)
+import ModuleExample exposing (ModuleExample)
+import Sort.Set as Set exposing (Set)
 
 
 type alias ModuleStates =
@@ -309,18 +308,6 @@ subscriptions moduleStates =
         ]
 
 
-{-| A container with a visually-apparent size for demonstrating how style guide components
-fill their parents.
--}
-container : Int -> List (Html msg) -> Html msg
-container width children =
-    Html.div
-        [ Html.Attributes.class "demo-container"
-        , style "width" (Debug.toString width ++ "px")
-        ]
-        children
-
-
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
 nriThemedModules model =
     [ Examples.Alert.example
@@ -366,9 +353,3 @@ exampleMessages exampleMessageWrapper exampleName =
     , showItWorked = ShowItWorked exampleName
     , wrapper = exampleMessageWrapper
     }
-
-
-route : Url -> Maybe String
-route location =
-    location.fragment
-        |> Maybe.map (String.dropLeft 1)

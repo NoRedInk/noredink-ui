@@ -6,20 +6,22 @@ module Examples.Pennant exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Pennant.V2"
-    , category = Icons
+    , categories = Set.fromList Category.sorter <| List.singleton Icons
     , content =
         [ Html.div [ css [ Css.displayFlex, Css.width (Css.px 200) ] ]
             [ Pennant.premiumFlag

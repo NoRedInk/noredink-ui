@@ -7,12 +7,14 @@ module Examples.Tooltip exposing (example, init, update, State, Msg)
 -}
 
 import Accessibility.Styled as Html
+import Category exposing (Category(..))
 import Css
 import Html.Styled.Attributes exposing (css, href)
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V1 as Tooltip
+import Sort.Set as Set exposing (Set)
 
 
 type TooltipType
@@ -53,7 +55,7 @@ update msg model =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example msg model =
     { name = "Nri.Ui.Tooltip.V1"
-    , category = Widgets
+    , categories = Set.fromList Category.sorter <| List.singleton Widgets
     , content =
         [ Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
         , Heading.h3 [] [ Html.text "primaryLabel" ]

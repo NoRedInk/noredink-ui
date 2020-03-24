@@ -6,18 +6,20 @@ module Examples.Logo exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Examples.IconExamples as IconExamples
-import ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Logo.V1"
-    , category = Icons
+    , categories = Set.fromList Category.sorter <| List.singleton Icons
     , content =
         [ IconExamples.viewWithCustomStyles "NRI"
             [ ( "noredink"

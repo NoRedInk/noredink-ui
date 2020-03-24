@@ -6,18 +6,20 @@ module Examples.Text exposing (example)
 
 -}
 
+import Category exposing (Category(..))
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
-import ModuleExample as ModuleExample exposing (Category(..), ModuleExample)
+import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Text.V4"
-    , category = Text
+    , categories = Set.fromList Category.sorter <| List.singleton Text
     , content =
         let
             exampleHtml kind =
