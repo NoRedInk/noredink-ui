@@ -5,12 +5,13 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
+import Sort.Set as Set exposing (Set)
 
 
 type alias ModuleExample msg =
     { name : String
     , content : List (Html msg)
-    , category : Category
+    , categories : Set Category
     }
 
 

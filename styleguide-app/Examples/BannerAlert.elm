@@ -17,12 +17,13 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Sort.Set as Set exposing (Set)
 
 
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMsg state =
     { name = "Nri.Ui.BannerAlert.V6"
-    , category = Messaging
+    , categories = Set.fromList Category.sorter <| List.singleton Messaging
     , content =
         [ if state.show then
             div

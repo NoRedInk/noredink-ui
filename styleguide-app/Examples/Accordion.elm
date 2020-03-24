@@ -20,13 +20,14 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage model =
     { name = "Nri.Ui.Accordion.V1"
-    , category = Layout
+    , categories = Set.fromList Category.sorter <| List.singleton Layout
     , content =
         [ Heading.h3 [] [ Html.text "Accordion.view with default styles" ]
         , Accordion.view

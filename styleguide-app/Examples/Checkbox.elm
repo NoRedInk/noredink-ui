@@ -15,6 +15,7 @@ import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Set exposing (Set)
+import Sort.Set
 
 
 {-| -}
@@ -33,7 +34,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Checkbox.V5"
-    , category = Inputs
+    , categories = Sort.Set.fromList Category.sorter <| List.singleton Inputs
     , content =
         [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
         , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state

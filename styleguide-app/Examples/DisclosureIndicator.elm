@@ -16,6 +16,7 @@ import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Text.V2 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -29,7 +30,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.DisclosureIndicator.V2"
-    , category = Widgets
+    , categories = Set.fromList Category.sorter <| List.singleton Widgets
     , content =
         [ Text.smallBodyGray [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
         , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]

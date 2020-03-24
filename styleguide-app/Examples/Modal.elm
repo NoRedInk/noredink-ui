@@ -19,6 +19,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V8 as Modal
 import Nri.Ui.Text.V4 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -52,7 +53,7 @@ init =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Modal.V8"
-    , category = Modals
+    , categories = Set.fromList Category.sorter <| List.singleton Modals
     , content =
         [ viewSettings state
         , Button.button "Launch Info Modal"

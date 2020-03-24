@@ -15,6 +15,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import NriModules as NriModules exposing (ModuleStates, nriThemedModules)
 import Routes as Routes exposing (Route(..))
+import Sort.Set as Set
 import Url exposing (Url)
 
 
@@ -126,7 +127,7 @@ view_ model =
                         []
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
                         , nriThemedModules model.moduleStates
-                            |> List.filter (\doodad -> category == doodad.category)
+                            |> List.filter (\doodad -> Set.memberOf doodad.categories category)
                             |> List.map (ModuleExample.view True)
                             |> Html.div [ id (Category.forId category) ]
                             |> Html.map UpdateModuleStates

@@ -12,13 +12,14 @@ import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Fonts.V1"
-    , category = Text
+    , categories = Set.fromList Category.sorter <| List.singleton Text
     , content =
         [ Heading.h3 [] [ Html.text "baseFont" ]
         , Html.p [ css [ Fonts.baseFont ] ]

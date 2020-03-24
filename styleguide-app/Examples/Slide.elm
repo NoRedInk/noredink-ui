@@ -16,6 +16,7 @@ import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Slide.V1 as Slide
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -35,7 +36,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Slide.V1"
-    , category = Animations
+    , categories = Set.fromList Category.sorter <| List.singleton Animations
     , content =
         [ Keyed.node "div"
             [ css

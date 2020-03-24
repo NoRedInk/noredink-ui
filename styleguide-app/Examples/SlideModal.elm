@@ -15,6 +15,7 @@ import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SlideModal.V2 as SlideModal
+import Sort.Set as Set exposing (Set)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -33,7 +34,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.SlideModal.V2"
-    , category = Modals
+    , categories = Set.fromList Category.sorter <| List.singleton Modals
     , content =
         [ viewModal state.modal
         , modalLaunchButton

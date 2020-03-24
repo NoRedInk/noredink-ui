@@ -12,6 +12,7 @@ import Html.Styled as Html
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -35,7 +36,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.TextInput.V5"
-    , category = Inputs
+    , categories = Set.fromList Category.sorter <| List.singleton Inputs
     , content =
         [ Html.map parentMessage <|
             Html.div []

@@ -12,12 +12,13 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (href, title)
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
+import Sort.Set as Set exposing (Set)
 
 
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Callout.V1"
-    , category = Messaging
+    , categories = Set.fromList Category.sorter <| List.singleton Messaging
     , content =
         [ -- PLAIN
           Html.h3 [] [ Html.text "Originally Designed Use Case" ]

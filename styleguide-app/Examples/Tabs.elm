@@ -14,6 +14,7 @@ import Html.Styled as Html
 import List.Zipper
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Tabs.V4 as Tabs
+import Sort.Set as Set exposing (Set)
 
 
 type Tab
@@ -24,7 +25,7 @@ type Tab
 example : (Tab -> msg) -> Tab -> ModuleExample msg
 example changeTab tab =
     { name = "Nri.Ui.Tabs.V4"
-    , category = Layout
+    , categories = Set.fromList Category.sorter <| List.singleton Layout
     , content =
         [ Tabs.view
             { title = Nothing

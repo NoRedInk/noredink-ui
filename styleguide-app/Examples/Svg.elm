@@ -30,6 +30,7 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V6 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -40,7 +41,7 @@ example unnamedMessages state =
             unnamedMessages "Nri.Ui.Svg.V1"
     in
     { name = "Nri.Ui.Svg.V1"
-    , category = Icons
+    , categories = Set.fromList Category.sorter <| List.singleton Icons
     , content =
         [ viewSettings state
             |> Html.map parentMessages.wrapper

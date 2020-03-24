@@ -11,6 +11,7 @@ import Html.Styled as Html
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
+import Sort.Set as Set exposing (Set)
 
 
 type Column
@@ -34,7 +35,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage { sortState } =
     { name = "Nri.Ui.SortableTable.V1"
-    , category = Tables
+    , categories = Set.fromList Category.sorter <| List.singleton Tables
     , content =
         let
             config =

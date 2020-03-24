@@ -11,13 +11,14 @@ import Examples.IconExamples as IconExamples
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MasteryIcon.V1 as MasteryIcon
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.MasteryIcon.V1"
-    , category = Icons
+    , categories = Set.fromList Category.sorter <| List.singleton Icons
     , content =
         [ IconExamples.view "Levels"
             [ ( "levelZero", MasteryIcon.levelZero )

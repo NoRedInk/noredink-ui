@@ -11,12 +11,13 @@ import Html.Styled as Html
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Heading.V2 as Heading
+import Sort.Set as Set exposing (Set)
 
 
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Alert.V4"
-    , category = Messaging
+    , categories = Set.fromList Category.sorter <| List.singleton Messaging
     , content =
         [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
         , Alert.error "This is an **error**"

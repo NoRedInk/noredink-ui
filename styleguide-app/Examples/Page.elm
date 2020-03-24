@@ -13,13 +13,14 @@ import Html.Styled as Html exposing (Html)
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Page.V3 as Page
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : msg -> ModuleExample msg
 example noOp =
     { name = "Nri.Ui.Page.V3"
-    , category = Pages
+    , categories = Set.fromList Category.sorter <| List.singleton Pages
     , content =
         [ Css.Global.global
             [ Css.Global.selector "[data-page-container]"

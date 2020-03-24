@@ -12,6 +12,7 @@ import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Table.V5 as Table
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -28,7 +29,7 @@ type alias State =
 example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage state =
     { name = "Nri.Ui.Table.V5"
-    , category = Tables
+    , categories = Set.fromList Category.sorter <| List.singleton Tables
     , content =
         let
             columns =

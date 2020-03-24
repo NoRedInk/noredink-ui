@@ -36,6 +36,7 @@ import Examples.TextInput as TextInputExample
 import Examples.Tooltip
 import Examples.UiIcon
 import ModuleExample exposing (ModuleExample)
+import Sort.Set as Set exposing (Set)
 
 
 type alias ModuleStates =

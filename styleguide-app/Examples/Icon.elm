@@ -17,13 +17,14 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Text.V4 as Text
+import Sort.Set as Set exposing (Set)
 
 
 {-| -}
 example : ModuleExample msg
 example =
     { name = "Nri.Ui.Icon.V5"
-    , category = Icons
+    , categories = Set.fromList Category.sorter <| List.singleton Icons
     , content =
         [ viewLarge "Bulbs and Tips"
             [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }

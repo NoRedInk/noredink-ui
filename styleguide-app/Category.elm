@@ -3,6 +3,7 @@ module Category exposing
     , fromString
     , forDisplay, forId
     , all
+    , sorter
     )
 
 {-|
@@ -11,8 +12,11 @@ module Category exposing
 @docs fromString
 @docs forDisplay, forId
 @docs all
+@docs sorter
 
 -}
+
+import Sort exposing (Sorter)
 
 
 {-| -}
@@ -133,6 +137,12 @@ forDisplay category =
 
         Animations ->
             "Animations"
+
+
+{-| -}
+sorter : Sorter Category
+sorter =
+    Sort.by forId Sort.alphabetical
 
 
 {-| -}
