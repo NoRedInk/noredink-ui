@@ -186,7 +186,7 @@ navigation route =
 
         navLink category =
             link (isActive category)
-                ("#category/" ++ Debug.toString category)
+                ("#/category/" ++ Debug.toString category)
                 (Category.forDisplay category)
 
         toNavLi element =
@@ -221,7 +221,7 @@ navigation route =
             [ Events.onClick SkipToMainContent, id "skip" ]
             [ Html.text "Skip to main content" ]
         , Heading.h4 [] [ Html.text "Categories" ]
-        , (link (route == Routes.All) "#" "All"
+        , (link (route == Routes.All) "#/" "All"
             :: List.map navLink Category.all
           )
             |> List.map toNavLi
