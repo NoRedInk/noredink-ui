@@ -35,8 +35,6 @@ import Examples.TextArea as TextAreaExample
 import Examples.TextInput as TextInputExample
 import Examples.Tooltip
 import Examples.UiIcon
-import Html exposing (Html, img)
-import Html.Attributes exposing (..)
 import ModuleExample exposing (ModuleExample)
 
 
@@ -307,18 +305,6 @@ subscriptions moduleStates =
     Sub.batch
         [ Sub.map ModalExampleMsg (Examples.Modal.subscriptions moduleStates.modalExampleState)
         ]
-
-
-{-| A container with a visually-apparent size for demonstrating how style guide components
-fill their parents.
--}
-container : Int -> List (Html msg) -> Html msg
-container width children =
-    Html.div
-        [ Html.Attributes.class "demo-container"
-        , style "width" (Debug.toString width ++ "px")
-        ]
-        children
 
 
 nriThemedModules : ModuleStates -> List (ModuleExample Msg)
