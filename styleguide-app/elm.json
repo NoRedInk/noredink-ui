@@ -19,6 +19,7 @@
             "elm-community/string-extra": "4.0.1",
             "pablohirafuji/elm-markdown": "2.0.5",
             "rtfeldman/elm-css": "16.0.0",
+            "rtfeldman/elm-sorter-experiment": "2.1.1",
             "tesk9/accessible-html": "4.0.0",
             "tesk9/accessible-html-with-css": "2.1.1",
             "tesk9/modal": "5.0.1",
