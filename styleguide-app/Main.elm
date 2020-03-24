@@ -1,6 +1,7 @@
 module Main exposing (init, main)
 
 import Browser exposing (Document, UrlRequest(..))
+import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category
 import Css exposing (..)
@@ -8,6 +9,7 @@ import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
+import Html.Styled.Events as Events
 import ModuleExample as ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
@@ -16,6 +18,7 @@ import Nri.Ui.Heading.V2 as Heading
 import NriModules as NriModules exposing (ModuleStates, nriThemedModules)
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set
+import Task
 import Url exposing (Url)
 
 
@@ -53,6 +56,7 @@ type Msg
     = UpdateModuleStates NriModules.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
+    | SkipToMainContent
     | NoOp
 
 
@@ -78,6 +82,11 @@ update action model =
 
         OnUrlChange route ->
             ( { model | route = Routes.fromLocation route }, Cmd.none )
+
+        SkipToMainContent ->
+            ( model
+            , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
+            )
 
         NoOp ->
             ( model, Cmd.none )
@@ -106,7 +115,7 @@ view_ model =
         [ navigation model.route
         , Html.styled Html.main_
             [ flexGrow (int 1) ]
-            []
+            [ id "maincontent", Attributes.tabindex -1 ]
             (case model.route of
                 Routes.Doodad doodad ->
                     [ Html.styled Html.section
@@ -160,7 +169,7 @@ navigation route =
                 _ ->
                     False
 
-        categoryLink active hash displayName =
+        link active hash displayName =
             Html.styled Html.a
                 [ backgroundColor transparent
                 , borderStyle none
@@ -176,7 +185,7 @@ navigation route =
                 [ Html.text displayName ]
 
         navLink category =
-            categoryLink (isActive category)
+            link (isActive category)
                 ("#category/" ++ Debug.toString category)
                 (Category.forDisplay category)
 
@@ -199,11 +208,20 @@ navigation route =
         , top (px 150)
         , flexShrink zero
         ]
-        [ id "categories"
-        , attribute "aria-label" "Main Navigation"
+        [ attribute "aria-label" "Main Navigation"
         ]
-        [ Heading.h4 [] [ Html.text "Categories" ]
-        , (categoryLink (route == Routes.All) "#" "All"
+        [ Html.styled Html.button
+            [ backgroundColor transparent
+            , borderStyle none
+            , textDecoration none
+            , color Colors.azure
+            , Fonts.baseFont
+            , Css.marginBottom (px 20)
+            ]
+            [ Events.onClick SkipToMainContent, id "skip" ]
+            [ Html.text "Skip to main content" ]
+        , Heading.h4 [] [ Html.text "Categories" ]
+        , (link (route == Routes.All) "#" "All"
             :: List.map navLink Category.all
           )
             |> List.map toNavLi
@@ -211,7 +229,7 @@ navigation route =
                 [ margin4 zero zero (px 40) zero
                 , padding zero
                 ]
-                []
+                [ id "categories" ]
         ]
 
 
