@@ -2,7 +2,7 @@ module Main exposing (init, main)
 
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Navigation exposing (Key)
-import Category exposing (Category(..))
+import Category
 import Css exposing (..)
 import Html as RootHtml
 import Html.Attributes
@@ -203,21 +203,7 @@ navigation route =
         ]
         [ Heading.h4 [] [ Html.text "Categories" ]
         , (categoryLink (route == Routes.All) "#" "All"
-            :: List.map
-                navLink
-                [ Animations
-                , Buttons
-                , Colors
-                , Icons
-                , Inputs
-                , Layout
-                , Modals
-                , Pages
-                , Tables
-                , Text
-                , Widgets
-                , Messaging
-                ]
+            :: List.map navLink Category.all
           )
             |> List.map toNavLi
             |> Html.styled Html.ul

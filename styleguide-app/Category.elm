@@ -2,6 +2,7 @@ module Category exposing
     ( Category(..)
     , fromString
     , forDisplay, forId
+    , all
     )
 
 {-|
@@ -9,6 +10,7 @@ module Category exposing
 @docs Category
 @docs fromString
 @docs forDisplay, forId
+@docs all
 
 -}
 
@@ -27,6 +29,24 @@ type Category
     | Text
     | Pages
     | Animations
+
+
+{-| -}
+all : List Category
+all =
+    [ Animations
+    , Buttons
+    , Colors
+    , Icons
+    , Inputs
+    , Layout
+    , Modals
+    , Pages
+    , Tables
+    , Text
+    , Widgets
+    , Messaging
+    ]
 
 
 {-| Used for route changes
