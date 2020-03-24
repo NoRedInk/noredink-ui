@@ -38,7 +38,6 @@ import Examples.UiIcon
 import Html exposing (Html, img)
 import Html.Attributes exposing (..)
 import ModuleExample exposing (ModuleExample)
-import Url exposing (Url)
 
 
 type alias ModuleStates =
@@ -367,9 +366,3 @@ exampleMessages exampleMessageWrapper exampleName =
     , showItWorked = ShowItWorked exampleName
     , wrapper = exampleMessageWrapper
     }
-
-
-route : Url -> Maybe String
-route location =
-    location.fragment
-        |> Maybe.map (String.dropLeft 1)
