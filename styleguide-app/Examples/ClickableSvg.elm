@@ -42,7 +42,7 @@ example unnamedMessages state =
             unnamedMessages "Nri.Ui.ClickableSvg.V1"
     in
     { name = "Nri.Ui.ClickableSvg.V1"
-    , categories = Set.fromList Category.sorter <| List.singleton Buttons
+    , categories = Set.fromList Category.sorter [ Buttons, Icons ]
     , content =
         [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
             [ ClickableSvg.button "Back"
