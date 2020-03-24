@@ -12,7 +12,7 @@ jq -r -f script/axe-report.jq "$JSON_FILE"
 # Hey there! Did this script tell you to check out this file because the
 # expected error count went down? Well done! Just change this number to the new
 # value.
-TARGET_ERRORS=30
+TARGET_ERRORS=24
 
 # ideally we'd fail on any failures, but we have had a bunch build up over time!
 # So right now, we need to fail if the error count is not exactly what we
