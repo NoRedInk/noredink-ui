@@ -39,720 +39,652 @@ import Examples.UiIcon as UiIcon
 
 all : List (Example State Msg)
 all =
-    [ Example.wrap
-        { wrapMsg = AccordionMsg
-        , unwrapMsg =
-            \msg ->
+    [ Accordion.example
+        |> Example.wrapMsg AccordionMsg
+            (\msg ->
                 case msg of
                     AccordionMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = AccordionState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState AccordionState
+            (\msg ->
                 case msg of
                     AccordionState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Accordion.example
-    , Example.wrap
-        { wrapMsg = AlertMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Alert.example
+        |> Example.wrapMsg AlertMsg
+            (\msg ->
                 case msg of
                     AlertMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = AlertState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState AlertState
+            (\msg ->
                 case msg of
                     AlertState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Alert.example
-    , Example.wrap
-        { wrapMsg = AssignmentIconMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , AssignmentIcon.example
+        |> Example.wrapMsg AssignmentIconMsg
+            (\msg ->
                 case msg of
                     AssignmentIconMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = AssignmentIconState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState AssignmentIconState
+            (\msg ->
                 case msg of
                     AssignmentIconState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        AssignmentIcon.example
-    , Example.wrap
-        { wrapMsg = BannerAlertMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , BannerAlert.example
+        |> Example.wrapMsg BannerAlertMsg
+            (\msg ->
                 case msg of
                     BannerAlertMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = BannerAlertState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState BannerAlertState
+            (\msg ->
                 case msg of
                     BannerAlertState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        BannerAlert.example
-    , Example.wrap
-        { wrapMsg = ButtonMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Button.example
+        |> Example.wrapMsg ButtonMsg
+            (\msg ->
                 case msg of
                     ButtonMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = ButtonState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState ButtonState
+            (\msg ->
                 case msg of
                     ButtonState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Button.example
-    , Example.wrap
-        { wrapMsg = CalloutMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Callout.example
+        |> Example.wrapMsg CalloutMsg
+            (\msg ->
                 case msg of
                     CalloutMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = CalloutState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState CalloutState
+            (\msg ->
                 case msg of
                     CalloutState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Callout.example
-    , Example.wrap
-        { wrapMsg = CheckboxMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Checkbox.example
+        |> Example.wrapMsg CheckboxMsg
+            (\msg ->
                 case msg of
                     CheckboxMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = CheckboxState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState CheckboxState
+            (\msg ->
                 case msg of
                     CheckboxState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Checkbox.example
-    , Example.wrap
-        { wrapMsg = ClickableSvgMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , ClickableSvg.example
+        |> Example.wrapMsg ClickableSvgMsg
+            (\msg ->
                 case msg of
                     ClickableSvgMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = ClickableSvgState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState ClickableSvgState
+            (\msg ->
                 case msg of
                     ClickableSvgState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        ClickableSvg.example
-    , Example.wrap
-        { wrapMsg = ClickableTextMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , ClickableText.example
+        |> Example.wrapMsg ClickableTextMsg
+            (\msg ->
                 case msg of
                     ClickableTextMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = ClickableTextState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState ClickableTextState
+            (\msg ->
                 case msg of
                     ClickableTextState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        ClickableText.example
-    , Example.wrap
-        { wrapMsg = ColorsMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Colors.example
+        |> Example.wrapMsg ColorsMsg
+            (\msg ->
                 case msg of
                     ColorsMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = ColorsState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState ColorsState
+            (\msg ->
                 case msg of
                     ColorsState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Colors.example
-    , Example.wrap
-        { wrapMsg = DisclosureIndicatorMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , DisclosureIndicator.example
+        |> Example.wrapMsg DisclosureIndicatorMsg
+            (\msg ->
                 case msg of
                     DisclosureIndicatorMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = DisclosureIndicatorState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState DisclosureIndicatorState
+            (\msg ->
                 case msg of
                     DisclosureIndicatorState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        DisclosureIndicator.example
-    , Example.wrap
-        { wrapMsg = DropdownMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Dropdown.example
+        |> Example.wrapMsg DropdownMsg
+            (\msg ->
                 case msg of
                     DropdownMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = DropdownState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState DropdownState
+            (\msg ->
                 case msg of
                     DropdownState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Dropdown.example
-    , Example.wrap
-        { wrapMsg = FontsMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Fonts.example
+        |> Example.wrapMsg FontsMsg
+            (\msg ->
                 case msg of
                     FontsMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = FontsState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState FontsState
+            (\msg ->
                 case msg of
                     FontsState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Fonts.example
-    , Example.wrap
-        { wrapMsg = HeadingMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Heading.example
+        |> Example.wrapMsg HeadingMsg
+            (\msg ->
                 case msg of
                     HeadingMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = HeadingState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState HeadingState
+            (\msg ->
                 case msg of
                     HeadingState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Heading.example
-    , Example.wrap
-        { wrapMsg = IconMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Icon.example
+        |> Example.wrapMsg IconMsg
+            (\msg ->
                 case msg of
                     IconMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = IconState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState IconState
+            (\msg ->
                 case msg of
                     IconState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Icon.example
-    , Example.wrap
-        { wrapMsg = LogoMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Logo.example
+        |> Example.wrapMsg LogoMsg
+            (\msg ->
                 case msg of
                     LogoMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = LogoState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState LogoState
+            (\msg ->
                 case msg of
                     LogoState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Logo.example
-    , Example.wrap
-        { wrapMsg = MasteryIconMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , MasteryIcon.example
+        |> Example.wrapMsg MasteryIconMsg
+            (\msg ->
                 case msg of
                     MasteryIconMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = MasteryIconState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState MasteryIconState
+            (\msg ->
                 case msg of
                     MasteryIconState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        MasteryIcon.example
-    , Example.wrap
-        { wrapMsg = ModalMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Modal.example
+        |> Example.wrapMsg ModalMsg
+            (\msg ->
                 case msg of
                     ModalMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = ModalState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState ModalState
+            (\msg ->
                 case msg of
                     ModalState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Modal.example
-    , Example.wrap
-        { wrapMsg = PageMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Page.example
+        |> Example.wrapMsg PageMsg
+            (\msg ->
                 case msg of
                     PageMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = PageState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState PageState
+            (\msg ->
                 case msg of
                     PageState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Page.example
-    , Example.wrap
-        { wrapMsg = PennantMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Pennant.example
+        |> Example.wrapMsg PennantMsg
+            (\msg ->
                 case msg of
                     PennantMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = PennantState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState PennantState
+            (\msg ->
                 case msg of
                     PennantState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Pennant.example
-    , Example.wrap
-        { wrapMsg = SegmentedControlMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , SegmentedControl.example
+        |> Example.wrapMsg SegmentedControlMsg
+            (\msg ->
                 case msg of
                     SegmentedControlMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SegmentedControlState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SegmentedControlState
+            (\msg ->
                 case msg of
                     SegmentedControlState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        SegmentedControl.example
-    , Example.wrap
-        { wrapMsg = SelectMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Select.example
+        |> Example.wrapMsg SelectMsg
+            (\msg ->
                 case msg of
                     SelectMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SelectState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SelectState
+            (\msg ->
                 case msg of
                     SelectState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Select.example
-    , Example.wrap
-        { wrapMsg = SlideMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Slide.example
+        |> Example.wrapMsg SlideMsg
+            (\msg ->
                 case msg of
                     SlideMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SlideState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SlideState
+            (\msg ->
                 case msg of
                     SlideState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Slide.example
-    , Example.wrap
-        { wrapMsg = SlideModalMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , SlideModal.example
+        |> Example.wrapMsg SlideModalMsg
+            (\msg ->
                 case msg of
                     SlideModalMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SlideModalState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SlideModalState
+            (\msg ->
                 case msg of
                     SlideModalState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        SlideModal.example
-    , Example.wrap
-        { wrapMsg = SortableTableMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , SortableTable.example
+        |> Example.wrapMsg SortableTableMsg
+            (\msg ->
                 case msg of
                     SortableTableMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SortableTableState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SortableTableState
+            (\msg ->
                 case msg of
                     SortableTableState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        SortableTable.example
-    , Example.wrap
-        { wrapMsg = SvgMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Svg.example
+        |> Example.wrapMsg SvgMsg
+            (\msg ->
                 case msg of
                     SvgMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = SvgState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState SvgState
+            (\msg ->
                 case msg of
                     SvgState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Svg.example
-    , Example.wrap
-        { wrapMsg = TableMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Table.example
+        |> Example.wrapMsg TableMsg
+            (\msg ->
                 case msg of
                     TableMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TableState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TableState
+            (\msg ->
                 case msg of
                     TableState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Table.example
-    , Example.wrap
-        { wrapMsg = TabsMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Tabs.example
+        |> Example.wrapMsg TabsMsg
+            (\msg ->
                 case msg of
                     TabsMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TabsState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TabsState
+            (\msg ->
                 case msg of
                     TabsState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Tabs.example
-    , Example.wrap
-        { wrapMsg = TextMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Text.example
+        |> Example.wrapMsg TextMsg
+            (\msg ->
                 case msg of
                     TextMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TextState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TextState
+            (\msg ->
                 case msg of
                     TextState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Text.example
-    , Example.wrap
-        { wrapMsg = WritingMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Writing.example
+        |> Example.wrapMsg WritingMsg
+            (\msg ->
                 case msg of
                     WritingMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = WritingState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState WritingState
+            (\msg ->
                 case msg of
                     WritingState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Writing.example
-    , Example.wrap
-        { wrapMsg = TextAreaMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , TextArea.example
+        |> Example.wrapMsg TextAreaMsg
+            (\msg ->
                 case msg of
                     TextAreaMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TextAreaState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TextAreaState
+            (\msg ->
                 case msg of
                     TextAreaState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        TextArea.example
-    , Example.wrap
-        { wrapMsg = TextInputMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , TextInput.example
+        |> Example.wrapMsg TextInputMsg
+            (\msg ->
                 case msg of
                     TextInputMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TextInputState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TextInputState
+            (\msg ->
                 case msg of
                     TextInputState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        TextInput.example
-    , Example.wrap
-        { wrapMsg = TooltipMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , Tooltip.example
+        |> Example.wrapMsg TooltipMsg
+            (\msg ->
                 case msg of
                     TooltipMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = TooltipState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState TooltipState
+            (\msg ->
                 case msg of
                     TooltipState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        Tooltip.example
-    , Example.wrap
-        { wrapMsg = UiIconMsg
-        , unwrapMsg =
-            \msg ->
+            )
+    , UiIcon.example
+        |> Example.wrapMsg UiIconMsg
+            (\msg ->
                 case msg of
                     UiIconMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
-        , wrapState = UiIconState
-        , unwrapState =
-            \msg ->
+            )
+        |> Example.wrapState UiIconState
+            (\msg ->
                 case msg of
                     UiIconState childState ->
                         Just childState
 
                     _ ->
                         Nothing
-        }
-        UiIcon.example
+            )
     ]
 
 

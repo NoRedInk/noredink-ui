@@ -1,4 +1,4 @@
-module Example exposing (Example, view, wrap)
+module Example exposing (Example, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css exposing (..)
@@ -18,43 +18,54 @@ type alias Example state msg =
     }
 
 
-wrap :
-    { wrapMsg : msg -> msg2
-    , unwrapMsg : msg2 -> Maybe msg
-    , wrapState : state -> state2
-    , unwrapState : state2 -> Maybe state
-    }
+wrapMsg :
+    (msg -> msg2)
+    -> (msg2 -> Maybe msg)
     -> Example state msg
-    -> Example state2 msg2
-wrap { wrapMsg, unwrapMsg, wrapState, unwrapState } example =
+    -> Example state msg2
+wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
-    , state = wrapState example.state
+    , state = example.state
     , update =
-        \msg2 state2 ->
-            case ( unwrapMsg msg2, unwrapState state2 ) of
-                ( Just msg, Just state ) ->
+        \msg2 state ->
+            case unwrapMsg msg2 of
+                Just msg ->
                     example.update msg state
-                        |> Tuple.mapFirst wrapState
-                        |> Tuple.mapSecond (Cmd.map wrapMsg)
+                        |> Tuple.mapSecond (Cmd.map wrapMsg_)
 
-                _ ->
+                Nothing ->
+                    ( state, Cmd.none )
+    , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
+    , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
+    , categories = example.categories
+    }
+
+
+wrapState :
+    (state -> state2)
+    -> (state2 -> Maybe state)
+    -> Example state msg
+    -> Example state2 msg
+wrapState wrapState_ unwrapState example =
+    { name = example.name
+    , state = wrapState_ example.state
+    , update =
+        \msg state2 ->
+            case unwrapState state2 of
+                Just state ->
+                    example.update msg state
+                        |> Tuple.mapFirst wrapState_
+
+                Nothing ->
                     ( state2, Cmd.none )
     , subscriptions =
-        \state2 ->
-            case unwrapState state2 of
-                Just state ->
-                    Sub.map wrapMsg (example.subscriptions state)
-
-                Nothing ->
-                    Sub.none
+        unwrapState
+            >> Maybe.map example.subscriptions
+            >> Maybe.withDefault Sub.none
     , view =
-        \state2 ->
-            case unwrapState state2 of
-                Just state ->
-                    List.map (Html.map wrapMsg) (example.view state)
-
-                Nothing ->
-                    []
+        unwrapState
+            >> Maybe.map example.view
+            >> Maybe.withDefault []
     , categories = example.categories
     }
 
