@@ -1,11 +1,12 @@
 module Examples.Accordion exposing
     ( example
-    , Msg, State, example_, init, update, view
+    , State, Msg
     )
 
 {-|
 
-@docs example, styles
+@docs example
+@docs State, Msg
 
 -}
 
@@ -20,27 +21,10 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage model =
-    { name = "Nri.Ui.Accordion.V1"
-    , categories = Set.fromList Category.sorter <| List.singleton Layout
-    , content = List.map (Html.map parentMessage) (view model)
-    }
-
-
-{-| -}
-example_ :
-    { name : String
-    , state : State
-    , update : Msg -> State -> ( State, Cmd Msg )
-    , view : State -> List (Html Msg)
-    , categories : List Category
-    }
-example_ =
+example =
     { name = "Nri.Ui.Accordion.V1"
     , state = init
     , update = update

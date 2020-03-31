@@ -4,7 +4,7 @@ import Category exposing (Category(..))
 import Examples.Accordion as Accordion
 import Examples.Alert
 import Examples.AssignmentIcon
-import Examples.BannerAlert
+import Examples.BannerAlert as BannerAlert
 import Examples.Button as Button
 import Examples.Callout
 import Examples.Checkbox
@@ -52,9 +52,8 @@ type alias Example state msg =
 type alias ModuleStates =
     { accordion : Example Accordion.State Accordion.Msg
     , button : Example Button.State Button.Msg
+    , bannerAlert : Example BannerAlert.State BannerAlert.Msg
 
-    --, bannerAlertExample : { state : Examples.BannerAlert.State
-    --        , update :Examples.BannerAlert.Msg -> Examples.BannerAlert.State -> (Examples.BannerAlert.State, Cmd Examples.BannerAlert.Msg) }
     --, clickableTextExample : { state : Examples.ClickableText.State
     --        , update :Examples.ClickableText.Msg -> Examples.ClickableText.State -> (Examples.ClickableText.State, Cmd Examples.ClickableText.Msg) }
     --, checkboxExample : { state : Examples.Checkbox.State
@@ -94,10 +93,10 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { accordion = Accordion.example_
+    { accordion = Accordion.example
     , button = Button.example_
+    , bannerAlert = BannerAlert.example
 
-    --, bannerAlertExample = { state = Examples.BannerAlert.init, update = Examples.BannerAlert.init }
     --, clickableTextExample = { state = Examples.ClickableText.init, update = Examples.ClickableText.init }
     --, checkboxExample = { state = Examples.Checkbox.init, update = Examples.Checkbox.init }
     --, dropdown = { state = Examples.Dropdown.init, update = Examples.Dropdown.init }
@@ -121,6 +120,7 @@ init =
 type Msg
     = AccordionMsg Accordion.Msg
     | ButtonMsg Button.Msg
+    | BannerAlertMsg BannerAlert.Msg
 
 
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
@@ -145,6 +145,9 @@ update msg moduleStates =
         ButtonMsg exampleMsg ->
             updateWith .button (\state m -> { m | button = state }) ButtonMsg exampleMsg
 
+        BannerAlertMsg exampleMsg ->
+            updateWith .bannerAlert (\state m -> { m | bannerAlert = state }) BannerAlertMsg exampleMsg
+
 
 subscriptions moduleStates =
     Sub.batch
@@ -155,13 +158,14 @@ subscriptions moduleStates =
 {-| -}
 view : ModuleStates -> List (ModuleExample Msg)
 view moduleStates =
-    [ viewExample moduleStates.accordion AccordionMsg
-    , viewExample moduleStates.button ButtonMsg
+    [ viewExample AccordionMsg moduleStates.accordion
+    , viewExample ButtonMsg moduleStates.button
+    , viewExample BannerAlertMsg moduleStates.bannerAlert
     ]
 
 
-viewExample : Example state msg -> (msg -> Msg) -> ModuleExample Msg
-viewExample example wrapperMsg =
+viewExample : (msg -> Msg) -> Example state msg -> ModuleExample Msg
+viewExample wrapperMsg example =
     { name = example.name
     , categories = Set.fromList Category.sorter example.categories
     , content = List.map (Html.map wrapperMsg) (example.view example.state)

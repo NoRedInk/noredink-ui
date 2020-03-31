@@ -1,12 +1,12 @@
 module Examples.Button exposing
-    ( Msg, State, init, update
-    , example_
+    ( Msg, State
+    , example_, init, update
     )
 
 {-|
 
-@docs Msg, State, example, init, update
-@docs example_
+@docs example
+@docs Msg, State
 
 -}
 
@@ -20,7 +20,6 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Sort.Set as Set exposing (Set)
 
 
 example_ =
@@ -41,23 +40,6 @@ type State
 type ButtonType
     = Button
     | Link
-
-
-
---{-| -}
---example :
---    (String -> ModuleMessages (Msg parentMsg) parentMsg)
---    -> State parentMsg
---    -> ModuleExample parentMsg
---example unnamedMessages state =
---    let
---        messages =
---            unnamedMessages "ButtonExample"
---    in
---    { name = "Nri.Ui.Button.V10"
---    , categories = Set.fromList Category.sorter <| List.singleton Buttons
---    , content = [ viewButtonExamples messages state ]
---    }
 
 
 {-| -}
