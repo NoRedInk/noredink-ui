@@ -1,5 +1,6 @@
 module Examples exposing (ModuleStates, Msg, init, subscriptions, update, view)
 
+import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.Alert as Alert
@@ -38,81 +39,13 @@ import Examples.UiIcon as UiIcon
 import Html.Styled as Html exposing (Html)
 
 
-type alias ModuleStates =
-    { accordion : Example State Msg
-    , button : Example State Msg
-    , bannerAlert : Example State Msg
-    , clickableText : Example ClickableText.State ClickableText.Msg
-    , checkbox : Example Checkbox.State Checkbox.Msg
-    , dropdown : Example Dropdown.State Dropdown.Msg
-    , segmentedControl : Example SegmentedControl.State SegmentedControl.Msg
-    , select : Example Select.State Select.Msg
-    , table : Example Table.State Table.Msg
-    , textArea : Example TextArea.State TextArea.Msg
-    , textInput : Example TextInput.State TextInput.Msg
-    , disclosureIndicator : Example DisclosureIndicator.State DisclosureIndicator.Msg
-    , modal : Example State Msg
-    , slideModal : Example SlideModal.State SlideModal.Msg
-    , slide : Example Slide.State Slide.Msg
-    , sortableTable : Example SortableTable.State SortableTable.Msg
-    , svg : Example Svg.State Svg.Msg
-    , clickableSvg : Example ClickableSvg.State ClickableSvg.Msg
-    , tabs : Example Tabs.State Tabs.Msg
-    , tooltip : Example Tooltip.State Tooltip.Msg
-    }
-
-
-init : ModuleStates
-init =
-    { accordion =
-        Example.wrap
-            { wrapMsg = AccordionMsg
-            , unwrapMsg = getAccordionMsg
-            , wrapState = AccordionState
-            , unwrapState = getAccordionState
-            }
-            Accordion.example
-    , button =
-        Example.wrap
-            { wrapMsg = ButtonMsg
-            , unwrapMsg = getButtonMsg
-            , wrapState = ButtonState
-            , unwrapState = getButtonState
-            }
-            Button.example
-    , bannerAlert =
-        Example.wrap
-            { wrapMsg = BannerAlertMsg
-            , unwrapMsg = getBannerAlertMsg
-            , wrapState = BannerAlertState
-            , unwrapState = getBannerAlertState
-            }
-            BannerAlert.example
-    , clickableText = ClickableText.example
-    , checkbox = Checkbox.example
-    , dropdown = Dropdown.example
-    , segmentedControl = SegmentedControl.example
-    , select = Select.example
-    , table = Table.example
-    , textArea = TextArea.example
-    , textInput = TextInput.example
-    , disclosureIndicator = DisclosureIndicator.example
-    , modal =
-        Example.wrap
-            { wrapMsg = ModalMsg
-            , unwrapMsg = getModalMsg
-            , wrapState = ModalState
-            , unwrapState = getModalState
-            }
-            Modal.example
-    , slideModal = SlideModal.example
-    , slide = Slide.example
-    , sortableTable = SortableTable.example
-    , svg = Svg.example
-    , clickableSvg = ClickableSvg.example
-    , tabs = Tabs.example
-    , tooltip = Tooltip.example
-    }
+constructors : List ( String, Example State Msg )
+constructors =
+    [ ( "accordion", Example.wrap { wrapMsg = AccordionMsg, unwrapMsg = getAccordionMsg, wrapState = AccordionState, unwrapState = getAccordionState } Accordion.example )
+    , ( "button", Example.wrap { wrapMsg = ButtonMsg, unwrapMsg = getButtonMsg, wrapState = ButtonState, unwrapState = getButtonState } Button.example )
+    , ( "bannerAlert", Example.wrap { wrapMsg = BannerAlertMsg, unwrapMsg = getBannerAlertMsg, wrapState = BannerAlertState, unwrapState = getBannerAlertState } BannerAlert.example )
+    , ( "modal", Example.wrap { wrapMsg = ModalMsg, unwrapMsg = getModalMsg, wrapState = ModalState, unwrapState = getModalState } Modal.example )
+    ]
 
 
 type State
@@ -212,26 +145,39 @@ getModalMsg msg =
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     let
-        update_ example =
-            example.update msg example.state
-                |> Tuple.mapFirst (\newState -> { example | state = newState })
+        update_ key =
+            case Dict.get key moduleStates of
+                Just example ->
+                    example.update msg example.state
+                        |> Tuple.mapFirst
+                            (\newState ->
+                                Dict.insert key { example | state = newState } moduleStates
+                            )
+
+                Nothing ->
+                    ( moduleStates, Cmd.none )
     in
     case msg of
         AccordionMsg exampleMsg ->
-            update_ moduleStates.accordion
-                |> Tuple.mapFirst (\accordion -> { moduleStates | accordion = accordion })
+            update_ "accordion"
 
         ButtonMsg exampleMsg ->
-            update_ moduleStates.button
-                |> Tuple.mapFirst (\button -> { moduleStates | button = button })
+            update_ "button"
 
         BannerAlertMsg exampleMsg ->
-            update_ moduleStates.bannerAlert
-                |> Tuple.mapFirst (\bannerAlert -> { moduleStates | bannerAlert = bannerAlert })
+            update_ "bannerAlert"
 
         ModalMsg exampleMsg ->
-            update_ moduleStates.modal
-                |> Tuple.mapFirst (\modal -> { moduleStates | modal = modal })
+            update_ "modal"
+
+
+type alias ModuleStates =
+    Dict String (Example State Msg)
+
+
+init : ModuleStates
+init =
+    Dict.fromList constructors
 
 
 {-| -}
@@ -252,9 +198,5 @@ view showFocusLink filter moduleStates =
 
 allExamples : ModuleStates -> List (Example State Msg)
 allExamples moduleStates =
-    List.map (\accessor -> accessor moduleStates)
-        [ .accordion
-        , .button
-        , .bannerAlert
-        , .modal
-        ]
+    List.filterMap (\accessor -> Dict.get accessor moduleStates)
+        (List.map Tuple.first constructors)
