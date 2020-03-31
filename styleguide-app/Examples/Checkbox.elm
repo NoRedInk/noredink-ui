@@ -1,8 +1,8 @@
-module Examples.Checkbox exposing (Msg, State, example, init, update)
+module Examples.Checkbox exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Css
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
@@ -31,20 +30,21 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.Checkbox.V5"
-    , categories = Sort.Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
-        , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
-        , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
-        , viewDisabledCheckbox "styleguide-checkbox-disabled" state
-        , viewMultilineCheckboxes
-        , h3 [] [ text "Premium Checkboxes" ]
-        , viewPremiumCheckboxes state
-        ]
-            |> List.map (Html.map parentMessage)
+    , state = init
+    , update = update
+    , view =
+        \state ->
+            [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
+            , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
+            , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
+            , viewDisabledCheckbox "styleguide-checkbox-disabled" state
+            , viewMultilineCheckboxes
+            , h3 [] [ text "Premium Checkboxes" ]
+            , viewPremiumCheckboxes state
+            ]
+    , categories = [ Inputs ]
     }
 
 

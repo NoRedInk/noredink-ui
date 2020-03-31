@@ -1,20 +1,18 @@
-module Examples.TextArea exposing (Msg, State, example, init, update)
+module Examples.TextArea exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Category exposing (Category(..))
 import Dict exposing (Dict)
 import Html.Styled as Html
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextArea.V4 as TextArea
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -35,104 +33,105 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.TextArea.V4"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Heading.h1 [] [ Html.text "Textarea controls" ]
-        , Html.div []
-            [ Checkbox.viewWithLabel
-                { identifier = "show-textarea-label"
-                , label = "Show Label"
-                , setterMsg = ToggleLabel
-                , selected = state.showLabel
-                , disabled = False
-                , theme = Checkbox.Square
+    , state = init
+    , update = update
+    , categories = [ Inputs ]
+    , view =
+        \state ->
+            [ Heading.h1 [] [ Html.text "Textarea controls" ]
+            , Html.div []
+                [ Checkbox.viewWithLabel
+                    { identifier = "show-textarea-label"
+                    , label = "Show Label"
+                    , setterMsg = ToggleLabel
+                    , selected = state.showLabel
+                    , disabled = False
+                    , theme = Checkbox.Square
+                    }
+                , Checkbox.viewWithLabel
+                    { identifier = "textarea-autoresize"
+                    , label = "Autoresize"
+                    , setterMsg = ToggleAutoResize
+                    , selected = state.autoResize
+                    , disabled = False
+                    , theme = Checkbox.Square
+                    }
+                , Checkbox.viewWithLabel
+                    { identifier = "textarea-isInError"
+                    , label = "Show Error State"
+                    , setterMsg = ToggleErrorState
+                    , selected = state.isInError
+                    , disabled = False
+                    , theme = Checkbox.Square
+                    }
+                ]
+            , TextArea.view
+                { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
+                , autofocus = False
+                , onInput = InputGiven 1
+                , onBlur = Nothing
+                , isInError = state.isInError == Checkbox.Selected
+                , label = "TextArea.view"
+                , height =
+                    if state.autoResize == Checkbox.Selected then
+                        TextArea.AutoResize TextArea.SingleLine
+
+                    else
+                        TextArea.Fixed
+                , placeholder = "Placeholder"
+                , showLabel = state.showLabel == Checkbox.Selected
                 }
-            , Checkbox.viewWithLabel
-                { identifier = "textarea-autoresize"
-                , label = "Autoresize"
-                , setterMsg = ToggleAutoResize
-                , selected = state.autoResize
-                , disabled = False
-                , theme = Checkbox.Square
+            , TextArea.writing
+                { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
+                , autofocus = False
+                , onInput = InputGiven 2
+                , onBlur = Nothing
+                , isInError = state.isInError == Checkbox.Selected
+                , label = "TextArea.writing"
+                , height =
+                    if state.autoResize == Checkbox.Selected then
+                        TextArea.AutoResize TextArea.DefaultHeight
+
+                    else
+                        TextArea.Fixed
+                , placeholder = "Placeholder"
+                , showLabel = state.showLabel == Checkbox.Selected
                 }
-            , Checkbox.viewWithLabel
-                { identifier = "textarea-isInError"
-                , label = "Show Error State"
-                , setterMsg = ToggleErrorState
-                , selected = state.isInError
-                , disabled = False
-                , theme = Checkbox.Square
+            , TextArea.contentCreation
+                { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
+                , autofocus = False
+                , onInput = InputGiven 3
+                , onBlur = Nothing
+                , isInError = state.isInError == Checkbox.Selected
+                , label = "TextArea.contentCreation"
+                , height =
+                    if state.autoResize == Checkbox.Selected then
+                        TextArea.AutoResize TextArea.DefaultHeight
+
+                    else
+                        TextArea.Fixed
+                , placeholder = "Placeholder"
+                , showLabel = state.showLabel == Checkbox.Selected
+                }
+            , TextArea.writing
+                { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
+                , autofocus = False
+                , onInput = InputGiven 4
+                , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
+                , isInError = state.isInError == Checkbox.Selected
+                , label = "TextArea.writing onBlur demonstration"
+                , height =
+                    if state.autoResize == Checkbox.Selected then
+                        TextArea.AutoResize TextArea.DefaultHeight
+
+                    else
+                        TextArea.Fixed
+                , placeholder = "Placeholder"
+                , showLabel = state.showLabel == Checkbox.Selected
                 }
             ]
-        , TextArea.view
-            { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
-            , autofocus = False
-            , onInput = InputGiven 1
-            , onBlur = Nothing
-            , isInError = state.isInError == Checkbox.Selected
-            , label = "TextArea.view"
-            , height =
-                if state.autoResize == Checkbox.Selected then
-                    TextArea.AutoResize TextArea.SingleLine
-
-                else
-                    TextArea.Fixed
-            , placeholder = "Placeholder"
-            , showLabel = state.showLabel == Checkbox.Selected
-            }
-        , TextArea.writing
-            { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
-            , autofocus = False
-            , onInput = InputGiven 2
-            , onBlur = Nothing
-            , isInError = state.isInError == Checkbox.Selected
-            , label = "TextArea.writing"
-            , height =
-                if state.autoResize == Checkbox.Selected then
-                    TextArea.AutoResize TextArea.DefaultHeight
-
-                else
-                    TextArea.Fixed
-            , placeholder = "Placeholder"
-            , showLabel = state.showLabel == Checkbox.Selected
-            }
-        , TextArea.contentCreation
-            { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
-            , autofocus = False
-            , onInput = InputGiven 3
-            , onBlur = Nothing
-            , isInError = state.isInError == Checkbox.Selected
-            , label = "TextArea.contentCreation"
-            , height =
-                if state.autoResize == Checkbox.Selected then
-                    TextArea.AutoResize TextArea.DefaultHeight
-
-                else
-                    TextArea.Fixed
-            , placeholder = "Placeholder"
-            , showLabel = state.showLabel == Checkbox.Selected
-            }
-        , TextArea.writing
-            { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
-            , autofocus = False
-            , onInput = InputGiven 4
-            , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
-            , isInError = state.isInError == Checkbox.Selected
-            , label = "TextArea.writing onBlur demonstration"
-            , height =
-                if state.autoResize == Checkbox.Selected then
-                    TextArea.AutoResize TextArea.DefaultHeight
-
-                else
-                    TextArea.Fixed
-            , placeholder = "Placeholder"
-            , showLabel = state.showLabel == Checkbox.Selected
-            }
-        ]
-            |> List.map (Html.map parentMessage)
     }
 
 

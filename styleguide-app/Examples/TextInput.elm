@@ -1,8 +1,8 @@
-module Examples.TextInput exposing (Msg, State, example, init, update)
+module Examples.TextInput exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
@@ -33,13 +33,14 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.TextInput.V5"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Html.map parentMessage <|
-            Html.div []
+    , categories = [ Inputs ]
+    , state = init
+    , update = update
+    , view =
+        \state ->
+            [ Html.div []
                 [ TextInput.view
                     { label = "Criterion"
                     , isInError = False
@@ -172,7 +173,7 @@ example parentMessage state =
                     , showLabel = True
                     }
                 ]
-        ]
+            ]
     }
 
 

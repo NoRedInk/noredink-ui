@@ -1,18 +1,8 @@
-module Examples.Select exposing
-    ( Msg
-    , State
-    , example
-    , init
-    , update
-    )
+module Examples.Select exposing (Msg, State, example)
 
 {-|
 
-@docs Msg
-@docs State
-@docs example
-@docs init
-@docs update
+@docs Msg, State, example
 
 -}
 
@@ -20,62 +10,62 @@ import Category exposing (Category(..))
 import Css
 import Html.Styled
 import Html.Styled.Attributes
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.Select.V7"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Html.Styled.label
-            [ Html.Styled.Attributes.for "tortilla-selector" ]
-            [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
-        , Select.view
-            { current = Nothing
-            , choices =
-                [ { label = "Tacos", value = "Tacos" }
-                , { label = "Burritos", value = "Burritos" }
-                , { label = "Enchiladas", value = "Enchiladas" }
-                ]
-            , id = "tortilla-selector"
-            , valueToString = identity
-            , defaultDisplayText = Just "Select a tasty tortilla based treat!"
-            , isInError = False
-            }
-            |> Html.Styled.map (parentMessage << ConsoleLog)
-        , Html.Styled.label
-            [ Html.Styled.Attributes.for "errored-selector" ]
-            [ Heading.h3 [] [ Html.Styled.text "Errored Selector" ] ]
-        , Select.view
-            { current = Nothing
-            , choices = []
-            , id = "errored-selector"
-            , valueToString = identity
-            , defaultDisplayText = Just "Please select an option"
-            , isInError = True
-            }
-            |> Html.Styled.map (parentMessage << ConsoleLog)
-        , Html.Styled.label
-            [ Html.Styled.Attributes.for "overflowed-selector" ]
-            [ Heading.h3 [] [ Html.Styled.text "Selector with Overflowed Text" ] ]
-        , Html.Styled.div
-            [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
-            [ Select.view
+    , state = init
+    , update = update
+    , categories = [ Inputs ]
+    , view =
+        \state ->
+            [ Html.Styled.label
+                [ Html.Styled.Attributes.for "tortilla-selector" ]
+                [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
+            , Select.view
                 { current = Nothing
-                , choices = []
-                , id = "overflowed-selector"
+                , choices =
+                    [ { label = "Tacos", value = "Tacos" }
+                    , { label = "Burritos", value = "Burritos" }
+                    , { label = "Enchiladas", value = "Enchiladas" }
+                    ]
+                , id = "tortilla-selector"
                 , valueToString = identity
-                , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
+                , defaultDisplayText = Just "Select a tasty tortilla based treat!"
                 , isInError = False
                 }
-                |> Html.Styled.map (parentMessage << ConsoleLog)
+                |> Html.Styled.map ConsoleLog
+            , Html.Styled.label
+                [ Html.Styled.Attributes.for "errored-selector" ]
+                [ Heading.h3 [] [ Html.Styled.text "Errored Selector" ] ]
+            , Select.view
+                { current = Nothing
+                , choices = []
+                , id = "errored-selector"
+                , valueToString = identity
+                , defaultDisplayText = Just "Please select an option"
+                , isInError = True
+                }
+                |> Html.Styled.map ConsoleLog
+            , Html.Styled.label
+                [ Html.Styled.Attributes.for "overflowed-selector" ]
+                [ Heading.h3 [] [ Html.Styled.text "Selector with Overflowed Text" ] ]
+            , Html.Styled.div
+                [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
+                [ Select.view
+                    { current = Nothing
+                    , choices = []
+                    , id = "overflowed-selector"
+                    , valueToString = identity
+                    , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
+                    , isInError = False
+                    }
+                    |> Html.Styled.map ConsoleLog
+                ]
             ]
-        ]
     }
 
 

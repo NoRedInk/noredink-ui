@@ -1,8 +1,8 @@
-module Examples.Modal exposing (Msg, State, example, init, update, subscriptions)
+module Examples.Modal exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update, subscriptions
+@docs Msg, State, example
 
 -}
 
@@ -12,14 +12,12 @@ import Css exposing (..)
 import Css.Global
 import Html as Root
 import Html.Styled.Attributes as Attributes
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V8 as Modal
 import Nri.Ui.Text.V4 as Text
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -50,41 +48,42 @@ init =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.Modal.V8"
-    , categories = Set.fromList Category.sorter <| List.singleton Modals
-    , content =
-        [ viewSettings state
-        , Button.button "Launch Info Modal"
-            [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
-            , Button.custom [ Attributes.id "launch-info-modal" ]
-            , Button.css [ Css.marginRight (Css.px 16) ]
-            , Button.secondary
-            , Button.medium
+    , categories = [ Modals ]
+    , state = init
+    , update = update
+    , view =
+        \state ->
+            [ viewSettings state
+            , Button.button "Launch Info Modal"
+                [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
+                , Button.custom [ Attributes.id "launch-info-modal" ]
+                , Button.css [ Css.marginRight (Css.px 16) ]
+                , Button.secondary
+                , Button.medium
+                ]
+            , Button.button "Launch Warning Modal"
+                [ Button.onClick (WarningModalMsg (Modal.open "launch-warning-modal"))
+                , Button.custom [ Attributes.id "launch-warning-modal" ]
+                , Button.secondary
+                , Button.medium
+                ]
+            , let
+                params =
+                    ( state, InfoModalMsg, Button.primary )
+              in
+              Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg, visibleTitle = state.visibleTitle }
+                (getFocusable params)
+                state.infoModal
+            , let
+                params =
+                    ( state, WarningModalMsg, Button.danger )
+              in
+              Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg, visibleTitle = state.visibleTitle }
+                (getFocusable params)
+                state.warningModal
             ]
-        , Button.button "Launch Warning Modal"
-            [ Button.onClick (WarningModalMsg (Modal.open "launch-warning-modal"))
-            , Button.custom [ Attributes.id "launch-warning-modal" ]
-            , Button.secondary
-            , Button.medium
-            ]
-        , let
-            params =
-                ( state, InfoModalMsg, Button.primary )
-          in
-          Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg, visibleTitle = state.visibleTitle }
-            (getFocusable params)
-            state.infoModal
-        , let
-            params =
-                ( state, WarningModalMsg, Button.danger )
-          in
-          Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg, visibleTitle = state.visibleTitle }
-            (getFocusable params)
-            state.warningModal
-        ]
-            |> List.map (Html.map parentMessage)
     }
 
 

@@ -1,8 +1,8 @@
-module Examples.Dropdown exposing (Msg, State, Value, example, init, update)
+module Examples.Dropdown exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, Value, example, init, update
+@docs Msg, State, example
 
 -}
 
@@ -14,33 +14,30 @@ import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-type alias Value =
-    String
-
-
-{-| -}
 type Msg
     = ConsoleLog String
 
 
 {-| -}
-type alias State value =
-    List (Nri.Ui.Dropdown.V2.ViewOptionEntry value)
+type alias State =
+    List (Nri.Ui.Dropdown.V2.ViewOptionEntry String)
 
 
 {-| -}
-example : (Msg -> msg) -> State Value -> ModuleExample msg
-example parentMessage state =
+example =
     { name = "Nri.Ui.Dropdown.V2"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Html.Styled.map parentMessage (Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog)
-        ]
+    , state = init
+    , update = update
+    , view =
+        \state ->
+            [ Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog
+            ]
+    , categories = [ Inputs ]
     }
 
 
 {-| -}
-init : State Value
+init : State
 init =
     [ { isSelected = False, val = "Burrito", displayText = "Burrito" }
     , { isSelected = False, val = "Nacho", displayText = "Nacho" }
@@ -49,7 +46,7 @@ init =
 
 
 {-| -}
-update : Msg -> State Value -> ( State Value, Cmd Msg )
+update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ConsoleLog message ->

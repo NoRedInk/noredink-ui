@@ -1,12 +1,8 @@
-module Examples.Button exposing
-    ( Msg, State
-    , example_, init, update
-    )
+module Examples.Button exposing (Msg, State, example)
 
 {-|
 
-@docs example
-@docs Msg, State
+@docs Msg, State, example
 
 -}
 
@@ -22,7 +18,7 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-example_ =
+example =
     { name = "Nri.Ui.Button.V10"
     , state = init
     , update = update
