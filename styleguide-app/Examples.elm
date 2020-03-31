@@ -39,8 +39,8 @@ import Html.Styled as Html exposing (Html)
 
 
 type alias ModuleStates =
-    { accordion : Example Accordion.State Accordion.Msg
-    , button : Example Button.State Button.Msg
+    { accordion : Example Accordion.State Msg
+    , button : Example Button.State Msg
     , bannerAlert : Example BannerAlert.State BannerAlert.Msg
     , clickableText : Example ClickableText.State ClickableText.Msg
     , checkbox : Example Checkbox.State Checkbox.Msg
@@ -64,8 +64,8 @@ type alias ModuleStates =
 
 init : ModuleStates
 init =
-    { accordion = Accordion.example
-    , button = Button.example
+    { accordion = Example.wrap { wrapMsg = AccordionMsg, unwrapMsg = getAccordionMsg } Accordion.example
+    , button = Example.wrap { wrapMsg = ButtonMsg, unwrapMsg = getButtonMsg } Button.example
     , bannerAlert = BannerAlert.example
     , clickableText = ClickableText.example
     , checkbox = Checkbox.example
@@ -94,6 +94,26 @@ type Msg
     | ModalMsg Modal.Msg
 
 
+getAccordionMsg : Msg -> Maybe Accordion.Msg
+getAccordionMsg msg =
+    case msg of
+        AccordionMsg childMsg ->
+            Just childMsg
+
+        _ ->
+            Nothing
+
+
+getButtonMsg : Msg -> Maybe Button.Msg
+getButtonMsg msg =
+    case msg of
+        ButtonMsg childMsg ->
+            Just childMsg
+
+        _ ->
+            Nothing
+
+
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     let
@@ -108,13 +128,19 @@ update msg moduleStates =
             ( updater { module_ | state = newState } moduleStates
             , Cmd.map wrapMsg cmd
             )
+
+        update_ example =
+            example.update msg example.state
+                |> Tuple.mapFirst (\newState -> { example | state = newState })
     in
     case msg of
         AccordionMsg exampleMsg ->
-            updateWith .accordion (\state m -> { m | accordion = state }) AccordionMsg exampleMsg
+            update_ moduleStates.accordion
+                |> Tuple.mapFirst (\accordion -> { moduleStates | accordion = accordion })
 
         ButtonMsg exampleMsg ->
-            updateWith .button (\state m -> { m | button = state }) ButtonMsg exampleMsg
+            update_ moduleStates.button
+                |> Tuple.mapFirst (\button -> { moduleStates | button = button })
 
         BannerAlertMsg exampleMsg ->
             updateWith .bannerAlert (\state m -> { m | bannerAlert = state }) BannerAlertMsg exampleMsg
@@ -136,9 +162,9 @@ view : Bool -> (Example state msg -> Bool) -> ModuleStates -> List (Html Msg)
 view showFocusLink filter moduleStates =
     -- TODO add the filter back in
     [ Example.view showFocusLink moduleStates.accordion
-        |> Html.map AccordionMsg
     , Example.view showFocusLink moduleStates.button
-        |> Html.map ButtonMsg
     , Example.view showFocusLink moduleStates.bannerAlert
         |> Html.map BannerAlertMsg
+    , Example.view showFocusLink moduleStates.modal
+        |> Html.map ModalMsg
     ]

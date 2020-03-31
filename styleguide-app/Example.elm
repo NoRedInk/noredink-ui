@@ -1,4 +1,4 @@
-module Example exposing (Example, view)
+module Example exposing (Example, view, wrap)
 
 import Category exposing (Category)
 import Css exposing (..)
@@ -18,6 +18,28 @@ type alias Example state msg =
     }
 
 
+wrap :
+    { wrapMsg : msg -> msg2, unwrapMsg : msg2 -> Maybe msg }
+    -> Example state msg
+    -> Example state msg2
+wrap { wrapMsg, unwrapMsg } example =
+    { name = example.name
+    , state = example.state
+    , update =
+        \msg2 state ->
+            case unwrapMsg msg2 of
+                Just msg ->
+                    example.update msg state
+                        |> Tuple.mapSecond (Cmd.map wrapMsg)
+
+                Nothing ->
+                    ( state, Cmd.none )
+    , subscriptions = \state -> Sub.map wrapMsg (example.subscriptions state)
+    , view = \state -> List.map (Html.map wrapMsg) (example.view state)
+    , categories = example.categories
+    }
+
+
 view : Bool -> Example state msg -> Html msg
 view showFocusLink example =
     Html.div
@@ -31,7 +53,7 @@ view showFocusLink example =
                 [ displayFlex
                 , alignItems center
                 , justifyContent flexStart
-                , flexWrap wrap
+                , flexWrap Css.wrap
                 , padding (px 4)
                 , backgroundColor glacier
                 ]
