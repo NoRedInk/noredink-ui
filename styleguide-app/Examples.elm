@@ -1,6 +1,5 @@
-module Examples exposing (ModuleStates, Msg, init, subscriptions, update, view)
+module Examples exposing (Msg, State, all)
 
-import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.Alert as Alert
@@ -36,11 +35,10 @@ import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
 import Examples.Tooltip as Tooltip
 import Examples.UiIcon as UiIcon
-import Html.Styled as Html exposing (Html)
 
 
-examples : List (Example State MsgKind)
-examples =
+all : List (Example State Msg)
+all =
     [ Example.wrap
         { wrapMsg = AccordionMsg
         , unwrapMsg =
@@ -795,7 +793,7 @@ type State
     | WritingState Writing.State
 
 
-type MsgKind
+type Msg
     = AccordionMsg Accordion.Msg
     | AlertMsg Alert.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
@@ -830,52 +828,3 @@ type MsgKind
     | TooltipMsg Tooltip.Msg
     | UiIconMsg UiIcon.Msg
     | WritingMsg Writing.Msg
-
-
-type Msg
-    = Msg String MsgKind
-
-
-update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
-update (Msg key exampleMsg) moduleStates =
-    case Dict.get key moduleStates of
-        Just example ->
-            example.update exampleMsg example.state
-                |> Tuple.mapFirst
-                    (\newState ->
-                        Dict.insert key { example | state = newState } moduleStates
-                    )
-                |> Tuple.mapSecond (Cmd.map (Msg key))
-
-        Nothing ->
-            ( moduleStates, Cmd.none )
-
-
-type alias ModuleStates =
-    Dict String (Example State MsgKind)
-
-
-init : ModuleStates
-init =
-    List.map (\example -> ( example.name, example )) examples
-        |> Dict.fromList
-
-
-{-| -}
-subscriptions : ModuleStates -> Sub Msg
-subscriptions moduleStates =
-    Dict.values moduleStates
-        |> List.map (\example -> Sub.map (Msg example.name) (example.subscriptions example.state))
-        |> Sub.batch
-
-
-{-| -}
-view : Bool -> (Example State MsgKind -> Bool) -> ModuleStates -> List (Html Msg)
-view showFocusLink filter moduleStates =
-    Dict.values moduleStates
-        |> List.filter filter
-        |> List.map
-            (\example ->
-                Example.view showFocusLink example
-                    |> Html.map (Msg example.name)
-            )
