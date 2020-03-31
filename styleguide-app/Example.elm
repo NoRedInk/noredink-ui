@@ -19,23 +19,42 @@ type alias Example state msg =
 
 
 wrap :
-    { wrapMsg : msg -> msg2, unwrapMsg : msg2 -> Maybe msg }
+    { wrapMsg : msg -> msg2
+    , unwrapMsg : msg2 -> Maybe msg
+    , wrapState : state -> state2
+    , unwrapState : state2 -> Maybe state
+    }
     -> Example state msg
-    -> Example state msg2
-wrap { wrapMsg, unwrapMsg } example =
+    -> Example state2 msg2
+wrap { wrapMsg, unwrapMsg, wrapState, unwrapState } example =
     { name = example.name
-    , state = example.state
+    , state = wrapState example.state
     , update =
-        \msg2 state ->
-            case unwrapMsg msg2 of
-                Just msg ->
+        \msg2 state2 ->
+            case ( unwrapMsg msg2, unwrapState state2 ) of
+                ( Just msg, Just state ) ->
                     example.update msg state
+                        |> Tuple.mapFirst wrapState
                         |> Tuple.mapSecond (Cmd.map wrapMsg)
 
+                _ ->
+                    ( state2, Cmd.none )
+    , subscriptions =
+        \state2 ->
+            case unwrapState state2 of
+                Just state ->
+                    Sub.map wrapMsg (example.subscriptions state)
+
                 Nothing ->
-                    ( state, Cmd.none )
-    , subscriptions = \state -> Sub.map wrapMsg (example.subscriptions state)
-    , view = \state -> List.map (Html.map wrapMsg) (example.view state)
+                    Sub.none
+    , view =
+        \state2 ->
+            case unwrapState state2 of
+                Just state ->
+                    List.map (Html.map wrapMsg) (example.view state)
+
+                Nothing ->
+                    []
     , categories = example.categories
     }
 
