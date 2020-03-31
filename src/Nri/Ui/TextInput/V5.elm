@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V5 exposing
     ( Model
     , view, writing
     , generateId
-    , number, float, text, password
+    , InputType, number, float, text, password
     )
 
 {-|
@@ -19,12 +19,12 @@ module Nri.Ui.TextInput.V5 exposing
 
 ## Input types
 
-@docs number, float, text, password
+@docs InputType, number, float, text, password
 
 -}
 
 import Accessibility.Styled.Style as Accessibility
-import Css exposing (batch, center, position, px, relative, textAlign)
+import Css exposing (center, position, px, relative, textAlign)
 import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
