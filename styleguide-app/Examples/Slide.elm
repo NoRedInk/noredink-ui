@@ -36,6 +36,7 @@ example =
     , categories = [ Animations ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ Keyed.node "div"

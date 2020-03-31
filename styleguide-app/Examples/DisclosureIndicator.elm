@@ -30,6 +30,7 @@ example =
     , categories = [ Widgets ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ Text.smallBodyGray [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]

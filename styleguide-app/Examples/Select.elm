@@ -19,6 +19,7 @@ example =
     { name = "Nri.Ui.Select.V7"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , view =
         \state ->

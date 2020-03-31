@@ -53,6 +53,7 @@ example =
     , categories = [ Modals ]
     , state = init
     , update = update
+    , subscriptions = subscriptions
     , view =
         \state ->
             [ viewSettings state

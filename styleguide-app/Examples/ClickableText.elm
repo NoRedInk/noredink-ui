@@ -28,6 +28,7 @@ example =
     { name = "Nri.Ui.ClickableText.V3"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewExamples state ]
     , categories = [ Buttons ]
     }

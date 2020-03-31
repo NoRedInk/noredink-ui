@@ -55,6 +55,7 @@ example =
     , categories = [ Widgets ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \model ->
             [ Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]

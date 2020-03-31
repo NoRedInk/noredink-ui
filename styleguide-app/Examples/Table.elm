@@ -31,6 +31,7 @@ example =
     { name = "Nri.Ui.Table.V5"
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
     , categories = [ Tables ]
     , view =
         \state ->

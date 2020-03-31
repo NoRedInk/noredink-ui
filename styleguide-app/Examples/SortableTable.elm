@@ -35,6 +35,7 @@ example =
     , categories = [ Tables ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \{ sortState } ->
             let

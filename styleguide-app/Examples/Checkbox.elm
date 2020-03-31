@@ -34,6 +34,7 @@ example =
     { name = "Nri.Ui.Checkbox.V5"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ viewInteractableCheckbox "styleguide-checkbox-interactable" state

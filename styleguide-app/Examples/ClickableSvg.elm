@@ -28,6 +28,7 @@ example =
     , categories = [ Buttons, Icons ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]

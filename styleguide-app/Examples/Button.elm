@@ -22,6 +22,7 @@ example =
     { name = "Nri.Ui.Button.V10"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
     }

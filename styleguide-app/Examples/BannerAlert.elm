@@ -24,6 +24,7 @@ example =
     { name = "Nri.Ui.BannerAlert.V6"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Messaging ]
     }

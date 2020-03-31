@@ -28,6 +28,7 @@ example =
     { name = "Nri.Ui.Dropdown.V2"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ Nri.Ui.Dropdown.V2.view "All the foods!" state ConsoleLog

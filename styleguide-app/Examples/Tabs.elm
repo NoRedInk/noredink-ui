@@ -30,6 +30,7 @@ example =
     , categories = [ Layout ]
     , state = First
     , update = \newTab oldTab -> ( newTab, Cmd.none )
+    , subscriptions = \_ -> Sub.none
     , view =
         \tab ->
             [ Tabs.view

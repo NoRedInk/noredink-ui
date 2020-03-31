@@ -38,6 +38,7 @@ example =
     , categories = [ Inputs ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ Html.div []

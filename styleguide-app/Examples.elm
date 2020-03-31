@@ -44,6 +44,7 @@ type alias Example state msg =
     { name : String
     , state : state
     , update : msg -> state -> ( state, Cmd msg )
+    , subscriptions : state -> Sub msg
     , view : state -> List (Html msg)
     , categories : List Category
     }
@@ -102,6 +103,7 @@ type Msg
     = AccordionMsg Accordion.Msg
     | ButtonMsg Button.Msg
     | BannerAlertMsg BannerAlert.Msg
+    | ModalMsg Modal.Msg
 
 
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
@@ -129,12 +131,15 @@ update msg moduleStates =
         BannerAlertMsg exampleMsg ->
             updateWith .bannerAlert (\state m -> { m | bannerAlert = state }) BannerAlertMsg exampleMsg
 
+        ModalMsg exampleMsg ->
+            updateWith .modal (\state m -> { m | modal = state }) ModalMsg exampleMsg
+
 
 {-| -}
 subscriptions : ModuleStates -> Sub Msg
 subscriptions moduleStates =
     Sub.batch
-        [-- Sub.map ModalExampleMsg (Examples.Modal.subscriptions moduleStates.modalExampleState)
+        [ Sub.map ModalMsg (moduleStates.modal.subscriptions moduleStates.modal.state)
         ]
 
 

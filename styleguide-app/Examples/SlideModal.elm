@@ -34,6 +34,7 @@ example =
     , categories = [ Modals ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ viewModal state.modal

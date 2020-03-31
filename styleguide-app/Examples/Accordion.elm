@@ -28,6 +28,7 @@ example =
     { name = "Nri.Ui.Accordion.V1"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Layout ]
     }

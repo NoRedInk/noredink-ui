@@ -27,6 +27,7 @@ example =
     { name = "Nri.Ui.SegmentedControl.V8"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             let

@@ -27,6 +27,7 @@ example =
     , categories = [ Icons ]
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , view =
         \state ->
             [ viewSettings state

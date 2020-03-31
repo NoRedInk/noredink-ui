@@ -37,6 +37,7 @@ example =
     { name = "Nri.Ui.TextArea.V4"
     , state = init
     , update = update
+    , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , view =
         \state ->
