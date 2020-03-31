@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V5 exposing
     ( Model
     , view, writing
     , generateId
-    , InputType, number, float, text, password
+    , InputType, number, float, text, password, email
     )
 
 {-|
@@ -19,7 +19,7 @@ module Nri.Ui.TextInput.V5 exposing
 
 ## Input types
 
-@docs InputType, number, float, text, password
+@docs InputType, number, float, text, password, email
 
 -}
 
@@ -54,6 +54,8 @@ type InputType value
         { toString : value -> String
         , fromString : String -> value
         , fieldType : String
+        , inputMode : Maybe String
+        , autocomplete : Maybe String
         }
 
 
@@ -65,6 +67,8 @@ text =
         { toString = identity
         , fromString = identity
         , fieldType = "text"
+        , inputMode = Nothing
+        , autocomplete = Nothing
         }
 
 
@@ -76,6 +80,8 @@ number =
         { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
         , fromString = String.toInt
         , fieldType = "number"
+        , inputMode = Nothing
+        , autocomplete = Nothing
         }
 
 
@@ -87,6 +93,8 @@ float =
         { toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
         , fromString = String.toFloat
         , fieldType = "number"
+        , inputMode = Nothing
+        , autocomplete = Nothing
         }
 
 
@@ -98,6 +106,26 @@ password =
         { toString = identity
         , fromString = identity
         , fieldType = "password"
+        , inputMode = Nothing
+        , autocomplete = Just "current-password"
+        }
+
+
+{-| An input that is optimized for email entry
+
+NOTE: this uses `inputmode="email"` so that mobile devices will use the email keyboard,
+but not `type="email"` because that would enable browser-provided validation which is inconsistent and at odds
+with our validation UI.
+
+-}
+email : InputType String
+email =
+    InputType
+        { toString = identity
+        , fromString = identity
+        , fieldType = "text"
+        , inputMode = Just "email"
+        , autocomplete = Just "email"
         }
 
 
@@ -128,6 +156,11 @@ view_ theme model =
 
             else
                 []
+
+        maybeAttr attr maybeValue =
+            maybeValue
+                |> Maybe.map attr
+                |> Maybe.withDefault Extra.none
     in
     div
         [ Attributes.css [ position relative ]
@@ -151,9 +184,11 @@ view_ theme model =
                    , placeholder model.placeholder
                    , value (inputType.toString model.value)
                    , onInput (inputType.fromString >> model.onInput)
-                   , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
+                   , maybeAttr Events.onBlur model.onBlur
                    , autofocus model.autofocus
                    , type_ inputType.fieldType
+                   , maybeAttr (attribute "inputmode") inputType.inputMode
+                   , maybeAttr (attribute "autocomplete") inputType.autocomplete
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
                         if model.isInError then

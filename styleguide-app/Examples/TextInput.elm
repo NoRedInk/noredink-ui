@@ -29,7 +29,7 @@ type Msg
 type alias State =
     { numberInputValue : Maybe Int
     , floatInputValue : Maybe Float
-    , textInputValues : Dict Id String
+    , stringInputValues : Dict Id String
     , passwordInputValue : String
     , control : Control ExampleConfig
     }
@@ -63,7 +63,7 @@ example parentMessage state =
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
-                    , value = Maybe.withDefault "" <| Dict.get 1 state.textInputValues
+                    , value = Maybe.withDefault "" <| Dict.get 1 state.stringInputValues
                     , onInput = SetTextInput 1
                     , onBlur = Nothing
                     , autofocus = False
@@ -105,12 +105,24 @@ example parentMessage state =
                     , autofocus = False
                     , type_ = TextInput.password
                     }
+                , Heading.h3 [] [ text "... type_ = TextInput.email" ]
+                , TextInput.view
+                    { label = exampleConfig.label
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
+                    , value = Maybe.withDefault "" <| Dict.get 2 state.stringInputValues
+                    , onInput = SetTextInput 2
+                    , onBlur = Nothing
+                    , autofocus = False
+                    , type_ = TextInput.email
+                    }
                 , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
                 , TextInput.writing
                     { label = exampleConfig.label
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
-                    , value = Maybe.withDefault "" <| Dict.get 4 state.textInputValues
+                    , value = Maybe.withDefault "" <| Dict.get 4 state.stringInputValues
                     , onInput = SetTextInput 4
                     , onBlur = Nothing
                     , autofocus = False
@@ -122,7 +134,7 @@ example parentMessage state =
                     { label = exampleConfig.label
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
-                    , value = Maybe.withDefault "" <| Dict.get 7 state.textInputValues
+                    , value = Maybe.withDefault "" <| Dict.get 7 state.stringInputValues
                     , onInput = SetTextInput 7
                     , onBlur = Just (SetTextInput 7 "Blurred!")
                     , autofocus = False
@@ -139,7 +151,7 @@ init : State
 init =
     { numberInputValue = Nothing
     , floatInputValue = Nothing
-    , textInputValues = Dict.empty
+    , stringInputValues = Dict.empty
     , passwordInputValue = ""
     , control =
         Control.record ExampleConfig
@@ -155,7 +167,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SetTextInput id textInputValue ->
-            ( { state | textInputValues = Dict.insert id textInputValue state.textInputValues }, Cmd.none )
+            ( { state | stringInputValues = Dict.insert id textInputValue state.stringInputValues }, Cmd.none )
 
         SetNumberInput numberInputValue ->
             ( { state | numberInputValue = numberInputValue }, Cmd.none )
