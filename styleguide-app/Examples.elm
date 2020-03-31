@@ -1,4 +1,4 @@
-module NriModules exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
+module Examples exposing (ModuleStates, Msg, init, nriThemedModules, subscriptions, update)
 
 import Category exposing (Category(..))
 import Examples.Accordion

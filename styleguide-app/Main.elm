@@ -5,6 +5,7 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category
 import Css exposing (..)
+import Examples exposing (ModuleStates, nriThemedModules)
 import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
@@ -15,7 +16,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
-import NriModules as NriModules exposing (ModuleStates, nriThemedModules)
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set
 import Task
@@ -45,7 +45,7 @@ type alias Model =
 init : () -> Url -> Key -> ( Model, Cmd Msg )
 init () url key =
     ( { route = Routes.fromLocation url
-      , moduleStates = NriModules.init
+      , moduleStates = Examples.init
       , navigationKey = key
       }
     , Cmd.none
@@ -53,7 +53,7 @@ init () url key =
 
 
 type Msg
-    = UpdateModuleStates NriModules.Msg
+    = UpdateModuleStates Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | SkipToMainContent
@@ -66,7 +66,7 @@ update action model =
         UpdateModuleStates msg ->
             let
                 ( moduleStates, cmd ) =
-                    NriModules.update msg model.moduleStates
+                    Examples.update msg model.moduleStates
             in
             ( { model | moduleStates = moduleStates }
             , Cmd.map UpdateModuleStates cmd
@@ -94,7 +94,7 @@ update action model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.map UpdateModuleStates (NriModules.subscriptions model.moduleStates)
+    Sub.map UpdateModuleStates (Examples.subscriptions model.moduleStates)
 
 
 view : Model -> Document Msg
