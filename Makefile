@@ -3,8 +3,8 @@ export DEPRECATED_MODULES=Html,Accessibility,Accessibility.Aria,Accessibility.Ke
 
 .PHONY: test
 test: node_modules tests/elm-verify-examples.json
+	npx elm-verify-examples
 	npx elm-test
-	npx elm-verify-examples --run-tests
 	make axe-report
 	make percy-tests
 	make deprecated-imports-report
