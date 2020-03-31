@@ -39,100 +39,92 @@ import Examples.UiIcon as UiIcon
 import Html.Styled as Html exposing (Html)
 
 
-constructors : List ( String, Example State Msg )
-constructors =
-    [ ( "accordion"
-      , Example.wrap
-            { wrapMsg = AccordionMsg
-            , unwrapMsg =
-                \msg ->
-                    case msg of
-                        AccordionMsg childMsg ->
-                            Just childMsg
+examples : List (Example State MsgKind)
+examples =
+    [ Example.wrap
+        { wrapMsg = AccordionMsg
+        , unwrapMsg =
+            \msg ->
+                case msg of
+                    AccordionMsg childMsg ->
+                        Just childMsg
 
-                        _ ->
-                            Nothing
-            , wrapState = AccordionState
-            , unwrapState =
-                \msg ->
-                    case msg of
-                        AccordionState childState ->
-                            Just childState
+                    _ ->
+                        Nothing
+        , wrapState = AccordionState
+        , unwrapState =
+            \msg ->
+                case msg of
+                    AccordionState childState ->
+                        Just childState
 
-                        _ ->
-                            Nothing
-            }
-            Accordion.example
-      )
-    , ( "button"
-      , Example.wrap
-            { wrapMsg = ButtonMsg
-            , unwrapMsg =
-                \msg ->
-                    case msg of
-                        ButtonMsg childMsg ->
-                            Just childMsg
+                    _ ->
+                        Nothing
+        }
+        Accordion.example
+    , Example.wrap
+        { wrapMsg = ButtonMsg
+        , unwrapMsg =
+            \msg ->
+                case msg of
+                    ButtonMsg childMsg ->
+                        Just childMsg
 
-                        _ ->
-                            Nothing
-            , wrapState = ButtonState
-            , unwrapState =
-                \msg ->
-                    case msg of
-                        ButtonState childState ->
-                            Just childState
+                    _ ->
+                        Nothing
+        , wrapState = ButtonState
+        , unwrapState =
+            \msg ->
+                case msg of
+                    ButtonState childState ->
+                        Just childState
 
-                        _ ->
-                            Nothing
-            }
-            Button.example
-      )
-    , ( "bannerAlert"
-      , Example.wrap
-            { wrapMsg = BannerAlertMsg
-            , unwrapMsg =
-                \msg ->
-                    case msg of
-                        BannerAlertMsg childMsg ->
-                            Just childMsg
+                    _ ->
+                        Nothing
+        }
+        Button.example
+    , Example.wrap
+        { wrapMsg = BannerAlertMsg
+        , unwrapMsg =
+            \msg ->
+                case msg of
+                    BannerAlertMsg childMsg ->
+                        Just childMsg
 
-                        _ ->
-                            Nothing
-            , wrapState = BannerAlertState
-            , unwrapState =
-                \msg ->
-                    case msg of
-                        BannerAlertState childState ->
-                            Just childState
+                    _ ->
+                        Nothing
+        , wrapState = BannerAlertState
+        , unwrapState =
+            \msg ->
+                case msg of
+                    BannerAlertState childState ->
+                        Just childState
 
-                        _ ->
-                            Nothing
-            }
-            BannerAlert.example
-      )
-    , ( "modal"
-      , Example.wrap
-            { wrapMsg = ModalMsg
-            , unwrapMsg =
-                \msg ->
-                    case msg of
-                        ModalMsg childMsg ->
-                            Just childMsg
+                    _ ->
+                        Nothing
+        }
+        BannerAlert.example
+    , Example.wrap
+        { wrapMsg = ModalMsg
+        , unwrapMsg =
+            \msg ->
+                case msg of
+                    ModalMsg childMsg ->
+                        Just childMsg
 
-                        _ ->
-                            Nothing
-            , wrapState = ModalState
-            , unwrapState =
-                \msg ->
-                    case msg of
-                        ModalState childState ->
-                            Just childState
+                    _ ->
+                        Nothing
+        , wrapState = ModalState
+        , unwrapState =
+            \msg ->
+                case msg of
+                    ModalState childState ->
+                        Just childState
 
-                        _ ->
-                            Nothing
-            }
-            Modal.example
-      )
+                    _ ->
+                        Nothing
+        }
+        Modal.example
     ]
 
 
@@ -143,68 +135,57 @@ type State
     | ModalState Modal.State
 
 
-type Msg
+type MsgKind
     = AccordionMsg Accordion.Msg
     | ButtonMsg Button.Msg
     | BannerAlertMsg BannerAlert.Msg
     | ModalMsg Modal.Msg
 
 
+type Msg
+    = Msg String MsgKind
+
+
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
-update msg moduleStates =
-    let
-        update_ key =
-            case Dict.get key moduleStates of
-                Just example ->
-                    example.update msg example.state
-                        |> Tuple.mapFirst
-                            (\newState ->
-                                Dict.insert key { example | state = newState } moduleStates
-                            )
+update (Msg key exampleMsg) moduleStates =
+    case Dict.get key moduleStates of
+        Just example ->
+            example.update exampleMsg example.state
+                |> Tuple.mapFirst
+                    (\newState ->
+                        Dict.insert key { example | state = newState } moduleStates
+                    )
+                |> Tuple.mapSecond (Cmd.map (Msg key))
 
-                Nothing ->
-                    ( moduleStates, Cmd.none )
-    in
-    case msg of
-        AccordionMsg exampleMsg ->
-            update_ "accordion"
-
-        ButtonMsg exampleMsg ->
-            update_ "button"
-
-        BannerAlertMsg exampleMsg ->
-            update_ "bannerAlert"
-
-        ModalMsg exampleMsg ->
-            update_ "modal"
+        Nothing ->
+            ( moduleStates, Cmd.none )
 
 
 type alias ModuleStates =
-    Dict String (Example State Msg)
+    Dict String (Example State MsgKind)
 
 
 init : ModuleStates
 init =
-    Dict.fromList constructors
+    List.map (\example -> ( example.name, example )) examples
+        |> Dict.fromList
 
 
 {-| -}
 subscriptions : ModuleStates -> Sub Msg
 subscriptions moduleStates =
-    allExamples moduleStates
-        |> List.map (\example -> example.subscriptions example.state)
+    Dict.values moduleStates
+        |> List.map (\example -> Sub.map (Msg example.name) (example.subscriptions example.state))
         |> Sub.batch
 
 
 {-| -}
-view : Bool -> (Example State Msg -> Bool) -> ModuleStates -> List (Html Msg)
+view : Bool -> (Example State MsgKind -> Bool) -> ModuleStates -> List (Html Msg)
 view showFocusLink filter moduleStates =
-    allExamples moduleStates
+    Dict.values moduleStates
         |> List.filter filter
-        |> List.map (Example.view showFocusLink)
-
-
-allExamples : ModuleStates -> List (Example State Msg)
-allExamples moduleStates =
-    List.filterMap (\accessor -> Dict.get accessor moduleStates)
-        (List.map Tuple.first constructors)
+        |> List.map
+            (\example ->
+                Example.view showFocusLink example
+                    |> Html.map (Msg example.name)
+            )
