@@ -1,6 +1,6 @@
 {
   "name": "@noredink/ui",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "UI widgets we use.",
   "main": "lib/index.js",
   "directories": {
