@@ -59,7 +59,7 @@ example parentMessage state =
                     |> Html.fromUnstyled
                 , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
                 , TextInput.view
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (text)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
@@ -71,7 +71,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ text "... type_ = TextInput.number" ]
                 , TextInput.view
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (number)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
@@ -83,7 +83,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ text "... type_ = TextInput.float" ]
                 , TextInput.view
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (float)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
@@ -95,7 +95,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ text "... type_ = TextInput.password" ]
                 , TextInput.view
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (password)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
@@ -107,7 +107,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ text "... type_ = TextInput.email" ]
                 , TextInput.view
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (email)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , showLabel = exampleConfig.showLabel
@@ -119,7 +119,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
                 , TextInput.writing
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (writing)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , value = Maybe.withDefault "" <| Dict.get 4 state.stringInputValues
@@ -131,7 +131,7 @@ example parentMessage state =
                     }
                 , Heading.h3 [] [ text "onBlur demonstration" ]
                 , TextInput.writing
-                    { label = exampleConfig.label
+                    { label = exampleConfig.label ++ " (onBlur)"
                     , isInError = exampleConfig.isInError
                     , placeholder = exampleConfig.placeholder
                     , value = Maybe.withDefault "" <| Dict.get 7 state.stringInputValues
