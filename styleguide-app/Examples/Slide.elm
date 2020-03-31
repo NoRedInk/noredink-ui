@@ -9,6 +9,7 @@ module Examples.Slide exposing (Msg, State, example)
 import Accessibility.Styled as Html
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
 import List.Zipper as Zipper exposing (Zipper)
@@ -31,6 +32,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Slide.V1"
     , categories = [ Animations ]

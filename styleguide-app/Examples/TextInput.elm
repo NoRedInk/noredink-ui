@@ -8,8 +8,8 @@ module Examples.TextInput exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Dict exposing (Dict)
+import Example exposing (Example)
 import Html.Styled as Html
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
 import Sort.Set as Set exposing (Set)
@@ -33,6 +33,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.TextInput.V5"
     , categories = [ Inputs ]

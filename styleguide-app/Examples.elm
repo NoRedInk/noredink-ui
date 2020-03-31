@@ -1,6 +1,7 @@
 module Examples exposing (ModuleStates, Msg, init, subscriptions, update, view)
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.Alert as Alert
 import Examples.AssignmentIcon as AssignmentIcon
@@ -38,16 +39,6 @@ import Examples.UiIcon as UiIcon
 import Html.Styled as Html exposing (Html)
 import ModuleExample exposing (ModuleExample)
 import Sort.Set as Set exposing (Set)
-
-
-type alias Example state msg =
-    { name : String
-    , state : state
-    , update : msg -> state -> ( state, Cmd msg )
-    , subscriptions : state -> Sub msg
-    , view : state -> List (Html msg)
-    , categories : List Category
-    }
 
 
 type alias ModuleStates =

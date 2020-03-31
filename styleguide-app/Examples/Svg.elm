@@ -9,6 +9,7 @@ module Examples.Svg exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
+import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
@@ -22,6 +23,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Svg.V1"
     , categories = [ Icons ]

@@ -7,8 +7,8 @@ module Examples.Dropdown exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Html.Styled
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Dropdown.V2
 import Sort.Set as Set exposing (Set)
 
@@ -24,6 +24,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Dropdown.V2"
     , state = init

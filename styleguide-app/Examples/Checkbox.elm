@@ -8,6 +8,7 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
@@ -30,6 +31,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Checkbox.V5"
     , state = init

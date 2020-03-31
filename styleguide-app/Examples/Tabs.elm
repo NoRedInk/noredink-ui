@@ -11,6 +11,7 @@ module Examples.Tabs exposing
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Html.Styled as Html
 import List.Zipper
 import Nri.Ui.Tabs.V4 as Tabs
@@ -25,6 +26,7 @@ type alias Msg =
     State
 
 
+example : Example State Msg
 example =
     { name = "Nri.Ui.Tabs.V4"
     , categories = [ Layout ]

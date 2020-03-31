@@ -8,6 +8,7 @@ module Examples.Select exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes
 import Nri.Ui.Heading.V2 as Heading
@@ -15,6 +16,7 @@ import Nri.Ui.Select.V7 as Select
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Select.V7"
     , state = init

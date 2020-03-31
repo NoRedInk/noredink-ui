@@ -9,6 +9,7 @@ module Examples.SlideModal exposing (Msg, State, example)
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V8 as Button
@@ -29,6 +30,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.SlideModal.V2"
     , categories = [ Modals ]

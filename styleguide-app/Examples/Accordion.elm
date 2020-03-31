@@ -13,6 +13,7 @@ module Examples.Accordion exposing
 import Category exposing (Category(..))
 import Css exposing (..)
 import Dict exposing (Dict)
+import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (ModuleExample)
@@ -24,6 +25,7 @@ import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Accordion.V1"
     , state = init

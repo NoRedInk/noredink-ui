@@ -9,6 +9,7 @@ module Examples.BannerAlert exposing (example, State, init, Msg, update)
 
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled exposing (Html, a, div, h3, pre, text)
 import Html.Styled.Attributes as Attributes
 import ModuleExample exposing (ModuleExample)
@@ -20,6 +21,8 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.BannerAlert.V6"
     , state = init

@@ -8,6 +8,7 @@ module Examples.Table exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css exposing (..)
+import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -27,6 +28,7 @@ type alias Msg =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Table.V5"
     , state = ()

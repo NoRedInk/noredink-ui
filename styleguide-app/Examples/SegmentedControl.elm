@@ -13,6 +13,7 @@ module Examples.SegmentedControl exposing
 import Accessibility.Styled
 import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
+import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
@@ -23,6 +24,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.SegmentedControl.V8"
     , state = init

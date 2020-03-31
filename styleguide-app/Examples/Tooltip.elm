@@ -9,6 +9,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 import Accessibility.Styled as Html
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
@@ -50,6 +51,7 @@ update msg model =
                 ( { model | openTooltip = Nothing }, Cmd.none )
 
 
+example : Example State Msg
 example =
     { name = "Nri.Ui.Tooltip.V1"
     , categories = [ Widgets ]

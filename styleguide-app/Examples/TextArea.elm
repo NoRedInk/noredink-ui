@@ -8,6 +8,7 @@ module Examples.TextArea exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Dict exposing (Dict)
+import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
@@ -33,6 +34,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.TextArea.V4"
     , state = init

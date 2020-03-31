@@ -9,6 +9,7 @@ module Examples.Button exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import ModuleExample exposing (ModuleExample, ModuleMessages)
@@ -18,6 +19,8 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Button.V10"
     , state = init

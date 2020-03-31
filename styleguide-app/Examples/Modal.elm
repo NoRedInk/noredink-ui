@@ -10,6 +10,7 @@ import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
+import Example exposing (Example)
 import Html as Root
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Button.V10 as Button
@@ -48,6 +49,7 @@ init =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Modal.V8"
     , categories = [ Modals ]

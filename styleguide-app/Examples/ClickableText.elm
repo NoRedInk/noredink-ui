@@ -9,6 +9,7 @@ module Examples.ClickableText exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -24,6 +25,7 @@ type State
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.ClickableText.V3"
     , state = init

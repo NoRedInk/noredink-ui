@@ -7,6 +7,7 @@ module Examples.SortableTable exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
@@ -30,6 +31,7 @@ type alias State =
 
 
 {-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.SortableTable.V1"
     , categories = [ Tables ]
