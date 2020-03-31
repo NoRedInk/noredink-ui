@@ -91,8 +91,7 @@ spec =
                         , isLocked = False
                         , isPremium = True
                         }
-                        |> Query.find [ Selector.tag "title" ]
-                        |> Query.has [ Selector.text "Premium" ]
+                        |> Query.has [ Selector.attribute (Attributes.attribute "aria-label" "Premium") ]
             , test "is not disabled when disabled = False" <|
                 \() ->
                     premiumView

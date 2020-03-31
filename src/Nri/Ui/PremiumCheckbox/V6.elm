@@ -8,6 +8,11 @@ This module is used when there may or may not be Premium
 content to be "checked"!
 
 
+# Patch changes
+
+  - Use Nri.Ui.Pennant.V2.premiumFlag instead of Nri.Ui.Pennant.V1.premiumFlag
+
+
 # Changes from V5
 
   - Allow checkbox to show pennant, or not, based on bool
@@ -16,10 +21,11 @@ content to be "checked"!
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Css exposing (..)
+import Css
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Pennant.V1 exposing (premiumFlag)
+import Nri.Ui.Pennant.V2 exposing (premiumFlag)
+import Nri.Ui.Svg.V1 as Svg
 
 
 {-| A checkbox that should be used for premium content
@@ -43,8 +49,8 @@ view :
 view config =
     Html.div
         [ css
-            [ displayFlex
-            , alignItems center
+            [ Css.displayFlex
+            , Css.alignItems Css.center
             ]
         ]
         [ Checkbox.viewWithLabel
@@ -67,6 +73,11 @@ view config =
             }
         , if config.isPremium then
             premiumFlag
+                |> Svg.withLabel "Premium"
+                |> Svg.withWidth (Css.px 25)
+                |> Svg.withHeight (Css.px 30)
+                |> Svg.withCss [ Css.marginLeft (Css.px 8) ]
+                |> Svg.toHtml
 
           else
             Html.text ""

@@ -1,13 +1,13 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
-    , withColor, withLabel, withWidth, withHeight
+    , withColor, withLabel, withWidth, withHeight, withCss
     , fromHtml, toHtml
     )
 
 {-|
 
 @docs Svg
-@docs withColor, withLabel, withWidth, withHeight
+@docs withColor, withLabel, withWidth, withHeight, withCss
 @docs fromHtml, toHtml
 
 -}
@@ -26,6 +26,7 @@ type Svg
         , color : Maybe Color
         , width : Maybe Css.Px
         , height : Maybe Css.Px
+        , css : List Css.Style
         , label : Maybe String
         }
 
@@ -39,6 +40,7 @@ fromHtml icon =
         , color = Nothing
         , height = Nothing
         , width = Nothing
+        , css = []
         , label = Nothing
         }
 
@@ -72,6 +74,13 @@ withHeight height (Svg record) =
     Svg { record | height = Just height }
 
 
+{-| Css for the SVG's container.
+-}
+withCss : List Css.Style -> Svg -> Svg
+withCss css (Svg record) =
+    Svg { record | css = css }
+
+
 {-| Render an svg.
 -}
 toHtml : Svg -> Html msg
@@ -83,6 +92,7 @@ toHtml (Svg record) =
                 , Maybe.map Css.width record.width
                 , Maybe.map Css.height record.height
                 ]
+                ++ record.css
 
         attributes =
             List.filterMap identity
