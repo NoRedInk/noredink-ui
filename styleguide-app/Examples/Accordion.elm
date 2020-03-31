@@ -1,6 +1,6 @@
 module Examples.Accordion exposing
     ( example
-    , Msg, State, init, update
+    , Msg, State, example_, init, update, view
     )
 
 {-|
@@ -12,7 +12,7 @@ module Examples.Accordion exposing
 import Category exposing (Category(..))
 import Css exposing (..)
 import Dict exposing (Dict)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Accordion.V1 as Accordion
@@ -28,84 +28,105 @@ example : (Msg -> msg) -> State -> ModuleExample msg
 example parentMessage model =
     { name = "Nri.Ui.Accordion.V1"
     , categories = Set.fromList Category.sorter <| List.singleton Layout
-    , content =
-        [ Heading.h3 [] [ Html.text "Accordion.view with default styles" ]
-        , Accordion.view
-            { entries =
-                [ { id = 1, title = "Entry 1", content = "Content for the first accordion" }
-                , { id = 2, title = "Entry 2", content = "Content for the second accordion" }
-                , { id = 3, title = "Super long entry that is very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long", content = "Content for the third accordion" }
-                ]
-                    |> List.map
-                        (\entry ->
-                            ( entry, Dict.get entry.id model |> Maybe.withDefault False )
-                        )
-            , viewHeader = .title >> Html.text
-            , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
-            , customStyles = Nothing
-            , toggle = \entry toExpand -> Toggle entry.id toExpand
-            , caret = Accordion.DefaultCaret
-            }
-        , Heading.h3 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
-        , Accordion.view
-            { entries =
-                [ { id = 4
-                  , title = "Firstname Lastname"
-                  , content =
-                        Html.div
-                            [ css [ Fonts.baseFont, fontSize (px 13) ]
-                            ]
-                            [ Html.text "has not started writing" ]
-                  }
-                , { id = 5
-                  , title = "LongFirstnameAnd EvenLongerLastname"
-                  , content =
-                        Html.div
-                            [ css [ Fonts.baseFont, fontSize (px 13) ] ]
-                            [ Html.text "has started writing" ]
-                  }
-                ]
-                    |> List.map
-                        (\entry ->
-                            ( entry, Dict.get entry.id model |> Maybe.withDefault False )
-                        )
-            , viewHeader = .title >> Html.text
-            , viewContent = .content
-            , customStyles =
-                Just
-                    (\_ ->
-                        { entryStyles =
-                            [ borderTop3 (px 1) solid Colors.gray75
-                            , marginBottom zero
-                            , width (px 284)
-                            ]
-                        , entryExpandedStyles = []
-                        , entryClosedStyles = []
-                        , headerStyles =
-                            [ height (px 46)
-                            , paddingLeft (px 8)
-                            , paddingRight (px 8)
-                            , Css.alignItems Css.center
-                            ]
-                        , headerExpandedStyles =
-                            [ backgroundColor Colors.gray96
-                            , borderRadius zero
-                            ]
-                        , headerClosedStyles = [ backgroundColor transparent ]
-                        , contentStyles =
-                            [ backgroundColor Colors.gray96
-                            , paddingLeft (px 8)
-                            , paddingRight (px 8)
-                            , paddingBottom (px 8)
-                            ]
-                        }
-                    )
-            , toggle = \entry toExpand -> Toggle entry.id toExpand
-            , caret = Accordion.DefaultCaret
-            }
-        ]
-            |> List.map (Html.map parentMessage)
+    , content = List.map (Html.map parentMessage) (view model)
     }
+
+
+{-| -}
+example_ :
+    { name : String
+    , state : State
+    , update : Msg -> State -> ( State, Cmd Msg )
+    , view : State -> List (Html Msg)
+    , categories : List Category
+    }
+example_ =
+    { name = "Nri.Ui.Accordion.V1"
+    , state = init
+    , update = update
+    , view = view
+    , categories = [ Layout ]
+    }
+
+
+{-| -}
+view : State -> List (Html Msg)
+view model =
+    [ Heading.h3 [] [ Html.text "Accordion.view with default styles" ]
+    , Accordion.view
+        { entries =
+            [ { id = 1, title = "Entry 1", content = "Content for the first accordion" }
+            , { id = 2, title = "Entry 2", content = "Content for the second accordion" }
+            , { id = 3, title = "Super long entry that is very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long", content = "Content for the third accordion" }
+            ]
+                |> List.map
+                    (\entry ->
+                        ( entry, Dict.get entry.id model |> Maybe.withDefault False )
+                    )
+        , viewHeader = .title >> Html.text
+        , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
+        , customStyles = Nothing
+        , toggle = \entry toExpand -> Toggle entry.id toExpand
+        , caret = Accordion.DefaultCaret
+        }
+    , Heading.h3 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
+    , Accordion.view
+        { entries =
+            [ { id = 4
+              , title = "Firstname Lastname"
+              , content =
+                    Html.div
+                        [ css [ Fonts.baseFont, fontSize (px 13) ]
+                        ]
+                        [ Html.text "has not started writing" ]
+              }
+            , { id = 5
+              , title = "LongFirstnameAnd EvenLongerLastname"
+              , content =
+                    Html.div
+                        [ css [ Fonts.baseFont, fontSize (px 13) ] ]
+                        [ Html.text "has started writing" ]
+              }
+            ]
+                |> List.map
+                    (\entry ->
+                        ( entry, Dict.get entry.id model |> Maybe.withDefault False )
+                    )
+        , viewHeader = .title >> Html.text
+        , viewContent = .content
+        , customStyles =
+            Just
+                (\_ ->
+                    { entryStyles =
+                        [ borderTop3 (px 1) solid Colors.gray75
+                        , marginBottom zero
+                        , width (px 284)
+                        ]
+                    , entryExpandedStyles = []
+                    , entryClosedStyles = []
+                    , headerStyles =
+                        [ height (px 46)
+                        , paddingLeft (px 8)
+                        , paddingRight (px 8)
+                        , Css.alignItems Css.center
+                        ]
+                    , headerExpandedStyles =
+                        [ backgroundColor Colors.gray96
+                        , borderRadius zero
+                        ]
+                    , headerClosedStyles = [ backgroundColor transparent ]
+                    , contentStyles =
+                        [ backgroundColor Colors.gray96
+                        , paddingLeft (px 8)
+                        , paddingRight (px 8)
+                        , paddingBottom (px 8)
+                        ]
+                    }
+                )
+        , toggle = \entry toExpand -> Toggle entry.id toExpand
+        , caret = Accordion.DefaultCaret
+        }
+    ]
 
 
 type Msg
@@ -130,6 +151,6 @@ type alias State =
 
 
 {-| -}
-update : Msg -> State -> State
+update : Msg -> State -> ( State, Cmd Msg )
 update (Toggle id toExpanded) model =
-    Dict.insert id toExpanded model
+    ( Dict.insert id toExpanded model, Cmd.none )

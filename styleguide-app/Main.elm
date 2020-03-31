@@ -5,7 +5,7 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category
 import Css exposing (..)
-import Examples exposing (ModuleStates, nriThemedModules)
+import Examples exposing (ModuleStates)
 import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
@@ -122,7 +122,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
-                        , nriThemedModules model.moduleStates
+                        , Examples.view model.moduleStates
                             |> List.filter (\m -> m.name == doodad)
                             |> List.map (ModuleExample.view False)
                             |> Html.div []
@@ -135,7 +135,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
-                        , nriThemedModules model.moduleStates
+                        , Examples.view model.moduleStates
                             |> List.filter (\doodad -> Set.memberOf doodad.categories category)
                             |> List.map (ModuleExample.view True)
                             |> Html.div [ id (Category.forId category) ]
@@ -148,7 +148,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text "All" ]
-                        , nriThemedModules model.moduleStates
+                        , Examples.view model.moduleStates
                             |> List.map (ModuleExample.view True)
                             |> Html.div []
                             |> Html.map UpdateModuleStates
