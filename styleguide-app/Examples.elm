@@ -41,10 +41,98 @@ import Html.Styled as Html exposing (Html)
 
 constructors : List ( String, Example State Msg )
 constructors =
-    [ ( "accordion", Example.wrap { wrapMsg = AccordionMsg, unwrapMsg = getAccordionMsg, wrapState = AccordionState, unwrapState = getAccordionState } Accordion.example )
-    , ( "button", Example.wrap { wrapMsg = ButtonMsg, unwrapMsg = getButtonMsg, wrapState = ButtonState, unwrapState = getButtonState } Button.example )
-    , ( "bannerAlert", Example.wrap { wrapMsg = BannerAlertMsg, unwrapMsg = getBannerAlertMsg, wrapState = BannerAlertState, unwrapState = getBannerAlertState } BannerAlert.example )
-    , ( "modal", Example.wrap { wrapMsg = ModalMsg, unwrapMsg = getModalMsg, wrapState = ModalState, unwrapState = getModalState } Modal.example )
+    [ ( "accordion"
+      , Example.wrap
+            { wrapMsg = AccordionMsg
+            , unwrapMsg =
+                \msg ->
+                    case msg of
+                        AccordionMsg childMsg ->
+                            Just childMsg
+
+                        _ ->
+                            Nothing
+            , wrapState = AccordionState
+            , unwrapState =
+                \msg ->
+                    case msg of
+                        AccordionState childState ->
+                            Just childState
+
+                        _ ->
+                            Nothing
+            }
+            Accordion.example
+      )
+    , ( "button"
+      , Example.wrap
+            { wrapMsg = ButtonMsg
+            , unwrapMsg =
+                \msg ->
+                    case msg of
+                        ButtonMsg childMsg ->
+                            Just childMsg
+
+                        _ ->
+                            Nothing
+            , wrapState = ButtonState
+            , unwrapState =
+                \msg ->
+                    case msg of
+                        ButtonState childState ->
+                            Just childState
+
+                        _ ->
+                            Nothing
+            }
+            Button.example
+      )
+    , ( "bannerAlert"
+      , Example.wrap
+            { wrapMsg = BannerAlertMsg
+            , unwrapMsg =
+                \msg ->
+                    case msg of
+                        BannerAlertMsg childMsg ->
+                            Just childMsg
+
+                        _ ->
+                            Nothing
+            , wrapState = BannerAlertState
+            , unwrapState =
+                \msg ->
+                    case msg of
+                        BannerAlertState childState ->
+                            Just childState
+
+                        _ ->
+                            Nothing
+            }
+            BannerAlert.example
+      )
+    , ( "modal"
+      , Example.wrap
+            { wrapMsg = ModalMsg
+            , unwrapMsg =
+                \msg ->
+                    case msg of
+                        ModalMsg childMsg ->
+                            Just childMsg
+
+                        _ ->
+                            Nothing
+            , wrapState = ModalState
+            , unwrapState =
+                \msg ->
+                    case msg of
+                        ModalState childState ->
+                            Just childState
+
+                        _ ->
+                            Nothing
+            }
+            Modal.example
+      )
     ]
 
 
@@ -55,91 +143,11 @@ type State
     | ModalState Modal.State
 
 
-getAccordionState : State -> Maybe Accordion.State
-getAccordionState msg =
-    case msg of
-        AccordionState childState ->
-            Just childState
-
-        _ ->
-            Nothing
-
-
-getButtonState : State -> Maybe Button.State
-getButtonState msg =
-    case msg of
-        ButtonState childState ->
-            Just childState
-
-        _ ->
-            Nothing
-
-
-getBannerAlertState : State -> Maybe BannerAlert.State
-getBannerAlertState msg =
-    case msg of
-        BannerAlertState childState ->
-            Just childState
-
-        _ ->
-            Nothing
-
-
-getModalState : State -> Maybe Modal.State
-getModalState msg =
-    case msg of
-        ModalState childState ->
-            Just childState
-
-        _ ->
-            Nothing
-
-
 type Msg
     = AccordionMsg Accordion.Msg
     | ButtonMsg Button.Msg
     | BannerAlertMsg BannerAlert.Msg
     | ModalMsg Modal.Msg
-
-
-getAccordionMsg : Msg -> Maybe Accordion.Msg
-getAccordionMsg msg =
-    case msg of
-        AccordionMsg childMsg ->
-            Just childMsg
-
-        _ ->
-            Nothing
-
-
-getButtonMsg : Msg -> Maybe Button.Msg
-getButtonMsg msg =
-    case msg of
-        ButtonMsg childMsg ->
-            Just childMsg
-
-        _ ->
-            Nothing
-
-
-getBannerAlertMsg : Msg -> Maybe BannerAlert.Msg
-getBannerAlertMsg msg =
-    case msg of
-        BannerAlertMsg childMsg ->
-            Just childMsg
-
-        _ ->
-            Nothing
-
-
-getModalMsg : Msg -> Maybe Modal.Msg
-getModalMsg msg =
-    case msg of
-        ModalMsg childMsg ->
-            Just childMsg
-
-        _ ->
-            Nothing
 
 
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
