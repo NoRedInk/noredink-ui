@@ -41,7 +41,7 @@ import Html.Styled as Html exposing (Html)
 type alias ModuleStates =
     { accordion : Example Accordion.State Msg
     , button : Example Button.State Msg
-    , bannerAlert : Example BannerAlert.State BannerAlert.Msg
+    , bannerAlert : Example BannerAlert.State Msg
     , clickableText : Example ClickableText.State ClickableText.Msg
     , checkbox : Example Checkbox.State Checkbox.Msg
     , dropdown : Example Dropdown.State Dropdown.Msg
@@ -51,7 +51,7 @@ type alias ModuleStates =
     , textArea : Example TextArea.State TextArea.Msg
     , textInput : Example TextInput.State TextInput.Msg
     , disclosureIndicator : Example DisclosureIndicator.State DisclosureIndicator.Msg
-    , modal : Example Modal.State Modal.Msg
+    , modal : Example Modal.State Msg
     , slideModal : Example SlideModal.State SlideModal.Msg
     , slide : Example Slide.State Slide.Msg
     , sortableTable : Example SortableTable.State SortableTable.Msg
@@ -66,7 +66,7 @@ init : ModuleStates
 init =
     { accordion = Example.wrap { wrapMsg = AccordionMsg, unwrapMsg = getAccordionMsg } Accordion.example
     , button = Example.wrap { wrapMsg = ButtonMsg, unwrapMsg = getButtonMsg } Button.example
-    , bannerAlert = BannerAlert.example
+    , bannerAlert = Example.wrap { wrapMsg = BannerAlertMsg, unwrapMsg = getBannerAlertMsg } BannerAlert.example
     , clickableText = ClickableText.example
     , checkbox = Checkbox.example
     , dropdown = Dropdown.example
@@ -76,7 +76,7 @@ init =
     , textArea = TextArea.example
     , textInput = TextInput.example
     , disclosureIndicator = DisclosureIndicator.example
-    , modal = Modal.example
+    , modal = Example.wrap { wrapMsg = ModalMsg, unwrapMsg = getModalMsg } Modal.example
     , slideModal = SlideModal.example
     , slide = Slide.example
     , sortableTable = SortableTable.example
@@ -114,21 +114,29 @@ getButtonMsg msg =
             Nothing
 
 
+getBannerAlertMsg : Msg -> Maybe BannerAlert.Msg
+getBannerAlertMsg msg =
+    case msg of
+        BannerAlertMsg childMsg ->
+            Just childMsg
+
+        _ ->
+            Nothing
+
+
+getModalMsg : Msg -> Maybe Modal.Msg
+getModalMsg msg =
+    case msg of
+        ModalMsg childMsg ->
+            Just childMsg
+
+        _ ->
+            Nothing
+
+
 update : Msg -> ModuleStates -> ( ModuleStates, Cmd Msg )
 update msg moduleStates =
     let
-        updateWith accessor updater wrapMsg childMsg =
-            let
-                module_ =
-                    accessor moduleStates
-
-                ( newState, cmd ) =
-                    module_.update childMsg module_.state
-            in
-            ( updater { module_ | state = newState } moduleStates
-            , Cmd.map wrapMsg cmd
-            )
-
         update_ example =
             example.update msg example.state
                 |> Tuple.mapFirst (\newState -> { example | state = newState })
@@ -143,17 +151,19 @@ update msg moduleStates =
                 |> Tuple.mapFirst (\button -> { moduleStates | button = button })
 
         BannerAlertMsg exampleMsg ->
-            updateWith .bannerAlert (\state m -> { m | bannerAlert = state }) BannerAlertMsg exampleMsg
+            update_ moduleStates.bannerAlert
+                |> Tuple.mapFirst (\bannerAlert -> { moduleStates | bannerAlert = bannerAlert })
 
         ModalMsg exampleMsg ->
-            updateWith .modal (\state m -> { m | modal = state }) ModalMsg exampleMsg
+            update_ moduleStates.modal
+                |> Tuple.mapFirst (\modal -> { moduleStates | modal = modal })
 
 
 {-| -}
 subscriptions : ModuleStates -> Sub Msg
 subscriptions moduleStates =
     Sub.batch
-        [ Sub.map ModalMsg (moduleStates.modal.subscriptions moduleStates.modal.state)
+        [ moduleStates.modal.subscriptions moduleStates.modal.state
         ]
 
 
@@ -164,7 +174,5 @@ view showFocusLink filter moduleStates =
     [ Example.view showFocusLink moduleStates.accordion
     , Example.view showFocusLink moduleStates.button
     , Example.view showFocusLink moduleStates.bannerAlert
-        |> Html.map BannerAlertMsg
     , Example.view showFocusLink moduleStates.modal
-        |> Html.map ModalMsg
     ]
