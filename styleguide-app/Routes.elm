@@ -16,10 +16,10 @@ route : Parser Route
 route =
     Parser.oneOf
         [ Parser.succeed Category
-            |. Parser.token "category/"
+            |. Parser.token "/category/"
             |= (restOfPath |> Parser.andThen category)
         , Parser.succeed Doodad
-            |. Parser.token "doodad/"
+            |. Parser.token "/doodad/"
             |= restOfPath
         , Parser.succeed All
         ]
@@ -42,5 +42,7 @@ category string =
 
 fromLocation : Url -> Route
 fromLocation location =
-    Parser.run route (Maybe.withDefault "" location.fragment)
+    location.fragment
+        |> Maybe.withDefault ""
+        |> Parser.run route
         |> Result.withDefault All

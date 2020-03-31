@@ -54,7 +54,7 @@ view showFocusLink { name, content } =
                 |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
                 |> viewLink "view docs"
             , if showFocusLink then
-                viewLink "see only this" ("#doodad/" ++ name)
+                viewLink "see only this" ("#/doodad/" ++ name)
 
               else
                 Html.text ""
