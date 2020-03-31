@@ -12,7 +12,6 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}

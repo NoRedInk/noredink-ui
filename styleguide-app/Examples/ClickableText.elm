@@ -16,7 +16,6 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}

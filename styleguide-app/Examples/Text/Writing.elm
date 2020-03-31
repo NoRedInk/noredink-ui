@@ -7,26 +7,29 @@ module Examples.Text.Writing exposing (example)
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Html.Styled exposing (text)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Text.Writing.V1 as TextWriting
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : ModuleExample msg
+example : Example () ()
 example =
     { name = "Nri.Ui.Text.Writing.V1"
-    , categories = Set.fromList Category.sorter <| List.singleton Text
-    , content =
-        let
-            longerBody =
-                """Be on the lookout for a new and improved assignment
+    , categories = List.singleton Text
+    , state = ()
+    , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \_ ->
+            let
+                longerBody =
+                    """Be on the lookout for a new and improved assignment
                     creation form! Soon, you'll be able to easily see a summary
                     of the content you're assigning, as well as an estimate for
                     how long the assignment will take.
                 """
-        in
-        [ TextWriting.footnote [ text <| "This is a footnote. " ++ longerBody ]
-        ]
+            in
+            [ TextWriting.footnote [ text <| "This is a footnote. " ++ longerBody ]
+            ]
     }

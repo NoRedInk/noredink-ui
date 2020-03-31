@@ -16,7 +16,6 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Accordion.V1 as Accordion
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts

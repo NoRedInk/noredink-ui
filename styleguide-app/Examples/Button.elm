@@ -12,7 +12,6 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)

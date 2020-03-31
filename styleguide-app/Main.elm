@@ -11,7 +11,6 @@ import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import ModuleExample as ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
@@ -122,9 +121,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
-                        , Examples.view model.moduleStates
-                            |> List.filter (\m -> m.name == doodad)
-                            |> List.map (ModuleExample.view False)
+                        , Examples.view False (\m -> m.name == doodad) model.moduleStates
                             |> Html.div []
                             |> Html.map UpdateModuleStates
                         ]
@@ -135,9 +132,13 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
-                        , Examples.view model.moduleStates
-                            |> List.filter (\doodad -> Set.memberOf doodad.categories category)
-                            |> List.map (ModuleExample.view True)
+                        , Examples.view True
+                            (\doodad ->
+                                Set.memberOf
+                                    (Set.fromList Category.sorter doodad.categories)
+                                    category
+                            )
+                            model.moduleStates
                             |> Html.div [ id (Category.forId category) ]
                             |> Html.map UpdateModuleStates
                         ]
@@ -148,8 +149,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text "All" ]
-                        , Examples.view model.moduleStates
-                            |> List.map (ModuleExample.view True)
+                        , Examples.view True (\_ -> True) model.moduleStates
                             |> Html.div []
                             |> Html.map UpdateModuleStates
                         ]

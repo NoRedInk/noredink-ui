@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled
 import Nri.Ui.Dropdown.V2
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}

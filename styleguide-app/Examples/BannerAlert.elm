@@ -12,7 +12,6 @@ import Css
 import Example exposing (Example)
 import Html.Styled exposing (Html, a, div, h3, pre, text)
 import Html.Styled.Attributes as Attributes
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts

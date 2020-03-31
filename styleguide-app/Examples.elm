@@ -1,6 +1,5 @@
 module Examples exposing (ModuleStates, Msg, init, subscriptions, update, view)
 
-import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.Alert as Alert
@@ -37,8 +36,6 @@ import Examples.TextInput as TextInput
 import Examples.Tooltip as Tooltip
 import Examples.UiIcon as UiIcon
 import Html.Styled as Html exposing (Html)
-import ModuleExample exposing (ModuleExample)
-import Sort.Set as Set exposing (Set)
 
 
 type alias ModuleStates =
@@ -135,17 +132,13 @@ subscriptions moduleStates =
 
 
 {-| -}
-view : ModuleStates -> List (ModuleExample Msg)
-view moduleStates =
-    [ viewExample AccordionMsg moduleStates.accordion
-    , viewExample ButtonMsg moduleStates.button
-    , viewExample BannerAlertMsg moduleStates.bannerAlert
+view : Bool -> (Example state msg -> Bool) -> ModuleStates -> List (Html Msg)
+view showFocusLink filter moduleStates =
+    -- TODO add the filter back in
+    [ Example.view showFocusLink moduleStates.accordion
+        |> Html.map AccordionMsg
+    , Example.view showFocusLink moduleStates.button
+        |> Html.map ButtonMsg
+    , Example.view showFocusLink moduleStates.bannerAlert
+        |> Html.map BannerAlertMsg
     ]
-
-
-viewExample : (msg -> Msg) -> Example state msg -> ModuleExample Msg
-viewExample wrapperMsg example =
-    { name = example.name
-    , categories = Set.fromList Category.sorter example.categories
-    , content = List.map (Html.map wrapperMsg) (example.view example.state)
-    }
