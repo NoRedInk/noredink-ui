@@ -1,8 +1,8 @@
-module Examples.AssignmentIcon exposing (example)
+module Examples.AssignmentIcon exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -14,7 +14,17 @@ import Nri.Ui.Icon.V5 as Icon
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.AssignmentIcon.V1"
     , categories = [ Icons ]

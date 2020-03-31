@@ -1,8 +1,8 @@
-module Examples.Pennant exposing (example)
+module Examples.Pennant exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -17,7 +17,17 @@ import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Pennant.V2"
     , categories = List.singleton Icons

@@ -1,8 +1,8 @@
-module Examples.MasteryIcon exposing (example)
+module Examples.MasteryIcon exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
@@ -14,7 +14,17 @@ import Nri.Ui.MasteryIcon.V1 as MasteryIcon
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.MasteryIcon.V1"
     , categories = List.singleton Icons

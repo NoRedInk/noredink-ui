@@ -1,8 +1,8 @@
-module Examples.Colors exposing (example)
+module Examples.Colors exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -21,7 +21,17 @@ type alias ColorExample =
     ( String, Css.Color, String )
 
 
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Colors.V1"
     , categories = List.singleton Colors

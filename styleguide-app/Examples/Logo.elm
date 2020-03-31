@@ -1,8 +1,8 @@
-module Examples.Logo exposing (example)
+module Examples.Logo exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
@@ -15,7 +15,17 @@ import Nri.Ui.Logo.V1 as Logo
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Logo.V1"
     , categories = List.singleton Icons

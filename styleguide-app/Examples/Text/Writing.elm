@@ -1,8 +1,8 @@
-module Examples.Text.Writing exposing (example)
+module Examples.Text.Writing exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -13,7 +13,16 @@ import Nri.Ui.Text.Writing.V1 as TextWriting
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+example : Example State Msg
 example =
     { name = "Nri.Ui.Text.Writing.V1"
     , categories = List.singleton Text

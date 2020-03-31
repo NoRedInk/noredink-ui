@@ -1,8 +1,8 @@
-module Examples.UiIcon exposing (example)
+module Examples.UiIcon exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
@@ -14,7 +14,17 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.UiIcon.V1"
     , categories = List.singleton Icons

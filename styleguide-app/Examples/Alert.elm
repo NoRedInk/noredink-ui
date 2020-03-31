@@ -1,8 +1,8 @@
-module Examples.Alert exposing (example)
+module Examples.Alert exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -13,7 +13,17 @@ import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Heading.V2 as Heading
 
 
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Alert.V4"
     , categories = [ Messaging ]

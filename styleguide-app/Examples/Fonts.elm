@@ -1,8 +1,8 @@
-module Examples.Fonts exposing (example)
+module Examples.Fonts exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -15,7 +15,17 @@ import Nri.Ui.Heading.V2 as Heading
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Fonts.V1"
     , categories = List.singleton Text

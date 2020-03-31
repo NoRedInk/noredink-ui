@@ -1,8 +1,8 @@
-module Examples.Page exposing (example)
+module Examples.Page exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -16,7 +16,17 @@ import Nri.Ui.Page.V3 as Page
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Page.V3"
     , categories = List.singleton Pages

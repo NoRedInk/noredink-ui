@@ -1,8 +1,8 @@
-module Examples.Text exposing (example)
+module Examples.Text exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -15,7 +15,17 @@ import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Text.V4"
     , categories = List.singleton Text

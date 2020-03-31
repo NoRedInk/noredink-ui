@@ -1,8 +1,8 @@
-module Examples.Callout exposing (example)
+module Examples.Callout exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
@@ -14,7 +14,17 @@ import Html.Styled.Attributes exposing (href, title)
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 
 
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Callout.V1"
     , categories = [ Messaging ]

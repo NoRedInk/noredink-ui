@@ -1,8 +1,8 @@
-module Examples.Icon exposing (example)
+module Examples.Icon exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
@@ -20,7 +20,17 @@ import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
-example : Example () ()
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Icon.V5"
     , categories = List.singleton Icons
