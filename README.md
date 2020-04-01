@@ -20,7 +20,7 @@ Suppose you just released version `5.0.1`, a small styling fix in the checkbox w
 
 To prevent these big Yaks from suddenly showing up in seemingly trivial tasks we prefer to avoid breaking changes in the package. Instead when we need to make a breaking change in a widget, we create a new module for it `Nri.Ui.MyWidget.VX`. Similarly, when we build custom elements in JavaScript we create a file `lib/MyWidget/VX.js` and define a custom element `nri-mywidget-vX`.
 
-That said, we may remove modules that we're not moving occasionally. If you're using this library outside NoRedInk, this guarantee won't hold as strongly for you.
+That said, we may prune unused modules occasionally.
 
 We should change this process if we feel it's not working for us!
 
