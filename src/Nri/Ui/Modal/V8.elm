@@ -16,51 +16,6 @@ module Nri.Ui.Modal.V8 exposing
   - viewContent and closeButton are now callbacks that are pre-configured with settings
     (previously you passed config through)
 
-```
-    import Html.Styled exposing (..)
-    import Nri.Ui.Button.V10 as Button
-    import Nri.Ui.Modal.V8 as Modal
-
-    type Msg
-        = ModalMsg Modal.Msg
-        | DoSomething
-
-    view : Modal.Model -> Html Msg
-    view state =
-        Modal.info
-            { title = "Modal Header"
-            , wrapMsg = ModalMsg
-            , visibleTitle = True
-            }
-            (\{viewContent, closeButton} ->
-                Modal.onlyFocusableElementView
-                    (\{ onlyFocusableElement } ->
-                        div []
-                            [ viewContent {
-                                , content = [ text "Content goes here!" ]
-                                , footer =
-                                    [ Button.button "Continue"
-                                        [ Button.primary
-                                        , Button.onClick DoSomething
-                                        , Button.custom onlyFocusableElement
-                                        ]
-                                    , text "`onlyFocusableElement` will trap the focus on the 'Continue' button."
-                                    ]
-                                }
-                                visibleTitle
-                            ]
-                    )
-            )
-            state
-
-    subscriptions : Modal.Model -> Sub Msg
-    subscriptions state =
-        Modal.subscriptions state
-
-    view init
-    --> text ""  -- a closed modal
-```
-
 
 ## State and updates
 
