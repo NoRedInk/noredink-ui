@@ -1,33 +1,46 @@
-module Examples.Alert exposing (example)
+module Examples.Alert exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Html.Styled as Html
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Heading.V2 as Heading
-import Sort.Set as Set exposing (Set)
 
 
-example : ModuleExample msg
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Alert.V4"
-    , categories = Set.fromList Category.sorter <| List.singleton Messaging
-    , content =
-        [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
-        , Alert.error "This is an **error**"
-        , Alert.warning "This is a **warning**"
-        , Alert.tip "This is a **tip**"
-        , Alert.success "This is a **success**"
-        , Html.hr [] []
-        , Heading.h3 [] [ Html.text "Stacktraces-supporting:" ]
-        , Alert.somethingWentWrong exampleRailsError
-        ]
+    , categories = [ Messaging ]
+    , state = ()
+    , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \_ ->
+            [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
+            , Alert.error "This is an **error**"
+            , Alert.warning "This is a **warning**"
+            , Alert.tip "This is a **tip**"
+            , Alert.success "This is a **success**"
+            , Html.hr [] []
+            , Heading.h3 [] [ Html.text "Stacktraces-supporting:" ]
+            , Alert.somethingWentWrong exampleRailsError
+            ]
     }
 
 

@@ -1,21 +1,20 @@
-module Examples.SlideModal exposing (Msg, State, example, init, update)
+module Examples.SlideModal exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SlideModal.V2 as SlideModal
-import Sort.Set as Set exposing (Set)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -31,15 +30,18 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example : Example State Msg
+example =
     { name = "Nri.Ui.SlideModal.V2"
-    , categories = Set.fromList Category.sorter <| List.singleton Modals
-    , content =
-        [ viewModal state.modal
-        , modalLaunchButton
-        ]
-            |> List.map (Html.map parentMessage)
+    , categories = [ Modals ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \state ->
+            [ viewModal state.modal
+            , modalLaunchButton
+            ]
     }
 
 

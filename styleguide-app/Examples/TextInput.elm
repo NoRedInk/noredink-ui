@@ -1,18 +1,17 @@
-module Examples.TextInput exposing (Msg, State, example, init, update)
+module Examples.TextInput exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Category exposing (Category(..))
 import Dict exposing (Dict)
+import Example exposing (Example)
 import Html.Styled as Html
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -33,13 +32,16 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example : Example State Msg
+example =
     { name = "Nri.Ui.TextInput.V5"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Html.map parentMessage <|
-            Html.div []
+    , categories = [ Inputs ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \state ->
+            [ Html.div []
                 [ TextInput.view
                     { label = "Criterion"
                     , isInError = False
@@ -172,7 +174,7 @@ example parentMessage state =
                     , showLabel = True
                     }
                 ]
-        ]
+            ]
     }
 
 

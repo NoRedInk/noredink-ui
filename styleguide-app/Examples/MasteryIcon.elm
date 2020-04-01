@@ -1,30 +1,43 @@
-module Examples.MasteryIcon exposing (example)
+module Examples.MasteryIcon exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
 import Category exposing (Category(..))
+import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MasteryIcon.V1 as MasteryIcon
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : ModuleExample msg
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.MasteryIcon.V1"
-    , categories = Set.fromList Category.sorter <| List.singleton Icons
-    , content =
-        [ IconExamples.view "Levels"
-            [ ( "levelZero", MasteryIcon.levelZero )
-            , ( "levelOne", MasteryIcon.levelOne )
-            , ( "levelTwo", MasteryIcon.levelTwo )
-            , ( "levelThree", MasteryIcon.levelThree )
+    , categories = List.singleton Icons
+    , state = ()
+    , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \_ ->
+            [ IconExamples.view "Levels"
+                [ ( "levelZero", MasteryIcon.levelZero )
+                , ( "levelOne", MasteryIcon.levelOne )
+                , ( "levelTwo", MasteryIcon.levelTwo )
+                , ( "levelThree", MasteryIcon.levelThree )
+                ]
             ]
-        ]
     }
