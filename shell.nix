@@ -11,6 +11,7 @@ stdenv.mkDerivation {
     git
     gnumake
     niv.niv
+    jq
 
     # node dependencies
     nodejs
