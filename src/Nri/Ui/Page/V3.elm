@@ -138,6 +138,8 @@ loading_ withCss =
         [ UiIcon.edit
             |> Svg.withLabel "Loading..."
             |> Svg.withColor Colors.white
+            |> Svg.withWidth (Css.px 100)
+            |> Svg.withHeight (Css.px 100)
             |> Svg.withCss
                 [ Css.property "animation-duration" "1s"
                 , Css.property "animation-iteration-count" "infinite"
