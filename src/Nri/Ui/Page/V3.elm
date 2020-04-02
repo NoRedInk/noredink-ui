@@ -1,14 +1,14 @@
 module Nri.Ui.Page.V3 exposing
     ( DefaultPage, broken, blocked, notFound, noPermission
     , RecoveryText(..)
-    , loadingFadeIn
+    , loadingFadeIn, loading
     )
 
 {-| A styled NRI page!
 
 @docs DefaultPage, broken, blocked, notFound, noPermission
 @docs RecoveryText
-@docs loadingFadeIn
+@docs loadingFadeIn, loading
 
 -}
 
@@ -96,29 +96,44 @@ noPermission defaultPage =
         }
 
 
-{-| View a full-screen loading page.
+{-| View a full-screen loading page that fades into view.
 -}
 loadingFadeIn : Html msg
 loadingFadeIn =
+    loading_
+        [ Css.property "animation-delay" "1s"
+        , Css.property "animation-duration" "1.5s"
+        , Css.property "animation-fill-mode" "forwards"
+        , Css.animationName fadeInKeyframes
+        , Css.property "animation-timing-function" "linear"
+        , Css.opacity Css.zero
+        ]
+
+
+{-| View a full-screen loading page.
+-}
+loading : Html msg
+loading =
+    loading_ []
+
+
+loading_ : List Css.Style -> Html msg
+loading_ withCss =
     Html.div
         [ Attributes.css
-            [ Css.backgroundColor Colors.blueDeep
-            , Css.position Css.fixed
-            , Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.center
-            , Css.width (Css.vw 100)
-            , Css.height (Css.vh 100)
-            , Css.top Css.zero
-            , Css.left Css.zero
-            , Css.zIndex (Css.int 10000)
-            , Css.opacity Css.zero
-            , Css.property "animation-delay" "1s"
-            , Css.property "animation-duration" "1.5s"
-            , Css.property "animation-fill-mode" "forwards"
-            , Css.animationName fadeInKeyframes
-            , Css.property "animation-timing-function" "linear"
-            ]
+            ([ Css.backgroundColor Colors.blueDeep
+             , Css.position Css.fixed
+             , Css.displayFlex
+             , Css.alignItems Css.center
+             , Css.justifyContent Css.center
+             , Css.width (Css.vw 100)
+             , Css.height (Css.vh 100)
+             , Css.top Css.zero
+             , Css.left Css.zero
+             , Css.zIndex (Css.int 10000)
+             ]
+                ++ withCss
+            )
         ]
         [ UiIcon.edit
             |> Svg.withLabel "Loading..."

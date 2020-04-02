@@ -22,17 +22,21 @@ import Nri.Ui.Page.V3 as Page
 {-| -}
 type alias State =
     { showLoadingFadeIn : Bool
+    , showLoading : Bool
     }
 
 
 init : State
 init =
-    { showLoadingFadeIn = False }
+    { showLoadingFadeIn = False
+    , showLoading = False
+    }
 
 
 {-| -}
 type Msg
     = ShowLoadingFadeIn
+    | ShowLoading
     | CloseFullScreenPage
     | LinkClick String
 
@@ -41,11 +45,19 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
         ShowLoadingFadeIn ->
-            ( { model | showLoadingFadeIn = True }, Cmd.none )
+            ( { model | showLoadingFadeIn = True }
+            , Cmd.none
+            )
+
+        ShowLoading ->
+            ( { model | showLoading = True }
+            , Cmd.none
+            )
 
         CloseFullScreenPage ->
             ( { model
                 | showLoadingFadeIn = False
+                , showLoading = False
               }
             , Cmd.none
             )
@@ -59,8 +71,8 @@ update msg model =
 
 
 subscriptions : State -> Sub Msg
-subscriptions { showLoadingFadeIn } =
-    if showLoadingFadeIn then
+subscriptions { showLoadingFadeIn, showLoading } =
+    if showLoadingFadeIn || showLoading then
         Browser.Events.onClick (Json.Decode.succeed CloseFullScreenPage)
 
     else
@@ -76,7 +88,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , view =
-        \{ showLoadingFadeIn } ->
+        \{ showLoadingFadeIn, showLoading } ->
             [ Css.Global.global
                 [ Css.Global.selector "[data-page-container]"
                     [ Css.displayFlex
@@ -113,6 +125,25 @@ example =
                     ]
                 , if showLoadingFadeIn then
                     Button.loading
+
+                  else
+                    Button.primary
+                ]
+            , Heading.h3 [] [ Html.text "Page.loading" ]
+            , if showLoading then
+                Page.loading
+
+              else
+                Html.text ""
+            , Button.button "Open loading"
+                [ Button.custom
+                    [ Events.stopPropagationOn "click"
+                        (Json.Decode.map (\m -> ( m, True ))
+                            (Json.Decode.succeed ShowLoading)
+                        )
+                    ]
+                , if showLoadingFadeIn then
+                    Button.disabled
 
                   else
                     Button.primary
