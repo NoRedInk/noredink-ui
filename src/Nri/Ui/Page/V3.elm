@@ -1,20 +1,26 @@
 module Nri.Ui.Page.V3 exposing
     ( DefaultPage, broken, blocked, notFound, noPermission
     , RecoveryText(..)
+    , loadingFadeIn
     )
 
-{-| A styled NRI issue page!
+{-| A styled NRI page!
 
 @docs DefaultPage, broken, blocked, notFound, noPermission
 @docs RecoveryText
+@docs loadingFadeIn
 
 -}
 
 import Css exposing (..)
+import Css.Animations
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V2 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| The default page information is for the button
@@ -88,6 +94,58 @@ noPermission defaultPage =
         , defaultPage = Just defaultPage
         , details = Nothing
         }
+
+
+{-| View a full-screen loading page.
+-}
+loadingFadeIn : Html msg
+loadingFadeIn =
+    Html.div
+        [ Attributes.css
+            [ Css.backgroundColor Colors.blueDeep
+            , Css.position Css.fixed
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.center
+            , Css.width (Css.vw 100)
+            , Css.height (Css.vh 100)
+            , Css.top Css.zero
+            , Css.left Css.zero
+            , Css.zIndex (Css.int 10000)
+            , Css.opacity Css.zero
+            , Css.property "animation-delay" "1s"
+            , Css.property "animation-duration" "1.5s"
+            , Css.property "animation-fill-mode" "forwards"
+            , Css.animationName fadeInKeyframes
+            , Css.property "animation-timing-function" "linear"
+            ]
+        ]
+        [ UiIcon.edit
+            |> Svg.withLabel "Loading..."
+            |> Svg.withColor Colors.white
+            |> Svg.withCss
+                [ Css.property "animation-duration" "1s"
+                , Css.property "animation-iteration-count" "infinite"
+                , Css.animationName rotateKeyframes
+                , Css.property "animation-timing-function" "linear"
+                ]
+            |> Svg.toHtml
+        ]
+
+
+rotateKeyframes : Css.Animations.Keyframes {}
+rotateKeyframes =
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.transform [ Css.rotate (Css.deg -360) ] ] )
+        ]
+
+
+fadeInKeyframes : Css.Animations.Keyframes {}
+fadeInKeyframes =
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.opacity Css.zero ] )
+        , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
+        ]
 
 
 
