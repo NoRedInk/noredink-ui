@@ -15,14 +15,18 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Loading.V1 as Loading
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
 type alias State =
     { showLoadingFadeIn : Bool
     , showLoading : Bool
+    , showSpinner : Bool
     }
 
 
@@ -30,6 +34,7 @@ init : State
 init =
     { showLoadingFadeIn = False
     , showLoading = False
+    , showSpinner = False
     }
 
 
@@ -37,7 +42,8 @@ init =
 type Msg
     = ShowLoadingFadeIn
     | ShowLoading
-    | CloseFullScreenPage
+    | ShowSpinner
+    | Close
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -53,19 +59,25 @@ update msg model =
             , Cmd.none
             )
 
-        CloseFullScreenPage ->
+        ShowSpinner ->
+            ( { model | showSpinner = True }
+            , Cmd.none
+            )
+
+        Close ->
             ( { model
                 | showLoadingFadeIn = False
                 , showLoading = False
+                , showSpinner = False
               }
             , Cmd.none
             )
 
 
 subscriptions : State -> Sub Msg
-subscriptions { showLoadingFadeIn, showLoading } =
-    if showLoadingFadeIn || showLoading then
-        Browser.Events.onClick (Json.Decode.succeed CloseFullScreenPage)
+subscriptions { showLoadingFadeIn, showLoading, showSpinner } =
+    if showLoadingFadeIn || showLoading || showSpinner then
+        Browser.Events.onClick (Json.Decode.succeed Close)
 
     else
         Sub.none
@@ -80,43 +92,46 @@ example =
     , update = update
     , subscriptions = subscriptions
     , view =
-        \{ showLoadingFadeIn, showLoading } ->
+        \{ showLoadingFadeIn, showLoading, showSpinner } ->
             [ if showLoading then
                 Loading.page
 
               else
                 Html.text ""
-            , Button.button "Loading.page"
-                [ Button.custom
-                    [ Events.stopPropagationOn "click"
-                        (Json.Decode.map (\m -> ( m, True ))
-                            (Json.Decode.succeed ShowLoading)
-                        )
-                    ]
-                , if showLoadingFadeIn then
-                    Button.disabled
-
-                  else
-                    Button.secondary
-                , Button.css [ Css.marginRight (Css.px 20) ]
-                ]
+            , button "Loading.page" ShowLoading showLoadingFadeIn
             , if showLoadingFadeIn then
                 Loading.fadeInPage
 
               else
                 Html.text ""
-            , Button.button "Loading.fadeInPage"
-                [ Button.custom
-                    [ Events.stopPropagationOn "click"
-                        (Json.Decode.map (\m -> ( m, True ))
-                            (Json.Decode.succeed ShowLoadingFadeIn)
-                        )
+            , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
+            , if showSpinner then
+                Html.div []
+                    [ Loading.spinner
+                        |> Svg.withColor Colors.blue
+                        |> Svg.toHtml
+                    , Text.caption [ Html.text "By default, the spinner is white. Showing as blue for visibility." ]
                     ]
-                , if showLoadingFadeIn then
-                    Button.loading
 
-                  else
-                    Button.secondary
-                ]
+              else
+                button "Loading.spinner" ShowSpinner showLoadingFadeIn
             ]
     }
+
+
+button : String -> Msg -> Bool -> Html Msg
+button name do disabled =
+    Button.button name
+        [ Button.custom
+            [ Events.stopPropagationOn "click"
+                (Json.Decode.map (\m -> ( m, True ))
+                    (Json.Decode.succeed do)
+                )
+            ]
+        , if disabled then
+            Button.disabled
+
+          else
+            Button.secondary
+        , Button.css [ Css.marginRight (Css.px 20) ]
+        ]
