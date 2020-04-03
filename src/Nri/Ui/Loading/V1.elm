@@ -1,12 +1,12 @@
 module Nri.Ui.Loading.V1 exposing
     ( fadeInPage, page
-    , spinner
+    , spinningPencil, spinningDots
     )
 
 {-| Loading behaviors
 
 @docs fadeInPage, page
-@docs spinner
+@docs spinningPencil, spinningDots
 
 -}
 
@@ -15,8 +15,10 @@ import Css.Animations
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as SvgAttributes
 
 
 {-| View a full-screen loading page that fades into view.
@@ -58,24 +60,51 @@ loading_ withCss =
                 ++ withCss
             )
         ]
-        [ Svg.toHtml spinner
+        [ Nri.Ui.Svg.V1.toHtml spinningPencil
         ]
 
 
 {-| -}
-spinner : Svg
-spinner =
+spinningPencil : Nri.Ui.Svg.V1.Svg
+spinningPencil =
     UiIcon.edit
-        |> Svg.withLabel "Loading..."
-        |> Svg.withColor Colors.white
-        |> Svg.withWidth (Css.px 100)
-        |> Svg.withHeight (Css.px 100)
-        |> Svg.withCss
-            [ Css.property "animation-duration" "1s"
-            , Css.property "animation-iteration-count" "infinite"
-            , Css.animationName rotateKeyframes
-            , Css.property "animation-timing-function" "linear"
-            ]
+        |> Nri.Ui.Svg.V1.withLabel "Loading..."
+        |> Nri.Ui.Svg.V1.withColor Colors.white
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
+        |> Nri.Ui.Svg.V1.withCss circlingCss
+
+
+{-| -}
+spinningDots : Nri.Ui.Svg.V1.Svg
+spinningDots =
+    Svg.svg
+        [ SvgAttributes.width "100%"
+        , SvgAttributes.height "100%"
+        , SvgAttributes.viewBox "0 0 12.54 12.54"
+        ]
+        [ Svg.circle [ SvgAttributes.fill "#004e95", SvgAttributes.cx "6.13", SvgAttributes.cy "0.98", SvgAttributes.r "0.98" ] []
+        , Svg.circle [ SvgAttributes.fill "#004cc9", SvgAttributes.cx "9.95", SvgAttributes.cy "2.47", SvgAttributes.r "0.98", SvgAttributes.transform "translate(1.12 7.67) rotate(-44.43)" ] []
+        , Svg.circle [ SvgAttributes.fill "#146aff", SvgAttributes.x "11.56", SvgAttributes.cy "6.24", SvgAttributes.r "0.98", SvgAttributes.transform "translate(5.09 17.67) rotate(-88.86)" ] []
+        , Svg.circle [ SvgAttributes.fill "#0af", SvgAttributes.cx "10", SvgAttributes.cy "10.02", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-4.15 9.58) rotate(-43.29)" ] []
+        , Svg.circle [ SvgAttributes.fill "#d4f0ff", SvgAttributes.cx "6.2", SvgAttributes.cy "11.56", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.6 17.29) rotate(-87.71)" ] []
+        , Svg.circle [ SvgAttributes.fill "#eef9ff", SvgAttributes.cx "2.44", SvgAttributes.cy "9.92", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-6.03 4.21) rotate(-42.14)" ] []
+        , Svg.circle [ SvgAttributes.fill "#f5f5f5", SvgAttributes.cx "0.98", SvgAttributes.cy "6.1", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.16 6.71) rotate(-86.57)" ] []
+        , Svg.circle [ SvgAttributes.fill "#fff", SvgAttributes.cx "2.69", SvgAttributes.cy "2.37", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-0.9 2.35) rotate(-41)" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
+        |> Nri.Ui.Svg.V1.withCss circlingCss
+
+
+circlingCss : List Css.Style
+circlingCss =
+    [ Css.property "animation-duration" "1s"
+    , Css.property "animation-iteration-count" "infinite"
+    , Css.animationName rotateKeyframes
+    , Css.property "animation-timing-function" "linear"
+    ]
 
 
 rotateKeyframes : Css.Animations.Keyframes {}

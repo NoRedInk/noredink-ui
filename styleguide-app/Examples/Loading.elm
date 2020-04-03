@@ -26,7 +26,7 @@ import Nri.Ui.Text.V4 as Text
 type alias State =
     { showLoadingFadeIn : Bool
     , showLoading : Bool
-    , showSpinner : Bool
+    , showSpinners : Bool
     }
 
 
@@ -34,7 +34,7 @@ init : State
 init =
     { showLoadingFadeIn = False
     , showLoading = False
-    , showSpinner = False
+    , showSpinners = False
     }
 
 
@@ -42,7 +42,7 @@ init =
 type Msg
     = ShowLoadingFadeIn
     | ShowLoading
-    | ShowSpinner
+    | ShowSpinners
     | Close
 
 
@@ -59,8 +59,8 @@ update msg model =
             , Cmd.none
             )
 
-        ShowSpinner ->
-            ( { model | showSpinner = True }
+        ShowSpinners ->
+            ( { model | showSpinners = True }
             , Cmd.none
             )
 
@@ -68,15 +68,15 @@ update msg model =
             ( { model
                 | showLoadingFadeIn = False
                 , showLoading = False
-                , showSpinner = False
+                , showSpinners = False
               }
             , Cmd.none
             )
 
 
 subscriptions : State -> Sub Msg
-subscriptions { showLoadingFadeIn, showLoading, showSpinner } =
-    if showLoadingFadeIn || showLoading || showSpinner then
+subscriptions { showLoadingFadeIn, showLoading, showSpinners } =
+    if showLoadingFadeIn || showLoading || showSpinners then
         Browser.Events.onClick (Json.Decode.succeed Close)
 
     else
@@ -92,7 +92,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , view =
-        \{ showLoadingFadeIn, showLoading, showSpinner } ->
+        \{ showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then
                 Loading.page
 
@@ -105,16 +105,18 @@ example =
               else
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
-            , if showSpinner then
+            , if showSpinners then
                 Html.div []
-                    [ Loading.spinner
+                    [ Loading.spinningPencil
                         |> Svg.withColor Colors.blue
                         |> Svg.toHtml
-                    , Text.caption [ Html.text "By default, the spinner is white. Showing as blue for visibility." ]
+                    , Text.caption [ Html.text "By default, the spinningPencil is white. Showing as blue for visibility." ]
+                    , Loading.spinningDots
+                        |> Svg.toHtml
                     ]
 
               else
-                button "Loading.spinner" ShowSpinner showLoadingFadeIn
+                button "Loading.spinningPencil, Loading.spinningDots" ShowSpinners showLoadingFadeIn
             ]
     }
 
