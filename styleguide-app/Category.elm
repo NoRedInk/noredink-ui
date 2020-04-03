@@ -180,7 +180,7 @@ forId category =
             "text-and-fonts"
 
         Pages ->
-            "error-pages"
+            "pages"
 
         Animations ->
             "animations"
