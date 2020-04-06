@@ -1,35 +1,48 @@
-module Examples.Pennant exposing (example)
+module Examples.Pennant exposing (example, State, Msg)
 
 {-|
 
-@docs example
+@docs example, State, Msg
 
 -}
 
 import Category exposing (Category(..))
 import Css exposing (..)
+import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : ModuleExample msg
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Pennant.V2"
-    , categories = Set.fromList Category.sorter <| List.singleton Icons
-    , content =
-        [ Html.div [ css [ Css.displayFlex, Css.width (Css.px 200) ] ]
-            [ Pennant.premiumFlag
-                |> Svg.withHeight (Css.px 60)
-                |> Svg.toHtml
-            , Pennant.disabledPremiumFlag
-                |> Svg.withHeight (Css.px 60)
-                |> Svg.toHtml
+    , categories = List.singleton Icons
+    , state = ()
+    , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \_ ->
+            [ Html.div [ css [ Css.displayFlex, Css.width (Css.px 200) ] ]
+                [ Pennant.premiumFlag
+                    |> Svg.withHeight (Css.px 60)
+                    |> Svg.toHtml
+                , Pennant.disabledPremiumFlag
+                    |> Svg.withHeight (Css.px 60)
+                    |> Svg.toHtml
+                ]
             ]
-        ]
     }

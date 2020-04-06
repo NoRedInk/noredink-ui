@@ -5,17 +5,18 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category
 import Css exposing (..)
+import Dict exposing (Dict)
+import Example exposing (Example)
+import Examples
 import Html as RootHtml
 import Html.Attributes
 import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import ModuleExample as ModuleExample exposing (ModuleExample)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
-import NriModules as NriModules exposing (ModuleStates, nriThemedModules)
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set
 import Task
@@ -37,7 +38,7 @@ main =
 type alias Model =
     { -- Global UI
       route : Route
-    , moduleStates : ModuleStates
+    , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
     }
 
@@ -45,7 +46,9 @@ type alias Model =
 init : () -> Url -> Key -> ( Model, Cmd Msg )
 init () url key =
     ( { route = Routes.fromLocation url
-      , moduleStates = NriModules.init
+      , moduleStates =
+            Dict.fromList
+                (List.map (\example -> ( example.name, example )) Examples.all)
       , navigationKey = key
       }
     , Cmd.none
@@ -53,7 +56,7 @@ init () url key =
 
 
 type Msg
-    = UpdateModuleStates NriModules.Msg
+    = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | SkipToMainContent
@@ -63,14 +66,23 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        UpdateModuleStates msg ->
-            let
-                ( moduleStates, cmd ) =
-                    NriModules.update msg model.moduleStates
-            in
-            ( { model | moduleStates = moduleStates }
-            , Cmd.map UpdateModuleStates cmd
-            )
+        UpdateModuleStates key exampleMsg ->
+            case Dict.get key model.moduleStates of
+                Just example ->
+                    example.update exampleMsg example.state
+                        |> Tuple.mapFirst
+                            (\newState ->
+                                { model
+                                    | moduleStates =
+                                        Dict.insert key
+                                            { example | state = newState }
+                                            model.moduleStates
+                                }
+                            )
+                        |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key))
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         OnUrlRequest request ->
             case request of
@@ -94,7 +106,9 @@ update action model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.map UpdateModuleStates (NriModules.subscriptions model.moduleStates)
+    Dict.values model.moduleStates
+        |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
+        |> Sub.batch
 
 
 view : Model -> Document Msg
@@ -122,11 +136,14 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
-                        , nriThemedModules model.moduleStates
+                        , Dict.values model.moduleStates
                             |> List.filter (\m -> m.name == doodad)
-                            |> List.map (ModuleExample.view False)
+                            |> List.map
+                                (\example ->
+                                    Example.view False example
+                                        |> Html.map (UpdateModuleStates example.name)
+                                )
                             |> Html.div []
-                            |> Html.map UpdateModuleStates
                         ]
                     ]
 
@@ -135,11 +152,19 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
-                        , nriThemedModules model.moduleStates
-                            |> List.filter (\doodad -> Set.memberOf doodad.categories category)
-                            |> List.map (ModuleExample.view True)
+                        , Dict.values model.moduleStates
+                            |> List.filter
+                                (\doodad ->
+                                    Set.memberOf
+                                        (Set.fromList Category.sorter doodad.categories)
+                                        category
+                                )
+                            |> List.map
+                                (\example ->
+                                    Example.view True example
+                                        |> Html.map (UpdateModuleStates example.name)
+                                )
                             |> Html.div [ id (Category.forId category) ]
-                            |> Html.map UpdateModuleStates
                         ]
                     ]
 
@@ -148,10 +173,13 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text "All" ]
-                        , nriThemedModules model.moduleStates
-                            |> List.map (ModuleExample.view True)
+                        , Dict.values model.moduleStates
+                            |> List.map
+                                (\example ->
+                                    Example.view True example
+                                        |> Html.map (UpdateModuleStates example.name)
+                                )
                             |> Html.div []
-                            |> Html.map UpdateModuleStates
                         ]
                     ]
             )

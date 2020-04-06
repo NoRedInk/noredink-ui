@@ -3,7 +3,7 @@ module Nri.Ui.Page.V3 exposing
     , RecoveryText(..)
     )
 
-{-| A styled NRI issue page!
+{-| A styled NRI page!
 
 @docs DefaultPage, broken, blocked, notFound, noPermission
 @docs RecoveryText

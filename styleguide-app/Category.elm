@@ -133,7 +133,7 @@ forDisplay category =
             "Text and Fonts"
 
         Pages ->
-            "Error Pages"
+            "Pages"
 
         Animations ->
             "Animations"
@@ -180,7 +180,7 @@ forId category =
             "text-and-fonts"
 
         Pages ->
-            "error-pages"
+            "pages"
 
         Animations ->
             "animations"
