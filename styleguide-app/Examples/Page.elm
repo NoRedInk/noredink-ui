@@ -22,7 +22,7 @@ type alias State =
 
 {-| -}
 type alias Msg =
-    ()
+    String
 
 
 {-| -}
@@ -31,7 +31,13 @@ example =
     { name = "Nri.Ui.Page.V3"
     , categories = List.singleton Pages
     , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , update =
+        \msg model ->
+            let
+                _ =
+                    Debug.log "Clicked: " msg
+            in
+            ( model, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , view =
         \_ ->
@@ -43,17 +49,17 @@ example =
                 ]
             , Heading.h3 [] [ Html.text "Page: Not Found, recovery text: ReturnTo" ]
             , Page.notFound
-                { link = ()
+                { link = "Page.notFound ReturnTo"
                 , recoveryText = Page.ReturnTo "the main page"
                 }
             , Heading.h3 [] [ Html.text "Page: Broken, recovery text: Reload" ]
             , Page.broken
-                { link = ()
+                { link = "Page.broken Reload"
                 , recoveryText = Page.Reload
                 }
             , Heading.h3 [] [ Html.text "Page: No Permission, recovery text: Custom" ]
             , Page.noPermission
-                { link = ()
+                { link = "Page.noPermission Custom"
                 , recoveryText = Page.Custom "Hit the road, Jack"
                 }
             ]
