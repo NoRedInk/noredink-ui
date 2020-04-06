@@ -17,15 +17,11 @@ src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Text,2
 src/Nri/Ui/SlideModal/V1.elm,Nri.Ui.Button,8
 src/Nri/Ui/SlideModal/V1.elm,Nri.Ui.Icon,3
 src/Nri/Ui/SlideModal/V1.elm,Nri.Ui.Text,2
-src/Nri/Ui/Alert/V3.elm,Nri.Ui.Icon,3
-src/Nri/Ui/Alert/V2.elm,Nri.Ui.Icon,3
 src/Nri/Ui/Alert/V4.elm,Nri.Ui.Icon,3
 src/Nri/Ui/SortableTable/V1.elm,Nri.Ui.Table,4
 src/Nri/Ui/Html/Attributes/Extra.elm,Html,DEPRECATED
 src/Nri/Ui/Button/V8.elm,Html,DEPRECATED
-src/Nri/Ui/Button/V3.elm,Nri.Ui.Icon,3
 src/Nri/Ui/Button/V5.elm,Nri.Ui.Icon,3
-src/Nri/Ui/Button/V4.elm,Nri.Ui.Icon,3
 src/Nri/Ui/Button/V6.elm,Nri.Ui.Icon,4
 src/Nri/Ui/Button/V7.elm,Nri.Ui.Icon,4
 src/Nri/Ui/SegmentedControl/V6.elm,Nri.Ui.Icon,3
