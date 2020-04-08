@@ -1,6 +1,6 @@
 module Nri.Ui.Divider.V2 exposing (view)
 
-{-| <https://staging.noredink.com/style_guide#ui/src/Nri/Divider.elm>
+{-|
 
 @docs view
 
@@ -9,12 +9,6 @@ module Nri.Ui.Divider.V2 exposing (view)
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
-
-
-type alias Config =
-    { lineColor : Css.Color
-    , textColor : Css.Color
-    }
 
 
 {-| -}
