@@ -1,6 +1,8 @@
 module Nri.Ui.Divider.V2 exposing (view)
 
-{-|
+{-| Patch changes:
+
+  - Title is navy, Muli, fontWeight 600
 
 @docs view
 
@@ -9,6 +11,7 @@ module Nri.Ui.Divider.V2 exposing (view)
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 
 
 {-| -}
@@ -57,5 +60,7 @@ titleStyles =
     batch
         [ margin2 zero (px 5)
         , fontSize (px 12)
-        , color Colors.gray45
+        , color Colors.navy
+        , Fonts.baseFont
+        , fontWeight (int 600)
         ]
