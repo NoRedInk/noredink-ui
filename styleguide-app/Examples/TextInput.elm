@@ -6,10 +6,11 @@ module Examples.TextInput exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
+import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
-import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
 
@@ -20,14 +21,24 @@ type Msg
     | SetNumberInput (Maybe Int)
     | SetFloatInput (Maybe Float)
     | SetPassword String
+    | UpdateControl (Control ExampleConfig)
 
 
 {-| -}
 type alias State =
     { numberInputValue : Maybe Int
     , floatInputValue : Maybe Float
-    , textInputValues : Dict Id String
+    , stringInputValues : Dict Id String
     , passwordInputValue : String
+    , control : Control ExampleConfig
+    }
+
+
+type alias ExampleConfig =
+    { showLabel : Bool
+    , label : String
+    , isInError : Bool
+    , placeholder : String
     }
 
 
@@ -41,137 +52,96 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
+            let
+                exampleConfig =
+                    Control.currentValue state.control
+            in
             [ Html.div []
-                [ TextInput.view
-                    { label = "Criterion"
-                    , isInError = False
-                    , placeholder = "For example, \"Something!!\""
-                    , value = Maybe.withDefault "" <| Dict.get 1 state.textInputValues
+                [ Control.view UpdateControl state.control
+                    |> Html.fromUnstyled
+                , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
+                , TextInput.view
+                    { label = exampleConfig.label ++ " (text)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
+                    , value = Maybe.withDefault "" <| Dict.get 1 state.stringInputValues
                     , onInput = SetTextInput 1
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.text
-                    , showLabel = True
                     }
-                , Html.br [] []
+                , Heading.h3 [] [ text "... type_ = TextInput.number" ]
                 , TextInput.view
-                    { label = "Points"
-                    , isInError = False
-                    , placeholder = "enter a number"
+                    { label = exampleConfig.label ++ " (number)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
                     , value = state.numberInputValue
                     , onInput = SetNumberInput
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.number
-                    , showLabel = True
                     }
-                , Html.br [] []
+                , Heading.h3 [] [ text "... type_ = TextInput.float" ]
                 , TextInput.view
-                    { label = "Points (decimal)"
-                    , isInError = False
-                    , placeholder = "enter a decimal"
+                    { label = exampleConfig.label ++ " (float)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
                     , value = state.floatInputValue
                     , onInput = SetFloatInput
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.float
-                    , showLabel = True
                     }
-                , Html.br [] []
+                , Heading.h3 [] [ text "... type_ = TextInput.password" ]
                 , TextInput.view
-                    { label = "Password"
-                    , isInError = False
-                    , placeholder = ""
+                    { label = exampleConfig.label ++ " (password)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
                     , value = state.passwordInputValue
                     , onInput = SetPassword
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.password
-                    , showLabel = True
                     }
-                , Html.br [] []
+                , Heading.h3 [] [ text "... type_ = TextInput.email" ]
                 , TextInput.view
-                    { label = "Error"
-                    , isInError = True
-                    , placeholder = "Wrong!"
-                    , value = state.numberInputValue
-                    , onInput = SetNumberInput
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.number
-                    , showLabel = True
-                    }
-                , Heading.h3 [] [ Html.text "invisible label" ]
-                , TextInput.view
-                    { label = "Invisible label text input"
-                    , isInError = False
-                    , placeholder = "For example, \"Something!!\""
-                    , value = Maybe.withDefault "" <| Dict.get 2 state.textInputValues
+                    { label = exampleConfig.label ++ " (email)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , showLabel = exampleConfig.showLabel
+                    , value = Maybe.withDefault "" <| Dict.get 2 state.stringInputValues
                     , onInput = SetTextInput 2
                     , onBlur = Nothing
                     , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = False
+                    , type_ = TextInput.email
                     }
-                , Html.br [] []
-                , TextInput.view
-                    { label = "Invisible label text input with error"
-                    , placeholder = "Everything you type is wrong!"
-                    , value = Maybe.withDefault "" <| Dict.get 3 state.textInputValues
-                    , onInput = SetTextInput 3
-                    , onBlur = Nothing
-                    , isInError = True
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = False
-                    }
-                , Heading.h3 [] [ Html.text "Writing Style" ]
+                , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
                 , TextInput.writing
-                    { label = "Writing!"
-                    , isInError = False
-                    , placeholder = "Writing is good for me and my family"
-                    , value = Maybe.withDefault "" <| Dict.get 4 state.textInputValues
+                    { label = exampleConfig.label ++ " (writing)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , value = Maybe.withDefault "" <| Dict.get 4 state.stringInputValues
                     , onInput = SetTextInput 4
                     , onBlur = Nothing
                     , autofocus = False
                     , type_ = TextInput.text
-                    , showLabel = True
+                    , showLabel = exampleConfig.showLabel
                     }
-                , Html.br [] []
+                , Heading.h3 [] [ text "onBlur demonstration" ]
                 , TextInput.writing
-                    { label = "Writing with errors!"
-                    , isInError = True
-                    , placeholder = "Oopsie!"
-                    , value = Maybe.withDefault "" <| Dict.get 5 state.textInputValues
-                    , onInput = SetTextInput 5
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = True
-                    }
-                , Html.br [] []
-                , TextInput.writing
-                    { label = "Writing without labels!"
-                    , isInError = False
-                    , placeholder = "No label on this writing input!"
-                    , value = Maybe.withDefault "" <| Dict.get 6 state.textInputValues
-                    , onInput = SetTextInput 6
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = False
-                    }
-                , Html.br [] []
-                , TextInput.writing
-                    { label = "Writing onBlur demonstration!"
-                    , isInError = False
-                    , placeholder = "Click away to blur!"
-                    , value = Maybe.withDefault "" <| Dict.get 7 state.textInputValues
+                    { label = exampleConfig.label ++ " (onBlur)"
+                    , isInError = exampleConfig.isInError
+                    , placeholder = exampleConfig.placeholder
+                    , value = Maybe.withDefault "" <| Dict.get 7 state.stringInputValues
                     , onInput = SetTextInput 7
                     , onBlur = Just (SetTextInput 7 "Blurred!")
                     , autofocus = False
                     , type_ = TextInput.text
-                    , showLabel = True
+                    , showLabel = exampleConfig.showLabel
                     }
                 ]
             ]
@@ -183,8 +153,14 @@ init : State
 init =
     { numberInputValue = Nothing
     , floatInputValue = Nothing
-    , textInputValues = Dict.empty
+    , stringInputValues = Dict.empty
     , passwordInputValue = ""
+    , control =
+        Control.record ExampleConfig
+            |> Control.field "showLabel" (Control.bool True)
+            |> Control.field "label" (Control.string "Assignment name")
+            |> Control.field "isInError" (Control.bool False)
+            |> Control.field "placeholder" (Control.string "Learning with commas")
     }
 
 
@@ -193,7 +169,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SetTextInput id textInputValue ->
-            ( { state | textInputValues = Dict.insert id textInputValue state.textInputValues }, Cmd.none )
+            ( { state | stringInputValues = Dict.insert id textInputValue state.stringInputValues }, Cmd.none )
 
         SetNumberInput numberInputValue ->
             ( { state | numberInputValue = numberInputValue }, Cmd.none )
@@ -203,6 +179,9 @@ update msg state =
 
         SetPassword password ->
             ( { state | passwordInputValue = password }, Cmd.none )
+
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )
 
 
 
