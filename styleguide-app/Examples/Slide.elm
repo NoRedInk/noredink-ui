@@ -1,22 +1,21 @@
-module Examples.Slide exposing (Msg, State, example, init, update)
+module Examples.Slide exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Accessibility.Styled as Html
 import Category exposing (Category(..))
 import Css
+import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
 import List.Zipper as Zipper exposing (Zipper)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Slide.V1 as Slide
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -33,42 +32,45 @@ type alias State =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
+example : Example State Msg
+example =
     { name = "Nri.Ui.Slide.V1"
-    , categories = Set.fromList Category.sorter <| List.singleton Animations
-    , content =
-        [ Keyed.node "div"
-            [ css
-                [ Slide.withSlidingContents
-                , Css.border3 (Css.px 3) Css.solid Colors.gray75
-                , Css.padding (Css.px 20)
-                , Css.width (Css.px 600)
-                ]
-            ]
-            (case state.previous of
-                Just previousPanel ->
-                    [ viewPanel previousPanel (Slide.animateOut state.direction)
-                    , viewPanel (Zipper.current state.panels) (Slide.animateIn state.direction)
+    , categories = [ Animations ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \state ->
+            [ Keyed.node "div"
+                [ css
+                    [ Slide.withSlidingContents
+                    , Css.border3 (Css.px 3) Css.solid Colors.gray75
+                    , Css.padding (Css.px 20)
+                    , Css.width (Css.px 600)
                     ]
+                ]
+                (case state.previous of
+                    Just previousPanel ->
+                        [ viewPanel previousPanel (Slide.animateOut state.direction)
+                        , viewPanel (Zipper.current state.panels) (Slide.animateIn state.direction)
+                        ]
 
-                Nothing ->
-                    [ viewPanel (Zipper.current state.panels) (Css.batch [])
+                    Nothing ->
+                        [ viewPanel (Zipper.current state.panels) (Css.batch [])
+                        ]
+                )
+            , Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.justifyContent Css.spaceBetween
+                    , Css.marginTop (Css.px 20)
+                    , Css.width (Css.px 300)
                     ]
-            )
-        , Html.div
-            [ css
-                [ Css.displayFlex
-                , Css.justifyContent Css.spaceBetween
-                , Css.marginTop (Css.px 20)
-                , Css.width (Css.px 300)
+                ]
+                [ triggerAnimation Slide.FromLTR "Left-to-right"
+                , triggerAnimation Slide.FromRTL "Right-to-left"
                 ]
             ]
-            [ triggerAnimation Slide.FromLTR "Left-to-right"
-            , triggerAnimation Slide.FromRTL "Right-to-left"
-            ]
-        ]
-            |> List.map (Html.map parentMessage)
     }
 
 

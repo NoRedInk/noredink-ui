@@ -1,27 +1,21 @@
-module Examples.ClickableText exposing (Msg, State, example, init, update)
+module Examples.ClickableText exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Sort.Set as Set exposing (Set)
-
-
-{-| -}
-type Msg
-    = SetState State
 
 
 {-| -}
@@ -30,19 +24,14 @@ type State
 
 
 {-| -}
-example :
-    (String -> ModuleMessages Msg parentMsg)
-    -> State
-    -> ModuleExample parentMsg
-example unnamedMessages state =
-    let
-        messages =
-            unnamedMessages "ClickableTextExample"
-    in
+example : Example State Msg
+example =
     { name = "Nri.Ui.ClickableText.V3"
-    , categories = Set.fromList Category.sorter <| List.singleton Buttons
-    , content =
-        [ viewExamples messages state ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view = \state -> [ viewExamples state ]
+    , categories = [ Buttons ]
     }
 
 
@@ -63,11 +52,24 @@ init =
 
 
 {-| -}
+type Msg
+    = SetState State
+    | ShowItWorked String String
+
+
+{-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SetState newState ->
             ( newState, Cmd.none )
+
+        ShowItWorked group message ->
+            let
+                _ =
+                    Debug.log group message
+            in
+            ( state, Cmd.none )
 
 
 
@@ -80,18 +82,15 @@ type alias Model =
     }
 
 
-viewExamples :
-    ModuleMessages Msg parentMsg
-    -> State
-    -> Html parentMsg
-viewExamples messages (State control) =
+viewExamples : State -> Html Msg
+viewExamples (State control) =
     let
         model =
             Control.currentValue control
     in
-    [ Control.view (State >> SetState >> messages.wrapper) control
+    [ Control.view (State >> SetState) control
         |> fromUnstyled
-    , buttons messages model
+    , buttons model
     , Text.smallBody
         [ text "Sometimes, we'll want our clickable links: "
         , ClickableText.link model.label
@@ -102,7 +101,7 @@ viewExamples messages (State control) =
         , text " and clickable buttons: "
         , ClickableText.button model.label
             [ ClickableText.small
-            , ClickableText.onClick (messages.showItWorked "in-line button")
+            , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
             , Maybe.map ClickableText.icon model.icon
                 |> Maybe.withDefault (ClickableText.custom [])
             ]
@@ -120,11 +119,8 @@ sizes =
     ]
 
 
-buttons :
-    ModuleMessages Msg parentMsg
-    -> Model
-    -> Html parentMsg
-buttons messages model =
+buttons : Model -> Html Msg
+buttons model =
     let
         sizeRow label render =
             row label (List.map render sizes)
@@ -144,7 +140,7 @@ buttons messages model =
             (\( size, sizeLabel ) ->
                 ClickableText.button model.label
                     [ size
-                    , ClickableText.onClick (messages.showItWorked sizeLabel)
+                    , ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
                     , Maybe.map ClickableText.icon model.icon
                         |> Maybe.withDefault (ClickableText.custom [])
                     ]

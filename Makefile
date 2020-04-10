@@ -2,12 +2,15 @@ SHELL:=env PATH=${PATH} /bin/sh
 export DEPRECATED_MODULES=Html,Accessibility,Accessibility.Aria,Accessibility.Key,Accessibility.Landmark,Accessibility.Live,Accessibility.Role,Accessibility.Style,Accessibility.Widget
 
 .PHONY: test
-test: node_modules
+test: node_modules tests/elm-verify-examples.json
+	npx elm-verify-examples
 	npx elm-test
-	npx elm-verify-examples --run-tests
 	make axe-report
 	make percy-tests
 	make deprecated-imports-report
+
+tests/elm-verify-examples.json: $(shell find src -name '*.elm') elm.json
+	jq --indent 4 '{ root: "../src", tests: .["exposed-modules"] }' elm.json > $@
 
 tests/axe-report.json: public script/run-axe.sh script/axe-puppeteer.js
 	script/run-axe.sh > $@

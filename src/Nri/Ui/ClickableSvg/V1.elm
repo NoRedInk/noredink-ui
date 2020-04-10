@@ -11,6 +11,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 {-|
 
 
+# Post-release patches
+
+  - uses ClickableAttributes
+
+
 # Create a button or link
 
 @docs button, link
@@ -40,15 +45,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 -}
 
 import Accessibility.Styled.Widget as Widget
-import AttributeExtras exposing (targetBlank)
+import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
-import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
-import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -77,16 +78,26 @@ link name icon attributes =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
+setClickableAttributes :
+    (ClickableAttributes msg -> ClickableAttributes msg)
+    -> Attribute msg
+setClickableAttributes apply =
+    set
+        (\attributes ->
+            { attributes | clickableAttributes = apply attributes.clickableAttributes }
+        )
+
+
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    set (\attributes -> { attributes | onClick = Just msg })
+    setClickableAttributes (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    set (\attributes -> { attributes | url = url })
+    setClickableAttributes (ClickableAttributes.href url)
 
 
 {-| Use this link for routing within a single page app.
@@ -98,71 +109,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = SinglePageApp
-                , url = url
-            }
-        )
+    setClickableAttributes (ClickableAttributes.linkSpa url)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
--}
+{-| -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
-linkWithMethod { method, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = WithMethod method
-                , url = url
-            }
-        )
+linkWithMethod config =
+    setClickableAttributes (ClickableAttributes.linkWithMethod config)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
-This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect.
-For buttons that trigger other effects on the page, please use Nri.Button.button instead.
--}
+{-| -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
-linkWithTracking { track, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = WithTracking
-                , url = url
-                , onClick = Just track
-            }
-        )
+linkWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkWithTracking config)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url and have it open to an external site
--}
+{-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = External
-                , url = url
-            }
-        )
+    setClickableAttributes (ClickableAttributes.linkExternal url)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site.
--}
+{-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
-linkExternalWithTracking { track, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = ExternalWithTracking
-                , url = url
-                , onClick = Just track
-            }
-        )
+linkExternalWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
 
 
 
@@ -247,9 +218,7 @@ set with =
 build : String -> Svg -> ButtonOrLink msg
 build label icon =
     ButtonOrLink
-        { onClick = Nothing
-        , url = "#"
-        , linkType = Default
+        { clickableAttributes = ClickableAttributes.init
         , label = label
         , icon = icon
         , height = Css.px 17
@@ -265,9 +234,7 @@ type ButtonOrLink msg
 
 
 type alias ButtonOrLinkAttributes msg =
-    { onClick : Maybe msg
-    , url : String
-    , linkType : Link
+    { clickableAttributes : ClickableAttributes msg
     , label : String
     , icon : Svg
     , height : Css.Px
@@ -285,10 +252,9 @@ renderButton ((ButtonOrLink config) as button_) =
          , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
          , Attributes.disabled config.disabled
-         , Maybe.map Events.onClick config.onClick
-            |> Maybe.withDefault AttributesExtra.none
          , Widget.label config.label
          ]
+            ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
         [ config.icon
@@ -310,66 +276,28 @@ type Link
 renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let
-        linkBase linkFunctionName extraAttrs =
-            Html.a
-                ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
-                 , if not config.disabled then
-                    Attributes.href config.url
-
-                   else
-                    AttributesExtra.none
-                 , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
-                 , Widget.disabled config.disabled
-                 , Widget.label config.label
-                 ]
-                    ++ extraAttrs
-                    ++ config.customAttributes
-                )
-                [ config.icon
-                    |> Svg.withWidth config.width
-                    |> Svg.withHeight config.height
-                    |> Svg.toHtml
-                ]
+        ( linkFunctionName, extraAttrs ) =
+            ClickableAttributes.toLinkAttributes config.clickableAttributes
     in
-    case config.linkType of
-        Default ->
-            linkBase "link" [ Attributes.target "_self" ]
+    Html.a
+        ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
+         , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
+         , Widget.disabled config.disabled
+         , Widget.label config.label
+         ]
+            ++ (if not config.disabled then
+                    extraAttrs
 
-        SinglePageApp ->
-            linkBase "linkSpa"
-                (config.onClick
-                    |> Maybe.map (\msg -> [ EventExtras.onClickPreventDefaultForLinkWithHref msg ])
-                    |> Maybe.withDefault []
-                )
-
-        WithMethod method ->
-            linkBase "linkWithMethod" [ Attributes.attribute "data-method" method ]
-
-        WithTracking ->
-            linkBase
-                "linkWithTracking"
-                (config.onClick
-                    |> Maybe.map (\msg -> [ Events.preventDefaultOn "click" (Json.Decode.succeed ( msg, True )) ])
-                    |> Maybe.withDefault []
-                )
-
-        External ->
-            linkBase "linkExternal" targetBlank
-
-        ExternalWithTracking ->
-            linkBase "linkExternalWithTracking"
-                (List.concat
-                    [ targetBlank
-                    , config.onClick
-                        |> Maybe.map
-                            (\onClickMsg ->
-                                [ Events.onClick onClickMsg
-                                , Events.on "auxclick" (Json.Decode.succeed onClickMsg)
-                                ]
-                            )
-                        |> Maybe.withDefault []
-                    ]
-                )
+                else
+                    []
+               )
+            ++ config.customAttributes
+        )
+        [ config.icon
+            |> Svg.withWidth config.width
+            |> Svg.withHeight config.height
+            |> Svg.toHtml
+        ]
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style

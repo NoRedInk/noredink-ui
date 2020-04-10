@@ -1,8 +1,8 @@
-module Examples.TextInput exposing (Msg, State, example, init, update)
+module Examples.TextInput exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
@@ -10,10 +10,9 @@ import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
-import ModuleExample exposing (ModuleExample)
+import Example exposing (Example)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V5 as TextInput
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -44,17 +43,20 @@ type alias ExampleConfig =
 
 
 {-| -}
-example : (Msg -> msg) -> State -> ModuleExample msg
-example parentMessage state =
-    let
-        exampleConfig =
-            Control.currentValue state.control
-    in
+example : Example State Msg
+example =
     { name = "Nri.Ui.TextInput.V5"
-    , categories = Set.fromList Category.sorter <| List.singleton Inputs
-    , content =
-        [ Html.map parentMessage <|
-            Html.div []
+    , categories = [ Inputs ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \state ->
+            let
+                exampleConfig =
+                    Control.currentValue state.control
+            in
+            [ Html.div []
                 [ Control.view UpdateControl state.control
                     |> Html.fromUnstyled
                 , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
@@ -142,7 +144,7 @@ example parentMessage state =
                     , showLabel = exampleConfig.showLabel
                     }
                 ]
-        ]
+            ]
     }
 
 

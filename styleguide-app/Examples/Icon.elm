@@ -1,35 +1,48 @@
-module Examples.Icon exposing (example)
+module Examples.Icon exposing (example, State, Msg)
 
 {-|
 
-@docs example, styles
+@docs example, State, Msg
 
 -}
 
 import Category exposing (Category(..))
 import Css
 import Css.Global
+import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import ModuleExample exposing (ModuleExample)
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Icon.V5 as Icon
 import Nri.Ui.Text.V4 as Text
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-example : ModuleExample msg
+type alias State =
+    ()
+
+
+{-| -}
+type alias Msg =
+    ()
+
+
+{-| -}
+example : Example State Msg
 example =
     { name = "Nri.Ui.Icon.V5"
-    , categories = Set.fromList Category.sorter <| List.singleton Icons
-    , content =
-        [ viewLarge "Bulbs and Tips"
-            [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
+    , categories = List.singleton Icons
+    , state = ()
+    , update = \_ state -> ( state, Cmd.none )
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \_ ->
+            [ viewLarge "Bulbs and Tips"
+                [ deprecatedIcon { icon = Icon.lightBulb { hint_png = Asset "assets/images/hint.png" }, background = Colors.frost, alt = "LightBulb" }
+                ]
             ]
-        ]
     }
 
 

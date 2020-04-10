@@ -1,27 +1,38 @@
-module Examples.Button exposing (Msg, State, example, init, update)
+module Examples.Button exposing (Msg, State, example)
 
 {-|
 
-@docs Msg, State, example, init, update
+@docs Msg, State, example
 
 -}
 
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import ModuleExample exposing (ModuleExample, ModuleMessages)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
-type State parentMsg
-    = State (Control (Model parentMsg))
+example : Example State Msg
+example =
+    { name = "Nri.Ui.Button.V10"
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view = \state -> [ viewButtonExamples state ]
+    , categories = [ Buttons ]
+    }
+
+
+{-| -}
+type State
+    = State (Control Model)
 
 
 {-| -}
@@ -31,33 +42,25 @@ type ButtonType
 
 
 {-| -}
-example :
-    (String -> ModuleMessages (Msg parentMsg) parentMsg)
-    -> State parentMsg
-    -> ModuleExample parentMsg
-example unnamedMessages state =
-    let
-        messages =
-            unnamedMessages "ButtonExample"
-    in
-    { name = "Nri.Ui.Button.V10"
-    , categories = Set.fromList Category.sorter <| List.singleton Buttons
-    , content = [ viewButtonExamples messages state ]
-    }
-
-
-{-| -}
-type Msg parentMsg
-    = SetState (State parentMsg)
+type Msg
+    = SetState State
+    | ShowItWorked String String
     | NoOp
 
 
 {-| -}
-update : Msg msg -> State msg -> ( State msg, Cmd (Msg msg) )
+update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SetState newState ->
             ( newState, Cmd.none )
+
+        ShowItWorked group message ->
+            let
+                _ =
+                    Debug.log group message
+            in
+            ( state, Cmd.none )
 
         NoOp ->
             ( state, Cmd.none )
@@ -67,17 +70,17 @@ update msg state =
 -- INTERNAL
 
 
-type alias Model msg =
+type alias Model =
     { label : String
     , icon : Maybe Svg
     , buttonType : ButtonType
-    , width : Button.Attribute msg
-    , state : Button.Attribute msg
+    , width : Button.Attribute Msg
+    , state : Button.Attribute Msg
     }
 
 
 {-| -}
-init : State msg
+init : State
 init =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
@@ -119,40 +122,34 @@ iconChoice =
         ]
 
 
-viewButtonExamples :
-    ModuleMessages (Msg parentMsg) parentMsg
-    -> State parentMsg
-    -> Html parentMsg
-viewButtonExamples messages (State control) =
+viewButtonExamples : State -> Html Msg
+viewButtonExamples (State control) =
     let
         model =
             Control.currentValue control
     in
-    [ Control.view (State >> SetState >> messages.wrapper) control
+    [ Control.view (State >> SetState) control
         |> fromUnstyled
-    , buttons messages model
-    , toggleButtons messages
+    , buttons model
+    , toggleButtons
     , Button.delete
         { label = "Delete Something"
-        , onClick = messages.showItWorked "delete"
+        , onClick = ShowItWorked "ButtonExample" "delete"
         }
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
         , Button.linkExternalWithTracking
             { url = "#"
-            , track = messages.showItWorked "linkExternalWithTracking clicked"
+            , track = ShowItWorked "ButtonExample" "linkExternalWithTracking clicked"
             }
         ]
     ]
         |> div []
 
 
-buttons :
-    ModuleMessages (Msg parentMsg) parentMsg
-    -> Model parentMsg
-    -> Html parentMsg
-buttons messages model =
+buttons : Model -> Html Msg
+buttons model =
     let
         sizes =
             [ ( Button.small, "small" )
@@ -195,7 +192,7 @@ buttons messages model =
                 , model.width
                 , model.state
                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                , Button.onClick (messages.showItWorked "Button clicked!")
+                , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
                 , case model.icon of
                     Just icon ->
                         Button.icon icon
@@ -221,20 +218,20 @@ buttons messages model =
         |> table []
 
 
-toggleButtons : ModuleMessages (Msg parentMsg) parentMsg -> Html parentMsg
-toggleButtons messages =
+toggleButtons : Html Msg
+toggleButtons =
     div []
         [ Heading.h3 [] [ text "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
-                { onDeselect = messages.showItWorked "onDeselect"
-                , onSelect = messages.showItWorked "onSelect"
+                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
+                , onSelect = ShowItWorked "ButtonExample" "onSelect"
                 , label = "5"
                 , pressed = False
                 }
             , Button.toggleButton
-                { onDeselect = messages.showItWorked "onDeselect"
-                , onSelect = messages.showItWorked "onSelect"
+                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
+                , onSelect = ShowItWorked "ButtonExample" "onSelect"
                 , label = "5"
                 , pressed = True
                 }
