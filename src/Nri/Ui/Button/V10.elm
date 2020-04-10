@@ -15,6 +15,11 @@ module Nri.Ui.Button.V10 exposing
 {-|
 
 
+# Patch changes:
+
+  - uses ClickableAttributes
+
+
 # Changes from V9:
 
   - Explicitly zeroes out all margin
@@ -61,6 +66,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import AttributeExtras exposing (targetBlank)
+import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
 import EventExtras.Styled as EventExtras
@@ -167,22 +173,13 @@ css styles =
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    set (\attributes -> { attributes | onClick = Just msg })
-
-
-type Link
-    = Default
-    | WithTracking
-    | SinglePageApp
-    | WithMethod String
-    | External
-    | ExternalWithTracking
+    setClickableAttributes (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    set (\attributes -> { attributes | url = url })
+    setClickableAttributes (ClickableAttributes.href url)
 
 
 {-| Use this link for routing within a single page app.
@@ -194,71 +191,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = SinglePageApp
-                , url = url
-            }
-        )
+    setClickableAttributes (ClickableAttributes.linkSpa url)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url, and it's an HTTP request (Rails includes JS to make this use the given HTTP method)
--}
+{-| -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
-linkWithMethod { method, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = WithMethod method
-                , url = url
-            }
-        )
+linkWithMethod config =
+    setClickableAttributes (ClickableAttributes.linkWithMethod config)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url.
-This should only take in messages that result in a Msg that triggers Analytics.trackAndRedirect.
-For buttons that trigger other effects on the page, please use Nri.Button.button instead.
--}
+{-| -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
-linkWithTracking { track, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = WithTracking
-                , url = url
-                , onClick = Just track
-            }
-        )
+linkWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkWithTracking config)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to
-some url and have it open to an external site
--}
+{-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = External
-                , url = url
-            }
-        )
+    setClickableAttributes (ClickableAttributes.linkExternal url)
 
 
-{-| Wrap some text so it looks like a button, but actually is wrapped in an anchor to some url and have it open to an external site.
--}
+{-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
-linkExternalWithTracking { track, url } =
-    set
-        (\attributes ->
-            { attributes
-                | linkType = ExternalWithTracking
-                , url = url
-                , onClick = Just track
-            }
-        )
+linkExternalWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
 
 
 
@@ -447,12 +404,20 @@ set with =
     Attribute (\(ButtonOrLink config) -> ButtonOrLink (with config))
 
 
+setClickableAttributes :
+    (ClickableAttributes msg -> ClickableAttributes msg)
+    -> Attribute msg
+setClickableAttributes apply =
+    set
+        (\attributes ->
+            { attributes | clickableAttributes = apply attributes.clickableAttributes }
+        )
+
+
 build : ButtonOrLink msg
 build =
     ButtonOrLink
-        { onClick = Nothing
-        , url = "#"
-        , linkType = Default
+        { clickableAttributes = ClickableAttributes.init
         , size = Medium
         , style = primaryColors
         , width = WidthUnbounded
@@ -469,9 +434,7 @@ type ButtonOrLink msg
 
 
 type alias ButtonOrLinkAttributes msg =
-    { onClick : Maybe msg
-    , url : String
-    , linkType : Link
+    { clickableAttributes : ClickableAttributes msg
     , size : ButtonSize
     , style : ColorPalette
     , width : ButtonWidth
@@ -512,10 +475,8 @@ renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ config.customStyles ]
-        ((Maybe.map Events.onClick config.onClick
-            |> Maybe.withDefault AttributesExtra.none
-         )
-            :: Attributes.disabled isDisabled
+        (ClickableAttributes.toButtonAttributes config.clickableAttributes
+            ++ Attributes.disabled isDisabled
             :: Attributes.type_ "button"
             :: config.customAttributes
         )
@@ -528,65 +489,14 @@ renderLink ((ButtonOrLink config) as link_) =
         colorPalette =
             getColorPalette link_
 
-        linkBase linkFunctionName extraAttrs =
-            Nri.Ui.styled Styled.a
-                (styledName linkFunctionName)
-                [ buttonStyles config.size config.width colorPalette config.customStyles ]
-                (Attributes.href config.url :: extraAttrs)
-                [ viewLabel config.icon config.label ]
+        ( linkFunctionName, attributes ) =
+            ClickableAttributes.toLinkAttributes config.clickableAttributes
     in
-    case config.linkType of
-        Default ->
-            linkBase "link"
-                (Attributes.target "_self" :: config.customAttributes)
-
-        SinglePageApp ->
-            linkBase "linkSpa"
-                ((Maybe.map EventExtras.onClickPreventDefaultForLinkWithHref config.onClick
-                    |> Maybe.withDefault AttributesExtra.none
-                 )
-                    :: config.customAttributes
-                )
-
-        WithMethod method ->
-            linkBase "linkWithMethod"
-                (Attributes.attribute "data-method" method
-                    :: config.customAttributes
-                )
-
-        WithTracking ->
-            linkBase
-                "linkWithTracking"
-                ((Maybe.map
-                    (\msg ->
-                        Events.preventDefaultOn "click"
-                            (Json.Decode.succeed ( msg, True ))
-                    )
-                    config.onClick
-                    |> Maybe.withDefault AttributesExtra.none
-                 )
-                    :: config.customAttributes
-                )
-
-        External ->
-            linkBase "linkExternal"
-                (targetBlank ++ config.customAttributes)
-
-        ExternalWithTracking ->
-            linkBase "linkExternalWithTracking"
-                (List.concat
-                    [ targetBlank
-                    , config.onClick
-                        |> Maybe.map
-                            (\onClickMsg ->
-                                [ Events.onClick onClickMsg
-                                , Events.on "auxclick" (Json.Decode.succeed onClickMsg)
-                                ]
-                            )
-                        |> Maybe.withDefault []
-                    , config.customAttributes
-                    ]
-                )
+    Nri.Ui.styled Styled.a
+        (styledName linkFunctionName)
+        [ buttonStyles config.size config.width colorPalette config.customStyles ]
+        (attributes ++ config.customAttributes)
+        [ viewLabel config.icon config.label ]
 
 
 
