@@ -8,8 +8,8 @@
     "dependencies": {
         "direct": {
             "avh4/elm-debug-controls": "2.2.1",
-            "elm/browser": "1.0.1",
-            "elm/core": "1.0.2",
+            "elm/browser": "1.0.2",
+            "elm/core": "1.0.5",
             "elm/html": "1.0.0",
             "elm/json": "1.1.3",
             "elm/parser": "1.1.0",
@@ -18,7 +18,7 @@
             "elm/url": "1.0.0",
             "elm-community/string-extra": "4.0.1",
             "pablohirafuji/elm-markdown": "2.0.5",
-            "rtfeldman/elm-css": "16.0.0",
+            "rtfeldman/elm-css": "16.0.1",
             "rtfeldman/elm-sorter-experiment": "2.1.1",
             "tesk9/accessible-html": "4.0.0",
             "tesk9/accessible-html-with-css": "2.1.1",
@@ -27,11 +27,11 @@
             "wernerdegroot/listzipper": "4.0.0"
         },
         "indirect": {
-            "NoRedInk/datetimepicker-legacy": "1.0.1",
+            "NoRedInk/datetimepicker-legacy": "1.0.4",
             "Skinney/murmur3": "2.0.8",
             "elm/time": "1.0.0",
             "elm/virtual-dom": "1.0.2",
-            "justinmimbs/date": "3.1.2",
+            "justinmimbs/date": "3.2.0",
             "justinmimbs/time-extra": "1.1.0",
             "rtfeldman/elm-hex": "1.0.0"
         }
