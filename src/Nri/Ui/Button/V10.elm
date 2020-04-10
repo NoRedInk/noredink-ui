@@ -170,6 +170,16 @@ css styles =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
+setClickableAttributes :
+    (ClickableAttributes msg -> ClickableAttributes msg)
+    -> Attribute msg
+setClickableAttributes apply =
+    set
+        (\attributes ->
+            { attributes | clickableAttributes = apply attributes.clickableAttributes }
+        )
+
+
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
@@ -402,16 +412,6 @@ set :
     -> Attribute msg
 set with =
     Attribute (\(ButtonOrLink config) -> ButtonOrLink (with config))
-
-
-setClickableAttributes :
-    (ClickableAttributes msg -> ClickableAttributes msg)
-    -> Attribute msg
-setClickableAttributes apply =
-    set
-        (\attributes ->
-            { attributes | clickableAttributes = apply attributes.clickableAttributes }
-        )
 
 
 build : ButtonOrLink msg
