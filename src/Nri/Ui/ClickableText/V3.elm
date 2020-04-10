@@ -3,7 +3,8 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large
-    , href, onClick
+    , onClick
+    , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
     , custom, css
     )
@@ -13,6 +14,7 @@ module Nri.Ui.ClickableText.V3 exposing
 
 # Post-release patches
 
+  - uses ClickableAttributes
   - adds `css` helper
   - add bottom border on hover instead of text decoration
 
@@ -46,21 +48,30 @@ HTML `<a>` elements and are created here with `*Link` functions.
 # Attributes
 
 @docs Attribute
+
+
+## Sizing
+
 @docs small, medium, large
-@docs href, onClick
+
+
+## Behavior
+
+@docs onClick
+@docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+
 @docs icon
 @docs custom, css
 
 -}
 
+import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -127,16 +138,66 @@ css styles =
         )
 
 
+
+-- LINKING, CLICKING, and TRACKING BEHAVIOR
+
+
+setClickableAttributes :
+    (ClickableAttributes msg -> ClickableAttributes msg)
+    -> Attribute msg
+setClickableAttributes apply =
+    set
+        (\attributes ->
+            { attributes | clickableAttributes = apply attributes.clickableAttributes }
+        )
+
+
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    set (\attributes -> { attributes | onClick = Just msg })
+    setClickableAttributes (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    set (\attributes -> { attributes | url = url })
+    setClickableAttributes (ClickableAttributes.href url)
+
+
+{-| Use this link for routing within a single page app.
+
+This will make a normal <a> tag, but change the Events.onClick behavior to avoid reloading the page.
+
+See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
+
+-}
+linkSpa : String -> Attribute msg
+linkSpa url =
+    setClickableAttributes (ClickableAttributes.linkSpa url)
+
+
+{-| -}
+linkWithMethod : { method : String, url : String } -> Attribute msg
+linkWithMethod config =
+    setClickableAttributes (ClickableAttributes.linkWithMethod config)
+
+
+{-| -}
+linkWithTracking : { track : msg, url : String } -> Attribute msg
+linkWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkWithTracking config)
+
+
+{-| -}
+linkExternal : String -> Attribute msg
+linkExternal url =
+    setClickableAttributes (ClickableAttributes.linkExternal url)
+
+
+{-| -}
+linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
+linkExternalWithTracking config =
+    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
 
 
 {-| Creates a `<button>` element
@@ -154,10 +215,8 @@ button label_ attributes =
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
         (clickableTextStyles ++ config.customStyles)
-        ((Maybe.map Events.onClick config.onClick
-            |> Maybe.withDefault AttributesExtra.none
-         )
-            :: config.customAttributes
+        (ClickableAttributes.toButtonAttributes config.clickableAttributes
+            ++ config.customAttributes
         )
         [ viewContent config ]
 
@@ -173,11 +232,14 @@ link label_ attributes =
         config =
             (label label_ :: attributes)
                 |> List.foldl (\(Attribute attribute) l -> attribute l) defaults
+
+        ( name, clickableAttributes ) =
+            ClickableAttributes.toLinkAttributes config.clickableAttributes
     in
     Nri.Ui.styled Html.a
-        (dataDescriptor "link")
+        (dataDescriptor name)
         (clickableTextStyles ++ config.customStyles)
-        (Attributes.href config.url :: config.customAttributes)
+        (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
 
@@ -269,11 +331,10 @@ dataDescriptor descriptor =
 
 
 type alias ClickableTextAttributes msg =
-    { label : String
+    { clickableAttributes : ClickableAttributes msg
+    , label : String
     , size : Size
     , icon : Maybe Svg
-    , onClick : Maybe msg
-    , url : String
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -281,8 +342,7 @@ type alias ClickableTextAttributes msg =
 
 defaults : ClickableTextAttributes msg
 defaults =
-    { onClick = Nothing
-    , url = "#"
+    { clickableAttributes = ClickableAttributes.init
     , size = Medium
     , label = ""
     , icon = Nothing
