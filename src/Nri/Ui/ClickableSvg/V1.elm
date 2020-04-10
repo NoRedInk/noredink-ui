@@ -11,6 +11,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 {-|
 
 
+# Post-release patches
+
+  - uses ClickableAttributes
+
+
 # Create a button or link
 
 @docs button, link
