@@ -3,7 +3,8 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large
-    , href, onClick
+    , onClick
+    , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
     , custom, css
     )
@@ -46,8 +47,18 @@ HTML `<a>` elements and are created here with `*Link` functions.
 # Attributes
 
 @docs Attribute
+
+
+## Sizing
+
 @docs small, medium, large
-@docs href, onClick
+
+
+## Behavior
+
+@docs onClick
+@docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+
 @docs icon
 @docs custom, css
 
