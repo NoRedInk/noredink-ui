@@ -40,16 +40,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 -}
 
 import Accessibility.Styled.Widget as Widget
-import AttributeExtras exposing (targetBlank)
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
-import EventExtras.Styled as EventExtras
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
-import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 

@@ -65,23 +65,18 @@ module Nri.Ui.Button.V10 exposing
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
-import AttributeExtras exposing (targetBlank)
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
-import EventExtras.Styled as EventExtras
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Json.Decode
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui
-import Nri.Ui.AssetPath as AssetPath exposing (Asset)
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes

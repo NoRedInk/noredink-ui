@@ -68,11 +68,9 @@ import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
