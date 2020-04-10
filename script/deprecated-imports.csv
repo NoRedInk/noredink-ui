@@ -22,8 +22,6 @@ src/Nri/Ui/SortableTable/V1.elm,Nri.Ui.Table,4
 src/Nri/Ui/Html/Attributes/Extra.elm,Html,DEPRECATED
 src/Nri/Ui/Button/V8.elm,Html,DEPRECATED
 src/Nri/Ui/Button/V5.elm,Nri.Ui.Icon,3
-src/Nri/Ui/Button/V6.elm,Nri.Ui.Icon,4
-src/Nri/Ui/Button/V7.elm,Nri.Ui.Icon,4
 src/Nri/Ui/SegmentedControl/V6.elm,Nri.Ui.Icon,3
 src/Nri/Ui/Icon/V3.elm,Accessibility.Role,DEPRECATED
 src/Nri/Ui/Icon/V3.elm,Html,DEPRECATED
