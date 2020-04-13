@@ -1,7 +1,7 @@
-module Spec.Nri.Ui.TextInput.V4 exposing (all)
+module Spec.Nri.Ui.TextInput.V6 exposing (all)
 
 import Html.Styled
-import Nri.Ui.TextInput.V4 as TextInput
+import Nri.Ui.TextInput.V6 as TextInput
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (id, tag)
@@ -22,7 +22,7 @@ all =
             , type_ = TextInput.text
             }
     in
-    describe "Nri.Ui.TextInput.V4"
+    describe "Nri.Ui.TextInput.V6"
         [ test "it uses the same DOM id that generateId produces" <|
             \() ->
                 TextInput.view

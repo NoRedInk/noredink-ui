@@ -12,7 +12,7 @@ import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.TextInput.V5 as TextInput
+import Nri.Ui.TextInput.V6 as TextInput
 
 
 {-| -}
@@ -45,7 +45,7 @@ type alias ExampleConfig =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.TextInput.V5"
+    { name = "Nri.Ui.TextInput.V6"
     , categories = [ Inputs ]
     , state = init
     , update = update
