@@ -42,7 +42,7 @@ example =
     , view =
         \_ ->
             [ Css.Global.global
-                [ Css.Global.selector "[data-page-container]"
+                [ selector "[data-page-container]"
                     [ Css.displayFlex
                     , Css.flexWrap Css.wrap
                     ]
