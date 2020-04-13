@@ -12,17 +12,12 @@ all =
     describe "Nri.Ui.TextInput.V6"
         [ test "it uses the same DOM id that generateId produces" <|
             \() ->
-                TextInput.view
-                    { label = "myLabel"
-                    , isInError = False
-                    , onInput = identity
-                    , onBlur = Nothing
-                    , placeholder = "placeholder"
-                    , value = "value"
-                    , autofocus = False
-                    , showLabel = False
-                    , type_ = TextInput.text
-                    }
+                TextInput.view "myLabel"
+                    (TextInput.text identity)
+                    [ TextInput.hiddenLabel
+                    , TextInput.placeholder "placeholder"
+                    ]
+                    "value"
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.has

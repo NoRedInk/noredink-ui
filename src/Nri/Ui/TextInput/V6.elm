@@ -1,8 +1,8 @@
 module Nri.Ui.TextInput.V6 exposing
-    ( Model
-    , view, writing
-    , generateId
+    ( view, generateId
     , InputType, number, float, text, password, email
+    , Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus
+    , writing
     )
 
 {-|
@@ -10,16 +10,20 @@ module Nri.Ui.TextInput.V6 exposing
 
 # Changes from V5
 
-  - nothing yet
+  - new Attributes-style API
 
-@docs Model
-@docs view, writing
-@docs generateId
+@docs view, generateId
 
 
-## Input types
+### Input types
 
 @docs InputType, number, float, text, password, email
+
+
+## Attributes
+
+@docs Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus
+@docs writing
 
 -}
 
@@ -30,29 +34,15 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.InputStyles.V2 as InputStyles exposing (Theme)
+import Nri.Ui.InputStyles.V2 as InputStyles
 import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
-type alias Model value msg =
-    { label : String
-    , isInError : Bool
-    , onInput : value -> msg
-    , onBlur : Maybe msg
-    , placeholder : String
-    , value : value
-    , autofocus : Bool
-    , showLabel : Bool
-    , type_ : InputType value
-    }
-
-
-{-| -}
-type InputType value
+type InputType value msg
     = InputType
         { toString : value -> String
-        , fromString : String -> value
+        , fromString : String -> msg
         , fieldType : String
         , inputMode : Maybe String
         , autocomplete : Maybe String
@@ -61,11 +51,11 @@ type InputType value
 
 {-| An input that allows text entry
 -}
-text : InputType String
-text =
+text : (String -> msg) -> InputType String msg
+text toMsg =
     InputType
         { toString = identity
-        , fromString = identity
+        , fromString = toMsg
         , fieldType = "text"
         , inputMode = Nothing
         , autocomplete = Nothing
@@ -74,11 +64,11 @@ text =
 
 {-| An input that allows integer entry
 -}
-number : InputType (Maybe Int)
-number =
+number : (Maybe Int -> msg) -> InputType (Maybe Int) msg
+number toMsg =
     InputType
         { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
-        , fromString = String.toInt
+        , fromString = String.toInt >> toMsg
         , fieldType = "number"
         , inputMode = Nothing
         , autocomplete = Nothing
@@ -87,11 +77,11 @@ number =
 
 {-| An input that allows float entry
 -}
-float : InputType (Maybe Float)
-float =
+float : (Maybe Float -> msg) -> InputType (Maybe Float) msg
+float toMsg =
     InputType
         { toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
-        , fromString = String.toFloat
+        , fromString = String.toFloat >> toMsg
         , fieldType = "number"
         , inputMode = Nothing
         , autocomplete = Nothing
@@ -100,11 +90,11 @@ float =
 
 {-| An input that allows password entry
 -}
-password : InputType String
-password =
+password : (String -> msg) -> InputType String msg
+password toMsg =
     InputType
         { toString = identity
-        , fromString = identity
+        , fromString = toMsg
         , fieldType = "password"
         , inputMode = Nothing
         , autocomplete = Just "current-password"
@@ -118,37 +108,137 @@ but not `type="email"` because that would enable browser-provided validation whi
 with our validation UI.
 
 -}
-email : InputType String
-email =
+email : (String -> msg) -> InputType String msg
+email toMsg =
     InputType
         { toString = identity
-        , fromString = identity
+        , fromString = toMsg
         , fieldType = "text"
         , inputMode = Just "email"
         , autocomplete = Just "email"
         }
 
 
-{-| -}
-view : Model value msg -> Html msg
-view model =
-    view_ InputStyles.Standard model
+{-| An optional customization of a TextInput.
+-}
+type Attribute value msg
+    = InputStyleAttribute InputStyles.Theme
+    | ErrorAttribute Bool
+    | HideLabelAttribute Bool
+    | PlaceholderAttribute String
+    | OnBlurAttribute msg
+    | AutofocusAttribute Bool
 
 
-{-| -}
-writing : Model value msg -> Html msg
-writing model =
-    view_ InputStyles.Writing model
+{-| If not explicit placeholder is given, the input label will be used as the placeholder.
+-}
+placeholder : String -> Attribute value msg
+placeholder text_ =
+    PlaceholderAttribute text_
 
 
-view_ : Theme -> Model value msg -> Html msg
-view_ theme model =
+{-| Sets whether or not the field will be highlighted as having a validation error.
+If you are always passing `True`, then you don't need to use this attribute.
+-}
+errorIf : Bool -> Attribute value msg
+errorIf isInError =
+    ErrorAttribute isInError
+
+
+{-| Hides the visible label. (There will still be an invisible label for screen readers.
+-}
+hiddenLabel : Attribute value msg
+hiddenLabel =
+    HideLabelAttribute True
+
+
+{-| Causes the TextInput to produce the given `msg` when the field is blurred.
+-}
+onBlur : msg -> Attribute value msg
+onBlur msg =
+    OnBlurAttribute msg
+
+
+{-| Sets the `autofocus` attribute of the resulting HTML input.
+-}
+autofocus : Attribute value msg
+autofocus =
+    AutofocusAttribute True
+
+
+{-| This is private. The public API only exposes `Attribute`.
+-}
+type alias Config msg =
+    { inputStyle : InputStyles.Theme
+    , isInError : Bool
+    , hideLabel : Bool
+    , placeholder : Maybe String
+    , onBlur : Maybe msg
+    , autofocus : Bool
+    }
+
+
+emptyConfig : Config msg
+emptyConfig =
+    { inputStyle = InputStyles.Standard
+    , isInError = False
+    , hideLabel = False
+    , placeholder = Nothing
+    , onBlur = Nothing
+    , autofocus = False
+    }
+
+
+updateConfig : Attribute value msg -> Config msg -> Config msg
+updateConfig attribute config =
+    case attribute of
+        InputStyleAttribute theme ->
+            { config | inputStyle = theme }
+
+        ErrorAttribute isInError ->
+            { config | isInError = isInError }
+
+        HideLabelAttribute hideLabel ->
+            { config | hideLabel = hideLabel }
+
+        PlaceholderAttribute text_ ->
+            { config | placeholder = Just text_ }
+
+        OnBlurAttribute msg ->
+            { config | onBlur = Just msg }
+
+        AutofocusAttribute autofocus_ ->
+            { config | autofocus = autofocus_ }
+
+
+{-| Render the TextInput as HTML.
+The input's label, InputType, and current value are all required. Other attributes are all optional.
+-}
+view : String -> InputType value msg -> List (Attribute value msg) -> value -> Html msg
+view label inputType attributes currentValue =
+    let
+        config =
+            List.foldl updateConfig emptyConfig attributes
+    in
+    view_ label inputType config currentValue
+
+
+{-| Uses the "Writing" input style. See [`Nri.Ui.InputStyles.V2.Theme`](Nri-Ui-InputStyles-V2#Theme).
+-}
+writing : Attribute value msg
+writing =
+    InputStyleAttribute InputStyles.Writing
+
+
+view_ : String -> InputType value msg -> Config msg -> value -> Html msg
+view_ label (InputType inputType) config currentValue =
     let
         idValue =
-            generateId model.label
+            generateId label
 
-        (InputType inputType) =
-            model.type_
+        placeholder_ =
+            config.placeholder
+                |> Maybe.withDefault label
 
         maybeStep =
             if inputType.fieldType == "number" then
@@ -169,8 +259,8 @@ view_ theme model =
             (maybeStep
                 ++ [ Attributes.id idValue
                    , css
-                        [ InputStyles.input theme model.isInError
-                        , if theme == InputStyles.Writing then
+                        [ InputStyles.input config.inputStyle config.isInError
+                        , if config.inputStyle == InputStyles.Writing then
                             Css.Global.withClass "override-sass-styles"
                                 [ textAlign center
                                 , Css.height Css.auto
@@ -181,17 +271,17 @@ view_ theme model =
                                 [ Css.height (px 45)
                                 ]
                         ]
-                   , placeholder model.placeholder
-                   , value (inputType.toString model.value)
-                   , onInput (inputType.fromString >> model.onInput)
-                   , maybeAttr Events.onBlur model.onBlur
-                   , autofocus model.autofocus
+                   , Attributes.placeholder placeholder_
+                   , value (inputType.toString currentValue)
+                   , onInput inputType.fromString
+                   , maybeAttr Events.onBlur config.onBlur
+                   , Attributes.autofocus config.autofocus
                    , type_ inputType.fieldType
                    , maybeAttr (attribute "inputmode") inputType.inputMode
                    , maybeAttr (attribute "autocomplete") inputType.autocomplete
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
-                        if model.isInError then
+                        if config.isInError then
                             "true"
 
                         else
@@ -199,21 +289,21 @@ view_ theme model =
                    ]
             )
             []
-        , if model.showLabel then
-            Html.label
-                [ for idValue
-                , css [ InputStyles.label theme model.isInError ]
-                ]
-                [ Html.text model.label ]
+        , let
+            extraStyles =
+                if config.hideLabel then
+                    Accessibility.invisible
 
-          else
-            Html.label
-                ([ for idValue
-                 , css [ InputStyles.label theme model.isInError ]
-                 ]
-                    ++ Accessibility.invisible
-                )
-                [ Html.text model.label ]
+                else
+                    []
+          in
+          Html.label
+            ([ for idValue
+             , css [ InputStyles.label config.inputStyle config.isInError ]
+             ]
+                ++ extraStyles
+            )
+            [ Html.text label ]
         ]
 
 

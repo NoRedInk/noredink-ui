@@ -60,89 +60,106 @@ example =
                 [ Control.view UpdateControl state.control
                     |> Html.fromUnstyled
                 , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
-                , TextInput.view
-                    { label = exampleConfig.label ++ " (text)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , showLabel = exampleConfig.showLabel
-                    , value = Maybe.withDefault "" <| Dict.get 1 state.stringInputValues
-                    , onInput = SetTextInput 1
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    }
+                , TextInput.view (exampleConfig.label ++ " (text)")
+                    (TextInput.text (SetTextInput 1))
+                    ([ TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                 , Heading.h3 [] [ text "... type_ = TextInput.number" ]
-                , TextInput.view
-                    { label = exampleConfig.label ++ " (number)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , showLabel = exampleConfig.showLabel
-                    , value = state.numberInputValue
-                    , onInput = SetNumberInput
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.number
-                    }
+                , TextInput.view (exampleConfig.label ++ " (number)")
+                    (TextInput.number SetNumberInput)
+                    ([ TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    state.numberInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.float" ]
-                , TextInput.view
-                    { label = exampleConfig.label ++ " (float)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , showLabel = exampleConfig.showLabel
-                    , value = state.floatInputValue
-                    , onInput = SetFloatInput
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.float
-                    }
+                , TextInput.view (exampleConfig.label ++ " (float)")
+                    (TextInput.float SetFloatInput)
+                    ([ TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    state.floatInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.password" ]
-                , TextInput.view
-                    { label = exampleConfig.label ++ " (password)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , showLabel = exampleConfig.showLabel
-                    , value = state.passwordInputValue
-                    , onInput = SetPassword
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.password
-                    }
+                , TextInput.view (exampleConfig.label ++ " (password)")
+                    (TextInput.password SetPassword)
+                    ([ TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    state.passwordInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.email" ]
-                , TextInput.view
-                    { label = exampleConfig.label ++ " (email)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , showLabel = exampleConfig.showLabel
-                    , value = Maybe.withDefault "" <| Dict.get 2 state.stringInputValues
-                    , onInput = SetTextInput 2
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.email
-                    }
+                , TextInput.view (exampleConfig.label ++ " (email)")
+                    (TextInput.email (SetTextInput 2))
+                    ([ TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
-                , TextInput.writing
-                    { label = exampleConfig.label ++ " (writing)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , value = Maybe.withDefault "" <| Dict.get 4 state.stringInputValues
-                    , onInput = SetTextInput 4
-                    , onBlur = Nothing
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = exampleConfig.showLabel
-                    }
+                , TextInput.view (exampleConfig.label ++ " (writing)")
+                    (TextInput.text (SetTextInput 4))
+                    ([ TextInput.writing
+                     , TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                 , Heading.h3 [] [ text "onBlur demonstration" ]
-                , TextInput.writing
-                    { label = exampleConfig.label ++ " (onBlur)"
-                    , isInError = exampleConfig.isInError
-                    , placeholder = exampleConfig.placeholder
-                    , value = Maybe.withDefault "" <| Dict.get 7 state.stringInputValues
-                    , onInput = SetTextInput 7
-                    , onBlur = Just (SetTextInput 7 "Blurred!")
-                    , autofocus = False
-                    , type_ = TextInput.text
-                    , showLabel = exampleConfig.showLabel
-                    }
+                , TextInput.view (exampleConfig.label ++ " (onBlur)")
+                    (TextInput.text (SetTextInput 7))
+                    ([ TextInput.writing
+                     , TextInput.errorIf exampleConfig.isInError
+                     , TextInput.placeholder exampleConfig.placeholder
+                     , TextInput.onBlur (SetTextInput 7 "Blurred!")
+                     ]
+                        ++ (if exampleConfig.showLabel then
+                                []
+
+                            else
+                                [ TextInput.hiddenLabel ]
+                           )
+                    )
+                    (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
                 ]
             ]
     }
