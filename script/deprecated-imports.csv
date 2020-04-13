@@ -6,8 +6,6 @@ src/Nri/Ui/Tabs/V3.elm,Accessibility.Role,DEPRECATED
 src/Nri/Ui/Tabs/V3.elm,Accessibility.Widget,DEPRECATED
 src/Nri/Ui/Page/V3.elm,Nri.Ui.Button,5
 src/Nri/Ui/Page/V3.elm,Nri.Ui.Text,2
-src/Nri/Ui/Page/V2.elm,Nri.Ui.Button,5
-src/Nri/Ui/Page/V2.elm,Nri.Ui.Text,2
 src/Nri/Ui/PremiumCheckbox/V3.elm,Nri.Ui.Checkbox,4
 src/Nri/Ui/PremiumCheckbox/V2.elm,Nri.Ui.Checkbox,3
 src/Nri/Ui/PremiumCheckbox/V1.elm,Nri.Ui.Checkbox,3
