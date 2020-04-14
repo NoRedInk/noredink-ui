@@ -153,8 +153,7 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (onBlur)")
                     (TextInput.text (SetTextInput 7))
                     (List.filterMap identity
-                        [ Just TextInput.writing
-                        , Just (TextInput.onBlur (SetTextInput 7 "Blurred!"))
+                        [ Just (TextInput.onBlur (SetTextInput 7 "Blurred!"))
                         , exampleConfig.maybeErrorAttribute1
                         , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
@@ -164,6 +163,25 @@ example =
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
+                , Heading.h3 [] [ text "TextInput.css" ]
+                , TextInput.view (exampleConfig.label ++ " (custom CSS)")
+                    (TextInput.text (SetTextInput 8))
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
+                        , Just
+                            (TextInput.css
+                                [ margin (px 50)
+                                , transform (rotateZ <| deg 4)
+                                ]
+                            )
+                        ]
+                    )
+                    (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
                 ]
             ]
     }

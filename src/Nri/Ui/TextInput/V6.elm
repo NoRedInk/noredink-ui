@@ -1,7 +1,7 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
-    , Attribute, placeholder, hiddenLabel, onBlur, autofocus, custom
+    , Attribute, placeholder, hiddenLabel, onBlur, autofocus, css, custom
     , disabled, loading, errorIf, errorMessage
     , writing
     )
@@ -23,7 +23,7 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus, custom
+@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus, css, custom
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
 
@@ -211,6 +211,17 @@ autofocus =
         \config -> { config | autofocus = True }
 
 
+{-| Adds CSS to the input container.
+This is meant to be used for margin, and child node attributes for display:flex, display:grid, etc.
+If you want to customize colors, borders, font sizes, etc, you should instead add to the TextInput API
+to support what you need.
+-}
+css : List Css.Style -> Attribute msg
+css styles =
+    Attribute <|
+        \config -> { config | css = styles :: config.css }
+
+
 {-| Add any attribute to the input.
 
 NOTE: This is meant for short-term workarounds, and if you use this,
@@ -234,6 +245,7 @@ type alias Config msg =
     , placeholder : Maybe String
     , onBlur : Maybe msg
     , autofocus : Bool
+    , css : List (List Css.Style)
     , custom : List (Html.Attribute msg)
     }
 
@@ -253,6 +265,7 @@ emptyConfig =
     , placeholder = Nothing
     , onBlur = Nothing
     , autofocus = False
+    , css = []
     , custom = []
     }
 
@@ -319,16 +332,18 @@ view_ label (InputType inputType) config currentValue =
                 |> Maybe.withDefault Extra.none
     in
     div
-        [ Attributes.css
+        ([ Attributes.css
             [ position relative
             , Css.opacity opacity
             ]
-        ]
+         ]
+            ++ List.map Attributes.css (List.reverse config.css)
+        )
         [ input
             (maybeStep
                 ++ List.reverse config.custom
                 ++ [ Attributes.id idValue
-                   , css
+                   , Attributes.css
                         [ InputStyles.input config.inputStyle isInError
                         , if config.inputStyle == InputStyles.Writing then
                             Css.Global.withClass "override-sass-styles"
@@ -370,7 +385,7 @@ view_ label (InputType inputType) config currentValue =
           in
           Html.label
             ([ for idValue
-             , css [ InputStyles.label config.inputStyle isInError ]
+             , Attributes.css [ InputStyles.label config.inputStyle isInError ]
              ]
                 ++ extraStyles
             )
