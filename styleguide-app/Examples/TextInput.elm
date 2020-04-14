@@ -35,10 +35,10 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { showLabel : Bool
-    , label : String
-    , isInError : Bool
-    , placeholder : String
+    { label : String
+    , maybePlaceholderAttribute : Maybe (TextInput.Attribute Msg)
+    , maybeErrorAttribute : Maybe (TextInput.Attribute Msg)
+    , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
     }
 
 
@@ -62,102 +62,74 @@ example =
                 , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
                 , TextInput.view (exampleConfig.label ++ " (text)")
                     (TextInput.text (SetTextInput 1))
-                    ([ TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                 , Heading.h3 [] [ text "... type_ = TextInput.number" ]
                 , TextInput.view (exampleConfig.label ++ " (number)")
                     (TextInput.number SetNumberInput)
-                    ([ TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     state.numberInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.float" ]
                 , TextInput.view (exampleConfig.label ++ " (float)")
                     (TextInput.float SetFloatInput)
-                    ([ TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     state.floatInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.password" ]
                 , TextInput.view (exampleConfig.label ++ " (password)")
                     (TextInput.password SetPassword)
-                    ([ TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     state.passwordInputValue
                 , Heading.h3 [] [ text "... type_ = TextInput.email" ]
                 , TextInput.view (exampleConfig.label ++ " (email)")
                     (TextInput.email (SetTextInput 2))
-                    ([ TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
                 , TextInput.view (exampleConfig.label ++ " (writing)")
                     (TextInput.text (SetTextInput 4))
-                    ([ TextInput.writing
-                     , TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ Just TextInput.writing
+                        , exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                 , Heading.h3 [] [ text "onBlur demonstration" ]
                 , TextInput.view (exampleConfig.label ++ " (onBlur)")
                     (TextInput.text (SetTextInput 7))
-                    ([ TextInput.writing
-                     , TextInput.errorIf exampleConfig.isInError
-                     , TextInput.placeholder exampleConfig.placeholder
-                     , TextInput.onBlur (SetTextInput 7 "Blurred!")
-                     ]
-                        ++ (if exampleConfig.showLabel then
-                                []
-
-                            else
-                                [ TextInput.hiddenLabel ]
-                           )
+                    (List.filterMap identity
+                        [ Just TextInput.writing
+                        , Just (TextInput.onBlur (SetTextInput 7 "Blurred!"))
+                        , exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        ]
                     )
                     (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
                 ]
@@ -174,10 +146,24 @@ init =
     , passwordInputValue = ""
     , control =
         Control.record ExampleConfig
-            |> Control.field "showLabel" (Control.bool True)
             |> Control.field "label" (Control.string "Assignment name")
-            |> Control.field "isInError" (Control.bool False)
-            |> Control.field "placeholder" (Control.string "Learning with commas")
+            |> Control.field "placeholder"
+                (Control.maybe True <|
+                    Control.map TextInput.placeholder <|
+                        Control.string "Learning with commas"
+                )
+            |> Control.field "show label"
+                (Control.choice
+                    [ ( "default (visible)", Control.value Nothing )
+                    , ( "TextInput.hiddenLabel", Control.value (Just TextInput.hiddenLabel) )
+                    ]
+                )
+            |> Control.field "error state"
+                (Control.choice
+                    [ ( "default (no error)", Control.value Nothing )
+                    , ( "TextInput.errorIf", Control.map (Just << TextInput.errorIf) <| Control.bool False )
+                    ]
+                )
     }
 
 
