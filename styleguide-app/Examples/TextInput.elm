@@ -8,9 +8,11 @@ module Examples.TextInput exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
+import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V6 as TextInput
 
@@ -56,10 +58,16 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
             in
-            [ Html.div []
-                [ Control.view UpdateControl state.control
-                    |> Html.fromUnstyled
-                , Heading.h3 [] [ text "TextInput.view { type_ = TextInput.text }" ]
+            [ Control.view UpdateControl state.control
+                |> Html.fromUnstyled
+            , Html.div
+                [ css
+                    [ property "display" "grid"
+                    , property "grid-template-columns" "auto 1fr"
+                    , property "grid-gap" "10px"
+                    ]
+                ]
+                [ Heading.h3 [] [ text "TextInput.text" ]
                 , TextInput.view (exampleConfig.label ++ " (text)")
                     (TextInput.text (SetTextInput 1))
                     (List.filterMap identity
@@ -69,7 +77,7 @@ example =
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
-                , Heading.h3 [] [ text "... type_ = TextInput.number" ]
+                , Heading.h3 [] [ text "TextInput.number" ]
                 , TextInput.view (exampleConfig.label ++ " (number)")
                     (TextInput.number SetNumberInput)
                     (List.filterMap identity
@@ -79,7 +87,7 @@ example =
                         ]
                     )
                     state.numberInputValue
-                , Heading.h3 [] [ text "... type_ = TextInput.float" ]
+                , Heading.h3 [] [ text "TextInput.float" ]
                 , TextInput.view (exampleConfig.label ++ " (float)")
                     (TextInput.float SetFloatInput)
                     (List.filterMap identity
@@ -89,7 +97,7 @@ example =
                         ]
                     )
                     state.floatInputValue
-                , Heading.h3 [] [ text "... type_ = TextInput.password" ]
+                , Heading.h3 [] [ text "TextInput.password" ]
                 , TextInput.view (exampleConfig.label ++ " (password)")
                     (TextInput.password SetPassword)
                     (List.filterMap identity
@@ -99,7 +107,7 @@ example =
                         ]
                     )
                     state.passwordInputValue
-                , Heading.h3 [] [ text "... type_ = TextInput.email" ]
+                , Heading.h3 [] [ text "TextInput.email" ]
                 , TextInput.view (exampleConfig.label ++ " (email)")
                     (TextInput.email (SetTextInput 2))
                     (List.filterMap identity
@@ -109,7 +117,7 @@ example =
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
-                , Heading.h3 [] [ Html.text "TextInput.writing { type_ = TextInput.text }" ]
+                , Heading.h3 [] [ Html.text "TextInput.writing" ]
                 , TextInput.view (exampleConfig.label ++ " (writing)")
                     (TextInput.text (SetTextInput 4))
                     (List.filterMap identity
@@ -120,7 +128,7 @@ example =
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
-                , Heading.h3 [] [ text "onBlur demonstration" ]
+                , Heading.h3 [] [ text "TextInput.onBlur" ]
                 , TextInput.view (exampleConfig.label ++ " (onBlur)")
                     (TextInput.text (SetTextInput 7))
                     (List.filterMap identity

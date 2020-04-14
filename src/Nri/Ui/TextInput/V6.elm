@@ -121,7 +121,7 @@ email toMsg =
 
 {-| An optional customization of a TextInput.
 -}
-type Attribute value msg
+type Attribute msg
     = InputStyleAttribute InputStyles.Theme
     | ErrorAttribute Bool
     | HideLabelAttribute Bool
@@ -132,7 +132,7 @@ type Attribute value msg
 
 {-| If not explicit placeholder is given, the input label will be used as the placeholder.
 -}
-placeholder : String -> Attribute value msg
+placeholder : String -> Attribute msg
 placeholder text_ =
     PlaceholderAttribute text_
 
@@ -140,28 +140,28 @@ placeholder text_ =
 {-| Sets whether or not the field will be highlighted as having a validation error.
 If you are always passing `True`, then you don't need to use this attribute.
 -}
-errorIf : Bool -> Attribute value msg
+errorIf : Bool -> Attribute msg
 errorIf isInError =
     ErrorAttribute isInError
 
 
-{-| Hides the visible label. (There will still be an invisible label for screen readers.
+{-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
-hiddenLabel : Attribute value msg
+hiddenLabel : Attribute msg
 hiddenLabel =
     HideLabelAttribute True
 
 
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
 -}
-onBlur : msg -> Attribute value msg
+onBlur : msg -> Attribute msg
 onBlur msg =
     OnBlurAttribute msg
 
 
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
-autofocus : Attribute value msg
+autofocus : Attribute msg
 autofocus =
     AutofocusAttribute True
 
@@ -189,7 +189,7 @@ emptyConfig =
     }
 
 
-updateConfig : Attribute value msg -> Config msg -> Config msg
+updateConfig : Attribute msg -> Config msg -> Config msg
 updateConfig attribute config =
     case attribute of
         InputStyleAttribute theme ->
@@ -214,7 +214,7 @@ updateConfig attribute config =
 {-| Render the TextInput as HTML.
 The input's label, InputType, and current value are all required. Other attributes are all optional.
 -}
-view : String -> InputType value msg -> List (Attribute value msg) -> value -> Html msg
+view : String -> InputType value msg -> List (Attribute msg) -> value -> Html msg
 view label inputType attributes currentValue =
     let
         config =
@@ -225,7 +225,7 @@ view label inputType attributes currentValue =
 
 {-| Uses the "Writing" input style. See [`Nri.Ui.InputStyles.V2.Theme`](Nri-Ui-InputStyles-V2#Theme).
 -}
-writing : Attribute value msg
+writing : Attribute msg
 writing =
     InputStyleAttribute InputStyles.Writing
 
