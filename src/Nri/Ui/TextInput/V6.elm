@@ -1,7 +1,7 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
-    , Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus
+    , Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus, custom
     , writing
     )
 
@@ -22,7 +22,7 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus
+@docs Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus, custom
 @docs writing
 
 -}
@@ -128,6 +128,7 @@ type Attribute msg
     | PlaceholderAttribute String
     | OnBlurAttribute msg
     | AutofocusAttribute Bool
+    | CustomAttribute (Html.Attribute msg)
 
 
 {-| If not explicit placeholder is given, the input label will be used as the placeholder.
@@ -166,6 +167,17 @@ autofocus =
     AutofocusAttribute True
 
 
+{-| Add any attribute to the input.
+
+NOTE: This is meant for short-term workarounds, and if you use this,
+consider adding to the TextInput API to support what you need.
+
+-}
+custom : Html.Attribute msg -> Attribute msg
+custom attr =
+    CustomAttribute attr
+
+
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config msg =
@@ -175,6 +187,7 @@ type alias Config msg =
     , placeholder : Maybe String
     , onBlur : Maybe msg
     , autofocus : Bool
+    , custom : List (Html.Attribute msg)
     }
 
 
@@ -186,6 +199,7 @@ emptyConfig =
     , placeholder = Nothing
     , onBlur = Nothing
     , autofocus = False
+    , custom = []
     }
 
 
@@ -209,6 +223,9 @@ updateConfig attribute config =
 
         AutofocusAttribute autofocus_ ->
             { config | autofocus = autofocus_ }
+
+        CustomAttribute attr ->
+            { config | custom = attr :: config.custom }
 
 
 {-| Render the TextInput as HTML.
@@ -257,6 +274,7 @@ view_ label (InputType inputType) config currentValue =
         ]
         [ input
             (maybeStep
+                ++ List.reverse config.custom
                 ++ [ Attributes.id idValue
                    , css
                         [ InputStyles.input config.inputStyle config.isInError
