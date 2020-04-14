@@ -39,7 +39,8 @@ type alias State =
 type alias ExampleConfig =
     { label : String
     , maybePlaceholderAttribute : Maybe (TextInput.Attribute Msg)
-    , maybeErrorAttribute : Maybe (TextInput.Attribute Msg)
+    , maybeErrorAttribute1 : Maybe (TextInput.Attribute Msg)
+    , maybeErrorAttribute2 : Maybe (TextInput.Attribute Msg)
     , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
     , maybeDisabledAttribute : Maybe (TextInput.Attribute Msg)
     , maybeLoadingAttribute : Maybe (TextInput.Attribute Msg)
@@ -73,7 +74,8 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (text)")
                     (TextInput.text (SetTextInput 1))
                     (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -85,7 +87,8 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (number)")
                     (TextInput.number SetNumberInput)
                     (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -97,7 +100,8 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (float)")
                     (TextInput.float SetFloatInput)
                     (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -109,7 +113,8 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (password)")
                     (TextInput.password SetPassword)
                     (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -121,7 +126,8 @@ example =
                 , TextInput.view (exampleConfig.label ++ " (email)")
                     (TextInput.email (SetTextInput 2))
                     (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -134,7 +140,8 @@ example =
                     (TextInput.text (SetTextInput 4))
                     (List.filterMap identity
                         [ Just TextInput.writing
-                        , exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -148,7 +155,8 @@ example =
                     (List.filterMap identity
                         [ Just TextInput.writing
                         , Just (TextInput.onBlur (SetTextInput 7 "Blurred!"))
-                        , exampleConfig.maybeErrorAttribute
+                        , exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
@@ -171,43 +179,21 @@ init =
     , control =
         Control.record ExampleConfig
             |> Control.field "label" (Control.string "Assignment name")
-            |> Control.field "placeholder"
+            |> Control.field "TextInput.placeholder"
                 (Control.maybe True <|
                     Control.map TextInput.placeholder <|
                         Control.string "Learning with commas"
                 )
-            |> Control.field "show label"
-                (Control.choice
-                    [ ( "default (visible)", Control.value Nothing )
-                    , ( "TextInput.hiddenLabel", Control.value (Just TextInput.hiddenLabel) )
-                    ]
-                )
-            |> Control.field "error state"
-                (Control.choice
-                    [ ( "default (no error)", Control.value Nothing )
-                    , ( "TextInput.errorIf"
-                      , Control.map (Just << TextInput.errorIf) <|
-                            Control.bool False
-                      )
-                    , ( "TextInput.errorMessage"
-                      , Control.map (Just << TextInput.errorMessage) <|
-                            Control.maybe True <|
-                                Control.string "The statement must be true."
-                      )
-                    ]
-                )
-            |> Control.field "disabled"
-                (Control.choice
-                    [ ( "default (enabled)", Control.value Nothing )
-                    , ( "TextInput.disabled", Control.value (Just TextInput.disabled) )
-                    ]
-                )
-            |> Control.field "loading"
-                (Control.choice
-                    [ ( "default (not loading)", Control.value Nothing )
-                    , ( "TextInput.loading", Control.value (Just TextInput.loading) )
-                    ]
-                )
+            |> Control.field "TextInput.hiddenLabel"
+                (Control.maybe False (Control.value TextInput.hiddenLabel))
+            |> Control.field "TextInput.errorIf"
+                (Control.maybe False (Control.map TextInput.errorIf <| Control.bool True))
+            |> Control.field "TextInput.errorMessage"
+                (Control.maybe False (Control.map TextInput.errorMessage <| Control.maybe True <| Control.string "The statement must be true."))
+            |> Control.field "TextInput.disabled"
+                (Control.maybe False (Control.value TextInput.disabled))
+            |> Control.field "TextInput.loading"
+                (Control.maybe False (Control.value TextInput.loading))
     }
 
 
