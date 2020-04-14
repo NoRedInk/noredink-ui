@@ -125,21 +125,15 @@ email toMsg =
 {-| An optional customization of a TextInput.
 -}
 type Attribute msg
-    = InputStyleAttribute InputStyles.Theme
-    | ErrorAttribute ErrorState
-    | HideLabelAttribute Bool
-    | PlaceholderAttribute String
-    | OnBlurAttribute msg
-    | AutofocusAttribute Bool
-    | Attribute (Config msg -> Config msg)
-    | CustomAttribute (Html.Attribute msg)
+    = Attribute (Config msg -> Config msg)
 
 
 {-| If not explicit placeholder is given, the input label will be used as the placeholder.
 -}
 placeholder : String -> Attribute msg
 placeholder text_ =
-    PlaceholderAttribute text_
+    Attribute <|
+        \config -> { config | placeholder = Just text_ }
 
 
 {-| This disables the input
@@ -163,12 +157,16 @@ If you are always passing `True`, then you don't need to use this attribute.
 -}
 errorIf : Bool -> Attribute msg
 errorIf isInError =
-    ErrorAttribute <|
-        if isInError then
-            Error { message = Nothing }
+    Attribute <|
+        \config ->
+            { config
+                | error =
+                    if isInError then
+                        Error { message = Nothing }
 
-        else
-            NoError
+                    else
+                        NoError
+            }
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
@@ -176,33 +174,41 @@ and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute msg
 errorMessage maybeMessage =
-    case maybeMessage of
-        Nothing ->
-            ErrorAttribute NoError
+    Attribute <|
+        \config ->
+            { config
+                | error =
+                    case maybeMessage of
+                        Nothing ->
+                            NoError
 
-        Just message ->
-            ErrorAttribute <| Error { message = Just message }
+                        Just message ->
+                            Error { message = Just message }
+            }
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute msg
 hiddenLabel =
-    HideLabelAttribute True
+    Attribute <|
+        \config -> { config | hideLabel = True }
 
 
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
 -}
 onBlur : msg -> Attribute msg
 onBlur msg =
-    OnBlurAttribute msg
+    Attribute <|
+        \config -> { config | onBlur = Just msg }
 
 
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute msg
 autofocus =
-    AutofocusAttribute True
+    Attribute <|
+        \config -> { config | autofocus = True }
 
 
 {-| Add any attribute to the input.
@@ -213,7 +219,8 @@ consider adding to the TextInput API to support what you need.
 -}
 custom : Html.Attribute msg -> Attribute msg
 custom attr =
-    CustomAttribute attr
+    Attribute <|
+        \config -> { config | custom = attr :: config.custom }
 
 
 {-| This is private. The public API only exposes `Attribute`.
@@ -250,34 +257,6 @@ emptyConfig =
     }
 
 
-updateConfig : Attribute msg -> Config msg -> Config msg
-updateConfig attribute config =
-    case attribute of
-        InputStyleAttribute theme ->
-            { config | inputStyle = theme }
-
-        ErrorAttribute errorState ->
-            { config | error = errorState }
-
-        HideLabelAttribute hideLabel ->
-            { config | hideLabel = hideLabel }
-
-        PlaceholderAttribute text_ ->
-            { config | placeholder = Just text_ }
-
-        OnBlurAttribute msg ->
-            { config | onBlur = Just msg }
-
-        AutofocusAttribute autofocus_ ->
-            { config | autofocus = autofocus_ }
-
-        Attribute updateConfig_ ->
-            updateConfig_ config
-
-        CustomAttribute attr ->
-            { config | custom = attr :: config.custom }
-
-
 {-| Render the TextInput as HTML.
 The input's label, InputType, and current value are all required. Other attributes are all optional.
 -}
@@ -285,7 +264,7 @@ view : String -> InputType value msg -> List (Attribute msg) -> value -> Html ms
 view label inputType attributes currentValue =
     let
         config =
-            List.foldl updateConfig emptyConfig attributes
+            List.foldl (\(Attribute update) -> update) emptyConfig attributes
     in
     view_ label inputType config currentValue
 
@@ -294,7 +273,8 @@ view label inputType attributes currentValue =
 -}
 writing : Attribute msg
 writing =
-    InputStyleAttribute InputStyles.Writing
+    Attribute <|
+        \config -> { config | inputStyle = InputStyles.Writing }
 
 
 view_ : String -> InputType value msg -> Config msg -> value -> Html msg
