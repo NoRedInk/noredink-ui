@@ -169,7 +169,15 @@ init =
             |> Control.field "error state"
                 (Control.choice
                     [ ( "default (no error)", Control.value Nothing )
-                    , ( "TextInput.errorIf", Control.map (Just << TextInput.errorIf) <| Control.bool False )
+                    , ( "TextInput.errorIf"
+                      , Control.map (Just << TextInput.errorIf) <|
+                            Control.bool False
+                      )
+                    , ( "TextInput.errorMessage"
+                      , Control.map (Just << TextInput.errorMessage) <|
+                            Control.maybe True <|
+                                Control.string "The statement must be true."
+                      )
                     ]
                 )
     }

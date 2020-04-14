@@ -1,7 +1,7 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
-    , Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus, custom
+    , Attribute, placeholder, errorIf, errorMessage, hiddenLabel, onBlur, autofocus, custom
     , writing
     )
 
@@ -22,7 +22,7 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, errorIf, hiddenLabel, onBlur, autofocus, custom
+@docs Attribute, placeholder, errorIf, errorMessage, hiddenLabel, onBlur, autofocus, custom
 @docs writing
 
 -}
@@ -33,6 +33,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
+import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V2 as InputStyles
 import Nri.Ui.Util exposing (dashify)
@@ -123,7 +124,7 @@ email toMsg =
 -}
 type Attribute msg
     = InputStyleAttribute InputStyles.Theme
-    | ErrorAttribute Bool
+    | ErrorAttribute ErrorState
     | HideLabelAttribute Bool
     | PlaceholderAttribute String
     | OnBlurAttribute msg
@@ -143,7 +144,25 @@ If you are always passing `True`, then you don't need to use this attribute.
 -}
 errorIf : Bool -> Attribute msg
 errorIf isInError =
-    ErrorAttribute isInError
+    ErrorAttribute <|
+        if isInError then
+            Error { message = Nothing }
+
+        else
+            NoError
+
+
+{-| If `Just`, the field will be highlighted as having a validation error,
+and the given error message will be shown.
+-}
+errorMessage : Maybe String -> Attribute msg
+errorMessage maybeMessage =
+    case maybeMessage of
+        Nothing ->
+            ErrorAttribute NoError
+
+        Just message ->
+            ErrorAttribute <| Error { message = Just message }
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -182,7 +201,7 @@ custom attr =
 -}
 type alias Config msg =
     { inputStyle : InputStyles.Theme
-    , isInError : Bool
+    , error : ErrorState
     , hideLabel : Bool
     , placeholder : Maybe String
     , onBlur : Maybe msg
@@ -191,10 +210,15 @@ type alias Config msg =
     }
 
 
+type ErrorState
+    = NoError
+    | Error { message : Maybe String }
+
+
 emptyConfig : Config msg
 emptyConfig =
     { inputStyle = InputStyles.Standard
-    , isInError = False
+    , error = NoError
     , hideLabel = False
     , placeholder = Nothing
     , onBlur = Nothing
@@ -209,8 +233,8 @@ updateConfig attribute config =
         InputStyleAttribute theme ->
             { config | inputStyle = theme }
 
-        ErrorAttribute isInError ->
-            { config | isInError = isInError }
+        ErrorAttribute errorState ->
+            { config | error = errorState }
 
         HideLabelAttribute hideLabel ->
             { config | hideLabel = hideLabel }
@@ -257,6 +281,14 @@ view_ label (InputType inputType) config currentValue =
             config.placeholder
                 |> Maybe.withDefault label
 
+        ( isInError, errorMessage_ ) =
+            case config.error of
+                NoError ->
+                    ( False, Nothing )
+
+                Error { message } ->
+                    ( True, message )
+
         maybeStep =
             if inputType.fieldType == "number" then
                 [ step "any" ]
@@ -277,7 +309,7 @@ view_ label (InputType inputType) config currentValue =
                 ++ List.reverse config.custom
                 ++ [ Attributes.id idValue
                    , css
-                        [ InputStyles.input config.inputStyle config.isInError
+                        [ InputStyles.input config.inputStyle isInError
                         , if config.inputStyle == InputStyles.Writing then
                             Css.Global.withClass "override-sass-styles"
                                 [ textAlign center
@@ -299,7 +331,7 @@ view_ label (InputType inputType) config currentValue =
                    , maybeAttr (attribute "autocomplete") inputType.autocomplete
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
-                        if config.isInError then
+                        if isInError then
                             "true"
 
                         else
@@ -317,11 +349,17 @@ view_ label (InputType inputType) config currentValue =
           in
           Html.label
             ([ for idValue
-             , css [ InputStyles.label config.inputStyle config.isInError ]
+             , css [ InputStyles.label config.inputStyle isInError ]
              ]
                 ++ extraStyles
             )
             [ Html.text label ]
+        , case errorMessage_ of
+            Just m ->
+                Alert.error m
+
+            Nothing ->
+                Html.text ""
         ]
 
 
