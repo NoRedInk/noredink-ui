@@ -1,6 +1,5 @@
 module Spec.Nri.Ui.TextInput.V4 exposing (all)
 
-import Expect
 import Html.Styled
 import Nri.Ui.TextInput.V4 as TextInput
 import Test exposing (..)
