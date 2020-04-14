@@ -1,7 +1,8 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
-    , Attribute, placeholder, errorIf, errorMessage, hiddenLabel, onBlur, autofocus, custom
+    , Attribute, placeholder, hiddenLabel, onBlur, autofocus, custom
+    , disabled, loading, errorIf, errorMessage
     , writing
     )
 
@@ -22,13 +23,14 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, errorIf, errorMessage, hiddenLabel, onBlur, autofocus, custom
+@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus, custom
+@docs disabled, loading, errorIf, errorMessage
 @docs writing
 
 -}
 
 import Accessibility.Styled.Style as Accessibility
-import Css exposing (center, position, px, relative, textAlign)
+import Css exposing (center, num, position, px, relative, textAlign)
 import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
@@ -129,6 +131,7 @@ type Attribute msg
     | PlaceholderAttribute String
     | OnBlurAttribute msg
     | AutofocusAttribute Bool
+    | Attribute (Config msg -> Config msg)
     | CustomAttribute (Html.Attribute msg)
 
 
@@ -137,6 +140,22 @@ type Attribute msg
 placeholder : String -> Attribute msg
 placeholder text_ =
     PlaceholderAttribute text_
+
+
+{-| This disables the input
+-}
+disabled : Attribute msg
+disabled =
+    Attribute <|
+        \config -> { config | disabled = True }
+
+
+{-| Use this while the form the input is a part of is being submitted.
+-}
+loading : Attribute msg
+loading =
+    Attribute <|
+        \config -> { config | loading = True }
 
 
 {-| Sets whether or not the field will be highlighted as having a validation error.
@@ -202,6 +221,8 @@ custom attr =
 type alias Config msg =
     { inputStyle : InputStyles.Theme
     , error : ErrorState
+    , disabled : Bool
+    , loading : Bool
     , hideLabel : Bool
     , placeholder : Maybe String
     , onBlur : Maybe msg
@@ -219,6 +240,8 @@ emptyConfig : Config msg
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , error = NoError
+    , disabled = False
+    , loading = False
     , hideLabel = False
     , placeholder = Nothing
     , onBlur = Nothing
@@ -247,6 +270,9 @@ updateConfig attribute config =
 
         AutofocusAttribute autofocus_ ->
             { config | autofocus = autofocus_ }
+
+        Attribute updateConfig_ ->
+            updateConfig_ config
 
         CustomAttribute attr ->
             { config | custom = attr :: config.custom }
@@ -289,6 +315,17 @@ view_ label (InputType inputType) config currentValue =
                 Error { message } ->
                     ( True, message )
 
+        ( opacity, disabled_ ) =
+            case ( config.disabled, config.loading ) of
+                ( False, False ) ->
+                    ( num 1, False )
+
+                ( False, True ) ->
+                    ( num 0.5, True )
+
+                ( True, _ ) ->
+                    ( num 0.4, True )
+
         maybeStep =
             if inputType.fieldType == "number" then
                 [ step "any" ]
@@ -302,7 +339,10 @@ view_ label (InputType inputType) config currentValue =
                 |> Maybe.withDefault Extra.none
     in
     div
-        [ Attributes.css [ position relative ]
+        [ Attributes.css
+            [ position relative
+            , Css.opacity opacity
+            ]
         ]
         [ input
             (maybeStep
@@ -323,6 +363,7 @@ view_ label (InputType inputType) config currentValue =
                         ]
                    , Attributes.placeholder placeholder_
                    , value (inputType.toString currentValue)
+                   , Attributes.disabled disabled_
                    , onInput inputType.fromString
                    , maybeAttr Events.onBlur config.onBlur
                    , Attributes.autofocus config.autofocus

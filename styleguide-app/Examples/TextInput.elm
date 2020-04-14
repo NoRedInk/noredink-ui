@@ -41,6 +41,8 @@ type alias ExampleConfig =
     , maybePlaceholderAttribute : Maybe (TextInput.Attribute Msg)
     , maybeErrorAttribute : Maybe (TextInput.Attribute Msg)
     , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
+    , maybeDisabledAttribute : Maybe (TextInput.Attribute Msg)
+    , maybeLoadingAttribute : Maybe (TextInput.Attribute Msg)
     }
 
 
@@ -74,6 +76,8 @@ example =
                         [ exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
@@ -84,6 +88,8 @@ example =
                         [ exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     state.numberInputValue
@@ -94,6 +100,8 @@ example =
                         [ exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     state.floatInputValue
@@ -104,6 +112,8 @@ example =
                         [ exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     state.passwordInputValue
@@ -114,6 +124,8 @@ example =
                         [ exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
@@ -125,6 +137,8 @@ example =
                         , exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
@@ -137,6 +151,8 @@ example =
                         , exampleConfig.maybeErrorAttribute
                         , exampleConfig.maybePlaceholderAttribute
                         , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
@@ -178,6 +194,18 @@ init =
                             Control.maybe True <|
                                 Control.string "The statement must be true."
                       )
+                    ]
+                )
+            |> Control.field "disabled"
+                (Control.choice
+                    [ ( "default (enabled)", Control.value Nothing )
+                    , ( "TextInput.disabled", Control.value (Just TextInput.disabled) )
+                    ]
+                )
+            |> Control.field "loading"
+                (Control.choice
+                    [ ( "default (not loading)", Control.value Nothing )
+                    , ( "TextInput.loading", Control.value (Just TextInput.loading) )
                     ]
                 )
     }
