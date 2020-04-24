@@ -139,7 +139,6 @@ module Nri.Ui.Icon.V5 exposing
 
 import Accessibility.Role as Role
 import Accessibility.Styled exposing (..)
-import Nri.Ui.Html.Attributes.V2 as AttributeExtras
 import Css exposing (..)
 import EventExtras
 import Html as RootHtml
@@ -149,6 +148,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras
 import Svg exposing (svg, use)
 import Svg.Attributes exposing (xlinkHref)
 
