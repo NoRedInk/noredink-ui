@@ -139,7 +139,7 @@ module Nri.Ui.Icon.V5 exposing
 
 import Accessibility.Role as Role
 import Accessibility.Styled exposing (..)
-import AttributeExtras
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras
 import Css exposing (..)
 import EventExtras
 import Html as RootHtml

@@ -14,7 +14,7 @@ module ClickableAttributes exposing
 
 {-| -}
 
-import AttributeExtras exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
