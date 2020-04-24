@@ -329,7 +329,6 @@ linkSpa : (route -> String) -> (route -> msg) -> IconLinkSpaModel route -> Html 
 linkSpa toUrl toMsg config =
     linkBase
         [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
-            |> Attributes.fromUnstyled
         ]
         { alt = config.alt
         , url = toUrl config.route
