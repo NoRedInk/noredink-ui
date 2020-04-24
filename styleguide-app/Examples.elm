@@ -13,7 +13,6 @@ import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
 import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
-import Examples.Dropdown as Dropdown
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
 import Examples.Icon as Icon
@@ -264,25 +263,6 @@ all =
             (\msg ->
                 case msg of
                     DividerState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , Dropdown.example
-        |> Example.wrapMsg DropdownMsg
-            (\msg ->
-                case msg of
-                    DropdownMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState DropdownState
-            (\msg ->
-                case msg of
-                    DropdownState childState ->
                         Just childState
 
                     _ ->
@@ -741,7 +721,6 @@ type State
     | ColorsState Colors.State
     | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
-    | DropdownState Dropdown.State
     | FontsState Fonts.State
     | HeadingState Heading.State
     | IconState Icon.State
@@ -780,7 +759,6 @@ type Msg
     | ColorsMsg Colors.Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
-    | DropdownMsg Dropdown.Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
     | IconMsg Icon.Msg
