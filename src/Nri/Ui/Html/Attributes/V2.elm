@@ -4,7 +4,7 @@ module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank)
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 
-@docs none, includeIf
+@docs none, includeIf, targetBlank
 
 -}
 
@@ -39,6 +39,7 @@ includeIf cond attr =
 
     else
         none
+
 
 {-| Use this list of attributes instead of applying `Attributes.target "_blank"`
 directly. This prevents an exploits like "tabnabbing", among other things.
