@@ -13,7 +13,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
 import List.Zipper as Zipper exposing (Zipper)
-import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Slide.V1 as Slide
 
@@ -147,13 +147,5 @@ viewPanel panel animation =
 
 triggerAnimation : Slide.AnimationDirection -> String -> Html.Html Msg
 triggerAnimation direction label =
-    Button.button
-        { onClick = TriggerAnimation direction
-        , size = Button.Small
-        , style = Button.Secondary
-        , width = Button.WidthUnbounded
-        }
-        { label = label
-        , state = Button.Enabled
-        , icon = Nothing
-        }
+    Button.button label
+        [ Button.onClick (TriggerAnimation direction), Button.small, Button.secondary ]
