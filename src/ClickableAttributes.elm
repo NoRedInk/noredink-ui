@@ -15,7 +15,7 @@ module ClickableAttributes exposing
 {-| -}
 
 import AttributeExtras exposing (targetBlank)
-import EventExtras.Styled as EventExtras
+import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events

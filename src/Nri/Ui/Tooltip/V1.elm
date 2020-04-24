@@ -61,7 +61,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
-import EventExtras.Styled as EventExtras
+import EventExtras
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Encode as Encode
