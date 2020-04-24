@@ -4,9 +4,7 @@ module Nri.Ui.Dropdown.V2 exposing
     , viewWithoutLabel
     )
 
-{-|
-
-DEPRECATED:
+{-| DEPRECATED:
 Please use Nri.Menu or Nri.Ui.Select instead.
 
 @docs ViewOptionEntry
