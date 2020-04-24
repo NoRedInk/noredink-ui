@@ -5,7 +5,6 @@ import Html
 import Html.Attributes as Attr
 import Html.Styled
 import Nri.Ui.Select.V5
-import Nri.Ui.Select.V6
 import Nri.Ui.Select.V7
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -24,19 +23,6 @@ spec =
                     , valueToString = identity
                     }
                         |> Nri.Ui.Select.V5.view
-                        |> Html.Styled.toUnstyled
-                )
-            )
-        , describe "V6"
-            (viewSuiteV6
-                (\config ->
-                    { choices = config.choices
-                    , current = config.current
-                    , id = Nothing
-                    , valueToString = identity
-                    , defaultDisplayText = config.defaultDisplayText
-                    }
-                        |> Nri.Ui.Select.V6.view
                         |> Html.Styled.toUnstyled
                 )
             )
