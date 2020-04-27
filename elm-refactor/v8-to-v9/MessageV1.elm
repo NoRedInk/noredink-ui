@@ -10,6 +10,10 @@ upgrade_Nri_Ui_Alert_V4_error content =
     Message.tiny Message.Error (Message.Markdown content)
 
 
+upgrade_Nri_Ui_Alert_V4_warning content =
+    Message.tiny Message.Warning (Message.Markdown content)
+
+
 upgrade_Nri_Ui_Alert_V4_success content =
     Message.tiny Message.Success (Message.Markdown content)
 

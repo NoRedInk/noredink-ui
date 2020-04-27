@@ -28,6 +28,7 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 type Theme
     = Error
+    | Warning
     | Success
 
 
@@ -45,6 +46,11 @@ tiny theme content =
                 Error ->
                     [ exclamation Colors.purple
                     , alertString Colors.purple content
+                    ]
+
+                Warning ->
+                    [ exclamation Colors.red
+                    , alertString Colors.redDark content
                     ]
 
                 Success ->

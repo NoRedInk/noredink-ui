@@ -51,7 +51,7 @@ example =
         \state ->
             [ Heading.h3 [] [ text "Message.tiny" ]
             , Message.tiny Message.Error (Message.Markdown "This is an **error**")
-            , Alert.warning "This is a **warning**"
+            , Message.tiny Message.Warning (Message.Markdown "This is a **warning**")
             , Alert.tip "This is a **tip**"
             , Message.tiny Message.Success (Message.Markdown "This is a **success**")
             , Html.hr [] []
