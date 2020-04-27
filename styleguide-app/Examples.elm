@@ -4,7 +4,6 @@ import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Button as Button
-import Examples.Callout as Callout
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -92,25 +91,6 @@ all =
             (\msg ->
                 case msg of
                     ButtonState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , Callout.example
-        |> Example.wrapMsg CalloutMsg
-            (\msg ->
-                case msg of
-                    CalloutMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState CalloutState
-            (\msg ->
-                case msg of
-                    CalloutState childState ->
                         Just childState
 
                     _ ->
@@ -712,7 +692,6 @@ type State
     = AccordionState Accordion.State
     | AssignmentIconState AssignmentIcon.State
     | ButtonState Button.State
-    | CalloutState Callout.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -750,7 +729,6 @@ type Msg
     = AccordionMsg Accordion.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | ButtonMsg Button.Msg
-    | CalloutMsg Callout.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
