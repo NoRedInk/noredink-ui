@@ -1,10 +1,4 @@
-module Examples.Alert exposing (example, State, Msg)
-
-{-|
-
-@docs example, State, Msg
-
--}
+module Examples.Message exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Example exposing (Example)
@@ -17,44 +11,29 @@ type alias State =
     ()
 
 
-{-| -}
 type alias Msg =
     ()
 
 
-{-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Alert.V4"
+    { name = "Nri.Ui.Message.V1"
     , categories = [ Messaging ]
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , view =
         \_ ->
-            [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
+            [ Heading.h3 [] [ Html.text "Message.tiny" ]
             , Alert.error "This is an **error**"
             , Alert.warning "This is a **warning**"
             , Alert.tip "This is a **tip**"
             , Alert.success "This is a **success**"
             , Html.hr [] []
-            , Heading.h3 [] [ Html.text "Stacktraces-supporting:" ]
+            , Heading.h3 [] [ Html.text "Message.internalError" ]
             , Alert.somethingWentWrong exampleRailsError
             ]
     }
-
-
-complexHtml : String -> Html.Html msg
-complexHtml name =
-    Html.div []
-        [ Html.p [] [ Html.text "We support more complex alerts as well." ]
-        , Html.p [] [ Html.text "Like this, for example!" ]
-        , Html.p [] [ Html.text ("I'm a " ++ name) ]
-        ]
-
-
-
--- INTERNAL
 
 
 exampleRailsError : String
