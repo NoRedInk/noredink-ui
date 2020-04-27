@@ -26,6 +26,8 @@ import Nri.Ui.SpriteSheet as SpriteSheet
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
+{-| `Error` / `Warning` / `Tip` / `Success`
+-}
 type Theme
     = Error
     | Warning
@@ -33,12 +35,27 @@ type Theme
     | Success
 
 
+{-| Prefer using the simplest variant that meets your needs.
+
+  - `Plain`: provide a plain-text string
+  - `Markdown`: provide a string that will be rendered as markdown
+  - `Html`: provide custom HTML
+
+-}
 type Content msg
     = Plain String
     | Markdown String
     | Html (Html msg)
 
 
+{-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
+
+    import Nri.Ui.Message.V1 as Message
+
+    view =
+        Message.tiny Message.Tip (Message.Markdown "Don't tip too much, or your waitress will **fall over**!")
+
+-}
 tiny : Theme -> Content msg -> Html msg
 tiny theme content =
     let
@@ -84,6 +101,12 @@ tiny theme content =
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
+
+    import Nri.Ui.Message.V1 as Message
+
+    view maybeDetailedErrorMessage =
+        viewMaybe Message.somethingWentWrong maybeDetailedErrorMessage
+
 -}
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
