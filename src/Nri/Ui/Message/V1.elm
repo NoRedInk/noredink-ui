@@ -165,6 +165,18 @@ banner theme content attr =
     let
         config =
             case theme of
+                Error ->
+                    { backgroundColor = Colors.purpleLight
+                    , color = Colors.purpleDark
+                    , icon =
+                        inCircle
+                            { backgroundColor = Colors.purple
+                            , color = Colors.white
+                            , height = Css.px 25
+                            , icon = UiIcon.attention
+                            }
+                    }
+
                 Warning ->
                     { backgroundColor = Colors.sunshine
                     , color = Colors.navy
@@ -177,8 +189,29 @@ banner theme content attr =
                             }
                     }
 
-                _ ->
-                    Debug.todo "other themes"
+                Tip ->
+                    { backgroundColor = Colors.frost
+                    , color = Colors.navy
+                    , icon =
+                        inCircle
+                            { backgroundColor = Colors.navy
+                            , color = Colors.mustard
+                            , height = Css.px 32
+                            , icon = UiIcon.bulb
+                            }
+                    }
+
+                Success ->
+                    { backgroundColor = Colors.greenLightest
+                    , color = Colors.greenDarkest
+                    , icon =
+                        inCircle
+                            { backgroundColor = Colors.green
+                            , color = Colors.white
+                            , height = Css.px 20
+                            , icon = UiIcon.checkmark
+                            }
+                    }
 
         attributes =
             bannerConfigFromAttributes attr

@@ -45,3 +45,30 @@ upgrade_Nri_Ui_BannerAlert_V6_alert content maybeOnDismiss =
             [ Maybe.map Message.onDismiss maybeOnDismiss
             ]
         )
+
+
+upgrade_Nri_Ui_BannerAlert_V6_error content maybeOnDismiss =
+    Message.banner Message.Error
+        (Message.Html content)
+        (List.filterMap identity
+            [ Maybe.map Message.onDismiss maybeOnDismiss
+            ]
+        )
+
+
+upgrade_Nri_Ui_BannerAlert_V6_neutral content maybeOnDismiss =
+    Message.banner Message.Tip
+        (Message.Html content)
+        (List.filterMap identity
+            [ Maybe.map Message.onDismiss maybeOnDismiss
+            ]
+        )
+
+
+upgrade_Nri_Ui_BannerAlert_V6_success content maybeOnDismiss =
+    Message.banner Message.Success
+        (Message.Html content)
+        (List.filterMap identity
+            [ Maybe.map Message.onDismiss maybeOnDismiss
+            ]
+        )

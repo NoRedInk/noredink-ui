@@ -73,14 +73,20 @@ example =
                 div
                     []
                     [ h3 [] [ text "success" ]
-                    , BannerAlert.success [ text "Nice! The alert message was dismissed. 👍" ] Nothing
+                    , Message.banner Message.Success
+                        (Message.Html [ text "Nice! The alert message was dismissed. 👍" ])
+                        []
                     , pre [] [ text "BannerAlert.success [ text \"Nice! The alert message was dismissed. 👍\" ] Nothing" ]
                     ]
             , h3 [] [ text "error" ]
-            , BannerAlert.error [ text "This is an error message!" ] Nothing
+            , Message.banner Message.Error
+                (Message.Html [ text "This is an error message!" ])
+                []
             , pre [] [ text "BannerAlert.error [ text \"This is an error message!\" ] Nothing" ]
             , h3 [] [ text "neutral" ]
-            , BannerAlert.neutral [ text "This is a neutral message!" ] Nothing
+            , Message.banner Message.Tip
+                (Message.Html [ text "This is a neutral message!" ])
+                []
             , pre [] [ text "BannerAlert.neutral [ text \"This is a neutral message!\" ] Nothing" ]
             , h3 [] [ text "custom" ]
             , BannerAlert.custom
@@ -102,20 +108,22 @@ example =
                       """
                 ]
             , h3 [] [ text "with multi-line link and icon" ]
-            , BannerAlert.success
-                [ text "Click "
-                , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                    [ text
-                        """here, yes, HERE, right here on this very long success message.
-                                  Wow, how successful! You're the biggest success I've ever seen!
-                                  You should feel great about yourself! Give yourself a very big round of applause!
-                                  """
-                    , div [ Attributes.css [ Css.display Css.inlineBlock, Css.width (Css.px 20) ] ]
-                        [ Svg.toHtml UiIcon.gear ]
+            , Message.banner Message.Success
+                (Message.Html
+                    [ text "Click "
+                    , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                        [ text
+                            """here, yes, HERE, right here on this very long success message.
+                               Wow, how successful! You're the biggest success I've ever seen!
+                               You should feel great about yourself! Give yourself a very big round of applause!
+                               """
+                        , div [ Attributes.css [ Css.display Css.inlineBlock, Css.width (Css.px 20) ] ]
+                            [ Svg.toHtml UiIcon.gear ]
+                        ]
+                    , text " to check out NoRedInk."
                     ]
-                , text " to check out NoRedInk."
-                ]
-                Nothing
+                )
+                []
             , pre []
                 [ text
                     """              BannerAlert.success
