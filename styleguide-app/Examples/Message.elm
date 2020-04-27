@@ -48,16 +48,16 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Heading.h3 [] [ Html.text "Message.tiny" ]
+            [ Heading.h3 [] [ text "Message.tiny" ]
             , Alert.error "This is an **error**"
             , Alert.warning "This is a **warning**"
             , Alert.tip "This is a **tip**"
             , Alert.success "This is a **success**"
             , Html.hr [] []
-            , Heading.h3 [] [ Html.text "Message.internalError" ]
+            , Heading.h3 [] [ text "Message.internalError" ]
             , Alert.somethingWentWrong exampleRailsError
             , Html.hr [] []
-            , Heading.h3 [] [ Html.text "Message.banner" ]
+            , Heading.h3 [] [ text "Message.banner" ]
             , if state.show then
                 div
                     []
@@ -101,7 +101,7 @@ example =
             , h3 [] [ text "with multi-line link and icon" ]
             , BannerAlert.success
                 [ text "Click "
-                , a [ Attributes.href "http://www.noredink.com", Attributes.target "_blank" ]
+                , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
                     [ text
                         """here, yes, HERE, right here on this very long success message.
                                   Wow, how successful! You're the biggest success I've ever seen!
@@ -134,38 +134,38 @@ example =
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.callout (deprecated; talk with your designer, but generally prefer Message.large, or consider adding Message.medium)" ]
             , -- PLAIN
-              Html.h3 [] [ Html.text "Originally Designed Use Case" ]
+              h3 [] [ text "Originally Designed Use Case" ]
             , callout
-                [ Callout.label (Html.text "BETA")
+                [ Callout.label (text "BETA")
                 , Callout.custom (title "beta warning")
                 ]
-                [ Html.text "This tab is still a work in progress; some of your student's information may be missing."
+                [ text "This tab is still a work in progress; some of your student's information may be missing."
                 , Html.br [] []
-                , Html.text "To share your thoughts and help us improve the experience, "
-                , Html.a [ href "#" ] [ Html.text "click here" ]
-                , Html.text "."
+                , text "To share your thoughts and help us improve the experience, "
+                , a [ href "#" ] [ text "click here" ]
+                , text "."
                 ]
 
             -- WITH SIDE TEXT
-            , Html.h3 [] [ Html.text "Without side text" ]
+            , h3 [] [ text "Without side text" ]
             , callout
                 [ Callout.custom (title "no side text") ]
-                [ Html.text "I feel weird without my side text!" ]
+                [ text "I feel weird without my side text!" ]
 
             -- WITH CSS CUSTOMIZATIONS
-            , Html.h3 [] [ Html.text "With CSS customizations" ]
+            , h3 [] [ text "With CSS customizations" ]
             , callout
                 [ Callout.containerCss [ Css.margin (Css.px 20) ]
-                , Callout.label (Html.text "HMMM")
+                , Callout.label (text "HMMM")
                 , Callout.custom (title "margin")
                 ]
-                [ Html.text "My container styles are customized to add margin around the callout" ]
+                [ text "My container styles are customized to add margin around the callout" ]
             , callout
                 [ Callout.contentCss [ Css.textTransform Css.uppercase ]
-                , Callout.label (Html.text "WOW!")
+                , Callout.label (text "WOW!")
                 , Callout.custom (title "yelling")
                 ]
-                [ Html.text "My content styles are customized to yell about everything" ]
+                [ text "My content styles are customized to yell about everything" ]
             ]
     }
 
