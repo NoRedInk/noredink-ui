@@ -1,29 +1,34 @@
 module Nri.Ui.Message.V1 exposing
-    ( tiny
-    , Theme(..), Content(..)
+    ( tiny, banner
+    , Theme(..), Content(..), BannerAttribute
+    , onDismiss
     , somethingWentWrong
     )
 
 {-|
 
-@docs tiny
-@docs Theme, Content
+@docs tiny, banner
+@docs Theme, Content, BannerAttribute
+@docs onDismiss
 
 @docs somethingWentWrong
 
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled exposing (fromUnstyled, styled)
 import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events exposing (onClick)
 import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SpriteSheet as SpriteSheet
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| `Error` / `Warning` / `Tip` / `Success`
@@ -45,7 +50,22 @@ type Theme
 type Content msg
     = Plain String
     | Markdown String
-    | Html (Html msg)
+    | Html (List (Html msg))
+
+
+{-| PRIVATE
+-}
+contentToHtml : Content msg -> List (Html msg)
+contentToHtml content =
+    case content of
+        Plain stringContent ->
+            [ text stringContent ]
+
+        Markdown markdownContent ->
+            Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
+
+        Html html ->
+            html
 
 
 {-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
@@ -98,6 +118,126 @@ tiny theme content =
         ]
         []
         children
+
+
+{-| PRIVATE
+-}
+type BannerAttribute msg
+    = BannerAttribute (BannerConfig msg -> BannerConfig msg)
+
+
+{-| Adds a dismiss ("X" icon) to a banner which will produce the given `msg` when clicked.
+-}
+onDismiss : msg -> BannerAttribute msg
+onDismiss msg =
+    BannerAttribute <|
+        \config ->
+            { config | onDismiss = Just msg }
+
+
+{-| PRIVATE
+-}
+type alias BannerConfig msg =
+    { onDismiss : Maybe msg
+    }
+
+
+{-| PRIVATE
+-}
+bannerConfigFromAttributes : List (BannerAttribute msg) -> BannerConfig msg
+bannerConfigFromAttributes attr =
+    List.foldl (\(BannerAttribute set) -> set)
+        { onDismiss = Nothing }
+        attr
+
+
+{-| Shows a banner alert message. This is even more prominent than `Message.large`.
+We commonly use these for flash messages at the top of pages.
+
+    import Nri.Ui.Message.V1 as Message
+
+    view =
+        Message.banner Message.Success (Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English.")
+
+-}
+banner : Theme -> Content msg -> List (BannerAttribute msg) -> Html msg
+banner theme content attr =
+    let
+        config =
+            case theme of
+                Warning ->
+                    { backgroundColor = Colors.sunshine
+                    , color = Colors.navy
+                    , icon =
+                        inCircle
+                            { backgroundColor = Colors.ochre
+                            , color = Colors.white
+                            , height = Css.px 25
+                            , icon = UiIcon.attention
+                            }
+                    }
+
+                _ ->
+                    Debug.todo "other themes"
+
+        attributes =
+            bannerConfigFromAttributes attr
+    in
+    styled div
+        [ displayFlex
+        , justifyContent center
+        , alignItems center
+        , backgroundColor config.backgroundColor
+        , color config.color
+        ]
+        []
+        [ styled span
+            [ alignItems center
+            , displayFlex
+            , justifyContent center
+            , padding (px 20)
+            , width (Css.pct 100)
+            , Css.Global.children
+                [ Css.Global.button
+                    [ position relative
+                    , right (px 15)
+                    ]
+                ]
+            ]
+            []
+            [ styled div
+                [ width (px 50)
+                , height (px 50)
+                , marginRight (px 20)
+                ]
+                []
+                [ config.icon ]
+            , Nri.Ui.styled div
+                "banner-alert-notification"
+                [ fontSize (px 20)
+                , fontWeight (int 700)
+                , lineHeight (px 27)
+                , maxWidth (px 600)
+                , Fonts.baseFont
+                , Css.Global.descendants
+                    [ Css.Global.a
+                        [ textDecoration none
+                        , color Colors.azure
+                        , borderBottom3 (px 1) solid Colors.azure
+                        , visited [ color Colors.azure ]
+                        ]
+                    ]
+                ]
+                []
+                (contentToHtml content)
+            ]
+        , case attributes.onDismiss of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                bannerDismissButton msg
+        ]
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -186,18 +326,6 @@ iconContainer styles icon =
 
 alertString : ColorValue compatible -> Content msg -> Html msg
 alertString textColor content =
-    let
-        children =
-            case content of
-                Plain stringContent ->
-                    [ text stringContent ]
-
-                Markdown markdownContent ->
-                    Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
-
-                Html html ->
-                    [ html ]
-    in
     Nri.Ui.styled div
         "Nri-Ui-Message-V1--alert"
         [ color textColor
@@ -224,4 +352,52 @@ alertString textColor content =
             ]
         ]
         []
-        children
+        (contentToHtml content)
+
+
+inCircle :
+    { backgroundColor : Css.Color
+    , color : Css.Color
+    , height : Css.Px
+    , icon : Svg
+    }
+    -> Html msg
+inCircle config =
+    styled div
+        [ borderRadius (pct 50)
+        , height (pct 100)
+        , backgroundColor config.backgroundColor
+        , displayFlex
+        , alignItems center
+        , justifyContent center
+        ]
+        []
+        [ config.icon
+            |> NriSvg.withColor config.color
+            |> NriSvg.withHeight config.height
+            |> NriSvg.toHtml
+        ]
+
+
+bannerDismissButton : msg -> Html msg
+bannerDismissButton msg =
+    Nri.Ui.styled div
+        "dismiss-button-container"
+        [ padding (px 25)
+        ]
+        []
+        [ styled button
+            [ borderWidth zero
+            , backgroundColor unset
+            , color Colors.azure
+            , width (px 30)
+            , height (px 30)
+            , padding2 zero (px 7)
+            , cursor pointer
+            ]
+            [ onClick msg
+            , Widget.label "Dismiss banner"
+            ]
+            [ NriSvg.toHtml UiIcon.x
+            ]
+        ]

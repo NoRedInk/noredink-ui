@@ -62,7 +62,10 @@ example =
                 div
                     []
                     [ h3 [] [ text "alert" ]
-                    , BannerAlert.alert [ text "Dismiss this alert message to see a success message!" ] (Just Dismiss)
+                    , Message.banner Message.Warning
+                        (Message.Html [ text "Dismiss this alert message to see a success message!" ])
+                        [ Message.onDismiss Dismiss
+                        ]
                     , pre [] [ text "BannerAlert.alert [ text \"Dismiss this alert message to see a success message!\" ] (Just Dismiss)" ]
                     ]
 

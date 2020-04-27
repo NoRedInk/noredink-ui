@@ -6,6 +6,12 @@ module MessageV1 exposing (..)
 import Nri.Ui.Message.V1 as Message
 
 
+
+--
+-- Nri.Ui.Alert.V4
+--
+
+
 upgrade_Nri_Ui_Alert_V4_error content =
     Message.tiny Message.Error (Message.Markdown content)
 
@@ -24,3 +30,18 @@ upgrade_Nri_Ui_Alert_V4_success content =
 
 upgrade_Nri_Ui_Alert_V4_somethingWentWrong errorMessageForEngineers =
     Message.somethingWentWrong errorMessageForEngineers
+
+
+
+--
+-- Nri.Ui.BannerAlert.V6
+--
+
+
+upgrade_Nri_Ui_BannerAlert_V6_alert content maybeOnDismiss =
+    Message.banner Message.Warning
+        (Message.Html content)
+        (List.filterMap identity
+            [ Maybe.map Message.onDismiss maybeOnDismiss
+            ]
+        )
