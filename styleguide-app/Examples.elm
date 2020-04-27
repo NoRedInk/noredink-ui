@@ -3,7 +3,6 @@ module Examples exposing (Msg, State, all)
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
-import Examples.BannerAlert as BannerAlert
 import Examples.Button as Button
 import Examples.Callout as Callout
 import Examples.Checkbox as Checkbox
@@ -74,25 +73,6 @@ all =
             (\msg ->
                 case msg of
                     AssignmentIconState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , BannerAlert.example
-        |> Example.wrapMsg BannerAlertMsg
-            (\msg ->
-                case msg of
-                    BannerAlertMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState BannerAlertState
-            (\msg ->
-                case msg of
-                    BannerAlertState childState ->
                         Just childState
 
                     _ ->
@@ -731,7 +711,6 @@ all =
 type State
     = AccordionState Accordion.State
     | AssignmentIconState AssignmentIcon.State
-    | BannerAlertState BannerAlert.State
     | ButtonState Button.State
     | CalloutState Callout.State
     | CheckboxState Checkbox.State
@@ -770,7 +749,6 @@ type State
 type Msg
     = AccordionMsg Accordion.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
-    | BannerAlertMsg BannerAlert.Msg
     | ButtonMsg Button.Msg
     | CalloutMsg Callout.Msg
     | CheckboxMsg Checkbox.Msg
