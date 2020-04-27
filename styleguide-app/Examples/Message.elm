@@ -5,7 +5,6 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, a, div, h3, pre, text)
 import Html.Styled.Attributes as Attributes exposing (href, title)
-import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 import Nri.Ui.Colors.V1 as Colors
@@ -52,7 +51,7 @@ example =
             [ Heading.h3 [] [ text "Message.tiny" ]
             , Message.tiny Message.Error (Message.Markdown "This is an **error**")
             , Message.tiny Message.Warning (Message.Markdown "This is a **warning**")
-            , Alert.tip "This is a **tip**"
+            , Message.tiny Message.Tip (Message.Markdown "This is a **tip**")
             , Message.tiny Message.Success (Message.Markdown "This is a **success**")
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]

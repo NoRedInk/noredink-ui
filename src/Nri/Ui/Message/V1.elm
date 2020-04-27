@@ -22,13 +22,14 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.SpriteSheet as SpriteSheet exposing (exclamationMark)
+import Nri.Ui.SpriteSheet as SpriteSheet
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 type Theme
     = Error
     | Warning
+    | Tip
     | Success
 
 
@@ -53,6 +54,11 @@ tiny theme content =
                     , alertString Colors.redDark content
                     ]
 
+                Tip ->
+                    [ iconContainer [ Css.color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
+                    , alertString Colors.navy content
+                    ]
+
                 Success ->
                     [ iconContainer
                         [ Css.color Colors.white
@@ -66,7 +72,7 @@ tiny theme content =
                     ]
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Message-V1--alert"
+        "Nri-Ui-Message-V1--tiny"
         [ Css.displayFlex
         , Css.justifyContent Css.start
         , Css.alignItems Css.flexStart
@@ -125,7 +131,7 @@ exclamation backgroundColor =
         ]
         (Html.div
             [ css [ Css.height (Css.px 13), Css.marginTop (Css.px 1) ] ]
-            [ NriSvg.toHtml exclamationMark ]
+            [ NriSvg.toHtml SpriteSheet.exclamationMark ]
         )
 
 
