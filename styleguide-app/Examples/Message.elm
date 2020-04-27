@@ -53,7 +53,7 @@ example =
             , Message.tiny Message.Error (Message.Markdown "This is an **error**")
             , Alert.warning "This is a **warning**"
             , Alert.tip "This is a **tip**"
-            , Alert.success "This is a **success**"
+            , Message.tiny Message.Success (Message.Markdown "This is a **success**")
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError

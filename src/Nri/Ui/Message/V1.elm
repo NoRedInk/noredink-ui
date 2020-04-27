@@ -22,12 +22,13 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.SpriteSheet exposing (exclamationMark)
+import Nri.Ui.SpriteSheet as SpriteSheet exposing (exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
 type Theme
     = Error
+    | Success
 
 
 type Content msg
@@ -45,9 +46,21 @@ tiny theme content =
                     [ exclamation Colors.purple
                     , alertString Colors.purple content
                     ]
+
+                Success ->
+                    [ iconContainer
+                        [ Css.color Colors.white
+                        , Css.backgroundColor Colors.green
+                        ]
+                        (Html.div
+                            [ css [ Css.width (Css.px 12), Css.marginTop (Css.px 1) ] ]
+                            [ NriSvg.toHtml SpriteSheet.checkmark ]
+                        )
+                    , alertString Colors.greenDarkest content
+                    ]
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Alert-V3__alert"
+        "Nri-Ui-Message-V1--alert"
         [ Css.displayFlex
         , Css.justifyContent Css.start
         , Css.alignItems Css.flexStart
@@ -113,7 +126,7 @@ exclamation backgroundColor =
 iconContainer : List Css.Style -> Html msg -> Html msg
 iconContainer styles icon =
     Nri.Ui.styled Html.div
-        "Nri-Ui-Alert-V4__iconContainer"
+        "Nri-Ui-Message-V1--iconContainer"
         (styles
             ++ [ -- Content positioning
                  Css.displayFlex
@@ -148,7 +161,7 @@ alertString color content =
                     [ html ]
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Alert-V4--alert"
+        "Nri-Ui-Message-V1--alert"
         [ Css.color color
         , Fonts.baseFont
         , Css.fontSize (Css.px 13)
