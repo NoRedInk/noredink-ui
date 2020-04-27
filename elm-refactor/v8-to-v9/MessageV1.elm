@@ -1,0 +1,14 @@
+module MessageV1 exposing (..)
+
+{-| NOTE: requires elm-refactor alpha-220-g24db2f5 or later.
+-}
+
+import Nri.Ui.Message.V1 as Message
+
+
+upgrade_Nri_Ui_Alert_V4_error content =
+    Message.tiny Message.Error (Message.Markdown content)
+
+
+upgrade_Nri_Ui_Alert_V4_somethingWentWrong errorMessageForEngineers =
+    Message.somethingWentWrong errorMessageForEngineers

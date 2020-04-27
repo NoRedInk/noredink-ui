@@ -10,6 +10,7 @@ import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Message.V1 as Message
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -49,13 +50,13 @@ example =
     , view =
         \state ->
             [ Heading.h3 [] [ text "Message.tiny" ]
-            , Alert.error "This is an **error**"
+            , Message.tiny Message.Error (Message.Markdown "This is an **error**")
             , Alert.warning "This is a **warning**"
             , Alert.tip "This is a **tip**"
             , Alert.success "This is a **success**"
             , Html.hr [] []
-            , Heading.h3 [] [ text "Message.internalError" ]
-            , Alert.somethingWentWrong exampleRailsError
+            , Heading.h3 [] [ text "Message.somethingWentWrong" ]
+            , Message.somethingWentWrong exampleRailsError
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.banner" ]
             , if state.show then
