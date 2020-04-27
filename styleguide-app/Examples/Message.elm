@@ -5,7 +5,6 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, a, div, h3, pre, text)
 import Html.Styled.Attributes as Attributes exposing (href, title)
-import Nri.Ui.BannerAlert.V6 as BannerAlert
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -53,6 +52,14 @@ example =
             , Message.tiny Message.Warning (Message.Markdown "This is a **warning**")
             , Message.tiny Message.Tip (Message.Markdown "This is a **tip**")
             , Message.tiny Message.Success (Message.Markdown "This is a **success**")
+            , Message.tiny
+                (Message.Custom
+                    { color = Colors.aquaDark
+                    , backgroundColor = Colors.gray92
+                    , icon = Pennant.premiumFlag
+                    }
+                )
+                (Message.Markdown "This is a **custom theme**")
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
@@ -89,13 +96,15 @@ example =
                 []
             , pre [] [ text "BannerAlert.neutral [ text \"This is a neutral message!\" ] Nothing" ]
             , h3 [] [ text "custom" ]
-            , BannerAlert.custom
-                { color = Colors.aquaDark
-                , backgroundColor = Colors.gray92
-                , icon = Pennant.premiumFlag
-                , content = [ text "This is a a custom message!" ]
-                , dismiss = Nothing
-                }
+            , Message.banner
+                (Message.Custom
+                    { color = Colors.aquaDark
+                    , backgroundColor = Colors.gray92
+                    , icon = Pennant.premiumFlag
+                    }
+                )
+                (Message.Html [ text "This is a a custom message!" ])
+                []
             , pre []
                 [ text
                     """BannerAlert.custom

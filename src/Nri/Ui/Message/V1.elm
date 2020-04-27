@@ -38,6 +38,11 @@ type Theme
     | Warning
     | Tip
     | Success
+    | Custom
+        { color : Color
+        , backgroundColor : Color
+        , icon : Svg
+        }
 
 
 {-| Prefer using the simplest variant that meets your needs.
@@ -75,6 +80,8 @@ contentToHtml content =
     view =
         Message.tiny Message.Tip (Message.Markdown "Don't tip too much, or your waitress will **fall over**!")
 
+NOTE: When using a `Custom` theme, `tiny` ignores the custom `backgroundColor`.
+
 -}
 tiny : Theme -> Content msg -> Html msg
 tiny theme content =
@@ -106,6 +113,11 @@ tiny theme content =
                             [ NriSvg.toHtml SpriteSheet.checkmark ]
                         )
                     , alertString Colors.greenDarkest content
+                    ]
+
+                Custom config ->
+                    [ iconContainer [ color config.color ] (NriSvg.toHtml config.icon)
+                    , alertString config.color content
                     ]
     in
     Nri.Ui.styled div
@@ -211,6 +223,12 @@ banner theme content attr =
                             , height = Css.px 20
                             , icon = UiIcon.checkmark
                             }
+                    }
+
+                Custom customTheme ->
+                    { backgroundColor = customTheme.backgroundColor
+                    , color = customTheme.color
+                    , icon = NriSvg.toHtml customTheme.icon
                     }
 
         attributes =

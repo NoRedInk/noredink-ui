@@ -72,3 +72,18 @@ upgrade_Nri_Ui_BannerAlert_V6_success content maybeOnDismiss =
             [ Maybe.map Message.onDismiss maybeOnDismiss
             ]
         )
+
+
+upgrade_Nri_Ui_BannerAlert_V6_custom config =
+    Message.banner
+        (Message.Custom
+            { color = config.color
+            , backgroundColor = config.backgroundColor
+            , icon = config.icon
+            }
+        )
+        (Message.Html config.content)
+        (List.filterMap identity
+            [ Maybe.map Message.onDismiss config.dismiss
+            ]
+        )
