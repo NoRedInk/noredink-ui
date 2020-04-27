@@ -13,10 +13,10 @@ module Nri.Ui.Message.V1 exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Css exposing (..)
 import Css.Global
-import Html.Styled exposing (fromUnstyled)
+import Html.Styled exposing (fromUnstyled, styled)
 import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui
@@ -55,29 +55,29 @@ tiny theme content =
                     ]
 
                 Tip ->
-                    [ iconContainer [ Css.color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
+                    [ iconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
                     , alertString Colors.navy content
                     ]
 
                 Success ->
                     [ iconContainer
-                        [ Css.color Colors.white
-                        , Css.backgroundColor Colors.green
+                        [ color Colors.white
+                        , backgroundColor Colors.green
                         ]
-                        (Html.div
-                            [ css [ Css.width (Css.px 12), Css.marginTop (Css.px 1) ] ]
+                        (div
+                            [ css [ width (px 12), marginTop (px 1) ] ]
                             [ NriSvg.toHtml SpriteSheet.checkmark ]
                         )
                     , alertString Colors.greenDarkest content
                     ]
     in
-    Nri.Ui.styled Html.div
+    Nri.Ui.styled div
         "Nri-Ui-Message-V1--tiny"
-        [ Css.displayFlex
-        , Css.justifyContent Css.start
-        , Css.alignItems Css.flexStart
-        , Css.paddingTop (Css.px 6)
-        , Css.paddingBottom (Css.px 8)
+        [ displayFlex
+        , justifyContent start
+        , alignItems flexStart
+        , paddingTop (px 6)
+        , paddingBottom (px 8)
         ]
         []
         children
@@ -87,32 +87,32 @@ tiny theme content =
 -}
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
-    Html.div []
+    div []
         [ tiny Error (Plain "Sorry, something went wrong.  Please try again later.")
-        , Html.details []
-            [ Html.summary
+        , details []
+            [ summary
                 [ css
                     [ Fonts.baseFont
-                    , Css.fontSize (Css.px 14)
-                    , Css.color Colors.gray45
+                    , fontSize (px 14)
+                    , color Colors.gray45
                     ]
                 ]
-                [ Html.text "Details for NoRedInk engineers" ]
-            , Html.code
+                [ text "Details for NoRedInk engineers" ]
+            , code
                 [ css
-                    [ Css.display Css.block
-                    , Css.whiteSpace Css.normal
-                    , Css.overflowWrap Css.breakWord
-                    , Css.color Colors.gray45
-                    , Css.backgroundColor Colors.gray96
-                    , Css.border3 (Css.px 1) Css.solid Colors.gray92
-                    , Css.borderRadius (Css.px 3)
-                    , Css.padding2 (Css.px 2) (Css.px 4)
-                    , Css.fontSize (Css.px 12)
-                    , Css.fontFamily Css.monospace
+                    [ display block
+                    , whiteSpace normal
+                    , overflowWrap breakWord
+                    , color Colors.gray45
+                    , backgroundColor Colors.gray96
+                    , border3 (px 1) solid Colors.gray92
+                    , borderRadius (px 3)
+                    , padding2 (px 2) (px 4)
+                    , fontSize (px 12)
+                    , fontFamily monospace
                     ]
                 ]
-                [ Html.text errorMessageForEngineers ]
+                [ text errorMessageForEngineers ]
             ]
         ]
 
@@ -123,43 +123,46 @@ somethingWentWrong errorMessageForEngineers =
 --
 
 
-exclamation : Css.Color -> Html msg
-exclamation backgroundColor =
+exclamation : Color -> Html msg
+exclamation iconColor =
     iconContainer
-        [ Css.color Colors.white
-        , Css.backgroundColor backgroundColor
+        [ color Colors.white
+        , backgroundColor iconColor
         ]
-        (Html.div
-            [ css [ Css.height (Css.px 13), Css.marginTop (Css.px 1) ] ]
+        (styled div
+            [ height (px 13)
+            , marginTop (px 1)
+            ]
+            []
             [ NriSvg.toHtml SpriteSheet.exclamationMark ]
         )
 
 
-iconContainer : List Css.Style -> Html msg -> Html msg
+iconContainer : List Style -> Html msg -> Html msg
 iconContainer styles icon =
-    Nri.Ui.styled Html.div
+    Nri.Ui.styled div
         "Nri-Ui-Message-V1--iconContainer"
         (styles
             ++ [ -- Content positioning
-                 Css.displayFlex
-               , Css.alignItems Css.center
-               , Css.justifyContent Css.center
-               , Css.marginRight (Css.px 5)
-               , Css.lineHeight (Css.px 13)
-               , Css.flexShrink Css.zero
+                 displayFlex
+               , alignItems center
+               , justifyContent center
+               , marginRight (px 5)
+               , lineHeight (px 13)
+               , flexShrink zero
 
                -- Size
-               , Css.borderRadius (Css.px 13)
-               , Css.height (Css.px 20)
-               , Css.width (Css.px 20)
+               , borderRadius (px 13)
+               , height (px 20)
+               , width (px 20)
                ]
         )
         []
         [ icon ]
 
 
-alertString : Css.ColorValue compatible -> Content msg -> Html msg
-alertString color content =
+alertString : ColorValue compatible -> Content msg -> Html msg
+alertString textColor content =
     let
         children =
             case content of
@@ -172,14 +175,14 @@ alertString color content =
                 Html html ->
                     [ html ]
     in
-    Nri.Ui.styled Html.div
+    Nri.Ui.styled div
         "Nri-Ui-Message-V1--alert"
-        [ Css.color color
+        [ color textColor
         , Fonts.baseFont
-        , Css.fontSize (Css.px 13)
+        , fontSize (px 13)
 
-        --, Css.lineHeight (Css.px 20)
-        , Css.listStyleType Css.none
+        --, lineHeight (px 20)
+        , listStyleType none
 
         -- This global selector and overrides are necessary due to
         -- old stylesheets used on the monolith that set the
@@ -189,10 +192,10 @@ alertString color content =
         -- to deal with visual regressions. 🙏
         , Css.Global.descendants
             [ Css.Global.p
-                [ Css.margin Css.zero
+                [ margin zero
 
-                --, Css.lineHeight (Css.px 20)
-                , Css.fontSize (Css.px 13)
+                --, lineHeight (px 20)
+                , fontSize (px 13)
                 , Fonts.baseFont
                 ]
             ]
