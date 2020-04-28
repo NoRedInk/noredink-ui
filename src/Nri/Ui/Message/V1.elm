@@ -283,24 +283,20 @@ banner theme content attr =
                     { backgroundColor = Colors.purpleLight
                     , color = Colors.purpleDark
                     , icon =
-                        inCircle
-                            { backgroundColor = Colors.purple
-                            , color = Colors.white
-                            , height = Css.px 25
-                            , icon = UiIcon.attention
-                            }
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.purple
+                            |> NriSvg.withLabel "Error"
+                            |> NriSvg.toHtml
                     }
 
                 Warning ->
                     { backgroundColor = Colors.sunshine
                     , color = Colors.navy
                     , icon =
-                        inCircle
-                            { backgroundColor = Colors.ochre
-                            , color = Colors.white
-                            , height = Css.px 25
-                            , icon = UiIcon.attention
-                            }
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.ochre
+                            |> NriSvg.withLabel "Alert"
+                            |> NriSvg.toHtml
                     }
 
                 Tip ->
@@ -319,12 +315,10 @@ banner theme content attr =
                     { backgroundColor = Colors.greenLightest
                     , color = Colors.greenDarkest
                     , icon =
-                        inCircle
-                            { backgroundColor = Colors.green
-                            , color = Colors.white
-                            , height = Css.px 20
-                            , icon = UiIcon.checkmark
-                            }
+                        UiIcon.checkmarkInCircle
+                            |> NriSvg.withColor Colors.green
+                            |> NriSvg.withLabel "Success"
+                            |> NriSvg.toHtml
                     }
 
                 Custom customTheme ->
@@ -371,6 +365,9 @@ banner theme content attr =
                 , fontWeight (int 700)
                 , lineHeight (px 27)
                 , maxWidth (px 600)
+                , minWidth (px 100)
+                , flexBasis (px 100)
+                , flexGrow (int 1)
                 , Fonts.baseFont
                 , Css.Global.descendants
                     [ Css.Global.a
