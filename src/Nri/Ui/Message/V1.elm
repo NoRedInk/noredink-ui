@@ -58,6 +58,8 @@ type Content msg
     | Html (List (Html msg))
 
 
+{-| Transform the messages produced by some `Content`.
+-}
 mapContent : (a -> b) -> Content a -> Content b
 mapContent f content =
     case content of
