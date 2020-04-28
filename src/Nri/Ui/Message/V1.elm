@@ -26,7 +26,6 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.SpriteSheet as SpriteSheet
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -105,40 +104,35 @@ tiny theme content =
             case theme of
                 Error ->
                     { icon = exclamation Colors.purple
-                    , content = tinyAlertString Colors.purple content
+                    , fontColor = Colors.purple
                     }
 
                 Alert ->
                     { icon = exclamation Colors.red
-                    , content = tinyAlertString Colors.redDark content
+                    , fontColor = Colors.redDark
                     }
 
                 Tip ->
                     { icon =
-                        tinyIconContainer []
-                            (UiIcon.bulb
-                                |> NriSvg.withColor Colors.yellow
-                                |> NriSvg.withLabel "Tip"
-                                |> NriSvg.toHtml
-                            )
-                    , content = tinyAlertString Colors.navy content
+                        UiIcon.bulb
+                            |> NriSvg.withColor Colors.yellow
+                            |> NriSvg.withLabel "Tip"
+                            |> NriSvg.toHtml
+                    , fontColor = Colors.navy
                     }
 
                 Success ->
                     { icon =
-                        tinyIconContainer
-                            []
-                            (UiIcon.checkmarkInCircle
-                                |> NriSvg.withColor Colors.green
-                                |> NriSvg.withLabel "Success"
-                                |> NriSvg.toHtml
-                            )
-                    , content = tinyAlertString Colors.greenDarkest content
+                        UiIcon.checkmarkInCircle
+                            |> NriSvg.withColor Colors.green
+                            |> NriSvg.withLabel "Success"
+                            |> NriSvg.toHtml
+                    , fontColor = Colors.greenDarkest
                     }
 
                 Custom customTheme ->
-                    { icon = tinyIconContainer [] (NriSvg.toHtml customTheme.icon)
-                    , content = tinyAlertString customTheme.color content
+                    { icon = NriSvg.toHtml customTheme.icon
+                    , fontColor = customTheme.color
                     }
     in
     Nri.Ui.styled div
@@ -149,8 +143,8 @@ tiny theme content =
         , paddingBottom (px 8)
         ]
         []
-        [ config.icon
-        , config.content
+        [ tinyIconContainer [] config.icon
+        , tinyAlertString config.fontColor content
         ]
 
 
@@ -445,11 +439,9 @@ somethingWentWrong errorMessageForEngineers =
 
 exclamation : Color -> Html msg
 exclamation iconColor =
-    tinyIconContainer []
-        (UiIcon.exclamation
-            |> NriSvg.withColor iconColor
-            |> NriSvg.toHtml
-        )
+    UiIcon.exclamation
+        |> NriSvg.withColor iconColor
+        |> NriSvg.toHtml
 
 
 tinyIconContainer : List Style -> Html msg -> Html msg
