@@ -103,12 +103,18 @@ tiny theme content =
         config =
             case theme of
                 Error ->
-                    { icon = exclamation Colors.purple
+                    { icon =
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.purple
+                            |> NriSvg.withLabel "Error"
                     , fontColor = Colors.purple
                     }
 
                 Alert ->
-                    { icon = exclamation Colors.red
+                    { icon =
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.red
+                            |> NriSvg.withLabel "Alert"
                     , fontColor = Colors.redDark
                     }
 
@@ -117,7 +123,6 @@ tiny theme content =
                         UiIcon.bulb
                             |> NriSvg.withColor Colors.yellow
                             |> NriSvg.withLabel "Tip"
-                            |> NriSvg.toHtml
                     , fontColor = Colors.navy
                     }
 
@@ -126,12 +131,11 @@ tiny theme content =
                         UiIcon.checkmarkInCircle
                             |> NriSvg.withColor Colors.green
                             |> NriSvg.withLabel "Success"
-                            |> NriSvg.toHtml
                     , fontColor = Colors.greenDarkest
                     }
 
                 Custom customTheme ->
-                    { icon = NriSvg.toHtml customTheme.icon
+                    { icon = customTheme.icon
                     , fontColor = customTheme.color
                     }
     in
@@ -143,7 +147,7 @@ tiny theme content =
         , paddingBottom (px 8)
         ]
         []
-        [ tinyIconContainer [] config.icon
+        [ tinyIconContainer [] (NriSvg.toHtml config.icon)
         , tinyAlertString config.fontColor content
         ]
 
@@ -435,13 +439,6 @@ somethingWentWrong errorMessageForEngineers =
 --
 -- PRIVATE
 --
-
-
-exclamation : Color -> Html msg
-exclamation iconColor =
-    UiIcon.exclamation
-        |> NriSvg.withColor iconColor
-        |> NriSvg.toHtml
 
 
 tinyIconContainer : List Style -> Html msg -> Html msg
