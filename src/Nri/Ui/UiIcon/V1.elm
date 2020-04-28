@@ -10,7 +10,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , document, newspaper
     , edit, pen
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
-    , checkmark, x
+    , checkmark, checkmarkInCircle, x
     , attention, exclamation
     , flag, star, starOutline
     , equals, plus
@@ -31,7 +31,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs document, newspaper
 @docs edit, pen
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
-@docs checkmark, x
+@docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
 @docs flag, star, starOutline
 @docs equals, plus
@@ -534,6 +534,32 @@ checkmark =
         , Attributes.viewBox "0 0 21.7 17.1"
         ]
         [ Svg.path [ Attributes.d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checkmarkInCircle : Nri.Ui.Svg.V1.Svg
+checkmarkInCircle =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 50 50"
+        ]
+        [ Svg.g []
+            [ Svg.circle
+                [ Attributes.cx "25"
+                , Attributes.cy "25"
+                , Attributes.r "25"
+                ]
+                []
+            , Svg.path
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.d "M20.812258,34.6599998 C20.2178448,34.6599998 19.6442477,34.4310236 19.2140498,34.0181724 L12.7148242,27.802276 C11.790824,26.9199078 11.7584435,25.4558474 12.6419681,24.5330036 C13.5220234,23.6101598 14.9872403,23.5766229 15.9112405,24.4601475 L20.7093343,29.0477682 L32.9896327,15.7451716 C33.8569671,14.8049812 35.3198711,14.7471589 36.2577487,15.6133368 C37.1967827,16.4806712 37.2557614,17.9435752 36.3895835,18.8814528 L22.5122334,33.9152487 C22.0901306,34.3720448 21.5049691,34.6391838 20.8839576,34.6588434 C20.8608287,34.6599998 20.8365434,34.6599998 20.812258,34.6599998"
+                ]
+                []
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 

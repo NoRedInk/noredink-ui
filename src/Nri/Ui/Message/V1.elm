@@ -167,7 +167,6 @@ large theme content =
                         UiIcon.exclamation
                             |> NriSvg.withColor Colors.purple
                             |> NriSvg.withLabel "Error"
-                            |> NriSvg.toHtml
                     }
 
                 Warning ->
@@ -177,7 +176,6 @@ large theme content =
                         UiIcon.exclamation
                             |> NriSvg.withColor Colors.ochre
                             |> NriSvg.withLabel "Alert"
-                            |> NriSvg.toHtml
                     }
 
                 Tip ->
@@ -187,22 +185,21 @@ large theme content =
                         UiIcon.bulb
                             |> NriSvg.withColor Colors.navy
                             |> NriSvg.withLabel "Tip"
-                            |> NriSvg.toHtml
                     }
 
                 Success ->
                     { backgroundColor = Colors.greenLightest
                     , fontColor = Colors.green
                     , icon =
-                        checkmarkInCircle "Success" Colors.green
+                        UiIcon.checkmarkInCircle
+                            |> NriSvg.withColor Colors.green
+                            |> NriSvg.withLabel "Success"
                     }
 
                 Custom customTheme ->
                     { backgroundColor = customTheme.backgroundColor
                     , fontColor = customTheme.color
-                    , icon =
-                        customTheme.icon
-                            |> NriSvg.toHtml
+                    , icon = customTheme.icon
                     }
     in
     Nri.Ui.styled div
@@ -225,7 +222,7 @@ large theme content =
             , marginRight (px 10)
             ]
             []
-            [ config.icon
+            [ NriSvg.toHtml config.icon
             ]
         , styled div
             [ minWidth (px 100)
@@ -531,25 +528,6 @@ inCircle config =
         [ config.icon
             |> NriSvg.withColor config.color
             |> NriSvg.withHeight config.height
-            |> NriSvg.toHtml
-        ]
-
-
-{-| TODO: the sizing is hard to control; replace this with a single SVG.
--}
-checkmarkInCircle : String -> Css.Color -> Html msg
-checkmarkInCircle label color =
-    styled div
-        [ borderRadius (pct 50)
-        , backgroundColor color
-        , displayFlex
-        , alignItems center
-        , justifyContent center
-        ]
-        []
-        [ UiIcon.checkmark
-            |> NriSvg.withColor Colors.white
-            |> NriSvg.withLabel label
             |> NriSvg.toHtml
         ]
 
