@@ -249,7 +249,7 @@ links config =
                 [ Role.tabList
                 ]
                 (config.tabs
-                    |> mapWithCurrent (viewTabLink config)
+                    |> mapWithCurrent viewTabLink
                     |> List.Zipper.toList
                 )
             ]
@@ -257,8 +257,8 @@ links config =
         ]
 
 
-viewTabLink : LinkConfig msg -> Bool -> LinkTabConfig msg -> Html msg
-viewTabLink config isSelected tabConfig =
+viewTabLink : Bool -> LinkTabConfig msg -> Html msg
+viewTabLink isSelected tabConfig =
     let
         ( tabLabel, tabHref, preventDefault ) =
             case tabConfig of
