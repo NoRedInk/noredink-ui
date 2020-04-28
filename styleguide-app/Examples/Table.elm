@@ -14,7 +14,6 @@ import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Table.V5 as Table
-import Sort.Set as Set exposing (Set)
 
 
 {-| -}
@@ -36,7 +35,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Tables ]
     , view =
-        \state ->
+        \() ->
             let
                 columns =
                     [ Table.string
