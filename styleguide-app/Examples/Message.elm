@@ -61,7 +61,7 @@ init =
                             |> Control.map Message.Plain
                       )
                     , ( "markdown"
-                      , Control.string "Katie's dad suggests: Don't tip too much, or your waitress will **fall over**!"
+                      , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
                             |> Control.map Message.Markdown
                       )
                     , ( "HTML"
