@@ -114,25 +114,30 @@ tiny theme content =
                     }
 
                 Tip ->
-                    { icon = tinyIconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
+                    { icon =
+                        tinyIconContainer []
+                            (UiIcon.bulb
+                                |> NriSvg.withColor Colors.yellow
+                                |> NriSvg.withLabel "Tip"
+                                |> NriSvg.toHtml
+                            )
                     , content = tinyAlertString Colors.navy content
                     }
 
                 Success ->
                     { icon =
                         tinyIconContainer
-                            [ color Colors.white
-                            , backgroundColor Colors.green
-                            ]
-                            (div
-                                [ css [ width (px 12), marginTop (px 1) ] ]
-                                [ NriSvg.toHtml SpriteSheet.checkmark ]
+                            []
+                            (UiIcon.checkmarkInCircle
+                                |> NriSvg.withColor Colors.green
+                                |> NriSvg.withLabel "Success"
+                                |> NriSvg.toHtml
                             )
                     , content = tinyAlertString Colors.greenDarkest content
                     }
 
                 Custom customTheme ->
-                    { icon = tinyIconContainer [ color customTheme.color ] (NriSvg.toHtml customTheme.icon)
+                    { icon = tinyIconContainer [] (NriSvg.toHtml customTheme.icon)
                     , content = tinyAlertString customTheme.color content
                     }
     in
@@ -440,16 +445,10 @@ somethingWentWrong errorMessageForEngineers =
 
 exclamation : Color -> Html msg
 exclamation iconColor =
-    tinyIconContainer
-        [ color Colors.white
-        , backgroundColor iconColor
-        ]
-        (styled div
-            [ height (px 13)
-            , marginTop (px 1)
-            ]
-            []
-            [ NriSvg.toHtml SpriteSheet.exclamationMark ]
+    tinyIconContainer []
+        (UiIcon.exclamation
+            |> NriSvg.withColor iconColor
+            |> NriSvg.toHtml
         )
 
 
