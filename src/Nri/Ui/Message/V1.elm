@@ -105,21 +105,21 @@ tiny theme content =
             case theme of
                 Error ->
                     [ exclamation Colors.purple
-                    , alertString Colors.purple content
+                    , tinyAlertString Colors.purple content
                     ]
 
                 Alert ->
                     [ exclamation Colors.red
-                    , alertString Colors.redDark content
+                    , tinyAlertString Colors.redDark content
                     ]
 
                 Tip ->
-                    [ iconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
-                    , alertString Colors.navy content
+                    [ tinyIconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
+                    , tinyAlertString Colors.navy content
                     ]
 
                 Success ->
-                    [ iconContainer
+                    [ tinyIconContainer
                         [ color Colors.white
                         , backgroundColor Colors.green
                         ]
@@ -127,19 +127,20 @@ tiny theme content =
                             [ css [ width (px 12), marginTop (px 1) ] ]
                             [ NriSvg.toHtml SpriteSheet.checkmark ]
                         )
-                    , alertString Colors.greenDarkest content
+                    , tinyAlertString Colors.greenDarkest content
                     ]
 
                 Custom config ->
-                    [ iconContainer [ color config.color ] (NriSvg.toHtml config.icon)
-                    , alertString config.color content
+                    [ tinyIconContainer [ color config.color ] (NriSvg.toHtml config.icon)
+                    , tinyAlertString config.color content
                     ]
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V1--tiny"
         [ displayFlex
         , justifyContent start
-        , alignItems flexStart
+
+        --, alignItems center
         , paddingTop (px 6)
         , paddingBottom (px 8)
         ]
@@ -438,7 +439,7 @@ somethingWentWrong errorMessageForEngineers =
 
 exclamation : Color -> Html msg
 exclamation iconColor =
-    iconContainer
+    tinyIconContainer
         [ color Colors.white
         , backgroundColor iconColor
         ]
@@ -451,58 +452,68 @@ exclamation iconColor =
         )
 
 
-iconContainer : List Style -> Html msg -> Html msg
-iconContainer styles icon =
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V1--iconContainer"
-        (styles
-            ++ [ -- Content positioning
-                 displayFlex
-               , alignItems center
-               , justifyContent center
-               , marginRight (px 5)
-               , lineHeight (px 13)
-               , flexShrink zero
-
-               -- Size
-               , borderRadius (px 13)
-               , height (px 20)
-               , width (px 20)
-               ]
-        )
+tinyIconContainer : List Style -> Html msg -> Html msg
+tinyIconContainer styles icon =
+    styled div
         []
-        [ icon ]
+        []
+        [ Nri.Ui.styled div
+            "Nri-Ui-Message-V1--tinyIconContainer"
+            (styles
+                ++ [ -- Content positioning
+                     displayFlex
+                   , alignItems center
+                   , justifyContent center
+                   , marginRight (px 5)
+                   , lineHeight (px 13)
+                   , flexShrink zero
+
+                   -- Size
+                   , borderRadius (px 13)
+                   , height (px 20)
+                   , width (px 20)
+                   ]
+            )
+            []
+            [ icon ]
+        ]
 
 
-alertString : ColorValue compatible -> Content msg -> Html msg
-alertString textColor content =
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V1--alert"
-        [ color textColor
-        , Fonts.baseFont
-        , fontSize (px 13)
-
-        --, lineHeight (px 20)
-        , listStyleType none
-
-        -- This global selector and overrides are necessary due to
-        -- old stylesheets used on the monolith that set the
-        -- `.txt p { font-size: 18px; }` -- without these overrides,
-        -- we may see giant ugly alerts.
-        -- Remove these if you want to! but be emotionally prepped
-        -- to deal with visual regressions. 🙏
-        , Css.Global.descendants
-            [ Css.Global.p
-                [ margin zero
-
-                --, lineHeight (px 20)
-                , fontSize (px 13)
-                , Fonts.baseFont
-                ]
-            ]
+tinyAlertString : ColorValue compatible -> Content msg -> Html msg
+tinyAlertString textColor content =
+    styled div
+        [ displayFlex
+        , alignItems center
         ]
         []
-        (contentToHtml content)
+        [ Nri.Ui.styled div
+            "Nri-Ui-Message-V1--alert"
+            [ color textColor
+            , Fonts.baseFont
+            , fontSize (px 13)
+
+            --, lineHeight (px 20)
+            , listStyleType none
+
+            -- This global selector and overrides are necessary due to
+            -- old stylesheets used on the monolith that set the
+            -- `.txt p { font-size: 18px; }` -- without these overrides,
+            -- we may see giant ugly alerts.
+            -- Remove these if you want to! but be emotionally prepped
+            -- to deal with visual regressions. 🙏
+            , Css.Global.descendants
+                [ Css.Global.p
+                    [ margin zero
+
+                    --, lineHeight (px 20)
+                    , fontSize (px 13)
+                    , Fonts.baseFont
+                    ]
+                ]
+            ]
+            []
+            (contentToHtml content)
+        ]
 
 
 inCircle :
