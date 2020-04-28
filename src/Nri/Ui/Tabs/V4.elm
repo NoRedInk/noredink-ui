@@ -147,14 +147,23 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
     let
         isSelected =
             selected.id == tab.id
+
+        tabIndex =
+            -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
+            if isSelected then
+                0
+
+            else
+                -1
     in
-    Html.styled Html.li
+    Html.styled Html.button
         (stylesTabSelectable isSelected)
         [ Events.onClick (onSelect tab.id)
         , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
         , Events.onFocus (onSelect tab.id)
-        , Attributes.tabindex 0
-        , Role.presentation
+        , Attributes.tabindex tabIndex
+        , Widget.selected (selected.id == tab.id)
+        , Role.tab
         , Attributes.id (tabToId tab)
         , Events.on "keyup" <|
             Json.Decode.andThen
@@ -175,10 +184,9 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
                         Json.Decode.fail "Wrong key code"
                 )
                 Events.keyCode
-        ]
-        [ Html.styled Html.div
+        , Attributes.css
             [ Css.color Colors.navy
-            , Css.display Css.inlineBlock
+            , Css.margin zero
             , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             , Css.position Css.relative
             , Css.textDecoration Css.none
@@ -186,12 +194,10 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
             , Css.cursor Css.pointer
+            , Css.border zero
             ]
-            [ Role.tab
-            , Attributes.tabindex -1
-            , Widget.selected (selected.id == tab.id)
-            ]
-            [ viewInnerTab tab ]
+        ]
+        [ viewInnerTab tab
         ]
 
 
