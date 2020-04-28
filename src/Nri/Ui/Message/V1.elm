@@ -1,6 +1,6 @@
 module Nri.Ui.Message.V1 exposing
     ( tiny, banner
-    , Theme(..), Content(..), BannerAttribute
+    , Theme(..), Content(..), mapContent, BannerAttribute
     , onDismiss
     , somethingWentWrong
     )
@@ -8,18 +8,18 @@ module Nri.Ui.Message.V1 exposing
 {-|
 
 @docs tiny, banner
-@docs Theme, Content, BannerAttribute
+@docs Theme, Content, mapContent, BannerAttribute
 @docs onDismiss
 
 @docs somethingWentWrong
 
 -}
 
-import Accessibility.Styled exposing (..)
+import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
-import Html.Styled exposing (fromUnstyled, styled)
+import Html.Styled exposing (styled)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Markdown
@@ -56,6 +56,19 @@ type Content msg
     = Plain String
     | Markdown String
     | Html (List (Html msg))
+
+
+mapContent : (a -> b) -> Content a -> Content b
+mapContent f content =
+    case content of
+        Plain string ->
+            Plain string
+
+        Markdown string ->
+            Markdown string
+
+        Html html ->
+            Html (List.map (Html.map f) html)
 
 
 {-| PRIVATE

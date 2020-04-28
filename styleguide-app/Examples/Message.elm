@@ -1,9 +1,11 @@
 module Examples.Message exposing (Msg, State, example)
 
+import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
-import Css
+import Css exposing (..)
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html, a, div, h3, pre, text)
+import Html.Styled exposing (styled)
 import Html.Styled.Attributes as Attributes exposing (href, title)
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 import Nri.Ui.Colors.V1 as Colors
@@ -15,17 +17,81 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias State =
-    { show : Bool }
+    { show : Bool
+    , control : Control ExampleConfig
+    }
+
+
+type alias ExampleConfig =
+    { themes : List Message.Theme
+    , content : Message.Content Never
+    }
 
 
 init : State
 init =
-    { show = True }
+    { show = True
+    , control =
+        Control.record ExampleConfig
+            |> Control.field "theme"
+                (Control.choice
+                    [ ( "Error / Warning / Tip / Success"
+                      , Control.value
+                            [ Message.Error
+                            , Message.Warning
+                            , Message.Tip
+                            , Message.Success
+                            ]
+                      )
+                    , ( "Custom (aquaDark, gray92, premiumFlag)"
+                      , Control.value
+                            [ Message.Custom
+                                { color = Colors.aquaDark
+                                , backgroundColor = Colors.gray92
+                                , icon = Pennant.premiumFlag
+                                }
+                            ]
+                      )
+                    ]
+                )
+            |> Control.field "content"
+                (Control.choice
+                    [ ( "plain text"
+                      , Control.string "Comic books do count as literature."
+                            |> Control.map Message.Plain
+                      )
+                    , ( "markdown"
+                      , Control.string "Katie's dad suggests: Don't tip too much, or your waitress will **fall over**!"
+                            |> Control.map Message.Markdown
+                      )
+                    , ( "HTML"
+                      , Control.value
+                            (Message.Html
+                                [ text "Click "
+                                , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                                    [ text "here, yes, HERE, right here on this very long success message."
+                                    , text "Wow, how successful! You're the biggest success I've ever seen!"
+                                    , text "You should feel great about yourself! Give yourself a very big round of applause!"
+                                    , styled div
+                                        [ display inlineBlock
+                                        , width (px 20)
+                                        ]
+                                        []
+                                        [ Svg.toHtml UiIcon.gear ]
+                                    ]
+                                , text " to check out NoRedInk."
+                                ]
+                            )
+                      )
+                    ]
+                )
+    }
 
 
 type Msg
     = NoOp
     | Dismiss
+    | UpdateControl (Control ExampleConfig)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -37,6 +103,9 @@ update msg state =
         Dismiss ->
             ( { state | show = False }, Cmd.none )
 
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )
+
 
 example : Example State Msg
 example =
@@ -47,110 +116,40 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Heading.h3 [] [ text "Message.tiny" ]
-            , Message.tiny Message.Error (Message.Markdown "This is an **error**")
-            , Message.tiny Message.Warning (Message.Markdown "This is a **warning**")
-            , Message.tiny Message.Tip (Message.Markdown "This is a **tip**")
-            , Message.tiny Message.Success (Message.Markdown "This is a **success**")
-            , Message.tiny
-                (Message.Custom
-                    { color = Colors.aquaDark
-                    , backgroundColor = Colors.gray92
-                    , icon = Pennant.premiumFlag
-                    }
-                )
-                (Message.Markdown "This is a **custom theme**")
+            let
+                exampleConfig =
+                    Control.currentValue state.control
+
+                content =
+                    Message.mapContent never exampleConfig.content
+            in
+            [ Control.view UpdateControl state.control
+                |> Html.fromUnstyled
+            , Heading.h3 [] [ text "Message.tiny" ]
+            , List.map (\theme -> Message.tiny theme content) exampleConfig.themes
+                |> div []
+            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.banner" ]
+            , List.map (\theme -> Message.banner theme content []) exampleConfig.themes
+                |> List.intersperse (br [])
+                |> div []
+            , Heading.h3 [] [ text "Message.banner ... [ onDismiss msg ]" ]
+            , if state.show then
+                List.map
+                    (\theme ->
+                        Message.banner theme
+                            content
+                            [ Message.onDismiss Dismiss ]
+                    )
+                    exampleConfig.themes
+                    |> List.intersperse (br [])
+                    |> div []
+
+              else
+                text "Nice! The banner was dismissed. 👍"
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
-            , Html.hr [] []
-            , Heading.h3 [] [ text "Message.banner" ]
-            , if state.show then
-                div
-                    []
-                    [ h3 [] [ text "alert" ]
-                    , Message.banner Message.Warning
-                        (Message.Html [ text "Dismiss this alert message to see a success message!" ])
-                        [ Message.onDismiss Dismiss
-                        ]
-                    , pre [] [ text "BannerAlert.alert [ text \"Dismiss this alert message to see a success message!\" ] (Just Dismiss)" ]
-                    ]
-
-              else
-                div
-                    []
-                    [ h3 [] [ text "success" ]
-                    , Message.banner Message.Success
-                        (Message.Html [ text "Nice! The alert message was dismissed. 👍" ])
-                        []
-                    , pre [] [ text "BannerAlert.success [ text \"Nice! The alert message was dismissed. 👍\" ] Nothing" ]
-                    ]
-            , h3 [] [ text "error" ]
-            , Message.banner Message.Error
-                (Message.Html [ text "This is an error message!" ])
-                []
-            , pre [] [ text "BannerAlert.error [ text \"This is an error message!\" ] Nothing" ]
-            , h3 [] [ text "neutral" ]
-            , Message.banner Message.Tip
-                (Message.Html [ text "This is a neutral message!" ])
-                []
-            , pre [] [ text "BannerAlert.neutral [ text \"This is a neutral message!\" ] Nothing" ]
-            , h3 [] [ text "custom" ]
-            , Message.banner
-                (Message.Custom
-                    { color = Colors.aquaDark
-                    , backgroundColor = Colors.gray92
-                    , icon = Pennant.premiumFlag
-                    }
-                )
-                (Message.Html [ text "This is a a custom message!" ])
-                []
-            , pre []
-                [ text
-                    """BannerAlert.custom
-                  { color = Colors.aquaDark
-                  , backgroundColor = Colors.gray92
-                  , icon = Pennant.premiumFlag
-                  , content = [ text "This is a a custom message!" ]
-                  , dismiss = Nothing
-                  }
-                      """
-                ]
-            , h3 [] [ text "with multi-line link and icon" ]
-            , Message.banner Message.Success
-                (Message.Html
-                    [ text "Click "
-                    , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                        [ text
-                            """here, yes, HERE, right here on this very long success message.
-                               Wow, how successful! You're the biggest success I've ever seen!
-                               You should feel great about yourself! Give yourself a very big round of applause!
-                               """
-                        , div [ Attributes.css [ Css.display Css.inlineBlock, Css.width (Css.px 20) ] ]
-                            [ Svg.toHtml UiIcon.gear ]
-                        ]
-                    , text " to check out NoRedInk."
-                    ]
-                )
-                []
-            , pre []
-                [ text
-                    """              BannerAlert.success
-                  [ text "Click "
-                  , a [ Attributes.href "http://www.noredink.com", Attributes.target "_blank" ]
-                      [ text
-                          \"\"\"here, yes, HERE, right here on this very long success message.
-                          Wow, how successful! You're the biggest success I've ever seen!
-                          You should feel great about yourself! Give yourself a very big round of applause!
-                          \"\"\"
-                      , div [ Attributes.css [ Css.display Css.inlineBlock, Css.width (Css.px 20) ] ]
-                          [ Svg.toHtml UiIcon.gear ]
-                      ]
-                  , text " to check out NoRedInk."
-                  ]
-                  Nothing
-                  """
-                ]
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.callout (deprecated; talk with your designer, but generally prefer Message.large, or consider adding Message.medium)" ]
             , -- PLAIN
@@ -160,7 +159,7 @@ example =
                 , Callout.custom (title "beta warning")
                 ]
                 [ text "This tab is still a work in progress; some of your student's information may be missing."
-                , Html.br [] []
+                , br []
                 , text "To share your thoughts and help us improve the experience, "
                 , a [ href "#" ] [ text "click here" ]
                 , text "."
@@ -175,13 +174,13 @@ example =
             -- WITH CSS CUSTOMIZATIONS
             , h3 [] [ text "With CSS customizations" ]
             , callout
-                [ Callout.containerCss [ Css.margin (Css.px 20) ]
+                [ Callout.containerCss [ margin (px 20) ]
                 , Callout.label (text "HMMM")
                 , Callout.custom (title "margin")
                 ]
                 [ text "My container styles are customized to add margin around the callout" ]
             , callout
-                [ Callout.contentCss [ Css.textTransform Css.uppercase ]
+                [ Callout.contentCss [ textTransform uppercase ]
                 , Callout.label (text "WOW!")
                 , Callout.custom (title "yelling")
                 ]
