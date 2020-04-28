@@ -147,8 +147,60 @@ tiny theme content =
         , paddingBottom (px 8)
         ]
         []
-        [ tinyIconContainer [] (NriSvg.toHtml config.icon)
-        , tinyAlertString config.fontColor content
+        [ styled div
+            []
+            []
+            [ Nri.Ui.styled div
+                "Nri-Ui-Message-V1--tinyIconContainer"
+                [ -- Content positioning
+                  displayFlex
+                , alignItems center
+                , justifyContent center
+                , marginRight (px 5)
+                , lineHeight (px 13)
+                , flexShrink zero
+
+                -- Size
+                , borderRadius (px 13)
+                , height (px 20)
+                , width (px 20)
+                ]
+                []
+                [ NriSvg.toHtml config.icon ]
+            ]
+        , styled div
+            [ displayFlex
+            , alignItems center
+            ]
+            []
+            [ Nri.Ui.styled div
+                "Nri-Ui-Message-V1--alert"
+                [ color config.fontColor
+                , Fonts.baseFont
+                , fontSize (px 13)
+
+                --, lineHeight (px 20)
+                , listStyleType none
+
+                -- This global selector and overrides are necessary due to
+                -- old stylesheets used on the monolith that set the
+                -- `.txt p { font-size: 18px; }` -- without these overrides,
+                -- we may see giant ugly alerts.
+                -- Remove these if you want to! but be emotionally prepped
+                -- to deal with visual regressions. 🙏
+                , Css.Global.descendants
+                    [ Css.Global.p
+                        [ margin zero
+
+                        --, lineHeight (px 20)
+                        , fontSize (px 13)
+                        , Fonts.baseFont
+                        ]
+                    ]
+                ]
+                []
+                (contentToHtml content)
+            ]
         ]
 
 
@@ -439,70 +491,6 @@ somethingWentWrong errorMessageForEngineers =
 --
 -- PRIVATE
 --
-
-
-tinyIconContainer : List Style -> Html msg -> Html msg
-tinyIconContainer styles icon =
-    styled div
-        []
-        []
-        [ Nri.Ui.styled div
-            "Nri-Ui-Message-V1--tinyIconContainer"
-            (styles
-                ++ [ -- Content positioning
-                     displayFlex
-                   , alignItems center
-                   , justifyContent center
-                   , marginRight (px 5)
-                   , lineHeight (px 13)
-                   , flexShrink zero
-
-                   -- Size
-                   , borderRadius (px 13)
-                   , height (px 20)
-                   , width (px 20)
-                   ]
-            )
-            []
-            [ icon ]
-        ]
-
-
-tinyAlertString : ColorValue compatible -> Content msg -> Html msg
-tinyAlertString textColor content =
-    styled div
-        [ displayFlex
-        , alignItems center
-        ]
-        []
-        [ Nri.Ui.styled div
-            "Nri-Ui-Message-V1--alert"
-            [ color textColor
-            , Fonts.baseFont
-            , fontSize (px 13)
-
-            --, lineHeight (px 20)
-            , listStyleType none
-
-            -- This global selector and overrides are necessary due to
-            -- old stylesheets used on the monolith that set the
-            -- `.txt p { font-size: 18px; }` -- without these overrides,
-            -- we may see giant ugly alerts.
-            -- Remove these if you want to! but be emotionally prepped
-            -- to deal with visual regressions. 🙏
-            , Css.Global.descendants
-                [ Css.Global.p
-                    [ margin zero
-
-                    --, lineHeight (px 20)
-                    , fontSize (px 13)
-                    , Fonts.baseFont
-                    ]
-                ]
-            ]
-            []
-            (contentToHtml content)
-        ]
 
 
 inCircle :
