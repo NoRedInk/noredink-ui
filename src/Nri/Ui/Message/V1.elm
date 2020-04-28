@@ -162,7 +162,7 @@ large theme content =
             case theme of
                 Error ->
                     { backgroundColor = Colors.purpleLight
-                    , fontColor = Colors.purple
+                    , fontColor = Colors.purpleDark
                     , icon =
                         UiIcon.exclamation
                             |> NriSvg.withColor Colors.purple
@@ -189,7 +189,7 @@ large theme content =
 
                 Success ->
                     { backgroundColor = Colors.greenLightest
-                    , fontColor = Colors.green
+                    , fontColor = Colors.greenDarkest
                     , icon =
                         UiIcon.checkmarkInCircle
                             |> NriSvg.withColor Colors.green
