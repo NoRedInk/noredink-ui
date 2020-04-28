@@ -18,7 +18,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , badge
     )
 
-{-|
+{-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
 @docs seeMore, openClose, download, sort, gear, flipper, sortArrow
 @docs unarchive, share, preview, skip, copyToClipboard, gift
