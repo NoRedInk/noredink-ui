@@ -101,51 +101,52 @@ NOTE: When using a `Custom` theme, `tiny` ignores the custom `backgroundColor`.
 tiny : Theme -> Content msg -> Html msg
 tiny theme content =
     let
-        children =
+        config =
             case theme of
                 Error ->
-                    [ exclamation Colors.purple
-                    , tinyAlertString Colors.purple content
-                    ]
+                    { icon = exclamation Colors.purple
+                    , content = tinyAlertString Colors.purple content
+                    }
 
                 Alert ->
-                    [ exclamation Colors.red
-                    , tinyAlertString Colors.redDark content
-                    ]
+                    { icon = exclamation Colors.red
+                    , content = tinyAlertString Colors.redDark content
+                    }
 
                 Tip ->
-                    [ tinyIconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
-                    , tinyAlertString Colors.navy content
-                    ]
+                    { icon = tinyIconContainer [ color Colors.yellow ] (NriSvg.toHtml SpriteSheet.bulb)
+                    , content = tinyAlertString Colors.navy content
+                    }
 
                 Success ->
-                    [ tinyIconContainer
-                        [ color Colors.white
-                        , backgroundColor Colors.green
-                        ]
-                        (div
-                            [ css [ width (px 12), marginTop (px 1) ] ]
-                            [ NriSvg.toHtml SpriteSheet.checkmark ]
-                        )
-                    , tinyAlertString Colors.greenDarkest content
-                    ]
+                    { icon =
+                        tinyIconContainer
+                            [ color Colors.white
+                            , backgroundColor Colors.green
+                            ]
+                            (div
+                                [ css [ width (px 12), marginTop (px 1) ] ]
+                                [ NriSvg.toHtml SpriteSheet.checkmark ]
+                            )
+                    , content = tinyAlertString Colors.greenDarkest content
+                    }
 
-                Custom config ->
-                    [ tinyIconContainer [ color config.color ] (NriSvg.toHtml config.icon)
-                    , tinyAlertString config.color content
-                    ]
+                Custom customTheme ->
+                    { icon = tinyIconContainer [ color customTheme.color ] (NriSvg.toHtml customTheme.icon)
+                    , content = tinyAlertString customTheme.color content
+                    }
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V1--tiny"
         [ displayFlex
         , justifyContent start
-
-        --, alignItems center
         , paddingTop (px 6)
         , paddingBottom (px 8)
         ]
         []
-        children
+        [ config.icon
+        , config.content
+        ]
 
 
 {-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
