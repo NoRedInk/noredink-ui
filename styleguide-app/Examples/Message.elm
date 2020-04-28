@@ -6,8 +6,7 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (styled)
-import Html.Styled.Attributes as Attributes exposing (href, title)
-import Nri.Ui.Callout.V1 as Callout exposing (callout)
+import Html.Styled.Attributes as Attributes exposing (href)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V1 as Message
@@ -159,41 +158,6 @@ example =
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
-            , Html.hr [] []
-            , Heading.h3 [] [ text "Message.callout (deprecated; talk with your designer, but generally prefer Message.large, or consider adding Message.medium)" ]
-            , -- PLAIN
-              h3 [] [ text "Originally Designed Use Case" ]
-            , callout
-                [ Callout.label (text "BETA")
-                , Callout.custom (title "beta warning")
-                ]
-                [ text "This tab is still a work in progress; some of your student's information may be missing."
-                , br []
-                , text "To share your thoughts and help us improve the experience, "
-                , a [ href "#" ] [ text "click here" ]
-                , text "."
-                ]
-
-            -- WITH SIDE TEXT
-            , h3 [] [ text "Without side text" ]
-            , callout
-                [ Callout.custom (title "no side text") ]
-                [ text "I feel weird without my side text!" ]
-
-            -- WITH CSS CUSTOMIZATIONS
-            , h3 [] [ text "With CSS customizations" ]
-            , callout
-                [ Callout.containerCss [ margin (px 20) ]
-                , Callout.label (text "HMMM")
-                , Callout.custom (title "margin")
-                ]
-                [ text "My container styles are customized to add margin around the callout" ]
-            , callout
-                [ Callout.contentCss [ textTransform uppercase ]
-                , Callout.label (text "WOW!")
-                , Callout.custom (title "yelling")
-                ]
-                [ text "My content styles are customized to yell about everything" ]
             ]
     }
 
