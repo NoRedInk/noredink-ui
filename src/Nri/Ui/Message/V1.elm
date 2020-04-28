@@ -31,11 +31,11 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-{-| `Error` / `Warning` / `Tip` / `Success`
+{-| `Error` / `Alert` / `Tip` / `Success`
 -}
 type Theme
     = Error
-    | Warning
+    | Alert
     | Tip
     | Success
     | Custom
@@ -108,7 +108,7 @@ tiny theme content =
                     , alertString Colors.purple content
                     ]
 
-                Warning ->
+                Alert ->
                     [ exclamation Colors.red
                     , alertString Colors.redDark content
                     ]
@@ -169,7 +169,7 @@ large theme content =
                             |> NriSvg.withLabel "Error"
                     }
 
-                Warning ->
+                Alert ->
                     { backgroundColor = Colors.sunshine
                     , fontColor = Colors.navy
                     , icon =
@@ -289,7 +289,7 @@ banner theme content attr =
                             |> NriSvg.toHtml
                     }
 
-                Warning ->
+                Alert ->
                     { backgroundColor = Colors.sunshine
                     , color = Colors.navy
                     , icon =

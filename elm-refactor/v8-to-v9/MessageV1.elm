@@ -17,7 +17,7 @@ upgrade_Nri_Ui_Alert_V4_error content =
 
 
 upgrade_Nri_Ui_Alert_V4_warning content =
-    Message.tiny Message.Warning (Message.Markdown content)
+    Message.tiny Message.Alert (Message.Markdown content)
 
 
 upgrade_Nri_Ui_Alert_V4_tip content =
@@ -39,7 +39,7 @@ upgrade_Nri_Ui_Alert_V4_somethingWentWrong errorMessageForEngineers =
 
 
 upgrade_Nri_Ui_BannerAlert_V6_alert content maybeOnDismiss =
-    Message.banner Message.Warning
+    Message.banner Message.Alert
         (Message.Html content)
         (List.filterMap identity
             [ Maybe.map Message.onDismiss maybeOnDismiss

@@ -35,10 +35,10 @@ init =
         Control.record ExampleConfig
             |> Control.field "theme"
                 (Control.choice
-                    [ ( "Error / Warning / Tip / Success"
+                    [ ( "Error / Alert / Tip / Success"
                       , Control.value
                             [ Message.Error
-                            , Message.Warning
+                            , Message.Alert
                             , Message.Tip
                             , Message.Success
                             ]
