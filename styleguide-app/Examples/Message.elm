@@ -69,9 +69,9 @@ init =
                             (Message.Html
                                 [ text "Click "
                                 , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                                    [ text "here, yes, HERE, right here on this very long success message."
-                                    , text "Wow, how successful! You're the biggest success I've ever seen!"
-                                    , text "You should feel great about yourself! Give yourself a very big round of applause!"
+                                    [ text "here, yes, HERE, right here on this very long success message. "
+                                    , text "Wow, how successful! You're the biggest success I've ever seen! "
+                                    , text "You should feel great about yourself! Give yourself a very big round of applause! "
                                     , styled div
                                         [ display inlineBlock
                                         , width (px 20)
