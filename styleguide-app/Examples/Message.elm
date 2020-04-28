@@ -56,8 +56,12 @@ init =
                 )
             |> Control.field "content"
                 (Control.choice
-                    [ ( "plain text"
+                    [ ( "plain text (short)"
                       , Control.string "Comic books do count as literature."
+                            |> Control.map Message.Plain
+                      )
+                    , ( "plain text (long)"
+                      , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
                             |> Control.map Message.Plain
                       )
                     , ( "markdown"
@@ -127,6 +131,11 @@ example =
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.tiny" ]
             , List.map (\theme -> Message.tiny theme content) exampleConfig.themes
+                |> div []
+            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.large" ]
+            , List.map (\theme -> Message.large theme content) exampleConfig.themes
+                |> List.intersperse (br [])
                 |> div []
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.banner" ]

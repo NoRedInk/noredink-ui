@@ -1,5 +1,5 @@
 module Nri.Ui.Message.V1 exposing
-    ( tiny, banner
+    ( tiny, large, banner
     , Theme(..), Content(..), mapContent, BannerAttribute
     , onDismiss
     , somethingWentWrong
@@ -7,7 +7,7 @@ module Nri.Ui.Message.V1 exposing
 
 {-|
 
-@docs tiny, banner
+@docs tiny, large, banner
 @docs Theme, Content, mapContent, BannerAttribute
 @docs onDismiss
 
@@ -145,6 +145,96 @@ tiny theme content =
         ]
         []
         children
+
+
+{-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
+
+    import Nri.Ui.Message.V1 as Message
+
+    view =
+        Message.large Message.Tip (Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work.")
+
+-}
+large : Theme -> Content msg -> Html msg
+large theme content =
+    let
+        config =
+            case theme of
+                Error ->
+                    { backgroundColor = Colors.purpleLight
+                    , fontColor = Colors.purple
+                    , icon =
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.purple
+                            |> NriSvg.withLabel "Error"
+                            |> NriSvg.toHtml
+                    }
+
+                Warning ->
+                    { backgroundColor = Colors.sunshine
+                    , fontColor = Colors.navy
+                    , icon =
+                        UiIcon.exclamation
+                            |> NriSvg.withColor Colors.ochre
+                            |> NriSvg.withLabel "Alert"
+                            |> NriSvg.toHtml
+                    }
+
+                Tip ->
+                    { backgroundColor = Colors.sunshine
+                    , fontColor = Colors.navy
+                    , icon =
+                        UiIcon.bulb
+                            |> NriSvg.withColor Colors.navy
+                            |> NriSvg.withLabel "Tip"
+                            |> NriSvg.toHtml
+                    }
+
+                Success ->
+                    { backgroundColor = Colors.greenLightest
+                    , fontColor = Colors.green
+                    , icon =
+                        checkmarkInCircle "Success" Colors.green
+                    }
+
+                Custom customTheme ->
+                    { backgroundColor = customTheme.backgroundColor
+                    , fontColor = customTheme.color
+                    , icon =
+                        customTheme.icon
+                            |> NriSvg.toHtml
+                    }
+    in
+    Nri.Ui.styled div
+        "Nri-Ui-Message-V1--large"
+        [ width (pct 100)
+        , backgroundColor config.backgroundColor
+        , Fonts.baseFont
+        , fontSize (px 15)
+        , fontWeight (int 600)
+        , boxSizing borderBox
+        , padding (px 20)
+        , borderRadius (px 8)
+        , color config.fontColor
+        , displayFlex
+        , alignItems center
+        ]
+        []
+        [ styled div
+            [ width (px 35)
+            , marginRight (px 10)
+            ]
+            []
+            [ config.icon
+            ]
+        , styled div
+            [ minWidth (px 100)
+            , flexBasis (px 100)
+            , flexGrow (int 1)
+            ]
+            []
+            (contentToHtml content)
+        ]
 
 
 {-| PRIVATE
@@ -441,6 +531,25 @@ inCircle config =
         [ config.icon
             |> NriSvg.withColor config.color
             |> NriSvg.withHeight config.height
+            |> NriSvg.toHtml
+        ]
+
+
+{-| TODO: the sizing is hard to control; replace this with a single SVG.
+-}
+checkmarkInCircle : String -> Css.Color -> Html msg
+checkmarkInCircle label color =
+    styled div
+        [ borderRadius (pct 50)
+        , backgroundColor color
+        , displayFlex
+        , alignItems center
+        , justifyContent center
+        ]
+        []
+        [ UiIcon.checkmark
+            |> NriSvg.withColor Colors.white
+            |> NriSvg.withLabel label
             |> NriSvg.toHtml
         ]
 
