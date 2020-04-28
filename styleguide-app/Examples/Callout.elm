@@ -6,12 +6,14 @@ module Examples.Callout exposing (example, State, Msg)
 
 -}
 
+import Accessibility.Styled exposing (text)
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (href, title)
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
+import Nri.Ui.Heading.V2 as Heading
 
 
 type alias State =
@@ -32,8 +34,11 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , view =
-        \_ ->
-            [ -- PLAIN
+        \() ->
+            [ Heading.h2 [ Heading.style Heading.Top ]
+                [ text "DEPRECATED: talk with your designer, but generally prefer `Message.large`, or consider adding `Message.medium`"
+                ]
+            , -- PLAIN
               Html.h3 [] [ Html.text "Originally Designed Use Case" ]
             , callout
                 [ Callout.label (Html.text "BETA")

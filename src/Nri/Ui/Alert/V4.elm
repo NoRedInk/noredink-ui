@@ -6,6 +6,9 @@ module Nri.Ui.Alert.V4 exposing
 {-|
 
 
+# DEPRECATED: Use `Nri.Ui.Message.V1.tiny` instead
+
+
 # Changes from V3:
 
   - Changes the error font color from `purpleDark` to `purple`
@@ -30,12 +33,16 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.SpriteSheet exposing (bulb, checkmark, exclamationMark)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
-{-| -}
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.somethingWentWrong` instead
+
+-}
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     Html.div []
@@ -68,10 +75,10 @@ somethingWentWrong errorMessageForEngineers =
         ]
 
 
-{-| import Nri.Ui.Alert.V4 as Alert
+{-|
 
-    view =
-        Alert.error "Some **awesome** message!"
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.tiny Error` instead
 
 -}
 error : String -> Html msg
@@ -82,10 +89,10 @@ error content =
         ]
 
 
-{-| import Nri.Ui.Alert.V4 as Alert
+{-|
 
-    view =
-        Alert.success "Some **awesome** message!"
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.tiny Success` instead
 
 -}
 success : String -> Html msg
@@ -103,10 +110,10 @@ success content =
         ]
 
 
-{-| import Nri.Ui.Alert.V4 as Alert
+{-|
 
-    view =
-        Alert.tip "Some **awesome** message!"
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.tiny Tip` instead
 
 -}
 tip : String -> Html msg
@@ -117,10 +124,10 @@ tip content =
         ]
 
 
-{-| import Nri.Ui.Alert.V4 as Alert
+{-|
 
-    view =
-        Alert.warning "Some **awesome** message!"
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.tiny Alert` instead
 
 -}
 warning : String -> Html msg
