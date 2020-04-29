@@ -41,14 +41,16 @@ example =
                 , tabs =
                     case tab of
                         First ->
-                            List.Zipper.from []
+                            List.Zipper.from
+                                []
                                 (Tabs.Tab "First tab" First)
                                 [ Tabs.Tab "Second tab" Second ]
 
                         Second ->
-                            List.Zipper.from []
-                                (Tabs.Tab "Second tab" Second)
+                            List.Zipper.from
                                 [ Tabs.Tab "First tab" First ]
+                                (Tabs.Tab "Second tab" Second)
+                                []
                 , content =
                     \id ->
                         case id of
