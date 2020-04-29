@@ -9,7 +9,6 @@ module Examples.UiIcon exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -82,6 +81,7 @@ example =
                 ]
             , IconExamples.view "Sticky things"
                 [ ( "checkmark", UiIcon.checkmark )
+                , ( "checkmarkInCircle", UiIcon.checkmarkInCircle )
                 , ( "x", UiIcon.x )
                 , ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )

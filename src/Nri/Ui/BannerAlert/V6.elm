@@ -5,6 +5,9 @@ module Nri.Ui.BannerAlert.V6 exposing
 
 {-|
 
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner` instead
+
 @docs alert, error, neutral, success
 @docs custom
 
@@ -24,7 +27,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Global
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
@@ -33,7 +36,11 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-{-| A banner to show error alerts
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner Alert` instead
+
 -}
 alert : List (Html msg) -> Maybe msg -> Html msg
 alert content maybeDismiss =
@@ -52,7 +59,11 @@ alert content maybeDismiss =
         }
 
 
-{-| A banner to show error alerts
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner Error` instead
+
 -}
 error : List (Html msg) -> Maybe msg -> Html msg
 error content maybeDismiss =
@@ -71,7 +82,11 @@ error content maybeDismiss =
         }
 
 
-{-| A banner to show neutral alerts
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner Tip` instead
+
 -}
 neutral : List (Html msg) -> Maybe msg -> Html msg
 neutral content maybeDismiss =
@@ -90,7 +105,11 @@ neutral content maybeDismiss =
         }
 
 
-{-| A banner for success alerts
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner Success` instead
+
 -}
 success : List (Html msg) -> Maybe msg -> Html msg
 success content maybeDismiss =
@@ -109,7 +128,11 @@ success content maybeDismiss =
         }
 
 
-{-| Use to construct a custom banner. Prefer to use a pre-made banner when possible.
+{-|
+
+
+# DEPRECATED: Use `Nri.Ui.Message.V1.banner Custom` instead
+
 -}
 custom :
     { color : Css.Color
