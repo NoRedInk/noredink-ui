@@ -413,6 +413,10 @@ banner theme content attr =
                 [ width (px 50)
                 , height (px 50)
                 , marginRight (px 20)
+                , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
+                  -- But using shrink here and on the next div lets us have the text content be centered rather than
+                  -- left-aligned when the content is shorter than one line
+                  flexShrink zero
                 ]
                 []
                 [ config.icon ]
@@ -423,8 +427,7 @@ banner theme content attr =
                 , lineHeight (px 27)
                 , maxWidth (px 600)
                 , minWidth (px 100)
-                , flexBasis (px 100)
-                , flexGrow (int 1)
+                , flexShrink (int 1)
                 , Fonts.baseFont
                 , Css.Global.descendants
                     [ Css.Global.a

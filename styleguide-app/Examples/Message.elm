@@ -86,6 +86,15 @@ init =
                                 ]
                             )
                       )
+                    , ( "HTML (short)"
+                      , Control.value
+                            (Message.Html
+                                [ code [] [ text "git status" ]
+                                , text " ⇄ "
+                                , Html.em [] [ text "tries again" ]
+                                ]
+                            )
+                      )
                     ]
                 )
     }
