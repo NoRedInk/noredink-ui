@@ -7,6 +7,9 @@ module Nri.Ui.Callout.V1 exposing
 
 {-|
 
+
+# DEPRECATED: talk with your designer, but generally prefer `Message.large`, or consider adding `Message.medium`
+
 @docs Attribute, callout
 
 @docs label

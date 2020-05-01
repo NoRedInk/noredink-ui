@@ -1,60 +1,174 @@
-module Examples.Alert exposing (example, State, Msg)
+module Examples.Message exposing (Msg, State, example)
 
-{-|
-
-@docs example, State, Msg
-
--}
-
+import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
+import Css exposing (..)
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled as Html
-import Nri.Ui.Alert.V4 as Alert
+import Html.Styled exposing (styled)
+import Html.Styled.Attributes as Attributes exposing (href)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Message.V1 as Message
+import Nri.Ui.Pennant.V2 as Pennant
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias State =
-    ()
-
-
-{-| -}
-type alias Msg =
-    ()
-
-
-{-| -}
-example : Example State Msg
-example =
-    { name = "Nri.Ui.Alert.V4"
-    , categories = [ Messaging ]
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
-    , subscriptions = \_ -> Sub.none
-    , view =
-        \_ ->
-            [ Heading.h3 [] [ Html.text "Markdown-supporting:" ]
-            , Alert.error "This is an **error**"
-            , Alert.warning "This is a **warning**"
-            , Alert.tip "This is a **tip**"
-            , Alert.success "This is a **success**"
-            , Html.hr [] []
-            , Heading.h3 [] [ Html.text "Stacktraces-supporting:" ]
-            , Alert.somethingWentWrong exampleRailsError
-            ]
+    { show : Bool
+    , control : Control ExampleConfig
     }
 
 
-complexHtml : String -> Html.Html msg
-complexHtml name =
-    Html.div []
-        [ Html.p [] [ Html.text "We support more complex alerts as well." ]
-        , Html.p [] [ Html.text "Like this, for example!" ]
-        , Html.p [] [ Html.text ("I'm a " ++ name) ]
-        ]
+type alias ExampleConfig =
+    { themes : List Message.Theme
+    , content : Message.Content Never
+    }
 
 
+init : State
+init =
+    { show = True
+    , control =
+        Control.record ExampleConfig
+            |> Control.field "theme"
+                (Control.choice
+                    [ ( "Error / Alert / Tip / Success"
+                      , Control.value
+                            [ Message.Error
+                            , Message.Alert
+                            , Message.Tip
+                            , Message.Success
+                            ]
+                      )
+                    , ( "Custom (aquaDark, gray92, premiumFlag)"
+                      , Control.value
+                            [ Message.Custom
+                                { color = Colors.aquaDark
+                                , backgroundColor = Colors.gray92
+                                , icon = Pennant.premiumFlag
+                                }
+                            ]
+                      )
+                    ]
+                )
+            |> Control.field "content"
+                (Control.choice
+                    [ ( "plain text (short)"
+                      , Control.string "Comic books do count as literature."
+                            |> Control.map Message.Plain
+                      )
+                    , ( "plain text (long)"
+                      , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
+                            |> Control.map Message.Plain
+                      )
+                    , ( "markdown"
+                      , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+                            |> Control.map Message.Markdown
+                      )
+                    , ( "HTML"
+                      , Control.value
+                            (Message.Html
+                                [ text "Click "
+                                , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                                    [ text "here, yes, HERE, right here on this very long success message. "
+                                    , text "Wow, how successful! You're the biggest success I've ever seen! "
+                                    , text "You should feel great about yourself! Give yourself a very big round of applause! "
+                                    , styled div
+                                        [ display inlineBlock
+                                        , width (px 20)
+                                        ]
+                                        []
+                                        [ Svg.toHtml UiIcon.gear ]
+                                    ]
+                                , text " to check out NoRedInk."
+                                ]
+                            )
+                      )
+                    , ( "HTML (short)"
+                      , Control.value
+                            (Message.Html
+                                [ code [] [ text "git status" ]
+                                , text " ⇄ "
+                                , Html.em [] [ text "tries again" ]
+                                ]
+                            )
+                      )
+                    ]
+                )
+    }
 
--- INTERNAL
+
+type Msg
+    = NoOp
+    | Dismiss
+    | UpdateControl (Control ExampleConfig)
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        NoOp ->
+            ( state, Cmd.none )
+
+        Dismiss ->
+            ( { state | show = False }, Cmd.none )
+
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )
+
+
+example : Example State Msg
+example =
+    { name = "Nri.Ui.Message.V1"
+    , categories = [ Messaging ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view =
+        \state ->
+            let
+                exampleConfig =
+                    Control.currentValue state.control
+
+                content =
+                    Message.mapContent never exampleConfig.content
+            in
+            [ Control.view UpdateControl state.control
+                |> Html.fromUnstyled
+            , Heading.h3 [] [ text "Message.tiny" ]
+            , List.map (\theme -> Message.tiny theme content) exampleConfig.themes
+                |> div []
+            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.large" ]
+            , List.map (\theme -> Message.large theme content) exampleConfig.themes
+                |> List.intersperse (br [])
+                |> div []
+            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.banner" ]
+            , List.map (\theme -> Message.banner theme content []) exampleConfig.themes
+                |> List.intersperse (br [])
+                |> div []
+            , Heading.h3 [] [ text "Message.banner ... [ onDismiss msg ]" ]
+            , if state.show then
+                List.map
+                    (\theme ->
+                        Message.banner theme
+                            content
+                            [ Message.onDismiss Dismiss ]
+                    )
+                    exampleConfig.themes
+                    |> List.intersperse (br [])
+                    |> div []
+
+              else
+                text "Nice! The banner was dismissed. 👍"
+            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.somethingWentWrong" ]
+            , Message.somethingWentWrong exampleRailsError
+            ]
+    }
 
 
 exampleRailsError : String

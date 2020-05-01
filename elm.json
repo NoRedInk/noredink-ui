@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "8.2.0",
+    "version": "8.3.1",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",
@@ -36,6 +36,7 @@
         "Nri.Ui.Loading.V1",
         "Nri.Ui.Logo.V1",
         "Nri.Ui.MasteryIcon.V1",
+        "Nri.Ui.Message.V1",
         "Nri.Ui.Modal.V2",
         "Nri.Ui.Modal.V3",
         "Nri.Ui.Modal.V8",

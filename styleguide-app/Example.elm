@@ -5,7 +5,6 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
-import Sort.Set as Set exposing (Set)
 
 
 type alias Example state msg =
