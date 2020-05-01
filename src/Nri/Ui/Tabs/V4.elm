@@ -389,7 +389,7 @@ stylesTabs =
     , Css.fontSize (Css.px 19)
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
-    , Css.marginRight (Css.px 10)
+    , Css.padding Css.zero
     ]
 
 
