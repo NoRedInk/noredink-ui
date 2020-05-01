@@ -35,9 +35,9 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
-import Nri.Ui.Alert.V4 as Alert
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V2 as InputStyles
+import Nri.Ui.Message.V1 as Message
 import Nri.Ui.Util exposing (dashify)
 
 
@@ -392,7 +392,7 @@ view_ label (InputType inputType) config currentValue =
             [ Html.text label ]
         , case errorMessage_ of
             Just m ->
-                Alert.error m
+                Message.tiny Message.Error (Message.Plain m)
 
             Nothing ->
                 Html.text ""
