@@ -265,6 +265,7 @@ large theme content =
         , backgroundColor config.backgroundColor
         , Fonts.baseFont
         , fontSize (px 15)
+        , lineHeight (px 21)
         , fontWeight (int 600)
         , boxSizing borderBox
         , padding (px 20)
