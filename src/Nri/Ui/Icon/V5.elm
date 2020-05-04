@@ -139,7 +139,6 @@ module Nri.Ui.Icon.V5 exposing
 
 import Accessibility.Role as Role
 import Accessibility.Styled exposing (..)
-import AttributeExtras
 import Css exposing (..)
 import EventExtras
 import Html as RootHtml
@@ -149,6 +148,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras
 import Svg exposing (svg, use)
 import Svg.Attributes exposing (xlinkHref)
 
@@ -279,7 +279,6 @@ linkSpa : (route -> String) -> (route -> msg) -> IconLinkSpaModel route -> Html 
 linkSpa toUrl toMsg config =
     linkBase
         [ EventExtras.onClickPreventDefaultForLinkWithHref (toMsg config.route)
-            |> Attributes.fromUnstyled
         ]
         { alt = config.alt
         , url = toUrl config.route

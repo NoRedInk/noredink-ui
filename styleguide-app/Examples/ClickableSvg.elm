@@ -18,7 +18,7 @@ import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V6 as Select
+import Nri.Ui.Select.V7 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 

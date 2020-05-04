@@ -12,7 +12,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SlideModal.V2 as SlideModal
 import Svg exposing (..)
@@ -40,7 +40,8 @@ example =
     , view =
         \state ->
             [ viewModal state.modal
-            , modalLaunchButton
+            , Button.button "Launch Modal"
+                [ Button.onClick (ModalMsg SlideModal.open), Button.small, Button.secondary ]
             ]
     }
 
@@ -62,20 +63,6 @@ update msg state =
 
 
 -- INTERNAL
-
-
-modalLaunchButton : Html Msg
-modalLaunchButton =
-    Button.button
-        { onClick = ModalMsg SlideModal.open
-        , size = Button.Small
-        , style = Button.Secondary
-        , width = Button.WidthUnbounded
-        }
-        { label = "Launch Modal"
-        , state = Button.Enabled
-        , icon = Nothing
-        }
 
 
 viewModal : SlideModal.State -> Html Msg

@@ -12,7 +12,7 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
-import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Text.V2 as Text
@@ -37,8 +37,10 @@ example =
         \state ->
             [ Text.smallBodyGray [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
-                [ toggleButton ToggleLarge "Toggle large indicator"
-                , toggleButton ToggleMedium "Toggle medium indicator"
+                [ Button.button "Toggle large indicator"
+                    [ Button.onClick ToggleLarge, Button.small, Button.secondary ]
+                , Button.button "Toggle medium indicator"
+                    [ Button.onClick ToggleMedium, Button.small, Button.secondary ]
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
                 [ DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState
@@ -50,20 +52,6 @@ example =
                 ]
             ]
     }
-
-
-toggleButton : msg -> String -> Html.Html msg
-toggleButton msg label =
-    Button.button
-        { onClick = msg
-        , size = Button.Small
-        , style = Button.Secondary
-        , width = Button.WidthUnbounded
-        }
-        { label = label
-        , state = Button.Enabled
-        , icon = Nothing
-        }
 
 
 {-| -}

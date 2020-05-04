@@ -274,7 +274,7 @@ viewTabLink isSelected tabConfig =
                 SpaLink { label, href, msg } ->
                     ( label
                     , Just href
-                    , [ Attributes.fromUnstyled <| EventExtras.onClickPreventDefaultForLinkWithHref msg ]
+                    , [ EventExtras.onClickPreventDefaultForLinkWithHref msg ]
                     )
 
         currentPage =
