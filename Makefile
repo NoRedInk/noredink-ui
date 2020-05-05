@@ -27,7 +27,7 @@ tests/deprecated-imports-report.txt: $(shell find src -type f) script/deprecated
 	script/deprecated-imports.py report > $@
 
 script/deprecated-imports.csv: $(shell find src -type f) script/deprecated-imports.py
-	script/deprecated-imports.py --imports-file $@ update 
+	script/deprecated-imports.py --imports-file $@ update
 
 .PHONY: deprecated-imports-report
 deprecated-imports-report: tests/deprecated-imports-report.txt script/deprecated-imports.py
@@ -40,7 +40,9 @@ checks:
 
 .PHONY: diff
 diff: node_modules
-	if (npx elm diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
+	true
+# 	Temporarily disabled to allow for an intentional MAJOR upgrade
+# 	if (npx elm diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
 
 .PHONY: format
 format: node_modules
