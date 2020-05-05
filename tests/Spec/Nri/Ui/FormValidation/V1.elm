@@ -112,31 +112,26 @@ start =
 
                     else
                         []
+
+                getString field =
+                    case field of
+                        FirstName ->
+                            .firstName
+
+                        LastName ->
+                            .lastName
+
+                        Username ->
+                            .username
             in
-            FormValidation.view errors <|
+            FormValidation.view getString OnInput errors model.formData <|
                 \form ->
-                    let
-                        errorFor field =
-                            List.filter (Tuple.first >> (==) field) errors
-                                |> List.head
-                                |> Maybe.map Tuple.second
-                    in
                     Html.div
                         []
                         [ Html.text "Form heading"
-                        , TextInput.view "First name"
-                            (TextInput.text (OnInput FirstName))
-                            [ TextInput.errorMessage (errorFor FirstName)
-                            ]
-                            model.formData.firstName
-                        , TextInput.view "Last name"
-                            (TextInput.text (OnInput LastName))
-                            []
-                            model.formData.lastName
-                        , TextInput.view "Username"
-                            (TextInput.text (OnInput Username))
-                            []
-                            model.formData.username
+                        , form.textInput FirstName "First name" []
+                        , form.textInput LastName "Last name" []
+                        , form.textInput Username "Username" []
                         , form.submitButton "Submit" SubmitForm []
                         ]
     in

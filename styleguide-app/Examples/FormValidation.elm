@@ -49,7 +49,19 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \model ->
-            [ FormValidation.view [] <|
+            let
+                getString field =
+                    case field of
+                        FirstName ->
+                            .firstName
+
+                        LastName ->
+                            .lastName
+
+                        Username ->
+                            .username
+            in
+            [ FormValidation.view getString OnInput [] model.formData <|
                 \form ->
                     styled div
                         [ padding (px 25)
@@ -58,18 +70,15 @@ example =
                         , maxWidth (px 250)
                         ]
                         []
-                        [ TextInput.view "First name"
-                            (TextInput.text (OnInput FirstName))
+                        [ form.textInput FirstName
+                            "First name"
                             []
-                            model.formData.firstName
-                        , TextInput.view "Last name"
-                            (TextInput.text (OnInput LastName))
+                        , form.textInput LastName
+                            "Last name"
                             [ TextInput.css [ marginTop (px 10) ] ]
-                            model.formData.lastName
-                        , TextInput.view "Username"
-                            (TextInput.text (OnInput Username))
+                        , form.textInput Username
+                            "Username"
                             [ TextInput.css [ marginTop (px 10) ] ]
-                            model.formData.username
                         , form.submitButton "Submit"
                             SubmitForm
                             [ Button.css [ marginTop (px 10) ]
