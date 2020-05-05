@@ -4,7 +4,7 @@ import Accessibility.Styled as Html
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
-import ProgramTest exposing (expectViewHas)
+import ProgramTest exposing (..)
 import Test exposing (..)
 import Test.Html.Selector exposing (text)
 
@@ -15,6 +15,7 @@ type alias ProgramTest =
 
 type alias FormModel =
     { formData : UnvalidatedForm
+    , submitted : Bool
     }
 
 
@@ -33,6 +34,7 @@ type alias UnvalidatedForm =
 
 type FormMsg
     = OnInput FormField String
+    | SubmitForm
 
 
 start : ProgramTest
@@ -44,6 +46,7 @@ start =
                 , lastName = ""
                 , username = ""
                 }
+            , submitted = False
             }
 
         update msg model =
@@ -66,15 +69,27 @@ start =
                                     { formData | username = newString }
                     }
 
+                SubmitForm ->
+                    { model | submitted = True }
+
         view model =
             FormValidation.view <|
                 \_ ->
+                    let
+                        firstNameError =
+                            if model.submitted && model.formData.firstName == "" then
+                                Just "First name is required"
+
+                            else
+                                Nothing
+                    in
                     Html.div
                         []
                         [ Html.text "Form heading"
                         , TextInput.view "First name"
                             (TextInput.text (OnInput FirstName))
-                            []
+                            [ TextInput.errorMessage firstNameError
+                            ]
                             model.formData.firstName
                         , TextInput.view "Last name"
                             (TextInput.text (OnInput LastName))
@@ -85,7 +100,8 @@ start =
                             []
                             model.formData.username
                         , Button.button "Submit"
-                            [ Button.disabled
+                            [ Button.unfulfilled
+                            , Button.onClick SubmitForm
                             ]
                         ]
     in
@@ -104,4 +120,19 @@ all =
             \() ->
                 start
                     |> expectViewHas [ text "Form heading" ]
+        , test "clicking the unfulfilled submit button shows validation errors" <|
+            \() ->
+                start
+                    |> clickButton "Submit"
+                    |> expectViewHas [ text "First name is required" ]
+        , test "form starts without validation errors" <|
+            \() ->
+                start
+                    |> expectViewHasNot [ text "First name is required" ]
+        , test "clicking submit does not show errors for valid fields" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" "Jeffy"
+                    |> clickButton "Submit"
+                    |> expectViewHasNot [ text "First name is required" ]
         ]
