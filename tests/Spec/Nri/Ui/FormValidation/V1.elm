@@ -1,9 +1,7 @@
 module Spec.Nri.Ui.FormValidation.V1 exposing (all)
 
 import Accessibility.Styled as Html
-import AssocList as Dict
 import Html.Attributes
-import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
 import ProgramTest exposing (..)
@@ -20,7 +18,7 @@ type alias ProgramTest =
 
 type alias FormModel =
     { formData : UnvalidatedForm
-    , submitted : Bool
+    , formState : FormValidation.FormState FormField
     }
 
 
@@ -74,7 +72,7 @@ start =
                 , lastName = ""
                 , username = ""
                 }
-            , submitted = False
+            , formState = FormValidation.init
             }
 
         update msg model =
@@ -98,22 +96,10 @@ start =
                     }
 
                 SubmitForm ->
-                    { model | submitted = True }
+                    { model | formState = FormValidation.submit model.formState }
 
         view model =
             let
-                errors =
-                    if model.submitted then
-                        case validator model.formData of
-                            Ok _ ->
-                                Dict.empty
-
-                            Err ( first, rest ) ->
-                                Dict.fromList (first :: rest)
-
-                    else
-                        Dict.empty
-
                 getString field =
                     case field of
                         FirstName ->
@@ -125,7 +111,7 @@ start =
                         Username ->
                             .username
             in
-            FormValidation.view getString OnInput errors model.formData <|
+            FormValidation.view getString OnInput validator model.formState model.formData <|
                 \form ->
                     Html.div
                         []

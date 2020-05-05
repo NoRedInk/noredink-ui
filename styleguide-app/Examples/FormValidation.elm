@@ -7,7 +7,6 @@ module Examples.FormValidation exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled exposing (..)
-import AssocList as Dict
 import Category
 import Css exposing (..)
 import Example exposing (Example)
@@ -16,11 +15,14 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
+import String.Verify
+import Verify exposing (Validator)
 
 
 {-| -}
 type alias State =
     { formData : UnvalidatedForm
+    , formState : FormValidation.FormState FormField
     }
 
 
@@ -31,6 +33,7 @@ init =
         , lastName = ""
         , username = ""
         }
+    , formState = FormValidation.init
     }
 
 
@@ -62,7 +65,7 @@ example =
                         Username ->
                             .username
             in
-            [ FormValidation.view getString OnInput Dict.empty model.formData <|
+            [ FormValidation.view getString OnInput validator model.formState model.formData <|
                 \form ->
                     styled div
                         [ padding (px 25)
@@ -113,7 +116,9 @@ update msg model =
             )
 
         SubmitForm ->
-            ( model, Cmd.none )
+            ( { model | formState = FormValidation.submit model.formState }
+            , Cmd.none
+            )
 
 
 type FormField
@@ -127,3 +132,26 @@ type alias UnvalidatedForm =
     , lastName : String
     , username : String
     }
+
+
+type alias ValidatedForm =
+    { firstName : String
+    , lastName : String
+    , username : Maybe String
+    }
+
+
+validator : Validator ( FormField, String ) UnvalidatedForm ValidatedForm
+validator =
+    let
+        maybeBlank s =
+            if s == "" then
+                Ok Nothing
+
+            else
+                Ok (Just s)
+    in
+    Verify.validate ValidatedForm
+        |> Verify.verify .firstName (String.Verify.notBlank ( FirstName, "First name is required" ))
+        |> Verify.verify .lastName (String.Verify.notBlank ( LastName, "Last name is required" ))
+        |> Verify.verify .username maybeBlank
