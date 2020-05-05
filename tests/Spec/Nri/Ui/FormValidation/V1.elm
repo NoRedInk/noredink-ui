@@ -5,8 +5,10 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
 import ProgramTest exposing (..)
+import String.Verify
 import Test exposing (..)
 import Test.Html.Selector exposing (text)
+import Verify exposing (Validator)
 
 
 type alias ProgramTest =
@@ -30,6 +32,29 @@ type alias UnvalidatedForm =
     , lastName : String
     , username : String
     }
+
+
+type alias ValidatedForm =
+    { firstName : String
+    , lastName : String
+    , username : Maybe String
+    }
+
+
+validator : Validator ( FormField, String ) UnvalidatedForm ValidatedForm
+validator =
+    let
+        maybeBlank s =
+            if s == "" then
+                Ok Nothing
+
+            else
+                Ok (Just s)
+    in
+    Verify.validate ValidatedForm
+        |> Verify.verify .firstName (String.Verify.notBlank ( FirstName, "First name is required" ))
+        |> Verify.verify .lastName (String.Verify.notBlank ( LastName, "Last name is required" ))
+        |> Verify.verify .username maybeBlank
 
 
 type FormMsg
@@ -76,19 +101,29 @@ start =
             FormValidation.view <|
                 \_ ->
                     let
-                        firstNameError =
-                            if model.submitted && model.formData.firstName == "" then
-                                Just "First name is required"
+                        errors =
+                            if model.submitted then
+                                case validator model.formData of
+                                    Ok _ ->
+                                        []
+
+                                    Err ( first, rest ) ->
+                                        first :: rest
 
                             else
-                                Nothing
+                                []
+
+                        errorFor field =
+                            List.filter (Tuple.first >> (==) field) errors
+                                |> List.head
+                                |> Maybe.map Tuple.second
                     in
                     Html.div
                         []
                         [ Html.text "Form heading"
                         , TextInput.view "First name"
                             (TextInput.text (OnInput FirstName))
-                            [ TextInput.errorMessage firstNameError
+                            [ TextInput.errorMessage (errorFor FirstName)
                             ]
                             model.formData.firstName
                         , TextInput.view "Last name"
