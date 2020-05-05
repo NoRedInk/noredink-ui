@@ -41,8 +41,7 @@ checks:
 .PHONY: diff
 diff: node_modules
 	true
-# 	Temporarily disabled to allow for an intentional MAJOR upgrade
-# 	if (npx elm diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
+	if (npx elm diff | tee /dev/stderr | grep -q MAJOR); then echo "MAJOR changes are not allowed!"; exit 1; fi
 
 .PHONY: format
 format: node_modules
