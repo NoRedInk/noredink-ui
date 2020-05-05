@@ -1,13 +1,15 @@
 module Spec.Nri.Ui.FormValidation.V1 exposing (all)
 
 import Accessibility.Styled as Html
+import Html.Attributes
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
 import ProgramTest exposing (..)
 import String.Verify
 import Test exposing (..)
-import Test.Html.Selector exposing (text)
+import Test.Html.Query as Query
+import Test.Html.Selector exposing (..)
 import Verify exposing (Validator)
 
 
@@ -135,7 +137,11 @@ start =
                             []
                             model.formData.username
                         , Button.button "Submit"
-                            [ Button.unfulfilled
+                            [ if errors == [] then
+                                Button.unfulfilled
+
+                              else
+                                Button.error
                             , Button.onClick SubmitForm
                             ]
                         ]
@@ -170,4 +176,14 @@ all =
                     |> fillIn (TextInput.generateId "First name") "First name" "Jeffy"
                     |> clickButton "Submit"
                     |> expectViewHasNot [ text "First name is required" ]
+        , test "submitting with validation errors puts the button into error state" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" " "
+                    |> fillIn (TextInput.generateId "Last name") "Last name" "   "
+                    |> clickButton "Submit"
+                    |> expectView
+                        (Query.find [ tag "button", containing [ text "Submit" ] ]
+                            >> Query.has [ attribute (Html.Attributes.attribute "data-nri-button-state" "error") ]
+                        )
         ]

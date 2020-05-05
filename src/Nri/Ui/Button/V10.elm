@@ -447,25 +447,25 @@ renderButton ((ButtonOrLink config) as button_) =
         buttonStyle_ =
             getColorPalette button_
 
-        isDisabled =
+        ( isDisabled, stateString ) =
             case config.state of
                 Enabled ->
-                    False
+                    ( False, "enabled" )
 
                 Disabled ->
-                    True
+                    ( True, "disabled" )
 
                 Error ->
-                    True
+                    ( True, "error" )
 
                 Unfulfilled ->
-                    False
+                    ( False, "unfulfilled" )
 
                 Loading ->
-                    True
+                    ( True, "loading" )
 
                 Success ->
-                    True
+                    ( True, "success" )
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
@@ -473,6 +473,7 @@ renderButton ((ButtonOrLink config) as button_) =
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled isDisabled
             :: Attributes.type_ "button"
+            :: Attributes.attribute "data-nri-button-state" stateString
             :: config.customAttributes
         )
         [ viewLabel config.icon config.label ]
