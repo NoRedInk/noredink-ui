@@ -1,6 +1,7 @@
 module Spec.Nri.Ui.FormValidation.V1 exposing (all)
 
 import Accessibility.Styled as Html
+import AssocList as Dict
 import Html.Attributes
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FormValidation.V1 as FormValidation
@@ -105,13 +106,13 @@ start =
                     if model.submitted then
                         case validator model.formData of
                             Ok _ ->
-                                []
+                                Dict.empty
 
                             Err ( first, rest ) ->
-                                first :: rest
+                                Dict.fromList (first :: rest)
 
                     else
-                        []
+                        Dict.empty
 
                 getString field =
                     case field of

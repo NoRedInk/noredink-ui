@@ -8,6 +8,7 @@ See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO982
 -}
 
 import Accessibility.Styled exposing (Html)
+import AssocList as Dict exposing (Dict)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.TextInput.V6 as TextInput
 
@@ -17,7 +18,7 @@ import Nri.Ui.TextInput.V6 as TextInput
 view :
     (field -> unvalidated -> String)
     -> (field -> String -> msg)
-    -> List ( field, String )
+    -> Dict field String
     -> unvalidated
     ->
         ({ textInput :
@@ -31,10 +32,8 @@ view :
 view getString onInput errors formData viewForm =
     let
         errorFor field =
-            List.filter (Tuple.first >> (==) field) errors
-                -- TODO: support multiple errors
-                |> List.head
-                |> Maybe.map Tuple.second
+            -- TODO: support multiple errors
+            Dict.get field errors
     in
     viewForm
         { textInput =
@@ -49,7 +48,7 @@ view getString onInput errors formData viewForm =
         , submitButton =
             \label onClick attr ->
                 Button.button label
-                    ([ if errors == [] then
+                    ([ if Dict.isEmpty errors then
                         Button.unfulfilled
 
                        else

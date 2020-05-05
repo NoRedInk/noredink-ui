@@ -18,6 +18,7 @@
             "elm/url": "1.0.0",
             "elm-community/string-extra": "4.0.1",
             "pablohirafuji/elm-markdown": "2.0.5",
+            "pzp1997/assoc-list": "1.0.0",
             "rtfeldman/elm-css": "16.0.1",
             "rtfeldman/elm-sorter-experiment": "2.1.1",
             "tesk9/accessible-html": "4.0.0",

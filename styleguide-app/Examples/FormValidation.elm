@@ -7,6 +7,7 @@ module Examples.FormValidation exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled exposing (..)
+import AssocList as Dict
 import Category
 import Css exposing (..)
 import Example exposing (Example)
@@ -61,7 +62,7 @@ example =
                         Username ->
                             .username
             in
-            [ FormValidation.view getString OnInput [] model.formData <|
+            [ FormValidation.view getString OnInput Dict.empty model.formData <|
                 \form ->
                     styled div
                         [ padding (px 25)
