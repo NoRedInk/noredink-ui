@@ -36,6 +36,7 @@ init =
 {-| -}
 type Msg
     = OnInput FormField String
+    | SubmitForm
 
 
 {-| -}
@@ -48,8 +49,8 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \model ->
-            [ FormValidation.view <|
-                \_ ->
+            [ FormValidation.view [] <|
+                \form ->
                     styled div
                         [ padding (px 25)
                         , border3 (px 3) dashed Colors.gray75
@@ -69,9 +70,9 @@ example =
                             (TextInput.text (OnInput Username))
                             [ TextInput.css [ marginTop (px 10) ] ]
                             model.formData.username
-                        , Button.button "Submit"
-                            [ Button.disabled
-                            , Button.css [ marginTop (px 10) ]
+                        , form.submitButton "Submit"
+                            SubmitForm
+                            [ Button.css [ marginTop (px 10) ]
                             ]
                         ]
             ]
@@ -100,6 +101,9 @@ update msg model =
               }
             , Cmd.none
             )
+
+        SubmitForm ->
+            ( model, Cmd.none )
 
 
 type FormField

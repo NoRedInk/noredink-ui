@@ -100,21 +100,22 @@ start =
                     { model | submitted = True }
 
         view model =
-            FormValidation.view <|
-                \_ ->
-                    let
-                        errors =
-                            if model.submitted then
-                                case validator model.formData of
-                                    Ok _ ->
-                                        []
-
-                                    Err ( first, rest ) ->
-                                        first :: rest
-
-                            else
+            let
+                errors =
+                    if model.submitted then
+                        case validator model.formData of
+                            Ok _ ->
                                 []
 
+                            Err ( first, rest ) ->
+                                first :: rest
+
+                    else
+                        []
+            in
+            FormValidation.view errors <|
+                \form ->
+                    let
                         errorFor field =
                             List.filter (Tuple.first >> (==) field) errors
                                 |> List.head
@@ -136,14 +137,7 @@ start =
                             (TextInput.text (OnInput Username))
                             []
                             model.formData.username
-                        , Button.button "Submit"
-                            [ if errors == [] then
-                                Button.unfulfilled
-
-                              else
-                                Button.error
-                            , Button.onClick SubmitForm
-                            ]
+                        , form.submitButton "Submit" SubmitForm []
                         ]
     in
     ProgramTest.createSandbox

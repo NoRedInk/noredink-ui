@@ -8,14 +8,32 @@ See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO982
 -}
 
 import Accessibility.Styled exposing (Html)
+import Nri.Ui.Button.V10 as Button
 
 
 {-| Used to render the form.
 -}
 view :
-    ({}
-     -> Html msg
-    )
+    List error
+    ->
+        ({ submitButton :
+            String -> msg -> List (Button.Attribute msg) -> Html msg
+         }
+         -> Html msg
+        )
     -> Html msg
-view viewForm =
-    viewForm {}
+view errors viewForm =
+    viewForm
+        { submitButton =
+            \label onClick attr ->
+                Button.button label
+                    ([ if errors == [] then
+                        Button.unfulfilled
+
+                       else
+                        Button.error
+                     , Button.onClick onClick
+                     ]
+                        ++ attr
+                    )
+        }
