@@ -1,6 +1,6 @@
 module Nri.Ui.FormValidation.V1 exposing
     ( FormState, init
-    , submit, reset
+    , onInput, submit, reset
     , FormDefinition, form, FormInput, textInput
     , view
     )
@@ -9,7 +9,7 @@ module Nri.Ui.FormValidation.V1 exposing
 See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO9829eQ201tVMhduNzjaAg-BylOxNMa6GEIpbP59qdZx>
 
 @docs FormState, init
-@docs submit, reset
+@docs onInput, submit, reset
 @docs FormDefinition, form, FormInput, textInput
 @docs view
 
@@ -17,6 +17,7 @@ See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO982
 
 import Accessibility.Styled exposing (Html)
 import AssocList as Dict exposing (Dict)
+import AssocSet as Set exposing (Set)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.TextInput.V6 as TextInput
 import Verify exposing (Validator)
@@ -34,10 +35,9 @@ and is safe to store in your model.
 type FormState field
     = FormState
         -- NOTE: do not add functions to this record; it needs to remain safe to store in the caller's Model and for Elm to compare with (==)
-        { showErrors : Bool
+        { showErrors : Set field
         , isSubmitting : Bool
 
-        --{ showErrors : Set field
         --, showErrors : Dict field -> Animator Bool -- for animation
         }
 
@@ -47,8 +47,34 @@ type FormState field
 init : FormState field
 init =
     FormState
-        { showErrors = False
+        { showErrors = Set.empty
         , isSubmitting = False
+        }
+
+
+{-| Use this in your update function when you get the Msg
+produced by any of the validated fields in your form.
+-}
+onInput :
+    Validator ( field, String ) unvalidated validated
+    -> unvalidated
+    -> FormState field
+    -> FormState field
+onInput validator newFormData (FormState formState) =
+    let
+        nowInvalidFields =
+            case validator newFormData of
+                Err ( first, rest ) ->
+                    (first :: rest)
+                        |> List.map Tuple.first
+                        |> Set.fromList
+
+                Ok _ ->
+                    Set.empty
+    in
+    FormState
+        { formState
+            | showErrors = Set.intersect nowInvalidFields formState.showErrors
         }
 
 
@@ -62,8 +88,14 @@ submit :
     -> FormState field
 submit validator formData (FormState formState) =
     case validator formData of
-        Err _ ->
-            FormState { formState | showErrors = True }
+        Err ( first, rest ) ->
+            FormState
+                { formState
+                    | showErrors =
+                        (first :: rest)
+                            |> List.map Tuple.first
+                            |> Set.fromList
+                }
 
         Ok _ ->
             FormState { formState | isSubmitting = True }
@@ -169,7 +201,7 @@ view :
          -> Html msg
         )
     -> Html msg
-view (FormDefinition formDefinition) onInput validator (FormState formState) formData viewForm =
+view (FormDefinition formDefinition) onInput_ validator (FormState formState) formData viewForm =
     let
         getString field =
             case Dict.get field formDefinition.textInputs of
@@ -189,7 +221,10 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
             List.any isRequiredAndBlank (Dict.values formDefinition.textInputs)
 
         errors =
-            if formState.showErrors then
+            if Set.isEmpty formState.showErrors then
+                Dict.empty
+
+            else
                 case validator formData of
                     Ok _ ->
                         Dict.empty
@@ -197,18 +232,19 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
                     Err ( first, rest ) ->
                         Dict.fromList (first :: rest)
 
-            else
-                Dict.empty
-
         errorFor field =
-            -- TODO: support multiple errors
-            Dict.get field errors
+            if Set.member field formState.showErrors then
+                -- TODO: support multiple errors
+                Dict.get field errors
+
+            else
+                Nothing
     in
     viewForm
         { textInput =
             \field label attr ->
                 TextInput.view label
-                    (TextInput.text (onInput field))
+                    (TextInput.text (onInput_ field))
                     (List.filterMap identity
                         [ Just <| TextInput.errorMessage (errorFor field)
                         , if formState.isSubmitting then

@@ -108,9 +108,8 @@ update msg model =
             let
                 formData =
                     model.formData
-            in
-            ( { model
-                | formData =
+
+                newFormData =
                     case field of
                         FirstName ->
                             { formData | firstName = newString }
@@ -120,6 +119,10 @@ update msg model =
 
                         Username ->
                             { formData | username = newString }
+            in
+            ( { model
+                | formData = newFormData
+                , formState = FormValidation.onInput validator newFormData model.formState
               }
             , Cmd.none
             )

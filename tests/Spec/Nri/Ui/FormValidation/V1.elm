@@ -83,9 +83,8 @@ start =
                     let
                         formData =
                             model.formData
-                    in
-                    { model
-                        | formData =
+
+                        newFormData =
                             case field of
                                 FirstName ->
                                     { formData | firstName = newString }
@@ -95,6 +94,10 @@ start =
 
                                 Username ->
                                     { formData | username = newString }
+                    in
+                    { model
+                        | formData = newFormData
+                        , formState = FormValidation.onInput validator newFormData model.formState
                     }
 
                 SubmitForm ->
@@ -198,6 +201,15 @@ all =
                     |> clickButton "Submit"
                     |> ProgramTest.update ResetFormState
                     |> expectButtonState "Submit" "enabled"
+        , test "a field that's corrected stops being validated until the submit button is pressed again" <|
+            \() ->
+                start
+                    |> clickButton "Submit"
+                    |> ensureViewHas [ text "First name is required" ]
+                    |> fillIn (TextInput.generateId "First name") "First name" "Balthazar"
+                    |> ensureViewHasNot [ text "First name is required" ]
+                    |> fillIn (TextInput.generateId "First name") "First name" ""
+                    |> expectViewHasNot [ text "First name is required" ]
         ]
 
 
