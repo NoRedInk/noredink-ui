@@ -159,7 +159,12 @@ view :
         ({ textInput :
             field -> String -> List (TextInput.Attribute msg) -> Html msg
          , submitButton :
-            String -> msg -> List (Button.Attribute msg) -> Html msg
+            { activeLabel : String
+            , submittingLabel : String
+            , onClick : msg
+            }
+            -> List (Button.Attribute msg)
+            -> Html msg
          }
          -> Html msg
         )
@@ -216,8 +221,16 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
                     )
                     (getString field)
         , submitButton =
-            \label onClick attr ->
-                Button.button label
+            \config attr ->
+                Button.button
+                    (if formState.isSubmitting then
+                        -- To ensure nice typography, we convert "..." to "…"
+                        -- because that's a common mistake people make
+                        String.replace "..." "…" config.submittingLabel
+
+                     else
+                        config.activeLabel
+                    )
                     ([ if formState.isSubmitting then
                         Button.loading
 
@@ -229,7 +242,7 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
 
                        else
                         Button.enabled
-                     , Button.onClick onClick
+                     , Button.onClick config.onClick
                      ]
                         ++ attr
                     )

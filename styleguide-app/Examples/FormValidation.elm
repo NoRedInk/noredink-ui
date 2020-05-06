@@ -89,8 +89,11 @@ example =
                             [ TextInput.placeholder ""
                             , TextInput.css [ marginTop (px 10) ]
                             ]
-                        , form.submitButton "Submit"
-                            SubmitForm
+                        , form.submitButton
+                            { activeLabel = "Submit"
+                            , submittingLabel = "Saving..."
+                            , onClick = SubmitForm
+                            }
                             [ Button.css [ marginTop (px 10) ]
                             ]
                         ]

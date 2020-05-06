@@ -121,7 +121,12 @@ start =
                         , form.textInput FirstName "First name" []
                         , form.textInput LastName "Last name" []
                         , form.textInput Username "Username" []
-                        , form.submitButton "Submit" SubmitForm []
+                        , form.submitButton
+                            { activeLabel = "Submit"
+                            , submittingLabel = "Saving..."
+                            , onClick = SubmitForm
+                            }
+                            []
                         ]
     in
     ProgramTest.createSandbox
@@ -177,7 +182,7 @@ all =
                     |> fillIn (TextInput.generateId "First name") "First name" "Balthazar"
                     |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
                     |> clickButton "Submit"
-                    |> expectButtonState "Submit" "loading"
+                    |> expectButtonState "Saving…" "loading"
         , test "textInputs are in the loading state after submitting" <|
             \() ->
                 start
