@@ -1,6 +1,6 @@
 module Nri.Ui.FormValidation.V1 exposing
     ( FormState, init
-    , submit
+    , submit, reset
     , FormDefinition, form, FormInput, textInput
     , view
     )
@@ -9,7 +9,7 @@ module Nri.Ui.FormValidation.V1 exposing
 See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO9829eQ201tVMhduNzjaAg-BylOxNMa6GEIpbP59qdZx>
 
 @docs FormState, init
-@docs submit
+@docs submit, reset
 @docs FormDefinition, form, FormInput, textInput
 @docs view
 
@@ -67,6 +67,26 @@ submit validator formData (FormState formState) =
 
         Ok _ ->
             FormState { formState | isSubmitting = True }
+
+
+{-| Resets the form state.
+This can be used to re-enable the form after it has been submitted
+(and after the server has responded to the submission).
+It is also common to not need `reset`,
+for cases when the form or the modal containing the form
+completely go away after the server responds successfully.
+
+NOTE: This is independent of clearing the form data (current values) in the form.
+You may want to reset the initial values of the fields at the same time,
+but you don't have to if you don't want to.
+
+-}
+reset : FormState field
+reset =
+    -- NOTE: currently, reset is the same as init, but they are separate
+    --       definitions because they are distinct events to the caller.
+    --       It's also possible that reset and init might diverge to be slightly different in the future
+    init
 
 
 {-| NOTE: this type internally contains functions, and thus should not be stored in your Model.

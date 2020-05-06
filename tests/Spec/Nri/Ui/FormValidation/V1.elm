@@ -62,6 +62,7 @@ validator =
 type FormMsg
     = OnInput FormField String
     | SubmitForm
+    | ResetFormState
 
 
 start : ProgramTest
@@ -98,6 +99,10 @@ start =
 
                 SubmitForm ->
                     { model | formState = FormValidation.submit validator model.formData model.formState }
+
+                ResetFormState ->
+                    -- NOTE: this doesn't clear the form data
+                    { model | formState = FormValidation.reset }
 
         view model =
             let
@@ -180,6 +185,14 @@ all =
                     |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
                     |> clickButton "Submit"
                     |> expectTextInputState "First name" "loading"
+        , test "form can be reset after submitting" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" "Balthazar"
+                    |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
+                    |> clickButton "Submit"
+                    |> ProgramTest.update ResetFormState
+                    |> expectButtonState "Submit" "enabled"
         ]
 
 
