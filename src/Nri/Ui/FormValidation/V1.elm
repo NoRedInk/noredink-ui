@@ -184,8 +184,14 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
             \field label attr ->
                 TextInput.view label
                     (TextInput.text (onInput field))
-                    ([ TextInput.errorMessage (errorFor field)
-                     ]
+                    (List.filterMap identity
+                        [ Just <| TextInput.errorMessage (errorFor field)
+                        , if formState.isSubmitting then
+                            Just TextInput.loading
+
+                          else
+                            Nothing
+                        ]
                         ++ attr
                     )
                     (getString field)

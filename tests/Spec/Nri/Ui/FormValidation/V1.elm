@@ -173,6 +173,13 @@ all =
                     |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
                     |> clickButton "Submit"
                     |> expectButtonState "Submit" "loading"
+        , test "textInputs are in the loading state after submitting" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" "Balthazar"
+                    |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
+                    |> clickButton "Submit"
+                    |> expectTextInputState "First name" "loading"
         ]
 
 
@@ -181,4 +188,17 @@ expectButtonState label stateString =
     expectView
         (Query.find [ tag "button", containing [ text label ] ]
             >> Query.has [ attribute (Html.Attributes.attribute "data-nri-button-state" stateString) ]
+        )
+
+
+expectTextInputState : String -> String -> ProgramTest.ProgramTest model msg effect -> Expectation
+expectTextInputState label stateString =
+    expectView
+        (Query.find
+            [ tag "input"
+            , id (TextInput.generateId label)
+            ]
+            >> Query.has
+                [ attribute (Html.Attributes.attribute "data-nri-input-state" stateString)
+                ]
         )

@@ -308,16 +308,16 @@ view_ label (InputType inputType) config currentValue =
                 Error { message } ->
                     ( True, message )
 
-        ( opacity, disabled_ ) =
+        ( opacity, disabled_, stateString ) =
             case ( config.disabled, config.loading ) of
                 ( False, False ) ->
-                    ( num 1, False )
+                    ( num 1, False, "enabled" )
 
                 ( False, True ) ->
-                    ( num 0.5, True )
+                    ( num 0.5, True, "loading" )
 
                 ( True, _ ) ->
-                    ( num 0.4, True )
+                    ( num 0.4, True, "disabled" )
 
         maybeStep =
             if inputType.fieldType == "number" then
@@ -359,6 +359,7 @@ view_ label (InputType inputType) config currentValue =
                    , Attributes.placeholder placeholder_
                    , value (inputType.toString currentValue)
                    , Attributes.disabled disabled_
+                   , Attributes.attribute "data-nri-input-state" stateString
                    , onInput inputType.fromString
                    , maybeAttr Events.onBlur config.onBlur
                    , Attributes.autofocus config.autofocus
