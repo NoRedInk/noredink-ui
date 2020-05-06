@@ -122,7 +122,7 @@ update msg model =
             )
 
         SubmitForm ->
-            ( { model | formState = FormValidation.submit model.formState }
+            ( { model | formState = FormValidation.submit validator model.formData model.formState }
             , Cmd.none
             )
 

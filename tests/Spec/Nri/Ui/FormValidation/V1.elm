@@ -97,7 +97,7 @@ start =
                     }
 
                 SubmitForm ->
-                    { model | formState = FormValidation.submit model.formState }
+                    { model | formState = FormValidation.submit validator model.formData model.formState }
 
         view model =
             let
@@ -166,6 +166,13 @@ all =
                     |> fillIn (TextInput.generateId "Last name") "Last name" "   "
                     |> clickButton "Submit"
                     |> expectButtonState "Submit" "error"
+        , test "button is in the loading state after submitting" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" "Balthazar"
+                    |> fillIn (TextInput.generateId "Last name") "Last name" "Dough, Jr."
+                    |> clickButton "Submit"
+                    |> expectButtonState "Submit" "loading"
         ]
 
 

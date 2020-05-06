@@ -35,6 +35,7 @@ type FormState field
     = FormState
         -- NOTE: do not add functions to this record; it needs to remain safe to store in the caller's Model and for Elm to compare with (==)
         { showErrors : Bool
+        , isSubmitting : Bool
 
         --{ showErrors : Set field
         --, showErrors : Dict field -> Animator Bool -- for animation
@@ -47,15 +48,25 @@ init : FormState field
 init =
     FormState
         { showErrors = False
+        , isSubmitting = False
         }
 
 
 {-| Use this in your update function when you get the Msg
 produced by the "Submit" button of your form.
 -}
-submit : FormState field -> FormState field
-submit (FormState formState) =
-    FormState { formState | showErrors = True }
+submit :
+    Validator ( field, String ) unvalidated validated
+    -> unvalidated
+    -> FormState field
+    -> FormState field
+submit validator formData (FormState formState) =
+    case validator formData of
+        Err _ ->
+            FormState { formState | showErrors = True }
+
+        Ok _ ->
+            FormState { formState | isSubmitting = True }
 
 
 {-| NOTE: this type internally contains functions, and thus should not be stored in your Model.
@@ -181,7 +192,10 @@ view (FormDefinition formDefinition) onInput validator (FormState formState) for
         , submitButton =
             \label onClick attr ->
                 Button.button label
-                    ([ if not (Dict.isEmpty errors) then
+                    ([ if formState.isSubmitting then
+                        Button.loading
+
+                       else if not (Dict.isEmpty errors) then
                         Button.error
 
                        else if missingRequiredFields then
