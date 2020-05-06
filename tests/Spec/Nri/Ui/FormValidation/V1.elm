@@ -1,6 +1,7 @@
 module Spec.Nri.Ui.FormValidation.V1 exposing (all)
 
 import Accessibility.Styled as Html
+import Expect exposing (Expectation)
 import Html.Attributes
 import Nri.Ui.FormValidation.V1 as FormValidation
 import Nri.Ui.TextInput.V6 as TextInput
@@ -137,6 +138,10 @@ all =
             \() ->
                 start
                     |> expectViewHas [ text "Form heading" ]
+        , test "submit button starts unfulfilled if there are required fields" <|
+            \() ->
+                start
+                    |> expectButtonState "Submit" "unfulfilled"
         , test "clicking the unfulfilled submit button shows validation errors" <|
             \() ->
                 start
@@ -158,8 +163,13 @@ all =
                     |> fillIn (TextInput.generateId "First name") "First name" " "
                     |> fillIn (TextInput.generateId "Last name") "Last name" "   "
                     |> clickButton "Submit"
-                    |> expectView
-                        (Query.find [ tag "button", containing [ text "Submit" ] ]
-                            >> Query.has [ attribute (Html.Attributes.attribute "data-nri-button-state" "error") ]
-                        )
+                    |> expectButtonState "Submit" "error"
         ]
+
+
+expectButtonState : String -> String -> ProgramTest.ProgramTest model msg effect -> Expectation
+expectButtonState label stateString =
+    expectView
+        (Query.find [ tag "button", containing [ text label ] ]
+            >> Query.has [ attribute (Html.Attributes.attribute "data-nri-button-state" stateString) ]
+        )
