@@ -101,18 +101,14 @@ start =
 
         view model =
             let
-                getString field =
-                    case field of
-                        FirstName ->
-                            .firstName
-
-                        LastName ->
-                            .lastName
-
-                        Username ->
-                            .username
+                formDefinition =
+                    FormValidation.form
+                        [ FormValidation.textInput True FirstName .firstName
+                        , FormValidation.textInput True LastName .lastName
+                        , FormValidation.textInput False Username .username
+                        ]
             in
-            FormValidation.view getString OnInput validator model.formState model.formData <|
+            FormValidation.view formDefinition OnInput validator model.formState model.formData <|
                 \form ->
                     Html.div
                         []
@@ -147,6 +143,12 @@ all =
                 start
                     |> clickButton "Submit"
                     |> expectViewHas [ text "First name is required" ]
+        , test "submit button is enabled when all required fields are not blank" <|
+            \() ->
+                start
+                    |> fillIn (TextInput.generateId "First name") "First name" "Jeffy"
+                    |> fillIn (TextInput.generateId "Last name") "Last name" "Yffy"
+                    |> expectButtonState "Submit" "enabled"
         , test "form starts without validation errors" <|
             \() ->
                 start

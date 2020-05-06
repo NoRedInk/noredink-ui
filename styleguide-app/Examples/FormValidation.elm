@@ -14,6 +14,7 @@ import Html.Styled exposing (styled)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FormValidation.V1 as FormValidation
+import Nri.Ui.Text.V4 as Text
 import Nri.Ui.TextInput.V6 as TextInput
 import String.Verify
 import Verify exposing (Validator)
@@ -54,18 +55,18 @@ example =
     , view =
         \model ->
             let
-                getString field =
-                    case field of
-                        FirstName ->
-                            .firstName
-
-                        LastName ->
-                            .lastName
-
-                        Username ->
-                            .username
+                formDefinition =
+                    FormValidation.form
+                        [ FormValidation.textInput True FirstName .firstName
+                        , FormValidation.textInput True LastName .lastName
+                        , FormValidation.textInput False Username .username
+                        ]
             in
-            [ FormValidation.view getString OnInput validator model.formState model.formData <|
+            [ Text.smallBody
+                [ text "NOTE: On the real site, we normally don't label fields as \"(required)\" or \"(optional)\". "
+                , text "The example here does so just to make it clear what's going on."
+                ]
+            , FormValidation.view formDefinition OnInput validator model.formState model.formData <|
                 \form ->
                     styled div
                         [ padding (px 25)
@@ -75,14 +76,19 @@ example =
                         ]
                         []
                         [ form.textInput FirstName
-                            "First name"
-                            []
+                            "First name (required)"
+                            [ TextInput.placeholder ""
+                            ]
                         , form.textInput LastName
-                            "Last name"
-                            [ TextInput.css [ marginTop (px 10) ] ]
+                            "Last name (required)"
+                            [ TextInput.placeholder ""
+                            , TextInput.css [ marginTop (px 10) ]
+                            ]
                         , form.textInput Username
-                            "Username"
-                            [ TextInput.css [ marginTop (px 10) ] ]
+                            "Username (optional)"
+                            [ TextInput.placeholder ""
+                            , TextInput.css [ marginTop (px 10) ]
+                            ]
                         , form.submitButton "Submit"
                             SubmitForm
                             [ Button.css [ marginTop (px 10) ]

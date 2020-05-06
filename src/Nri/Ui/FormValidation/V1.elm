@@ -1,6 +1,7 @@
 module Nri.Ui.FormValidation.V1 exposing
     ( FormState, init
     , submit
+    , FormDefinition, form, FormInput, textInput
     , view
     )
 
@@ -9,6 +10,7 @@ See <https://paper.dropbox.com/doc/yes-Reusable-form-validation-in-Elm--AzJTO982
 
 @docs FormState, init
 @docs submit
+@docs FormDefinition, form, FormInput, textInput
 @docs view
 
 -}
@@ -56,10 +58,68 @@ submit (FormState formState) =
     FormState { formState | showErrors = True }
 
 
+{-| NOTE: this type internally contains functions, and thus should not be stored in your Model.
+
+See [`form`](#form).
+
+-}
+type FormDefinition unvalidated field
+    = FormDefinition
+        { textInputs : Dict field (TextInputConfig unvalidated)
+        }
+
+
+{-| A form input provided to [`form`](#form).
+
+Available options are: [`textInput`](#textInput).
+
+-}
+type FormInput unvalidated field
+    = TextInput field (TextInputConfig unvalidated)
+
+
+{-| PRIVATE
+-}
+type alias TextInputConfig unvalidated =
+    { isRequired : Bool
+    , getString : unvalidated -> String
+    }
+
+
+{-| A `TextInput.V6` input.
+-}
+textInput : Bool -> field -> (unvalidated -> String) -> FormInput unvalidated field
+textInput isRequired field getString =
+    TextInput field
+        { isRequired = isRequired
+        , getString = getString
+        }
+
+
+{-| Builds a `FormDefinition`. You need this for calling [`view`](#view).
+
+NOTE: the resulting `FormDefinition` internally contains functions, and thus should not be stored in your Model.
+
+-}
+form : List (FormInput unvalidated field) -> FormDefinition unvalidated field
+form inputs =
+    let
+        justTextInput input =
+            case input of
+                TextInput field config ->
+                    Just ( field, config )
+    in
+    FormDefinition
+        { textInputs =
+            List.filterMap justTextInput inputs
+                |> Dict.fromList
+        }
+
+
 {-| Used to render the form.
 -}
 view :
-    (field -> unvalidated -> String)
+    FormDefinition unvalidated field
     -> (field -> String -> msg)
     -> Validator ( field, String ) unvalidated validated
     -> FormState field
@@ -73,8 +133,25 @@ view :
          -> Html msg
         )
     -> Html msg
-view getString onInput validator (FormState formState) formData viewForm =
+view (FormDefinition formDefinition) onInput validator (FormState formState) formData viewForm =
     let
+        getString field =
+            case Dict.get field formDefinition.textInputs of
+                Just config ->
+                    config.getString formData
+
+                Nothing ->
+                    -- NOTE: this could be avoided by having `form` take a function (field -> ...) instead of a list.
+                    --       But would that API be harder to use?
+                    "(Internal error: the FormDefinition does not include the requested field)"
+
+        isRequiredAndBlank textInputConfig =
+            textInputConfig.isRequired
+                && (String.trim (textInputConfig.getString formData) == "")
+
+        missingRequiredFields =
+            List.any isRequiredAndBlank (Dict.values formDefinition.textInputs)
+
         errors =
             if formState.showErrors then
                 case validator formData of
@@ -100,15 +177,18 @@ view getString onInput validator (FormState formState) formData viewForm =
                      ]
                         ++ attr
                     )
-                    (getString field formData)
+                    (getString field)
         , submitButton =
             \label onClick attr ->
                 Button.button label
-                    ([ if Dict.isEmpty errors then
+                    ([ if not (Dict.isEmpty errors) then
+                        Button.error
+
+                       else if missingRequiredFields then
                         Button.unfulfilled
 
                        else
-                        Button.error
+                        Button.enabled
                      , Button.onClick onClick
                      ]
                         ++ attr
