@@ -33,11 +33,11 @@ import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events exposing (onClick, onMouseDown)
-import Nri.Ui.Colors.V1
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
@@ -145,8 +145,8 @@ view config =
                 , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
-                    , color Nri.Ui.Colors.V1.azure
-                    , backgroundColor Nri.Ui.Colors.V1.white
+                    , color Colors.azure
+                    , backgroundColor Colors.white
                     , border zero
                     , padding (px 4)
                     , textAlign left
@@ -159,8 +159,8 @@ view config =
                         ]
                     , Css.batch <|
                         if config.hasBorder then
-                            [ border3 (px 1) solid Nri.Ui.Colors.V1.gray75
-                            , borderBottom3 (px 3) solid Nri.Ui.Colors.V1.gray75
+                            [ border3 (px 1) solid Colors.gray75
+                            , borderBottom3 (px 3) solid Colors.gray75
                             , borderRadius (px 8)
                             , padding2 (px 10) (px 15)
                             ]
@@ -327,6 +327,20 @@ iconButton config =
             else
                 -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
                 [ onMouseDown config.onClick ]
+
+        styleIconButton =
+            [ boxSizing borderBox
+            , border zero
+            , backgroundColor transparent
+            , cursor pointer
+            , verticalAlign middle
+            , padding zero
+            , margin zero
+            , disabled
+                [ opacity (num 0.4)
+                , cursor notAllowed
+                ]
+            ]
     in
     div styleIconButtonContainer
         [ tooltip [ text config.label ]
@@ -337,14 +351,15 @@ iconButton config =
                 , triggerHtml =
                     button
                         ([ Attributes.id config.id
+                         , class "IconButton"
+                         , css styleIconButton
                          , Widget.disabled config.isDisabled
                          , Attributes.disabled config.isDisabled
                          , Widget.label config.label
                          ]
-                            ++ styleIconButton
                             ++ perhapsOnclick
                         )
-                        [ Svg.toHtml config.icon
+                        [ independentIcon config.icon
                         ]
                 , extraButtonAttrs = []
                 , id = config.id ++ "-tooltip"
@@ -442,6 +457,23 @@ iconLink config =
 
             else
                 [ Attributes.href config.linkUrl ]
+
+        styleIconLink =
+            [ boxSizing borderBox
+            , border zero
+            , backgroundColor transparent
+            , cursor pointer
+            , display inlineBlock
+            , verticalAlign middle
+            , Css.batch <|
+                if config.isDisabled then
+                    [ opacity (num 0.4)
+                    , cursor notAllowed
+                    ]
+
+                else
+                    []
+            ]
     in
     div styleIconButtonContainer
         [ tooltip [ text config.label ]
@@ -452,26 +484,29 @@ iconLink config =
                 , triggerHtml =
                     a
                         ([ class "IconLink"
-                         , styleIconLink <|
-                            if config.isDisabled then
-                                [ opacity (num 0.4)
-                                , cursor notAllowed
-                                ]
-
-                            else
-                                []
+                         , css styleIconLink
                          , Widget.disabled config.isDisabled
                          , Attributes.id (String.Extra.dasherize config.label)
                          , Widget.label config.label
                          ]
                             ++ perhapsHref
                         )
-                        [ Svg.toHtml config.icon
+                        [ independentIcon config.icon
                         ]
                 , extraButtonAttrs = []
                 , id = String.replace " " "-" config.label ++ "-tooltip"
                 }
         ]
+
+
+independentIcon : Svg -> Html msg
+independentIcon icon =
+    icon
+        |> Svg.withColor Colors.azure
+        |> Svg.withWidth (Css.px 25)
+        |> Svg.withHeight (Css.px 25)
+        |> Svg.withCss [ Css.margin (Css.px 10) ]
+        |> Svg.toHtml
 
 
 
@@ -540,7 +575,7 @@ styleGroupTitle =
     , css
         [ Nri.Ui.Fonts.V1.baseFont
         , fontSize (px 12)
-        , color Nri.Ui.Colors.V1.gray45
+        , color Colors.gray45
         , margin zero
         , padding2 (px 5) zero
         , lineHeight initial
@@ -549,7 +584,7 @@ styleGroupTitle =
         , before
             [ property "content" "\"\""
             , width (pct 100)
-            , backgroundColor Nri.Ui.Colors.V1.gray75
+            , backgroundColor Colors.gray75
             , height (px 1)
             , marginTop (px -1)
             , display block
@@ -564,7 +599,7 @@ styleGroupTitleText : List (Attribute msg)
 styleGroupTitleText =
     [ class "GroupTitleText"
     , css
-        [ backgroundColor Nri.Ui.Colors.V1.white
+        [ backgroundColor Colors.white
         , marginLeft (px 22)
         , padding2 zero (px 5)
         , zIndex (int 2)
@@ -614,13 +649,13 @@ styleContent : Bool -> Alignment -> Attribute msg
 styleContent contentVisible alignment =
     css
         [ padding (px 25)
-        , border3 (px 1) solid Nri.Ui.Colors.V1.azure
+        , border3 (px 1) solid Colors.azure
         , minWidth (px 202)
         , position absolute
         , borderRadius (px 8)
         , marginTop (px 10)
         , zIndex (int 2)
-        , backgroundColor Nri.Ui.Colors.V1.white
+        , backgroundColor Colors.white
         , listStyle Css.none
         , zIndex (int 2)
         , before
@@ -628,7 +663,7 @@ styleContent contentVisible alignment =
             , position absolute
             , top (px -12)
             , border3 (px 6) solid transparent
-            , borderBottomColor Nri.Ui.Colors.V1.azure
+            , borderBottomColor Colors.azure
             ]
         , after
             [ property "content" "\"\""
@@ -636,7 +671,7 @@ styleContent contentVisible alignment =
             , top (px -10)
             , zIndex (int 2)
             , border3 (px 5) solid transparent
-            , borderBottomColor Nri.Ui.Colors.V1.white
+            , borderBottomColor Colors.white
             ]
         , case alignment of
             Left ->
@@ -678,46 +713,3 @@ styleIconButtonContainer =
         , position relative
         ]
     ]
-
-
-styleIconButton : List (Attribute msg)
-styleIconButton =
-    [ class "IconButton"
-    , css
-        [ border zero
-        , backgroundColor transparent
-        , color Nri.Ui.Colors.V1.azure
-        , width (px 45)
-        , height (px 45) -- Matches Nri.Button.Medium height
-        , padding (px 10)
-        , cursor pointer
-
-        -- NOTE: no hover state is necessary because the tooltip appears on hover
-        , disabled
-            [ opacity (num 0.4)
-            , cursor notAllowed
-            ]
-        ]
-    ]
-
-
-styleIconLink : List Style -> Attribute msg
-styleIconLink disabledStyles =
-    css
-        ([ border zero
-         , backgroundColor transparent
-         , color Nri.Ui.Colors.V1.azure
-         , width (px 45)
-         , height (px 45) -- Matches Nri.Button.Medium height
-         , padding (px 10)
-         , cursor pointer
-         , display inlineBlock
-         , verticalAlign middle
-
-         -- NOTE: override default link hover styling, no hover state is necessary because the tooltip appears on hover
-         , hover
-            [ color Nri.Ui.Colors.V1.azure
-            ]
-         ]
-            ++ disabledStyles
-        )
