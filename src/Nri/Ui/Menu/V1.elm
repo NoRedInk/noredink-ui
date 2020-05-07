@@ -1,4 +1,4 @@
-module Nri.Menu exposing
+module Nri.Ui.Menu.V1 exposing
     ( view, Alignment(..), TitleWrapping(..)
     , iconButton
     , iconButtonWithMenu
@@ -31,18 +31,17 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Extra exposing (Snippet, classSelector, classSelectors)
 import Css.Global exposing (descendants)
-import Data.Url as Url exposing (Url)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attr
-import Html.Styled.Attributes.Extra
 import Html.Styled.Events exposing (onClick, onMouseDown)
-import Html.Styled.Extra exposing (viewJust)
-import Nri.Tooltip as Tooltip exposing (Tooltip)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Util
+import String.Extra
 
 
 
@@ -156,7 +155,7 @@ view config =
                 , Attr.id buttonId
                 , config.buttonWidth
                     |> Maybe.map (\w -> Attr.style "width" (String.fromInt w ++ "px"))
-                    |> Maybe.withDefault Html.Styled.Attributes.Extra.none
+                    |> Maybe.withDefault AttributesExtra.none
                 ]
                 [ div [ class [ ButtonInner ] ]
                     [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title, dataDescription = config.id }
@@ -315,7 +314,7 @@ iconButton config =
     in
     div [ class [ IconButtonContainer ] ]
         [ tooltip [ text config.label ]
-            |> Tooltip.view
+            |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnHover
                 , onTrigger = config.onShowTooltip
                 , isOpen = config.isTooltipOpen
@@ -331,6 +330,10 @@ iconButton config =
                         )
                         [ Svg.toHtml config.icon
                         ]
+                , extraButtonAttrs = []
+                , onTrigger = config.onShowTooltip
+                , isOpen = config.isTooltipOpen
+                , id = config.id ++ "-tooltip"
                 }
         ]
 
@@ -416,7 +419,7 @@ iconLink :
     , label : String
     , isTooltipOpen : Bool
     , onShowTooltip : Bool -> msg
-    , linkUrl : Url
+    , linkUrl : String
     , isDisabled : Bool
     }
     -> Html msg
@@ -427,11 +430,11 @@ iconLink config =
                 []
 
             else
-                [ Attr.href <| Url.toString config.linkUrl ]
+                [ Attr.href config.linkUrl ]
     in
     div [ class [ IconButtonContainer ] ]
         [ tooltip [ text config.label ]
-            |> Tooltip.view
+            |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnHover
                 , onTrigger = config.onShowTooltip
                 , isOpen = config.isTooltipOpen
@@ -442,13 +445,17 @@ iconLink config =
                             , ( Disabled, config.isDisabled ) -- `a` tags don't allow the `disabled` attribute so we have to use a class to apply disabled styles
                             ]
                          , Widget.disabled config.isDisabled
-                         , Attr.id (Util.dashify config.label)
+                         , Attr.id (String.Extra.dashify config.label)
                          , Widget.label config.label
                          ]
                             ++ perhapsHref
                         )
                         [ Svg.toHtml config.icon
                         ]
+                , extraButtonAttrs = []
+                , onTrigger = config.onShowTooltip
+                , isOpen = config.isTooltipOpen
+                , id = String.replace " " "-" config.label ++ "-tooltip"
                 }
         ]
 
