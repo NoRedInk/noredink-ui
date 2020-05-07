@@ -12,7 +12,6 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Menu.V1 as Menu
@@ -65,7 +64,20 @@ view state =
             , isDisabled = viewConfiguration.isDisabled
             , buttonWidth = viewConfiguration.buttonWidth
             , menuWidth = viewConfiguration.menuWidth
-            , entries = [ viewButtonGroup, viewCheckboxGroup state ]
+            , entries =
+                [ Menu.group "Buttons"
+                    [ Menu.entry <|
+                        ClickableText.button "Hello"
+                            [ ClickableText.onClick (ConsoleLog "Hello")
+                            , ClickableText.small
+                            ]
+                    , Menu.entry <|
+                        ClickableText.button "Performance"
+                            [ ClickableText.onClick (ConsoleLog "Performance")
+                            , ClickableText.small
+                            ]
+                    ]
+                ]
             }
         ]
     , div
@@ -83,7 +95,7 @@ view state =
             , alignment = iconButtonWithMenuConfiguration.alignment
             , isDisabled = iconButtonWithMenuConfiguration.isDisabled
             , menuWidth = iconButtonWithMenuConfiguration.menuWidth
-            , entries = [ viewButtonGroup, viewCheckboxGroup state ]
+            , entries = []
             }
         ]
     , Html.h3 [] [ Html.text "Row with buttons and menus" ]
@@ -214,7 +226,6 @@ initIconButtonWithMenuConfiguration =
 {-| -}
 type Msg
     = SetMenu (Maybe Id)
-    | SetCheckbox Bool
     | ShowTooltip String Bool
     | ConsoleLog String
     | SetViewConfiguration (Control ViewConfiguration)
@@ -228,9 +239,6 @@ update msg state =
     case msg of
         SetMenu maybeId ->
             ( { state | openMenu = maybeId }, Cmd.none )
-
-        SetCheckbox bool ->
-            ( { state | checkboxChecked = bool }, Cmd.none )
 
         ShowTooltip key isOpen ->
             ( { state
@@ -271,37 +279,6 @@ type alias Id =
 
 type alias Value =
     String
-
-
-viewButtonGroup : Menu.Entry Msg
-viewButtonGroup =
-    Menu.group "Buttons"
-        [ Menu.entry <|
-            ClickableText.button "Hello"
-                [ ClickableText.onClick (ConsoleLog "Hello")
-                , ClickableText.small
-                ]
-        , Menu.entry <|
-            ClickableText.button "Performance"
-                [ ClickableText.onClick (ConsoleLog "Hello")
-                , ClickableText.small
-                ]
-        ]
-
-
-viewCheckboxGroup : State -> Menu.Entry Msg
-viewCheckboxGroup state =
-    Menu.group "Checkboxes"
-        [ Menu.entry <|
-            Checkbox.viewWithLabel
-                { identifier = "styleguide-menu-interactable-checkbox"
-                , label = "This is an interactable checkbox!"
-                , setterMsg = SetCheckbox
-                , selected = Checkbox.selectedFromBool state.checkboxChecked
-                , disabled = False
-                , theme = Checkbox.Square
-                }
-        ]
 
 
 menuToggler : Id -> Bool -> Msg
