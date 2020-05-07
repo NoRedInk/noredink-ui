@@ -327,20 +327,6 @@ iconButton config =
             else
                 -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
                 [ onMouseDown config.onClick ]
-
-        styleIconButton =
-            [ boxSizing borderBox
-            , border zero
-            , backgroundColor transparent
-            , cursor pointer
-            , verticalAlign middle
-            , padding zero
-            , margin zero
-            , disabled
-                [ opacity (num 0.4)
-                , cursor notAllowed
-                ]
-            ]
     in
     div styleIconButtonContainer
         [ tooltip [ text config.label ]
@@ -352,7 +338,13 @@ iconButton config =
                     button
                         ([ Attributes.id config.id
                          , class "IconButton"
-                         , css styleIconButton
+                         , css
+                            (disabled
+                                [ opacity (num 0.4)
+                                , cursor notAllowed
+                                ]
+                                :: buttonLinkResets
+                            )
                          , Widget.disabled config.isDisabled
                          , Attributes.disabled config.isDisabled
                          , Widget.label config.label
@@ -457,23 +449,6 @@ iconLink config =
 
             else
                 [ Attributes.href config.linkUrl ]
-
-        styleIconLink =
-            [ boxSizing borderBox
-            , border zero
-            , backgroundColor transparent
-            , cursor pointer
-            , display inlineBlock
-            , verticalAlign middle
-            , Css.batch <|
-                if config.isDisabled then
-                    [ opacity (num 0.4)
-                    , cursor notAllowed
-                    ]
-
-                else
-                    []
-            ]
     in
     div styleIconButtonContainer
         [ tooltip [ text config.label ]
@@ -484,7 +459,17 @@ iconLink config =
                 , triggerHtml =
                     a
                         ([ class "IconLink"
-                         , css styleIconLink
+                         , css
+                            (buttonLinkResets
+                                ++ (if config.isDisabled then
+                                        [ opacity (num 0.4)
+                                        , cursor notAllowed
+                                        ]
+
+                                    else
+                                        []
+                                   )
+                            )
                          , Widget.disabled config.isDisabled
                          , Attributes.id (String.Extra.dasherize config.label)
                          , Widget.label config.label
@@ -511,6 +496,19 @@ independentIcon icon =
 
 
 -- STYLES
+
+
+buttonLinkResets : List Style
+buttonLinkResets =
+    [ boxSizing borderBox
+    , border zero
+    , padding zero
+    , margin zero
+    , backgroundColor transparent
+    , cursor pointer
+    , display inlineBlock
+    , verticalAlign middle
+    ]
 
 
 tooltip : List (Html msg) -> Tooltip msg
