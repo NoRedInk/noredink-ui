@@ -1,7 +1,11 @@
-module Nri.Ui.Html.V3 exposing (onKeyUp, defaultOptions)
+module Nri.Ui.Html.V3 exposing
+    ( viewJust, viewIf
+    , onKeyUp, defaultOptions
+    )
 
 {-|
 
+@docs viewJust, viewIf
 @docs onKeyUp, defaultOptions
 
 -}
@@ -11,6 +15,29 @@ import Html.Styled as Html exposing (Attribute, Html, span, text)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events as Events exposing (..)
 import Json.Decode
+
+
+{-| -}
+viewIf : (() -> Html msg) -> Bool -> Html msg
+viewIf view condition =
+    case condition of
+        True ->
+            view ()
+
+        False ->
+            Html.text ""
+
+
+{-| View value of if `Maybe` is a `Just`, otherwise show nothing.
+-}
+viewJust : (a -> Html msg) -> Maybe a -> Html msg
+viewJust view maybe =
+    case maybe of
+        Just whatever ->
+            view whatever
+
+        Nothing ->
+            Html.text ""
 
 
 {-| -}
