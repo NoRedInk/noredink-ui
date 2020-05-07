@@ -29,10 +29,9 @@ import Accessibility.Styled.Aria as Aria exposing (controls)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import Css.Extra exposing (Snippet, classSelector, classSelectors)
 import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attr
+import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events exposing (onClick, onMouseDown)
 import Nri.Ui.Colors.V1
 import Nri.Ui.Fonts.V1
@@ -129,35 +128,33 @@ view config =
         menuId =
             config.id ++ "-menu"
     in
-    div
-        [ class [ Container ]
-        , Attr.id config.id
-        ]
+    div (Attributes.id config.id :: styleContainer)
         [ if config.isOpen then
             div
-                [ class [ Overlay ]
-                , Attr.class "Nri-Menu-Overlay"
-                , onClick (config.onToggle False)
-                ]
+                (onClick (config.onToggle False)
+                    :: class "Nri-Menu-Overlay"
+                    :: styleOverlay
+                )
                 []
 
           else
             Html.text ""
-        , div [ class [ InnerContainer ] ]
+        , div styleInnerContainer
             [ Html.button
-                [ classList [ ( ToggleButton, True ), ( WithBorder, config.hasBorder ) ]
-                , onClick <| config.onToggle (not config.isOpen)
-                , Attr.disabled config.isDisabled
+                [ --classList [ ( ToggleButton, True ), ( WithBorder, config.hasBorder ) ]
+                  --,
+                  onClick <| config.onToggle (not config.isOpen)
+                , Attributes.disabled config.isDisabled
                 , Widget.disabled config.isDisabled
                 , Widget.hasMenuPopUp
                 , Widget.expanded config.isOpen
                 , controls menuId
-                , Attr.id buttonId
+                , Attributes.id buttonId
                 , config.buttonWidth
-                    |> Maybe.map (\w -> Attr.style "width" (String.fromInt w ++ "px"))
+                    |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
                     |> Maybe.withDefault AttributesExtra.none
                 ]
-                [ div [ class [ ButtonInner ] ]
+                [ div styleButtonInner
                     [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title, dataDescription = config.id }
                     , viewArrow { isOpen = config.isOpen }
                     ]
@@ -178,8 +175,8 @@ view config =
 viewArrow : { isOpen : Bool } -> Html msg
 viewArrow { isOpen } =
     span
-        [ Attr.classList [ ( "Arrow", True ), ( "Open", isOpen ) ]
-        , Attr.css
+        [ classList [ ( "Arrow", True ), ( "Open", isOpen ) ]
+        , css
             [ width (px 12)
             , height (px 7)
             , marginLeft (px 5)
@@ -209,25 +206,21 @@ type alias TitleConfig =
 
 viewTitle : TitleConfig -> Html msg
 viewTitle config =
-    div [ class [ Title ] ]
-        [ viewJust
-            (\icon ->
-                span [ class [ IconContainer ] ]
-                    [ Svg.toHtml icon ]
-            )
+    div styleTitle
+        [ viewJust (\icon -> span styleIconContainer [ Svg.toHtml icon ])
             config.icon
         , span
-            [ classList
-                [ ( Truncated
-                  , case config.wrapping of
-                        WrapAndExpandTitle ->
-                            False
-
-                        TruncateTitle ->
-                            True
-                  )
-                ]
-            , Attr.attribute "data-nri-description" config.dataDescription
+            [ --classList
+              --    [ ( Truncated
+              --      , case config.wrapping of
+              --            WrapAndExpandTitle ->
+              --                False
+              --            TruncateTitle ->
+              --                True
+              --      )
+              --    ]
+              --,
+              Attributes.attribute "data-nri-description" config.dataDescription
             ]
             [ Html.text config.title ]
         ]
@@ -247,18 +240,19 @@ type alias DropdownConfig msg =
 viewDropdown : DropdownConfig msg -> Html msg
 viewDropdown config =
     div
-        [ classList
-            [ ( Content, True )
-            , ( Align config.alignment, True )
-            , ( ContentVisible, config.isOpen && not config.isDisabled )
-            ]
-        , Role.menu
+        [ --classList
+          --    [ ( Content, True )
+          --    , ( Align config.alignment, True )
+          --    , ( ContentVisible, config.isOpen && not config.isDisabled )
+          --    ]
+          --,
+          Role.menu
         , Aria.labelledBy config.buttonId
-        , Attr.id config.menuId
+        , Attributes.id config.menuId
         , Widget.hidden (not config.isOpen)
         , config.menuWidth
-            |> Maybe.map (\w -> Attr.style "width" (String.fromInt w ++ "px"))
-            |> Maybe.withDefault Html.Styled.Attributes.Extra.none
+            |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
+            |> Maybe.withDefault AttributesExtra.none
         ]
         (List.map viewEntry config.entries)
 
@@ -267,11 +261,7 @@ viewEntry : Entry msg -> Html msg
 viewEntry entry_ =
     case entry_ of
         Single child ->
-            div
-                [ class [ MenuEntryContainer ]
-                , Role.menuItem
-                ]
-                [ child ]
+            div (Role.menuItem :: styleMenuEntryContainer) [ child ]
 
         Batch title childList ->
             case childList of
@@ -279,11 +269,9 @@ viewEntry entry_ =
                     Html.text ""
 
                 _ ->
-                    fieldset [ class [ GroupContainer ] ] <|
-                        legend [ class [ GroupTitle ] ]
-                            [ span [ class [ GroupTitleText ] ]
-                                [ Html.text title ]
-                            ]
+                    fieldset styleGroupContainer <|
+                        legend styleGroupTitle
+                            [ span styleGroupTitleText [ Html.text title ] ]
                             :: List.map viewEntry childList
 
         None ->
@@ -312,7 +300,7 @@ iconButton config =
                 -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
                 [ onMouseDown config.onClick ]
     in
-    div [ class [ IconButtonContainer ] ]
+    div styleIconButtonContainer
         [ tooltip [ text config.label ]
             |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnHover
@@ -320,19 +308,17 @@ iconButton config =
                 , isOpen = config.isTooltipOpen
                 , triggerHtml =
                     button
-                        ([ class [ IconButton ]
-                         , Attr.id config.id
+                        ([ Attributes.id config.id
                          , Widget.disabled config.isDisabled
-                         , Attr.disabled config.isDisabled
+                         , Attributes.disabled config.isDisabled
                          , Widget.label config.label
                          ]
+                            ++ styleIconButton
                             ++ perhapsOnclick
                         )
                         [ Svg.toHtml config.icon
                         ]
                 , extraButtonAttrs = []
-                , onTrigger = config.onShowTooltip
-                , isOpen = config.isTooltipOpen
                 , id = config.id ++ "-tooltip"
                 }
         ]
@@ -375,21 +361,18 @@ iconButtonWithMenu config =
         menuId =
             config.id ++ "-menu"
     in
-    div
-        [ class [ Container ]
-        , Attr.id config.id
-        ]
+    div (Attributes.id config.id :: styleContainer)
         [ if config.isOpen then
             div
-                [ class [ Overlay ]
-                , Attr.class "Nri-Menu-Overlay"
-                , onClick (config.onToggle False)
-                ]
+                (onClick (config.onToggle False)
+                    :: Attributes.class "Nri-Menu-Overlay"
+                    :: styleOverlay
+                )
                 []
 
           else
             Html.text ""
-        , div [ class [ InnerContainer ] ]
+        , div styleInnerContainer
             [ iconButton
                 { icon = config.icon
                 , isDisabled = config.isDisabled
@@ -430,9 +413,9 @@ iconLink config =
                 []
 
             else
-                [ Attr.href config.linkUrl ]
+                [ Attributes.href config.linkUrl ]
     in
-    div [ class [ IconButtonContainer ] ]
+    div styleIconButtonContainer
         [ tooltip [ text config.label ]
             |> Tooltip.primaryLabel
                 { trigger = Tooltip.OnHover
@@ -440,12 +423,13 @@ iconLink config =
                 , isOpen = config.isTooltipOpen
                 , triggerHtml =
                     a
-                        ([ classList
-                            [ ( IconLink, True )
-                            , ( Disabled, config.isDisabled ) -- `a` tags don't allow the `disabled` attribute so we have to use a class to apply disabled styles
-                            ]
-                         , Widget.disabled config.isDisabled
-                         , Attr.id (String.Extra.dashify config.label)
+                        ([ --   classList
+                           --   [ ( IconLink, True )
+                           --   , ( Disabled, config.isDisabled ) -- `a` tags don't allow the `disabled` attribute so we have to use a class to apply disabled styles
+                           --   ]
+                           --,
+                           Widget.disabled config.isDisabled
+                         , Attributes.id (String.Extra.dasherize config.label)
                          , Widget.label config.label
                          ]
                             ++ perhapsHref
@@ -453,8 +437,6 @@ iconLink config =
                         [ Svg.toHtml config.icon
                         ]
                 , extraButtonAttrs = []
-                , onTrigger = config.onShowTooltip
-                , isOpen = config.isTooltipOpen
                 , id = String.replace " " "-" config.label ++ "-tooltip"
                 }
         ]
@@ -472,36 +454,20 @@ tooltip =
         >> Tooltip.withPadding Tooltip.SmallPadding
 
 
-type CssClass
-    = ToggleButton
-    | ButtonInner
-    | IconContainer
-    | Content
-    | Container
-    | WithBorder
-    | Align Alignment
-    | Title
-    | Truncated
-    | ContentVisible
-    | MenuEntryContainer
-    | GroupContainer
-    | GroupTitle
-    | GroupTitleText
-    | Overlay
-    | InnerContainer
-    | IconButtonContainer
-    | IconButton
-    | IconLink
-    | Disabled
-
-
 {-| -}
-snippets : List (Snippet CssClass)
-snippets =
-    [ classSelector InnerContainer
+styleInnerContainer : List (Attribute msg)
+styleInnerContainer =
+    [ class "InnerContainer"
+    , css
         [ position relative
         ]
-    , classSelector Overlay
+    ]
+
+
+styleOverlay : List (Attribute msg)
+styleOverlay =
+    [ class "Overlay"
+    , css
         [ position fixed
         , width (pct 100)
         , height (pct 100)
@@ -509,7 +475,13 @@ snippets =
         , top zero
         , zIndex (int 1)
         ]
-    , classSelector MenuEntryContainer
+    ]
+
+
+styleMenuEntryContainer : List (Attribute msg)
+styleMenuEntryContainer =
+    [ class "MenuEntryContainer"
+    , css
         [ padding2 (px 5) zero
         , position relative
         , firstChild
@@ -517,18 +489,36 @@ snippets =
         , lastChild
             [ paddingBottom zero ]
         ]
-    , classSelector Title
+    ]
+
+
+styleTitle : List (Attribute msg)
+styleTitle =
+    [ class "Title"
+    , css
         [ width (pct 100)
         , overflow hidden
         , Css.displayFlex
         , Css.alignItems Css.center
         ]
-    , classSelector Truncated
+    ]
+
+
+styleTruncated : List (Attribute msg)
+styleTruncated =
+    [ class "Truncated"
+    , css
         [ whiteSpace noWrap
         , overflow hidden
         , textOverflow ellipsis
         ]
-    , classSelector GroupTitle
+    ]
+
+
+styleGroupTitle : List (Attribute msg)
+styleGroupTitle =
+    [ class "GroupTitle"
+    , css
         [ Nri.Ui.Fonts.V1.baseFont
         , fontSize (px 12)
         , color Nri.Ui.Colors.V1.gray45
@@ -548,21 +538,39 @@ snippets =
             , position absolute
             ]
         ]
-    , classSelector GroupTitleText
+    ]
+
+
+styleGroupTitleText : List (Attribute msg)
+styleGroupTitleText =
+    [ class "GroupTitleText"
+    , css
         [ backgroundColor Nri.Ui.Colors.V1.white
         , marginLeft (px 22)
         , padding2 zero (px 5)
         , zIndex (int 2)
         , position relative
         ]
-    , classSelector GroupContainer
+    ]
+
+
+styleGroupContainer : List (Attribute msg)
+styleGroupContainer =
+    [ class "GroupContainer"
+    , css
         [ margin zero
         , padding zero
         , paddingBottom (px 15)
         , lastChild
             [ paddingBottom zero ]
         ]
-    , classSelector ToggleButton
+    ]
+
+
+styleToggleButton : List (Attribute msg)
+styleToggleButton =
+    [ class "ToggleButton"
+    , css
         [ Nri.Ui.Fonts.V1.baseFont
         , fontSize (px 15)
         , color Nri.Ui.Colors.V1.azure
@@ -578,25 +586,46 @@ snippets =
             , cursor notAllowed
             ]
         ]
-    , classSelectors [ ToggleButton, WithBorder ]
-        [ border3 (px 1) solid Nri.Ui.Colors.V1.gray75
-        , borderBottom3 (px 3) solid Nri.Ui.Colors.V1.gray75
-        , borderRadius (px 8)
-        , padding2 (px 10) (px 15)
-        ]
-    , classSelector ButtonInner
+    ]
+
+
+
+--, classSelectors [ ToggleButton, WithBorder ]
+--    [ border3 (px 1) solid Nri.Ui.Colors.V1.gray75
+--    , borderBottom3 (px 3) solid Nri.Ui.Colors.V1.gray75
+--    , borderRadius (px 8)
+--    , padding2 (px 10) (px 15)
+--    ]
+
+
+styleButtonInner : List (Attribute msg)
+styleButtonInner =
+    [ class "ButtonInner"
+    , css
         [ Css.displayFlex
         , Css.justifyContent Css.spaceBetween
         , Css.alignItems Css.center
         ]
-    , classSelector IconContainer
+    ]
+
+
+styleIconContainer : List (Attribute msg)
+styleIconContainer =
+    [ class "IconContainer"
+    , css
         [ width (px 21)
         , height (px 21)
         , marginRight (px 5)
         , display inlineBlock
         , Css.flexShrink (Css.num 0)
         ]
-    , classSelector Content
+    ]
+
+
+styleContent : List (Attribute msg)
+styleContent =
+    [ class "Content"
+    , css
         [ padding (px 25)
         , border3 (px 1) solid Nri.Ui.Colors.V1.azure
         , minWidth (px 202)
@@ -624,27 +653,48 @@ snippets =
             , borderBottomColor Nri.Ui.Colors.V1.white
             ]
         ]
-    , classSelectors [ Content, Align Left ]
-        [ left zero
-        , before [ left (px 19) ]
-        , after [ left (px 20) ]
-        ]
-    , classSelectors [ Content, Align Right ]
-        [ right zero
-        , before [ right (px 19) ]
-        , after [ right (px 20) ]
-        ]
-    , classSelectors [ Content, ContentVisible ]
-        [ display block ]
-    , classSelector Container
+    ]
+
+
+
+--, classSelectors [ Content, Align Left ]
+--    [ left zero
+--    , before [ left (px 19) ]
+--    , after [ left (px 20) ]
+--    ]
+--, classSelectors [ Content, Align Right ]
+--    [ right zero
+--    , before [ right (px 19) ]
+--    , after [ right (px 20) ]
+--    ]
+--, classSelectors [ Content, ContentVisible ]
+--    [ display block ]
+
+
+styleContainer : List (Attribute msg)
+styleContainer =
+    [ class "Container"
+    , css
         [ position relative
         , display inlineBlock
         ]
-    , classSelector IconButtonContainer
+    ]
+
+
+styleIconButtonContainer : List (Attribute msg)
+styleIconButtonContainer =
+    [ class "IconButtonContainer"
+    , css
         [ display inlineBlock
         , position relative
         ]
-    , classSelector IconButton
+    ]
+
+
+styleIconButton : List (Attribute msg)
+styleIconButton =
+    [ class "IconButton"
+    , css
         [ border zero
         , backgroundColor transparent
         , color Nri.Ui.Colors.V1.azure
@@ -659,7 +709,13 @@ snippets =
             , cursor notAllowed
             ]
         ]
-    , classSelector IconLink
+    ]
+
+
+styleIconLink : List (Attribute msg)
+styleIconLink =
+    [ class "IconLink"
+    , css
         [ border zero
         , backgroundColor transparent
         , color Nri.Ui.Colors.V1.azure
@@ -675,20 +731,11 @@ snippets =
             [ color Nri.Ui.Colors.V1.azure
             ]
         ]
-    , classSelectors [ IconLink, Disabled ]
-        [ opacity (num 0.4)
-        , cursor notAllowed
-        ]
     ]
 
 
-{-| -}
-class : List CssClass -> Html.Attribute msg
-class =
-    Css.Extra.class snippets
 
-
-{-| -}
-classList : List ( CssClass, Bool ) -> Html.Attribute msg
-classList =
-    Css.Extra.classList snippets
+--, classSelectors [ IconLink, Disabled ]
+--    [ opacity (num 0.4)
+--    , cursor notAllowed
+--    ]
