@@ -141,9 +141,34 @@ view config =
             Html.text ""
         , div styleInnerContainer
             [ Html.button
-                [ --classList [ ( ToggleButton, True ), ( WithBorder, config.hasBorder ) ]
-                  --,
-                  onClick <| config.onToggle (not config.isOpen)
+                [ classList [ ( "ToggleButton", True ), ( "WithBorder", config.hasBorder ) ]
+                , css
+                    [ Nri.Ui.Fonts.V1.baseFont
+                    , fontSize (px 15)
+                    , color Nri.Ui.Colors.V1.azure
+                    , backgroundColor Nri.Ui.Colors.V1.white
+                    , border zero
+                    , padding (px 4)
+                    , textAlign left
+                    , height (pct 100)
+                    , fontWeight (int 600)
+                    , cursor pointer
+                    , disabled
+                        [ opacity (num 0.4)
+                        , cursor notAllowed
+                        ]
+                    , Css.batch <|
+                        if config.hasBorder then
+                            [ border3 (px 1) solid Nri.Ui.Colors.V1.gray75
+                            , borderBottom3 (px 3) solid Nri.Ui.Colors.V1.gray75
+                            , borderRadius (px 8)
+                            , padding2 (px 10) (px 15)
+                            ]
+
+                        else
+                            []
+                    ]
+                , onClick <| config.onToggle (not config.isOpen)
                 , Attributes.disabled config.isDisabled
                 , Widget.disabled config.isDisabled
                 , Widget.hasMenuPopUp
@@ -151,6 +176,7 @@ view config =
                 , controls menuId
                 , Attributes.id buttonId
                 , config.buttonWidth
+                    -- TODO: don't set this value as an inline style unnecessarily
                     |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
                     |> Maybe.withDefault AttributesExtra.none
                 ]
@@ -210,18 +236,19 @@ viewTitle config =
         [ viewJust (\icon -> span styleIconContainer [ Svg.toHtml icon ])
             config.icon
         , span
-            [ --classList
-              --    [ ( Truncated
-              --      , case config.wrapping of
-              --            WrapAndExpandTitle ->
-              --                False
-              --            TruncateTitle ->
-              --                True
-              --      )
-              --    ]
-              --,
-              Attributes.attribute "data-nri-description" config.dataDescription
-            ]
+            (case config.wrapping of
+                WrapAndExpandTitle ->
+                    [ Attributes.attribute "data-nri-description" config.dataDescription ]
+
+                TruncateTitle ->
+                    [ class "Truncated"
+                    , css
+                        [ whiteSpace noWrap
+                        , overflow hidden
+                        , textOverflow ellipsis
+                        ]
+                    ]
+            )
             [ Html.text config.title ]
         ]
 
@@ -239,18 +266,19 @@ type alias DropdownConfig msg =
 
 viewDropdown : DropdownConfig msg -> Html msg
 viewDropdown config =
+    let
+        contentVisible =
+            config.isOpen && not config.isDisabled
+    in
     div
-        [ --classList
-          --    [ ( Content, True )
-          --    , ( Align config.alignment, True )
-          --    , ( ContentVisible, config.isOpen && not config.isDisabled )
-          --    ]
-          --,
-          Role.menu
+        [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
+        , styleContent contentVisible config.alignment
+        , Role.menu
         , Aria.labelledBy config.buttonId
         , Attributes.id config.menuId
         , Widget.hidden (not config.isOpen)
         , config.menuWidth
+            -- TODO: don't set this style inline unnecessarily
             |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
             |> Maybe.withDefault AttributesExtra.none
         ]
@@ -423,12 +451,16 @@ iconLink config =
                 , isOpen = config.isTooltipOpen
                 , triggerHtml =
                     a
-                        ([ --   classList
-                           --   [ ( IconLink, True )
-                           --   , ( Disabled, config.isDisabled ) -- `a` tags don't allow the `disabled` attribute so we have to use a class to apply disabled styles
-                           --   ]
-                           --,
-                           Widget.disabled config.isDisabled
+                        ([ class "IconLink"
+                         , styleIconLink <|
+                            if config.isDisabled then
+                                [ opacity (num 0.4)
+                                , cursor notAllowed
+                                ]
+
+                            else
+                                []
+                         , Widget.disabled config.isDisabled
                          , Attributes.id (String.Extra.dasherize config.label)
                          , Widget.label config.label
                          ]
@@ -458,9 +490,7 @@ tooltip =
 styleInnerContainer : List (Attribute msg)
 styleInnerContainer =
     [ class "InnerContainer"
-    , css
-        [ position relative
-        ]
+    , css [ position relative ]
     ]
 
 
@@ -500,17 +530,6 @@ styleTitle =
         , overflow hidden
         , Css.displayFlex
         , Css.alignItems Css.center
-        ]
-    ]
-
-
-styleTruncated : List (Attribute msg)
-styleTruncated =
-    [ class "Truncated"
-    , css
-        [ whiteSpace noWrap
-        , overflow hidden
-        , textOverflow ellipsis
         ]
     ]
 
@@ -567,37 +586,6 @@ styleGroupContainer =
     ]
 
 
-styleToggleButton : List (Attribute msg)
-styleToggleButton =
-    [ class "ToggleButton"
-    , css
-        [ Nri.Ui.Fonts.V1.baseFont
-        , fontSize (px 15)
-        , color Nri.Ui.Colors.V1.azure
-        , backgroundColor Nri.Ui.Colors.V1.white
-        , border zero
-        , padding (px 4)
-        , textAlign left
-        , height (pct 100)
-        , fontWeight (int 600)
-        , cursor pointer
-        , disabled
-            [ opacity (num 0.4)
-            , cursor notAllowed
-            ]
-        ]
-    ]
-
-
-
---, classSelectors [ ToggleButton, WithBorder ]
---    [ border3 (px 1) solid Nri.Ui.Colors.V1.gray75
---    , borderBottom3 (px 3) solid Nri.Ui.Colors.V1.gray75
---    , borderRadius (px 8)
---    , padding2 (px 10) (px 15)
---    ]
-
-
 styleButtonInner : List (Attribute msg)
 styleButtonInner =
     [ class "ButtonInner"
@@ -622,10 +610,9 @@ styleIconContainer =
     ]
 
 
-styleContent : List (Attribute msg)
-styleContent =
-    [ class "Content"
-    , css
+styleContent : Bool -> Alignment -> Attribute msg
+styleContent contentVisible alignment =
+    css
         [ padding (px 25)
         , border3 (px 1) solid Nri.Ui.Colors.V1.azure
         , minWidth (px 202)
@@ -634,7 +621,6 @@ styleContent =
         , marginTop (px 10)
         , zIndex (int 2)
         , backgroundColor Nri.Ui.Colors.V1.white
-        , display Css.none
         , listStyle Css.none
         , zIndex (int 2)
         , before
@@ -652,23 +638,26 @@ styleContent =
             , border3 (px 5) solid transparent
             , borderBottomColor Nri.Ui.Colors.V1.white
             ]
+        , case alignment of
+            Left ->
+                Css.batch
+                    [ left zero
+                    , before [ left (px 19) ]
+                    , after [ left (px 20) ]
+                    ]
+
+            Right ->
+                Css.batch
+                    [ right zero
+                    , before [ right (px 19) ]
+                    , after [ right (px 20) ]
+                    ]
+        , if contentVisible then
+            display block
+
+          else
+            display Css.none
         ]
-    ]
-
-
-
---, classSelectors [ Content, Align Left ]
---    [ left zero
---    , before [ left (px 19) ]
---    , after [ left (px 20) ]
---    ]
---, classSelectors [ Content, Align Right ]
---    [ right zero
---    , before [ right (px 19) ]
---    , after [ right (px 20) ]
---    ]
---, classSelectors [ Content, ContentVisible ]
---    [ display block ]
 
 
 styleContainer : List (Attribute msg)
@@ -712,30 +701,23 @@ styleIconButton =
     ]
 
 
-styleIconLink : List (Attribute msg)
-styleIconLink =
-    [ class "IconLink"
-    , css
-        [ border zero
-        , backgroundColor transparent
-        , color Nri.Ui.Colors.V1.azure
-        , width (px 45)
-        , height (px 45) -- Matches Nri.Button.Medium height
-        , padding (px 10)
-        , cursor pointer
-        , display inlineBlock
-        , verticalAlign middle
+styleIconLink : List Style -> Attribute msg
+styleIconLink disabledStyles =
+    css
+        ([ border zero
+         , backgroundColor transparent
+         , color Nri.Ui.Colors.V1.azure
+         , width (px 45)
+         , height (px 45) -- Matches Nri.Button.Medium height
+         , padding (px 10)
+         , cursor pointer
+         , display inlineBlock
+         , verticalAlign middle
 
-        -- NOTE: override default link hover styling, no hover state is necessary because the tooltip appears on hover
-        , hover
+         -- NOTE: override default link hover styling, no hover state is necessary because the tooltip appears on hover
+         , hover
             [ color Nri.Ui.Colors.V1.azure
             ]
-        ]
-    ]
-
-
-
---, classSelectors [ IconLink, Disabled ]
---    [ opacity (num 0.4)
---    , cursor notAllowed
---    ]
+         ]
+            ++ disabledStyles
+        )
