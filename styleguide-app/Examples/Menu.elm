@@ -52,8 +52,7 @@ view state =
     in
     [ div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
         [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.view" ]
-        , Control.view SetViewConfiguration state.viewConfiguration
-            |> fromUnstyled
+        , viewControl SetViewConfiguration state.viewConfiguration
         , Menu.view
             { isOpen = isOpen "1stPeriodEnglish"
             , onToggle = menuToggler "1stPeriodEnglish"
@@ -66,17 +65,13 @@ view state =
             , isDisabled = viewConfiguration.isDisabled
             , buttonWidth = viewConfiguration.buttonWidth
             , menuWidth = viewConfiguration.menuWidth
-            , entries =
-                [ viewButtonGroup
-                , viewCheckboxGroup state
-                ]
+            , entries = [ viewButtonGroup, viewCheckboxGroup state ]
             }
         ]
     , div
         [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
         [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.iconButtonWithMenu" ]
-        , Control.view SetIconButtonWithMenuConfiguration state.iconButtonWithMenuConfiguration
-            |> fromUnstyled
+        , viewControl SetIconButtonWithMenuConfiguration state.iconButtonWithMenuConfiguration
         , Menu.iconButtonWithMenu
             { isTooltipOpen = Set.member "iconButtonWithMenu" state.openTooltips
             , onShowTooltip = ShowTooltip "iconButtonWithMenu"
@@ -88,10 +83,7 @@ view state =
             , alignment = iconButtonWithMenuConfiguration.alignment
             , isDisabled = iconButtonWithMenuConfiguration.isDisabled
             , menuWidth = iconButtonWithMenuConfiguration.menuWidth
-            , entries =
-                [ viewButtonGroup
-                , viewCheckboxGroup state
-                ]
+            , entries = [ viewButtonGroup, viewCheckboxGroup state ]
             }
         ]
     , Html.h3 [] [ Html.text "Row with buttons and menus" ]
@@ -115,6 +107,15 @@ view state =
             }
         ]
     ]
+
+
+viewControl : (Control a -> Msg) -> Control a -> Html Msg
+viewControl setControl control =
+    code
+        [ css [ Css.minWidth (Css.px 300), Css.marginRight (Css.px 20) ] ]
+        [ Control.view setControl control
+            |> fromUnstyled
+        ]
 
 
 {-| -}
