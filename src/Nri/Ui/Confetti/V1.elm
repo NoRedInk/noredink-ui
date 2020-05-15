@@ -139,7 +139,17 @@ viewConfetti particle =
 -- UPDATE
 
 
-{-| -}
+{-| `burst` BURSTS CONFETTI!!! Pass in a list of words that you'd like to have
+in the confetti:
+
+    Confetti.burst
+        [ { color = Colors.highlightMagenta, text = "tree" }
+        , { color = Colors.highlightGreen, text = "bush" }
+        , { color = Colors.highlightCyan, text = "succulent" }
+        ]
+        state.confetti
+
+-}
 burst : List { color : Color, text : String } -> Model -> Model
 burst highlightedWords (System system center) =
     System
