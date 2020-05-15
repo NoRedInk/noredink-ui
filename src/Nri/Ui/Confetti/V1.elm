@@ -1,14 +1,20 @@
 module Nri.Ui.Confetti.V1 exposing
-    ( Confetti
-    , Msg
-    , System
-    , burst
-    , init
-    , particleSystem
-    , update
-    , updateCenter
+    ( System, init
+    , Msg, burst, update, updateCenter
     , view
+    , Confetti
+    , particleSystem
     )
+
+{-|
+
+@docs System, init
+@docs Msg, burst, update, updateCenter
+@docs view
+@docs Confetti
+@docs particleSystem
+
+-}
 
 import Css exposing (Color)
 import Html.Styled as Html
@@ -21,6 +27,7 @@ import Random.Extra
 import Random.Float exposing (normal)
 
 
+{-| -}
 type Confetti
     = Word
         { color : Color
@@ -34,14 +41,17 @@ type Confetti
         }
 
 
+{-| -}
 type System
     = System (ParticleSystem.System Confetti) Float
 
 
+{-| -}
 type alias Msg =
     ParticleSystem.Msg Confetti
 
 
+{-| -}
 init : Float -> System
 init center =
     System
@@ -49,6 +59,7 @@ init center =
         center
 
 
+{-| -}
 burst : List { color : Color, text : String } -> System -> System
 burst highlightedWords (System system center) =
     System
@@ -148,6 +159,7 @@ particleGenerator center generator =
             )
 
 
+{-| -}
 view : System -> Html.Html msg
 view (System system _) =
     system
@@ -225,6 +237,7 @@ viewConfetti particle =
                 []
 
 
+{-| -}
 update : ParticleSystem.Msg Confetti -> System -> System
 update msg (System system center) =
     System
@@ -232,11 +245,13 @@ update msg (System system center) =
         center
 
 
+{-| -}
 updateCenter : Float -> System -> System
 updateCenter center (System system _) =
     System system center
 
 
+{-| -}
 particleSystem : System -> ParticleSystem.System Confetti
 particleSystem (System system _) =
     system
