@@ -6,6 +6,7 @@ module Examples.Confetti exposing (example, State, Msg)
 
 -}
 
+import Browser.Events
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -23,7 +24,12 @@ example =
     , categories = [ Animations ]
     , state = init
     , update = update
-    , subscriptions = \state -> Confetti.subscriptions ConfettiMsg state.confettiState
+    , subscriptions =
+        \state ->
+            Sub.batch
+                [ Browser.Events.onResize WindowResized
+                , Confetti.subscriptions ConfettiMsg state.confetti
+                ]
     , view =
         \state ->
             [ Button.button "Launch confetti!"
@@ -31,20 +37,20 @@ example =
                 , Button.small
                 , Button.secondary
                 ]
-            , Confetti.view state.confettiState
+            , Confetti.view state.confetti
             ]
     }
 
 
 {-| -}
 type alias State =
-    { confettiState : Confetti.System
+    { confetti : Confetti.System
     }
 
 
 init : State
 init =
-    { confettiState = Confetti.init 50
+    { confetti = Confetti.init 400
     }
 
 
@@ -52,6 +58,7 @@ init =
 type Msg
     = LaunchConfetti
     | ConfettiMsg Confetti.Msg
+    | WindowResized Int Int
 
 
 {-| -}
@@ -63,11 +70,16 @@ update msg state =
     in
     case msg of
         LaunchConfetti ->
-            ( { state | confettiState = Confetti.burst words state.confettiState }
+            ( { state | confetti = Confetti.burst words state.confetti }
             , Cmd.none
             )
 
         ConfettiMsg confettiMsg ->
-            ( { state | confettiState = Confetti.update confettiMsg state.confettiState }
+            ( { state | confetti = Confetti.update confettiMsg state.confetti }
+            , Cmd.none
+            )
+
+        WindowResized width _ ->
+            ( { state | confetti = Confetti.updateCenter (toFloat (width // 2)) state.confetti }
             , Cmd.none
             )
