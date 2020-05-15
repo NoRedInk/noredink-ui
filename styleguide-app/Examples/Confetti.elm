@@ -8,13 +8,15 @@ module Examples.Confetti exposing (example, State, Msg)
 
 import Browser.Events
 import Category exposing (Category(..))
-import Css
+import Css exposing (Color)
+import Dict exposing (Dict)
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V1 as Confetti
+import Nri.Ui.TextArea.V4 as TextArea
 
 
 {-| -}
@@ -32,7 +34,8 @@ example =
                 ]
     , view =
         \state ->
-            [ Button.button "Launch confetti!"
+            [ confettiWordsInput state.confettiWords
+            , Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small
                 , Button.secondary
@@ -42,15 +45,34 @@ example =
     }
 
 
+confettiWordsInput : String -> Html Msg
+confettiWordsInput confettiWords =
+    Html.div [ css [ Css.width (Css.px 600), Css.marginBottom (Css.px 10) ] ]
+        [ TextArea.writing
+            { value = confettiWords
+            , autofocus = False
+            , onInput = OnInput
+            , onBlur = Nothing
+            , isInError = False
+            , label = "Confetti Words"
+            , height = TextArea.Fixed
+            , placeholder = ""
+            , showLabel = True
+            }
+        ]
+
+
 {-| -}
 type alias State =
     { confetti : Confetti.System
+    , confettiWords : String
     }
 
 
 init : State
 init =
-    { confetti = Confetti.init 400
+    { confetti = Confetti.init 700
+    , confettiWords = "lemonade iced tea coca-cola pepsi"
     }
 
 
@@ -59,6 +81,7 @@ type Msg
     = LaunchConfetti
     | ConfettiMsg Confetti.Msg
     | WindowResized Int Int
+    | OnInput String
 
 
 {-| -}
@@ -66,7 +89,9 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     let
         words =
-            [ { color = Colors.azure, text = "Hello!" } ]
+            List.indexedMap
+                (\index word -> { color = getColor index, text = word })
+                (String.words state.confettiWords)
     in
     case msg of
         LaunchConfetti ->
@@ -83,3 +108,29 @@ update msg state =
             ( { state | confetti = Confetti.updateCenter (toFloat (width // 2)) state.confetti }
             , Cmd.none
             )
+
+        OnInput confettiWords ->
+            ( { state | confettiWords = confettiWords }
+            , Cmd.none
+            )
+
+
+getColor : Int -> Color
+getColor key =
+    let
+        dict =
+            List.indexedMap (\i c -> ( i, c ))
+                [ Colors.highlightBlue
+                , Colors.highlightBlueDark
+                , Colors.highlightCyan
+                , Colors.highlightCyanDark
+                , Colors.highlightGreen
+                , Colors.highlightGreenDark
+                , Colors.highlightMagenta
+                , Colors.highlightMagentaDark
+                , Colors.highlightYellow
+                , Colors.highlightYellowDark
+                ]
+                |> Dict.fromList
+    in
+    Maybe.withDefault Colors.highlightYellow (Dict.get key dict)
