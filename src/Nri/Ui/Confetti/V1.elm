@@ -1,5 +1,5 @@
 module Nri.Ui.Confetti.V1 exposing
-    ( System, init
+    ( Model, init
     , Msg, burst, update, updateCenter
     , view
     , subscriptions
@@ -7,7 +7,7 @@ module Nri.Ui.Confetti.V1 exposing
 
 {-|
 
-@docs System, init
+@docs Model, init
 @docs Msg, burst, update, updateCenter
 @docs view
 @docs subscriptions
@@ -40,7 +40,7 @@ type Confetti
 
 
 {-| -}
-type System
+type Model
     = System (ParticleSystem.System Confetti) Float
 
 
@@ -50,7 +50,7 @@ type alias Msg =
 
 
 {-| -}
-init : Float -> System
+init : Float -> Model
 init center =
     System
         (ParticleSystem.init (Random.initialSeed 0))
@@ -58,7 +58,7 @@ init center =
 
 
 {-| -}
-burst : List { color : Color, text : String } -> System -> System
+burst : List { color : Color, text : String } -> Model -> Model
 burst highlightedWords (System system center) =
     System
         (ParticleSystem.burst (particlesGenerator center highlightedWords) system)
@@ -158,7 +158,7 @@ particleGenerator center generator =
 
 
 {-| -}
-view : System -> Html.Html msg
+view : Model -> Html.Html msg
 view (System system _) =
     system
         |> ParticleSystem.viewCustom viewConfetti
@@ -236,7 +236,7 @@ viewConfetti particle =
 
 
 {-| -}
-update : ParticleSystem.Msg Confetti -> System -> System
+update : ParticleSystem.Msg Confetti -> Model -> Model
 update msg (System system center) =
     System
         (ParticleSystem.update msg system)
@@ -244,12 +244,12 @@ update msg (System system center) =
 
 
 {-| -}
-updateCenter : Float -> System -> System
+updateCenter : Float -> Model -> Model
 updateCenter center (System system _) =
     System system center
 
 
 {-| -}
-subscriptions : (Msg -> msg) -> System -> Sub msg
+subscriptions : (Msg -> msg) -> Model -> Sub msg
 subscriptions confettiMsg (System system _) =
     ParticleSystem.sub [] confettiMsg system

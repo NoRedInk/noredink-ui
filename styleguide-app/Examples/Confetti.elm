@@ -64,7 +64,7 @@ confettiWordsInput confettiWords =
 
 {-| -}
 type alias State =
-    { confetti : Confetti.System
+    { confetti : Confetti.Model
     , confettiWords : String
     }
 
