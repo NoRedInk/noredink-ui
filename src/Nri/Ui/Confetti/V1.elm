@@ -2,7 +2,6 @@ module Nri.Ui.Confetti.V1 exposing
     ( System, init
     , Msg, burst, update, updateCenter
     , view
-    , Confetti
     , subscriptions
     )
 
@@ -11,7 +10,6 @@ module Nri.Ui.Confetti.V1 exposing
 @docs System, init
 @docs Msg, burst, update, updateCenter
 @docs view
-@docs Confetti
 @docs subscriptions
 
 -}
