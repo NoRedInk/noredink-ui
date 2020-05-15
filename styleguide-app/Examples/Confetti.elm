@@ -23,7 +23,7 @@ example =
     , categories = [ Animations ]
     , state = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = \state -> Confetti.subscriptions ConfettiMsg state.confettiState
     , view =
         \state ->
             [ Button.button "Launch confetti!"

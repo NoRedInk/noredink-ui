@@ -3,7 +3,7 @@ module Nri.Ui.Confetti.V1 exposing
     , Msg, burst, update, updateCenter
     , view
     , Confetti
-    , particleSystem
+    , subscriptions
     )
 
 {-|
@@ -12,7 +12,7 @@ module Nri.Ui.Confetti.V1 exposing
 @docs Msg, burst, update, updateCenter
 @docs view
 @docs Confetti
-@docs particleSystem
+@docs subscriptions
 
 -}
 
@@ -252,6 +252,6 @@ updateCenter center (System system _) =
 
 
 {-| -}
-particleSystem : System -> ParticleSystem.System Confetti
-particleSystem (System system _) =
-    system
+subscriptions : (Msg -> msg) -> System -> Sub msg
+subscriptions confettiMsg (System system _) =
+    ParticleSystem.sub [] confettiMsg system
