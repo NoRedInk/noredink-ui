@@ -105,7 +105,7 @@ update msg state =
             )
 
         WindowResized width _ ->
-            ( { state | confetti = Confetti.updateCenter (toFloat (width // 2)) state.confetti }
+            ( { state | confetti = Confetti.updatePageWidth width state.confetti }
             , Cmd.none
             )
 

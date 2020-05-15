@@ -1,14 +1,14 @@
 module Nri.Ui.Confetti.V1 exposing
     ( Model, init
     , view
-    , Msg, burst, update, updateCenter, subscriptions
+    , Msg, burst, update, updatePageWidth, subscriptions
     )
 
 {-|
 
 @docs Model, init
 @docs view
-@docs Msg, burst, update, updateCenter, subscriptions
+@docs Msg, burst, update, updatePageWidth, subscriptions
 
 -}
 
@@ -257,15 +257,19 @@ type alias Msg =
 {-| -}
 update : ParticleSystem.Msg Confetti -> Model -> Model
 update msg (System system center) =
-    System
-        (ParticleSystem.update msg system)
-        center
+    System (ParticleSystem.update msg system) center
 
 
-{-| -}
-updateCenter : Float -> Model -> Model
-updateCenter center (System system _) =
-    System system center
+{-| You will need to watch for page resize events and update the confetti model
+with the new width. If you don't, your confetti will be off-center.
+
+Why is this not part of subscriptions? Your application may already be listening
+for browser resize events -- we don't want to double-up listeners unnecessarily.
+
+-}
+updatePageWidth : Int -> Model -> Model
+updatePageWidth width (System system _) =
+    System system (toFloat (width // 2))
 
 
 {-| -}
