@@ -30,7 +30,7 @@
     "browserify": "16.2.3",
     "elm": "^0.19.0-no-deps",
     "elm-format": "0.8.3",
-    "elm-test": "0.19.0-rev6",
+    "elm-test": "0.19.1",
     "elm-verify-examples": "^4.0.0",
     "request": "^2.88.0"
   },
