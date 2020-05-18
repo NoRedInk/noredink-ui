@@ -112,5 +112,12 @@ example =
                 , ( "sapling", UiIcon.sapling )
                 , ( "tree", UiIcon.tree )
                 ]
+            , IconExamples.view "Rich Text Formatting"
+                [ ( "bold", UiIcon.bold )
+                , ( "italic", UiIcon.italic )
+                , ( "underline", UiIcon.underline )
+                , ( "list", UiIcon.list )
+                , ( "undo", UiIcon.undo )
+                ]
             ]
     }
