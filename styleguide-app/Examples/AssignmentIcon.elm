@@ -57,6 +57,7 @@ example =
                 [ ( "assessment", AssignmentIcon.assessment )
                 , ( "practice2", AssignmentIcon.practice2 )
                 , ( "standards", AssignmentIcon.standards )
+                , ( "writing", AssignmentIcon.writing )
                 ]
             ]
     }
