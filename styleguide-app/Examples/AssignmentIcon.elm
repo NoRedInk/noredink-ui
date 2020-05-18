@@ -53,5 +53,8 @@ example =
                 [ ( "startPrimary", AssignmentIcon.startPrimary )
                 , ( "startSecondary", AssignmentIcon.startSecondary )
                 ]
+            , IconExamples.view "Browse & Assign"
+                [ ( "assessment", AssignmentIcon.assessment )
+                ]
             ]
     }
