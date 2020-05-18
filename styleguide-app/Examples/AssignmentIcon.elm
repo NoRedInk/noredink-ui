@@ -55,6 +55,7 @@ example =
                 ]
             , IconExamples.view "Browse & Assign"
                 [ ( "assessment", AssignmentIcon.assessment )
+                , ( "practice2", AssignmentIcon.practice2 )
                 ]
             ]
     }
