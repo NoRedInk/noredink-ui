@@ -53,11 +53,14 @@ example =
                 [ ( "startPrimary", AssignmentIcon.startPrimary )
                 , ( "startSecondary", AssignmentIcon.startSecondary )
                 ]
-            , IconExamples.view "Browse & Assign"
+            , IconExamples.view "Activities"
                 [ ( "assessment", AssignmentIcon.assessment )
                 , ( "practice2", AssignmentIcon.practice2 )
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )
+                ]
+            , IconExamples.view "Practice & Assessment"
+                [ ( "assign-arrow", AssignmentIcon.assignArrow )
                 ]
             ]
     }

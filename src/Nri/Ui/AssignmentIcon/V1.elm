@@ -4,7 +4,7 @@ module Nri.Ui.AssignmentIcon.V1 exposing
     , selfReview
     , peerReview, submitting, rating, revising
     , startPrimary, startSecondary
-    , assessment, practice2, standards, writing
+    , assessment, assignArrow, practice2, standards, writing
     )
 
 {-|
@@ -368,6 +368,23 @@ writing =
                     , Svg.path [ Attributes.d "M12.35615,5.62347887 C11.6227571,5.62347887 11.0188643,5.06717606 10.9527929,4.35974648 L10.9527929,4.23207042 C10.9527929,3.46471127 11.5831143,2.83935915 12.3587929,2.83935915 L35.5155071,2.83935915 C36.5554714,2.83935915 36.9254714,3.58978169 36.9254714,4.23207042 C36.9254714,4.87435915 36.5554714,5.62347887 35.5155071,5.62347887 L12.35615,5.62347887 Z" ] []
                     ]
                 ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+assignArrow : Nri.Ui.Svg.V1.Svg
+assignArrow =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 30 30"
+        , Attributes.fill "currentcolor"
+        ]
+        [ Svg.g
+            [ Attributes.fillRule "evenodd" ]
+            [ Svg.path [ Attributes.d "M15.0153,0 L30,15 L15.0153,30.0003 L9.6972,24.6822 L9.749948,24.629449 L9.89998116,24.4794159 C10.618401,23.7609967 13.1327192,21.2466827 15.6153,18.7641 L0,18.7641 L0,11.2431 L15.6153,11.2431 L9.6972,5.3181 L15.0153,0 Z" ] []
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
