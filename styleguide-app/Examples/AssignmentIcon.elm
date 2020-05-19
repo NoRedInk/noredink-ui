@@ -66,6 +66,7 @@ example =
                 , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
                 , ( "quiz2", AssignmentIcon.quiz2 )
                 , ( "unitDiagnostic", AssignmentIcon.unitDiagnostic )
+                , ( "allLibrary", AssignmentIcon.allLibrary )
                 ]
             ]
     }
