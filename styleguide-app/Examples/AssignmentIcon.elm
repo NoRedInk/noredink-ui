@@ -60,7 +60,10 @@ example =
                 , ( "writing", AssignmentIcon.writing )
                 ]
             , IconExamples.view "Practice & Assessment"
-                [ ( "assign-arrow", AssignmentIcon.assignArrow )
+                [ ( "assignArrow", AssignmentIcon.assignArrow )
+                , ( "home", AssignmentIcon.home )
+                , ( "passageQuiz", AssignmentIcon.passageQuiz )
+                , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
                 ]
             ]
     }
