@@ -64,6 +64,8 @@ example =
                 , ( "home", AssignmentIcon.home )
                 , ( "passageQuiz", AssignmentIcon.passageQuiz )
                 , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
+                , ( "quiz2", AssignmentIcon.quiz2 )
+                , ( "unitDiagnostic", AssignmentIcon.unitDiagnostic )
                 ]
             ]
     }
