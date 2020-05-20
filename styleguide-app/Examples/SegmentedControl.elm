@@ -48,7 +48,7 @@ example =
               in
               viewFn
                 { onClick = SelectNav
-                , options = buildOptions "" options [A,B,C] [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
+                , options = buildOptions "" options [ A, B, C ] [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
                 , selected = state.selectedNav
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
@@ -57,7 +57,7 @@ example =
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewToggle
                 { onClick = Select
-                , options = buildOptions "Toggle-Only " options [One, Two,Three] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.selected
                 , width = options.width
                 }
@@ -65,7 +65,7 @@ example =
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control but don't want a default." ]
             , SegmentedControl.viewOptionalSelectToggle
                 { onClick = MaybeSelect
-                , options = buildOptions "Toggle-Only " options [Do, Re, Mi] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "Toggle-Only " options [ Do, Re, Mi ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -96,10 +96,12 @@ type ExampleOptionNav
     | B
     | C
 
+
 type ExampleOptionSelect
     = One
     | Two
     | Three
+
 
 type ExampleOptionMaybeSelect
     = Do
@@ -113,6 +115,7 @@ type alias State =
     , selected : ExampleOptionSelect
     , optionallySelected : Maybe ExampleOptionMaybeSelect
     , optionsControl : Control Options
+
     -- , optionsControlSelect
     -- , optionsControlMaybeSelect :
     }
@@ -169,10 +172,12 @@ update msg state =
             ( { state | selectedNav = id }
             , Cmd.none
             )
+
         Select id ->
             ( { state | selected = id }
             , Cmd.none
             )
+
         MaybeSelect id ->
             ( { state | optionallySelected = Just id }
             , Cmd.none
