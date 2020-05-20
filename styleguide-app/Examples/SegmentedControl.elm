@@ -61,6 +61,14 @@ example =
                 , selected = state.selected
                 , width = options.width
                 }
+            , Html.h3 [] [ Html.text "Toggle only view without a default" ]
+            , Html.p [] [ Html.text "Used when you only need the ui element and not a page control but don't want a default." ]
+            , SegmentedControl.viewOptionalSelectToggle
+                { onClick = Select
+                , options = buildOptions "Toggle-Only " options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , selected = Just state.selected
+                , width = options.width
+                }
             ]
     , categories = [ Widgets ]
     }

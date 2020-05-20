@@ -1,8 +1,8 @@
-module Nri.Ui.SegmentedControl.V8 exposing (Config, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle)
+module Nri.Ui.SegmentedControl.V8 exposing (Config, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle, viewOptionalSelectToggle)
 
 {-|
 
-@docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle
+@docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle, viewOptionalSelectToggle
 
 Changes from V7:
 
@@ -55,6 +55,18 @@ type alias ToggleConfig a msg =
     , width : Width
     }
 
+{-| Same shape as ToggleConfig but with an optional selected. This would ideally
+be the same as ToggleConfig but we as Zambonis don't have time in the ticket to
+also upgrade all existing uses of viewToggle. Katie is mentally noting this as a
+good hackday clean up but if you find it and fix it first, that's great too!
+-}
+type alias ToggleConfigWithOptionalSelection a msg =
+    { onClick : a -> msg
+    , options : List (Option a)
+    , selected : Maybe a
+    , width : Width
+    }
+
 
 {-| -}
 type alias Option a =
@@ -101,6 +113,33 @@ viewToggle config =
         (List.map
             (viewTab
                 { onClick = config.onClick
+                , selected = Just config.selected
+                , width = config.width
+                , selectedAttribute = Widget.selected True
+                , maybeToUrl = Nothing
+                }
+            )
+            config.options
+        )
+
+{-| Creates _just the toggle_ when need the ui element itself and not a page
+control. Since this element is used for a selection and not for page navigation,
+it seems reasonable to handle nothing being selected. Additionally, this feels
+like under the hood it should be radio buttons or something that denotes
+selection instead of buttons. Again, Katie is mentally noting this clean up for
+hackday but if your heart sees fit, update if you'd like!
+-}
+viewOptionalSelectToggle : ToggleConfigWithOptionalSelection a msg -> Html msg
+viewOptionalSelectToggle config =
+    tabList
+        [ css
+            [ displayFlex
+            , cursor pointer
+            ]
+        ]
+        (List.map
+            (viewTab
+                { onClick = config.onClick
                 , selected = config.selected
                 , width = config.width
                 , selectedAttribute = Widget.selected True
@@ -129,7 +168,7 @@ viewHelper maybeToUrl config =
             (List.map
                 (viewTab
                     { onClick = config.onClick
-                    , selected = config.selected
+                    , selected = Just config.selected
                     , width = config.width
                     , selectedAttribute = Aria.currentPage
                     , maybeToUrl = maybeToUrl
@@ -160,7 +199,7 @@ panelIdFor option =
 
 viewTab :
     { onClick : a -> msg
-    , selected : a
+    , selected : Maybe a
     , width : Width
     , selectedAttribute : Attribute msg
     , maybeToUrl : Maybe (a -> String)
@@ -198,7 +237,7 @@ viewTab config option =
               , Role.tab
               , css sharedTabStyles
               ]
-            , if option.value == config.selected then
+            , if (Just option.value) == config.selected then
                 [ css focusedTabStyles
                 , config.selectedAttribute
                 ]
