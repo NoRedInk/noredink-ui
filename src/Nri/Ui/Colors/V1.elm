@@ -4,7 +4,7 @@ module Nri.Ui.Colors.V1 exposing
     , blue, blueDeep
     , cornflower, cornflowerDark, cornflowerLight, cyan
     , frost
-    , gray20, gray45, gray75, gray92, gray96
+    , gray20, gray45, gray75, gray85, gray92, gray96
     , glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
     , highlightLightBlue, highlightLightMagenta, highlightLightYellow
     , highlightBlue, highlightBlueDark
@@ -36,7 +36,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs blue, blueDeep
 @docs cornflower, cornflowerDark, cornflowerLight, cyan
 @docs frost
-@docs gray20, gray45, gray75, gray92, gray96
+@docs gray20, gray45, gray75, gray85, gray92, gray96
 @docs glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
 @docs highlightLightBlue, highlightLightMagenta, highlightLightYellow
 @docs highlightBlue, highlightBlueDark
@@ -180,6 +180,13 @@ gray45 =
 gray75 : Css.Color
 gray75 =
     hex "#bfbfbf"
+
+
+{-| See <https://noredink-ui.netlify.com/#category/Colors>
+-}
+gray85 : Css.Color
+gray85 =
+    hex "#d9d9d9"
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>

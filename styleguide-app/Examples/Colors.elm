@@ -43,6 +43,7 @@ example =
             [ [ ( "gray20", Colors.gray20, "Main text" )
               , ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )
               , ( "gray75", Colors.gray75, "Border of form elements and tabs" )
+              , ( "gray85", Colors.gray85, "Alternate for divider lines and container borders" )
               , ( "gray92", Colors.gray92, "Dvdrs/rules, incomplete assmt, inactive tabs/dsbld buttons" )
               , ( "gray96", Colors.gray96, "backgrounds/alternating rows" )
               , ( "navy", Colors.navy, "Headings, indented compts, labels, tooltip bckgrnds" )
