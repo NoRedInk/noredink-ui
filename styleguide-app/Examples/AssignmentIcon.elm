@@ -59,14 +59,16 @@ example =
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )
                 ]
-            , IconExamples.view "Practice & Assessment"
+            , IconExamples.view "Navigate"
                 [ ( "assignArrow", AssignmentIcon.assignArrow )
                 , ( "home", AssignmentIcon.home )
-                , ( "passageQuiz", AssignmentIcon.passageQuiz )
+                , ( "allLibrary", AssignmentIcon.allLibrary )
+                ]
+            , IconExamples.view "Practice & Assessment"
+                [ ( "passageQuiz", AssignmentIcon.passageQuiz )
                 , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
                 , ( "quiz2", AssignmentIcon.quiz2 )
                 , ( "unitDiagnostic", AssignmentIcon.unitDiagnostic )
-                , ( "allLibrary", AssignmentIcon.allLibrary )
                 ]
             ]
     }

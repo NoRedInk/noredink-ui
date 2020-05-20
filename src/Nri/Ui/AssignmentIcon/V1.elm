@@ -14,6 +14,7 @@ module Nri.Ui.AssignmentIcon.V1 exposing
 @docs selfReview
 @docs peerReview, submitting, rating, revising
 @docs startPrimary, startSecondary
+@docs allLibrary, assessment, assignArrow, home, passageQuiz, planningDiagnostic, practice2, quiz2, standards, unitDiagnostic, writing
 
     import Html.Styled exposing (Html)
     import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
@@ -424,6 +425,7 @@ passageQuiz =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
+{-| -}
 planningDiagnostic : Nri.Ui.Svg.V1.Svg
 planningDiagnostic =
     Svg.svg
