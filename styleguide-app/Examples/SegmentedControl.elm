@@ -66,7 +66,7 @@ example =
             , SegmentedControl.viewOptionalSelectToggle
                 { onClick = Select
                 , options = buildOptions "Toggle-Only " options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
-                , selected = Just state.selected
+                , selected = state.optionallySelected
                 , width = options.width
                 }
             ]
@@ -100,6 +100,7 @@ type ExampleOption
 {-| -}
 type alias State =
     { selected : ExampleOption
+    , optionallySelected : Maybe ExampleOption
     , optionsControl : Control Options
     }
 
@@ -108,6 +109,7 @@ type alias State =
 init : State
 init =
     { selected = A
+    , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
 
@@ -148,7 +150,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         Select id ->
-            ( { state | selected = id }
+            ( { state | selected = id, optionallySelected = Just id }
             , Cmd.none
             )
 
