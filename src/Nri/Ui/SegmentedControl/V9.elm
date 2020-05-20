@@ -32,7 +32,8 @@ import Nri.Ui.Util exposing (dashify)
 
   - `onClick` : the message to produce when an option is selected (clicked) by the user
   - `options`: the list of options available
-  - `selected`: the value of the currently-selected option
+  - `selected`: the value of the currently-selected option, since this config is
+    used for page controls, something must always be selected.
   - `width`: how to size the segmented control
   - `content`: the panel content for the selected option
 
@@ -46,12 +47,19 @@ type alias Config a msg =
     }
 
 
-{-| Same shape as Config but without the content
+{-|
+
+  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `options`: the list of options available
+  - `selected`: the value of the currently-selected option, since this config is
+    used for selection, a default option is not required.
+  - `width`: how to size the segmented control
+
 -}
 type alias ToggleConfig a msg =
     { onClick : a -> msg
     , options : List (Option a)
-    , selected : a
+    , selected : Maybe a
     , width : Width
     }
 
@@ -129,7 +137,7 @@ viewHelper maybeToUrl config =
             (List.map
                 (viewTab
                     { onClick = config.onClick
-                    , selected = config.selected
+                    , selected = Just config.selected
                     , width = config.width
                     , selectedAttribute = Aria.currentPage
                     , maybeToUrl = maybeToUrl
@@ -160,7 +168,7 @@ panelIdFor option =
 
 viewTab :
     { onClick : a -> msg
-    , selected : a
+    , selected : Maybe a
     , width : Width
     , selectedAttribute : Attribute msg
     , maybeToUrl : Maybe (a -> String)
@@ -198,13 +206,17 @@ viewTab config option =
               , Role.tab
               , css sharedTabStyles
               ]
-            , if option.value == config.selected then
-                [ css focusedTabStyles
-                , config.selectedAttribute
-                ]
+            , case config.selected of
+                Just selected ->
+                    if option.value == selected then
+                        [ css focusedTabStyles
+                        , config.selectedAttribute
+                        ]
 
-              else
-                [ css unFocusedTabStyles ]
+                    else
+                        [ css unFocusedTabStyles ]
+                Nothing ->
+                    [ css unFocusedTabStyles ]
             , case config.width of
                 FitContent ->
                     []
