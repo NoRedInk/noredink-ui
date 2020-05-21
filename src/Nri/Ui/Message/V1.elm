@@ -273,6 +273,14 @@ large theme content =
         , color config.fontColor
         , displayFlex
         , alignItems center
+        , Css.Global.descendants
+            [ Css.Global.a
+                [ textDecoration none
+                , color Colors.azure
+                , borderBottom3 (px 1) solid Colors.azure
+                , visited [ color Colors.azure ]
+                ]
+            ]
         ]
         []
         [ styled div
