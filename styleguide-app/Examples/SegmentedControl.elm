@@ -55,7 +55,7 @@ example =
                 }
             , Html.h3 [] [ Html.text "Toggle only view" ]
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
-            , SegmentedControl.viewToggle
+            , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
                 , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.optionallySelected

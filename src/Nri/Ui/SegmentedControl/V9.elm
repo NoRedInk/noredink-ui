@@ -1,8 +1,8 @@
-module Nri.Ui.SegmentedControl.V9 exposing (Config, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle)
+module Nri.Ui.SegmentedControl.V9 exposing (NavConfig, Option, Width(..), view, viewSpa, SelectConfig, viewSelect)
 
 {-|
 
-@docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle
+@docs NavConfig, Option, Width, view, viewSpa, SelectConfig, viewSelect
 
 Changes from V7:
 
@@ -37,7 +37,7 @@ import Nri.Ui.Util exposing (dashify)
   - `content`: the panel content for the selected option
 
 -}
-type alias Config a msg =
+type alias NavConfig a msg =
     { onClick : a -> msg
     , options : List (Option a)
     , selected : a
@@ -46,9 +46,9 @@ type alias Config a msg =
     }
 
 
-{-| Same shape as Config but without the content
+{-| Same shape as NavConfig but without the content
 -}
-type alias ToggleConfig a msg =
+type alias SelectConfig a msg =
     { onClick : a -> msg
     , options : List (Option a)
     , selected : Maybe a
@@ -71,7 +71,7 @@ type Width
 
 
 {-| -}
-view : Config a msg -> Html msg
+view : NavConfig a msg -> Html msg
 view config =
     viewHelper Nothing config
 
@@ -83,15 +83,15 @@ and the segmented control options correspond to routes in the SPA.
 The first parameter is a function that takes a `route` and returns the URL of that route.
 
 -}
-viewSpa : (route -> String) -> Config route msg -> Html msg
+viewSpa : (route -> String) -> NavConfig route msg -> Html msg
 viewSpa toUrl config =
     viewHelper (Just toUrl) config
 
 
 {-| Creates _just the toggle_ when need the ui element itself and not a page control
 -}
-viewToggle : ToggleConfig a msg -> Html msg
-viewToggle config =
+viewSelect : SelectConfig a msg -> Html msg
+viewSelect config =
     tabList
         [ css
             [ displayFlex
@@ -111,7 +111,7 @@ viewToggle config =
         )
 
 
-viewHelper : Maybe (a -> String) -> Config a msg -> Html msg
+viewHelper : Maybe (a -> String) -> NavConfig a msg -> Html msg
 viewHelper maybeToUrl config =
     let
         selected =
