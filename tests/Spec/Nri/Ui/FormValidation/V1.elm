@@ -110,6 +110,7 @@ start =
         view model =
             let
                 formDefinition =
+                    -- TODO: try getting rid of the `field` type?
                     FormValidation.form
                         [ FormValidation.textInput True FirstName .firstName
                         , FormValidation.textInput True LastName .lastName
@@ -210,6 +211,21 @@ all =
                     |> ensureViewHasNot [ text "First name is required" ]
                     |> fillIn (TextInput.generateId "First name") "First name" ""
                     |> expectViewHasNot [ text "First name is required" ]
+
+        -- TODO: allow for TextInput.number
+        -- TODO: caller gets the validated data when submitting
+        -- TODO: error that's not for a single field
+        -- TODO: way for server errors to get added in
+        -- TODO:
+        -- TODO: radio buttons and checkboxes
+        -- TODO: handle MultiInput
+        -- TODO: handle Quill docs
+        -- TODO: don't require duplication of the string trimming in the provided validator
+        -- TODO: tooltips should work fine
+        -- TODO: dynamic form that has different fields based on partial selection
+        -- TODO: animate errors appearing and disappearing
+        -- TODO: avoid repetition of field in the validator error tags by combining validation into the FormDefinition?  Is this actually a better API?
+        -- TODO: required radio button
         ]
 
 

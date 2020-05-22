@@ -58,6 +58,7 @@ produced by any of the validated fields in your form.
 onInput :
     Validator ( field, String ) unvalidated validated
     -> unvalidated
+    -- TODO: could this just be (field, String) instead of the entire unvalidated?  That would need the FormDefinition to have the validator for each field
     -> FormState field
     -> FormState field
 onInput validator newFormData (FormState formState) =
@@ -113,12 +114,19 @@ You may want to reset the initial values of the fields at the same time,
 but you don't have to if you don't want to.
 
 -}
-reset : FormState field
+reset :
+    -- TODO: probably have this require (but ignore for now) the old FormState before publishing?
+    FormState field
 reset =
     -- NOTE: currently, reset is the same as init, but they are separate
     --       definitions because they are distinct events to the caller.
     --       It's also possible that reset and init might diverge to be slightly different in the future
     init
+
+
+
+--init : Form unvalidated field -> FormState field
+--tick : Time -> FormState field -> FormState field -- for animation
 
 
 {-| NOTE: this type internally contains functions, and thus should not be stored in your Model.
@@ -187,6 +195,7 @@ view :
     -> Validator ( field, String ) unvalidated validated
     -> FormState field
     -> unvalidated
+    --    -> (error -> Maybe field) -- TODO: consider combining this into Form?
     ->
         ({ textInput :
             field -> String -> List (TextInput.Attribute msg) -> Html msg

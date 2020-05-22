@@ -89,6 +89,12 @@ example =
                             [ TextInput.placeholder ""
                             , TextInput.css [ marginTop (px 10) ]
                             ]
+
+                        --, form.textInput Points
+                        --    "Points"
+                        --    [ TextInput.placeholder "20"
+                        --    , TextInput.number
+                        --    ]
                         , form.submitButton
                             { activeLabel = "Submit"
                             , submittingLabel = "Saving..."
@@ -167,3 +173,12 @@ validator =
         |> Verify.verify .firstName (String.Verify.notBlank ( FirstName, "First name is required" ))
         |> Verify.verify .lastName (String.Verify.notBlank ( LastName, "Last name is required" ))
         |> Verify.verify .username maybeBlank
+
+
+
+--myValidator : Validator MyUnvalidated MyError MyValidated
+--myValidator =
+--    Validator.succeed MyUnvalidated MyValidated
+--        |> Validator.string .firstName Validator.notBlank
+--        |> Validator.string .lastName Validator.notBlank
+--        |> Validator.string .username Validator.maybeNotBlank
