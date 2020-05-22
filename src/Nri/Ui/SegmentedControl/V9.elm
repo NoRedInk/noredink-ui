@@ -106,6 +106,7 @@ viewSelect config =
                 , selectedAttribute = Widget.selected True
                 , maybeToUrl = Nothing
                 }
+                Role.radio
             )
             config.options
         )
@@ -134,6 +135,7 @@ viewHelper maybeToUrl config =
                     , selectedAttribute = Aria.currentPage
                     , maybeToUrl = maybeToUrl
                     }
+                    Role.tab
                 )
                 config.options
             )
@@ -165,9 +167,10 @@ viewTab :
     , selectedAttribute : Attribute msg
     , maybeToUrl : Maybe (a -> String)
     }
+    -> Html.Styled.Attribute msg
     -> Option a
     -> Html msg
-viewTab config option =
+viewTab config ariaRole option =
     let
         idValue =
             tabIdFor option
@@ -195,7 +198,7 @@ viewTab config option =
     element
         (List.concat
             [ [ Attr.id idValue
-              , Role.tab
+              , ariaRole
               , css sharedTabStyles
               ]
             , if Just option.value == config.selected then
