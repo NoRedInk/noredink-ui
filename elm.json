@@ -25,6 +25,7 @@
         "Nri.Ui.Divider.V2",
         "Nri.Ui.Effects.V1",
         "Nri.Ui.Fonts.V1",
+        "Nri.Ui.FormValidation.V1",
         "Nri.Ui.Heading.V2",
         "Nri.Ui.Html.Attributes.V2",
         "Nri.Ui.Html.V3",
@@ -75,8 +76,11 @@
         "elm/regex": "1.0.0 <= v < 2.0.0",
         "elm/svg": "1.0.1 <= v < 2.0.0",
         "elm-community/random-extra": "3.1.0 <= v < 4.0.0",
+        "erlandsona/assoc-set": "1.1.0 <= v < 2.0.0",
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
+        "pzp1997/assoc-list": "1.0.0 <= v < 2.0.0",
         "rtfeldman/elm-css": "16.0.0 <= v < 17.0.0",
+        "stoeffel/elm-verify": "5.0.0 <= v < 6.0.0",
         "tesk9/accessible-html": "4.0.0 <= v < 5.0.0",
         "tesk9/accessible-html-with-css": "2.1.1 <= v < 3.0.0",
         "tesk9/modal": "5.0.1 <= v < 6.0.0",
@@ -84,7 +88,7 @@
         "wernerdegroot/listzipper": "3.1.1 <= v < 5.0.0"
     },
     "test-dependencies": {
-        "avh4/elm-program-test": "3.1.0 <= v < 4.0.0",
+        "avh4/elm-program-test": "3.2.0 <= v < 4.0.0",
         "elm-explorations/test": "1.2.0 <= v < 2.0.0"
     }
 }

@@ -13,6 +13,7 @@ import Examples.Confetti as Confetti
 import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
+import Examples.FormValidation as FormValidation
 import Examples.Heading as Heading
 import Examples.Icon as Icon
 import Examples.Loading as Loading
@@ -263,6 +264,25 @@ all =
             (\msg ->
                 case msg of
                     FontsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , FormValidation.example
+        |> Example.wrapMsg FormValidationMsg
+            (\msg ->
+                case msg of
+                    FormValidationMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState FormValidationState
+            (\msg ->
+                case msg of
+                    FormValidationState childState ->
                         Just childState
 
                     _ ->
@@ -721,6 +741,7 @@ type State
     | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
+    | FormValidationState FormValidation.State
     | HeadingState Heading.State
     | IconState Icon.State
     | LoadingState Loading.State
@@ -759,6 +780,7 @@ type Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
+    | FormValidationMsg FormValidation.Msg
     | HeadingMsg Heading.Msg
     | IconMsg Icon.Msg
     | LoadingMsg Loading.Msg
