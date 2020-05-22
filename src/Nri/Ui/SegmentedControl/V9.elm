@@ -99,7 +99,7 @@ viewSelect config =
             ]
         ]
         (List.map
-            (viewTab
+            (viewSegment
                 { onClick = config.onClick
                 , selected = config.selected
                 , width = config.width
@@ -128,7 +128,7 @@ viewHelper maybeToUrl config =
                 ]
             ]
             (List.map
-                (viewTab
+                (viewSegment
                     { onClick = config.onClick
                     , selected = Just config.selected
                     , width = config.width
@@ -141,7 +141,7 @@ viewHelper maybeToUrl config =
             )
         , tabPanel
             (List.filterMap identity
-                [ Maybe.map (Aria.labelledBy << tabIdFor) selected
+                [ Maybe.map (Aria.labelledBy << segmentIdFor) selected
                 , Just <| css [ paddingTop (px 10) ]
                 ]
             )
@@ -150,9 +150,9 @@ viewHelper maybeToUrl config =
         ]
 
 
-tabIdFor : Option a -> String
-tabIdFor option =
-    "Nri-Ui-SegmentedControl-Tab-" ++ dashify option.label
+segmentIdFor : Option a -> String
+segmentIdFor option =
+    "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
 
 
 panelIdFor : Option a -> String
@@ -160,7 +160,7 @@ panelIdFor option =
     "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
-viewTab :
+viewSegment :
     { onClick : a -> msg
     , selected : Maybe a
     , width : Width
@@ -170,10 +170,10 @@ viewTab :
     -> Html.Styled.Attribute msg
     -> Option a
     -> Html msg
-viewTab config ariaRole option =
+viewSegment config ariaRole option =
     let
         idValue =
-            tabIdFor option
+            segmentIdFor option
 
         element attrs children =
             case config.maybeToUrl of
@@ -199,15 +199,15 @@ viewTab config ariaRole option =
         (List.concat
             [ [ Attr.id idValue
               , ariaRole
-              , css sharedTabStyles
+              , css sharedSegmentStyles
               ]
             , if Just option.value == config.selected then
-                [ css focusedTabStyles
+                [ css focusedSegmentStyles
                 , config.selectedAttribute
                 ]
 
               else
-                [ css unFocusedTabStyles ]
+                [ css unFocusedSegmentStyles ]
             , case config.width of
                 FitContent ->
                     []
@@ -238,8 +238,8 @@ viewTab config ariaRole option =
         ]
 
 
-sharedTabStyles : List Style
-sharedTabStyles =
+sharedSegmentStyles : List Style
+sharedSegmentStyles =
     [ padding2 (px 6) (px 20)
     , height (px 45)
     , Fonts.baseFont
@@ -271,16 +271,16 @@ sharedTabStyles =
     ]
 
 
-focusedTabStyles : List Style
-focusedTabStyles =
+focusedSegmentStyles : List Style
+focusedSegmentStyles =
     [ backgroundColor Colors.glacier
     , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
     , color Colors.navy
     ]
 
 
-unFocusedTabStyles : List Style
-unFocusedTabStyles =
+unFocusedSegmentStyles : List Style
+unFocusedSegmentStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
