@@ -46,7 +46,13 @@ type alias NavConfig a msg =
     }
 
 
-{-| Same shape as NavConfig but without the content
+{-|
+
+  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `options`: the list of options available
+  - `selected`: if present, the value of the currently-selected option
+  - `width`: how to size the segmented control
+
 -}
 type alias SelectConfig a msg =
     { onClick : a -> msg
@@ -88,7 +94,8 @@ viewSpa toUrl config =
     viewHelper (Just toUrl) config
 
 
-{-| Creates _just the toggle_ when need the ui element itself and not a page control
+{-| Creates _just the segmented select_ when you need the ui element itself and
+not a page control
 -}
 viewSelect : SelectConfig a msg -> Html msg
 viewSelect config =
