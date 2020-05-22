@@ -18,7 +18,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SegmentedControl.V8 as SegmentedControl
+import Nri.Ui.SegmentedControl.V9 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -26,7 +26,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SegmentedControl.V8"
+    { name = "Nri.Ui.SegmentedControl.V9"
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
