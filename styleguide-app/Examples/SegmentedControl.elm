@@ -47,18 +47,26 @@ example =
                         SegmentedControl.view
               in
               viewFn
-                { onClick = Select
-                , options = buildOptions "" options [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
-                , selected = state.selected
+                { onClick = SelectNav
+                , options = buildOptions "" options [ A, B, C ] [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
+                , selected = state.selectedNav
                 , width = options.width
-                , content = Html.text ("[Content for " ++ Debug.toString state.selected ++ "]")
+                , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
                 }
             , Html.h3 [] [ Html.text "Toggle only view" ]
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewToggle
                 { onClick = Select
-                , options = buildOptions "Toggle-Only " options [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.selected
+                , width = options.width
+                }
+            , Html.h3 [] [ Html.text "Toggle only view without a default" ]
+            , Html.p [] [ Html.text "Used when you only need the ui element and not a page control but don't want a default." ]
+            , SegmentedControl.viewOptionalSelectToggle
+                { onClick = MaybeSelect
+                , options = buildOptions "Toggle-Only " options [ Do, Re, Mi ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , selected = state.optionallySelected
                 , width = options.width
                 }
             ]
@@ -66,8 +74,8 @@ example =
     }
 
 
-buildOptions : String -> Options -> List Svg -> List (SegmentedControl.Option ExampleOption)
-buildOptions prefix options =
+buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a)
+buildOptions prefix options selections =
     let
         buildOption option icon =
             { icon =
@@ -80,26 +88,45 @@ buildOptions prefix options =
             , value = option
             }
     in
-    List.map2 buildOption [ A, B, C ]
+    List.map2 buildOption selections
 
 
-type ExampleOption
+type ExampleOptionNav
     = A
     | B
     | C
 
 
+type ExampleOptionSelect
+    = One
+    | Two
+    | Three
+
+
+type ExampleOptionMaybeSelect
+    = Do
+    | Re
+    | Mi
+
+
 {-| -}
 type alias State =
-    { selected : ExampleOption
+    { selectedNav : ExampleOptionNav
+    , selected : ExampleOptionSelect
+    , optionallySelected : Maybe ExampleOptionMaybeSelect
     , optionsControl : Control Options
+
+    -- , optionsControlSelect
+    -- , optionsControlMaybeSelect :
     }
 
 
 {-| -}
 init : State
 init =
-    { selected = A
+    { selectedNav = A
+    , selected = One
+    , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
 
@@ -131,7 +158,9 @@ optionsControl =
 
 {-| -}
 type Msg
-    = Select ExampleOption
+    = SelectNav ExampleOptionNav
+    | Select ExampleOptionSelect
+    | MaybeSelect ExampleOptionMaybeSelect
     | ChangeOptions (Control Options)
 
 
@@ -139,8 +168,18 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
+        SelectNav id ->
+            ( { state | selectedNav = id }
+            , Cmd.none
+            )
+
         Select id ->
             ( { state | selected = id }
+            , Cmd.none
+            )
+
+        MaybeSelect id ->
+            ( { state | optionallySelected = Just id }
             , Cmd.none
             )
 
