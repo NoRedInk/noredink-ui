@@ -53,5 +53,22 @@ example =
                 [ ( "startPrimary", AssignmentIcon.startPrimary )
                 , ( "startSecondary", AssignmentIcon.startSecondary )
                 ]
+            , IconExamples.view "Activities"
+                [ ( "assessment", AssignmentIcon.assessment )
+                , ( "practice2", AssignmentIcon.practice2 )
+                , ( "standards", AssignmentIcon.standards )
+                , ( "writing", AssignmentIcon.writing )
+                ]
+            , IconExamples.view "Navigate"
+                [ ( "assignArrow", AssignmentIcon.assignArrow )
+                , ( "home", AssignmentIcon.home )
+                , ( "allLibrary", AssignmentIcon.allLibrary )
+                ]
+            , IconExamples.view "Practice & Assessment"
+                [ ( "passageQuiz", AssignmentIcon.passageQuiz )
+                , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
+                , ( "quiz2", AssignmentIcon.quiz2 )
+                , ( "unitDiagnostic", AssignmentIcon.unitDiagnostic )
+                ]
             ]
     }
