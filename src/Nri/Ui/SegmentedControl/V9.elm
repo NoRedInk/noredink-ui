@@ -1,8 +1,8 @@
-module Nri.Ui.SegmentedControl.V9 exposing (Config, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle, viewOptionalSelectToggle)
+module Nri.Ui.SegmentedControl.V9 exposing (Config, Option, Width(..), view, viewSpa, ToggleConfig, viewToggle)
 
 {-|
 
-@docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle, viewOptionalSelectToggle
+@docs Config, Option, Width, view, viewSpa, ToggleConfig, viewToggle
 
 Changes from V7:
 
@@ -51,19 +51,6 @@ type alias Config a msg =
 type alias ToggleConfig a msg =
     { onClick : a -> msg
     , options : List (Option a)
-    , selected : a
-    , width : Width
-    }
-
-
-{-| Same shape as ToggleConfig but with an optional selected. This would ideally
-be the same as ToggleConfig but we as Zambonis don't have time in the ticket to
-also upgrade all existing uses of viewToggle. Katie is mentally noting this as a
-good hackday clean up but if you find it and fix it first, that's great too!
--}
-type alias ToggleConfigWithOptionalSelection a msg =
-    { onClick : a -> msg
-    , options : List (Option a)
     , selected : Maybe a
     , width : Width
     }
@@ -105,34 +92,6 @@ viewSpa toUrl config =
 -}
 viewToggle : ToggleConfig a msg -> Html msg
 viewToggle config =
-    tabList
-        [ css
-            [ displayFlex
-            , cursor pointer
-            ]
-        ]
-        (List.map
-            (viewTab
-                { onClick = config.onClick
-                , selected = Just config.selected
-                , width = config.width
-                , selectedAttribute = Widget.selected True
-                , maybeToUrl = Nothing
-                }
-            )
-            config.options
-        )
-
-
-{-| Creates _just the toggle_ when need the ui element itself and not a page
-control. Since this element is used for a selection and not for page navigation,
-it seems reasonable to handle nothing being selected. Additionally, this feels
-like under the hood it should be radio buttons or something that denotes
-selection instead of buttons. Again, Katie is mentally noting this clean up for
-hackday but if your heart sees fit, update if you'd like!
--}
-viewOptionalSelectToggle : ToggleConfigWithOptionalSelection a msg -> Html msg
-viewOptionalSelectToggle config =
     tabList
         [ css
             [ displayFlex

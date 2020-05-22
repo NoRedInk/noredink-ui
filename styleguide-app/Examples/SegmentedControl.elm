@@ -56,16 +56,8 @@ example =
             , Html.h3 [] [ Html.text "Toggle only view" ]
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewToggle
-                { onClick = Select
-                , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
-                , selected = state.selected
-                , width = options.width
-                }
-            , Html.h3 [] [ Html.text "Toggle only view without a default" ]
-            , Html.p [] [ Html.text "Used when you only need the ui element and not a page control but don't want a default." ]
-            , SegmentedControl.viewOptionalSelectToggle
                 { onClick = MaybeSelect
-                , options = buildOptions "Toggle-Only " options [ Do, Re, Mi ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -103,21 +95,11 @@ type ExampleOptionSelect
     | Three
 
 
-type ExampleOptionMaybeSelect
-    = Do
-    | Re
-    | Mi
-
-
 {-| -}
 type alias State =
     { selectedNav : ExampleOptionNav
-    , selected : ExampleOptionSelect
-    , optionallySelected : Maybe ExampleOptionMaybeSelect
+    , optionallySelected : Maybe ExampleOptionSelect
     , optionsControl : Control Options
-
-    -- , optionsControlSelect
-    -- , optionsControlMaybeSelect :
     }
 
 
@@ -125,7 +107,6 @@ type alias State =
 init : State
 init =
     { selectedNav = A
-    , selected = One
     , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
@@ -159,8 +140,7 @@ optionsControl =
 {-| -}
 type Msg
     = SelectNav ExampleOptionNav
-    | Select ExampleOptionSelect
-    | MaybeSelect ExampleOptionMaybeSelect
+    | MaybeSelect ExampleOptionSelect
     | ChangeOptions (Control Options)
 
 
@@ -170,11 +150,6 @@ update msg state =
     case msg of
         SelectNav id ->
             ( { state | selectedNav = id }
-            , Cmd.none
-            )
-
-        Select id ->
-            ( { state | selected = id }
             , Cmd.none
             )
 
