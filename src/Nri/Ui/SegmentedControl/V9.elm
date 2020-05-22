@@ -92,7 +92,7 @@ viewSpa toUrl config =
 -}
 viewSelect : SelectConfig a msg -> Html msg
 viewSelect config =
-    tabList
+    div
         [ css
             [ displayFlex
             , cursor pointer
