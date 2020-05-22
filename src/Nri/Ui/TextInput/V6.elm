@@ -391,12 +391,25 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case errorMessage_ of
-            Just m ->
-                Message.tiny Message.Error (Message.Plain m)
+        , let
+            ( errorHtml, styles ) =
+                case errorMessage_ of
+                    Just m ->
+                        ( Message.tiny Message.Error (Message.Plain m)
+                        , [ Css.maxHeight (Css.em 2) ]
+                        )
 
-            Nothing ->
-                Html.text ""
+                    Nothing ->
+                        ( Html.text ""
+                        , [ Css.maxHeight Css.zero ]
+                        )
+          in
+          styled div
+            (styles
+                ++ [ Css.property "transition" "max-height 0.2s" ]
+            )
+            []
+            [ errorHtml ]
         ]
 
 
