@@ -9,6 +9,7 @@ import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
+import Examples.Confetti as Confetti
 import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
@@ -187,6 +188,25 @@ all =
             (\msg ->
                 case msg of
                     ColorsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Confetti.example
+        |> Example.wrapMsg ConfettiMsg
+            (\msg ->
+                case msg of
+                    ConfettiMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState ConfettiState
+            (\msg ->
+                case msg of
+                    ConfettiState childState ->
                         Just childState
 
                     _ ->
@@ -717,6 +737,7 @@ type State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
     | ColorsState Colors.State
+    | ConfettiState Confetti.State
     | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
@@ -755,6 +776,7 @@ type Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
     | ColorsMsg Colors.Msg
+    | ConfettiMsg Confetti.Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
