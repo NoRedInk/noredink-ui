@@ -62,7 +62,7 @@ example =
                 , width = options.width
                 }
             ]
-    , categories = [ Widgets ]
+    , categories = [ Inputs, Widgets ]
     }
 
 
