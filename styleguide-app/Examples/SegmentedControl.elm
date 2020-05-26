@@ -53,11 +53,11 @@ example =
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
                 }
-            , Html.h3 [] [ Html.text "Toggle only view" ]
+            , Html.h3 [] [ Html.text "Select only view" ]
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildOptions "Toggle-Only " options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "" options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
                 , selected = state.optionallySelected
                 , width = options.width
                 }
