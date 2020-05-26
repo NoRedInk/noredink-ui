@@ -104,6 +104,7 @@ viewSelect config =
             [ displayFlex
             , cursor pointer
             ]
+        , Role.radioGroup
         ]
         (List.map
             (viewSegment
