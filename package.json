@@ -35,7 +35,7 @@
     "request": "^2.88.0"
   },
   "dependencies": {
-    "axe-core": "^3.3.0",
+    "axe-core": "^3.5.3",
     "puppeteer": "^1.20.0"
   }
 }
