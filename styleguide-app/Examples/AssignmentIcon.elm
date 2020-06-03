@@ -9,7 +9,7 @@ module Examples.AssignmentIcon exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Nri.Ui.AssignmentIcon.V1 as AssignmentIcon
+import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.Icon.V5 as Icon
 
 
@@ -26,17 +26,26 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.AssignmentIcon.V1"
+    { name = "Nri.Ui.AssignmentIcon.V2"
     , categories = [ Icons ]
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , view =
         \_ ->
-            [ IconExamples.view "Quiz engine"
+            [ IconExamples.view "Diagnostic"
                 [ ( "diagnostic", AssignmentIcon.diagnostic )
-                , ( "practice", AssignmentIcon.practice )
-                , ( "quiz", AssignmentIcon.quiz )
+                , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled )
+                , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled )
+                ]
+            , IconExamples.view "Practice"
+                [ ( "practice", AssignmentIcon.practice )
+                , ( "practiceCircled", AssignmentIcon.practiceCircled )
+                ]
+            , IconExamples.view "Quiz"
+                [ ( "quiz", AssignmentIcon.quiz )
+                , ( "quizCircled", AssignmentIcon.quizCircled )
+                , ( "passageQuizCircled", AssignmentIcon.passageQuizCircled )
                 ]
             , IconExamples.view "Writing"
                 [ ( "quickWrite", AssignmentIcon.quickWrite )
@@ -55,20 +64,13 @@ example =
                 ]
             , IconExamples.view "Activities"
                 [ ( "assessment", AssignmentIcon.assessment )
-                , ( "practice2", AssignmentIcon.practice2 )
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )
                 ]
             , IconExamples.view "Navigate"
                 [ ( "assignArrow", AssignmentIcon.assignArrow )
                 , ( "home", AssignmentIcon.home )
-                , ( "allLibrary", AssignmentIcon.allLibrary )
-                ]
-            , IconExamples.view "Practice & Assessment"
-                [ ( "passageQuiz", AssignmentIcon.passageQuiz )
-                , ( "planningDiagnostic", AssignmentIcon.planningDiagnostic )
-                , ( "quiz2", AssignmentIcon.quiz2 )
-                , ( "unitDiagnostic", AssignmentIcon.unitDiagnostic )
+                , ( "library", AssignmentIcon.library )
                 ]
             ]
     }
