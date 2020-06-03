@@ -119,5 +119,10 @@ example =
                 , ( "list", UiIcon.list )
                 , ( "undo", UiIcon.undo )
                 ]
+            , IconExamples.view "Navigation"
+                [ ( "assignArrow", UiIcon.assignArrow )
+                , ( "home", UiIcon.home )
+                , ( "library", UiIcon.library )
+                ]
             ]
     }

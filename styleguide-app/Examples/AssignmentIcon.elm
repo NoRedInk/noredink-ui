@@ -73,10 +73,5 @@ example =
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )
                 ]
-            , IconExamples.view "Navigate"
-                [ ( "assignArrow", AssignmentIcon.assignArrow )
-                , ( "home", AssignmentIcon.home )
-                , ( "library", AssignmentIcon.library )
-                ]
             ]
     }
