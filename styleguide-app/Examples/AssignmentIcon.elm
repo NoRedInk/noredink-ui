@@ -53,6 +53,12 @@ example =
                 , ( "peerReview", AssignmentIcon.peerReview )
                 , ( "selfReview", AssignmentIcon.selfReview )
                 ]
+            , IconExamples.view "Writing II"
+                [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled )
+                , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled )
+                , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled )
+                , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled )
+                ]
             , IconExamples.view "Stages"
                 [ ( "submitting", AssignmentIcon.submitting )
                 , ( "rating", AssignmentIcon.rating )
