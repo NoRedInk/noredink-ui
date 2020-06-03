@@ -78,6 +78,7 @@ example =
                 , ( "arrowDown", UiIcon.arrowDown )
                 , ( "arrowLeft", UiIcon.arrowLeft )
                 , ( "arrowPointingRight", UiIcon.arrowPointingRight )
+                , ( "arrowPointingRightThick", UiIcon.arrowPointingRightThick )
                 ]
             , IconExamples.view "Sticky things"
                 [ ( "checkmark", UiIcon.checkmark )
@@ -120,8 +121,7 @@ example =
                 , ( "undo", UiIcon.undo )
                 ]
             , IconExamples.view "Navigation"
-                [ ( "assignArrow", UiIcon.assignArrow )
-                , ( "home", UiIcon.home )
+                [ ( "home", UiIcon.home )
                 , ( "library", UiIcon.library )
                 ]
             ]

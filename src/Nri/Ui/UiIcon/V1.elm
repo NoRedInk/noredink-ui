@@ -9,7 +9,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , document, newspaper
     , edit, pen
-    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
+    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
     , flag, star, starOutline
@@ -17,7 +17,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , key, lock, premiumLock
     , badge
     , bold, italic, underline, list, undo
-    , home, library, assignArrow
+    , home, library
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -32,7 +32,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs document, newspaper
 @docs edit, pen
-@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight
+@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
 @docs flag, star, starOutline
@@ -40,7 +40,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs key, lock, premiumLock
 @docs badge
 @docs bold, italic, underline, list, undo
-@docs home, library, assignArrow
+@docs home, library
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -1221,8 +1221,8 @@ home =
 
 
 {-| -}
-assignArrow : Nri.Ui.Svg.V1.Svg
-assignArrow =
+arrowPointingRightThick : Nri.Ui.Svg.V1.Svg
+arrowPointingRightThick =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
