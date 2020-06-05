@@ -14,8 +14,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Confetti.V1 as Confetti
+import Nri.Ui.Confetti.V2 as Confetti
 
 
 {-| -}
@@ -23,13 +22,13 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Confetti.V1"
     , categories = [ Animations ]
-    , state = init
+    , state = Confetti.init 700
     , update = update
     , subscriptions =
         \state ->
             Sub.batch
                 [ Browser.Events.onResize WindowResized
-                , Confetti.subscriptions ConfettiMsg state.confetti
+                , Confetti.subscriptions ConfettiMsg state
                 ]
     , view =
         \state ->
@@ -38,21 +37,14 @@ example =
                 , Button.small
                 , Button.secondary
                 ]
-            , Confetti.view state.confetti
+            , Confetti.view state
             ]
     }
 
 
 {-| -}
 type alias State =
-    { confetti : Confetti.Model
-    }
-
-
-init : State
-init =
-    { confetti = Confetti.init 700
-    }
+    Confetti.Model
 
 
 {-| -}
@@ -65,39 +57,14 @@ type Msg
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    case msg of
+    ( case msg of
         LaunchConfetti ->
-            ( { state | confetti = Confetti.burst [] state.confetti }
-            , Cmd.none
-            )
+            Confetti.burst state
 
         ConfettiMsg confettiMsg ->
-            ( { state | confetti = Confetti.update confettiMsg state.confetti }
-            , Cmd.none
-            )
+            Confetti.update confettiMsg state
 
         WindowResized width _ ->
-            ( { state | confetti = Confetti.updatePageWidth width state.confetti }
-            , Cmd.none
-            )
-
-
-getColor : Int -> Color
-getColor key =
-    let
-        dict =
-            List.indexedMap (\i c -> ( i, c ))
-                [ Colors.highlightBlue
-                , Colors.highlightBlueDark
-                , Colors.highlightCyan
-                , Colors.highlightCyanDark
-                , Colors.highlightGreen
-                , Colors.highlightGreenDark
-                , Colors.highlightMagenta
-                , Colors.highlightMagentaDark
-                , Colors.highlightYellow
-                , Colors.highlightYellowDark
-                ]
-                |> Dict.fromList
-    in
-    Maybe.withDefault Colors.highlightYellow (Dict.get key dict)
+            Confetti.updatePageWidth width state
+    , Cmd.none
+    )
