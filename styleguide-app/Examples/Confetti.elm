@@ -16,7 +16,6 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V1 as Confetti
-import Nri.Ui.TextArea.V4 as TextArea
 
 
 {-| -}
@@ -34,8 +33,7 @@ example =
                 ]
     , view =
         \state ->
-            [ confettiWordsInput state.confettiWords
-            , Button.button "Launch confetti!"
+            [ Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small
                 , Button.secondary
@@ -45,34 +43,15 @@ example =
     }
 
 
-confettiWordsInput : String -> Html Msg
-confettiWordsInput confettiWords =
-    Html.div [ css [ Css.width (Css.px 600), Css.marginBottom (Css.px 10) ] ]
-        [ TextArea.writing
-            { value = confettiWords
-            , autofocus = False
-            , onInput = OnInput
-            , onBlur = Nothing
-            , isInError = False
-            , label = "Confetti Words"
-            , height = TextArea.Fixed
-            , placeholder = ""
-            , showLabel = True
-            }
-        ]
-
-
 {-| -}
 type alias State =
     { confetti : Confetti.Model
-    , confettiWords : String
     }
 
 
 init : State
 init =
     { confetti = Confetti.init 700
-    , confettiWords = "lemonade iced tea coca-cola pepsi"
     }
 
 
@@ -81,21 +60,14 @@ type Msg
     = LaunchConfetti
     | ConfettiMsg Confetti.Msg
     | WindowResized Int Int
-    | OnInput String
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    let
-        words =
-            List.indexedMap
-                (\index word -> { color = getColor index, text = word })
-                (String.words state.confettiWords)
-    in
     case msg of
         LaunchConfetti ->
-            ( { state | confetti = Confetti.burst words state.confetti }
+            ( { state | confetti = Confetti.burst [] state.confetti }
             , Cmd.none
             )
 
@@ -106,11 +78,6 @@ update msg state =
 
         WindowResized width _ ->
             ( { state | confetti = Confetti.updatePageWidth width state.confetti }
-            , Cmd.none
-            )
-
-        OnInput confettiWords ->
-            ( { state | confettiWords = confettiWords }
             , Cmd.none
             )
 
