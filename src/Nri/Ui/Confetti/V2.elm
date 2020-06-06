@@ -46,9 +46,7 @@ type Confetti
 {-| -}
 init : Float -> Model
 init center =
-    System
-        (ParticleSystem.init (Random.initialSeed 0))
-        center
+    System (ParticleSystem.init (Random.initialSeed 0)) center
 
 
 
