@@ -90,13 +90,12 @@ example =
                     Control.currentValue model.settings
             in
             [ Control.view SetSettings model.settings |> fromUnstyled
+            , Html.text (idToString model.selected)
             , Tabs.view
                 { title = settings.title
                 , onSelect = SelectTab
-                , tabs =
-                    List.Zipper.from [] First [ Second, Third, Fourth ]
-                        |> List.Zipper.find ((==) model.selected)
-                        |> Maybe.withDefault (List.Zipper.from [] First [ Second, Third, Fourth ])
+                , tabs = [ First, Second, Third, Fourth ]
+                , selected = model.selected
                 , idToString = idToString
                 , viewTab = viewTab
                 , viewPanel = viewPanel

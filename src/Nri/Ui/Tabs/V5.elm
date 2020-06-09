@@ -52,7 +52,8 @@ type Alignment
 view :
     { title : Maybe String
     , onSelect : id -> msg
-    , tabs : Zipper id
+    , tabs : List id
+    , selected : id
     , idToString : id -> String
     , viewTab : id -> Html msg
     , viewPanel : id -> Html msg
@@ -60,14 +61,6 @@ view :
     }
     -> Html msg
 view config =
-    let
-        selected =
-            List.Zipper.current config.tabs
-
-        viewTabs =
-            List.Zipper.toList config.tabs
-                |> List.map (viewTab_ config selected)
-    in
     Nri.Ui.styled Html.div
         (styledName "container")
         []
@@ -88,15 +81,15 @@ view config =
                 (stylesTabsAligned config.alignment)
                 [ Role.tabList
                 ]
-                viewTabs
+                (List.map (viewTab_ config) config.tabs)
             ]
         , Html.div
             [ Role.tabPanel
-            , Aria.labelledBy (tabToId (config.idToString selected))
+            , Aria.labelledBy (tabToId (config.idToString config.selected))
             , Widget.hidden False
-            , Attributes.id (tabToBodyId (config.idToString selected))
+            , Attributes.id (tabToBodyId (config.idToString config.selected))
             ]
-            [ config.viewPanel selected ]
+            [ config.viewPanel config.selected ]
         ]
 
 
@@ -130,14 +123,14 @@ viewTitle title =
 viewTab_ :
     { config
         | onSelect : id -> msg
-        , tabs : Zipper id
+        , tabs : List id
+        , selected : id
         , viewTab : id -> Html msg
         , idToString : id -> String
     }
     -> id
-    -> id
     -> Html msg
-viewTab_ { onSelect, tabs, viewTab, idToString } selected tab =
+viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
     let
         isSelected =
             selected == tab
@@ -149,6 +142,25 @@ viewTab_ { onSelect, tabs, viewTab, idToString } selected tab =
 
             else
                 -1
+
+        findAdjacentTab id acc =
+            case acc of
+                ( _, Just _ ) ->
+                    acc
+
+                ( True, Nothing ) ->
+                    ( True, Just id )
+
+                ( False, Nothing ) ->
+                    ( id == tab, Nothing )
+
+        nextTab =
+            List.foldl findAdjacentTab ( False, Nothing ) tabs
+                |> Tuple.second
+
+        previousTab =
+            List.foldr findAdjacentTab ( False, Nothing ) tabs
+                |> Tuple.second
     in
     Html.styled Html.button
         (stylesTabSelectable isSelected)
@@ -163,15 +175,13 @@ viewTab_ { onSelect, tabs, viewTab, idToString } selected tab =
             Json.Decode.andThen
                 (\keyCode ->
                     if keyCode == 39 then
-                        tabs
-                            |> List.Zipper.next
-                            |> Maybe.map (List.Zipper.current >> onSelect >> Json.Decode.succeed)
+                        nextTab
+                            |> Maybe.map (onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No next tab")
 
                     else if keyCode == 37 then
-                        tabs
-                            |> List.Zipper.previous
-                            |> Maybe.map (List.Zipper.current >> onSelect >> Json.Decode.succeed)
+                        previousTab
+                            |> Maybe.map (onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No previous tab")
 
                     else
