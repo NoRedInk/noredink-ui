@@ -33,55 +33,46 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ ClickableSvg.button "Back"
+            [ viewExample "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]" <|
+                ClickableSvg.button "Back"
                     UiIcon.arrowLeft
                     [ ClickableSvg.onClick (ShowItWorked "You clicked the back button!") ]
-                , viewCode
-                    "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]"
-                ]
-            , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.linkSpa "some_link" ]
-                , viewCode
-                    "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]"
-                ]
-            , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ ClickableSvg.button "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
-                , viewCode
-                    "ClickableSvg.button \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]"
-                ]
-            , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ ClickableSvg.link "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
-                , viewCode
-                    "ClickableSvg.link \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]"
-                ]
-            , Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ ClickableSvg.button "Go to tutorial"
+            , viewExample "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]" <|
+                ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.linkSpa "some_link" ]
+            , viewExample "ClickableSvg.button \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]" <|
+                ClickableSvg.button "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
+            , viewExample "ClickableSvg.link \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]" <|
+                ClickableSvg.link "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
+            , viewExample
+                """
+    ClickableSvg.button "Go to tutorial"
+        UiIcon.footsteps
+        [ ClickableSvg.width (Css.px 80)
+        , ClickableSvg.height (Css.px 80)
+        , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
+        , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
+        , ClickableSvg.css [ Css.border3 (Css.px 3) Css.dashed Colors.purple ]
+        ]
+                """
+              <|
+                ClickableSvg.button "Go to tutorial"
                     UiIcon.footsteps
                     [ ClickableSvg.width (Css.px 80)
                     , ClickableSvg.height (Css.px 80)
                     , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
                     , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-                    , ClickableSvg.css
-                        [ Css.border3 (Css.px 3) Css.dashed Colors.purple
-                        ]
+                    , ClickableSvg.css [ Css.border3 (Css.px 3) Css.dashed Colors.purple ]
                     ]
-                , viewCode
-                    """
-                    ClickableSvg.button "Go to tutorial"
-                        UiIcon.footsteps
-                        [ ClickableSvg.width (Css.px 80)
-                        , ClickableSvg.height (Css.px 80)
-                        , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
-                        , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-                        , ClickableSvg.css
-                            [ Css.border3 (Css.px 3) Css.dashed Colors.purple
-                            ]
-                        ]
-                """
-                ]
             ]
     }
+
+
+viewExample : String -> Html.Html msg -> Html.Html msg
+viewExample code html =
+    Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+        [ html
+        , viewCode code
+        ]
 
 
 viewCode : String -> Html.Html msg
