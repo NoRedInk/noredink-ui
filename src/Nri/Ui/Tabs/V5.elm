@@ -1,7 +1,6 @@
 module Nri.Ui.Tabs.V5 exposing
     ( Alignment(..)
     , LinkConfig
-    , LinkTabConfig(..)
     , links
     , view
     , Tab
@@ -12,7 +11,6 @@ module Nri.Ui.Tabs.V5 exposing
 
 @docs Alignment
 @docs LinkConfig
-@docs LinkTabConfig
 @docs links
 @docs view
 
@@ -236,30 +234,18 @@ viewTab_ { onSelect, tabs, selected } tab =
         ]
 
 
-{-| The types of links that we can show.
-
-  - `NormalLink` - A link to another page.
-  - `SpaLink` - A link to another SPA page. The `msg` type should be used to handle
-    the navigation event.
-
+{-| A link to another SPA page. The `msg` type should be used to handle
+the navigation event.
 -}
-type LinkTabConfig msg
-    = NormalLink
-        { label : String
-        , href : Maybe String
-        }
-    | SpaLink
-        { label : String
-        , href : String
-        , msg : msg
-        }
+type alias SpaLink msg =
+    { label : String, href : String, msg : msg }
 
 
 {-| Configure a set a tab links
 -}
 type alias LinkConfig msg =
     { title : Maybe String
-    , tabs : Zipper (LinkTabConfig msg)
+    , tabs : Zipper (SpaLink msg)
     , content : Html msg
     , alignment : Alignment
     }
@@ -298,20 +284,9 @@ links config =
         ]
 
 
-viewTabLink : Bool -> LinkTabConfig msg -> Html msg
+viewTabLink : Bool -> SpaLink msg -> Html msg
 viewTabLink isSelected tabConfig =
     let
-        ( tabLabel, tabHref, preventDefault ) =
-            case tabConfig of
-                NormalLink { label, href } ->
-                    ( label, href, [] )
-
-                SpaLink { label, href, msg } ->
-                    ( label
-                    , Just href
-                    , [ EventExtras.onClickPreventDefaultForLinkWithHref msg ]
-                    )
-
         currentPage =
             if isSelected then
                 [ Aria.currentPage ]
@@ -322,48 +297,22 @@ viewTabLink isSelected tabConfig =
     Html.styled Html.li
         (stylesTabSelectable isSelected)
         [ Role.presentation
-        , Attributes.id (tabToId tabLabel)
+        , Attributes.id (tabToId tabConfig.label)
         ]
-        [ case tabHref of
-            Just href ->
-                Html.styled Html.a
-                    [ Css.color Colors.navy
-                    , Css.display Css.inlineBlock
-                    , Css.textDecoration Css.none
-                    , hover
-                        [ textDecoration none
-                        ]
-                    , focus
-                        [ textDecoration none
-                        ]
-                    ]
-                    (List.concat
-                        [ [ Attributes.href href
-                          , Role.tab
-                          ]
-                        , preventDefault
-                        , currentPage
-                        ]
-                    )
-                    [ Html.text tabLabel ]
-
-            Nothing ->
-                Html.styled Html.button
-                    [ Css.color Colors.navy
-                    , Css.display Css.inlineBlock
-                    , Css.textDecoration Css.none
-                    , Css.fontFamily Css.inherit
-                    , Css.fontSize Css.inherit
-                    , Css.border Css.zero
-                    , Css.property "background" "none"
-                    , Css.lineHeight (Css.num 1)
-                    ]
-                    (List.concat
-                        [ [ Role.tab ]
-                        , currentPage
-                        ]
-                    )
-                    [ Html.text tabLabel ]
+        [ Html.styled Html.a
+            [ Css.color Colors.navy
+            , Css.display Css.inlineBlock
+            , Css.textDecoration Css.none
+            , hover [ textDecoration none ]
+            , focus [ textDecoration none ]
+            ]
+            ([ Attributes.href tabConfig.href
+             , Role.tab
+             , EventExtras.onClickPreventDefaultForLinkWithHref tabConfig.msg
+             ]
+                ++ currentPage
+            )
+            [ Html.text tabConfig.label ]
         ]
 
 

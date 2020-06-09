@@ -104,9 +104,8 @@ example =
                 , tabs =
                     List.Zipper.from
                         []
-                        (Tabs.NormalLink { label = "Nowhere", href = Nothing })
-                        [ Tabs.NormalLink { label = "Elm", href = Just "http://elm-lang.org" }
-                        , Tabs.SpaLink { label = "Spa", href = "/#category/Layout", msg = SelectTab Second }
+                        { label = "Elm", href = "http://elm-lang.org", msg = SelectTab First }
+                        [ { label = "Spa", href = "/#category/Layout", msg = SelectTab Second }
                         ]
                 }
             ]
