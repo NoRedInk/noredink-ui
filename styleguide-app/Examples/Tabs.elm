@@ -14,7 +14,7 @@ import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
 import List.Zipper
-import Nri.Ui.Tabs.V4 as Tabs
+import Nri.Ui.Tabs.V5 as Tabs
 
 
 type State
@@ -28,7 +28,7 @@ type alias Msg =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tabs.V4"
+    { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
     , state = First
     , update = \newTab oldTab -> ( newTab, Cmd.none )
