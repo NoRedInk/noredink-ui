@@ -4,6 +4,7 @@ module Nri.Ui.Tabs.V5 exposing
     , LinkTabConfig(..)
     , links
     , view
+    , viewTabDefault
     )
 
 {-|
@@ -13,6 +14,11 @@ module Nri.Ui.Tabs.V5 exposing
 @docs LinkTabConfig
 @docs links
 @docs view
+
+
+## Defaults
+
+@docs viewTabDefault
 
 -}
 
@@ -94,6 +100,17 @@ view config =
         ]
 
 
+{-| -}
+viewTabDefault : String -> Html msg
+viewTabDefault title =
+    Html.div
+        [ Attributes.css
+            [ Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
+            ]
+        ]
+        [ Html.text title ]
+
+
 viewTitle : String -> Html msg
 viewTitle title =
     Html.styled Html.h1
@@ -164,7 +181,6 @@ viewTab_ { onSelect, tabs, viewTab, idToString } selected tab =
         , Attributes.css
             [ Css.color Colors.navy
             , Css.margin zero
-            , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             , Css.position Css.relative
             , Css.textDecoration Css.none
             , Css.property "background" "none"
@@ -271,7 +287,6 @@ viewTabLink isSelected tabConfig =
                 Html.styled Html.a
                     [ Css.color Colors.navy
                     , Css.display Css.inlineBlock
-                    , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
                     , hover
                         [ textDecoration none
@@ -294,7 +309,6 @@ viewTabLink isSelected tabConfig =
                 Html.styled Html.button
                     [ Css.color Colors.navy
                     , Css.display Css.inlineBlock
-                    , Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
                     , Css.textDecoration Css.none
                     , Css.fontFamily Css.inherit
                     , Css.fontSize Css.inherit

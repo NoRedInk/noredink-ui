@@ -11,11 +11,15 @@ module Examples.Tabs exposing
 -}
 
 import Category exposing (Category(..))
+import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, fromUnstyled)
+import Html.Styled.Attributes exposing (css)
 import List.Zipper exposing (Zipper)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..))
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias State =
@@ -134,16 +138,20 @@ viewTab : Id -> Html msg
 viewTab id =
     case id of
         First ->
-            Html.text "First Tab"
+            Tabs.viewTabDefault "First Tab"
 
         Second ->
-            Html.text "Second Tab"
+            Tabs.viewTabDefault "Second Tab"
 
         Third ->
-            Html.text "Third Tab"
+            UiIcon.bulb
+                |> Svg.withWidth (Css.px 40)
+                |> Svg.withHeight (Css.px 40)
+                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+                |> Svg.toHtml
 
         Fourth ->
-            Html.text "Fourth Tab"
+            Tabs.viewTabDefault "Fourth Tab"
 
 
 viewPanel : Id -> Html msg
