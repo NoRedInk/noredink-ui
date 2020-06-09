@@ -45,31 +45,36 @@ example =
                 ClickableSvg.link "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
             , viewExample
                 """
-    ClickableSvg.button "Go to tutorial"
-        UiIcon.footsteps
-        [ ClickableSvg.width (Css.px 80)
-        , ClickableSvg.height (Css.px 80)
-        , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
-        , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-        , ClickableSvg.css [ Css.border3 (Css.px 3) Css.dashed Colors.purple ]
-        ]
+ClickableSvg.button "Go to tutorial"
+    UiIcon.footsteps
+    [ ClickableSvg.width (Css.px 30)
+    , ClickableSvg.height (Css.px 30)
+    , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
+    , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
+    , ClickableSvg.css [ Css.border3 (Css.px 1) Css.dashed Colors.azure ]
+    ]
                 """
               <|
                 ClickableSvg.button "Go to tutorial"
                     UiIcon.footsteps
-                    [ ClickableSvg.width (Css.px 80)
-                    , ClickableSvg.height (Css.px 80)
+                    [ ClickableSvg.width (Css.px 30)
+                    , ClickableSvg.height (Css.px 30)
                     , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
                     , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-                    , ClickableSvg.css [ Css.border3 (Css.px 3) Css.dashed Colors.purple ]
+                    , ClickableSvg.css [ Css.border3 (Css.px 1) Css.dashed Colors.azure ]
                     ]
+            , viewExample "ClickableSvg.button \"Preview\" UiIcon.preview [ ClickableSvg.withTooltipAbove ]" <|
+                ClickableSvg.button "Preview" UiIcon.preview [ ClickableSvg.withTooltipAbove ]
+            , viewExample "ClickableSvg.button \"Share\" UiIcon.share [ ClickableSvg.withTooltipBelow ]" <|
+                ClickableSvg.button "Share" UiIcon.share [ ClickableSvg.withTooltipBelow ]
             ]
     }
 
 
 viewExample : String -> Html.Html msg -> Html.Html msg
 viewExample code html =
-    Html.div [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
+    Html.div
+        [ Attributes.css [ Css.displayFlex, Css.alignItems Css.center ] ]
         [ html
         , viewCode code
         ]
@@ -80,7 +85,7 @@ viewCode renderStrategy =
     Html.code
         [ Attributes.css
             [ Css.width (Css.px 400)
-            , Css.marginRight (Css.px 20)
+            , Css.marginLeft (Css.px 20)
             ]
         ]
         [ Html.pre [] [ Html.text renderStrategy ] ]

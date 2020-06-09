@@ -6,6 +6,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , width, height
     , disabled
     , custom, css
+    , withTooltipAbove, withTooltipBelow
     )
 
 {-|
@@ -14,6 +15,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 # Post-release patches
 
   - uses ClickableAttributes
+  - adds tooltip helpers
 
 
 # Create a button or link
@@ -41,6 +43,11 @@ module Nri.Ui.ClickableSvg.V1 exposing
 ## Customization
 
 @docs custom, css
+
+
+## Tooltips
+
+@docs withTooltipAbove, withTooltipBelow
 
 -}
 
@@ -202,6 +209,22 @@ css styles =
                 | customStyles = List.append config.customStyles styles
             }
         )
+
+
+
+-- TOOLTIPS
+
+
+{-| -}
+withTooltipAbove : Attribute msg
+withTooltipAbove =
+    set identity
+
+
+{-| -}
+withTooltipBelow : Attribute msg
+withTooltipBelow =
+    set identity
 
 
 
