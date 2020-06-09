@@ -85,7 +85,7 @@ view config =
             [ config.title
                 |> Maybe.map viewTitle
                 |> Maybe.withDefault (Html.text "")
-            , Html.styled Html.ul
+            , Html.styled Html.div
                 (stylesTabsAligned config.alignment)
                 [ Role.tabList
                 ]
@@ -413,8 +413,7 @@ stylesTabsAligned alignment =
                     Css.justifyContent Css.flexEnd
     in
     alignmentStyles
-        :: [ Css.listStyle Css.none
-           , Css.margin Css.zero
+        :: [ Css.margin Css.zero
            , Css.fontSize (Css.px 19)
            , Css.displayFlex
            , Css.flexGrow (Css.int 1)
@@ -450,13 +449,9 @@ stylesTabSelectable isSelected =
             , Css.marginBottom (Css.px -1)
             , Css.marginLeft (Css.px 10)
             , Css.cursor Css.pointer
-            , Css.firstChild
-                [ Css.marginLeft Css.zero
-                ]
+            , Css.firstChild [ Css.marginLeft Css.zero ]
             , property "transition" "background-color 0.2s"
-            , hover
-                [ backgroundColor Colors.white
-                ]
+            , hover [ backgroundColor Colors.white ]
             ]
     in
     stylesTab ++ stylesDynamic
