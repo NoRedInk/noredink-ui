@@ -404,26 +404,22 @@ stylesTabsAligned alignment =
         alignmentStyles =
             case alignment of
                 Left ->
-                    [ Css.justifyContent Css.flexStart ]
+                    Css.justifyContent Css.flexStart
 
                 Center ->
-                    [ Css.justifyContent Css.center ]
+                    Css.justifyContent Css.center
 
                 Right ->
-                    [ Css.justifyContent Css.flexEnd ]
+                    Css.justifyContent Css.flexEnd
     in
-    stylesTabs ++ alignmentStyles
-
-
-stylesTabs : List Style
-stylesTabs =
-    [ Css.listStyle Css.none
-    , Css.margin Css.zero
-    , Css.fontSize (Css.px 19)
-    , Css.displayFlex
-    , Css.flexGrow (Css.int 1)
-    , Css.padding Css.zero
-    ]
+    alignmentStyles
+        :: [ Css.listStyle Css.none
+           , Css.margin Css.zero
+           , Css.fontSize (Css.px 19)
+           , Css.displayFlex
+           , Css.flexGrow (Css.int 1)
+           , Css.padding Css.zero
+           ]
 
 
 stylesTabSelectable : Bool -> List Style
