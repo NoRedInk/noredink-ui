@@ -137,6 +137,11 @@ viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
 
         tabIndex =
             -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
+            -- TODO:
+            -- keyboard interactions aren't behaving the way I'd expect.
+            -- Right and left arrows aren't shifting the tab focus properly,
+            -- and we can't tab to de-selected tabs as a result of this line.
+            -- Dig into this more before publishing.
             if isSelected then
                 0
 
