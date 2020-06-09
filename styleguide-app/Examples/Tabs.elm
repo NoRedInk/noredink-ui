@@ -18,7 +18,7 @@ import Html.Styled as Html exposing (Html, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..))
+import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -90,16 +90,12 @@ example =
                     Control.currentValue model.settings
             in
             [ Control.view SetSettings model.settings |> fromUnstyled
-            , Html.text (idToString model.selected)
             , Tabs.view
                 { title = settings.title
-                , onSelect = SelectTab
-                , tabs = [ First, Second, Third, Fourth ]
-                , selected = model.selected
-                , idToString = idToString
-                , viewTab = viewTab
-                , viewPanel = viewPanel
                 , alignment = settings.alignment
+                , onSelect = SelectTab
+                , selected = model.selected
+                , tabs = allTabs
                 }
             , Tabs.links
                 { title = Nothing
@@ -117,53 +113,31 @@ example =
     }
 
 
-idToString : Id -> String
-idToString id =
-    case id of
-        First ->
-            "tab-0"
-
-        Second ->
-            "tab-1"
-
-        Third ->
-            "tab-2"
-
-        Fourth ->
-            "tab-3"
-
-
-viewTab : Id -> Html msg
-viewTab id =
-    case id of
-        First ->
-            Tabs.viewTabDefault "First Tab"
-
-        Second ->
-            Tabs.viewTabDefault "Second Tab"
-
-        Third ->
+allTabs : List (Tab Id Msg)
+allTabs =
+    [ { id = First
+      , idString = "tab-0"
+      , tabView = Tabs.viewTabDefault "First Tab"
+      , panelView = Html.text "First Panel"
+      }
+    , { id = Second
+      , idString = "tab-1"
+      , tabView = Tabs.viewTabDefault "Second Tab"
+      , panelView = Html.text "Second Panel"
+      }
+    , { id = Third
+      , idString = "tab-2"
+      , tabView =
             UiIcon.bulb
                 |> Svg.withWidth (Css.px 40)
                 |> Svg.withHeight (Css.px 40)
                 |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
                 |> Svg.toHtml
-
-        Fourth ->
-            Tabs.viewTabDefault "Fourth Tab"
-
-
-viewPanel : Id -> Html msg
-viewPanel id =
-    case id of
-        First ->
-            Html.text "First"
-
-        Second ->
-            Html.text "Second"
-
-        Third ->
-            Html.text "Third"
-
-        Fourth ->
-            Html.text "Fourth"
+      , panelView = Html.text "Third Panel"
+      }
+    , { id = Fourth
+      , idString = "tab-3"
+      , tabView = Tabs.viewTabDefault "Fourth Tab"
+      , panelView = Html.text "Fourth Panel"
+      }
+    ]

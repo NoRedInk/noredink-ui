@@ -4,6 +4,7 @@ module Nri.Ui.Tabs.V5 exposing
     , LinkTabConfig(..)
     , links
     , view
+    , Tab
     , viewTabDefault
     )
 
@@ -14,6 +15,8 @@ module Nri.Ui.Tabs.V5 exposing
 @docs LinkTabConfig
 @docs links
 @docs view
+
+@docs Tab
 
 
 ## Defaults
@@ -48,16 +51,21 @@ type Alignment
     | Right
 
 
+type alias Tab id msg =
+    { id : id
+    , idString : String
+    , tabView : Html msg
+    , panelView : Html msg
+    }
+
+
 {-| -}
 view :
     { title : Maybe String
-    , onSelect : id -> msg
-    , tabs : List id
-    , selected : id
-    , idToString : id -> String
-    , viewTab : id -> Html msg
-    , viewPanel : id -> Html msg
     , alignment : Alignment
+    , onSelect : id -> msg
+    , selected : id
+    , tabs : List (Tab id msg)
     }
     -> Html msg
 view config =
@@ -81,15 +89,37 @@ view config =
                 (stylesTabsAligned config.alignment)
                 [ Role.tabList
                 ]
-                (List.map (viewTab_ config) config.tabs)
+                (List.map
+                    (viewTab_
+                        { onSelect = config.onSelect
+                        , tabs = List.map .id config.tabs
+                        , selected = config.selected
+                        }
+                    )
+                    config.tabs
+                )
             ]
-        , Html.div
-            [ Role.tabPanel
-            , Aria.labelledBy (tabToId (config.idToString config.selected))
-            , Widget.hidden False
-            , Attributes.id (tabToBodyId (config.idToString config.selected))
-            ]
-            [ config.viewPanel config.selected ]
+        , Html.div []
+            (List.map
+                (\tab ->
+                    Html.div
+                        ([ Role.tabPanel
+                         , Aria.labelledBy (tabToId tab.idString)
+                         , Attributes.id (tabToBodyId tab.idString)
+                         ]
+                            ++ (if tab.id /= config.selected then
+                                    [ Attributes.css [ Css.display none ]
+                                    , Widget.hidden True
+                                    ]
+
+                                else
+                                    [ Widget.hidden False ]
+                               )
+                        )
+                        [ tab.panelView ]
+                )
+                config.tabs
+            )
         ]
 
 
@@ -121,19 +151,16 @@ viewTitle title =
 
 
 viewTab_ :
-    { config
-        | onSelect : id -> msg
-        , tabs : List id
-        , selected : id
-        , viewTab : id -> Html msg
-        , idToString : id -> String
+    { onSelect : id -> msg
+    , tabs : List id
+    , selected : id
     }
-    -> id
+    -> Tab id msg
     -> Html msg
-viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
+viewTab_ { onSelect, tabs, selected } tab =
     let
         isSelected =
-            selected == tab
+            selected == tab.id
 
         tabIndex =
             -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
@@ -157,7 +184,7 @@ viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
                     ( True, Just id )
 
                 ( False, Nothing ) ->
-                    ( id == tab, Nothing )
+                    ( id == tab.id, Nothing )
 
         nextTab =
             List.foldl findAdjacentTab ( False, Nothing ) tabs
@@ -169,13 +196,13 @@ viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
     in
     Html.styled Html.button
         (stylesTabSelectable isSelected)
-        [ Events.onClick (onSelect tab)
-        , Key.onKeyDown [ Key.enter (onSelect tab) ]
-        , Events.onFocus (onSelect tab)
+        [ Events.onClick (onSelect tab.id)
+        , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
+        , Events.onFocus (onSelect tab.id)
         , Attributes.tabindex tabIndex
         , Widget.selected isSelected
         , Role.tab
-        , Attributes.id (tabToId (idToString tab))
+        , Attributes.id (tabToId tab.idString)
         , Events.on "keyup" <|
             Json.Decode.andThen
                 (\keyCode ->
@@ -205,7 +232,7 @@ viewTab_ { onSelect, tabs, viewTab, selected, idToString } tab =
             , Css.border zero
             ]
         ]
-        [ viewTab tab
+        [ tab.tabView
         ]
 
 
