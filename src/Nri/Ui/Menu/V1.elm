@@ -306,7 +306,10 @@ viewEntry entry_ =
             Html.text ""
 
 
-{-| Display an icon button consistent with menu button
+{-| Display an icon button consistent with menu button.
+
+Prefer to use ClickableSvg with the `withTooltipAbove` helper.
+
 -}
 iconButton :
     { icon : Svg.Svg
@@ -431,6 +434,9 @@ iconButtonWithMenu config =
 
 
 {-| Display an icon link consistent with menu button styles.
+
+Prefer to use ClickableSvg with the `withTooltipAbove` helper.
+
 -}
 iconLink :
     { icon : Svg.Svg
