@@ -1,30 +1,22 @@
 module Nri.Ui.Tabs.V5 exposing
     ( Alignment(..)
-    , Config
     , LinkConfig
     , Tab
     , LinkTabConfig(..)
     , links
     , view
     , viewCustom
-    , viewTabDefault
     )
 
 {-|
 
 @docs Alignment
-@docs Config
 @docs LinkConfig
 @docs Tab
 @docs LinkTabConfig
 @docs links
 @docs view
 @docs viewCustom
-
-
-## Defaults
-
-@docs viewTabDefault
 
 -}
 
@@ -46,16 +38,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 
 
-{-| -}
-type alias Config id msg =
-    { title : Maybe String
-    , onSelect : id -> msg
-    , tabs : Zipper (Tab id)
-    , content : id -> Html msg
-    , alignment : Alignment
-    }
-
-
 {-| Determines whether tabs are centered or floating to the left or right.
 -}
 type Alignment
@@ -72,19 +54,28 @@ type alias Tab id =
 
 
 {-| -}
-view : Config id msg -> Html msg
+view :
+    { title : Maybe String
+    , onSelect : id -> msg
+    , tabs : Zipper (Tab id)
+    , content : id -> Html msg
+    , alignment : Alignment
+    }
+    -> Html msg
 view config =
-    viewCustom config viewTabDefault
+    viewCustom config (\tab -> Html.text tab.label)
 
 
 {-| -}
-viewTabDefault : Tab id -> Html msg
-viewTabDefault tab =
-    Html.text tab.label
-
-
-{-| -}
-viewCustom : Config id msg -> (Tab id -> Html msg) -> Html msg
+viewCustom :
+    { title : Maybe String
+    , onSelect : id -> msg
+    , tabs : Zipper (Tab id)
+    , content : id -> Html msg
+    , alignment : Alignment
+    }
+    -> (Tab id -> Html msg)
+    -> Html msg
 viewCustom config viewInnerTab =
     let
         selected =
@@ -142,7 +133,15 @@ viewTitle title =
         [ Html.text title ]
 
 
-viewTab : Config id msg -> (Tab id -> Html msg) -> Tab id -> Tab id -> Html msg
+viewTab :
+    { config
+        | onSelect : id -> msg
+        , tabs : Zipper (Tab id)
+    }
+    -> (Tab id -> Html msg)
+    -> Tab id
+    -> Tab id
+    -> Html msg
 viewTab { onSelect, tabs } viewInnerTab selected tab =
     let
         isSelected =
