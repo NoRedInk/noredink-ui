@@ -20,20 +20,34 @@ import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..))
 
 type alias State =
     { selected : Id
-    , alignment : Control Alignment
+    , settings : Control Settings
     }
 
 
 init : State
 init =
     { selected = First
-    , alignment =
-        Control.choice
-            [ ( "Left", Control.value Left )
-            , ( "Center", Control.value Center )
-            , ( "Right", Control.value Right )
-            ]
+    , settings = initSettings
     }
+
+
+type alias Settings =
+    { title : Maybe String
+    , alignment : Alignment
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "title" (Control.maybe False (Control.string "Title"))
+        |> Control.field "alignment"
+            (Control.choice
+                [ ( "Left", Control.value Left )
+                , ( "Center", Control.value Center )
+                , ( "Right", Control.value Right )
+                ]
+            )
 
 
 type Id
@@ -43,7 +57,7 @@ type Id
 
 type Msg
     = SelectTab Id
-    | SetAlignment (Control Alignment)
+    | SetSettings (Control Settings)
 
 
 update : Msg -> State -> State
@@ -52,8 +66,8 @@ update msg model =
         SelectTab id ->
             { model | selected = id }
 
-        SetAlignment alignment ->
-            { model | alignment = alignment }
+        SetSettings settings ->
+            { model | settings = settings }
 
 
 example : Example State Msg
@@ -65,9 +79,13 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \model ->
-            [ Control.view SetAlignment model.alignment |> fromUnstyled
+            let
+                settings =
+                    Control.currentValue model.settings
+            in
+            [ Control.view SetSettings model.settings |> fromUnstyled
             , Tabs.view
-                { title = Nothing
+                { title = settings.title
                 , onSelect = SelectTab
                 , tabs =
                     case model.selected of
@@ -90,7 +108,7 @@ example =
 
                             Second ->
                                 Html.text "Second"
-                , alignment = Control.currentValue model.alignment
+                , alignment = settings.alignment
                 }
             , Tabs.links
                 { title = Nothing
