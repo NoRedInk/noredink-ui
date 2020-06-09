@@ -1,22 +1,18 @@
 module Nri.Ui.Tabs.V5 exposing
     ( Alignment(..)
     , LinkConfig
-    , Tab
     , LinkTabConfig(..)
     , links
     , view
-    , viewCustom
     )
 
 {-|
 
 @docs Alignment
 @docs LinkConfig
-@docs Tab
 @docs LinkTabConfig
 @docs links
 @docs view
-@docs viewCustom
 
 -}
 
@@ -47,43 +43,24 @@ type Alignment
 
 
 {-| -}
-type alias Tab id =
-    { label : String
-    , id : id
-    }
-
-
-{-| -}
 view :
     { title : Maybe String
     , onSelect : id -> msg
-    , tabs : Zipper (Tab id)
-    , content : id -> Html msg
+    , tabs : Zipper id
+    , idToString : id -> String
+    , viewTab : id -> Html msg
+    , viewPanel : id -> Html msg
     , alignment : Alignment
     }
     -> Html msg
 view config =
-    viewCustom config (\tab -> Html.text tab.label)
-
-
-{-| -}
-viewCustom :
-    { title : Maybe String
-    , onSelect : id -> msg
-    , tabs : Zipper (Tab id)
-    , content : id -> Html msg
-    , alignment : Alignment
-    }
-    -> (Tab id -> Html msg)
-    -> Html msg
-viewCustom config viewInnerTab =
     let
         selected =
             List.Zipper.current config.tabs
 
         viewTabs =
             List.Zipper.toList config.tabs
-                |> List.map (viewTab config viewInnerTab selected)
+                |> List.map (viewTab_ config selected)
     in
     Nri.Ui.styled Html.div
         (styledName "container")
@@ -109,11 +86,11 @@ viewCustom config viewInnerTab =
             ]
         , Html.div
             [ Role.tabPanel
-            , Aria.labelledBy (tabToId selected)
+            , Aria.labelledBy (tabToId (config.idToString selected))
             , Widget.hidden False
-            , Attributes.id (tabToBodyId selected)
+            , Attributes.id (tabToBodyId (config.idToString selected))
             ]
-            [ config.content selected.id ]
+            [ config.viewPanel selected ]
         ]
 
 
@@ -133,19 +110,20 @@ viewTitle title =
         [ Html.text title ]
 
 
-viewTab :
+viewTab_ :
     { config
         | onSelect : id -> msg
-        , tabs : Zipper (Tab id)
+        , tabs : Zipper id
+        , viewTab : id -> Html msg
+        , idToString : id -> String
     }
-    -> (Tab id -> Html msg)
-    -> Tab id
-    -> Tab id
+    -> id
+    -> id
     -> Html msg
-viewTab { onSelect, tabs } viewInnerTab selected tab =
+viewTab_ { onSelect, tabs, viewTab, idToString } selected tab =
     let
         isSelected =
-            selected.id == tab.id
+            selected == tab
 
         tabIndex =
             -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
@@ -157,26 +135,26 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
     in
     Html.styled Html.button
         (stylesTabSelectable isSelected)
-        [ Events.onClick (onSelect tab.id)
-        , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
-        , Events.onFocus (onSelect tab.id)
+        [ Events.onClick (onSelect tab)
+        , Key.onKeyDown [ Key.enter (onSelect tab) ]
+        , Events.onFocus (onSelect tab)
         , Attributes.tabindex tabIndex
-        , Widget.selected (selected.id == tab.id)
+        , Widget.selected isSelected
         , Role.tab
-        , Attributes.id (tabToId tab)
+        , Attributes.id (tabToId (idToString tab))
         , Events.on "keyup" <|
             Json.Decode.andThen
                 (\keyCode ->
                     if keyCode == 39 then
                         tabs
                             |> List.Zipper.next
-                            |> Maybe.map (List.Zipper.current >> .id >> onSelect >> Json.Decode.succeed)
+                            |> Maybe.map (List.Zipper.current >> onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No next tab")
 
                     else if keyCode == 37 then
                         tabs
                             |> List.Zipper.previous
-                            |> Maybe.map (List.Zipper.current >> .id >> onSelect >> Json.Decode.succeed)
+                            |> Maybe.map (List.Zipper.current >> onSelect >> Json.Decode.succeed)
                             |> Maybe.withDefault (Json.Decode.fail "No previous tab")
 
                     else
@@ -196,7 +174,7 @@ viewTab { onSelect, tabs } viewInnerTab selected tab =
             , Css.border zero
             ]
         ]
-        [ viewInnerTab tab
+        [ viewTab tab
         ]
 
 
@@ -286,7 +264,7 @@ viewTabLink isSelected tabConfig =
     Html.styled Html.li
         (stylesTabSelectable isSelected)
         [ Role.presentation
-        , Attributes.id (tabToId { label = tabLabel })
+        , Attributes.id (tabToId tabLabel)
         ]
         [ case tabHref of
             Just href ->
@@ -337,12 +315,12 @@ viewTabLink isSelected tabConfig =
 -- HELP
 
 
-tabToId : { a | label : String } -> String
+tabToId : String -> String
 tabToId tab =
-    String.replace " " "-" tab.label
+    String.replace " " "-" tab
 
 
-tabToBodyId : { a | label : String } -> String
+tabToBodyId : String -> String
 tabToBodyId tab =
     "tab-body-" ++ tabToId tab
 

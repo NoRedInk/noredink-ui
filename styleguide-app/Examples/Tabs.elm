@@ -14,7 +14,7 @@ import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, fromUnstyled)
-import List.Zipper
+import List.Zipper exposing (Zipper)
 import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..))
 
 
@@ -53,6 +53,8 @@ initSettings =
 type Id
     = First
     | Second
+    | Third
+    | Fourth
 
 
 type Msg
@@ -88,26 +90,12 @@ example =
                 { title = settings.title
                 , onSelect = SelectTab
                 , tabs =
-                    case model.selected of
-                        First ->
-                            List.Zipper.from
-                                []
-                                (Tabs.Tab "First tab" First)
-                                [ Tabs.Tab "Second tab" Second ]
-
-                        Second ->
-                            List.Zipper.from
-                                [ Tabs.Tab "First tab" First ]
-                                (Tabs.Tab "Second tab" Second)
-                                []
-                , content =
-                    \id ->
-                        case id of
-                            First ->
-                                Html.text "First"
-
-                            Second ->
-                                Html.text "Second"
+                    List.Zipper.from [] First [ Second, Third, Fourth ]
+                        |> List.Zipper.find ((==) model.selected)
+                        |> Maybe.withDefault (List.Zipper.from [] First [ Second, Third, Fourth ])
+                , idToString = idToString
+                , viewTab = viewTab
+                , viewPanel = viewPanel
                 , alignment = settings.alignment
                 }
             , Tabs.links
@@ -124,3 +112,51 @@ example =
                 }
             ]
     }
+
+
+idToString : Id -> String
+idToString id =
+    case id of
+        First ->
+            "tab-0"
+
+        Second ->
+            "tab-1"
+
+        Third ->
+            "tab-2"
+
+        Fourth ->
+            "tab-3"
+
+
+viewTab : Id -> Html msg
+viewTab id =
+    case id of
+        First ->
+            Html.text "First Tab"
+
+        Second ->
+            Html.text "Second Tab"
+
+        Third ->
+            Html.text "Third Tab"
+
+        Fourth ->
+            Html.text "Fourth Tab"
+
+
+viewPanel : Id -> Html msg
+viewPanel id =
+    case id of
+        First ->
+            Html.text "First"
+
+        Second ->
+            Html.text "Second"
+
+        Third ->
+            Html.text "Third"
+
+        Fourth ->
+            Html.text "Fourth"
