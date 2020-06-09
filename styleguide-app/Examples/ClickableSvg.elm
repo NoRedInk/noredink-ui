@@ -63,10 +63,50 @@ ClickableSvg.button "Go to tutorial"
                     , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
                     , ClickableSvg.css [ Css.border3 (Css.px 1) Css.dashed Colors.azure ]
                     ]
-            , viewExample "ClickableSvg.button \"Preview\" UiIcon.preview [ ClickableSvg.withTooltipAbove ]" <|
-                ClickableSvg.button "Preview" UiIcon.preview [ ClickableSvg.withTooltipAbove ]
-            , viewExample "ClickableSvg.button \"Share\" UiIcon.share [ ClickableSvg.withTooltipBelow ]" <|
-                ClickableSvg.button "Share" UiIcon.share [ ClickableSvg.withTooltipBelow ]
+            , viewExample
+                """
+ClickableSvg.button "Preview"
+    UiIcon.preview
+    [ ClickableSvg.width (Css.px 20)
+    , ClickableSvg.height (Css.px 20)
+    , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+    , ClickableSvg.withTooltipAbove { id = "preview", isOpen = state.tooltipPreview, onShow = SetPreviewTooltip }
+    ]
+            """
+              <|
+                ClickableSvg.button "Preview"
+                    UiIcon.preview
+                    [ ClickableSvg.width (Css.px 20)
+                    , ClickableSvg.height (Css.px 20)
+                    , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+                    , ClickableSvg.withTooltipAbove
+                        { id = "preview"
+                        , isOpen = state.tooltipPreview
+                        , onShow = SetPreviewTooltip
+                        }
+                    ]
+            , viewExample
+                """
+ClickableSvg.button "Share"
+    UiIcon.share
+    [ ClickableSvg.width (Css.px 20)
+    , ClickableSvg.height (Css.px 20)
+    , ClickableSvg.onClick (ShowItWorked "You clicked the Share button!")
+    , ClickableSvg.withTooltipBelow { id = "share", isOpen = state.tooltipShareTo, onShow = SetShareTooltip }
+    ]
+            """
+              <|
+                ClickableSvg.button "Share"
+                    UiIcon.share
+                    [ ClickableSvg.width (Css.px 20)
+                    , ClickableSvg.height (Css.px 20)
+                    , ClickableSvg.onClick (ShowItWorked "You clicked the share button!")
+                    , ClickableSvg.withTooltipBelow
+                        { id = "share"
+                        , isOpen = state.tooltipShareTo
+                        , onShow = SetShareTooltip
+                        }
+                    ]
             ]
     }
 
@@ -93,18 +133,24 @@ viewCode renderStrategy =
 
 {-| -}
 type alias State =
-    {}
+    { tooltipPreview : Bool
+    , tooltipShareTo : Bool
+    }
 
 
 {-| -}
 init : State
 init =
-    {}
+    { tooltipPreview = False
+    , tooltipShareTo = False
+    }
 
 
 {-| -}
 type Msg
     = ShowItWorked String
+    | SetPreviewTooltip Bool
+    | SetShareTooltip Bool
 
 
 {-| -}
@@ -117,3 +163,9 @@ update msg state =
                     Debug.log "ClickableSvg" message
             in
             ( state, Cmd.none )
+
+        SetPreviewTooltip bool ->
+            ( { state | tooltipPreview = bool }, Cmd.none )
+
+        SetShareTooltip bool ->
+            ( { state | tooltipShareTo = bool }, Cmd.none )

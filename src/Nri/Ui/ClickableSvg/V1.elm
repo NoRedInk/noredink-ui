@@ -58,6 +58,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
 
 
 {-| -}
@@ -215,16 +216,59 @@ css styles =
 -- TOOLTIPS
 
 
+type alias TooltipSettings msg =
+    { position : Tooltip.Position
+    , isOpen : Bool
+    , onShow : Bool -> msg
+    , id : String
+    }
+
+
+showTooltip : String -> Maybe (TooltipSettings msg) -> Html msg -> Html msg
+showTooltip label maybeSettings buttonOrLink =
+    case maybeSettings of
+        Just { position, onShow, isOpen, id } ->
+            let
+                tooltipSettings =
+                    { trigger = Tooltip.OnHover
+                    , onTrigger = onShow
+                    , isOpen = isOpen
+                    , triggerHtml = buttonOrLink
+                    , extraButtonAttrs = []
+                    , id = id ++ "__clickable-svg-tooltip"
+                    }
+            in
+            Tooltip.tooltip [ Html.text label ]
+                |> Tooltip.withPosition position
+                |> Tooltip.withWidth Tooltip.FitToContent
+                |> Tooltip.withPadding Tooltip.SmallPadding
+                |> Tooltip.primaryLabel tooltipSettings
+
+        Nothing ->
+            buttonOrLink
+
+
+withTooltip : Tooltip.Position -> { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
+withTooltip position { id, isOpen, onShow } =
+    set
+        (\config ->
+            { config
+                | tooltip =
+                    Just { position = position, id = id, isOpen = isOpen, onShow = onShow }
+            }
+        )
+
+
 {-| -}
-withTooltipAbove : Attribute msg
+withTooltipAbove : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipAbove =
-    set identity
+    withTooltip Tooltip.OnTop
 
 
 {-| -}
-withTooltipBelow : Attribute msg
+withTooltipBelow : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipBelow =
-    set identity
+    withTooltip Tooltip.OnBottom
 
 
 
@@ -249,6 +293,7 @@ build label icon =
         , disabled = False
         , customAttributes = []
         , customStyles = []
+        , tooltip = Nothing
         }
 
 
@@ -265,6 +310,7 @@ type alias ButtonOrLinkAttributes msg =
     , disabled : Bool
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
+    , tooltip : Maybe (TooltipSettings msg)
     }
 
 
@@ -285,6 +331,7 @@ renderButton ((ButtonOrLink config) as button_) =
             |> Svg.withHeight config.height
             |> Svg.toHtml
         ]
+        |> showTooltip config.label config.tooltip
 
 
 type Link
@@ -321,6 +368,7 @@ renderLink ((ButtonOrLink config) as link_) =
             |> Svg.withHeight config.height
             |> Svg.toHtml
         ]
+        |> showTooltip config.label config.tooltip
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
