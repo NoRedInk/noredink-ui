@@ -441,24 +441,22 @@ stylesTabSelectable isSelected =
                         (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 25))
                         [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 100) ]
                 ]
+
+        stylesTab =
+            [ Css.display Css.inlineBlock
+            , Css.borderTopLeftRadius (Css.px 10)
+            , Css.borderTopRightRadius (Css.px 10)
+            , Css.border3 (Css.px 1) Css.solid Colors.navy
+            , Css.marginBottom (Css.px -1)
+            , Css.marginLeft (Css.px 10)
+            , Css.cursor Css.pointer
+            , Css.firstChild
+                [ Css.marginLeft Css.zero
+                ]
+            , property "transition" "background-color 0.2s"
+            , hover
+                [ backgroundColor Colors.white
+                ]
+            ]
     in
     stylesTab ++ stylesDynamic
-
-
-stylesTab : List Style
-stylesTab =
-    [ Css.display Css.inlineBlock
-    , Css.borderTopLeftRadius (Css.px 10)
-    , Css.borderTopRightRadius (Css.px 10)
-    , Css.border3 (Css.px 1) Css.solid Colors.navy
-    , Css.marginBottom (Css.px -1)
-    , Css.marginLeft (Css.px 10)
-    , Css.cursor Css.pointer
-    , Css.firstChild
-        [ Css.marginLeft Css.zero
-        ]
-    , property "transition" "background-color 0.2s"
-    , hover
-        [ backgroundColor Colors.white
-        ]
-    ]
