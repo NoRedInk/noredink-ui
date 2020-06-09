@@ -364,7 +364,7 @@ mapWithCurrent fn zipper =
 
 styledName : String -> String
 styledName suffix =
-    "Nri-Ui-Tabs-V4-" ++ suffix
+    "Nri-Ui-Tabs__" ++ suffix
 
 
 
