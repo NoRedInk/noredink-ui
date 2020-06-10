@@ -70,6 +70,7 @@ example =
             , IconExamples.view "Texts"
                 [ ( "document", UiIcon.document )
                 , ( "newspaper", UiIcon.newspaper )
+                , ( "openBook", UiIcon.openBook )
                 ]
             , IconExamples.view "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
