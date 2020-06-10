@@ -19,7 +19,6 @@ module Nri.Ui.Tabs.V5 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
@@ -171,26 +170,7 @@ viewTab_ { onSelect, tabs, selected } tab =
             else
                 -1
 
-        findAdjacentTab id acc =
-            case acc of
-                ( _, Just _ ) ->
-                    acc
-
-                ( True, Nothing ) ->
-                    ( True, Just id )
-
-                ( False, Nothing ) ->
-                    ( id == tab.id, Nothing )
-
-        nextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) tabs
-                |> Tuple.second
-
-        previousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) tabs
-                |> Tuple.second
-
-        ( tag, eventHandlers ) =
+        ( tag, tagSpecificAttributes ) =
             case tab.spaHref of
                 Just href ->
                     ( Html.a
@@ -207,25 +187,6 @@ viewTab_ { onSelect, tabs, selected } tab =
                 Nothing ->
                     ( Html.button
                     , [ Events.onClick (onSelect tab.id)
-                      , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
-                      , Events.onFocus (onSelect tab.id)
-                      , Events.on "keyup" <|
-                            Json.Decode.andThen
-                                (\keyCode ->
-                                    if keyCode == 39 then
-                                        nextTab
-                                            |> Maybe.map (onSelect >> Json.Decode.succeed)
-                                            |> Maybe.withDefault (Json.Decode.fail "No next tab")
-
-                                    else if keyCode == 37 then
-                                        previousTab
-                                            |> Maybe.map (onSelect >> Json.Decode.succeed)
-                                            |> Maybe.withDefault (Json.Decode.fail "No previous tab")
-
-                                    else
-                                        Json.Decode.fail "Wrong key code"
-                                )
-                                Events.keyCode
                       ]
                     )
 
@@ -243,16 +204,63 @@ viewTab_ { onSelect, tabs, selected } tab =
     in
     Html.styled tag
         (stylesTabSelectable isSelected)
-        (eventHandlers
+        (tagSpecificAttributes
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
                , Role.tab
                , Attributes.id (tabToId tab.idString)
                , Attributes.css tabStyles
+               , Events.on "keyup"
+                    (Json.Decode.andThen (keyEvents onSelect tabs tab.id) Events.keyCode)
                ]
         )
         [ tab.tabView
         ]
+
+
+keyEvents : (id -> msg) -> List id -> id -> Int -> Json.Decode.Decoder msg
+keyEvents onSelect tabs thisTabId keyCode =
+    let
+        findAdjacentTab id acc =
+            case acc of
+                ( _, Just _ ) ->
+                    acc
+
+                ( True, Nothing ) ->
+                    ( True, Just id )
+
+                ( False, Nothing ) ->
+                    ( id == thisTabId, Nothing )
+
+        nextTab =
+            List.foldl findAdjacentTab ( False, Nothing ) tabs
+                |> Tuple.second
+
+        previousTab =
+            List.foldr findAdjacentTab ( False, Nothing ) tabs
+                |> Tuple.second
+    in
+    case keyCode of
+        39 ->
+            -- Right
+            case nextTab of
+                Just next ->
+                    Json.Decode.succeed (onSelect next)
+
+                Nothing ->
+                    Json.Decode.fail "No next tab"
+
+        37 ->
+            -- Left
+            case previousTab of
+                Just previous ->
+                    Json.Decode.succeed (onSelect previous)
+
+                Nothing ->
+                    Json.Decode.fail "No previous tab"
+
+        _ ->
+            Json.Decode.fail "Upsupported key event"
 
 
 

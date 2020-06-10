@@ -66,14 +66,14 @@ type Msg
     | SetSettings (Control Settings)
 
 
-update : Msg -> State -> State
+update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
         SelectTab id ->
-            { model | selected = id }
+            ( { model | selected = id }, Cmd.none )
 
         SetSettings settings ->
-            { model | settings = settings }
+            ( { model | settings = settings }, Cmd.none )
 
 
 example : Example State Msg
@@ -81,7 +81,7 @@ example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
     , state = init
-    , update = \msg model -> ( update msg model, Cmd.none )
+    , update = update
     , subscriptions = \_ -> Sub.none
     , view =
         \model ->
