@@ -55,6 +55,7 @@ example =
                 , ( "speedometer", UiIcon.speedometer )
                 , ( "bulb", UiIcon.bulb )
                 , ( "help", UiIcon.help )
+                , ( "checklist", UiIcon.checklist )
                 ]
             , IconExamples.view "Humans & Class"
                 [ ( "person", UiIcon.person )
