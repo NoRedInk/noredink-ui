@@ -184,27 +184,14 @@ viewTab_ { onSelect, onFocus, tabs, selected, customSpacing } tab =
                     , [ Events.onClick (onSelect tab.id)
                       ]
                     )
-
-        tabStyles =
-            [ Css.color Colors.navy
-            , Css.margin zero
-            , Css.position Css.relative
-            , Css.textDecoration Css.none
-            , Css.property "background" "none"
-            , Css.fontFamily Css.inherit
-            , Css.fontSize Css.inherit
-            , Css.cursor Css.pointer
-            , Css.border zero
-            ]
     in
     Html.styled tag
-        (stylesTabSelectable isSelected customSpacing)
+        (tabStyles isSelected customSpacing)
         (tagSpecificAttributes
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
                , Role.tab
                , Attributes.id (tabToId tab.idString)
-               , Attributes.css tabStyles
                , Events.onFocus (onSelect tab.id)
                , Events.on "keyup"
                     (Json.Decode.andThen (keyEvents onFocus tabs tab) Events.keyCode)
@@ -305,8 +292,8 @@ stylesTabsAligned alignment =
            ]
 
 
-stylesTabSelectable : Bool -> Maybe Float -> List Style
-stylesTabSelectable isSelected customSpacing =
+tabStyles : Bool -> Maybe Float -> List Style
+tabStyles isSelected customSpacing =
     let
         stylesDynamic =
             if isSelected then
@@ -325,17 +312,30 @@ stylesTabSelectable isSelected customSpacing =
                         [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 100) ]
                 ]
 
+        baseStyles =
+            [ Css.color Colors.navy
+            , Css.position Css.relative
+            , Css.textDecoration Css.none
+            , Css.property "background" "none"
+            , Css.fontFamily Css.inherit
+            , Css.fontSize Css.inherit
+            , Css.cursor Css.pointer
+            , Css.border zero
+            ]
+
         stylesTab =
             [ Css.display Css.inlineBlock
             , Css.borderTopLeftRadius (Css.px 10)
             , Css.borderTopRightRadius (Css.px 10)
             , Css.border3 (Css.px 1) Css.solid Colors.navy
-            , Css.marginBottom (Css.px -1)
+            , Css.marginTop Css.zero
+            , Css.marginRight Css.zero
             , Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
+            , Css.marginBottom (Css.px -1)
             , Css.cursor Css.pointer
             , Css.firstChild [ Css.marginLeft Css.zero ]
             , property "transition" "background-color 0.2s"
             , hover [ backgroundColor Colors.white ]
             ]
     in
-    stylesTab ++ stylesDynamic
+    baseStyles ++ stylesTab ++ stylesDynamic
