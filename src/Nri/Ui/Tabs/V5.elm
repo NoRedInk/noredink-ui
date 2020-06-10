@@ -226,7 +226,7 @@ keyEvents onFocus tabs thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just tab )
+                    ( True, Just (tabToId tab.idString) )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
@@ -244,7 +244,7 @@ keyEvents onFocus tabs thisTab keyCode =
             -- Right
             case nextTab of
                 Just next ->
-                    Json.Decode.succeed (onFocus next.idString)
+                    Json.Decode.succeed (onFocus next)
 
                 Nothing ->
                     Json.Decode.fail "No next tab"
@@ -253,7 +253,7 @@ keyEvents onFocus tabs thisTab keyCode =
             -- Left
             case previousTab of
                 Just previous ->
-                    Json.Decode.succeed (onFocus previous.idString)
+                    Json.Decode.succeed (onFocus previous)
 
                 Nothing ->
                     Json.Decode.fail "No previous tab"
