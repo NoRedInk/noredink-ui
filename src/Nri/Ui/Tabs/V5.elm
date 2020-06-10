@@ -52,6 +52,7 @@ type alias Tab id msg =
 view :
     { title : Maybe String
     , alignment : Alignment
+    , customSpacing : Maybe Float
     , onSelect : id -> msg
     , onFocus : String -> msg
     , selected : id
@@ -81,7 +82,8 @@ view config =
                 ]
                 (List.map
                     (viewTab_
-                        { onSelect = config.onSelect
+                        { customSpacing = config.customSpacing
+                        , onSelect = config.onSelect
                         , onFocus = config.onFocus
                         , tabs = config.tabs
                         , selected = config.selected
@@ -146,10 +148,11 @@ viewTab_ :
     , onFocus : String -> msg
     , tabs : List (Tab id msg)
     , selected : id
+    , customSpacing : Maybe Float
     }
     -> Tab id msg
     -> Html msg
-viewTab_ { onSelect, onFocus, tabs, selected } tab =
+viewTab_ { onSelect, onFocus, tabs, selected, customSpacing } tab =
     let
         isSelected =
             selected == tab.id
@@ -195,7 +198,7 @@ viewTab_ { onSelect, onFocus, tabs, selected } tab =
             ]
     in
     Html.styled tag
-        (stylesTabSelectable isSelected)
+        (stylesTabSelectable isSelected customSpacing)
         (tagSpecificAttributes
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
@@ -302,8 +305,8 @@ stylesTabsAligned alignment =
            ]
 
 
-stylesTabSelectable : Bool -> List Style
-stylesTabSelectable isSelected =
+stylesTabSelectable : Bool -> Maybe Float -> List Style
+stylesTabSelectable isSelected customSpacing =
     let
         stylesDynamic =
             if isSelected then
@@ -328,7 +331,7 @@ stylesTabSelectable isSelected =
             , Css.borderTopRightRadius (Css.px 10)
             , Css.border3 (Css.px 1) Css.solid Colors.navy
             , Css.marginBottom (Css.px -1)
-            , Css.marginLeft (Css.px 10)
+            , Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
             , Css.cursor Css.pointer
             , Css.firstChild [ Css.marginLeft Css.zero ]
             , property "transition" "background-color 0.2s"

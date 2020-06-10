@@ -40,6 +40,7 @@ init =
 type alias Settings =
     { title : Maybe String
     , alignment : Alignment
+    , customSpacing : Maybe Float
     }
 
 
@@ -53,6 +54,17 @@ initSettings =
                 , ( "Center", Control.value Center )
                 , ( "Right", Control.value Right )
                 ]
+            )
+        |> Control.field "customSpacing"
+            (Control.maybe False
+                (Control.choice
+                    [ ( "2", Control.value 2 )
+                    , ( "3", Control.value 3 )
+                    , ( "4", Control.value 4 )
+                    , ( "8", Control.value 8 )
+                    , ( "16", Control.value 16 )
+                    ]
+                )
             )
 
 
@@ -103,6 +115,7 @@ example =
             , Tabs.view
                 { title = settings.title
                 , alignment = settings.alignment
+                , customSpacing = settings.customSpacing
                 , onSelect = SelectTab
                 , onFocus = Focus
                 , selected = model.selected
