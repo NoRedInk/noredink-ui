@@ -16,7 +16,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , equals, plus
     , key, lock, premiumLock
     , badge
-    , bold, italic, underline, list, undo
+    , bold, italic, underline, list, undo, redo
     , home, library
     )
 
@@ -39,7 +39,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs equals, plus
 @docs key, lock, premiumLock
 @docs badge
-@docs bold, italic, underline, list, undo
+@docs bold, italic, underline, list, undo, redo
 @docs home, library
 
     import Html.Styled exposing (..)
@@ -1200,6 +1200,19 @@ undo =
         , Attributes.viewBox "0 0 18 8"
         ]
         [ Svg.path [ Attributes.d "M3.16 3.168C4.83 1.76 6.938.879 9.22.879c4.126 0 7.55 2.64 8.78 6.336l-2.107.705c-.879-2.816-3.513-4.84-6.674-4.84a6.877 6.877 0 0 0-4.478 1.672L7.902 7.92H0V0l3.16 3.168z" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+redo : Nri.Ui.Svg.V1.Svg
+redo =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 18 8"
+        ]
+        [ Svg.path [ Attributes.transform "scale(-1,1) translate(-18,0)", Attributes.d "M3.16 3.168C4.83 1.76 6.938.879 9.22.879c4.126 0 7.55 2.64 8.78 6.336l-2.107.705c-.879-2.816-3.513-4.84-6.674-4.84a6.877 6.877 0 0 0-4.478 1.672L7.902 7.92H0V0l3.16 3.168z" ] [] ]
         |> Nri.Ui.Svg.V1.fromHtml
 
 

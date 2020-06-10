@@ -119,6 +119,7 @@ example =
                 , ( "underline", UiIcon.underline )
                 , ( "list", UiIcon.list )
                 , ( "undo", UiIcon.undo )
+                , ( "redo", UiIcon.redo )
                 ]
             , IconExamples.view "Navigation"
                 [ ( "home", UiIcon.home )
