@@ -39,6 +39,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 
 
 {-| Determines whether tabs are centered or floating to the left or right.
@@ -289,10 +290,10 @@ viewTabLink isSelected tabConfig =
     let
         currentPage =
             if isSelected then
-                [ Aria.currentPage ]
+                Aria.currentPage
 
             else
-                []
+                AttributesExtra.none
     in
     Html.styled Html.li
         (stylesTabSelectable isSelected)
@@ -306,11 +307,11 @@ viewTabLink isSelected tabConfig =
             , hover [ textDecoration none ]
             , focus [ textDecoration none ]
             ]
-            ([ Attributes.href tabConfig.href
-             , Role.tab
-             , EventExtras.onClickPreventDefaultForLinkWithHref tabConfig.msg
-             ]
-                ++ currentPage
+            (currentPage
+                :: [ Attributes.href tabConfig.href
+                   , Role.tab
+                   , EventExtras.onClickPreventDefaultForLinkWithHref tabConfig.msg
+                   ]
             )
             [ Html.text tabConfig.label ]
         ]
