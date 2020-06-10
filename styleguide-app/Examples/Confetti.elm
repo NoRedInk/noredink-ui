@@ -20,7 +20,7 @@ import Nri.Ui.Confetti.V2 as Confetti
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Confetti.V1"
+    { name = "Nri.Ui.Confetti.V2"
     , categories = [ Animations ]
     , state = Confetti.init 700
     , update = update
