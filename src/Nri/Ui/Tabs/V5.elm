@@ -1,20 +1,14 @@
 module Nri.Ui.Tabs.V5 exposing
-    ( Alignment(..)
-    , view
-    , Tab
-    , viewTabDefault
+    ( view
+    , Alignment(..)
+    , Tab, viewTabDefault
     )
 
 {-|
 
-@docs Alignment
 @docs view
-@docs Tab
-
-
-## Defaults
-
-@docs viewTabDefault
+@docs Alignment
+@docs Tab, viewTabDefault
 
 -}
 
