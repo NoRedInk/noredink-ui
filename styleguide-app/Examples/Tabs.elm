@@ -10,6 +10,7 @@ module Examples.Tabs exposing
 
 -}
 
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -20,6 +21,7 @@ import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Task
 
 
 type alias State =
@@ -63,6 +65,8 @@ type Id
 
 type Msg
     = SelectTab Id
+    | Focus String
+    | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
 
@@ -71,6 +75,12 @@ update msg model =
     case msg of
         SelectTab id ->
             ( { model | selected = id }, Cmd.none )
+
+        Focus id ->
+            ( model, Task.attempt Focused (Dom.focus id) )
+
+        Focused error ->
+            ( model, Cmd.none )
 
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
@@ -94,6 +104,7 @@ example =
                 { title = settings.title
                 , alignment = settings.alignment
                 , onSelect = SelectTab
+                , onFocus = Focus
                 , selected = model.selected
                 , tabs = allTabs
                 }

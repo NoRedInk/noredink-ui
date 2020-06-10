@@ -59,6 +59,7 @@ view :
     { title : Maybe String
     , alignment : Alignment
     , onSelect : id -> msg
+    , onFocus : String -> msg
     , selected : id
     , tabs : List (Tab id msg)
     }
@@ -87,7 +88,8 @@ view config =
                 (List.map
                     (viewTab_
                         { onSelect = config.onSelect
-                        , tabs = List.map .id config.tabs
+                        , onFocus = config.onFocus
+                        , tabs = config.tabs
                         , selected = config.selected
                         }
                     )
@@ -147,23 +149,19 @@ viewTitle title =
 
 viewTab_ :
     { onSelect : id -> msg
-    , tabs : List id
+    , onFocus : String -> msg
+    , tabs : List (Tab id msg)
     , selected : id
     }
     -> Tab id msg
     -> Html msg
-viewTab_ { onSelect, tabs, selected } tab =
+viewTab_ { onSelect, onFocus, tabs, selected } tab =
     let
         isSelected =
             selected == tab.id
 
         tabIndex =
             -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
-            -- TODO:
-            -- keyboard interactions aren't behaving the way I'd expect.
-            -- Right and left arrows aren't shifting the tab focus properly,
-            -- and we can't tab to de-selected tabs as a result of this line.
-            -- Dig into this more before publishing.
             if isSelected then
                 0
 
@@ -210,27 +208,28 @@ viewTab_ { onSelect, tabs, selected } tab =
                , Role.tab
                , Attributes.id (tabToId tab.idString)
                , Attributes.css tabStyles
+               , Events.onFocus (onSelect tab.id)
                , Events.on "keyup"
-                    (Json.Decode.andThen (keyEvents onSelect tabs tab.id) Events.keyCode)
+                    (Json.Decode.andThen (keyEvents onFocus tabs tab) Events.keyCode)
                ]
         )
         [ tab.tabView
         ]
 
 
-keyEvents : (id -> msg) -> List id -> id -> Int -> Json.Decode.Decoder msg
-keyEvents onSelect tabs thisTabId keyCode =
+keyEvents : (String -> msg) -> List (Tab id msg) -> Tab id msg -> Int -> Json.Decode.Decoder msg
+keyEvents onFocus tabs thisTab keyCode =
     let
-        findAdjacentTab id acc =
+        findAdjacentTab tab acc =
             case acc of
                 ( _, Just _ ) ->
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just id )
+                    ( True, Just tab )
 
                 ( False, Nothing ) ->
-                    ( id == thisTabId, Nothing )
+                    ( tab.id == thisTab.id, Nothing )
 
         nextTab =
             List.foldl findAdjacentTab ( False, Nothing ) tabs
@@ -245,7 +244,7 @@ keyEvents onSelect tabs thisTabId keyCode =
             -- Right
             case nextTab of
                 Just next ->
-                    Json.Decode.succeed (onSelect next)
+                    Json.Decode.succeed (onFocus next.idString)
 
                 Nothing ->
                     Json.Decode.fail "No next tab"
@@ -254,7 +253,7 @@ keyEvents onSelect tabs thisTabId keyCode =
             -- Left
             case previousTab of
                 Just previous ->
-                    Json.Decode.succeed (onSelect previous)
+                    Json.Decode.succeed (onFocus previous.idString)
 
                 Nothing ->
                     Json.Decode.fail "No previous tab"
