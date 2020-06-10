@@ -98,26 +98,6 @@ view state =
             , entries = []
             }
         ]
-    , Html.h3 [] [ Html.text "Row with buttons and menus" ]
-    , Html.div []
-        [ Menu.iconButton
-            { icon = UiIcon.performance
-            , label = "Menu.iconButton: I'm a button!"
-            , isTooltipOpen = Set.member "Performance" state.openTooltips
-            , onShowTooltip = ShowTooltip "Performance"
-            , onClick = ConsoleLog "Clicked the Performance button!"
-            , isDisabled = False
-            , id = "performance"
-            }
-        , Menu.iconLink
-            { icon = UiIcon.document
-            , label = "Menu.iconLink: I link elsewhere!"
-            , isTooltipOpen = Set.member "Document" state.openTooltips
-            , onShowTooltip = ShowTooltip "Document"
-            , linkUrl = "https://www.noredink.com/"
-            , isDisabled = False
-            }
-        ]
     ]
 
 
