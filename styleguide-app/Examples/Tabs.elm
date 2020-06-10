@@ -97,17 +97,6 @@ example =
                 , selected = model.selected
                 , tabs = allTabs
                 }
-            , Tabs.links
-                { title = Nothing
-                , content = Html.text "Links"
-                , alignment = Tabs.Left
-                , tabs =
-                    List.Zipper.from
-                        []
-                        { label = "Elm", href = "http://elm-lang.org", msg = SelectTab First }
-                        [ { label = "Spa", href = "/#category/Layout", msg = SelectTab Second }
-                        ]
-                }
             ]
     }
 
@@ -116,16 +105,19 @@ allTabs : List (Tab Id Msg)
 allTabs =
     [ { id = First
       , idString = "tab-0"
-      , tabView = Tabs.viewTabDefault "First Tab"
+      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V5"
+      , tabView = Tabs.viewTabDefault "Link example"
       , panelView = Html.text "First Panel"
       }
     , { id = Second
       , idString = "tab-1"
+      , spaHref = Nothing
       , tabView = Tabs.viewTabDefault "Second Tab"
       , panelView = Html.text "Second Panel"
       }
     , { id = Third
       , idString = "tab-2"
+      , spaHref = Nothing
       , tabView =
             UiIcon.bulb
                 |> Svg.withWidth (Css.px 40)
@@ -136,6 +128,7 @@ allTabs =
       }
     , { id = Fourth
       , idString = "tab-3"
+      , spaHref = Nothing
       , tabView = Tabs.viewTabDefault "Fourth Tab"
       , panelView = Html.text "Fourth Panel"
       }

@@ -1,7 +1,5 @@
 module Nri.Ui.Tabs.V5 exposing
     ( Alignment(..)
-    , LinkConfig
-    , links
     , view
     , Tab
     , viewTabDefault
@@ -10,10 +8,7 @@ module Nri.Ui.Tabs.V5 exposing
 {-|
 
 @docs Alignment
-@docs LinkConfig
-@docs links
 @docs view
-
 @docs Tab
 
 
@@ -50,11 +45,13 @@ type Alignment
     | Right
 
 
+{-| -}
 type alias Tab id msg =
     { id : id
     , idString : String
     , tabView : Html msg
     , panelView : Html msg
+    , spaHref : Maybe String
     }
 
 
@@ -192,34 +189,47 @@ viewTab_ { onSelect, tabs, selected } tab =
         previousTab =
             List.foldr findAdjacentTab ( False, Nothing ) tabs
                 |> Tuple.second
-    in
-    Html.styled Html.button
-        (stylesTabSelectable isSelected)
-        [ Events.onClick (onSelect tab.id)
-        , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
-        , Events.onFocus (onSelect tab.id)
-        , Attributes.tabindex tabIndex
-        , Widget.selected isSelected
-        , Role.tab
-        , Attributes.id (tabToId tab.idString)
-        , Events.on "keyup" <|
-            Json.Decode.andThen
-                (\keyCode ->
-                    if keyCode == 39 then
-                        nextTab
-                            |> Maybe.map (onSelect >> Json.Decode.succeed)
-                            |> Maybe.withDefault (Json.Decode.fail "No next tab")
 
-                    else if keyCode == 37 then
-                        previousTab
-                            |> Maybe.map (onSelect >> Json.Decode.succeed)
-                            |> Maybe.withDefault (Json.Decode.fail "No previous tab")
+        ( tag, eventHandlers ) =
+            case tab.spaHref of
+                Just href ->
+                    ( Html.a
+                    , [ if isSelected then
+                            Aria.currentPage
 
-                    else
-                        Json.Decode.fail "Wrong key code"
-                )
-                Events.keyCode
-        , Attributes.css
+                        else
+                            AttributesExtra.none
+                      , Attributes.href href
+                      , EventExtras.onClickPreventDefaultForLinkWithHref (onSelect tab.id)
+                      ]
+                    )
+
+                Nothing ->
+                    ( Html.button
+                    , [ Events.onClick (onSelect tab.id)
+                      , Key.onKeyDown [ Key.enter (onSelect tab.id) ]
+                      , Events.onFocus (onSelect tab.id)
+                      , Events.on "keyup" <|
+                            Json.Decode.andThen
+                                (\keyCode ->
+                                    if keyCode == 39 then
+                                        nextTab
+                                            |> Maybe.map (onSelect >> Json.Decode.succeed)
+                                            |> Maybe.withDefault (Json.Decode.fail "No next tab")
+
+                                    else if keyCode == 37 then
+                                        previousTab
+                                            |> Maybe.map (onSelect >> Json.Decode.succeed)
+                                            |> Maybe.withDefault (Json.Decode.fail "No previous tab")
+
+                                    else
+                                        Json.Decode.fail "Wrong key code"
+                                )
+                                Events.keyCode
+                      ]
+                    )
+
+        tabStyles =
             [ Css.color Colors.navy
             , Css.margin zero
             , Css.position Css.relative
@@ -230,90 +240,18 @@ viewTab_ { onSelect, tabs, selected } tab =
             , Css.cursor Css.pointer
             , Css.border zero
             ]
-        ]
-        [ tab.tabView
-        ]
-
-
-{-| A link to another SPA page. The `msg` type should be used to handle
-the navigation event.
--}
-type alias SpaLink msg =
-    { label : String, href : String, msg : msg }
-
-
-{-| Configure a set a tab links
--}
-type alias LinkConfig msg =
-    { title : Maybe String
-    , tabs : Zipper (SpaLink msg)
-    , content : Html msg
-    , alignment : Alignment
-    }
-
-
-{-| View a set of tab links
--}
-links : LinkConfig msg -> Html msg
-links config =
-    Nri.Ui.styled Html.div
-        (styledName "container")
-        []
-        []
-        [ Html.styled Html.nav
-            [ Css.displayFlex
-            , Css.alignItems Css.flexEnd
-            , Css.borderBottom (Css.px 1)
-            , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Colors.navy
-            , Nri.Ui.Fonts.V1.baseFont
-            ]
-            []
-            [ config.title
-                |> Maybe.map viewTitle
-                |> Maybe.withDefault (Html.text "")
-            , Html.styled Html.ul
-                (stylesTabsAligned config.alignment)
-                [ Role.tabList
-                ]
-                (config.tabs
-                    |> mapWithCurrent viewTabLink
-                    |> List.Zipper.toList
-                )
-            ]
-        , Html.div [] [ config.content ]
-        ]
-
-
-viewTabLink : Bool -> SpaLink msg -> Html msg
-viewTabLink isSelected tabConfig =
-    let
-        currentPage =
-            if isSelected then
-                Aria.currentPage
-
-            else
-                AttributesExtra.none
     in
-    Html.styled Html.li
+    Html.styled tag
         (stylesTabSelectable isSelected)
-        [ Role.presentation
-        , Attributes.id (tabToId tabConfig.label)
-        ]
-        [ Html.styled Html.a
-            [ Css.color Colors.navy
-            , Css.display Css.inlineBlock
-            , Css.textDecoration Css.none
-            , hover [ textDecoration none ]
-            , focus [ textDecoration none ]
-            ]
-            (currentPage
-                :: [ Attributes.href tabConfig.href
-                   , Role.tab
-                   , EventExtras.onClickPreventDefaultForLinkWithHref tabConfig.msg
-                   ]
-            )
-            [ Html.text tabConfig.label ]
+        (eventHandlers
+            ++ [ Attributes.tabindex tabIndex
+               , Widget.selected isSelected
+               , Role.tab
+               , Attributes.id (tabToId tab.idString)
+               , Attributes.css tabStyles
+               ]
+        )
+        [ tab.tabView
         ]
 
 
@@ -329,14 +267,6 @@ tabToId tab =
 tabToBodyId : String -> String
 tabToBodyId tab =
     "tab-body-" ++ tabToId tab
-
-
-mapWithCurrent : (Bool -> a -> b) -> Zipper a -> Zipper b
-mapWithCurrent fn zipper =
-    List.Zipper.Extra.from
-        (List.map (fn False) (List.Zipper.before zipper))
-        (fn True (List.Zipper.current zipper))
-        (List.map (fn False) (List.Zipper.after zipper))
 
 
 styledName : String -> String
