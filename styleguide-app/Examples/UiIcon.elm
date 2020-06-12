@@ -55,6 +55,7 @@ example =
                 , ( "speedometer", UiIcon.speedometer )
                 , ( "bulb", UiIcon.bulb )
                 , ( "help", UiIcon.help )
+                , ( "checklist", UiIcon.checklist )
                 ]
             , IconExamples.view "Humans & Class"
                 [ ( "person", UiIcon.person )
@@ -66,10 +67,16 @@ example =
                 [ ( "calendar", UiIcon.calendar )
                 , ( "clock", UiIcon.clock )
                 ]
-            , IconExamples.view "Writing & Writing Utensils"
+            , IconExamples.view "Texts"
                 [ ( "document", UiIcon.document )
                 , ( "newspaper", UiIcon.newspaper )
-                , ( "edit", UiIcon.edit )
+                , ( "openBook", UiIcon.openBook )
+                ]
+            , IconExamples.view "Communication"
+                [ ( "speechBalloon", UiIcon.speechBalloon )
+                ]
+            , IconExamples.view "Writing Utensils"
+                [ ( "edit", UiIcon.edit )
                 , ( "pen", UiIcon.pen )
                 ]
             , IconExamples.view "Arrows"
@@ -119,6 +126,7 @@ example =
                 , ( "underline", UiIcon.underline )
                 , ( "list", UiIcon.list )
                 , ( "undo", UiIcon.undo )
+                , ( "redo", UiIcon.redo )
                 ]
             , IconExamples.view "Navigation"
                 [ ( "home", UiIcon.home )
