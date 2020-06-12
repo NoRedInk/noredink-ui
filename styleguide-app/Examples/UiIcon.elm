@@ -125,6 +125,7 @@ example =
                 , ( "italic", UiIcon.italic )
                 , ( "underline", UiIcon.underline )
                 , ( "list", UiIcon.list )
+                , ( "link", UiIcon.link )
                 , ( "undo", UiIcon.undo )
                 , ( "redo", UiIcon.redo )
                 ]
