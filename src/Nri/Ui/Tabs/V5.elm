@@ -335,7 +335,13 @@ tabStyles isSelected customSpacing =
             , Css.cursor Css.pointer
             , Css.firstChild [ Css.marginLeft Css.zero ]
             , property "transition" "background-color 0.2s"
-            , hover [ backgroundColor Colors.white, borderColor Colors.azure ]
+            , property "transition" "border-color 0.2s"
+            , hover
+                [ backgroundColor Colors.white
+                , borderTopColor Colors.azure
+                , borderRightColor Colors.azure
+                , borderLeftColor Colors.azure
+                ]
             ]
     in
     baseStyles ++ stylesTab ++ stylesDynamic
