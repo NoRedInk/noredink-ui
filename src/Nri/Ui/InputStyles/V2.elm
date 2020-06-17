@@ -98,7 +98,6 @@ input theme isInError =
                 [ border3 (px 1) solid gray75
                 , width (pct 100)
                 , borderRadius (px 8)
-                , property "transition" "all 0.1s ease"
                 , pseudoClass "placeholder"
                     [ color gray45
                     ]
