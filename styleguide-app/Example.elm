@@ -6,6 +6,7 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
 
 type alias Example state msg =
@@ -99,15 +100,14 @@ view showFocusLink example =
                 , marginBottom zero
                 ]
                 []
-                [ Html.text example.name ]
+                [ Html.a [ Attributes.href ("#/doodad/" ++ example.name) ] [ Html.text example.name ] ]
             , String.replace "." "-" example.name
                 |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                |> viewLink "view docs"
-            , if showFocusLink then
-                viewLink "see only this" ("#/doodad/" ++ example.name)
-
-              else
-                Html.text ""
+                |> viewLink "Docs"
+            , String.replace "." "/" example.name
+                ++ ".elm"
+                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
+                |> viewLink "Source"
             ]
         , Html.div [ Attributes.css [ padding2 (px 20) zero ] ] (example.view example.state)
         ]
@@ -116,8 +116,10 @@ view showFocusLink example =
 viewLink : String -> String -> Html msg
 viewLink text href =
     Html.a
-        [ Attributes.href href
-        , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
-        ]
+        ([ Attributes.href href
+         , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
+         ]
+            ++ targetBlank
+        )
         [ Html.text text
         ]
