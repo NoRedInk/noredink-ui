@@ -7,6 +7,7 @@ module Examples.Callout exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled exposing (text)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -30,6 +31,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Callout.V1"
     , categories = [ Messaging ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

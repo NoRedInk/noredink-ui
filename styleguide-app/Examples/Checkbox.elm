@@ -6,6 +6,7 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -48,6 +49,7 @@ example =
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
+    , atomicDesignType = AtomicDesignType.Molecule
     }
 
 

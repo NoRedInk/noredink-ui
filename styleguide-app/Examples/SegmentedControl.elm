@@ -11,6 +11,7 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
@@ -62,7 +63,8 @@ example =
                 , width = options.width
                 }
             ]
-    , categories = [ Inputs, Widgets ]
+    , categories = [ Inputs, Widgets, Layout ]
+    , atomicDesignType = AtomicDesignType.Molecule
     }
 
 

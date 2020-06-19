@@ -6,6 +6,7 @@ module Examples.Svg exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
@@ -27,6 +28,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Svg.V1"
     , categories = [ Icons ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -6,6 +6,7 @@ module Examples.Page exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
@@ -29,7 +30,8 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Page.V3"
-    , categories = List.singleton Pages
+    , categories = [ Pages ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = ()
     , update =
         \msg model ->

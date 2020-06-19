@@ -10,6 +10,7 @@ module Examples.Accordion exposing
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Dict exposing (Dict)
@@ -32,6 +33,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Layout ]
+    , atomicDesignType = AtomicDesignType.Molecule
     }
 
 

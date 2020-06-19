@@ -6,6 +6,7 @@ module Examples.Colors exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (highContrast)
 import Css
@@ -34,7 +35,8 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Colors.V1"
-    , categories = List.singleton Colors
+    , categories = [ Colors ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

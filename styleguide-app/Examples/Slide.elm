@@ -7,6 +7,7 @@ module Examples.Slide exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -36,6 +37,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Slide.V1"
     , categories = [ Animations ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

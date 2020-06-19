@@ -1,6 +1,7 @@
 module Examples.Message exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (..)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
@@ -123,6 +124,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Message.V1"
     , categories = [ Messaging ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

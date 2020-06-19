@@ -7,6 +7,7 @@ module Examples.Menu exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -28,6 +29,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , view = view
     }
 

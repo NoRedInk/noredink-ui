@@ -10,6 +10,7 @@ module Examples.Tabs exposing
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -102,6 +103,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -6,6 +6,7 @@ module Examples.Confetti exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Events
 import Category exposing (Category(..))
 import Css exposing (Color)
@@ -22,6 +23,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Confetti.V2"
     , categories = [ Animations ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = Confetti.init 700
     , update = update
     , subscriptions =

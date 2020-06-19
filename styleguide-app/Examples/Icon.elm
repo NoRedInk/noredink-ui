@@ -6,6 +6,7 @@ module Examples.Icon exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Css.Global
@@ -33,7 +34,8 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Icon.V5"
-    , categories = List.singleton Icons
+    , categories = [ Icons ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

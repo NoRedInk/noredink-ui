@@ -6,6 +6,7 @@ module Examples.Select exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -23,6 +24,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , view =
         \state ->
             [ Html.Styled.label

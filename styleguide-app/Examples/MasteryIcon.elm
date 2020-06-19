@@ -6,6 +6,7 @@ module Examples.MasteryIcon exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -27,7 +28,8 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.MasteryIcon.V1"
-    , categories = List.singleton Icons
+    , categories = [ Icons ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

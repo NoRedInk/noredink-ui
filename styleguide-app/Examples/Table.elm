@@ -6,6 +6,7 @@ module Examples.Table exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
@@ -33,7 +34,8 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , categories = [ Tables ]
+    , categories = [ Tables, Layout ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , view =
         \() ->
             let

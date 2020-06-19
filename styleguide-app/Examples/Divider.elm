@@ -6,6 +6,7 @@ module Examples.Divider exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -29,6 +30,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Divider.V2"
     , categories = [ Layout ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = {}
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

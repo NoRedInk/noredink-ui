@@ -6,6 +6,7 @@ module Examples.Loading exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Events
 import Category exposing (Category(..))
 import Css
@@ -88,6 +89,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Loading.V1"
     , categories = [ Pages ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = init
     , update = update
     , subscriptions = subscriptions

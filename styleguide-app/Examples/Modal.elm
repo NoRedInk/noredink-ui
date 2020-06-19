@@ -7,6 +7,7 @@ module Examples.Modal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
@@ -53,6 +54,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Modal.V8"
     , categories = [ Modals ]
+    , atomicDesignType = AtomicDesignType.Organism
     , state = init
     , update = update
     , subscriptions = subscriptions

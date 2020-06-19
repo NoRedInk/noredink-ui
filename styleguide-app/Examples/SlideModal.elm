@@ -7,6 +7,7 @@ module Examples.SlideModal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -34,6 +35,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.SlideModal.V2"
     , categories = [ Modals ]
+    , atomicDesignType = AtomicDesignType.Organism
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

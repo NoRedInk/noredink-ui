@@ -6,6 +6,7 @@ module Examples.DisclosureIndicator exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -30,6 +31,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , categories = [ Widgets ]
+    , atomicDesignType = AtomicDesignType.Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

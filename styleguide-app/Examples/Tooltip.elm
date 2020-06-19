@@ -7,6 +7,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -55,6 +56,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tooltip.V1"
     , categories = [ Widgets ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

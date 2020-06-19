@@ -6,6 +6,7 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
@@ -28,6 +29,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.ClickableSvg.V1"
     , categories = [ Buttons, Icons ]
+    , atomicDesignType = AtomicDesignType.Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
