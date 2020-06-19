@@ -1,14 +1,12 @@
 module AtomicDesignType exposing
     ( AtomicDesignType(..)
-    , sorter
-    , toString
+    , all, sorter, toString
     )
 
 {-|
 
 @docs AtomicDesignType
-@docs sorter
-@docs toString
+@docs all, sorter, toString
 
 -}
 
@@ -22,6 +20,17 @@ type AtomicDesignType
     | Organism
     | Template
     | Page
+
+
+{-| -}
+all : List AtomicDesignType
+all =
+    [ Atom
+    , Molecule
+    , Organism
+    , Template
+    , Page
+    ]
 
 
 {-| -}

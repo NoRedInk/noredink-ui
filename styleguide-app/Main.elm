@@ -1,5 +1,6 @@
 module Main exposing (init, main)
 
+import AtomicDesignType exposing (AtomicDesignType)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -18,7 +19,7 @@ import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Routes as Routes exposing (Route(..))
-import Sort.Set as Set
+import Sort.Set as Set exposing (Set)
 import Task
 import Url exposing (Url)
 
@@ -39,6 +40,7 @@ type alias Model =
     { -- Global UI
       route : Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , atomicDesignTypes : Set AtomicDesignType
     , navigationKey : Key
     }
 
@@ -49,6 +51,7 @@ init () url key =
       , moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
+      , atomicDesignTypes = Set.fromList AtomicDesignType.sorter AtomicDesignType.all
       , navigationKey = key
       }
     , Cmd.none
@@ -59,6 +62,7 @@ type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
+    | ToggleAtomicDesignType AtomicDesignType Bool
     | SkipToMainContent
     | NoOp
 
@@ -95,6 +99,21 @@ update action model =
         OnUrlChange route ->
             ( { model | route = Routes.fromLocation route }, Cmd.none )
 
+        ToggleAtomicDesignType atomicDesignType isOpen ->
+            ( { model
+                | atomicDesignTypes =
+                    (if isOpen then
+                        Set.insert
+
+                     else
+                        Set.remove
+                    )
+                        atomicDesignType
+                        model.atomicDesignTypes
+              }
+            , Cmd.none
+            )
+
         SkipToMainContent ->
             ( model
             , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
@@ -120,6 +139,15 @@ view model =
 
 view_ : Model -> Html Msg
 view_ model =
+    let
+        examples filterBy =
+            List.filter
+                (\m ->
+                    filterBy m
+                        && Set.memberOf model.atomicDesignTypes m.atomicDesignType
+                )
+                (Dict.values model.moduleStates)
+    in
     Html.styled Html.div
         [ displayFlex
         , alignItems flexStart
@@ -136,8 +164,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
-                        , Dict.values model.moduleStates
-                            |> List.filter (\m -> m.name == doodad)
+                        , examples (\m -> m.name == doodad)
                             |> List.map
                                 (\example ->
                                     Example.view False example
@@ -152,13 +179,12 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
-                        , Dict.values model.moduleStates
-                            |> List.filter
-                                (\doodad ->
-                                    Set.memberOf
-                                        (Set.fromList Category.sorter doodad.categories)
-                                        category
-                                )
+                        , examples
+                            (\doodad ->
+                                Set.memberOf
+                                    (Set.fromList Category.sorter doodad.categories)
+                                    category
+                            )
                             |> List.map
                                 (\example ->
                                     Example.view True example
@@ -173,7 +199,7 @@ view_ model =
                         [ sectionStyles ]
                         []
                         [ Heading.h2 [] [ Html.text "All" ]
-                        , Dict.values model.moduleStates
+                        , examples (\_ -> True)
                             |> List.map
                                 (\example ->
                                     Example.view True example
