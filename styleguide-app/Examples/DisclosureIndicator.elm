@@ -13,6 +13,7 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
@@ -32,6 +33,7 @@ example =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , categories = [ Widgets ]
     , atomicDesignType = Atom
+    , keyboardShortcuts = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

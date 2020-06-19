@@ -8,6 +8,7 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (styled)
 import Html.Styled.Attributes as Attributes exposing (href)
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V1 as Message
@@ -125,6 +126,7 @@ example =
     { name = "Nri.Ui.Message.V1"
     , categories = [ Messaging ]
     , atomicDesignType = Molecule
+    , keyboardShortcuts = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -12,6 +12,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Divider.V2 as Divider
 
 
@@ -31,6 +32,7 @@ example =
     { name = "Nri.Ui.Divider.V2"
     , categories = [ Layout ]
     , atomicDesignType = Atom
+    , keyboardShortcuts = []
     , state = {}
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

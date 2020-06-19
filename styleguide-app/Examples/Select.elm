@@ -12,6 +12,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
 
@@ -25,6 +26,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , atomicDesignType = Molecule
+    , keyboardShortcuts = []
     , view =
         \state ->
             [ Html.Styled.label

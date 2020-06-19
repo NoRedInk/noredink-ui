@@ -15,6 +15,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Events as Events
 import Json.Decode
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -90,6 +91,7 @@ example =
     { name = "Nri.Ui.Loading.V1"
     , categories = [ Pages ]
     , atomicDesignType = Page
+    , keyboardShortcuts = []
     , state = init
     , update = update
     , subscriptions = subscriptions

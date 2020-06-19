@@ -5,6 +5,7 @@ import Category exposing (Category)
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import KeyboardShortcuts exposing (KeyboardShortcut)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
@@ -17,6 +18,7 @@ type alias Example state msg =
     , view : state -> List (Html msg)
     , categories : List Category
     , atomicDesignType : AtomicDesignType
+    , keyboardShortcuts : List KeyboardShortcut
     }
 
 
@@ -41,6 +43,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
     , atomicDesignType = example.atomicDesignType
+    , keyboardShortcuts = example.keyboardShortcuts
     }
 
 
@@ -71,6 +74,7 @@ wrapState wrapState_ unwrapState example =
             >> Maybe.withDefault []
     , categories = example.categories
     , atomicDesignType = example.atomicDesignType
+    , keyboardShortcuts = example.keyboardShortcuts
     }
 
 
@@ -109,6 +113,7 @@ view showFocusLink example =
                 |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
                 |> viewLink "Source"
             ]
+        , KeyboardShortcuts.view example.keyboardShortcuts
         , Html.div [ Attributes.css [ padding2 (px 20) zero ] ] (example.view example.state)
         ]
 

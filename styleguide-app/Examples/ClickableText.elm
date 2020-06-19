@@ -13,6 +13,7 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
@@ -34,6 +35,7 @@ example =
     , view = \state -> [ viewExamples state ]
     , categories = [ Buttons ]
     , atomicDesignType = Molecule
+    , keyboardShortcuts = []
     }
 
 

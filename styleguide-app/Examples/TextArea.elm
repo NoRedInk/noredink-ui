@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Heading.V2 as Heading
@@ -43,6 +44,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , atomicDesignType = Molecule
+    , keyboardShortcuts = []
     , view =
         \state ->
             [ Heading.h1 [] [ Html.text "Textarea controls" ]

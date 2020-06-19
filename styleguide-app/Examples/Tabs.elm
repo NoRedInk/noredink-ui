@@ -18,6 +18,7 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
+import KeyboardShortcuts exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..), Tab)
@@ -104,6 +105,7 @@ example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
     , atomicDesignType = Molecule
+    , keyboardShortcuts = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

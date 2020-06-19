@@ -14,6 +14,7 @@ import Css.Global
 import Example exposing (Example)
 import Html as Root
 import Html.Styled.Attributes as Attributes
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -55,6 +56,7 @@ example =
     { name = "Nri.Ui.Modal.V8"
     , categories = [ Modals ]
     , atomicDesignType = Organism
+    , keyboardShortcuts = []
     , state = init
     , update = update
     , subscriptions = subscriptions

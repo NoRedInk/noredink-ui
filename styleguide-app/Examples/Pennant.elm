@@ -12,6 +12,7 @@ import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
@@ -33,6 +34,7 @@ example =
     { name = "Nri.Ui.Pennant.V2"
     , categories = [ Icons ]
     , atomicDesignType = Atom
+    , keyboardShortcuts = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

@@ -10,6 +10,7 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+import KeyboardShortcuts exposing (Direction(..), Key(..))
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -29,6 +30,7 @@ example =
     { name = "Nri.Ui.UiIcon.V1"
     , categories = List.singleton Icons
     , atomicDesignType = Atom
+    , keyboardShortcuts = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
