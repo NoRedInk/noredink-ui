@@ -12,7 +12,9 @@ module KeyboardSupport exposing
 
 -}
 
+import Css exposing (..)
 import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (css)
 
 
 {-| -}
@@ -32,14 +34,17 @@ view keyboardSupport =
         _ ->
             details []
                 [ summary [] [ text "Keyboard Support" ]
-                , ul [] (List.map viewKeyboardActions keyboardSupport)
+                , ul
+                    [ css [ listStyle none, margin2 (px 10) zero, padding zero ]
+                    ]
+                    (List.map viewKeyboardActions keyboardSupport)
                 ]
 
 
 viewKeyboardActions : KeyboardSupport -> Html msg
 viewKeyboardActions { keys, result } =
     li []
-        [ strong [] [ text (String.join "+" (List.map keyToString keys)) ]
+        [ strong [] [ text (String.join "+" (List.map keyToString keys) ++ ": ") ]
         , text result
         ]
 

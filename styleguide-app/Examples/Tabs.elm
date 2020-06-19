@@ -105,7 +105,17 @@ example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
     , atomicDesignType = Molecule
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Move focus to and from the currently-selected Tab"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the tab to the left of the currently-selected Tab"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the tab to the right of the currently-selected Tab"
+          }
+        ]
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
