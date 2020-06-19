@@ -1,5 +1,6 @@
 module Main exposing (init, main)
 
+import Accessibility.Styled as Html exposing (Html, img, text)
 import AtomicDesignType exposing (AtomicDesignType)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
@@ -11,7 +12,6 @@ import Example exposing (Example)
 import Examples
 import Html as RootHtml
 import Html.Attributes
-import Html.Styled as Html exposing (Html, img)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.V1 as Colors
@@ -148,21 +148,22 @@ view_ model =
                 )
                 (Dict.values model.moduleStates)
     in
-    Html.styled Html.div
-        [ displayFlex
-        , alignItems flexStart
-        , minHeight (vh 100)
+    Html.div
+        [ css
+            [ displayFlex
+            , alignItems flexStart
+            , minHeight (vh 100)
+            ]
         ]
-        []
-        [ navigation model.route
-        , Html.styled Html.main_
-            [ flexGrow (int 1) ]
-            [ id "maincontent", Attributes.tabindex -1 ]
+        [ navigation model.route model.atomicDesignTypes
+        , Html.main_
+            [ css [ flexGrow (int 1) ]
+            , id "maincontent"
+            , Attributes.tabindex -1
+            ]
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ Html.styled Html.section
-                        [ sectionStyles ]
-                        []
+                    [ Html.section [ css [ sectionStyles ] ]
                         [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
                         , examples (\m -> m.name == doodad)
                             |> List.map
@@ -175,9 +176,7 @@ view_ model =
                     ]
 
                 Routes.Category category ->
-                    [ Html.styled Html.section
-                        [ sectionStyles ]
-                        []
+                    [ Html.section [ css [ sectionStyles ] ]
                         [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
                         , examples
                             (\doodad ->
@@ -195,9 +194,7 @@ view_ model =
                     ]
 
                 Routes.All ->
-                    [ Html.styled Html.section
-                        [ sectionStyles ]
-                        []
+                    [ Html.section [ css [ sectionStyles ] ]
                         [ Heading.h2 [] [ Html.text "All" ]
                         , examples (\_ -> True)
                             |> List.map
@@ -212,8 +209,8 @@ view_ model =
         ]
 
 
-navigation : Route -> Html Msg
-navigation route =
+navigation : Route -> Set AtomicDesignType -> Html Msg
+navigation route openAtomicDesignTypes =
     let
         isActive category =
             case route of
@@ -224,18 +221,20 @@ navigation route =
                     False
 
         link active hash displayName =
-            Html.styled Html.a
-                [ backgroundColor transparent
-                , borderStyle none
-                , textDecoration none
-                , if active then
-                    color Colors.navy
+            Html.a
+                [ css
+                    [ backgroundColor transparent
+                    , borderStyle none
+                    , textDecoration none
+                    , if active then
+                        color Colors.navy
 
-                  else
-                    color Colors.azure
-                , Fonts.baseFont
+                      else
+                        color Colors.azure
+                    , Fonts.baseFont
+                    ]
+                , Attributes.href hash
                 ]
-                [ Attributes.href hash ]
                 [ Html.text displayName ]
 
         navLink category =
@@ -253,38 +252,60 @@ navigation route =
                 ]
                 [ element ]
     in
-    Html.styled Html.nav
-        [ flexBasis (px 200)
-        , backgroundColor Colors.gray96
-        , marginRight (px 40)
-        , padding (px 25)
-        , VendorPrefixed.value "position" "sticky"
-        , top (px 150)
-        , flexShrink zero
-        ]
-        [ attribute "aria-label" "Main Navigation"
-        ]
-        [ Html.styled Html.button
-            [ backgroundColor transparent
-            , borderStyle none
-            , textDecoration none
-            , color Colors.azure
-            , Fonts.baseFont
-            , Css.marginBottom (px 20)
+    Html.nav
+        [ css
+            [ flexBasis (px 200)
+            , backgroundColor Colors.gray96
+            , marginRight (px 40)
+            , padding (px 25)
+            , VendorPrefixed.value "position" "sticky"
+            , top (px 55)
+            , flexShrink zero
             ]
-            [ Events.onClick SkipToMainContent, id "skip" ]
+        , attribute "aria-label" "Main Navigation"
+        ]
+        [ Html.button
+            [ css
+                [ backgroundColor transparent
+                , borderStyle none
+                , textDecoration none
+                , color Colors.azure
+                , Fonts.baseFont
+                , Css.marginBottom (px 20)
+                ]
+            , Events.onClick SkipToMainContent
+            , id "skip"
+            ]
             [ Html.text "Skip to main content" ]
         , Heading.h4 [] [ Html.text "Categories" ]
         , (link (route == Routes.All) "#/" "All"
             :: List.map navLink Category.all
           )
             |> List.map toNavLi
-            |> Html.styled Html.ul
-                [ margin4 zero zero (px 40) zero
-                , padding zero
+            |> Html.ul
+                [ css [ margin4 zero zero (px 40) zero, padding zero ]
+                , id "categories"
                 ]
-                [ id "categories" ]
+        , Html.fieldset []
+            (Html.legend [] [ text "Atomic Design type" ]
+                :: List.map (checkAtomicDesignType openAtomicDesignTypes) AtomicDesignType.all
+            )
         ]
+
+
+checkAtomicDesignType : Set AtomicDesignType -> AtomicDesignType -> Html Msg
+checkAtomicDesignType openAtomicDesignTypes atomicDesignType =
+    let
+        isChecked =
+            Set.memberOf openAtomicDesignTypes atomicDesignType
+
+        name =
+            AtomicDesignType.toString atomicDesignType
+    in
+    Html.labelAfter [ css [ display block ] ] (text name) <|
+        Html.checkbox name
+            (Just isChecked)
+            [ Events.onCheck (ToggleAtomicDesignType atomicDesignType) ]
 
 
 sectionStyles : Css.Style
