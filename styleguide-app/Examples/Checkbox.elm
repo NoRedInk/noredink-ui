@@ -49,7 +49,7 @@ example =
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     }
 
 

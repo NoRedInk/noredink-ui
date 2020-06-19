@@ -23,7 +23,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Confetti.V2"
     , categories = [ Animations ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = Confetti.init 700
     , update = update
     , subscriptions =

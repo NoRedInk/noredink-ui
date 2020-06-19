@@ -89,7 +89,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Loading.V1"
     , categories = [ Pages ]
-    , atomicDesignType = AtomicDesignType.Page
+    , atomicDesignType = Page
     , state = init
     , update = update
     , subscriptions = subscriptions

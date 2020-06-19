@@ -30,7 +30,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Heading.V2"
     , categories = [ Text, Layout ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

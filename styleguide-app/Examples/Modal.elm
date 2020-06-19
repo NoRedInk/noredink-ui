@@ -54,7 +54,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Modal.V8"
     , categories = [ Modals ]
-    , atomicDesignType = AtomicDesignType.Organism
+    , atomicDesignType = Organism
     , state = init
     , update = update
     , subscriptions = subscriptions

@@ -124,7 +124,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Message.V1"
     , categories = [ Messaging ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

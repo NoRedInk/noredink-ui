@@ -42,7 +42,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , view =
         \state ->
             [ Heading.h1 [] [ Html.text "Textarea controls" ]

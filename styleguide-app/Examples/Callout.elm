@@ -31,7 +31,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Callout.V1"
     , categories = [ Messaging ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

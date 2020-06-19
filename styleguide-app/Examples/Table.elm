@@ -35,7 +35,7 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , categories = [ Tables, Layout ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , view =
         \() ->
             let

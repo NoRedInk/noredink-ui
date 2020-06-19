@@ -24,7 +24,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , view =
         \state ->
             [ Html.Styled.label

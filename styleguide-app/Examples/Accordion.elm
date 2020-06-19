@@ -33,7 +33,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Layout ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     }
 
 

@@ -31,7 +31,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Page.V3"
     , categories = [ Pages ]
-    , atomicDesignType = AtomicDesignType.Page
+    , atomicDesignType = Page
     , state = ()
     , update =
         \msg model ->

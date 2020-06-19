@@ -33,7 +33,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewExamples state ]
     , categories = [ Buttons ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     }
 
 

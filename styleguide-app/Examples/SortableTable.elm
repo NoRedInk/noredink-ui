@@ -36,7 +36,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.SortableTable.V1"
     , categories = [ Tables, Layout ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

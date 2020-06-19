@@ -31,7 +31,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.DisclosureIndicator.V2"
     , categories = [ Widgets ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -53,7 +53,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.TextInput.V6"
     , categories = [ Inputs ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

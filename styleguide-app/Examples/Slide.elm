@@ -37,7 +37,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Slide.V1"
     , categories = [ Animations ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

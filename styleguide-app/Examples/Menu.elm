@@ -29,7 +29,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , view = view
     }
 

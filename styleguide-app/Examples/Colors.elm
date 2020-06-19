@@ -36,7 +36,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Colors.V1"
     , categories = [ Colors ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

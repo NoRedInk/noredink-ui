@@ -56,7 +56,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tooltip.V1"
     , categories = [ Widgets ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

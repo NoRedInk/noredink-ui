@@ -64,7 +64,7 @@ example =
                 }
             ]
     , categories = [ Inputs, Widgets, Layout ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     }
 
 

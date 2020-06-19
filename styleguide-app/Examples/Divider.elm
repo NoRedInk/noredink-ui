@@ -30,7 +30,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Divider.V2"
     , categories = [ Layout ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = {}
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

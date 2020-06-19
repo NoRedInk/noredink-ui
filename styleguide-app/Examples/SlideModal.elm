@@ -35,7 +35,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.SlideModal.V2"
     , categories = [ Modals ]
-    , atomicDesignType = AtomicDesignType.Organism
+    , atomicDesignType = Organism
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

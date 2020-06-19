@@ -28,7 +28,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Svg.V1"
     , categories = [ Icons ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

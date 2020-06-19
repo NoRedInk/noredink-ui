@@ -27,7 +27,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Text.Writing.V1"
     , categories = [ Text ]
-    , atomicDesignType = AtomicDesignType.Atom
+    , atomicDesignType = Atom
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

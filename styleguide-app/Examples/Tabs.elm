@@ -103,7 +103,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

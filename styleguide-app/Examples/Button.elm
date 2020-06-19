@@ -28,7 +28,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
-    , atomicDesignType = AtomicDesignType.Molecule
+    , atomicDesignType = Molecule
     }
 
 
