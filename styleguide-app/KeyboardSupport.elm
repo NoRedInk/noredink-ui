@@ -1,13 +1,13 @@
-module KeyboardShortcuts exposing
+module KeyboardSupport exposing
     ( view
-    , KeyboardShortcut
+    , KeyboardSupport
     , Key(..), Direction(..)
     )
 
 {-|
 
 @docs view
-@docs KeyboardShortcut
+@docs KeyboardSupport
 @docs Key, Direction
 
 -}
@@ -16,27 +16,27 @@ import Html.Styled as Html exposing (..)
 
 
 {-| -}
-type alias KeyboardShortcut =
+type alias KeyboardSupport =
     { keys : List Key
     , result : String
     }
 
 
 {-| -}
-view : List KeyboardShortcut -> Html msg
-view keyboardShortcuts =
-    case keyboardShortcuts of
+view : List KeyboardSupport -> Html msg
+view keyboardSupport =
+    case keyboardSupport of
         [] ->
             text ""
 
         _ ->
             details []
                 [ summary [] [ text "Keyboard Support" ]
-                , ul [] (List.map viewKeyboardActions keyboardShortcuts)
+                , ul [] (List.map viewKeyboardActions keyboardSupport)
                 ]
 
 
-viewKeyboardActions : KeyboardShortcut -> Html msg
+viewKeyboardActions : KeyboardSupport -> Html msg
 viewKeyboardActions { keys, result } =
     li []
         [ strong [] [ text (String.join "+" (List.map keyToString keys)) ]

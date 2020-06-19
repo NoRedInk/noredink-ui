@@ -13,7 +13,7 @@ import Css.Global
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.AssetPath as AssetPath exposing (Asset(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -37,7 +37,7 @@ example =
     { name = "Nri.Ui.Icon.V5"
     , categories = [ Icons ]
     , atomicDesignType = Atom
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

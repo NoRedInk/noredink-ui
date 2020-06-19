@@ -11,7 +11,7 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
 
@@ -32,7 +32,7 @@ example =
     { name = "Nri.Ui.Logo.V1"
     , categories = [ Icons ]
     , atomicDesignType = Atom
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

@@ -11,7 +11,7 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 
@@ -32,7 +32,7 @@ example =
     { name = "Nri.Ui.Heading.V2"
     , categories = [ Text, Layout ]
     , atomicDesignType = Atom
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

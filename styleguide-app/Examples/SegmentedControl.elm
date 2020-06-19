@@ -18,7 +18,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V9 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -66,7 +66,7 @@ example =
             ]
     , categories = [ Inputs, Widgets, Layout ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     }
 
 

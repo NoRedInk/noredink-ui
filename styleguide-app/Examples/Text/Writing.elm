@@ -10,7 +10,7 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled exposing (text)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
 
@@ -29,7 +29,7 @@ example =
     { name = "Nri.Ui.Text.Writing.V1"
     , categories = [ Text ]
     , atomicDesignType = Atom
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

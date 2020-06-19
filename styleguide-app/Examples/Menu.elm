@@ -13,7 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Menu.V1 as Menu
@@ -31,7 +31,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , view = view
     }
 

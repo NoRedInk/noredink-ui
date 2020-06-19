@@ -12,7 +12,7 @@ import Css
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Page.V3 as Page
 
@@ -33,7 +33,7 @@ example =
     { name = "Nri.Ui.Page.V3"
     , categories = [ Pages ]
     , atomicDesignType = Page
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update =
         \msg model ->

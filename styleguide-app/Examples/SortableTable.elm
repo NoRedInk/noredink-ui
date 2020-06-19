@@ -10,7 +10,7 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
 
@@ -38,7 +38,7 @@ example =
     { name = "Nri.Ui.SortableTable.V1"
     , categories = [ Tables, Layout ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

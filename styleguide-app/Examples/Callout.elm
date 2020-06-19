@@ -13,7 +13,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (href, title)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Callout.V1 as Callout exposing (callout)
 import Nri.Ui.Heading.V2 as Heading
 
@@ -33,7 +33,7 @@ example =
     { name = "Nri.Ui.Callout.V1"
     , categories = [ Messaging ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

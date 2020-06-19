@@ -13,7 +13,7 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -30,7 +30,7 @@ example =
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     }
 
 

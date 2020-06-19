@@ -14,7 +14,7 @@ import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V6 as TextInput
 
@@ -55,7 +55,7 @@ example =
     { name = "Nri.Ui.TextInput.V6"
     , categories = [ Inputs ]
     , atomicDesignType = Molecule
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -14,7 +14,7 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardShortcuts exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Confetti.V2 as Confetti
 
@@ -25,7 +25,7 @@ example =
     { name = "Nri.Ui.Confetti.V2"
     , categories = [ Animations ]
     , atomicDesignType = Atom
-    , keyboardShortcuts = []
+    , keyboardSupport = []
     , state = Confetti.init 700
     , update = update
     , subscriptions =
