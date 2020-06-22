@@ -29,7 +29,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.InputStyles.V2 as InputStyles
+import Nri.Ui.InputStyles.V3 as InputStyles
     exposing
         ( Theme(..)
         , input
@@ -101,6 +101,9 @@ view_ theme model =
         heightForStyle =
             case theme of
                 Standard ->
+                    InputStyles.textAreaHeight
+
+                UserGenerated ->
                     InputStyles.textAreaHeight
 
                 ContentCreation ->
@@ -180,6 +183,9 @@ calculateMinHeight textAreaStyle specifiedHeight =
                 Standard ->
                     singleLineHeight
 
+                UserGenerated ->
+                    singleLineHeight
+
                 Writing ->
                     writingSingleLineHeight
 
@@ -189,6 +195,9 @@ calculateMinHeight textAreaStyle specifiedHeight =
         DefaultHeight ->
             case textAreaStyle of
                 Standard ->
+                    InputStyles.textAreaHeight
+
+                UserGenerated ->
                     InputStyles.textAreaHeight
 
                 Writing ->
