@@ -36,7 +36,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.InputStyles.V2 as InputStyles
+import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Message.V1 as Message
 import Nri.Ui.Util exposing (dashify)
 

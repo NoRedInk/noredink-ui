@@ -8,7 +8,6 @@ src/Nri/Ui/Page/V3.elm,Nri.Ui.Text,2
 src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Button,8
 src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Icon,3
 src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Text,2
-src/Nri/Ui/TextInput/V6.elm,Nri.Ui.InputStyles,2
 src/Nri/Ui/SortableTable/V1.elm,Nri.Ui.Table,4
 src/Nri/Ui/AssignmentIcon/V1.elm,Nri.Ui.AssignmentIcon,1
 src/Nri/Ui/Button/V8.elm,Html,DEPRECATED
