@@ -13,7 +13,7 @@ module Nri.Ui.Page.V3 exposing
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Text.V2 as Text
 
 
@@ -112,14 +112,12 @@ view config =
         , viewButton
             [ viewExit config ]
         , viewButton
-            [ Button.linkExternal
-                { label = "Get help!"
-                , icon = Nothing
-                , url = "https://noredink.zendesk.com/hc/en-us"
-                , size = Button.Large
-                , style = Button.Secondary
-                , width = Button.WidthExact 260
-                }
+            [ Button.link "Get help!"
+                [ Button.linkExternal "https://noredink.zendesk.com/hc/en-us"
+                , Button.large
+                , Button.exactWidth 260
+                , Button.secondary
+                ]
             ]
         , case config.details of
             Just details ->
@@ -135,34 +133,27 @@ viewExit config =
     case config.defaultPage of
         Just defaultPage ->
             Button.button
-                { onClick = defaultPage.link
-                , size = Button.Large
-                , style = Button.Primary
-                , width = Button.WidthExact 260
-                }
-                { label =
-                    case defaultPage.recoveryText of
-                        ReturnTo name ->
-                            "Return to " ++ name
+                (case defaultPage.recoveryText of
+                    ReturnTo name ->
+                        "Return to " ++ name
 
-                        Reload ->
-                            "Try again"
+                    Reload ->
+                        "Try again"
 
-                        Custom text ->
-                            text
-                , state = Button.Enabled
-                , icon = Nothing
-                }
+                    Custom text ->
+                        text
+                )
+                [ Button.onClick defaultPage.link
+                , Button.large
+                , Button.exactWidth 260
+                ]
 
         Nothing ->
-            Button.link
-                { label = "Return to dashboard"
-                , icon = Nothing
-                , url = "/"
-                , size = Button.Large
-                , style = Button.Primary
-                , width = Button.WidthExact 260
-                }
+            Button.link "Return to dashboard"
+                [ Button.href "/"
+                , Button.large
+                , Button.exactWidth 260
+                ]
 
 
 viewDetails : String -> Html msg

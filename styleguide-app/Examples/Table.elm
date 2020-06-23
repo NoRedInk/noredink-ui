@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html
-import Nri.Ui.Button.V5 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Table.V5 as Table
@@ -68,18 +68,7 @@ example =
                         { header =
                             Html.text "Actions"
                         , width = px 250
-                        , view =
-                            \_ ->
-                                Button.button
-                                    { size = Button.Small
-                                    , style = Button.Primary
-                                    , onClick = ()
-                                    , width = Button.WidthUnbounded
-                                    }
-                                    { label = "Action"
-                                    , state = Button.Enabled
-                                    , icon = Nothing
-                                    }
+                        , view = \_ -> Button.button "Action" [ Button.small, Button.onClick () ]
                         , cellStyles = always []
                         }
                     ]
