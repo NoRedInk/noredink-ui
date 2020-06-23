@@ -29,7 +29,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
-    , atomicDesignType = Molecule
+    , atomicDesignType = Atom
     , keyboardSupport = []
     }
 

@@ -24,7 +24,7 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Confetti.V2"
     , categories = [ Animations ]
-    , atomicDesignType = Atom
+    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = Confetti.init 700
     , update = update
