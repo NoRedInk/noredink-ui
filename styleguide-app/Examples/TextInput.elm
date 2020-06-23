@@ -7,12 +7,14 @@ module Examples.TextInput exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V6 as TextInput
 
@@ -52,6 +54,8 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.TextInput.V6"
     , categories = [ Inputs ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

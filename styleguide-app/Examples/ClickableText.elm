@@ -6,12 +6,14 @@ module Examples.ClickableText exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V4 as Text
@@ -32,6 +34,8 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewExamples state ]
     , categories = [ Buttons ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     }
 
 

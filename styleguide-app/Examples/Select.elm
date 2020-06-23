@@ -6,11 +6,13 @@ module Examples.Select exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
 
@@ -23,6 +25,8 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , view =
         \state ->
             [ Html.Styled.label

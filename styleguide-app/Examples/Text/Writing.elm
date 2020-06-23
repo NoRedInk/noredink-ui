@@ -6,9 +6,11 @@ module Examples.Text.Writing exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled exposing (text)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
 
@@ -25,7 +27,9 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Text.Writing.V1"
-    , categories = List.singleton Text
+    , categories = [ Text ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

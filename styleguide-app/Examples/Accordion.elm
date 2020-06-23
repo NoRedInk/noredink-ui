@@ -10,12 +10,14 @@ module Examples.Accordion exposing
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Accordion.V1 as Accordion
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -32,6 +34,8 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Layout ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     }
 
 

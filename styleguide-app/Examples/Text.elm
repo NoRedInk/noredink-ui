@@ -6,10 +6,12 @@ module Examples.Text exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 
@@ -28,7 +30,9 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Text.V4"
-    , categories = List.singleton Text
+    , categories = [ Text ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

@@ -6,11 +6,13 @@ module Examples.Pennant exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
@@ -30,7 +32,9 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Nri.Ui.Pennant.V2"
-    , categories = List.singleton Icons
+    , categories = [ Icons ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

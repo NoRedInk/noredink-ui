@@ -6,9 +6,11 @@ module Examples.AssignmentIcon exposing (example, State, Msg)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.Icon.V5 as Icon
 
@@ -28,6 +30,8 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.AssignmentIcon.V2"
     , categories = [ Icons ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

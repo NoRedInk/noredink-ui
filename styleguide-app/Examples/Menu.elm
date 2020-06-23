@@ -7,11 +7,13 @@ module Examples.Menu exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Menu.V1 as Menu
@@ -28,6 +30,8 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , view = view
     }
 

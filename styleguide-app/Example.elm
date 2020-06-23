@@ -1,10 +1,13 @@
 module Example exposing (Example, view, wrapMsg, wrapState)
 
+import AtomicDesignType exposing (AtomicDesignType)
 import Category exposing (Category)
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
 
 type alias Example state msg =
@@ -14,6 +17,8 @@ type alias Example state msg =
     , subscriptions : state -> Sub msg
     , view : state -> List (Html msg)
     , categories : List Category
+    , atomicDesignType : AtomicDesignType
+    , keyboardSupport : List KeyboardSupport
     }
 
 
@@ -37,6 +42,8 @@ wrapMsg wrapMsg_ unwrapMsg example =
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
+    , atomicDesignType = example.atomicDesignType
+    , keyboardSupport = example.keyboardSupport
     }
 
 
@@ -66,6 +73,8 @@ wrapState wrapState_ unwrapState example =
             >> Maybe.map example.view
             >> Maybe.withDefault []
     , categories = example.categories
+    , atomicDesignType = example.atomicDesignType
+    , keyboardSupport = example.keyboardSupport
     }
 
 
@@ -95,16 +104,16 @@ view showFocusLink example =
                 , marginBottom zero
                 ]
                 []
-                [ Html.text example.name ]
+                [ Html.a [ Attributes.href ("#/doodad/" ++ example.name) ] [ Html.text example.name ] ]
             , String.replace "." "-" example.name
                 |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                |> viewLink "view docs"
-            , if showFocusLink then
-                viewLink "see only this" ("#/doodad/" ++ example.name)
-
-              else
-                Html.text ""
+                |> viewLink "Docs"
+            , String.replace "." "/" example.name
+                ++ ".elm"
+                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
+                |> viewLink "Source"
             ]
+        , KeyboardSupport.view example.keyboardSupport
         , Html.div [ Attributes.css [ padding2 (px 20) zero ] ] (example.view example.state)
         ]
 
@@ -112,8 +121,10 @@ view showFocusLink example =
 viewLink : String -> String -> Html msg
 viewLink text href =
     Html.a
-        [ Attributes.href href
-        , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
-        ]
+        ([ Attributes.href href
+         , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
+         ]
+            ++ targetBlank
+        )
         [ Html.text text
         ]
