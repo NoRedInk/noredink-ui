@@ -6,9 +6,11 @@ module Examples.SortableTable exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V1 as SortableTable
 
@@ -34,7 +36,9 @@ type alias State =
 example : Example State Msg
 example =
     { name = "Nri.Ui.SortableTable.V1"
-    , categories = [ Tables ]
+    , categories = [ Tables, Layout ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

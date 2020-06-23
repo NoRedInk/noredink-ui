@@ -6,12 +6,14 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -27,6 +29,8 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     }
 
 

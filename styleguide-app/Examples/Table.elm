@@ -6,10 +6,12 @@ module Examples.Table exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V5 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -33,7 +35,9 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , categories = [ Tables ]
+    , categories = [ Tables, Layout ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , view =
         \() ->
             let

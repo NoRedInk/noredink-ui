@@ -10,6 +10,7 @@ module Examples.Tabs exposing
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -17,6 +18,7 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..), Tab)
@@ -102,6 +104,18 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tabs.V5"
     , categories = [ Layout ]
+    , atomicDesignType = Molecule
+    , keyboardSupport =
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Move focus to and from the currently-selected Tab"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the tab to the left of the currently-selected Tab"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the tab to the right of the currently-selected Tab"
+          }
+        ]
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

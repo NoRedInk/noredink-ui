@@ -6,11 +6,13 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 -}
 
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
@@ -48,6 +50,8 @@ example =
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     }
 
 

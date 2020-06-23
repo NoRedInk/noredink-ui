@@ -7,10 +7,12 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V1 as Tooltip
@@ -55,6 +57,8 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Tooltip.V1"
     , categories = [ Widgets ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

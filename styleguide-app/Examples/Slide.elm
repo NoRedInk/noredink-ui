@@ -7,11 +7,13 @@ module Examples.Slide exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html
+import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Keyed as Keyed
+import KeyboardSupport exposing (Direction(..), Key(..))
 import List.Zipper as Zipper exposing (Zipper)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -36,6 +38,8 @@ example : Example State Msg
 example =
     { name = "Nri.Ui.Slide.V1"
     , categories = [ Animations ]
+    , atomicDesignType = Atom
+    , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
