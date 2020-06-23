@@ -36,7 +36,25 @@ all =
 {-| -}
 sorter : Sorter AtomicDesignType
 sorter =
-    Sort.by toString Sort.alphabetical
+    Sort.by
+        (\v ->
+            case v of
+                Atom ->
+                    0
+
+                Molecule ->
+                    1
+
+                Organism ->
+                    2
+
+                Template ->
+                    3
+
+                Page ->
+                    4
+        )
+        Sort.increasing
 
 
 {-| -}
