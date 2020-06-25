@@ -31,7 +31,6 @@ import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Icon.V3 as Icon
 import Nri.Ui.Slide.V1 as Slide exposing (AnimationDirection(..))
 import Nri.Ui.Text.V2 as Text
 
