@@ -276,8 +276,8 @@ custom styles =
 
 
 {-| -}
-type Focusable msg
-    = Focusable (Attribute msg) (List (Attribute msg))
+type alias Focusable msg =
+    Attribute msg
 
 
 {-| -}
@@ -290,43 +290,6 @@ multipleFocusableElementView :
     )
     -> Focusable msg
 multipleFocusableElementView f =
-    Focusable (multipleFocusableElementView_ (\attributes -> f attributes)) []
-
-
-{-| -}
-onlyFocusableElementView :
-    ({ onlyFocusableElement : List (Html.Attribute msg)
-     }
-     -> Html msg
-    )
-    -> Focusable msg
-onlyFocusableElementView f =
-    Focusable
-        (Attribute
-            (\config ->
-                { config
-                    | content =
-                        \{ onlyFocusableElement } ->
-                            f
-                                { onlyFocusableElement = onlyFocusableElement
-                                }
-                }
-            )
-        )
-        [ Attribute (\config -> { config | autofocusOn = Last })
-        ]
-
-
-{-| -}
-multipleFocusableElementView_ :
-    ({ firstFocusableElement : List (Html.Attribute msg)
-     , lastFocusableElement : List (Html.Attribute msg)
-     , autofocusElement : Html.Attribute msg
-     }
-     -> Html msg
-    )
-    -> Attribute msg
-multipleFocusableElementView_ f =
     Attribute
         (\config ->
             { config
@@ -337,6 +300,27 @@ multipleFocusableElementView_ f =
                             , lastFocusableElement = lastFocusableElement
                             , autofocusElement = autofocusOn
                             }
+            }
+        )
+
+
+{-| -}
+onlyFocusableElementView :
+    ({ onlyFocusableElement : List (Html.Attribute msg)
+     }
+     -> Html msg
+    )
+    -> Focusable msg
+onlyFocusableElementView f =
+    Attribute
+        (\config ->
+            { config
+                | content =
+                    \{ onlyFocusableElement } ->
+                        f
+                            { onlyFocusableElement = onlyFocusableElement
+                            }
+                , autofocusOn = Last
             }
         )
 
@@ -368,9 +352,7 @@ view theme config getFocusable model =
             }
 
         focusables =
-            case getFocusable viewFuncs of
-                Focusable fst rst ->
-                    fst :: rst
+            getFocusable viewFuncs
     in
     view_
         config.wrapMsg
@@ -411,7 +393,7 @@ view theme config getFocusable model =
                 , Css.border Css.zero
                 ]
          ]
-            ++ focusables
+            ++ [ focusables ]
         )
         model
         |> List.singleton
