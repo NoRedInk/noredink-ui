@@ -160,7 +160,6 @@ info config getFocusable model =
         config.wrapMsg
         config.title
         [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
-        , size
         , titleAttribute Colors.navy config.visibleTitle
         , getFocusable
             { viewContent = viewContent config.visibleTitle
@@ -189,7 +188,6 @@ warning config getFocusable model =
         config.wrapMsg
         config.title
         [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-        , size
         , titleAttribute Colors.red config.visibleTitle
         , getFocusable
             { viewContent = viewContent config.visibleTitle
@@ -226,13 +224,22 @@ defaults wrapMsg t =
     , wrapMsg = wrapMsg
     , modalStyle =
         batch
-            [ backgroundColor (rgb 255 255 255)
-            , borderRadius (px 8)
+            [ -- Border
+              borderRadius (px 20)
             , border3 (px 2) solid (rgb 127 0 127)
-            , margin2 (px 80) auto
+            , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
+
+            -- Spacing
+            , margin2 (px 50) auto
             , padding (px 20)
-            , maxWidth (px 600)
+
+            -- Size
             , minHeight (vh 40)
+            , width (px 600)
+            , backgroundColor Colors.white
+
+            -- the modal should grow up to the viewport minus a 50px margin
+            , maxHeight (calc (pct 100) minus (px 100))
             ]
     , titleString = t
     , titleStyles = []
@@ -262,12 +269,6 @@ title t =
 titleStyles : List Style -> Attribute msg
 titleStyles styles =
     Attribute (\config -> { config | titleStyles = styles })
-
-
-{-| -}
-custom : List Style -> Attribute msg
-custom styles =
-    Attribute (\config -> { config | modalStyle = batch styles })
 
 
 {-| -}
@@ -341,20 +342,6 @@ titleAttribute titleColor visibleTitle =
             , Css.padding Css.zero
             , Css.border Css.zero
             ]
-
-
-size : Attribute msg
-size =
-    custom
-        [ Css.width (Css.px 600)
-        , Css.margin2 (Css.px 50) Css.auto
-        , Css.borderRadius (Css.px 20)
-        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
-        , Css.backgroundColor Colors.white
-
-        -- the modal should grow up to the viewport minus a 50px margin
-        , Css.maxHeight (Css.calc (Css.pct 100) Css.minus (Css.px 100))
-        ]
 
 
 
