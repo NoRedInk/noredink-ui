@@ -22,9 +22,6 @@ module Nri.Ui.Modal.V9 exposing
 
 ## Views
 
-
-### Modals
-
 @docs info, warning
 
 
@@ -207,30 +204,6 @@ themeToTitleColor theme =
             Colors.red
 
 
-{-| -}
-type Focusable msg
-    = Focusable (Attribute msg) (List (Attribute msg))
-
-
-{-| -}
-multipleFocusableElementView :
-    ({ firstFocusableElement : List (Html.Attribute msg)
-     , lastFocusableElement : List (Html.Attribute msg)
-     , autofocusElement : Html.Attribute msg
-     }
-     -> Html msg
-    )
-    -> Focusable msg
-multipleFocusableElementView f =
-    Focusable (multipleFocusableElementView_ (\attributes -> f attributes)) []
-
-
-{-| -}
-onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Focusable msg
-onlyFocusableElementView f =
-    Focusable (onlyFocusableElementView_ (\attributes -> f attributes)) [ autofocusOnLastElement ]
-
-
 
 -- ATTRIBUTES
 
@@ -303,15 +276,38 @@ custom styles =
 
 
 {-| -}
-autofocusOnLastElement : Attribute msg
-autofocusOnLastElement =
-    Attribute (\config -> { config | autofocusOn = Last })
+type Focusable msg
+    = Focusable (Attribute msg) (List (Attribute msg))
 
 
 {-| -}
-onlyFocusableElementView_ : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
-onlyFocusableElementView_ v =
-    Attribute (\config -> { config | content = \{ onlyFocusableElement } -> v onlyFocusableElement })
+multipleFocusableElementView :
+    ({ firstFocusableElement : List (Html.Attribute msg)
+     , lastFocusableElement : List (Html.Attribute msg)
+     , autofocusElement : Html.Attribute msg
+     }
+     -> Html msg
+    )
+    -> Focusable msg
+multipleFocusableElementView f =
+    Focusable (multipleFocusableElementView_ (\attributes -> f attributes)) []
+
+
+{-| -}
+onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Focusable msg
+onlyFocusableElementView f =
+    Focusable
+        (Attribute
+            (\config ->
+                { config
+                    | content =
+                        \{ onlyFocusableElement } ->
+                            f onlyFocusableElement
+                }
+            )
+        )
+        [ Attribute (\config -> { config | autofocusOn = Last })
+        ]
 
 
 {-| -}
@@ -323,13 +319,13 @@ multipleFocusableElementView_ :
      -> Html msg
     )
     -> Attribute msg
-multipleFocusableElementView_ v =
+multipleFocusableElementView_ f =
     Attribute
         (\config ->
             { config
                 | content =
                     \{ firstFocusableElement, lastFocusableElement, autofocusOn } ->
-                        v
+                        f
                             { firstFocusableElement = firstFocusableElement
                             , lastFocusableElement = lastFocusableElement
                             , autofocusElement = autofocusOn
