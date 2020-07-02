@@ -14,6 +14,33 @@ module Nri.Ui.Modal.V9 exposing
 @docs Msg, open, close, update, subscriptions
 @docs FocusManager, info, warning
 
+    import Html.Styled exposing (text)
+    import Nri.Ui.Modal.V9 as Modal
+
+    type Msg
+        = ModalMsg Modal.Msg
+
+    ...
+
+    viewModal : Modal.Model -> Html Msg
+    viewModal modalState =
+        Modal.info
+            { title = "Modal Title"
+            , visibleTitle = False
+            , wrapMsg = ModalMsg
+            , focusManager =
+                Modal.OneFocusableElement
+                    (\{ onlyFocusableElement, closeButton } ->
+                        { content =
+                            [ closeButton onlyFocusableElement
+                            , text "Modal Content"
+                            ]
+                        , footer = []
+                        }
+                    )
+            }
+            modalState
+
 -}
 
 import Accessibility.Styled as Html exposing (..)
@@ -151,7 +178,13 @@ close =
 -- ATTRIBUTES
 
 
-{-| -}
+{-| Modals should allow the user to tab forwards & backwards through the modal content.
+The user should never find their Focus lost behind the modal backdrop!
+
+Use the `FocusManager` to tag the focusable elements in your modal, so that we
+know to which element to return focus when the user reaches the last focusable element.
+
+-}
 type FocusManager msg
     = MultipleFocusableElements
         ({ firstFocusableElement : List (Attribute msg)
