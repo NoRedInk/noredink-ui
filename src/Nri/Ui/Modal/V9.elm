@@ -294,7 +294,12 @@ multipleFocusableElementView f =
 
 
 {-| -}
-onlyFocusableElementView : (List (Html.Attribute msg) -> Html msg) -> Focusable msg
+onlyFocusableElementView :
+    ({ onlyFocusableElement : List (Html.Attribute msg)
+     }
+     -> Html msg
+    )
+    -> Focusable msg
 onlyFocusableElementView f =
     Focusable
         (Attribute
@@ -302,7 +307,9 @@ onlyFocusableElementView f =
                 { config
                     | content =
                         \{ onlyFocusableElement } ->
-                            f onlyFocusableElement
+                            f
+                                { onlyFocusableElement = onlyFocusableElement
+                                }
                 }
             )
         )

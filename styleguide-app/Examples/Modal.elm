@@ -149,7 +149,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( True, False, False ) ->
             Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
+                (\{ onlyFocusableElement } ->
                     div []
                         [ closeButton onlyFocusableElement
                         , viewContent
@@ -204,7 +204,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( False, False, True ) ->
             Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
+                (\{ onlyFocusableElement } ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
@@ -222,7 +222,7 @@ getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
 
         ( False, True, False ) ->
             Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
+                (\{ onlyFocusableElement } ->
                     div []
                         [ viewContent
                             { content = [ viewModalContent state.longContent ]
