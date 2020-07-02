@@ -57,13 +57,6 @@ type alias Model =
     Modal.Model
 
 
-type alias Config msg =
-    { visibleTitle : Bool
-    , title : String
-    , wrapMsg : Msg -> msg
-    }
-
-
 {-| -}
 init : Model
 init =
@@ -103,7 +96,10 @@ open =
 
 {-| -}
 info :
-    Config msg
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    }
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
@@ -113,7 +109,10 @@ info config getFocusable model =
 
 {-| -}
 warning :
-    Config msg
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    }
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
@@ -179,7 +178,11 @@ type alias ViewFuncs msg =
 
 view :
     Theme
-    -> Config msg
+    ->
+        { visibleTitle : Bool
+        , title : String
+        , wrapMsg : Msg -> msg
+        }
     -> (ViewFuncs msg -> Focusable msg)
     -> Model
     -> Html msg
