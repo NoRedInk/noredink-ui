@@ -318,6 +318,48 @@ onlyFocusableElementView f =
         )
 
 
+titleAttribute : Theme -> Bool -> Attribute msg
+titleAttribute theme visibleTitle =
+    if visibleTitle then
+        titleStyles
+            [ Fonts.baseFont
+            , Css.fontWeight (Css.int 700)
+            , Css.paddingTop (Css.px 40)
+            , Css.paddingBottom (Css.px 20)
+            , Css.margin Css.zero
+            , Css.fontSize (Css.px 20)
+            , Css.textAlign Css.center
+            , Css.color (themeToTitleColor theme)
+            ]
+
+    else
+        titleStyles
+            [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+              Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+            , Css.position Css.absolute
+            , Css.height (Css.px 1)
+            , Css.width (Css.px 1)
+            , Css.overflow Css.hidden
+            , Css.margin (Css.px -1)
+            , Css.padding Css.zero
+            , Css.border Css.zero
+            ]
+
+
+size : Attribute msg
+size =
+    custom
+        [ Css.width (Css.px 600)
+        , Css.margin2 (Css.px 50) Css.auto
+        , Css.borderRadius (Css.px 20)
+        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
+        , Css.backgroundColor Colors.white
+
+        -- the modal should grow up to the viewport minus a 50px margin
+        , Css.maxHeight (Css.calc (Css.pct 100) Css.minus (Css.px 100))
+        ]
+
+
 
 -- VIEW
 
@@ -347,53 +389,13 @@ view theme config getFocusable model =
         focusables : Attribute msg
         focusables =
             getFocusable viewFuncs
-
-        size : Attribute msg
-        size =
-            custom
-                [ Css.width (Css.px 600)
-                , Css.margin2 (Css.px 50) Css.auto
-                , Css.borderRadius (Css.px 20)
-                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
-                , Css.backgroundColor Colors.white
-
-                -- the modal should grow up to the viewport minus a 50px margin
-                , Css.maxHeight (Css.calc (Css.pct 100) Css.minus (Css.px 100))
-                ]
-
-        titleAttribute : Attribute msg
-        titleAttribute =
-            if config.visibleTitle then
-                titleStyles
-                    [ Fonts.baseFont
-                    , Css.fontWeight (Css.int 700)
-                    , Css.paddingTop (Css.px 40)
-                    , Css.paddingBottom (Css.px 20)
-                    , Css.margin Css.zero
-                    , Css.fontSize (Css.px 20)
-                    , Css.textAlign Css.center
-                    , Css.color (themeToTitleColor theme)
-                    ]
-
-            else
-                titleStyles
-                    [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-                      Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-                    , Css.position Css.absolute
-                    , Css.height (Css.px 1)
-                    , Css.width (Css.px 1)
-                    , Css.overflow Css.hidden
-                    , Css.margin (Css.px -1)
-                    , Css.padding Css.zero
-                    , Css.border Css.zero
-                    ]
     in
     view_
         config.wrapMsg
         config.title
         ([ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
          , size
-         , titleAttribute
+         , titleAttribute theme config.visibleTitle
          ]
             ++ [ focusables ]
         )
