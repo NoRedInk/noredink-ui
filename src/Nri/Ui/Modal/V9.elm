@@ -1,5 +1,5 @@
 module Nri.Ui.Modal.V9 exposing
-    ( Model, init
+    ( Model, init, initOpen
     , Msg, update, subscriptions
     , open, close
     , info, warning
@@ -8,12 +8,13 @@ module Nri.Ui.Modal.V9 exposing
 
 {-| Changes from V8:
 
+  - adds initOpen
   - enable checks against the state (e.g., is the modal open or not?)
 
 
 ## State and updates
 
-@docs Model, init
+@docs Model, init, initOpen
 @docs Msg, update, subscriptions
 
 @docs open, close
@@ -57,6 +58,13 @@ type Model
 init : Model
 init =
     Closed
+
+
+{-| Pass the id of the element that should receive focus when the modal is closed.
+-}
+initOpen : String -> Model
+initOpen =
+    Opened
 
 
 type By
