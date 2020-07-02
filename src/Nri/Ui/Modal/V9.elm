@@ -159,10 +159,16 @@ info config getFocusable model =
     let
         appliedAttrs =
             List.foldl (\(Attribute f) acc -> f acc)
-                (defaults config.wrapMsg config.visibleTitle config.title)
-                [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
-                , titleAttribute Colors.navy config.visibleTitle
-                , getFocusable
+                { visibleTitle = config.visibleTitle
+                , overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy
+                , wrapMsg = config.wrapMsg
+                , modalStyle = modalStyle
+                , titleString = config.title
+                , titleStyles = titleStyle Colors.navy config.visibleTitle
+                , autofocusOn = Default
+                , content = \_ -> text ""
+                }
+                [ getFocusable
                     { viewContent = viewContent config.visibleTitle
                     , closeButton = closeButton config.wrapMsg
                     }
@@ -189,10 +195,16 @@ warning config getFocusable model =
     let
         appliedAttrs =
             List.foldl (\(Attribute f) acc -> f acc)
-                (defaults config.wrapMsg config.visibleTitle config.title)
-                [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-                , titleAttribute Colors.red config.visibleTitle
-                , getFocusable
+                { visibleTitle = config.visibleTitle
+                , overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20
+                , wrapMsg = config.wrapMsg
+                , modalStyle = modalStyle
+                , titleString = config.title
+                , titleStyles = titleStyle Colors.red config.visibleTitle
+                , autofocusOn = Default
+                , content = \_ -> text ""
+                }
+                [ getFocusable
                     { viewContent = viewContent config.visibleTitle
                     , closeButton = closeButton config.wrapMsg
                     }
@@ -223,58 +235,31 @@ type alias Config msg =
     }
 
 
-defaults : (Msg -> msg) -> Bool -> String -> Config msg
-defaults wrapMsg visibleTitle t =
-    { visibleTitle = visibleTitle
-    , overlayColor = rgba 128 0 70 0.7
-    , wrapMsg = wrapMsg
-    , modalStyle =
-        batch
-            [ -- Border
-              borderRadius (px 20)
-            , border3 (px 2) solid (rgb 127 0 127)
-            , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
+modalStyle : Style
+modalStyle =
+    batch
+        [ -- Border
+          borderRadius (px 20)
+        , border3 (px 2) solid (rgb 127 0 127)
+        , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
 
-            -- Spacing
-            , margin2 (px 50) auto
-            , padding (px 20)
+        -- Spacing
+        , margin2 (px 50) auto
+        , padding (px 20)
 
-            -- Size
-            , minHeight (vh 40)
-            , width (px 600)
-            , backgroundColor Colors.white
+        -- Size
+        , minHeight (vh 40)
+        , width (px 600)
+        , backgroundColor Colors.white
 
-            -- the modal should grow up to the viewport minus a 50px margin
-            , maxHeight (calc (pct 100) minus (px 100))
-            ]
-    , titleString = t
-    , titleStyles = []
-    , autofocusOn = Default
-    , content = \_ -> text ""
-    }
+        -- the modal should grow up to the viewport minus a 50px margin
+        , maxHeight (calc (pct 100) minus (px 100))
+        ]
 
 
 {-| -}
 type Attribute msg
     = Attribute (Config msg -> Config msg)
-
-
-{-| -}
-overlayColor : Color -> Attribute msg
-overlayColor color =
-    Attribute (\config -> { config | overlayColor = color })
-
-
-{-| -}
-title : String -> Attribute msg
-title t =
-    Attribute (\config -> { config | titleString = t })
-
-
-{-| -}
-titleStyles : List Style -> Attribute msg
-titleStyles styles =
-    Attribute (\config -> { config | titleStyles = styles })
 
 
 {-| -}
@@ -322,32 +307,30 @@ onlyFocusableElementView f =
         )
 
 
-titleAttribute : Color -> Bool -> Attribute msg
-titleAttribute titleColor visibleTitle =
+titleStyle : Color -> Bool -> List Style
+titleStyle titleColor visibleTitle =
     if visibleTitle then
-        titleStyles
-            [ Fonts.baseFont
-            , Css.fontWeight (Css.int 700)
-            , Css.paddingTop (Css.px 40)
-            , Css.paddingBottom (Css.px 20)
-            , Css.margin Css.zero
-            , Css.fontSize (Css.px 20)
-            , Css.textAlign Css.center
-            , Css.color titleColor
-            ]
+        [ Fonts.baseFont
+        , Css.fontWeight (Css.int 700)
+        , Css.paddingTop (Css.px 40)
+        , Css.paddingBottom (Css.px 20)
+        , Css.margin Css.zero
+        , Css.fontSize (Css.px 20)
+        , Css.textAlign Css.center
+        , Css.color titleColor
+        ]
 
     else
-        titleStyles
-            [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-              Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-            , Css.position Css.absolute
-            , Css.height (Css.px 1)
-            , Css.width (Css.px 1)
-            , Css.overflow Css.hidden
-            , Css.margin (Css.px -1)
-            , Css.padding Css.zero
-            , Css.border Css.zero
-            ]
+        [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+          Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+        , Css.position Css.absolute
+        , Css.height (Css.px 1)
+        , Css.width (Css.px 1)
+        , Css.overflow Css.hidden
+        , Css.margin (Css.px -1)
+        , Css.padding Css.zero
+        , Css.border Css.zero
+        ]
 
 
 
