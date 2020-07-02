@@ -1,4 +1,4 @@
-module Nri.Ui.Modal.V8 exposing
+module Nri.Ui.Modal.V9 exposing
     ( Model, init
     , Msg, update, subscriptions
     , open, close
@@ -8,13 +8,9 @@ module Nri.Ui.Modal.V8 exposing
     , multipleFocusableElementView, onlyFocusableElementView
     )
 
-{-| Changes from V7:
+{-| Changes from V8:
 
-  - More customizable attributes
-  - Rather than accepting any number of attributes, Modal provides one callback that returns a focusable
-  - viewFooter has been merged into viewContent
-  - viewContent and closeButton are now callbacks that are pre-configured with settings
-    (previously you passed config through)
+  - enable checks against the state (e.g., is the modal open or not?)
 
 
 ## State and updates
