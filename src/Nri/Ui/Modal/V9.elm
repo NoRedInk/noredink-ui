@@ -3,7 +3,7 @@ module Nri.Ui.Modal.V9 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , multipleFocusableElementView, onlyFocusableElementView
+    , FocusManager(..)
     )
 
 {-| Changes from V8:
@@ -22,11 +22,6 @@ module Nri.Ui.Modal.V9 exposing
 ## Views
 
 @docs info, warning
-
-
-### Focusable
-
-@docs multipleFocusableElementView, onlyFocusableElementView
 
 -}
 
@@ -141,170 +136,53 @@ close =
     CloseModal Other
 
 
-{-| -}
-info :
-    { visibleTitle : Bool
-    , title : String
-    , wrapMsg : Msg -> msg
-    }
-    ->
-        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
-         , closeButton : List (Html.Attribute msg) -> Html msg
-         }
-         -> Attribute msg
-        )
-    -> Model
-    -> Html msg
-info config getFocusable model =
-    let
-        appliedAttrs =
-            List.foldl (\(Attribute f) acc -> f acc)
-                { visibleTitle = config.visibleTitle
-                , overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy
-                , wrapMsg = config.wrapMsg
-                , modalStyle = modalStyle
-                , titleString = config.title
-                , titleStyles = titleStyle Colors.navy config.visibleTitle
-                , autofocusOn = Default
-                , content = \_ -> text ""
-                }
-                [ getFocusable
-                    { viewContent = viewContent config.visibleTitle
-                    , closeButton = closeButton config.wrapMsg
-                    }
-                ]
-    in
-    view config.wrapMsg config.title appliedAttrs model
-
-
-{-| -}
-warning :
-    { visibleTitle : Bool
-    , title : String
-    , wrapMsg : Msg -> msg
-    }
-    ->
-        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
-         , closeButton : List (Html.Attribute msg) -> Html msg
-         }
-         -> Attribute msg
-        )
-    -> Model
-    -> Html msg
-warning config getFocusable model =
-    let
-        appliedAttrs =
-            List.foldl (\(Attribute f) acc -> f acc)
-                { visibleTitle = config.visibleTitle
-                , overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20
-                , wrapMsg = config.wrapMsg
-                , modalStyle = modalStyle
-                , titleString = config.title
-                , titleStyles = titleStyle Colors.red config.visibleTitle
-                , autofocusOn = Default
-                , content = \_ -> text ""
-                }
-                [ getFocusable
-                    { viewContent = viewContent config.visibleTitle
-                    , closeButton = closeButton config.wrapMsg
-                    }
-                ]
-    in
-    view config.wrapMsg config.title appliedAttrs model
-
-
 
 -- ATTRIBUTES
 
 
-type alias Config msg =
-    { visibleTitle : Bool
-    , overlayColor : Color
-    , wrapMsg : Msg -> msg
-    , modalStyle : Style
-    , titleString : String
-    , titleStyles : List Style
-    , autofocusOn : Autofocus
-    , content :
-        { onlyFocusableElement : List (Html.Attribute msg)
-        , firstFocusableElement : List (Html.Attribute msg)
-        , lastFocusableElement : List (Html.Attribute msg)
-        , autofocusOn : Html.Attribute msg
-        }
-        -> Html msg
-    }
+{-| -}
+type FocusManager msg
+    = MultipleFocusableElements
+        ({ firstFocusableElement : List (Attribute msg)
+         , lastFocusableElement : List (Attribute msg)
+         , autofocusElement : Attribute msg
+         , closeButton : List (Attribute msg) -> Html msg
+         }
+         ->
+            { content : List (Html msg)
+            , footer : List (Html msg)
+            }
+        )
+    | OneFocusableElement
+        ({ onlyFocusableElement : List (Attribute msg)
+         , closeButton : List (Attribute msg) -> Html msg
+         }
+         ->
+            { content : List (Html msg)
+            , footer : List (Html msg)
+            }
+        )
 
 
-modalStyle : Style
+modalStyle : List Style
 modalStyle =
-    batch
-        [ -- Border
-          borderRadius (px 20)
-        , border3 (px 2) solid (rgb 127 0 127)
-        , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
+    [ position relative -- Border
+    , borderRadius (px 20)
+    , border3 (px 2) solid (rgb 127 0 127)
+    , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
 
-        -- Spacing
-        , margin2 (px 50) auto
-        , padding (px 20)
+    -- Spacing
+    , margin2 (px 50) auto
+    , padding (px 20)
 
-        -- Size
-        , minHeight (vh 40)
-        , width (px 600)
-        , backgroundColor Colors.white
+    -- Size
+    , minHeight (vh 40)
+    , width (px 600)
+    , backgroundColor Colors.white
 
-        -- the modal should grow up to the viewport minus a 50px margin
-        , maxHeight (calc (pct 100) minus (px 100))
-        ]
-
-
-{-| -}
-type Attribute msg
-    = Attribute (Config msg -> Config msg)
-
-
-{-| -}
-multipleFocusableElementView :
-    ({ firstFocusableElement : List (Html.Attribute msg)
-     , lastFocusableElement : List (Html.Attribute msg)
-     , autofocusElement : Html.Attribute msg
-     }
-     -> Html msg
-    )
-    -> Attribute msg
-multipleFocusableElementView f =
-    Attribute
-        (\config ->
-            { config
-                | content =
-                    \{ firstFocusableElement, lastFocusableElement, autofocusOn } ->
-                        f
-                            { firstFocusableElement = firstFocusableElement
-                            , lastFocusableElement = lastFocusableElement
-                            , autofocusElement = autofocusOn
-                            }
-            }
-        )
-
-
-{-| -}
-onlyFocusableElementView :
-    ({ onlyFocusableElement : List (Html.Attribute msg)
-     }
-     -> Html msg
-    )
-    -> Attribute msg
-onlyFocusableElementView f =
-    Attribute
-        (\config ->
-            { config
-                | content =
-                    \{ onlyFocusableElement } ->
-                        f
-                            { onlyFocusableElement = onlyFocusableElement
-                            }
-                , autofocusOn = Last
-            }
-        )
+    -- the modal should grow up to the viewport minus a 50px margin
+    , maxHeight (calc (pct 100) minus (px 100))
+    ]
 
 
 titleStyle : Color -> Bool -> List Style
@@ -337,13 +215,48 @@ titleStyle titleColor visibleTitle =
 -- VIEW
 
 
-view :
-    (Msg -> msg)
-    -> String
-    -> Config msg
+{-| -}
+info :
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    , focusManager : FocusManager msg
+    }
     -> Model
     -> Html msg
-view wrapMsg ti config model =
+info config =
+    view config
+        { overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy
+        , titleStyles = titleStyle Colors.navy config.visibleTitle
+        }
+
+
+{-| -}
+warning :
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    , focusManager : FocusManager msg
+    }
+    -> Model
+    -> Html msg
+warning config =
+    view config
+        { overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20
+        , titleStyles = titleStyle Colors.red config.visibleTitle
+        }
+
+
+view :
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    , focusManager : FocusManager msg
+    }
+    -> { overlayColor : Color, titleStyles : List Style }
+    -> Model
+    -> Html msg
+view config styles model =
     case model of
         Opened _ ->
             div
@@ -359,10 +272,8 @@ view wrapMsg ti config model =
                     , zIndex (int 1)
                     ]
                 ]
-                [ viewBackdrop config
-                , div
-                    [ css [ position relative, config.modalStyle ] ]
-                    [ viewModal config ]
+                [ viewBackdrop config.wrapMsg styles.overlayColor
+                , div [ css modalStyle ] [ viewModal config styles ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
                 ]
 
@@ -370,10 +281,8 @@ view wrapMsg ti config model =
             text ""
 
 
-viewBackdrop :
-    { a | wrapMsg : Msg -> msg, overlayColor : Color }
-    -> Html msg
-viewBackdrop config =
+viewBackdrop : (Msg -> msg) -> Color -> Html msg
+viewBackdrop wrapMsg overlayColor =
     Root.div
         -- We use Root html here in order to allow clicking to exit out of
         -- the overlay. This behavior is available to non-mouse users as
@@ -383,70 +292,58 @@ viewBackdrop config =
             [ position absolute
             , width (pct 100)
             , height (pct 100)
-            , backgroundColor config.overlayColor
+            , backgroundColor overlayColor
             ]
-        , onClick (config.wrapMsg (CloseModal OverlayClick))
+        , onClick (wrapMsg (CloseModal OverlayClick))
         ]
         []
 
 
-viewModal : Config msg -> Html msg
-viewModal config =
+viewModal :
+    { visibleTitle : Bool
+    , title : String
+    , wrapMsg : Msg -> msg
+    , focusManager : FocusManager msg
+    }
+    -> { a | titleStyles : List Style }
+    -> Html msg
+viewModal config styles =
     section
         [ Role.dialog
         , Aria.labeledBy modalTitleId
         ]
-        [ h1 [ id modalTitleId, css config.titleStyles ] [ text config.titleString ]
-        , config.content
-            (case config.autofocusOn of
-                Last ->
-                    { onlyFocusableElement =
-                        [ Key.onKeyDown
-                            [ Key.tabBack (Focus firstId)
-                            , Key.tab (Focus firstId)
-                            ]
-                        , id firstId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , firstFocusableElement =
-                        [ Key.onKeyDown [ Key.tabBack (Focus autofocusId) ]
-                        , id firstId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , lastFocusableElement =
-                        [ Key.onKeyDown [ Key.tab (Focus firstId) ]
-                        , id autofocusId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , autofocusOn =
-                        id autofocusId
-                            |> Attributes.map config.wrapMsg
-                    }
+        [ h1 [ id modalTitleId, css styles.titleStyles ] [ text config.title ]
+        , viewContent config.visibleTitle <|
+            case config.focusManager of
+                OneFocusableElement toContentAndFooter ->
+                    toContentAndFooter
+                        { onlyFocusableElement =
+                            List.map (Attributes.map config.wrapMsg)
+                                [ Key.onKeyDown
+                                    [ Key.tabBack (Focus autofocusId)
+                                    , Key.tab (Focus autofocusId)
+                                    ]
+                                , id autofocusId
+                                ]
+                        , closeButton = closeButton config.wrapMsg
+                        }
 
-                _ ->
-                    { onlyFocusableElement =
-                        [ Key.onKeyDown
-                            [ Key.tabBack (Focus firstId)
-                            , Key.tab (Focus firstId)
-                            ]
-                        , id firstId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , firstFocusableElement =
-                        [ Key.onKeyDown [ Key.tabBack (Focus lastId) ]
-                        , id firstId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , lastFocusableElement =
-                        [ Key.onKeyDown [ Key.tab (Focus firstId) ]
-                        , id lastId
-                        ]
-                            |> List.map (Attributes.map config.wrapMsg)
-                    , autofocusOn =
-                        id autofocusId
-                            |> Attributes.map config.wrapMsg
-                    }
-            )
+                MultipleFocusableElements toContentAndFooter ->
+                    toContentAndFooter
+                        { firstFocusableElement =
+                            List.map (Attributes.map config.wrapMsg)
+                                [ Key.onKeyDown [ Key.tabBack (Focus lastId) ]
+                                , id firstId
+                                ]
+                        , lastFocusableElement =
+                            List.map (Attributes.map config.wrapMsg)
+                                [ Key.onKeyDown [ Key.tab (Focus firstId) ]
+                                , id lastId
+                                ]
+                        , autofocusElement =
+                            Attributes.map config.wrapMsg (id autofocusId)
+                        , closeButton = closeButton config.wrapMsg
+                        }
         ]
 
 
@@ -586,7 +483,7 @@ viewFooter children =
 
 
 {-| -}
-closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
+closeButton : (Msg -> msg) -> List (Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
     button
         (Widget.label "Close modal"
