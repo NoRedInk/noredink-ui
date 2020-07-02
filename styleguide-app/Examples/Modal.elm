@@ -80,14 +80,14 @@ example =
         \state ->
             [ viewSettings state.settings
             , Button.button "Launch Info Modal"
-                [ Button.onClick (ModalMsg (Modal.open "launch-info-modal"))
+                [ Button.onClick (OpenModal Info "launch-info-modal")
                 , Button.custom [ Attributes.id "launch-info-modal" ]
                 , Button.css [ Css.marginRight (Css.px 16) ]
                 , Button.secondary
                 , Button.medium
                 ]
             , Button.button "Launch Warning Modal"
-                [ Button.onClick (ModalMsg (Modal.open "launch-warning-modal"))
+                [ Button.onClick (OpenModal Warning "launch-warning-modal")
                 , Button.custom [ Attributes.id "launch-warning-modal" ]
                 , Button.secondary
                 , Button.medium
@@ -323,7 +323,8 @@ viewSettings settings =
 
 {-| -}
 type Msg
-    = ModalMsg Modal.Msg
+    = OpenModal Content String
+    | ModalMsg Modal.Msg
     | ForceClose
     | SetVisibleTitle Bool
     | SetShowX Bool
@@ -344,6 +345,9 @@ update msg state =
             { dismissOnEscAndOverlayClick = settings.dismissOnEscAndOverlayClick }
     in
     case msg of
+        OpenModal content returnFocusTo ->
+            update (ModalMsg (Modal.open returnFocusTo)) { state | content = content }
+
         ModalMsg modalMsg ->
             case Modal.update updateConfig modalMsg state.state of
                 ( newState, cmds ) ->
