@@ -214,7 +214,6 @@ modalStyle =
 
     -- Border
     , borderRadius (px 20)
-    , border3 (px 2) solid (rgb 127 0 127)
     , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
 
     -- Spacing
