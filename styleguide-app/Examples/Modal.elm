@@ -94,13 +94,16 @@ example =
     }
 
 
-getFocusable :
-    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
-    ->
-        { viewContent : { content : List (Html Msg), footer : List (Html Msg) } -> Html Msg
-        , closeButton : List (Html.Attribute Msg) -> Html Msg
-        }
-    -> Modal.Focusable Msg
+
+--getFocusable :
+--    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
+--    ->
+--        { viewContent : { content : List (Html Msg), footer : List (Html Msg) } -> Html Msg
+--        , closeButton : List (Html.Attribute Msg) -> Html Msg
+--        }
+--    -> Modal.Focusable Msg
+
+
 getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
     case ( state.showX, state.showContinue, state.showSecondary ) of
         ( True, True, True ) ->
