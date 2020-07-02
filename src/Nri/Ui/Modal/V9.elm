@@ -156,7 +156,18 @@ info :
     -> Model
     -> Html msg
 info config getFocusable model =
-    view Info config getFocusable model
+    view
+        config.wrapMsg
+        config.title
+        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
+        , size
+        , titleAttribute Colors.navy config.visibleTitle
+        , getFocusable
+            { viewContent = viewContent config.visibleTitle
+            , closeButton = closeButton config.wrapMsg
+            }
+        ]
+        model
 
 
 {-| -}
@@ -174,32 +185,18 @@ warning :
     -> Model
     -> Html msg
 warning config getFocusable model =
-    view Warning config getFocusable model
-
-
-type Theme
-    = Info
-    | Warning
-
-
-themeToOverlayColor : Theme -> Css.Color
-themeToOverlayColor theme =
-    case theme of
-        Info ->
-            Colors.navy
-
-        Warning ->
-            Colors.gray20
-
-
-themeToTitleColor : Theme -> Css.Color
-themeToTitleColor theme =
-    case theme of
-        Info ->
-            Colors.navy
-
-        Warning ->
-            Colors.red
+    view
+        config.wrapMsg
+        config.title
+        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
+        , size
+        , titleAttribute Colors.red config.visibleTitle
+        , getFocusable
+            { viewContent = viewContent config.visibleTitle
+            , closeButton = closeButton config.wrapMsg
+            }
+        ]
+        model
 
 
 
@@ -318,8 +315,8 @@ onlyFocusableElementView f =
         )
 
 
-titleAttribute : Theme -> Bool -> Attribute msg
-titleAttribute theme visibleTitle =
+titleAttribute : Color -> Bool -> Attribute msg
+titleAttribute titleColor visibleTitle =
     if visibleTitle then
         titleStyles
             [ Fonts.baseFont
@@ -329,7 +326,7 @@ titleAttribute theme visibleTitle =
             , Css.margin Css.zero
             , Css.fontSize (Css.px 20)
             , Css.textAlign Css.center
-            , Css.color (themeToTitleColor theme)
+            , Css.color titleColor
             ]
 
     else
@@ -365,52 +362,12 @@ size =
 
 
 view :
-    Theme
-    ->
-        { visibleTitle : Bool
-        , title : String
-        , wrapMsg : Msg -> msg
-        }
-    ->
-        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
-         , closeButton : List (Html.Attribute msg) -> Html msg
-         }
-         -> Attribute msg
-        )
-    -> Model
-    -> Html msg
-view theme config getFocusable model =
-    let
-        viewFuncs =
-            { viewContent = viewContent config.visibleTitle
-            , closeButton = closeButton config.wrapMsg
-            }
-
-        focusables : Attribute msg
-        focusables =
-            getFocusable viewFuncs
-    in
-    view_
-        config.wrapMsg
-        config.title
-        ([ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 (themeToOverlayColor theme))
-         , size
-         , titleAttribute theme config.visibleTitle
-         ]
-            ++ [ focusables ]
-        )
-        model
-        |> List.singleton
-        |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
-
-
-view_ :
     (Msg -> msg)
     -> String
     -> List (Attribute msg)
     -> Model
     -> Html msg
-view_ wrapMsg ti attributes model =
+view wrapMsg ti attributes model =
     let
         config =
             List.foldl (\(Attribute f) acc -> f acc) (defaults wrapMsg ti) attributes
@@ -426,6 +383,8 @@ view_ wrapMsg ti attributes model =
                     , height (pct 100)
                     , displayFlex
                     , alignItems center
+                    , position relative
+                    , zIndex (int 1)
                     ]
                 ]
                 [ viewBackdrop config
