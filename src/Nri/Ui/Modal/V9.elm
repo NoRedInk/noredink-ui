@@ -1,28 +1,18 @@
 module Nri.Ui.Modal.V9 exposing
-    ( Model, init, initOpen
-    , Msg, update, subscriptions
-    , open, close
-    , info, warning
-    , FocusManager(..)
+    ( Model, init, initOpen, isOpen
+    , Msg, open, close, update, subscriptions
+    , FocusManager(..), info, warning
     )
 
 {-| Changes from V8:
 
+  - replace multipleFocusableElementView, onlyFocusableElementView, ViewFuncs, and Focusable with FocusManager
   - adds initOpen
   - enable checks against the state (e.g., is the modal open or not?)
 
-
-## State and updates
-
-@docs Model, init, initOpen
-@docs Msg, update, subscriptions
-
-@docs open, close
-
-
-## Views
-
-@docs info, warning
+@docs Model, init, initOpen, isOpen
+@docs Msg, open, close, update, subscriptions
+@docs FocusManager, info, warning
 
 -}
 
@@ -65,6 +55,17 @@ init =
 initOpen : String -> Model
 initOpen =
     Opened
+
+
+{-| -}
+isOpen : Model -> Bool
+isOpen model =
+    case model of
+        Opened _ ->
+            True
+
+        Closed ->
+            False
 
 
 type By
@@ -123,6 +124,8 @@ update { dismissOnEscAndOverlayClick } msg model =
             ( model, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
+            -- TODO: consider adding error handling when we didn't successfully
+            -- fous an element
             ( model, Cmd.none )
 
 
