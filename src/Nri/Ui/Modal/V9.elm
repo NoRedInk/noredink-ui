@@ -156,17 +156,19 @@ info :
     -> Model
     -> Html msg
 info config getFocusable model =
-    view
-        config.wrapMsg
-        config.title
-        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
-        , titleAttribute Colors.navy config.visibleTitle
-        , getFocusable
-            { viewContent = viewContent config.visibleTitle
-            , closeButton = closeButton config.wrapMsg
-            }
-        ]
-        model
+    let
+        appliedAttrs =
+            List.foldl (\(Attribute f) acc -> f acc)
+                (defaults config.wrapMsg config.visibleTitle config.title)
+                [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
+                , titleAttribute Colors.navy config.visibleTitle
+                , getFocusable
+                    { viewContent = viewContent config.visibleTitle
+                    , closeButton = closeButton config.wrapMsg
+                    }
+                ]
+    in
+    view config.wrapMsg config.title appliedAttrs model
 
 
 {-| -}
@@ -184,17 +186,19 @@ warning :
     -> Model
     -> Html msg
 warning config getFocusable model =
-    view
-        config.wrapMsg
-        config.title
-        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-        , titleAttribute Colors.red config.visibleTitle
-        , getFocusable
-            { viewContent = viewContent config.visibleTitle
-            , closeButton = closeButton config.wrapMsg
-            }
-        ]
-        model
+    let
+        appliedAttrs =
+            List.foldl (\(Attribute f) acc -> f acc)
+                (defaults config.wrapMsg config.visibleTitle config.title)
+                [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
+                , titleAttribute Colors.red config.visibleTitle
+                , getFocusable
+                    { viewContent = viewContent config.visibleTitle
+                    , closeButton = closeButton config.wrapMsg
+                    }
+                ]
+    in
+    view config.wrapMsg config.title appliedAttrs model
 
 
 
@@ -202,7 +206,8 @@ warning config getFocusable model =
 
 
 type alias Config msg =
-    { overlayColor : Color
+    { visibleTitle : Bool
+    , overlayColor : Color
     , wrapMsg : Msg -> msg
     , modalStyle : Style
     , titleString : String
@@ -218,9 +223,10 @@ type alias Config msg =
     }
 
 
-defaults : (Msg -> msg) -> String -> Config msg
-defaults wrapMsg t =
-    { overlayColor = rgba 128 0 70 0.7
+defaults : (Msg -> msg) -> Bool -> String -> Config msg
+defaults wrapMsg visibleTitle t =
+    { visibleTitle = visibleTitle
+    , overlayColor = rgba 128 0 70 0.7
     , wrapMsg = wrapMsg
     , modalStyle =
         batch
@@ -351,14 +357,10 @@ titleAttribute titleColor visibleTitle =
 view :
     (Msg -> msg)
     -> String
-    -> List (Attribute msg)
+    -> Config msg
     -> Model
     -> Html msg
-view wrapMsg ti attributes model =
-    let
-        config =
-            List.foldl (\(Attribute f) acc -> f acc) (defaults wrapMsg ti) attributes
-    in
+view wrapMsg ti config model =
     case model of
         Opened _ ->
             div
