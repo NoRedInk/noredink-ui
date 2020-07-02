@@ -3,7 +3,6 @@ module Nri.Ui.Modal.V9 exposing
     , Msg, update, subscriptions
     , open, close
     , info, warning
-    , ViewFuncs
     , Focusable
     , multipleFocusableElementView, onlyFocusableElementView
     )
@@ -27,7 +26,6 @@ module Nri.Ui.Modal.V9 exposing
 ### Modals
 
 @docs info, warning
-@docs ViewFuncs
 
 
 ### Focusable
@@ -100,7 +98,12 @@ info :
     , title : String
     , wrapMsg : Msg -> msg
     }
-    -> (ViewFuncs msg -> Focusable msg)
+    ->
+        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
+         , closeButton : List (Html.Attribute msg) -> Html msg
+         }
+         -> Focusable msg
+        )
     -> Model
     -> Html msg
 info config getFocusable model =
@@ -113,7 +116,12 @@ warning :
     , title : String
     , wrapMsg : Msg -> msg
     }
-    -> (ViewFuncs msg -> Focusable msg)
+    ->
+        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
+         , closeButton : List (Html.Attribute msg) -> Html msg
+         }
+         -> Focusable msg
+        )
     -> Model
     -> Html msg
 warning config getFocusable model =
@@ -169,13 +177,6 @@ onlyFocusableElementView f =
     Focusable (Modal.onlyFocusableElementView (\attributes -> f attributes)) [ Modal.autofocusOnLastElement ]
 
 
-{-| -}
-type alias ViewFuncs msg =
-    { viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
-    , closeButton : List (Html.Attribute msg) -> Html msg
-    }
-
-
 view :
     Theme
     ->
@@ -183,12 +184,16 @@ view :
         , title : String
         , wrapMsg : Msg -> msg
         }
-    -> (ViewFuncs msg -> Focusable msg)
+    ->
+        ({ viewContent : { content : List (Html msg), footer : List (Html msg) } -> Html msg
+         , closeButton : List (Html.Attribute msg) -> Html msg
+         }
+         -> Focusable msg
+        )
     -> Model
     -> Html msg
 view theme config getFocusable model =
     let
-        viewFuncs : ViewFuncs msg
         viewFuncs =
             { viewContent = viewContent config.visibleTitle
             , closeButton = closeButton config.wrapMsg
