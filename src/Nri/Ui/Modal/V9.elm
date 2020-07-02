@@ -166,14 +166,15 @@ type FocusManager msg
 
 modalStyle : List Style
 modalStyle =
-    [ position relative -- Border
+    [ position relative
+
+    -- Border
     , borderRadius (px 20)
     , border3 (px 2) solid (rgb 127 0 127)
     , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
 
     -- Spacing
     , margin2 (px 50) auto
-    , padding (px 20)
 
     -- Size
     , minHeight (vh 40)
@@ -268,14 +269,14 @@ view config styles model =
                     , height (pct 100)
                     , displayFlex
                     , alignItems center
-                    , position relative
-                    , zIndex (int 1)
                     ]
                 ]
                 [ viewBackdrop config.wrapMsg styles.overlayColor
                 , div [ css modalStyle ] [ viewModal config styles ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
                 ]
+                |> List.singleton
+                |> div [ css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
 
         Closed ->
             text ""
