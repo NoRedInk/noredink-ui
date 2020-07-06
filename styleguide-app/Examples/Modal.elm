@@ -19,15 +19,34 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V8 as Modal
+import Nri.Ui.Modal.V9 as Modal
 import Nri.Ui.Text.V4 as Text
 
 
 {-| -}
 type alias State =
-    { infoModal : Modal.Model
-    , warningModal : Modal.Model
-    , visibleTitle : Bool
+    { state : Modal.Model
+    , content : Content
+    , settings : Settings
+    }
+
+
+{-| -}
+init : State
+init =
+    { state = Modal.init
+    , content = Info
+    , settings = initModalSettings
+    }
+
+
+type Content
+    = Info
+    | Warning
+
+
+type alias Settings =
+    { visibleTitle : Bool
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -36,12 +55,9 @@ type alias State =
     }
 
 
-{-| -}
-init : State
-init =
-    { infoModal = Modal.init
-    , warningModal = Modal.init
-    , visibleTitle = True
+initModalSettings : Settings
+initModalSettings =
+    { visibleTitle = True
     , showX = True
     , showContinue = True
     , showSecondary = True
@@ -53,7 +69,7 @@ init =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Modal.V8"
+    { name = "Nri.Ui.Modal.V9"
     , categories = [ Modals ]
     , atomicDesignType = Organism
     , keyboardSupport = []
@@ -62,188 +78,169 @@ example =
     , subscriptions = subscriptions
     , view =
         \state ->
-            [ viewSettings state
+            [ viewSettings state.settings
             , Button.button "Launch Info Modal"
-                [ Button.onClick (InfoModalMsg (Modal.open "launch-info-modal"))
+                [ Button.onClick (OpenModal Info "launch-info-modal")
                 , Button.custom [ Attributes.id "launch-info-modal" ]
                 , Button.css [ Css.marginRight (Css.px 16) ]
                 , Button.secondary
                 , Button.medium
                 ]
             , Button.button "Launch Warning Modal"
-                [ Button.onClick (WarningModalMsg (Modal.open "launch-warning-modal"))
+                [ Button.onClick (OpenModal Warning "launch-warning-modal")
                 , Button.custom [ Attributes.id "launch-warning-modal" ]
                 , Button.secondary
                 , Button.medium
                 ]
-            , let
-                params =
-                    ( state, InfoModalMsg, Button.primary )
-              in
-              Modal.info { title = "Modal.info", wrapMsg = InfoModalMsg, visibleTitle = state.visibleTitle }
-                (getFocusable params)
-                state.infoModal
-            , let
-                params =
-                    ( state, WarningModalMsg, Button.danger )
-              in
-              Modal.warning { title = "Modal.warning", wrapMsg = WarningModalMsg, visibleTitle = state.visibleTitle }
-                (getFocusable params)
-                state.warningModal
+            , case state.content of
+                Info ->
+                    Modal.info
+                        { title = "Modal.info"
+                        , wrapMsg = ModalMsg
+                        , visibleTitle = state.settings.visibleTitle
+                        , focusManager = makeFocusManager Button.primary state.settings
+                        }
+                        state.state
+
+                Warning ->
+                    Modal.warning
+                        { title = "Modal.warning"
+                        , wrapMsg = ModalMsg
+                        , visibleTitle = state.settings.visibleTitle
+                        , focusManager = makeFocusManager Button.danger state.settings
+                        }
+                        state.state
             ]
     }
 
 
-getFocusable :
-    ( State, Modal.Msg -> Msg, Button.Attribute Msg )
-    -> Modal.ViewFuncs Msg
-    -> Modal.Focusable Msg
-getFocusable ( state, wrapMsg, firstButtonStyle ) { viewContent, closeButton } =
-    case ( state.showX, state.showContinue, state.showSecondary ) of
+makeFocusManager : Button.Attribute Msg -> Settings -> Modal.FocusManager Msg
+makeFocusManager firstButtonStyle settings =
+    case ( settings.showX, settings.showContinue, settings.showSecondary ) of
         ( True, True, True ) ->
-            Modal.multipleFocusableElementView
-                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
-                    div []
-                        [ closeButton firstFocusableElement
-                        , viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ Button.button "Continue"
-                                    [ firstButtonStyle
-                                    , Button.onClick ForceClose
-                                    , Button.large
-                                    , Button.custom [ autofocusElement ]
-                                    ]
-                                , ClickableText.button "Close"
-                                    [ ClickableText.onClick ForceClose
-                                    , ClickableText.large
-                                    , ClickableText.custom lastFocusableElement
-                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                                    ]
-                                ]
-                            }
+            Modal.MultipleFocusableElements <|
+                \modalOptions ->
+                    { content =
+                        [ modalOptions.closeButton modalOptions.firstFocusableElement
+                        , viewModalContent settings.longContent
                         ]
-                )
+                    , footer =
+                        [ Button.button "Continue"
+                            [ firstButtonStyle
+                            , Button.onClick ForceClose
+                            , Button.large
+                            , Button.custom [ modalOptions.autofocusElement ]
+                            ]
+                        , ClickableText.button "Close"
+                            [ ClickableText.onClick ForceClose
+                            , ClickableText.large
+                            , ClickableText.custom modalOptions.lastFocusableElement
+                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
+                            ]
+                        ]
+                    }
 
         ( True, False, True ) ->
-            Modal.multipleFocusableElementView
-                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
-                    div []
-                        [ closeButton firstFocusableElement
-                        , viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ ClickableText.button "Close"
-                                    [ ClickableText.onClick ForceClose
-                                    , ClickableText.large
-                                    , ClickableText.custom (autofocusElement :: lastFocusableElement)
-                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                                    ]
-                                ]
-                            }
+            Modal.MultipleFocusableElements <|
+                \modalOptions ->
+                    { content =
+                        [ modalOptions.closeButton modalOptions.firstFocusableElement
+                        , viewModalContent settings.longContent
                         ]
-                )
+                    , footer =
+                        [ ClickableText.button "Close"
+                            [ ClickableText.onClick ForceClose
+                            , ClickableText.large
+                            , ClickableText.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
+                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
+                            ]
+                        ]
+                    }
 
         ( True, False, False ) ->
-            Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
-                    div []
+            Modal.OneFocusableElement
+                (\{ onlyFocusableElement, closeButton } ->
+                    { content =
                         [ closeButton onlyFocusableElement
-                        , viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer = []
-                            }
+                        , viewModalContent settings.longContent
                         ]
+                    , footer = []
+                    }
                 )
 
         ( True, True, False ) ->
-            Modal.multipleFocusableElementView
-                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
-                    div []
-                        [ closeButton firstFocusableElement
-                        , viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ Button.button "Continue"
-                                    [ firstButtonStyle
-                                    , Button.onClick ForceClose
-                                    , Button.custom (autofocusElement :: lastFocusableElement)
-                                    , Button.large
-                                    ]
-                                ]
-                            }
+            Modal.MultipleFocusableElements <|
+                \modalOptions ->
+                    { content =
+                        [ modalOptions.closeButton modalOptions.firstFocusableElement
+                        , viewModalContent settings.longContent
                         ]
-                )
+                    , footer =
+                        [ Button.button "Continue"
+                            [ firstButtonStyle
+                            , Button.onClick ForceClose
+                            , Button.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
+                            , Button.large
+                            ]
+                        ]
+                    }
 
         ( False, True, True ) ->
-            Modal.multipleFocusableElementView
-                (\{ firstFocusableElement, autofocusElement, lastFocusableElement } ->
-                    div []
-                        [ viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ Button.button "Continue"
-                                    [ firstButtonStyle
-                                    , Button.onClick ForceClose
-                                    , Button.custom (autofocusElement :: firstFocusableElement)
-                                    , Button.large
-                                    ]
-                                , ClickableText.button "Close"
-                                    [ ClickableText.onClick ForceClose
-                                    , ClickableText.large
-                                    , ClickableText.custom lastFocusableElement
-                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                                    ]
-                                ]
-                            }
+            Modal.MultipleFocusableElements <|
+                \modalOptions ->
+                    { content = [ viewModalContent settings.longContent ]
+                    , footer =
+                        [ Button.button "Continue"
+                            [ firstButtonStyle
+                            , Button.onClick ForceClose
+                            , Button.custom (modalOptions.autofocusElement :: modalOptions.firstFocusableElement)
+                            , Button.large
+                            ]
+                        , ClickableText.button "Close"
+                            [ ClickableText.onClick ForceClose
+                            , ClickableText.large
+                            , ClickableText.custom modalOptions.lastFocusableElement
+                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
+                            ]
                         ]
-                )
+                    }
 
         ( False, False, True ) ->
-            Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
-                    div []
-                        [ viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ ClickableText.button "Close"
-                                    [ ClickableText.onClick ForceClose
-                                    , ClickableText.large
-                                    , ClickableText.custom onlyFocusableElement
-                                    , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                                    ]
-                                ]
-                            }
+            Modal.OneFocusableElement
+                (\{ onlyFocusableElement } ->
+                    { content = [ viewModalContent settings.longContent ]
+                    , footer =
+                        [ ClickableText.button "Close"
+                            [ ClickableText.onClick ForceClose
+                            , ClickableText.large
+                            , ClickableText.custom onlyFocusableElement
+                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
+                            ]
                         ]
+                    }
                 )
 
         ( False, True, False ) ->
-            Modal.onlyFocusableElementView
-                (\onlyFocusableElement ->
-                    div []
-                        [ viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer =
-                                [ Button.button "Continue"
-                                    [ firstButtonStyle
-                                    , Button.onClick ForceClose
-                                    , Button.custom onlyFocusableElement
-                                    , Button.large
-                                    ]
-                                ]
-                            }
+            Modal.OneFocusableElement
+                (\{ onlyFocusableElement } ->
+                    { content = [ viewModalContent settings.longContent ]
+                    , footer =
+                        [ Button.button "Continue"
+                            [ firstButtonStyle
+                            , Button.onClick ForceClose
+                            , Button.custom onlyFocusableElement
+                            , Button.large
+                            ]
                         ]
+                    }
                 )
 
         ( False, False, False ) ->
-            Modal.onlyFocusableElementView
+            Modal.OneFocusableElement
                 (\_ ->
-                    div []
-                        [ viewContent
-                            { content = [ viewModalContent state.longContent ]
-                            , footer = []
-                            }
-                        ]
+                    { content = [ viewModalContent settings.longContent ]
+                    , footer = []
+                    }
                 )
 
 
@@ -270,13 +267,13 @@ viewModalContent longContent =
         ]
 
 
-viewSettings : State -> Html Msg
-viewSettings state =
+viewSettings : Settings -> Html Msg
+viewSettings settings =
     div []
         [ Checkbox.viewWithLabel
             { identifier = "visible-title"
             , label = "Visible title"
-            , selected = Checkbox.selectedFromBool state.visibleTitle
+            , selected = Checkbox.selectedFromBool settings.visibleTitle
             , setterMsg = SetVisibleTitle
             , disabled = False
             , theme = Checkbox.Square
@@ -284,7 +281,7 @@ viewSettings state =
         , Checkbox.viewWithLabel
             { identifier = "show-x"
             , label = "Show X button"
-            , selected = Checkbox.selectedFromBool state.showX
+            , selected = Checkbox.selectedFromBool settings.showX
             , setterMsg = SetShowX
             , disabled = False
             , theme = Checkbox.Square
@@ -292,7 +289,7 @@ viewSettings state =
         , Checkbox.viewWithLabel
             { identifier = "show-continue"
             , label = "Show main button"
-            , selected = Checkbox.selectedFromBool state.showContinue
+            , selected = Checkbox.selectedFromBool settings.showContinue
             , setterMsg = SetShowContinue
             , disabled = False
             , theme = Checkbox.Square
@@ -300,7 +297,7 @@ viewSettings state =
         , Checkbox.viewWithLabel
             { identifier = "show-secondary"
             , label = "Show secondary button"
-            , selected = Checkbox.selectedFromBool state.showSecondary
+            , selected = Checkbox.selectedFromBool settings.showSecondary
             , setterMsg = SetShowSecondary
             , disabled = False
             , theme = Checkbox.Square
@@ -308,7 +305,7 @@ viewSettings state =
         , Checkbox.viewWithLabel
             { identifier = "dismiss-on-click"
             , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool state.dismissOnEscAndOverlayClick
+            , selected = Checkbox.selectedFromBool settings.dismissOnEscAndOverlayClick
             , setterMsg = SetDismissOnEscAndOverlayClick
             , disabled = False
             , theme = Checkbox.Square
@@ -316,7 +313,7 @@ viewSettings state =
         , Checkbox.viewWithLabel
             { identifier = "long-content"
             , label = "Display longer content"
-            , selected = Checkbox.selectedFromBool state.longContent
+            , selected = Checkbox.selectedFromBool settings.longContent
             , setterMsg = SetLongContent
             , disabled = False
             , theme = Checkbox.Square
@@ -326,8 +323,8 @@ viewSettings state =
 
 {-| -}
 type Msg
-    = InfoModalMsg Modal.Msg
-    | WarningModalMsg Modal.Msg
+    = OpenModal Content String
+    | ModalMsg Modal.Msg
     | ForceClose
     | SetVisibleTitle Bool
     | SetShowX Bool
@@ -341,55 +338,48 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     let
+        settings =
+            state.settings
+
         updateConfig =
-            { dismissOnEscAndOverlayClick = state.dismissOnEscAndOverlayClick }
+            { dismissOnEscAndOverlayClick = settings.dismissOnEscAndOverlayClick }
     in
     case msg of
-        InfoModalMsg modalMsg ->
-            case Modal.update updateConfig modalMsg state.infoModal of
-                ( newState, cmds ) ->
-                    ( { state | infoModal = newState }
-                    , Cmd.map InfoModalMsg cmds
-                    )
+        OpenModal content returnFocusTo ->
+            update (ModalMsg (Modal.open returnFocusTo)) { state | content = content }
 
-        WarningModalMsg modalMsg ->
-            case Modal.update updateConfig modalMsg state.warningModal of
+        ModalMsg modalMsg ->
+            case Modal.update updateConfig modalMsg state.state of
                 ( newState, cmds ) ->
-                    ( { state | warningModal = newState }
-                    , Cmd.map WarningModalMsg cmds
+                    ( { state | state = newState }
+                    , Cmd.map ModalMsg cmds
                     )
 
         ForceClose ->
-            ( { state
-                | infoModal = Modal.init
-                , warningModal = Modal.init
-              }
+            ( { state | state = Modal.init }
             , Cmd.none
             )
 
         SetVisibleTitle value ->
-            ( { state | visibleTitle = value }, Cmd.none )
+            ( { state | settings = { settings | visibleTitle = value } }, Cmd.none )
 
         SetShowX value ->
-            ( { state | showX = value }, Cmd.none )
+            ( { state | settings = { settings | showX = value } }, Cmd.none )
 
         SetShowContinue value ->
-            ( { state | showContinue = value }, Cmd.none )
+            ( { state | settings = { settings | showContinue = value } }, Cmd.none )
 
         SetShowSecondary value ->
-            ( { state | showSecondary = value }, Cmd.none )
+            ( { state | settings = { settings | showSecondary = value } }, Cmd.none )
 
         SetDismissOnEscAndOverlayClick value ->
-            ( { state | dismissOnEscAndOverlayClick = value }, Cmd.none )
+            ( { state | settings = { settings | dismissOnEscAndOverlayClick = value } }, Cmd.none )
 
         SetLongContent value ->
-            ( { state | longContent = value }, Cmd.none )
+            ( { state | settings = { settings | longContent = value } }, Cmd.none )
 
 
 {-| -}
 subscriptions : State -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Sub.map InfoModalMsg (Modal.subscriptions model.infoModal)
-        , Sub.map WarningModalMsg (Modal.subscriptions model.warningModal)
-        ]
+    Sub.map ModalMsg (Modal.subscriptions model.state)
