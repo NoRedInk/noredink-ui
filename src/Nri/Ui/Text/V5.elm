@@ -87,12 +87,35 @@ singleLine =
     SingleLine
 
 
+styleForAttributes : List Attribute -> Style
+styleForAttributes attrs =
+    let
+        config =
+            List.foldl
+                (\attr soFar ->
+                    case attr of
+                        SingleLine ->
+                            { soFar | singleLine = True }
+                )
+                { singleLine = False }
+                attrs
+    in
+    batch
+        [ if config.singleLine then
+            whiteSpace noWrap
+
+          else
+            batch []
+        ]
+
+
 {-| This is some medium body copy.
 -}
 mediumBody : List Attribute -> List (Html msg) -> Html msg
 mediumBody attributes content =
     p
         [ paragraphStyles
+            attributes
             { font = Fonts.baseFont
             , color = gray20
             , size = 18
@@ -110,6 +133,7 @@ smallBody : List Attribute -> List (Html msg) -> Html msg
 smallBody attributes content =
     p
         [ paragraphStyles
+            attributes
             { font = Fonts.baseFont
             , color = gray20
             , size = 15
@@ -127,6 +151,7 @@ smallBodyGray : List Attribute -> List (Html msg) -> Html msg
 smallBodyGray attributes content =
     p
         [ paragraphStyles
+            attributes
             { font = Fonts.baseFont
             , color = gray45
             , size = 15
@@ -138,7 +163,18 @@ smallBodyGray attributes content =
         content
 
 
-paragraphStyles config =
+paragraphStyles :
+    List Attribute
+    ->
+        { color : Color
+        , font : Style
+        , lineHeight : Float
+        , margin : Float
+        , size : Float
+        , weight : Int
+        }
+    -> Html.Styled.Attribute msg
+paragraphStyles attributes config =
     css
         [ config.font
         , fontSize (px config.size)
@@ -160,6 +196,7 @@ paragraphStyles config =
         , lastChild
             [ margin zero
             ]
+        , styleForAttributes attributes
         ]
 
 
@@ -169,6 +206,7 @@ caption : List Attribute -> List (Html msg) -> Html msg
 caption attributes content =
     p
         [ paragraphStyles
+            attributes
             { font = Fonts.baseFont
             , color = gray45
             , size = 13
@@ -183,7 +221,7 @@ caption attributes content =
 {-| User-generated text.
 -}
 ugMediumBody : List Attribute -> List (Html msg) -> Html msg
-ugMediumBody =
+ugMediumBody attributes =
     p
         [ css
             [ Fonts.quizFont
@@ -192,6 +230,7 @@ ugMediumBody =
             , whiteSpace preLine
             , color gray20
             , margin zero
+            , styleForAttributes attributes
             ]
         ]
 
@@ -199,7 +238,7 @@ ugMediumBody =
 {-| User-generated text.
 -}
 ugSmallBody : List Attribute -> List (Html msg) -> Html msg
-ugSmallBody =
+ugSmallBody attributes =
     p
         [ css
             [ Fonts.quizFont
@@ -208,6 +247,7 @@ ugSmallBody =
             , whiteSpace preLine
             , color gray20
             , margin zero
+            , styleForAttributes attributes
             ]
         ]
 

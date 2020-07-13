@@ -13,7 +13,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -58,14 +58,14 @@ example =
                     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
                     ]
             in
-            [ Text.caption [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            [ Text.caption [] [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
-            , Text.mediumBody (exampleHtml "mediumBody")
-            , Text.smallBody (exampleHtml "smallBody")
-            , Text.smallBodyGray (exampleHtml "smallBodyGray")
-            , Text.caption (exampleHtml "caption")
+            , Text.mediumBody [] (exampleHtml "mediumBody")
+            , Text.smallBody [] (exampleHtml "smallBody")
+            , Text.smallBodyGray [] (exampleHtml "smallBodyGray")
+            , Text.caption [] (exampleHtml "caption")
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
-            , Text.ugMediumBody (exampleUGHtml "ugMediumBody")
-            , Text.ugSmallBody (exampleUGHtml "ugSmallBody")
+            , Text.ugMediumBody [] (exampleUGHtml "ugMediumBody")
+            , Text.ugSmallBody [] (exampleUGHtml "ugSmallBody")
             ]
     }
