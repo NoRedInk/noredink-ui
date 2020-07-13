@@ -331,6 +331,7 @@ tabStyles isSelected customSpacing =
             , Css.marginTop Css.zero
             , Css.marginRight Css.zero
             , Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
+            , Css.padding2 (Css.px 1) (Css.px 6)
             , Css.marginBottom (Css.px -1)
             , Css.cursor Css.pointer
             , Css.firstChild [ Css.marginLeft Css.zero ]
