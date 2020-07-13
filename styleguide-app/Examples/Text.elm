@@ -8,6 +8,7 @@ module Examples.Text exposing (example, State, Msg)
 
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
@@ -67,5 +68,19 @@ example =
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
             , Text.ugMediumBody [] (exampleUGHtml "ugMediumBody")
             , Text.ugSmallBody [] (exampleUGHtml "ugSmallBody")
+            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
+            , Text.mediumBody
+                [ Text.css [ Css.padding (Css.px 20) ] ]
+                [ Html.text "I've got more padding than my siblings!" ]
+            , Html.div
+                [ Attributes.css
+                    [ Css.width (Css.px 80)
+                    , Css.border3 (Css.px 1) Css.solid (Css.hex "000")
+                    ]
+                ]
+                [ Text.mediumBody
+                    [ Text.noBreak ]
+                    [ Html.text "I won't ever break, no matter how narrow my container is." ]
+                ]
             ]
     }
