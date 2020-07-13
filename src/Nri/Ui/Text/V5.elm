@@ -1,7 +1,7 @@
 module Nri.Ui.Text.V5 exposing
     ( caption, mediumBody, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
-    , Attribute, singleLine, css
+    , Attribute, noBreak, css
     , noWidow
     )
 
@@ -58,7 +58,7 @@ API. See the Nri.Ui.Heading.V2 docs for details.
 
 ## Customizations
 
-@docs Attribute, singleLine, css
+@docs Attribute, noBreak, css
 
 
 ## Modifying strings to display nicely:
@@ -77,15 +77,15 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 {-| -}
 type Attribute
-    = SingleLine
+    = NoBreak
     | Css (List Style)
 
 
 {-| Text with this attribute will never wrap.
 -}
-singleLine : Attribute
-singleLine =
-    SingleLine
+noBreak : Attribute
+noBreak =
+    NoBreak
 
 
 {-| Add some custom CSS to the text. If you find yourself using this a lot,
@@ -103,19 +103,19 @@ styleForAttributes attrs =
             List.foldl
                 (\attr soFar ->
                     case attr of
-                        SingleLine ->
-                            { soFar | singleLine = True }
+                        NoBreak ->
+                            { soFar | noBreak = True }
 
                         Css styles ->
                             { soFar | styles = soFar.styles ++ styles }
                 )
-                { singleLine = False
+                { noBreak = False
                 , styles = []
                 }
                 attrs
     in
     batch
-        [ if config.singleLine then
+        [ if config.noBreak then
             whiteSpace noWrap
 
           else
