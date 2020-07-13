@@ -8,12 +8,13 @@ module Examples.Text exposing (example, State, Msg)
 
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -58,14 +59,28 @@ example =
                     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
                     ]
             in
-            [ Text.caption [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            [ Text.caption [] [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
-            , Text.mediumBody (exampleHtml "mediumBody")
-            , Text.smallBody (exampleHtml "smallBody")
-            , Text.smallBodyGray (exampleHtml "smallBodyGray")
-            , Text.caption (exampleHtml "caption")
+            , Text.mediumBody [] (exampleHtml "mediumBody")
+            , Text.smallBody [] (exampleHtml "smallBody")
+            , Text.smallBodyGray [] (exampleHtml "smallBodyGray")
+            , Text.caption [] (exampleHtml "caption")
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
-            , Text.ugMediumBody (exampleUGHtml "ugMediumBody")
-            , Text.ugSmallBody (exampleUGHtml "ugSmallBody")
+            , Text.ugMediumBody [] (exampleUGHtml "ugMediumBody")
+            , Text.ugSmallBody [] (exampleUGHtml "ugSmallBody")
+            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
+            , Text.mediumBody
+                [ Text.css [ Css.padding (Css.px 20) ] ]
+                [ Html.text "I've got more padding than my siblings!" ]
+            , Html.div
+                [ Attributes.css
+                    [ Css.width (Css.px 80)
+                    , Css.border3 (Css.px 1) Css.solid (Css.hex "000")
+                    ]
+                ]
+                [ Text.mediumBody
+                    [ Text.noBreak ]
+                    [ Html.text "I won't ever break, no matter how narrow my container is." ]
+                ]
             ]
     }
