@@ -1,7 +1,7 @@
 module Nri.Ui.Text.V5 exposing
     ( caption, mediumBody, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
-    , Attribute, singleLine
+    , Attribute, singleLine, css
     , noWidow
     )
 
@@ -58,7 +58,7 @@ API. See the Nri.Ui.Heading.V2 docs for details.
 
 ## Customizations
 
-@docs Attribute, singleLine
+@docs Attribute, singleLine, css
 
 
 ## Modifying strings to display nicely:
@@ -70,7 +70,7 @@ API. See the Nri.Ui.Heading.V2 docs for details.
 import Css exposing (..)
 import Css.Global exposing (a, descendants)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attrs
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -78,6 +78,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 {-| -}
 type Attribute
     = SingleLine
+    | Css (List Style)
 
 
 {-| Text with this attribute will never wrap.
@@ -85,6 +86,14 @@ type Attribute
 singleLine : Attribute
 singleLine =
     SingleLine
+
+
+{-| Add some custom CSS to the text. If you find yourself using this a lot,
+please add a stricter attribute to noredink-ui!
+-}
+css : List Style -> Attribute
+css =
+    Css
 
 
 styleForAttributes : List Attribute -> Style
@@ -96,8 +105,13 @@ styleForAttributes attrs =
                     case attr of
                         SingleLine ->
                             { soFar | singleLine = True }
+
+                        Css styles ->
+                            { soFar | styles = soFar.styles ++ styles }
                 )
-                { singleLine = False }
+                { singleLine = False
+                , styles = []
+                }
                 attrs
     in
     batch
@@ -106,6 +120,7 @@ styleForAttributes attrs =
 
           else
             batch []
+        , batch config.styles
         ]
 
 
@@ -175,7 +190,7 @@ paragraphStyles :
         }
     -> Html.Styled.Attribute msg
 paragraphStyles attributes config =
-    css
+    Attrs.css
         [ config.font
         , fontSize (px config.size)
         , color config.color
@@ -223,7 +238,7 @@ caption attributes content =
 ugMediumBody : List Attribute -> List (Html msg) -> Html msg
 ugMediumBody attributes =
     p
-        [ css
+        [ Attrs.css
             [ Fonts.quizFont
             , fontSize (px 18)
             , lineHeight (px 30)
@@ -240,7 +255,7 @@ ugMediumBody attributes =
 ugSmallBody : List Attribute -> List (Html msg) -> Html msg
 ugSmallBody attributes =
     p
-        [ css
+        [ Attrs.css
             [ Fonts.quizFont
             , fontSize (px 16)
             , lineHeight (px 25)
