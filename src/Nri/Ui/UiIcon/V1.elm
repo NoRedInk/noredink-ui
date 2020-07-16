@@ -7,7 +7,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , sprout, sapling, tree
     , person, class, leaderboard, performance
     , calendar, clock
-    , document, newspaper, openBook
+    , document, documents, newspaper, openBook
     , edit, pen
     , speechBalloon
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
@@ -31,7 +31,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs sprout, sapling, tree
 @docs person, class, leaderboard, performance
 @docs calendar, clock
-@docs document, newspaper, openBook
+@docs document, documents, newspaper, openBook
 @docs edit, pen
 @docs speechBalloon
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
@@ -303,6 +303,34 @@ document =
         ]
         [ Svg.path [ Attributes.d "M13.41.219H4.742a2.703 2.703 0 0 0-2.699 2.699V18.08c0 1.487 1.211 2.699 2.7 2.699h11.051c1.488 0 2.7-1.212 2.7-2.7V5.899L13.41.218zm.356 2.327l2.644 2.956h-2.644V2.546zm2.026 16.949H4.742A1.414 1.414 0 0 1 3.33 18.08V2.918c0-.779.634-1.414 1.412-1.414h7.739v5.282h4.725V18.08c0 .78-.634 1.414-1.414 1.414z" ] []
         , Svg.path [ Attributes.d "M6.355 10.072V8.785h7.824v1.287H6.355zm0 2.964V11.75h7.824v1.286H6.355zm0 2.965v-1.287h7.824v1.287H6.355z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+documents : Nri.Ui.Svg.V1.Svg
+documents =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 24 30"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M3.33333333,30 L3.33333333,29 L22.3333333,29 L22.3333333,3.33333333 L23.3333333,3.33333333 L23.3333333,30 L3.33333333,30 Z M1.66666667,27.3333333 L20.6666667,27.3333333 L20.6666667,1.66666667 L21.6666667,1.66666667 L21.6666667,28.3333333 L1.66666667,28.3333333 L1.66666667,27.3333333 Z M-3.73034936e-14,0 L20,0 L20,26.6666667 L-3.73034936e-14,26.6666667 L-3.73034936e-14,0 Z M2,22.6666667 L10.6666667,22.6666667 L10.6666667,21.3333333 L2,21.3333333 L2,22.6666667 Z M2,19.3333333 L18,19.3333333 L18,18 L2,18 L2,19.3333333 Z M2,16 L18,16 L18,14.6666667 L2,14.6666667 L2,16 Z M2,12.6666667 L18,12.6666667 L18,11.3333333 L2,11.3333333 L2,12.6666667 Z M2,9.33333333 L18,9.33333333 L18,8 L2,8 L2,9.33333333 Z M2,6 L18,6 L18,4.66666667 L2,4.66666667 L2,6 Z"
+                    ]
+                    []
+                ]
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
