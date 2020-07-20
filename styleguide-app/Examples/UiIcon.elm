@@ -73,6 +73,7 @@ example =
                 ]
             , IconExamples.view "Texts"
                 [ ( "document", UiIcon.document )
+                , ( "documents", UiIcon.documents )
                 , ( "newspaper", UiIcon.newspaper )
                 , ( "openBook", UiIcon.openBook )
                 ]
