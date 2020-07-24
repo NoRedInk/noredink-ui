@@ -280,6 +280,8 @@ large theme content =
                 , borderBottom3 (px 1) solid Colors.azure
                 , visited [ color Colors.azure ]
                 ]
+            , Css.Global.button
+                [ margin zero ]
             ]
         ]
         []
@@ -445,6 +447,8 @@ banner theme content attr =
                         , borderBottom3 (px 1) solid Colors.azure
                         , visited [ color Colors.azure ]
                         ]
+                    , Css.Global.button
+                        [ margin zero ]
                     ]
                 ]
                 []
