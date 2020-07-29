@@ -72,7 +72,8 @@ example =
                 , ( "clock", UiIcon.clock )
                 ]
             , IconExamples.view "Texts"
-                [ ( "document", UiIcon.document )
+                [ ( "missingDocument", UiIcon.missingDocument )
+                , ( "document", UiIcon.document )
                 , ( "documents", UiIcon.documents )
                 , ( "newspaper", UiIcon.newspaper )
                 , ( "openBook", UiIcon.openBook )
