@@ -59,7 +59,19 @@ example =
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildOptions "" options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options =
+                    buildOptions ""
+                        options
+                        (List.range 1 8)
+                        [ UiIcon.leaderboard
+                        , UiIcon.person
+                        , UiIcon.performance
+                        , UiIcon.gift
+                        , UiIcon.document
+                        , UiIcon.key
+                        , UiIcon.badge
+                        , UiIcon.hat
+                        ]
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -93,16 +105,10 @@ type ExampleOptionNav
     | C
 
 
-type ExampleOptionSelect
-    = One
-    | Two
-    | Three
-
-
 {-| -}
 type alias State =
     { selectedNav : ExampleOptionNav
-    , optionallySelected : Maybe ExampleOptionSelect
+    , optionallySelected : Maybe Int
     , optionsControl : Control Options
     }
 
@@ -144,7 +150,7 @@ optionsControl =
 {-| -}
 type Msg
     = SelectNav ExampleOptionNav
-    | MaybeSelect ExampleOptionSelect
+    | MaybeSelect Int
     | ChangeOptions (Control Options)
 
 
