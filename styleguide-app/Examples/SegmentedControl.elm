@@ -50,7 +50,7 @@ example =
               in
               viewFn
                 { onClick = SelectNav
-                , options = buildOptions options (List.range 1 options.count) coloredIcons
+                , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
                 , selected = state.selectedNav
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
@@ -59,7 +59,7 @@ example =
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildOptions options (List.range 1 options.count) plainIcons
+                , options = buildOptions "Source " options (List.range 1 options.count) plainIcons
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -96,8 +96,8 @@ plainIcons =
     ]
 
 
-buildOptions : Options -> List a -> List Svg -> List (SegmentedControl.Option a)
-buildOptions options selections =
+buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a)
+buildOptions prefix options selections =
     let
         buildOption option icon =
             { icon =
@@ -106,7 +106,7 @@ buildOptions options selections =
 
                 else
                     Nothing
-            , label = "Choice " ++ Debug.toString option
+            , label = prefix ++ Debug.toString option
             , value = option
             }
     in
