@@ -1,6 +1,9 @@
 module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
-{-|
+{-| Changes from monolith version:
+
+    - uses Nri.Ui.Data.PremiumLevel rather than monolith version
+    - uses Nri.Ui.Html.* rather than deprecated monolith extras
 
 @docs view, premium
 
