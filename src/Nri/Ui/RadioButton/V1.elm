@@ -4,6 +4,7 @@ module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
     - uses Nri.Ui.Data.PremiumLevel rather than monolith version
     - uses Nri.Ui.Html.* rather than deprecated monolith extras
+    - removes Role.radio from the radio input's label
 
 @docs view, premium
 
@@ -11,7 +12,6 @@ module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
@@ -179,7 +179,6 @@ internalView config =
         , Html.label
             [ for id_
             , Widget.disabled config.isLocked
-            , Role.radio
             , Widget.checked (Just isChecked)
             , Aria.controls id_
             , if not config.isLocked then
