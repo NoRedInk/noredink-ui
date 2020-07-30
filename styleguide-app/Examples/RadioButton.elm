@@ -37,7 +37,9 @@ example =
     , view = view
     , categories = [ Layout ]
     , atomicDesignType = Atom
-    , keyboardSupport = []
+    , keyboardSupport =
+        -- TODO: fix keyboard support.
+        []
     }
 
 
@@ -138,7 +140,14 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.Free
             , onSelect = Select
-            , premiumMsg = ModalMsg (Modal.open "id")
+
+            -- TODO:
+            -- the next version of the RadioComponent will handle focus correctly,
+            -- including re-capturing the focus when the modal closes.
+            -- While we could change premiumMsg to be String -> msg now,
+            -- and use the correct id, there's not much point in doing
+            -- so yet since the radio doesn't handle focus correctly.
+            , premiumMsg = ModalMsg (Modal.open "fake-id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
@@ -152,7 +161,14 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.PremiumWithWriting
             , onSelect = Select
-            , premiumMsg = ModalMsg (Modal.open "id")
+
+            -- TODO:
+            -- the next version of the RadioComponent will handle focus correctly,
+            -- including re-capturing the focus when the modal closes.
+            -- While we could change premiumMsg to be String -> msg now,
+            -- and use the correct id, there's not much point in doing
+            -- so yet since the radio doesn't handle focus correctly.
+            , premiumMsg = ModalMsg (Modal.open "fake-id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
@@ -166,7 +182,14 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.PremiumWithWriting
             , onSelect = Select
-            , premiumMsg = ModalMsg (Modal.open "id")
+
+            -- TODO:
+            -- the next version of the RadioComponent will handle focus correctly,
+            -- including re-capturing the focus when the modal closes.
+            -- While we could change premiumMsg to be String -> msg now,
+            -- and use the correct id, there's not much point in doing
+            -- so yet since the radio doesn't handle focus correctly.
+            , premiumMsg = ModalMsg (Modal.open "fake-id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
