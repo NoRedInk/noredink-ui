@@ -1,4 +1,4 @@
-module Nri.RadioButton exposing (view, premium)
+module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
 {-|
 
@@ -12,22 +12,22 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
-import Html.Styled.Attributes.Extra as Attributes
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
-import Html.Styled.Events.Extra exposing (onEnterAndSpacePreventDefault)
-import Html.Styled.Extra exposing (viewIf)
 import Json.Decode
 import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as Attributes
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg, fromHtml)
+import String exposing (toLower)
+import String.Extra exposing (dasherize)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
-import Util
 
 
 {-| View a single radio button.
@@ -106,7 +106,16 @@ premium config =
         , valueToString = config.valueToString
         , premiumMsg = config.premiumMsg
         , noOpMsg = config.noOpMsg
-        , showPennant = config.showPennant && PremiumLevel.isPremium config.contentPremiumLevel
+        , showPennant =
+            case config.contentPremiumLevel of
+                PremiumLevel.Premium ->
+                    config.showPennant
+
+                PremiumLevel.PremiumWithWriting ->
+                    config.showPennant
+
+                PremiumLevel.Free ->
+                    False
         }
 
 
@@ -133,7 +142,7 @@ internalView config =
             config.selectedValue == Just config.value
 
         id_ =
-            config.name ++ "-" ++ Util.dashify (config.valueToString config.value)
+            config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
 
         onContainerClick =
             if config.isLocked then
@@ -248,6 +257,19 @@ internalView config =
                 ]
             ]
         ]
+
+
+onEnterAndSpacePreventDefault : msg -> Attribute msg
+onEnterAndSpacePreventDefault msg =
+    Nri.Ui.Html.V3.onKeyUp
+        { stopPropagation = False, preventDefault = True }
+        (\code ->
+            if code == 13 || code == 32 then
+                Just msg
+
+            else
+                Nothing
+        )
 
 
 radioInputIcon :
