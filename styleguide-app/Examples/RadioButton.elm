@@ -19,12 +19,12 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Modal.V9 as Modal
 import Nri.Ui.RadioButton.V1 as RadioButton
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -33,7 +33,7 @@ example =
     { name = "Nri.Ui.RadioButton.V1"
     , state = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = subscriptions
     , view = view
     , categories = [ Layout ]
     , atomicDesignType = Atom
@@ -50,6 +50,28 @@ view model =
     , viewInvisibleLabel model
     , Heading.h4 [] [ Html.text "premium" ]
     , viewPremium model
+    , Modal.info
+        { visibleTitle = True
+        , title = "Go Premium!"
+        , wrapMsg = ModalMsg
+        , focusManager =
+            Modal.MultipleFocusableElements
+                (\{ firstFocusableElement, autofocusElement, lastFocusableElement, closeButton } ->
+                    { content =
+                        [ Text.mediumBody [] [ text "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
+                        , closeButton (autofocusElement :: firstFocusableElement)
+                        ]
+                    , footer =
+                        [ Button.button "Okay"
+                            [ Button.large
+                            , Button.onClick (ModalMsg Modal.close)
+                            , Button.custom lastFocusableElement
+                            ]
+                        ]
+                    }
+                )
+        }
+        model.modal
     ]
 
 
@@ -116,7 +138,7 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.Free
             , onSelect = Select
-            , premiumMsg = ShowModal True
+            , premiumMsg = ModalMsg (Modal.open "id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
@@ -130,7 +152,7 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.PremiumWithWriting
             , onSelect = Select
-            , premiumMsg = ShowModal True
+            , premiumMsg = ModalMsg (Modal.open "id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
@@ -144,7 +166,7 @@ viewPremium state =
             , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
             , contentPremiumLevel = PremiumLevel.PremiumWithWriting
             , onSelect = Select
-            , premiumMsg = ShowModal True
+            , premiumMsg = ModalMsg (Modal.open "id")
             , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
@@ -156,7 +178,7 @@ viewPremium state =
 {-| -}
 type alias State =
     { selectedValue : Maybe String
-    , isModalShowing : Bool
+    , modal : Modal.Model
     , premiumControl : Control PremiumConfig
     }
 
@@ -165,7 +187,7 @@ type alias State =
 init : State
 init =
     { selectedValue = Nothing
-    , isModalShowing = False
+    , modal = Modal.init
     , premiumControl = initPremiumControls
     }
 
@@ -189,7 +211,7 @@ initPremiumControls =
 
 
 type Msg
-    = ShowModal Bool
+    = ModalMsg Modal.Msg
     | Select String
     | SetPremiumControl (Control PremiumConfig)
     | NoOp
@@ -199,8 +221,14 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        ShowModal isModalShowing ->
-            ( { model | isModalShowing = isModalShowing }, Cmd.none )
+        ModalMsg modalMsg ->
+            let
+                ( modal, cmd ) =
+                    Modal.update { dismissOnEscAndOverlayClick = True }
+                        modalMsg
+                        model.modal
+            in
+            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
 
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
@@ -210,3 +238,8 @@ update msg model =
 
         NoOp ->
             ( model, Cmd.none )
+
+
+subscriptions : State -> Sub Msg
+subscriptions { modal } =
+    Sub.map ModalMsg (Modal.subscriptions modal)
