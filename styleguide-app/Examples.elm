@@ -23,6 +23,7 @@ import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pennant as Pennant
+import Examples.RadioButton as RadioButton
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Slide as Slide
@@ -459,6 +460,25 @@ all =
                     _ ->
                         Nothing
             )
+    , RadioButton.example
+        |> Example.wrapMsg RadioButtonMsg
+            (\msg ->
+                case msg of
+                    RadioButtonMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState RadioButtonState
+            (\msg ->
+                case msg of
+                    RadioButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , SegmentedControl.example
         |> Example.wrapMsg SegmentedControlMsg
             (\msg ->
@@ -751,6 +771,7 @@ type State
     | ModalState Modal.State
     | PageState Page.State
     | PennantState Pennant.State
+    | RadioButtonState RadioButton.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
     | SlideState Slide.State
@@ -790,6 +811,7 @@ type Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
     | PennantMsg Pennant.Msg
+    | RadioButtonMsg RadioButton.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
     | SlideMsg Slide.Msg

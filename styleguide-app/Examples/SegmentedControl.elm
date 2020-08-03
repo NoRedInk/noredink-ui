@@ -50,7 +50,7 @@ example =
               in
               viewFn
                 { onClick = SelectNav
-                , options = buildOptions "" options [ A, B, C ] [ UiIcon.flag, UiIcon.star, Svg.withColor Colors.greenDark UiIcon.attention ]
+                , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
                 , selected = state.selectedNav
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
@@ -59,7 +59,7 @@ example =
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildOptions "" options [ One, Two, Three ] [ UiIcon.leaderboard, UiIcon.person, UiIcon.performance ]
+                , options = buildOptions "Source " options (List.range 1 options.count) plainIcons
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -68,6 +68,32 @@ example =
     , atomicDesignType = Molecule
     , keyboardSupport = []
     }
+
+
+coloredIcons : List Svg
+coloredIcons =
+    [ UiIcon.flag
+    , UiIcon.sprout
+    , UiIcon.star
+    , UiIcon.sapling
+    , Svg.withColor Colors.greenDark UiIcon.attention
+    , UiIcon.tree
+    , UiIcon.premiumLock
+    , Svg.withColor Colors.purple UiIcon.activity
+    ]
+
+
+plainIcons : List Svg
+plainIcons =
+    [ UiIcon.leaderboard
+    , UiIcon.person
+    , UiIcon.performance
+    , UiIcon.gift
+    , UiIcon.document
+    , UiIcon.key
+    , UiIcon.badge
+    , UiIcon.hat
+    ]
 
 
 buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a)
@@ -80,29 +106,17 @@ buildOptions prefix options selections =
 
                 else
                     Nothing
-            , label = prefix ++ "Choice " ++ Debug.toString option
+            , label = prefix ++ Debug.toString option
             , value = option
             }
     in
     List.map2 buildOption selections
 
 
-type ExampleOptionNav
-    = A
-    | B
-    | C
-
-
-type ExampleOptionSelect
-    = One
-    | Two
-    | Three
-
-
 {-| -}
 type alias State =
-    { selectedNav : ExampleOptionNav
-    , optionallySelected : Maybe ExampleOptionSelect
+    { selectedNav : Int
+    , optionallySelected : Maybe Int
     , optionsControl : Control Options
     }
 
@@ -110,7 +124,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { selectedNav = A
+    { selectedNav = 1
     , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
@@ -120,6 +134,7 @@ type alias Options =
     { width : SegmentedControl.Width
     , icon : Bool
     , useSpa : Bool
+    , count : Int
     }
 
 
@@ -139,12 +154,16 @@ optionsControl =
                 , ( "viewSpa", Control.value True )
                 ]
             )
+        |> Control.field "count"
+            (Control.choice
+                (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
+            )
 
 
 {-| -}
 type Msg
-    = SelectNav ExampleOptionNav
-    | MaybeSelect ExampleOptionSelect
+    = SelectNav Int
+    | MaybeSelect Int
     | ChangeOptions (Control Options)
 
 
