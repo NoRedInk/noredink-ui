@@ -3,8 +3,6 @@ src/Nri/Ui/Page/V3.elm,Nri.Ui.Text,2
 src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Button,8
 src/Nri/Ui/SlideModal/V2.elm,Nri.Ui.Text,2
 src/Nri/Ui/Button/V8.elm,Html,DEPRECATED
-src/Nri/Ui/Button/V5.elm,Nri.Ui.Icon,3
-src/Nri/Ui/SegmentedControl/V6.elm,Nri.Ui.Icon,3
 src/Nri/Ui/Icon/V3.elm,Accessibility.Role,DEPRECATED
 src/Nri/Ui/Icon/V3.elm,Html,DEPRECATED
 src/Nri/Ui/Icon/V5.elm,Accessibility.Role,DEPRECATED
