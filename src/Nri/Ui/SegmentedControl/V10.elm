@@ -28,6 +28,7 @@ import EventExtras
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import Html.Styled.Events as Events
+import Html.Styled.Keyed as Keyed
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
@@ -164,7 +165,11 @@ view config =
                 )
                 config.options
             )
-        , div [] (List.map viewTabPanel config.options)
+        , Keyed.node "div"
+            []
+            (List.map (\option -> ( keyedNodeIdFor option, viewTabPanel option ))
+                config.options
+            )
         ]
 
 
@@ -221,6 +226,11 @@ viewTab config option =
 segmentIdFor : { option | label : String } -> String
 segmentIdFor option =
     "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
+
+
+keyedNodeIdFor : { option | label : String } -> String
+keyedNodeIdFor option =
+    "Nri-Ui-SegmentedControl-Panel-keyed-node-" ++ dashify option.label
 
 
 panelIdFor : { option | label : String } -> String
