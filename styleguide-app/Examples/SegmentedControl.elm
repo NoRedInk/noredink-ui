@@ -112,6 +112,7 @@ buildOptions prefix options selections =
                     Nothing
             , label = prefix ++ Debug.toString option
             , value = option
+            , attributes = []
             }
     in
     List.map2 buildOption selections

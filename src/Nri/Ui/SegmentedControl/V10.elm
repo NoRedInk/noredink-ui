@@ -29,10 +29,11 @@ import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
-type alias Option a =
-    { value : a
-    , icon : Maybe Svg
+type alias Option value =
+    { value : value
     , label : String
+    , attributes : List (Attribute Never)
+    , icon : Maybe Svg
     }
 
 
@@ -158,9 +159,6 @@ viewSegment :
     -> Html msg
 viewSegment config option =
     let
-        idValue =
-            segmentIdFor option
-
         element attrs children =
             case config.toUrl of
                 Nothing ->
@@ -183,7 +181,8 @@ viewSegment config option =
     in
     element
         (List.concat
-            [ [ Attributes.id idValue
+            [ List.map (Attributes.map never) option.attributes
+            , [ Attributes.id (segmentIdFor option)
               , config.ariaRole
               , css sharedSegmentStyles
               ]
