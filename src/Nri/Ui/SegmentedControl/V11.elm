@@ -8,6 +8,7 @@ module Nri.Ui.SegmentedControl.V11 exposing
 
   - change selection using left/right arrow keys
   - only currently-selected or first control is tabbable
+  - tabpanel is tabbable
   - `viewSelect` renamed to `viewRadioGroup`, `SelectOption` renamed to `Radio`
   - `viewRadioGroup` uses native HTML radio input internally
 
