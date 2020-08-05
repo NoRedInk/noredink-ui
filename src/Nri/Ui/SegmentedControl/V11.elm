@@ -4,14 +4,12 @@ module Nri.Ui.SegmentedControl.V11 exposing
     , Width(..)
     )
 
-{-| Changes from V9:
+{-| Changes from V10:
 
-  - hides non-displayed content rather than fully removing from the DOM, allowing for the content the SegmentedControl controls to have overflowY: auto & maintain scroll position
-  - 💀 removes NavConfig and SelectConfig
-  - combines `view` and `viewSpa` (for V9 `view` behavior, be sure `toUrl` is Nothing. for V9 `viewSpa` behavior, pass through a Just as `toUrl`)
-  - add custom attributes hole to the Option (in order to make SegmentedControls compatible with the Modal component)
-  - combine `css` attributes into one to prevent class-name-order-change css :bug:s
-  - :bug: fix overflowing-y svg icon issue
+  - change selection using left/right arrow keys
+  - only currently-selected or first control is tabbable
+  - `viewSelect` renamed to `viewRadioGroup`, `SelectOption` renamed to `Radio`
+  - `viewRadioGroup` uses native HTML radio input internally
 
 @docs Option, view
 @docs SelectOption, viewSelect
