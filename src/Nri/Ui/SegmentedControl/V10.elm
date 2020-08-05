@@ -25,6 +25,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (dashify)
 
@@ -199,19 +200,16 @@ viewSegment config option =
             ]
     in
     element
-        (List.concat
-            [ List.map (Attributes.map never) option.attributes
-            , [ Attributes.id (segmentIdFor option)
-              , config.ariaRole
-              , css styles
-              ]
-            , if isSelected then
-                [ config.selectedAttribute
-                ]
+        ([ Attributes.id (segmentIdFor option)
+         , config.ariaRole
+         , css styles
+         , if isSelected then
+            config.selectedAttribute
 
-              else
-                []
-            ]
+           else
+            AttributesExtra.none
+         ]
+            ++ List.map (Attributes.map never) option.attributes
         )
         [ case option.icon of
             Nothing ->
