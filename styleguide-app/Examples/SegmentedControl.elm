@@ -45,11 +45,11 @@ example =
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use when you need a page control. This view is effectively a fancy Tab/Tabpanel pairing." ]
             , SegmentedControl.view
-                { onClick = SelectNav
-                , options = buildOptions options (List.range 1 options.count) coloredIcons
-                , selected = state.selectedNav
+                { onClick = SelectPage
+                , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
+                , options = List.take options.count (buildOptions options.icon)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewSelect" ] ]
@@ -73,17 +73,61 @@ example =
     }
 
 
-coloredIcons : List Svg
-coloredIcons =
-    [ UiIcon.flag
-    , UiIcon.sprout
-    , UiIcon.star
-    , UiIcon.sapling
-    , Svg.withColor Colors.greenDark UiIcon.attention
-    , UiIcon.tree
-    , UiIcon.premiumLock
-    , Svg.withColor Colors.purple UiIcon.activity
+type Page
+    = Flag
+    | Sprout
+    | Star
+    | Sapling
+    | Attention
+    | Tree
+    | Premium
+    | Activity
+
+
+buildOptions : Bool -> List (SegmentedControl.Option Page Msg)
+buildOptions keepIcon =
+    let
+        buildOption { icon, value } =
+            { icon = ifIcon icon
+            , label = Debug.toString value
+            , value = value
+            , attributes = []
+            , content = Html.text <| "Content for " ++ Debug.toString value
+            }
+
+        ifIcon icon =
+            if keepIcon then
+                Just icon
+
+            else
+                Nothing
+    in
+    [ { icon = UiIcon.flag
+      , value = Flag
+      }
+    , { icon = UiIcon.sprout
+      , value = Sprout
+      }
+    , { icon = UiIcon.star
+      , value = Star
+      }
+    , { icon = UiIcon.sapling
+      , value = Sapling
+      }
+    , { icon = Svg.withColor Colors.greenDark UiIcon.attention
+      , value = Attention
+      }
+    , { icon = UiIcon.tree
+      , value = Tree
+      }
+    , { icon = UiIcon.premiumLock
+      , value = Premium
+      }
+    , { icon = Svg.withColor Colors.purple UiIcon.activity
+      , value = Activity
+      }
     ]
+        |> List.map buildOption
 
 
 plainIcons : List Svg
@@ -97,25 +141,6 @@ plainIcons =
     , UiIcon.badge
     , UiIcon.hat
     ]
-
-
-buildOptions : Options -> List a -> List Svg -> List (SegmentedControl.Option a msg)
-buildOptions options selections =
-    let
-        buildOption option icon =
-            { icon =
-                if options.icon then
-                    Just icon
-
-                else
-                    Nothing
-            , label = "Choice " ++ Debug.toString option
-            , value = option
-            , attributes = []
-            , content = Html.text ("[Content for " ++ Debug.toString option ++ "]")
-            }
-    in
-    List.map2 buildOption selections
 
 
 buildSelectOptions : Options -> List a -> List Svg -> List (SegmentedControl.SelectOption a msg)
@@ -138,7 +163,7 @@ buildSelectOptions options selections =
 
 {-| -}
 type alias State =
-    { selectedNav : Int
+    { page : Page
     , optionallySelected : Maybe Int
     , optionsControl : Control Options
     }
@@ -147,7 +172,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { selectedNav = 1
+    { page = Flag
     , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
@@ -178,7 +203,7 @@ optionsControl =
 
 {-| -}
 type Msg
-    = SelectNav Int
+    = SelectPage Page
     | MaybeSelect Int
     | ChangeOptions (Control Options)
 
@@ -187,8 +212,8 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SelectNav id ->
-            ( { state | selectedNav = id }
+        SelectPage page ->
+            ( { state | page = page }
             , Cmd.none
             )
 
