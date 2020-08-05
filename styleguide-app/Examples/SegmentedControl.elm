@@ -46,11 +46,10 @@ example =
                 [ Html.text "Use when you need a page control. This view is effectively a fancy Tab/Tabpanel pairing." ]
             , SegmentedControl.view
                 { onClick = SelectNav
-                , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
+                , options = buildOptions options (List.range 1 options.count) coloredIcons
                 , selected = state.selectedNav
                 , width = options.width
-                , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
-                , toUrl = Just String.fromInt
+                , toUrl = Nothing
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewSelect" ] ]
@@ -58,7 +57,7 @@ example =
                 [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildOptions "Source " options (List.range 1 options.count) plainIcons
+                , options = buildSelectOptions options (List.range 1 options.count) plainIcons
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -100,8 +99,8 @@ plainIcons =
     ]
 
 
-buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a msg)
-buildOptions prefix options selections =
+buildOptions : Options -> List a -> List Svg -> List (SegmentedControl.Option a msg)
+buildOptions options selections =
     let
         buildOption option icon =
             { icon =
@@ -110,7 +109,26 @@ buildOptions prefix options selections =
 
                 else
                     Nothing
-            , label = prefix ++ Debug.toString option
+            , label = "Choice " ++ Debug.toString option
+            , value = option
+            , attributes = []
+            , content = Html.text ("[Content for " ++ Debug.toString option ++ "]")
+            }
+    in
+    List.map2 buildOption selections
+
+
+buildSelectOptions : Options -> List a -> List Svg -> List (SegmentedControl.SelectOption a msg)
+buildSelectOptions options selections =
+    let
+        buildOption option icon =
+            { icon =
+                if options.icon then
+                    Just icon
+
+                else
+                    Nothing
+            , label = "Source " ++ Debug.toString option
             , value = option
             , attributes = []
             }

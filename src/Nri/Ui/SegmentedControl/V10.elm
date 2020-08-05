@@ -63,7 +63,7 @@ not a page control
 -}
 viewSelect :
     { onClick : a -> msg
-    , options : List (Option a msg)
+    , options : List (SelectOption a msg)
     , selected : Maybe a
     , width : Width
     }
@@ -108,6 +108,7 @@ type alias Option value msg =
     , label : String
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
+    , content : Html msg
     }
 
 
@@ -117,7 +118,6 @@ type alias Option value msg =
   - `options`: the list of options available
   - `selected`: the value of the currently-selected option
   - `width`: how to size the segmented control
-  - `content`: the panel content for the selected option
   - `toUrl`: a optional function that takes a `route` and returns the URL of that route. You should always use pass a `toUrl` function when the segmented control options correspond to routes in your SPA.
 
 -}
@@ -126,16 +126,26 @@ view :
     , options : List (Option a msg)
     , selected : a
     , width : Width
-    , content : Html msg
     , toUrl : Maybe (a -> String)
     }
     -> Html msg
 view config =
     let
-        selected =
-            config.options
-                |> List.filter (\o -> o.value == config.selected)
-                |> List.head
+        viewTabPanel option =
+            tabPanel
+                [ Aria.labelledBy (segmentIdFor option)
+                , css
+                    [ paddingTop (px 10)
+                    , if option.value == config.selected then
+                        Css.batch []
+
+                      else
+                        Css.display none
+                    ]
+                , Widget.hidden (option.value /= config.selected)
+                ]
+                [ option.content
+                ]
     in
     div []
         [ tabList
@@ -154,14 +164,7 @@ view config =
                 )
                 config.options
             )
-        , tabPanel
-            (List.filterMap identity
-                [ Maybe.map (Aria.labelledBy << segmentIdFor) selected
-                , Just <| css [ paddingTop (px 10) ]
-                ]
-            )
-            [ config.content
-            ]
+        , div [] (List.map viewTabPanel config.options)
         ]
 
 
@@ -215,12 +218,12 @@ viewTab config option =
         ]
 
 
-segmentIdFor : Option a msg -> String
+segmentIdFor : { option | label : String } -> String
 segmentIdFor option =
     "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
 
 
-panelIdFor : Option a msg -> String
+panelIdFor : { option | label : String } -> String
 panelIdFor option =
     "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
