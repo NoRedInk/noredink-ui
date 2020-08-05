@@ -55,6 +55,7 @@ type Key
     | Enter
     | Arrow Direction
     | Tab
+    | Space
 
 
 keyToString : Key -> String
@@ -71,6 +72,9 @@ keyToString key =
 
         Tab ->
             "Tab"
+
+        Space ->
+            "Space"
 
 
 {-| -}
