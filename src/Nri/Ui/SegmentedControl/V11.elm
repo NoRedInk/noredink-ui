@@ -1,6 +1,6 @@
 module Nri.Ui.SegmentedControl.V11 exposing
     ( Option, view
-    , SelectOption, viewSelect
+    , Radio, viewRadioGroup
     , Width(..)
     )
 
@@ -12,7 +12,7 @@ module Nri.Ui.SegmentedControl.V11 exposing
   - `viewRadioGroup` uses native HTML radio input internally
 
 @docs Option, view
-@docs SelectOption, viewSelect
+@docs Radio, viewRadioGroup
 @docs Width
 
 -}
@@ -43,7 +43,7 @@ type Width
 
 
 {-| -}
-type alias SelectOption value msg =
+type alias Radio value msg =
     { value : value
     , label : String
     , attributes : List (Attribute msg)
@@ -60,14 +60,14 @@ not a page control
   - `width`: how to size the segmented control
 
 -}
-viewSelect :
+viewRadioGroup :
     { onClick : a -> msg
-    , options : List (SelectOption a msg)
+    , options : List (Radio a msg)
     , selected : Maybe a
     , width : Width
     }
     -> Html msg
-viewSelect config =
+viewRadioGroup config =
     let
         viewRadio option =
             let

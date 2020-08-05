@@ -52,12 +52,12 @@ example =
                 , options = List.take options.count (buildOptions options)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
-                [ Html.code [] [ Html.text "viewSelect" ] ]
+                [ Html.code [] [ Html.text "viewRadioGroup" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
-            , SegmentedControl.viewSelect
+            , SegmentedControl.viewRadioGroup
                 { onClick = MaybeSelect
-                , options = List.take options.count (buildSelectOptions options.icon)
+                , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -126,8 +126,8 @@ buildOptions { icon, longContent } =
     ]
 
 
-buildSelectOptions : Bool -> List (SegmentedControl.SelectOption Int msg)
-buildSelectOptions keepIcon =
+buildRadioOptions : Bool -> List (SegmentedControl.Radio Int msg)
+buildRadioOptions keepIcon =
     let
         buildOption value icon =
             { icon = ifIcon icon
