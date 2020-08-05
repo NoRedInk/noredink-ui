@@ -10,12 +10,11 @@ module Examples.SegmentedControl exposing
 
 -}
 
-import Accessibility.Styled
+import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attr
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -40,20 +39,18 @@ example =
             in
             [ Control.view ChangeOptions state.optionsControl
                 |> Html.fromUnstyled
-            , let
-                viewFn =
-                    if options.useSpa then
-                        SegmentedControl.viewSpa Debug.toString
-
-                    else
-                        SegmentedControl.view
-              in
-              viewFn
+            , SegmentedControl.view
                 { onClick = SelectNav
                 , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
                 , selected = state.selectedNav
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
+                , toUrl =
+                    if options.useSpa then
+                        Just String.fromInt
+
+                    else
+                        Nothing
                 }
             , Html.h3 [] [ Html.text "Select only view" ]
             , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]

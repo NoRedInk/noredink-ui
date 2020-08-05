@@ -1,10 +1,12 @@
-module Nri.Ui.SegmentedControl.V10 exposing (NavConfig, Option, Width(..), view, viewSpa, viewSelect)
+module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect)
 
 {-| Changes from V9:
 
   - hides non-displayed content rather than fully removing from the DOM, allowing for the segmented control to be used as a sticky-header that doesn't lose scroll position
+  - :skull: removes NavConfig and SelectConfig
+  - combines `view` and `viewSpa` (for V9 `view` behavior, be sure `toUrl` is Nothing. for V9 `viewSpa` behavior, pass through a Just as `toUrl`)
 
-@docs NavConfig, Option, Width, view, viewSpa, viewSelect
+@docs Option, Width, view, viewSpa, viewSelect
 
 -}
 
@@ -25,24 +27,6 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (dashify)
 
 
-{-|
-
-  - `onClick` : the message to produce when an option is selected (clicked) by the user
-  - `options`: the list of options available
-  - `selected`: the value of the currently-selected option
-  - `width`: how to size the segmented control
-  - `content`: the panel content for the selected option
-
--}
-type alias NavConfig a msg =
-    { onClick : a -> msg
-    , options : List (Option a)
-    , selected : a
-    , width : Width
-    , content : Html msg
-    }
-
-
 {-| -}
 type alias Option a =
     { value : a
@@ -55,24 +39,6 @@ type alias Option a =
 type Width
     = FitContent
     | FillContainer
-
-
-{-| -}
-view : NavConfig a msg -> Html msg
-view config =
-    viewHelper Nothing config
-
-
-{-| Creates a segmented control that supports SPA navigation.
-You should always use this instead of `view` when building a SPA
-and the segmented control options correspond to routes in the SPA.
-
-The first parameter is a function that takes a `route` and returns the URL of that route.
-
--}
-viewSpa : (route -> String) -> NavConfig route msg -> Html msg
-viewSpa toUrl config =
-    viewHelper (Just toUrl) config
 
 
 {-| Creates _just the segmented select_ when you need the ui element itself and
@@ -113,8 +79,26 @@ viewSelect config =
         )
 
 
-viewHelper : Maybe (a -> String) -> NavConfig a msg -> Html msg
-viewHelper maybeToUrl config =
+{-|
+
+  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `options`: the list of options available
+  - `selected`: the value of the currently-selected option
+  - `width`: how to size the segmented control
+  - `content`: the panel content for the selected option
+  - `toUrl`: a optional function that takes a `route` and returns the URL of that route. You should always use pass a `toUrl` function when the segmented control options correspond to routes in your SPA.
+
+-}
+view :
+    { onClick : a -> msg
+    , options : List (Option a)
+    , selected : a
+    , width : Width
+    , content : Html msg
+    , toUrl : Maybe (a -> String)
+    }
+    -> Html msg
+view config =
     let
         selected =
             config.options
@@ -134,7 +118,7 @@ viewHelper maybeToUrl config =
                     , selected = Just config.selected
                     , width = config.width
                     , selectedAttribute = Aria.currentPage
-                    , maybeToUrl = maybeToUrl
+                    , maybeToUrl = config.toUrl
                     }
                     Role.tab
                 )
