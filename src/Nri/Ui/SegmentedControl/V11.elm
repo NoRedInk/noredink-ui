@@ -165,7 +165,7 @@ view config =
                 , onFocus = config.onFocus
                 , selected = config.selected
                 , tabs = List.map toInternalTab config.options
-                , tabListStyles = [ displayFlex, cursor pointer ]
+                , tabListStyles = [ displayFlex, cursor pointer, marginBottom (px 10) ]
                 , tabStyles = styles config.width
                 }
     in
