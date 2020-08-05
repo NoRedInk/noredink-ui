@@ -6,6 +6,7 @@ module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect
   - :skull: removes NavConfig and SelectConfig
   - combines `view` and `viewSpa` (for V9 `view` behavior, be sure `toUrl` is Nothing. for V9 `viewSpa` behavior, pass through a Just as `toUrl`)
   - add custom attributes hole to the Option (in order to make SegmentedControls compatible with the Modal component)
+  - combine `css` attributes into one to prevent class-name-order-change css :bug:s
 
 @docs Option, Width, view, viewSpa, viewSelect
 
@@ -178,27 +179,38 @@ viewSegment config option =
                             :: attrs
                         )
                         children
+
+        isSelected =
+            Just option.value == config.selected
+
+        styles =
+            [ sharedSegmentStyles
+            , if isSelected then
+                focusedSegmentStyles
+
+              else
+                unFocusedSegmentStyles
+            , case config.width of
+                FitContent ->
+                    Css.batch []
+
+                FillContainer ->
+                    expandingTabStyles
+            ]
     in
     element
         (List.concat
             [ List.map (Attributes.map never) option.attributes
             , [ Attributes.id (segmentIdFor option)
               , config.ariaRole
-              , css sharedSegmentStyles
+              , css styles
               ]
-            , if Just option.value == config.selected then
-                [ css focusedSegmentStyles
-                , config.selectedAttribute
+            , if isSelected then
+                [ config.selectedAttribute
                 ]
 
               else
-                [ css unFocusedSegmentStyles ]
-            , case config.width of
-                FitContent ->
-                    []
-
-                FillContainer ->
-                    [ css expandingTabStyles ]
+                []
             ]
         )
         [ case option.icon of
@@ -223,7 +235,7 @@ viewSegment config option =
         ]
 
 
-sharedSegmentStyles : List Style
+sharedSegmentStyles : Style
 sharedSegmentStyles =
     [ padding2 (px 6) (px 20)
     , height (px 45)
@@ -254,17 +266,19 @@ sharedSegmentStyles =
         [ textDecoration none
         ]
     ]
+        |> Css.batch
 
 
-focusedSegmentStyles : List Style
+focusedSegmentStyles : Style
 focusedSegmentStyles =
     [ backgroundColor Colors.glacier
     , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
     , color Colors.navy
     ]
+        |> Css.batch
 
 
-unFocusedSegmentStyles : List Style
+unFocusedSegmentStyles : Style
 unFocusedSegmentStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
@@ -273,10 +287,12 @@ unFocusedSegmentStyles =
         [ backgroundColor Colors.frost
         ]
     ]
+        |> Css.batch
 
 
-expandingTabStyles : List Style
+expandingTabStyles : Style
 expandingTabStyles =
     [ flexGrow (int 1)
     , textAlign center
     ]
+        |> Css.batch
