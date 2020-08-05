@@ -30,8 +30,8 @@ type alias Config id msg =
     , tabs : List (Tab id msg)
     , tabToId : String -> String
     , tabToBodyId : String -> String
+    , tabListStyles : List Css.Style
     , tabStyles : Bool -> List Css.Style
-    , containerStyles : List Css.Style
     }
 
 
@@ -57,7 +57,7 @@ viewTabs : Config id msg -> Html msg
 viewTabs config =
     Html.div
         [ Role.tabList
-        , Attributes.css config.containerStyles
+        , Attributes.css config.tabListStyles
         ]
         (List.map (viewTab_ config) config.tabs)
 

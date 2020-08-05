@@ -4,7 +4,10 @@ module Nri.Ui.Tabs.V6 exposing
     , Tab, viewTabDefault
     )
 
-{-|
+{-| Changes from V5:
+
+  - Uses TabsInternal under the hood
+  - Allows user to focus on the selected tabpanel
 
 @docs view
 @docs Alignment
@@ -28,6 +31,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import TabsInternal
 
 
 {-| Determines whether tabs are centered or floating to the left or right.
@@ -60,6 +64,19 @@ view :
     }
     -> Html msg
 view config =
+    let
+        { tabList, tabPanels } =
+            TabsInternal.views
+                { onSelect = config.onSelect
+                , onFocus = config.onFocus
+                , selected = config.selected
+                , tabs = config.tabs
+                , tabToId = tabToId
+                , tabToBodyId = tabToBodyId
+                , tabStyles = tabStyles config.customSpacing
+                , tabListStyles = stylesTabsAligned config.alignment
+                }
+    in
     Nri.Ui.styled Html.div
         (styledName "container")
         []
@@ -186,7 +203,7 @@ viewTab_ { onSelect, onFocus, tabs, selected, customSpacing } tab =
                     )
     in
     Html.styled tag
-        (tabStyles isSelected customSpacing)
+        (tabStyles customSpacing isSelected)
         (tagSpecificAttributes
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
@@ -292,8 +309,8 @@ stylesTabsAligned alignment =
            ]
 
 
-tabStyles : Bool -> Maybe Float -> List Style
-tabStyles isSelected customSpacing =
+tabStyles : Maybe Float -> Bool -> List Style
+tabStyles customSpacing isSelected =
     let
         stylesDynamic =
             if isSelected then
