@@ -9,6 +9,7 @@ module Nri.Ui.SegmentedControl.V11 exposing
   - change selection using left/right arrow keys
   - only currently-selected or first control is tabbable
   - tabpanel is tabbable
+  - Uses TabsInternal under the hood
   - `viewSelect` renamed to `viewRadioGroup`, `SelectOption` renamed to `Radio`
   - `viewRadioGroup` uses native HTML radio input internally
 
@@ -96,6 +97,7 @@ viewRadioGroup config =
 {-| -}
 type alias Option value msg =
     { value : value
+    , idString : String
     , label : String
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
@@ -122,6 +124,16 @@ view :
     -> Html msg
 view config =
     let
+        toInternalTab : Option a msg -> TabsInternal.Tab a msg
+        toInternalTab option =
+            { id = option.value
+            , idString = option.idString
+            , tabAttributes = option.attributes
+            , tabView = [ viewIcon option.icon, text option.label ]
+            , panelView = option.content
+            , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
+            }
+
         isSelected option =
             option.value == config.selected
 

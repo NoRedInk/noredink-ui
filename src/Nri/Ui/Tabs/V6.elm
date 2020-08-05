@@ -56,12 +56,22 @@ view :
     -> Html msg
 view config =
     let
+        toInternalTab : Tab id msg -> TabsInternal.Tab id msg
+        toInternalTab tab =
+            { id = tab.id
+            , idString = tab.idString
+            , tabAttributes = []
+            , tabView = [ tab.tabView ]
+            , panelView = tab.panelView
+            , spaHref = tab.spaHref
+            }
+
         { tabList, tabPanels } =
             TabsInternal.views
                 { onSelect = config.onSelect
                 , onFocus = config.onFocus
                 , selected = config.selected
-                , tabs = config.tabs
+                , tabs = List.map toInternalTab config.tabs
                 , tabToId = \tab -> String.replace " " "-" tab
                 , tabToBodyId = \tab -> "tab-body-" ++ String.replace " " "-" tab
                 , tabStyles = tabStyles config.customSpacing

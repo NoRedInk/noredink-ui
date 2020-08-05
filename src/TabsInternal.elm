@@ -35,7 +35,8 @@ type alias Config id msg =
 type alias Tab id msg =
     { id : id
     , idString : String
-    , tabView : Html msg
+    , tabAttributes : List (Attribute msg)
+    , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
     }
@@ -75,6 +76,7 @@ viewTab_ config tab =
         ( tag, tagSpecificAttributes ) =
             case tab.spaHref of
                 Just href ->
+                    -- This is a for a SPA view
                     ( Html.a
                     , [ if isSelected then
                             Aria.currentPage
@@ -87,6 +89,7 @@ viewTab_ config tab =
                     )
 
                 Nothing ->
+                    -- This is for a non-SPA view
                     ( Html.button
                     , [ Events.onClick (config.onSelect tab.id)
                       ]
@@ -95,6 +98,7 @@ viewTab_ config tab =
     Html.styled tag
         (config.tabStyles isSelected)
         (tagSpecificAttributes
+            ++ tab.tabAttributes
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
                , Role.tab
@@ -104,8 +108,7 @@ viewTab_ config tab =
                     Json.Decode.andThen (keyEvents config tab) Events.keyCode
                ]
         )
-        [ tab.tabView
-        ]
+        tab.tabView
 
 
 keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg

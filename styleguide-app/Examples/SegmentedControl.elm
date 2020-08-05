@@ -23,6 +23,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V11 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import String exposing (toLower)
 
 
 {-| -}
@@ -96,6 +97,7 @@ buildOptions { icon, longContent } =
 
                 else
                     Nothing
+            , idString = toLower (Debug.toString value)
             , label = Debug.toString value
             , value = value
             , attributes = []
