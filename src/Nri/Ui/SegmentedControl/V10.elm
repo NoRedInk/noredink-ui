@@ -1,10 +1,10 @@
-module Nri.Ui.SegmentedControl.V10 exposing (NavConfig, Option, Width(..), view, viewSpa, SelectConfig, viewSelect)
+module Nri.Ui.SegmentedControl.V10 exposing (NavConfig, Option, Width(..), view, viewSpa, viewSelect)
 
 {-| Changes from V9:
 
   - hides non-displayed content rather than fully removing from the DOM, allowing for the segmented control to be used as a sticky-header that doesn't lose scroll position
 
-@docs NavConfig, Option, Width, view, viewSpa, SelectConfig, viewSelect
+@docs NavConfig, Option, Width, view, viewSpa, viewSelect
 
 -}
 
@@ -43,22 +43,6 @@ type alias NavConfig a msg =
     }
 
 
-{-|
-
-  - `onClick` : the message to produce when an option is selected (clicked) by the user
-  - `options`: the list of options available
-  - `selected`: if present, the value of the currently-selected option
-  - `width`: how to size the segmented control
-
--}
-type alias SelectConfig a msg =
-    { onClick : a -> msg
-    , options : List (Option a)
-    , selected : Maybe a
-    , width : Width
-    }
-
-
 {-| -}
 type alias Option a =
     { value : a
@@ -93,8 +77,20 @@ viewSpa toUrl config =
 
 {-| Creates _just the segmented select_ when you need the ui element itself and
 not a page control
+
+  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `options`: the list of options available
+  - `selected`: if present, the value of the currently-selected option
+  - `width`: how to size the segmented control
+
 -}
-viewSelect : SelectConfig a msg -> Html msg
+viewSelect :
+    { onClick : a -> msg
+    , options : List (Option a)
+    , selected : Maybe a
+    , width : Width
+    }
+    -> Html msg
 viewSelect config =
     div
         [ css
