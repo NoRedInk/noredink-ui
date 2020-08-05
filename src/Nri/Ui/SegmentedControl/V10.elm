@@ -184,26 +184,11 @@ viewSegment config option =
 
         isSelected =
             Just option.value == config.selected
-
-        styles =
-            [ sharedSegmentStyles
-            , if isSelected then
-                focusedSegmentStyles
-
-              else
-                unFocusedSegmentStyles
-            , case config.width of
-                FitContent ->
-                    Css.batch []
-
-                FillContainer ->
-                    expandingTabStyles
-            ]
     in
     element
         ([ Attributes.id (segmentIdFor option)
          , config.ariaRole
-         , css styles
+         , css (getStyles { isSelected = isSelected, width = config.width })
          , if isSelected then
             config.selectedAttribute
 
@@ -234,6 +219,23 @@ viewIcon icon =
                     , marginRight (px 8)
                     ]
                 |> Svg.toHtml
+
+
+getStyles : { isSelected : Bool, width : Width } -> List Style
+getStyles { isSelected, width } =
+    [ sharedSegmentStyles
+    , if isSelected then
+        focusedSegmentStyles
+
+      else
+        unFocusedSegmentStyles
+    , case width of
+        FitContent ->
+            Css.batch []
+
+        FillContainer ->
+            expandingTabStyles
+    ]
 
 
 sharedSegmentStyles : Style
