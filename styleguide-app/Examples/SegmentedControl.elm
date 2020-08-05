@@ -63,7 +63,12 @@ example =
             ]
     , categories = [ Inputs, Widgets, Layout ]
     , atomicDesignType = Molecule
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Enter ], result = "Select the focused control" }
+        , { keys = [ Space ], result = "Select the focused control" }
+        , { keys = [ Tab ], result = "Focus the next focusable element" }
+        , { keys = [ Tab, Shift ], result = "Focus the previous focusable element" }
+        ]
     }
 
 
