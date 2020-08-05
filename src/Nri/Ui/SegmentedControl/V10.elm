@@ -63,6 +63,29 @@ viewSelect :
     }
     -> Html msg
 viewSelect config =
+    let
+        viewRadio option =
+            let
+                isSelected =
+                    Just option.value == config.selected
+            in
+            button
+                ([ Attributes.id (segmentIdFor option)
+                 , css (getStyles { isSelected = isSelected, width = config.width })
+                 , Role.radio
+                 , if isSelected then
+                    Widget.selected True
+
+                   else
+                    Widget.selected False
+                 , Events.onClick (config.onClick option.value)
+                 ]
+                    ++ option.attributes
+                )
+                [ viewIcon option.icon
+                , text option.label
+                ]
+    in
     div
         [ css
             [ displayFlex
@@ -70,18 +93,7 @@ viewSelect config =
             ]
         , Role.radioGroup
         ]
-        (List.map
-            (viewSegment
-                { onClick = config.onClick
-                , selected = config.selected
-                , width = config.width
-                , selectedAttribute = Widget.selected True
-                , ariaRole = Role.radio
-                , toUrl = Nothing
-                }
-            )
-            config.options
-        )
+        (List.map viewRadio config.options)
 
 
 {-|
@@ -118,13 +130,11 @@ view config =
                 ]
             ]
             (List.map
-                (viewSegment
+                (viewTab
                     { onClick = config.onClick
                     , selected = Just config.selected
                     , width = config.width
                     , toUrl = config.toUrl
-                    , selectedAttribute = Aria.currentPage
-                    , ariaRole = Role.tab
                     }
                 )
                 config.options
@@ -140,27 +150,15 @@ view config =
         ]
 
 
-segmentIdFor : Option a msg -> String
-segmentIdFor option =
-    "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
-
-
-panelIdFor : Option a msg -> String
-panelIdFor option =
-    "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
-
-
-viewSegment :
+viewTab :
     { onClick : a -> msg
     , selected : Maybe a
     , width : Width
     , toUrl : Maybe (a -> String)
-    , selectedAttribute : Attribute msg
-    , ariaRole : Attribute msg
     }
     -> Option a msg
     -> Html msg
-viewSegment config option =
+viewTab config option =
     let
         element attrs children =
             case config.toUrl of
@@ -187,10 +185,10 @@ viewSegment config option =
     in
     element
         ([ Attributes.id (segmentIdFor option)
-         , config.ariaRole
          , css (getStyles { isSelected = isSelected, width = config.width })
+         , Role.tab
          , if isSelected then
-            config.selectedAttribute
+            Aria.currentPage
 
            else
             AttributesExtra.none
@@ -200,6 +198,16 @@ viewSegment config option =
         [ viewIcon option.icon
         , text option.label
         ]
+
+
+segmentIdFor : Option a msg -> String
+segmentIdFor option =
+    "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
+
+
+panelIdFor : Option a msg -> String
+panelIdFor option =
+    "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
 viewIcon : Maybe Svg.Svg -> Html msg
