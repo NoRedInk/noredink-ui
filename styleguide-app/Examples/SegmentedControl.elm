@@ -49,7 +49,7 @@ example =
                 , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
-                , options = List.take options.count (buildOptions options.icon)
+                , options = List.take options.count (buildOptions options)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewSelect" ] ]
@@ -84,23 +84,36 @@ type Page
     | Activity
 
 
-buildOptions : Bool -> List (SegmentedControl.Option Page Msg)
-buildOptions keepIcon =
+buildOptions : { options | icon : Bool, longContent : Bool } -> List (SegmentedControl.Option Page Msg)
+buildOptions { icon, longContent } =
     let
-        buildOption value icon =
-            { icon = ifIcon icon
+        buildOption value icon_ =
+            { icon =
+                if icon then
+                    Just icon_
+
+                else
+                    Nothing
             , label = Debug.toString value
             , value = value
             , attributes = []
-            , content = Html.text <| "Content for " ++ Debug.toString value
+            , content =
+                if longContent then
+                    Html.div
+                        [ css
+                            [ Css.maxHeight (Css.px 100)
+                            , Css.overflowY Css.auto
+                            ]
+                        ]
+                        [ Html.p [] [ Html.text <| "Content for " ++ Debug.toString value ]
+                        , Html.ol [] <|
+                            List.map (\i -> Html.li [] [ Html.text (Debug.toString value) ])
+                                (List.range 1 20)
+                        ]
+
+                else
+                    Html.text <| "Content for " ++ Debug.toString value
             }
-
-        ifIcon icon =
-            if keepIcon then
-                Just icon
-
-            else
-                Nothing
     in
     [ buildOption Flag UiIcon.flag
     , buildOption Sprout UiIcon.sprout
@@ -118,7 +131,7 @@ buildSelectOptions keepIcon =
     let
         buildOption value icon =
             { icon = ifIcon icon
-            , label = "Source " ++ Debug.toString value
+            , label = "Source " ++ Debug.toString (value + 1)
             , value = value
             , attributes = []
             }
@@ -163,6 +176,7 @@ type alias Options =
     { width : SegmentedControl.Width
     , icon : Bool
     , count : Int
+    , longContent : Bool
     }
 
 
@@ -180,6 +194,7 @@ optionsControl =
             (Control.choice
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
             )
+        |> Control.field "long content" (Control.bool False)
 
 
 {-| -}
