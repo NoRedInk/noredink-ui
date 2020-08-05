@@ -72,7 +72,7 @@ viewSelect config =
                 , selected = config.selected
                 , width = config.width
                 , selectedAttribute = Widget.selected True
-                , maybeToUrl = Nothing
+                , toUrl = Nothing
                 }
                 Role.radio
             )
@@ -119,7 +119,7 @@ view config =
                     , selected = Just config.selected
                     , width = config.width
                     , selectedAttribute = Aria.currentPage
-                    , maybeToUrl = config.toUrl
+                    , toUrl = config.toUrl
                     }
                     Role.tab
                 )
@@ -151,7 +151,7 @@ viewSegment :
     , selected : Maybe a
     , width : Width
     , selectedAttribute : Attribute msg
-    , maybeToUrl : Maybe (a -> String)
+    , toUrl : Maybe (a -> String)
     }
     -> Html.Styled.Attribute msg
     -> Option a
@@ -162,7 +162,7 @@ viewSegment config ariaRole option =
             segmentIdFor option
 
         element attrs children =
-            case config.maybeToUrl of
+            case config.toUrl of
                 Nothing ->
                     -- This is for a non-SPA view
                     button
