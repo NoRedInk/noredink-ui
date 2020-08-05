@@ -18,7 +18,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import EventExtras
 import Html.Styled
-import Html.Styled.Attributes as Attr exposing (css, href)
+import Html.Styled.Attributes as Attributes exposing (css, href)
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
@@ -72,9 +72,9 @@ viewSelect config =
                 , selected = config.selected
                 , width = config.width
                 , selectedAttribute = Widget.selected True
+                , ariaRole = Role.radio
                 , toUrl = Nothing
                 }
-                Role.radio
             )
             config.options
         )
@@ -118,10 +118,10 @@ view config =
                     { onClick = config.onClick
                     , selected = Just config.selected
                     , width = config.width
-                    , selectedAttribute = Aria.currentPage
                     , toUrl = config.toUrl
+                    , selectedAttribute = Aria.currentPage
+                    , ariaRole = Role.tab
                     }
-                    Role.tab
                 )
                 config.options
             )
@@ -150,13 +150,13 @@ viewSegment :
     { onClick : a -> msg
     , selected : Maybe a
     , width : Width
-    , selectedAttribute : Attribute msg
     , toUrl : Maybe (a -> String)
+    , selectedAttribute : Attribute msg
+    , ariaRole : Attribute msg
     }
-    -> Html.Styled.Attribute msg
     -> Option a
     -> Html msg
-viewSegment config ariaRole option =
+viewSegment config option =
     let
         idValue =
             segmentIdFor option
@@ -183,8 +183,8 @@ viewSegment config ariaRole option =
     in
     element
         (List.concat
-            [ [ Attr.id idValue
-              , ariaRole
+            [ [ Attributes.id idValue
+              , config.ariaRole
               , css sharedSegmentStyles
               ]
             , if Just option.value == config.selected then
