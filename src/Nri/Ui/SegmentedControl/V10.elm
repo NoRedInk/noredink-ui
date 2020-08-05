@@ -7,6 +7,7 @@ module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect
   - combines `view` and `viewSpa` (for V9 `view` behavior, be sure `toUrl` is Nothing. for V9 `viewSpa` behavior, pass through a Just as `toUrl`)
   - add custom attributes hole to the Option (in order to make SegmentedControls compatible with the Modal component)
   - combine `css` attributes into one to prevent class-name-order-change css :bug:s
+  - :bug: fix overflowing-y svg icon issue
 
 @docs Option, Width, view, viewSpa, viewSelect
 
@@ -216,19 +217,16 @@ viewSegment config option =
                 text ""
 
             Just svg ->
-                span
-                    [ css
-                        [ maxWidth (px 18)
-                        , width (px 18)
-                        , maxHeight (px 18)
-                        , height (px 18)
-                        , display inlineBlock
+                svg
+                    |> Svg.withWidth (px 18)
+                    |> Svg.withHeight (px 18)
+                    |> Svg.withCss
+                        [ display inlineBlock
                         , verticalAlign textTop
                         , lineHeight (px 15)
                         , marginRight (px 8)
                         ]
-                    ]
-                    [ Svg.toHtml svg ]
+                    |> Svg.toHtml
         , text option.label
         ]
 
@@ -257,12 +255,8 @@ sharedSegmentStyles =
     , cursor pointer
     , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
     , textDecoration none
-    , hover
-        [ textDecoration none
-        ]
-    , focus
-        [ textDecoration none
-        ]
+    , hover [ textDecoration none ]
+    , focus [ textDecoration none ]
     ]
         |> Css.batch
 
