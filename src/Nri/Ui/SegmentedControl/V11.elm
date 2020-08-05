@@ -35,6 +35,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Util exposing (dashify)
 import TabsInternal
 
 
@@ -60,7 +61,9 @@ type alias Radio value msg =
   - `options`: the list of options available
   - `selected`: if present, the value of the currently-selected option
   - `width`: how to size the segmented control
-  - `name`: value used to group the radio buttons together
+  - `legend`:
+      - value read to screenreader users to explain the radio group's purpose <https://dequeuniversity.com/rules/axe/3.3/radiogroup?application=axeAPI>
+      - after lowercasing & dashifying, this value is used to group the radio buttons together
 
 -}
 viewRadioGroup :
@@ -69,7 +72,7 @@ viewRadioGroup :
     , options : List (Radio a msg)
     , selected : Maybe a
     , width : Width
-    , name : String
+    , legend : String
     }
     -> Html msg
 viewRadioGroup config =
@@ -90,15 +93,27 @@ viewRadioGroup config =
                     )
                 ]
                 (div [] [ viewIcon option.icon, text option.label ])
-                (radio config.name (config.toString option.value) isSelected <|
+                (radio name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
                         :: Style.invisible
                     )
                 )
+
+        name =
+            dashify (String.toLower config.legend)
+
+        legendId =
+            "legend-" ++ name
     in
-    div [ css [ displayFlex, cursor pointer ] ]
-        (List.map viewRadio config.options)
+    div
+        [ Role.radioGroup
+        , Aria.labelledBy legendId
+        , css [ displayFlex, cursor pointer ]
+        ]
+        (p (Attributes.id legendId :: Style.invisible) [ text config.legend ]
+            :: List.map viewRadio config.options
+        )
 
 
 {-| -}

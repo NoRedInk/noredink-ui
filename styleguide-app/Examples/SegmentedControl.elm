@@ -61,7 +61,7 @@ example =
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would be reasonable to use radio buttons for the same purpose." ]
             , SegmentedControl.viewRadioGroup
-                { name = "segmented-control-radio-group-example"
+                { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
                 , toString = String.fromInt
                 , options = List.take options.count (buildRadioOptions options.icon)
