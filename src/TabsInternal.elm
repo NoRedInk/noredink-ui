@@ -14,8 +14,10 @@ import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -24,8 +26,6 @@ type alias Config id msg =
     , onFocus : String -> msg
     , selected : id
     , tabs : List (Tab id msg)
-    , tabToId : String -> String
-    , tabToBodyId : String -> String
     , tabListStyles : List Css.Style
     , tabStyles : Bool -> List Css.Style
     }
@@ -43,7 +43,7 @@ type alias Tab id msg =
 
 
 {-| -}
-views : Config id msg -> { tabList : Html msg, tabPanels : List (Html msg) }
+views : Config id msg -> { tabList : Html msg, tabPanels : Html msg }
 views config =
     { tabList = viewTabs config
     , tabPanels = viewTabPanels config
@@ -102,7 +102,7 @@ viewTab_ config tab =
             ++ [ Attributes.tabindex tabIndex
                , Widget.selected isSelected
                , Role.tab
-               , Attributes.id (config.tabToId tab.idString)
+               , Attributes.id (tabToId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
                , Events.on "keyup" <|
                     Json.Decode.andThen (keyEvents config tab) Events.keyCode
@@ -112,7 +112,7 @@ viewTab_ config tab =
 
 
 keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg
-keyEvents { onFocus, tabs, tabToId } thisTab keyCode =
+keyEvents { onFocus, tabs } thisTab keyCode =
     let
         findAdjacentTab tab acc =
             case acc of
@@ -156,24 +156,47 @@ keyEvents { onFocus, tabs, tabToId } thisTab keyCode =
             Json.Decode.fail "Upsupported key event"
 
 
-viewTabPanels : Config id msg -> List (Html msg)
+viewTabPanels : Config id msg -> Html msg
 viewTabPanels config =
-    List.map
-        (\tab ->
-            Html.div
-                ([ Role.tabPanel
-                 , Aria.labelledBy (config.tabToId tab.idString)
-                 , Attributes.id (config.tabToBodyId tab.idString)
-                 ]
-                    ++ (if tab.id /= config.selected then
-                            [ Attributes.css [ Css.display Css.none ]
-                            , Widget.hidden True
-                            ]
-
-                        else
-                            [ Widget.hidden False ]
-                       )
+    Keyed.node "div" [] <|
+        List.map
+            (\tab ->
+                ( tabToKeyedNode tab.idString
+                , viewTabPanel tab (tab.id == config.selected)
                 )
-                [ tab.panelView ]
+            )
+            config.tabs
+
+
+viewTabPanel : Tab id msg -> Bool -> Html msg
+viewTabPanel tab selected =
+    Html.div
+        ([ Role.tabPanel
+         , Aria.labelledBy (tabToId tab.idString)
+         , Attributes.id (tabToBodyId tab.idString)
+         ]
+            ++ (if selected then
+                    [ Widget.hidden False ]
+
+                else
+                    [ Attributes.css [ Css.display Css.none ]
+                    , Widget.hidden True
+                    ]
+               )
         )
-        config.tabs
+        [ tab.panelView ]
+
+
+tabToId : String -> String
+tabToId tab =
+    dashify (String.toLower tab)
+
+
+tabToBodyId : String -> String
+tabToBodyId tab =
+    "tab-body-" ++ tabToId tab
+
+
+tabToKeyedNode : String -> String
+tabToKeyedNode tab =
+    "tabs-internal-keyed-node-" ++ tabToId tab

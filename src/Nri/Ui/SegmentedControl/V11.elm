@@ -29,14 +29,12 @@ import EventExtras
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import Html.Styled.Events as Events
-import Html.Styled.Keyed as Keyed
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Util exposing (dashify)
 import TabsInternal
 
 
@@ -79,9 +77,7 @@ viewRadioGroup config =
                 isSelected =
                     Just option.value == config.selected
             in
-            labelAfter
-                [ css (getStyles { isSelected = isSelected, width = config.width })
-                ]
+            labelAfter [ css (styles config.width isSelected) ]
                 (div [] [ viewIcon option.icon, text option.label ])
                 (radio config.name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onClick option.value)
@@ -115,7 +111,8 @@ type alias Option value msg =
 
 -}
 view :
-    { onClick : a -> msg
+    { onSelect : a -> msg
+    , onFocus : String -> msg
     , options : List (Option a msg)
     , selected : a
     , width : Width
@@ -134,84 +131,20 @@ view config =
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
             }
 
-        isSelected option =
-            option.value == config.selected
-
-        viewTab option =
-            case config.toUrl of
-                Just toUrl ->
-                    -- This is a for a SPA view
-                    Html.Styled.a
-                        (href (toUrl option.value)
-                            :: EventExtras.onClickPreventDefaultForLinkWithHref
-                                (config.onClick option.value)
-                            :: tabAttributes option
-                            ++ option.attributes
-                        )
-                        [ viewIcon option.icon
-                        , text option.label
-                        ]
-
-                Nothing ->
-                    -- This is for a non-SPA view
-                    button
-                        (Events.onClick (config.onClick option.value)
-                            :: tabAttributes option
-                            ++ option.attributes
-                        )
-                        [ viewIcon option.icon
-                        , text option.label
-                        ]
-
-        tabAttributes option =
-            [ Attributes.id (segmentIdFor option)
-            , css (getStyles { isSelected = isSelected option, width = config.width })
-            , Role.tab
-            , if isSelected option then
-                Aria.currentPage
-
-              else
-                AttributesExtra.none
-            ]
-
-        viewTabPanel option =
-            tabPanel
-                [ Aria.labelledBy (segmentIdFor option)
-                , css
-                    [ paddingTop (px 10)
-                    , if isSelected option then
-                        Css.batch []
-
-                      else
-                        Css.display none
-                    ]
-                , Widget.hidden (not (isSelected option))
-                ]
-                [ option.content
-                ]
+        { tabList, tabPanels } =
+            TabsInternal.views
+                { onSelect = config.onSelect
+                , onFocus = config.onFocus
+                , selected = config.selected
+                , tabs = List.map toInternalTab config.options
+                , tabListStyles = [ displayFlex, cursor pointer ]
+                , tabStyles = styles config.width
+                }
     in
     div []
-        [ tabList [ css [ displayFlex, cursor pointer ] ]
-            (List.map viewTab config.options)
-        , Keyed.node "div" [] <|
-            List.map (\option -> ( keyedNodeIdFor option, viewTabPanel option ))
-                config.options
+        [ tabList
+        , tabPanels
         ]
-
-
-segmentIdFor : { option | label : String } -> String
-segmentIdFor option =
-    "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
-
-
-keyedNodeIdFor : { option | label : String } -> String
-keyedNodeIdFor option =
-    "Nri-Ui-SegmentedControl-Panel-keyed-node-" ++ dashify option.label
-
-
-panelIdFor : { option | label : String } -> String
-panelIdFor option =
-    "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
 
 viewIcon : Maybe Svg.Svg -> Html msg
@@ -233,8 +166,8 @@ viewIcon icon =
                 |> Svg.toHtml
 
 
-getStyles : { isSelected : Bool, width : Width } -> List Style
-getStyles { isSelected, width } =
+styles : Width -> Bool -> List Style
+styles width isSelected =
     [ sharedSegmentStyles
     , if isSelected then
         focusedSegmentStyles

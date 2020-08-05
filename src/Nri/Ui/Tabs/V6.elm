@@ -72,8 +72,6 @@ view config =
                 , onFocus = config.onFocus
                 , selected = config.selected
                 , tabs = List.map toInternalTab config.tabs
-                , tabToId = \tab -> String.replace " " "-" tab
-                , tabToBodyId = \tab -> "tab-body-" ++ String.replace " " "-" tab
                 , tabStyles = tabStyles config.customSpacing
                 , tabListStyles = stylesTabsAligned config.alignment
                 }
@@ -96,7 +94,7 @@ view config =
                 |> Maybe.withDefault (Html.text "")
             , tabList
             ]
-        , Html.div [] tabPanels
+        , tabPanels
         ]
 
 

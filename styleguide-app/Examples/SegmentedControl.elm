@@ -12,6 +12,7 @@ module Examples.SegmentedControl exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -24,6 +25,7 @@ import Nri.Ui.SegmentedControl.V11 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
+import Task
 
 
 {-| -}
@@ -46,7 +48,8 @@ example =
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
-                { onClick = SelectPage
+                { onSelect = SelectPage
+                , onFocus = Focus
                 , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
@@ -203,7 +206,9 @@ optionsControl =
 
 {-| -}
 type Msg
-    = SelectPage Page
+    = Focus String
+    | Focused (Result Dom.Error ())
+    | SelectPage Page
     | MaybeSelect Int
     | ChangeOptions (Control Options)
 
@@ -212,6 +217,16 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
+        Focus id ->
+            ( state
+            , Task.attempt Focused (Dom.focus id)
+            )
+
+        Focused _ ->
+            ( state
+            , Cmd.none
+            )
+
         SelectPage page ->
             ( { state | page = page }
             , Cmd.none
