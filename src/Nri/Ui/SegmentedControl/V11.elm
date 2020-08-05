@@ -20,6 +20,7 @@ module Nri.Ui.SegmentedControl.V11 exposing
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import EventExtras
@@ -51,8 +52,7 @@ type alias Radio value msg =
     }
 
 
-{-| Creates _just the segmented select_ when you need the ui element itself and
-not a page control
+{-| Creates a set of radio buttons styled to look like a segmented control.
 
   - `onClick` : the message to produce when an option is selected (clicked) by the user
   - `options`: the list of options available
@@ -62,9 +62,11 @@ not a page control
 -}
 viewRadioGroup :
     { onClick : a -> msg
+    , toString : a -> String
     , options : List (Radio a msg)
     , selected : Maybe a
     , width : Width
+    , name : String
     }
     -> Html msg
 viewRadioGroup config =
@@ -74,30 +76,18 @@ viewRadioGroup config =
                 isSelected =
                     Just option.value == config.selected
             in
-            button
-                ([ Attributes.id (segmentIdFor option)
-                 , css (getStyles { isSelected = isSelected, width = config.width })
-                 , Role.radio
-                 , if isSelected then
-                    Widget.selected True
-
-                   else
-                    Widget.selected False
-                 , Events.onClick (config.onClick option.value)
-                 ]
-                    ++ option.attributes
-                )
-                [ viewIcon option.icon
-                , text option.label
+            labelAfter
+                [ css (getStyles { isSelected = isSelected, width = config.width })
                 ]
+                (div [] [ viewIcon option.icon, text option.label ])
+                (radio config.name (config.toString option.value) isSelected <|
+                    (Events.onCheck (\_ -> config.onClick option.value)
+                        :: css [ Css.opacity Css.zero ]
+                        :: Style.invisible
+                    )
+                )
     in
-    div
-        [ css
-            [ displayFlex
-            , cursor pointer
-            ]
-        , Role.radioGroup
-        ]
+    div [ css [ displayFlex, cursor pointer ] ]
         (List.map viewRadio config.options)
 
 

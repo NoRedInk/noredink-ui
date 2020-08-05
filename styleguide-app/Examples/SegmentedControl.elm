@@ -43,7 +43,7 @@ example =
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "view" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you need a page control. This view is effectively a fancy Tab/Tabpanel pairing." ]
+                [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
                 { onClick = SelectPage
                 , selected = state.page
@@ -54,9 +54,11 @@ example =
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewRadioGroup" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
+                [ Html.text "Use in cases where it would be reasonable to use radio buttons for the same purpose." ]
             , SegmentedControl.viewRadioGroup
-                { onClick = MaybeSelect
+                { name = "segmented-control-radio-group-example"
+                , onClick = MaybeSelect
+                , toString = String.fromInt
                 , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
                 , width = options.width
