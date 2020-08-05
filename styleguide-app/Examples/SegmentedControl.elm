@@ -13,9 +13,10 @@ module Examples.SegmentedControl exposing
 import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled.Attributes as Attr
+import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
@@ -39,21 +40,22 @@ example =
             in
             [ Control.view ChangeOptions state.optionsControl
                 |> Html.fromUnstyled
+            , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
+                [ Html.code [] [ Html.text "view" ] ]
+            , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
+                [ Html.text "Use when you need a page control." ]
             , SegmentedControl.view
                 { onClick = SelectNav
                 , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
                 , selected = state.selectedNav
                 , width = options.width
                 , content = Html.text ("[Content for " ++ Debug.toString state.selectedNav ++ "]")
-                , toUrl =
-                    if options.useSpa then
-                        Just String.fromInt
-
-                    else
-                        Nothing
+                , toUrl = Just String.fromInt
                 }
-            , Html.h3 [] [ Html.text "Select only view" ]
-            , Html.p [] [ Html.text "Used when you only need the ui element and not a page control." ]
+            , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
+                [ Html.code [] [ Html.text "viewSelect" ] ]
+            , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
+                [ Html.text "Use when you only need the ui element." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
                 , options = buildOptions "Source " options (List.range 1 options.count) plainIcons
@@ -135,7 +137,6 @@ init =
 type alias Options =
     { width : SegmentedControl.Width
     , icon : Bool
-    , useSpa : Bool
     , count : Int
     }
 
@@ -150,12 +151,6 @@ optionsControl =
                 ]
             )
         |> Control.field "icon" (Control.bool False)
-        |> Control.field "which view function"
-            (Control.choice
-                [ ( "view", Control.value False )
-                , ( "viewSpa", Control.value True )
-                ]
-            )
         |> Control.field "count"
             (Control.choice
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
