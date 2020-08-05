@@ -72,10 +72,15 @@ example =
     , categories = [ Widgets, Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
-        [ { keys = [ Enter ], result = "Select the focused control" }
-        , { keys = [ Space ], result = "Select the focused control" }
-        , { keys = [ Tab ], result = "Focus the next focusable element" }
-        , { keys = [ Tab, Shift ], result = "Focus the previous focusable element" }
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Move focus to the currently-selected Control's content"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the Control to the left of the current selection"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the Control to the right of the current selection"
+          }
         ]
     }
 

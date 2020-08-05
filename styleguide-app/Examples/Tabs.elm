@@ -107,7 +107,7 @@ example =
     , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
-          , result = "Move focus to and from the currently-selected Tab"
+          , result = "Move focus to the currently-selected Tab's tab panel"
           }
         , { keys = [ Arrow KeyboardSupport.Left ]
           , result = "Select the tab to the left of the currently-selected Tab"
