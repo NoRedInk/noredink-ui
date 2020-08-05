@@ -132,94 +132,69 @@ view :
     -> Html msg
 view config =
     let
+        isSelected option =
+            option.value == config.selected
+
+        viewTab option =
+            let
+                element attrs children =
+                    case config.toUrl of
+                        Nothing ->
+                            -- This is for a non-SPA view
+                            button
+                                (Events.onClick (config.onClick option.value)
+                                    :: attrs
+                                )
+                                children
+
+                        Just toUrl ->
+                            -- This is a for a SPA view
+                            Html.Styled.a
+                                (href (toUrl option.value)
+                                    :: EventExtras.onClickPreventDefaultForLinkWithHref
+                                        (config.onClick option.value)
+                                    :: attrs
+                                )
+                                children
+            in
+            element
+                ([ Attributes.id (segmentIdFor option)
+                 , css (getStyles { isSelected = isSelected option, width = config.width })
+                 , Role.tab
+                 , if isSelected option then
+                    Aria.currentPage
+
+                   else
+                    AttributesExtra.none
+                 ]
+                    ++ option.attributes
+                )
+                [ viewIcon option.icon
+                , text option.label
+                ]
+
         viewTabPanel option =
             tabPanel
                 [ Aria.labelledBy (segmentIdFor option)
                 , css
                     [ paddingTop (px 10)
-                    , if option.value == config.selected then
+                    , if isSelected option then
                         Css.batch []
 
                       else
                         Css.display none
                     ]
-                , Widget.hidden (option.value /= config.selected)
+                , Widget.hidden (not (isSelected option))
                 ]
                 [ option.content
                 ]
     in
     div []
-        [ tabList
-            [ css
-                [ displayFlex
-                , cursor pointer
-                ]
-            ]
-            (List.map
-                (viewTab
-                    { onClick = config.onClick
-                    , selected = Just config.selected
-                    , width = config.width
-                    , toUrl = config.toUrl
-                    }
-                )
+        [ tabList [ css [ displayFlex, cursor pointer ] ]
+            (List.map viewTab config.options)
+        , Keyed.node "div" [] <|
+            List.map (\option -> ( keyedNodeIdFor option, viewTabPanel option ))
                 config.options
-            )
-        , Keyed.node "div"
-            []
-            (List.map (\option -> ( keyedNodeIdFor option, viewTabPanel option ))
-                config.options
-            )
-        ]
-
-
-viewTab :
-    { onClick : a -> msg
-    , selected : Maybe a
-    , width : Width
-    , toUrl : Maybe (a -> String)
-    }
-    -> Option a msg
-    -> Html msg
-viewTab config option =
-    let
-        element attrs children =
-            case config.toUrl of
-                Nothing ->
-                    -- This is for a non-SPA view
-                    button
-                        (Events.onClick (config.onClick option.value)
-                            :: attrs
-                        )
-                        children
-
-                Just toUrl ->
-                    -- This is a for a SPA view
-                    Html.Styled.a
-                        (href (toUrl option.value)
-                            :: EventExtras.onClickPreventDefaultForLinkWithHref
-                                (config.onClick option.value)
-                            :: attrs
-                        )
-                        children
-
-        isSelected =
-            Just option.value == config.selected
-    in
-    element
-        ([ Attributes.id (segmentIdFor option)
-         , css (getStyles { isSelected = isSelected, width = config.width })
-         , Role.tab
-         , if isSelected then
-            Aria.currentPage
-
-           else
-            AttributesExtra.none
-         ]
-            ++ option.attributes
-        )
-        [ viewIcon option.icon
-        , text option.label
         ]
 
 
