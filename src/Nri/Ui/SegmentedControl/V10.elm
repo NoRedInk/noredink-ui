@@ -5,6 +5,7 @@ module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect
   - hides non-displayed content rather than fully removing from the DOM, allowing for the segmented control to be used as a sticky-header that doesn't lose scroll position
   - :skull: removes NavConfig and SelectConfig
   - combines `view` and `viewSpa` (for V9 `view` behavior, be sure `toUrl` is Nothing. for V9 `viewSpa` behavior, pass through a Just as `toUrl`)
+  - add custom attributes hole to the Option (in order to make SegmentedControls compatible with the Modal component)
 
 @docs Option, Width, view, viewSpa, viewSelect
 
