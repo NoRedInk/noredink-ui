@@ -55,14 +55,16 @@ type alias Radio value msg =
 
 {-| Creates a set of radio buttons styled to look like a segmented control.
 
-  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `onSelect`: the message to produce when an option is selected (clicked) by the user
+  - `toString`: function to get the radio value as a string
   - `options`: the list of options available
   - `selected`: if present, the value of the currently-selected option
   - `width`: how to size the segmented control
+  - `name`: value used to group the radio buttons together
 
 -}
 viewRadioGroup :
-    { onClick : a -> msg
+    { onSelect : a -> msg
     , toString : a -> String
     , options : List (Radio a msg)
     , selected : Maybe a
@@ -80,7 +82,7 @@ viewRadioGroup config =
             labelAfter [ css (styles config.width isSelected) ]
                 (div [] [ viewIcon option.icon, text option.label ])
                 (radio config.name (config.toString option.value) isSelected <|
-                    (Events.onCheck (\_ -> config.onClick option.value)
+                    (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
                         :: Style.invisible
                     )
@@ -93,7 +95,6 @@ viewRadioGroup config =
 {-| -}
 type alias Option value msg =
     { value : value
-    , idString : String
     , label : String
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
@@ -103,7 +104,9 @@ type alias Option value msg =
 
 {-|
 
-  - `onClick` : the message to produce when an option is selected (clicked) by the user
+  - `onSelect` : the message to produce when an option is selected by the user
+  - `onFocus` : the message to focus an element by id string
+  - `toString` : function to get the option value as a string
   - `options`: the list of options available
   - `selected`: the value of the currently-selected option
   - `width`: how to size the segmented control
@@ -113,6 +116,7 @@ type alias Option value msg =
 view :
     { onSelect : a -> msg
     , onFocus : String -> msg
+    , toString : a -> String
     , options : List (Option a msg)
     , selected : a
     , width : Width
@@ -124,7 +128,7 @@ view config =
         toInternalTab : Option a msg -> TabsInternal.Tab a msg
         toInternalTab option =
             { id = option.value
-            , idString = option.idString
+            , idString = config.toString option.value
             , tabAttributes = option.attributes
             , tabView = [ viewIcon option.icon, text option.label ]
             , panelView = option.content

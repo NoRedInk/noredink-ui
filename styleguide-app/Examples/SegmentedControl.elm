@@ -50,6 +50,7 @@ example =
             , SegmentedControl.view
                 { onSelect = SelectPage
                 , onFocus = Focus
+                , toString = \value -> toLower (Debug.toString value)
                 , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
@@ -61,7 +62,7 @@ example =
                 [ Html.text "Use in cases where it would be reasonable to use radio buttons for the same purpose." ]
             , SegmentedControl.viewRadioGroup
                 { name = "segmented-control-radio-group-example"
-                , onClick = MaybeSelect
+                , onSelect = SelectRadio
                 , toString = String.fromInt
                 , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
@@ -100,7 +101,6 @@ buildOptions { icon, longContent } =
 
                 else
                     Nothing
-            , idString = toLower (Debug.toString value)
             , label = Debug.toString value
             , value = value
             , attributes = []
@@ -209,7 +209,7 @@ type Msg
     = Focus String
     | Focused (Result Dom.Error ())
     | SelectPage Page
-    | MaybeSelect Int
+    | SelectRadio Int
     | ChangeOptions (Control Options)
 
 
@@ -232,7 +232,7 @@ update msg state =
             , Cmd.none
             )
 
-        MaybeSelect id ->
+        SelectRadio id ->
             ( { state | optionallySelected = Just id }
             , Cmd.none
             )
