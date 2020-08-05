@@ -15,10 +15,6 @@ import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui
-import Nri.Ui.Colors.Extra
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 
 

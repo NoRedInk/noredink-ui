@@ -15,22 +15,13 @@ module Nri.Ui.Tabs.V6 exposing
 
 -}
 
-import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
-import Json.Decode
-import List.Zipper exposing (Zipper)
-import List.Zipper.Extra
 import Nri.Ui
-import Nri.Ui.Colors.Extra
+import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Fonts.V1 as Fonts
 import TabsInternal
 
 
@@ -87,7 +78,7 @@ view config =
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
-            , Nri.Ui.Fonts.V1.baseFont
+            , Fonts.baseFont
             ]
             []
             [ config.title
@@ -168,9 +159,9 @@ tabStyles customSpacing isSelected =
                 [ Css.backgroundColor Colors.frost
                 , Css.backgroundImage <|
                     Css.linearGradient2 Css.toTop
-                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0.25 Colors.azure) (Css.pct 0))
-                        (Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 25))
-                        [ Css.stop2 (Nri.Ui.Colors.Extra.withAlpha 0 Colors.azure) (Css.pct 100) ]
+                        (Css.stop2 (withAlpha 0.25 Colors.azure) (Css.pct 0))
+                        (Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 25))
+                        [ Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 100) ]
                 ]
 
         baseStyles =
