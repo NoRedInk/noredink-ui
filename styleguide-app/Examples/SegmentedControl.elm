@@ -57,7 +57,7 @@ example =
                 [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
-                , options = buildSelectOptions options (List.range 1 options.count) plainIcons
+                , options = List.take options.count (buildSelectOptions options.icon)
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -87,7 +87,7 @@ type Page
 buildOptions : Bool -> List (SegmentedControl.Option Page Msg)
 buildOptions keepIcon =
     let
-        buildOption { icon, value } =
+        buildOption value icon =
             { icon = ifIcon icon
             , label = Debug.toString value
             , value = value
@@ -102,63 +102,44 @@ buildOptions keepIcon =
             else
                 Nothing
     in
-    [ { icon = UiIcon.flag
-      , value = Flag
-      }
-    , { icon = UiIcon.sprout
-      , value = Sprout
-      }
-    , { icon = UiIcon.star
-      , value = Star
-      }
-    , { icon = UiIcon.sapling
-      , value = Sapling
-      }
-    , { icon = Svg.withColor Colors.greenDark UiIcon.attention
-      , value = Attention
-      }
-    , { icon = UiIcon.tree
-      , value = Tree
-      }
-    , { icon = UiIcon.premiumLock
-      , value = Premium
-      }
-    , { icon = Svg.withColor Colors.purple UiIcon.activity
-      , value = Activity
-      }
-    ]
-        |> List.map buildOption
-
-
-plainIcons : List Svg
-plainIcons =
-    [ UiIcon.leaderboard
-    , UiIcon.person
-    , UiIcon.performance
-    , UiIcon.gift
-    , UiIcon.document
-    , UiIcon.key
-    , UiIcon.badge
-    , UiIcon.hat
+    [ buildOption Flag UiIcon.flag
+    , buildOption Sprout UiIcon.sprout
+    , buildOption Star UiIcon.star
+    , buildOption Sapling UiIcon.sapling
+    , buildOption Attention <| Svg.withColor Colors.greenDark UiIcon.attention
+    , buildOption Tree UiIcon.tree
+    , buildOption Premium UiIcon.premiumLock
+    , buildOption Activity <| Svg.withColor Colors.purple UiIcon.activity
     ]
 
 
-buildSelectOptions : Options -> List a -> List Svg -> List (SegmentedControl.SelectOption a msg)
-buildSelectOptions options selections =
+buildSelectOptions : Bool -> List (SegmentedControl.SelectOption Int msg)
+buildSelectOptions keepIcon =
     let
-        buildOption option icon =
-            { icon =
-                if options.icon then
-                    Just icon
-
-                else
-                    Nothing
-            , label = "Source " ++ Debug.toString option
-            , value = option
+        buildOption value icon =
+            { icon = ifIcon icon
+            , label = "Source " ++ Debug.toString value
+            , value = value
             , attributes = []
             }
+
+        ifIcon icon =
+            if keepIcon then
+                Just icon
+
+            else
+                Nothing
     in
-    List.map2 buildOption selections
+    List.indexedMap buildOption
+        [ UiIcon.leaderboard
+        , UiIcon.person
+        , UiIcon.performance
+        , UiIcon.gift
+        , UiIcon.document
+        , UiIcon.key
+        , UiIcon.badge
+        , UiIcon.hat
+        ]
 
 
 {-| -}
