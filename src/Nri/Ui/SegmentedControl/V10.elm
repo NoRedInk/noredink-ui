@@ -136,42 +136,41 @@ view config =
             option.value == config.selected
 
         viewTab option =
-            let
-                element attrs children =
-                    case config.toUrl of
-                        Nothing ->
-                            -- This is for a non-SPA view
-                            button
-                                (Events.onClick (config.onClick option.value)
-                                    :: attrs
-                                )
-                                children
+            case config.toUrl of
+                Just toUrl ->
+                    -- This is a for a SPA view
+                    Html.Styled.a
+                        (href (toUrl option.value)
+                            :: EventExtras.onClickPreventDefaultForLinkWithHref
+                                (config.onClick option.value)
+                            :: tabAttributes option
+                            ++ option.attributes
+                        )
+                        [ viewIcon option.icon
+                        , text option.label
+                        ]
 
-                        Just toUrl ->
-                            -- This is a for a SPA view
-                            Html.Styled.a
-                                (href (toUrl option.value)
-                                    :: EventExtras.onClickPreventDefaultForLinkWithHref
-                                        (config.onClick option.value)
-                                    :: attrs
-                                )
-                                children
-            in
-            element
-                ([ Attributes.id (segmentIdFor option)
-                 , css (getStyles { isSelected = isSelected option, width = config.width })
-                 , Role.tab
-                 , if isSelected option then
-                    Aria.currentPage
+                Nothing ->
+                    -- This is for a non-SPA view
+                    button
+                        (Events.onClick (config.onClick option.value)
+                            :: tabAttributes option
+                            ++ option.attributes
+                        )
+                        [ viewIcon option.icon
+                        , text option.label
+                        ]
 
-                   else
-                    AttributesExtra.none
-                 ]
-                    ++ option.attributes
-                )
-                [ viewIcon option.icon
-                , text option.label
-                ]
+        tabAttributes option =
+            [ Attributes.id (segmentIdFor option)
+            , css (getStyles { isSelected = isSelected option, width = config.width })
+            , Role.tab
+            , if isSelected option then
+                Aria.currentPage
+
+              else
+                AttributesExtra.none
+            ]
 
         viewTabPanel option =
             tabPanel
