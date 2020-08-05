@@ -36,6 +36,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (dashify)
+import TabsInternal
 
 
 {-| -}

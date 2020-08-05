@@ -71,14 +71,14 @@ view config =
                 , onFocus = config.onFocus
                 , selected = config.selected
                 , tabs = config.tabs
-                , tabToId = tabToId
-                , tabToBodyId = tabToBodyId
+                , tabToId = \tab -> String.replace " " "-" tab
+                , tabToBodyId = \tab -> "tab-body-" ++ String.replace " " "-" tab
                 , tabStyles = tabStyles config.customSpacing
                 , tabListStyles = stylesTabsAligned config.alignment
                 }
     in
     Nri.Ui.styled Html.div
-        (styledName "container")
+        "Nri-Ui-Tabs__container"
         []
         []
         [ Html.styled Html.div
@@ -93,43 +93,9 @@ view config =
             [ config.title
                 |> Maybe.map viewTitle
                 |> Maybe.withDefault (Html.text "")
-            , Html.styled Html.div
-                (stylesTabsAligned config.alignment)
-                [ Role.tabList
-                ]
-                (List.map
-                    (viewTab_
-                        { customSpacing = config.customSpacing
-                        , onSelect = config.onSelect
-                        , onFocus = config.onFocus
-                        , tabs = config.tabs
-                        , selected = config.selected
-                        }
-                    )
-                    config.tabs
-                )
+            , tabList
             ]
-        , Html.div []
-            (List.map
-                (\tab ->
-                    Html.div
-                        ([ Role.tabPanel
-                         , Aria.labelledBy (tabToId tab.idString)
-                         , Attributes.id (tabToBodyId tab.idString)
-                         ]
-                            ++ (if tab.id /= config.selected then
-                                    [ Attributes.css [ Css.display none ]
-                                    , Widget.hidden True
-                                    ]
-
-                                else
-                                    [ Widget.hidden False ]
-                               )
-                        )
-                        [ tab.panelView ]
-                )
-                config.tabs
-            )
+        , Html.div [] tabPanels
         ]
 
 
@@ -158,128 +124,6 @@ viewTitle title =
         ]
         []
         [ Html.text title ]
-
-
-viewTab_ :
-    { onSelect : id -> msg
-    , onFocus : String -> msg
-    , tabs : List (Tab id msg)
-    , selected : id
-    , customSpacing : Maybe Float
-    }
-    -> Tab id msg
-    -> Html msg
-viewTab_ { onSelect, onFocus, tabs, selected, customSpacing } tab =
-    let
-        isSelected =
-            selected == tab.id
-
-        tabIndex =
-            -- From recommendation at https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role#Best_practices
-            if isSelected then
-                0
-
-            else
-                -1
-
-        ( tag, tagSpecificAttributes ) =
-            case tab.spaHref of
-                Just href ->
-                    ( Html.a
-                    , [ if isSelected then
-                            Aria.currentPage
-
-                        else
-                            AttributesExtra.none
-                      , Attributes.href href
-                      , EventExtras.onClickPreventDefaultForLinkWithHref (onSelect tab.id)
-                      ]
-                    )
-
-                Nothing ->
-                    ( Html.button
-                    , [ Events.onClick (onSelect tab.id)
-                      ]
-                    )
-    in
-    Html.styled tag
-        (tabStyles customSpacing isSelected)
-        (tagSpecificAttributes
-            ++ [ Attributes.tabindex tabIndex
-               , Widget.selected isSelected
-               , Role.tab
-               , Attributes.id (tabToId tab.idString)
-               , Events.onFocus (onSelect tab.id)
-               , Events.on "keyup"
-                    (Json.Decode.andThen (keyEvents onFocus tabs tab) Events.keyCode)
-               ]
-        )
-        [ tab.tabView
-        ]
-
-
-keyEvents : (String -> msg) -> List (Tab id msg) -> Tab id msg -> Int -> Json.Decode.Decoder msg
-keyEvents onFocus tabs thisTab keyCode =
-    let
-        findAdjacentTab tab acc =
-            case acc of
-                ( _, Just _ ) ->
-                    acc
-
-                ( True, Nothing ) ->
-                    ( True, Just (tabToId tab.idString) )
-
-                ( False, Nothing ) ->
-                    ( tab.id == thisTab.id, Nothing )
-
-        nextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) tabs
-                |> Tuple.second
-
-        previousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) tabs
-                |> Tuple.second
-    in
-    case keyCode of
-        39 ->
-            -- Right
-            case nextTab of
-                Just next ->
-                    Json.Decode.succeed (onFocus next)
-
-                Nothing ->
-                    Json.Decode.fail "No next tab"
-
-        37 ->
-            -- Left
-            case previousTab of
-                Just previous ->
-                    Json.Decode.succeed (onFocus previous)
-
-                Nothing ->
-                    Json.Decode.fail "No previous tab"
-
-        _ ->
-            Json.Decode.fail "Upsupported key event"
-
-
-
--- HELP
-
-
-tabToId : String -> String
-tabToId tab =
-    String.replace " " "-" tab
-
-
-tabToBodyId : String -> String
-tabToBodyId tab =
-    "tab-body-" ++ tabToId tab
-
-
-styledName : String -> String
-styledName suffix =
-    "Nri-Ui-Tabs__" ++ suffix
 
 
 
