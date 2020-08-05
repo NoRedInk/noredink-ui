@@ -1,13 +1,8 @@
-module Nri.Ui.SegmentedControl.V9 exposing (NavConfig, Option, Width(..), view, viewSpa, SelectConfig, viewSelect)
+module Nri.Ui.SegmentedControl.V10 exposing (NavConfig, Option, Width(..), view, viewSpa, SelectConfig, viewSelect)
 
 {-|
 
 @docs NavConfig, Option, Width, view, viewSpa, SelectConfig, viewSelect
-
-Changes from V7:
-
-  - remove dependence on Nri.Ui.Icon.V5
-  - fix icons overlowing the segmented control
 
 -}
 
