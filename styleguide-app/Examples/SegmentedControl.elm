@@ -189,7 +189,7 @@ optionsControl =
                 , ( "FillContainer", Control.value SegmentedControl.FillContainer )
                 ]
             )
-        |> Control.field "icon" (Control.bool False)
+        |> Control.field "icon" (Control.bool True)
         |> Control.field "count"
             (Control.choice
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
