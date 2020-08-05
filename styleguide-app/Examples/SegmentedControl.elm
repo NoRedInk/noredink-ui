@@ -43,7 +43,7 @@ example =
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "view" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you need a page control." ]
+                [ Html.text "Use when you need a page control. This view is effectively a fancy Tab/Tabpanel pairing." ]
             , SegmentedControl.view
                 { onClick = SelectNav
                 , options = buildOptions "Choice " options (List.range 1 options.count) coloredIcons
@@ -55,7 +55,7 @@ example =
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewSelect" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you only need the ui element." ]
+                [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
             , SegmentedControl.viewSelect
                 { onClick = MaybeSelect
                 , options = buildOptions "Source " options (List.range 1 options.count) plainIcons
