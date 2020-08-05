@@ -176,11 +176,14 @@ viewTabPanel tab selected =
          , Attributes.id (tabToBodyId tab.idString)
          ]
             ++ (if selected then
-                    [ Widget.hidden False ]
+                    [ Widget.hidden False
+                    , Attributes.tabindex 0
+                    ]
 
                 else
                     [ Attributes.css [ Css.display Css.none ]
                     , Widget.hidden True
+                    , Attributes.tabindex -1
                     ]
                )
         )
