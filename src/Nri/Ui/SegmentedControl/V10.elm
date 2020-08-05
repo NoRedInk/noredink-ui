@@ -212,23 +212,28 @@ viewSegment config option =
          ]
             ++ option.attributes
         )
-        [ case option.icon of
-            Nothing ->
-                text ""
-
-            Just svg ->
-                svg
-                    |> Svg.withWidth (px 18)
-                    |> Svg.withHeight (px 18)
-                    |> Svg.withCss
-                        [ display inlineBlock
-                        , verticalAlign textTop
-                        , lineHeight (px 15)
-                        , marginRight (px 8)
-                        ]
-                    |> Svg.toHtml
+        [ viewIcon option.icon
         , text option.label
         ]
+
+
+viewIcon : Maybe Svg.Svg -> Html msg
+viewIcon icon =
+    case icon of
+        Nothing ->
+            text ""
+
+        Just svg ->
+            svg
+                |> Svg.withWidth (px 18)
+                |> Svg.withHeight (px 18)
+                |> Svg.withCss
+                    [ display inlineBlock
+                    , verticalAlign textTop
+                    , lineHeight (px 15)
+                    , marginRight (px 8)
+                    ]
+                |> Svg.toHtml
 
 
 sharedSegmentStyles : Style
@@ -275,9 +280,7 @@ unFocusedSegmentStyles =
     [ backgroundColor Colors.white
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
-    , hover
-        [ backgroundColor Colors.frost
-        ]
+    , hover [ backgroundColor Colors.frost ]
     ]
         |> Css.batch
 
