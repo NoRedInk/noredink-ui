@@ -12,7 +12,7 @@ import Example exposing (Example)
 import Html.Styled as Html
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.SortableTable.V1 as SortableTable
+import Nri.Ui.SortableTable.V2 as SortableTable
 
 
 type Column
@@ -35,7 +35,7 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SortableTable.V1"
+    { name = "Nri.Ui.SortableTable.V2"
     , categories = [ Tables, Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
@@ -53,12 +53,14 @@ example =
                             , header = "First name"
                             , value = .firstName
                             , width = 125
+                            , cellStyles = \_ -> []
                             }
                         , SortableTable.string
                             { id = LastName
                             , header = "Last name"
                             , value = .lastName
                             , width = 125
+                            , cellStyles = \_ -> []
                             }
                         , SortableTable.custom
                             { id = Coins
@@ -66,6 +68,7 @@ example =
                             , view = .coins >> String.fromInt >> Html.text
                             , sorter = SortableTable.simpleSort .coins
                             , width = 125
+                            , cellStyles = \_ -> []
                             }
                         ]
                     }
