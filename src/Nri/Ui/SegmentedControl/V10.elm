@@ -1,6 +1,8 @@
 module Nri.Ui.SegmentedControl.V10 exposing (NavConfig, Option, Width(..), view, viewSpa, SelectConfig, viewSelect)
 
-{-|
+{-| Changes from V9:
+
+  - hides non-displayed content rather than fully removing from the DOM, allowing for the segmented control to be used as a sticky-header that doesn't lose scroll position
 
 @docs NavConfig, Option, Width, view, viewSpa, SelectConfig, viewSelect
 
