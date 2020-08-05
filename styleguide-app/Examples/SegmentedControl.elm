@@ -61,7 +61,7 @@ example =
                 , width = options.width
                 }
             ]
-    , categories = [ Inputs, Widgets, Layout ]
+    , categories = [ Widgets, Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ Enter ], result = "Select the focused control" }
