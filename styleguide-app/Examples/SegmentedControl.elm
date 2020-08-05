@@ -100,7 +100,7 @@ plainIcons =
     ]
 
 
-buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a)
+buildOptions : String -> Options -> List a -> List Svg -> List (SegmentedControl.Option a msg)
 buildOptions prefix options selections =
     let
         buildOption option icon =

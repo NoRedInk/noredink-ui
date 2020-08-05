@@ -31,10 +31,10 @@ import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
-type alias Option value =
+type alias Option value msg =
     { value : value
     , label : String
-    , attributes : List (Attribute Never)
+    , attributes : List (Attribute msg)
     , icon : Maybe Svg
     }
 
@@ -56,7 +56,7 @@ not a page control
 -}
 viewSelect :
     { onClick : a -> msg
-    , options : List (Option a)
+    , options : List (Option a msg)
     , selected : Maybe a
     , width : Width
     }
@@ -95,7 +95,7 @@ viewSelect config =
 -}
 view :
     { onClick : a -> msg
-    , options : List (Option a)
+    , options : List (Option a msg)
     , selected : a
     , width : Width
     , content : Html msg
@@ -139,12 +139,12 @@ view config =
         ]
 
 
-segmentIdFor : Option a -> String
+segmentIdFor : Option a msg -> String
 segmentIdFor option =
     "Nri-Ui-SegmentedControl-Segment-" ++ dashify option.label
 
 
-panelIdFor : Option a -> String
+panelIdFor : Option a msg -> String
 panelIdFor option =
     "Nri-Ui-SegmentedControl-Panel-" ++ dashify option.label
 
@@ -157,7 +157,7 @@ viewSegment :
     , selectedAttribute : Attribute msg
     , ariaRole : Attribute msg
     }
-    -> Option a
+    -> Option a msg
     -> Html msg
 viewSegment config option =
     let
@@ -209,7 +209,7 @@ viewSegment config option =
            else
             AttributesExtra.none
          ]
-            ++ List.map (Attributes.map never) option.attributes
+            ++ option.attributes
         )
         [ case option.icon of
             Nothing ->
