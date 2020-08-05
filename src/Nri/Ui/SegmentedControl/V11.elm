@@ -79,7 +79,16 @@ viewRadioGroup config =
                 isSelected =
                     Just option.value == config.selected
             in
-            labelAfter [ css (styles config.width isSelected) ]
+            labelAfter
+                [ css
+                    -- ensure that the focus state is visible, even
+                    -- though the radio button that technically has focus
+                    -- is not
+                    (Css.pseudoClass "focus-within"
+                        [ Css.property "outline-style" "auto" ]
+                        :: styles config.width isSelected
+                    )
+                ]
                 (div [] [ viewIcon option.icon, text option.label ])
                 (radio config.name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
