@@ -1,4 +1,8 @@
-module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect)
+module Nri.Ui.SegmentedControl.V10 exposing
+    ( Option, view
+    , SelectOption, viewSelect
+    , Width(..)
+    )
 
 {-| Changes from V9:
 
@@ -9,7 +13,9 @@ module Nri.Ui.SegmentedControl.V10 exposing (Option, Width(..), view, viewSelect
   - combine `css` attributes into one to prevent class-name-order-change css :bug:s
   - :bug: fix overflowing-y svg icon issue
 
-@docs Option, Width, view, viewSpa, viewSelect
+@docs Option, view
+@docs SelectOption, viewSelect
+@docs Width
 
 -}
 
@@ -32,18 +38,18 @@ import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
-type alias Option value msg =
+type Width
+    = FitContent
+    | FillContainer
+
+
+{-| -}
+type alias SelectOption value msg =
     { value : value
     , label : String
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
     }
-
-
-{-| -}
-type Width
-    = FitContent
-    | FillContainer
 
 
 {-| Creates _just the segmented select_ when you need the ui element itself and
@@ -94,6 +100,15 @@ viewSelect config =
         , Role.radioGroup
         ]
         (List.map viewRadio config.options)
+
+
+{-| -}
+type alias Option value msg =
+    { value : value
+    , label : String
+    , attributes : List (Attribute msg)
+    , icon : Maybe Svg
+    }
 
 
 {-|
