@@ -12,6 +12,7 @@ module Examples.SegmentedControl exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -20,15 +21,17 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SegmentedControl.V10 as SegmentedControl
+import Nri.Ui.SegmentedControl.V11 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import String exposing (toLower)
+import Task
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SegmentedControl.V10"
+    { name = "Nri.Ui.SegmentedControl.V11"
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -43,21 +46,25 @@ example =
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "view" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you need a page control. This view is effectively a fancy Tab/Tabpanel pairing." ]
+                [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
-                { onClick = SelectPage
+                { onSelect = SelectPage
+                , onFocus = Focus
+                , toString = \value -> toLower (Debug.toString value)
                 , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
                 , options = List.take options.count (buildOptions options)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
-                [ Html.code [] [ Html.text "viewSelect" ] ]
+                [ Html.code [] [ Html.text "viewRadioGroup" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
-                [ Html.text "Use when you only need the ui element. This view is effectively a fancy Radio button." ]
-            , SegmentedControl.viewSelect
-                { onClick = MaybeSelect
-                , options = List.take options.count (buildSelectOptions options.icon)
+                [ Html.text "Use in cases where it would be reasonable to use radio buttons for the same purpose." ]
+            , SegmentedControl.viewRadioGroup
+                { legend = "SegmentedControls 'viewSelectRadio' example"
+                , onSelect = SelectRadio
+                , toString = String.fromInt
+                , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
                 , width = options.width
                 }
@@ -65,10 +72,15 @@ example =
     , categories = [ Widgets, Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
-        [ { keys = [ Enter ], result = "Select the focused control" }
-        , { keys = [ Space ], result = "Select the focused control" }
-        , { keys = [ Tab ], result = "Focus the next focusable element" }
-        , { keys = [ Tab, Shift ], result = "Focus the previous focusable element" }
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Move focus to the currently-selected Control's content"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the Control to the left of the current selection"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the Control to the right of the current selection"
+          }
         ]
     }
 
@@ -126,8 +138,8 @@ buildOptions { icon, longContent } =
     ]
 
 
-buildSelectOptions : Bool -> List (SegmentedControl.SelectOption Int msg)
-buildSelectOptions keepIcon =
+buildRadioOptions : Bool -> List (SegmentedControl.Radio Int msg)
+buildRadioOptions keepIcon =
     let
         buildOption value icon =
             { icon = ifIcon icon
@@ -199,8 +211,10 @@ optionsControl =
 
 {-| -}
 type Msg
-    = SelectPage Page
-    | MaybeSelect Int
+    = Focus String
+    | Focused (Result Dom.Error ())
+    | SelectPage Page
+    | SelectRadio Int
     | ChangeOptions (Control Options)
 
 
@@ -208,12 +222,22 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
+        Focus id ->
+            ( state
+            , Task.attempt Focused (Dom.focus id)
+            )
+
+        Focused _ ->
+            ( state
+            , Cmd.none
+            )
+
         SelectPage page ->
             ( { state | page = page }
             , Cmd.none
             )
 
-        MaybeSelect id ->
+        SelectRadio id ->
             ( { state | optionallySelected = Just id }
             , Cmd.none
             )
