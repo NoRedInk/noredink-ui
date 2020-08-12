@@ -97,9 +97,9 @@ class Imports(list):
     `list` to save some hassle on writing iteration etc.
     """
 
-    NRI_UI_IMPORT_RE = "import\s+" + NriUiModules.MODULE_RE
-    DEPRECATED_IMPORT_RE = "import\s+(?P<import>[\w\.]*deprecated[\w\.]*)"
-    GENERIC_IMPORT_RE = "import\s+(?P<import>[\w\.]+)"
+    NRI_UI_IMPORT_RE = "^import\s+" + NriUiModules.MODULE_RE
+    DEPRECATED_IMPORT_RE = "^import\s+(?P<import>[\w\.]*deprecated[\w\.]*)"
+    GENERIC_IMPORT_RE = "^import\s+(?P<import>[\w\.]+)"
 
     @classmethod
     def from_source_directories(cls, source_directories, extras):
@@ -116,11 +116,9 @@ class Imports(list):
 
                     full_path = os.path.join(dirpath, filename)
                     with open(full_path, "r") as fh:
-                        lines = [line.strip() for line in fh.readlines()]
+                        lines = [line.rstrip() for line in fh.readlines()]
 
                     for line in lines:
-                        line = line.strip()
-
                         # add whatever imports we want to track here, continue
                         # after each.
 
