@@ -22,7 +22,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Modal.V9 as Modal
+import Nri.Ui.Modal.V10 as Modal
 import Nri.Ui.RadioButton.V1 as RadioButton
 import Nri.Ui.Text.V5 as Text
 
@@ -53,8 +53,7 @@ view model =
     , Heading.h4 [] [ Html.text "premium" ]
     , viewPremium model
     , Modal.info
-        { visibleTitle = True
-        , title = "Go Premium!"
+        { title = "Go Premium!"
         , wrapMsg = ModalMsg
         , focusManager =
             Modal.MultipleFocusableElements
@@ -73,6 +72,7 @@ view model =
                     }
                 )
         }
+        []
         model.modal
     ]
 
