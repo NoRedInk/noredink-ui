@@ -10,8 +10,8 @@ src/Nri/Ui/Icon/V5.elm,Html,DEPRECATED
 src/Nri/Ui/Icon/V4.elm,Accessibility.Role,DEPRECATED
 src/Nri/Ui/Icon/V4.elm,Html,DEPRECATED
 src/Nri/Ui/Modal/V3.elm,Nri.Ui.Icon,3
+tests/Spec/Nri/Ui/Tooltip.elm,Accessibility.Aria,DEPRECATED
+tests/Spec/Nri/Ui/Tooltip.elm,Accessibility.Widget,DEPRECATED
+tests/Spec/Nri/Ui/Tooltip.elm,Html,DEPRECATED
 tests/Spec/Nri/Ui/Select.elm,Html,DEPRECATED
 tests/Spec/Nri/Ui/Select.elm,Nri.Ui.Select,5
-tests/Spec/Nri/Ui/Tooltip/V1.elm,Accessibility.Aria,DEPRECATED
-tests/Spec/Nri/Ui/Tooltip/V1.elm,Accessibility.Widget,DEPRECATED
-tests/Spec/Nri/Ui/Tooltip/V1.elm,Html,DEPRECATED
