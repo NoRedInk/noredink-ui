@@ -27,6 +27,10 @@ class ElmJson:
         self.elm_version = self.data["elm-version"]
         self.source_directories = ["src"]
 
+        potential_test_directory = os.path.join(os.path.dirname(path), 'tests')
+        if os.path.exists(potential_test_directory):
+            self.source_directories.append(potential_test_directory)
+
 
 class NriUiModules:
     """
