@@ -96,6 +96,7 @@ viewRadioGroup config =
                 (radio name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
+                        :: Attributes.checked isSelected
                         :: Style.invisible
                     )
                 )
