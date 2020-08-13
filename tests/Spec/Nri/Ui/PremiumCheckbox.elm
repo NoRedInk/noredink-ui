@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.PremiumCheckbox.V6 exposing (spec)
+module Spec.Nri.Ui.PremiumCheckbox exposing (spec)
 
 import Html.Attributes as Attributes
 import Html.Styled
