@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.Page.V3 exposing (all)
+module Spec.Nri.Ui.Page exposing (all)
 
 import Expect exposing (Expectation)
 import Html.Styled as Html

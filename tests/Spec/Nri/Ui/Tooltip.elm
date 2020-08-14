@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.Tooltip.V1 exposing (spec)
+module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
 import Accessibility.Widget as Widget

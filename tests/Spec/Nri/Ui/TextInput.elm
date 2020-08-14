@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.TextInput.V6 exposing (spec)
+module Spec.Nri.Ui.TextInput exposing (spec)
 
 import Html.Styled
 import Nri.Ui.TextInput.V6 as TextInput

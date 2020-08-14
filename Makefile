@@ -23,10 +23,10 @@ axe-report: tests/axe-report.json script/format-axe-report.sh script/axe-report.
 percy-tests:
 	script/percy-tests.sh
 
-tests/deprecated-imports-report.txt: $(shell find src -type f) script/deprecated-imports.py
+tests/deprecated-imports-report.txt: $(shell find src tests -type f) script/deprecated-imports.py
 	script/deprecated-imports.py report > $@
 
-script/deprecated-imports.csv: $(shell find src -type f) script/deprecated-imports.py
+script/deprecated-imports.csv: $(shell find src tests -type f) script/deprecated-imports.py
 	script/deprecated-imports.py --imports-file $@ update
 
 .PHONY: deprecated-imports-report

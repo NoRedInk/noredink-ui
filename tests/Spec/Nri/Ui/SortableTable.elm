@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.SortableTable.V2 exposing (spec)
+module Spec.Nri.Ui.SortableTable exposing (spec)
 
 import Expect exposing (Expectation)
 import Html.Styled
