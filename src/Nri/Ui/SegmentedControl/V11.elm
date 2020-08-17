@@ -29,6 +29,7 @@ import EventExtras
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import Html.Styled.Events as Events
+import Json.Encode as Encode
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
@@ -96,7 +97,13 @@ viewRadioGroup config =
                 (radio name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
-                        :: Attributes.checked isSelected
+                        :: Attributes.attribute "data-nri-checked"
+                            (if isSelected then
+                                "true"
+
+                             else
+                                "false"
+                            )
                         :: Style.invisible
                     )
                 )

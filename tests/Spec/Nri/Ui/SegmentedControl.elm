@@ -54,7 +54,7 @@ spec =
                                 , Selector.containing
                                     [ Selector.tag "input"
                                     , Selector.attribute (Attributes.type_ "radio")
-                                    , Selector.attribute (Attributes.checked True)
+                                    , Selector.attribute (Attributes.attribute "data-nri-checked" "true")
                                     ]
                                 ]
                             ]
@@ -69,7 +69,7 @@ spec =
                                 , Selector.containing
                                     [ Selector.tag "input"
                                     , Selector.attribute (Attributes.type_ "radio")
-                                    , Selector.attribute (Attributes.checked False)
+                                    , Selector.attribute (Attributes.attribute "data-nri-checked" "false")
                                     ]
                                 ]
                             ]
