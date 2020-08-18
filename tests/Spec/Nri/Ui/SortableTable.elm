@@ -1,8 +1,8 @@
-module Spec.Nri.Ui.SortableTable.V1 exposing (spec)
+module Spec.Nri.Ui.SortableTable exposing (spec)
 
 import Expect exposing (Expectation)
 import Html.Styled
-import Nri.Ui.SortableTable.V1 as SortableTable
+import Nri.Ui.SortableTable.V2 as SortableTable
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -33,12 +33,14 @@ config =
             , header = "First name"
             , value = .firstName
             , width = 125
+            , cellStyles = \_ -> []
             }
         , SortableTable.string
             { id = LastName
             , header = "Last name"
             , value = .lastName
             , width = 125
+            , cellStyles = \_ -> []
             }
         ]
     }

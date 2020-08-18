@@ -19,7 +19,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V9 as Modal
+import Nri.Ui.Modal.V10 as Modal
 import Nri.Ui.Text.V4 as Text
 
 
@@ -52,6 +52,7 @@ type alias Settings =
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , longContent : Bool
+    , customStyling : Bool
     }
 
 
@@ -63,6 +64,7 @@ initModalSettings =
     , showSecondary = True
     , dismissOnEscAndOverlayClick = True
     , longContent = True
+    , customStyling = False
     }
 
 
@@ -78,6 +80,28 @@ example =
     , subscriptions = subscriptions
     , view =
         \state ->
+            let
+                titleAttrs =
+                    if state.settings.visibleTitle then
+                        []
+
+                    else
+                        [ Modal.hideTitle ]
+
+                stylingAttrs =
+                    if state.settings.customStyling then
+                        [ Modal.css
+                            [ Css.borderRadius Css.zero
+                            , Css.width (Css.px 800)
+                            ]
+                        ]
+
+                    else
+                        []
+
+                attrs =
+                    titleAttrs ++ stylingAttrs
+            in
             [ viewSettings state.settings
             , Button.button "Launch Info Modal"
                 [ Button.onClick (OpenModal Info "launch-info-modal")
@@ -97,18 +121,18 @@ example =
                     Modal.info
                         { title = "Modal.info"
                         , wrapMsg = ModalMsg
-                        , visibleTitle = state.settings.visibleTitle
                         , focusManager = makeFocusManager Button.primary state.settings
                         }
+                        attrs
                         state.state
 
                 Warning ->
                     Modal.warning
                         { title = "Modal.warning"
                         , wrapMsg = ModalMsg
-                        , visibleTitle = state.settings.visibleTitle
                         , focusManager = makeFocusManager Button.danger state.settings
                         }
+                        attrs
                         state.state
             ]
     }
@@ -318,6 +342,14 @@ viewSettings settings =
             , disabled = False
             , theme = Checkbox.Square
             }
+        , Checkbox.viewWithLabel
+            { identifier = "custom-styles"
+            , label = "Custom Styling"
+            , selected = Checkbox.selectedFromBool settings.customStyling
+            , setterMsg = SetCustomStyling
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         ]
 
 
@@ -332,6 +364,7 @@ type Msg
     | SetShowSecondary Bool
     | SetDismissOnEscAndOverlayClick Bool
     | SetLongContent Bool
+    | SetCustomStyling Bool
 
 
 {-| -}
@@ -377,6 +410,9 @@ update msg state =
 
         SetLongContent value ->
             ( { state | settings = { settings | longContent = value } }, Cmd.none )
+
+        SetCustomStyling value ->
+            ( { state | settings = { settings | customStyling = value } }, Cmd.none )
 
 
 {-| -}

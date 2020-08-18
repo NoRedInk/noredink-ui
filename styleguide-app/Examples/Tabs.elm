@@ -21,7 +21,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Tabs.V5 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V6 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -102,12 +102,12 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tabs.V5"
+    { name = "Nri.Ui.Tabs.V6"
     , categories = [ Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
-          , result = "Move focus to and from the currently-selected Tab"
+          , result = "Move focus to the currently-selected Tab's tab panel"
           }
         , { keys = [ Arrow KeyboardSupport.Left ]
           , result = "Select the tab to the left of the currently-selected Tab"
@@ -143,7 +143,7 @@ allTabs : List (Tab Id Msg)
 allTabs =
     [ { id = First
       , idString = "tab-0"
-      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V5"
+      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V6"
       , tabView = Tabs.viewTabDefault "Link example"
       , panelView = Html.text "First Panel"
       }

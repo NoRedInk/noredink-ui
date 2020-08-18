@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.SlideModal.V2 exposing (all)
+module Spec.Nri.Ui.SlideModal exposing (all)
 
 import Css
 import Expect exposing (Expectation)
