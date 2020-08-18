@@ -131,10 +131,13 @@ viewTitle : String -> Html msg
 viewTitle title =
     Html.styled Html.h1
         [ Css.flexGrow (Css.int 2)
-        , Css.fontSize (Css.px 20)
+        , Css.fontSize (Css.px 30)
         , Css.fontWeight Css.bold
-        , Css.margin4 (Css.px 5) (Css.px 10) (Css.px 10) Css.zero
+        , Css.margin Css.zero
+        , Css.marginTop (Css.px 5)
+        , Css.marginBottom (Css.px 10)
         , Css.color Colors.navy
+        , Css.width (Css.px 430)
         ]
         []
         [ Html.text title ]
