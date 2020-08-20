@@ -21,7 +21,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SegmentedControl.V11 as SegmentedControl
+import Nri.Ui.SegmentedControl.V12 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
@@ -31,7 +31,7 @@ import Task
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SegmentedControl.V11"
+    { name = "Nri.Ui.SegmentedControl.V12"
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
