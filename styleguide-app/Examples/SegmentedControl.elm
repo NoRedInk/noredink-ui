@@ -106,7 +106,7 @@ buildOptions { icon, longContent } =
 
                 else
                     Nothing
-            , label = Debug.toString value
+            , label = Html.text (Debug.toString value)
             , value = value
             , attributes = []
             , content =

@@ -4,14 +4,9 @@ module Nri.Ui.SegmentedControl.V12 exposing
     , Width(..)
     )
 
-{-| Changes from V10:
+{-| Changes from V11:
 
-  - change selection using left/right arrow keys
-  - only currently-selected or first control is tabbable
-  - tabpanel is tabbable
-  - Uses TabsInternal under the hood
-  - `viewSelect` renamed to `viewRadioGroup`, `SelectOption` renamed to `Radio`
-  - `viewRadioGroup` uses native HTML radio input internally
+  - allow HTML in labels
 
 @docs Option, view
 @docs Radio, viewRadioGroup
@@ -127,7 +122,7 @@ viewRadioGroup config =
 {-| -}
 type alias Option value msg =
     { value : value
-    , label : String
+    , label : Html msg
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
     , content : Html msg
@@ -162,7 +157,7 @@ view config =
             { id = option.value
             , idString = config.toString option.value
             , tabAttributes = option.attributes
-            , tabView = [ viewIcon option.icon, text option.label ]
+            , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
             }
