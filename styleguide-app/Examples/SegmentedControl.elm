@@ -143,7 +143,7 @@ buildRadioOptions keepIcon =
     let
         buildOption value icon =
             { icon = ifIcon icon
-            , label = "Source " ++ Debug.toString (value + 1)
+            , label = Html.text ("Source " ++ Debug.toString (value + 1))
             , value = value
             , attributes = []
             }

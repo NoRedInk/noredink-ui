@@ -44,7 +44,7 @@ type Width
 {-| -}
 type alias Radio value msg =
     { value : value
-    , label : String
+    , label : Html msg
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
     }
@@ -78,7 +78,7 @@ viewRadioGroup config =
                 isSelected =
                     Just option.value == config.selected
             in
-            labelAfter
+            Html.Styled.label
                 [ css
                     -- ensure that the focus state is visible, even
                     -- though the radio button that technically has focus
@@ -88,8 +88,7 @@ viewRadioGroup config =
                         :: styles config.width isSelected
                     )
                 ]
-                (div [] [ viewIcon option.icon, text option.label ])
-                (radio name (config.toString option.value) isSelected <|
+                [ radio name (config.toString option.value) isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
                         :: Attributes.attribute "data-nri-checked"
@@ -101,7 +100,8 @@ viewRadioGroup config =
                             )
                         :: Style.invisible
                     )
-                )
+                , div [] [ viewIcon option.icon, option.label ]
+                ]
 
         name =
             dashify (String.toLower config.legend)
