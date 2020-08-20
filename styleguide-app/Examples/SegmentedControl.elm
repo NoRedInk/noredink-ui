@@ -21,7 +21,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SegmentedControl.V11 as SegmentedControl
+import Nri.Ui.SegmentedControl.V12 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
@@ -31,7 +31,7 @@ import Task
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SegmentedControl.V11"
+    { name = "Nri.Ui.SegmentedControl.V12"
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -50,9 +50,8 @@ example =
             , SegmentedControl.view
                 { onSelect = SelectPage
                 , onFocus = Focus
-                , toString = \value -> toLower (Debug.toString value)
                 , selected = state.page
-                , width = options.width
+                , positioning = options.positioning
                 , toUrl = Nothing
                 , options = List.take options.count (buildOptions options)
                 }
@@ -63,10 +62,9 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , toString = String.fromInt
                 , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
-                , width = options.width
+                , positioning = options.positioning
                 }
             ]
     , categories = [ Widgets, Layout ]
@@ -106,8 +104,9 @@ buildOptions { icon, longContent } =
 
                 else
                     Nothing
-            , label = Debug.toString value
+            , label = Html.text (Debug.toString value)
             , value = value
+            , idString = toLower (Debug.toString value)
             , attributes = []
             , content =
                 if longContent then
@@ -143,8 +142,9 @@ buildRadioOptions keepIcon =
     let
         buildOption value icon =
             { icon = ifIcon icon
-            , label = "Source " ++ Debug.toString (value + 1)
+            , label = Html.text ("Source " ++ Debug.toString (value + 1))
             , value = value
+            , idString = String.fromInt value
             , attributes = []
             }
 
@@ -185,7 +185,7 @@ init =
 
 
 type alias Options =
-    { width : SegmentedControl.Width
+    { positioning : SegmentedControl.Positioning
     , icon : Bool
     , count : Int
     , longContent : Bool
@@ -195,10 +195,11 @@ type alias Options =
 optionsControl : Control Options
 optionsControl =
     Control.record Options
-        |> Control.field "width"
+        |> Control.field "positioning"
             (Control.choice
-                [ ( "FitContent", Control.value SegmentedControl.FitContent )
-                , ( "FillContainer", Control.value SegmentedControl.FillContainer )
+                [ ( "Left (FitContent)", Control.value (SegmentedControl.Left SegmentedControl.FitContent) )
+                , ( "Left (FillContainer)", Control.value (SegmentedControl.Left SegmentedControl.FillContainer) )
+                , ( "Center", Control.value SegmentedControl.Center )
                 ]
             )
         |> Control.field "icon" (Control.bool True)

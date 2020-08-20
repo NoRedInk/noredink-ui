@@ -4,7 +4,7 @@ import Expect
 import Html.Attributes as Attributes
 import Html.Styled
 import Json.Encode as Encode
-import Nri.Ui.SegmentedControl.V11 as SegmentedControl
+import Nri.Ui.SegmentedControl.V12 as SegmentedControl
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -27,19 +27,19 @@ spec =
                 control =
                     SegmentedControl.viewRadioGroup
                         { onSelect = identity
-                        , toString = identity
                         , options =
                             List.map
                                 (\value ->
                                     { value = value
-                                    , label = value
+                                    , idString = value
+                                    , label = Html.Styled.text value
                                     , attributes = []
                                     , icon = Nothing
                                     }
                                 )
                                 [ selected, notSelected ]
                         , selected = Just selected
-                        , width = SegmentedControl.FitContent
+                        , positioning = SegmentedControl.Left SegmentedControl.FitContent
                         , legend = "A Segmented Control Example"
                         }
             in
