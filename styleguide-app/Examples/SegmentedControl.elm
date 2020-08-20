@@ -62,7 +62,6 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , toString = String.fromInt
                 , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
                 , width = options.width
@@ -145,6 +144,7 @@ buildRadioOptions keepIcon =
             { icon = ifIcon icon
             , label = Html.text ("Source " ++ Debug.toString (value + 1))
             , value = value
+            , idString = String.fromInt value
             , attributes = []
             }
 

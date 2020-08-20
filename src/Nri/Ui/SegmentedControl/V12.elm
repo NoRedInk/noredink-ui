@@ -45,6 +45,7 @@ type Width
 {-| -}
 type alias Radio value msg =
     { value : value
+    , idString : String
     , label : Html msg
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
@@ -65,7 +66,6 @@ type alias Radio value msg =
 -}
 viewRadioGroup :
     { onSelect : a -> msg
-    , toString : a -> String
     , options : List (Radio a msg)
     , selected : Maybe a
     , width : Width
@@ -89,7 +89,7 @@ viewRadioGroup config =
                         :: styles config.width isSelected
                     )
                 ]
-                [ radio name (config.toString option.value) isSelected <|
+                [ radio name option.idString isSelected <|
                     (Events.onCheck (\_ -> config.onSelect option.value)
                         :: css [ Css.opacity Css.zero ]
                         :: Attributes.attribute "data-nri-checked"
