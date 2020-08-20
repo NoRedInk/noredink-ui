@@ -27,12 +27,12 @@ spec =
                 control =
                     SegmentedControl.viewRadioGroup
                         { onSelect = identity
-                        , toString = identity
                         , options =
                             List.map
                                 (\value ->
                                     { value = value
-                                    , label = value
+                                    , idString = value
+                                    , label = Html.Styled.text value
                                     , attributes = []
                                     , icon = Nothing
                                     }
