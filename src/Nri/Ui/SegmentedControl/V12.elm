@@ -1,17 +1,18 @@
 module Nri.Ui.SegmentedControl.V12 exposing
     ( Option, view
     , Radio, viewRadioGroup
-    , Width(..)
+    , Positioning(..), Width(..)
     )
 
 {-| Changes from V11:
 
   - allow HTML in labels
   - [use idString instead of toString](https://github.com/NoRedInk/noredink-ui/issues/575)
+  - allow control to be centered
 
 @docs Option, view
 @docs Radio, viewRadioGroup
-@docs Width
+@docs Positioning, Width
 
 -}
 
@@ -37,6 +38,12 @@ import TabsInternal
 
 
 {-| -}
+type Positioning
+    = Left Width
+    | Center
+
+
+{-| -}
 type Width
     = FitContent
     | FillContainer
@@ -58,7 +65,7 @@ type alias Radio value msg =
   - `toString`: function to get the radio value as a string
   - `options`: the list of options available
   - `selected`: if present, the value of the currently-selected option
-  - `width`: how to size the segmented control
+  - `positioning`: how to position and size the segmented control
   - `legend`:
       - value read to screenreader users to explain the radio group's purpose <https://dequeuniversity.com/rules/axe/3.3/radiogroup?application=axeAPI>
       - after lowercasing & dashifying, this value is used to group the radio buttons together
@@ -68,7 +75,7 @@ viewRadioGroup :
     { onSelect : a -> msg
     , options : List (Radio a msg)
     , selected : Maybe a
-    , width : Width
+    , positioning : Positioning
     , legend : String
     }
     -> Html msg
@@ -86,7 +93,7 @@ viewRadioGroup config =
                     -- is not
                     (Css.pseudoClass "focus-within"
                         [ Css.property "outline-style" "auto" ]
-                        :: styles config.width isSelected
+                        :: styles config.positioning isSelected
                     )
                 ]
                 [ radio name option.idString isSelected <|
@@ -113,7 +120,16 @@ viewRadioGroup config =
     div
         [ Role.radioGroup
         , Aria.labelledBy legendId
-        , css [ displayFlex, cursor pointer ]
+        , css
+            [ displayFlex
+            , cursor pointer
+            , case config.positioning of
+                Left _ ->
+                    justifyContent flexStart
+
+                Center ->
+                    justifyContent center
+            ]
         ]
         (p (Attributes.id legendId :: Style.invisible) [ text config.legend ]
             :: List.map viewRadio config.options
@@ -137,7 +153,7 @@ type alias Option value msg =
   - `onFocus` : the message to focus an element by id string
   - `options`: the list of options available
   - `selected`: the value of the currently-selected option
-  - `width`: how to size the segmented control
+  - `positioning`: how to position and size the segmented control
   - `toUrl`: a optional function that takes a `route` and returns the URL of that route. You should always use pass a `toUrl` function when the segmented control options correspond to routes in your SPA.
 
 -}
@@ -146,7 +162,7 @@ view :
     , onFocus : String -> msg
     , options : List (Option a msg)
     , selected : a
-    , width : Width
+    , positioning : Positioning
     , toUrl : Maybe (a -> String)
     }
     -> Html msg
@@ -168,8 +184,18 @@ view config =
                 , onFocus = config.onFocus
                 , selected = config.selected
                 , tabs = List.map toInternalTab config.options
-                , tabListStyles = [ displayFlex, cursor pointer, marginBottom (px 10) ]
-                , tabStyles = styles config.width
+                , tabListStyles =
+                    [ displayFlex
+                    , cursor pointer
+                    , marginBottom (px 10)
+                    , case config.positioning of
+                        Left _ ->
+                            justifyContent flexStart
+
+                        Center ->
+                            justifyContent center
+                    ]
+                , tabStyles = styles config.positioning
                 }
     in
     div []
@@ -197,20 +223,23 @@ viewIcon icon =
                 |> Svg.toHtml
 
 
-styles : Width -> Bool -> List Style
-styles width isSelected =
+styles : Positioning -> Bool -> List Style
+styles positioning isSelected =
     [ sharedSegmentStyles
     , if isSelected then
         focusedSegmentStyles
 
       else
         unFocusedSegmentStyles
-    , case width of
-        FitContent ->
+    , case positioning of
+        Left FitContent ->
             Css.batch []
 
-        FillContainer ->
+        Left FillContainer ->
             expandingTabStyles
+
+        Center ->
+            Css.batch []
     ]
 
 

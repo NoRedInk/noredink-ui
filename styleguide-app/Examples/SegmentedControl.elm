@@ -51,7 +51,7 @@ example =
                 { onSelect = SelectPage
                 , onFocus = Focus
                 , selected = state.page
-                , width = options.width
+                , positioning = options.positioning
                 , toUrl = Nothing
                 , options = List.take options.count (buildOptions options)
                 }
@@ -64,7 +64,7 @@ example =
                 , onSelect = SelectRadio
                 , options = List.take options.count (buildRadioOptions options.icon)
                 , selected = state.optionallySelected
-                , width = options.width
+                , positioning = options.positioning
                 }
             ]
     , categories = [ Widgets, Layout ]
@@ -185,7 +185,7 @@ init =
 
 
 type alias Options =
-    { width : SegmentedControl.Width
+    { positioning : SegmentedControl.Positioning
     , icon : Bool
     , count : Int
     , longContent : Bool
@@ -195,10 +195,11 @@ type alias Options =
 optionsControl : Control Options
 optionsControl =
     Control.record Options
-        |> Control.field "width"
+        |> Control.field "positioning"
             (Control.choice
-                [ ( "FitContent", Control.value SegmentedControl.FitContent )
-                , ( "FillContainer", Control.value SegmentedControl.FillContainer )
+                [ ( "Left (FitContent)", Control.value (SegmentedControl.Left SegmentedControl.FitContent) )
+                , ( "Left (FillContainer)", Control.value (SegmentedControl.Left SegmentedControl.FillContainer) )
+                , ( "Center", Control.value SegmentedControl.Center )
                 ]
             )
         |> Control.field "icon" (Control.bool True)
