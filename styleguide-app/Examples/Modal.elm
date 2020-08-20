@@ -71,7 +71,7 @@ initModalSettings =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Modal.V9"
+    { name = "Nri.Ui.Modal.V10"
     , categories = [ Modals ]
     , atomicDesignType = Organism
     , keyboardSupport = []
