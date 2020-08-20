@@ -39,7 +39,7 @@ spec =
                                 )
                                 [ selected, notSelected ]
                         , selected = Just selected
-                        , width = SegmentedControl.FitContent
+                        , positioning = SegmentedControl.Left SegmentedControl.FitContent
                         , legend = "A Segmented Control Example"
                         }
             in
