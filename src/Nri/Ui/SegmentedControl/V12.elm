@@ -7,6 +7,7 @@ module Nri.Ui.SegmentedControl.V12 exposing
 {-| Changes from V11:
 
   - allow HTML in labels
+  - [use idString instead of toString](https://github.com/NoRedInk/noredink-ui/issues/575)
 
 @docs Option, view
 @docs Radio, viewRadioGroup
@@ -122,6 +123,7 @@ viewRadioGroup config =
 {-| -}
 type alias Option value msg =
     { value : value
+    , idString : String
     , label : Html msg
     , attributes : List (Attribute msg)
     , icon : Maybe Svg
@@ -133,7 +135,6 @@ type alias Option value msg =
 
   - `onSelect` : the message to produce when an option is selected by the user
   - `onFocus` : the message to focus an element by id string
-  - `toString` : function to get the option value as a string
   - `options`: the list of options available
   - `selected`: the value of the currently-selected option
   - `width`: how to size the segmented control
@@ -143,7 +144,6 @@ type alias Option value msg =
 view :
     { onSelect : a -> msg
     , onFocus : String -> msg
-    , toString : a -> String
     , options : List (Option a msg)
     , selected : a
     , width : Width
@@ -155,7 +155,7 @@ view config =
         toInternalTab : Option a msg -> TabsInternal.Tab a msg
         toInternalTab option =
             { id = option.value
-            , idString = config.toString option.value
+            , idString = option.idString
             , tabAttributes = option.attributes
             , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content

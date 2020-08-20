@@ -50,7 +50,6 @@ example =
             , SegmentedControl.view
                 { onSelect = SelectPage
                 , onFocus = Focus
-                , toString = \value -> toLower (Debug.toString value)
                 , selected = state.page
                 , width = options.width
                 , toUrl = Nothing
@@ -108,6 +107,7 @@ buildOptions { icon, longContent } =
                     Nothing
             , label = Html.text (Debug.toString value)
             , value = value
+            , idString = toLower (Debug.toString value)
             , attributes = []
             , content =
                 if longContent then
