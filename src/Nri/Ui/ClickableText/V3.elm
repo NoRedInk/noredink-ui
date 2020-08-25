@@ -295,6 +295,7 @@ clickableTextStyles =
     , Css.border Css.zero
     , Css.disabled [ Css.cursor Css.notAllowed ]
     , Css.color Colors.azure
+    , Css.hover [ Css.color Colors.azureDark ]
     , Css.backgroundColor Css.transparent
     , Css.fontWeight (Css.int 600)
     , Css.textAlign Css.left
