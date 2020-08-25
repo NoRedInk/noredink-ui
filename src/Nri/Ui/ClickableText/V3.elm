@@ -16,7 +16,7 @@ module Nri.Ui.ClickableText.V3 exposing
 
   - uses ClickableAttributes
   - adds `css` helper
-  - add bottom border on hover instead of text decoration
+  - removes underline on hover and recolors to azureDark
 
 
 # Changes from V2
