@@ -24,7 +24,7 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { size : List (Message.Attribute Msg) -> Html Msg
+    { size : Maybe (Message.Attribute Msg)
     , theme : Maybe (Message.Attribute Msg)
     , content : Maybe (Message.Attribute Msg)
     , role : Maybe (Message.Attribute Msg)
@@ -45,12 +45,13 @@ init =
     }
 
 
-controlSize : Control (List (Message.Attribute Msg) -> Html Msg)
+controlSize : Control (Maybe (Message.Attribute Msg))
 controlSize =
     Control.choice
-        [ ( "banner", Control.value Message.banner )
-        , ( "large", Control.value Message.large )
-        , ( "tiny", Control.value Message.tiny )
+        [ ( "not set", Control.value Nothing )
+        , ( "banner", Control.value (Just Message.banner) )
+        , ( "large", Control.value (Just Message.large) )
+        , ( "tiny", Control.value (Just Message.tiny) )
         ]
 
 
@@ -190,7 +191,8 @@ example =
                 attributes : List (Message.Attribute Msg)
                 attributes =
                     List.filterMap identity
-                        [ theme
+                        [ size
+                        , theme
                         , content
                         , role
                         , dismissable
@@ -206,7 +208,7 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.view" ]
-            , orDismiss <| size attributes
+            , orDismiss <| Message.view attributes
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]

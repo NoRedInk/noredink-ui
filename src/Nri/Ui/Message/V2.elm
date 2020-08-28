@@ -1,6 +1,7 @@
 module Nri.Ui.Message.V2 exposing
-    ( tiny, large, banner
+    ( view
     , Attribute
+    , tiny, large, banner
     , plaintext, markdown, html
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
@@ -16,12 +17,14 @@ module Nri.Ui.Message.V2 exposing
   - :skull: remove mapContent
   - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
   - expose theme Attribute helpers instead of having `Theme(..)` in the view APIs
+  - exposes a singular view function (tiny, large, and banner are now attributes)
 
-@docs tiny, large, banner
+@docs view
 
 Attributes:
 
 @docs Attribute
+@docs tiny, large, banner
 @docs plaintext, markdown, html
 @docs tip, error, alert, success, customTheme
 @docs alertRole, alertDialogRole
@@ -48,365 +51,163 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-{-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
+{-|
 
     view =
-        Message.tiny
+        Message.view
             [ Message.tip
             , Message.markdown "Don't tip too much, or your waitress will **fall over**!"
             ]
 
 -}
-tiny : List (Attribute msg) -> Html msg
-tiny attr =
+view : List (Attribute msg) -> Html msg
+view attributes_ =
     let
         attributes =
-            configFromAttributes attr
+            configFromAttributes attributes_
 
-        config =
-            case attributes.theme of
-                Error ->
-                    { icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.purple
-                            |> NriSvg.withLabel "Error"
-                    , fontColor = Colors.purple
-                    }
+        role =
+            getRoleAttribute attributes.role
 
-                Alert ->
-                    { icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.red
-                            |> NriSvg.withLabel "Alert"
-                    , fontColor = Colors.redDark
-                    }
-
-                Tip ->
-                    { icon =
-                        UiIcon.bulb
-                            |> NriSvg.withColor Colors.yellow
-                            |> NriSvg.withLabel "Tip"
-                    , fontColor = Colors.navy
-                    }
-
-                Success ->
-                    { icon =
-                        UiIcon.checkmarkInCircle
-                            |> NriSvg.withColor Colors.green
-                            |> NriSvg.withLabel "Success"
-                    , fontColor = Colors.greenDarkest
-                    }
-
-                Custom theme ->
-                    { icon = theme.icon
-                    , fontColor = theme.color
-                    }
+        html_ =
+            contentToHtml attributes.content
     in
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V2--tiny"
-        [ displayFlex
-        , justifyContent start
-        , paddingTop (px 6)
-        , paddingBottom (px 8)
-        ]
-        (getRoleAttribute attributes.role)
-        [ styled div
-            []
-            []
-            [ Nri.Ui.styled div
-                "Nri-Ui-Message-V2--tinyIconContainer"
-                [ -- Content positioning
-                  displayFlex
-                , alignItems center
-                , justifyContent center
-                , marginRight (px 5)
-                , lineHeight (px 13)
-                , flexShrink zero
+    case attributes.size of
+        Tiny ->
+            viewTiny role html_ attributes.onDismiss <|
+                case attributes.theme of
+                    Error ->
+                        { icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.purple
+                                |> NriSvg.withLabel "Error"
+                        , fontColor = Colors.purple
+                        }
 
-                -- Size
-                , borderRadius (px 13)
-                , height (px 20)
-                , width (px 20)
-                ]
-                []
-                [ NriSvg.toHtml config.icon ]
-            ]
-        , styled div
-            [ displayFlex
-            , alignItems center
-            ]
-            []
-            [ Nri.Ui.styled div
-                "Nri-Ui-Message-V2--alert"
-                [ color config.fontColor
-                , Fonts.baseFont
-                , fontSize (px 13)
+                    Alert ->
+                        { icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.red
+                                |> NriSvg.withLabel "Alert"
+                        , fontColor = Colors.redDark
+                        }
 
-                --, lineHeight (px 20)
-                , listStyleType none
+                    Tip ->
+                        { icon =
+                            UiIcon.bulb
+                                |> NriSvg.withColor Colors.yellow
+                                |> NriSvg.withLabel "Tip"
+                        , fontColor = Colors.navy
+                        }
 
-                -- This global selector and overrides are necessary due to
-                -- old stylesheets used on the monolith that set the
-                -- `.txt p { font-size: 18px; }` -- without these overrides,
-                -- we may see giant ugly alerts.
-                -- Remove these if you want to! but be emotionally prepped
-                -- to deal with visual regressions. 🙏
-                , Css.Global.descendants
-                    [ Css.Global.p
-                        [ margin zero
+                    Success ->
+                        { icon =
+                            UiIcon.checkmarkInCircle
+                                |> NriSvg.withColor Colors.green
+                                |> NriSvg.withLabel "Success"
+                        , fontColor = Colors.greenDarkest
+                        }
 
-                        --, lineHeight (px 20)
-                        , fontSize (px 13)
-                        , Fonts.baseFont
-                        ]
-                    ]
-                ]
-                []
-                (contentToHtml attributes.content)
-            ]
-        , case attributes.onDismiss of
-            Nothing ->
-                text ""
+                    Custom theme ->
+                        { icon = theme.icon
+                        , fontColor = theme.color
+                        }
 
-            Just msg ->
-                tinyDismissButton msg
-        ]
+        Large ->
+            viewLarge role html_ attributes.onDismiss <|
+                case attributes.theme of
+                    Error ->
+                        { backgroundColor = Colors.purpleLight
+                        , fontColor = Colors.purpleDark
+                        , icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.purple
+                                |> NriSvg.withLabel "Error"
+                        }
 
+                    Alert ->
+                        { backgroundColor = Colors.sunshine
+                        , fontColor = Colors.navy
+                        , icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.ochre
+                                |> NriSvg.withLabel "Alert"
+                        }
 
-{-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
+                    Tip ->
+                        { backgroundColor = Colors.sunshine
+                        , fontColor = Colors.navy
+                        , icon =
+                            UiIcon.bulb
+                                |> NriSvg.withColor Colors.navy
+                                |> NriSvg.withLabel "Tip"
+                        }
 
-    view =
-        Message.large
-            [ Message.success
-            , Message.plaintext "Two out of two parents agree: NoRedInk sounds like a fun place to work."
-            ]
+                    Success ->
+                        { backgroundColor = Colors.greenLightest
+                        , fontColor = Colors.greenDarkest
+                        , icon =
+                            UiIcon.checkmarkInCircle
+                                |> NriSvg.withColor Colors.green
+                                |> NriSvg.withLabel "Success"
+                        }
 
--}
-large : List (Attribute msg) -> Html msg
-large attr =
-    let
-        attributes =
-            configFromAttributes attr
+                    Custom theme ->
+                        { backgroundColor = theme.backgroundColor
+                        , fontColor = theme.color
+                        , icon = theme.icon
+                        }
 
-        config =
-            case attributes.theme of
-                Error ->
-                    { backgroundColor = Colors.purpleLight
-                    , fontColor = Colors.purpleDark
-                    , icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.purple
-                            |> NriSvg.withLabel "Error"
-                    }
+        Banner ->
+            viewBanner role html_ attributes.onDismiss <|
+                case attributes.theme of
+                    Error ->
+                        { backgroundColor = Colors.purpleLight
+                        , color = Colors.purpleDark
+                        , icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.purple
+                                |> NriSvg.withLabel "Error"
+                                |> NriSvg.toHtml
+                        }
 
-                Alert ->
-                    { backgroundColor = Colors.sunshine
-                    , fontColor = Colors.navy
-                    , icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.ochre
-                            |> NriSvg.withLabel "Alert"
-                    }
+                    Alert ->
+                        { backgroundColor = Colors.sunshine
+                        , color = Colors.navy
+                        , icon =
+                            UiIcon.exclamation
+                                |> NriSvg.withColor Colors.ochre
+                                |> NriSvg.withLabel "Alert"
+                                |> NriSvg.toHtml
+                        }
 
-                Tip ->
-                    { backgroundColor = Colors.sunshine
-                    , fontColor = Colors.navy
-                    , icon =
-                        UiIcon.bulb
-                            |> NriSvg.withColor Colors.navy
-                            |> NriSvg.withLabel "Tip"
-                    }
+                    Tip ->
+                        { backgroundColor = Colors.frost
+                        , color = Colors.navy
+                        , icon =
+                            inCircle
+                                { backgroundColor = Colors.navy
+                                , color = Colors.mustard
+                                , height = Css.px 32
+                                , icon = UiIcon.bulb
+                                }
+                        }
 
-                Success ->
-                    { backgroundColor = Colors.greenLightest
-                    , fontColor = Colors.greenDarkest
-                    , icon =
-                        UiIcon.checkmarkInCircle
-                            |> NriSvg.withColor Colors.green
-                            |> NriSvg.withLabel "Success"
-                    }
+                    Success ->
+                        { backgroundColor = Colors.greenLightest
+                        , color = Colors.greenDarkest
+                        , icon =
+                            UiIcon.checkmarkInCircle
+                                |> NriSvg.withColor Colors.green
+                                |> NriSvg.withLabel "Success"
+                                |> NriSvg.toHtml
+                        }
 
-                Custom theme ->
-                    { backgroundColor = theme.backgroundColor
-                    , fontColor = theme.color
-                    , icon = theme.icon
-                    }
-    in
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V2--large"
-        [ width (pct 100)
-        , backgroundColor config.backgroundColor
-        , Fonts.baseFont
-        , fontSize (px 15)
-        , lineHeight (px 21)
-        , fontWeight (int 600)
-        , boxSizing borderBox
-        , padding (px 20)
-        , borderRadius (px 8)
-        , color config.fontColor
-        , displayFlex
-        , alignItems center
-        , Css.Global.descendants
-            [ Css.Global.a
-                [ textDecoration none
-                , color Colors.azure
-                , borderBottom3 (px 1) solid Colors.azure
-                , visited [ color Colors.azure ]
-                ]
-            ]
-        ]
-        (getRoleAttribute attributes.role)
-        [ styled div
-            [ width (px 35)
-            , marginRight (px 10)
-            ]
-            []
-            [ NriSvg.toHtml config.icon
-            ]
-        , styled div
-            [ minWidth (px 100)
-            , flexBasis (px 100)
-            , flexGrow (int 1)
-            ]
-            []
-            (contentToHtml attributes.content)
-        , case attributes.onDismiss of
-            Nothing ->
-                text ""
-
-            Just msg ->
-                largeDismissButton msg
-        ]
-
-
-{-| Shows a banner alert message. This is even more prominent than `Message.large`.
-We commonly use these for flash messages at the top of pages.
-
-    view =
-        Message.banner
-            [ Message.alertTheme
-            , Message.alertRole
-            , Message.plaintext "John Jacob Jingleheimer Schmidt has been dropped from First Period English."
-            ]
-
--}
-banner : List (Attribute msg) -> Html msg
-banner attr =
-    let
-        config =
-            case attributes.theme of
-                Error ->
-                    { backgroundColor = Colors.purpleLight
-                    , color = Colors.purpleDark
-                    , icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.purple
-                            |> NriSvg.withLabel "Error"
-                            |> NriSvg.toHtml
-                    }
-
-                Alert ->
-                    { backgroundColor = Colors.sunshine
-                    , color = Colors.navy
-                    , icon =
-                        UiIcon.exclamation
-                            |> NriSvg.withColor Colors.ochre
-                            |> NriSvg.withLabel "Alert"
-                            |> NriSvg.toHtml
-                    }
-
-                Tip ->
-                    { backgroundColor = Colors.frost
-                    , color = Colors.navy
-                    , icon =
-                        inCircle
-                            { backgroundColor = Colors.navy
-                            , color = Colors.mustard
-                            , height = Css.px 32
-                            , icon = UiIcon.bulb
-                            }
-                    }
-
-                Success ->
-                    { backgroundColor = Colors.greenLightest
-                    , color = Colors.greenDarkest
-                    , icon =
-                        UiIcon.checkmarkInCircle
-                            |> NriSvg.withColor Colors.green
-                            |> NriSvg.withLabel "Success"
-                            |> NriSvg.toHtml
-                    }
-
-                Custom theme ->
-                    { backgroundColor = theme.backgroundColor
-                    , color = theme.color
-                    , icon = NriSvg.toHtml theme.icon
-                    }
-
-        attributes =
-            configFromAttributes attr
-    in
-    styled div
-        [ displayFlex
-        , justifyContent center
-        , alignItems center
-        , backgroundColor config.backgroundColor
-        , color config.color
-        ]
-        (getRoleAttribute attributes.role)
-        [ styled span
-            [ alignItems center
-            , displayFlex
-            , justifyContent center
-            , padding (px 20)
-            , width (Css.pct 100)
-            , Css.Global.children
-                [ Css.Global.button
-                    [ position relative
-                    , right (px 15)
-                    ]
-                ]
-            ]
-            []
-            [ styled div
-                [ width (px 50)
-                , height (px 50)
-                , marginRight (px 20)
-                , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
-                  -- But using shrink here and on the next div lets us have the text content be centered rather than
-                  -- left-aligned when the content is shorter than one line
-                  flexShrink zero
-                ]
-                []
-                [ config.icon ]
-            , Nri.Ui.styled div
-                "banner-alert-notification"
-                [ fontSize (px 20)
-                , fontWeight (int 700)
-                , lineHeight (px 27)
-                , maxWidth (px 600)
-                , minWidth (px 100)
-                , flexShrink (int 1)
-                , Fonts.baseFont
-                , Css.Global.descendants
-                    [ Css.Global.a
-                        [ textDecoration none
-                        , color Colors.azure
-                        , borderBottom3 (px 1) solid Colors.azure
-                        , visited [ color Colors.azure ]
-                        ]
-                    ]
-                ]
-                []
-                (contentToHtml attributes.content)
-            ]
-        , case attributes.onDismiss of
-            Nothing ->
-                text ""
-
-            Just msg ->
-                bannerDismissButton msg
-        ]
+                    Custom theme ->
+                        { backgroundColor = theme.backgroundColor
+                        , color = theme.color
+                        , icon = NriSvg.toHtml theme.icon
+                        }
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -418,8 +219,9 @@ banner attr =
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     div []
-        [ tiny
-            [ error
+        [ view
+            [ tiny
+            , error
             , plaintext "Sorry, something went wrong.  Please try again later."
             ]
         , details []
@@ -448,6 +250,37 @@ somethingWentWrong errorMessageForEngineers =
                 [ text errorMessageForEngineers ]
             ]
         ]
+
+
+{-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
+
+    Message.view [ Message.tiny ]
+
+-}
+tiny : Attribute msg
+tiny =
+    Attribute <| \config -> { config | size = Tiny }
+
+
+{-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
+
+    Message.view [ Message.large ]
+
+-}
+large : Attribute msg
+large =
+    Attribute <| \config -> { config | size = Large }
+
+
+{-| Shows a banner alert message. This is even more prominent than `Message.large`.
+We commonly use these for flash messages at the top of pages.
+
+    Message.view [ Message.banner ]
+
+-}
+banner : Attribute msg
+banner =
+    Attribute <| \config -> { config | size = Banner }
 
 
 {-| -}
@@ -537,6 +370,7 @@ type alias BannerConfig msg =
     , role : Maybe Role
     , content : Content msg
     , theme : Theme
+    , size : Size
     }
 
 
@@ -549,8 +383,19 @@ configFromAttributes attr =
         , role = Nothing
         , content = Plain ""
         , theme = Tip
+        , size = Tiny
         }
         attr
+
+
+
+-- Size
+
+
+type Size
+    = Tiny
+    | Large
+    | Banner
 
 
 
@@ -648,6 +493,194 @@ inCircle config =
             |> NriSvg.withColor config.color
             |> NriSvg.withHeight config.height
             |> NriSvg.toHtml
+        ]
+
+
+
+-- Views
+
+
+viewTiny attributes content onDismiss_ config =
+    Nri.Ui.styled div
+        "Nri-Ui-Message-V2--tiny"
+        [ displayFlex
+        , justifyContent start
+        , paddingTop (px 6)
+        , paddingBottom (px 8)
+        ]
+        attributes
+        [ styled div
+            []
+            []
+            [ Nri.Ui.styled div
+                "Nri-Ui-Message-V2--tinyIconContainer"
+                [ -- Content positioning
+                  displayFlex
+                , alignItems center
+                , justifyContent center
+                , marginRight (px 5)
+                , lineHeight (px 13)
+                , flexShrink zero
+
+                -- Size
+                , borderRadius (px 13)
+                , height (px 20)
+                , width (px 20)
+                ]
+                []
+                [ NriSvg.toHtml config.icon ]
+            ]
+        , styled div
+            [ displayFlex
+            , alignItems center
+            ]
+            []
+            [ Nri.Ui.styled div
+                "Nri-Ui-Message-V2--alert"
+                [ color config.fontColor
+                , Fonts.baseFont
+                , fontSize (px 13)
+
+                --, lineHeight (px 20)
+                , listStyleType none
+
+                -- This global selector and overrides are necessary due to
+                -- old stylesheets used on the monolith that set the
+                -- `.txt p { font-size: 18px; }` -- without these overrides,
+                -- we may see giant ugly alerts.
+                -- Remove these if you want to! but be emotionally prepped
+                -- to deal with visual regressions. 🙏
+                , Css.Global.descendants
+                    [ Css.Global.p
+                        [ margin zero
+
+                        --, lineHeight (px 20)
+                        , fontSize (px 13)
+                        , Fonts.baseFont
+                        ]
+                    ]
+                ]
+                []
+                content
+            ]
+        , case onDismiss_ of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                tinyDismissButton msg
+        ]
+
+
+viewLarge attributes content onDismiss_ config =
+    Nri.Ui.styled div
+        "Nri-Ui-Message-V2--large"
+        [ width (pct 100)
+        , backgroundColor config.backgroundColor
+        , Fonts.baseFont
+        , fontSize (px 15)
+        , lineHeight (px 21)
+        , fontWeight (int 600)
+        , boxSizing borderBox
+        , padding (px 20)
+        , borderRadius (px 8)
+        , color config.fontColor
+        , displayFlex
+        , alignItems center
+        , Css.Global.descendants
+            [ Css.Global.a
+                [ textDecoration none
+                , color Colors.azure
+                , borderBottom3 (px 1) solid Colors.azure
+                , visited [ color Colors.azure ]
+                ]
+            ]
+        ]
+        attributes
+        [ styled div
+            [ width (px 35)
+            , marginRight (px 10)
+            ]
+            []
+            [ NriSvg.toHtml config.icon
+            ]
+        , styled div
+            [ minWidth (px 100)
+            , flexBasis (px 100)
+            , flexGrow (int 1)
+            ]
+            []
+            content
+        , case onDismiss_ of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                largeDismissButton msg
+        ]
+
+
+viewBanner attributes content onDismiss_ config =
+    styled div
+        [ displayFlex
+        , justifyContent center
+        , alignItems center
+        , backgroundColor config.backgroundColor
+        , color config.color
+        ]
+        attributes
+        [ styled span
+            [ alignItems center
+            , displayFlex
+            , justifyContent center
+            , padding (px 20)
+            , width (Css.pct 100)
+            , Css.Global.children
+                [ Css.Global.button
+                    [ position relative
+                    , right (px 15)
+                    ]
+                ]
+            ]
+            []
+            [ styled div
+                [ width (px 50)
+                , height (px 50)
+                , marginRight (px 20)
+                , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
+                  -- But using shrink here and on the next div lets us have the text content be centered rather than
+                  -- left-aligned when the content is shorter than one line
+                  flexShrink zero
+                ]
+                []
+                [ config.icon ]
+            , Nri.Ui.styled div
+                "banner-alert-notification"
+                [ fontSize (px 20)
+                , fontWeight (int 700)
+                , lineHeight (px 27)
+                , maxWidth (px 600)
+                , minWidth (px 100)
+                , flexShrink (int 1)
+                , Fonts.baseFont
+                , Css.Global.descendants
+                    [ Css.Global.a
+                        [ textDecoration none
+                        , color Colors.azure
+                        , borderBottom3 (px 1) solid Colors.azure
+                        , visited [ color Colors.azure ]
+                        ]
+                    ]
+                ]
+                []
+                content
+            ]
+        , case onDismiss_ of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                bannerDismissButton msg
         ]
 
 
