@@ -35,6 +35,7 @@ import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Markdown
 import Nri.Ui
+import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
@@ -215,6 +216,12 @@ tiny theme content attr =
                 []
                 (contentToHtml content)
             ]
+        , case attributes.onDismiss of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                tinyDismissButton msg
         ]
 
 
@@ -314,6 +321,12 @@ large theme content attr =
             ]
             []
             (contentToHtml content)
+        , case attributes.onDismiss of
+            Nothing ->
+                text ""
+
+            Just msg ->
+                largeDismissButton msg
         ]
 
 
@@ -581,25 +594,48 @@ inCircle config =
         ]
 
 
+tinyDismissButton : msg -> Html msg
+tinyDismissButton msg =
+    Nri.Ui.styled div
+        "dismiss-button-container"
+        []
+        []
+        [ ClickableSvg.button "Dismiss message"
+            UiIcon.x
+            [ ClickableSvg.onClick msg
+            , ClickableSvg.width (px 16)
+            , ClickableSvg.height (px 16)
+            ]
+        ]
+
+
+largeDismissButton : msg -> Html msg
+largeDismissButton msg =
+    Nri.Ui.styled div
+        "dismiss-button-container"
+        [ padding2 (px 20) (px 30)
+        ]
+        []
+        [ ClickableSvg.button "Dismiss message"
+            UiIcon.x
+            [ ClickableSvg.onClick msg
+            , ClickableSvg.width (px 16)
+            , ClickableSvg.height (px 16)
+            ]
+        ]
+
+
 bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding (px 25)
+        [ padding2 (px 30) (px 40)
         ]
         []
-        [ styled button
-            [ borderWidth zero
-            , backgroundColor unset
-            , color Colors.azure
-            , width (px 30)
-            , height (px 30)
-            , padding2 zero (px 7)
-            , cursor pointer
-            ]
-            [ onClick msg
-            , Widget.label "Dismiss banner"
-            ]
-            [ NriSvg.toHtml UiIcon.x
+        [ ClickableSvg.button "Dismiss banner"
+            UiIcon.x
+            [ ClickableSvg.onClick msg
+            , ClickableSvg.width (px 16)
+            , ClickableSvg.height (px 16)
             ]
         ]
