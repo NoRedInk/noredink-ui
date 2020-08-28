@@ -87,6 +87,7 @@ view attributes_ =
                 "Nri-Ui-Message-V2--tiny"
                 [ displayFlex
                 , justifyContent start
+                , alignItems center
                 , paddingTop (px 6)
                 , paddingBottom (px 8)
 
@@ -103,13 +104,7 @@ view attributes_ =
                 ]
                 role
                 [ icon
-                , styled div
-                    [ displayFlex
-                    , alignItems center
-                    ]
-                    []
-                    [ html_
-                    ]
+                , div [] html_
                 , case attributes.onDismiss of
                     Nothing ->
                         text ""
@@ -481,9 +476,6 @@ getColor size theme =
 getBackgroundColor : Size -> Theme -> Style
 getBackgroundColor size theme =
     case ( size, theme ) of
-        ( _, Custom { backgroundColor } ) ->
-            Css.backgroundColor backgroundColor
-
         ( Tiny, _ ) ->
             Css.batch []
 
@@ -501,6 +493,9 @@ getBackgroundColor size theme =
 
         ( _, Success ) ->
             Css.backgroundColor Colors.greenLightest
+
+        ( _, Custom { backgroundColor } ) ->
+            Css.backgroundColor backgroundColor
 
 
 getIcon : Size -> Theme -> Html msg
@@ -594,7 +589,11 @@ getIcon size theme =
                 |> NriSvg.toHtml
 
         Custom { icon } ->
-            NriSvg.toHtml icon
+            icon
+                |> NriSvg.withWidth iconSize
+                |> NriSvg.withHeight iconSize
+                |> NriSvg.withCss [ marginRight ]
+                |> NriSvg.toHtml
 
 
 
