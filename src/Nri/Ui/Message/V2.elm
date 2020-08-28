@@ -1,6 +1,7 @@
 module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
-    , Theme(..), Content(..), mapContent, BannerAttribute
+    , Theme(..), Content(..), mapContent
+    , Attribute
     , alert, alertDialog
     , onDismiss
     , somethingWentWrong
@@ -8,10 +9,15 @@ module Nri.Ui.Message.V2 exposing
 
 {-| Changes from V1:
 
-  - adds alert, alertdialog, and live region support
+  - adds `alert`, `alertDialog` role attributes
+  - rename BannerAttribute -> Attribute
 
 @docs tiny, large, banner
-@docs Theme, Content, mapContent, BannerAttribute
+@docs Theme, Content, mapContent
+
+Attributes:
+
+@docs Attribute
 @docs alert, alertDialog
 @docs onDismiss
 
@@ -305,61 +311,6 @@ large theme content =
         ]
 
 
-{-| PRIVATE
--}
-type BannerAttribute msg
-    = BannerAttribute (BannerConfig msg -> BannerConfig msg)
-
-
-{-| Adds a dismiss ("X" icon) to a banner which will produce the given `msg` when clicked.
--}
-onDismiss : msg -> BannerAttribute msg
-onDismiss msg =
-    BannerAttribute <|
-        \config ->
-            { config | onDismiss = Just msg }
-
-
-{-| -}
-alert : BannerAttribute msg
-alert =
-    BannerAttribute <|
-        \config ->
-            { config | role = Just AlertRole }
-
-
-{-| -}
-alertDialog : BannerAttribute msg
-alertDialog =
-    BannerAttribute <|
-        \config ->
-            { config | role = Just AlertDialog }
-
-
-{-| PRIVATE
--}
-type alias BannerConfig msg =
-    { onDismiss : Maybe msg
-    , role : Maybe Role
-    }
-
-
-type Role
-    = AlertRole
-    | AlertDialog
-
-
-{-| PRIVATE
--}
-bannerConfigFromAttributes : List (BannerAttribute msg) -> BannerConfig msg
-bannerConfigFromAttributes attr =
-    List.foldl (\(BannerAttribute set) -> set)
-        { onDismiss = Nothing
-        , role = Nothing
-        }
-        attr
-
-
 {-| Shows a banner alert message. This is even more prominent than `Message.large`.
 We commonly use these for flash messages at the top of pages.
 
@@ -371,7 +322,7 @@ We commonly use these for flash messages at the top of pages.
             [ Message.alert ]
 
 -}
-banner : Theme -> Content msg -> List (BannerAttribute msg) -> Html msg
+banner : Theme -> Content msg -> List (Attribute msg) -> Html msg
 banner theme content attr =
     let
         config =
@@ -425,7 +376,7 @@ banner theme content attr =
                     }
 
         attributes =
-            bannerConfigFromAttributes attr
+            configFromAttributes attr
     in
     styled div
         [ displayFlex
@@ -539,10 +490,65 @@ somethingWentWrong errorMessageForEngineers =
         ]
 
 
+{-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
+-}
+onDismiss : msg -> Attribute msg
+onDismiss msg =
+    Attribute <|
+        \config ->
+            { config | onDismiss = Just msg }
+
+
+{-| -}
+alert : Attribute msg
+alert =
+    Attribute <|
+        \config ->
+            { config | role = Just AlertRole }
+
+
+{-| -}
+alertDialog : Attribute msg
+alertDialog =
+    Attribute <|
+        \config ->
+            { config | role = Just AlertDialog }
+
+
 
 --
 -- PRIVATE
 --
+
+
+{-| Construct an `Attribute` using a helper like `onDismiss` or `alert`.
+-}
+type Attribute msg
+    = Attribute (BannerConfig msg -> BannerConfig msg)
+
+
+{-| PRIVATE
+-}
+type alias BannerConfig msg =
+    { onDismiss : Maybe msg
+    , role : Maybe Role
+    }
+
+
+type Role
+    = AlertRole
+    | AlertDialog
+
+
+{-| PRIVATE
+-}
+configFromAttributes : List (Attribute msg) -> BannerConfig msg
+configFromAttributes attr =
+    List.foldl (\(Attribute set) -> set)
+        { onDismiss = Nothing
+        , role = Nothing
+        }
+        attr
 
 
 inCircle :

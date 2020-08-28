@@ -26,7 +26,7 @@ type alias State =
 type alias ExampleConfig =
     { themes : List Message.Theme
     , content : Message.Content Never
-    , role : Maybe (Message.BannerAttribute Msg)
+    , role : Maybe (Message.Attribute Msg)
     }
 
 
