@@ -7,7 +7,7 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled exposing (styled)
-import Html.Styled.Attributes as Attributes exposing (href)
+import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -24,8 +24,7 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { size : Maybe (Message.Attribute Msg)
-    , theme : Maybe (Message.Attribute Msg)
+    { theme : Maybe (Message.Attribute Msg)
     , content : Message.Attribute Msg
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
@@ -37,22 +36,11 @@ init =
     { show = True
     , control =
         Control.record ExampleConfig
-            |> Control.field "size" controlSize
             |> Control.field "theme" controlTheme
             |> Control.field "content" controlContent
             |> Control.field "role" controlRole
             |> Control.field "dismissable" controlDismissable
     }
-
-
-controlSize : Control (Maybe (Message.Attribute Msg))
-controlSize =
-    Control.choice
-        [ ( "not set", Control.value Nothing )
-        , ( "banner", Control.value (Just Message.banner) )
-        , ( "large", Control.value (Just Message.large) )
-        , ( "tiny", Control.value (Just Message.tiny) )
-        ]
 
 
 controlTheme : Control (Maybe (Message.Attribute msg))
@@ -177,14 +165,13 @@ example =
     , view =
         \state ->
             let
-                { size, role, theme, dismissable, content } =
+                { role, theme, dismissable, content } =
                     Control.currentValue state.control
 
                 attributes : List (Message.Attribute Msg)
                 attributes =
                     List.filterMap identity
-                        [ size
-                        , theme
+                        [ theme
                         , Just content
                         , role
                         , dismissable
@@ -195,12 +182,28 @@ example =
                         view
 
                     else
-                        text "Nice! The message was dismissed. 👍"
+                        text "Nice! The messages were dismissed. 👍"
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.view" ]
-            , orDismiss <| Message.view attributes
+            , orDismiss <|
+                Html.table [ css [ width (pct 100) ] ]
+                    [ Html.tbody []
+                        [ tr []
+                            [ th [] [ Html.text "tiny" ]
+                            , td [] [ Message.view (Message.tiny :: attributes) ]
+                            ]
+                        , tr []
+                            [ th [] [ Html.text "large" ]
+                            , td [] [ Message.view (Message.large :: attributes) ]
+                            ]
+                        , tr []
+                            [ th [] [ Html.text "banner" ]
+                            , td [] [ Message.view (Message.banner :: attributes) ]
+                            ]
+                        ]
+                    ]
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
