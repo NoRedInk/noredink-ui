@@ -100,16 +100,16 @@ contentToHtml content =
 
 {-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
 
-    import Nri.Ui.Message.V1 as Message
-
     view =
-        Message.tiny Message.Tip (Message.Markdown "Don't tip too much, or your waitress will **fall over**!")
+        Message.tiny Message.Tip
+            (Message.Markdown "Don't tip too much, or your waitress will **fall over**!")
+            []
 
 NOTE: When using a `Custom` theme, `tiny` ignores the custom `backgroundColor`.
 
 -}
-tiny : Theme -> Content msg -> Html msg
-tiny theme content =
+tiny : Theme -> Content msg -> List (Attribute msg) -> Html msg
+tiny theme content attr =
     let
         config =
             case theme of
@@ -149,6 +149,9 @@ tiny theme content =
                     { icon = customTheme.icon
                     , fontColor = customTheme.color
                     }
+
+        attributes =
+            configFromAttributes attr
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V1--tiny"
@@ -157,7 +160,7 @@ tiny theme content =
         , paddingTop (px 6)
         , paddingBottom (px 8)
         ]
-        []
+        (getRoleAttribute attributes.role)
         [ styled div
             []
             []
@@ -217,14 +220,14 @@ tiny theme content =
 
 {-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
 
-    import Nri.Ui.Message.V1 as Message
-
     view =
-        Message.large Message.Tip (Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work.")
+        Message.large Message.Tip
+            (Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work.")
+            []
 
 -}
-large : Theme -> Content msg -> Html msg
-large theme content =
+large : Theme -> Content msg -> List (Attribute msg) -> Html msg
+large theme content attr =
     let
         config =
             case theme of
@@ -269,6 +272,9 @@ large theme content =
                     , fontColor = customTheme.color
                     , icon = customTheme.icon
                     }
+
+        attributes =
+            configFromAttributes attr
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V1--large"
@@ -293,7 +299,7 @@ large theme content =
                 ]
             ]
         ]
-        []
+        (getRoleAttribute attributes.role)
         [ styled div
             [ width (px 35)
             , marginRight (px 10)
@@ -313,8 +319,6 @@ large theme content =
 
 {-| Shows a banner alert message. This is even more prominent than `Message.large`.
 We commonly use these for flash messages at the top of pages.
-
-    import Nri.Ui.Message.V1 as Message
 
     view =
         Message.banner Message.Success
@@ -385,16 +389,7 @@ banner theme content attr =
         , backgroundColor config.backgroundColor
         , color config.color
         ]
-        (case attributes.role of
-            Just AlertRole ->
-                [ Role.alert ]
-
-            Just AlertDialog ->
-                [ Role.alertDialog ]
-
-            Nothing ->
-                []
-        )
+        (getRoleAttribute attributes.role)
         [ styled span
             [ alignItems center
             , displayFlex
@@ -452,8 +447,6 @@ banner theme content attr =
 
 {-| Shows an appropriate error message for when something unhandled happened.
 
-    import Nri.Ui.Message.V1 as Message
-
     view maybeDetailedErrorMessage =
         viewMaybe Message.somethingWentWrong maybeDetailedErrorMessage
 
@@ -461,7 +454,7 @@ banner theme content attr =
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     div []
-        [ tiny Error (Plain "Sorry, something went wrong.  Please try again later.")
+        [ tiny Error (Plain "Sorry, something went wrong.  Please try again later.") []
         , details []
             [ summary
                 [ css
@@ -538,6 +531,19 @@ type alias BannerConfig msg =
 type Role
     = AlertRole
     | AlertDialog
+
+
+getRoleAttribute : Maybe Role -> List (Html.Attribute msg)
+getRoleAttribute role =
+    case role of
+        Just AlertRole ->
+            [ Role.alert ]
+
+        Just AlertDialog ->
+            [ Role.alertDialog ]
+
+        Nothing ->
+            []
 
 
 {-| PRIVATE

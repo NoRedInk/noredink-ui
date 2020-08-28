@@ -150,11 +150,11 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.tiny" ]
-            , List.map (\theme -> Message.tiny theme content) exampleConfig.themes
+            , List.map (\theme -> Message.tiny theme content []) exampleConfig.themes
                 |> div []
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.large" ]
-            , List.map (\theme -> Message.large theme content) exampleConfig.themes
+            , List.map (\theme -> Message.large theme content []) exampleConfig.themes
                 |> List.intersperse (br [])
                 |> div []
             , Html.hr [] []
