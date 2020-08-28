@@ -11,6 +11,7 @@ module Nri.Ui.Message.V2 exposing
 
   - adds `alert`, `alertDialog` role attributes
   - rename BannerAttribute -> Attribute
+  - accept Attributes on any Message type
 
 @docs tiny, large, banner
 @docs Theme, Content, mapContent

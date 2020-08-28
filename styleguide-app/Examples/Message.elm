@@ -27,6 +27,7 @@ type alias ExampleConfig =
     { theme : Message.Theme
     , content : Message.Content Never
     , role : Maybe (Message.Attribute Msg)
+    , dismissable : Maybe (Message.Attribute Msg)
     }
 
 
@@ -38,6 +39,7 @@ init =
             |> Control.field "theme" controlTheme
             |> Control.field "content" controlContent
             |> Control.field "role" controlRole
+            |> Control.field "dismissable" controlDismissable
     }
 
 
@@ -114,6 +116,12 @@ controlRole =
         ]
 
 
+controlDismissable : Control (Maybe (Message.Attribute Msg))
+controlDismissable =
+    Control.maybe False <|
+        Control.value (Message.onDismiss Dismiss)
+
+
 type Msg
     = NoOp
     | Dismiss
@@ -145,34 +153,32 @@ example =
     , view =
         \state ->
             let
-                exampleConfig =
+                { role, theme, dismissable, content } =
                     Control.currentValue state.control
 
-                content =
-                    Message.mapContent never exampleConfig.content
+                content_ =
+                    Message.mapContent never content
+
+                attributes =
+                    List.filterMap identity [ role, dismissable ]
+
+                orDismiss view =
+                    if state.show then
+                        view
+
+                    else
+                        text "Nice! The message was dismissed. 👍"
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.tiny" ]
-            , Message.tiny exampleConfig.theme content []
+            , orDismiss <| Message.tiny theme content_ attributes
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.large" ]
-            , Message.large exampleConfig.theme content []
+            , orDismiss <| Message.large theme content_ attributes
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.banner" ]
-            , Message.banner exampleConfig.theme
-                content
-                (Maybe.map List.singleton exampleConfig.role
-                    |> Maybe.withDefault []
-                )
-            , Heading.h3 [] [ text "Message.banner ... [ onDismiss msg ]" ]
-            , if state.show then
-                Message.banner exampleConfig.theme
-                    content
-                    [ Message.onDismiss Dismiss ]
-
-              else
-                text "Nice! The banner was dismissed. 👍"
+            , orDismiss <| Message.banner theme content_ attributes
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
