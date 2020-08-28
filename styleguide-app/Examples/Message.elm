@@ -26,7 +26,7 @@ type alias State =
 type alias ExampleConfig =
     { size : Message.Theme -> Message.Content Msg -> List (Message.Attribute Msg) -> Html Msg
     , theme : Message.Theme
-    , content : Message.Content Never
+    , content : Message.Content Msg
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
     }
@@ -134,17 +134,13 @@ controlDismissable =
 
 
 type Msg
-    = NoOp
-    | Dismiss
+    = Dismiss
     | UpdateControl (Control ExampleConfig)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        NoOp ->
-            ( state, Cmd.none )
-
         Dismiss ->
             ( { state | show = False }, Cmd.none )
 
@@ -167,9 +163,6 @@ example =
                 { size, role, theme, dismissable, content } =
                     Control.currentValue state.control
 
-                content_ =
-                    Message.mapContent never content
-
                 attributes =
                     List.filterMap identity [ role, dismissable ]
 
@@ -183,7 +176,7 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.view" ]
-            , orDismiss <| size theme content_ attributes
+            , orDismiss <| size theme content attributes
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]

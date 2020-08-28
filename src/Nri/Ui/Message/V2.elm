@@ -1,6 +1,6 @@
 module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
-    , Theme(..), Content(..), mapContent
+    , Theme(..), Content(..)
     , Attribute
     , alert, alertDialog
     , onDismiss
@@ -12,9 +12,10 @@ module Nri.Ui.Message.V2 exposing
   - adds `alert`, `alertDialog` role attributes
   - rename BannerAttribute -> Attribute
   - accept Attributes on any Message type
+  - :skull: remove mapContent
 
 @docs tiny, large, banner
-@docs Theme, Content, mapContent
+@docs Theme, Content
 
 Attributes:
 
@@ -68,21 +69,6 @@ type Content msg
     = Plain String
     | Markdown String
     | Html (List (Html msg))
-
-
-{-| Transform the messages produced by some `Content`.
--}
-mapContent : (a -> b) -> Content a -> Content b
-mapContent f content =
-    case content of
-        Plain string ->
-            Plain string
-
-        Markdown string ->
-            Markdown string
-
-        Html html ->
-            Html (List.map (Html.map f) html)
 
 
 {-| PRIVATE
