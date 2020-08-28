@@ -39,7 +39,6 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
-import Html.Styled exposing (styled)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Markdown
@@ -81,129 +80,114 @@ view attributes_ =
         icon =
             getIcon attributes.size attributes.theme
     in
-    case attributes.size of
-        Tiny ->
-            Nri.Ui.styled div
-                "Nri-Ui-Message-V2--tiny"
-                [ displayFlex
-                , justifyContent start
-                , alignItems center
-                , paddingTop (px 6)
-                , paddingBottom (px 8)
-
-                -- Color
-                , backgroundColor_
-                , color color_
-
-                -- Fonts
-                , Fonts.baseFont
-                , fontSize (px 13)
-
-                -- Resets
-                , styleOverrides
-                ]
-                role
-                [ icon
-                , div [] html_
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
-
-                    Just msg ->
-                        tinyDismissButton msg
-                ]
-
-        Large ->
-            Nri.Ui.styled div
-                "Nri-Ui-Message-V2--large"
-                [ displayFlex
-                , alignItems center
-
-                -- Box
-                , boxSizing borderBox
-                , borderRadius (px 8)
-                , padding (px 20)
-                , width (pct 100)
-
-                -- Colors
-                , backgroundColor_
-                , color color_
-
-                -- Fonts
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , fontWeight (int 600)
-                , lineHeight (px 21)
-
-                -- Resets
-                , styleOverrides
-                ]
-                role
-                [ icon
-                , styled div
-                    [ minWidth (px 100)
-                    , flexBasis (px 100)
-                    , flexGrow (int 1)
-                    ]
-                    []
-                    html_
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
-
-                    Just msg ->
-                        largeDismissButton msg
-                ]
-
-        Banner ->
-            styled div
-                [ displayFlex
-                , justifyContent center
-                , alignItems center
-
-                -- Colors
-                , backgroundColor_
-                , color color_
-
-                -- Fonts
-                , Fonts.baseFont
-                , fontSize (px 20)
-                , fontWeight (int 700)
-                , lineHeight (px 27)
-
-                -- Resets
-                , styleOverrides
-                ]
-                role
-                [ styled span
-                    [ alignItems center
-                    , displayFlex
-                    , justifyContent center
-                    , padding (px 20)
-                    , width (Css.pct 100)
+    Nri.Ui.styled div
+        "Nri-Ui-Message-V2"
+        [ Fonts.baseFont
+        , backgroundColor_
+        , color color_
+        , boxSizing borderBox
+        , styleOverrides
+        ]
+        role
+        [ case attributes.size of
+            Tiny ->
+                Nri.Ui.styled div
+                    "Nri-Ui-Message--tiny"
+                    [ displayFlex
+                    , justifyContent start
+                    , alignItems center
+                    , paddingTop (px 6)
+                    , paddingBottom (px 8)
+                    , fontSize (px 13)
                     ]
                     []
                     [ icon
-                    , Nri.Ui.styled div
-                        "banner-alert-notification"
-                        [ fontSize (px 20)
-                        , fontWeight (int 700)
-                        , lineHeight (px 27)
-                        , maxWidth (px 600)
-                        , minWidth (px 100)
-                        , flexShrink (int 1)
-                        , Fonts.baseFont
-                        ]
-                        []
-                        html_
-                    ]
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
+                    , div [] html_
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
 
-                    Just msg ->
-                        bannerDismissButton msg
-                ]
+                        Just msg ->
+                            tinyDismissButton msg
+                    ]
+
+            Large ->
+                Nri.Ui.styled div
+                    "Nri-Ui-Message-large"
+                    [ displayFlex
+                    , alignItems center
+
+                    -- Box
+                    , borderRadius (px 8)
+                    , padding (px 20)
+
+                    -- Fonts
+                    , fontSize (px 15)
+                    , fontWeight (int 600)
+                    , lineHeight (px 21)
+                    ]
+                    []
+                    [ icon
+                    , div
+                        [ css
+                            [ minWidth (px 100)
+                            , flexBasis (px 100)
+                            , flexGrow (int 1)
+                            ]
+                        ]
+                        html_
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
+
+                        Just msg ->
+                            largeDismissButton msg
+                    ]
+
+            Banner ->
+                Nri.Ui.styled div
+                    "Nri-Ui-Message-banner"
+                    [ displayFlex
+                    , justifyContent center
+                    , alignItems center
+
+                    -- Fonts
+                    , fontSize (px 20)
+                    , fontWeight (int 700)
+                    , lineHeight (px 27)
+                    ]
+                    []
+                    [ span
+                        [ css
+                            [ alignItems center
+                            , displayFlex
+                            , justifyContent center
+                            , padding (px 20)
+                            , width (Css.pct 100)
+                            ]
+                        ]
+                        [ icon
+                        , Nri.Ui.styled div
+                            "banner-alert-notification"
+                            [ fontSize (px 20)
+                            , fontWeight (int 700)
+                            , lineHeight (px 27)
+                            , maxWidth (px 600)
+                            , minWidth (px 100)
+                            , flexShrink (int 1)
+                            , Fonts.baseFont
+                            ]
+                            []
+                            html_
+                        ]
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
+
+                        Just msg ->
+                            bannerDismissButton msg
+                    ]
+        ]
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -561,17 +545,18 @@ getIcon size theme =
                         |> NriSvg.toHtml
 
                 Banner ->
-                    styled div
-                        [ borderRadius (pct 50)
-                        , height (px 50)
-                        , width (px 50)
-                        , Css.marginRight (Css.px 20)
-                        , backgroundColor Colors.navy
-                        , displayFlex
-                        , alignItems center
-                        , justifyContent center
+                    div
+                        [ css
+                            [ borderRadius (pct 50)
+                            , height (px 50)
+                            , width (px 50)
+                            , Css.marginRight (Css.px 20)
+                            , backgroundColor Colors.navy
+                            , displayFlex
+                            , alignItems center
+                            , justifyContent center
+                            ]
                         ]
-                        []
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
                             |> NriSvg.withWidth (Css.px 32)
