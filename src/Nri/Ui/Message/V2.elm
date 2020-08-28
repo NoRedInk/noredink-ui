@@ -1,6 +1,7 @@
 module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
     , Theme(..), Content(..), mapContent, BannerAttribute
+    , alert, alertDialog
     , onDismiss
     , somethingWentWrong
     )
@@ -11,6 +12,7 @@ module Nri.Ui.Message.V2 exposing
 
 @docs tiny, large, banner
 @docs Theme, Content, mapContent, BannerAttribute
+@docs alert, alertDialog
 @docs onDismiss
 
 @docs somethingWentWrong
@@ -18,6 +20,7 @@ module Nri.Ui.Message.V2 exposing
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
@@ -317,11 +320,33 @@ onDismiss msg =
             { config | onDismiss = Just msg }
 
 
+{-| -}
+alert : BannerAttribute msg
+alert =
+    BannerAttribute <|
+        \config ->
+            { config | role = Just AlertRole }
+
+
+{-| -}
+alertDialog : BannerAttribute msg
+alertDialog =
+    BannerAttribute <|
+        \config ->
+            { config | role = Just AlertDialog }
+
+
 {-| PRIVATE
 -}
 type alias BannerConfig msg =
     { onDismiss : Maybe msg
+    , role : Maybe Role
     }
+
+
+type Role
+    = AlertRole
+    | AlertDialog
 
 
 {-| PRIVATE
@@ -329,7 +354,9 @@ type alias BannerConfig msg =
 bannerConfigFromAttributes : List (BannerAttribute msg) -> BannerConfig msg
 bannerConfigFromAttributes attr =
     List.foldl (\(BannerAttribute set) -> set)
-        { onDismiss = Nothing }
+        { onDismiss = Nothing
+        , role = Nothing
+        }
         attr
 
 
@@ -339,7 +366,9 @@ We commonly use these for flash messages at the top of pages.
     import Nri.Ui.Message.V1 as Message
 
     view =
-        Message.banner Message.Success (Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English.")
+        Message.banner Message.Success
+            (Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English.")
+            [ Message.alert ]
 
 -}
 banner : Theme -> Content msg -> List (BannerAttribute msg) -> Html msg
@@ -405,7 +434,16 @@ banner theme content attr =
         , backgroundColor config.backgroundColor
         , color config.color
         ]
-        []
+        (case attributes.role of
+            Just AlertRole ->
+                [ Role.alert ]
+
+            Just AlertDialog ->
+                [ Role.alertDialog ]
+
+            Nothing ->
+                []
+        )
         [ styled span
             [ alignItems center
             , displayFlex

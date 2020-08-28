@@ -26,6 +26,7 @@ type alias State =
 type alias ExampleConfig =
     { themes : List Message.Theme
     , content : Message.Content Never
+    , role : Maybe (Message.BannerAttribute Msg)
     }
 
 
@@ -99,6 +100,13 @@ init =
                       )
                     ]
                 )
+            |> Control.field "role"
+                (Control.choice
+                    [ ( "Not set", Control.value Nothing )
+                    , ( "Alert", Control.value (Just Message.alert) )
+                    , ( "Alert Dialog", Control.value (Just Message.alertDialog) )
+                    ]
+                )
     }
 
 
@@ -151,7 +159,15 @@ example =
                 |> div []
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.banner" ]
-            , List.map (\theme -> Message.banner theme content []) exampleConfig.themes
+            , List.map
+                (\theme ->
+                    Message.banner theme
+                        content
+                        (Maybe.map List.singleton exampleConfig.role
+                            |> Maybe.withDefault []
+                        )
+                )
+                exampleConfig.themes
                 |> List.intersperse (br [])
                 |> div []
             , Heading.h3 [] [ text "Message.banner ... [ onDismiss msg ]" ]
