@@ -72,6 +72,9 @@ view attributes_ =
         html_ =
             contentToHtml attributes.content
 
+        backgroundColor_ =
+            getBackgroundColor attributes.size attributes.theme
+
         color_ =
             getColor attributes.size attributes.theme
 
@@ -86,46 +89,126 @@ view attributes_ =
                 , justifyContent start
                 , paddingTop (px 6)
                 , paddingBottom (px 8)
+
+                -- Color
+                , backgroundColor_
                 , color color_
+
+                -- Fonts
+                , Fonts.baseFont
+                , fontSize (px 13)
+
+                -- Resets
                 , styleOverrides
                 ]
                 role
-            <|
-                viewTiny html_ attributes.onDismiss icon
+                [ icon
+                , styled div
+                    [ displayFlex
+                    , alignItems center
+                    ]
+                    []
+                    [ html_
+                    ]
+                , case attributes.onDismiss of
+                    Nothing ->
+                        text ""
+
+                    Just msg ->
+                        tinyDismissButton msg
+                ]
 
         Large ->
             Nri.Ui.styled div
                 "Nri-Ui-Message-V2--large"
-                [ width (pct 100)
-                , getBackgroundColor attributes.size attributes.theme
+                [ displayFlex
+                , alignItems center
+
+                -- Box
+                , boxSizing borderBox
+                , borderRadius (px 8)
+                , padding (px 20)
+                , width (pct 100)
+
+                -- Colors
+                , backgroundColor_
+                , color color_
+
+                -- Fonts
                 , Fonts.baseFont
                 , fontSize (px 15)
-                , lineHeight (px 21)
                 , fontWeight (int 600)
-                , boxSizing borderBox
-                , padding (px 20)
-                , borderRadius (px 8)
-                , color color_
-                , displayFlex
-                , alignItems center
+                , lineHeight (px 21)
+
+                -- Resets
                 , styleOverrides
                 ]
                 role
-            <|
-                viewLarge html_ attributes.onDismiss icon
+                [ icon
+                , styled div
+                    [ minWidth (px 100)
+                    , flexBasis (px 100)
+                    , flexGrow (int 1)
+                    ]
+                    []
+                    html_
+                , case attributes.onDismiss of
+                    Nothing ->
+                        text ""
+
+                    Just msg ->
+                        largeDismissButton msg
+                ]
 
         Banner ->
             styled div
                 [ displayFlex
                 , justifyContent center
                 , alignItems center
-                , getBackgroundColor attributes.size attributes.theme
+
+                -- Colors
+                , backgroundColor_
                 , color color_
+
+                -- Fonts
+                , Fonts.baseFont
+                , fontSize (px 20)
+                , fontWeight (int 700)
+                , lineHeight (px 27)
+
+                -- Resets
                 , styleOverrides
                 ]
                 role
-            <|
-                viewBanner html_ attributes.onDismiss icon
+                [ styled span
+                    [ alignItems center
+                    , displayFlex
+                    , justifyContent center
+                    , padding (px 20)
+                    , width (Css.pct 100)
+                    ]
+                    []
+                    [ icon
+                    , Nri.Ui.styled div
+                        "banner-alert-notification"
+                        [ fontSize (px 20)
+                        , fontWeight (int 700)
+                        , lineHeight (px 27)
+                        , maxWidth (px 600)
+                        , minWidth (px 100)
+                        , flexShrink (int 1)
+                        , Fonts.baseFont
+                        ]
+                        []
+                        html_
+                    ]
+                , case attributes.onDismiss of
+                    Nothing ->
+                        text ""
+
+                    Just msg ->
+                        bannerDismissButton msg
+                ]
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -537,85 +620,6 @@ getRoleAttribute role =
 
 
 
--- Views
-
-
-viewTiny content onDismiss_ icon =
-    [ icon
-    , styled div
-        [ displayFlex
-        , alignItems center
-        ]
-        []
-        [ Nri.Ui.styled div
-            "Nri-Ui-Message-V2--alert"
-            [ Fonts.baseFont
-            , fontSize (px 13)
-            , listStyleType none
-            ]
-            []
-            content
-        ]
-    , case onDismiss_ of
-        Nothing ->
-            text ""
-
-        Just msg ->
-            tinyDismissButton msg
-    ]
-
-
-viewLarge content onDismiss_ icon =
-    [ icon
-    , styled div
-        [ minWidth (px 100)
-        , flexBasis (px 100)
-        , flexGrow (int 1)
-        ]
-        []
-        content
-    , case onDismiss_ of
-        Nothing ->
-            text ""
-
-        Just msg ->
-            largeDismissButton msg
-    ]
-
-
-viewBanner content onDismiss_ icon =
-    [ styled span
-        [ alignItems center
-        , displayFlex
-        , justifyContent center
-        , padding (px 20)
-        , width (Css.pct 100)
-        ]
-        []
-        [ icon
-        , Nri.Ui.styled div
-            "banner-alert-notification"
-            [ fontSize (px 20)
-            , fontWeight (int 700)
-            , lineHeight (px 27)
-            , maxWidth (px 600)
-            , minWidth (px 100)
-            , flexShrink (int 1)
-            , Fonts.baseFont
-            ]
-            []
-            content
-        ]
-    , case onDismiss_ of
-        Nothing ->
-            text ""
-
-        Just msg ->
-            bannerDismissButton msg
-    ]
-
-
-
 -- Style overrides
 
 
@@ -685,8 +689,7 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 (px 30) (px 40)
-        ]
+        [ padding2 (px 30) (px 40) ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
