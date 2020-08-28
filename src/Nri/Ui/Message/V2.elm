@@ -256,6 +256,8 @@ somethingWentWrong errorMessageForEngineers =
 
     Message.view [ Message.tiny ]
 
+This is the default size for a Message.
+
 -}
 tiny : Attribute msg
 tiny =
@@ -301,7 +303,8 @@ html content =
     Attribute <| \config -> { config | content = Html content }
 
 
-{-| -}
+{-| This is the default theme for a Message.
+-}
 tip : Attribute msg
 tip =
     Attribute <| \config -> { config | theme = Tip }
