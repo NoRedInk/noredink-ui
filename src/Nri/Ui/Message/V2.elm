@@ -422,10 +422,25 @@ getBackgroundColor size theme =
 
 getIcon : Size -> Theme -> Html msg
 getIcon size theme =
+    let
+        ( iconSize, marginRight ) =
+            case size of
+                Tiny ->
+                    ( px 20, Css.marginRight (Css.px 5) )
+
+                Large ->
+                    ( px 35, Css.marginRight (Css.px 10) )
+
+                Banner ->
+                    ( px 50, Css.marginRight (Css.px 20) )
+    in
     case theme of
         Error ->
             UiIcon.exclamation
                 |> NriSvg.withColor Colors.purple
+                |> NriSvg.withWidth iconSize
+                |> NriSvg.withHeight iconSize
+                |> NriSvg.withCss [ marginRight ]
                 |> NriSvg.withLabel "Error"
                 |> NriSvg.toHtml
 
@@ -441,6 +456,9 @@ getIcon size theme =
             in
             UiIcon.exclamation
                 |> NriSvg.withColor color
+                |> NriSvg.withWidth iconSize
+                |> NriSvg.withHeight iconSize
+                |> NriSvg.withCss [ marginRight ]
                 |> NriSvg.withLabel "Alert"
                 |> NriSvg.toHtml
 
@@ -449,26 +467,46 @@ getIcon size theme =
                 Tiny ->
                     UiIcon.bulb
                         |> NriSvg.withColor Colors.yellow
+                        |> NriSvg.withWidth iconSize
+                        |> NriSvg.withHeight iconSize
+                        |> NriSvg.withCss [ marginRight ]
                         |> NriSvg.withLabel "Tip"
                         |> NriSvg.toHtml
 
                 Large ->
                     UiIcon.bulb
                         |> NriSvg.withColor Colors.navy
+                        |> NriSvg.withWidth iconSize
+                        |> NriSvg.withHeight iconSize
+                        |> NriSvg.withCss [ marginRight ]
                         |> NriSvg.withLabel "Tip"
                         |> NriSvg.toHtml
 
                 Banner ->
-                    inCircle
-                        { backgroundColor = Colors.navy
-                        , color = Colors.mustard
-                        , height = Css.px 32
-                        , icon = UiIcon.bulb
-                        }
+                    styled div
+                        [ borderRadius (pct 50)
+                        , height (px 50)
+                        , width (px 50)
+                        , Css.marginRight (Css.px 20)
+                        , backgroundColor Colors.navy
+                        , displayFlex
+                        , alignItems center
+                        , justifyContent center
+                        ]
+                        []
+                        [ UiIcon.bulb
+                            |> NriSvg.withColor Colors.mustard
+                            |> NriSvg.withWidth (Css.px 32)
+                            |> NriSvg.withHeight (Css.px 32)
+                            |> NriSvg.toHtml
+                        ]
 
         Success ->
             UiIcon.checkmarkInCircle
                 |> NriSvg.withColor Colors.green
+                |> NriSvg.withWidth iconSize
+                |> NriSvg.withHeight iconSize
+                |> NriSvg.withCss [ marginRight ]
                 |> NriSvg.withLabel "Success"
                 |> NriSvg.toHtml
 
@@ -499,39 +537,11 @@ getRoleAttribute role =
 
 
 
--- Rendering icon helpers
-
-
-inCircle :
-    { backgroundColor : Css.Color
-    , color : Css.Color
-    , height : Css.Px
-    , icon : Svg
-    }
-    -> Html msg
-inCircle config =
-    styled div
-        [ borderRadius (pct 50)
-        , height (pct 100)
-        , backgroundColor config.backgroundColor
-        , displayFlex
-        , alignItems center
-        , justifyContent center
-        ]
-        []
-        [ config.icon
-            |> NriSvg.withColor config.color
-            |> NriSvg.withHeight config.height
-            |> NriSvg.toHtml
-        ]
-
-
-
 -- Views
 
 
 viewTiny content onDismiss_ icon =
-    [ viewTinyIcon icon
+    [ icon
     , styled div
         [ displayFlex
         , alignItems center
@@ -556,7 +566,7 @@ viewTiny content onDismiss_ icon =
 
 
 viewLarge content onDismiss_ icon =
-    [ viewLargeIcon icon
+    [ icon
     , styled div
         [ minWidth (px 100)
         , flexBasis (px 100)
@@ -588,7 +598,7 @@ viewBanner content onDismiss_ icon =
             ]
         ]
         []
-        [ viewBannerIcon icon
+        [ icon
         , Nri.Ui.styled div
             "banner-alert-notification"
             [ fontSize (px 20)
@@ -636,61 +646,6 @@ styleOverrides =
             , Fonts.baseFont
             ]
         ]
-
-
-
--- Icons
-
-
-viewTinyIcon : Html msg -> Html msg
-viewTinyIcon icon =
-    styled div
-        []
-        []
-        [ Nri.Ui.styled div
-            "Nri-Ui-Message-V2--tinyIconContainer"
-            [ -- Content positioning
-              displayFlex
-            , alignItems center
-            , justifyContent center
-            , marginRight (px 5)
-            , lineHeight (px 13)
-            , flexShrink zero
-
-            -- Size
-            , borderRadius (px 13)
-            , height (px 20)
-            , width (px 20)
-            ]
-            []
-            [ icon ]
-        ]
-
-
-viewLargeIcon : Html msg -> Html msg
-viewLargeIcon icon =
-    styled div
-        [ width (px 35)
-        , marginRight (px 10)
-        ]
-        []
-        [ icon
-        ]
-
-
-viewBannerIcon : Html msg -> Html msg
-viewBannerIcon icon =
-    styled div
-        [ width (px 50)
-        , height (px 50)
-        , marginRight (px 20)
-        , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
-          -- But using shrink here and on the next div lets us have the text content be centered rather than
-          -- left-aligned when the content is shorter than one line
-          flexShrink zero
-        ]
-        []
-        [ icon ]
 
 
 
