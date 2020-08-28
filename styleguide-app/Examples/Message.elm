@@ -24,9 +24,9 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { size : Message.Theme -> List (Message.Attribute Msg) -> Html Msg
-    , theme : Message.Theme
-    , content : Message.Attribute Msg
+    { size : List (Message.Attribute Msg) -> Html Msg
+    , theme : Maybe (Message.Attribute Msg)
+    , content : Maybe (Message.Attribute Msg)
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
     }
@@ -45,7 +45,7 @@ init =
     }
 
 
-controlSize : Control (Message.Theme -> List (Message.Attribute Msg) -> Html Msg)
+controlSize : Control (List (Message.Attribute Msg) -> Html Msg)
 controlSize =
     Control.choice
         [ ( "banner", Control.value Message.banner )
@@ -54,38 +54,46 @@ controlSize =
         ]
 
 
-controlTheme : Control Message.Theme
+controlTheme : Control (Maybe (Message.Attribute msg))
 controlTheme =
     Control.choice
-        [ ( "Tip", Control.value Message.Tip )
-        , ( "Error", Control.value Message.Error )
-        , ( "Alert", Control.value Message.Alert )
-        , ( "Success", Control.value Message.Success )
-        , ( "Custom (aquaDark, gray92, premiumFlag)"
-          , Control.value <|
-                Message.Custom
-                    { color = Colors.aquaDark
-                    , backgroundColor = Colors.gray92
-                    , icon = Pennant.premiumFlag
-                    }
+        [ ( "not set", Control.value Nothing )
+        , ( "tip", Control.value (Just Message.tip) )
+        , ( "error", Control.value (Just Message.error) )
+        , ( "alert", Control.value (Just Message.alert) )
+        , ( "success", Control.value (Just Message.success) )
+        , ( "customTheme (aquaDark, gray92, premiumFlag)"
+          , Message.customTheme
+                { color = Colors.aquaDark
+                , backgroundColor = Colors.gray92
+                , icon = Pennant.premiumFlag
+                }
+                |> Just
+                |> Control.value
           )
         ]
 
 
-controlContent : Control (Message.Attribute msg)
+controlContent : Control (Maybe (Message.Attribute msg))
 controlContent =
     Control.choice
-        [ ( "plain text (short)"
+        [ ( "not set"
+          , Control.value Nothing
+          )
+        , ( "plain text (short)"
           , Control.string "Comic books do count as literature."
                 |> Control.map Message.plaintext
+                |> Control.map Just
           )
         , ( "plain text (long)"
           , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
                 |> Control.map Message.plaintext
+                |> Control.map Just
           )
         , ( "markdown"
           , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
                 |> Control.map Message.markdown
+                |> Control.map Just
           )
         , ( "HTML (short)"
           , Control.value
@@ -94,6 +102,7 @@ controlContent =
                     , text " ⇄ "
                     , Html.em [] [ text "tries again" ]
                     ]
+                    |> Just
                 )
           )
         , ( "HTML (long)"
@@ -113,6 +122,7 @@ controlContent =
                         ]
                     , text " to check out NoRedInk."
                     ]
+                    |> Just
                 )
           )
         ]
@@ -121,9 +131,9 @@ controlContent =
 controlRole : Control (Maybe (Message.Attribute msg))
 controlRole =
     Control.choice
-        [ ( "Not set", Control.value Nothing )
-        , ( "Alert", Control.value (Just Message.alert) )
-        , ( "Alert Dialog", Control.value (Just Message.alertDialog) )
+        [ ( "not set", Control.value Nothing )
+        , ( "alertRole", Control.value (Just Message.alertRole) )
+        , ( "alertDialogRole", Control.value (Just Message.alertDialogRole) )
         ]
 
 
@@ -163,9 +173,11 @@ example =
                 { size, role, theme, dismissable, content } =
                     Control.currentValue state.control
 
+                attributes : List (Message.Attribute Msg)
                 attributes =
                     List.filterMap identity
-                        [ Just content
+                        [ theme
+                        , content
                         , role
                         , dismissable
                         ]
@@ -180,7 +192,7 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.view" ]
-            , orDismiss <| size theme attributes
+            , orDismiss <| size attributes
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]

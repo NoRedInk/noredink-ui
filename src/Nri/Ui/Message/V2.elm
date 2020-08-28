@@ -1,29 +1,30 @@
 module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
-    , Theme(..)
     , Attribute
     , plaintext, markdown, html
-    , alert, alertDialog
+    , tip, error, alert, success, customTheme
+    , alertRole, alertDialogRole
     , onDismiss
     , somethingWentWrong
     )
 
 {-| Changes from V1:
 
-  - adds `alert`, `alertDialog` role attributes
+  - adds `alertRole`, `alertDialogRole` role attributes
   - rename BannerAttribute -> Attribute
   - accept Attributes on any Message type
   - :skull: remove mapContent
   - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
+  - expose theme Attribute helpers instead of having `Theme(..)` in the view APIs
 
 @docs tiny, large, banner
-@docs Theme
 
 Attributes:
 
 @docs Attribute
 @docs plaintext, markdown, html
-@docs alert, alertDialog
+@docs tip, error, alert, success, customTheme
+@docs alertRole, alertDialogRole
 @docs onDismiss
 
 @docs somethingWentWrong
@@ -47,34 +48,23 @@ import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-{-| `Error` / `Alert` / `Tip` / `Success`
--}
-type Theme
-    = Error
-    | Alert
-    | Tip
-    | Success
-    | Custom
-        { color : Color
-        , backgroundColor : Color
-        , icon : Svg
-        }
-
-
 {-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
 
     view =
-        Message.tiny Message.Tip
-            [ Message.Markdown "Don't tip too much, or your waitress will **fall over**!" ]
-
-NOTE: When using a `Custom` theme, `tiny` ignores the custom `backgroundColor`.
+        Message.tiny
+            [ Message.tip
+            , Message.markdown "Don't tip too much, or your waitress will **fall over**!"
+            ]
 
 -}
-tiny : Theme -> List (Attribute msg) -> Html msg
-tiny theme attr =
+tiny : List (Attribute msg) -> Html msg
+tiny attr =
     let
+        attributes =
+            configFromAttributes attr
+
         config =
-            case theme of
+            case attributes.theme of
                 Error ->
                     { icon =
                         UiIcon.exclamation
@@ -107,13 +97,10 @@ tiny theme attr =
                     , fontColor = Colors.greenDarkest
                     }
 
-                Custom customTheme ->
-                    { icon = customTheme.icon
-                    , fontColor = customTheme.color
+                Custom theme ->
+                    { icon = theme.icon
+                    , fontColor = theme.color
                     }
-
-        attributes =
-            configFromAttributes attr
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V2--tiny"
@@ -189,15 +176,20 @@ tiny theme attr =
 {-| Shows a large alert or callout message. We commonly use these for highlighted tips, instructions, or asides in page copy.
 
     view =
-        Message.large Message.Tip
-            [ Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work." ]
+        Message.large
+            [ Message.success
+            , Message.plaintext "Two out of two parents agree: NoRedInk sounds like a fun place to work."
+            ]
 
 -}
-large : Theme -> List (Attribute msg) -> Html msg
-large theme attr =
+large : List (Attribute msg) -> Html msg
+large attr =
     let
+        attributes =
+            configFromAttributes attr
+
         config =
-            case theme of
+            case attributes.theme of
                 Error ->
                     { backgroundColor = Colors.purpleLight
                     , fontColor = Colors.purpleDark
@@ -234,14 +226,11 @@ large theme attr =
                             |> NriSvg.withLabel "Success"
                     }
 
-                Custom customTheme ->
-                    { backgroundColor = customTheme.backgroundColor
-                    , fontColor = customTheme.color
-                    , icon = customTheme.icon
+                Custom theme ->
+                    { backgroundColor = theme.backgroundColor
+                    , fontColor = theme.color
+                    , icon = theme.icon
                     }
-
-        attributes =
-            configFromAttributes attr
     in
     Nri.Ui.styled div
         "Nri-Ui-Message-V2--large"
@@ -294,17 +283,18 @@ large theme attr =
 We commonly use these for flash messages at the top of pages.
 
     view =
-        Message.banner Message.Success
-            [ Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English."
-            , Message.alert
+        Message.banner
+            [ Message.alertTheme
+            , Message.alertRole
+            , Message.plaintext "John Jacob Jingleheimer Schmidt has been dropped from First Period English."
             ]
 
 -}
-banner : Theme -> List (Attribute msg) -> Html msg
-banner theme attr =
+banner : List (Attribute msg) -> Html msg
+banner attr =
     let
         config =
-            case theme of
+            case attributes.theme of
                 Error ->
                     { backgroundColor = Colors.purpleLight
                     , color = Colors.purpleDark
@@ -347,10 +337,10 @@ banner theme attr =
                             |> NriSvg.toHtml
                     }
 
-                Custom customTheme ->
-                    { backgroundColor = customTheme.backgroundColor
-                    , color = customTheme.color
-                    , icon = NriSvg.toHtml customTheme.icon
+                Custom theme ->
+                    { backgroundColor = theme.backgroundColor
+                    , color = theme.color
+                    , icon = NriSvg.toHtml theme.icon
                     }
 
         attributes =
@@ -428,8 +418,9 @@ banner theme attr =
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     div []
-        [ tiny Error
-            [ plaintext "Sorry, something went wrong.  Please try again later."
+        [ tiny
+            [ error
+            , plaintext "Sorry, something went wrong.  Please try again later."
             ]
         , details []
             [ summary
@@ -477,6 +468,37 @@ html content =
     Attribute <| \config -> { config | content = Html content }
 
 
+{-| -}
+tip : Attribute msg
+tip =
+    Attribute <| \config -> { config | theme = Tip }
+
+
+{-| -}
+error : Attribute msg
+error =
+    Attribute <| \config -> { config | theme = Error }
+
+
+{-| -}
+alert : Attribute msg
+alert =
+    Attribute <| \config -> { config | theme = Alert }
+
+
+{-| -}
+success : Attribute msg
+success =
+    Attribute <| \config -> { config | theme = Success }
+
+
+{-| When using a `custom` theme and `tiny` size, the custom `backgroundColor` will be ignored.
+-}
+customTheme : { color : Color, backgroundColor : Color, icon : Svg } -> Attribute msg
+customTheme custom_ =
+    Attribute <| \config -> { config | theme = Custom custom_ }
+
+
 {-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
 -}
 onDismiss : msg -> Attribute msg
@@ -485,14 +507,14 @@ onDismiss msg =
 
 
 {-| -}
-alert : Attribute msg
-alert =
+alertRole : Attribute msg
+alertRole =
     Attribute <| \config -> { config | role = Just AlertRole }
 
 
 {-| -}
-alertDialog : Attribute msg
-alertDialog =
+alertDialogRole : Attribute msg
+alertDialogRole =
     Attribute <| \config -> { config | role = Just AlertDialog }
 
 
@@ -514,6 +536,7 @@ type alias BannerConfig msg =
     { onDismiss : Maybe msg
     , role : Maybe Role
     , content : Content msg
+    , theme : Theme
     }
 
 
@@ -525,6 +548,7 @@ configFromAttributes attr =
         { onDismiss = Nothing
         , role = Nothing
         , content = Plain ""
+        , theme = Tip
         }
         attr
 
@@ -557,6 +581,24 @@ contentToHtml content =
 
         Html html_ ->
             html_
+
+
+
+-- Themes
+
+
+{-| `Error` / `Alert` / `Tip` / `Success`
+-}
+type Theme
+    = Error
+    | Alert
+    | Tip
+    | Success
+    | Custom
+        { color : Color
+        , backgroundColor : Color
+        , icon : Svg
+        }
 
 
 
