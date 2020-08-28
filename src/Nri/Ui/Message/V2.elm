@@ -156,7 +156,7 @@ tiny theme content attr =
             configFromAttributes attr
     in
     Nri.Ui.styled div
-        "Nri-Ui-Message-V1--tiny"
+        "Nri-Ui-Message-V2--tiny"
         [ displayFlex
         , justifyContent start
         , paddingTop (px 6)
@@ -167,7 +167,7 @@ tiny theme content attr =
             []
             []
             [ Nri.Ui.styled div
-                "Nri-Ui-Message-V1--tinyIconContainer"
+                "Nri-Ui-Message-V2--tinyIconContainer"
                 [ -- Content positioning
                   displayFlex
                 , alignItems center
@@ -190,7 +190,7 @@ tiny theme content attr =
             ]
             []
             [ Nri.Ui.styled div
-                "Nri-Ui-Message-V1--alert"
+                "Nri-Ui-Message-V2--alert"
                 [ color config.fontColor
                 , Fonts.baseFont
                 , fontSize (px 13)
@@ -285,7 +285,7 @@ large theme content attr =
             configFromAttributes attr
     in
     Nri.Ui.styled div
-        "Nri-Ui-Message-V1--large"
+        "Nri-Ui-Message-V2--large"
         [ width (pct 100)
         , backgroundColor config.backgroundColor
         , Fonts.baseFont
