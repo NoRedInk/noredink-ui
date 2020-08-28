@@ -606,6 +606,10 @@ tinyDismissButton msg =
             [ ClickableSvg.onClick msg
             , ClickableSvg.width (px 16)
             , ClickableSvg.height (px 16)
+            , ClickableSvg.css
+                [ Css.verticalAlign Css.middle
+                , Css.marginLeft (Css.px 5)
+                ]
             ]
         ]
 
