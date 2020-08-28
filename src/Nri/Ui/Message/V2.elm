@@ -1,11 +1,13 @@
-module Nri.Ui.Message.V1 exposing
+module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
     , Theme(..), Content(..), mapContent, BannerAttribute
     , onDismiss
     , somethingWentWrong
     )
 
-{-|
+{-| Changes from V1:
+
+  - adds alert, alertdialog, and live region support
 
 @docs tiny, large, banner
 @docs Theme, Content, mapContent, BannerAttribute
