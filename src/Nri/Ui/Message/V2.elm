@@ -590,12 +590,6 @@ viewBanner content onDismiss_ icon =
         , justifyContent center
         , padding (px 20)
         , width (Css.pct 100)
-        , Css.Global.children
-            [ Css.Global.button
-                [ position relative
-                , right (px 15)
-                ]
-            ]
         ]
         []
         [ icon
