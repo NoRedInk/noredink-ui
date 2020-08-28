@@ -1,7 +1,8 @@
 module Nri.Ui.Message.V2 exposing
     ( tiny, large, banner
-    , Theme(..), Content(..)
+    , Theme(..)
     , Attribute
+    , plaintext, markdown, html
     , alert, alertDialog
     , onDismiss
     , somethingWentWrong
@@ -13,13 +14,15 @@ module Nri.Ui.Message.V2 exposing
   - rename BannerAttribute -> Attribute
   - accept Attributes on any Message type
   - :skull: remove mapContent
+  - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
 
 @docs tiny, large, banner
-@docs Theme, Content
+@docs Theme
 
 Attributes:
 
 @docs Attribute
+@docs plaintext, markdown, html
 @docs alert, alertDialog
 @docs onDismiss
 
@@ -58,46 +61,17 @@ type Theme
         }
 
 
-{-| Prefer using the simplest variant that meets your needs.
-
-  - `Plain`: provide a plain-text string
-  - `Markdown`: provide a string that will be rendered as markdown
-  - `Html`: provide custom HTML
-
--}
-type Content msg
-    = Plain String
-    | Markdown String
-    | Html (List (Html msg))
-
-
-{-| PRIVATE
--}
-contentToHtml : Content msg -> List (Html msg)
-contentToHtml content =
-    case content of
-        Plain stringContent ->
-            [ text stringContent ]
-
-        Markdown markdownContent ->
-            Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
-
-        Html html ->
-            html
-
-
 {-| Shows a tiny alert message. We commonly use these for validation errors and small hints to users.
 
     view =
         Message.tiny Message.Tip
-            (Message.Markdown "Don't tip too much, or your waitress will **fall over**!")
-            []
+            [ Message.Markdown "Don't tip too much, or your waitress will **fall over**!" ]
 
 NOTE: When using a `Custom` theme, `tiny` ignores the custom `backgroundColor`.
 
 -}
-tiny : Theme -> Content msg -> List (Attribute msg) -> Html msg
-tiny theme content attr =
+tiny : Theme -> List (Attribute msg) -> Html msg
+tiny theme attr =
     let
         config =
             case theme of
@@ -201,7 +175,7 @@ tiny theme content attr =
                     ]
                 ]
                 []
-                (contentToHtml content)
+                (contentToHtml attributes.content)
             ]
         , case attributes.onDismiss of
             Nothing ->
@@ -216,12 +190,11 @@ tiny theme content attr =
 
     view =
         Message.large Message.Tip
-            (Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work.")
-            []
+            [ Message.Plain "Two out of two parents agree: NoRedInk sounds like a fun place to work." ]
 
 -}
-large : Theme -> Content msg -> List (Attribute msg) -> Html msg
-large theme content attr =
+large : Theme -> List (Attribute msg) -> Html msg
+large theme attr =
     let
         config =
             case theme of
@@ -307,7 +280,7 @@ large theme content attr =
             , flexGrow (int 1)
             ]
             []
-            (contentToHtml content)
+            (contentToHtml attributes.content)
         , case attributes.onDismiss of
             Nothing ->
                 text ""
@@ -322,12 +295,13 @@ We commonly use these for flash messages at the top of pages.
 
     view =
         Message.banner Message.Success
-            (Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English.")
-            [ Message.alert ]
+            [ Message.Plain "John Jacob Jingleheimer Schmidt has been dropped from First Period English."
+            , Message.alert
+            ]
 
 -}
-banner : Theme -> Content msg -> List (Attribute msg) -> Html msg
-banner theme content attr =
+banner : Theme -> List (Attribute msg) -> Html msg
+banner theme attr =
     let
         config =
             case theme of
@@ -434,7 +408,7 @@ banner theme content attr =
                     ]
                 ]
                 []
-                (contentToHtml content)
+                (contentToHtml attributes.content)
             ]
         , case attributes.onDismiss of
             Nothing ->
@@ -454,7 +428,9 @@ banner theme content attr =
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
     div []
-        [ tiny Error (Plain "Sorry, something went wrong.  Please try again later.") []
+        [ tiny Error
+            [ plaintext "Sorry, something went wrong.  Please try again later."
+            ]
         , details []
             [ summary
                 [ css
@@ -483,29 +459,41 @@ somethingWentWrong errorMessageForEngineers =
         ]
 
 
+{-| -}
+plaintext : String -> Attribute msg
+plaintext content =
+    Attribute <| \config -> { config | content = Plain content }
+
+
+{-| -}
+markdown : String -> Attribute msg
+markdown content =
+    Attribute <| \config -> { config | content = Markdown content }
+
+
+{-| -}
+html : List (Html msg) -> Attribute msg
+html content =
+    Attribute <| \config -> { config | content = Html content }
+
+
 {-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
 -}
 onDismiss : msg -> Attribute msg
 onDismiss msg =
-    Attribute <|
-        \config ->
-            { config | onDismiss = Just msg }
+    Attribute <| \config -> { config | onDismiss = Just msg }
 
 
 {-| -}
 alert : Attribute msg
 alert =
-    Attribute <|
-        \config ->
-            { config | role = Just AlertRole }
+    Attribute <| \config -> { config | role = Just AlertRole }
 
 
 {-| -}
 alertDialog : Attribute msg
 alertDialog =
-    Attribute <|
-        \config ->
-            { config | role = Just AlertDialog }
+    Attribute <| \config -> { config | role = Just AlertDialog }
 
 
 
@@ -525,7 +513,54 @@ type Attribute msg
 type alias BannerConfig msg =
     { onDismiss : Maybe msg
     , role : Maybe Role
+    , content : Content msg
     }
+
+
+{-| PRIVATE
+-}
+configFromAttributes : List (Attribute msg) -> BannerConfig msg
+configFromAttributes attr =
+    List.foldl (\(Attribute set) -> set)
+        { onDismiss = Nothing
+        , role = Nothing
+        , content = Plain ""
+        }
+        attr
+
+
+
+-- Message contents
+
+
+{-| Prefer using the simplest variant that meets your needs.
+
+  - `Plain`: provide a plain-text string
+  - `Markdown`: provide a string that will be rendered as markdown
+  - `Html`: provide custom HTML
+
+-}
+type Content msg
+    = Plain String
+    | Markdown String
+    | Html (List (Html msg))
+
+
+contentToHtml : Content msg -> List (Html msg)
+contentToHtml content =
+    case content of
+        Plain stringContent ->
+            [ text stringContent ]
+
+        Markdown markdownContent ->
+            Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
+
+        Html html_ ->
+            html_
+
+
+
+-- Role
 
 
 type Role
@@ -546,15 +581,8 @@ getRoleAttribute role =
             []
 
 
-{-| PRIVATE
--}
-configFromAttributes : List (Attribute msg) -> BannerConfig msg
-configFromAttributes attr =
-    List.foldl (\(Attribute set) -> set)
-        { onDismiss = Nothing
-        , role = Nothing
-        }
-        attr
+
+-- Rendering icon helpers
 
 
 inCircle :
@@ -579,6 +607,10 @@ inCircle config =
             |> NriSvg.withHeight config.height
             |> NriSvg.toHtml
         ]
+
+
+
+-- Dismiss buttons
 
 
 tinyDismissButton : msg -> Html msg

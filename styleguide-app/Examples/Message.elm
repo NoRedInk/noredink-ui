@@ -24,9 +24,9 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { size : Message.Theme -> Message.Content Msg -> List (Message.Attribute Msg) -> Html Msg
+    { size : Message.Theme -> List (Message.Attribute Msg) -> Html Msg
     , theme : Message.Theme
-    , content : Message.Content Msg
+    , content : Message.Attribute Msg
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
     }
@@ -45,7 +45,7 @@ init =
     }
 
 
-controlSize : Control (Message.Theme -> Message.Content Msg -> List (Message.Attribute Msg) -> Html Msg)
+controlSize : Control (Message.Theme -> List (Message.Attribute Msg) -> Html Msg)
 controlSize =
     Control.choice
         [ ( "banner", Control.value Message.banner )
@@ -72,24 +72,33 @@ controlTheme =
         ]
 
 
-controlContent : Control (Message.Content msg)
+controlContent : Control (Message.Attribute msg)
 controlContent =
     Control.choice
         [ ( "plain text (short)"
           , Control.string "Comic books do count as literature."
-                |> Control.map Message.Plain
+                |> Control.map Message.plaintext
           )
         , ( "plain text (long)"
           , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
-                |> Control.map Message.Plain
+                |> Control.map Message.plaintext
           )
         , ( "markdown"
           , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
-                |> Control.map Message.Markdown
+                |> Control.map Message.markdown
           )
-        , ( "HTML"
+        , ( "HTML (short)"
           , Control.value
-                (Message.Html
+                (Message.html
+                    [ code [] [ text "git status" ]
+                    , text " ⇄ "
+                    , Html.em [] [ text "tries again" ]
+                    ]
+                )
+          )
+        , ( "HTML (long)"
+          , Control.value
+                (Message.html
                     [ text "Click "
                     , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
                         [ text "here, yes, HERE, right here on this very long success message. "
@@ -103,15 +112,6 @@ controlContent =
                             [ Svg.toHtml UiIcon.gear ]
                         ]
                     , text " to check out NoRedInk."
-                    ]
-                )
-          )
-        , ( "HTML (short)"
-          , Control.value
-                (Message.Html
-                    [ code [] [ text "git status" ]
-                    , text " ⇄ "
-                    , Html.em [] [ text "tries again" ]
                     ]
                 )
           )
@@ -164,7 +164,11 @@ example =
                     Control.currentValue state.control
 
                 attributes =
-                    List.filterMap identity [ role, dismissable ]
+                    List.filterMap identity
+                        [ Just content
+                        , role
+                        , dismissable
+                        ]
 
                 orDismiss view =
                     if state.show then
@@ -176,7 +180,7 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.view" ]
-            , orDismiss <| size theme content attributes
+            , orDismiss <| size theme attributes
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
