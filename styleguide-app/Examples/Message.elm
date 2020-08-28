@@ -26,7 +26,7 @@ type alias State =
 type alias ExampleConfig =
     { size : Maybe (Message.Attribute Msg)
     , theme : Maybe (Message.Attribute Msg)
-    , content : Maybe (Message.Attribute Msg)
+    , content : Message.Attribute Msg
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
     }
@@ -89,26 +89,20 @@ controlCustomTheme =
             )
 
 
-controlContent : Control (Maybe (Message.Attribute msg))
+controlContent : Control (Message.Attribute msg)
 controlContent =
     Control.choice
-        [ ( "not set"
-          , Control.value Nothing
-          )
-        , ( "plain text (short)"
+        [ ( "plain text (short)"
           , Control.string "Comic books do count as literature."
                 |> Control.map Message.plaintext
-                |> Control.map Just
           )
         , ( "plain text (long)"
           , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
                 |> Control.map Message.plaintext
-                |> Control.map Just
           )
         , ( "markdown"
           , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
                 |> Control.map Message.markdown
-                |> Control.map Just
           )
         , ( "HTML (short)"
           , Control.value
@@ -117,7 +111,6 @@ controlContent =
                     , text " ⇄ "
                     , Html.em [] [ text "tries again" ]
                     ]
-                    |> Just
                 )
           )
         , ( "HTML (long)"
@@ -137,7 +130,6 @@ controlContent =
                         ]
                     , text " to check out NoRedInk."
                     ]
-                    |> Just
                 )
           )
         ]
@@ -193,7 +185,7 @@ example =
                     List.filterMap identity
                         [ size
                         , theme
-                        , content
+                        , Just content
                         , role
                         , dismissable
                         ]
