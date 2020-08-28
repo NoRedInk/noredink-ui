@@ -24,7 +24,8 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { theme : Message.Theme
+    { size : Message.Theme -> Message.Content Msg -> List (Message.Attribute Msg) -> Html Msg
+    , theme : Message.Theme
     , content : Message.Content Never
     , role : Maybe (Message.Attribute Msg)
     , dismissable : Maybe (Message.Attribute Msg)
@@ -36,11 +37,21 @@ init =
     { show = True
     , control =
         Control.record ExampleConfig
+            |> Control.field "size" controlSize
             |> Control.field "theme" controlTheme
             |> Control.field "content" controlContent
             |> Control.field "role" controlRole
             |> Control.field "dismissable" controlDismissable
     }
+
+
+controlSize : Control (Message.Theme -> Message.Content Msg -> List (Message.Attribute Msg) -> Html Msg)
+controlSize =
+    Control.choice
+        [ ( "banner", Control.value Message.banner )
+        , ( "large", Control.value Message.large )
+        , ( "tiny", Control.value Message.tiny )
+        ]
 
 
 controlTheme : Control Message.Theme
@@ -153,7 +164,7 @@ example =
     , view =
         \state ->
             let
-                { role, theme, dismissable, content } =
+                { size, role, theme, dismissable, content } =
                     Control.currentValue state.control
 
                 content_ =
@@ -171,15 +182,8 @@ example =
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , Heading.h3 [] [ text "Message.tiny" ]
-            , orDismiss <| Message.tiny theme content_ attributes
-            , Html.hr [] []
-            , Heading.h3 [] [ text "Message.large" ]
-            , orDismiss <| Message.large theme content_ attributes
-            , Html.hr [] []
-            , Heading.h3 [] [ text "Message.banner" ]
-            , orDismiss <| Message.banner theme content_ attributes
-            , Html.hr [] []
+            , Heading.h3 [] [ text "Message.view" ]
+            , orDismiss <| size theme content_ attributes
             , Heading.h3 [] [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
