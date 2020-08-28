@@ -24,7 +24,7 @@ type alias State =
 
 
 type alias ExampleConfig =
-    { themes : List Message.Theme
+    { theme : Message.Theme
     , content : Message.Content Never
     , role : Maybe (Message.Attribute Msg)
     }
@@ -37,22 +37,17 @@ init =
         Control.record ExampleConfig
             |> Control.field "theme"
                 (Control.choice
-                    [ ( "Error / Alert / Tip / Success"
-                      , Control.value
-                            [ Message.Error
-                            , Message.Alert
-                            , Message.Tip
-                            , Message.Success
-                            ]
-                      )
+                    [ ( "Tip", Control.value Message.Tip )
+                    , ( "Error", Control.value Message.Error )
+                    , ( "Alert", Control.value Message.Alert )
+                    , ( "Success", Control.value Message.Success )
                     , ( "Custom (aquaDark, gray92, premiumFlag)"
-                      , Control.value
-                            [ Message.Custom
+                      , Control.value <|
+                            Message.Custom
                                 { color = Colors.aquaDark
                                 , backgroundColor = Colors.gray92
                                 , icon = Pennant.premiumFlag
                                 }
-                            ]
                       )
                     ]
                 )
@@ -150,37 +145,22 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h3 [] [ text "Message.tiny" ]
-            , List.map (\theme -> Message.tiny theme content []) exampleConfig.themes
-                |> div []
+            , Message.tiny exampleConfig.theme content []
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.large" ]
-            , List.map (\theme -> Message.large theme content []) exampleConfig.themes
-                |> List.intersperse (br [])
-                |> div []
+            , Message.large exampleConfig.theme content []
             , Html.hr [] []
             , Heading.h3 [] [ text "Message.banner" ]
-            , List.map
-                (\theme ->
-                    Message.banner theme
-                        content
-                        (Maybe.map List.singleton exampleConfig.role
-                            |> Maybe.withDefault []
-                        )
+            , Message.banner exampleConfig.theme
+                content
+                (Maybe.map List.singleton exampleConfig.role
+                    |> Maybe.withDefault []
                 )
-                exampleConfig.themes
-                |> List.intersperse (br [])
-                |> div []
             , Heading.h3 [] [ text "Message.banner ... [ onDismiss msg ]" ]
             , if state.show then
-                List.map
-                    (\theme ->
-                        Message.banner theme
-                            content
-                            [ Message.onDismiss Dismiss ]
-                    )
-                    exampleConfig.themes
-                    |> List.intersperse (br [])
-                    |> div []
+                Message.banner exampleConfig.theme
+                    content
+                    [ Message.onDismiss Dismiss ]
 
               else
                 text "Nice! The banner was dismissed. 👍"
