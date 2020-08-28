@@ -535,8 +535,6 @@ viewTiny attributes content onDismiss_ config =
                 , Css.Global.descendants
                     [ Css.Global.p
                         [ margin zero
-
-                        --, lineHeight (px 20)
                         , fontSize (px 13)
                         , Fonts.baseFont
                         ]
@@ -702,7 +700,7 @@ viewBannerIcon icon =
           flexShrink zero
         ]
         []
-        [ config.icon ]
+        [ NriSvg.toHtml icon ]
 
 
 
