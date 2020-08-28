@@ -35,74 +35,83 @@ init =
     { show = True
     , control =
         Control.record ExampleConfig
-            |> Control.field "theme"
-                (Control.choice
-                    [ ( "Tip", Control.value Message.Tip )
-                    , ( "Error", Control.value Message.Error )
-                    , ( "Alert", Control.value Message.Alert )
-                    , ( "Success", Control.value Message.Success )
-                    , ( "Custom (aquaDark, gray92, premiumFlag)"
-                      , Control.value <|
-                            Message.Custom
-                                { color = Colors.aquaDark
-                                , backgroundColor = Colors.gray92
-                                , icon = Pennant.premiumFlag
-                                }
-                      )
-                    ]
-                )
-            |> Control.field "content"
-                (Control.choice
-                    [ ( "plain text (short)"
-                      , Control.string "Comic books do count as literature."
-                            |> Control.map Message.Plain
-                      )
-                    , ( "plain text (long)"
-                      , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
-                            |> Control.map Message.Plain
-                      )
-                    , ( "markdown"
-                      , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
-                            |> Control.map Message.Markdown
-                      )
-                    , ( "HTML"
-                      , Control.value
-                            (Message.Html
-                                [ text "Click "
-                                , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                                    [ text "here, yes, HERE, right here on this very long success message. "
-                                    , text "Wow, how successful! You're the biggest success I've ever seen! "
-                                    , text "You should feel great about yourself! Give yourself a very big round of applause! "
-                                    , styled div
-                                        [ display inlineBlock
-                                        , width (px 20)
-                                        ]
-                                        []
-                                        [ Svg.toHtml UiIcon.gear ]
-                                    ]
-                                , text " to check out NoRedInk."
-                                ]
-                            )
-                      )
-                    , ( "HTML (short)"
-                      , Control.value
-                            (Message.Html
-                                [ code [] [ text "git status" ]
-                                , text " ⇄ "
-                                , Html.em [] [ text "tries again" ]
-                                ]
-                            )
-                      )
-                    ]
-                )
-            |> Control.field "role"
-                (Control.choice
-                    [ ( "Not set", Control.value Nothing )
-                    , ( "Alert", Control.value (Just Message.alert) )
-                    , ( "Alert Dialog", Control.value (Just Message.alertDialog) )
-                    ]
-                )
+            |> Control.field "theme" controlTheme
+            |> Control.field "content" controlContent
+            |> Control.field "role" controlRole
     }
+
+
+controlTheme : Control Message.Theme
+controlTheme =
+    Control.choice
+        [ ( "Tip", Control.value Message.Tip )
+        , ( "Error", Control.value Message.Error )
+        , ( "Alert", Control.value Message.Alert )
+        , ( "Success", Control.value Message.Success )
+        , ( "Custom (aquaDark, gray92, premiumFlag)"
+          , Control.value <|
+                Message.Custom
+                    { color = Colors.aquaDark
+                    , backgroundColor = Colors.gray92
+                    , icon = Pennant.premiumFlag
+                    }
+          )
+        ]
+
+
+controlContent : Control (Message.Content msg)
+controlContent =
+    Control.choice
+        [ ( "plain text (short)"
+          , Control.string "Comic books do count as literature."
+                |> Control.map Message.Plain
+          )
+        , ( "plain text (long)"
+          , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
+                |> Control.map Message.Plain
+          )
+        , ( "markdown"
+          , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+                |> Control.map Message.Markdown
+          )
+        , ( "HTML"
+          , Control.value
+                (Message.Html
+                    [ text "Click "
+                    , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                        [ text "here, yes, HERE, right here on this very long success message. "
+                        , text "Wow, how successful! You're the biggest success I've ever seen! "
+                        , text "You should feel great about yourself! Give yourself a very big round of applause! "
+                        , styled div
+                            [ display inlineBlock
+                            , width (px 20)
+                            ]
+                            []
+                            [ Svg.toHtml UiIcon.gear ]
+                        ]
+                    , text " to check out NoRedInk."
+                    ]
+                )
+          )
+        , ( "HTML (short)"
+          , Control.value
+                (Message.Html
+                    [ code [] [ text "git status" ]
+                    , text " ⇄ "
+                    , Html.em [] [ text "tries again" ]
+                    ]
+                )
+          )
+        ]
+
+
+controlRole : Control (Maybe (Message.Attribute msg))
+controlRole =
+    Control.choice
+        [ ( "Not set", Control.value Nothing )
+        , ( "Alert", Control.value (Just Message.alert) )
+        , ( "Alert Dialog", Control.value (Just Message.alertDialog) )
+        ]
 
 
 type Msg
