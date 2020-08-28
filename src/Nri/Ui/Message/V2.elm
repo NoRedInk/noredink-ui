@@ -84,6 +84,7 @@ view attributes_ =
                 , paddingTop (px 6)
                 , paddingBottom (px 8)
                 , color color_
+                , styleOverrides
                 ]
                 role
             <|
@@ -127,14 +128,7 @@ view attributes_ =
                 , color color_
                 , displayFlex
                 , alignItems center
-                , Css.Global.descendants
-                    [ Css.Global.a
-                        [ textDecoration none
-                        , color Colors.azure
-                        , borderBottom3 (px 1) solid Colors.azure
-                        , visited [ color Colors.azure ]
-                        ]
-                    ]
+                , styleOverrides
                 ]
                 role
             <|
@@ -170,6 +164,7 @@ view attributes_ =
                 , alignItems center
                 , getBackgroundColor attributes.size attributes.theme
                 , color color_
+                , styleOverrides
                 ]
                 role
             <|
@@ -562,23 +557,7 @@ viewTiny content onDismiss_ icon =
             "Nri-Ui-Message-V2--alert"
             [ Fonts.baseFont
             , fontSize (px 13)
-
-            --, lineHeight (px 20)
             , listStyleType none
-
-            -- This global selector and overrides are necessary due to
-            -- old stylesheets used on the monolith that set the
-            -- `.txt p { font-size: 18px; }` -- without these overrides,
-            -- we may see giant ugly alerts.
-            -- Remove these if you want to! but be emotionally prepped
-            -- to deal with visual regressions. 🙏
-            , Css.Global.descendants
-                [ Css.Global.p
-                    [ margin zero
-                    , fontSize (px 13)
-                    , Fonts.baseFont
-                    ]
-                ]
             ]
             []
             content
@@ -635,14 +614,6 @@ viewBanner content onDismiss_ icon =
             , minWidth (px 100)
             , flexShrink (int 1)
             , Fonts.baseFont
-            , Css.Global.descendants
-                [ Css.Global.a
-                    [ textDecoration none
-                    , color Colors.azure
-                    , borderBottom3 (px 1) solid Colors.azure
-                    , visited [ color Colors.azure ]
-                    ]
-                ]
             ]
             []
             content
@@ -654,6 +625,33 @@ viewBanner content onDismiss_ icon =
         Just msg ->
             bannerDismissButton msg
     ]
+
+
+
+-- Style overrides
+
+
+styleOverrides : Style
+styleOverrides =
+    Css.Global.descendants
+        [ Css.Global.a
+            [ textDecoration none
+            , color Colors.azure
+            , borderBottom3 (px 1) solid Colors.azure
+            , visited [ color Colors.azure ]
+            ]
+        , -- This global selector and overrides are necessary due to
+          -- old stylesheets used on the monolith that set the
+          -- `.txt p { font-size: 18px; }` -- without these overrides,
+          -- we may see giant ugly alerts.
+          -- Remove these if you want to! but be emotionally prepped
+          -- to deal with visual regressions. 🙏
+          Css.Global.p
+            [ margin zero
+            , fontSize (px 13)
+            , Fonts.baseFont
+            ]
+        ]
 
 
 
