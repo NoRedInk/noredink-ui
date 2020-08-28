@@ -62,16 +62,30 @@ controlTheme =
         , ( "error", Control.value (Just Message.error) )
         , ( "alert", Control.value (Just Message.alert) )
         , ( "success", Control.value (Just Message.success) )
-        , ( "customTheme (aquaDark, gray92, premiumFlag)"
-          , Message.customTheme
-                { color = Colors.aquaDark
-                , backgroundColor = Colors.gray92
-                , icon = Pennant.premiumFlag
-                }
-                |> Just
-                |> Control.value
-          )
+        , ( "customTheme", Control.map Just controlCustomTheme )
         ]
+
+
+controlCustomTheme : Control (Message.Attribute msg)
+controlCustomTheme =
+    Control.record (\a b c -> Message.customTheme { color = a, backgroundColor = b, icon = c })
+        |> Control.field "color"
+            (Control.choice
+                [ ( "aquaDark", Control.value Colors.aquaDark )
+                ]
+            )
+        |> Control.field "backgroundColor"
+            (Control.choice
+                [ ( "gray92", Control.value Colors.gray92 )
+                ]
+            )
+        |> Control.field "icon"
+            (Control.choice
+                [ ( "premiumFlag", Control.value Pennant.premiumFlag )
+                , ( "lock", Control.value UiIcon.lock )
+                , ( "clock", Control.value UiIcon.clock )
+                ]
+            )
 
 
 controlContent : Control (Maybe (Message.Attribute msg))
