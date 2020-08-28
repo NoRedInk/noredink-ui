@@ -618,7 +618,7 @@ largeDismissButton : msg -> Html msg
 largeDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 (px 20) (px 30)
+        [ padding2 Css.zero (px 20)
         ]
         []
         [ ClickableSvg.button "Dismiss message"
