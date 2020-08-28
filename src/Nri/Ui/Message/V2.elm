@@ -83,7 +83,6 @@ view attributes_ =
     Nri.Ui.styled div
         "Nri-Ui-Message-V2"
         [ Fonts.baseFont
-        , backgroundColor_
         , color color_
         , boxSizing borderBox
         , styleOverrides
@@ -120,6 +119,7 @@ view attributes_ =
                     -- Box
                     , borderRadius (px 8)
                     , padding (px 20)
+                    , backgroundColor_
 
                     -- Fonts
                     , fontSize (px 15)
@@ -150,6 +150,7 @@ view attributes_ =
                     [ displayFlex
                     , justifyContent center
                     , alignItems center
+                    , backgroundColor_
 
                     -- Fonts
                     , fontSize (px 20)
