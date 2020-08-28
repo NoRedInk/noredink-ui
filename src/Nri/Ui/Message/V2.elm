@@ -109,7 +109,7 @@ view attributes_ =
                         }
 
                     Custom theme ->
-                        { icon = theme.icon
+                        { icon = NriSvg.withColor theme.backgroundColor theme.icon
                         , fontColor = theme.color
                         }
 
@@ -328,8 +328,7 @@ success =
     Attribute <| \config -> { config | theme = Success }
 
 
-{-| When using a `custom` theme and `tiny` size, the custom `backgroundColor` will be ignored.
--}
+{-| -}
 customTheme : { color : Color, backgroundColor : Color, icon : Svg } -> Attribute msg
 customTheme custom_ =
     Attribute <| \config -> { config | theme = Custom custom_ }
@@ -512,27 +511,7 @@ viewTiny attributes content onDismiss_ config =
         , paddingBottom (px 8)
         ]
         attributes
-        [ styled div
-            []
-            []
-            [ Nri.Ui.styled div
-                "Nri-Ui-Message-V2--tinyIconContainer"
-                [ -- Content positioning
-                  displayFlex
-                , alignItems center
-                , justifyContent center
-                , marginRight (px 5)
-                , lineHeight (px 13)
-                , flexShrink zero
-
-                -- Size
-                , borderRadius (px 13)
-                , height (px 20)
-                , width (px 20)
-                ]
-                []
-                [ NriSvg.toHtml config.icon ]
-            ]
+        [ viewTinyIcon config.icon
         , styled div
             [ displayFlex
             , alignItems center
@@ -600,13 +579,7 @@ viewLarge attributes content onDismiss_ config =
             ]
         ]
         attributes
-        [ styled div
-            [ width (px 35)
-            , marginRight (px 10)
-            ]
-            []
-            [ NriSvg.toHtml config.icon
-            ]
+        [ viewLargeIcon config.icon
         , styled div
             [ minWidth (px 100)
             , flexBasis (px 100)
@@ -646,17 +619,7 @@ viewBanner attributes content onDismiss_ config =
                 ]
             ]
             []
-            [ styled div
-                [ width (px 50)
-                , height (px 50)
-                , marginRight (px 20)
-                , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
-                  -- But using shrink here and on the next div lets us have the text content be centered rather than
-                  -- left-aligned when the content is shorter than one line
-                  flexShrink zero
-                ]
-                []
-                [ config.icon ]
+            [ viewBannerIcon config.icon
             , Nri.Ui.styled div
                 "banner-alert-notification"
                 [ fontSize (px 20)
@@ -685,6 +648,61 @@ viewBanner attributes content onDismiss_ config =
             Just msg ->
                 bannerDismissButton msg
         ]
+
+
+
+-- Icons
+
+
+viewTinyIcon : NriSvg.Svg -> Html msg
+viewTinyIcon icon =
+    styled div
+        []
+        []
+        [ Nri.Ui.styled div
+            "Nri-Ui-Message-V2--tinyIconContainer"
+            [ -- Content positioning
+              displayFlex
+            , alignItems center
+            , justifyContent center
+            , marginRight (px 5)
+            , lineHeight (px 13)
+            , flexShrink zero
+
+            -- Size
+            , borderRadius (px 13)
+            , height (px 20)
+            , width (px 20)
+            ]
+            []
+            [ NriSvg.toHtml icon ]
+        ]
+
+
+viewLargeIcon : NriSvg.Svg -> Html msg
+viewLargeIcon icon =
+    styled div
+        [ width (px 35)
+        , marginRight (px 10)
+        ]
+        []
+        [ NriSvg.toHtml icon
+        ]
+
+
+viewBannerIcon : NriSvg.Svg -> Html msg
+viewBannerIcon icon =
+    styled div
+        [ width (px 50)
+        , height (px 50)
+        , marginRight (px 20)
+        , -- NOTE: I think it's normally best to avoid relying on flexShrink (and use flexGrow/flexBasis) instead,
+          -- But using shrink here and on the next div lets us have the text content be centered rather than
+          -- left-aligned when the content is shorter than one line
+          flexShrink zero
+        ]
+        []
+        [ config.icon ]
 
 
 
