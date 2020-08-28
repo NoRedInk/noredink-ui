@@ -74,6 +74,9 @@ view attributes_ =
 
         color_ =
             getColor attributes.size attributes.theme
+
+        icon =
+            getIcon attributes.size attributes.theme
     in
     case attributes.size of
         Tiny ->
@@ -88,30 +91,7 @@ view attributes_ =
                 ]
                 role
             <|
-                viewTiny html_ attributes.onDismiss <|
-                    case attributes.theme of
-                        Error ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.purple
-                                |> NriSvg.withLabel "Error"
-
-                        Alert ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.red
-                                |> NriSvg.withLabel "Alert"
-
-                        Tip ->
-                            UiIcon.bulb
-                                |> NriSvg.withColor Colors.yellow
-                                |> NriSvg.withLabel "Tip"
-
-                        Success ->
-                            UiIcon.checkmarkInCircle
-                                |> NriSvg.withColor Colors.green
-                                |> NriSvg.withLabel "Success"
-
-                        Custom theme ->
-                            NriSvg.withColor theme.backgroundColor theme.icon
+                viewTiny html_ attributes.onDismiss icon
 
         Large ->
             Nri.Ui.styled div
@@ -132,30 +112,7 @@ view attributes_ =
                 ]
                 role
             <|
-                viewLarge html_ attributes.onDismiss <|
-                    case attributes.theme of
-                        Error ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.purple
-                                |> NriSvg.withLabel "Error"
-
-                        Alert ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.ochre
-                                |> NriSvg.withLabel "Alert"
-
-                        Tip ->
-                            UiIcon.bulb
-                                |> NriSvg.withColor Colors.navy
-                                |> NriSvg.withLabel "Tip"
-
-                        Success ->
-                            UiIcon.checkmarkInCircle
-                                |> NriSvg.withColor Colors.green
-                                |> NriSvg.withLabel "Success"
-
-                        Custom theme ->
-                            theme.icon
+                viewLarge html_ attributes.onDismiss icon
 
         Banner ->
             styled div
@@ -168,36 +125,7 @@ view attributes_ =
                 ]
                 role
             <|
-                viewBanner html_ attributes.onDismiss <|
-                    case attributes.theme of
-                        Error ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.purple
-                                |> NriSvg.withLabel "Error"
-                                |> NriSvg.toHtml
-
-                        Alert ->
-                            UiIcon.exclamation
-                                |> NriSvg.withColor Colors.ochre
-                                |> NriSvg.withLabel "Alert"
-                                |> NriSvg.toHtml
-
-                        Tip ->
-                            inCircle
-                                { backgroundColor = Colors.navy
-                                , color = Colors.mustard
-                                , height = Css.px 32
-                                , icon = UiIcon.bulb
-                                }
-
-                        Success ->
-                            UiIcon.checkmarkInCircle
-                                |> NriSvg.withColor Colors.green
-                                |> NriSvg.withLabel "Success"
-                                |> NriSvg.toHtml
-
-                        Custom theme ->
-                            NriSvg.toHtml theme.icon
+                viewBanner html_ attributes.onDismiss icon
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -492,6 +420,62 @@ getBackgroundColor size theme =
             Css.backgroundColor Colors.greenLightest
 
 
+getIcon : Size -> Theme -> Html msg
+getIcon size theme =
+    case theme of
+        Error ->
+            UiIcon.exclamation
+                |> NriSvg.withColor Colors.purple
+                |> NriSvg.withLabel "Error"
+                |> NriSvg.toHtml
+
+        Alert ->
+            let
+                color =
+                    case size of
+                        Tiny ->
+                            Colors.red
+
+                        _ ->
+                            Colors.ochre
+            in
+            UiIcon.exclamation
+                |> NriSvg.withColor color
+                |> NriSvg.withLabel "Alert"
+                |> NriSvg.toHtml
+
+        Tip ->
+            case size of
+                Tiny ->
+                    UiIcon.bulb
+                        |> NriSvg.withColor Colors.yellow
+                        |> NriSvg.withLabel "Tip"
+                        |> NriSvg.toHtml
+
+                Large ->
+                    UiIcon.bulb
+                        |> NriSvg.withColor Colors.navy
+                        |> NriSvg.withLabel "Tip"
+                        |> NriSvg.toHtml
+
+                Banner ->
+                    inCircle
+                        { backgroundColor = Colors.navy
+                        , color = Colors.mustard
+                        , height = Css.px 32
+                        , icon = UiIcon.bulb
+                        }
+
+        Success ->
+            UiIcon.checkmarkInCircle
+                |> NriSvg.withColor Colors.green
+                |> NriSvg.withLabel "Success"
+                |> NriSvg.toHtml
+
+        Custom { icon } ->
+            NriSvg.toHtml icon
+
+
 
 -- Role
 
@@ -658,7 +642,7 @@ styleOverrides =
 -- Icons
 
 
-viewTinyIcon : NriSvg.Svg -> Html msg
+viewTinyIcon : Html msg -> Html msg
 viewTinyIcon icon =
     styled div
         []
@@ -679,18 +663,18 @@ viewTinyIcon icon =
             , width (px 20)
             ]
             []
-            [ NriSvg.toHtml icon ]
+            [ icon ]
         ]
 
 
-viewLargeIcon : NriSvg.Svg -> Html msg
+viewLargeIcon : Html msg -> Html msg
 viewLargeIcon icon =
     styled div
         [ width (px 35)
         , marginRight (px 10)
         ]
         []
-        [ NriSvg.toHtml icon
+        [ icon
         ]
 
 
