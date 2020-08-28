@@ -71,143 +71,138 @@ view attributes_ =
 
         html_ =
             contentToHtml attributes.content
+
+        color_ =
+            getColor attributes.size attributes.theme
     in
     case attributes.size of
         Tiny ->
-            viewTiny role html_ attributes.onDismiss <|
-                case attributes.theme of
-                    Error ->
-                        { icon =
+            Nri.Ui.styled div
+                "Nri-Ui-Message-V2--tiny"
+                [ displayFlex
+                , justifyContent start
+                , paddingTop (px 6)
+                , paddingBottom (px 8)
+                , color color_
+                ]
+                role
+            <|
+                viewTiny html_ attributes.onDismiss <|
+                    case attributes.theme of
+                        Error ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.purple
                                 |> NriSvg.withLabel "Error"
-                        , fontColor = Colors.purple
-                        }
 
-                    Alert ->
-                        { icon =
+                        Alert ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.red
                                 |> NriSvg.withLabel "Alert"
-                        , fontColor = Colors.redDark
-                        }
 
-                    Tip ->
-                        { icon =
+                        Tip ->
                             UiIcon.bulb
                                 |> NriSvg.withColor Colors.yellow
                                 |> NriSvg.withLabel "Tip"
-                        , fontColor = Colors.navy
-                        }
 
-                    Success ->
-                        { icon =
+                        Success ->
                             UiIcon.checkmarkInCircle
                                 |> NriSvg.withColor Colors.green
                                 |> NriSvg.withLabel "Success"
-                        , fontColor = Colors.greenDarkest
-                        }
 
-                    Custom theme ->
-                        { icon = NriSvg.withColor theme.backgroundColor theme.icon
-                        , fontColor = theme.color
-                        }
+                        Custom theme ->
+                            NriSvg.withColor theme.backgroundColor theme.icon
 
         Large ->
-            viewLarge role html_ attributes.onDismiss <|
-                case attributes.theme of
-                    Error ->
-                        { backgroundColor = Colors.purpleLight
-                        , fontColor = Colors.purpleDark
-                        , icon =
+            Nri.Ui.styled div
+                "Nri-Ui-Message-V2--large"
+                [ width (pct 100)
+                , getBackgroundColor attributes.size attributes.theme
+                , Fonts.baseFont
+                , fontSize (px 15)
+                , lineHeight (px 21)
+                , fontWeight (int 600)
+                , boxSizing borderBox
+                , padding (px 20)
+                , borderRadius (px 8)
+                , color color_
+                , displayFlex
+                , alignItems center
+                , Css.Global.descendants
+                    [ Css.Global.a
+                        [ textDecoration none
+                        , color Colors.azure
+                        , borderBottom3 (px 1) solid Colors.azure
+                        , visited [ color Colors.azure ]
+                        ]
+                    ]
+                ]
+                role
+            <|
+                viewLarge html_ attributes.onDismiss <|
+                    case attributes.theme of
+                        Error ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.purple
                                 |> NriSvg.withLabel "Error"
-                        }
 
-                    Alert ->
-                        { backgroundColor = Colors.sunshine
-                        , fontColor = Colors.navy
-                        , icon =
+                        Alert ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.ochre
                                 |> NriSvg.withLabel "Alert"
-                        }
 
-                    Tip ->
-                        { backgroundColor = Colors.sunshine
-                        , fontColor = Colors.navy
-                        , icon =
+                        Tip ->
                             UiIcon.bulb
                                 |> NriSvg.withColor Colors.navy
                                 |> NriSvg.withLabel "Tip"
-                        }
 
-                    Success ->
-                        { backgroundColor = Colors.greenLightest
-                        , fontColor = Colors.greenDarkest
-                        , icon =
+                        Success ->
                             UiIcon.checkmarkInCircle
                                 |> NriSvg.withColor Colors.green
                                 |> NriSvg.withLabel "Success"
-                        }
 
-                    Custom theme ->
-                        { backgroundColor = theme.backgroundColor
-                        , fontColor = theme.color
-                        , icon = theme.icon
-                        }
+                        Custom theme ->
+                            theme.icon
 
         Banner ->
-            viewBanner role html_ attributes.onDismiss <|
-                case attributes.theme of
-                    Error ->
-                        { backgroundColor = Colors.purpleLight
-                        , color = Colors.purpleDark
-                        , icon =
+            styled div
+                [ displayFlex
+                , justifyContent center
+                , alignItems center
+                , getBackgroundColor attributes.size attributes.theme
+                , color color_
+                ]
+                role
+            <|
+                viewBanner html_ attributes.onDismiss <|
+                    case attributes.theme of
+                        Error ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.purple
                                 |> NriSvg.withLabel "Error"
                                 |> NriSvg.toHtml
-                        }
 
-                    Alert ->
-                        { backgroundColor = Colors.sunshine
-                        , color = Colors.navy
-                        , icon =
+                        Alert ->
                             UiIcon.exclamation
                                 |> NriSvg.withColor Colors.ochre
                                 |> NriSvg.withLabel "Alert"
                                 |> NriSvg.toHtml
-                        }
 
-                    Tip ->
-                        { backgroundColor = Colors.frost
-                        , color = Colors.navy
-                        , icon =
+                        Tip ->
                             inCircle
                                 { backgroundColor = Colors.navy
                                 , color = Colors.mustard
                                 , height = Css.px 32
                                 , icon = UiIcon.bulb
                                 }
-                        }
 
-                    Success ->
-                        { backgroundColor = Colors.greenLightest
-                        , color = Colors.greenDarkest
-                        , icon =
+                        Success ->
                             UiIcon.checkmarkInCircle
                                 |> NriSvg.withColor Colors.green
                                 |> NriSvg.withLabel "Success"
                                 |> NriSvg.toHtml
-                        }
 
-                    Custom theme ->
-                        { backgroundColor = theme.backgroundColor
-                        , color = theme.color
-                        , icon = NriSvg.toHtml theme.icon
-                        }
+                        Custom theme ->
+                            NriSvg.toHtml theme.icon
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -448,6 +443,60 @@ type Theme
         }
 
 
+getColor : Size -> Theme -> Color
+getColor size theme =
+    case theme of
+        Custom { color } ->
+            color
+
+        Error ->
+            case size of
+                Tiny ->
+                    Colors.purple
+
+                _ ->
+                    Colors.purpleDark
+
+        Alert ->
+            case size of
+                Tiny ->
+                    Colors.redDark
+
+                _ ->
+                    Colors.navy
+
+        Tip ->
+            Colors.navy
+
+        Success ->
+            Colors.greenDarkest
+
+
+getBackgroundColor : Size -> Theme -> Style
+getBackgroundColor size theme =
+    case ( size, theme ) of
+        ( _, Custom { backgroundColor } ) ->
+            Css.backgroundColor backgroundColor
+
+        ( Tiny, _ ) ->
+            Css.batch []
+
+        ( Large, Tip ) ->
+            Css.backgroundColor Colors.sunshine
+
+        ( Banner, Tip ) ->
+            Css.backgroundColor Colors.frost
+
+        ( _, Error ) ->
+            Css.backgroundColor Colors.purpleLight
+
+        ( _, Alert ) ->
+            Css.backgroundColor Colors.sunshine
+
+        ( _, Success ) ->
+            Css.backgroundColor Colors.greenLightest
+
+
 
 -- Role
 
@@ -502,150 +551,109 @@ inCircle config =
 -- Views
 
 
-viewTiny attributes content onDismiss_ config =
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V2--tiny"
+viewTiny content onDismiss_ icon =
+    [ viewTinyIcon icon
+    , styled div
         [ displayFlex
-        , justifyContent start
-        , paddingTop (px 6)
-        , paddingBottom (px 8)
+        , alignItems center
         ]
-        attributes
-        [ viewTinyIcon config.icon
-        , styled div
-            [ displayFlex
-            , alignItems center
-            ]
-            []
-            [ Nri.Ui.styled div
-                "Nri-Ui-Message-V2--alert"
-                [ color config.fontColor
-                , Fonts.baseFont
-                , fontSize (px 13)
+        []
+        [ Nri.Ui.styled div
+            "Nri-Ui-Message-V2--alert"
+            [ Fonts.baseFont
+            , fontSize (px 13)
 
-                --, lineHeight (px 20)
-                , listStyleType none
+            --, lineHeight (px 20)
+            , listStyleType none
 
-                -- This global selector and overrides are necessary due to
-                -- old stylesheets used on the monolith that set the
-                -- `.txt p { font-size: 18px; }` -- without these overrides,
-                -- we may see giant ugly alerts.
-                -- Remove these if you want to! but be emotionally prepped
-                -- to deal with visual regressions. 🙏
-                , Css.Global.descendants
-                    [ Css.Global.p
-                        [ margin zero
-                        , fontSize (px 13)
-                        , Fonts.baseFont
-                        ]
+            -- This global selector and overrides are necessary due to
+            -- old stylesheets used on the monolith that set the
+            -- `.txt p { font-size: 18px; }` -- without these overrides,
+            -- we may see giant ugly alerts.
+            -- Remove these if you want to! but be emotionally prepped
+            -- to deal with visual regressions. 🙏
+            , Css.Global.descendants
+                [ Css.Global.p
+                    [ margin zero
+                    , fontSize (px 13)
+                    , Fonts.baseFont
                     ]
                 ]
-                []
-                content
-            ]
-        , case onDismiss_ of
-            Nothing ->
-                text ""
-
-            Just msg ->
-                tinyDismissButton msg
-        ]
-
-
-viewLarge attributes content onDismiss_ config =
-    Nri.Ui.styled div
-        "Nri-Ui-Message-V2--large"
-        [ width (pct 100)
-        , backgroundColor config.backgroundColor
-        , Fonts.baseFont
-        , fontSize (px 15)
-        , lineHeight (px 21)
-        , fontWeight (int 600)
-        , boxSizing borderBox
-        , padding (px 20)
-        , borderRadius (px 8)
-        , color config.fontColor
-        , displayFlex
-        , alignItems center
-        , Css.Global.descendants
-            [ Css.Global.a
-                [ textDecoration none
-                , color Colors.azure
-                , borderBottom3 (px 1) solid Colors.azure
-                , visited [ color Colors.azure ]
-                ]
-            ]
-        ]
-        attributes
-        [ viewLargeIcon config.icon
-        , styled div
-            [ minWidth (px 100)
-            , flexBasis (px 100)
-            , flexGrow (int 1)
             ]
             []
             content
-        , case onDismiss_ of
-            Nothing ->
-                text ""
-
-            Just msg ->
-                largeDismissButton msg
         ]
+    , case onDismiss_ of
+        Nothing ->
+            text ""
+
+        Just msg ->
+            tinyDismissButton msg
+    ]
 
 
-viewBanner attributes content onDismiss_ config =
-    styled div
-        [ displayFlex
+viewLarge content onDismiss_ icon =
+    [ viewLargeIcon icon
+    , styled div
+        [ minWidth (px 100)
+        , flexBasis (px 100)
+        , flexGrow (int 1)
+        ]
+        []
+        content
+    , case onDismiss_ of
+        Nothing ->
+            text ""
+
+        Just msg ->
+            largeDismissButton msg
+    ]
+
+
+viewBanner content onDismiss_ icon =
+    [ styled span
+        [ alignItems center
+        , displayFlex
         , justifyContent center
-        , alignItems center
-        , backgroundColor config.backgroundColor
-        , color config.color
+        , padding (px 20)
+        , width (Css.pct 100)
+        , Css.Global.children
+            [ Css.Global.button
+                [ position relative
+                , right (px 15)
+                ]
+            ]
         ]
-        attributes
-        [ styled span
-            [ alignItems center
-            , displayFlex
-            , justifyContent center
-            , padding (px 20)
-            , width (Css.pct 100)
-            , Css.Global.children
-                [ Css.Global.button
-                    [ position relative
-                    , right (px 15)
+        []
+        [ viewBannerIcon icon
+        , Nri.Ui.styled div
+            "banner-alert-notification"
+            [ fontSize (px 20)
+            , fontWeight (int 700)
+            , lineHeight (px 27)
+            , maxWidth (px 600)
+            , minWidth (px 100)
+            , flexShrink (int 1)
+            , Fonts.baseFont
+            , Css.Global.descendants
+                [ Css.Global.a
+                    [ textDecoration none
+                    , color Colors.azure
+                    , borderBottom3 (px 1) solid Colors.azure
+                    , visited [ color Colors.azure ]
                     ]
                 ]
             ]
             []
-            [ viewBannerIcon config.icon
-            , Nri.Ui.styled div
-                "banner-alert-notification"
-                [ fontSize (px 20)
-                , fontWeight (int 700)
-                , lineHeight (px 27)
-                , maxWidth (px 600)
-                , minWidth (px 100)
-                , flexShrink (int 1)
-                , Fonts.baseFont
-                , Css.Global.descendants
-                    [ Css.Global.a
-                        [ textDecoration none
-                        , color Colors.azure
-                        , borderBottom3 (px 1) solid Colors.azure
-                        , visited [ color Colors.azure ]
-                        ]
-                    ]
-                ]
-                []
-                content
-            ]
-        , case onDismiss_ of
-            Nothing ->
-                text ""
-
-            Just msg ->
-                bannerDismissButton msg
+            content
         ]
+    , case onDismiss_ of
+        Nothing ->
+            text ""
+
+        Just msg ->
+            bannerDismissButton msg
+    ]
 
 
 
@@ -688,7 +696,7 @@ viewLargeIcon icon =
         ]
 
 
-viewBannerIcon : NriSvg.Svg -> Html msg
+viewBannerIcon : Html msg -> Html msg
 viewBannerIcon icon =
     styled div
         [ width (px 50)
@@ -700,7 +708,7 @@ viewBannerIcon icon =
           flexShrink zero
         ]
         []
-        [ NriSvg.toHtml icon ]
+        [ icon ]
 
 
 
