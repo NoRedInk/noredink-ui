@@ -301,6 +301,7 @@ clickableTextStyles =
     , Css.textAlign Css.left
     , Css.borderStyle Css.none
     , Css.textDecoration Css.none
+    , Css.borderBottom3 (Css.px 1) Css.solid Css.transparent
     , Css.padding Css.zero
     , Css.display Css.inlineBlock
     , Css.verticalAlign Css.textBottom
