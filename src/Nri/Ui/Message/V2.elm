@@ -18,7 +18,7 @@ module Nri.Ui.Message.V2 exposing
   - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
   - expose theme Attribute helpers instead of having `Theme(..)` in the view APIs
   - exposes a singular view function (tiny, large, and banner are now attributes)
-  - sets the somethingWentWrong role to `alertdialog`
+  - sets the somethingWentWrong role to `alert`
 
 @docs view
 
@@ -204,7 +204,7 @@ somethingWentWrong errorMessageForEngineers =
         [ view
             [ tiny
             , error
-            , alertDialogRole
+            , alertRole
             , plaintext "Sorry, something went wrong.  Please try again later."
             ]
         , details []
