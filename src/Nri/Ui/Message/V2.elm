@@ -324,7 +324,17 @@ onDismiss msg =
     Attribute <| \config -> { config | onDismiss = Just msg }
 
 
-{-| -}
+{-| Use this attribute when a user's immediate attention on the Message is required.
+
+For example, use this attribute when:
+
+> An invalid value was entered into a form field
+> The user's login session is about to expire
+> The connection to the server was lost, local changes will not be saved
+
+-- Excerpted from [Using the alert role MDN docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_alert_role)
+
+-}
 alertRole : Attribute msg
 alertRole =
     Attribute <| \config -> { config | role = Just AlertRole }
