@@ -340,7 +340,15 @@ alertRole =
     Attribute <| \config -> { config | role = Just AlertRole }
 
 
-{-| -}
+{-| Use this attribute when a user's immediate attention on the Message is required,
+the Message contains interactible elements, and you're correctly set up the Message to be
+modal (i.e., you've set up tab-wrapping, the body's overflow is hidden, the user
+can't interact with elements apart from the Message's contents...)
+
+When you use this role, verify that you are using it correctly using [this
+MDN article](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_alertdialog_role).
+
+-}
 alertDialogRole : Attribute msg
 alertDialogRole =
     Attribute <| \config -> { config | role = Just AlertDialog }
