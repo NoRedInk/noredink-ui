@@ -1,37 +1,54 @@
 module Nri.Ui.Message.V2 exposing
-    ( view
-    , Attribute
+    ( somethingWentWrong
+    , view, Attribute
     , tiny, large, banner
     , plaintext, markdown, html
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
-    , somethingWentWrong
     )
 
 {-| Changes from V1:
 
   - adds `alertRole`, `alertDialogRole` role attributes
-  - rename BannerAttribute -> Attribute
-  - accept Attributes on any Message type
-  - :skull: remove mapContent
+  - rename `BannerAttribute` -> `Attribute`
+  - accept `Attribute`s on any `Message` type
+  - ☠️ remove `mapContent`
   - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
-  - expose theme Attribute helpers instead of having `Theme(..)` in the view APIs
-  - exposes a singular view function (tiny, large, and banner are now attributes)
-  - sets the somethingWentWrong role to `alert`
+  - expose theme `Attribute` helpers instead of having `Theme(..)` in the view APIs
+  - exposes a singular `view` function (`tiny`, `large`, and `banner` are now `Attribute`s)
+  - uses `alertRole` in `somethingWentWrong`
 
-@docs view
 
-Attributes:
-
-@docs Attribute
-@docs tiny, large, banner
-@docs plaintext, markdown, html
-@docs tip, error, alert, success, customTheme
-@docs alertRole, alertDialogRole
-@docs onDismiss
+# View
 
 @docs somethingWentWrong
+@docs view, Attribute
+
+
+## Size
+
+@docs tiny, large, banner
+
+
+## Content
+
+@docs plaintext, markdown, html
+
+
+## Theme
+
+@docs tip, error, alert, success, customTheme
+
+
+## Role
+
+@docs alertRole, alertDialogRole
+
+
+## Actions
+
+@docs onDismiss
 
 -}
 
@@ -328,9 +345,9 @@ onDismiss msg =
 
 For example, use this attribute when:
 
-> An invalid value was entered into a form field
-> The user's login session is about to expire
-> The connection to the server was lost, local changes will not be saved
+>   - An invalid value was entered into a form field
+>   - The user's login session is about to expire
+>   - The connection to the server was lost, local changes will not be saved
 
 -- Excerpted from [Using the alert role MDN docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_alert_role)
 
@@ -340,8 +357,8 @@ alertRole =
     Attribute <| \config -> { config | role = Just AlertRole }
 
 
-{-| Use this attribute when a user's immediate attention on the Message is required,
-the Message contains interactible elements, and you're correctly set up the Message to be
+{-| Use this attribute when (1) a user's immediate attention on the Message is required,
+(2) the Message contains interactible elements, and (3) you've correctly set up the Message to be
 modal (i.e., you've set up tab-wrapping, the body's overflow is hidden, the user
 can't interact with elements apart from the Message's contents...)
 
