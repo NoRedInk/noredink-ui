@@ -79,9 +79,16 @@ init =
 
 {-| Pass the id of the element that should receive focus when the modal is closed.
 -}
-initOpen : String -> Model
-initOpen =
-    Opened
+initOpen : String -> ( Model, Cmd Msg )
+initOpen returnFocusTo =
+    ( Opened returnFocusTo, focusFirstElement )
+
+
+focusFirstElement : Cmd Msg
+focusFirstElement =
+    Dom.focus autofocusId
+        |> Task.onError (\_ -> Dom.focus firstId)
+        |> Task.attempt Focused
 
 
 {-| -}
@@ -126,11 +133,7 @@ update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd 
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
         OpenModal returnFocusTo ->
-            ( Opened returnFocusTo
-            , Dom.focus autofocusId
-                |> Task.onError (\_ -> Dom.focus firstId)
-                |> Task.attempt Focused
-            )
+            ( Opened returnFocusTo, focusFirstElement )
 
         CloseModal by ->
             let
