@@ -26,7 +26,6 @@ import Nri.Ui.Text.V4 as Text
 {-| -}
 type alias State =
     { state : Modal.Model
-    , content : Content
     , settings : Control Settings
     }
 
@@ -35,14 +34,8 @@ type alias State =
 init : State
 init =
     { state = Modal.init
-    , content = Info
     , settings = initModalSettings
     }
-
-
-type Content
-    = Info
-    | Warning
 
 
 type alias Settings =
@@ -53,6 +46,7 @@ type alias Settings =
     , dismissOnEscAndOverlayClick : Bool
     , longContent : Bool
     , customStyling : Bool
+    , theme : Modal.Attribute
     }
 
 
@@ -66,6 +60,15 @@ initModalSettings =
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
         |> Control.field "longContent" (Control.bool True)
         |> Control.field "customStyling" (Control.bool False)
+        |> Control.field "theme" controlTheme
+
+
+controlTheme : Control Modal.Attribute
+controlTheme =
+    Control.choice
+        [ ( "info", Control.value Modal.info )
+        , ( "warning", Control.value Modal.warning )
+        ]
 
 
 {-| -}
@@ -102,36 +105,21 @@ example =
                     else
                         []
 
-                ( title, themeAttrs, buttonTheme ) =
-                    case state.content of
-                        Info ->
-                            ( "Modal.info", Modal.info, Button.primary )
-
-                        Warning ->
-                            ( "Modal.warning", Modal.warning, Button.danger )
-
                 attrs =
-                    themeAttrs :: titleAttrs ++ stylingAttrs
+                    settings.theme :: titleAttrs ++ stylingAttrs
             in
             [ Control.view UpdateSettings state.settings
                 |> Html.fromUnstyled
-            , Button.button "Launch Info Modal"
-                [ Button.onClick (OpenModal Info "launch-info-modal")
-                , Button.custom [ Attributes.id "launch-info-modal" ]
-                , Button.css [ Css.marginRight (Css.px 16) ]
-                , Button.secondary
-                , Button.medium
-                ]
-            , Button.button "Launch Warning Modal"
-                [ Button.onClick (OpenModal Warning "launch-warning-modal")
-                , Button.custom [ Attributes.id "launch-warning-modal" ]
+            , Button.button "Launch Modal"
+                [ Button.onClick (OpenModal "launch-modal")
+                , Button.custom [ Attributes.id "launch-modal" ]
                 , Button.secondary
                 , Button.medium
                 ]
             , Modal.view
-                { title = title
+                { title = "Modal Title"
                 , wrapMsg = ModalMsg
-                , focusManager = makeFocusManager buttonTheme settings
+                , focusManager = makeFocusManager settings
                 }
                 attrs
                 state.state
@@ -139,8 +127,8 @@ example =
     }
 
 
-makeFocusManager : Button.Attribute Msg -> Settings -> Modal.FocusManager Msg
-makeFocusManager firstButtonStyle settings =
+makeFocusManager : Settings -> Modal.FocusManager Msg
+makeFocusManager settings =
     case ( settings.showX, settings.showContinue, settings.showSecondary ) of
         ( True, True, True ) ->
             Modal.MultipleFocusableElements <|
@@ -151,7 +139,7 @@ makeFocusManager firstButtonStyle settings =
                         ]
                     , footer =
                         [ Button.button "Continue"
-                            [ firstButtonStyle
+                            [ Button.premium
                             , Button.onClick ForceClose
                             , Button.large
                             , Button.custom [ modalOptions.autofocusElement ]
@@ -202,7 +190,7 @@ makeFocusManager firstButtonStyle settings =
                         ]
                     , footer =
                         [ Button.button "Continue"
-                            [ firstButtonStyle
+                            [ Button.premium
                             , Button.onClick ForceClose
                             , Button.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
                             , Button.large
@@ -216,7 +204,7 @@ makeFocusManager firstButtonStyle settings =
                     { content = [ viewModalContent settings.longContent ]
                     , footer =
                         [ Button.button "Continue"
-                            [ firstButtonStyle
+                            [ Button.premium
                             , Button.onClick ForceClose
                             , Button.custom (modalOptions.autofocusElement :: modalOptions.firstFocusableElement)
                             , Button.large
@@ -251,7 +239,7 @@ makeFocusManager firstButtonStyle settings =
                     { content = [ viewModalContent settings.longContent ]
                     , footer =
                         [ Button.button "Continue"
-                            [ firstButtonStyle
+                            [ Button.premium
                             , Button.onClick ForceClose
                             , Button.custom onlyFocusableElement
                             , Button.large
@@ -286,7 +274,7 @@ viewModalContent longContent =
                     |> text
 
               else
-                "Ice cream tootsie roll donut sweet cookie liquorice sweet donut. Sugar plum danish apple pie sesame snaps chocolate bar biscuit. Caramels macaroon jelly gummies sweet tootsie roll tiramisu apple pie. Dessert chocolate bar lemon drops dragée jelly powder cheesecake chocolate."
+                "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
                     |> text
             ]
         ]
@@ -294,7 +282,7 @@ viewModalContent longContent =
 
 {-| -}
 type Msg
-    = OpenModal Content String
+    = OpenModal String
     | ModalMsg Modal.Msg
     | ForceClose
     | UpdateSettings (Control Settings)
@@ -313,12 +301,12 @@ update msg state =
             }
     in
     case msg of
-        OpenModal content returnFocusTo ->
+        OpenModal returnFocusTo ->
             let
                 ( newState, cmd ) =
                     Modal.open returnFocusTo
             in
-            ( { state | content = content, state = newState }
+            ( { state | state = newState }
             , Cmd.map ModalMsg cmd
             )
 
