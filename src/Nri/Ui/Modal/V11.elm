@@ -132,6 +132,7 @@ view model =
                     }
                     [ Modal.hideTitle
                     , Modal.css [ padding (px 10) ]
+                    , Modal.custom [ id "first-modal" ]
                     ]
                     model.modalState
 
