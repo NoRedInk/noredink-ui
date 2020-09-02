@@ -269,6 +269,16 @@ navigation route openAtomicDesignTypes =
                 , color Colors.azure
                 , Fonts.baseFont
                 , Css.marginBottom (px 20)
+                , Css.pseudoClass "not(:focus)"
+                    [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+                    , Css.position Css.absolute
+                    , Css.height (Css.px 1)
+                    , Css.width (Css.px 1)
+                    , Css.overflow Css.hidden
+                    , Css.margin (Css.px -1)
+                    , Css.padding Css.zero
+                    , Css.border Css.zero
+                    ]
                 ]
             , Events.onClick SkipToMainContent
             , id "skip"
