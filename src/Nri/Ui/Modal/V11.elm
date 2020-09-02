@@ -2,8 +2,11 @@ module Nri.Ui.Modal.V11 exposing
     ( view
     , Model, init, open, close
     , Msg, update, subscriptions
-    , Attribute, info, warning, hideTitle, css
     , FocusManager(..)
+    , Attribute
+    , info, warning
+    , hideTitle
+    , custom, css
     , isOpen
     )
 
@@ -156,8 +159,20 @@ view model =
 @docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
-@docs Attribute, info, warning, hideTitle, css
-@docs FocusManager, info, warning
+
+@docs FocusManager
+
+
+### Attributes
+
+@docs Attribute
+@docs info, warning
+@docs hideTitle
+@docs custom, css
+
+
+### State checks
+
 @docs isOpen
 
 -}
@@ -358,6 +373,30 @@ hideTitle =
     Attribute (\attrs -> { attrs | visibleTitle = False })
 
 
+{-| Do NOT use this function for attaching styles -- use the `css` helper instead.
+
+    import Html.Styled.Attribute exposing (id)
+
+    Modal.view
+        { title = "Some Great Modal"
+        , wrapMsg = ModalMsg
+        , focusManager = focusManager
+        }
+        [ Modal.custom [ id "my-modal" ]]
+        modalState
+
+-}
+custom : List (Html.Attribute Never) -> Attribute
+custom customAttributes =
+    Attribute
+        (\attrs ->
+            { attrs
+                | customAttributes =
+                    List.append attrs.customAttributes customAttributes
+            }
+        )
+
+
 {-| -}
 css : List Style -> Attribute
 css styles =
@@ -386,6 +425,7 @@ type alias Attributes =
     , visibleTitle : Bool
     , titleStyles : List Style
     , customStyles : List Style
+    , customAttributes : List (Html.Attribute Never)
     }
 
 
@@ -396,6 +436,7 @@ defaultAttributes =
     , visibleTitle = True
     , titleStyles = []
     , customStyles = []
+    , customAttributes = []
     }
 
 
@@ -505,7 +546,16 @@ view config attrsList model =
                     ]
                 ]
                 [ viewBackdrop config.wrapMsg attrs.overlayColor
-                , div [ Attrs.css (List.append modalStyles attrs.customStyles) ] [ viewModal config attrs ]
+                , div [ Attrs.css (List.append modalStyles attrs.customStyles) ]
+                    [ viewModal
+                        { title = config.title
+                        , wrapMsg = config.wrapMsg
+                        , focusManager = config.focusManager
+                        , visibleTitle = attrs.visibleTitle
+                        , titleStyles = attrs.titleStyles
+                        , customAttributes = attrs.customAttributes
+                        }
+                    ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
                 ]
                 |> List.singleton
@@ -537,21 +587,25 @@ viewModal :
     { title : String
     , wrapMsg : Msg -> msg
     , focusManager : FocusManager msg
+    , visibleTitle : Bool
+    , titleStyles : List Style
+    , customAttributes : List (Html.Attribute Never)
     }
-    ->
-        { a
-            | visibleTitle : Bool
-            , titleStyles : List Style
-        }
     -> Html msg
-viewModal config styles =
+viewModal config =
     section
-        [ Role.dialog
-        , Widget.modal True
-        , Aria.labeledBy modalTitleId
-        ]
-        [ h1 [ id modalTitleId, Attrs.css styles.titleStyles ] [ text config.title ]
-        , viewContent styles.visibleTitle <|
+        ([ Role.dialog
+         , Widget.modal True
+         , Aria.labeledBy modalTitleId
+         ]
+            ++ config.customAttributes
+        )
+        [ h1
+            [ id modalTitleId
+            , Attrs.css config.titleStyles
+            ]
+            [ text config.title ]
+        , viewContent config.visibleTitle <|
             case config.focusManager of
                 OneFocusableElement toContentAndFooter ->
                     toContentAndFooter
