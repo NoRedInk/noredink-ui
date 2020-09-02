@@ -46,7 +46,7 @@ type alias Settings =
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
-    , customStyling : Bool
+    , styles : Modal.Attribute
     , theme : Modal.Attribute
     }
 
@@ -68,7 +68,7 @@ initModalSettings =
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
-        |> Control.field "customStyling" (Control.bool False)
+        |> Control.field "css" controlCss
         |> Control.field "theme" controlTheme
 
 
@@ -88,6 +88,16 @@ controlTheme =
         ]
 
 
+controlCss : Control Modal.Attribute
+controlCss =
+    Control.map Modal.css <|
+        Control.choice
+            [ ( "[]", Control.value [] )
+            , ( "[ Css.borderRadius Css.zero ]", Control.value [ Css.borderRadius Css.zero ] )
+            , ( "[ Css.width (Css.px 900) ]", Control.value [ Css.width (Css.px 900) ] )
+            ]
+
+
 {-| -}
 example : Example State Msg
 example =
@@ -103,20 +113,6 @@ example =
             let
                 settings =
                     Control.currentValue state.settings
-
-                stylingAttrs =
-                    if settings.customStyling then
-                        [ Modal.css
-                            [ Css.borderRadius Css.zero
-                            , Css.width (Css.px 800)
-                            ]
-                        ]
-
-                    else
-                        []
-
-                attrs =
-                    settings.theme :: settings.titleVisibility :: stylingAttrs
             in
             [ Control.view UpdateSettings state.settings
                 |> Html.fromUnstyled
@@ -131,7 +127,10 @@ example =
                 , wrapMsg = ModalMsg
                 , focusManager = makeFocusManager settings
                 }
-                attrs
+                [ settings.theme
+                , settings.titleVisibility
+                , settings.styles
+                ]
                 state.state
             ]
     }
