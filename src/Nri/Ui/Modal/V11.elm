@@ -430,6 +430,7 @@ viewModal :
 viewModal config styles =
     section
         [ Role.dialog
+        , Widget.modal True
         , Aria.labeledBy modalTitleId
         ]
         [ h1 [ id modalTitleId, Attrs.css styles.titleStyles ] [ text config.title ]
