@@ -109,6 +109,22 @@ type By
 
 
 {-| -}
+close : Msg
+close =
+    CloseModal Other
+
+
+close_ : Model -> ( Model, Cmd Msg )
+close_ model =
+    case model of
+        Opened returnFocusTo ->
+            ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
+
+        Closed ->
+            ( Closed, Cmd.none )
+
+
+{-| -}
 type Msg
     = OpenModal String
     | CloseModal By
@@ -136,19 +152,16 @@ update { dismissOnEscAndOverlayClick } msg model =
             ( Opened returnFocusTo, focusFirstElement )
 
         CloseModal by ->
-            let
-                closeModal returnFocusTo =
-                    ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
-            in
-            case ( model, by, dismissOnEscAndOverlayClick ) of
-                ( Opened returnFocusTo, _, True ) ->
-                    closeModal returnFocusTo
-
-                ( Opened returnFocusTo, Other, False ) ->
-                    closeModal returnFocusTo
+            case by of
+                Other ->
+                    close_ model
 
                 _ ->
-                    ( model, Cmd.none )
+                    if dismissOnEscAndOverlayClick then
+                        close_ model
+
+                    else
+                        ( model, Cmd.none )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -169,12 +182,6 @@ type Autofocus
 open : String -> Msg
 open =
     OpenModal
-
-
-{-| -}
-close : Msg
-close =
-    CloseModal Other
 
 
 
