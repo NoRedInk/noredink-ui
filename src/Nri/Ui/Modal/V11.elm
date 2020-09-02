@@ -109,13 +109,8 @@ type By
 
 
 {-| -}
-close : Msg
-close =
-    CloseModal Other
-
-
-close_ : Model -> ( Model, Cmd Msg )
-close_ model =
+close : Model -> ( Model, Cmd Msg )
+close model =
     case model of
         Opened returnFocusTo ->
             ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
@@ -154,11 +149,11 @@ update { dismissOnEscAndOverlayClick } msg model =
         CloseModal by ->
             case by of
                 Other ->
-                    close_ model
+                    close model
 
                 _ ->
                     if dismissOnEscAndOverlayClick then
-                        close_ model
+                        close model
 
                     else
                         ( model, Cmd.none )
@@ -611,7 +606,7 @@ closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
 closeButton wrapMsg focusableElementAttrs =
     button
         (Widget.label "Close modal"
-            :: Attrs.map wrapMsg (onClick close)
+            :: Attrs.map wrapMsg (onClick (CloseModal Other))
             :: Attrs.css
                 [ -- in the upper-right corner of the modal
                   Css.position Css.absolute
