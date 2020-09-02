@@ -125,8 +125,7 @@ view model =
                                     ]
                                 , footer =
                                     [ button
-                                        [ Events.onClick CloseModal
-                                        ]
+                                        (Events.onClick CloseModal :: lastFocusableElement)
                                         [ text "Close" ]
                                     ]
                                 }
