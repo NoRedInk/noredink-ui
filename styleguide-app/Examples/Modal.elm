@@ -158,12 +158,7 @@ makeFocusManager settings =
                         , viewModalContent settings.content
                         ]
                     , footer =
-                        [ Button.button "Continue"
-                            [ Button.premium
-                            , Button.onClick ForceClose
-                            , Button.large
-                            , Button.custom [ modalOptions.autofocusElement ]
-                            ]
+                        [ continueButton [ modalOptions.autofocusElement ]
                         , closeClickableText modalOptions.lastFocusableElement
                         ]
                     }
@@ -199,12 +194,10 @@ makeFocusManager settings =
                         , viewModalContent settings.content
                         ]
                     , footer =
-                        [ Button.button "Continue"
-                            [ Button.premium
-                            , Button.onClick ForceClose
-                            , Button.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
-                            , Button.large
-                            ]
+                        [ continueButton
+                            (modalOptions.autofocusElement
+                                :: modalOptions.lastFocusableElement
+                            )
                         ]
                     }
 
@@ -213,12 +206,10 @@ makeFocusManager settings =
                 \modalOptions ->
                     { content = [ viewModalContent settings.content ]
                     , footer =
-                        [ Button.button "Continue"
-                            [ Button.premium
-                            , Button.onClick ForceClose
-                            , Button.custom (modalOptions.autofocusElement :: modalOptions.firstFocusableElement)
-                            , Button.large
-                            ]
+                        [ continueButton
+                            (modalOptions.autofocusElement
+                                :: modalOptions.firstFocusableElement
+                            )
                         , closeClickableText modalOptions.lastFocusableElement
                         ]
                     }
@@ -227,9 +218,7 @@ makeFocusManager settings =
             Modal.OneFocusableElement
                 (\{ onlyFocusableElement } ->
                     { content = [ viewModalContent settings.content ]
-                    , footer =
-                        [ closeClickableText onlyFocusableElement
-                        ]
+                    , footer = [ closeClickableText onlyFocusableElement ]
                     }
                 )
 
@@ -237,14 +226,7 @@ makeFocusManager settings =
             Modal.OneFocusableElement
                 (\{ onlyFocusableElement } ->
                     { content = [ viewModalContent settings.content ]
-                    , footer =
-                        [ Button.button "Continue"
-                            [ Button.premium
-                            , Button.onClick ForceClose
-                            , Button.custom onlyFocusableElement
-                            , Button.large
-                            ]
-                        ]
+                    , footer = [ continueButton onlyFocusableElement ]
                     }
                 )
 
@@ -263,6 +245,16 @@ viewModalContent content =
         [ span
             [ Attributes.css [ whiteSpace preLine ] ]
             [ text content ]
+        ]
+
+
+continueButton : List (Html.Attribute Msg) -> Html Msg
+continueButton attributes =
+    Button.button "Continue"
+        [ Button.premium
+        , Button.onClick ForceClose
+        , Button.custom attributes
+        , Button.large
         ]
 
 
