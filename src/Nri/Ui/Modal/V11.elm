@@ -299,11 +299,6 @@ update { dismissOnEscAndOverlayClick } msg model =
             ( model, Cmd.none )
 
 
-type Autofocus
-    = Default
-    | Last
-
-
 
 -- ATTRIBUTES
 
