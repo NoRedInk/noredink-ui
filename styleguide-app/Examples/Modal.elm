@@ -8,12 +8,13 @@ module Examples.Modal exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html as Root
-import Html.Styled.Attributes as Attributes
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
@@ -21,6 +22,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V4 as Text
+import Task
 
 
 {-| -}
@@ -130,122 +132,158 @@ example =
             in
             [ Control.view UpdateSettings state.settings
                 |> Html.fromUnstyled
-            , Button.button "Launch Modal"
-                [ Button.onClick (OpenModal "launch-modal")
-                , Button.custom [ Attributes.id "launch-modal" ]
-                , Button.secondary
-                , Button.medium
-                ]
-            , Modal.view
-                { title = settings.title
-                , wrapMsg = ModalMsg
-                , focusManager = makeFocusManager settings
-                }
-                settings.attributes
-                state.state
+            , launchModalButton settings
+            , Modal.view (modalSettings settings) settings.attributes state.state
             ]
     }
 
 
-makeFocusManager : Settings -> Modal.FocusManager Msg
-makeFocusManager settings =
+launchModalButton : Settings -> Html Msg
+launchModalButton settings =
+    let
+        launchId =
+            "launch-modal"
+
+        startFocusId =
+            if settings.showContinue then
+                Just continueButtonId
+
+            else if settings.showX then
+                Just Modal.closeButtonId
+
+            else if settings.showSecondary then
+                Just closeClickableTextId
+
+            else
+                Nothing
+    in
+    Button.button "Launch Modal"
+        [ case startFocusId of
+            Just autofocusElementId ->
+                Button.onClick
+                    (OpenModal
+                        { startFocusOn = autofocusElementId
+                        , returnFocusTo = launchId
+                        }
+                    )
+
+            Nothing ->
+                Button.disabled
+        , Button.custom [ Attributes.id launchId ]
+        , Button.secondary
+        ]
+
+
+modalSettings :
+    Settings
+    ->
+        { title : String
+        , wrapMsg : Modal.Msg -> Msg
+        , content : List (Html Msg)
+        , footer : List (Html Msg)
+        }
+modalSettings settings =
+    let
+        default =
+            { title = settings.title
+            , wrapMsg = ModalMsg
+            , content = []
+            , footer = []
+            }
+    in
     case ( settings.showX, settings.showContinue, settings.showSecondary ) of
         ( True, True, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.content
-                        ]
-                    , footer =
-                        [ continueButton [ modalOptions.autofocusElement ]
-                        , closeClickableText modalOptions.lastFocusableElement
-                        ]
-                    }
+            { default
+                | content =
+                    [ Modal.closeButton ModalMsg <|
+                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ continueButton []
+                    , closeClickableText <|
+                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                    ]
+            }
 
         ( True, False, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.content
-                        ]
-                    , footer =
-                        [ closeClickableText (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
-                        ]
-                    }
+            { default
+                | content =
+                    [ Modal.closeButton ModalMsg <|
+                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ closeClickableText <|
+                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                    ]
+            }
 
         ( True, False, False ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement, closeButton } ->
-                    { content =
-                        [ closeButton onlyFocusableElement
-                        , viewModalContent settings.content
-                        ]
-                    , footer = []
-                    }
-                )
+            { default
+                | content =
+                    [ Modal.closeButton ModalMsg <|
+                        Modal.onlyFocusable { focusSelf = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+            }
 
         ( True, True, False ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.content
-                        ]
-                    , footer =
-                        [ continueButton
-                            (modalOptions.autofocusElement
-                                :: modalOptions.lastFocusableElement
-                            )
-                        ]
-                    }
+            { default
+                | content =
+                    [ Modal.closeButton ModalMsg <|
+                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ continueButton <|
+                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                    ]
+            }
 
         ( False, True, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content = [ viewModalContent settings.content ]
-                    , footer =
-                        [ continueButton
-                            (modalOptions.autofocusElement
-                                :: modalOptions.firstFocusableElement
-                            )
-                        , closeClickableText modalOptions.lastFocusableElement
-                        ]
-                    }
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ continueButton <|
+                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                    , closeClickableText <|
+                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                    ]
+            }
 
         ( False, False, True ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.content ]
-                    , footer = [ closeClickableText onlyFocusableElement ]
-                    }
-                )
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ closeClickableText <|
+                        Modal.onlyFocusable { focusSelf = Focus closeClickableTextId }
+                    ]
+            }
 
         ( False, True, False ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.content ]
-                    , footer = [ continueButton onlyFocusableElement ]
-                    }
-                )
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ continueButton <|
+                        Modal.onlyFocusable { focusSelf = Focus continueButtonId }
+                    ]
+            }
 
         ( False, False, False ) ->
-            Modal.OneFocusableElement
-                (\_ ->
-                    { content = [ viewModalContent settings.content ]
-                    , footer = []
-                    }
-                )
+            { default
+                | content = [ viewModalContent settings.content ]
+            }
 
 
 viewModalContent : String -> Html msg
 viewModalContent content =
-    Text.mediumBody
-        [ span
-            [ Attributes.css [ whiteSpace preLine ] ]
-            [ text content ]
-        ]
+    Text.mediumBody [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
+
+
+continueButtonId : String
+continueButtonId =
+    "continue-button-id"
 
 
 continueButton : List (Html.Attribute Msg) -> Html Msg
@@ -253,9 +291,14 @@ continueButton attributes =
     Button.button "Continue"
         [ Button.premium
         , Button.onClick ForceClose
-        , Button.custom attributes
+        , Button.custom (Attributes.id continueButtonId :: attributes)
         , Button.large
         ]
+
+
+closeClickableTextId : String
+closeClickableTextId =
+    "continue-button-id"
 
 
 closeClickableText : List (Html.Attribute Msg) -> Html Msg
@@ -263,17 +306,19 @@ closeClickableText attributes =
     ClickableText.button "Close"
         [ ClickableText.onClick ForceClose
         , ClickableText.large
-        , ClickableText.custom attributes
+        , ClickableText.custom (Attributes.id closeClickableTextId :: attributes)
         , ClickableText.css [ Css.marginTop (Css.px 15) ]
         ]
 
 
 {-| -}
 type Msg
-    = OpenModal String
+    = OpenModal { startFocusOn : String, returnFocusTo : String }
     | ModalMsg Modal.Msg
     | ForceClose
     | UpdateSettings (Control Settings)
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
@@ -289,10 +334,10 @@ update msg state =
             }
     in
     case msg of
-        OpenModal returnFocusTo ->
+        OpenModal config ->
             let
                 ( newState, cmd ) =
-                    Modal.open returnFocusTo
+                    Modal.open config
             in
             ( { state | state = newState }
             , Cmd.map ModalMsg cmd
@@ -316,6 +361,12 @@ update msg state =
 
         UpdateSettings value ->
             ( { state | settings = value }, Cmd.none )
+
+        Focus id ->
+            ( state, Task.attempt Focused (Dom.focus id) )
+
+        Focused _ ->
+            ( state, Cmd.none )
 
 
 {-| -}

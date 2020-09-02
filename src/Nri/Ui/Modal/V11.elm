@@ -1,13 +1,13 @@
 module Nri.Ui.Modal.V11 exposing
-    ( view
+    ( view, closeButton
     , Model, init, open, close
     , Msg, update, subscriptions
-    , FocusManager(..)
     , Attribute
     , info, warning
     , showTitle, hideTitle
     , custom, css
     , isOpen
+    , closeButtonId, firstFocusable, lastFocusable, onlyFocusable
     )
 
 {-| Changes from V10:
@@ -20,10 +20,12 @@ module Nri.Ui.Modal.V11 exposing
 
 ```
 import Browser exposing (Program, element)
+import Browser.Dom as Dom
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
 import Nri.Ui.Modal.V11 as Modal
+import Task
 
 main : Program flags model msg
 main =
@@ -50,7 +52,10 @@ init =
             -- the focus someplace sensible when the modal closes.
             -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
             -- focusing the main or body.
-            Modal.open "maincontent"
+            Modal.open
+                { startFocusOn = Modal.closeButtonId
+                , returnFocusTo = "maincontent"
+                }
     in
     ( { modal = FirstKindOfModal
       , modalState = modalState
@@ -62,6 +67,8 @@ type Msg
     = OpenModal ModalKind String
     | ModalMsg Modal.Msg
     | CloseModal
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 update : Msg -> Model -> ( Modal, Cmd Msg )
 update msg model =
@@ -69,7 +76,10 @@ update msg model =
         OpenModal modalKind returnFocusTo ->
             let
                 ( modalState, cmd ) =
-                    Modal.open returnFocusTo
+                    Modal.open
+                        { startFocusOn = Modal.closeButtonId
+                        , returnFocusTo = returnFocusTo
+                        }
             in
             ( { modal = modalKind
               , modalState = modalState
@@ -98,6 +108,12 @@ update msg model =
             , Cmd.map ModalMsg cmd
             )
 
+        Focus id ->
+            ( model, Task.attempt Focused (Dom.focus id) )
+
+        Focused _ ->
+            ( model, Cmd.none )
+
 view : Model -> Html Msg
 view model =
     main_ [ id "maincontent" ]
@@ -116,20 +132,19 @@ view model =
                 Modal.view
                     { title = "First kind of modal"
                     , wrapMsg = ModalMsg
-                    , focusManager =
-                        Modal.MultipleFocusableElements
-                            (\{ firstFocusableElement, lastFocusableElement, closeButton } ->
-                                { content =
-                                    [ closeButton firstFocusableElement
-                                    , text "Modal Content"
-                                    ]
-                                , footer =
-                                    [ button
-                                        (Events.onClick CloseModal :: lastFocusableElement)
-                                        [ text "Close" ]
-                                    ]
-                                }
+                    , content =
+                        [ Modal.closeButton ModalMsg <|
+                            Modal.firstFocusable { focusLastId = Focus "last-element-id" }
+                        , text "Modal Content"
+                        ]
+                    , footer =
+                        [ button
+                            (Events.onClick CloseModal
+                                :: id "last-element-id"
+                                :: Modal.lastFocusable { focusFirstElement = Focus Modal.closeButtonId }
                             )
+                            [ text "Close" ]
+                        ]
                     }
                     [ Modal.hideTitle
                     , Modal.css [ padding (px 10) ]
@@ -141,16 +156,12 @@ view model =
                 Modal.view
                     { title = "Second kind of modal"
                     , wrapMsg = ModalMsg
-                    , focusManager =
-                        Modal.OneFocusableElement
-                            (\{ onlyFocusableElement, closeButton } ->
-                                { content =
-                                    [ closeButton onlyFocusableElement
-                                    , text "Modal Content"
-                                    ]
-                                , footer = []
-                                }
-                            )
+                    , content =
+                        [ Modal.closeButton ModalMsg <|
+                            Modal.onlyFocusable { focusSelf = Focus Modal.closeButtonId }
+                        , text "Modal Content"
+                        ]
+                    , footer = []
                     }
                     [ Modal.warning
                     ]
@@ -158,11 +169,9 @@ view model =
         ]
 ```
 
-@docs view
+@docs view, closeButton
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
-
-@docs FocusManager
 
 
 ### Attributes
@@ -222,9 +231,11 @@ init =
 <https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/>
 
 -}
-open : String -> ( Model, Cmd Msg )
-open returnFocusTo =
-    ( Opened returnFocusTo, focusFirstElement )
+open : { startFocusOn : String, returnFocusTo : String } -> ( Model, Cmd Msg )
+open { startFocusOn, returnFocusTo } =
+    ( Opened returnFocusTo
+    , Task.attempt Focused (Dom.focus startFocusOn)
+    )
 
 
 {-| -}
@@ -257,8 +268,7 @@ type By
 
 {-| -}
 type Msg
-    = OpenModal String
-    | CloseModal By
+    = CloseModal By
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -279,9 +289,6 @@ subscriptions model =
 update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
-        OpenModal returnFocusTo ->
-            ( Opened returnFocusTo, focusFirstElement )
-
         CloseModal by ->
             case by of
                 Other ->
@@ -303,50 +310,9 @@ update { dismissOnEscAndOverlayClick } msg model =
             ( model, Cmd.none )
 
 
-focusFirstElement : Cmd Msg
-focusFirstElement =
-    Dom.focus autofocusId
-        |> Task.onError (\_ -> Dom.focus firstId)
-        |> Task.attempt Focused
-
-
 type Autofocus
     = Default
     | Last
-
-
-
--- ATTRIBUTES
-
-
-{-| Modals should allow the user to tab forwards & backwards through the modal content.
-The user should never find their Focus lost behind the modal backdrop!
-
-Use the `FocusManager` to tag the focusable elements in your modal, so that we
-know to which element to return focus when the user reaches the last focusable element.
-
--}
-type FocusManager msg
-    = MultipleFocusableElements
-        ({ firstFocusableElement : List (Html.Attribute msg)
-         , lastFocusableElement : List (Html.Attribute msg)
-         , autofocusElement : Html.Attribute msg
-         , closeButton : List (Html.Attribute msg) -> Html msg
-         }
-         ->
-            { content : List (Html msg)
-            , footer : List (Html msg)
-            }
-        )
-    | OneFocusableElement
-        ({ onlyFocusableElement : List (Html.Attribute msg)
-         , closeButton : List (Html.Attribute msg) -> Html msg
-         }
-         ->
-            { content : List (Html msg)
-            , footer : List (Html msg)
-            }
-        )
 
 
 
@@ -389,7 +355,8 @@ hideTitle =
     Modal.view
         { title = "Some Great Modal"
         , wrapMsg = ModalMsg
-        , focusManager = focusManager
+        , content = []
+        , footer = []
         }
         [ Modal.custom [ id "my-modal" ]]
         modalState
@@ -526,7 +493,8 @@ titleStyles color visibleTitle =
 view :
     { title : String
     , wrapMsg : Msg -> msg
-    , focusManager : FocusManager msg
+    , content : List (Html msg)
+    , footer : List (Html msg)
     }
     -> List Attribute
     -> Model
@@ -553,11 +521,11 @@ view config attrsList model =
                 , div [ Attrs.css (List.append modalStyles attrs.customStyles) ]
                     [ viewModal
                         { title = config.title
-                        , wrapMsg = config.wrapMsg
-                        , focusManager = config.focusManager
                         , titleColor = attrs.titleColor
                         , visibleTitle = attrs.visibleTitle
                         , customAttributes = attrs.customAttributes
+                        , content = config.content
+                        , footer = config.footer
                         }
                     ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
@@ -587,13 +555,18 @@ viewBackdrop wrapMsg color =
         []
 
 
+modalTitleId : String
+modalTitleId =
+    "modal__title"
+
+
 viewModal :
     { title : String
-    , wrapMsg : Msg -> msg
-    , focusManager : FocusManager msg
     , titleColor : Color
     , visibleTitle : Bool
     , customAttributes : List (Html.Attribute Never)
+    , content : List (Html msg)
+    , footer : List (Html msg)
     }
     -> Html msg
 viewModal config =
@@ -609,57 +582,45 @@ viewModal config =
             , Attrs.css (titleStyles config.titleColor config.visibleTitle)
             ]
             [ text config.title ]
-        , viewContent config.visibleTitle <|
-            case config.focusManager of
-                OneFocusableElement toContentAndFooter ->
-                    toContentAndFooter
-                        { onlyFocusableElement =
-                            List.map (Attrs.map config.wrapMsg)
-                                [ onKeyDownPreventDefault
-                                    [ Key.tabBack (Focus autofocusId)
-                                    , Key.tab (Focus autofocusId)
-                                    ]
-                                , id autofocusId
-                                ]
-                        , closeButton = closeButton config.wrapMsg
-                        }
-
-                MultipleFocusableElements toContentAndFooter ->
-                    toContentAndFooter
-                        { firstFocusableElement =
-                            List.map (Attrs.map config.wrapMsg)
-                                [ onKeyDownPreventDefault
-                                    [ Key.tabBack (Focus lastId)
-                                    ]
-                                , id firstId
-                                ]
-                        , lastFocusableElement =
-                            List.map (Attrs.map config.wrapMsg)
-                                [ onKeyDownPreventDefault
-                                    [ Key.tab (Focus firstId)
-                                    ]
-                                , id lastId
-                                ]
-                        , autofocusElement =
-                            Attrs.map config.wrapMsg (id autofocusId)
-                        , closeButton = closeButton config.wrapMsg
-                        }
+        , div
+            []
+            [ viewInnerContent config.content config.visibleTitle (not (List.isEmpty config.footer))
+            , viewFooter config.footer
+            ]
         ]
+
+
+{-| -}
+onlyFocusable : { focusSelf : msg } -> List (Html.Attribute msg)
+onlyFocusable { focusSelf } =
+    [ onKeyDownPreventDefault
+        [ Key.tab focusSelf
+        , Key.tabBack focusSelf
+        ]
+    , Attrs.class "modal__only-focusable-element"
+    ]
+
+
+{-| -}
+firstFocusable : { focusLastId : msg } -> List (Html.Attribute msg)
+firstFocusable { focusLastId } =
+    [ onKeyDownPreventDefault [ Key.tabBack focusLastId ]
+    , Attrs.class "modal__first-focusable-element"
+    ]
+
+
+{-| -}
+lastFocusable : { focusFirstId : msg } -> List (Html.Attribute msg)
+lastFocusable { focusFirstId } =
+    [ onKeyDownPreventDefault [ Key.tab focusFirstId ]
+    , Attrs.class "modal__last-focusable-element"
+    ]
 
 
 onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
 onKeyDownPreventDefault decoders =
     Events.preventDefaultOn "keydown"
         (Decode.oneOf (List.map (Decode.map (\msg -> ( msg, True ))) decoders))
-
-
-{-| -}
-viewContent : Bool -> { content : List (Html msg), footer : List (Html msg) } -> Html msg
-viewContent visibleTitle { content, footer } =
-    div []
-        [ viewInnerContent content visibleTitle (not (List.isEmpty footer))
-        , viewFooter footer
-        ]
 
 
 {-| -}
@@ -789,8 +750,14 @@ viewFooter children =
 
 
 {-| -}
+closeButtonId : String
+closeButtonId =
+    "modal__close-button-x"
+
+
+{-| -}
 closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
-closeButton wrapMsg focusableElementAttrs =
+closeButton wrapMsg attrs =
     button
         (Widget.label "Close modal"
             :: Attrs.map wrapMsg (onClick (CloseModal Other))
@@ -813,31 +780,8 @@ closeButton wrapMsg focusableElementAttrs =
                 , Css.hover [ Css.color Colors.azureDark ]
                 , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
                 ]
-            :: focusableElementAttrs
+            :: Attrs.id closeButtonId
+            :: attrs
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
-
-
-
--- IDS
-
-
-modalTitleId : String
-modalTitleId =
-    "modal__title"
-
-
-firstId : String
-firstId =
-    "modal__first-focusable-element"
-
-
-lastId : String
-lastId =
-    "modal__last-focusable-element"
-
-
-autofocusId : String
-autofocusId =
-    "modal__autofocus-element"
