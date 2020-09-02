@@ -10,7 +10,7 @@ import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
-import Css.Global
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html as Root
 import Html.Styled.Attributes as Attributes
@@ -27,7 +27,7 @@ import Nri.Ui.Text.V4 as Text
 type alias State =
     { state : Modal.Model
     , content : Content
-    , settings : Settings
+    , settings : Control Settings
     }
 
 
@@ -56,16 +56,16 @@ type alias Settings =
     }
 
 
-initModalSettings : Settings
+initModalSettings : Control Settings
 initModalSettings =
-    { visibleTitle = True
-    , showX = True
-    , showContinue = True
-    , showSecondary = True
-    , dismissOnEscAndOverlayClick = True
-    , longContent = True
-    , customStyling = False
-    }
+    Control.record Settings
+        |> Control.field "visibleTitle" (Control.bool True)
+        |> Control.field "showX" (Control.bool True)
+        |> Control.field "showContinue" (Control.bool True)
+        |> Control.field "showSecondary" (Control.bool True)
+        |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
+        |> Control.field "longContent" (Control.bool True)
+        |> Control.field "customStyling" (Control.bool False)
 
 
 {-| -}
@@ -81,15 +81,18 @@ example =
     , view =
         \state ->
             let
+                settings =
+                    Control.currentValue state.settings
+
                 titleAttrs =
-                    if state.settings.visibleTitle then
+                    if settings.visibleTitle then
                         []
 
                     else
                         [ Modal.hideTitle ]
 
                 stylingAttrs =
-                    if state.settings.customStyling then
+                    if settings.customStyling then
                         [ Modal.css
                             [ Css.borderRadius Css.zero
                             , Css.width (Css.px 800)
@@ -110,7 +113,8 @@ example =
                 attrs =
                     themeAttrs :: titleAttrs ++ stylingAttrs
             in
-            [ viewSettings state.settings
+            [ Control.view UpdateSettings state.settings
+                |> Html.fromUnstyled
             , Button.button "Launch Info Modal"
                 [ Button.onClick (OpenModal Info "launch-info-modal")
                 , Button.custom [ Attributes.id "launch-info-modal" ]
@@ -127,7 +131,7 @@ example =
             , Modal.view
                 { title = title
                 , wrapMsg = ModalMsg
-                , focusManager = makeFocusManager buttonTheme state.settings
+                , focusManager = makeFocusManager buttonTheme settings
                 }
                 attrs
                 state.state
@@ -288,80 +292,12 @@ viewModalContent longContent =
         ]
 
 
-viewSettings : Settings -> Html Msg
-viewSettings settings =
-    div []
-        [ Checkbox.viewWithLabel
-            { identifier = "visible-title"
-            , label = "Visible title"
-            , selected = Checkbox.selectedFromBool settings.visibleTitle
-            , setterMsg = SetVisibleTitle
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "show-x"
-            , label = "Show X button"
-            , selected = Checkbox.selectedFromBool settings.showX
-            , setterMsg = SetShowX
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "show-continue"
-            , label = "Show main button"
-            , selected = Checkbox.selectedFromBool settings.showContinue
-            , setterMsg = SetShowContinue
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "show-secondary"
-            , label = "Show secondary button"
-            , selected = Checkbox.selectedFromBool settings.showSecondary
-            , setterMsg = SetShowSecondary
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "dismiss-on-click"
-            , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool settings.dismissOnEscAndOverlayClick
-            , setterMsg = SetDismissOnEscAndOverlayClick
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "long-content"
-            , label = "Display longer content"
-            , selected = Checkbox.selectedFromBool settings.longContent
-            , setterMsg = SetLongContent
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "custom-styles"
-            , label = "Custom Styling"
-            , selected = Checkbox.selectedFromBool settings.customStyling
-            , setterMsg = SetCustomStyling
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        ]
-
-
 {-| -}
 type Msg
     = OpenModal Content String
     | ModalMsg Modal.Msg
     | ForceClose
-    | SetVisibleTitle Bool
-    | SetShowX Bool
-    | SetShowContinue Bool
-    | SetShowSecondary Bool
-    | SetDismissOnEscAndOverlayClick Bool
-    | SetLongContent Bool
-    | SetCustomStyling Bool
+    | UpdateSettings (Control Settings)
 
 
 {-| -}
@@ -372,7 +308,9 @@ update msg state =
             state.settings
 
         updateConfig =
-            { dismissOnEscAndOverlayClick = settings.dismissOnEscAndOverlayClick }
+            { dismissOnEscAndOverlayClick =
+                (Control.currentValue settings).dismissOnEscAndOverlayClick
+            }
     in
     case msg of
         OpenModal content returnFocusTo ->
@@ -400,26 +338,8 @@ update msg state =
             , Cmd.map ModalMsg cmd
             )
 
-        SetVisibleTitle value ->
-            ( { state | settings = { settings | visibleTitle = value } }, Cmd.none )
-
-        SetShowX value ->
-            ( { state | settings = { settings | showX = value } }, Cmd.none )
-
-        SetShowContinue value ->
-            ( { state | settings = { settings | showContinue = value } }, Cmd.none )
-
-        SetShowSecondary value ->
-            ( { state | settings = { settings | showSecondary = value } }, Cmd.none )
-
-        SetDismissOnEscAndOverlayClick value ->
-            ( { state | settings = { settings | dismissOnEscAndOverlayClick = value } }, Cmd.none )
-
-        SetLongContent value ->
-            ( { state | settings = { settings | longContent = value } }, Cmd.none )
-
-        SetCustomStyling value ->
-            ( { state | settings = { settings | customStyling = value } }, Cmd.none )
+        UpdateSettings value ->
+            ( { state | settings = value }, Cmd.none )
 
 
 {-| -}
