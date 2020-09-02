@@ -64,7 +64,8 @@ import Css exposing (..)
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
-import Html.Styled.Events exposing (onClick)
+import Html.Styled.Events as Events exposing (onClick)
+import Json.Decode as Decode exposing (Decoder)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -438,7 +439,7 @@ viewModal config styles =
                     toContentAndFooter
                         { onlyFocusableElement =
                             List.map (Attrs.map config.wrapMsg)
-                                [ Key.onKeyDown
+                                [ onKeyDownPreventDefault
                                     [ Key.tabBack (Focus autofocusId)
                                     , Key.tab (Focus autofocusId)
                                     ]
@@ -451,12 +452,16 @@ viewModal config styles =
                     toContentAndFooter
                         { firstFocusableElement =
                             List.map (Attrs.map config.wrapMsg)
-                                [ Key.onKeyDown [ Key.tabBack (Focus lastId) ]
+                                [ onKeyDownPreventDefault
+                                    [ Key.tabBack (Focus lastId)
+                                    ]
                                 , id firstId
                                 ]
                         , lastFocusableElement =
                             List.map (Attrs.map config.wrapMsg)
-                                [ Key.onKeyDown [ Key.tab (Focus firstId) ]
+                                [ onKeyDownPreventDefault
+                                    [ Key.tab (Focus firstId)
+                                    ]
                                 , id lastId
                                 ]
                         , autofocusElement =
@@ -464,6 +469,12 @@ viewModal config styles =
                         , closeButton = closeButton config.wrapMsg
                         }
         ]
+
+
+onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
+onKeyDownPreventDefault decoders =
+    Events.preventDefaultOn "keydown"
+        (Decode.oneOf (List.map (Decode.map (\msg -> ( msg, True ))) decoders))
 
 
 {-| -}
