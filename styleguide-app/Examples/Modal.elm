@@ -108,7 +108,17 @@ example =
     { name = "Nri.Ui.Modal.V11"
     , categories = [ Modals ]
     , atomicDesignType = Organism
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."
+          }
+        , { keys = [ KeyboardSupport.Tab, KeyboardSupport.Shift ]
+          , result = "Moves focus to the previous button within the modal or wraps back to the last element within the modal."
+          }
+        , { keys = [ KeyboardSupport.Esc ]
+          , result = "If 'dismissOnEscAndOverlayClick' is set to true, closes the modal. Else, does nothing."
+          }
+        ]
     , state = init
     , update = update
     , subscriptions = subscriptions

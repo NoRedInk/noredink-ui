@@ -56,6 +56,7 @@ type Key
     | Arrow Direction
     | Tab
     | Space
+    | Esc
 
 
 keyToString : Key -> String
@@ -75,6 +76,9 @@ keyToString key =
 
         Space ->
             "Space"
+
+        Esc ->
+            "Escape"
 
 
 {-| -}
