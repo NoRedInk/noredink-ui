@@ -195,7 +195,7 @@ modalSettings settings =
         ( True, True, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton ModalMsg <|
+                    [ Modal.closeButton CloseModal <|
                         Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
@@ -209,7 +209,7 @@ modalSettings settings =
         ( True, False, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton ModalMsg <|
+                    [ Modal.closeButton CloseModal <|
                         Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
@@ -222,7 +222,7 @@ modalSettings settings =
         ( True, False, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton ModalMsg <|
+                    [ Modal.closeButton CloseModal <|
                         Modal.onlyFocusable { focusSelf = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
@@ -231,7 +231,7 @@ modalSettings settings =
         ( True, True, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton ModalMsg <|
+                    [ Modal.closeButton CloseModal <|
                         Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
@@ -290,7 +290,7 @@ continueButton : List (Html.Attribute Msg) -> Html Msg
 continueButton attributes =
     Button.button "Continue"
         [ Button.premium
-        , Button.onClick ForceClose
+        , Button.onClick CloseModal
         , Button.custom (Attributes.id continueButtonId :: attributes)
         , Button.large
         ]
@@ -304,7 +304,7 @@ closeClickableTextId =
 closeClickableText : List (Html.Attribute Msg) -> Html Msg
 closeClickableText attributes =
     ClickableText.button "Close"
-        [ ClickableText.onClick ForceClose
+        [ ClickableText.onClick CloseModal
         , ClickableText.large
         , ClickableText.custom (Attributes.id closeClickableTextId :: attributes)
         , ClickableText.css [ Css.marginTop (Css.px 15) ]
@@ -315,7 +315,7 @@ closeClickableText attributes =
 type Msg
     = OpenModal { startFocusOn : String, returnFocusTo : String }
     | ModalMsg Modal.Msg
-    | ForceClose
+    | CloseModal
     | UpdateSettings (Control Settings)
     | Focus String
     | Focused (Result Dom.Error ())
@@ -350,7 +350,7 @@ update msg state =
                     , Cmd.map ModalMsg cmd
                     )
 
-        ForceClose ->
+        CloseModal ->
             let
                 ( newState, cmd ) =
                     Modal.close state.state

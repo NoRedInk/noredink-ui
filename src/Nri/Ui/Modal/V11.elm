@@ -133,7 +133,7 @@ view model =
                     { title = "First kind of modal"
                     , wrapMsg = ModalMsg
                     , content =
-                        [ Modal.closeButton ModalMsg <|
+                        [ Modal.closeButton CloseModal <|
                             Modal.firstFocusable { focusLastId = Focus "last-element-id" }
                         , text "Modal Content"
                         ]
@@ -157,7 +157,7 @@ view model =
                     { title = "Second kind of modal"
                     , wrapMsg = ModalMsg
                     , content =
-                        [ Modal.closeButton ModalMsg <|
+                        [ Modal.closeButton CloseModal <|
                             Modal.onlyFocusable { focusSelf = Focus Modal.closeButtonId }
                         , text "Modal Content"
                         ]
@@ -260,15 +260,9 @@ isOpen model =
             False
 
 
-type By
-    = EscapeKey
-    | OverlayClick
-    | Other
-
-
 {-| -}
 type Msg
-    = CloseModal By
+    = CloseModal
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -279,7 +273,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
         Opened _ ->
-            Browser.Events.onKeyDown (Key.escape (CloseModal EscapeKey))
+            Browser.Events.onKeyDown (Key.escape CloseModal)
 
         Closed ->
             Sub.none
@@ -289,17 +283,12 @@ subscriptions model =
 update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
-        CloseModal by ->
-            case by of
-                Other ->
-                    close model
+        CloseModal ->
+            if dismissOnEscAndOverlayClick then
+                close model
 
-                _ ->
-                    if dismissOnEscAndOverlayClick then
-                        close model
-
-                    else
-                        ( model, Cmd.none )
+            else
+                ( model, Cmd.none )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -550,7 +539,7 @@ viewBackdrop wrapMsg color =
             , height (pct 100)
             , backgroundColor color
             ]
-        , onClick (wrapMsg (CloseModal OverlayClick))
+        , onClick (wrapMsg CloseModal)
         ]
         []
 
@@ -756,11 +745,11 @@ closeButtonId =
 
 
 {-| -}
-closeButton : (Msg -> msg) -> List (Html.Attribute msg) -> Html msg
-closeButton wrapMsg attrs =
+closeButton : msg -> List (Html.Attribute msg) -> Html msg
+closeButton closeModal attrs =
     button
         (Widget.label "Close modal"
-            :: Attrs.map wrapMsg (onClick (CloseModal Other))
+            :: onClick closeModal
             :: Attrs.css
                 [ -- in the upper-right corner of the modal
                   Css.position Css.absolute
