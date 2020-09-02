@@ -13,41 +13,152 @@ module Nri.Ui.Modal.V11 exposing
   - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
   - make info and warning themes
 
+```
+import Browser exposing (Program, element)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id)
+import Html.Styled.Events as Events
+import Nri.Ui.Modal.V11 as Modal
+
+main : Program flags model msg
+main =
+    { init = \_ -> init
+    , view = view
+    , update = update
+    , subscriptions = \model -> Modal.subscriptions model.modalState
+    }
+
+type ModalKind
+    = FirstKindOfModal
+    | SecondKindOfModal
+
+type alias Model =
+    { modal : ModalKind
+    , modalState : Modal.Model
+    }
+
+init : Model
+init =
+    let
+        ( modalState, cmd ) =
+            -- When we load the page with a modal already open, we should return
+            -- the focus someplace sensible when the modal closes.
+            -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
+            -- focusing the main or body.
+            Modal.open "maincontent"
+    in
+    ( { modal = FirstKindOfModal
+      , modalState = modalState
+      }
+    , Cmd.map ModalMsg cmd
+    )
+
+type Msg
+    = OpenModal ModalKind String
+    | ModalMsg Modal.Msg
+    | CloseModal
+
+update : Msg -> Model -> ( Modal, Cmd Msg )
+update msg model =
+    case msg of
+        OpenModal modalKind returnFocusTo ->
+            let
+                ( modalState, cmd ) =
+                    Modal.open returnFocusTo
+            in
+            ( { modal = modalKind
+              , modalState = modalState
+              }
+            , Cmd.map ModalMsg cmd
+            )
+
+        ModalMsg modalMsg ->
+            let
+                ( modalState, cmd ) =
+                    Modal.update
+                        { dismissOnEscAndOverlayClick = True }
+                        modalMsg
+                        model.modalState
+            in
+            ( { model | modalState = modalState }
+            , Cmd.map ModalMsg cmd
+            )
+
+        CloseModal ->
+            let
+                ( modalState, cmd ) =
+                    Modal.close model.modalState
+            in
+            ( { model | modalState = modalState }
+            , Cmd.map ModalMsg cmd
+            )
+
+view : Model -> Html Msg
+view model =
+    main_ [ id "maincontent" ]
+        [ button
+            [ id "open-first-kind-of-modal-button"
+            , Events.onClick (OpenModal FirstKindOfModal "open-first-kind-of-modal-button")
+            ]
+            [ text "Open FirstKindOfModal" ]
+        , button
+            [ id "open-second-kind-of-modal-button"
+            , Events.onClick (OpenModal SecondKindOfModal "open-second-kind-of-modal-button")
+            ]
+            [ text "Open SecondKindOfModal" ]
+        , case model.modal of
+            FirstKindOfModal ->
+                Modal.view
+                    { title = "First kind of modal"
+                    , wrapMsg = ModalMsg
+                    , focusManager =
+                        Modal.MultipleFocusableElements
+                            (\{ firstFocusableElement, lastFocusableElement, closeButton } ->
+                                { content =
+                                    [ closeButton firstFocusableElement
+                                    , text "Modal Content"
+                                    ]
+                                , footer =
+                                    [ button
+                                        [ Events.onClick CloseModal
+                                        ]
+                                        [ text "Close" ]
+                                    ]
+                                }
+                            )
+                    }
+                    [ Modal.hideTitle
+                    , Modal.css [ padding (px 10) ]
+                    ]
+                    model.modalState
+
+            SecondKindOfModal ->
+                Modal.view
+                    { title = "Second kind of modal"
+                    , wrapMsg = ModalMsg
+                    , focusManager =
+                        Modal.OneFocusableElement
+                            (\{ onlyFocusableElement, closeButton } ->
+                                { content =
+                                    [ closeButton onlyFocusableElement
+                                    , text "Modal Content"
+                                    ]
+                                , footer = []
+                                }
+                            )
+                    }
+                    [ Modal.warning
+                    ]
+                    model.modalState
+        ]
+```
+
 @docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
 @docs Attribute, info, warning, hideTitle, css
 @docs FocusManager, info, warning
 @docs isOpen
-
-    import Html.Styled exposing (text)
-    import Nri.Ui.Modal.V11 as Modal
-
-    type Msg
-        = ModalMsg Modal.Msg
-
-    ...
-
-    viewModal : Modal.Model -> Html Msg
-    viewModal modalState =
-        Modal.info
-            { title = "Modal Title"
-            , wrapMsg = ModalMsg
-            , focusManager =
-                Modal.OneFocusableElement
-                    (\{ onlyFocusableElement, closeButton } ->
-                        { content =
-                            [ closeButton onlyFocusableElement
-                            , text "Modal Content"
-                            ]
-                        , footer = []
-                        }
-                    )
-            }
-            [ Modal.hideTitle
-            , Modal.css [ padding (px 10) ]
-            ]
-            modalState
 
 -}
 
@@ -87,6 +198,12 @@ init =
 
 
 {-| Pass the id of the element that should receive focus when the modal closes.
+
+> ...if a dialog was opened on page load, then focus could be placed on either the body or main element.
+> If the trigger was removed from the DOM, then placing focus as close to the trigger’s DOM location would be ideal.
+
+<https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/>
+
 -}
 open : String -> ( Model, Cmd Msg )
 open returnFocusTo =
