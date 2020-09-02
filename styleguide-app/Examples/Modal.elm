@@ -44,7 +44,7 @@ type alias Settings =
     , showContinue : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
-    , longContent : Bool
+    , content : String
     , customStyling : Bool
     , theme : Modal.Attribute
     }
@@ -58,7 +58,14 @@ initModalSettings =
         |> Control.field "showContinue" (Control.bool True)
         |> Control.field "showSecondary" (Control.bool True)
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
-        |> Control.field "longContent" (Control.bool True)
+        |> Control.field "content"
+            (Control.stringTextarea <|
+                String.join "\n\n"
+                    [ "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
+                    , "Muffin liquorice powder liquorice jujubes biscuit cookie candy canes lemon drops. Liquorice powder carrot cake dragée icing tootsie roll apple pie lemon drops lemon drops. Jujubes danish bear claw cotton candy. Dragée apple pie tiramisu. Sugar plum dessert pastry marzipan chocolate cake dragée sesame snaps. Marshmallow gingerbread lemon drops. Brownie chocolate fruitcake pastry. Powder jelly beans jujubes. Croissant macaroon dessert cookie candy canes jelly jujubes. Muffin liquorice ice cream wafer donut danish soufflé dragée chocolate bar. Candy croissant candy wafer toffee lemon drops croissant danish sugar plum. Cookie cake candy canes. Pastry powder muffin soufflé tootsie roll sweet cookie tiramisu."
+                    , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
+                    ]
+            )
         |> Control.field "customStyling" (Control.bool False)
         |> Control.field "theme" controlTheme
 
@@ -135,7 +142,7 @@ makeFocusManager settings =
                 \modalOptions ->
                     { content =
                         [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
+                        , viewModalContent settings.content
                         ]
                     , footer =
                         [ Button.button "Continue"
@@ -158,7 +165,7 @@ makeFocusManager settings =
                 \modalOptions ->
                     { content =
                         [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
+                        , viewModalContent settings.content
                         ]
                     , footer =
                         [ ClickableText.button "Close"
@@ -175,7 +182,7 @@ makeFocusManager settings =
                 (\{ onlyFocusableElement, closeButton } ->
                     { content =
                         [ closeButton onlyFocusableElement
-                        , viewModalContent settings.longContent
+                        , viewModalContent settings.content
                         ]
                     , footer = []
                     }
@@ -186,7 +193,7 @@ makeFocusManager settings =
                 \modalOptions ->
                     { content =
                         [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
+                        , viewModalContent settings.content
                         ]
                     , footer =
                         [ Button.button "Continue"
@@ -201,7 +208,7 @@ makeFocusManager settings =
         ( False, True, True ) ->
             Modal.MultipleFocusableElements <|
                 \modalOptions ->
-                    { content = [ viewModalContent settings.longContent ]
+                    { content = [ viewModalContent settings.content ]
                     , footer =
                         [ Button.button "Continue"
                             [ Button.premium
@@ -221,7 +228,7 @@ makeFocusManager settings =
         ( False, False, True ) ->
             Modal.OneFocusableElement
                 (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.longContent ]
+                    { content = [ viewModalContent settings.content ]
                     , footer =
                         [ ClickableText.button "Close"
                             [ ClickableText.onClick ForceClose
@@ -236,7 +243,7 @@ makeFocusManager settings =
         ( False, True, False ) ->
             Modal.OneFocusableElement
                 (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.longContent ]
+                    { content = [ viewModalContent settings.content ]
                     , footer =
                         [ Button.button "Continue"
                             [ Button.premium
@@ -251,32 +258,18 @@ makeFocusManager settings =
         ( False, False, False ) ->
             Modal.OneFocusableElement
                 (\_ ->
-                    { content = [ viewModalContent settings.longContent ]
+                    { content = [ viewModalContent settings.content ]
                     , footer = []
                     }
                 )
 
 
-viewModalContent : Bool -> Html msg
-viewModalContent longContent =
+viewModalContent : String -> Html msg
+viewModalContent content =
     Text.mediumBody
-        [ span [ Attributes.css [ whiteSpace preLine ] ]
-            [ if longContent then
-                """Soufflé pastry chocolate cake danish muffin. Candy wafer pastry ice cream cheesecake toffee cookie cake carrot cake. Macaroon pie jujubes gummies cookie pie. Gummi bears brownie pastry carrot cake cotton candy. Jelly-o sweet roll biscuit cake soufflé lemon drops tiramisu marshmallow macaroon. Chocolate jelly halvah marzipan macaroon cupcake sweet cheesecake carrot cake.
-
-                    Sesame snaps pastry muffin cookie. Powder powder sweet roll toffee cake icing. Chocolate cake sweet roll gingerbread icing chupa chups sweet roll sesame snaps. Chocolate croissant chupa chups jelly beans toffee. Jujubes sweet wafer marshmallow halvah jelly. Liquorice sesame snaps sweet.
-
-                    Tootsie roll icing jelly danish ice cream tiramisu sweet roll. Fruitcake ice cream dragée. Bear claw sugar plum sweet jelly beans bonbon dragée tart. Gingerbread chocolate sweet. Apple pie danish toffee sugar plum jelly beans donut. Chocolate cake croissant caramels chocolate bar. Jelly beans caramels toffee chocolate cake liquorice. Toffee pie sugar plum cookie toffee muffin. Marzipan marshmallow marzipan liquorice tiramisu.
-
-                    Brownie ice cream halvah danish candy ice cream sweet roll jujubes chocolate cake. Chocolate bar sesame snaps bear claw gummies. Dragée cookie brownie cake sugar plum chocolate cake fruitcake toffee. Tiramisu tiramisu cookie cake. Lemon drops pie toffee icing powder biscuit cotton candy gummies. Caramels lemon drops cupcake. Lemon drops toffee macaroon liquorice chocolate bar candy bonbon. Cupcake biscuit cupcake chupa chups candy. Chocolate cake sweet toffee bonbon danish biscuit pudding. Tootsie roll brownie jelly tootsie roll. Jujubes jujubes marshmallow gummi bears bear claw sugar plum. Cupcake bonbon soufflé carrot cake powder fruitcake sugar plum brownie.
-
-                    Danish sesame snaps tiramisu chocolate cake powder cotton candy powder. Liquorice cupcake macaroon sweet soufflé jujubes. Jelly-o oat cake caramels sweet roll. Sweet roll sugar plum gummies cheesecake sesame snaps. Gummies pastry tootsie roll marzipan lollipop muffin sweet cake. Wafer carrot cake halvah bear claw jelly beans apple pie cookie halvah. Brownie sugar plum macaroon halvah croissant pastry. Marzipan muffin carrot cake chocolate jelly beans dragée jelly beans dragée tiramisu. Sweet roll powder apple pie icing halvah marshmallow pastry. Pastry marzipan chocolate cake jelly beans sugar plum carrot cake lollipop croissant. Cotton candy chocolate croissant gummies muffin. Dragée jelly beans oat cake pastry muffin pie. Donut marzipan dessert wafer gingerbread tiramisu macaroon. Cotton candy macaroon gummies oat cake cake gingerbread cotton candy sweet roll pie."""
-                    |> text
-
-              else
-                "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
-                    |> text
-            ]
+        [ span
+            [ Attributes.css [ whiteSpace preLine ] ]
+            [ text content ]
         ]
 
 
