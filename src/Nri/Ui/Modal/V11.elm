@@ -423,7 +423,6 @@ type alias Attributes =
     { overlayColor : Color
     , titleColor : Color
     , visibleTitle : Bool
-    , titleStyles : List Style
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     }
@@ -434,7 +433,6 @@ defaultAttributes =
     { overlayColor = Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy
     , titleColor = Colors.navy
     , visibleTitle = True
-    , titleStyles = []
     , customStyles = []
     , customAttributes = []
     }
@@ -460,11 +458,8 @@ buildAttributes attrs =
 
                 Batch functions ->
                     List.foldl applyAttrs acc functions
-
-        result =
-            List.foldl applyAttrs defaultAttributes attrs
     in
-    { result | titleStyles = titleStyles result.titleColor result.visibleTitle }
+    List.foldl applyAttrs defaultAttributes attrs
 
 
 modalStyles : List Style
@@ -551,8 +546,8 @@ view config attrsList model =
                         { title = config.title
                         , wrapMsg = config.wrapMsg
                         , focusManager = config.focusManager
+                        , titleColor = attrs.titleColor
                         , visibleTitle = attrs.visibleTitle
-                        , titleStyles = attrs.titleStyles
                         , customAttributes = attrs.customAttributes
                         }
                     ]
@@ -587,8 +582,8 @@ viewModal :
     { title : String
     , wrapMsg : Msg -> msg
     , focusManager : FocusManager msg
+    , titleColor : Color
     , visibleTitle : Bool
-    , titleStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     }
     -> Html msg
@@ -602,7 +597,7 @@ viewModal config =
         )
         [ h1
             [ id modalTitleId
-            , Attrs.css config.titleStyles
+            , Attrs.css (titleStyles config.titleColor config.visibleTitle)
             ]
             [ text config.title ]
         , viewContent config.visibleTitle <|
