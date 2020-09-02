@@ -99,8 +99,16 @@ example =
                     else
                         []
 
+                ( title, themeAttrs, buttonTheme ) =
+                    case state.content of
+                        Info ->
+                            ( "Modal.info", Modal.info, Button.primary )
+
+                        Warning ->
+                            ( "Modal.warning", Modal.warning, Button.danger )
+
                 attrs =
-                    titleAttrs ++ stylingAttrs
+                    themeAttrs :: titleAttrs ++ stylingAttrs
             in
             [ viewSettings state.settings
             , Button.button "Launch Info Modal"
@@ -116,24 +124,13 @@ example =
                 , Button.secondary
                 , Button.medium
                 ]
-            , case state.content of
-                Info ->
-                    Modal.info
-                        { title = "Modal.info"
-                        , wrapMsg = ModalMsg
-                        , focusManager = makeFocusManager Button.primary state.settings
-                        }
-                        attrs
-                        state.state
-
-                Warning ->
-                    Modal.warning
-                        { title = "Modal.warning"
-                        , wrapMsg = ModalMsg
-                        , focusManager = makeFocusManager Button.danger state.settings
-                        }
-                        attrs
-                        state.state
+            , Modal.view
+                { title = title
+                , wrapMsg = ModalMsg
+                , focusManager = makeFocusManager buttonTheme state.settings
+                }
+                attrs
+                state.state
             ]
     }
 

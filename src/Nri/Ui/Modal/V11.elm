@@ -1,8 +1,9 @@
 module Nri.Ui.Modal.V11 exposing
-    ( Model, init, open, close
+    ( view
+    , Model, init, open, close
     , Msg, update, subscriptions
-    , Attribute, hideTitle, css
-    , FocusManager(..), info, warning
+    , Attribute, info, warning, hideTitle, css
+    , FocusManager(..)
     , isOpen
     )
 
@@ -10,10 +11,12 @@ module Nri.Ui.Modal.V11 exposing
 
   - remove `initOpen`
   - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
+  - make info and warning themes
 
+@docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
-@docs Attribute, hideTitle, css
+@docs Attribute, info, warning, hideTitle, css
 @docs FocusManager, info, warning
 @docs isOpen
 
@@ -211,9 +214,52 @@ type FocusManager msg
         )
 
 
+
+-- ATTRIBUTES
+
+
+{-| This is the default theme.
+-}
+info : Attribute
+info =
+    Batch []
+
+
+{-| -}
+warning : Attribute
+warning =
+    Batch
+        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
+        , titleColor Colors.red
+        ]
+
+
+{-| -}
+hideTitle : Attribute
+hideTitle =
+    Attribute (\attrs -> { attrs | visibleTitle = False })
+
+
+{-| -}
+css : List Style -> Attribute
+css styles =
+    Attribute
+        (\attrs ->
+            { attrs
+                | customStyles =
+                    List.append attrs.customStyles styles
+            }
+        )
+
+
 {-| -}
 type Attribute
     = Attribute (Attributes -> Attributes)
+    | Batch (List Attribute)
+
+
+
+-- ATTRIBUTES (INTERNAL)
 
 
 type alias Attributes =
@@ -235,42 +281,29 @@ defaultAttributes =
     }
 
 
-{-| -}
-hideTitle : Attribute
-hideTitle =
-    Attribute (\attrs -> { attrs | visibleTitle = False })
-
-
-{-| -}
-css : List Style -> Attribute
-css styles =
-    Attribute
-        (\attrs ->
-            { attrs
-                | customStyles =
-                    List.append attrs.customStyles styles
-            }
-        )
-
-
 titleColor : Color -> Attribute
 titleColor color =
-    Attribute
-        (\attrs -> { attrs | titleColor = color })
+    Attribute (\attrs -> { attrs | titleColor = color })
 
 
 overlayColor : Color -> Attribute
 overlayColor color =
-    Attribute
-        (\attrs -> { attrs | overlayColor = color })
+    Attribute (\attrs -> { attrs | overlayColor = color })
 
 
-buildAttributes : List Attribute -> Attributes -> Attributes
-buildAttributes attrs initial =
+buildAttributes : List Attribute -> Attributes
+buildAttributes attrs =
     let
+        applyAttrs attribute acc =
+            case attribute of
+                Attribute fun ->
+                    fun acc
+
+                Batch functions ->
+                    List.foldl applyAttrs acc functions
+
         result =
-            attrs
-                |> List.foldl (\(Attribute fun) acc -> fun acc) initial
+            List.foldl applyAttrs defaultAttributes attrs
     in
     { result | titleStyles = titleStyles result.titleColor result.visibleTitle }
 
@@ -327,37 +360,6 @@ titleStyles color visibleTitle =
 
 
 {-| -}
-info :
-    { title : String
-    , wrapMsg : Msg -> msg
-    , focusManager : FocusManager msg
-    }
-    -> List Attribute
-    -> Model
-    -> Html msg
-info config attrsList =
-    view config attrsList
-
-
-{-| -}
-warning :
-    { title : String
-    , wrapMsg : Msg -> msg
-    , focusManager : FocusManager msg
-    }
-    -> List Attribute
-    -> Model
-    -> Html msg
-warning config attrsList =
-    view config
-        (List.append
-            [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-            , titleColor Colors.red
-            ]
-            attrsList
-        )
-
-
 view :
     { title : String
     , wrapMsg : Msg -> msg
@@ -369,7 +371,7 @@ view :
 view config attrsList model =
     let
         attrs =
-            buildAttributes attrsList defaultAttributes
+            buildAttributes attrsList
     in
     case model of
         Opened _ ->
