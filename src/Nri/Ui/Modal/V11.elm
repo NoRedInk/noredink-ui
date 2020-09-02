@@ -1,5 +1,5 @@
 module Nri.Ui.Modal.V11 exposing
-    ( view, closeButton
+    ( view, closeButton, closeButtonId
     , Model, init, open, close
     , Msg, update, subscriptions
     , Attribute
@@ -7,7 +7,6 @@ module Nri.Ui.Modal.V11 exposing
     , showTitle, hideTitle
     , custom, css
     , isOpen
-    , closeButtonId, firstFocusable, lastFocusable, onlyFocusable
     )
 
 {-| Changes from V10:
@@ -24,6 +23,7 @@ import Browser.Dom as Dom
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
+import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Modal.V11 as Modal
 import Task
 
@@ -134,14 +134,14 @@ view model =
                     , wrapMsg = ModalMsg
                     , content =
                         [ Modal.closeButton CloseModal <|
-                            Modal.firstFocusable { focusLastId = Focus "last-element-id" }
+                            FocusTrap.first { focusLastId = Focus "last-element-id" }
                         , text "Modal Content"
                         ]
                     , footer =
                         [ button
                             (Events.onClick CloseModal
                                 :: id "last-element-id"
-                                :: Modal.lastFocusable { focusFirstElement = Focus Modal.closeButtonId }
+                                :: FocusTrap.last { focusFirstElement = Focus Modal.closeButtonId }
                             )
                             [ text "Close" ]
                         ]
@@ -158,7 +158,7 @@ view model =
                     , wrapMsg = ModalMsg
                     , content =
                         [ Modal.closeButton CloseModal <|
-                            Modal.onlyFocusable { focusSelf = Focus Modal.closeButtonId }
+                            FocusTrap.only { focusSelf = Focus Modal.closeButtonId }
                         , text "Modal Content"
                         ]
                     , footer = []
@@ -169,7 +169,7 @@ view model =
         ]
 ```
 
-@docs view, closeButton
+@docs view, closeButton, closeButtonId
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
 
@@ -572,39 +572,6 @@ viewModal config =
             , viewFooter config.footer
             ]
         ]
-
-
-{-| -}
-onlyFocusable : { focusSelf : msg } -> List (Html.Attribute msg)
-onlyFocusable { focusSelf } =
-    [ onKeyDownPreventDefault
-        [ Key.tab focusSelf
-        , Key.tabBack focusSelf
-        ]
-    , Attrs.class "modal__only-focusable-element"
-    ]
-
-
-{-| -}
-firstFocusable : { focusLastId : msg } -> List (Html.Attribute msg)
-firstFocusable { focusLastId } =
-    [ onKeyDownPreventDefault [ Key.tabBack focusLastId ]
-    , Attrs.class "modal__first-focusable-element"
-    ]
-
-
-{-| -}
-lastFocusable : { focusFirstId : msg } -> List (Html.Attribute msg)
-lastFocusable { focusFirstId } =
-    [ onKeyDownPreventDefault [ Key.tab focusFirstId ]
-    , Attrs.class "modal__last-focusable-element"
-    ]
-
-
-onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
-onKeyDownPreventDefault decoders =
-    Events.preventDefaultOn "keydown"
-        (Decode.oneOf (List.map (Decode.map (\msg -> ( msg, True ))) decoders))
 
 
 {-| -}

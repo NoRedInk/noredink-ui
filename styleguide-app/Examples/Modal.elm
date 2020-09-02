@@ -20,6 +20,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V4 as Text
 import Task
@@ -196,13 +197,13 @@ modalSettings settings =
             { default
                 | content =
                     [ Modal.closeButton CloseModal <|
-                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
                 , footer =
                     [ continueButton []
                     , closeClickableText <|
-                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
                     ]
             }
 
@@ -210,12 +211,12 @@ modalSettings settings =
             { default
                 | content =
                     [ Modal.closeButton CloseModal <|
-                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
                 , footer =
                     [ closeClickableText <|
-                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
                     ]
             }
 
@@ -223,7 +224,7 @@ modalSettings settings =
             { default
                 | content =
                     [ Modal.closeButton CloseModal <|
-                        Modal.onlyFocusable { focusSelf = Focus closeClickableTextId }
+                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
             }
@@ -232,12 +233,12 @@ modalSettings settings =
             { default
                 | content =
                     [ Modal.closeButton CloseModal <|
-                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
                     , viewModalContent settings.content
                     ]
                 , footer =
                     [ continueButton <|
-                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
                     ]
             }
 
@@ -246,9 +247,9 @@ modalSettings settings =
                 | content = [ viewModalContent settings.content ]
                 , footer =
                     [ continueButton <|
-                        Modal.firstFocusable { focusLastId = Focus closeClickableTextId }
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
                     , closeClickableText <|
-                        Modal.lastFocusable { focusFirstId = Focus Modal.closeButtonId }
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
                     ]
             }
 
@@ -257,7 +258,7 @@ modalSettings settings =
                 | content = [ viewModalContent settings.content ]
                 , footer =
                     [ closeClickableText <|
-                        Modal.onlyFocusable { focusSelf = Focus closeClickableTextId }
+                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
                     ]
             }
 
@@ -266,7 +267,7 @@ modalSettings settings =
                 | content = [ viewModalContent settings.content ]
                 , footer =
                     [ continueButton <|
-                        Modal.onlyFocusable { focusSelf = Focus continueButtonId }
+                        FocusTrap.only { focusSelf = Focus continueButtonId }
                     ]
             }
 
