@@ -1,13 +1,11 @@
-module Nri.Ui.Modal.V10 exposing
+module Nri.Ui.Modal.V11 exposing
     ( Model, init, initOpen, isOpen
     , Msg, open, close, update, subscriptions
     , Attribute, hideTitle, css
     , FocusManager(..), info, warning
     )
 
-{-| Changes from V9:
-
-  - adds hideTitle and css helpers
+{-| Changes from V10:
 
 @docs Model, init, initOpen, isOpen
 @docs Msg, open, close, update, subscriptions
@@ -15,7 +13,7 @@ module Nri.Ui.Modal.V10 exposing
 @docs FocusManager, info, warning
 
     import Html.Styled exposing (text)
-    import Nri.Ui.Modal.V10 as Modal
+    import Nri.Ui.Modal.V11 as Modal
 
     type Msg
         = ModalMsg Modal.Msg
