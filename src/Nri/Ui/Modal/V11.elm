@@ -1,16 +1,21 @@
 module Nri.Ui.Modal.V11 exposing
-    ( Model, init, initOpen, isOpen
-    , Msg, open, close, update, subscriptions
+    ( Model, init, open, close
+    , Msg, update, subscriptions
     , Attribute, hideTitle, css
     , FocusManager(..), info, warning
+    , isOpen
     )
 
 {-| Changes from V10:
 
-@docs Model, init, initOpen, isOpen
-@docs Msg, open, close, update, subscriptions
+  - remove `initOpen`
+  - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
+
+@docs Model, init, open, close
+@docs Msg, update, subscriptions
 @docs Attribute, hideTitle, css
 @docs FocusManager, info, warning
+@docs isOpen
 
     import Html.Styled exposing (text)
     import Nri.Ui.Modal.V11 as Modal
@@ -77,18 +82,22 @@ init =
     Closed
 
 
-{-| Pass the id of the element that should receive focus when the modal is closed.
+{-| Pass the id of the element that should receive focus when the modal closes.
 -}
-initOpen : String -> ( Model, Cmd Msg )
-initOpen returnFocusTo =
+open : String -> ( Model, Cmd Msg )
+open returnFocusTo =
     ( Opened returnFocusTo, focusFirstElement )
 
 
-focusFirstElement : Cmd Msg
-focusFirstElement =
-    Dom.focus autofocusId
-        |> Task.onError (\_ -> Dom.focus firstId)
-        |> Task.attempt Focused
+{-| -}
+close : Model -> ( Model, Cmd Msg )
+close model =
+    case model of
+        Opened returnFocusTo ->
+            ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
+
+        Closed ->
+            ( Closed, Cmd.none )
 
 
 {-| -}
@@ -106,17 +115,6 @@ type By
     = EscapeKey
     | OverlayClick
     | Other
-
-
-{-| -}
-close : Model -> ( Model, Cmd Msg )
-close model =
-    case model of
-        Opened returnFocusTo ->
-            ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
-
-        Closed ->
-            ( Closed, Cmd.none )
 
 
 {-| -}
@@ -167,16 +165,16 @@ update { dismissOnEscAndOverlayClick } msg model =
             ( model, Cmd.none )
 
 
+focusFirstElement : Cmd Msg
+focusFirstElement =
+    Dom.focus autofocusId
+        |> Task.onError (\_ -> Dom.focus firstId)
+        |> Task.attempt Focused
+
+
 type Autofocus
     = Default
     | Last
-
-
-{-| Pass the id of the element that should receive focus when the modal closes.
--}
-open : String -> Msg
-open =
-    OpenModal
 
 
 

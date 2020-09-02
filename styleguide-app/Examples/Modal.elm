@@ -379,18 +379,28 @@ update msg state =
     in
     case msg of
         OpenModal content returnFocusTo ->
-            update (ModalMsg (Modal.open returnFocusTo)) { state | content = content }
+            let
+                ( newState, cmd ) =
+                    Modal.open returnFocusTo
+            in
+            ( { state | content = content, state = newState }
+            , Cmd.map ModalMsg cmd
+            )
 
         ModalMsg modalMsg ->
             case Modal.update updateConfig modalMsg state.state of
-                ( newState, cmds ) ->
+                ( newState, cmd ) ->
                     ( { state | state = newState }
-                    , Cmd.map ModalMsg cmds
+                    , Cmd.map ModalMsg cmd
                     )
 
         ForceClose ->
-            ( { state | state = Modal.init }
-            , Cmd.none
+            let
+                ( newState, cmd ) =
+                    Modal.close state.state
+            in
+            ( { state | state = newState }
+            , Cmd.map ModalMsg cmd
             )
 
         SetVisibleTitle value ->
