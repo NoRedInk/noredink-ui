@@ -164,12 +164,7 @@ makeFocusManager settings =
                             , Button.large
                             , Button.custom [ modalOptions.autofocusElement ]
                             ]
-                        , ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom modalOptions.lastFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
+                        , closeClickableText modalOptions.lastFocusableElement
                         ]
                     }
 
@@ -181,12 +176,7 @@ makeFocusManager settings =
                         , viewModalContent settings.content
                         ]
                     , footer =
-                        [ ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
+                        [ closeClickableText (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
                         ]
                     }
 
@@ -229,12 +219,7 @@ makeFocusManager settings =
                             , Button.custom (modalOptions.autofocusElement :: modalOptions.firstFocusableElement)
                             , Button.large
                             ]
-                        , ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom modalOptions.lastFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
+                        , closeClickableText modalOptions.lastFocusableElement
                         ]
                     }
 
@@ -243,12 +228,7 @@ makeFocusManager settings =
                 (\{ onlyFocusableElement } ->
                     { content = [ viewModalContent settings.content ]
                     , footer =
-                        [ ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom onlyFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
+                        [ closeClickableText onlyFocusableElement
                         ]
                     }
                 )
@@ -283,6 +263,16 @@ viewModalContent content =
         [ span
             [ Attributes.css [ whiteSpace preLine ] ]
             [ text content ]
+        ]
+
+
+closeClickableText : List (Html.Attribute Msg) -> Html Msg
+closeClickableText attributes =
+    ClickableText.button "Close"
+        [ ClickableText.onClick ForceClose
+        , ClickableText.large
+        , ClickableText.custom attributes
+        , ClickableText.css [ Css.marginTop (Css.px 15) ]
         ]
 
 
