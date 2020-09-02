@@ -15,6 +15,8 @@ module Nri.Ui.Modal.V11 exposing
   - remove `initOpen`
   - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
   - make info and warning themes
+  - adds `custom` helper for adding arbitrary html attributes (primarily useful to make limiting the scope of selectors in tests easier by adding ids to modals)
+  - tab and tabback events stop propagation and prevent default
 
 ```
 import Browser exposing (Program, element)
