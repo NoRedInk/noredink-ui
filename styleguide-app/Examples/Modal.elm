@@ -249,7 +249,7 @@ modalSettings settings =
                     [ continueButton <|
                         FocusTrap.first { focusLastId = Focus closeClickableTextId }
                     , closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                        FocusTrap.last { focusFirstId = Focus continueButtonId }
                     ]
             }
 
