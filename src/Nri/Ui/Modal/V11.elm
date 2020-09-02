@@ -5,7 +5,7 @@ module Nri.Ui.Modal.V11 exposing
     , FocusManager(..)
     , Attribute
     , info, warning
-    , hideTitle
+    , showTitle, hideTitle
     , custom, css
     , isOpen
     )
@@ -168,7 +168,7 @@ view model =
 
 @docs Attribute
 @docs info, warning
-@docs hideTitle
+@docs showTitle, hideTitle
 @docs custom, css
 
 
@@ -366,6 +366,13 @@ warning =
         [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
         , titleColor Colors.red
         ]
+
+
+{-| This is the default setting.
+-}
+showTitle : Attribute
+showTitle =
+    Attribute (\attrs -> { attrs | visibleTitle = True })
 
 
 {-| -}

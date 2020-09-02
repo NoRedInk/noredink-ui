@@ -39,7 +39,8 @@ init =
 
 
 type alias Settings =
-    { visibleTitle : Bool
+    { titleVisibility : Modal.Attribute
+    , title : String
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -53,7 +54,8 @@ type alias Settings =
 initModalSettings : Control Settings
 initModalSettings =
     Control.record Settings
-        |> Control.field "visibleTitle" (Control.bool True)
+        |> Control.field "titleVisibility" controlTitleVisibility
+        |> Control.field "title" (Control.string "Modal Title")
         |> Control.field "showX" (Control.bool True)
         |> Control.field "showContinue" (Control.bool True)
         |> Control.field "showSecondary" (Control.bool True)
@@ -68,6 +70,14 @@ initModalSettings =
             )
         |> Control.field "customStyling" (Control.bool False)
         |> Control.field "theme" controlTheme
+
+
+controlTitleVisibility : Control Modal.Attribute
+controlTitleVisibility =
+    Control.choice
+        [ ( "showTitle", Control.value Modal.showTitle )
+        , ( "hideTitle", Control.value Modal.hideTitle )
+        ]
 
 
 controlTheme : Control Modal.Attribute
@@ -94,13 +104,6 @@ example =
                 settings =
                     Control.currentValue state.settings
 
-                titleAttrs =
-                    if settings.visibleTitle then
-                        []
-
-                    else
-                        [ Modal.hideTitle ]
-
                 stylingAttrs =
                     if settings.customStyling then
                         [ Modal.css
@@ -113,7 +116,7 @@ example =
                         []
 
                 attrs =
-                    settings.theme :: titleAttrs ++ stylingAttrs
+                    settings.theme :: settings.titleVisibility :: stylingAttrs
             in
             [ Control.view UpdateSettings state.settings
                 |> Html.fromUnstyled
@@ -124,7 +127,7 @@ example =
                 , Button.medium
                 ]
             , Modal.view
-                { title = "Modal Title"
+                { title = settings.title
                 , wrapMsg = ModalMsg
                 , focusManager = makeFocusManager settings
                 }
