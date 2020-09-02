@@ -39,28 +39,25 @@ init =
 
 
 type alias Settings =
-    { titleVisibility : Modal.Attribute
-    , title : String
+    { title : String
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
-    , styles : Modal.Attribute
-    , theme : Modal.Attribute
+    , attributes : List Modal.Attribute
     }
 
 
 initModalSettings : Control Settings
 initModalSettings =
     Control.record Settings
-        |> Control.field "titleVisibility" controlTitleVisibility
-        |> Control.field "title" (Control.string "Modal Title")
-        |> Control.field "showX" (Control.bool True)
-        |> Control.field "showContinue" (Control.bool True)
-        |> Control.field "showSecondary" (Control.bool True)
+        |> Control.field "Modal title" (Control.string "Modal Title")
+        |> Control.field "X button" (Control.bool True)
+        |> Control.field "Continue button" (Control.bool True)
+        |> Control.field "Close button" (Control.bool True)
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
-        |> Control.field "content"
+        |> Control.field "Content"
             (Control.stringTextarea <|
                 String.join "\n\n"
                     [ "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
@@ -68,8 +65,15 @@ initModalSettings =
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
-        |> Control.field "css" controlCss
-        |> Control.field "theme" controlTheme
+        |> Control.field "Modal Attributes" controlAttributes
+
+
+controlAttributes : Control (List Modal.Attribute)
+controlAttributes =
+    Control.record (\a b c -> a :: b :: c :: [])
+        |> Control.field "Theme" controlTheme
+        |> Control.field "Title visibility" controlTitleVisibility
+        |> Control.field "Custom css" controlCss
 
 
 controlTitleVisibility : Control Modal.Attribute
@@ -127,10 +131,7 @@ example =
                 , wrapMsg = ModalMsg
                 , focusManager = makeFocusManager settings
                 }
-                [ settings.theme
-                , settings.titleVisibility
-                , settings.styles
-                ]
+                settings.attributes
                 state.state
             ]
     }
