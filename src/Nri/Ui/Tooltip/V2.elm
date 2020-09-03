@@ -3,7 +3,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , onTop, onBottom, onLeft, onRight
     , Width(..), withWidth
     , Padding(..), withPadding
-    , withTooltipStyleOverrides
+    , css
     , Trigger(..)
     , primaryLabel, auxillaryDescription, toggleTip
     )
@@ -11,6 +11,7 @@ module Nri.Ui.Tooltip.V2 exposing
 {-| Changes from V1:
 
   - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
+  - withTooltipStyleOverrides -> css
 
 A tooltip component!
 
@@ -48,7 +49,7 @@ Example usage:
 
 @docs Padding, withPadding
 
-@docs withTooltipStyleOverrides
+@docs css
 
 @docs Trigger
 
@@ -66,7 +67,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
 import EventExtras
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
 import Nri.Ui
@@ -179,8 +180,8 @@ onLeft =
 {-| Set some custom styles on the tooltip. These will be treated as overrides,
 so be careful!
 -}
-withTooltipStyleOverrides : List Style -> Tooltip msg -> Tooltip msg
-withTooltipStyleOverrides tooltipStyleOverrides (Tooltip config) =
+css : List Style -> Tooltip msg -> Tooltip msg
+css tooltipStyleOverrides (Tooltip config) =
     Tooltip { config | tooltipStyleOverrides = tooltipStyleOverrides }
 
 
@@ -307,14 +308,14 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
         []
         [ Html.button
             ([ Widget.label label
-             , css buttonStyleOverrides
+             , Attributes.css buttonStyleOverrides
              ]
                 ++ eventsForTrigger OnHover onTrigger
                 ++ extraButtonAttrs
             )
             [ hoverBridge contentSize
                 [ Html.div
-                    [ css
+                    [ Attributes.css
                         [ Css.position Css.relative
                         , Css.width (Css.px contentSize)
                         , Css.height (Css.px contentSize)
@@ -412,7 +413,7 @@ viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonA
                 -- invalid and jumping to a reference would not work, so we
                 -- skip labels and descriptions if the tooltip is closed.
                 Attributes.property "data-closed-tooltip" Encode.null
-             , css buttonStyleOverrides
+             , Attributes.css buttonStyleOverrides
              ]
                 ++ eventsForTrigger trigger onTrigger
                 ++ extraButtonAttrs
@@ -443,9 +444,9 @@ viewIf viewFn condition =
 
 viewTooltip : Maybe String -> Trigger -> Tooltip msg -> Html msg
 viewTooltip maybeTooltipId trigger (Tooltip config) =
-    Html.div [ css (containerPositioningForArrowPosition config.position) ]
+    Html.div [ Attributes.css (containerPositioningForArrowPosition config.position) ]
         [ Html.div
-            ([ css
+            ([ Attributes.css
                 ([ Css.borderRadius (Css.px 8)
                  , case config.width of
                     Exactly width ->
@@ -549,7 +550,7 @@ containerPositioningForArrowPosition arrowPosition =
 
 pointerBox : Direction -> Attribute msg
 pointerBox position =
-    css
+    Attributes.css
         [ Css.backgroundColor Colors.navy
         , Css.border3 (Css.px 1) Css.solid Colors.navy
         , arrowInPosition position
@@ -565,7 +566,7 @@ pointerBox position =
 viewCloseTooltipOverlay : msg -> Html msg
 viewCloseTooltipOverlay msg =
     Html.button
-        [ css
+        [ Attributes.css
             [ Css.width (Css.pct 100)
             , -- ancestor uses transform property, which interacts with
               -- position: fixed, forcing this hack.
