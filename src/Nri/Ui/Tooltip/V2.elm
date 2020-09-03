@@ -2,7 +2,7 @@ module Nri.Ui.Tooltip.V2 exposing
     ( Tooltip, tooltip
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
-    , Padding(..), withPadding
+    , smallPadding, normalPadding
     , css
     , Trigger(..)
     , primaryLabel, auxillaryDescription, toggleTip
@@ -13,6 +13,7 @@ module Nri.Ui.Tooltip.V2 exposing
   - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
   - withTooltipStyleOverrides -> css
   - {Width, withWidth} -> {exactWidth, fitToContent}
+  - {Padding, withPadding} -> {smallPadding, normalPadding}
 
 A tooltip component!
 
@@ -46,8 +47,7 @@ Example usage:
 
 @docs onTop, onBottom, onLeft, onRight
 @docs exactWidth, fitToContent
-
-@docs Padding, withPadding
+@docs smallPadding, normalPadding
 
 @docs css
 
@@ -219,11 +219,21 @@ type Padding
     | NormalPadding
 
 
-{-| Set the padding around the edges of the tooltip.
--}
 withPadding : Padding -> Tooltip msg -> Tooltip msg
 withPadding padding (Tooltip config) =
     Tooltip { config | padding = padding }
+
+
+{-| -}
+smallPadding : Tooltip msg -> Tooltip msg
+smallPadding =
+    withPadding SmallPadding
+
+
+{-| -}
+normalPadding : Tooltip msg -> Tooltip msg
+normalPadding =
+    withPadding NormalPadding
 
 
 {-| How do you open this tooltip?
