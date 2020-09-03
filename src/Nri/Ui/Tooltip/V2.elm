@@ -1,6 +1,6 @@
 module Nri.Ui.Tooltip.V2 exposing
     ( Tooltip, tooltip
-    , Position(..), withPosition
+    , onTop, onBottom, onLeft, onRight
     , Width(..), withWidth
     , Padding(..), withPadding
     , withTooltipStyleOverrides
@@ -8,7 +8,11 @@ module Nri.Ui.Tooltip.V2 exposing
     , primaryLabel, auxillaryDescription, toggleTip
     )
 
-{-| A tooltip component!
+{-| Changes from V1:
+
+  - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
+
+A tooltip component!
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
@@ -38,7 +42,7 @@ Example usage:
 
 @docs Tooltip, tooltip
 
-@docs Position, withPosition
+@docs onTop, onBottom, onLeft, onRight
 
 @docs Width, withWidth
 
@@ -74,16 +78,15 @@ import Svg.Styled.Attributes exposing (cx, cy, d, fill, fillRule, height, r, str
 
 {-| A standard NoRedInk tooltip, which appears around its parent element.
 
-Create versions of me with `tooltip`, and customize them with functions like
-`withPosition` and `withTheme` from this model. Like so:
+Create versions of me with `tooltip`, and customize them
 
-    tooltip [ Html.text "Hello, World!" ]
-        |> withPosition OnLeft
+    Tooltip.tooltip [ Html.text "Hello, World!" ]
+        |> Tooltip.left
 
 -}
 type Tooltip msg
     = Tooltip
-        { position : Position
+        { position : Direction
         , content : List (Html msg)
 
         -- extra styles
@@ -110,22 +113,67 @@ tooltip content =
 
 {-| Where should this tooltip be positioned?
 -}
-type Position
+type Direction
     = OnTop
     | OnBottom
     | OnLeft
     | OnRight
 
 
-{-| Set a tooltip's position:
-
-    tooltip [ text "I'm on the left!" ]
-        |> withPosition OnLeft
-
--}
-withPosition : Position -> Tooltip msg -> Tooltip msg
+withPosition : Direction -> Tooltip msg -> Tooltip msg
 withPosition position (Tooltip config) =
     Tooltip { config | position = position }
+
+
+{-|
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTop : Tooltip msg -> Tooltip msg
+onTop =
+    withPosition OnTop
+
+
+{-|
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRight : Tooltip msg -> Tooltip msg
+onRight =
+    withPosition OnRight
+
+
+{-|
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottom : Tooltip msg -> Tooltip msg
+onBottom =
+    withPosition OnBottom
+
+
+{-|
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeft : Tooltip msg -> Tooltip msg
+onLeft =
+    withPosition OnLeft
 
 
 {-| Set some custom styles on the tooltip. These will be treated as overrides,
@@ -471,7 +519,7 @@ tooltipColor =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Position -> List Style
+containerPositioningForArrowPosition : Direction -> List Style
 containerPositioningForArrowPosition arrowPosition =
     case arrowPosition of
         OnTop ->
@@ -499,7 +547,7 @@ containerPositioningForArrowPosition arrowPosition =
             ]
 
 
-pointerBox : Position -> Attribute msg
+pointerBox : Direction -> Attribute msg
 pointerBox position =
     css
         [ Css.backgroundColor Colors.navy
@@ -561,7 +609,7 @@ buttonStyleOverrides =
 -- ARROWS
 
 
-arrowInPosition : Position -> Style
+arrowInPosition : Direction -> Style
 arrowInPosition position =
     case position of
         OnTop ->

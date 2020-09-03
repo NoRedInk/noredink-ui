@@ -133,7 +133,7 @@ example =
                         [ href "/" ]
                         [ Html.text "Links work!" ]
                     ]
-                    |> Tooltip.withPosition Tooltip.OnLeft
+                    |> Tooltip.onLeft
                     |> Tooltip.toggleTip
                         { onTrigger = ToggleTooltip ToggleTipLeft
                         , isOpen = model.openTooltip == Just ToggleTipLeft
