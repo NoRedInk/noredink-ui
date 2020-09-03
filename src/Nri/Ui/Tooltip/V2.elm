@@ -77,6 +77,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import String.Extra
 
 
 {-| -}
@@ -366,7 +367,7 @@ toggleTip : { label : String } -> List (Attribute msg) -> Html msg
 toggleTip { label } attributes_ =
     let
         id =
-            "TODO-reasonable-id"
+            String.Extra.dasherize label
     in
     view
         { triggerHtml =
