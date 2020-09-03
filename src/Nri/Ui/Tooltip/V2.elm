@@ -5,6 +5,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
+    , open
     , css, custom, customTriggerAttributes
     , primaryLabel, auxillaryDescription
     )
@@ -23,20 +24,20 @@ module Nri.Ui.Tooltip.V2 exposing
   - change primaryLabel and auxillaryDescription to attributes, adding view
   - move the onTrigger event to the attributes
   - extraButtonAttrs becomes attribute `customTriggerAttributes`
+  - isOpen field becomes the `open` attribute
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
 Example usage:
 
         Tooltip.view
-            { triggerHtml = someTriggerHtml
-            , isOpen = True
+            { triggerHtml = text "Click me to open the tooltip"
+            , id = "my-tooltip"
             }
             [ Tooltip.plaintext "Gradebook"
             , Tooltip.primaryLabel
-            , Tooltip.smallPadding
-            , Tooltip.fitToContent
             , Tooltip.onClick MyOnTriggerMsg
+            , Tooltip.open True
             ]
 
 
@@ -54,6 +55,7 @@ Example usage:
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
+@docs open
 @docs css, custom, customTriggerAttributes
 @docs primaryLabel, auxillaryDescription
 
@@ -91,6 +93,7 @@ type alias Tooltip msg =
     , trigger : Maybe (Trigger msg)
     , triggerAttributes : List (Html.Attribute msg)
     , purpose : Purpose
+    , isOpen : Bool
     }
 
 
@@ -108,6 +111,7 @@ buildAttributes =
             , trigger = Nothing
             , triggerAttributes = []
             , purpose = PrimaryLabel
+            , isOpen = False
             }
     in
     List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaultTooltip
@@ -345,33 +349,27 @@ auxillaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
+{-| -}
+open : Bool -> Attribute msg
+open isOpen =
+    Attribute (\config -> { config | isOpen = isOpen })
+
+
 {-| Here's what the fields in the configuration record do:
 
   - `triggerHtml`: What element do you interact with to open the tooltip?
-  - `isOpen`: Is the tooltip open now? (keep track of this in your model somewhere)
   - `id`: A unique identifier used to associate the trigger with its content
 
 -}
-view :
-    { triggerHtml : Html msg
-    , isOpen : Bool
-    , id : String
-    }
-    -> List (Attribute msg)
-    -> Html msg
+view : { triggerHtml : Html msg, id : String } -> List (Attribute msg) -> Html msg
 view config attributes =
     viewTooltip_ config (buildAttributes attributes)
 
 
 {-| Supplementary information triggered by a "?" icon.
 -}
-toggleTip :
-    { isOpen : Bool
-    , label : String
-    }
-    -> List (Attribute msg)
-    -> Html msg
-toggleTip { isOpen, label } attributes_ =
+toggleTip : { label : String } -> List (Attribute msg) -> Html msg
+toggleTip { label } attributes_ =
     let
         contentSize =
             20
@@ -410,7 +408,7 @@ toggleTip { isOpen, label } attributes_ =
                         [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
                           Role.status
                         ]
-                        [ viewIf (\_ -> viewTooltip Nothing attributes) isOpen ]
+                        [ viewTooltip Nothing attributes ]
                     ]
                 ]
             ]
@@ -461,18 +459,17 @@ iconHelp =
 
 viewTooltip_ :
     { triggerHtml : Html msg
-    , isOpen : Bool
     , id : String -- Accessibility: Used to match tooltip to trigger
     }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ { triggerHtml, isOpen, id } tooltip_ =
+viewTooltip_ { triggerHtml, id } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V2"
         tooltipContainerStyles
         []
         [ Html.button
-            ([ if isOpen then
+            ([ if tooltip_.isOpen then
                 case tooltip_.purpose of
                     PrimaryLabel ->
                         Aria.labeledBy id
@@ -492,28 +489,25 @@ viewTooltip_ { triggerHtml, isOpen, id } tooltip_ =
                 ++ tooltip_.triggerAttributes
             )
             [ triggerHtml ]
-        , viewOverlay isOpen tooltip_
+        , viewOverlay tooltip_
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewIf (\_ -> viewTooltip (Just id) tooltip_) isOpen
+        , viewTooltip (Just id) tooltip_
         ]
-
-
-{-| TODO: Move this somewhere if it becomes useful in other modules here
--}
-viewIf : (() -> Html msg) -> Bool -> Html msg
-viewIf viewFn condition =
-    case condition of
-        True ->
-            viewFn ()
-
-        False ->
-            Html.text ""
 
 
 viewTooltip : Maybe String -> Tooltip msg -> Html msg
 viewTooltip maybeTooltipId config =
+    if config.isOpen then
+        viewOpenTooltip maybeTooltipId config
+
+    else
+        text ""
+
+
+viewOpenTooltip : Maybe String -> Tooltip msg -> Html msg
+viewOpenTooltip maybeTooltipId config =
     Html.div [ Attributes.css (containerPositioningForArrowPosition config.position) ]
         [ Html.div
             ([ Attributes.css
@@ -627,8 +621,8 @@ pointerBox position =
         ]
 
 
-viewOverlay : Bool -> Tooltip msg -> Html msg
-viewOverlay isOpen { trigger } =
+viewOverlay : Tooltip msg -> Html msg
+viewOverlay { isOpen, trigger } =
     case ( isOpen, trigger ) of
         ( True, Just (OnClick msg) ) ->
             -- if we display the click-to-close overlay on hover, you will have to

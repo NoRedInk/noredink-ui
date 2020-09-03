@@ -73,22 +73,22 @@ example =
                 ]
             , Tooltip.view
                 { triggerHtml = Html.text "Primary Label - OnClick Trigger"
-                , isOpen = model.openTooltip == Just PrimaryLabelOnClick
                 , id = "primary label tooltip"
                 }
                 [ Tooltip.plaintext "Tooltip"
                 , Tooltip.primaryLabel
                 , Tooltip.onClick (ToggleTooltip PrimaryLabelOnClick)
+                , Tooltip.open (model.openTooltip == Just PrimaryLabelOnClick)
                 ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
             , Tooltip.view
                 { triggerHtml = Html.text "Primary Label - OnHover Trigger"
-                , isOpen = model.openTooltip == Just PrimaryLabelOnHover
                 , id = "primary label tooltip"
                 }
                 [ Tooltip.plaintext "Tooltip"
                 , Tooltip.primaryLabel
                 , Tooltip.onHover (ToggleTooltip PrimaryLabelOnHover)
+                , Tooltip.open (model.openTooltip == Just PrimaryLabelOnHover)
                 ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
             , Heading.h3 [] [ Html.text "auxillaryDescription" ]
@@ -99,26 +99,26 @@ example =
                 ]
             , Tooltip.view
                 { triggerHtml = Html.text "Auxillary Description Trigger"
-                , isOpen = model.openTooltip == Just AuxillaryDescription
                 , id = "Auxillary description"
                 }
                 [ Tooltip.plaintext "Tooltip"
                 , Tooltip.onClick (ToggleTooltip AuxillaryDescription)
                 , Tooltip.auxillaryDescription
+                , Tooltip.open (model.openTooltip == Just AuxillaryDescription)
                 ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
             , Heading.h3 [] [ Html.text "toggleTip" ]
             , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
                 [ Tooltip.toggleTip
-                    { isOpen = model.openTooltip == Just ToggleTipTop
-                    , label = "More info"
+                    { label = "More info"
                     }
                     [ Tooltip.html
                         [ Html.text "Tooltip On Top! "
                         , Html.a [ href "/" ] [ Html.text "Links work!" ]
                         ]
                     , Tooltip.onHover (ToggleTooltip ToggleTipTop)
+                    , Tooltip.open (model.openTooltip == Just ToggleTipTop)
                     ]
                 , Text.mediumBody
                     [ Html.text "This toggletip will open on top"
@@ -126,8 +126,7 @@ example =
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
                 [ Tooltip.toggleTip
-                    { isOpen = model.openTooltip == Just ToggleTipLeft
-                    , label = "More info"
+                    { label = "More info"
                     }
                     [ Tooltip.html
                         [ Html.text "Tooltip On Left! "
@@ -135,6 +134,7 @@ example =
                         ]
                     , Tooltip.onLeft
                     , Tooltip.onHover (ToggleTooltip ToggleTipLeft)
+                    , Tooltip.open (model.openTooltip == Just ToggleTipLeft)
                     ]
                 , Text.mediumBody
                     [ Html.text "This toggletip will open on the left"
