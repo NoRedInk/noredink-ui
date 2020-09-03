@@ -10,6 +10,7 @@ import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -33,12 +34,14 @@ example =
 
 type alias State =
     { openTooltip : Maybe TooltipType
+    , staticExampleSettings : Control StaticExampleSettings
     }
 
 
 init : State
 init =
     { openTooltip = Nothing
+    , staticExampleSettings = initStaticExampleSettings
     }
 
 
@@ -54,6 +57,7 @@ type TooltipType
 
 type Msg
     = ToggleTooltip TooltipType Bool
+    | SetStaticExampleSettings (Control StaticExampleSettings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -66,10 +70,16 @@ update msg model =
             else
                 ( { model | openTooltip = Nothing }, Cmd.none )
 
+        SetStaticExampleSettings settings ->
+            ( { model | staticExampleSettings = settings }, Cmd.none )
+
 
 view : State -> List (Html Msg)
 view model =
-    [ Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
+    [ Heading.h2 [] [ Html.text "Static Examples" ]
+    , viewStaticExamples model.staticExampleSettings
+    , Heading.h2 [] [ Html.text "Interactive Examples" ]
+    , Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
     , Heading.h3 [] [ Html.text "primaryLabel" ]
     , Text.smallBody
         [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
@@ -146,3 +156,24 @@ view model =
             ]
         ]
     ]
+
+
+type alias StaticExampleSettings =
+    {}
+
+
+initStaticExampleSettings : Control StaticExampleSettings
+initStaticExampleSettings =
+    Control.record StaticExampleSettings
+
+
+viewStaticExamples : Control StaticExampleSettings -> Html Msg
+viewStaticExamples controlSettings =
+    let
+        settings =
+            Control.currentValue controlSettings
+    in
+    Html.div []
+        [ Control.view SetStaticExampleSettings controlSettings
+            |> Html.fromUnstyled
+        ]
