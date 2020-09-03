@@ -412,9 +412,8 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
             case tooltip_.trigger of
                 Just (OnClick msg) ->
                     ( []
-                    , [ EventExtras.onClickStopPropagation (msg True)
-                      , Events.onFocus (msg True)
-                      , Events.onBlur (msg False)
+                    , [ EventExtras.onClickStopPropagation
+                            (msg (not tooltip_.isOpen))
                       ]
                     )
 
