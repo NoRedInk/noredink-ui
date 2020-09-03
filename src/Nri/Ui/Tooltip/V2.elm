@@ -459,6 +459,10 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
                 [ triggerHtml
                 , hoverBridge tooltip_
                 ]
+            , viewOverlay tooltip_
+
+            -- Popout is rendered after the overlay, to allow client code to give it
+            -- priority when clicking by setting its position
             , viewTooltip (Just id) tooltip_
             ]
         ]
@@ -616,6 +620,39 @@ pointerBox position =
         , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
         , Global.descendants [ Global.a [ Css.color Colors.white ] ]
         ]
+
+
+viewOverlay : Tooltip msg -> Html msg
+viewOverlay { isOpen, trigger } =
+    case ( isOpen, trigger ) of
+        ( True, Just (OnClick msg) ) ->
+            -- if we display the click-to-close overlay on hover, you will have to
+            -- close the overlay by moving the mouse out of the window or clicking.
+            viewCloseTooltipOverlay (msg False)
+
+        _ ->
+            text ""
+
+
+viewCloseTooltipOverlay : msg -> Html msg
+viewCloseTooltipOverlay msg =
+    Html.button
+        [ Attributes.css
+            [ Css.width (Css.pct 100)
+            , -- ancestor uses transform property, which interacts with
+              -- position: fixed, forcing this hack.
+              -- https://www.w3.org/TR/css-transforms-1/#propdef-transform
+              Css.height (Css.calc (Css.px 1000) Css.plus (Css.calc (Css.pct 100) Css.plus (Css.px 1000)))
+            , Css.left Css.zero
+            , Css.top (Css.px -1000)
+            , Css.cursor Css.pointer
+            , Css.position Css.fixed
+            , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
+            , Css.backgroundColor Css.transparent
+            ]
+        , EventExtras.onClickStopPropagation msg
+        ]
+        []
 
 
 tooltipContainerStyles : List Style
