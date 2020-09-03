@@ -164,6 +164,7 @@ view model =
 type alias StaticExampleSettings =
     { content : Tooltip.Attribute Never
     , direction : Tooltip.Attribute Never
+    , alignment : Tooltip.Attribute Never
     , width : Tooltip.Attribute Never
     , padding : Tooltip.Attribute Never
     }
@@ -174,6 +175,7 @@ initStaticExampleSettings =
     Control.record StaticExampleSettings
         |> Control.field "content" controlContent
         |> Control.field "direction" controlDirection
+        |> Control.field "alignment" controlAlignment
         |> Control.field "width" controlWidth
         |> Control.field "padding" controlPadding
 
@@ -224,6 +226,15 @@ controlDirection =
         ]
 
 
+controlAlignment : Control (Tooltip.Attribute Never)
+controlAlignment =
+    Control.choice
+        [ ( "alignStart", Control.value Tooltip.alignStart )
+        , ( "alignMiddle", Control.value Tooltip.alignMiddle )
+        , ( "alignEnd", Control.value Tooltip.alignEnd )
+        ]
+
+
 controlWidth : Control (Tooltip.Attribute Never)
 controlWidth =
     Control.choice
@@ -253,6 +264,7 @@ viewStaticExamples controlSettings =
             [ Tooltip.open True
             , settings.content
             , settings.direction
+            , settings.alignment
             , settings.width
             , settings.padding
             ]
@@ -260,7 +272,14 @@ viewStaticExamples controlSettings =
     Html.div []
         [ Control.view SetStaticExampleSettings controlSettings
             |> Html.fromUnstyled
-        , Html.div [ css [ Css.margin (Css.px 150) ] ]
+        , Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                , Css.height (Css.px 300)
+                ]
+            ]
             [ Tooltip.view
                 { triggerHtml =
                     UiIcon.arrowTop
