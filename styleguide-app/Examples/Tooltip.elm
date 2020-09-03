@@ -165,6 +165,7 @@ type alias StaticExampleSettings =
     { content : Tooltip.Attribute Never
     , direction : Tooltip.Attribute Never
     , width : Tooltip.Attribute Never
+    , padding : Tooltip.Attribute Never
     }
 
 
@@ -174,6 +175,7 @@ initStaticExampleSettings =
         |> Control.field "content" controlContent
         |> Control.field "direction" controlDirection
         |> Control.field "width" controlWidth
+        |> Control.field "padding" controlPadding
 
 
 controlContent : Control (Tooltip.Attribute Never)
@@ -232,6 +234,15 @@ controlWidth =
         ]
 
 
+controlPadding : Control (Tooltip.Attribute Never)
+controlPadding =
+    Control.choice
+        [ ( "normalPadding (default)", Control.value Tooltip.normalPadding )
+        , ( "smallPadding", Control.value Tooltip.smallPadding )
+        , ( "customPadding 40", Control.value (Tooltip.customPadding 40) )
+        ]
+
+
 viewStaticExamples : Control StaticExampleSettings -> Html Msg
 viewStaticExamples controlSettings =
     let
@@ -243,6 +254,7 @@ viewStaticExamples controlSettings =
             , settings.content
             , settings.direction
             , settings.width
+            , settings.padding
             ]
     in
     Html.div []
