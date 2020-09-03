@@ -20,22 +20,21 @@ module Nri.Ui.Tooltip.V2 exposing
   - pass a list of attributes rather than requiring a pipeline to set up the tooltip
   - move Trigger into the attributes
 
-A tooltip component!
-
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
 Example usage:
 
-        tooltip [ Html.text "Gradebook" ]
-        |> withPadding SmallPadding
-        |> withWidth FitToContent
-        |> primaryLabel {
-            trigger = OnClick
-            , triggerHtml = someTriggerHtml
+        Tooltip.primaryLabel
+            { triggerHtml = someTriggerHtml
             , onTrigger = MyOnTriggerMsg
             , isOpen = True
             , extraButtonAttrs = modalV9LastFocusableElement
-        }
+            }
+            [ Tooltip.plaintext "Gradebook"
+            , Tooltip.smallPadding
+            , Tooltip.fitToContent
+            , Tooltip.onClick
+            ]
 
 
 ## Suggested Improvements for V2
@@ -270,7 +269,8 @@ smallPadding =
     withPadding SmallPadding
 
 
-{-| -}
+{-| This the default spacing.
+-}
 normalPadding : Attribute msg
 normalPadding =
     withPadding NormalPadding
