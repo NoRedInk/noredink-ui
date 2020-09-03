@@ -2,7 +2,7 @@ module Nri.Ui.Tooltip.V2 exposing
     ( Tooltip, tooltip
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
-    , smallPadding, normalPadding
+    , smallPadding, normalPadding, customPadding
     , css
     , Trigger(..)
     , primaryLabel, auxillaryDescription, toggleTip
@@ -14,6 +14,7 @@ module Nri.Ui.Tooltip.V2 exposing
   - withTooltipStyleOverrides -> css
   - {Width, withWidth} -> {exactWidth, fitToContent}
   - {Padding, withPadding} -> {smallPadding, normalPadding}
+  - adds customPadding
 
 A tooltip component!
 
@@ -47,7 +48,7 @@ Example usage:
 
 @docs onTop, onBottom, onLeft, onRight
 @docs exactWidth, fitToContent
-@docs smallPadding, normalPadding
+@docs smallPadding, normalPadding, customPadding
 
 @docs css
 
@@ -217,6 +218,20 @@ fitToContent =
 type Padding
     = SmallPadding
     | NormalPadding
+    | CustomPadding Float
+
+
+paddingToStyle : Padding -> Style
+paddingToStyle padding =
+    case padding of
+        SmallPadding ->
+            Css.padding2 (Css.px 10) (Css.px 13)
+
+        NormalPadding ->
+            Css.padding (Css.px 20)
+
+        CustomPadding padding_ ->
+            Css.padding (Css.px padding_)
 
 
 withPadding : Padding -> Tooltip msg -> Tooltip msg
@@ -234,6 +249,13 @@ smallPadding =
 normalPadding : Tooltip msg -> Tooltip msg
 normalPadding =
     withPadding NormalPadding
+
+
+{-| Pass in the desired spacing around the edge of the tooltip (pixels).
+-}
+customPadding : Float -> Tooltip msg -> Tooltip msg
+customPadding value =
+    withPadding (CustomPadding value)
 
 
 {-| How do you open this tooltip?
@@ -500,16 +522,6 @@ viewTooltip maybeTooltipId trigger (Tooltip config) =
             )
             config.content
         ]
-
-
-paddingToStyle : Padding -> Style
-paddingToStyle padding =
-    case padding of
-        SmallPadding ->
-            Css.padding2 (Css.px 10) (Css.px 13)
-
-        NormalPadding ->
-            Css.padding2 (Css.px 20) (Css.px 20)
 
 
 eventsForTrigger : Trigger -> (Bool -> msg) -> List (Attribute msg)
