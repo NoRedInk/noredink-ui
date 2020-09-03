@@ -1,11 +1,12 @@
 module Nri.Ui.Tooltip.V2 exposing
-    ( plaintext, html
+    ( view, toggleTip
+    , plaintext, html
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
     , css, custom
-    , primaryLabel, auxillaryDescription, toggleTip
+    , primaryLabel, auxillaryDescription
     )
 
 {-| Changes from V1:
@@ -19,18 +20,20 @@ module Nri.Ui.Tooltip.V2 exposing
   - adds plaintext, html helpers for setting the content
   - pass a list of attributes rather than requiring a pipeline to set up the tooltip
   - move Trigger into the attributes
+  - change primaryLabel and auxillaryDescription to attributes, adding view
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
 Example usage:
 
-        Tooltip.primaryLabel
+        Tooltip.view
             { triggerHtml = someTriggerHtml
             , onTrigger = MyOnTriggerMsg
             , isOpen = True
             , extraButtonAttrs = modalV9LastFocusableElement
             }
             [ Tooltip.plaintext "Gradebook"
+            , Tooltip.primaryLabel
             , Tooltip.smallPadding
             , Tooltip.fitToContent
             , Tooltip.onClick
@@ -44,10 +47,7 @@ Example usage:
     to the next item in the page. This should be improved in the next release.
   - Currently, only toggle tip supports links on hover - generalize this to all tooltips
 
-
-## Tooltip Construction
-
-@docs Tooltip, tooltip
+@docs view, toggleTip
 
 @docs plaintext, html
 @docs onTop, onBottom, onLeft, onRight
@@ -55,11 +55,7 @@ Example usage:
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
 @docs css, custom
-
-
-## View Functions
-
-@docs primaryLabel, auxillaryDescription, toggleTip
+@docs primaryLabel, auxillaryDescription
 
 -}
 
@@ -93,6 +89,7 @@ type alias Tooltip msg =
     , width : Width
     , padding : Padding
     , trigger : Trigger
+    , purpose : Purpose
     }
 
 
@@ -108,6 +105,7 @@ buildAttributes =
             , width = Exactly 320
             , padding = NormalPadding
             , trigger = OnHover
+            , purpose = PrimaryLabel
             }
     in
     List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaultTooltip
@@ -311,11 +309,31 @@ onClick =
     Attribute (\config -> { config | trigger = OnHover })
 
 
+type Purpose
+    = PrimaryLabel
+    | AuxillaryDescription
+
+
 {-| Used when the content of the tooltip is the "primary label" for its content, for example,
 when the trigger content is an icon. The tooltip content will supercede the content of the trigger
 HTML for screen readers.
 
-Here's what the fields in the configuration record do:
+This is the default.
+
+-}
+primaryLabel : Attribute msg
+primaryLabel =
+    Attribute (\config -> { config | purpose = PrimaryLabel })
+
+
+{-| Used when the content of the tooltip provides an "auxillary description" for its content.
+-}
+auxillaryDescription : Attribute msg
+auxillaryDescription =
+    Attribute (\config -> { config | purpose = AuxillaryDescription })
+
+
+{-| Here's what the fields in the configuration record do:
 
   - `triggerHtml`: What element do you interact with to open the tooltip?
   - `extraButtonAttrs`: Adds attributes to the trigger button. Useful for things like focus management, like with Accessible Modal
@@ -325,7 +343,7 @@ Here's what the fields in the configuration record do:
   - `id`: A unique identifier used to associate the trigger with its content
 
 -}
-primaryLabel :
+view :
     { triggerHtml : Html msg
     , extraButtonAttrs : List (Html.Attribute msg)
     , onTrigger : Bool -> msg
@@ -334,23 +352,8 @@ primaryLabel :
     }
     -> List (Attribute msg)
     -> Html msg
-primaryLabel config attributes =
-    viewTooltip_ PrimaryLabel config (buildAttributes attributes)
-
-
-{-| Used when the content of the tooltip provides an "auxillary description" for its content.
--}
-auxillaryDescription :
-    { triggerHtml : Html msg
-    , extraButtonAttrs : List (Html.Attribute msg)
-    , onTrigger : Bool -> msg
-    , isOpen : Bool
-    , id : String
-    }
-    -> List (Attribute msg)
-    -> Html msg
-auxillaryDescription config attributes =
-    viewTooltip_ AuxillaryDescription config (buildAttributes attributes)
+view config attributes =
+    viewTooltip_ config (buildAttributes attributes)
 
 
 {-| Supplementary information triggered by a "?" icon
@@ -454,30 +457,23 @@ iconHelp =
 -- INTERNALS
 
 
-type Purpose
-    = PrimaryLabel
-    | AuxillaryDescription
-
-
 viewTooltip_ :
-    Purpose
-    ->
-        { triggerHtml : Html msg
-        , onTrigger : Bool -> msg
-        , isOpen : Bool
-        , id : String -- Accessibility: Used to match tooltip to trigger
-        , extraButtonAttrs : List (Html.Attribute msg)
-        }
+    { triggerHtml : Html msg
+    , onTrigger : Bool -> msg
+    , isOpen : Bool
+    , id : String -- Accessibility: Used to match tooltip to trigger
+    , extraButtonAttrs : List (Html.Attribute msg)
+    }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ purpose { triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
+viewTooltip_ { triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V2"
         tooltipContainerStyles
         []
         [ Html.button
             ([ if isOpen then
-                case purpose of
+                case tooltip_.purpose of
                     PrimaryLabel ->
                         Aria.labeledBy id
 

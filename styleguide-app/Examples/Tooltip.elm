@@ -71,23 +71,23 @@ example =
                 , Html.br []
                 , Html.text "e.g. when the trigger content is an icon with no text."
                 ]
-            , Tooltip.primaryLabel
+            , Tooltip.view
                 { triggerHtml = Html.text "Primary Label - OnClick Trigger"
                 , onTrigger = ToggleTooltip PrimaryLabelOnClick
                 , isOpen = model.openTooltip == Just PrimaryLabelOnClick
                 , id = "primary label tooltip"
                 , extraButtonAttrs = []
                 }
-                [ Tooltip.plaintext "Tooltip", Tooltip.onClick ]
+                [ Tooltip.plaintext "Tooltip", Tooltip.onClick, Tooltip.primaryLabel ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-            , Tooltip.primaryLabel
+            , Tooltip.view
                 { triggerHtml = Html.text "Primary Label - OnHover Trigger"
                 , onTrigger = ToggleTooltip PrimaryLabelOnHover
                 , isOpen = model.openTooltip == Just PrimaryLabelOnHover
                 , id = "primary label tooltip"
                 , extraButtonAttrs = []
                 }
-                [ Tooltip.plaintext "Tooltip" ]
+                [ Tooltip.plaintext "Tooltip", Tooltip.primaryLabel ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
             , Heading.h3 [] [ Html.text "auxillaryDescription" ]
             , Text.smallBody
@@ -95,14 +95,14 @@ example =
                 , Html.br []
                 , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
                 ]
-            , Tooltip.auxillaryDescription
+            , Tooltip.view
                 { triggerHtml = Html.text "Auxillary Description Trigger"
                 , onTrigger = ToggleTooltip AuxillaryDescription
                 , isOpen = model.openTooltip == Just AuxillaryDescription
                 , id = "Auxillary description"
                 , extraButtonAttrs = []
                 }
-                [ Tooltip.plaintext "Tooltip", Tooltip.onClick ]
+                [ Tooltip.plaintext "Tooltip", Tooltip.onClick, Tooltip.auxillaryDescription ]
             , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
             , Heading.h3 [] [ Html.text "toggleTip" ]
             , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
