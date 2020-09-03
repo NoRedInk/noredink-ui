@@ -1,5 +1,6 @@
 module Nri.Ui.Tooltip.V2 exposing
     ( view, toggleTip
+    , Attribute
     , plaintext, html
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
@@ -49,7 +50,7 @@ Example usage:
   - Currently, only toggle tip supports links on hover - generalize this to all tooltips
 
 @docs view, toggleTip
-
+@docs Attribute
 @docs plaintext, html
 @docs onTop, onBottom, onLeft, onRight
 @docs exactWidth, fitToContent

@@ -12,11 +12,14 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css, href)
+import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V4 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 example : Example State Msg
@@ -159,12 +162,50 @@ view model =
 
 
 type alias StaticExampleSettings =
-    {}
+    { content : Tooltip.Attribute Never
+    }
 
 
 initStaticExampleSettings : Control StaticExampleSettings
 initStaticExampleSettings =
     Control.record StaticExampleSettings
+        |> Control.field "content" controlContent
+
+
+controlContent : Control (Tooltip.Attribute Never)
+controlContent =
+    Control.choice
+        [ ( "plaintext"
+          , "Song lyrics are literature."
+                |> Control.string
+                |> Control.map Tooltip.plaintext
+          )
+        , ( "HTML (short)"
+          , [ Html.code [] [ Html.text "git status" ]
+            , Html.text " ⇄ "
+            , Html.em [] [ Html.text "tries again" ]
+            ]
+                |> Tooltip.html
+                |> Control.value
+          )
+        , ( "HTML"
+          , [ Html.text "Click "
+            , Html.a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                [ Html.text "here, yes, HERE, right here on this long tooltip. "
+                , Html.div
+                    [ css
+                        [ Css.display Css.inlineBlock
+                        , Css.width (Css.px 20)
+                        ]
+                    ]
+                    [ Svg.toHtml UiIcon.gear ]
+                ]
+            , Html.text " to check out NoRedInk."
+            ]
+                |> Tooltip.html
+                |> Control.value
+          )
+        ]
 
 
 viewStaticExamples : Control StaticExampleSettings -> Html Msg
@@ -172,8 +213,25 @@ viewStaticExamples controlSettings =
     let
         settings =
             Control.currentValue controlSettings
+
+        attributes =
+            [ Tooltip.open True
+            , settings.content
+            ]
     in
     Html.div []
         [ Control.view SetStaticExampleSettings controlSettings
             |> Html.fromUnstyled
+        , Html.div [ css [ Css.marginTop (Css.px 150) ] ]
+            [ Tooltip.view
+                { triggerHtml =
+                    UiIcon.arrowTop
+                        |> Svg.withColor Colors.azure
+                        |> Svg.withWidth (Css.px 20)
+                        |> Svg.toHtml
+                , id = "my-top-tooltip"
+                }
+                attributes
+                |> Html.map never
+            ]
         ]
