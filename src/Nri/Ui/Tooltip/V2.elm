@@ -1,5 +1,5 @@
 module Nri.Ui.Tooltip.V2 exposing
-    ( Tooltip, tooltip
+    ( plaintext, html
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
@@ -16,6 +16,8 @@ module Nri.Ui.Tooltip.V2 exposing
   - {Padding, withPadding} -> {smallPadding, normalPadding}
   - adds customPadding
   - adds custom for custom attributes
+  - adds plaintext, html helpers for setting the content
+  - pass a list of attributes rather than requiring a pipeline to set up the tooltip
 
 A tooltip component!
 
@@ -47,6 +49,7 @@ Example usage:
 
 @docs Tooltip, tooltip
 
+@docs plaintext, html
 @docs onTop, onBottom, onLeft, onRight
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
@@ -78,37 +81,47 @@ import Svg.Styled as Svg exposing (Svg, circle, g, svg)
 import Svg.Styled.Attributes exposing (cx, cy, d, fill, fillRule, height, r, stroke, strokeWidth, viewBox, width)
 
 
-{-| A standard NoRedInk tooltip, which appears around its parent element.
-
-Create versions of me with `tooltip`, and customize them
-
-    Tooltip.tooltip [ Html.text "Hello, World!" ]
-        |> Tooltip.left
-
--}
-type Tooltip msg
-    = Tooltip
-        { position : Direction
-        , content : List (Html msg)
-        , attributes : List (Html.Attribute Never)
-        , tooltipStyleOverrides : List Style
-        , width : Width
-        , padding : Padding
-        }
+{-| -}
+type Attribute msg
+    = Attribute (Tooltip msg -> Tooltip msg)
 
 
-{-| Construct a tooltip given some content.
--}
-tooltip : List (Html msg) -> Tooltip msg
-tooltip content =
-    Tooltip
-        { position = OnTop
-        , content = content
-        , attributes = []
-        , tooltipStyleOverrides = []
-        , width = Exactly 320
-        , padding = NormalPadding
-        }
+type alias Tooltip msg =
+    { position : Direction
+    , content : List (Html msg)
+    , attributes : List (Html.Attribute Never)
+    , tooltipStyleOverrides : List Style
+    , width : Width
+    , padding : Padding
+    }
+
+
+buildAttributes : List (Attribute msg) -> Tooltip msg
+buildAttributes =
+    let
+        defaultTooltip : Tooltip msg
+        defaultTooltip =
+            { position = OnTop
+            , content = []
+            , attributes = []
+            , tooltipStyleOverrides = []
+            , width = Exactly 320
+            , padding = NormalPadding
+            }
+    in
+    List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaultTooltip
+
+
+{-| -}
+plaintext : String -> Attribute msg
+plaintext content =
+    Attribute (\config -> { config | content = [ text content ] })
+
+
+{-| -}
+html : List (Html msg) -> Attribute msg
+html content =
+    Attribute (\config -> { config | content = content })
 
 
 {-| Where should this tooltip be positioned?
@@ -120,9 +133,9 @@ type Direction
     | OnRight
 
 
-withPosition : Direction -> Tooltip msg -> Tooltip msg
-withPosition position (Tooltip config) =
-    Tooltip { config | position = position }
+withPosition : Direction -> Attribute msg
+withPosition position =
+    Attribute (\config -> { config | position = position })
 
 
 {-|
@@ -133,7 +146,7 @@ withPosition position (Tooltip config) =
         \/
 
 -}
-onTop : Tooltip msg -> Tooltip msg
+onTop : Attribute msg
 onTop =
     withPosition OnTop
 
@@ -146,7 +159,7 @@ onTop =
      |_________|
 
 -}
-onRight : Tooltip msg -> Tooltip msg
+onRight : Attribute msg
 onRight =
     withPosition OnRight
 
@@ -158,7 +171,7 @@ onRight =
     |_________|
 
 -}
-onBottom : Tooltip msg -> Tooltip msg
+onBottom : Attribute msg
 onBottom =
     withPosition OnBottom
 
@@ -171,7 +184,7 @@ onBottom =
      |_________|
 
 -}
-onLeft : Tooltip msg -> Tooltip msg
+onLeft : Attribute msg
 onLeft =
     withPosition OnLeft
 
@@ -179,9 +192,9 @@ onLeft =
 {-| Set some custom styles on the tooltip. These will be treated as overrides,
 so be careful!
 -}
-css : List Style -> Tooltip msg -> Tooltip msg
-css tooltipStyleOverrides (Tooltip config) =
-    Tooltip { config | tooltipStyleOverrides = tooltipStyleOverrides }
+css : List Style -> Attribute msg
+css tooltipStyleOverrides =
+    Attribute (\config -> { config | tooltipStyleOverrides = tooltipStyleOverrides })
 
 
 {-| Use this helper to add custom attributes.
@@ -191,9 +204,9 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Tooltip msg -> Tooltip msg
-custom attributes (Tooltip config) =
-    Tooltip { config | attributes = attributes }
+custom : List (Html.Attribute Never) -> Attribute msg
+custom attributes =
+    Attribute (\config -> { config | attributes = attributes })
 
 
 {-| Should the tooltip be exactly some measurement or fit to the width of the
@@ -204,21 +217,21 @@ type Width
     | FitToContent
 
 
-withWidth : Width -> Tooltip msg -> Tooltip msg
-withWidth width (Tooltip config) =
-    Tooltip { config | width = width }
+withWidth : Width -> Attribute msg
+withWidth width =
+    Attribute (\config -> { config | width = width })
 
 
 {-| Define a size in `px` for the tooltips's total width. The default is 320px.
 -}
-exactWidth : Int -> Tooltip msg -> Tooltip msg
+exactWidth : Int -> Attribute msg
 exactWidth width =
     withWidth (Exactly width)
 
 
 {-| Tooltip width fits its content.
 -}
-fitToContent : Tooltip msg -> Tooltip msg
+fitToContent : Attribute msg
 fitToContent =
     withWidth FitToContent
 
@@ -244,26 +257,26 @@ paddingToStyle padding =
             Css.padding (Css.px padding_)
 
 
-withPadding : Padding -> Tooltip msg -> Tooltip msg
-withPadding padding (Tooltip config) =
-    Tooltip { config | padding = padding }
+withPadding : Padding -> Attribute msg
+withPadding padding =
+    Attribute (\config -> { config | padding = padding })
 
 
 {-| -}
-smallPadding : Tooltip msg -> Tooltip msg
+smallPadding : Attribute msg
 smallPadding =
     withPadding SmallPadding
 
 
 {-| -}
-normalPadding : Tooltip msg -> Tooltip msg
+normalPadding : Attribute msg
 normalPadding =
     withPadding NormalPadding
 
 
 {-| Pass in the desired spacing around the edge of the tooltip (pixels).
 -}
-customPadding : Float -> Tooltip msg -> Tooltip msg
+customPadding : Float -> Attribute msg
 customPadding value =
     withPadding (CustomPadding value)
 
@@ -305,15 +318,15 @@ Here's what the fields in the configuration record do:
 primaryLabel :
     { trigger : Trigger
     , triggerHtml : Html msg
-    , extraButtonAttrs : List (Attribute msg)
+    , extraButtonAttrs : List (Html.Attribute msg)
     , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String
     }
-    -> Tooltip msg
+    -> List (Attribute msg)
     -> Html msg
-primaryLabel =
-    viewTooltip_ PrimaryLabel
+primaryLabel config attributes =
+    viewTooltip_ PrimaryLabel config (buildAttributes attributes)
 
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
@@ -321,15 +334,15 @@ primaryLabel =
 auxillaryDescription :
     { trigger : Trigger
     , triggerHtml : Html msg
-    , extraButtonAttrs : List (Attribute msg)
+    , extraButtonAttrs : List (Html.Attribute msg)
     , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String
     }
-    -> Tooltip msg
+    -> List (Attribute msg)
     -> Html msg
-auxillaryDescription =
-    viewTooltip_ AuxillaryDescription
+auxillaryDescription config attributes =
+    viewTooltip_ AuxillaryDescription config (buildAttributes attributes)
 
 
 {-| Supplementary information triggered by a "?" icon
@@ -341,11 +354,11 @@ toggleTip :
     { onTrigger : Bool -> msg
     , isOpen : Bool
     , label : String
-    , extraButtonAttrs : List (Attribute msg)
+    , extraButtonAttrs : List (Html.Attribute msg)
     }
-    -> Tooltip msg
+    -> List (Attribute msg)
     -> Html msg
-toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
+toggleTip { isOpen, onTrigger, extraButtonAttrs, label } attributes =
     let
         contentSize =
             20
@@ -381,7 +394,7 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
                         [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
                           Role.status
                         ]
-                        [ viewIf (\_ -> viewTooltip Nothing OnHover tooltip_) isOpen ]
+                        [ viewIf (\_ -> viewTooltip Nothing OnHover (buildAttributes attributes)) isOpen ]
                     ]
                 ]
             ]
@@ -443,7 +456,7 @@ viewTooltip_ :
         , onTrigger : Bool -> msg
         , isOpen : Bool
         , id : String -- Accessibility: Used to match tooltip to trigger
-        , extraButtonAttrs : List (Attribute msg)
+        , extraButtonAttrs : List (Html.Attribute msg)
         }
     -> Tooltip msg
     -> Html msg
@@ -497,7 +510,7 @@ viewIf viewFn condition =
 
 
 viewTooltip : Maybe String -> Trigger -> Tooltip msg -> Html msg
-viewTooltip maybeTooltipId trigger (Tooltip config) =
+viewTooltip maybeTooltipId trigger config =
     Html.div [ Attributes.css (containerPositioningForArrowPosition config.position) ]
         [ Html.div
             ([ Attributes.css
@@ -535,7 +548,7 @@ viewTooltip maybeTooltipId trigger (Tooltip config) =
         ]
 
 
-eventsForTrigger : Trigger -> (Bool -> msg) -> List (Attribute msg)
+eventsForTrigger : Trigger -> (Bool -> msg) -> List (Html.Attribute msg)
 eventsForTrigger trigger msg =
     case trigger of
         OnClick ->
@@ -593,7 +606,7 @@ containerPositioningForArrowPosition arrowPosition =
             ]
 
 
-pointerBox : Direction -> Attribute msg
+pointerBox : Direction -> Html.Attribute msg
 pointerBox position =
     Attributes.css
         [ Css.backgroundColor Colors.navy
