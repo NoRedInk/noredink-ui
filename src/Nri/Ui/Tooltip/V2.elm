@@ -1,7 +1,7 @@
 module Nri.Ui.Tooltip.V2 exposing
     ( Tooltip, tooltip
     , onTop, onBottom, onLeft, onRight
-    , Width(..), withWidth
+    , exactWidth, fitToContent
     , Padding(..), withPadding
     , css
     , Trigger(..)
@@ -12,6 +12,7 @@ module Nri.Ui.Tooltip.V2 exposing
 
   - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
   - withTooltipStyleOverrides -> css
+  - {Width, withWidth} -> {exactWidth, fitToContent}
 
 A tooltip component!
 
@@ -44,8 +45,7 @@ Example usage:
 @docs Tooltip, tooltip
 
 @docs onTop, onBottom, onLeft, onRight
-
-@docs Width, withWidth
+@docs exactWidth, fitToContent
 
 @docs Padding, withPadding
 
@@ -193,11 +193,23 @@ type Width
     | FitToContent
 
 
-{-| Set the width of the tooltip itself.
--}
 withWidth : Width -> Tooltip msg -> Tooltip msg
 withWidth width (Tooltip config) =
     Tooltip { config | width = width }
+
+
+{-| Define a size in `px` for the tooltips's total width. The default is 320px.
+-}
+exactWidth : Int -> Tooltip msg -> Tooltip msg
+exactWidth width =
+    withWidth (Exactly width)
+
+
+{-| Tooltip width fits its content.
+-}
+fitToContent : Tooltip msg -> Tooltip msg
+fitToContent =
+    withWidth FitToContent
 
 
 {-| How much padding should be around the content inside the tooltip?
