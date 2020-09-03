@@ -3,6 +3,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , Attribute
     , plaintext, html
     , onTop, onBottom, onLeft, onRight
+    , alignEnd, alignMiddle, alignStart
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
@@ -53,6 +54,7 @@ Example usage:
 @docs Attribute
 @docs plaintext, html
 @docs onTop, onBottom, onLeft, onRight
+@docs alignEnd, alignMiddle, alignStart
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
@@ -86,7 +88,8 @@ type Attribute msg
 
 
 type alias Tooltip msg =
-    { position : Direction
+    { direction : Direction
+    , alignment : Alignment
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
     , tooltipStyleOverrides : List Style
@@ -104,7 +107,8 @@ buildAttributes =
     let
         defaultTooltip : Tooltip msg
         defaultTooltip =
-            { position = OnTop
+            { direction = OnTop
+            , alignment = Middle
             , content = []
             , attributes = []
             , tooltipStyleOverrides = []
@@ -131,7 +135,60 @@ html content =
     Attribute (\config -> { config | content = content })
 
 
-{-| Where should this tooltip be positioned?
+{-| Where should the arrow be positioned relative to the tooltip?
+-}
+type Alignment
+    = Start
+    | Middle
+    | End
+
+
+withAligment : Alignment -> Attribute msg
+withAligment alignment =
+    Attribute (\config -> { config | alignment = alignment })
+
+
+{-| Put the arrow at the "start" of the tooltip.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStart : Attribute msg
+alignStart =
+    withAligment Start
+
+
+{-| Put the arrow at the "middle" of the tooltip. This is the default behavior.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddle : Attribute msg
+alignMiddle =
+    withAligment Middle
+
+
+{-| Put the arrow at the "end" of the tooltip.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEnd : Attribute msg
+alignEnd =
+    withAligment End
+
+
+{-| Where should this tooltip be positioned relative to the trigger?
 -}
 type Direction
     = OnTop
