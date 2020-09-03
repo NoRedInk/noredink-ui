@@ -5,7 +5,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
-    , css, custom
+    , css, custom, customTriggerAttributes
     , primaryLabel, auxillaryDescription
     )
 
@@ -21,6 +21,8 @@ module Nri.Ui.Tooltip.V2 exposing
   - pass a list of attributes rather than requiring a pipeline to set up the tooltip
   - move Trigger into the attributes
   - change primaryLabel and auxillaryDescription to attributes, adding view
+  - move the onTrigger event to the attributes
+  - extraButtonAttrs becomes attribute `customTriggerAttributes`
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
@@ -28,15 +30,13 @@ Example usage:
 
         Tooltip.view
             { triggerHtml = someTriggerHtml
-            , onTrigger = MyOnTriggerMsg
             , isOpen = True
-            , extraButtonAttrs = modalV9LastFocusableElement
             }
             [ Tooltip.plaintext "Gradebook"
             , Tooltip.primaryLabel
             , Tooltip.smallPadding
             , Tooltip.fitToContent
-            , Tooltip.onClick
+            , Tooltip.onClick MyOnTriggerMsg
             ]
 
 
@@ -54,7 +54,7 @@ Example usage:
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
-@docs css, custom
+@docs css, custom, customTriggerAttributes
 @docs primaryLabel, auxillaryDescription
 
 -}
@@ -88,7 +88,8 @@ type alias Tooltip msg =
     , tooltipStyleOverrides : List Style
     , width : Width
     , padding : Padding
-    , trigger : Trigger
+    , trigger : Maybe (Trigger msg)
+    , triggerAttributes : List (Html.Attribute msg)
     , purpose : Purpose
     }
 
@@ -104,7 +105,8 @@ buildAttributes =
             , tooltipStyleOverrides = []
             , width = Exactly 320
             , padding = NormalPadding
-            , trigger = OnHover
+            , trigger = Nothing
+            , triggerAttributes = []
             , purpose = PrimaryLabel
             }
     in
@@ -208,6 +210,18 @@ custom attributes =
     Attribute (\config -> { config | attributes = attributes })
 
 
+{-| Use this helper to add custom attributes to the tooltip trigger.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+customTriggerAttributes : List (Html.Attribute msg) -> Attribute msg
+customTriggerAttributes attributes =
+    Attribute (\config -> { config | triggerAttributes = attributes })
+
+
 {-| Should the tooltip be exactly some measurement or fit to the width of the
 content?
 -}
@@ -281,9 +295,9 @@ customPadding value =
     withPadding (CustomPadding value)
 
 
-type Trigger
-    = OnHover
-    | OnClick
+type Trigger msg
+    = OnHover (Bool -> msg)
+    | OnClick (Bool -> msg)
 
 
 {-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
@@ -294,19 +308,17 @@ to click the link.
 
 FIXME: Make it so you can click on links in hover tooltips.
 
-This is the default.
-
 -}
-onHover : Attribute msg
-onHover =
-    Attribute (\config -> { config | trigger = OnHover })
+onHover : (Bool -> msg) -> Attribute msg
+onHover msg =
+    Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
 {-| The tooltip opens when clicking the root element, and closes when anything but the tooltip is clicked again.
 -}
-onClick : Attribute msg
-onClick =
-    Attribute (\config -> { config | trigger = OnHover })
+onClick : (Bool -> msg) -> Attribute msg
+onClick msg =
+    Attribute (\config -> { config | trigger = Just (OnClick msg) })
 
 
 type Purpose
@@ -336,17 +348,12 @@ auxillaryDescription =
 {-| Here's what the fields in the configuration record do:
 
   - `triggerHtml`: What element do you interact with to open the tooltip?
-  - `extraButtonAttrs`: Adds attributes to the trigger button. Useful for things like focus management, like with Accessible Modal
-  - `onTrigger`: What `msg` should I send when the tooltip should open and
-    close? The `Bool` represents the next `isOpen` value.
   - `isOpen`: Is the tooltip open now? (keep track of this in your model somewhere)
   - `id`: A unique identifier used to associate the trigger with its content
 
 -}
 view :
     { triggerHtml : Html msg
-    , extraButtonAttrs : List (Html.Attribute msg)
-    , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String
     }
@@ -356,20 +363,15 @@ view config attributes =
     viewTooltip_ config (buildAttributes attributes)
 
 
-{-| Supplementary information triggered by a "?" icon
-
-A toggle tip is always triggered by a hover (or focus, for keyboard users)
-
+{-| Supplementary information triggered by a "?" icon.
 -}
 toggleTip :
-    { onTrigger : Bool -> msg
-    , isOpen : Bool
+    { isOpen : Bool
     , label : String
-    , extraButtonAttrs : List (Html.Attribute msg)
     }
     -> List (Attribute msg)
     -> Html msg
-toggleTip { isOpen, onTrigger, extraButtonAttrs, label } attributes_ =
+toggleTip { isOpen, label } attributes_ =
     let
         contentSize =
             20
@@ -391,8 +393,8 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } attributes_ =
             ([ Widget.label label
              , Attributes.css buttonStyleOverrides
              ]
-                ++ eventsForTrigger attributes.trigger onTrigger
-                ++ extraButtonAttrs
+                ++ eventsForTrigger attributes.trigger
+                ++ attributes.triggerAttributes
             )
             [ hoverBridge contentSize
                 [ Html.div
@@ -459,14 +461,12 @@ iconHelp =
 
 viewTooltip_ :
     { triggerHtml : Html msg
-    , onTrigger : Bool -> msg
     , isOpen : Bool
     , id : String -- Accessibility: Used to match tooltip to trigger
-    , extraButtonAttrs : List (Html.Attribute msg)
     }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ { triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
+viewTooltip_ { triggerHtml, isOpen, id } tooltip_ =
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V2"
         tooltipContainerStyles
@@ -488,15 +488,11 @@ viewTooltip_ { triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
                 Attributes.property "data-closed-tooltip" Encode.null
              , Attributes.css buttonStyleOverrides
              ]
-                ++ eventsForTrigger tooltip_.trigger onTrigger
-                ++ extraButtonAttrs
+                ++ eventsForTrigger tooltip_.trigger
+                ++ tooltip_.triggerAttributes
             )
             [ triggerHtml ]
-
-        -- if we display the click-to-close overlay on hover, you will have to
-        -- close the overlay by moving the mouse out of the window or clicking.
-        , viewIf (\_ -> viewCloseTooltipOverlay (onTrigger False))
-            (isOpen && tooltip_.trigger == OnClick)
+        , viewOverlay isOpen tooltip_
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
@@ -555,22 +551,25 @@ viewTooltip maybeTooltipId config =
         ]
 
 
-eventsForTrigger : Trigger -> (Bool -> msg) -> List (Html.Attribute msg)
-eventsForTrigger trigger msg =
+eventsForTrigger : Maybe (Trigger msg) -> List (Html.Attribute msg)
+eventsForTrigger trigger =
     case trigger of
-        OnClick ->
+        Just (OnClick msg) ->
             [ EventExtras.onClickStopPropagation (msg True)
             , Events.onFocus (msg True)
             , Events.onBlur (msg False)
             ]
 
-        OnHover ->
+        Just (OnHover msg) ->
             [ Events.onMouseEnter (msg True)
             , Events.onMouseLeave (msg False)
             , Events.onFocus (msg True)
             , Events.onBlur (msg False)
             , EventExtras.onClickStopPropagation (msg True)
             ]
+
+        Nothing ->
+            []
 
 
 arrowSize : Float
@@ -626,6 +625,18 @@ pointerBox position =
         , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
         , Global.descendants [ Global.a [ Css.color Colors.white ] ]
         ]
+
+
+viewOverlay : Bool -> Tooltip msg -> Html msg
+viewOverlay isOpen { trigger } =
+    case ( isOpen, trigger ) of
+        ( True, Just (OnClick msg) ) ->
+            -- if we display the click-to-close overlay on hover, you will have to
+            -- close the overlay by moving the mouse out of the window or clicking.
+            viewCloseTooltipOverlay (msg False)
+
+        _ ->
+            text ""
 
 
 viewCloseTooltipOverlay : msg -> Html msg
