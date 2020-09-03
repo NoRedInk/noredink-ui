@@ -164,6 +164,7 @@ view model =
 type alias StaticExampleSettings =
     { content : Tooltip.Attribute Never
     , direction : Tooltip.Attribute Never
+    , width : Tooltip.Attribute Never
     }
 
 
@@ -172,6 +173,7 @@ initStaticExampleSettings =
     Control.record StaticExampleSettings
         |> Control.field "content" controlContent
         |> Control.field "direction" controlDirection
+        |> Control.field "width" controlWidth
 
 
 controlContent : Control (Tooltip.Attribute Never)
@@ -220,6 +222,16 @@ controlDirection =
         ]
 
 
+controlWidth : Control (Tooltip.Attribute Never)
+controlWidth =
+    Control.choice
+        [ ( "exactWidth 320 (default)", Control.value (Tooltip.exactWidth 320) )
+        , ( "exactWidth 100", Control.value (Tooltip.exactWidth 100) )
+        , ( "exactWidth 400", Control.value (Tooltip.exactWidth 400) )
+        , ( "fitToContent", Control.value Tooltip.fitToContent )
+        ]
+
+
 viewStaticExamples : Control StaticExampleSettings -> Html Msg
 viewStaticExamples controlSettings =
     let
@@ -230,6 +242,7 @@ viewStaticExamples controlSettings =
             [ Tooltip.open True
             , settings.content
             , settings.direction
+            , settings.width
             ]
     in
     Html.div []
