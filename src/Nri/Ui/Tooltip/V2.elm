@@ -1,4 +1,4 @@
-module Nri.Ui.Tooltip.V1 exposing
+module Nri.Ui.Tooltip.V2 exposing
     ( Tooltip, tooltip
     , Position(..), withPosition
     , Width(..), withWidth
@@ -248,7 +248,7 @@ toggleTip { isOpen, onTrigger, extraButtonAttrs, label } tooltip_ =
             20
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Tooltip-V1-ToggleTip"
+        "Nri-Ui-Tooltip-V2-ToggleTip"
         (tooltipContainerStyles
             ++ [ -- Take up enough room within the document flow
                  Css.width (Css.px contentSize)
@@ -346,7 +346,7 @@ viewTooltip_ :
     -> Html msg
 viewTooltip_ purpose { trigger, triggerHtml, onTrigger, isOpen, id, extraButtonAttrs } tooltip_ =
     Nri.Ui.styled Html.div
-        "Nri-Ui-Tooltip-V1"
+        "Nri-Ui-Tooltip-V2"
         tooltipContainerStyles
         []
         [ Html.button

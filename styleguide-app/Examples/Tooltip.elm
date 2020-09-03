@@ -15,7 +15,7 @@ import Html.Styled.Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
-import Nri.Ui.Tooltip.V1 as Tooltip
+import Nri.Ui.Tooltip.V2 as Tooltip
 
 
 type TooltipType
@@ -55,7 +55,7 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tooltip.V1"
+    { name = "Nri.Ui.Tooltip.V2"
     , categories = [ Widgets ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
