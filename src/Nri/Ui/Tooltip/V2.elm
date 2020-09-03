@@ -3,7 +3,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , onTop, onBottom, onLeft, onRight
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , css
+    , css, custom
     , Trigger(..)
     , primaryLabel, auxillaryDescription, toggleTip
     )
@@ -15,6 +15,7 @@ module Nri.Ui.Tooltip.V2 exposing
   - {Width, withWidth} -> {exactWidth, fitToContent}
   - {Padding, withPadding} -> {smallPadding, normalPadding}
   - adds customPadding
+  - adds custom for custom attributes
 
 A tooltip component!
 
@@ -49,8 +50,7 @@ Example usage:
 @docs onTop, onBottom, onLeft, onRight
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-
-@docs css
+@docs css, custom
 
 @docs Trigger
 
@@ -90,8 +90,7 @@ type Tooltip msg
     = Tooltip
         { position : Direction
         , content : List (Html msg)
-
-        -- extra styles
+        , attributes : List (Html.Attribute Never)
         , tooltipStyleOverrides : List Style
         , width : Width
         , padding : Padding
@@ -105,8 +104,7 @@ tooltip content =
     Tooltip
         { position = OnTop
         , content = content
-
-        -- extra styles
+        , attributes = []
         , tooltipStyleOverrides = []
         , width = Exactly 320
         , padding = NormalPadding
@@ -184,6 +182,18 @@ so be careful!
 css : List Style -> Tooltip msg -> Tooltip msg
 css tooltipStyleOverrides (Tooltip config) =
     Tooltip { config | tooltipStyleOverrides = tooltipStyleOverrides }
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Tooltip msg -> Tooltip msg
+custom attributes (Tooltip config) =
+    Tooltip { config | attributes = attributes }
 
 
 {-| Should the tooltip be exactly some measurement or fit to the width of the
@@ -512,6 +522,7 @@ viewTooltip maybeTooltipId trigger (Tooltip config) =
              , Attributes.class "dont-disable-animation"
              , Role.toolTip
              ]
+                ++ config.attributes
                 ++ (case maybeTooltipId of
                         Just tooltipId ->
                             [ Attributes.id tooltipId ]
