@@ -26,6 +26,7 @@ module Nri.Ui.Tooltip.V2 exposing
   - move the onTrigger event to the attributes
   - extraButtonAttrs becomes attribute `customTriggerAttributes`
   - isOpen field becomes the `open` attribute
+  - fold toggleTip and view into each other, so there's less to maintain
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
@@ -65,7 +66,6 @@ Example usage:
 import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
 import EventExtras
@@ -75,8 +75,8 @@ import Json.Encode as Encode
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Svg.Styled as Svg exposing (Svg, circle, g, svg)
-import Svg.Styled.Attributes exposing (cx, cy, d, fill, fillRule, height, r, stroke, strokeWidth, viewBox, width)
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -372,86 +372,34 @@ view config attributes =
 toggleTip : { label : String } -> List (Attribute msg) -> Html msg
 toggleTip { label } attributes_ =
     let
-        contentSize =
-            20
-
-        attributes =
-            buildAttributes attributes_
+        id =
+            "TODO-reasonable-id"
     in
-    Nri.Ui.styled Html.div
-        "Nri-Ui-Tooltip-V2-ToggleTip"
-        (tooltipContainerStyles
-            ++ [ -- Take up enough room within the document flow
-                 Css.width (Css.px contentSize)
-               , Css.height (Css.px contentSize)
-               , Css.margin (Css.px 5)
-               ]
-        )
-        []
-        [ Html.button
-            ([ Widget.label label
-             , Attributes.css buttonStyleOverrides
-             ]
-                ++ eventsForTrigger attributes.trigger
-                ++ attributes.triggerAttributes
-            )
-            [ hoverBridge contentSize
-                [ Html.div
+    view
+        { triggerHtml =
+            UiIcon.help
+                |> Svg.withWidth (Css.px 20)
+                |> Svg.withHeight (Css.px 20)
+                |> Svg.withColor Colors.azure
+                |> Svg.withLabel label
+                |> Svg.toHtml
+                |> List.singleton
+                |> Html.div
                     [ Attributes.css
-                        [ Css.position Css.relative
-                        , Css.width (Css.px contentSize)
-                        , Css.height (Css.px contentSize)
-                        , Css.color Colors.azure
+                        [ -- Take up enough room within the document flow
+                          Css.width (Css.px 20)
+                        , Css.height (Css.px 20)
+                        , Css.margin (Css.px 5)
                         ]
                     ]
-                    [ iconHelp
-                    , Html.span
-                        [ -- This adds aria-live polite & also aria-live atomic, so our screen readers are alerted when content appears
-                          Role.status
-                        ]
-                        [ viewTooltip Nothing attributes ]
-                    ]
-                ]
+        , id = id
+        }
+        (custom
+            [ Attributes.class "Nri-Ui-Tooltip-V2-ToggleTip"
+            , Attributes.id id
             ]
-        ]
-
-
-{-| Provides a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
-
-Works by being larger than the trigger content & overlaying it, but is removed from the flow of the page (position: absolute), so that it looks ok visually.
-
--}
-hoverBridge : Float -> List (Html msg) -> Html msg
-hoverBridge contentSize =
-    let
-        padding =
-            -- enough to cover the empty gap between tooltip and trigger content
-            10
-    in
-    Nri.Ui.styled Html.div
-        "tooltip-hover-bridge"
-        [ Css.boxSizing Css.borderBox
-        , Css.padding (Css.px padding)
-        , Css.width (Css.px <| contentSize + padding * 2)
-        , Css.height (Css.px <| contentSize + padding * 2)
-        , Css.position Css.absolute
-        , Css.top (Css.px <| negate padding)
-        , Css.left (Css.px <| negate padding)
-        ]
-        []
-
-
-{-| Made with <https://levelteams.com/svg-to-elm>
--}
-iconHelp : Svg msg
-iconHelp =
-    svg [ width "20px", height "20px", viewBox "0 0 25 25" ]
-        [ g [ stroke "none", strokeWidth "1", fill "none", fillRule "evenodd" ]
-            [ circle [ stroke "#146AFF", strokeWidth "2", cx "12.5", cy "12.5", r "11.5" ] []
-            , Svg.path [ d "M12.6825,6.6275 C13.3866702,6.6275 14.0095806,6.74395717 14.55125,6.976875 C15.0929194,7.20979283 15.5154151,7.53749789 15.81875,7.96 C16.1220849,8.38250211 16.27375,8.86458063 16.27375,9.40625 C16.27375,9.98041954 16.1329181,10.470623 15.85125,10.876875 C15.5695819,11.283127 15.1579194,11.7408308 14.61625,12.25 C14.1937479,12.6508353 13.8768761,12.9866653 13.665625,13.2575 C13.4543739,13.5283347 13.3216669,13.8262484 13.2675,14.15125 L13.18625,14.6875 L11.74,14.6875 L11.74,13.875 C11.74,13.3116639 11.8402073,12.8458352 12.040625,12.4775 C12.2410427,12.1091648 12.5362481,11.6975023 12.92625,11.2425 C13.2079181,10.9174984 13.419166,10.6385428 13.56,10.405625 C13.700834,10.1727072 13.77125,9.91541808 13.77125,9.63375 C13.77125,9.30874838 13.6602094,9.0595842 13.438125,8.88625 C13.2160406,8.7129158 12.8991687,8.62625 12.4875,8.62625 C11.7074961,8.62625 10.9437537,8.85916434 10.19625,9.325 L10.19625,7.29375 C10.9112536,6.84958111 11.7399953,6.6275 12.6825,6.6275 Z M11.17125,18.34375 L11.17125,15.7275 L13.82,15.7275 L13.82,18.34375 L11.17125,18.34375 Z", fill "#146AFF" ]
-                []
-            ]
-        ]
+            :: attributes_
+        )
 
 
 
