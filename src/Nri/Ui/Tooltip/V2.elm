@@ -198,8 +198,8 @@ type Direction
 
 
 withPosition : Direction -> Attribute msg
-withPosition position =
-    Attribute (\config -> { config | position = position })
+withPosition direction =
+    Attribute (\config -> { config | direction = direction })
 
 
 {-|
@@ -527,7 +527,7 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
 {-| This is a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
 -}
 hoverBridge : Tooltip msg -> Html msg
-hoverBridge { isOpen, position } =
+hoverBridge { isOpen, direction } =
     let
         bridgeLength =
             arrowSize + 5
@@ -539,7 +539,7 @@ hoverBridge { isOpen, position } =
             , Css.padding (Css.px arrowSize)
             , Css.position Css.absolute
             , Css.batch <|
-                case position of
+                case direction of
                     OnTop ->
                         [ Css.top (Css.px -bridgeLength)
                         , Css.left Css.zero
@@ -586,7 +586,7 @@ viewTooltip maybeTooltipId config =
 
 viewOpenTooltip : Maybe String -> Tooltip msg -> Html msg
 viewOpenTooltip maybeTooltipId config =
-    Html.div [ Attributes.css (containerPositioningForArrowPosition config.position) ]
+    Html.div [ Attributes.css (containerPositioningForArrowPosition config.direction) ]
         [ Html.div
             ([ Attributes.css
                 ([ Css.borderRadius (Css.px 8)
@@ -602,7 +602,7 @@ viewOpenTooltip maybeTooltipId config =
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.position
+             , pointerBox config.direction
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -664,11 +664,11 @@ containerPositioningForArrowPosition arrowPosition =
 
 
 pointerBox : Direction -> Html.Attribute msg
-pointerBox position =
+pointerBox direction =
     Attributes.css
         [ Css.backgroundColor Colors.navy
         , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , arrowInPosition position
+        , arrowInPosition direction
         , Fonts.baseFont
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
