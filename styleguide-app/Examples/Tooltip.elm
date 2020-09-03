@@ -93,7 +93,7 @@ view model =
         { triggerHtml = Html.text "Primary Label - OnClick Trigger"
         , id = "primary label tooltip"
         }
-        [ Tooltip.plaintext "Tooltip"
+        [ Tooltip.html [ Html.text "Tooltip ", Html.a [ href "/" ] [ Html.text "Links work!" ] ]
         , Tooltip.primaryLabel
         , Tooltip.onClick (ToggleTooltip PrimaryLabelOnClick)
         , Tooltip.open (model.openTooltip == Just PrimaryLabelOnClick)
@@ -103,7 +103,7 @@ view model =
         { triggerHtml = Html.text "Primary Label - OnHover Trigger"
         , id = "primary label tooltip"
         }
-        [ Tooltip.plaintext "Tooltip"
+        [ Tooltip.html [ Html.text "Tooltip ", Html.a [ href "/" ] [ Html.text "Links work!" ] ]
         , Tooltip.primaryLabel
         , Tooltip.onHover (ToggleTooltip PrimaryLabelOnHover)
         , Tooltip.open (model.openTooltip == Just PrimaryLabelOnHover)

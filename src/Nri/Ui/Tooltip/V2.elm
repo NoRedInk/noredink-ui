@@ -48,7 +48,6 @@ Example usage:
   - The toggle tip does not currently manage focus correctly for keyboard users - if a
     user tries to click on a link in the toggle tip, the tip will disappear as focus moves
     to the next item in the page. This should be improved in the next release.
-  - Currently, only toggle tip supports links on hover - generalize this to all tooltips
 
 @docs view, toggleTip
 @docs Attribute
@@ -69,6 +68,7 @@ import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
 import EventExtras
+import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
@@ -306,13 +306,6 @@ type Trigger msg
 
 
 {-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
-
-Note: design typically prefers `OnHover`. However, if your tooltip has a link that someone
-needs to click, use `OnClick` because hover tooltips will currently close when you try
-to click the link.
-
-FIXME: Make it so you can click on links in hover tooltips.
-
 -}
 onHover : (Bool -> msg) -> Attribute msg
 onHover msg =
@@ -413,37 +406,116 @@ viewTooltip_ :
     -> Tooltip msg
     -> Html msg
 viewTooltip_ { triggerHtml, id } tooltip_ =
+    let
+        ( containerEvents, buttonEvents ) =
+            case tooltip_.trigger of
+                Just (OnClick msg) ->
+                    ( []
+                    , [ EventExtras.onClickStopPropagation (msg True)
+                      , Events.onFocus (msg True)
+                      , Events.onBlur (msg False)
+                      ]
+                    )
+
+                Just (OnHover msg) ->
+                    ( [ Events.onMouseEnter (msg True)
+                      , Events.onMouseLeave (msg False)
+                      ]
+                    , [ Events.onFocus (msg True)
+                      , Events.onBlur (msg False)
+                      , EventExtras.onClickStopPropagation (msg True)
+                      ]
+                    )
+
+                Nothing ->
+                    ( [], [] )
+    in
     Nri.Ui.styled Html.div
         "Nri-Ui-Tooltip-V2"
         tooltipContainerStyles
         []
-        [ Html.button
-            ([ if tooltip_.isOpen then
-                case tooltip_.purpose of
-                    PrimaryLabel ->
-                        Aria.labeledBy id
+        [ Root.div containerEvents
+            [ Html.button
+                ([ if tooltip_.isOpen then
+                    case tooltip_.purpose of
+                        PrimaryLabel ->
+                            Aria.labeledBy id
 
-                    AuxillaryDescription ->
-                        Aria.describedBy [ id ]
+                        AuxillaryDescription ->
+                            Aria.describedBy [ id ]
 
-               else
-                -- when our tooltips are closed, they're not rendered in the
-                -- DOM. This means that the ID references above would be
-                -- invalid and jumping to a reference would not work, so we
-                -- skip labels and descriptions if the tooltip is closed.
-                Attributes.property "data-closed-tooltip" Encode.null
-             , Attributes.css buttonStyleOverrides
-             ]
-                ++ eventsForTrigger tooltip_.trigger
-                ++ tooltip_.triggerAttributes
-            )
-            [ triggerHtml ]
-        , viewOverlay tooltip_
+                   else
+                    -- when our tooltips are closed, they're not rendered in the
+                    -- DOM. This means that the ID references above would be
+                    -- invalid and jumping to a reference would not work, so we
+                    -- skip labels and descriptions if the tooltip is closed.
+                    Attributes.property "data-closed-tooltip" Encode.null
+                 , Attributes.css buttonStyleOverrides
+                 ]
+                    ++ buttonEvents
+                    ++ tooltip_.triggerAttributes
+                )
+                [ triggerHtml
+                , hoverBridge tooltip_
+                ]
+            , viewOverlay tooltip_
 
-        -- Popout is rendered after the overlay, to allow client code to give it
-        -- priority when clicking by setting its position
-        , viewTooltip (Just id) tooltip_
+            -- Popout is rendered after the overlay, to allow client code to give it
+            -- priority when clicking by setting its position
+            , viewTooltip (Just id) tooltip_
+            ]
         ]
+
+
+{-| This is a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
+-}
+hoverBridge : Tooltip msg -> Html msg
+hoverBridge { isOpen, position } =
+    let
+        bridgeLength =
+            arrowSize + 5
+    in
+    if isOpen then
+        Nri.Ui.styled Html.div
+            "tooltip-hover-bridge"
+            [ Css.boxSizing Css.borderBox
+            , Css.padding (Css.px arrowSize)
+            , Css.position Css.absolute
+            , Css.batch <|
+                case position of
+                    OnTop ->
+                        [ Css.top (Css.px -bridgeLength)
+                        , Css.left Css.zero
+                        , Css.width (Css.pct 100)
+                        , Css.height (Css.px arrowSize)
+                        ]
+
+                    OnRight ->
+                        [ Css.right (Css.px -bridgeLength)
+                        , Css.top Css.zero
+                        , Css.width (Css.px arrowSize)
+                        , Css.height (Css.pct 100)
+                        ]
+
+                    OnBottom ->
+                        [ Css.bottom (Css.px -bridgeLength)
+                        , Css.left Css.zero
+                        , Css.width (Css.pct 100)
+                        , Css.height (Css.px arrowSize)
+                        ]
+
+                    OnLeft ->
+                        [ Css.left (Css.px -bridgeLength)
+                        , Css.top Css.zero
+                        , Css.width (Css.px arrowSize)
+                        , Css.height (Css.pct 100)
+                        ]
+            ]
+            []
+            []
+
+    else
+        text ""
 
 
 viewTooltip : Maybe String -> Tooltip msg -> Html msg
@@ -492,27 +564,6 @@ viewOpenTooltip maybeTooltipId config =
             )
             config.content
         ]
-
-
-eventsForTrigger : Maybe (Trigger msg) -> List (Html.Attribute msg)
-eventsForTrigger trigger =
-    case trigger of
-        Just (OnClick msg) ->
-            [ EventExtras.onClickStopPropagation (msg True)
-            , Events.onFocus (msg True)
-            , Events.onBlur (msg False)
-            ]
-
-        Just (OnHover msg) ->
-            [ Events.onMouseEnter (msg True)
-            , Events.onMouseLeave (msg False)
-            , Events.onFocus (msg True)
-            , Events.onBlur (msg False)
-            , EventExtras.onClickStopPropagation (msg True)
-            ]
-
-        Nothing ->
-            []
 
 
 arrowSize : Float
