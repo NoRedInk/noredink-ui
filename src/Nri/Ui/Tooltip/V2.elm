@@ -3,7 +3,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , Attribute
     , plaintext, html
     , onTop, onBottom, onLeft, onRight
-    , alignEnd, alignMiddle, alignStart
+    , alignStart, alignMiddle, alignEnd
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
@@ -54,7 +54,7 @@ Example usage:
 @docs Attribute
 @docs plaintext, html
 @docs onTop, onBottom, onLeft, onRight
-@docs alignEnd, alignMiddle, alignStart
+@docs alignStart, alignMiddle, alignEnd
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
@@ -527,7 +527,7 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
 {-| This is a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
 -}
 hoverBridge : Tooltip msg -> Html msg
-hoverBridge { isOpen, direction } =
+hoverBridge { isOpen, direction, alignment } =
     let
         bridgeLength =
             arrowSize + 5
@@ -538,6 +538,7 @@ hoverBridge { isOpen, direction } =
             [ Css.boxSizing Css.borderBox
             , Css.padding (Css.px arrowSize)
             , Css.position Css.absolute
+            , Css.backgroundColor Colors.green
             , Css.batch <|
                 case direction of
                     OnTop ->
@@ -586,7 +587,7 @@ viewTooltip maybeTooltipId config =
 
 viewOpenTooltip : Maybe String -> Tooltip msg -> Html msg
 viewOpenTooltip maybeTooltipId config =
-    Html.div [ Attributes.css (containerPositioningForArrowPosition config.direction) ]
+    Html.div [ Attributes.css (containerPositioningForArrowPosition config.direction config.alignment) ]
         [ Html.div
             ([ Attributes.css
                 ([ Css.borderRadius (Css.px 8)
@@ -602,7 +603,7 @@ viewOpenTooltip maybeTooltipId config =
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.direction
+             , pointerBox config.direction config.alignment
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -635,8 +636,8 @@ tooltipColor =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Direction -> List Style
-containerPositioningForArrowPosition arrowPosition =
+containerPositioningForArrowPosition : Direction -> Alignment -> List Style
+containerPositioningForArrowPosition arrowPosition alignment =
     case arrowPosition of
         OnTop ->
             [ Css.left (Css.pct 50)
@@ -663,12 +664,12 @@ containerPositioningForArrowPosition arrowPosition =
             ]
 
 
-pointerBox : Direction -> Html.Attribute msg
-pointerBox direction =
+pointerBox : Direction -> Alignment -> Html.Attribute msg
+pointerBox direction alignment =
     Attributes.css
         [ Css.backgroundColor Colors.navy
         , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , arrowInPosition direction
+        , arrowInPosition direction alignment
         , Fonts.baseFont
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
@@ -737,44 +738,71 @@ buttonStyleOverrides =
 -- ARROWS
 
 
-arrowInPosition : Direction -> Style
-arrowInPosition position =
+arrowInPosition : Direction -> Alignment -> Style
+arrowInPosition position alignment =
+    let
+        topBottomAlignment =
+            case alignment of
+                Start ->
+                    Css.left (Css.px 20)
+
+                Middle ->
+                    Css.left (Css.pct 50)
+
+                End ->
+                    Css.right (Css.px -20)
+
+        rightLeftAlignment =
+            case alignment of
+                Start ->
+                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 20px)")
+
+                Middle ->
+                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 50%)")
+
+                End ->
+                    Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 20px)")
+    in
     case position of
         OnTop ->
-            newPositionVerticalAlignTooltip "-100%" Css.top bottomArrow
+            Css.batch
+                [ Css.property "transform" "translate(-50%, -100%)"
+                , getArrowPositioning
+                    { xAlignment = topBottomAlignment
+                    , yAlignment = Css.top (Css.pct 100)
+                    }
+                , bottomArrow
+                ]
 
         OnBottom ->
-            newPositionVerticalAlignTooltip "0" Css.bottom topArrow
+            Css.batch
+                [ Css.property "transform" "translate(-50%, 0)"
+                , getArrowPositioning
+                    { xAlignment = topBottomAlignment
+                    , yAlignment = Css.bottom (Css.pct 100)
+                    }
+                , topArrow
+                ]
 
         OnRight ->
-            newPositionHorizontalAlignTooltip "0" Css.right leftArrow
+            Css.batch
+                [ Css.property "transform" "translate(0, -50%)"
+                , getArrowPositioning
+                    { xAlignment = Css.right (Css.pct 100)
+                    , yAlignment = rightLeftAlignment
+                    }
+                , leftArrow
+                ]
 
         OnLeft ->
-            newPositionHorizontalAlignTooltip "-100%" Css.left rightArrow
-
-
-newPositionVerticalAlignTooltip : String -> (Css.Pct -> Style) -> Style -> Style
-newPositionVerticalAlignTooltip verticalAlign arrowAlignment arrow =
-    Css.batch
-        [ Css.property "transform" ("translate(-50%, " ++ verticalAlign ++ ")")
-        , getArrowPositioning
-            { xAlignment = Css.left (Css.pct 50)
-            , yAlignment = arrowAlignment (Css.pct 100)
-            }
-        , arrow
-        ]
-
-
-newPositionHorizontalAlignTooltip : String -> (Css.Pct -> Style) -> Style -> Style
-newPositionHorizontalAlignTooltip horizontalAlign arrowAlignment arrow =
-    Css.batch
-        [ Css.property "transform" ("translate(" ++ horizontalAlign ++ ", -50%)")
-        , getArrowPositioning
-            { xAlignment = arrowAlignment (Css.pct 100)
-            , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 50%)")
-            }
-        , arrow
-        ]
+            Css.batch
+                [ Css.property "transform" "translate(-100%, -50%)"
+                , getArrowPositioning
+                    { xAlignment = Css.left (Css.pct 100)
+                    , yAlignment = rightLeftAlignment
+                    }
+                , rightArrow
+                ]
 
 
 bottomArrow : Style
