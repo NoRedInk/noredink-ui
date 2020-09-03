@@ -163,6 +163,7 @@ view model =
 
 type alias StaticExampleSettings =
     { content : Tooltip.Attribute Never
+    , direction : Tooltip.Attribute Never
     }
 
 
@@ -170,6 +171,7 @@ initStaticExampleSettings : Control StaticExampleSettings
 initStaticExampleSettings =
     Control.record StaticExampleSettings
         |> Control.field "content" controlContent
+        |> Control.field "direction" controlDirection
 
 
 controlContent : Control (Tooltip.Attribute Never)
@@ -208,6 +210,16 @@ controlContent =
         ]
 
 
+controlDirection : Control (Tooltip.Attribute Never)
+controlDirection =
+    Control.choice
+        [ ( "onTop", Control.value Tooltip.onTop )
+        , ( "onBottom", Control.value Tooltip.onBottom )
+        , ( "onLeft", Control.value Tooltip.onLeft )
+        , ( "onRight", Control.value Tooltip.onRight )
+        ]
+
+
 viewStaticExamples : Control StaticExampleSettings -> Html Msg
 viewStaticExamples controlSettings =
     let
@@ -217,12 +229,13 @@ viewStaticExamples controlSettings =
         attributes =
             [ Tooltip.open True
             , settings.content
+            , settings.direction
             ]
     in
     Html.div []
         [ Control.view SetStaticExampleSettings controlSettings
             |> Html.fromUnstyled
-        , Html.div [ css [ Css.marginTop (Css.px 150) ] ]
+        , Html.div [ css [ Css.margin (Css.px 150) ] ]
             [ Tooltip.view
                 { triggerHtml =
                     UiIcon.arrowTop
