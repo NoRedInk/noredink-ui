@@ -208,8 +208,8 @@ controlDirection =
 controlAlignment : Control (Tooltip.Attribute Never)
 controlAlignment =
     Control.choice
-        [ ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
-        , ( "alignMiddle", Control.value Tooltip.alignMiddle )
+        [ ( "alignMiddle (default)", Control.value Tooltip.alignMiddle )
+        , ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
         , ( "alignEnd", Control.map (Css.px >> Tooltip.alignEnd) controlNumber )
         ]
 
