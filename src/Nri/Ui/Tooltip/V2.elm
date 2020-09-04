@@ -477,7 +477,7 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
                       -- TODO: this blur event means that we cannot focus links
                       -- that are within the tooltip without a mouse
                       , Events.onBlur (msg False)
-                      , EventExtras.onClickStopPropagation (msg True)
+                      , Events.onClick (msg True)
                       ]
                     )
 
