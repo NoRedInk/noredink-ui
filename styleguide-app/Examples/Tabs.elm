@@ -22,6 +22,7 @@ import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V6 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -29,6 +30,7 @@ import Task
 type alias State =
     { selected : Id
     , settings : Control Settings
+    , isTooltipOpen : Bool
     }
 
 
@@ -36,6 +38,7 @@ init : State
 init =
     { selected = First
     , settings = initSettings
+    , isTooltipOpen = False
     }
 
 
@@ -82,6 +85,7 @@ type Msg
     | Focus String
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
+    | ToggleTooltip Bool
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -98,6 +102,9 @@ update msg model =
 
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
+
+        ToggleTooltip isTooltipOpen ->
+            ( { model | isTooltipOpen = isTooltipOpen }, Cmd.none )
 
 
 example : Example State Msg
@@ -133,14 +140,14 @@ example =
                 , onSelect = SelectTab
                 , onFocus = Focus
                 , selected = model.selected
-                , tabs = allTabs
+                , tabs = allTabs model.isTooltipOpen
                 }
             ]
     }
 
 
-allTabs : List (Tab Id Msg)
-allTabs =
+allTabs : Bool -> List (Tab Id Msg)
+allTabs isTooltipOpen =
     [ { id = First
       , idString = "tab-0"
       , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V6"
@@ -157,12 +164,24 @@ allTabs =
       , idString = "tab-2"
       , spaHref = Nothing
       , tabView =
-            UiIcon.bulb
-                |> Svg.withLabel "Lightbulb"
-                |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 40)
-                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                |> Svg.toHtml
+            Tooltip.view
+                { id = "lightbulb-tooltip"
+                , triggerHtml =
+                    UiIcon.bulb
+                        |> Svg.withLabel "Lightbulb"
+                        |> Svg.withWidth (Css.px 40)
+                        |> Svg.withHeight (Css.px 40)
+                        |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+                        |> Svg.toHtml
+                }
+                [ Tooltip.plaintext "The Electrifying Third Tab"
+                , Tooltip.onBottom
+                , Tooltip.onHover ToggleTooltip
+                , Tooltip.primaryLabel
+                , Tooltip.fitToContent
+                , Tooltip.smallPadding
+                , Tooltip.open isTooltipOpen
+                ]
       , panelView = Html.text "Third Panel"
       }
     , { id = Fourth
