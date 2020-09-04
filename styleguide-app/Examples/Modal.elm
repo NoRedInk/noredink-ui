@@ -20,7 +20,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap(..))
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V4 as Text
 import Task
@@ -138,8 +138,27 @@ example =
                     |> Html.fromUnstyled
                 ]
             , launchModalButton settings
-            , Modal.view (modalSettings settings)
-                (Control.currentValue state.attributes)
+            , let
+                { title, wrapMsg, content, footer, focusTrap } =
+                    modalSettings settings
+              in
+              Modal.view
+                { title = title
+                , wrapMsg = wrapMsg
+                , content = content
+                , footer = footer
+                , focus = Focus
+                }
+                (List.concatMap identity
+                    [ case focusTrap of
+                        Nothing ->
+                            []
+
+                        Just focusTrap_ ->
+                            [ Modal.focusTrap focusTrap_ ]
+                    , Control.currentValue state.attributes
+                    ]
+                )
                 state.state
             ]
     }
@@ -188,6 +207,7 @@ modalSettings :
         , wrapMsg : Modal.Msg -> Msg
         , content : List (Html Msg)
         , footer : List (Html Msg)
+        , focusTrap : Maybe FocusTrap
         }
 modalSettings settings =
     let
@@ -196,21 +216,27 @@ modalSettings settings =
             , wrapMsg = ModalMsg
             , content = []
             , footer = []
+            , focusTrap = Nothing
             }
     in
     case ( settings.showX, settings.showContinue, settings.showSecondary ) of
         ( True, True, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    [ Modal.closeButton CloseModal []
                     , viewModalContent settings.content
                     ]
                 , footer =
                     [ continueButton []
-                    , closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    , closeClickableText []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.MultipleElements
+                            { firstId = Modal.closeButtonId
+                            , lastId = closeClickableTextId
+                            }
+                        )
             }
 
         ( True, False, True ) ->

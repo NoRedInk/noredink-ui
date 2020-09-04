@@ -5,6 +5,7 @@ module Nri.Ui.Modal.V11 exposing
     , Attribute
     , info, warning
     , showTitle, hideTitle
+    , focusTrap
     , custom, css
     , isOpen
     )
@@ -23,7 +24,7 @@ import Browser.Dom as Dom
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
-import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V11 as Modal
 import Task
 
@@ -179,6 +180,7 @@ view model =
 @docs Attribute
 @docs info, warning
 @docs showTitle, hideTitle
+@docs focusTrap
 @docs custom, css
 
 
@@ -205,6 +207,7 @@ import Html.Styled.Events as Events exposing (onClick)
 import Json.Decode as Decode exposing (Decoder)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
@@ -326,6 +329,11 @@ showTitle =
     Attribute (\attrs -> { attrs | visibleTitle = True })
 
 
+focusTrap : FocusTrap -> Attribute
+focusTrap trap =
+    Attribute (\attrs -> { attrs | focusTrap = Just trap })
+
+
 {-| -}
 hideTitle : Attribute
 hideTitle =
@@ -385,6 +393,7 @@ type alias Attributes =
     , visibleTitle : Bool
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
+    , focusTrap : Maybe FocusTrap
     }
 
 
@@ -395,6 +404,7 @@ defaultAttributes =
     , visibleTitle = True
     , customStyles = []
     , customAttributes = []
+    , focusTrap = Nothing
     }
 
 
@@ -477,6 +487,7 @@ titleStyles color visibleTitle =
 view :
     { title : String
     , wrapMsg : Msg -> msg
+    , focus : String -> msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -515,7 +526,17 @@ view config attrsList model =
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
                 ]
                 |> List.singleton
-                |> div [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                |> Root.div
+                    (List.concat
+                        [ case attrs.focusTrap of
+                            Nothing ->
+                                []
+
+                            Just trap_ ->
+                                [ FocusTrap.toAttribute config.focus trap_ ]
+                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                        ]
+                    )
 
         Closed ->
             text ""
