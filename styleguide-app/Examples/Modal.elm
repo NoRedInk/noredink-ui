@@ -223,7 +223,7 @@ modalSettings settings =
         ( True, True, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal []
+                    [ Modal.closeButton CloseModal
                     , viewModalContent settings.content
                     ]
                 , footer =
@@ -245,7 +245,7 @@ modalSettings settings =
         ( True, False, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal []
+                    [ Modal.closeButton CloseModal
                     , viewModalContent settings.content
                     ]
                 , footer =
@@ -266,7 +266,7 @@ modalSettings settings =
         ( True, False, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal []
+                    [ Modal.closeButton CloseModal
                     , viewModalContent settings.content
                     ]
                 , focusTrap =
@@ -281,7 +281,7 @@ modalSettings settings =
         ( True, True, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal []
+                    [ Modal.closeButton CloseModal
                     , viewModalContent settings.content
                     ]
                 , footer =

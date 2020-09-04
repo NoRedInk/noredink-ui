@@ -728,8 +728,8 @@ closeButtonId =
 
 
 {-| -}
-closeButton : msg -> List (Html.Attribute msg) -> Html msg
-closeButton closeModal attrs =
+closeButton : msg -> Html msg
+closeButton closeModal =
     button
         (Widget.label "Close modal"
             :: onClick closeModal
@@ -753,7 +753,7 @@ closeButton closeModal attrs =
                 , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
                 ]
             :: Attrs.id closeButtonId
-            :: attrs
+            :: []
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
