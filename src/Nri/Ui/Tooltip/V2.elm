@@ -487,40 +487,41 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
                 Nothing ->
                     ( [], [] )
     in
-    Nri.Ui.styled Html.div
+    Nri.Ui.styled Root.div
         "Nri-Ui-Tooltip-V2"
-        tooltipContainerStyles
-        []
-        [ Root.div containerEvents
-            [ Html.button
-                ([ if tooltip_.isOpen then
-                    case tooltip_.purpose of
-                        PrimaryLabel ->
-                            Aria.labeledBy id
+        [ Css.display Css.inlineBlock
+        , Css.textAlign Css.left
+        , Css.position Css.relative
+        ]
+        containerEvents
+        [ Html.button
+            ([ if tooltip_.isOpen then
+                case tooltip_.purpose of
+                    PrimaryLabel ->
+                        Aria.labeledBy id
 
-                        AuxillaryDescription ->
-                            Aria.describedBy [ id ]
+                    AuxillaryDescription ->
+                        Aria.describedBy [ id ]
 
-                   else
-                    -- when our tooltips are closed, they're not rendered in the
-                    -- DOM. This means that the ID references above would be
-                    -- invalid and jumping to a reference would not work, so we
-                    -- skip labels and descriptions if the tooltip is closed.
-                    Attributes.property "data-closed-tooltip" Encode.null
-                 , Attributes.css buttonStyleOverrides
-                 ]
-                    ++ buttonEvents
-                    ++ tooltip_.triggerAttributes
-                )
-                [ triggerHtml
-                , hoverBridge tooltip_
-                ]
-            , viewOverlay tooltip_
-
-            -- Popout is rendered after the overlay, to allow client code to give it
-            -- priority when clicking by setting its position
-            , viewTooltip (Just id) tooltip_
+               else
+                -- when our tooltips are closed, they're not rendered in the
+                -- DOM. This means that the ID references above would be
+                -- invalid and jumping to a reference would not work, so we
+                -- skip labels and descriptions if the tooltip is closed.
+                Attributes.property "data-closed-tooltip" Encode.null
+             , Attributes.css buttonStyleOverrides
+             ]
+                ++ buttonEvents
+                ++ tooltip_.triggerAttributes
+            )
+            [ triggerHtml
+            , hoverBridge tooltip_
             ]
+        , viewOverlay tooltip_
+
+        -- Popout is rendered after the overlay, to allow client code to give it
+        -- priority when clicking by setting its position
+        , viewTooltip (Just id) tooltip_
         ]
 
 
