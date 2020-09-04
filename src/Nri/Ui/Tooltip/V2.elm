@@ -59,6 +59,7 @@ Example usage:
 
 import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
@@ -734,6 +735,7 @@ viewCloseTooltipOverlay msg =
             , Css.backgroundColor Css.transparent
             ]
         , EventExtras.onClickStopPropagation msg
+        , Key.tabbable False
         ]
         []
 
