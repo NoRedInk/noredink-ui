@@ -227,8 +227,8 @@ modalSettings settings =
                     , viewModalContent settings.content
                     ]
                 , footer =
-                    [ continueButton []
-                    , closeClickableText []
+                    [ continueButton
+                    , closeClickableText
                     ]
                 , focusTrap =
                     Just
@@ -249,7 +249,7 @@ modalSettings settings =
                     , viewModalContent settings.content
                     ]
                 , footer =
-                    [ closeClickableText []
+                    [ closeClickableText
                     ]
                 , focusTrap =
                     Just
@@ -285,7 +285,7 @@ modalSettings settings =
                     , viewModalContent settings.content
                     ]
                 , footer =
-                    [ continueButton []
+                    [ continueButton
                     ]
                 , focusTrap =
                     Just
@@ -303,8 +303,8 @@ modalSettings settings =
             { default
                 | content = [ viewModalContent settings.content ]
                 , footer =
-                    [ continueButton []
-                    , closeClickableText []
+                    [ continueButton
+                    , closeClickableText
                     ]
                 , focusTrap =
                     Just
@@ -321,9 +321,7 @@ modalSettings settings =
         ( False, False, True ) ->
             { default
                 | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ closeClickableText []
-                    ]
+                , footer = [ closeClickableText ]
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
@@ -337,7 +335,7 @@ modalSettings settings =
             { default
                 | content = [ viewModalContent settings.content ]
                 , footer =
-                    [ continueButton []
+                    [ continueButton
                     ]
                 , focusTrap =
                     Just
@@ -364,12 +362,12 @@ continueButtonId =
     "continue-button-id"
 
 
-continueButton : List (Html.Attribute Msg) -> Html Msg
-continueButton attributes =
+continueButton : Html Msg
+continueButton =
     Button.button "Continue"
         [ Button.premium
         , Button.onClick CloseModal
-        , Button.custom (Attributes.id continueButtonId :: attributes)
+        , Button.custom [ Attributes.id continueButtonId ]
         , Button.large
         ]
 
@@ -379,12 +377,12 @@ closeClickableTextId =
     "continue-button-id"
 
 
-closeClickableText : List (Html.Attribute Msg) -> Html Msg
-closeClickableText attributes =
+closeClickableText : Html Msg
+closeClickableText =
     ClickableText.button "Close"
         [ ClickableText.onClick CloseModal
         , ClickableText.large
-        , ClickableText.custom (Attributes.id closeClickableTextId :: attributes)
+        , ClickableText.custom [ Attributes.id closeClickableTextId ]
         , ClickableText.css [ Css.marginTop (Css.px 15) ]
         ]
 
