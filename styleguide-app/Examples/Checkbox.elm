@@ -175,45 +175,51 @@ viewMultilineCheckboxes =
 
 viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
-    let
-        safeId =
-            String.replace " " "-"
-
-        checkbox config =
-            PremiumCheckbox.view
-                { label = config.label
-                , id = "premium-checkbox-" ++ safeId config.label
-                , selected =
-                    if Set.member config.label state.isChecked then
-                        Checkbox.Selected
-
-                    else
-                        Checkbox.NotSelected
-                , disabled = config.disabled
-                , isLocked = config.isLocked
-                , isPremium = config.isPremium
-                , onChange = ToggleCheck config.label
-                , onLockedClick = NoOp
-                }
-    in
     Html.div []
-        [ checkbox
-            { label = "Identify Adjectives 2 (Premium)"
+        [ PremiumCheckbox.view
+            { label = "Identify Adjectives 1 (Premium)"
+            , id = "premium-checkbox-identify-adjectives-premium"
+            , selected =
+                if Set.member "premium-1" state.isChecked then
+                    Checkbox.Selected
+
+                else
+                    Checkbox.NotSelected
             , disabled = False
             , isLocked = False
             , isPremium = True
+            , onChange = ToggleCheck "premium-1"
+            , onLockedClick = NoOp
             }
-        , checkbox
+        , PremiumCheckbox.view
             { label = "Identify Adjectives 2 (Free)"
+            , id = "premium-checkbox-identify-adjectives-free"
+            , selected =
+                if Set.member "premium-2" state.isChecked then
+                    Checkbox.Selected
+
+                else
+                    Checkbox.NotSelected
             , disabled = False
             , isLocked = False
             , isPremium = False
+            , onChange = ToggleCheck "premium-2"
+            , onLockedClick = NoOp
             }
-        , checkbox
-            { label = "Revising Wordy Phrases 2 (Premium, Disabled)"
+        , PremiumCheckbox.view
+            { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
+            , id = "premium-checkbox-premium-disabled"
+            , selected =
+                if Set.member "premium-3" state.isChecked then
+                    Checkbox.Selected
+
+                else
+                    Checkbox.NotSelected
             , disabled = True
             , isLocked = True
             , isPremium = True
+            , onChange = ToggleCheck "premium-3"
+            , onLockedClick = NoOp
             }
         ]
 

@@ -10,7 +10,7 @@ module Nri.Ui.Checkbox.V5 exposing
 # Patch changes
 
   - Use Nri.Ui.Svg.V1 rather than a custom Icon type specific to this module
-  - Make the filter ids within the svg unique (now the id depends on the checkbox label)
+  - Make the filter ids within the svg unique (now the id depends on the checkbox identifier)
 
 
 # Changes from V5:
