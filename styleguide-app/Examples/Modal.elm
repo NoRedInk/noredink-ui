@@ -29,7 +29,8 @@ import Task
 {-| -}
 type alias State =
     { state : Modal.Model
-    , settings : Control Settings
+    , attributes : Control (List Modal.Attribute)
+    , settings : Control ViewSettings
     }
 
 
@@ -37,24 +38,32 @@ type alias State =
 init : State
 init =
     { state = Modal.init
-    , settings = initModalSettings
+    , attributes = controlAttributes
+    , settings = initViewSettings
     }
 
 
-type alias Settings =
+controlAttributes : Control (List Modal.Attribute)
+controlAttributes =
+    Control.record (\a b c -> a :: b :: c :: [])
+        |> Control.field "Theme" controlTheme
+        |> Control.field "Title visibility" controlTitleVisibility
+        |> Control.field "Custom css" controlCss
+
+
+type alias ViewSettings =
     { title : String
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
-    , attributes : List Modal.Attribute
     }
 
 
-initModalSettings : Control Settings
-initModalSettings =
-    Control.record Settings
+initViewSettings : Control ViewSettings
+initViewSettings =
+    Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
@@ -68,15 +77,6 @@ initModalSettings =
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
-        |> Control.field "Modal Attributes" controlAttributes
-
-
-controlAttributes : Control (List Modal.Attribute)
-controlAttributes =
-    Control.record (\a b c -> a :: b :: c :: [])
-        |> Control.field "Theme" controlTheme
-        |> Control.field "Title visibility" controlTitleVisibility
-        |> Control.field "Custom css" controlCss
 
 
 controlTitleVisibility : Control Modal.Attribute
@@ -131,15 +131,21 @@ example =
                 settings =
                     Control.currentValue state.settings
             in
-            [ Control.view UpdateSettings state.settings
-                |> Html.fromUnstyled
+            [ div [ css [ Css.displayFlex, Css.justifyContent Css.spaceAround ] ]
+                [ Control.view UpdateAttributes state.attributes
+                    |> Html.fromUnstyled
+                , Control.view UpdateSettings state.settings
+                    |> Html.fromUnstyled
+                ]
             , launchModalButton settings
-            , Modal.view (modalSettings settings) settings.attributes state.state
+            , Modal.view (modalSettings settings)
+                (Control.currentValue state.attributes)
+                state.state
             ]
     }
 
 
-launchModalButton : Settings -> Html Msg
+launchModalButton : ViewSettings -> Html Msg
 launchModalButton settings =
     let
         launchId =
@@ -176,7 +182,7 @@ launchModalButton settings =
 
 
 modalSettings :
-    Settings
+    ViewSettings
     ->
         { title : String
         , wrapMsg : Modal.Msg -> Msg
@@ -317,7 +323,8 @@ type Msg
     = OpenModal { startFocusOn : String, returnFocusTo : String }
     | ModalMsg Modal.Msg
     | CloseModal
-    | UpdateSettings (Control Settings)
+    | UpdateAttributes (Control (List Modal.Attribute))
+    | UpdateSettings (Control ViewSettings)
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -359,6 +366,9 @@ update msg state =
             ( { state | state = newState }
             , Cmd.map ModalMsg cmd
             )
+
+        UpdateAttributes value ->
+            ( { state | attributes = value }, Cmd.none )
 
         UpdateSettings value ->
             ( { state | settings = value }, Cmd.none )
