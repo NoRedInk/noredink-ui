@@ -147,6 +147,13 @@ view_ model =
                         && Set.memberOf model.atomicDesignTypes m.atomicDesignType
                 )
                 (Dict.values model.moduleStates)
+
+        mainContentHeader heading =
+            Heading.h2
+                [ Heading.customAttr (id "maincontent")
+                , Heading.customAttr (tabindex -1)
+                ]
+                [ Html.text heading ]
     in
     Html.div
         [ css
@@ -156,54 +163,44 @@ view_ model =
             ]
         ]
         [ navigation model.route model.atomicDesignTypes
-        , Html.main_
-            [ css [ flexGrow (int 1) ]
-            , id "maincontent"
-            , Attributes.tabindex -1
-            ]
+        , Html.main_ [ css [ flexGrow (int 1), sectionStyles ] ]
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ Html.section [ css [ sectionStyles ] ]
-                        [ Heading.h2 [] [ Html.text ("Viewing " ++ doodad ++ " doodad only") ]
-                        , examples (\m -> m.name == doodad)
-                            |> List.map
-                                (\example ->
-                                    Example.view False example
-                                        |> Html.map (UpdateModuleStates example.name)
-                                )
-                            |> Html.div []
-                        ]
+                    [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
+                    , examples (\m -> m.name == doodad)
+                        |> List.map
+                            (\example ->
+                                Example.view False example
+                                    |> Html.map (UpdateModuleStates example.name)
+                            )
+                        |> Html.div []
                     ]
 
                 Routes.Category category ->
-                    [ Html.section [ css [ sectionStyles ] ]
-                        [ Heading.h2 [] [ Html.text (Category.forDisplay category) ]
-                        , examples
-                            (\doodad ->
-                                Set.memberOf
-                                    (Set.fromList Category.sorter doodad.categories)
-                                    category
+                    [ mainContentHeader (Category.forDisplay category)
+                    , examples
+                        (\doodad ->
+                            Set.memberOf
+                                (Set.fromList Category.sorter doodad.categories)
+                                category
+                        )
+                        |> List.map
+                            (\example ->
+                                Example.view True example
+                                    |> Html.map (UpdateModuleStates example.name)
                             )
-                            |> List.map
-                                (\example ->
-                                    Example.view True example
-                                        |> Html.map (UpdateModuleStates example.name)
-                                )
-                            |> Html.div [ id (Category.forId category) ]
-                        ]
+                        |> Html.div [ id (Category.forId category) ]
                     ]
 
                 Routes.All ->
-                    [ Html.section [ css [ sectionStyles ] ]
-                        [ Heading.h2 [] [ Html.text "All" ]
-                        , examples (\_ -> True)
-                            |> List.map
-                                (\example ->
-                                    Example.view True example
-                                        |> Html.map (UpdateModuleStates example.name)
-                                )
-                            |> Html.div []
-                        ]
+                    [ mainContentHeader "All"
+                    , examples (\_ -> True)
+                        |> List.map
+                            (\example ->
+                                Example.view True example
+                                    |> Html.map (UpdateModuleStates example.name)
+                            )
+                        |> Html.div []
                     ]
             )
         ]
@@ -272,6 +269,16 @@ navigation route openAtomicDesignTypes =
                 , color Colors.azure
                 , Fonts.baseFont
                 , Css.marginBottom (px 20)
+                , Css.pseudoClass "not(:focus)"
+                    [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+                    , Css.position Css.absolute
+                    , Css.height (Css.px 1)
+                    , Css.width (Css.px 1)
+                    , Css.overflow Css.hidden
+                    , Css.margin (Css.px -1)
+                    , Css.padding Css.zero
+                    , Css.border Css.zero
+                    ]
                 ]
             , Events.onClick SkipToMainContent
             , id "skip"

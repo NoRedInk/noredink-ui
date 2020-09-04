@@ -8,26 +8,29 @@ module Examples.Modal exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
-import Css.Global
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html as Root
-import Html.Styled.Attributes as Attributes
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Modal.V10 as Modal
+import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V4 as Text
+import Task
 
 
 {-| -}
 type alias State =
     { state : Modal.Model
-    , content : Content
-    , settings : Settings
+    , attributes : Control (List Modal.Attribute)
+    , settings : Control ViewSettings
     }
 
 
@@ -35,336 +38,295 @@ type alias State =
 init : State
 init =
     { state = Modal.init
-    , content = Info
-    , settings = initModalSettings
+    , attributes = controlAttributes
+    , settings = initViewSettings
     }
 
 
-type Content
-    = Info
-    | Warning
+controlAttributes : Control (List Modal.Attribute)
+controlAttributes =
+    Control.record (\a b c -> a :: b :: c :: [])
+        |> Control.field "Theme" controlTheme
+        |> Control.field "Title visibility" controlTitleVisibility
+        |> Control.field "Custom css" controlCss
 
 
-type alias Settings =
-    { visibleTitle : Bool
+type alias ViewSettings =
+    { title : String
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
-    , longContent : Bool
-    , customStyling : Bool
+    , content : String
     }
 
 
-initModalSettings : Settings
-initModalSettings =
-    { visibleTitle = True
-    , showX = True
-    , showContinue = True
-    , showSecondary = True
-    , dismissOnEscAndOverlayClick = True
-    , longContent = True
-    , customStyling = False
-    }
+initViewSettings : Control ViewSettings
+initViewSettings =
+    Control.record ViewSettings
+        |> Control.field "Modal title" (Control.string "Modal Title")
+        |> Control.field "X button" (Control.bool True)
+        |> Control.field "Continue button" (Control.bool True)
+        |> Control.field "Close button" (Control.bool True)
+        |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
+        |> Control.field "Content"
+            (Control.stringTextarea <|
+                String.join "\n\n"
+                    [ "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
+                    , "Muffin liquorice powder liquorice jujubes biscuit cookie candy canes lemon drops. Liquorice powder carrot cake dragée icing tootsie roll apple pie lemon drops lemon drops. Jujubes danish bear claw cotton candy. Dragée apple pie tiramisu. Sugar plum dessert pastry marzipan chocolate cake dragée sesame snaps. Marshmallow gingerbread lemon drops. Brownie chocolate fruitcake pastry. Powder jelly beans jujubes. Croissant macaroon dessert cookie candy canes jelly jujubes. Muffin liquorice ice cream wafer donut danish soufflé dragée chocolate bar. Candy croissant candy wafer toffee lemon drops croissant danish sugar plum. Cookie cake candy canes. Pastry powder muffin soufflé tootsie roll sweet cookie tiramisu."
+                    , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
+                    ]
+            )
+
+
+controlTitleVisibility : Control Modal.Attribute
+controlTitleVisibility =
+    Control.choice
+        [ ( "showTitle", Control.value Modal.showTitle )
+        , ( "hideTitle", Control.value Modal.hideTitle )
+        ]
+
+
+controlTheme : Control Modal.Attribute
+controlTheme =
+    Control.choice
+        [ ( "info", Control.value Modal.info )
+        , ( "warning", Control.value Modal.warning )
+        ]
+
+
+controlCss : Control Modal.Attribute
+controlCss =
+    Control.map Modal.css <|
+        Control.choice
+            [ ( "[]", Control.value [] )
+            , ( "[ Css.borderRadius Css.zero ]", Control.value [ Css.borderRadius Css.zero ] )
+            , ( "[ Css.width (Css.px 900) ]", Control.value [ Css.width (Css.px 900) ] )
+            ]
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Modal.V10"
+    { name = "Nri.Ui.Modal.V11"
     , categories = [ Modals ]
     , atomicDesignType = Organism
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."
+          }
+        , { keys = [ KeyboardSupport.Tab, KeyboardSupport.Shift ]
+          , result = "Moves focus to the previous button within the modal or wraps back to the last element within the modal."
+          }
+        , { keys = [ KeyboardSupport.Esc ]
+          , result = "If 'dismissOnEscAndOverlayClick' is set to true, closes the modal. Else, does nothing."
+          }
+        ]
     , state = init
     , update = update
     , subscriptions = subscriptions
     , view =
         \state ->
             let
-                titleAttrs =
-                    if state.settings.visibleTitle then
-                        []
-
-                    else
-                        [ Modal.hideTitle ]
-
-                stylingAttrs =
-                    if state.settings.customStyling then
-                        [ Modal.css
-                            [ Css.borderRadius Css.zero
-                            , Css.width (Css.px 800)
-                            ]
-                        ]
-
-                    else
-                        []
-
-                attrs =
-                    titleAttrs ++ stylingAttrs
+                settings =
+                    Control.currentValue state.settings
             in
-            [ viewSettings state.settings
-            , Button.button "Launch Info Modal"
-                [ Button.onClick (OpenModal Info "launch-info-modal")
-                , Button.custom [ Attributes.id "launch-info-modal" ]
-                , Button.css [ Css.marginRight (Css.px 16) ]
-                , Button.secondary
-                , Button.medium
+            [ div [ css [ Css.displayFlex, Css.justifyContent Css.spaceAround ] ]
+                [ Control.view UpdateAttributes state.attributes
+                    |> Html.fromUnstyled
+                , Control.view UpdateSettings state.settings
+                    |> Html.fromUnstyled
                 ]
-            , Button.button "Launch Warning Modal"
-                [ Button.onClick (OpenModal Warning "launch-warning-modal")
-                , Button.custom [ Attributes.id "launch-warning-modal" ]
-                , Button.secondary
-                , Button.medium
-                ]
-            , case state.content of
-                Info ->
-                    Modal.info
-                        { title = "Modal.info"
-                        , wrapMsg = ModalMsg
-                        , focusManager = makeFocusManager Button.primary state.settings
-                        }
-                        attrs
-                        state.state
-
-                Warning ->
-                    Modal.warning
-                        { title = "Modal.warning"
-                        , wrapMsg = ModalMsg
-                        , focusManager = makeFocusManager Button.danger state.settings
-                        }
-                        attrs
-                        state.state
+            , launchModalButton settings
+            , Modal.view (modalSettings settings)
+                (Control.currentValue state.attributes)
+                state.state
             ]
     }
 
 
-makeFocusManager : Button.Attribute Msg -> Settings -> Modal.FocusManager Msg
-makeFocusManager firstButtonStyle settings =
-    case ( settings.showX, settings.showContinue, settings.showSecondary ) of
-        ( True, True, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
-                        ]
-                    , footer =
-                        [ Button.button "Continue"
-                            [ firstButtonStyle
-                            , Button.onClick ForceClose
-                            , Button.large
-                            , Button.custom [ modalOptions.autofocusElement ]
-                            ]
-                        , ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom modalOptions.lastFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
-                        ]
-                    }
+launchModalButton : ViewSettings -> Html Msg
+launchModalButton settings =
+    let
+        launchId =
+            "launch-modal"
 
-        ( True, False, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
-                        ]
-                    , footer =
-                        [ ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
-                        ]
-                    }
+        startFocusId =
+            if settings.showContinue then
+                Just continueButtonId
 
-        ( True, False, False ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement, closeButton } ->
-                    { content =
-                        [ closeButton onlyFocusableElement
-                        , viewModalContent settings.longContent
-                        ]
-                    , footer = []
-                    }
-                )
+            else if settings.showX then
+                Just Modal.closeButtonId
 
-        ( True, True, False ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content =
-                        [ modalOptions.closeButton modalOptions.firstFocusableElement
-                        , viewModalContent settings.longContent
-                        ]
-                    , footer =
-                        [ Button.button "Continue"
-                            [ firstButtonStyle
-                            , Button.onClick ForceClose
-                            , Button.custom (modalOptions.autofocusElement :: modalOptions.lastFocusableElement)
-                            , Button.large
-                            ]
-                        ]
-                    }
+            else if settings.showSecondary then
+                Just closeClickableTextId
 
-        ( False, True, True ) ->
-            Modal.MultipleFocusableElements <|
-                \modalOptions ->
-                    { content = [ viewModalContent settings.longContent ]
-                    , footer =
-                        [ Button.button "Continue"
-                            [ firstButtonStyle
-                            , Button.onClick ForceClose
-                            , Button.custom (modalOptions.autofocusElement :: modalOptions.firstFocusableElement)
-                            , Button.large
-                            ]
-                        , ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom modalOptions.lastFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
-                        ]
-                    }
+            else
+                Nothing
+    in
+    Button.button "Launch Modal"
+        [ case startFocusId of
+            Just autofocusElementId ->
+                Button.onClick
+                    (OpenModal
+                        { startFocusOn = autofocusElementId
+                        , returnFocusTo = launchId
+                        }
+                    )
 
-        ( False, False, True ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.longContent ]
-                    , footer =
-                        [ ClickableText.button "Close"
-                            [ ClickableText.onClick ForceClose
-                            , ClickableText.large
-                            , ClickableText.custom onlyFocusableElement
-                            , ClickableText.css [ Css.marginTop (Css.px 12) ]
-                            ]
-                        ]
-                    }
-                )
-
-        ( False, True, False ) ->
-            Modal.OneFocusableElement
-                (\{ onlyFocusableElement } ->
-                    { content = [ viewModalContent settings.longContent ]
-                    , footer =
-                        [ Button.button "Continue"
-                            [ firstButtonStyle
-                            , Button.onClick ForceClose
-                            , Button.custom onlyFocusableElement
-                            , Button.large
-                            ]
-                        ]
-                    }
-                )
-
-        ( False, False, False ) ->
-            Modal.OneFocusableElement
-                (\_ ->
-                    { content = [ viewModalContent settings.longContent ]
-                    , footer = []
-                    }
-                )
-
-
-viewModalContent : Bool -> Html msg
-viewModalContent longContent =
-    Text.mediumBody
-        [ span [ Attributes.css [ whiteSpace preLine ] ]
-            [ if longContent then
-                """Soufflé pastry chocolate cake danish muffin. Candy wafer pastry ice cream cheesecake toffee cookie cake carrot cake. Macaroon pie jujubes gummies cookie pie. Gummi bears brownie pastry carrot cake cotton candy. Jelly-o sweet roll biscuit cake soufflé lemon drops tiramisu marshmallow macaroon. Chocolate jelly halvah marzipan macaroon cupcake sweet cheesecake carrot cake.
-
-                    Sesame snaps pastry muffin cookie. Powder powder sweet roll toffee cake icing. Chocolate cake sweet roll gingerbread icing chupa chups sweet roll sesame snaps. Chocolate croissant chupa chups jelly beans toffee. Jujubes sweet wafer marshmallow halvah jelly. Liquorice sesame snaps sweet.
-
-                    Tootsie roll icing jelly danish ice cream tiramisu sweet roll. Fruitcake ice cream dragée. Bear claw sugar plum sweet jelly beans bonbon dragée tart. Gingerbread chocolate sweet. Apple pie danish toffee sugar plum jelly beans donut. Chocolate cake croissant caramels chocolate bar. Jelly beans caramels toffee chocolate cake liquorice. Toffee pie sugar plum cookie toffee muffin. Marzipan marshmallow marzipan liquorice tiramisu.
-
-                    Brownie ice cream halvah danish candy ice cream sweet roll jujubes chocolate cake. Chocolate bar sesame snaps bear claw gummies. Dragée cookie brownie cake sugar plum chocolate cake fruitcake toffee. Tiramisu tiramisu cookie cake. Lemon drops pie toffee icing powder biscuit cotton candy gummies. Caramels lemon drops cupcake. Lemon drops toffee macaroon liquorice chocolate bar candy bonbon. Cupcake biscuit cupcake chupa chups candy. Chocolate cake sweet toffee bonbon danish biscuit pudding. Tootsie roll brownie jelly tootsie roll. Jujubes jujubes marshmallow gummi bears bear claw sugar plum. Cupcake bonbon soufflé carrot cake powder fruitcake sugar plum brownie.
-
-                    Danish sesame snaps tiramisu chocolate cake powder cotton candy powder. Liquorice cupcake macaroon sweet soufflé jujubes. Jelly-o oat cake caramels sweet roll. Sweet roll sugar plum gummies cheesecake sesame snaps. Gummies pastry tootsie roll marzipan lollipop muffin sweet cake. Wafer carrot cake halvah bear claw jelly beans apple pie cookie halvah. Brownie sugar plum macaroon halvah croissant pastry. Marzipan muffin carrot cake chocolate jelly beans dragée jelly beans dragée tiramisu. Sweet roll powder apple pie icing halvah marshmallow pastry. Pastry marzipan chocolate cake jelly beans sugar plum carrot cake lollipop croissant. Cotton candy chocolate croissant gummies muffin. Dragée jelly beans oat cake pastry muffin pie. Donut marzipan dessert wafer gingerbread tiramisu macaroon. Cotton candy macaroon gummies oat cake cake gingerbread cotton candy sweet roll pie."""
-                    |> text
-
-              else
-                "Ice cream tootsie roll donut sweet cookie liquorice sweet donut. Sugar plum danish apple pie sesame snaps chocolate bar biscuit. Caramels macaroon jelly gummies sweet tootsie roll tiramisu apple pie. Dessert chocolate bar lemon drops dragée jelly powder cheesecake chocolate."
-                    |> text
-            ]
+            Nothing ->
+                Button.disabled
+        , Button.custom [ Attributes.id launchId ]
+        , Button.secondary
         ]
 
 
-viewSettings : Settings -> Html Msg
-viewSettings settings =
-    div []
-        [ Checkbox.viewWithLabel
-            { identifier = "visible-title"
-            , label = "Visible title"
-            , selected = Checkbox.selectedFromBool settings.visibleTitle
-            , setterMsg = SetVisibleTitle
-            , disabled = False
-            , theme = Checkbox.Square
+modalSettings :
+    ViewSettings
+    ->
+        { title : String
+        , wrapMsg : Modal.Msg -> Msg
+        , content : List (Html Msg)
+        , footer : List (Html Msg)
+        }
+modalSettings settings =
+    let
+        default =
+            { title = settings.title
+            , wrapMsg = ModalMsg
+            , content = []
+            , footer = []
             }
-        , Checkbox.viewWithLabel
-            { identifier = "show-x"
-            , label = "Show X button"
-            , selected = Checkbox.selectedFromBool settings.showX
-            , setterMsg = SetShowX
-            , disabled = False
-            , theme = Checkbox.Square
+    in
+    case ( settings.showX, settings.showContinue, settings.showSecondary ) of
+        ( True, True, True ) ->
+            { default
+                | content =
+                    [ Modal.closeButton CloseModal <|
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ continueButton []
+                    , closeClickableText <|
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    ]
             }
-        , Checkbox.viewWithLabel
-            { identifier = "show-continue"
-            , label = "Show main button"
-            , selected = Checkbox.selectedFromBool settings.showContinue
-            , setterMsg = SetShowContinue
-            , disabled = False
-            , theme = Checkbox.Square
+
+        ( True, False, True ) ->
+            { default
+                | content =
+                    [ Modal.closeButton CloseModal <|
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ closeClickableText <|
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    ]
             }
-        , Checkbox.viewWithLabel
-            { identifier = "show-secondary"
-            , label = "Show secondary button"
-            , selected = Checkbox.selectedFromBool settings.showSecondary
-            , setterMsg = SetShowSecondary
-            , disabled = False
-            , theme = Checkbox.Square
+
+        ( True, False, False ) ->
+            { default
+                | content =
+                    [ Modal.closeButton CloseModal <|
+                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
             }
-        , Checkbox.viewWithLabel
-            { identifier = "dismiss-on-click"
-            , label = "Dismiss on ESC and on backdrop click"
-            , selected = Checkbox.selectedFromBool settings.dismissOnEscAndOverlayClick
-            , setterMsg = SetDismissOnEscAndOverlayClick
-            , disabled = False
-            , theme = Checkbox.Square
+
+        ( True, True, False ) ->
+            { default
+                | content =
+                    [ Modal.closeButton CloseModal <|
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    , viewModalContent settings.content
+                    ]
+                , footer =
+                    [ continueButton <|
+                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    ]
             }
-        , Checkbox.viewWithLabel
-            { identifier = "long-content"
-            , label = "Display longer content"
-            , selected = Checkbox.selectedFromBool settings.longContent
-            , setterMsg = SetLongContent
-            , disabled = False
-            , theme = Checkbox.Square
+
+        ( False, True, True ) ->
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ continueButton <|
+                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    , closeClickableText <|
+                        FocusTrap.last { focusFirstId = Focus continueButtonId }
+                    ]
             }
-        , Checkbox.viewWithLabel
-            { identifier = "custom-styles"
-            , label = "Custom Styling"
-            , selected = Checkbox.selectedFromBool settings.customStyling
-            , setterMsg = SetCustomStyling
-            , disabled = False
-            , theme = Checkbox.Square
+
+        ( False, False, True ) ->
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ closeClickableText <|
+                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
+                    ]
             }
+
+        ( False, True, False ) ->
+            { default
+                | content = [ viewModalContent settings.content ]
+                , footer =
+                    [ continueButton <|
+                        FocusTrap.only { focusSelf = Focus continueButtonId }
+                    ]
+            }
+
+        ( False, False, False ) ->
+            { default
+                | content = [ viewModalContent settings.content ]
+            }
+
+
+viewModalContent : String -> Html msg
+viewModalContent content =
+    Text.mediumBody [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
+
+
+continueButtonId : String
+continueButtonId =
+    "continue-button-id"
+
+
+continueButton : List (Html.Attribute Msg) -> Html Msg
+continueButton attributes =
+    Button.button "Continue"
+        [ Button.premium
+        , Button.onClick CloseModal
+        , Button.custom (Attributes.id continueButtonId :: attributes)
+        , Button.large
+        ]
+
+
+closeClickableTextId : String
+closeClickableTextId =
+    "continue-button-id"
+
+
+closeClickableText : List (Html.Attribute Msg) -> Html Msg
+closeClickableText attributes =
+    ClickableText.button "Close"
+        [ ClickableText.onClick CloseModal
+        , ClickableText.large
+        , ClickableText.custom (Attributes.id closeClickableTextId :: attributes)
+        , ClickableText.css [ Css.marginTop (Css.px 15) ]
         ]
 
 
 {-| -}
 type Msg
-    = OpenModal Content String
+    = OpenModal { startFocusOn : String, returnFocusTo : String }
     | ModalMsg Modal.Msg
-    | ForceClose
-    | SetVisibleTitle Bool
-    | SetShowX Bool
-    | SetShowContinue Bool
-    | SetShowSecondary Bool
-    | SetDismissOnEscAndOverlayClick Bool
-    | SetLongContent Bool
-    | SetCustomStyling Bool
+    | CloseModal
+    | UpdateAttributes (Control (List Modal.Attribute))
+    | UpdateSettings (Control ViewSettings)
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
@@ -375,44 +337,47 @@ update msg state =
             state.settings
 
         updateConfig =
-            { dismissOnEscAndOverlayClick = settings.dismissOnEscAndOverlayClick }
+            { dismissOnEscAndOverlayClick =
+                (Control.currentValue settings).dismissOnEscAndOverlayClick
+            }
     in
     case msg of
-        OpenModal content returnFocusTo ->
-            update (ModalMsg (Modal.open returnFocusTo)) { state | content = content }
+        OpenModal config ->
+            let
+                ( newState, cmd ) =
+                    Modal.open config
+            in
+            ( { state | state = newState }
+            , Cmd.map ModalMsg cmd
+            )
 
         ModalMsg modalMsg ->
             case Modal.update updateConfig modalMsg state.state of
-                ( newState, cmds ) ->
+                ( newState, cmd ) ->
                     ( { state | state = newState }
-                    , Cmd.map ModalMsg cmds
+                    , Cmd.map ModalMsg cmd
                     )
 
-        ForceClose ->
-            ( { state | state = Modal.init }
-            , Cmd.none
+        CloseModal ->
+            let
+                ( newState, cmd ) =
+                    Modal.close state.state
+            in
+            ( { state | state = newState }
+            , Cmd.map ModalMsg cmd
             )
 
-        SetVisibleTitle value ->
-            ( { state | settings = { settings | visibleTitle = value } }, Cmd.none )
+        UpdateAttributes value ->
+            ( { state | attributes = value }, Cmd.none )
 
-        SetShowX value ->
-            ( { state | settings = { settings | showX = value } }, Cmd.none )
+        UpdateSettings value ->
+            ( { state | settings = value }, Cmd.none )
 
-        SetShowContinue value ->
-            ( { state | settings = { settings | showContinue = value } }, Cmd.none )
+        Focus id ->
+            ( state, Task.attempt Focused (Dom.focus id) )
 
-        SetShowSecondary value ->
-            ( { state | settings = { settings | showSecondary = value } }, Cmd.none )
-
-        SetDismissOnEscAndOverlayClick value ->
-            ( { state | settings = { settings | dismissOnEscAndOverlayClick = value } }, Cmd.none )
-
-        SetLongContent value ->
-            ( { state | settings = { settings | longContent = value } }, Cmd.none )
-
-        SetCustomStyling value ->
-            ( { state | settings = { settings | customStyling = value } }, Cmd.none )
+        Focused _ ->
+            ( state, Cmd.none )
 
 
 {-| -}
