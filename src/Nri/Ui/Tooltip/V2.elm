@@ -264,7 +264,7 @@ Instead, please use the `css` helper.
 -}
 custom : List (Html.Attribute Never) -> Attribute msg
 custom attributes =
-    Attribute (\config -> { config | attributes = attributes })
+    Attribute (\config -> { config | attributes = config.attributes ++ attributes })
 
 
 {-| Use this helper to add custom attributes to the tooltip trigger.
@@ -276,7 +276,7 @@ Instead, please use the `css` helper.
 -}
 customTriggerAttributes : List (Html.Attribute msg) -> Attribute msg
 customTriggerAttributes attributes =
-    Attribute (\config -> { config | triggerAttributes = attributes })
+    Attribute (\config -> { config | triggerAttributes = config.triggerAttributes ++ attributes })
 
 
 {-| Should the tooltip be exactly some measurement or fit to the width of the
