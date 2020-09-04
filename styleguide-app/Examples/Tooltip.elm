@@ -208,14 +208,15 @@ controlDirection =
 controlAlignment : Control (Tooltip.Attribute Never)
 controlAlignment =
     Control.choice
-        [ ( "alignStart (Css.px 150)"
-          , Control.value (Tooltip.alignStart (Css.px 150))
-          )
-        , ( "alignStart (Css.px 0)", Control.value (Tooltip.alignStart (Css.px 0)) )
+        [ ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
         , ( "alignMiddle", Control.value Tooltip.alignMiddle )
-        , ( "alignEnd (Css.px 0)", Control.value (Tooltip.alignEnd (Css.px 0)) )
-        , ( "alignEnd (Css.px 140)", Control.value (Tooltip.alignEnd (Css.px 140)) )
+        , ( "alignEnd", Control.map (Css.px >> Tooltip.alignEnd) controlNumber )
         ]
+
+
+controlNumber : Control Float
+controlNumber =
+    Control.map (String.toFloat >> Maybe.withDefault 0) (Control.string "0")
 
 
 controlWidth : Control (Tooltip.Attribute Never)
