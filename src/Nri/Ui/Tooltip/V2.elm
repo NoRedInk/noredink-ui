@@ -752,7 +752,7 @@ arrowInPosition position alignment =
                     Css.left (Css.pct 50)
 
                 End ->
-                    Css.right (Css.px -20)
+                    Css.right (Css.px 20)
 
         rightLeftAlignment =
             case alignment of
