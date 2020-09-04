@@ -489,7 +489,8 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
     in
     Nri.Ui.styled Root.div
         "Nri-Ui-Tooltip-V2"
-        [ Css.display Css.inlineBlock
+        [ Css.boxSizing Css.borderBox
+        , Css.display Css.inlineBlock
         , Css.textAlign Css.left
         , Css.position Css.relative
         ]
@@ -539,7 +540,6 @@ hoverBridge { isOpen, direction, alignment } =
             [ Css.boxSizing Css.borderBox
             , Css.padding (Css.px arrowSize)
             , Css.position Css.absolute
-            , Css.backgroundColor Colors.green
             , Css.batch <|
                 case direction of
                     OnTop ->
@@ -657,15 +657,26 @@ containerPositioningForArrowPosition { width, direction, alignment } =
                 ( Exactly w, Start ) ->
                     Css.left (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px (offCenterOffset / 2)))
 
-                ( Exactly w, End ) ->
-                    Css.right (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px offCenterOffset))
-
                 ( _, Middle ) ->
                     Css.left (Css.pct 50)
+
+                ( Exactly w, End ) ->
+                    Css.right (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px offCenterOffset))
 
                 _ ->
                     -- Not sure what to do here! 🤷🏻‍♀️
                     Css.left (Css.pct 50)
+
+        topToBottomPosition =
+            case alignment of
+                Start ->
+                    Css.top (Css.px offCenterOffset)
+
+                Middle ->
+                    Css.top (Css.pct 50)
+
+                End ->
+                    Css.bottom Css.zero
     in
     Css.batch <|
         case direction of
@@ -680,12 +691,12 @@ containerPositioningForArrowPosition { width, direction, alignment } =
                 ]
 
             OnLeft ->
-                [ Css.top (Css.pct 50)
+                [ topToBottomPosition
                 , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
                 ]
 
             OnRight ->
-                [ Css.top (Css.pct 50)
+                [ topToBottomPosition
                 , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
                 ]
 
@@ -757,6 +768,7 @@ buttonStyleOverrides =
     , Css.margin Css.zero
     , Css.padding Css.zero
     , Css.textAlign Css.left
+    , Css.boxSizing Css.borderBox
     ]
 
 
