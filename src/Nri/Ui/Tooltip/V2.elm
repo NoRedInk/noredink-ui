@@ -43,13 +43,6 @@ Example usage:
             , Tooltip.open True
             ]
 
-
-## Suggested Improvements for V2
-
-  - The toggle tip does not currently manage focus correctly for keyboard users - if a
-    user tries to click on a link in the toggle tip, the tip will disappear as focus moves
-    to the next item in the page. This should be improved in the next release.
-
 @docs view, toggleTip
 @docs Attribute
 @docs plaintext, html
