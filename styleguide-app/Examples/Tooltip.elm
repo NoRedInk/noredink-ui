@@ -223,8 +223,7 @@ controlWidth : Control (Tooltip.Attribute Never)
 controlWidth =
     Control.choice
         [ ( "exactWidth 320 (default)", Control.value (Tooltip.exactWidth 320) )
-        , ( "exactWidth 100", Control.value (Tooltip.exactWidth 100) )
-        , ( "exactWidth 400", Control.value (Tooltip.exactWidth 400) )
+        , ( "exactWidth", Control.map (round >> Tooltip.exactWidth) controlNumber )
         , ( "fitToContent", Control.value Tooltip.fitToContent )
         ]
 
@@ -234,7 +233,7 @@ controlPadding =
     Control.choice
         [ ( "normalPadding (default)", Control.value Tooltip.normalPadding )
         , ( "smallPadding", Control.value Tooltip.smallPadding )
-        , ( "customPadding 40", Control.value (Tooltip.customPadding 40) )
+        , ( "customPadding", Control.map Tooltip.customPadding controlNumber )
         ]
 
 
