@@ -37,7 +37,7 @@ example =
 
 type alias State =
     { openTooltip : Maybe TooltipType
-    , staticExampleSettings : Control StaticExampleSettings
+    , staticExampleSettings : Control ExampleSettings
     }
 
 
@@ -49,18 +49,14 @@ init =
 
 
 type TooltipType
-    = PrimaryLabelOnClick
-    | PrimaryLabelOnHover
+    = PrimaryLabel
     | AuxillaryDescription
-    | ToggleTipTop
-    | ToggleTipRight
-    | ToggleTipBottom
-    | ToggleTipLeft
+    | LearnMore
 
 
 type Msg
     = ToggleTooltip TooltipType Bool
-    | SetStaticExampleSettings (Control StaticExampleSettings)
+    | SetStaticExampleSettings (Control ExampleSettings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -79,89 +75,72 @@ update msg model =
 
 view : State -> List (Html Msg)
 view model =
-    [ Heading.h2 [] [ Html.text "Static Examples" ]
-    , viewStaticExamples model.staticExampleSettings
-    , Heading.h2 [] [ Html.text "Interactive Examples" ]
-    , Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
-    , Heading.h3 [] [ Html.text "primaryLabel" ]
-    , Text.smallBody
-        [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
-        , Html.br []
-        , Html.text "e.g. when the trigger content is an icon with no text."
+    [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
+    , Text.mediumBody
+        [ Html.text "Label the Tooltip as either being the "
+        , viewPrimaryLabelTooltip model.openTooltip
+        , Html.text " or the "
+        , viewAuxillaryDescriptionToolip model.openTooltip
+        , Html.text " for the trigger content."
+        , viewToggleTip model.openTooltip
         ]
-    , Tooltip.view
-        { triggerHtml = Html.text "Primary Label - OnClick Trigger"
-        , id = "primary label tooltip"
-        }
-        [ Tooltip.html [ Html.text "Tooltip ", Html.a [ href "/" ] [ Html.text "Links work!" ] ]
-        , Tooltip.primaryLabel
-        , Tooltip.onClick (ToggleTooltip PrimaryLabelOnClick)
-        , Tooltip.open (model.openTooltip == Just PrimaryLabelOnClick)
-        ]
-    , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-    , Tooltip.view
-        { triggerHtml = Html.text "Primary Label - OnHover Trigger"
-        , id = "primary label tooltip"
-        }
-        [ Tooltip.html [ Html.text "Tooltip ", Html.a [ href "/" ] [ Html.text "Links work!" ] ]
-        , Tooltip.primaryLabel
-        , Tooltip.onHover (ToggleTooltip PrimaryLabelOnHover)
-        , Tooltip.open (model.openTooltip == Just PrimaryLabelOnHover)
-        ]
-    , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-    , Heading.h3 [] [ Html.text "auxillaryDescription" ]
-    , Text.smallBody
-        [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
-        , Html.br []
-        , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
-        ]
-    , Tooltip.view
-        { triggerHtml = Html.text "Auxillary Description Trigger"
-        , id = "Auxillary description"
-        }
-        [ Tooltip.plaintext "Tooltip"
-        , Tooltip.onClick (ToggleTooltip AuxillaryDescription)
-        , Tooltip.auxillaryDescription
-        , Tooltip.open (model.openTooltip == Just AuxillaryDescription)
-        ]
-    , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-    , Heading.h3 [] [ Html.text "toggleTip" ]
-    , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
-    , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-        [ Tooltip.toggleTip
-            { label = "More info"
-            }
-            [ Tooltip.html
-                [ Html.text "Tooltip On Top! "
-                , Html.a [ href "/" ] [ Html.text "Links work!" ]
-                ]
-            , Tooltip.onHover (ToggleTooltip ToggleTipTop)
-            , Tooltip.open (model.openTooltip == Just ToggleTipTop)
-            ]
-        , Text.mediumBody
-            [ Html.text "This toggletip will open on top"
-            ]
-        ]
-    , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-        [ Tooltip.toggleTip
-            { label = "More info"
-            }
-            [ Tooltip.html
-                [ Html.text "Tooltip On Left! "
-                , Html.a [ href "/" ] [ Html.text "Links work!" ]
-                ]
-            , Tooltip.onLeft
-            , Tooltip.onHover (ToggleTooltip ToggleTipLeft)
-            , Tooltip.open (model.openTooltip == Just ToggleTipLeft)
-            ]
-        , Text.mediumBody
-            [ Html.text "This toggletip will open on the left"
-            ]
-        ]
+    , viewCustomizableExample model.staticExampleSettings
     ]
 
 
-type alias StaticExampleSettings =
+viewPrimaryLabelTooltip : Maybe TooltipType -> Html Msg
+viewPrimaryLabelTooltip openTooltip =
+    Tooltip.view
+        { id = "tooltip__primaryLabel"
+        , triggerHtml = Html.text "primaryLabel"
+        }
+        [ Tooltip.html
+            [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is an icon with no text."
+            ]
+        , Tooltip.auxillaryDescription
+        , Tooltip.onHover (ToggleTooltip PrimaryLabel)
+        , Tooltip.open (openTooltip == Just PrimaryLabel)
+        , Tooltip.onBottom
+        ]
+
+
+viewAuxillaryDescriptionToolip : Maybe TooltipType -> Html Msg
+viewAuxillaryDescriptionToolip openTooltip =
+    Tooltip.view
+        { id = "tooltip__auxillaryDescription"
+        , triggerHtml = Html.text "auxillaryDescription"
+        }
+        [ Tooltip.html
+            [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
+            ]
+        , Tooltip.auxillaryDescription
+        , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
+        , Tooltip.open (openTooltip == Just AuxillaryDescription)
+        , Tooltip.onBottom
+        ]
+
+
+viewToggleTip : Maybe TooltipType -> Html Msg
+viewToggleTip openTooltip =
+    Tooltip.toggleTip { label = "tooltip__learn-more" }
+        [ Tooltip.html
+            [ Html.a
+                [ href "https://inclusive-components.design/tooltips-toggletips" ]
+                [ Html.text "Learn more" ]
+            ]
+        , Tooltip.primaryLabel
+        , Tooltip.onHover (ToggleTooltip LearnMore)
+        , Tooltip.open (openTooltip == Just LearnMore)
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
+        ]
+
+
+type alias ExampleSettings =
     { content : Tooltip.Attribute Never
     , direction : Tooltip.Attribute Never
     , alignment : Tooltip.Attribute Never
@@ -170,9 +149,9 @@ type alias StaticExampleSettings =
     }
 
 
-initStaticExampleSettings : Control StaticExampleSettings
+initStaticExampleSettings : Control ExampleSettings
 initStaticExampleSettings =
-    Control.record StaticExampleSettings
+    Control.record ExampleSettings
         |> Control.field "content" controlContent
         |> Control.field "direction" controlDirection
         |> Control.field "alignment" controlAlignment
@@ -258,8 +237,8 @@ controlPadding =
         ]
 
 
-viewStaticExamples : Control StaticExampleSettings -> Html Msg
-viewStaticExamples controlSettings =
+viewCustomizableExample : Control ExampleSettings -> Html Msg
+viewCustomizableExample controlSettings =
     let
         settings =
             Control.currentValue controlSettings
