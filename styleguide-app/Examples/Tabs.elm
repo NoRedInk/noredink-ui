@@ -21,7 +21,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Tabs.V6 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
@@ -109,7 +109,7 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tabs.V6"
+    { name = "Nri.Ui.Tabs.V7"
     , categories = [ Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
@@ -150,7 +150,7 @@ allTabs : Bool -> List (Tab Id Msg)
 allTabs isTooltipOpen =
     [ { id = First
       , idString = "tab-0"
-      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V6"
+      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V7"
       , tabView = Tabs.viewTabDefault "Link example"
       , panelView = Html.text "First Panel"
       }

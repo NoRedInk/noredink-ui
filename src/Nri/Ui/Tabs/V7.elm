@@ -1,13 +1,10 @@
-module Nri.Ui.Tabs.V6 exposing
+module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
     , Tab, viewTabDefault
     )
 
-{-| Changes from V5:
-
-  - Uses TabsInternal under the hood
-  - Allows user to focus on the selected tabpanel
+{-| Changes from V6:
 
 @docs view
 @docs Alignment

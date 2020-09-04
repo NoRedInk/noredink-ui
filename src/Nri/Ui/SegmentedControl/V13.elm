@@ -1,14 +1,10 @@
-module Nri.Ui.SegmentedControl.V12 exposing
+module Nri.Ui.SegmentedControl.V13 exposing
     ( Option, view
     , Radio, viewRadioGroup
     , Positioning(..), Width(..)
     )
 
-{-| Changes from V11:
-
-  - allow HTML in labels
-  - [use idString instead of toString](https://github.com/NoRedInk/noredink-ui/issues/575)
-  - allow control to be centered
+{-| Changes from V12:
 
 @docs Option, view
 @docs Radio, viewRadioGroup
