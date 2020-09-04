@@ -67,7 +67,7 @@ Example usage:
 import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Css exposing (Color, Style)
+import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import EventExtras
 import Html.Styled as Root
@@ -138,9 +138,9 @@ html content =
 {-| Where should the arrow be positioned relative to the tooltip?
 -}
 type Alignment
-    = Start
+    = Start Px
     | Middle
-    | End
+    | End Px
 
 
 withAligment : Alignment -> Attribute msg
@@ -157,9 +157,9 @@ For onLeft & onRight tooltip, this means "top".
       \/
 
 -}
-alignStart : Attribute msg
-alignStart =
-    withAligment Start
+alignStart : Px -> Attribute msg
+alignStart position =
+    withAligment (Start position)
 
 
 {-| Put the arrow at the "middle" of the tooltip. This is the default behavior.
@@ -183,9 +183,9 @@ For onLeft & onRight tooltip, this means "bottom".
            \/
 
 -}
-alignEnd : Attribute msg
-alignEnd =
-    withAligment End
+alignEnd : Px -> Attribute msg
+alignEnd position =
+    withAligment (End position)
 
 
 {-| Where should this tooltip be positioned relative to the trigger?
@@ -591,7 +591,7 @@ viewOpenTooltip maybeTooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , containerPositioningForArrowPosition config
+            , positionTooltip config.direction config.alignment
             , Css.boxSizing Css.borderBox
             ]
         ]
@@ -649,34 +649,30 @@ offCenterOffset =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Tooltip msg -> Style
-containerPositioningForArrowPosition { width, direction, alignment } =
+positionTooltip : Direction -> Alignment -> Style
+positionTooltip direction alignment =
     let
         ltrPosition =
-            case ( width, alignment ) of
-                ( Exactly w, Start ) ->
-                    Css.left (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px (offCenterOffset / 2)))
+            case alignment of
+                Start customOffset ->
+                    Css.left customOffset
 
-                ( _, Middle ) ->
+                Middle ->
                     Css.left (Css.pct 50)
 
-                ( Exactly w, End ) ->
-                    Css.right (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px offCenterOffset))
-
-                _ ->
-                    -- Not sure what to do here! 🤷🏻‍♀️
-                    Css.left (Css.pct 50)
+                End customOffset ->
+                    Css.right customOffset
 
         topToBottomPosition =
             case alignment of
-                Start ->
-                    Css.top (Css.px offCenterOffset)
+                Start customOffset ->
+                    Css.top customOffset
 
                 Middle ->
                     Css.top (Css.pct 50)
 
-                End ->
-                    Css.bottom Css.zero
+                End customOffset ->
+                    Css.bottom customOffset
     in
     Css.batch <|
         case direction of
@@ -781,24 +777,24 @@ arrowInPosition position alignment =
     let
         topBottomAlignment =
             case alignment of
-                Start ->
+                Start _ ->
                     Css.left (Css.px offCenterOffset)
 
                 Middle ->
                     Css.left (Css.pct 50)
 
-                End ->
+                End _ ->
                     Css.right (Css.px offCenterOffset)
 
         rightLeftAlignment =
             case alignment of
-                Start ->
+                Start _ ->
                     Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
 
                 Middle ->
                     Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 50%)")
 
-                End ->
+                End _ ->
                     Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
     in
     case position of

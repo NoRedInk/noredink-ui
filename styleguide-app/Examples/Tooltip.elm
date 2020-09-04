@@ -229,9 +229,13 @@ controlDirection =
 controlAlignment : Control (Tooltip.Attribute Never)
 controlAlignment =
     Control.choice
-        [ ( "alignStart", Control.value Tooltip.alignStart )
+        [ ( "alignStart (Css.px 150)"
+          , Control.value (Tooltip.alignStart (Css.px 150))
+          )
+        , ( "alignStart (Css.px 0)", Control.value (Tooltip.alignStart (Css.px 0)) )
         , ( "alignMiddle", Control.value Tooltip.alignMiddle )
-        , ( "alignEnd", Control.value Tooltip.alignEnd )
+        , ( "alignEnd (Css.px 0)", Control.value (Tooltip.alignEnd (Css.px 0)) )
+        , ( "alignEnd (Css.px 140)", Control.value (Tooltip.alignEnd (Css.px 140)) )
         ]
 
 
