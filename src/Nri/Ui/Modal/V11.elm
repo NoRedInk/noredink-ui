@@ -322,6 +322,13 @@ warning =
         ]
 
 
+{-| Include the close button.
+-}
+closeButton : Attribute
+closeButton =
+    Attribute (\attrs -> { attrs | closeButton = True })
+
+
 {-| This is the default setting.
 -}
 showTitle : Attribute
@@ -394,6 +401,7 @@ type alias Attributes =
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     , focusTrap : Maybe FocusTrap
+    , closeButton : Bool
     }
 
 
@@ -405,6 +413,7 @@ defaultAttributes =
     , customStyles = []
     , customAttributes = []
     , focusTrap = Nothing
+    , closeButton = False
     }
 
 
@@ -519,6 +528,12 @@ view config attrsList model =
                         , titleColor = attrs.titleColor
                         , visibleTitle = attrs.visibleTitle
                         , customAttributes = attrs.customAttributes
+                        , closeButton =
+                            if attrs.closeButton then
+                                Just (config.wrapMsg CloseModal)
+
+                            else
+                                Nothing
                         , content = config.content
                         , footer = config.footer
                         }
@@ -570,6 +585,7 @@ viewModal :
     , titleColor : Color
     , visibleTitle : Bool
     , customAttributes : List (Html.Attribute Never)
+    , closeButton : Maybe msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -589,16 +605,34 @@ viewModal config =
             [ text config.title ]
         , div
             []
-            [ viewInnerContent config.content config.visibleTitle (not (List.isEmpty config.footer))
+            [ viewInnerContent config
             , viewFooter config.footer
             ]
         ]
 
 
 {-| -}
-viewInnerContent : List (Html msg) -> Bool -> Bool -> Html msg
-viewInnerContent children visibleTitle visibleFooter =
+viewInnerContent :
+    { config
+        | content : List (Html msg)
+        , visibleTitle : Bool
+        , closeButton : Maybe msg
+        , footer : List (Html msg)
+    }
+    -> Html msg
+viewInnerContent ({ visibleTitle } as config) =
     let
+        children =
+            case config.closeButton of
+                Just msg ->
+                    viewCloseButton msg :: config.content
+
+                Nothing ->
+                    config.content
+
+        visibleFooter =
+            not (List.isEmpty config.footer)
+
         titleHeight =
             if visibleTitle then
                 45
@@ -728,8 +762,8 @@ closeButtonId =
 
 
 {-| -}
-closeButton : msg -> Html msg
-closeButton closeModal =
+viewCloseButton : msg -> Html msg
+viewCloseButton closeModal =
     button
         (Widget.label "Close modal"
             :: onClick closeModal

@@ -156,6 +156,11 @@ example =
 
                         Just focusTrap_ ->
                             [ Modal.focusTrap focusTrap_ ]
+                    , if settings.showX then
+                        [ Modal.closeButton ]
+
+                      else
+                        []
                     , Control.currentValue state.attributes
                     ]
                 )
@@ -222,14 +227,8 @@ modalSettings settings =
     case ( settings.showX, settings.showContinue, settings.showSecondary ) of
         ( True, True, True ) ->
             { default
-                | content =
-                    [ Modal.closeButton CloseModal
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ continueButton
-                    , closeClickableText
-                    ]
+                | content = [ viewModalContent settings.content ]
+                , footer = [ continueButton, closeClickableText ]
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
@@ -244,13 +243,8 @@ modalSettings settings =
 
         ( True, False, True ) ->
             { default
-                | content =
-                    [ Modal.closeButton CloseModal
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ closeClickableText
-                    ]
+                | content = [ viewModalContent settings.content ]
+                , footer = [ closeClickableText ]
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
@@ -265,10 +259,7 @@ modalSettings settings =
 
         ( True, False, False ) ->
             { default
-                | content =
-                    [ Modal.closeButton CloseModal
-                    , viewModalContent settings.content
-                    ]
+                | content = [ viewModalContent settings.content ]
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
@@ -280,13 +271,8 @@ modalSettings settings =
 
         ( True, True, False ) ->
             { default
-                | content =
-                    [ Modal.closeButton CloseModal
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ continueButton
-                    ]
+                | content = [ viewModalContent settings.content ]
+                , footer = [ continueButton ]
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
