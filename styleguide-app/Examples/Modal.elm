@@ -233,6 +233,9 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
+                            --🐛 Currently, this is:
+                            -- 1. focuses the "Continue button" to start
+                            -- 2. tabbing to the X (this is wrong, because we are skipping the "close" clickabletext)
                             { firstId = Modal.closeButtonId
                             , lastId = closeClickableTextId
                             }
@@ -242,65 +245,107 @@ modalSettings settings =
         ( True, False, True ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    [ Modal.closeButton CloseModal []
                     , viewModalContent settings.content
                     ]
                 , footer =
-                    [ closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    [ closeClickableText []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.MultipleElements
+                            --✨ This works great!
+                            -- 1. focuses the X button
+                            -- 2. tabbing wraps
+                            { firstId = Modal.closeButtonId
+                            , lastId = closeClickableTextId
+                            }
+                        )
             }
 
         ( True, False, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
+                    [ Modal.closeButton CloseModal []
                     , viewModalContent settings.content
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.OneElement
+                            --⚪️ Not implemented
+                            { id = Modal.closeButtonId
+                            }
+                        )
             }
 
         ( True, True, False ) ->
             { default
                 | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
+                    [ Modal.closeButton CloseModal []
                     , viewModalContent settings.content
                     ]
                 , footer =
-                    [ continueButton <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
+                    [ continueButton []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.MultipleElements
+                            --✨ This works great!
+                            -- 1. focuses the Continue button
+                            -- 2. tabbing wraps
+                            { firstId = Modal.closeButtonId
+                            , lastId = continueButtonId
+                            }
+                        )
             }
 
         ( False, True, True ) ->
             { default
                 | content = [ viewModalContent settings.content ]
                 , footer =
-                    [ continueButton <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
-                    , closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus continueButtonId }
+                    [ continueButton []
+                    , closeClickableText []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.MultipleElements
+                            --🐛 Currently, this is:
+                            -- 1. focuses the "Continue button" to start
+                            -- 2. tabbing stays focused on the "Continue" button
+                            { firstId = continueButtonId
+                            , lastId = closeClickableTextId
+                            }
+                        )
             }
 
         ( False, False, True ) ->
             { default
                 | content = [ viewModalContent settings.content ]
                 , footer =
-                    [ closeClickableText <|
-                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
+                    [ closeClickableText []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.OneElement
+                            --⚪️ Not implemented
+                            { id = closeClickableTextId
+                            }
+                        )
             }
 
         ( False, True, False ) ->
             { default
                 | content = [ viewModalContent settings.content ]
                 , footer =
-                    [ continueButton <|
-                        FocusTrap.only { focusSelf = Focus continueButtonId }
+                    [ continueButton []
                     ]
+                , focusTrap =
+                    Just
+                        (FocusTrap.OneElement
+                            --⚪️ Not implemented
+                            { id = continueButtonId
+                            }
+                        )
             }
 
         ( False, False, False ) ->

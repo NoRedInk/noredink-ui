@@ -23,42 +23,55 @@ import Task
 
 type FocusTrap
     = MultipleElements { firstId : String, lastId : String }
+    | OneElement { id : String }
 
 
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
 toAttribute focus trap =
-    case trap of
-        MultipleElements { firstId, lastId } ->
-            Events.custom "keydown"
-                (Decode.andThen
-                    (\( elementId, keyCode, shiftKey ) ->
-                        if keyCode == 9 then
-                            if elementId == firstId && shiftKey then
-                                Decode.succeed
-                                    { message = focus lastId
-                                    , preventDefault = True
-                                    , stopPropagation = False
-                                    }
+    onKeyDown <|
+        \( elementId, keyCode, shiftKey ) ->
+            case trap of
+                OneElement { id } ->
+                    Decode.fail "Not implemented"
 
-                            else if elementId == lastId && not shiftKey then
-                                Decode.succeed
-                                    { message = focus firstId
-                                    , preventDefault = True
-                                    , stopPropagation = False
-                                    }
+                MultipleElements { firstId, lastId } ->
+                    if keyCode == 9 then
+                        if elementId == firstId && shiftKey then
+                            Decode.succeed
+                                { message = focus lastId
+                                , preventDefault = True
+                                , stopPropagation = False
+                                }
 
-                            else
-                                Decode.fail "No need to intercept the key press"
+                        else if elementId == lastId && not shiftKey then
+                            Decode.succeed
+                                { message = focus firstId
+
+                                -- Will this preventDefault break anything
+                                -- if the element is an input
+                                -- or dropdown (if the element has key-based
+                                -- behavior already)?
+                                , preventDefault = True
+                                , stopPropagation = False
+                                }
 
                         else
                             Decode.fail "No need to intercept the key press"
-                    )
-                    (Decode.map3 (\id keyCode shiftKey -> ( id, keyCode, shiftKey ))
-                        (Decode.at [ "target", "id" ] Decode.string)
-                        (Decode.field "keyCode" Decode.int)
-                        (Decode.field "shiftKey" Decode.bool)
-                    )
-                )
+
+                    else
+                        Decode.fail "No need to intercept the key press"
+
+
+onKeyDown do =
+    Events.custom "keydown"
+        (Decode.andThen do decodeKeydown)
+
+
+decodeKeydown =
+    Decode.map3 (\id keyCode shiftKey -> ( id, keyCode, shiftKey ))
+        (Decode.at [ "target", "id" ] Decode.string)
+        (Decode.field "keyCode" Decode.int)
+        (Decode.field "shiftKey" Decode.bool)
 
 
 {-| -}
