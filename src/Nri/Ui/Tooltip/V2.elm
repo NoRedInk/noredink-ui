@@ -591,12 +591,14 @@ viewOpenTooltip maybeTooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , containerPositioningForArrowPosition config.direction config.alignment
+            , containerPositioningForArrowPosition config
+            , Css.boxSizing Css.borderBox
             ]
         ]
         [ Html.div
             ([ Attributes.css
-                ([ Css.borderRadius (Css.px 8)
+                ([ Css.boxSizing Css.borderBox
+                 , Css.borderRadius (Css.px 8)
                  , case config.width of
                     Exactly width ->
                         Css.width (Css.px (toFloat width))
@@ -640,19 +642,40 @@ tooltipColor =
     Colors.navy
 
 
+offCenterOffset : Float
+offCenterOffset =
+    20
+
+
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Direction -> Alignment -> Style
-containerPositioningForArrowPosition arrowPosition alignment =
+containerPositioningForArrowPosition : Tooltip msg -> Style
+containerPositioningForArrowPosition { width, direction, alignment } =
+    let
+        ltrPosition =
+            case ( width, alignment ) of
+                ( Exactly w, Start ) ->
+                    Css.left (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px (offCenterOffset / 2)))
+
+                ( Exactly w, End ) ->
+                    Css.right (Css.calc (Css.px (toFloat w / 2)) Css.minus (Css.px offCenterOffset))
+
+                ( _, Middle ) ->
+                    Css.left (Css.pct 50)
+
+                _ ->
+                    -- Not sure what to do here! 🤷🏻‍♀️
+                    Css.left (Css.pct 50)
+    in
     Css.batch <|
-        case arrowPosition of
+        case direction of
             OnTop ->
-                [ Css.left (Css.pct 50)
+                [ ltrPosition
                 , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
                 ]
 
             OnBottom ->
-                [ Css.left (Css.pct 50)
+                [ ltrPosition
                 , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
                 ]
 
@@ -747,24 +770,24 @@ arrowInPosition position alignment =
         topBottomAlignment =
             case alignment of
                 Start ->
-                    Css.left (Css.px 20)
+                    Css.left (Css.px offCenterOffset)
 
                 Middle ->
                     Css.left (Css.pct 50)
 
                 End ->
-                    Css.right (Css.px 20)
+                    Css.right (Css.px offCenterOffset)
 
         rightLeftAlignment =
             case alignment of
                 Start ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 20px)")
+                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
 
                 Middle ->
                     Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 50%)")
 
                 End ->
-                    Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 20px)")
+                    Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
     in
     case position of
         OnTop ->
