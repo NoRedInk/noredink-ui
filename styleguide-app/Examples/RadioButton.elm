@@ -115,7 +115,7 @@ viewInvisibleLabel state =
             , selectedValue = state.selectedValue
             , onSelect = Select
             , noOpMsg = NoOp
-            , valueToString = identity
+            , valueToString = \_ -> "i-m-a-secret-but-not-to-screen-readers"
             }
         ]
 
