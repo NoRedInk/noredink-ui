@@ -164,24 +164,25 @@ allTabs isTooltipOpen =
       , idString = "tab-2"
       , spaHref = Nothing
       , tabView =
-            Tooltip.view
-                { id = "lightbulb-tooltip"
-                , triggerHtml =
-                    UiIcon.bulb
-                        |> Svg.withLabel "Lightbulb"
-                        |> Svg.withWidth (Css.px 40)
-                        |> Svg.withHeight (Css.px 40)
-                        |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                        |> Svg.toHtml
-                }
-                [ Tooltip.plaintext "The Electrifying Third Tab"
-                , Tooltip.onBottom
-                , Tooltip.onHover ToggleTooltip
-                , Tooltip.primaryLabel
-                , Tooltip.fitToContent
-                , Tooltip.smallPadding
-                , Tooltip.open isTooltipOpen
-                ]
+            --Tooltip.view
+            --    { id = "lightbulb-tooltip"
+            --    , triggerHtml =
+            UiIcon.bulb
+                |> Svg.withLabel "Lightbulb"
+                |> Svg.withWidth (Css.px 40)
+                |> Svg.withHeight (Css.px 40)
+                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+                |> Svg.toHtml
+
+      --}
+      --[ Tooltip.plaintext "The Electrifying Third Tab"
+      --, Tooltip.onBottom
+      --, Tooltip.onHover ToggleTooltip
+      --, Tooltip.primaryLabel
+      --, Tooltip.fitToContent
+      --, Tooltip.smallPadding
+      --, Tooltip.open isTooltipOpen
+      --]
       , panelView = Html.text "Third Panel"
       }
     , { id = Fourth

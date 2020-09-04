@@ -34,7 +34,10 @@ These tooltips follow the accessibility recommendations from: <https://inclusive
 Example usage:
 
         Tooltip.view
-            { triggerHtml = text "Click me to open the tooltip"
+            { trigger =
+                \attrs ->
+                    ClickableText.button "Click me to open the tooltip"
+                        [ ClickableText.custom attrs ]
             , id = "my-tooltip"
             }
             [ Tooltip.plaintext "Gradebook"
@@ -69,6 +72,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
 import Nri.Ui
+import Nri.Ui.ClickableSvg.V1 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg
@@ -403,11 +407,16 @@ open isOpen =
 
 {-| Here's what the fields in the configuration record do:
 
-  - `triggerHtml`: What element do you interact with to open the tooltip?
+  - `trigger`: What element do you interact with to open the tooltip?
   - `id`: A unique identifier used to associate the trigger with its content
 
 -}
-view : { triggerHtml : Html msg, id : String } -> List (Attribute msg) -> Html msg
+view :
+    { trigger : List (Html.Attribute msg) -> Html msg
+    , id : String -- Accessibility: Used to match tooltip to trigger
+    }
+    -> List (Attribute msg)
+    -> Html msg
 view config attributes =
     viewTooltip_ config (buildAttributes attributes)
 
@@ -421,20 +430,16 @@ toggleTip { label } attributes_ =
             String.Extra.dasherize label
     in
     view
-        { triggerHtml =
-            UiIcon.help
-                |> Svg.withWidth (Css.px 20)
-                |> Svg.withHeight (Css.px 20)
-                |> Svg.withColor Colors.azure
-                |> Svg.withLabel label
-                |> Svg.toHtml
-                |> List.singleton
-                |> Html.div
-                    [ Attributes.css
+        { trigger =
+            \events ->
+                ClickableSvg.button label
+                    UiIcon.help
+                    [ ClickableSvg.width (Css.px 20)
+                    , ClickableSvg.height (Css.px 20)
+                    , ClickableSvg.custom events
+                    , ClickableSvg.css
                         [ -- Take up enough room within the document flow
-                          Css.width (Css.px 20)
-                        , Css.height (Css.px 20)
-                        , Css.margin (Css.px 5)
+                          Css.margin (Css.px 5)
                         ]
                     ]
         , id = id
@@ -452,12 +457,12 @@ toggleTip { label } attributes_ =
 
 
 viewTooltip_ :
-    { triggerHtml : Html msg
+    { trigger : List (Html.Attribute msg) -> Html msg
     , id : String -- Accessibility: Used to match tooltip to trigger
     }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ { triggerHtml, id } tooltip_ =
+viewTooltip_ { trigger, id } tooltip_ =
     let
         ( containerEvents, buttonEvents ) =
             case tooltip_.trigger of
@@ -492,27 +497,27 @@ viewTooltip_ { triggerHtml, id } tooltip_ =
         , Css.position Css.relative
         ]
         containerEvents
-        [ Html.button
-            ([ if tooltip_.isOpen then
-                case tooltip_.purpose of
-                    PrimaryLabel ->
-                        Aria.labeledBy id
+        [ Html.div
+            []
+            [ trigger
+                ([ if tooltip_.isOpen then
+                    case tooltip_.purpose of
+                        PrimaryLabel ->
+                            Aria.labeledBy id
 
-                    AuxillaryDescription ->
-                        Aria.describedBy [ id ]
+                        AuxillaryDescription ->
+                            Aria.describedBy [ id ]
 
-               else
-                -- when our tooltips are closed, they're not rendered in the
-                -- DOM. This means that the ID references above would be
-                -- invalid and jumping to a reference would not work, so we
-                -- skip labels and descriptions if the tooltip is closed.
-                Attributes.property "data-closed-tooltip" Encode.null
-             , Attributes.css buttonStyleOverrides
-             ]
-                ++ buttonEvents
-                ++ tooltip_.triggerAttributes
-            )
-            [ triggerHtml
+                   else
+                    -- when our tooltips are closed, they're not rendered in the
+                    -- DOM. This means that the ID references above would be
+                    -- invalid and jumping to a reference would not work, so we
+                    -- skip labels and descriptions if the tooltip is closed.
+                    Attributes.property "data-closed-tooltip" Encode.null
+                 ]
+                    ++ buttonEvents
+                    ++ tooltip_.triggerAttributes
+                )
             , hoverBridge tooltip_
             ]
         , viewOverlay tooltip_
@@ -748,21 +753,6 @@ tooltipContainerStyles =
     [ Css.display Css.inlineBlock
     , Css.textAlign Css.left
     , Css.position Css.relative
-    ]
-
-
-buttonStyleOverrides : List Style
-buttonStyleOverrides =
-    [ Css.cursor Css.pointer
-    , Css.border Css.zero
-    , Css.backgroundColor Css.transparent
-    , Css.fontSize Css.inherit
-    , Css.fontFamily Css.inherit
-    , Css.color Css.inherit
-    , Css.margin Css.zero
-    , Css.padding Css.zero
-    , Css.textAlign Css.left
-    , Css.boxSizing Css.borderBox
     ]
 
 

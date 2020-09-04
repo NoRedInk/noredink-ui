@@ -14,6 +14,8 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
@@ -92,7 +94,11 @@ viewPrimaryLabelTooltip : Maybe TooltipType -> Html Msg
 viewPrimaryLabelTooltip openTooltip =
     Tooltip.view
         { id = "tooltip__primaryLabel"
-        , triggerHtml = Html.text "primaryLabel"
+        , trigger =
+            \eventHandlers ->
+                ClickableText.button "primaryLabel"
+                    [ ClickableText.custom eventHandlers
+                    ]
         }
         [ Tooltip.html
             [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
@@ -110,7 +116,11 @@ viewAuxillaryDescriptionToolip : Maybe TooltipType -> Html Msg
 viewAuxillaryDescriptionToolip openTooltip =
     Tooltip.view
         { id = "tooltip__auxillaryDescription"
-        , triggerHtml = Html.text "auxillaryDescription"
+        , trigger =
+            \eventHandlers ->
+                ClickableText.button "auxillaryDescription"
+                    [ ClickableText.custom eventHandlers
+                    ]
         }
         [ Tooltip.html
             [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
@@ -264,11 +274,12 @@ viewCustomizableExample controlSettings =
                 ]
             ]
             [ Tooltip.view
-                { triggerHtml =
-                    UiIcon.arrowTop
-                        |> Svg.withColor Colors.azure
-                        |> Svg.withWidth (Css.px 20)
-                        |> Svg.toHtml
+                { trigger =
+                    \eventHandlers ->
+                        ClickableSvg.button "Arrow Up"
+                            UiIcon.arrowTop
+                            [ ClickableSvg.custom eventHandlers
+                            ]
                 , id = "my-top-tooltip"
                 }
                 attributes
