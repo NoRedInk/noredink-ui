@@ -587,7 +587,12 @@ viewTooltip maybeTooltipId config =
 
 viewOpenTooltip : Maybe String -> Tooltip msg -> Html msg
 viewOpenTooltip maybeTooltipId config =
-    Html.div [ Attributes.css (containerPositioningForArrowPosition config.direction config.alignment) ]
+    Html.div
+        [ Attributes.css
+            [ Css.position Css.absolute
+            , containerPositioningForArrowPosition config.direction config.alignment
+            ]
+        ]
         [ Html.div
             ([ Attributes.css
                 ([ Css.borderRadius (Css.px 8)
@@ -636,32 +641,29 @@ tooltipColor =
 
 {-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
 -}
-containerPositioningForArrowPosition : Direction -> Alignment -> List Style
+containerPositioningForArrowPosition : Direction -> Alignment -> Style
 containerPositioningForArrowPosition arrowPosition alignment =
-    case arrowPosition of
-        OnTop ->
-            [ Css.left (Css.pct 50)
-            , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
-            , Css.position Css.absolute
-            ]
+    Css.batch <|
+        case arrowPosition of
+            OnTop ->
+                [ Css.left (Css.pct 50)
+                , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                ]
 
-        OnBottom ->
-            [ Css.left (Css.pct 50)
-            , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
-            , Css.position Css.absolute
-            ]
+            OnBottom ->
+                [ Css.left (Css.pct 50)
+                , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                ]
 
-        OnLeft ->
-            [ Css.top (Css.pct 50)
-            , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
-            , Css.position Css.absolute
-            ]
+            OnLeft ->
+                [ Css.top (Css.pct 50)
+                , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                ]
 
-        OnRight ->
-            [ Css.top (Css.pct 50)
-            , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
-            , Css.position Css.absolute
-            ]
+            OnRight ->
+                [ Css.top (Css.pct 50)
+                , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                ]
 
 
 pointerBox : Direction -> Alignment -> Html.Attribute msg
