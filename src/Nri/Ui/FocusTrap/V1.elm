@@ -28,13 +28,32 @@ type FocusTrap
 
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
 toAttribute focus trap =
-    onKeyDown <|
-        \( elementId, keyCode, shiftKey ) ->
+    onTab <|
+        \elementId shiftKey ->
             case trap of
                 OneElement { id } ->
-                    if keyCode == 9 then
+                    Decode.succeed
+                        { message = focus id
+                        , preventDefault = True
+                        , stopPropagation = False
+                        }
+
+                MultipleElements { firstId, lastId } ->
+                    if elementId == firstId && shiftKey then
                         Decode.succeed
-                            { message = focus id
+                            { message = focus lastId
+                            , preventDefault = True
+                            , stopPropagation = False
+                            }
+
+                    else if elementId == lastId && not shiftKey then
+                        Decode.succeed
+                            { message = focus firstId
+
+                            -- Will this preventDefault break anything
+                            -- if the element is an input
+                            -- or dropdown (if the element has key-based
+                            -- behavior already)?
                             , preventDefault = True
                             , stopPropagation = False
                             }
@@ -42,37 +61,19 @@ toAttribute focus trap =
                     else
                         Decode.fail "No need to intercept the key press"
 
-                MultipleElements { firstId, lastId } ->
-                    if keyCode == 9 then
-                        if elementId == firstId && shiftKey then
-                            Decode.succeed
-                                { message = focus lastId
-                                , preventDefault = True
-                                , stopPropagation = False
-                                }
 
-                        else if elementId == lastId && not shiftKey then
-                            Decode.succeed
-                                { message = focus firstId
-
-                                -- Will this preventDefault break anything
-                                -- if the element is an input
-                                -- or dropdown (if the element has key-based
-                                -- behavior already)?
-                                , preventDefault = True
-                                , stopPropagation = False
-                                }
-
-                        else
-                            Decode.fail "No need to intercept the key press"
-
-                    else
-                        Decode.fail "No need to intercept the key press"
-
-
-onKeyDown do =
+onTab do =
     Events.custom "keydown"
-        (Decode.andThen do decodeKeydown)
+        (Decode.andThen
+            (\( id, keyCode, shiftKey ) ->
+                if keyCode == 9 then
+                    do id shiftKey
+
+                else
+                    Decode.fail "No need to intercept the key press"
+            )
+            decodeKeydown
+        )
 
 
 decodeKeydown =
