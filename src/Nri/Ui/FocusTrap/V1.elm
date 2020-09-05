@@ -39,6 +39,8 @@ toAttribute focus trap =
                         }
 
                 MultipleElements { firstId, lastId } ->
+                    -- if the user tabs back while on the first id,
+                    -- we want to wrap around to the last id.
                     if elementId == firstId && shiftKey then
                         Decode.succeed
                             { message = focus lastId
@@ -47,6 +49,8 @@ toAttribute focus trap =
                             }
 
                     else if elementId == lastId && not shiftKey then
+                        -- if the user tabs forward while on the last id,
+                        -- we want to wrap around to the first id.
                         Decode.succeed
                             { message = focus firstId
 

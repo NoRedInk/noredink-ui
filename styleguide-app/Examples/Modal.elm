@@ -232,9 +232,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
-                            --🐛 Currently, this is:
-                            -- 1. focuses the "Continue button" to start
-                            -- 2. tabbing to the X (this is wrong, because we are skipping the "close" clickabletext)
                             { firstId = Modal.closeButtonId
                             , lastId = closeClickableTextId
                             }
@@ -248,9 +245,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
-                            --✨ This works great!
-                            -- 1. focuses the X button
-                            -- 2. tabbing wraps
                             { firstId = Modal.closeButtonId
                             , lastId = closeClickableTextId
                             }
@@ -263,7 +257,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
-                            --✨ works!
                             { id = Modal.closeButtonId
                             }
                         )
@@ -276,9 +269,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
-                            --✨ This works great!
-                            -- 1. focuses the Continue button
-                            -- 2. tabbing wraps
                             { firstId = Modal.closeButtonId
                             , lastId = continueButtonId
                             }
@@ -295,9 +285,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.MultipleElements
-                            --🐛 Currently, this is:
-                            -- 1. focuses the "Continue button" to start
-                            -- 2. tabbing stays focused on the "Continue" button
                             { firstId = continueButtonId
                             , lastId = closeClickableTextId
                             }
@@ -311,7 +298,6 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
-                            --✨ works!
                             { id = closeClickableTextId
                             }
                         )
@@ -325,11 +311,7 @@ modalSettings settings =
                     ]
                 , focusTrap =
                     Just
-                        (FocusTrap.OneElement
-                            --✨ works!
-                            { id = continueButtonId
-                            }
-                        )
+                        (FocusTrap.OneElement { id = continueButtonId })
             }
 
         ( False, False, False ) ->
@@ -360,7 +342,7 @@ continueButton =
 
 closeClickableTextId : String
 closeClickableTextId =
-    "continue-button-id"
+    "close-clickable-text-id"
 
 
 closeClickableText : Html Msg
