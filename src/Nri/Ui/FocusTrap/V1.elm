@@ -22,8 +22,7 @@ import Task
 
 
 type FocusTrap
-    = MultipleElements { firstId : String, lastId : String }
-    | OneElement { id : String }
+    = FocusTrap { firstId : String, lastId : String }
 
 
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
@@ -31,14 +30,7 @@ toAttribute focus trap =
     onTab <|
         \elementId shiftKey ->
             case trap of
-                OneElement { id } ->
-                    Decode.succeed
-                        { message = focus id
-                        , preventDefault = True
-                        , stopPropagation = False
-                        }
-
-                MultipleElements { firstId, lastId } ->
+                FocusTrap { firstId, lastId } ->
                     -- if the user tabs back while on the first id,
                     -- we want to wrap around to the last id.
                     if elementId == firstId && shiftKey then

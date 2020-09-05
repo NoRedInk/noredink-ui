@@ -138,24 +138,48 @@ example =
                     |> Html.fromUnstyled
                 ]
             , launchModalButton settings
-            , let
-                { title, wrapMsg, content, footer, focusTrap } =
-                    modalSettings settings
-              in
-              Modal.view
-                { title = title
-                , wrapMsg = wrapMsg
-                , content = content
-                , footer = footer
+            , Modal.view
+                { title = settings.title
+                , wrapMsg = ModalMsg
+                , content = [ viewModalContent settings.content ]
+                , footer =
+                    List.filterMap identity
+                        [ if settings.showContinue then
+                            Just continueButton
+
+                          else
+                            Nothing
+                        , if settings.showSecondary then
+                            Just closeClickableText
+
+                          else
+                            Nothing
+                        ]
                 , focus = Focus
                 }
                 (List.concatMap identity
-                    [ case focusTrap of
-                        Nothing ->
-                            []
+                    [ [ Modal.focusTrap <|
+                            FocusTrap.FocusTrap
+                                { firstId =
+                                    if settings.showX then
+                                        Modal.closeButtonId
 
-                        Just focusTrap_ ->
-                            [ Modal.focusTrap focusTrap_ ]
+                                    else if settings.showContinue then
+                                        continueButtonId
+
+                                    else
+                                        closeClickableTextId
+                                , lastId =
+                                    if settings.showSecondary then
+                                        closeClickableTextId
+
+                                    else if settings.showContinue then
+                                        continueButtonId
+
+                                    else
+                                        Modal.closeButtonId
+                                }
+                      ]
                     , if settings.showX then
                         [ Modal.closeButton ]
 
@@ -203,121 +227,6 @@ launchModalButton settings =
         , Button.custom [ Attributes.id launchId ]
         , Button.secondary
         ]
-
-
-modalSettings :
-    ViewSettings
-    ->
-        { title : String
-        , wrapMsg : Modal.Msg -> Msg
-        , content : List (Html Msg)
-        , footer : List (Html Msg)
-        , focusTrap : Maybe FocusTrap
-        }
-modalSettings settings =
-    let
-        default =
-            { title = settings.title
-            , wrapMsg = ModalMsg
-            , content = []
-            , footer = []
-            , focusTrap = Nothing
-            }
-    in
-    case ( settings.showX, settings.showContinue, settings.showSecondary ) of
-        ( True, True, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer = [ continueButton, closeClickableText ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.MultipleElements
-                            { firstId = Modal.closeButtonId
-                            , lastId = closeClickableTextId
-                            }
-                        )
-            }
-
-        ( True, False, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer = [ closeClickableText ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.MultipleElements
-                            { firstId = Modal.closeButtonId
-                            , lastId = closeClickableTextId
-                            }
-                        )
-            }
-
-        ( True, False, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.OneElement
-                            { id = Modal.closeButtonId
-                            }
-                        )
-            }
-
-        ( True, True, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer = [ continueButton ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.MultipleElements
-                            { firstId = Modal.closeButtonId
-                            , lastId = continueButtonId
-                            }
-                        )
-            }
-
-        ( False, True, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ continueButton
-                    , closeClickableText
-                    ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.MultipleElements
-                            { firstId = continueButtonId
-                            , lastId = closeClickableTextId
-                            }
-                        )
-            }
-
-        ( False, False, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer = [ closeClickableText ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.OneElement
-                            { id = closeClickableTextId
-                            }
-                        )
-            }
-
-        ( False, True, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ continueButton
-                    ]
-                , focusTrap =
-                    Just
-                        (FocusTrap.OneElement { id = continueButtonId })
-            }
-
-        ( False, False, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-            }
 
 
 viewModalContent : String -> Html msg
