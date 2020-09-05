@@ -32,7 +32,15 @@ toAttribute focus trap =
         \( elementId, keyCode, shiftKey ) ->
             case trap of
                 OneElement { id } ->
-                    Decode.fail "Not implemented"
+                    if keyCode == 9 then
+                        Decode.succeed
+                            { message = focus id
+                            , preventDefault = True
+                            , stopPropagation = False
+                            }
+
+                    else
+                        Decode.fail "No need to intercept the key press"
 
                 MultipleElements { firstId, lastId } ->
                     if keyCode == 9 then

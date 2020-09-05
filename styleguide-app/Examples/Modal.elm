@@ -263,7 +263,7 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
-                            --⚪️ Not implemented
+                            --✨ works!
                             { id = Modal.closeButtonId
                             }
                         )
@@ -311,7 +311,7 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
-                            --⚪️ Not implemented
+                            --✨ works!
                             { id = closeClickableTextId
                             }
                         )
@@ -326,7 +326,7 @@ modalSettings settings =
                 , focusTrap =
                     Just
                         (FocusTrap.OneElement
-                            --⚪️ Not implemented
+                            --✨ works!
                             { id = continueButtonId
                             }
                         )
