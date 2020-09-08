@@ -153,8 +153,7 @@ type alias Option value msg =
 
 {-|
 
-  - `onSelect` : the message to produce when an option is selected by the user
-  - `onFocus` : the message to focus an element by id string
+  - `focusAndSelect` : the message to produce when an option is selected by the user
   - `options`: the list of options available
   - `selected`: the value of the currently-selected option
   - `positioning`: how to position and size the segmented control
@@ -162,8 +161,7 @@ type alias Option value msg =
 
 -}
 view :
-    { onSelect : a -> msg
-    , onFocus : String -> msg
+    { focusAndSelect : { select : a, focus : Maybe String } -> msg
     , options : List (Option a msg)
     , selected : a
     , positioning : Positioning
@@ -185,8 +183,7 @@ view config =
 
         { tabList, tabPanels } =
             TabsInternal.views
-                { onSelect = config.onSelect
-                , onFocus = config.onFocus
+                { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
                 , tabs = List.map toInternalTab config.options
                 , tabListStyles =

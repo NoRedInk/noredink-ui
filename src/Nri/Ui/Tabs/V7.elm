@@ -112,8 +112,7 @@ view :
     { title : Maybe String
     , alignment : Alignment
     , customSpacing : Maybe Float
-    , onSelect : id -> msg
-    , onFocus : String -> msg
+    , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , selected : id
     , tabs : List (Tab id msg)
     }
@@ -133,8 +132,7 @@ view config =
 
         { tabList, tabPanels } =
             TabsInternal.views
-                { onSelect = config.onSelect
-                , onFocus = config.onFocus
+                { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
                 , tabs = List.map toInternalTab config.tabs
                 , tabStyles = tabStyles config.customSpacing

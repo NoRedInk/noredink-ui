@@ -49,8 +49,7 @@ example =
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
-                { onSelect = SelectPage
-                , onFocus = Focus
+                { focusAndSelect = FocusAndSelectPage
                 , selected = state.page
                 , positioning = options.positioning
                 , toUrl = Nothing
@@ -221,14 +220,13 @@ optionsControl =
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
             )
         |> Control.field "long content" (Control.bool False)
-        |> Control.field "tooltips" (Control.bool False)
+        |> Control.field "tooltips" (Control.bool True)
 
 
 {-| -}
 type Msg
-    = Focus String
+    = FocusAndSelectPage { select : Page, focus : Maybe String }
     | Focused (Result Dom.Error ())
-    | SelectPage Page
     | PageTooltip Page Bool
     | SelectRadio Int
     | ChangeOptions (Control Options)
@@ -238,18 +236,14 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        Focus id ->
-            ( state
-            , Task.attempt Focused (Dom.focus id)
+        FocusAndSelectPage { select, focus } ->
+            ( { state | page = select }
+            , Maybe.map (Task.attempt Focused << Dom.focus) focus
+                |> Maybe.withDefault Cmd.none
             )
 
         Focused _ ->
             ( state
-            , Cmd.none
-            )
-
-        SelectPage page ->
-            ( { state | page = page }
             , Cmd.none
             )
 

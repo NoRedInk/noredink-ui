@@ -81,8 +81,7 @@ type Id
 
 
 type Msg
-    = SelectTab Id
-    | Focus String
+    = FocusAndSelectTab { select : Id, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
     | ToggleTooltip Id Bool
@@ -91,11 +90,12 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        SelectTab id ->
-            ( { model | selected = id }, Cmd.none )
-
-        Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) )
+        FocusAndSelectTab { select, focus } ->
+            ( { model | selected = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
+            )
 
         Focused error ->
             ( model, Cmd.none )
@@ -146,8 +146,7 @@ example =
                 { title = settings.title
                 , alignment = settings.alignment
                 , customSpacing = settings.customSpacing
-                , onSelect = SelectTab
-                , onFocus = Focus
+                , focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 , tabs = allTabs model.openTooltip
                 }

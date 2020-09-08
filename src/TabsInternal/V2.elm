@@ -23,8 +23,7 @@ import Nri.Ui.Util exposing (dashify)
 
 {-| -}
 type alias Config id msg =
-    { onSelect : id -> msg
-    , onFocus : String -> msg
+    { focusAndSelect : { select : id, focus : Maybe String } -> msg
     , selected : id
     , tabs : List (Tab id msg)
     , tabListStyles : List Css.Style
@@ -85,15 +84,15 @@ viewTab_ config index tab =
 
                         else
                             AttributesExtra.none
-                      , Attributes.href href
-                      , EventExtras.onClickPreventDefaultForLinkWithHref (config.onSelect tab.id)
+                      , EventExtras.onClickPreventDefaultForLinkWithHref
+                            (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
                     )
 
                 Nothing ->
                     -- This is for a non-SPA view
                     ( Html.button
-                    , [ Events.onClick (config.onSelect tab.id)
+                    , [ Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
                     )
 
@@ -107,7 +106,6 @@ viewTab_ config index tab =
                        , Widget.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
-                       , Events.onFocus (config.onSelect tab.id)
                        , Events.on "keyup" <|
                             Json.Decode.andThen (keyEvents config tab) Events.keyCode
                        ]
@@ -132,7 +130,7 @@ viewTab_ config index tab =
 
 
 keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg
-keyEvents { onFocus, tabs } thisTab keyCode =
+keyEvents { focusAndSelect, tabs } thisTab keyCode =
     let
         findAdjacentTab tab acc =
             case acc of
@@ -140,7 +138,7 @@ keyEvents { onFocus, tabs } thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just (tabToId tab.idString) )
+                    ( True, Just { select = tab.id, focus = Just (tabToId tab.idString) } )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
@@ -158,7 +156,7 @@ keyEvents { onFocus, tabs } thisTab keyCode =
             -- Right
             case nextTab of
                 Just next ->
-                    Json.Decode.succeed (onFocus next)
+                    Json.Decode.succeed (focusAndSelect next)
 
                 Nothing ->
                     Json.Decode.fail "No next tab"
@@ -167,7 +165,7 @@ keyEvents { onFocus, tabs } thisTab keyCode =
             -- Left
             case previousTab of
                 Just previous ->
-                    Json.Decode.succeed (onFocus previous)
+                    Json.Decode.succeed (focusAndSelect previous)
 
                 Nothing ->
                     Json.Decode.fail "No previous tab"
