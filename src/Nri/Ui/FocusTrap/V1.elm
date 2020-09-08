@@ -32,36 +32,34 @@ type FocusTrap
 {-| Attach this attribute to add a focus trap to an HTML element.
 -}
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
-toAttribute focus trap =
+toAttribute focus (FocusTrap { firstId, lastId }) =
     onTab <|
         \elementId shiftKey ->
-            case trap of
-                FocusTrap { firstId, lastId } ->
-                    -- if the user tabs back while on the first id,
-                    -- we want to wrap around to the last id.
-                    if elementId == firstId && shiftKey then
-                        Decode.succeed
-                            { message = focus lastId
-                            , preventDefault = True
-                            , stopPropagation = False
-                            }
+            -- if the user tabs back while on the first id,
+            -- we want to wrap around to the last id.
+            if elementId == firstId && shiftKey then
+                Decode.succeed
+                    { message = focus lastId
+                    , preventDefault = True
+                    , stopPropagation = False
+                    }
 
-                    else if elementId == lastId && not shiftKey then
-                        -- if the user tabs forward while on the last id,
-                        -- we want to wrap around to the first id.
-                        Decode.succeed
-                            { message = focus firstId
+            else if elementId == lastId && not shiftKey then
+                -- if the user tabs forward while on the last id,
+                -- we want to wrap around to the first id.
+                Decode.succeed
+                    { message = focus firstId
 
-                            -- Will this preventDefault break anything
-                            -- if the element is an input
-                            -- or dropdown (if the element has key-based
-                            -- behavior already)?
-                            , preventDefault = True
-                            , stopPropagation = False
-                            }
+                    -- Will this preventDefault break anything
+                    -- if the element is an input
+                    -- or dropdown (if the element has key-based
+                    -- behavior already)?
+                    , preventDefault = True
+                    , stopPropagation = False
+                    }
 
-                    else
-                        Decode.fail "No need to intercept the key press"
+            else
+                Decode.fail "No need to intercept the key press"
 
 
 onTab do =
