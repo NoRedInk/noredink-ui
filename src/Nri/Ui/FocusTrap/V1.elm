@@ -1,11 +1,8 @@
-module Nri.Ui.FocusTrap.V1 exposing
-    ( FocusTrap
-    , toAttribute
-    )
+module Nri.Ui.FocusTrap.V1 exposing (FocusTrap, toAttribute)
 
 {-| Create a focus trap.
 
-@docs FocusTrap, toAttributer
+@docs FocusTrap, toAttribute
 
 -}
 
