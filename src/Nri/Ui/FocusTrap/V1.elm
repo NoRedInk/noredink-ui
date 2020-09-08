@@ -19,10 +19,18 @@ import Json.Decode as Decode exposing (Decoder)
 import Task
 
 
+{-| Defines how focus will wrap in reponse to tab keypresses in a part of the UI.
+
+The ids referenced here are expected to correspond to elements in the container
+we are applying the focus trap on.
+
+-}
 type FocusTrap
     = FocusTrap { firstId : String, lastId : String }
 
 
+{-| Attach this attribute to add a focus trap to an HTML element.
+-}
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
 toAttribute focus trap =
     onTab <|
