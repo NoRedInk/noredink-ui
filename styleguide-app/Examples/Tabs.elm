@@ -30,7 +30,7 @@ import Task
 type alias State =
     { selected : Id
     , settings : Control Settings
-    , isTooltipOpen : Bool
+    , openTooltip : Maybe Id
     }
 
 
@@ -38,7 +38,7 @@ init : State
 init =
     { selected = First
     , settings = initSettings
-    , isTooltipOpen = False
+    , openTooltip = Nothing
     }
 
 
@@ -85,7 +85,7 @@ type Msg
     | Focus String
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
-    | ToggleTooltip Bool
+    | ToggleTooltip Id Bool
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -103,8 +103,17 @@ update msg model =
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
 
-        ToggleTooltip isTooltipOpen ->
-            ( { model | isTooltipOpen = isTooltipOpen }, Cmd.none )
+        ToggleTooltip id openTooltip ->
+            ( { model
+                | openTooltip =
+                    if openTooltip then
+                        Just id
+
+                    else
+                        Nothing
+              }
+            , Cmd.none
+            )
 
 
 example : Example State Msg
@@ -140,14 +149,14 @@ example =
                 , onSelect = SelectTab
                 , onFocus = Focus
                 , selected = model.selected
-                , tabs = allTabs model.isTooltipOpen
+                , tabs = allTabs model.openTooltip
                 }
             ]
     }
 
 
-allTabs : Bool -> List (Tab Id Msg)
-allTabs isTooltipOpen =
+allTabs : Maybe Id -> List (Tab Id Msg)
+allTabs openTooltipId =
     let
         bulbIcon =
             UiIcon.bulb
@@ -158,7 +167,17 @@ allTabs isTooltipOpen =
     in
     [ Tabs.build { id = First, idString = "tab-0" }
         [ Tabs.spaHref "/#/doodad/Nri.Ui.Tabs.V7"
-        , Tabs.tabString "Link example"
+        , Tabs.tabString "1"
+        , Tabs.withTooltip
+            [ Tooltip.plaintext "Link Example"
+            , Tooltip.onBottom
+            , Tooltip.onHover (ToggleTooltip First)
+            , Tooltip.alignStart (Css.px 75)
+            , Tooltip.primaryLabel
+            , Tooltip.fitToContent
+            , Tooltip.smallPadding
+            , Tooltip.open (openTooltipId == Just First)
+            ]
         , Tabs.panelHtml (Html.text "First Panel")
         ]
     , Tabs.build { id = Second, idString = "tab-1" }
@@ -170,11 +189,11 @@ allTabs isTooltipOpen =
         , Tabs.withTooltip
             [ Tooltip.plaintext "The Electrifying Third Tab"
             , Tooltip.onBottom
-            , Tooltip.onHover ToggleTooltip
+            , Tooltip.onHover (ToggleTooltip Third)
             , Tooltip.primaryLabel
             , Tooltip.fitToContent
             , Tooltip.smallPadding
-            , Tooltip.open isTooltipOpen
+            , Tooltip.open (openTooltipId == Just Third)
             ]
         , Tabs.panelHtml (Html.text "Third Panel")
         ]
