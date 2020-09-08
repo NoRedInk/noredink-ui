@@ -1,5 +1,5 @@
 module Nri.Ui.FocusTrap.V1 exposing
-    ( FocusTrap(..)
+    ( FocusTrap
     , toAttribute
     )
 
@@ -25,14 +25,16 @@ The ids referenced here are expected to correspond to elements in the container
 we are applying the focus trap on.
 
 -}
-type FocusTrap
-    = FocusTrap { firstId : String, lastId : String }
+type alias FocusTrap =
+    { firstId : String
+    , lastId : String
+    }
 
 
 {-| Attach this attribute to add a focus trap to an HTML element.
 -}
 toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
-toAttribute focus (FocusTrap { firstId, lastId }) =
+toAttribute focus { firstId, lastId } =
     onTab <|
         \elementId shiftKey ->
             -- if the user tabs back while on the first id,

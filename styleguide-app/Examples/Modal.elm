@@ -20,7 +20,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap(..))
+import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V4 as Text
 import Task
@@ -159,26 +159,25 @@ example =
                 }
                 (List.concatMap identity
                     [ [ Modal.focusTrap <|
-                            FocusTrap.FocusTrap
-                                { firstId =
-                                    if settings.showX then
-                                        Modal.closeButtonId
+                            { firstId =
+                                if settings.showX then
+                                    Modal.closeButtonId
 
-                                    else if settings.showContinue then
-                                        continueButtonId
+                                else if settings.showContinue then
+                                    continueButtonId
 
-                                    else
-                                        closeClickableTextId
-                                , lastId =
-                                    if settings.showSecondary then
-                                        closeClickableTextId
+                                else
+                                    closeClickableTextId
+                            , lastId =
+                                if settings.showSecondary then
+                                    closeClickableTextId
 
-                                    else if settings.showContinue then
-                                        continueButtonId
+                                else if settings.showContinue then
+                                    continueButtonId
 
-                                    else
-                                        Modal.closeButtonId
-                                }
+                                else
+                                    Modal.closeButtonId
+                            }
                       ]
                     , if settings.showX then
                         [ Modal.closeButton ]
