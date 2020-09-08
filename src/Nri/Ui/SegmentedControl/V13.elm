@@ -6,6 +6,8 @@ module Nri.Ui.SegmentedControl.V13 exposing
 
 {-| Changes from V12:
 
+  - Adds tooltip support
+
 @docs Option, view
 @docs Radio, viewRadioGroup
 @docs Positioning, Width
@@ -29,6 +31,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 import TabsInternal.V2 as TabsInternal
 
@@ -77,6 +80,9 @@ viewRadioGroup :
     -> Html msg
 viewRadioGroup config =
     let
+        numOptions =
+            List.length config.options
+
         viewRadio index option =
             let
                 isSelected =
@@ -89,7 +95,7 @@ viewRadioGroup config =
                     -- is not
                     (Css.pseudoClass "focus-within"
                         [ Css.property "outline-style" "auto" ]
-                        :: styles config.positioning index isSelected
+                        :: styles config.positioning numOptions index isSelected
                     )
                 ]
                 [ radio name option.idString isSelected <|
@@ -138,6 +144,7 @@ type alias Option value msg =
     , idString : String
     , label : Html msg
     , attributes : List (Attribute msg)
+    , tabTooltip : List (Tooltip.Attribute msg)
     , icon : Maybe Svg
     , content : Html msg
     }
@@ -169,7 +176,7 @@ view config =
             { id = option.value
             , idString = option.idString
             , tabAttributes = option.attributes
-            , tabTooltip = []
+            , tabTooltip = option.tabTooltip
             , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
@@ -192,7 +199,7 @@ view config =
                         Center ->
                             justifyContent center
                     ]
-                , tabStyles = styles config.positioning
+                , tabStyles = styles config.positioning (List.length config.options)
                 }
     in
     div []
@@ -220,9 +227,9 @@ viewIcon icon =
                 |> Svg.toHtml
 
 
-styles : Positioning -> Int -> Bool -> List Style
-styles positioning index isSelected =
-    [ sharedSegmentStyles
+styles : Positioning -> Int -> Int -> Bool -> List Style
+styles positioning numEntries index isSelected =
+    [ sharedSegmentStyles numEntries index
     , if isSelected then
         focusedSegmentStyles
 
@@ -240,8 +247,8 @@ styles positioning index isSelected =
     ]
 
 
-sharedSegmentStyles : Style
-sharedSegmentStyles =
+sharedSegmentStyles : Int -> Int -> Style
+sharedSegmentStyles numEntries index =
     [ padding2 (px 6) (px 20)
     , height (px 45)
     , Fonts.baseFont
@@ -249,17 +256,7 @@ sharedSegmentStyles =
     , fontWeight bold
     , lineHeight (px 30)
     , margin zero
-    , firstOfType
-        [ borderTopLeftRadius (px 8)
-        , borderBottomLeftRadius (px 8)
-        , borderLeft3 (px 1) solid Colors.azure
-        ]
-    , lastOfType
-        [ borderTopRightRadius (px 8)
-        , borderBottomRightRadius (px 8)
-        ]
     , border3 (px 1) solid Colors.azure
-    , borderLeft (px 0)
     , boxSizing borderBox
     , cursor pointer
     , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
@@ -267,6 +264,20 @@ sharedSegmentStyles =
     , hover [ textDecoration none ]
     , focus [ textDecoration none ]
     ]
+        ++ (if index == 0 then
+                [ borderTopLeftRadius (px 8)
+                , borderBottomLeftRadius (px 8)
+                ]
+
+            else if index == numEntries - 1 then
+                [ borderTopRightRadius (px 8)
+                , borderBottomRightRadius (px 8)
+                , borderLeft (px 0)
+                ]
+
+            else
+                [ borderLeft (px 0) ]
+           )
         |> Css.batch
 
 

@@ -23,6 +23,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V13 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
 import Task
@@ -53,7 +54,7 @@ example =
                 , selected = state.page
                 , positioning = options.positioning
                 , toUrl = Nothing
-                , options = List.take options.count (buildOptions options)
+                , options = List.take options.count (buildOptions options state.pageTooltip)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewRadioGroup" ] ]
@@ -94,8 +95,8 @@ type Page
     | Activity
 
 
-buildOptions : { options | icon : Bool, longContent : Bool } -> List (SegmentedControl.Option Page Msg)
-buildOptions { icon, longContent } =
+buildOptions : { options | icon : Bool, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
+buildOptions { icon, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
             { icon =
@@ -108,6 +109,18 @@ buildOptions { icon, longContent } =
             , value = value
             , idString = toLower (Debug.toString value)
             , attributes = []
+            , tabTooltip =
+                if tooltips then
+                    [ Tooltip.plaintext (Debug.toString value)
+                    , Tooltip.smallPadding
+                    , Tooltip.onBottom
+                    , Tooltip.onHover (PageTooltip value)
+                    , Tooltip.fitToContent
+                    , Tooltip.open (openTooltip == Just value)
+                    ]
+
+                else
+                    []
             , content =
                 if longContent then
                     Html.div
@@ -170,6 +183,7 @@ buildRadioOptions keepIcon =
 {-| -}
 type alias State =
     { page : Page
+    , pageTooltip : Maybe Page
     , optionallySelected : Maybe Int
     , optionsControl : Control Options
     }
@@ -179,6 +193,7 @@ type alias State =
 init : State
 init =
     { page = Flag
+    , pageTooltip = Nothing
     , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
@@ -189,6 +204,7 @@ type alias Options =
     , icon : Bool
     , count : Int
     , longContent : Bool
+    , tooltips : Bool
     }
 
 
@@ -208,6 +224,7 @@ optionsControl =
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
             )
         |> Control.field "long content" (Control.bool False)
+        |> Control.field "tooltips" (Control.bool False)
 
 
 {-| -}
@@ -215,6 +232,7 @@ type Msg
     = Focus String
     | Focused (Result Dom.Error ())
     | SelectPage Page
+    | PageTooltip Page Bool
     | SelectRadio Int
     | ChangeOptions (Control Options)
 
@@ -235,6 +253,18 @@ update msg state =
 
         SelectPage page ->
             ( { state | page = page }
+            , Cmd.none
+            )
+
+        PageTooltip page isOpen ->
+            ( { state
+                | pageTooltip =
+                    if isOpen then
+                        Just page
+
+                    else
+                        Nothing
+              }
             , Cmd.none
             )
 
