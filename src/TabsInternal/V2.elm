@@ -28,7 +28,7 @@ type alias Config id msg =
     , selected : id
     , tabs : List (Tab id msg)
     , tabListStyles : List Css.Style
-    , tabStyles : Bool -> List Css.Style
+    , tabStyles : Int -> Bool -> List Css.Style
     }
 
 
@@ -58,11 +58,11 @@ viewTabs config =
         [ Role.tabList
         , Attributes.css config.tabListStyles
         ]
-        (List.map (viewTab_ config) config.tabs)
+        (List.indexedMap (viewTab_ config) config.tabs)
 
 
-viewTab_ : Config id msg -> Tab id msg -> Html msg
-viewTab_ config tab =
+viewTab_ : Config id msg -> Int -> Tab id msg -> Html msg
+viewTab_ config index tab =
     let
         isSelected =
             config.selected == tab.id
@@ -99,7 +99,7 @@ viewTab_ config tab =
 
         buttonOrLink tooltipAttributes =
             Html.styled tag
-                (config.tabStyles isSelected)
+                (config.tabStyles index isSelected)
                 (tooltipAttributes
                     ++ tagSpecificAttributes
                     ++ tab.tabAttributes
@@ -121,9 +121,7 @@ viewTab_ config tab =
         tooltipAttributes ->
             Tooltip.view
                 { id = "tab-tooltip__" ++ tabToId tab.idString
-                , trigger =
-                    \eventHandlers ->
-                        buttonOrLink eventHandlers
+                , trigger = \eventHandlers -> buttonOrLink eventHandlers
                 }
                 tooltipAttributes
 

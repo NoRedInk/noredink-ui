@@ -77,7 +77,7 @@ viewRadioGroup :
     -> Html msg
 viewRadioGroup config =
     let
-        viewRadio option =
+        viewRadio index option =
             let
                 isSelected =
                     Just option.value == config.selected
@@ -89,7 +89,7 @@ viewRadioGroup config =
                     -- is not
                     (Css.pseudoClass "focus-within"
                         [ Css.property "outline-style" "auto" ]
-                        :: styles config.positioning isSelected
+                        :: styles config.positioning index isSelected
                     )
                 ]
                 [ radio name option.idString isSelected <|
@@ -128,7 +128,7 @@ viewRadioGroup config =
             ]
         ]
         (p (Attributes.id legendId :: Style.invisible) [ text config.legend ]
-            :: List.map viewRadio config.options
+            :: List.indexedMap viewRadio config.options
         )
 
 
@@ -220,8 +220,8 @@ viewIcon icon =
                 |> Svg.toHtml
 
 
-styles : Positioning -> Bool -> List Style
-styles positioning isSelected =
+styles : Positioning -> Int -> Bool -> List Style
+styles positioning index isSelected =
     [ sharedSegmentStyles
     , if isSelected then
         focusedSegmentStyles

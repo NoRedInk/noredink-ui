@@ -213,8 +213,8 @@ stylesTabsAligned alignment =
            ]
 
 
-tabStyles : Maybe Float -> Bool -> List Style
-tabStyles customSpacing isSelected =
+tabStyles : Maybe Float -> Int -> Bool -> List Style
+tabStyles customSpacing index isSelected =
     let
         stylesDynamic =
             if isSelected then
@@ -242,6 +242,7 @@ tabStyles customSpacing isSelected =
             , Css.fontSize Css.inherit
             , Css.cursor Css.pointer
             , Css.border zero
+            , Css.height (Css.pct 100)
             ]
 
         stylesTab =
@@ -251,11 +252,9 @@ tabStyles customSpacing isSelected =
             , Css.border3 (Css.px 1) Css.solid Colors.navy
             , Css.marginTop Css.zero
             , Css.marginRight Css.zero
-            , Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
             , Css.padding2 (Css.px 1) (Css.px 6)
             , Css.marginBottom (Css.px -1)
             , Css.cursor Css.pointer
-            , Css.firstChild [ Css.marginLeft Css.zero ]
             , property "transition" "background-color 0.2s"
             , property "transition" "border-color 0.2s"
             , hover
@@ -265,5 +264,12 @@ tabStyles customSpacing isSelected =
                 , borderLeftColor Colors.azure
                 ]
             ]
+
+        leftIndex =
+            if index == 0 then
+                Css.marginLeft Css.zero
+
+            else
+                Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
     in
-    baseStyles ++ stylesTab ++ stylesDynamic
+    leftIndex :: baseStyles ++ stylesTab ++ stylesDynamic

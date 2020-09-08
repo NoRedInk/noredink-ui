@@ -152,7 +152,7 @@ allTabs isTooltipOpen =
         bulbIcon =
             UiIcon.bulb
                 |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 40)
+                |> Svg.withHeight (Css.px 45)
                 |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
                 |> Svg.toHtml
     in
