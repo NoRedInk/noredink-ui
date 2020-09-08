@@ -155,31 +155,30 @@ example =
                           else
                             Nothing
                         ]
-                , focus = Focus
+                , focusTrap =
+                    { focus = Focus
+                    , firstId =
+                        if settings.showX then
+                            Modal.closeButtonId
+
+                        else if settings.showContinue then
+                            continueButtonId
+
+                        else
+                            closeClickableTextId
+                    , lastId =
+                        if settings.showSecondary then
+                            closeClickableTextId
+
+                        else if settings.showContinue then
+                            continueButtonId
+
+                        else
+                            Modal.closeButtonId
+                    }
                 }
-                (List.concatMap identity
-                    [ [ Modal.focusTrap <|
-                            { firstId =
-                                if settings.showX then
-                                    Modal.closeButtonId
-
-                                else if settings.showContinue then
-                                    continueButtonId
-
-                                else
-                                    closeClickableTextId
-                            , lastId =
-                                if settings.showSecondary then
-                                    closeClickableTextId
-
-                                else if settings.showContinue then
-                                    continueButtonId
-
-                                else
-                                    Modal.closeButtonId
-                            }
-                      ]
-                    , if settings.showX then
+                (List.concat
+                    [ if settings.showX then
                         [ Modal.closeButton ]
 
                       else

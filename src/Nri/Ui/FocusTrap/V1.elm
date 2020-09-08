@@ -25,16 +25,17 @@ The ids referenced here are expected to correspond to elements in the container
 we are applying the focus trap on.
 
 -}
-type alias FocusTrap =
+type alias FocusTrap msg =
     { firstId : String
     , lastId : String
+    , focus : String -> msg
     }
 
 
 {-| Attach this attribute to add a focus trap to an HTML element.
 -}
-toAttribute : (String -> msg) -> FocusTrap -> Html.Attribute msg
-toAttribute focus { firstId, lastId } =
+toAttribute : FocusTrap msg -> Html.Attribute msg
+toAttribute { firstId, lastId, focus } =
     onTab <|
         \elementId shiftKey ->
             -- if the user tabs back while on the first id,

@@ -5,7 +5,6 @@ module Nri.Ui.Modal.V11 exposing
     , Attribute
     , info, warning
     , showTitle, hideTitle
-    , focusTrap
     , custom, css
     , isOpen
     )
@@ -107,7 +106,6 @@ view model =
         , Modal.view
             { title = "First kind of modal"
             , wrapMsg = ModalMsg
-            , focus = Focus
             , content = [ text "Modal Content" ]
             , footer =
                 [ button
@@ -116,17 +114,16 @@ view model =
                     ]
                     [ text "Close" ]
                 ]
+            , focusTrap =
+                { focus = Focus
+                , firstId = Modal.closeButtonId
+                , lastId = "last-element-id"
+                }
             }
             [ Modal.hideTitle
             , Modal.css [ padding (px 10) ]
             , Modal.custom [ id "first-modal" ]
             , Modal.closeButton
-            , Modal.focusTrap
-                (FocusTrap.FocusTrap
-                    { firstId = Modal.closeButtonId
-                    , lastId = "last-element-id"
-                    }
-                )
             ]
             model
         ]
@@ -142,7 +139,6 @@ view model =
 @docs Attribute
 @docs info, warning
 @docs showTitle, hideTitle
-@docs focusTrap
 @docs custom, css
 
 
@@ -298,11 +294,6 @@ showTitle =
     Attribute (\attrs -> { attrs | visibleTitle = True })
 
 
-focusTrap : FocusTrap -> Attribute
-focusTrap trap =
-    Attribute (\attrs -> { attrs | focusTrap = Just trap })
-
-
 {-| -}
 hideTitle : Attribute
 hideTitle =
@@ -362,7 +353,6 @@ type alias Attributes =
     , visibleTitle : Bool
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
-    , focusTrap : Maybe FocusTrap
     , closeButton : Bool
     }
 
@@ -374,7 +364,6 @@ defaultAttributes =
     , visibleTitle = True
     , customStyles = []
     , customAttributes = []
-    , focusTrap = Nothing
     , closeButton = False
     }
 
@@ -458,7 +447,7 @@ titleStyles color visibleTitle =
 view :
     { title : String
     , wrapMsg : Msg -> msg
-    , focus : String -> msg
+    , focusTrap : FocusTrap msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -505,12 +494,7 @@ view config attrsList model =
                 |> List.singleton
                 |> Root.div
                     (List.concat
-                        [ case attrs.focusTrap of
-                            Nothing ->
-                                []
-
-                            Just trap_ ->
-                                [ FocusTrap.toAttribute config.focus trap_ ]
+                        [ [ FocusTrap.toAttribute config.focusTrap ]
                         , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
                         ]
                     )
