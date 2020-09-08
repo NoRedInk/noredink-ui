@@ -11,6 +11,7 @@ module Nri.Ui.Tabs.V7 exposing
 
   - Changes Tab construction to follow attributes-based approach
   - Adds tooltip support
+  - combine onFocus and onSelect into focusAndSelect msg handler (for tooltips)
 
 @docs view
 @docs Alignment
@@ -34,34 +35,24 @@ import TabsInternal.V2 as TabsInternal
 
 {-| -}
 type Tab id msg
-    = Tab (TabInternal id msg)
-
-
-type alias TabInternal id msg =
-    { id : id
-    , idString : String
-    , tabView : Html Never
-    , tabTooltip : List (Tooltip.Attribute msg)
-    , panelView : Html msg
-    , spaHref : Maybe String
-    }
+    = Tab (TabsInternal.Tab id msg)
 
 
 {-| -}
 type Attribute id msg
-    = Attribute (TabInternal id msg -> TabInternal id msg)
+    = Attribute (TabsInternal.Tab id msg -> TabsInternal.Tab id msg)
 
 
 {-| -}
 tabString : String -> Attribute id msg
 tabString content =
-    Attribute (\tab -> { tab | tabView = viewTabDefault content })
+    Attribute (\tab -> { tab | tabView = [ viewTabDefault content ] })
 
 
 {-| -}
 tabHtml : Html Never -> Attribute id msg
 tabHtml content =
-    Attribute (\tab -> { tab | tabView = content })
+    Attribute (\tab -> { tab | tabView = [ Html.map never content ] })
 
 
 {-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
@@ -87,13 +78,15 @@ spaHref url =
 build : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
 build { id, idString } attributes =
     let
+        defaults : TabsInternal.Tab id msg
         defaults =
             { id = id
             , idString = idString
-            , tabView = Html.text ""
+            , tabAttributes = []
+            , tabTooltip = []
+            , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
-            , tabTooltip = []
             }
     in
     Tab (List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaults attributes)
@@ -119,22 +112,11 @@ view :
     -> Html msg
 view config =
     let
-        toInternalTab : Tab id msg -> TabsInternal.Tab id msg
-        toInternalTab (Tab tab) =
-            { id = tab.id
-            , idString = tab.idString
-            , tabAttributes = []
-            , tabTooltip = tab.tabTooltip
-            , tabView = [ Html.map never tab.tabView ]
-            , panelView = tab.panelView
-            , spaHref = tab.spaHref
-            }
-
         { tabList, tabPanels } =
             TabsInternal.views
                 { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
-                , tabs = List.map toInternalTab config.tabs
+                , tabs = List.map (\(Tab t) -> t) config.tabs
                 , tabStyles = tabStyles config.customSpacing
                 , tabListStyles = stylesTabsAligned config.alignment
                 }

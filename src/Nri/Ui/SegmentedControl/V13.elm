@@ -7,6 +7,7 @@ module Nri.Ui.SegmentedControl.V13 exposing
 {-| Changes from V12:
 
   - Adds tooltip support
+  - combine onFocus and onSelect into focusAndSelect msg handler (for tooltips)
 
 @docs Option, view
 @docs Radio, viewRadioGroup
