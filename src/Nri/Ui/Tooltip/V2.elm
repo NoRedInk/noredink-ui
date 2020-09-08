@@ -12,7 +12,12 @@ module Nri.Ui.Tooltip.V2 exposing
     , primaryLabel, auxillaryDescription
     )
 
-{-| Changes from V1:
+{-| Known issues:
+
+  - tooltips with focusable content (e.g., a link) will not handle focus correctly for
+    keyboard-only users when using the onHover attribute
+
+Changes from V1:
 
   - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
   - withTooltipStyleOverrides -> css
