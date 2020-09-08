@@ -1,13 +1,11 @@
 module Nri.Ui.FocusTrap.V1 exposing
-    ( first, last
-    , only
-    , FocusTrap(..), toAttribute
+    ( FocusTrap(..)
+    , toAttribute
     )
 
 {-| Create a focus trap.
 
-@docs first, last
-@docs only
+@docs FocusTrap, toAttributer
 
 -}
 
@@ -77,36 +75,3 @@ decodeKeydown =
         (Decode.at [ "target", "id" ] Decode.string)
         (Decode.field "keyCode" Decode.int)
         (Decode.field "shiftKey" Decode.bool)
-
-
-{-| -}
-only : { focusSelf : msg } -> List (Html.Attribute msg)
-only { focusSelf } =
-    [ onKeyDownPreventDefault
-        [ Key.tab focusSelf
-        , Key.tabBack focusSelf
-        ]
-    , class "focus-trap__only-focusable-element"
-    ]
-
-
-{-| -}
-first : { focusLastId : msg } -> List (Html.Attribute msg)
-first { focusLastId } =
-    [ onKeyDownPreventDefault [ Key.tabBack focusLastId ]
-    , class "focus-trap__first-focusable-element"
-    ]
-
-
-{-| -}
-last : { focusFirstId : msg } -> List (Html.Attribute msg)
-last { focusFirstId } =
-    [ onKeyDownPreventDefault [ Key.tab focusFirstId ]
-    , class "focus-trap__last-focusable-element"
-    ]
-
-
-onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
-onKeyDownPreventDefault decoders =
-    Events.preventDefaultOn "keydown"
-        (Decode.oneOf (List.map (Decode.map (\msg -> ( msg, True ))) decoders))
