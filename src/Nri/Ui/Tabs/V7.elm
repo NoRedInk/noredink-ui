@@ -19,7 +19,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import TabsInternal
+import TabsInternal.V2 as TabsInternal
 
 
 {-| Determines whether tabs are centered or floating to the left or right.
