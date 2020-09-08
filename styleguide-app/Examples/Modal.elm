@@ -138,8 +138,54 @@ example =
                     |> Html.fromUnstyled
                 ]
             , launchModalButton settings
-            , Modal.view (modalSettings settings)
-                (Control.currentValue state.attributes)
+            , Modal.view
+                { title = settings.title
+                , wrapMsg = ModalMsg
+                , content = [ viewModalContent settings.content ]
+                , footer =
+                    List.filterMap identity
+                        [ if settings.showContinue then
+                            Just continueButton
+
+                          else
+                            Nothing
+                        , if settings.showSecondary then
+                            Just closeClickableText
+
+                          else
+                            Nothing
+                        ]
+                , focusTrap =
+                    { focus = Focus
+                    , firstId =
+                        if settings.showX then
+                            Modal.closeButtonId
+
+                        else if settings.showContinue then
+                            continueButtonId
+
+                        else
+                            closeClickableTextId
+                    , lastId =
+                        if settings.showSecondary then
+                            closeClickableTextId
+
+                        else if settings.showContinue then
+                            continueButtonId
+
+                        else
+                            Modal.closeButtonId
+                    }
+                }
+                (List.concat
+                    [ if settings.showX then
+                        [ Modal.closeButton ]
+
+                      else
+                        []
+                    , Control.currentValue state.attributes
+                    ]
+                )
                 state.state
             ]
     }
@@ -181,108 +227,6 @@ launchModalButton settings =
         ]
 
 
-modalSettings :
-    ViewSettings
-    ->
-        { title : String
-        , wrapMsg : Modal.Msg -> Msg
-        , content : List (Html Msg)
-        , footer : List (Html Msg)
-        }
-modalSettings settings =
-    let
-        default =
-            { title = settings.title
-            , wrapMsg = ModalMsg
-            , content = []
-            , footer = []
-            }
-    in
-    case ( settings.showX, settings.showContinue, settings.showSecondary ) of
-        ( True, True, True ) ->
-            { default
-                | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ continueButton []
-                    , closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
-                    ]
-            }
-
-        ( True, False, True ) ->
-            { default
-                | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
-                    ]
-            }
-
-        ( True, False, False ) ->
-            { default
-                | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
-                    , viewModalContent settings.content
-                    ]
-            }
-
-        ( True, True, False ) ->
-            { default
-                | content =
-                    [ Modal.closeButton CloseModal <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
-                    , viewModalContent settings.content
-                    ]
-                , footer =
-                    [ continueButton <|
-                        FocusTrap.last { focusFirstId = Focus Modal.closeButtonId }
-                    ]
-            }
-
-        ( False, True, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ continueButton <|
-                        FocusTrap.first { focusLastId = Focus closeClickableTextId }
-                    , closeClickableText <|
-                        FocusTrap.last { focusFirstId = Focus continueButtonId }
-                    ]
-            }
-
-        ( False, False, True ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ closeClickableText <|
-                        FocusTrap.only { focusSelf = Focus closeClickableTextId }
-                    ]
-            }
-
-        ( False, True, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-                , footer =
-                    [ continueButton <|
-                        FocusTrap.only { focusSelf = Focus continueButtonId }
-                    ]
-            }
-
-        ( False, False, False ) ->
-            { default
-                | content = [ viewModalContent settings.content ]
-            }
-
-
 viewModalContent : String -> Html msg
 viewModalContent content =
     Text.mediumBody [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
@@ -293,27 +237,27 @@ continueButtonId =
     "continue-button-id"
 
 
-continueButton : List (Html.Attribute Msg) -> Html Msg
-continueButton attributes =
+continueButton : Html Msg
+continueButton =
     Button.button "Continue"
         [ Button.premium
         , Button.onClick CloseModal
-        , Button.custom (Attributes.id continueButtonId :: attributes)
+        , Button.custom [ Attributes.id continueButtonId ]
         , Button.large
         ]
 
 
 closeClickableTextId : String
 closeClickableTextId =
-    "continue-button-id"
+    "close-clickable-text-id"
 
 
-closeClickableText : List (Html.Attribute Msg) -> Html Msg
-closeClickableText attributes =
+closeClickableText : Html Msg
+closeClickableText =
     ClickableText.button "Close"
         [ ClickableText.onClick CloseModal
         , ClickableText.large
-        , ClickableText.custom (Attributes.id closeClickableTextId :: attributes)
+        , ClickableText.custom [ Attributes.id closeClickableTextId ]
         , ClickableText.css [ Css.marginTop (Css.px 15) ]
         ]
 
