@@ -76,20 +76,8 @@ spaHref url =
 
 {-| -}
 build : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
-build { id, idString } attributes =
-    let
-        defaults : TabsInternal.Tab id msg
-        defaults =
-            { id = id
-            , idString = idString
-            , tabAttributes = []
-            , tabTooltip = []
-            , tabView = []
-            , panelView = Html.text ""
-            , spaHref = Nothing
-            }
-    in
-    Tab (List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaults attributes)
+build config attributes =
+    Tab (TabsInternal.fromList config (List.map (\(Attribute f) -> f) attributes))
 
 
 {-| Determines whether tabs are centered or floating to the left or right.

@@ -1,8 +1,12 @@
-module TabsInternal.V2 exposing (Config, Tab, views)
+module TabsInternal.V2 exposing
+    ( Config, views
+    , Tab, fromList
+    )
 
 {-|
 
-@docs Config, Tab, views
+@docs Config, views
+@docs Tab, fromList
 
 -}
 
@@ -41,6 +45,23 @@ type alias Tab id msg =
     , panelView : Html msg
     , spaHref : Maybe String
     }
+
+
+{-| -}
+fromList : { id : id, idString : String } -> List (Tab id msg -> Tab id msg) -> Tab id msg
+fromList { id, idString } attributes =
+    let
+        defaults =
+            { id = id
+            , idString = idString
+            , tabAttributes = []
+            , tabTooltip = []
+            , tabView = []
+            , panelView = Html.text ""
+            , spaHref = Nothing
+            }
+    in
+    List.foldl (\applyAttr acc -> applyAttr acc) defaults attributes
 
 
 {-| -}
