@@ -49,11 +49,6 @@ toAttribute { firstId, lastId, focus } =
                 -- we want to wrap around to the first id.
                 Decode.succeed
                     { message = focus firstId
-
-                    -- Will this preventDefault break anything
-                    -- if the element is an input
-                    -- or dropdown (if the element has key-based
-                    -- behavior already)?
                     , preventDefault = True
                     , stopPropagation = False
                     }
