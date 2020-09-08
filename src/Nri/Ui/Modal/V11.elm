@@ -18,36 +18,29 @@ module Nri.Ui.Modal.V11 exposing
   - tab and tabback events stop propagation and prevent default
 
 ```
-import Browser exposing (Program, element)
+import Browser exposing (element)
 import Browser.Dom as Dom
+import Css exposing (padding, px)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
-import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V11 as Modal
 import Task
 
-main : Program flags model msg
+main : Program () Modal.Model Msg
 main =
-    { init = \_ -> init
-    , view = view
-    , update = update
-    , subscriptions = \model -> Modal.subscriptions model.modalState
-    }
+    Browser.element
+        { init = \_ -> init
+        , view = toUnstyled << view
+        , update = update
+        , subscriptions = \model -> Sub.map ModalMsg (Modal.subscriptions model)
+        }
 
-type ModalKind
-    = FirstKindOfModal
-    | SecondKindOfModal
-
-type alias Model =
-    { modal : ModalKind
-    , modalState : Modal.Model
-    }
-
-init : Model
+init : ( Modal.Model, Cmd Msg )
 init =
     let
-        ( modalState, cmd ) =
+        ( model, cmd ) =
             -- When we load the page with a modal already open, we should return
             -- the focus someplace sensible when the modal closes.
             -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
@@ -57,56 +50,44 @@ init =
                 , returnFocusTo = "maincontent"
                 }
     in
-    ( { modal = FirstKindOfModal
-      , modalState = modalState
-      }
-    , Cmd.map ModalMsg cmd
-    )
+    ( model, Cmd.map ModalMsg cmd )
 
 type Msg
-    = OpenModal ModalKind String
+    = OpenModal String
     | ModalMsg Modal.Msg
     | CloseModal
     | Focus String
     | Focused (Result Dom.Error ())
 
-update : Msg -> Model -> ( Modal, Cmd Msg )
+update : Msg -> Modal.Model -> ( Modal.Model, Cmd Msg )
 update msg model =
     case msg of
-        OpenModal modalKind returnFocusTo ->
+        OpenModal returnFocusTo ->
             let
-                ( modalState, cmd ) =
+                ( newModel, cmd ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( { modal = modalKind
-              , modalState = modalState
-              }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         ModalMsg modalMsg ->
             let
-                ( modalState, cmd ) =
+                ( newModel, cmd ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
-                        model.modalState
+                        model
             in
-            ( { model | modalState = modalState }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         CloseModal ->
             let
-                ( modalState, cmd ) =
-                    Modal.close model.modalState
+                ( newModel, cmd ) =
+                    Modal.close model
             in
-            ( { model | modalState = modalState }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -114,58 +95,37 @@ update msg model =
         Focused _ ->
             ( model, Cmd.none )
 
-view : Model -> Html Msg
+view : Modal.Model -> Html Msg
 view model =
     main_ [ id "maincontent" ]
         [ button
-            [ id "open-first-kind-of-modal-button"
-            , Events.onClick (OpenModal FirstKindOfModal "open-first-kind-of-modal-button")
+            [ id "open-modal"
+            , Events.onClick (OpenModal "open-modal")
             ]
-            [ text "Open FirstKindOfModal" ]
-        , button
-            [ id "open-second-kind-of-modal-button"
-            , Events.onClick (OpenModal SecondKindOfModal "open-second-kind-of-modal-button")
+            [ text "Open Modal" ]
+        , Modal.view
+            { title = "First kind of modal"
+            , wrapMsg = ModalMsg
+            , content = [ text "Modal Content" ]
+            , footer =
+                [ button
+                    [ Events.onClick CloseModal
+                    , id "last-element-id"
+                    ]
+                    [ text "Close" ]
+                ]
+            , focusTrap =
+                { focus = Focus
+                , firstId = Modal.closeButtonId
+                , lastId = "last-element-id"
+                }
+            }
+            [ Modal.hideTitle
+            , Modal.css [ padding (px 10) ]
+            , Modal.custom [ id "first-modal" ]
+            , Modal.closeButton
             ]
-            [ text "Open SecondKindOfModal" ]
-        , case model.modal of
-            FirstKindOfModal ->
-                Modal.view
-                    { title = "First kind of modal"
-                    , wrapMsg = ModalMsg
-                    , content =
-                        [ Modal.closeButton CloseModal <|
-                            FocusTrap.first { focusLastId = Focus "last-element-id" }
-                        , text "Modal Content"
-                        ]
-                    , footer =
-                        [ button
-                            (Events.onClick CloseModal
-                                :: id "last-element-id"
-                                :: FocusTrap.last { focusFirstElement = Focus Modal.closeButtonId }
-                            )
-                            [ text "Close" ]
-                        ]
-                    }
-                    [ Modal.hideTitle
-                    , Modal.css [ padding (px 10) ]
-                    , Modal.custom [ id "first-modal" ]
-                    ]
-                    model.modalState
-
-            SecondKindOfModal ->
-                Modal.view
-                    { title = "Second kind of modal"
-                    , wrapMsg = ModalMsg
-                    , content =
-                        [ Modal.closeButton CloseModal <|
-                            FocusTrap.only { focusSelf = Focus Modal.closeButtonId }
-                        , text "Modal Content"
-                        ]
-                    , footer = []
-                    }
-                    [ Modal.warning
-                    ]
-                    model.modalState
+            model
         ]
 ```
 
@@ -205,6 +165,7 @@ import Html.Styled.Events as Events exposing (onClick)
 import Json.Decode as Decode exposing (Decoder)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
@@ -319,6 +280,13 @@ warning =
         ]
 
 
+{-| Include the close button.
+-}
+closeButton : Attribute
+closeButton =
+    Attribute (\attrs -> { attrs | closeButton = True })
+
+
 {-| This is the default setting.
 -}
 showTitle : Attribute
@@ -385,6 +353,7 @@ type alias Attributes =
     , visibleTitle : Bool
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
+    , closeButton : Bool
     }
 
 
@@ -395,6 +364,7 @@ defaultAttributes =
     , visibleTitle = True
     , customStyles = []
     , customAttributes = []
+    , closeButton = False
     }
 
 
@@ -477,6 +447,7 @@ titleStyles color visibleTitle =
 view :
     { title : String
     , wrapMsg : Msg -> msg
+    , focusTrap : FocusTrap msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -508,6 +479,12 @@ view config attrsList model =
                         , titleColor = attrs.titleColor
                         , visibleTitle = attrs.visibleTitle
                         , customAttributes = attrs.customAttributes
+                        , closeButton =
+                            if attrs.closeButton then
+                                Just (config.wrapMsg CloseModal)
+
+                            else
+                                Nothing
                         , content = config.content
                         , footer = config.footer
                         }
@@ -515,7 +492,12 @@ view config attrsList model =
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
                 ]
                 |> List.singleton
-                |> div [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                |> Root.div
+                    (List.concat
+                        [ [ FocusTrap.toAttribute config.focusTrap ]
+                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                        ]
+                    )
 
         Closed ->
             text ""
@@ -549,6 +531,7 @@ viewModal :
     , titleColor : Color
     , visibleTitle : Bool
     , customAttributes : List (Html.Attribute Never)
+    , closeButton : Maybe msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -568,16 +551,34 @@ viewModal config =
             [ text config.title ]
         , div
             []
-            [ viewInnerContent config.content config.visibleTitle (not (List.isEmpty config.footer))
+            [ viewInnerContent config
             , viewFooter config.footer
             ]
         ]
 
 
 {-| -}
-viewInnerContent : List (Html msg) -> Bool -> Bool -> Html msg
-viewInnerContent children visibleTitle visibleFooter =
+viewInnerContent :
+    { config
+        | content : List (Html msg)
+        , visibleTitle : Bool
+        , closeButton : Maybe msg
+        , footer : List (Html msg)
+    }
+    -> Html msg
+viewInnerContent ({ visibleTitle } as config) =
     let
+        children =
+            case config.closeButton of
+                Just msg ->
+                    viewCloseButton msg :: config.content
+
+                Nothing ->
+                    config.content
+
+        visibleFooter =
+            not (List.isEmpty config.footer)
+
         titleHeight =
             if visibleTitle then
                 45
@@ -707,8 +708,8 @@ closeButtonId =
 
 
 {-| -}
-closeButton : msg -> List (Html.Attribute msg) -> Html msg
-closeButton closeModal attrs =
+viewCloseButton : msg -> Html msg
+viewCloseButton closeModal =
     button
         (Widget.label "Close modal"
             :: onClick closeModal
@@ -732,7 +733,7 @@ closeButton closeModal attrs =
                 , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
                 ]
             :: Attrs.id closeButtonId
-            :: attrs
+            :: []
         )
         [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
         ]
