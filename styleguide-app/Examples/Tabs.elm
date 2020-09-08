@@ -148,47 +148,40 @@ example =
 
 allTabs : Bool -> List (Tab Id Msg)
 allTabs isTooltipOpen =
-    [ { id = First
-      , idString = "tab-0"
-      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V7"
-      , tabView = Tabs.viewTabDefault "Link example"
-      , panelView = Html.text "First Panel"
-      }
-    , { id = Second
-      , idString = "tab-1"
-      , spaHref = Nothing
-      , tabView = Tabs.viewTabDefault "Second Tab"
-      , panelView = Html.text "Second Panel"
-      }
-    , { id = Third
-      , idString = "tab-2"
-      , spaHref = Nothing
-      , tabView =
-            --Tooltip.view
-            --    { id = "lightbulb-tooltip"
-            --    , triggerHtml =
-            UiIcon.bulb
-                |> Svg.withLabel "Lightbulb"
-                |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 40)
-                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                |> Svg.toHtml
+    [ Tabs.build { id = First, idString = "tab-0" }
+        [ Tabs.spaHref "/#/doodad/Nri.Ui.Tabs.V7"
+        , Tabs.tabString "Link example"
+        , Tabs.panelHtml (Html.text "First Panel")
+        ]
+    , Tabs.build { id = Second, idString = "tab-1" }
+        [ Tabs.tabString "Second Tab"
+        , Tabs.panelHtml (Html.text "Second Panel")
+        ]
+    , Tabs.build { id = Third, idString = "tab-2" }
+        [ UiIcon.bulb
+            |> Svg.withLabel "Lightbulb"
+            |> Svg.withWidth (Css.px 40)
+            |> Svg.withHeight (Css.px 40)
+            |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+            |> Svg.toHtml
+            |> Tabs.tabHtml
 
-      --}
-      --[ Tooltip.plaintext "The Electrifying Third Tab"
-      --, Tooltip.onBottom
-      --, Tooltip.onHover ToggleTooltip
-      --, Tooltip.primaryLabel
-      --, Tooltip.fitToContent
-      --, Tooltip.smallPadding
-      --, Tooltip.open isTooltipOpen
-      --]
-      , panelView = Html.text "Third Panel"
-      }
-    , { id = Fourth
-      , idString = "tab-3"
-      , spaHref = Nothing
-      , tabView = Tabs.viewTabDefault "Fourth Tab"
-      , panelView = Html.text "Fourth Panel"
-      }
+        --Tooltip.view
+        --    { id = "lightbulb-tooltip"
+        --    , triggerHtml =
+        --}
+        --[ Tooltip.plaintext "The Electrifying Third Tab"
+        --, Tooltip.onBottom
+        --, Tooltip.onHover ToggleTooltip
+        --, Tooltip.primaryLabel
+        --, Tooltip.fitToContent
+        --, Tooltip.smallPadding
+        --, Tooltip.open isTooltipOpen
+        --]
+        , Tabs.panelHtml (Html.text "Third Panel")
+        ]
+    , Tabs.build { id = Fourth, idString = "tab-3" }
+        [ Tabs.tabString "Fourth Tab"
+        , Tabs.panelHtml (Html.text "Fourth Panel")
+        ]
     ]

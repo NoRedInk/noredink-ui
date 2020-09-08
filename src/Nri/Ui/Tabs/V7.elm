@@ -1,25 +1,93 @@
 module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
-    , Tab, viewTabDefault
+    , Tab, Attribute, build
+    , tabString, tabHtml
+    , panelHtml
+    , spaHref
     )
 
 {-| Changes from V6:
 
+  - Changes Tab construction to follow attributes-based approach
+  - Adds tooltip support
+
 @docs view
 @docs Alignment
-@docs Tab, viewTabDefault
+@docs Tab, Attribute, build
+@docs tabString, tabHtml
+@docs panelHtml
+@docs spaHref
 
 -}
 
 import Css exposing (..)
-import Html.Styled as Html exposing (Attribute, Html)
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Tooltip.V2 as Tooltip
 import TabsInternal.V2 as TabsInternal
+
+
+{-| -}
+type Tab id msg
+    = Tab (TabInternal id msg)
+
+
+type alias TabInternal id msg =
+    { id : id
+    , idString : String
+    , tabView : Html Never
+    , panelView : Html msg
+    , spaHref : Maybe String
+    }
+
+
+{-| -}
+type Attribute id msg
+    = Attribute (TabInternal id msg -> TabInternal id msg)
+
+
+{-| -}
+tabString : String -> Attribute id msg
+tabString content =
+    Attribute (\tab -> { tab | tabView = viewTabDefault content })
+
+
+{-| -}
+tabHtml : Html Never -> Attribute id msg
+tabHtml content =
+    Attribute (\tab -> { tab | tabView = content })
+
+
+{-| -}
+panelHtml : Html msg -> Attribute id msg
+panelHtml content =
+    Attribute (\tab -> { tab | panelView = content })
+
+
+{-| -}
+spaHref : String -> Attribute id msg
+spaHref url =
+    Attribute (\tab -> { tab | spaHref = Just url })
+
+
+{-| -}
+build : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
+build { id, idString } attributes =
+    let
+        defaults =
+            { id = id
+            , idString = idString
+            , tabView = Html.text ""
+            , panelView = Html.text ""
+            , spaHref = Nothing
+            }
+    in
+    Tab (List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaults attributes)
 
 
 {-| Determines whether tabs are centered or floating to the left or right.
@@ -28,16 +96,6 @@ type Alignment
     = Left
     | Center
     | Right
-
-
-{-| -}
-type alias Tab id msg =
-    { id : id
-    , idString : String
-    , tabView : Html msg
-    , panelView : Html msg
-    , spaHref : Maybe String
-    }
 
 
 {-| -}
@@ -54,12 +112,12 @@ view :
 view config =
     let
         toInternalTab : Tab id msg -> TabsInternal.Tab id msg
-        toInternalTab tab =
+        toInternalTab (Tab tab) =
             { id = tab.id
             , idString = tab.idString
             , tabAttributes = []
             , tabTooltip = []
-            , tabView = [ tab.tabView ]
+            , tabView = [ Html.map never tab.tabView ]
             , panelView = tab.panelView
             , spaHref = tab.spaHref
             }
