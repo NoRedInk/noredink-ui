@@ -251,7 +251,14 @@ tabStyles customSpacing index isSelected =
             , Css.borderTopRightRadius (Css.px 10)
             , Css.border3 (Css.px 1) Css.solid Colors.navy
             , Css.marginTop Css.zero
-            , Css.marginRight Css.zero
+            , Css.marginLeft
+                (if index == 0 then
+                    Css.px 0
+
+                 else
+                    Css.px margin
+                )
+            , Css.marginRight (Css.px margin)
             , Css.padding2 (Css.px 1) (Css.px 6)
             , Css.marginBottom (Css.px -1)
             , Css.cursor Css.pointer
@@ -265,11 +272,7 @@ tabStyles customSpacing index isSelected =
                 ]
             ]
 
-        leftIndex =
-            if index == 0 then
-                Css.marginLeft Css.zero
-
-            else
-                Css.marginLeft (Css.px (Maybe.withDefault 10 customSpacing))
+        margin =
+            Maybe.withDefault 10 customSpacing / 2
     in
-    leftIndex :: baseStyles ++ stylesTab ++ stylesDynamic
+    baseStyles ++ stylesTab ++ stylesDynamic
