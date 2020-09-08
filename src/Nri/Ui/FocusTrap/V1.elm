@@ -57,6 +57,12 @@ toAttribute { firstId, lastId, focus } =
                 Decode.fail "No need to intercept the key press"
 
 
+onTab :
+    (String
+     -> Bool
+     -> Decoder { message : msg, preventDefault : Bool, stopPropagation : Bool }
+    )
+    -> Html.Attribute msg
 onTab do =
     Events.custom "keydown"
         (Decode.andThen
@@ -71,6 +77,7 @@ onTab do =
         )
 
 
+decodeKeydown : Decoder ( String, Int, Bool )
 decodeKeydown =
     Decode.map3 (\id keyCode shiftKey -> ( id, keyCode, shiftKey ))
         (Decode.at [ "target", "id" ] Decode.string)
