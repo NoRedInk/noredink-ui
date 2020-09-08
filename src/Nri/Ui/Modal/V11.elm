@@ -29,28 +29,19 @@ import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V11 as Modal
 import Task
 
-main : Program () Model Msg
+main : Program () Modal.Model Msg
 main =
     Browser.element
         { init = \_ -> init
         , view = toUnstyled << view
         , update = update
-        , subscriptions = \model -> Sub.map ModalMsg (Modal.subscriptions model.modalState)
+        , subscriptions = \model -> Sub.map ModalMsg (Modal.subscriptions model)
         }
 
-type ModalKind
-    = FirstKindOfModal
-    | SecondKindOfModal
-
-type alias Model =
-    { modal : ModalKind
-    , modalState : Modal.Model
-    }
-
-init : ( Model, Cmd Msg )
+init : ( Modal.Model, Cmd Msg )
 init =
     let
-        ( modalState, cmd ) =
+        ( model, cmd ) =
             -- When we load the page with a modal already open, we should return
             -- the focus someplace sensible when the modal closes.
             -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
@@ -60,56 +51,44 @@ init =
                 , returnFocusTo = "maincontent"
                 }
     in
-    ( { modal = FirstKindOfModal
-      , modalState = modalState
-      }
-    , Cmd.map ModalMsg cmd
-    )
+    ( model, Cmd.map ModalMsg cmd )
 
 type Msg
-    = OpenModal ModalKind String
+    = OpenModal String
     | ModalMsg Modal.Msg
     | CloseModal
     | Focus String
     | Focused (Result Dom.Error ())
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Modal.Model -> ( Modal.Model, Cmd Msg )
 update msg model =
     case msg of
-        OpenModal modalKind returnFocusTo ->
+        OpenModal returnFocusTo ->
             let
-                ( modalState, cmd ) =
+                ( newModel, cmd ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( { modal = modalKind
-              , modalState = modalState
-              }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         ModalMsg modalMsg ->
             let
-                ( modalState, cmd ) =
+                ( newModel, cmd ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
-                        model.modalState
+                        model
             in
-            ( { model | modalState = modalState }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         CloseModal ->
             let
-                ( modalState, cmd ) =
-                    Modal.close model.modalState
+                ( newModel, cmd ) =
+                    Modal.close model
             in
-            ( { model | modalState = modalState }
-            , Cmd.map ModalMsg cmd
-            )
+            ( newModel, Cmd.map ModalMsg cmd )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -117,65 +96,39 @@ update msg model =
         Focused _ ->
             ( model, Cmd.none )
 
-view : Model -> Html Msg
+view : Modal.Model -> Html Msg
 view model =
     main_ [ id "maincontent" ]
         [ button
-            [ id "open-first-kind-of-modal-button"
-            , Events.onClick (OpenModal FirstKindOfModal "open-first-kind-of-modal-button")
+            [ id "open-modal"
+            , Events.onClick (OpenModal "open-modal")
             ]
-            [ text "Open FirstKindOfModal" ]
-        , button
-            [ id "open-second-kind-of-modal-button"
-            , Events.onClick (OpenModal SecondKindOfModal "open-second-kind-of-modal-button")
+            [ text "Open Modal" ]
+        , Modal.view
+            { title = "First kind of modal"
+            , wrapMsg = ModalMsg
+            , focus = Focus
+            , content = [ text "Modal Content" ]
+            , footer =
+                [ button
+                    [ Events.onClick CloseModal
+                    , id "last-element-id"
+                    ]
+                    [ text "Close" ]
+                ]
+            }
+            [ Modal.hideTitle
+            , Modal.css [ padding (px 10) ]
+            , Modal.custom [ id "first-modal" ]
+            , Modal.closeButton
+            , Modal.focusTrap
+                (FocusTrap.FocusTrap
+                    { firstId = Modal.closeButtonId
+                    , lastId = "last-element-id"
+                    }
+                )
             ]
-            [ text "Open SecondKindOfModal" ]
-        , case model.modal of
-            FirstKindOfModal ->
-                Modal.view
-                    { title = "First kind of modal"
-                    , wrapMsg = ModalMsg
-                    , focus = Focus
-                    , content = [ text "Modal Content" ]
-                    , footer =
-                        [ button
-                            [ Events.onClick CloseModal
-                            , id "last-element-id"
-                            ]
-                            [ text "Close" ]
-                        ]
-                    }
-                    [ Modal.hideTitle
-                    , Modal.css [ padding (px 10) ]
-                    , Modal.custom [ id "first-modal" ]
-                    , Modal.closeButton
-                    , Modal.focusTrap
-                        (FocusTrap.FocusTrap
-                            { firstId = Modal.closeButtonId
-                            , lastId = "last-element-id"
-                            }
-                        )
-                    ]
-                    model.modalState
-
-            SecondKindOfModal ->
-                Modal.view
-                    { title = "Second kind of modal"
-                    , wrapMsg = ModalMsg
-                    , focus = Focus
-                    , content = [ text "Modal Content" ]
-                    , footer = []
-                    }
-                    [ Modal.warning
-                    , Modal.closeButton
-                    , Modal.focusTrap
-                        (FocusTrap.FocusTrap
-                            { firstId = Modal.closeButtonId
-                            , lastId = Modal.closeButtonId
-                            }
-                        )
-                    ]
-                    model.modalState
+            model
         ]
 ```
 
