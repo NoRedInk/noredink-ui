@@ -170,12 +170,9 @@ allTabs openTooltipId =
         , Tabs.tabString "1"
         , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
-            , Tooltip.onBottom
             , Tooltip.onHover (ToggleTooltip First)
             , Tooltip.alignStart (Css.px 75)
             , Tooltip.primaryLabel
-            , Tooltip.fitToContent
-            , Tooltip.smallPadding
             , Tooltip.open (openTooltipId == Just First)
             ]
         , Tabs.panelHtml (Html.text "First Panel")
@@ -188,11 +185,8 @@ allTabs openTooltipId =
         [ Tabs.tabHtml bulbIcon
         , Tabs.withTooltip
             [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onBottom
             , Tooltip.onHover (ToggleTooltip Third)
             , Tooltip.primaryLabel
-            , Tooltip.fitToContent
-            , Tooltip.smallPadding
             , Tooltip.open (openTooltipId == Just Third)
             ]
         , Tabs.panelHtml (Html.text "Third Panel")

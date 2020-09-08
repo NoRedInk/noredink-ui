@@ -112,10 +112,7 @@ buildOptions { icon, longContent, tooltips } openTooltip =
             , tabTooltip =
                 if tooltips then
                     [ Tooltip.plaintext (Debug.toString value)
-                    , Tooltip.smallPadding
-                    , Tooltip.onBottom
                     , Tooltip.onHover (PageTooltip value)
-                    , Tooltip.fitToContent
                     , Tooltip.open (openTooltip == Just value)
                     ]
 

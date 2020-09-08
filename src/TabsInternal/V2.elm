@@ -123,7 +123,12 @@ viewTab_ config index tab =
                 { id = "tab-tooltip__" ++ tabToId tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers
                 }
-                tooltipAttributes
+                ([ Tooltip.smallPadding
+                 , Tooltip.onBottom
+                 , Tooltip.fitToContent
+                 ]
+                    ++ tooltipAttributes
+                )
 
 
 keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg

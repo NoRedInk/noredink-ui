@@ -64,7 +64,8 @@ tabHtml content =
     Attribute (\tab -> { tab | tabView = content })
 
 
-{-| -}
+{-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
+-}
 withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
 withTooltip attributes =
     Attribute (\tab -> { tab | tabTooltip = attributes })

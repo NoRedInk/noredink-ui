@@ -138,7 +138,8 @@ viewRadioGroup config =
         )
 
 
-{-| -}
+{-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
+-}
 type alias Option value msg =
     { value : value
     , idString : String
