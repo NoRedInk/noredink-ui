@@ -62,7 +62,7 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions options.icon)
+                , options = List.take options.count (buildRadioOptions options.content)
                 , selected = state.optionallySelected
                 , positioning = options.positioning
                 }
@@ -94,17 +94,16 @@ type Page
     | Activity
 
 
-buildOptions : { options | icon : Bool, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
-buildOptions { icon, longContent, tooltips } openTooltip =
+buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
+buildOptions { content, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
-            { icon =
-                if icon then
-                    Just icon_
-
-                else
-                    Nothing
-            , label = Html.text (Debug.toString value)
+            let
+                ( icon, label ) =
+                    getIconAndLabel content icon_ (Html.text (Debug.toString value))
+            in
+            { icon = icon
+            , label = label
             , value = value
             , idString = toLower (Debug.toString value)
             , attributes = []
@@ -146,23 +145,22 @@ buildOptions { icon, longContent, tooltips } openTooltip =
     ]
 
 
-buildRadioOptions : Bool -> List (SegmentedControl.Radio Int msg)
-buildRadioOptions keepIcon =
+buildRadioOptions : Content -> List (SegmentedControl.Radio Int msg)
+buildRadioOptions content =
     let
         buildOption value icon =
-            { icon = ifIcon icon
-            , label = Html.text ("Source " ++ Debug.toString (value + 1))
+            let
+                ( icon_, label ) =
+                    getIconAndLabel content
+                        icon
+                        (Html.text ("Source " ++ Debug.toString (value + 1)))
+            in
+            { icon = icon_
+            , label = label
             , value = value
             , idString = String.fromInt value
             , attributes = []
             }
-
-        ifIcon icon =
-            if keepIcon then
-                Just icon
-
-            else
-                Nothing
     in
     List.indexedMap buildOption
         [ UiIcon.leaderboard
@@ -197,7 +195,7 @@ init =
 
 type alias Options =
     { positioning : SegmentedControl.Positioning
-    , icon : Bool
+    , content : Content
     , count : Int
     , longContent : Bool
     , tooltips : Bool
@@ -214,13 +212,41 @@ optionsControl =
                 , ( "Center", Control.value SegmentedControl.Center )
                 ]
             )
-        |> Control.field "icon" (Control.bool True)
+        |> Control.field "content" controlContent
         |> Control.field "count"
             (Control.choice
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
             )
         |> Control.field "long content" (Control.bool False)
         |> Control.field "tooltips" (Control.bool True)
+
+
+type Content
+    = TextAndIcon
+    | Text
+    | Icon
+
+
+controlContent : Control Content
+controlContent =
+    Control.choice
+        [ ( "Text and icon", Control.value TextAndIcon )
+        , ( "Text", Control.value Text )
+        , ( "Icon", Control.value Icon )
+        ]
+
+
+getIconAndLabel : Content -> svg -> Html msg -> ( Maybe svg, Html msg )
+getIconAndLabel content icon_ value =
+    case content of
+        TextAndIcon ->
+            ( Just icon_, value )
+
+        Icon ->
+            ( Just icon_, Html.text "" )
+
+        Text ->
+            ( Nothing, value )
 
 
 {-| -}
