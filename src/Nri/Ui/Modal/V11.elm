@@ -19,8 +19,9 @@ module Nri.Ui.Modal.V11 exposing
   - tab and tabback events stop propagation and prevent default
 
 ```
-import Browser exposing (Program, element)
+import Browser exposing (element)
 import Browser.Dom as Dom
+import Css exposing (padding, px)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
@@ -28,13 +29,14 @@ import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V11 as Modal
 import Task
 
-main : Program flags model msg
+main : Program () Model Msg
 main =
-    { init = \_ -> init
-    , view = view
-    , update = update
-    , subscriptions = \model -> Modal.subscriptions model.modalState
-    }
+    Browser.element
+        { init = \_ -> init
+        , view = toUnstyled << view
+        , update = update
+        , subscriptions = \model -> Sub.map ModalMsg (Modal.subscriptions model.modalState)
+        }
 
 type ModalKind
     = FirstKindOfModal
@@ -45,7 +47,7 @@ type alias Model =
     , modalState : Modal.Model
     }
 
-init : Model
+init : ( Model, Cmd Msg )
 init =
     let
         ( modalState, cmd ) =
@@ -71,7 +73,7 @@ type Msg
     | Focus String
     | Focused (Result Dom.Error ())
 
-update : Msg -> Model -> ( Modal, Cmd Msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OpenModal modalKind returnFocusTo ->
@@ -133,23 +135,26 @@ view model =
                 Modal.view
                     { title = "First kind of modal"
                     , wrapMsg = ModalMsg
-                    , content =
-                        [ Modal.closeButton CloseModal <|
-                            FocusTrap.first { focusLastId = Focus "last-element-id" }
-                        , text "Modal Content"
-                        ]
+                    , focus = Focus
+                    , content = [ text "Modal Content" ]
                     , footer =
                         [ button
-                            (Events.onClick CloseModal
-                                :: id "last-element-id"
-                                :: FocusTrap.last { focusFirstElement = Focus Modal.closeButtonId }
-                            )
+                            [ Events.onClick CloseModal
+                            , id "last-element-id"
+                            ]
                             [ text "Close" ]
                         ]
                     }
                     [ Modal.hideTitle
                     , Modal.css [ padding (px 10) ]
                     , Modal.custom [ id "first-modal" ]
+                    , Modal.closeButton
+                    , Modal.focusTrap
+                        (FocusTrap.FocusTrap
+                            { firstId = Modal.closeButtonId
+                            , lastId = "last-element-id"
+                            }
+                        )
                     ]
                     model.modalState
 
@@ -157,14 +162,18 @@ view model =
                 Modal.view
                     { title = "Second kind of modal"
                     , wrapMsg = ModalMsg
-                    , content =
-                        [ Modal.closeButton CloseModal <|
-                            FocusTrap.only { focusSelf = Focus Modal.closeButtonId }
-                        , text "Modal Content"
-                        ]
+                    , focus = Focus
+                    , content = [ text "Modal Content" ]
                     , footer = []
                     }
                     [ Modal.warning
+                    , Modal.closeButton
+                    , Modal.focusTrap
+                        (FocusTrap.FocusTrap
+                            { firstId = Modal.closeButtonId
+                            , lastId = Modal.closeButtonId
+                            }
+                        )
                     ]
                     model.modalState
         ]
