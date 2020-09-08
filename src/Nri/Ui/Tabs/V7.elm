@@ -58,6 +58,7 @@ view config =
             { id = tab.id
             , idString = tab.idString
             , tabAttributes = []
+            , tabTooltip = []
             , tabView = [ tab.tabView ]
             , panelView = tab.panelView
             , spaHref = tab.spaHref

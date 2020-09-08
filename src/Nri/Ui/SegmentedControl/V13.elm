@@ -169,6 +169,7 @@ view config =
             { id = option.value
             , idString = option.idString
             , tabAttributes = option.attributes
+            , tabTooltip = []
             , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl

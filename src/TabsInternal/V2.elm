@@ -17,6 +17,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 
 
@@ -36,6 +37,7 @@ type alias Tab id msg =
     { id : id
     , idString : String
     , tabAttributes : List (Attribute msg)
+    , tabTooltip : List (Tooltip.Attribute msg)
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
@@ -94,21 +96,36 @@ viewTab_ config tab =
                     , [ Events.onClick (config.onSelect tab.id)
                       ]
                     )
+
+        buttonOrLink tooltipAttributes =
+            Html.styled tag
+                (config.tabStyles isSelected)
+                (tooltipAttributes
+                    ++ tagSpecificAttributes
+                    ++ tab.tabAttributes
+                    ++ [ Attributes.tabindex tabIndex
+                       , Widget.selected isSelected
+                       , Role.tab
+                       , Attributes.id (tabToId tab.idString)
+                       , Events.onFocus (config.onSelect tab.id)
+                       , Events.on "keyup" <|
+                            Json.Decode.andThen (keyEvents config tab) Events.keyCode
+                       ]
+                )
+                tab.tabView
     in
-    Html.styled tag
-        (config.tabStyles isSelected)
-        (tagSpecificAttributes
-            ++ tab.tabAttributes
-            ++ [ Attributes.tabindex tabIndex
-               , Widget.selected isSelected
-               , Role.tab
-               , Attributes.id (tabToId tab.idString)
-               , Events.onFocus (config.onSelect tab.id)
-               , Events.on "keyup" <|
-                    Json.Decode.andThen (keyEvents config tab) Events.keyCode
-               ]
-        )
-        tab.tabView
+    case tab.tabTooltip of
+        [] ->
+            buttonOrLink []
+
+        tooltipAttributes ->
+            Tooltip.view
+                { id = "tab-tooltip__" ++ tabToId tab.idString
+                , trigger =
+                    \eventHandlers ->
+                        buttonOrLink eventHandlers
+                }
+                tooltipAttributes
 
 
 keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg
