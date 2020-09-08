@@ -148,6 +148,14 @@ example =
 
 allTabs : Bool -> List (Tab Id Msg)
 allTabs isTooltipOpen =
+    let
+        bulbIcon =
+            UiIcon.bulb
+                |> Svg.withWidth (Css.px 40)
+                |> Svg.withHeight (Css.px 40)
+                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+                |> Svg.toHtml
+    in
     [ Tabs.build { id = First, idString = "tab-0" }
         [ Tabs.spaHref "/#/doodad/Nri.Ui.Tabs.V7"
         , Tabs.tabString "Link example"
@@ -158,26 +166,16 @@ allTabs isTooltipOpen =
         , Tabs.panelHtml (Html.text "Second Panel")
         ]
     , Tabs.build { id = Third, idString = "tab-2" }
-        [ UiIcon.bulb
-            |> Svg.withLabel "Lightbulb"
-            |> Svg.withWidth (Css.px 40)
-            |> Svg.withHeight (Css.px 40)
-            |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-            |> Svg.toHtml
-            |> Tabs.tabHtml
-
-        --Tooltip.view
-        --    { id = "lightbulb-tooltip"
-        --    , triggerHtml =
-        --}
-        --[ Tooltip.plaintext "The Electrifying Third Tab"
-        --, Tooltip.onBottom
-        --, Tooltip.onHover ToggleTooltip
-        --, Tooltip.primaryLabel
-        --, Tooltip.fitToContent
-        --, Tooltip.smallPadding
-        --, Tooltip.open isTooltipOpen
-        --]
+        [ Tabs.tabHtml bulbIcon
+        , Tabs.withTooltip
+            [ Tooltip.plaintext "The Electrifying Third Tab"
+            , Tooltip.onBottom
+            , Tooltip.onHover ToggleTooltip
+            , Tooltip.primaryLabel
+            , Tooltip.fitToContent
+            , Tooltip.smallPadding
+            , Tooltip.open isTooltipOpen
+            ]
         , Tabs.panelHtml (Html.text "Third Panel")
         ]
     , Tabs.build { id = Fourth, idString = "tab-3" }

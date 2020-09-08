@@ -2,7 +2,7 @@ module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
     , Tab, Attribute, build
-    , tabString, tabHtml
+    , tabString, tabHtml, withTooltip
     , panelHtml
     , spaHref
     )
@@ -15,7 +15,7 @@ module Nri.Ui.Tabs.V7 exposing
 @docs view
 @docs Alignment
 @docs Tab, Attribute, build
-@docs tabString, tabHtml
+@docs tabString, tabHtml, withTooltip
 @docs panelHtml
 @docs spaHref
 
@@ -41,6 +41,7 @@ type alias TabInternal id msg =
     { id : id
     , idString : String
     , tabView : Html Never
+    , tabTooltip : List (Tooltip.Attribute msg)
     , panelView : Html msg
     , spaHref : Maybe String
     }
@@ -61,6 +62,12 @@ tabString content =
 tabHtml : Html Never -> Attribute id msg
 tabHtml content =
     Attribute (\tab -> { tab | tabView = content })
+
+
+{-| -}
+withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
+withTooltip attributes =
+    Attribute (\tab -> { tab | tabTooltip = attributes })
 
 
 {-| -}
@@ -85,6 +92,7 @@ build { id, idString } attributes =
             , tabView = Html.text ""
             , panelView = Html.text ""
             , spaHref = Nothing
+            , tabTooltip = []
             }
     in
     Tab (List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaults attributes)
@@ -116,7 +124,7 @@ view config =
             { id = tab.id
             , idString = tab.idString
             , tabAttributes = []
-            , tabTooltip = []
+            , tabTooltip = tab.tabTooltip
             , tabView = [ Html.map never tab.tabView ]
             , panelView = tab.panelView
             , spaHref = tab.spaHref
