@@ -10,6 +10,7 @@ module Nri.Ui.Checkbox.V5 exposing
 # Patch changes
 
   - Use Nri.Ui.Svg.V1 rather than a custom Icon type specific to this module
+  - Make the filter ids within the svg unique (now the id depends on the checkbox identifier)
 
 
 # Changes from V5:
@@ -131,13 +132,13 @@ buildCheckbox model labelView =
                     icon =
                         case model.selected of
                             Selected ->
-                                checkboxChecked
+                                checkboxChecked model.identifier
 
                             NotSelected ->
-                                checkboxUnchecked
+                                checkboxUnchecked model.identifier
 
                             PartiallySelected ->
-                                checkboxCheckedPartially
+                                checkboxCheckedPartially model.identifier
                 in
                 if model.disabled then
                     viewDisabledLabel model labelView icon
@@ -147,10 +148,10 @@ buildCheckbox model labelView =
 
             Locked ->
                 if model.disabled then
-                    viewDisabledLabel model labelView checkboxLockOnInside
+                    viewDisabledLabel model labelView (checkboxLockOnInside model.identifier)
 
                 else
-                    viewEnabledLabel model labelView checkboxLockOnInside
+                    viewEnabledLabel model labelView (checkboxLockOnInside model.identifier)
         ]
 
 
@@ -308,8 +309,15 @@ viewIcon styles icon =
         ]
 
 
-checkboxUnchecked : Svg
-checkboxUnchecked =
+checkboxUnchecked : String -> Svg
+checkboxUnchecked idSuffix =
+    let
+        filterId =
+            "filter-2" ++ idSuffix
+
+        filterUrl =
+            "url(#" ++ filterId ++ ")"
+    in
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
@@ -322,7 +330,7 @@ checkboxUnchecked =
                 , SvgAttributes.width "107.4%"
                 , SvgAttributes.height "107.4%"
                 , SvgAttributes.filterUnits "objectBoundingBox"
-                , SvgAttributes.id "filter-2"
+                , SvgAttributes.id filterId
                 ]
                 [ Svg.feOffset
                     [ SvgAttributes.dx "0"
@@ -362,7 +370,7 @@ checkboxUnchecked =
                 , checkboxBackground
                     [ SvgAttributes.fill "black"
                     , SvgAttributes.fillOpacity "1"
-                    , SvgAttributes.filter "url(#filter-2)"
+                    , SvgAttributes.filter filterUrl
                     ]
                 ]
             ]
@@ -370,8 +378,15 @@ checkboxUnchecked =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
-checkboxChecked : Svg
-checkboxChecked =
+checkboxChecked : String -> Svg
+checkboxChecked idSuffix =
+    let
+        filterId =
+            "filter-2" ++ idSuffix
+
+        filterUrl =
+            "url(#" ++ filterId ++ ")"
+    in
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
@@ -384,7 +399,7 @@ checkboxChecked =
                 , SvgAttributes.width "107.4%"
                 , SvgAttributes.height "107.4%"
                 , SvgAttributes.filterUnits "objectBoundingBox"
-                , SvgAttributes.id "filter-2"
+                , SvgAttributes.id filterId
                 ]
                 [ Svg.feOffset
                     [ SvgAttributes.dx "0"
@@ -425,7 +440,7 @@ checkboxChecked =
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
                         , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter "url(#filter-2)"
+                        , SvgAttributes.filter filterUrl
                         ]
                     ]
                 , Svg.g
@@ -443,8 +458,15 @@ checkboxChecked =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
-checkboxCheckedPartially : Svg
-checkboxCheckedPartially =
+checkboxCheckedPartially : String -> Svg
+checkboxCheckedPartially idSuffix =
+    let
+        filterId =
+            "filter-2" ++ idSuffix
+
+        filterUrl =
+            "url(#" ++ filterId ++ ")"
+    in
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
@@ -457,7 +479,7 @@ checkboxCheckedPartially =
                 , SvgAttributes.width "107.4%"
                 , SvgAttributes.height "107.4%"
                 , SvgAttributes.filterUnits "objectBoundingBox"
-                , SvgAttributes.id "filter-2"
+                , SvgAttributes.id filterId
                 ]
                 [ Svg.feOffset
                     [ SvgAttributes.dx "0"
@@ -499,7 +521,7 @@ checkboxCheckedPartially =
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
                         , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter "url(#filter-2)"
+                        , SvgAttributes.filter filterUrl
                         ]
                     ]
                 , Svg.path
@@ -526,8 +548,15 @@ checkboxBackground attrs =
         []
 
 
-checkboxLockOnInside : Svg
-checkboxLockOnInside =
+checkboxLockOnInside : String -> Svg
+checkboxLockOnInside idSuffix =
+    let
+        filterId =
+            "filter-2" ++ idSuffix
+
+        filterUrl =
+            "url(#" ++ filterId ++ ")"
+    in
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
@@ -540,7 +569,7 @@ checkboxLockOnInside =
                 , SvgAttributes.width "107.4%"
                 , SvgAttributes.height "107.4%"
                 , SvgAttributes.filterUnits "objectBoundingBox"
-                , SvgAttributes.id "filter-2"
+                , SvgAttributes.id filterId
                 ]
                 [ Svg.feOffset
                     [ SvgAttributes.dx "0"
@@ -582,7 +611,7 @@ checkboxLockOnInside =
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
                         , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter "url(#filter-2)"
+                        , SvgAttributes.filter filterUrl
                         ]
                     ]
                 , Svg.g
