@@ -68,36 +68,36 @@ spec =
                     |> ProgramTest.done
         , test "Tooltip.view with onClick trigger" <|
             \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+                in
                 program
                     (Tooltip.view
-                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
-                        , id = "primary-label"
+                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text triggerContent ]
+                        , id = tooltipId
                         }
                     )
-                    [ Tooltip.plaintext "This will be the primary label"
+                    [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
                     , Tooltip.onClick ToggleTooltip
                     ]
-                    |> focus
-                        [ Selector.tag "button"
-                        , Selector.containing [ Selector.text "label-less icon" ]
-                        ]
-                    |> ProgramTest.ensureViewHas
+                    -- Tooltip opens on click
+                    |> clickButton triggerContent
+                    |> ensureViewHas
                         [ tag "button"
-                        , Selector.attribute (Aria.labeledBy "primary-label")
+                        , Selector.attribute (Aria.labeledBy tooltipId)
                         ]
-                    |> ProgramTest.ensureViewHas
-                        [ id "primary-label"
-                        , Selector.text "This will be the primary label"
-                        ]
-                    |> blur
-                        [ Selector.tag "button"
-                        , Selector.containing [ Selector.text "label-less icon" ]
-                        ]
-                    |> ProgramTest.ensureViewHasNot
-                        [ id "primary-label"
-                        , Selector.text "This will be the primary label"
-                        ]
+                    |> ensureViewHas [ id tooltipId, text tooltipContent ]
+                    -- Tooltip closes on another click
+                    |> clickButton triggerContent
+                    |> ensureViewHasNot [ id tooltipId, text tooltipContent ]
                     |> ProgramTest.done
         , test "Tooltip.view with onHover trigger" <|
             \() ->
