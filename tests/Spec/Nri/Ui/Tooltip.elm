@@ -5,7 +5,7 @@ import Accessibility.Widget as Widget
 import Expect
 import Html
 import Html.Styled as HtmlStyled
-import Nri.Ui.Tooltip.V1 as Tooltip
+import Nri.Ui.Tooltip.V2 as Tooltip
 import ProgramTest
 import Test exposing (..)
 import Test.Html.Event as Event
@@ -35,7 +35,7 @@ update msg model =
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tooltip.V1"
+    describe "Nri.Ui.Tooltip.V2"
         [ describe "toggleTip"
             [ test "Toggletip is available on hover and hides on blur" <|
                 \() ->
@@ -70,10 +70,10 @@ spec =
                         |> ProgramTest.done
             ]
         , describe "tooltips"
-            ([ Tooltip.OnClick, Tooltip.OnHover ]
+            ([ ( Tooltip.onClick, "onClick" ), ( Tooltip.onHover, "onHover" ) ]
                 |> List.map
-                    (\trigger ->
-                        test ("Tooltip with " ++ Debug.toString trigger ++ " trigger is available on focus") <|
+                    (\( trigger, triggerName ) ->
+                        test ("Tooltip with " ++ triggerName ++ " trigger is available on focus") <|
                             \() ->
                                 ProgramTest.createSandbox
                                     { init = init
@@ -113,27 +113,25 @@ spec =
         ]
 
 
-viewTooltip : Tooltip.Trigger -> Model -> Html.Html Msg
+viewTooltip : ((Bool -> Msg) -> Tooltip.Attribute Msg) -> Model -> Html.Html Msg
 viewTooltip trigger model =
-    Tooltip.tooltip [ HtmlStyled.text "This will be the primary label" ]
-        |> Tooltip.primaryLabel
-            { trigger = trigger
-            , triggerHtml = HtmlStyled.text "label-less icon"
-            , onTrigger = ToggleTooltip
-            , isOpen = model.tooltipOpen
-            , extraButtonAttrs = []
-            , id = "primary-label"
-            }
+    Tooltip.view
+        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
+        , id = "primary-label"
+        }
+        [ Tooltip.plaintext "This will be the primary label"
+        , Tooltip.primaryLabel
+        , trigger ToggleTooltip
+        , Tooltip.open model.tooltipOpen
+        ]
         |> HtmlStyled.toUnstyled
 
 
 viewToggleTip : Model -> Html.Html Msg
 viewToggleTip model =
-    Tooltip.tooltip [ HtmlStyled.text "Toggly!" ]
-        |> Tooltip.toggleTip
-            { onTrigger = ToggleTooltip
-            , isOpen = model.tooltipOpen
-            , extraButtonAttrs = []
-            , label = "More info"
-            }
+    Tooltip.toggleTip { label = "More info" }
+        [ Tooltip.plaintext "Toggly!"
+        , Tooltip.onHover ToggleTooltip
+        , Tooltip.open model.tooltipOpen
+        ]
         |> HtmlStyled.toUnstyled
