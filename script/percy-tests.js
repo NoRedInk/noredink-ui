@@ -1,17 +1,15 @@
 const PercyScript = require('@percy/script')
 
 PercyScript.run(async (page, percySnapshot) => {
-  const defaultProcessing = async (name, id, location) => {
+  const defaultProcessing = async (name, location) => {
     await page.goto(location)
-    await page.waitFor(`#${id}`)
+    await page.waitFor(`#${name}`)
     await percySnapshot(name)
     console.log(`Snapshot complete for ${name}`)
   }
   const specialProcessing = {
-    'All': async (_) => {
-    },
-    'Modals': async (name, id, location) => {
-      await defaultProcessing(name, id, location)
+    'Modal': async (name, location) => {
+      await defaultProcessing(name, location)
       await page.click('#launch-modal')
       await page.waitFor('[role="dialog"]')
       await percySnapshot('Full Info Modal')
@@ -24,15 +22,16 @@ PercyScript.run(async (page, percySnapshot) => {
     }
   }
   await page.goto('http://localhost:8000')
-  await page.waitFor('#categories').then(category => {
-    return category.$$('a').then(links => {
+  await page.waitFor('.module-example__doodad-link').then(doodads => {
+    return doodads.$$('a').then(links => {
       return links.reduce((acc, link) => {
         return acc.then(_ => {
-              return link.evaluate(node => [node.innerText, node.innerText.toLowerCase().replace(/ /g, "-"), node.href]).then(([name, id, location]) => {
+            return link.evaluate(node => [node["dataset"]["percyName"], node.href]).then(([name, location]) => {
                 let handler = specialProcessing[name] || defaultProcessing
-                return handler(name, id, location)
-              })
-            }
+                return handler(name, location)
+              }
+            )
+          }
         )
       }, Promise.resolve())
     })

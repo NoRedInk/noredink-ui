@@ -81,8 +81,8 @@ wrapState wrapState_ unwrapState example =
     }
 
 
-view : Bool -> Example state msg -> Html msg
-view showFocusLink example =
+view : Example state msg -> Html msg
+view example =
     let
         fullName =
             "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
@@ -111,7 +111,14 @@ view showFocusLink example =
                 , marginBottom zero
                 ]
                 []
-                [ Html.a [ Attributes.href ("#/doodad/" ++ example.name) ] [ Html.text fullName ]
+                [ Html.a
+                    [ Attributes.href ("#/doodad/" ++ example.name)
+                    , Attributes.class "module-example__doodad-link"
+                    , -- this data attribute is used to name the Percy screenshots
+                      String.replace "." "-" example.name
+                        |> Attributes.attribute "data-percy-name"
+                    ]
+                    [ Html.text fullName ]
                 ]
             , String.replace "." "-" fullName
                 |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
