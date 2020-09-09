@@ -101,35 +101,45 @@ spec =
                     |> ProgramTest.done
         , test "Tooltip.view with onHover trigger" <|
             \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+                in
                 program
                     (Tooltip.view
-                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
-                        , id = "primary-label"
+                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text triggerContent ]
+                        , id = tooltipId
                         }
                     )
-                    [ Tooltip.plaintext "This will be the primary label"
+                    [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
                     , Tooltip.onHover ToggleTooltip
                     ]
                     |> focus
                         [ Selector.tag "button"
-                        , Selector.containing [ Selector.text "label-less icon" ]
+                        , Selector.containing [ Selector.text triggerContent ]
                         ]
                     |> ProgramTest.ensureViewHas
                         [ tag "button"
-                        , Selector.attribute (Aria.labeledBy "primary-label")
+                        , Selector.attribute (Aria.labeledBy tooltipId)
                         ]
                     |> ProgramTest.ensureViewHas
-                        [ id "primary-label"
-                        , Selector.text "This will be the primary label"
+                        [ id tooltipId
+                        , Selector.text tooltipContent
                         ]
                     |> blur
                         [ Selector.tag "button"
-                        , Selector.containing [ Selector.text "label-less icon" ]
+                        , Selector.containing [ Selector.text triggerContent ]
                         ]
                     |> ProgramTest.ensureViewHasNot
-                        [ id "primary-label"
-                        , Selector.text "This will be the primary label"
+                        [ id tooltipId
+                        , Selector.text tooltipContent
                         ]
                     |> ProgramTest.done
         ]
