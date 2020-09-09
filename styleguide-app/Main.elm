@@ -166,18 +166,17 @@ view_ model =
         , Html.main_ [ css [ flexGrow (int 1), sectionStyles ] ]
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
-                    , examples (\m -> m.name == doodad)
-                        |> List.head
-                        |> Maybe.map
-                            (\example ->
-                                Html.div [ id (String.replace "." "-" example.name) ]
-                                    [ Example.view example
-                                        |> Html.map (UpdateModuleStates example.name)
-                                    ]
-                            )
-                        |> Maybe.withDefault (Html.text "Oops! We couldn't find that doodad.")
-                    ]
+                    case List.head (examples (\m -> m.name == doodad)) of
+                        Just example ->
+                            [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
+                            , Html.div [ id (String.replace "." "-" example.name) ]
+                                [ Example.view example
+                                    |> Html.map (UpdateModuleStates example.name)
+                                ]
+                            ]
+
+                        Nothing ->
+                            [ Html.text <| "Oops! We couldn't find " ++ doodad ]
 
                 Routes.Category category ->
                     [ mainContentHeader (Category.forDisplay category)
