@@ -121,6 +121,16 @@ spec =
                     , Tooltip.primaryLabel
                     , Tooltip.onHover ToggleTooltip
                     ]
+                    -- Tooltip opens on mouse enter
+                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> ensureViewHas [ text tooltipContent ]
+                    -- Tooltip stays open on trigger-html click
+                    |> clickButton triggerContent
+                    |> ensureViewHas [ text tooltipContent ]
+                    -- Tooltip closes on mouse leave
+                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> ensureViewHasNot [ text tooltipContent ]
+                    -- Tooltip opens on focus
                     |> focus
                         [ Selector.tag "button"
                         , Selector.containing [ Selector.text triggerContent ]
@@ -133,6 +143,7 @@ spec =
                         [ id tooltipId
                         , Selector.text tooltipContent
                         ]
+                    -- Tooltip closes on blur
                     |> blur
                         [ Selector.tag "button"
                         , Selector.containing [ Selector.text triggerContent ]
