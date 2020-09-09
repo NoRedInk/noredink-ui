@@ -22,18 +22,17 @@ PercyScript.run(async (page, percySnapshot) => {
     }
   }
   await page.goto('http://localhost:8000')
-  await page.waitFor('.module-example__doodad-link').then(doodads => {
-    return doodads.$$('a').then(links => {
-      return links.reduce((acc, link) => {
-        return acc.then(_ => {
-            return link.evaluate(node => [node["dataset"]["percyName"], node.href]).then(([name, location]) => {
-                let handler = specialProcessing[name] || defaultProcessing
-                return handler(name, location)
-              }
-            )
-          }
-        )
-      }, Promise.resolve())
-    })
-  })
+  await page.waitFor('.module-example__doodad-link')
+  let links = await page.evaluate(() => {
+      let nodes = Array.from(document.querySelectorAll('.module-example__doodad-link'));
+      return nodes.map(node => [node["dataset"]["percyName"], node.href])
+  });
+
+  await links.reduce((acc, [name, location]) => {
+    return acc.then(() => {
+        let handler = specialProcessing[name] || defaultProcessing
+        return handler(name, location)
+      }
+    )
+  }, Promise.resolve())
 })
