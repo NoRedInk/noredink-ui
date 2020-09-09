@@ -4,9 +4,10 @@ import Accessibility.Aria as Aria
 import Accessibility.Widget as Widget
 import Expect
 import Html
+import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Nri.Ui.Tooltip.V2 as Tooltip
-import ProgramTest
+import ProgramTest exposing (ProgramTest, clickButton, ensureViewHas, ensureViewHasNot)
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -45,21 +46,25 @@ spec =
                     label =
                         "More info"
                 in
-                program
-                    (Tooltip.toggleTip { label = label })
+                program (Tooltip.toggleTip { label = label })
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.onHover ToggleTooltip
                     ]
-                    |> mouseEnter
-                        [ Selector.tag "button"
-                        , Selector.attribute (Widget.label label)
-                        ]
-                    |> ProgramTest.ensureViewHas [ Selector.text tooltipContent ]
-                    |> blur
-                        [ Selector.tag "button"
-                        , Selector.attribute (Widget.label label)
-                        ]
-                    |> ProgramTest.ensureViewHasNot [ Selector.text tooltipContent ]
+                    -- Tooltip opens on mouse enter
+                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> ensureViewHas [ text tooltipContent ]
+                    -- Tooltip stays open on trigger-html click
+                    |> clickButtonByLabel label
+                    |> ensureViewHas [ text tooltipContent ]
+                    -- Tooltip closes on mouse leave
+                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> ensureViewHasNot [ text tooltipContent ]
+                    -- Tooltip opens on focus
+                    |> focus [ tag "button", Selector.attribute (Widget.label label) ]
+                    |> ensureViewHas [ text tooltipContent ]
+                    -- Tooltip closes on blur
+                    |> blur [ tag "button", Selector.attribute (Widget.label label) ]
+                    |> ensureViewHasNot [ text tooltipContent ]
                     |> ProgramTest.done
         , test "Tooltip.view with onClick trigger" <|
             \() ->
@@ -130,31 +135,52 @@ spec =
         ]
 
 
-program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest.ProgramTest Model Msg ()
+program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest Model Msg ()
 program view attributes =
     ProgramTest.createSandbox
         { init = init
         , update = update
-        , view = \model -> HtmlStyled.toUnstyled (view (Tooltip.open model.tooltipOpen :: attributes))
+        , view =
+            \model ->
+                HtmlStyled.div []
+                    [ view (Tooltip.open model.tooltipOpen :: attributes)
+                    ]
+                    |> HtmlStyled.toUnstyled
         }
         |> ProgramTest.start ()
 
 
-mouseEnter : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+nriDescription : String -> Selector.Selector
+nriDescription desc =
+    Selector.attribute (Attributes.attribute "data-nri-description" desc)
+
+
+mouseEnter : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 mouseEnter selectors =
     ProgramTest.simulateDomEvent (Query.find selectors) Event.mouseEnter
 
 
-mouseLeave : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+mouseLeave : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 mouseLeave selectors =
     ProgramTest.simulateDomEvent (Query.find selectors) Event.mouseLeave
 
 
-blur : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+blur : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 blur selectors =
     ProgramTest.simulateDomEvent (Query.find selectors) Event.blur
 
 
-focus : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+focus : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 focus selectors =
-    ProgramTest.simulateDomEvent (Query.find selectors) Event.focuss
+    ProgramTest.simulateDomEvent (Query.find selectors) Event.focus
+
+
+clickButtonByLabel : String -> ProgramTest model msg effect -> ProgramTest model msg effect
+clickButtonByLabel label =
+    ProgramTest.simulateDomEvent
+        (Query.find
+            [ Selector.tag "button"
+            , Selector.attribute (Widget.label label)
+            ]
+        )
+        Event.click
