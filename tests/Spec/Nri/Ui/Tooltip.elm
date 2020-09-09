@@ -36,73 +36,47 @@ update msg model =
 spec : Test
 spec =
     describe "Nri.Ui.Tooltip.V2"
-        [ describe "toggleTip"
-            [ test "Toggletip is available on hover and hides on blur" <|
-                \() ->
-                    let
-                        tooltipContent =
-                            "Toggly!"
-
-                        label =
-                            "More info"
-                    in
-                    ProgramTest.createSandbox
-                        { init = init
-                        , update = update
-                        , view =
-                            \model ->
-                                Tooltip.toggleTip { label = label }
-                                    [ Tooltip.plaintext tooltipContent
-                                    , Tooltip.onHover ToggleTooltip
-                                    , Tooltip.open model.tooltipOpen
-                                    ]
-                                    |> HtmlStyled.toUnstyled
-                        }
-                        |> ProgramTest.start ()
-                        |> ProgramTest.simulateDomEvent
-                            (Query.find
-                                [ Selector.tag "button"
-                                , Selector.attribute (Widget.label label)
-                                ]
-                            )
-                            Event.mouseEnter
-                        |> ProgramTest.ensureViewHas [ Selector.text tooltipContent ]
-                        |> ProgramTest.simulateDomEvent
-                            (Query.find
-                                [ Selector.tag "button"
-                                , Selector.attribute (Widget.label label)
-                                ]
-                            )
-                            Event.blur
-                        |> ProgramTest.ensureViewHasNot [ Selector.text tooltipContent ]
-                        |> ProgramTest.done
-            ]
-        , test "tooltip with onClick trigger" <|
+        [ test "Tooltip.toggleTip with onHover trigger" <|
             \() ->
-                ProgramTest.createSandbox
-                    { init = init
-                    , update = update
-                    , view =
-                        \model ->
-                            Tooltip.view
-                                { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
-                                , id = "primary-label"
-                                }
-                                [ Tooltip.plaintext "This will be the primary label"
-                                , Tooltip.primaryLabel
-                                , Tooltip.onClick ToggleTooltip
-                                , Tooltip.open model.tooltipOpen
-                                ]
-                                |> HtmlStyled.toUnstyled
-                    }
-                    |> ProgramTest.start ()
-                    |> ProgramTest.simulateDomEvent
-                        (Query.find
-                            [ Selector.tag "button"
-                            , Selector.containing [ Selector.text "label-less icon" ]
-                            ]
-                        )
-                        Event.focus
+                let
+                    tooltipContent =
+                        "Toggly!"
+
+                    label =
+                        "More info"
+                in
+                program
+                    (Tooltip.toggleTip { label = label })
+                    [ Tooltip.plaintext tooltipContent
+                    , Tooltip.onHover ToggleTooltip
+                    ]
+                    |> mouseEnter
+                        [ Selector.tag "button"
+                        , Selector.attribute (Widget.label label)
+                        ]
+                    |> ProgramTest.ensureViewHas [ Selector.text tooltipContent ]
+                    |> blur
+                        [ Selector.tag "button"
+                        , Selector.attribute (Widget.label label)
+                        ]
+                    |> ProgramTest.ensureViewHasNot [ Selector.text tooltipContent ]
+                    |> ProgramTest.done
+        , test "Tooltip.view with onClick trigger" <|
+            \() ->
+                program
+                    (Tooltip.view
+                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
+                        , id = "primary-label"
+                        }
+                    )
+                    [ Tooltip.plaintext "This will be the primary label"
+                    , Tooltip.primaryLabel
+                    , Tooltip.onClick ToggleTooltip
+                    ]
+                    |> focus
+                        [ Selector.tag "button"
+                        , Selector.containing [ Selector.text "label-less icon" ]
+                        ]
                     |> ProgramTest.ensureViewHas
                         [ tag "button"
                         , Selector.attribute (Aria.labeledBy "primary-label")
@@ -111,44 +85,31 @@ spec =
                         [ id "primary-label"
                         , Selector.text "This will be the primary label"
                         ]
-                    |> ProgramTest.simulateDomEvent
-                        (Query.find
-                            [ Selector.tag "button"
-                            , Selector.containing [ Selector.text "label-less icon" ]
-                            ]
-                        )
-                        Event.blur
+                    |> blur
+                        [ Selector.tag "button"
+                        , Selector.containing [ Selector.text "label-less icon" ]
+                        ]
                     |> ProgramTest.ensureViewHasNot
                         [ id "primary-label"
                         , Selector.text "This will be the primary label"
                         ]
                     |> ProgramTest.done
-        , test "tooltip with onHover trigger" <|
+        , test "Tooltip.view with onHover trigger" <|
             \() ->
-                ProgramTest.createSandbox
-                    { init = init
-                    , update = update
-                    , view =
-                        \model ->
-                            Tooltip.view
-                                { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
-                                , id = "primary-label"
-                                }
-                                [ Tooltip.plaintext "This will be the primary label"
-                                , Tooltip.primaryLabel
-                                , Tooltip.onHover ToggleTooltip
-                                , Tooltip.open model.tooltipOpen
-                                ]
-                                |> HtmlStyled.toUnstyled
-                    }
-                    |> ProgramTest.start ()
-                    |> ProgramTest.simulateDomEvent
-                        (Query.find
-                            [ Selector.tag "button"
-                            , Selector.containing [ Selector.text "label-less icon" ]
-                            ]
-                        )
-                        Event.focus
+                program
+                    (Tooltip.view
+                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text "label-less icon" ]
+                        , id = "primary-label"
+                        }
+                    )
+                    [ Tooltip.plaintext "This will be the primary label"
+                    , Tooltip.primaryLabel
+                    , Tooltip.onHover ToggleTooltip
+                    ]
+                    |> focus
+                        [ Selector.tag "button"
+                        , Selector.containing [ Selector.text "label-less icon" ]
+                        ]
                     |> ProgramTest.ensureViewHas
                         [ tag "button"
                         , Selector.attribute (Aria.labeledBy "primary-label")
@@ -157,16 +118,43 @@ spec =
                         [ id "primary-label"
                         , Selector.text "This will be the primary label"
                         ]
-                    |> ProgramTest.simulateDomEvent
-                        (Query.find
-                            [ Selector.tag "button"
-                            , Selector.containing [ Selector.text "label-less icon" ]
-                            ]
-                        )
-                        Event.blur
+                    |> blur
+                        [ Selector.tag "button"
+                        , Selector.containing [ Selector.text "label-less icon" ]
+                        ]
                     |> ProgramTest.ensureViewHasNot
                         [ id "primary-label"
                         , Selector.text "This will be the primary label"
                         ]
                     |> ProgramTest.done
         ]
+
+
+program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest.ProgramTest Model Msg ()
+program view attributes =
+    ProgramTest.createSandbox
+        { init = init
+        , update = update
+        , view = \model -> HtmlStyled.toUnstyled (view (Tooltip.open model.tooltipOpen :: attributes))
+        }
+        |> ProgramTest.start ()
+
+
+mouseEnter : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+mouseEnter selectors =
+    ProgramTest.simulateDomEvent (Query.find selectors) Event.mouseEnter
+
+
+mouseLeave : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+mouseLeave selectors =
+    ProgramTest.simulateDomEvent (Query.find selectors) Event.mouseLeave
+
+
+blur : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+blur selectors =
+    ProgramTest.simulateDomEvent (Query.find selectors) Event.blur
+
+
+focus : List Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+focus selectors =
+    ProgramTest.simulateDomEvent (Query.find selectors) Event.focuss
