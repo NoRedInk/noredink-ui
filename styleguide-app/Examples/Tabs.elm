@@ -102,7 +102,8 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tabs.V6"
+    { name = "Tabs"
+    , version = 6
     , categories = [ Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
@@ -143,7 +144,7 @@ allTabs : List (Tab Id Msg)
 allTabs =
     [ { id = First
       , idString = "tab-0"
-      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.V6"
+      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.6"
       , tabView = Tabs.viewTabDefault "Link example"
       , panelView = Html.text "First Panel"
       }

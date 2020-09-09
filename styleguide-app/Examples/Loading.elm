@@ -88,7 +88,8 @@ subscriptions { showLoadingFadeIn, showLoading, showSpinners } =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Loading.V1"
+    { name = "Loading"
+    , version = 1
     , categories = [ Pages ]
     , atomicDesignType = Page
     , keyboardSupport = []

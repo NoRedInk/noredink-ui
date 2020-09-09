@@ -55,7 +55,8 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tooltip.V1"
+    { name = "Tooltip"
+    , version = 1
     , categories = [ Widgets ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
