@@ -161,6 +161,7 @@ allTabs openTooltipId =
             UiIcon.bulb
                 |> Svg.withWidth (Css.px 40)
                 |> Svg.withHeight (Css.px 45)
+                |> Svg.withLabel "Bulb"
                 |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
                 |> Svg.toHtml
     in
