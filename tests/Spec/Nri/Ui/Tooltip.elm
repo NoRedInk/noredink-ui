@@ -14,26 +14,6 @@ import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (id, tag, text)
 
 
-type alias Model =
-    { tooltipOpen : Bool }
-
-
-init : Model
-init =
-    { tooltipOpen = False }
-
-
-type Msg
-    = ToggleTooltip Bool
-
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        ToggleTooltip isOpen ->
-            { tooltipOpen = isOpen }
-
-
 spec : Test
 spec =
     describe "Nri.Ui.Tooltip.V2"
@@ -48,7 +28,7 @@ spec =
                 in
                 program (Tooltip.toggleTip { label = label })
                     [ Tooltip.plaintext tooltipContent
-                    , Tooltip.onHover ToggleTooltip
+                    , Tooltip.onHover identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -86,7 +66,7 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onClick ToggleTooltip
+                    , Tooltip.onClick identity
                     ]
                     -- Tooltip opens on click
                     |> clickButton triggerContent
@@ -119,7 +99,7 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onHover ToggleTooltip
+                    , Tooltip.onHover identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -156,15 +136,15 @@ spec =
         ]
 
 
-program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest Model Msg ()
+program : (List (Tooltip.Attribute Bool) -> HtmlStyled.Html Bool) -> List (Tooltip.Attribute Bool) -> ProgramTest Bool Bool ()
 program view attributes =
     ProgramTest.createSandbox
-        { init = init
-        , update = update
+        { init = False
+        , update = \msg model -> msg
         , view =
-            \model ->
+            \isOpen ->
                 HtmlStyled.div []
-                    [ view (Tooltip.open model.tooltipOpen :: attributes)
+                    [ view (Tooltip.open isOpen :: attributes)
                     ]
                     |> HtmlStyled.toUnstyled
         }
