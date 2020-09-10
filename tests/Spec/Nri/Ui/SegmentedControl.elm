@@ -4,7 +4,7 @@ import Expect
 import Html.Attributes as Attributes
 import Html.Styled
 import Json.Encode as Encode
-import Nri.Ui.SegmentedControl.V12 as SegmentedControl
+import Nri.Ui.SegmentedControl.V13 as SegmentedControl
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector

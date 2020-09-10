@@ -6,40 +6,60 @@ module Examples.Tooltip exposing (example, State, Msg)
 
 -}
 
-import Accessibility.Styled as Html
+import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css, href)
+import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V4 as Text
-import Nri.Ui.Tooltip.V1 as Tooltip
+import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-type TooltipType
-    = PrimaryLabelOnClick
-    | PrimaryLabelOnHover
-    | AuxillaryDescription
-    | ToggleTipTop
-    | ToggleTipRight
-    | ToggleTipBottom
-    | ToggleTipLeft
+example : Example State Msg
+example =
+    { name = "Tooltip"
+    , version = 2
+    , categories = [ Widgets ]
+    , atomicDesignType = Molecule
+    , keyboardSupport = []
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view = view
+    }
 
 
 type alias State =
     { openTooltip : Maybe TooltipType
+    , staticExampleSettings : Control ExampleSettings
     }
 
 
 init : State
 init =
-    { openTooltip = Nothing }
+    { openTooltip = Nothing
+    , staticExampleSettings = initStaticExampleSettings
+    }
+
+
+type TooltipType
+    = PrimaryLabel
+    | AuxillaryDescription
+    | LearnMore
 
 
 type Msg
     = ToggleTooltip TooltipType Bool
+    | SetStaticExampleSettings (Control ExampleSettings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -52,98 +72,218 @@ update msg model =
             else
                 ( { model | openTooltip = Nothing }, Cmd.none )
 
+        SetStaticExampleSettings settings ->
+            ( { model | staticExampleSettings = settings }, Cmd.none )
 
-example : Example State Msg
-example =
-    { name = "Tooltip"
-    , version = 1
-    , categories = [ Widgets ]
-    , atomicDesignType = Molecule
-    , keyboardSupport = []
-    , state = init
-    , update = update
-    , subscriptions = \_ -> Sub.none
-    , view =
-        \model ->
-            [ Text.mediumBody [ Html.text "These tooltips look similar, but serve different purposes when reading them via a screen-reader." ]
-            , Heading.h3 [] [ Html.text "primaryLabel" ]
-            , Text.smallBody
-                [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
-                , Html.br []
-                , Html.text "e.g. when the trigger content is an icon with no text."
+
+view : State -> List (Html Msg)
+view model =
+    [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
+    , Text.mediumBody
+        [ Html.text "Label the Tooltip as either being the "
+        , viewPrimaryLabelTooltip model.openTooltip
+        , Html.text " or the "
+        , viewAuxillaryDescriptionToolip model.openTooltip
+        , Html.text " for the trigger content."
+        , viewToggleTip model.openTooltip
+        ]
+    , viewCustomizableExample model.staticExampleSettings
+    ]
+
+
+viewPrimaryLabelTooltip : Maybe TooltipType -> Html Msg
+viewPrimaryLabelTooltip openTooltip =
+    Tooltip.view
+        { id = "tooltip__primaryLabel"
+        , trigger =
+            \eventHandlers ->
+                ClickableText.button "primaryLabel"
+                    [ ClickableText.custom eventHandlers
+                    ]
+        }
+        [ Tooltip.html
+            [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is an icon with no text."
+            ]
+        , Tooltip.auxillaryDescription
+        , Tooltip.onHover (ToggleTooltip PrimaryLabel)
+        , Tooltip.open (openTooltip == Just PrimaryLabel)
+        , Tooltip.onBottom
+        ]
+
+
+viewAuxillaryDescriptionToolip : Maybe TooltipType -> Html Msg
+viewAuxillaryDescriptionToolip openTooltip =
+    Tooltip.view
+        { id = "tooltip__auxillaryDescription"
+        , trigger =
+            \eventHandlers ->
+                ClickableText.button "auxillaryDescription"
+                    [ ClickableText.custom eventHandlers
+                    ]
+        }
+        [ Tooltip.html
+            [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
+            , Html.br []
+            , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
+            ]
+        , Tooltip.auxillaryDescription
+        , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
+        , Tooltip.open (openTooltip == Just AuxillaryDescription)
+        , Tooltip.onBottom
+        ]
+
+
+viewToggleTip : Maybe TooltipType -> Html Msg
+viewToggleTip openTooltip =
+    Tooltip.toggleTip { label = "tooltip__learn-more" }
+        [ Tooltip.html
+            [ Html.a
+                [ href "https://inclusive-components.design/tooltips-toggletips" ]
+                [ Html.text "Learn more" ]
+            ]
+        , Tooltip.primaryLabel
+        , Tooltip.onHover (ToggleTooltip LearnMore)
+        , Tooltip.open (openTooltip == Just LearnMore)
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
+        ]
+
+
+type alias ExampleSettings =
+    { content : Tooltip.Attribute Never
+    , direction : Tooltip.Attribute Never
+    , alignment : Tooltip.Attribute Never
+    , width : Tooltip.Attribute Never
+    , padding : Tooltip.Attribute Never
+    }
+
+
+initStaticExampleSettings : Control ExampleSettings
+initStaticExampleSettings =
+    Control.record ExampleSettings
+        |> Control.field "content" controlContent
+        |> Control.field "direction" controlDirection
+        |> Control.field "alignment" controlAlignment
+        |> Control.field "width" controlWidth
+        |> Control.field "padding" controlPadding
+
+
+controlContent : Control (Tooltip.Attribute Never)
+controlContent =
+    Control.choice
+        [ ( "plaintext"
+          , "Song lyrics are literature."
+                |> Control.string
+                |> Control.map Tooltip.plaintext
+          )
+        , ( "HTML (short)"
+          , [ Html.code [] [ Html.text "git status" ]
+            , Html.text " ⇄ "
+            , Html.em [] [ Html.text "tries again" ]
+            ]
+                |> Tooltip.html
+                |> Control.value
+          )
+        , ( "HTML"
+          , [ Html.text "Click "
+            , Html.a [ href "http://www.noredink.com", Attributes.target "_blank" ]
+                [ Html.text "here, yes, HERE, right here on this long tooltip. "
+                , Html.div
+                    [ css
+                        [ Css.display Css.inlineBlock
+                        , Css.width (Css.px 20)
+                        ]
+                    ]
+                    [ Svg.toHtml UiIcon.gear ]
                 ]
-            , Tooltip.tooltip [ Html.text "Tooltip" ]
-                |> Tooltip.primaryLabel
-                    { trigger = Tooltip.OnClick
-                    , triggerHtml = Html.text "Primary Label - OnClick Trigger"
-                    , onTrigger = ToggleTooltip PrimaryLabelOnClick
-                    , isOpen = model.openTooltip == Just PrimaryLabelOnClick
-                    , id = "primary label tooltip"
-                    , extraButtonAttrs = []
-                    }
-            , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-            , Tooltip.tooltip [ Html.text "Tooltip" ]
-                |> Tooltip.primaryLabel
-                    { trigger = Tooltip.OnHover
-                    , triggerHtml = Html.text "Primary Label - OnHover Trigger"
-                    , onTrigger = ToggleTooltip PrimaryLabelOnHover
-                    , isOpen = model.openTooltip == Just PrimaryLabelOnHover
-                    , id = "primary label tooltip"
-                    , extraButtonAttrs = []
-                    }
-            , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-            , Heading.h3 [] [ Html.text "auxillaryDescription" ]
-            , Text.smallBody
-                [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
-                , Html.br []
-                , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
-                ]
-            , Tooltip.tooltip [ Html.text "Tooltip" ]
-                |> Tooltip.auxillaryDescription
-                    { trigger = Tooltip.OnClick
-                    , triggerHtml = Html.text "Auxillary Description Trigger"
-                    , onTrigger = ToggleTooltip AuxillaryDescription
-                    , isOpen = model.openTooltip == Just AuxillaryDescription
-                    , id = "Auxillary description"
-                    , extraButtonAttrs = []
-                    }
-            , Html.br [ css [ Css.marginBottom (Css.px 20) ] ]
-            , Heading.h3 [] [ Html.text "toggleTip" ]
-            , Text.smallBody [ Html.text "A Toggle Tip is triggered by the \"?\" icon and provides supplemental information for the page." ]
-            , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ Tooltip.tooltip
-                    [ Html.text "Tooltip On Top! "
-                    , Html.a
-                        [ href "/" ]
-                        [ Html.text "Links work!" ]
-                    ]
-                    |> Tooltip.toggleTip
-                        { onTrigger = ToggleTooltip ToggleTipTop
-                        , isOpen = model.openTooltip == Just ToggleTipTop
-                        , label = "More info"
-                        , extraButtonAttrs = []
-                        }
-                , Text.mediumBody
-                    [ Html.text "This toggletip will open on top"
-                    ]
-                ]
-            , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ Tooltip.tooltip
-                    [ Html.text "Tooltip On Left! "
-                    , Html.a
-                        [ href "/" ]
-                        [ Html.text "Links work!" ]
-                    ]
-                    |> Tooltip.withPosition Tooltip.OnLeft
-                    |> Tooltip.toggleTip
-                        { onTrigger = ToggleTooltip ToggleTipLeft
-                        , isOpen = model.openTooltip == Just ToggleTipLeft
-                        , label = "More info"
-                        , extraButtonAttrs = []
-                        }
-                , Text.mediumBody
-                    [ Html.text "This toggletip will open on the left"
-                    ]
+            , Html.text " to check out NoRedInk."
+            ]
+                |> Tooltip.html
+                |> Control.value
+          )
+        ]
+
+
+controlDirection : Control (Tooltip.Attribute Never)
+controlDirection =
+    Control.choice
+        [ ( "onTop", Control.value Tooltip.onTop )
+        , ( "onBottom", Control.value Tooltip.onBottom )
+        , ( "onLeft", Control.value Tooltip.onLeft )
+        , ( "onRight", Control.value Tooltip.onRight )
+        ]
+
+
+controlAlignment : Control (Tooltip.Attribute Never)
+controlAlignment =
+    Control.choice
+        [ ( "alignMiddle (default)", Control.value Tooltip.alignMiddle )
+        , ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
+        , ( "alignEnd", Control.map (Css.px >> Tooltip.alignEnd) controlNumber )
+        ]
+
+
+controlNumber : Control Float
+controlNumber =
+    Control.map (String.toFloat >> Maybe.withDefault 0) (Control.string "0")
+
+
+controlWidth : Control (Tooltip.Attribute Never)
+controlWidth =
+    Control.choice
+        [ ( "exactWidth 320 (default)", Control.value (Tooltip.exactWidth 320) )
+        , ( "exactWidth", Control.map (round >> Tooltip.exactWidth) controlNumber )
+        , ( "fitToContent", Control.value Tooltip.fitToContent )
+        ]
+
+
+controlPadding : Control (Tooltip.Attribute Never)
+controlPadding =
+    Control.choice
+        [ ( "normalPadding (default)", Control.value Tooltip.normalPadding )
+        , ( "smallPadding", Control.value Tooltip.smallPadding )
+        , ( "customPadding", Control.map Tooltip.customPadding controlNumber )
+        ]
+
+
+viewCustomizableExample : Control ExampleSettings -> Html Msg
+viewCustomizableExample controlSettings =
+    let
+        settings =
+            Control.currentValue controlSettings
+
+        attributes =
+            [ Tooltip.open True
+            , settings.content
+            , settings.direction
+            , settings.alignment
+            , settings.width
+            , settings.padding
+            ]
+    in
+    Html.div []
+        [ Control.view SetStaticExampleSettings controlSettings
+            |> Html.fromUnstyled
+        , Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                , Css.height (Css.px 300)
                 ]
             ]
-    }
+            [ Tooltip.view
+                { trigger =
+                    \eventHandlers ->
+                        ClickableSvg.button "Arrow Up"
+                            UiIcon.arrowTop
+                            [ ClickableSvg.custom eventHandlers
+                            ]
+                , id = "my-top-tooltip"
+                }
+                attributes
+                |> Html.map never
+            ]
+        ]

@@ -21,7 +21,8 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Tabs.V6 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -29,6 +30,7 @@ import Task
 type alias State =
     { selected : Id
     , settings : Control Settings
+    , openTooltip : Maybe Id
     }
 
 
@@ -36,6 +38,7 @@ init : State
 init =
     { selected = First
     , settings = initSettings
+    , openTooltip = Nothing
     }
 
 
@@ -78,20 +81,21 @@ type Id
 
 
 type Msg
-    = SelectTab Id
-    | Focus String
+    = FocusAndSelectTab { select : Id, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
+    | ToggleTooltip Id Bool
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        SelectTab id ->
-            ( { model | selected = id }, Cmd.none )
-
-        Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) )
+        FocusAndSelectTab { select, focus } ->
+            ( { model | selected = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
+            )
 
         Focused error ->
             ( model, Cmd.none )
@@ -99,11 +103,23 @@ update msg model =
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
 
+        ToggleTooltip id openTooltip ->
+            ( { model
+                | openTooltip =
+                    if openTooltip then
+                        Just id
+
+                    else
+                        Nothing
+              }
+            , Cmd.none
+            )
+
 
 example : Example State Msg
 example =
     { name = "Tabs"
-    , version = 6
+    , version = 7
     , categories = [ Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
@@ -131,45 +147,53 @@ example =
                 { title = settings.title
                 , alignment = settings.alignment
                 , customSpacing = settings.customSpacing
-                , onSelect = SelectTab
-                , onFocus = Focus
+                , focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = allTabs
+                , tabs = allTabs model.openTooltip
                 }
             ]
     }
 
 
-allTabs : List (Tab Id Msg)
-allTabs =
-    [ { id = First
-      , idString = "tab-0"
-      , spaHref = Just "/#/doodad/Nri.Ui.Tabs.6"
-      , tabView = Tabs.viewTabDefault "Link example"
-      , panelView = Html.text "First Panel"
-      }
-    , { id = Second
-      , idString = "tab-1"
-      , spaHref = Nothing
-      , tabView = Tabs.viewTabDefault "Second Tab"
-      , panelView = Html.text "Second Panel"
-      }
-    , { id = Third
-      , idString = "tab-2"
-      , spaHref = Nothing
-      , tabView =
+allTabs : Maybe Id -> List (Tab Id Msg)
+allTabs openTooltipId =
+    let
+        bulbIcon =
             UiIcon.bulb
-                |> Svg.withLabel "Lightbulb"
                 |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 40)
+                |> Svg.withHeight (Css.px 45)
+                |> Svg.withLabel "Bulb"
                 |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
                 |> Svg.toHtml
-      , panelView = Html.text "Third Panel"
-      }
-    , { id = Fourth
-      , idString = "tab-3"
-      , spaHref = Nothing
-      , tabView = Tabs.viewTabDefault "Fourth Tab"
-      , panelView = Html.text "Fourth Panel"
-      }
+    in
+    [ Tabs.build { id = First, idString = "tab-0" }
+        [ Tabs.spaHref "/#/doodad/Tabs"
+        , Tabs.tabString "1"
+        , Tabs.withTooltip
+            [ Tooltip.plaintext "Link Example"
+            , Tooltip.onHover (ToggleTooltip First)
+            , Tooltip.alignStart (Css.px 75)
+            , Tooltip.primaryLabel
+            , Tooltip.open (openTooltipId == Just First)
+            ]
+        , Tabs.panelHtml (Html.text "First Panel")
+        ]
+    , Tabs.build { id = Second, idString = "tab-1" }
+        [ Tabs.tabString "Second Tab"
+        , Tabs.panelHtml (Html.text "Second Panel")
+        ]
+    , Tabs.build { id = Third, idString = "tab-2" }
+        [ Tabs.tabHtml bulbIcon
+        , Tabs.withTooltip
+            [ Tooltip.plaintext "The Electrifying Third Tab"
+            , Tooltip.onHover (ToggleTooltip Third)
+            , Tooltip.primaryLabel
+            , Tooltip.open (openTooltipId == Just Third)
+            ]
+        , Tabs.panelHtml (Html.text "Third Panel")
+        ]
+    , Tabs.build { id = Fourth, idString = "tab-3" }
+        [ Tabs.tabString "Fourth Tab"
+        , Tabs.panelHtml (Html.text "Fourth Panel")
+        ]
     ]

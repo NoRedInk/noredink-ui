@@ -21,8 +21,9 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SegmentedControl.V12 as SegmentedControl
+import Nri.Ui.SegmentedControl.V13 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
 import Task
@@ -32,7 +33,7 @@ import Task
 example : Example State Msg
 example =
     { name = "SegmentedControl"
-    , version = 12
+    , version = 13
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -49,12 +50,11 @@ example =
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
-                { onSelect = SelectPage
-                , onFocus = Focus
+                { focusAndSelect = FocusAndSelectPage
                 , selected = state.page
                 , positioning = options.positioning
                 , toUrl = Nothing
-                , options = List.take options.count (buildOptions options)
+                , options = List.take options.count (buildOptions options state.pageTooltip)
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewRadioGroup" ] ]
@@ -63,7 +63,7 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions options.icon)
+                , options = List.take options.count (buildRadioOptions options.content)
                 , selected = state.optionallySelected
                 , positioning = options.positioning
                 }
@@ -95,20 +95,28 @@ type Page
     | Activity
 
 
-buildOptions : { options | icon : Bool, longContent : Bool } -> List (SegmentedControl.Option Page Msg)
-buildOptions { icon, longContent } =
+buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
+buildOptions { content, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
-            { icon =
-                if icon then
-                    Just icon_
-
-                else
-                    Nothing
-            , label = Html.text (Debug.toString value)
+            let
+                ( icon, label ) =
+                    getIconAndLabel content icon_ (Html.text (Debug.toString value))
+            in
+            { icon = icon
+            , label = label
             , value = value
             , idString = toLower (Debug.toString value)
             , attributes = []
+            , tabTooltip =
+                if tooltips then
+                    [ Tooltip.plaintext (Debug.toString value)
+                    , Tooltip.onHover (PageTooltip value)
+                    , Tooltip.open (openTooltip == Just value)
+                    ]
+
+                else
+                    []
             , content =
                 if longContent then
                     Html.div
@@ -138,23 +146,22 @@ buildOptions { icon, longContent } =
     ]
 
 
-buildRadioOptions : Bool -> List (SegmentedControl.Radio Int msg)
-buildRadioOptions keepIcon =
+buildRadioOptions : Content -> List (SegmentedControl.Radio Int msg)
+buildRadioOptions content =
     let
         buildOption value icon =
-            { icon = ifIcon icon
-            , label = Html.text ("Source " ++ Debug.toString (value + 1))
+            let
+                ( icon_, label ) =
+                    getIconAndLabel content
+                        icon
+                        (Html.text ("Source " ++ Debug.toString (value + 1)))
+            in
+            { icon = icon_
+            , label = label
             , value = value
             , idString = String.fromInt value
             , attributes = []
             }
-
-        ifIcon icon =
-            if keepIcon then
-                Just icon
-
-            else
-                Nothing
     in
     List.indexedMap buildOption
         [ UiIcon.leaderboard
@@ -171,6 +178,7 @@ buildRadioOptions keepIcon =
 {-| -}
 type alias State =
     { page : Page
+    , pageTooltip : Maybe Page
     , optionallySelected : Maybe Int
     , optionsControl : Control Options
     }
@@ -180,6 +188,7 @@ type alias State =
 init : State
 init =
     { page = Flag
+    , pageTooltip = Nothing
     , optionallySelected = Nothing
     , optionsControl = optionsControl
     }
@@ -187,9 +196,10 @@ init =
 
 type alias Options =
     { positioning : SegmentedControl.Positioning
-    , icon : Bool
+    , content : Content
     , count : Int
     , longContent : Bool
+    , tooltips : Bool
     }
 
 
@@ -203,19 +213,48 @@ optionsControl =
                 , ( "Center", Control.value SegmentedControl.Center )
                 ]
             )
-        |> Control.field "icon" (Control.bool True)
+        |> Control.field "content" controlContent
         |> Control.field "count"
             (Control.choice
                 (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
             )
         |> Control.field "long content" (Control.bool False)
+        |> Control.field "tooltips" (Control.bool True)
+
+
+type Content
+    = TextAndIcon
+    | Text
+    | Icon
+
+
+controlContent : Control Content
+controlContent =
+    Control.choice
+        [ ( "Text and icon", Control.value TextAndIcon )
+        , ( "Text", Control.value Text )
+        , ( "Icon", Control.value Icon )
+        ]
+
+
+getIconAndLabel : Content -> svg -> Html msg -> ( Maybe svg, Html msg )
+getIconAndLabel content icon_ value =
+    case content of
+        TextAndIcon ->
+            ( Just icon_, value )
+
+        Icon ->
+            ( Just icon_, Html.text "" )
+
+        Text ->
+            ( Nothing, value )
 
 
 {-| -}
 type Msg
-    = Focus String
+    = FocusAndSelectPage { select : Page, focus : Maybe String }
     | Focused (Result Dom.Error ())
-    | SelectPage Page
+    | PageTooltip Page Bool
     | SelectRadio Int
     | ChangeOptions (Control Options)
 
@@ -224,9 +263,10 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        Focus id ->
-            ( state
-            , Task.attempt Focused (Dom.focus id)
+        FocusAndSelectPage { select, focus } ->
+            ( { state | page = select }
+            , Maybe.map (Task.attempt Focused << Dom.focus) focus
+                |> Maybe.withDefault Cmd.none
             )
 
         Focused _ ->
@@ -234,8 +274,15 @@ update msg state =
             , Cmd.none
             )
 
-        SelectPage page ->
-            ( { state | page = page }
+        PageTooltip page isOpen ->
+            ( { state
+                | pageTooltip =
+                    if isOpen then
+                        Just page
+
+                    else
+                        Nothing
+              }
             , Cmd.none
             )
 
