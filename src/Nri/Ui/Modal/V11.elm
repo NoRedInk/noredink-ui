@@ -245,11 +245,7 @@ update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd 
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
         CloseModal ->
-            if dismissOnEscAndOverlayClick then
-                close model
-
-            else
-                ( model, Cmd.none )
+            close model
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
