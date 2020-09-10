@@ -26,7 +26,8 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tooltip.V2"
+    { name = "Tooltip"
+    , version = 2
     , categories = [ Widgets ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

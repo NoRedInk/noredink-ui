@@ -26,7 +26,8 @@ type alias Msg =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Text.Writing.V1"
+    { name = "Text.Writing"
+    , version = 1
     , categories = [ Text ]
     , atomicDesignType = Atom
     , keyboardSupport = []

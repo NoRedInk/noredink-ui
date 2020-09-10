@@ -166,15 +166,17 @@ view_ model =
         , Html.main_ [ css [ flexGrow (int 1), sectionStyles ] ]
             (case model.route of
                 Routes.Doodad doodad ->
-                    [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
-                    , examples (\m -> m.name == doodad)
-                        |> List.map
-                            (\example ->
-                                Example.view False example
+                    case List.head (examples (\m -> m.name == doodad)) of
+                        Just example ->
+                            [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
+                            , Html.div [ id (String.replace "." "-" example.name) ]
+                                [ Example.view example
                                     |> Html.map (UpdateModuleStates example.name)
-                            )
-                        |> Html.div []
-                    ]
+                                ]
+                            ]
+
+                        Nothing ->
+                            [ Html.text <| "Oops! We couldn't find " ++ doodad ]
 
                 Routes.Category category ->
                     [ mainContentHeader (Category.forDisplay category)
@@ -186,7 +188,7 @@ view_ model =
                         )
                         |> List.map
                             (\example ->
-                                Example.view True example
+                                Example.view example
                                     |> Html.map (UpdateModuleStates example.name)
                             )
                         |> Html.div [ id (Category.forId category) ]
@@ -197,7 +199,7 @@ view_ model =
                     , examples (\_ -> True)
                         |> List.map
                             (\example ->
-                                Example.view True example
+                                Example.view example
                                     |> Html.map (UpdateModuleStates example.name)
                             )
                         |> Html.div []

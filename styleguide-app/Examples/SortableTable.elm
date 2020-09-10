@@ -35,7 +35,8 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SortableTable.V2"
+    { name = "SortableTable"
+    , version = 2
     , categories = [ Tables, Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

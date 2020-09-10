@@ -38,7 +38,8 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.TextArea.V4"
+    { name = "TextArea"
+    , version = 4
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

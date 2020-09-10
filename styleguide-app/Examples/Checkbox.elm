@@ -35,7 +35,8 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Checkbox.V5"
+    { name = "Checkbox"
+    , version = 5
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

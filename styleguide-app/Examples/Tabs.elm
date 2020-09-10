@@ -118,7 +118,8 @@ update msg model =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Tabs.V7"
+    { name = "Tabs"
+    , version = 7
     , categories = [ Layout ]
     , atomicDesignType = Molecule
     , keyboardSupport =
@@ -166,7 +167,7 @@ allTabs openTooltipId =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        [ Tabs.spaHref "/#/doodad/Nri.Ui.Tabs.V7"
+        [ Tabs.spaHref "/#/doodad/Tabs"
         , Tabs.tabString "1"
         , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
