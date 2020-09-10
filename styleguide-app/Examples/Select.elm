@@ -20,7 +20,8 @@ import Nri.Ui.Select.V7 as Select
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Select.V7"
+    { name = "Select"
+    , version = 7
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

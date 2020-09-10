@@ -155,7 +155,8 @@ update msg state =
 
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Message.V2"
+    { name = "Message"
+    , version = 2
     , categories = [ Messaging ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

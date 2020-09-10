@@ -22,7 +22,8 @@ import Nri.Ui.Confetti.V2 as Confetti
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Confetti.V2"
+    { name = "Confetti"
+    , version = 2
     , categories = [ Animations ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

@@ -28,7 +28,8 @@ type State
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.ClickableText.V3"
+    { name = "ClickableText"
+    , version = 3
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

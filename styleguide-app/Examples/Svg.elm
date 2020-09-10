@@ -27,7 +27,8 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Svg.V1"
+    { name = "Svg"
+    , version = 1
     , categories = [ Icons ]
     , atomicDesignType = Atom
     , keyboardSupport = []

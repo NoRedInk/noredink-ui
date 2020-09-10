@@ -36,7 +36,8 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Slide.V1"
+    { name = "Slide"
+    , version = 1
     , categories = [ Animations ]
     , atomicDesignType = Atom
     , keyboardSupport = []

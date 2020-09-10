@@ -23,7 +23,8 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Button.V10"
+    { name = "Button"
+    , version = 10
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

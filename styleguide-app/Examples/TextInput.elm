@@ -52,7 +52,8 @@ type alias ExampleConfig =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.TextInput.V6"
+    { name = "TextInput"
+    , version = 6
     , categories = [ Inputs ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

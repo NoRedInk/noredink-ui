@@ -28,7 +28,8 @@ import Nri.Ui.Text.V4 as Text
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Accordion.V1"
+    { name = "Accordion"
+    , version = 1
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

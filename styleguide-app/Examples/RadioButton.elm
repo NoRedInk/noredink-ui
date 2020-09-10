@@ -30,7 +30,8 @@ import Nri.Ui.Text.V5 as Text
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.RadioButton.V1"
+    { name = "RadioButton"
+    , version = 1
     , state = init
     , update = update
     , subscriptions = subscriptions

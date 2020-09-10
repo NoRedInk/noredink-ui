@@ -25,7 +25,8 @@ import Set exposing (Set)
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Menu.V1"
+    { name = "Menu"
+    , version = 1
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

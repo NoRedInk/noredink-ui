@@ -31,7 +31,8 @@ import Task
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SegmentedControl.V12"
+    { name = "SegmentedControl"
+    , version = 12
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

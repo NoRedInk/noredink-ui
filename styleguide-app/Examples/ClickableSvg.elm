@@ -28,7 +28,8 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.ClickableSvg.V1"
+    { name = "ClickableSvg"
+    , version = 1
     , categories = [ Buttons, Icons ]
     , atomicDesignType = Molecule
     , keyboardSupport = []

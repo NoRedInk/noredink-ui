@@ -34,7 +34,8 @@ type alias State =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.SlideModal.V2"
+    { name = "SlideModal"
+    , version = 2
     , categories = [ Modals ]
     , atomicDesignType = Organism
     , keyboardSupport = []

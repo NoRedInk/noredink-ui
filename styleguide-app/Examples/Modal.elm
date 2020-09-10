@@ -108,7 +108,8 @@ controlCss =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Nri.Ui.Modal.V11"
+    { name = "Modal"
+    , version = 11
     , categories = [ Modals ]
     , atomicDesignType = Organism
     , keyboardSupport =
