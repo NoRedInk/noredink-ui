@@ -105,6 +105,7 @@ viewTab_ config index tab =
 
                         else
                             AttributesExtra.none
+                      , Attributes.href href
                       , EventExtras.onClickPreventDefaultForLinkWithHref
                             (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
