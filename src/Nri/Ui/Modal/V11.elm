@@ -223,7 +223,8 @@ isOpen model =
 
 {-| -}
 type Msg
-    = CloseModal
+    = CloseButtonClicked
+    | EscOrOverlayClicked
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -234,7 +235,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
         Opened _ ->
-            Browser.Events.onKeyDown (Key.escape CloseModal)
+            Browser.Events.onKeyDown (Key.escape EscOrOverlayClicked)
 
         Closed ->
             Sub.none
@@ -244,8 +245,15 @@ subscriptions model =
 update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
-        CloseModal ->
+        CloseButtonClicked ->
             close model
+
+        EscOrOverlayClicked ->
+            if dismissOnEscAndOverlayClick then
+                close model
+
+            else
+                ( model, Cmd.none )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -477,7 +485,7 @@ view config attrsList model =
                         , customAttributes = attrs.customAttributes
                         , closeButton =
                             if attrs.closeButton then
-                                Just (config.wrapMsg CloseModal)
+                                Just (config.wrapMsg CloseButtonClicked)
 
                             else
                                 Nothing
@@ -512,7 +520,7 @@ viewBackdrop wrapMsg color =
             , height (pct 100)
             , backgroundColor color
             ]
-        , onClick (wrapMsg CloseModal)
+        , onClick (wrapMsg EscOrOverlayClicked)
         ]
         []
 
