@@ -569,7 +569,7 @@ getIcon size theme =
                         |> NriSvg.withColor Colors.yellow
                         |> NriSvg.withWidth iconSize
                         |> NriSvg.withHeight iconSize
-                        |> NriSvg.withCss [ marginRight ]
+                        |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                         |> NriSvg.withLabel "Tip"
                         |> NriSvg.toHtml
 
@@ -578,7 +578,7 @@ getIcon size theme =
                         |> NriSvg.withColor Colors.navy
                         |> NriSvg.withWidth iconSize
                         |> NriSvg.withHeight iconSize
-                        |> NriSvg.withCss [ marginRight ]
+                        |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                         |> NriSvg.withLabel "Tip"
                         |> NriSvg.toHtml
 
@@ -591,6 +591,7 @@ getIcon size theme =
                             , Css.marginRight (Css.px 20)
                             , backgroundColor Colors.navy
                             , displayFlex
+                            , Css.flexShrink Css.zero
                             , alignItems center
                             , justifyContent center
                             ]
