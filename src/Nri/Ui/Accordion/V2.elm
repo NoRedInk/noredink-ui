@@ -1,11 +1,12 @@
 module Nri.Ui.Accordion.V2 exposing
-    ( view, viewKeyed
+    ( view
     , viewCaret, Caret(..)
     , StyleOptions
     )
 
 {-| Changes from V1:
 
+  - combine view and viewKeyed so that nodes are always keyed
   - Changed implementation to follow recommendations from <https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html>
 
 @docs view, viewKeyed
@@ -89,7 +90,7 @@ type Caret
 
 {-| -}
 view :
-    { entries : List ( entry, Bool )
+    { entries : List ( String, entry, Bool )
     , viewHeader : entry -> Html msg
     , viewContent : entry -> Html msg
     , customStyles : Maybe (entry -> StyleOptions)
@@ -103,33 +104,11 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle } =
         , Attributes.attribute "role" "tablist"
         , Attributes.attribute "aria-live" "polite"
         ]
-        (List.map (viewEntry viewHeader viewContent customStyles caret toggle) entries)
-
-
-{-| If your accordion's rows can be moved around, use viewKeyed. It prevents
-the caret's animation from firing off incorrectly when rows move.
--}
-viewKeyed :
-    { entries : List ( entry, Bool )
-    , viewHeader : entry -> Html msg
-    , viewContent : entry -> Html msg
-    , customStyles : Maybe (entry -> StyleOptions)
-    , caret : Caret
-    , toggle : entry -> Bool -> msg
-    }
-    -> (entry -> String)
-    -> Html msg
-viewKeyed { entries, viewHeader, viewContent, customStyles, caret, toggle } identifier =
-    div
-        [ Attributes.class "accordion"
-        , Attributes.attribute "role" "tablist"
-        , Attributes.attribute "aria-live" "polite"
-        ]
         [ Html.Styled.Keyed.node "div"
             []
             (List.map
-                (\( entry, isExpanded ) ->
-                    ( identifier entry
+                (\( identifier, entry, isExpanded ) ->
+                    ( identifier
                     , viewEntry viewHeader viewContent customStyles caret toggle ( entry, isExpanded )
                     )
                 )

@@ -52,7 +52,10 @@ view model =
             ]
                 |> List.map
                     (\entry ->
-                        ( entry, Dict.get entry.id model |> Maybe.withDefault False )
+                        ( "accordion-entry__" ++ String.fromInt entry.id
+                        , entry
+                        , Dict.get entry.id model |> Maybe.withDefault False
+                        )
                     )
         , viewHeader = .title >> Html.text
         , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
@@ -81,7 +84,10 @@ view model =
             ]
                 |> List.map
                     (\entry ->
-                        ( entry, Dict.get entry.id model |> Maybe.withDefault False )
+                        ( "accordion-entry__" ++ String.fromInt entry.id
+                        , entry
+                        , Dict.get entry.id model |> Maybe.withDefault False
+                        )
                     )
         , viewHeader = .title >> Html.text
         , viewContent = .content
