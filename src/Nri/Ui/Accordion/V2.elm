@@ -1,4 +1,4 @@
-module Nri.Ui.Accordion.V2 exposing (view, Caret(..), StyleOptions)
+module Nri.Ui.Accordion.V2 exposing (view, Caret(..), StyleOptions, HeaderLevel(..))
 
 {-| Changes from V1:
 
@@ -9,9 +9,9 @@ module Nri.Ui.Accordion.V2 exposing (view, Caret(..), StyleOptions)
       - Adds aria-expanded and aria-controls
       - Changes accordion container to a section
       - removes tablist/tab/tabpanel roles
-      - [ ] Adds heading levels for the accordion header (including style resets)
+      - Adds heading levels for the accordion header (including style resets)
 
-@docs view, Caret, StyleOptions
+@docs view, Caret, StyleOptions, HeaderLevel
 
 -}
 
@@ -91,9 +91,50 @@ type Caret
     | NoneCaret
 
 
+{-| Corresponds to h1, h2, h3 etc.
+Choose the correct header level given your page context.
+-}
+type HeaderLevel
+    = H1
+    | H2
+    | H3
+    | H4
+    | H5
+    | H6
+
+
+header : HeaderLevel -> Html msg -> Html msg
+header headerLevel content =
+    let
+        resets =
+            [ margin zero
+            , padding zero
+            ]
+    in
+    case headerLevel of
+        H1 ->
+            Accessibility.Styled.h1 [ Attributes.css resets ] [ content ]
+
+        H2 ->
+            Accessibility.Styled.h2 [ Attributes.css resets ] [ content ]
+
+        H3 ->
+            Accessibility.Styled.h3 [ Attributes.css resets ] [ content ]
+
+        H4 ->
+            Accessibility.Styled.h4 [ Attributes.css resets ] [ content ]
+
+        H5 ->
+            Accessibility.Styled.h5 [ Attributes.css resets ] [ content ]
+
+        H6 ->
+            Accessibility.Styled.h6 [ Attributes.css resets ] [ content ]
+
+
 {-| -}
 view :
     { entries : List { headerId : String, entry : entry, isExpanded : Bool }
+    , headerLevel : HeaderLevel
     , viewHeader : entry -> Html msg
     , viewContent : entry -> Html msg
     , customStyles : Maybe (entry -> StyleOptions)
@@ -102,7 +143,7 @@ view :
     , focus : String -> msg
     }
     -> Html msg
-view { entries, viewHeader, viewContent, customStyles, caret, toggle, focus } =
+view { entries, headerLevel, viewHeader, viewContent, customStyles, caret, toggle, focus } =
     let
         arrowUpIds : List (Maybe String)
         arrowUpIds =
@@ -127,6 +168,7 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle, focus } =
                                 ( "keyed-section__" ++ headerId
                                 , viewEntry
                                     { headerId = headerId
+                                    , headerLevel = headerLevel
                                     , viewHeader = viewHeader
                                     , viewContent = viewContent
                                     , styleOptions = customStyles
@@ -151,6 +193,7 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle, focus } =
 
 viewEntry :
     { headerId : String
+    , headerLevel : HeaderLevel
     , viewHeader : entry -> Html msg
     , viewContent : entry -> Html msg
     , styleOptions : Maybe (entry -> StyleOptions)
@@ -162,7 +205,7 @@ viewEntry :
     , isExpanded : Bool
     }
     -> Html msg
-viewEntry { headerId, viewHeader, viewContent, styleOptions, caret, toggle, entry, isExpanded, arrowDown, arrowUp } =
+viewEntry { headerId, headerLevel, viewHeader, viewContent, styleOptions, caret, toggle, entry, isExpanded, arrowDown, arrowUp } =
     let
         newStyleOptions =
             case Maybe.map (\styles_ -> styles_ entry) styleOptions of
@@ -199,23 +242,24 @@ viewEntry { headerId, viewHeader, viewContent, styleOptions, caret, toggle, entr
         [ entryClass isExpanded
         , Attributes.css styles.entry
         ]
-        [ button
-            [ Attributes.id headerId
-            , Attributes.class "accordion-entry-header"
-            , Attributes.css styles.header
-            , Widget.expanded isExpanded
-            , Aria.controls panelId
-            , onClick (toggle entry (not isExpanded))
-            , Key.onKeyDown
-                (List.filterMap identity
-                    [ Maybe.map Key.up arrowUp
-                    , Maybe.map Key.down arrowDown
-                    ]
-                )
-            ]
-            [ viewCaret isExpanded caret
-            , viewHeader entry
-            ]
+        [ header headerLevel <|
+            button
+                [ Attributes.id headerId
+                , Attributes.class "accordion-entry-header"
+                , Attributes.css styles.header
+                , Widget.expanded isExpanded
+                , Aria.controls panelId
+                , onClick (toggle entry (not isExpanded))
+                , Key.onKeyDown
+                    (List.filterMap identity
+                        [ Maybe.map Key.up arrowUp
+                        , Maybe.map Key.down arrowDown
+                        ]
+                    )
+                ]
+                [ viewCaret isExpanded caret
+                , viewHeader entry
+                ]
         , div
             [ Attributes.id panelId
             , Attributes.class "accordion-entry-panel"

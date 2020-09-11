@@ -66,6 +66,7 @@ view model =
                         , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
                         }
                     )
+        , headerLevel = Accordion.H4
         , viewHeader = .title >> Html.text
         , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
         , customStyles = Nothing
@@ -99,6 +100,7 @@ view model =
                         , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
                         }
                     )
+        , headerLevel = Accordion.H4
         , viewHeader = .title >> Html.text
         , viewContent = .content
         , customStyles =
