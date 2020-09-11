@@ -1,8 +1,4 @@
-module Nri.Ui.Accordion.V2 exposing
-    ( view
-    , Caret(..)
-    , StyleOptions
-    )
+module Nri.Ui.Accordion.V2 exposing (view, Caret(..), StyleOptions)
 
 {-| Changes from V1:
 
@@ -10,13 +6,12 @@ module Nri.Ui.Accordion.V2 exposing
   - Removes viewCaret from the API -- it's possible to use the DisclosureIndicator directly
   - Changed implementation to follow recommendations from <https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html>
 
-@docs view
-@docs Caret
-@docs StyleOptions
+@docs view, Caret, StyleOptions
 
 -}
 
 import Accessibility.Styled exposing (Attribute, Html, button, div, text)
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Css.Global
@@ -91,15 +86,25 @@ type Caret
 
 {-| -}
 view :
-    { entries : List ( String, entry, Bool )
+    { entries : List { headerId : String, entry : entry, isExpanded : Bool }
     , viewHeader : entry -> Html msg
     , viewContent : entry -> Html msg
     , customStyles : Maybe (entry -> StyleOptions)
     , caret : Caret
     , toggle : entry -> Bool -> msg
+    , focus : String -> msg
     }
     -> Html msg
-view { entries, viewHeader, viewContent, customStyles, caret, toggle } =
+view { entries, viewHeader, viewContent, customStyles, caret, toggle, focus } =
+    let
+        arrowUpIds : List (Maybe String)
+        arrowUpIds =
+            lastHeaderId :: List.map (.headerId >> Just) entries
+
+        lastHeaderId : Maybe String
+        lastHeaderId =
+            Maybe.map .headerId (List.head (List.reverse entries))
+    in
     div
         [ Attributes.class "accordion"
         , Attributes.attribute "role" "tablist"
@@ -107,26 +112,51 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle } =
         ]
         [ Html.Styled.Keyed.node "div"
             []
-            (List.map
-                (\( identifier, entry, isExpanded ) ->
-                    ( identifier
-                    , viewEntry viewHeader viewContent customStyles caret toggle ( entry, isExpanded )
+            (entries
+                |> List.map2 (\id nextEntry -> ( id, nextEntry )) arrowUpIds
+                |> List.foldr
+                    (\( previousId, { headerId, entry, isExpanded } ) ( nextId, acc ) ->
+                        let
+                            node =
+                                ( "keyed-section__" ++ headerId
+                                , viewEntry
+                                    { headerId = headerId
+                                    , viewHeader = viewHeader
+                                    , viewContent = viewContent
+                                    , styleOptions = customStyles
+                                    , caret = caret
+                                    , toggle = toggle
+                                    , arrowUp = Maybe.map focus previousId
+                                    , arrowDown = Maybe.map focus nextId
+                                    , entry = entry
+                                    , isExpanded = isExpanded
+                                    }
+                                )
+                        in
+                        ( Just headerId
+                        , node :: acc
+                        )
                     )
-                )
-                entries
+                    ( Maybe.map .headerId (List.head entries), [] )
+                |> Tuple.second
             )
         ]
 
 
 viewEntry :
-    (entry -> Html msg)
-    -> (entry -> Html msg)
-    -> Maybe (entry -> StyleOptions)
-    -> Caret
-    -> (entry -> Bool -> msg)
-    -> ( entry, Bool )
+    { headerId : String
+    , viewHeader : entry -> Html msg
+    , viewContent : entry -> Html msg
+    , styleOptions : Maybe (entry -> StyleOptions)
+    , caret : Caret
+    , toggle : entry -> Bool -> msg
+    , arrowUp : Maybe msg
+    , arrowDown : Maybe msg
+    , entry : entry
+    , isExpanded : Bool
+    }
     -> Html msg
-viewEntry viewHeader viewContent styleOptions caret toggle ( entry, expanded ) =
+viewEntry { headerId, viewHeader, viewContent, styleOptions, caret, toggle, entry, isExpanded, arrowDown, arrowUp } =
     let
         newStyleOptions =
             case Maybe.map (\styles_ -> styles_ entry) styleOptions of
@@ -144,7 +174,7 @@ viewEntry viewHeader viewContent styleOptions caret toggle ( entry, expanded ) =
                     defaultStyleOptions
 
         styles =
-            if expanded then
+            if isExpanded then
                 { entry = newStyleOptions.entryStyles ++ newStyleOptions.entryExpandedStyles
                 , header = newStyleOptions.headerStyles ++ newStyleOptions.headerExpandedStyles
                 , content = newStyleOptions.contentStyles
@@ -157,12 +187,26 @@ viewEntry viewHeader viewContent styleOptions caret toggle ( entry, expanded ) =
                 }
     in
     div
-        [ entryClass expanded
+        [ entryClass isExpanded
         , Attributes.attribute "role" "tab"
         , Attributes.css styles.entry
         ]
-        [ entryHeader expanded viewHeader styles.header caret toggle entry
-        , entryPanel expanded viewContent styles.content entry
+        [ button
+            [ Attributes.id headerId
+            , Attributes.class "accordion-entry-header"
+            , Attributes.css styles.header
+            , onClick (toggle entry (not isExpanded))
+            , Key.onKeyDown
+                (List.filterMap identity
+                    [ Maybe.map Key.up arrowUp
+                    , Maybe.map Key.down arrowDown
+                    ]
+                )
+            ]
+            [ viewCaret isExpanded caret
+            , viewHeader entry
+            ]
+        , entryPanel isExpanded viewContent styles.content entry
         ]
 
 
@@ -175,29 +219,6 @@ entryClass expanded =
         , ( "accordion-entry-state-expanded", expanded )
         , ( "accordion-entry-state-collapsed", not expanded )
         ]
-
-
-entryHeader :
-    Bool
-    -> (entry -> Html msg)
-    -> List Style
-    -> Caret
-    -> (entry -> Bool -> msg)
-    -> entry
-    -> Html msg
-entryHeader expanded viewHeader styles caret toggle entry =
-    button
-        [ Attributes.class "accordion-entry-header"
-        , onClick (toggle entry (not expanded))
-        , Attributes.css styles
-        ]
-        [ viewCaret expanded caret
-        , viewHeader entry
-        ]
-
-
-
--- TODO change content/body instances to panel
 
 
 entryPanel : Bool -> (entry -> Html msg) -> List Style -> entry -> Html msg

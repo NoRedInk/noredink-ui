@@ -11,6 +11,7 @@ module Examples.Accordion exposing
 -}
 
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Dict exposing (Dict)
@@ -23,6 +24,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V4 as Text
+import Task
 
 
 {-| -}
@@ -36,7 +38,14 @@ example =
     , view = view
     , categories = [ Layout ]
     , atomicDesignType = Molecule
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Arrow KeyboardSupport.Up ]
+          , result = "Moves the focus to the previous accordion header button (wraps focus to the last header button)"
+          }
+        , { keys = [ Arrow KeyboardSupport.Down ]
+          , result = "Moves the focus to the next accordion header button (wraps focus to the first header button)"
+          }
+        ]
     }
 
 
@@ -52,15 +61,16 @@ view model =
             ]
                 |> List.map
                     (\entry ->
-                        ( "accordion-entry__" ++ String.fromInt entry.id
-                        , entry
-                        , Dict.get entry.id model |> Maybe.withDefault False
-                        )
+                        { headerId = "accordion-entry__" ++ String.fromInt entry.id
+                        , entry = entry
+                        , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
+                        }
                     )
         , viewHeader = .title >> Html.text
         , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
         , customStyles = Nothing
         , toggle = \entry toExpand -> Toggle entry.id toExpand
+        , focus = Focus
         , caret = Accordion.DefaultCaret
         }
     , Heading.h3 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
@@ -84,10 +94,10 @@ view model =
             ]
                 |> List.map
                     (\entry ->
-                        ( "accordion-entry__" ++ String.fromInt entry.id
-                        , entry
-                        , Dict.get entry.id model |> Maybe.withDefault False
-                        )
+                        { headerId = "accordion-entry__" ++ String.fromInt entry.id
+                        , entry = entry
+                        , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
+                        }
                     )
         , viewHeader = .title >> Html.text
         , viewContent = .content
@@ -121,6 +131,7 @@ view model =
                     }
                 )
         , toggle = \entry toExpand -> Toggle entry.id toExpand
+        , focus = Focus
         , caret = Accordion.DefaultCaret
         }
     ]
@@ -128,6 +139,8 @@ view model =
 
 type Msg
     = Toggle Int Bool
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
@@ -149,5 +162,13 @@ type alias State =
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
-update (Toggle id toExpanded) model =
-    ( Dict.insert id toExpanded model, Cmd.none )
+update msg model =
+    case msg of
+        Toggle id toExpanded ->
+            ( Dict.insert id toExpanded model, Cmd.none )
+
+        Focus id ->
+            ( model, Task.attempt Focused (Dom.focus id) )
+
+        Focused _ ->
+            ( model, Cmd.none )
