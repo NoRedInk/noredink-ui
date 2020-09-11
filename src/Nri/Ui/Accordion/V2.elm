@@ -1,16 +1,17 @@
 module Nri.Ui.Accordion.V2 exposing
     ( view
-    , viewCaret, Caret(..)
+    , Caret(..)
     , StyleOptions
     )
 
 {-| Changes from V1:
 
-  - combine view and viewKeyed so that nodes are always keyed
+  - Combine view and viewKeyed so that nodes are always keyed
+  - Removes viewCaret from the API -- it's possible to use the DisclosureIndicator directly
   - Changed implementation to follow recommendations from <https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html>
 
-@docs view, viewKeyed
-@docs viewCaret, Caret
+@docs view
+@docs Caret
 @docs StyleOptions
 
 -}
