@@ -5,14 +5,21 @@ module Nri.Ui.Accordion.V2 exposing (view, Caret(..), StyleOptions)
   - Combine view and viewKeyed so that nodes are always keyed
   - Removes viewCaret from the API -- it's possible to use the DisclosureIndicator directly
   - Changed implementation to follow recommendations from <https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html>
+      - Adds Up and Down keyboard handling for navigating between the accordions
+      - Adds aria-expanded and aria-controls
+      - Changes accordion container to a section
+      - removes tablist/tab/tabpanel roles
+      - [ ] Adds heading levels for the accordion header (including style resets)
 
 @docs view, Caret, StyleOptions
 
 -}
 
-import Accessibility.Styled exposing (Attribute, Html, button, div, text)
+import Accessibility.Styled exposing (Attribute, Html, button, div, section, text)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
@@ -107,7 +114,6 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle, focus } =
     in
     div
         [ Attributes.class "accordion"
-        , Attributes.attribute "role" "tablist"
         , Attributes.attribute "aria-live" "polite"
         ]
         [ Html.Styled.Keyed.node "div"
@@ -185,16 +191,20 @@ viewEntry { headerId, viewHeader, viewContent, styleOptions, caret, toggle, entr
                 , header = newStyleOptions.headerStyles ++ newStyleOptions.headerClosedStyles
                 , content = [ maxHeight (px 0) ]
                 }
+
+        panelId =
+            "accordion-panel__" ++ headerId
     in
-    div
+    section
         [ entryClass isExpanded
-        , Attributes.attribute "role" "tab"
         , Attributes.css styles.entry
         ]
         [ button
             [ Attributes.id headerId
             , Attributes.class "accordion-entry-header"
             , Attributes.css styles.header
+            , Widget.expanded isExpanded
+            , Aria.controls panelId
             , onClick (toggle entry (not isExpanded))
             , Key.onKeyDown
                 (List.filterMap identity
@@ -206,7 +216,13 @@ viewEntry { headerId, viewHeader, viewContent, styleOptions, caret, toggle, entr
             [ viewCaret isExpanded caret
             , viewHeader entry
             ]
-        , entryPanel isExpanded viewContent styles.content entry
+        , div
+            [ Attributes.id panelId
+            , Attributes.class "accordion-entry-panel"
+            , Attributes.hidden (not isExpanded)
+            , Attributes.css styles.content
+            ]
+            [ viewContent entry ]
         ]
 
 
@@ -219,17 +235,6 @@ entryClass expanded =
         , ( "accordion-entry-state-expanded", expanded )
         , ( "accordion-entry-state-collapsed", not expanded )
         ]
-
-
-entryPanel : Bool -> (entry -> Html msg) -> List Style -> entry -> Html msg
-entryPanel expanded viewContent styles entry =
-    div
-        [ Attributes.class "accordion-entry-panel"
-        , Attributes.hidden (not expanded)
-        , Attributes.attribute "role" "tabpanel"
-        , Attributes.css styles
-        ]
-        [ viewContent entry ]
 
 
 {-| Just the caret!
