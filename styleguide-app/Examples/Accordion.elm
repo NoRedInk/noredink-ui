@@ -18,7 +18,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Accordion.V1 as Accordion
+import Nri.Ui.Accordion.V2 as Accordion
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
@@ -29,7 +29,7 @@ import Nri.Ui.Text.V4 as Text
 example : Example State Msg
 example =
     { name = "Accordion"
-    , version = 1
+    , version = 2
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

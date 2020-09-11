@@ -1,10 +1,12 @@
-module Nri.Ui.Accordion.V1 exposing
+module Nri.Ui.Accordion.V2 exposing
     ( view, viewKeyed
     , viewCaret, Caret(..)
     , AccordionOptions, StyleOptions
     )
 
-{-|
+{-| Changes from V1:
+
+  - Changed implementation to follow recommendations from <https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html>
 
 @docs view, viewKeyed
 @docs viewCaret, Caret

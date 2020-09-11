@@ -7,6 +7,7 @@
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",
+        "Nri.Ui.Accordion.V2",
         "Nri.Ui.AssetPath",
         "Nri.Ui.AssignmentIcon.V2",
         "Nri.Ui.Button.V10",
