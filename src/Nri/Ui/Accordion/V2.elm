@@ -1,7 +1,7 @@
 module Nri.Ui.Accordion.V2 exposing
     ( view, viewKeyed
     , viewCaret, Caret(..)
-    , AccordionOptions, StyleOptions
+    , StyleOptions
     )
 
 {-| Changes from V1:
@@ -10,7 +10,7 @@ module Nri.Ui.Accordion.V2 exposing
 
 @docs view, viewKeyed
 @docs viewCaret, Caret
-@docs AccordionOptions, StyleOptions
+@docs StyleOptions
 
 -}
 
@@ -24,17 +24,6 @@ import Html.Styled.Keyed
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
-
-
-{-| -}
-type alias AccordionOptions entry msg =
-    { entries : List ( entry, Bool )
-    , viewHeader : entry -> Html msg
-    , viewContent : entry -> Html msg
-    , customStyles : Maybe (entry -> StyleOptions)
-    , caret : Caret
-    , toggle : entry -> Bool -> msg
-    }
 
 
 {-| -}
@@ -99,7 +88,15 @@ type Caret
 
 
 {-| -}
-view : AccordionOptions entry msg -> Html msg
+view :
+    { entries : List ( entry, Bool )
+    , viewHeader : entry -> Html msg
+    , viewContent : entry -> Html msg
+    , customStyles : Maybe (entry -> StyleOptions)
+    , caret : Caret
+    , toggle : entry -> Bool -> msg
+    }
+    -> Html msg
 view { entries, viewHeader, viewContent, customStyles, caret, toggle } =
     div
         [ Attributes.class "accordion"
@@ -112,7 +109,16 @@ view { entries, viewHeader, viewContent, customStyles, caret, toggle } =
 {-| If your accordion's rows can be moved around, use viewKeyed. It prevents
 the caret's animation from firing off incorrectly when rows move.
 -}
-viewKeyed : AccordionOptions entry msg -> (entry -> String) -> Html msg
+viewKeyed :
+    { entries : List ( entry, Bool )
+    , viewHeader : entry -> Html msg
+    , viewContent : entry -> Html msg
+    , customStyles : Maybe (entry -> StyleOptions)
+    , caret : Caret
+    , toggle : entry -> Bool -> msg
+    }
+    -> (entry -> String)
+    -> Html msg
 viewKeyed { entries, viewHeader, viewContent, customStyles, caret, toggle } identifier =
     div
         [ Attributes.class "accordion"
