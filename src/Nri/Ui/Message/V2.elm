@@ -112,7 +112,7 @@ view attributes_ =
                     "Nri-Ui-Message--tiny"
                     [ displayFlex
                     , justifyContent start
-                    , alignItems center
+                    , alignItems flexStart
                     , paddingTop (px 6)
                     , paddingBottom (px 8)
                     , fontSize (px 13)
