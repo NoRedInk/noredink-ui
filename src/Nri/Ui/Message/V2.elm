@@ -112,13 +112,13 @@ view attributes_ =
                     "Nri-Ui-Message--tiny"
                     [ displayFlex
                     , justifyContent start
-                    , alignItems flexStart
+                    , alignItems center
                     , paddingTop (px 6)
                     , paddingBottom (px 8)
                     , fontSize (px 13)
                     ]
                     []
-                    [ icon
+                    [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon ]
                     , div [] html_
                     , case attributes.onDismiss of
                         Nothing ->
