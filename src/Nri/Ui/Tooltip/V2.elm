@@ -8,7 +8,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
     , open
-    , css, custom, customTriggerAttributes
+    , css, custom, customTriggerAttributes, containerCss
     , primaryLabel, auxillaryDescription
     )
 
@@ -16,6 +16,11 @@ module Nri.Ui.Tooltip.V2 exposing
 
   - tooltips with focusable content (e.g., a link) will not handle focus correctly for
     keyboard-only users when using the onHover attribute
+
+Post-release patches:
+
+  - mark customTriggerAttributes as deprecated
+  - add containerCss
 
 Changes from V1:
 
@@ -60,7 +65,7 @@ Example usage:
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
 @docs open
-@docs css, custom, customTriggerAttributes
+@docs css, custom, customTriggerAttributes, containerCss
 @docs primaryLabel, auxillaryDescription
 
 -}
@@ -95,6 +100,7 @@ type alias Tooltip msg =
     , alignment : Alignment
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
+    , containerStyles : List Style
     , tooltipStyleOverrides : List Style
     , width : Width
     , padding : Padding
@@ -114,6 +120,12 @@ buildAttributes =
             , alignment = Middle
             , content = []
             , attributes = []
+            , containerStyles =
+                [ Css.boxSizing Css.borderBox
+                , Css.display Css.inlineBlock
+                , Css.textAlign Css.left
+                , Css.position Css.relative
+                ]
             , tooltipStyleOverrides = []
             , width = Exactly 320
             , padding = NormalPadding
@@ -276,16 +288,17 @@ custom attributes =
     Attribute (\config -> { config | attributes = config.attributes ++ attributes })
 
 
-{-| Use this helper to add custom attributes to the tooltip trigger.
-
-Do NOT use this helper to add css styles, as they may not be applied the way
-you want/expect if underlying styles change.
-Instead, please use the `css` helper.
-
+{-| DEPRECATED -- a future release will remove this helper.
 -}
 customTriggerAttributes : List (Html.Attribute msg) -> Attribute msg
 customTriggerAttributes attributes =
     Attribute (\config -> { config | triggerAttributes = config.triggerAttributes ++ attributes })
+
+
+{-| -}
+containerCss : List Style -> Attribute msg
+containerCss styles =
+    Attribute (\config -> { config | containerStyles = config.containerStyles ++ styles })
 
 
 {-| Should the tooltip be exactly some measurement or fit to the width of the
@@ -467,14 +480,14 @@ viewTooltip_ :
     }
     -> Tooltip msg
     -> Html msg
-viewTooltip_ { trigger, id } tooltip_ =
+viewTooltip_ { trigger, id } tooltip =
     let
         ( containerEvents, buttonEvents ) =
-            case tooltip_.trigger of
+            case tooltip.trigger of
                 Just (OnClick msg) ->
                     ( []
                     , [ EventExtras.onClickStopPropagation
-                            (msg (not tooltip_.isOpen))
+                            (msg (not tooltip.isOpen))
                       ]
                     )
 
@@ -496,17 +509,13 @@ viewTooltip_ { trigger, id } tooltip_ =
     in
     Nri.Ui.styled Root.div
         "Nri-Ui-Tooltip-V2"
-        [ Css.boxSizing Css.borderBox
-        , Css.display Css.inlineBlock
-        , Css.textAlign Css.left
-        , Css.position Css.relative
-        ]
+        tooltip.containerStyles
         containerEvents
         [ Html.div
             []
             [ trigger
-                ([ if tooltip_.isOpen then
-                    case tooltip_.purpose of
+                ([ if tooltip.isOpen then
+                    case tooltip.purpose of
                         PrimaryLabel ->
                             Aria.labeledBy id
 
@@ -521,15 +530,15 @@ viewTooltip_ { trigger, id } tooltip_ =
                     Attributes.property "data-closed-tooltip" Encode.null
                  ]
                     ++ buttonEvents
-                    ++ tooltip_.triggerAttributes
+                    ++ tooltip.triggerAttributes
                 )
-            , hoverBridge tooltip_
+            , hoverBridge tooltip
             ]
-        , viewOverlay tooltip_
+        , viewOverlay tooltip
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewTooltip (Just id) tooltip_
+        , viewTooltip (Just id) tooltip
         ]
 
 
