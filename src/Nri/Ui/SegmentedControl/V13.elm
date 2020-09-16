@@ -4,7 +4,11 @@ module Nri.Ui.SegmentedControl.V13 exposing
     , Positioning(..), Width(..)
     )
 
-{-| Changes from V12:
+{-| Post-release patches:
+
+  - Fixes <https://github.com/NoRedInk/noredink-ui/issues/608>
+
+Changes from V12:
 
   - Adds tooltip support
   - combine onFocus and onSelect into focusAndSelect msg handler (for tooltips)
@@ -176,7 +180,13 @@ view config =
             { id = option.value
             , idString = option.idString
             , tabAttributes = option.attributes
-            , tabTooltip = option.tabTooltip
+            , tabTooltip =
+                case config.positioning of
+                    Left FillContainer ->
+                        Tooltip.containerCss [ Css.width (Css.pct 100) ] :: option.tabTooltip
+
+                    _ ->
+                        option.tabTooltip
             , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
@@ -234,15 +244,16 @@ styles positioning numEntries index isSelected =
 
       else
         unFocusedSegmentStyles
-    , case positioning of
-        Left FitContent ->
-            Css.batch []
+    , Css.batch <|
+        case positioning of
+            Left FillContainer ->
+                [ width (Css.pct 100)
+                , flexGrow (int 1)
+                , textAlign center
+                ]
 
-        Left FillContainer ->
-            expandingTabStyles
-
-        Center ->
-            Css.batch []
+            _ ->
+                []
     ]
 
 
@@ -295,13 +306,5 @@ unFocusedSegmentStyles =
     , boxShadow5 inset zero (px -2) zero Colors.azure
     , color Colors.azure
     , hover [ backgroundColor Colors.frost ]
-    ]
-        |> Css.batch
-
-
-expandingTabStyles : Style
-expandingTabStyles =
-    [ flexGrow (int 1)
-    , textAlign center
     ]
         |> Css.batch
