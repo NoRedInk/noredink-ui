@@ -7,6 +7,8 @@ node_js:
 cache:
   directories:
     - node_modules
+    - sysconfcpus
+    - ~/.elm
 
 before_install:
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
