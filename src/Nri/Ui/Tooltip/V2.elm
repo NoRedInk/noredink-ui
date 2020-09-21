@@ -19,6 +19,7 @@ module Nri.Ui.Tooltip.V2 exposing
 
 Post-release patches:
 
+  - fix overlay for onClick toolTip having a border
   - mark customTriggerAttributes as deprecated
   - add containerCss
 
@@ -755,6 +756,8 @@ viewCloseTooltipOverlay msg =
             , Css.position Css.fixed
             , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
             , Css.backgroundColor Css.transparent
+            , Css.border Css.zero
+            , Css.outline Css.none
             ]
         , EventExtras.onClickStopPropagation msg
         , Key.tabbable False
