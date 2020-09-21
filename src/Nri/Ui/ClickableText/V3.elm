@@ -315,7 +315,7 @@ sizeToPx size =
             Css.px 15
 
         Medium ->
-            Css.px 15
+            Css.px 17
 
         Large ->
             Css.px 20
