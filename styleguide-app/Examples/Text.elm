@@ -31,7 +31,7 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Text"
-    , version = 4
+    , version = 5
     , categories = [ Text ]
     , atomicDesignType = Atom
     , keyboardSupport = []
