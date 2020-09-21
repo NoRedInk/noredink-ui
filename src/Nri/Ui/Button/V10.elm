@@ -776,7 +776,7 @@ sizeStyle size width =
                     }
 
                 Medium ->
-                    { fontSize = 17
+                    { fontSize = 15
                     , height = 45
                     , imageHeight = 15
                     , shadowHeight = 3
