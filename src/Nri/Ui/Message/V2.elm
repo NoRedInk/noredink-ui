@@ -118,7 +118,7 @@ view attributes_ =
                     , fontSize (px 13)
                     ]
                     []
-                    [ icon
+                    [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon ]
                     , div [] html_
                     , case attributes.onDismiss of
                         Nothing ->
@@ -540,7 +540,7 @@ getIcon size theme =
                 |> NriSvg.withColor Colors.purple
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
-                |> NriSvg.withCss [ marginRight ]
+                |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Error"
                 |> NriSvg.toHtml
 
@@ -558,7 +558,7 @@ getIcon size theme =
                 |> NriSvg.withColor color
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
-                |> NriSvg.withCss [ marginRight ]
+                |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Alert"
                 |> NriSvg.toHtml
 
@@ -608,7 +608,7 @@ getIcon size theme =
                 |> NriSvg.withColor Colors.green
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
-                |> NriSvg.withCss [ marginRight ]
+                |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Success"
                 |> NriSvg.toHtml
 
@@ -616,7 +616,7 @@ getIcon size theme =
             icon
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
-                |> NriSvg.withCss [ marginRight ]
+                |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.toHtml
 
 

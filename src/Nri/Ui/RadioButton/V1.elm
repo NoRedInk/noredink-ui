@@ -1,13 +1,6 @@
 module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
-{-|
-
-
-# Patch changes
-
-  - Make the filter ids within the svg unique (now the id depends on the radio value)
-
-Changes from monolith version:
+{-| Changes from monolith version:
 
     - uses Nri.Ui.Data.PremiumLevel rather than monolith version
     - uses Nri.Ui.Html.* rather than deprecated monolith extras
@@ -231,8 +224,7 @@ internalView config =
                 ]
             ]
             [ radioInputIcon
-                { idSuffix = id_
-                , isLocked = config.isLocked
+                { isLocked = config.isLocked
                 , isDisabled = config.isDisabled
                 , isChecked = isChecked
                 }
@@ -283,8 +275,7 @@ onEnterAndSpacePreventDefault msg =
 
 
 radioInputIcon :
-    { idSuffix : String
-    , isChecked : Bool
+    { isChecked : Bool
     , isLocked : Bool
     , isDisabled : Bool
     }
@@ -294,16 +285,16 @@ radioInputIcon config =
         image =
             case ( config.isDisabled, config.isLocked, config.isChecked ) of
                 ( _, True, _ ) ->
-                    lockedSvg config.idSuffix
+                    lockedSvg
 
                 ( True, _, _ ) ->
-                    unselectedSvg config.idSuffix
+                    unselectedSvg
 
                 ( _, False, True ) ->
-                    selectedSvg config.idSuffix
+                    selectedSvg
 
                 ( _, False, False ) ->
-                    unselectedSvg config.idSuffix
+                    unselectedSvg
     in
     div
         [ classList
@@ -328,25 +319,12 @@ radioInputIcon config =
         [ Nri.Ui.Svg.V1.toHtml image ]
 
 
-unselectedSvg : String -> Svg
-unselectedSvg idSuffix =
-    let
-        pathId =
-            "unselected-path-1" ++ idSuffix
-
-        xlinkPathHref =
-            SvgAttributes.xlinkHref ("#" ++ pathId)
-
-        filterId =
-            "unselected-filter-1" ++ idSuffix
-
-        filterUrl =
-            "url(#" ++ filterId ++ ")"
-    in
+unselectedSvg : Svg
+unselectedSvg =
     Svg.svg [ SvgAttributes.viewBox "0 0 27 27" ]
         [ Svg.defs []
-            [ Svg.rect [ SvgAttributes.id pathId, SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
-            , Svg.filter [ SvgAttributes.id filterId, SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
+            [ Svg.rect [ SvgAttributes.id "unselected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
+            , Svg.filter [ SvgAttributes.id "unselected-filter-2", SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
             ]
         , Svg.g
             [ SvgAttributes.stroke "none"
@@ -359,14 +337,14 @@ unselectedSvg idSuffix =
                     [ Svg.use
                         [ SvgAttributes.fill "#EBEBEB"
                         , SvgAttributes.fillRule "evenodd"
-                        , xlinkPathHref
+                        , SvgAttributes.xlinkHref "#unselected-path-1"
                         ]
                         []
                     , Svg.use
                         [ SvgAttributes.fill "black"
                         , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter filterUrl
-                        , xlinkPathHref
+                        , SvgAttributes.filter "url(#unselected-filter-2)"
+                        , SvgAttributes.xlinkHref "#unselected-path-1"
                         ]
                         []
                     ]
@@ -376,26 +354,13 @@ unselectedSvg idSuffix =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
-selectedSvg : String -> Svg
-selectedSvg idSuffix =
-    let
-        pathId =
-            "selected-path-1" ++ idSuffix
-
-        xlinkPathHref =
-            SvgAttributes.xlinkHref ("#" ++ pathId)
-
-        filterId =
-            "selected-filter-1" ++ idSuffix
-
-        filterUrl =
-            "url(#" ++ filterId ++ ")"
-    in
+selectedSvg : Svg
+selectedSvg =
     Svg.svg [ SvgAttributes.viewBox "0 0 27 27" ]
         [ Svg.defs []
-            [ Svg.rect [ SvgAttributes.id pathId, SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
+            [ Svg.rect [ SvgAttributes.id "selected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
             , Svg.filter
-                [ SvgAttributes.id filterId, SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ]
+                [ SvgAttributes.id "selected-filter-2", SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ]
                 [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
             ]
         , Svg.g
@@ -409,14 +374,14 @@ selectedSvg idSuffix =
                     [ Svg.use
                         [ SvgAttributes.fill "#D4F0FF"
                         , SvgAttributes.fillRule "evenodd"
-                        , xlinkPathHref
+                        , SvgAttributes.xlinkHref "#selected-path-1"
                         ]
                         []
                     , Svg.use
                         [ SvgAttributes.fill "black"
                         , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter filterUrl
-                        , xlinkPathHref
+                        , SvgAttributes.filter "url(#selected-filter-2)"
+                        , SvgAttributes.xlinkHref "#selected-path-1"
                         ]
                         []
                     ]
@@ -433,25 +398,12 @@ selectedSvg idSuffix =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
-lockedSvg : String -> Svg
-lockedSvg idSuffix =
-    let
-        pathId =
-            "locked-path-1" ++ idSuffix
-
-        xlinkPathHref =
-            SvgAttributes.xlinkHref ("#" ++ pathId)
-
-        filterId =
-            "locked-filter-1" ++ idSuffix
-
-        filterUrl =
-            "url(#" ++ filterId ++ ")"
-    in
+lockedSvg : Svg
+lockedSvg =
     Svg.svg [ SvgAttributes.viewBox "0 0 30 30" ]
         [ Svg.defs []
-            [ Svg.rect [ SvgAttributes.id pathId, SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "30", SvgAttributes.height "30", SvgAttributes.rx "15" ] []
-            , Svg.filter [ SvgAttributes.id filterId, SvgAttributes.x "-3.3%", SvgAttributes.y "-3.3%", SvgAttributes.width "106.7%", SvgAttributes.height "106.7%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
+            [ Svg.rect [ SvgAttributes.id "locked-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "30", SvgAttributes.height "30", SvgAttributes.rx "15" ] []
+            , Svg.filter [ SvgAttributes.id "locked-filter-2", SvgAttributes.x "-3.3%", SvgAttributes.y "-3.3%", SvgAttributes.width "106.7%", SvgAttributes.height "106.7%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
             ]
         , Svg.g
             [ SvgAttributes.stroke "none"
@@ -463,13 +415,13 @@ lockedSvg idSuffix =
                 [ Svg.use
                     [ SvgAttributes.fill "#EBEBEB"
                     , SvgAttributes.fillRule "evenodd"
-                    , xlinkPathHref
+                    , SvgAttributes.xlinkHref "#locked-path-1"
                     ]
                     []
                 , Svg.use
                     [ SvgAttributes.fill "black"
                     , SvgAttributes.fillOpacity "1"
-                    , SvgAttributes.filter filterUrl
+                    , SvgAttributes.filter "url(#locked-filter-2)"
                     , SvgAttributes.xlinkHref "#locked-path-1"
                     ]
                     []
