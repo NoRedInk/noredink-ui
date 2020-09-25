@@ -238,7 +238,7 @@ viewEntry { headerId, headerLevel, viewHeader, viewContent, styleOptions, caret,
         panelId =
             "accordion-panel__" ++ headerId
     in
-    section
+    div
         [ entryClass isExpanded
         , Attributes.css styles.entry
         ]
@@ -260,8 +260,9 @@ viewEntry { headerId, headerLevel, viewHeader, viewContent, styleOptions, caret,
                 [ viewCaret isExpanded caret
                 , viewHeader entry
                 ]
-        , div
+        , section
             [ Attributes.id panelId
+            , Aria.labelledBy headerId
             , Attributes.class "accordion-entry-panel"
             , Attributes.hidden (not isExpanded)
             , Attributes.css styles.content
