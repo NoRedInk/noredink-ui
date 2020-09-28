@@ -394,8 +394,11 @@ buttonOrLinkStyles config =
             else
                 ( Colors.azure, Colors.azureDark, Css.pointer )
     in
-    [ -- Colors, text decoration, cursor
-      Css.backgroundColor Css.transparent
+    [ Css.property "transition"
+        "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
+
+    -- Colors, text decoration, cursor
+    , Css.backgroundColor Css.transparent
     , Css.textDecoration Css.none
     , Css.color mainColor
     , Css.visited [ Css.color mainColor ]
@@ -410,7 +413,9 @@ buttonOrLinkStyles config =
     , Css.padding Css.zero
     , if config.hasBorder then
         Css.batch
-            [ Css.border3 (Css.px 1) Css.solid mainColor
+            [ Css.borderRadius (Css.px 8)
+            , Css.border3 (Css.px 1) Css.solid mainColor
+            , Css.borderBottomWidth (Css.px 2)
             , Css.hover [ Css.color hoverColor ]
             ]
 
