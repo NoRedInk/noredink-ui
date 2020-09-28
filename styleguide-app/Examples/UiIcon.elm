@@ -64,6 +64,7 @@ example =
                 ]
             , IconExamples.view "Humans & Class"
                 [ ( "person", UiIcon.person )
+                , ( "couple", UiIcon.couple )
                 , ( "class", UiIcon.class )
                 , ( "leaderboard", UiIcon.leaderboard )
                 , ( "performance", UiIcon.performance )
