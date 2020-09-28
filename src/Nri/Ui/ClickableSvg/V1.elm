@@ -585,14 +585,14 @@ withBorderLeftBorderWidth =
 
 withBorderTopPadding : Float
 withBorderTopPadding =
-    3
+    4
 
 
 withBorderBottomPadding : Float
 withBorderBottomPadding =
-    1
+    3
 
 
 withBorderHorizontalPadding : Float
 withBorderHorizontalPadding =
-    4
+    5
