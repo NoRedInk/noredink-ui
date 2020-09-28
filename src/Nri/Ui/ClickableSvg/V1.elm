@@ -445,7 +445,7 @@ buttonOrLinkStyles config =
                         ( Colors.navy, Colors.navy, Css.pointer )
 
                     Danger ->
-                        ( Colors.red, Colors.red, Css.pointer )
+                        ( Colors.red, Colors.redDark, Css.pointer )
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
