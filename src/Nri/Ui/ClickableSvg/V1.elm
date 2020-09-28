@@ -6,6 +6,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , width, height
     , disabled
     , withBorder
+    , primary, secondary, danger
     , custom, css
     , withTooltipAbove, withTooltipBelow
     )
@@ -44,6 +45,8 @@ module Nri.Ui.ClickableSvg.V1 exposing
 ## Customization
 
 @docs withBorder
+@docs primary, secondary, danger
+
 @docs custom, css
 
 
@@ -193,6 +196,33 @@ withBorder =
     set (\config -> { config | hasBorder = True })
 
 
+type Theme
+    = Primary
+    | Secondary
+    | Danger
+
+
+{-| -}
+primary : Attribute msg
+primary =
+    set (\attributes -> { attributes | theme = Primary })
+
+
+{-| -}
+secondary : Attribute msg
+secondary =
+    set
+        (\attributes ->
+            { attributes | theme = Secondary }
+        )
+
+
+{-| -}
+danger : Attribute msg
+danger =
+    set (\attributes -> { attributes | theme = Danger })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -306,6 +336,7 @@ build label icon =
         , customStyles = []
         , tooltip = Nothing
         , hasBorder = False
+        , theme = Primary
         }
 
 
@@ -324,6 +355,7 @@ type alias ButtonOrLinkAttributes msg =
     , customStyles : List Style
     , tooltip : Maybe (TooltipSettings msg)
     , hasBorder : Bool
+    , theme : Theme
     }
 
 
@@ -405,7 +437,15 @@ buttonOrLinkStyles config =
                 ( Colors.gray75, Colors.gray75, Css.notAllowed )
 
             else
-                ( Colors.azure, Colors.azureDark, Css.pointer )
+                case config.theme of
+                    Primary ->
+                        ( Colors.azure, Colors.azureDark, Css.pointer )
+
+                    Secondary ->
+                        ( Colors.navy, Colors.navy, Css.pointer )
+
+                    Danger ->
+                        ( Colors.red, Colors.red, Css.pointer )
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
