@@ -412,20 +412,35 @@ renderLink ((ButtonOrLink config) as link_) =
 
 renderIcon : ButtonOrLinkAttributes msg -> Html msg
 renderIcon config =
-    let
-        ( iconWidth, iconHeight ) =
-            if config.hasBorder then
-                ( Css.width (Css.calc config.width Css.minus (Css.px <| 2 * withBorderVerticalPadding))
-                , Css.height (Css.calc config.height Css.minus (Css.px <| 2 * withBorderHorizontalPadding))
-                )
-
-            else
-                ( Css.width config.width
-                , Css.height config.height
-                )
-    in
     config.icon
-        |> Svg.withCss [ iconWidth, iconHeight ]
+        |> Svg.withCss
+            (if config.hasBorder then
+                [ Css.width
+                    (Css.calc config.width
+                        Css.minus
+                        (Css.px <|
+                            (2 * withBorderHorizontalPadding)
+                                + withBorderLeftBorderWidth
+                                + withBorderRightBorderWidth
+                        )
+                    )
+                , Css.height
+                    (Css.calc config.height
+                        Css.minus
+                        (Css.px <|
+                            withBorderTopPadding
+                                + withBorderBottomPadding
+                                + withBorderTopBorderWidth
+                                + withBorderBottomBorderWidth
+                        )
+                    )
+                ]
+
+             else
+                [ Css.width config.width
+                , Css.height config.height
+                ]
+            )
         |> Svg.toHtml
 
 
@@ -463,15 +478,21 @@ buttonOrLinkStyles config =
 
     -- Margins, borders, padding
     , Css.margin Css.zero
+    , Css.textAlign Css.center
     , Css.batch <|
         if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
-            , Css.border3 (Css.px 1) Css.solid mainColor
-            , Css.borderBottomWidth (Css.px 2)
+            , Css.borderColor mainColor
+            , Css.borderStyle Css.solid
+            , Css.borderTopWidth (Css.px withBorderTopBorderWidth)
+            , Css.borderRightWidth (Css.px withBorderRightBorderWidth)
+            , Css.borderBottomWidth (Css.px withBorderBottomBorderWidth)
+            , Css.borderLeftWidth (Css.px withBorderLeftBorderWidth)
             , Css.hover [ Css.borderColor hoverColor ]
-            , Css.padding3 (Css.px (withBorderVerticalPadding + 1))
+            , Css.padding3
+                (Css.px withBorderTopPadding)
                 (Css.px withBorderHorizontalPadding)
-                (Css.px (withBorderVerticalPadding - 1))
+                (Css.px withBorderBottomPadding)
             ]
 
         else
@@ -481,16 +502,41 @@ buttonOrLinkStyles config =
 
     -- Sizing
     , Css.display Css.inlineBlock
-    , Css.boxSizing Css.contentBox
+    , Css.boxSizing Css.borderBox
     , Css.width config.width
     , Css.height config.height
     , Css.lineHeight (Css.num 1)
     ]
 
 
-withBorderVerticalPadding : Float
-withBorderVerticalPadding =
+withBorderTopBorderWidth : Float
+withBorderTopBorderWidth =
+    1
+
+
+withBorderRightBorderWidth : Float
+withBorderRightBorderWidth =
+    1
+
+
+withBorderBottomBorderWidth : Float
+withBorderBottomBorderWidth =
     2
+
+
+withBorderLeftBorderWidth : Float
+withBorderLeftBorderWidth =
+    1
+
+
+withBorderTopPadding : Float
+withBorderTopPadding =
+    3
+
+
+withBorderBottomPadding : Float
+withBorderBottomPadding =
+    1
 
 
 withBorderHorizontalPadding : Float
