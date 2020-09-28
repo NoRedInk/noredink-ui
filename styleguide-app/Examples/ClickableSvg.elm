@@ -166,19 +166,10 @@ viewExampleTable icon attributes =
         viewExampleRow index ( themeName, theme ) =
             Html.tr []
                 [ cell index [ Html.text themeName ]
-                , cell index
-                    [ ClickableSvg.button "Button example"
-                        icon
-                        (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
-                            :: theme
-                            :: attributes
-                        )
-                    ]
-                , cell index
-                    [ ClickableSvg.link "Link example"
-                        icon
-                        (ClickableSvg.linkSpa "some_link" :: theme :: attributes)
-                    ]
+                , cell index [ buttonExample (theme :: attributes) ]
+                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: attributes) ]
+                , cell index [ linkExample (theme :: attributes) ]
+                , cell index [ linkExample (ClickableSvg.withBorder :: theme :: attributes) ]
                 ]
 
         cell index =
@@ -192,13 +183,25 @@ viewExampleTable icon attributes =
                     , Css.padding (Css.px 10)
                     ]
                 ]
+
+        buttonExample attributes_ =
+            ClickableSvg.button "Button example"
+                icon
+                (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
+                    :: attributes_
+                )
+
+        linkExample attributes_ =
+            ClickableSvg.link "Link example"
+                icon
+                (ClickableSvg.linkSpa "some_link" :: attributes_)
     in
     Html.table []
         [ Html.thead []
             [ Html.tr []
                 [ Html.th [] [ Html.text "theme" ]
-                , Html.th [] [ Html.text "button" ]
-                , Html.th [] [ Html.text "link" ]
+                , Html.th [ Attributes.colspan 2 ] [ Html.text "button" ]
+                , Html.th [ Attributes.colspan 2 ] [ Html.text "link" ]
                 ]
             ]
         , Html.tbody [] <|
@@ -280,7 +283,6 @@ update msg state =
 type alias Settings msg =
     { icon : Svg
     , disabled : ClickableSvg.Attribute msg
-    , withBorder : ClickableSvg.Attribute msg
     , width : ClickableSvg.Attribute msg
     , height : ClickableSvg.Attribute msg
     }
@@ -289,10 +291,10 @@ type alias Settings msg =
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, withBorder, width, height } =
+        { icon, disabled, width, height } =
             Control.currentValue settings
     in
-    ( icon, [ disabled, withBorder, width, height ] )
+    ( icon, [ disabled, width, height ] )
 
 
 initSettings : Control (Settings msg)
@@ -314,17 +316,6 @@ initSettings =
             )
         |> Control.field "disabled"
             (Control.map ClickableSvg.disabled (Control.bool False))
-        |> Control.field "withBorder"
-            (Control.map
-                (\hasBorder ->
-                    if hasBorder then
-                        ClickableSvg.withBorder
-
-                    else
-                        ClickableSvg.css []
-                )
-                (Control.bool False)
-            )
         |> Control.field "width"
             (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
         |> Control.field "height"
