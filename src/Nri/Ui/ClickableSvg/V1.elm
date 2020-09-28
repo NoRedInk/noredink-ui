@@ -58,7 +58,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
-import Css exposing (Style)
+import Css exposing (Color, Style)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
@@ -200,6 +200,44 @@ type Theme
     = Primary
     | Secondary
     | Danger
+    | DangerSecondary
+
+
+type alias AppliedTheme =
+    { mainColor : Color
+    , hoverColor : Color
+    }
+
+
+disabledTheme : AppliedTheme
+disabledTheme =
+    { mainColor = Colors.gray75
+    , hoverColor = Colors.gray75
+    }
+
+
+applyTheme : Theme -> AppliedTheme
+applyTheme theme =
+    case theme of
+        Primary ->
+            { mainColor = Colors.azure
+            , hoverColor = Colors.azureDark
+            }
+
+        Secondary ->
+            { mainColor = Colors.navy
+            , hoverColor = Colors.navy
+            }
+
+        Danger ->
+            { mainColor = Colors.red
+            , hoverColor = Colors.redDark
+            }
+
+        DangerSecondary ->
+            { mainColor = Colors.red
+            , hoverColor = Colors.redDark
+            }
 
 
 {-| -}
@@ -211,10 +249,7 @@ primary =
 {-| -}
 secondary : Attribute msg
 secondary =
-    set
-        (\attributes ->
-            { attributes | theme = Secondary }
-        )
+    set (\attributes -> { attributes | theme = Secondary })
 
 
 {-| -}
@@ -447,20 +482,12 @@ renderIcon config =
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
 buttonOrLinkStyles config =
     let
-        ( mainColor, hoverColor, cursor ) =
+        ( { mainColor, hoverColor }, cursor ) =
             if config.disabled then
-                ( Colors.gray75, Colors.gray75, Css.notAllowed )
+                ( disabledTheme, Css.notAllowed )
 
             else
-                case config.theme of
-                    Primary ->
-                        ( Colors.azure, Colors.azureDark, Css.pointer )
-
-                    Secondary ->
-                        ( Colors.navy, Colors.navy, Css.pointer )
-
-                    Danger ->
-                        ( Colors.red, Colors.redDark, Css.pointer )
+                ( applyTheme config.theme, Css.pointer )
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
