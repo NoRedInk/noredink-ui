@@ -167,8 +167,8 @@ viewExampleTable icon attributes =
             Html.tr []
                 [ cell index [ Html.text themeName ]
                 , cell index [ buttonExample (theme :: attributes) ]
-                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: attributes) ]
                 , cell index [ linkExample (theme :: attributes) ]
+                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: attributes) ]
                 , cell index [ linkExample (ClickableSvg.withBorder :: theme :: attributes) ]
                 ]
 
@@ -200,8 +200,8 @@ viewExampleTable icon attributes =
         [ Html.thead []
             [ Html.tr []
                 [ Html.th [] [ Html.text "theme" ]
-                , Html.th [ Attributes.colspan 2 ] [ Html.text "button" ]
-                , Html.th [ Attributes.colspan 2 ] [ Html.text "link" ]
+                , Html.th [ Attributes.colspan 2 ] [ Html.text "" ]
+                , Html.th [ Attributes.colspan 2 ] [ Html.text "withBorder" ]
                 ]
             ]
         , Html.tbody [] <|
@@ -211,6 +211,15 @@ viewExampleTable icon attributes =
                 , ( "danger", ClickableSvg.danger )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
+        , Html.tfoot []
+            [ Html.tr []
+                [ Html.td [] [ Html.text "" ]
+                , Html.td [] [ Html.text "button" ]
+                , Html.td [] [ Html.text "link" ]
+                , Html.td [] [ Html.text "button" ]
+                , Html.td [] [ Html.text "link" ]
+                ]
+            ]
         ]
 
 
