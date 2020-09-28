@@ -10,6 +10,7 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Html.Styled as Html
@@ -39,7 +40,12 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ viewExample "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]" <|
+            let
+                settings =
+                    Control.currentValue state.settings
+            in
+            [ Html.fromUnstyled (Control.view SetControls state.settings)
+            , viewExample "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]" <|
                 ClickableSvg.button "Back"
                     UiIcon.arrowLeft
                     [ ClickableSvg.onClick (ShowItWorked "You clicked the back button!") ]
@@ -187,6 +193,7 @@ viewCode renderStrategy =
 type alias State =
     { tooltipPreview : Bool
     , tooltipShareTo : Bool
+    , settings : Control Settings
     }
 
 
@@ -195,6 +202,7 @@ init : State
 init =
     { tooltipPreview = False
     , tooltipShareTo = False
+    , settings = initSettings
     }
 
 
@@ -203,6 +211,7 @@ type Msg
     = ShowItWorked String
     | SetPreviewTooltip Bool
     | SetShareTooltip Bool
+    | SetControls (Control Settings)
 
 
 {-| -}
@@ -221,3 +230,15 @@ update msg state =
 
         SetShareTooltip bool ->
             ( { state | tooltipShareTo = bool }, Cmd.none )
+
+        SetControls settings ->
+            ( { state | settings = settings }, Cmd.none )
+
+
+type alias Settings =
+    {}
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
