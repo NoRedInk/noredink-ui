@@ -22,7 +22,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -236,9 +236,59 @@ update msg state =
 
 
 type alias Settings =
-    {}
+    { disabled : ClickableSvg.Attribute Never
+    , withBorder : ClickableSvg.Attribute Never
+    , theme : ClickableSvg.Attribute Never
+    , icon : Svg
+    , width : ClickableSvg.Attribute Never
+    , height : ClickableSvg.Attribute Never
+    }
 
 
 initSettings : Control Settings
 initSettings =
     Control.record Settings
+        |> Control.field "disabled"
+            (Control.map ClickableSvg.disabled (Control.bool False))
+        |> Control.field "withBorder"
+            (Control.map
+                (\hasBorder ->
+                    if hasBorder then
+                        ClickableSvg.withBorder
+
+                    else
+                        ClickableSvg.css []
+                )
+                (Control.bool False)
+            )
+        |> Control.field "theme"
+            (Control.choice
+                [ ( "primary", Control.value ClickableSvg.primary )
+                , ( "secondary", Control.value ClickableSvg.secondary )
+                , ( "danger", Control.value ClickableSvg.danger )
+                ]
+            )
+        |> Control.field "icon"
+            (Control.choice
+                [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
+                , ( "unarchive", Control.value UiIcon.unarchive )
+                , ( "share", Control.value UiIcon.share )
+                , ( "preview", Control.value UiIcon.preview )
+                , ( "skip", Control.value UiIcon.skip )
+                , ( "copyToClipboard", Control.value UiIcon.copyToClipboard )
+                , ( "gift", Control.value UiIcon.gift )
+                , ( "home", Control.value UiIcon.home )
+                , ( "library", Control.value UiIcon.library )
+                , ( "searchInCicle", Control.value UiIcon.searchInCicle )
+                ]
+            )
+        |> Control.field "width"
+            (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
+        |> Control.field "height"
+            (Control.map (Css.px >> ClickableSvg.height) (controlNumber 20))
+
+
+controlNumber : Float -> Control Float
+controlNumber default =
+    Control.map (String.toFloat >> Maybe.withDefault default)
+        (Control.string (String.fromFloat default))
