@@ -48,26 +48,6 @@ example =
             , viewExampleTable icon attributes
             , viewExample
                 """
-ClickableSvg.button "Go to tutorial"
-    UiIcon.footsteps
-    [ ClickableSvg.width (Css.px 30)
-    , ClickableSvg.height (Css.px 30)
-    , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
-    , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-    , ClickableSvg.css [ Css.border3 (Css.px 1) Css.dashed Colors.azure ]
-    ]
-                """
-              <|
-                ClickableSvg.button "Go to tutorial"
-                    UiIcon.footsteps
-                    [ ClickableSvg.width (Css.px 30)
-                    , ClickableSvg.height (Css.px 30)
-                    , ClickableSvg.onClick (ShowItWorked "You clicked the tutorials button!")
-                    , ClickableSvg.custom [ Attributes.id "clickable-svg-customized-example-id" ]
-                    , ClickableSvg.css [ Css.border3 (Css.px 1) Css.dashed Colors.azure ]
-                    ]
-            , viewExample
-                """
 Tooltip.view
     { trigger =
         \\attrs ->
@@ -76,7 +56,6 @@ Tooltip.view
                 [ ClickableSvg.width (Css.px 20)
                 , ClickableSvg.height (Css.px 20)
                 , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
-                , ClickableSvg.withBorder
                 , ClickableSvg.custom attrs
                 ]
     , id = "preview-tooltip"
@@ -87,7 +66,6 @@ Tooltip.view
     , Tooltip.open state.tooltipPreview
     , Tooltip.smallPadding
     , Tooltip.fitToContent
-    , Tooltip.alignEnd (Css.px 28)
     ]
             """
               <|
@@ -99,7 +77,6 @@ Tooltip.view
                                 [ ClickableSvg.width (Css.px 20)
                                 , ClickableSvg.height (Css.px 20)
                                 , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
-                                , ClickableSvg.withBorder
                                 , ClickableSvg.custom attrs
                                 ]
                     , id = "preview-tooltip"
@@ -110,51 +87,6 @@ Tooltip.view
                     , Tooltip.open state.tooltipPreview
                     , Tooltip.smallPadding
                     , Tooltip.fitToContent
-                    , Tooltip.alignEnd (Css.px 28)
-                    ]
-            , viewExample
-                """
-Tooltip.view
-    { trigger =
-        \\attrs ->
-            ClickableSvg.button "Share"
-                UiIcon.share
-                [ ClickableSvg.width (Css.px 20)
-                , ClickableSvg.height (Css.px 20)
-                , ClickableSvg.onClick (ShowItWorked "You clicked the share button!")
-                , ClickableSvg.custom attrs
-                ]
-    , id = "share-tooltip"
-    }
-    [ Tooltip.plaintext "Share"
-    , Tooltip.primaryLabel
-    , Tooltip.onHover SetShareTooltip
-    , Tooltip.open state.tooltipShareTo
-    , Tooltip.smallPadding
-    , Tooltip.fitToContent
-    , Tooltip.onRight
-    ]
-            """
-              <|
-                Tooltip.view
-                    { trigger =
-                        \attrs ->
-                            ClickableSvg.button "Share"
-                                UiIcon.share
-                                [ ClickableSvg.width (Css.px 20)
-                                , ClickableSvg.height (Css.px 20)
-                                , ClickableSvg.onClick (ShowItWorked "You clicked the share button!")
-                                , ClickableSvg.custom attrs
-                                ]
-                    , id = "share-tooltip"
-                    }
-                    [ Tooltip.plaintext "Share"
-                    , Tooltip.primaryLabel
-                    , Tooltip.onHover SetShareTooltip
-                    , Tooltip.open state.tooltipShareTo
-                    , Tooltip.smallPadding
-                    , Tooltip.fitToContent
-                    , Tooltip.onRight
                     ]
             ]
     }
