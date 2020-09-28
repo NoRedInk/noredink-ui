@@ -76,6 +76,7 @@ ClickableSvg.button "Preview"
     , ClickableSvg.height (Css.px 20)
     , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
     , ClickableSvg.withTooltipAbove { id = "preview", isOpen = state.tooltipPreview, onShow = SetPreviewTooltip }
+    , ClickableSvg.withBorder
     ]
             """
               <|
@@ -89,6 +90,7 @@ ClickableSvg.button "Preview"
                         , isOpen = state.tooltipPreview
                         , onShow = SetPreviewTooltip
                         }
+                    , ClickableSvg.withBorder
                     ]
             , viewExample
                 """

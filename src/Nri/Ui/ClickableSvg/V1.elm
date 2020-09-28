@@ -5,6 +5,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , width, height
     , disabled
+    , withBorder
     , custom, css
     , withTooltipAbove, withTooltipBelow
     )
@@ -42,6 +43,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 ## Customization
 
+@docs withBorder
 @docs custom, css
 
 
@@ -184,6 +186,13 @@ disabled disabled_ =
 -- CUSTOMIZATION
 
 
+{-| Display a border around the icon.
+-}
+withBorder : Attribute msg
+withBorder =
+    set (\config -> { config | hasBorder = True })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -259,13 +268,15 @@ withTooltip position { id, isOpen, onShow } =
         )
 
 
-{-| -}
+{-| DEPRECATED: prefer to use the Tooltip module directly.
+-}
 withTooltipAbove : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipAbove =
     withTooltip Tooltip.OnTop
 
 
-{-| -}
+{-| DEPRECATED: prefer to use the Tooltip module directly.
+-}
 withTooltipBelow : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipBelow =
     withTooltip Tooltip.OnBottom
@@ -294,6 +305,7 @@ build label icon =
         , customAttributes = []
         , customStyles = []
         , tooltip = Nothing
+        , hasBorder = False
         }
 
 
@@ -311,6 +323,7 @@ type alias ButtonOrLinkAttributes msg =
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , tooltip : Maybe (TooltipSettings msg)
+    , hasBorder : Bool
     }
 
 
@@ -373,35 +386,36 @@ renderLink ((ButtonOrLink config) as link_) =
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
 buttonOrLinkStyles config =
+    let
+        ( mainColor, hoverColor, cursor ) =
+            if config.disabled then
+                ( Colors.gray75, Colors.gray75, Css.notAllowed )
+
+            else
+                ( Colors.azure, Colors.azureDark, Css.pointer )
+    in
     [ -- Colors, text decoration, cursor
       Css.backgroundColor Css.transparent
     , Css.textDecoration Css.none
-    , if config.disabled then
-        Css.batch
-            [ Css.color Colors.gray75
-            , Css.visited [ Css.color Colors.gray75 ]
-            , Css.hover
-                [ Css.textDecoration Css.none
-                , Css.color Colors.gray75
-                , Css.cursor Css.notAllowed
-                ]
-            ]
-
-      else
-        Css.batch
-            [ Css.color Colors.azure
-            , Css.visited [ Css.color Colors.azure ]
-            , Css.hover
-                [ Css.textDecoration Css.none
-                , Css.color Colors.azureDark
-                , Css.cursor Css.pointer
-                ]
-            ]
+    , Css.color mainColor
+    , Css.visited [ Css.color mainColor ]
+    , Css.hover
+        [ Css.textDecoration Css.none
+        , Css.color hoverColor
+        , Css.cursor cursor
+        ]
 
     -- Margins, borders, padding
     , Css.margin Css.zero
     , Css.padding Css.zero
-    , Css.borderWidth Css.zero
+    , if config.hasBorder then
+        Css.batch
+            [ Css.border3 (Css.px 1) Css.solid mainColor
+            , Css.hover [ Css.color hoverColor ]
+            ]
+
+      else
+        Css.borderWidth Css.zero
 
     -- Sizing
     , Css.boxSizing Css.contentBox
