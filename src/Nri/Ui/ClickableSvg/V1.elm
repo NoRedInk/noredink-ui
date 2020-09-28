@@ -6,7 +6,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , width, height
     , disabled
     , withBorder
-    , primary, secondary, danger
+    , primary, secondary, danger, dangerSecondary
     , custom, css
     , withTooltipAbove, withTooltipBelow
     )
@@ -45,7 +45,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, danger
+@docs primary, secondary, danger, dangerSecondary
 
 @docs custom, css
 
@@ -204,15 +204,19 @@ type Theme
 
 
 type alias AppliedTheme =
-    { mainColor : Color
-    , hoverColor : Color
+    { main_ : Color
+    , mainHovered : Color
+    , background : Color
+    , backgroundHovered : Color
     }
 
 
 disabledTheme : AppliedTheme
 disabledTheme =
-    { mainColor = Colors.gray75
-    , hoverColor = Colors.gray75
+    { main_ = Colors.gray75
+    , mainHovered = Colors.gray75
+    , background = Colors.white
+    , backgroundHovered = Colors.white
     }
 
 
@@ -220,42 +224,61 @@ applyTheme : Theme -> AppliedTheme
 applyTheme theme =
     case theme of
         Primary ->
-            { mainColor = Colors.azure
-            , hoverColor = Colors.azureDark
+            { main_ = Colors.white
+            , mainHovered = Colors.white
+            , background = Colors.azure
+            , backgroundHovered = Colors.azureDark
             }
 
         Secondary ->
-            { mainColor = Colors.navy
-            , hoverColor = Colors.navy
+            { main_ = Colors.azure
+            , mainHovered = Colors.azureDark
+            , background = Colors.white
+            , backgroundHovered = Colors.glacier
             }
 
         Danger ->
-            { mainColor = Colors.red
-            , hoverColor = Colors.redDark
+            { main_ = Colors.white
+            , mainHovered = Colors.white
+            , background = Colors.red
+            , backgroundHovered = Colors.redDark
             }
 
         DangerSecondary ->
-            { mainColor = Colors.red
-            , hoverColor = Colors.redDark
+            { main_ = Colors.red
+            , mainHovered = Colors.redDark
+            , background = Colors.white
+            , backgroundHovered = Colors.redLight
             }
 
 
-{-| -}
+{-| white/transparent icon on an azure background.
+-}
 primary : Attribute msg
 primary =
     set (\attributes -> { attributes | theme = Primary })
 
 
-{-| -}
+{-| This is the default: a blue icon on a transparent background, or a blue icon
+on a white/glacier icon with a blue border.
+-}
 secondary : Attribute msg
 secondary =
     set (\attributes -> { attributes | theme = Secondary })
 
 
-{-| -}
+{-| White/transparent icon on a red background.
+-}
 danger : Attribute msg
 danger =
     set (\attributes -> { attributes | theme = Danger })
+
+
+{-| Red icon on a white/transparent background.
+-}
+dangerSecondary : Attribute msg
+dangerSecondary =
+    set (\attributes -> { attributes | theme = DangerSecondary })
 
 
 {-| Use this helper to add custom attributes.
@@ -371,7 +394,7 @@ build label icon =
         , customStyles = []
         , tooltip = Nothing
         , hasBorder = False
-        , theme = Primary
+        , theme = Secondary
         }
 
 
@@ -482,7 +505,7 @@ renderIcon config =
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
 buttonOrLinkStyles config =
     let
-        ( { mainColor, hoverColor }, cursor ) =
+        ( { main_, mainHovered, background, backgroundHovered }, cursor ) =
             if config.disabled then
                 ( disabledTheme, Css.notAllowed )
 
@@ -493,13 +516,12 @@ buttonOrLinkStyles config =
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
 
     -- Colors, text decoration, cursor
-    , Css.backgroundColor Css.transparent
     , Css.textDecoration Css.none
-    , Css.color mainColor
-    , Css.visited [ Css.color mainColor ]
+    , Css.color main_
+    , Css.visited [ Css.color main_ ]
     , Css.hover
         [ Css.textDecoration Css.none
-        , Css.color hoverColor
+        , Css.color mainHovered
         , Css.cursor cursor
         ]
 
@@ -509,13 +531,17 @@ buttonOrLinkStyles config =
     , Css.batch <|
         if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
-            , Css.borderColor mainColor
+            , Css.borderColor main_
             , Css.borderStyle Css.solid
             , Css.borderTopWidth (Css.px withBorderTopBorderWidth)
             , Css.borderRightWidth (Css.px withBorderRightBorderWidth)
             , Css.borderBottomWidth (Css.px withBorderBottomBorderWidth)
             , Css.borderLeftWidth (Css.px withBorderLeftBorderWidth)
-            , Css.hover [ Css.borderColor hoverColor ]
+            , Css.backgroundColor background
+            , Css.hover
+                [ Css.borderColor mainHovered
+                , Css.backgroundColor backgroundHovered
+                ]
             , Css.padding3
                 (Css.px withBorderTopPadding)
                 (Css.px withBorderHorizontalPadding)
@@ -525,6 +551,7 @@ buttonOrLinkStyles config =
         else
             [ Css.borderWidth Css.zero
             , Css.padding Css.zero
+            , Css.backgroundColor Css.transparent
             ]
 
     -- Sizing

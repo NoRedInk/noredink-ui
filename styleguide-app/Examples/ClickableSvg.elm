@@ -162,6 +162,15 @@ Tooltip.view
 
 viewExampleTable : Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
 viewExampleTable icon attributes =
+    let
+        cell =
+            Html.td
+                [ Attributes.css
+                    [ Css.backgroundColor Colors.gray96
+                    , Css.padding (Css.px 30)
+                    ]
+                ]
+    in
     Html.table []
         [ Html.thead []
             [ Html.tr []
@@ -171,14 +180,14 @@ viewExampleTable icon attributes =
             ]
         , Html.tbody []
             [ Html.tr []
-                [ Html.td []
+                [ cell
                     [ ClickableSvg.button "Button example"
                         icon
                         (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
                             :: attributes
                         )
                     ]
-                , Html.td []
+                , cell
                     [ ClickableSvg.link "Link example"
                         icon
                         (ClickableSvg.linkSpa "some_link" :: attributes)
@@ -308,6 +317,7 @@ initSettings =
                 [ ( "primary", Control.value ClickableSvg.primary )
                 , ( "secondary", Control.value ClickableSvg.secondary )
                 , ( "danger", Control.value ClickableSvg.danger )
+                , ( "dangerSecondary", Control.value ClickableSvg.dangerSecondary )
                 ]
             )
         |> Control.field "width"
