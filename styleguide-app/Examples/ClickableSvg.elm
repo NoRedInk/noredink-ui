@@ -13,7 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -41,20 +41,11 @@ example =
     , view =
         \state ->
             let
-                settings =
-                    Control.currentValue state.settings
+                ( icon, attributes ) =
+                    applySettings state.settings
             in
             [ Html.fromUnstyled (Control.view SetControls state.settings)
-            , viewExample "ClickableSvg.button \"Back\" UiIcon.arrowLeft [ ClickableSvg.onClick OnClickMsg ]" <|
-                ClickableSvg.button "Back"
-                    UiIcon.arrowLeft
-                    [ ClickableSvg.onClick (ShowItWorked "You clicked the back button!") ]
-            , viewExample "ClickableSvg.link \"Back\" UiIcon.arrowLeft [ ClickableSvg.linkSpa \"some_link\" ]" <|
-                ClickableSvg.link "Back" UiIcon.arrowLeft [ ClickableSvg.linkSpa "some_link" ]
-            , viewExample "ClickableSvg.button \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]" <|
-                ClickableSvg.button "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
-            , viewExample "ClickableSvg.link \"Disabled\" UiIcon.arrowLeft [ ClickableSvg.disabled True ]" <|
-                ClickableSvg.link "Disabled" UiIcon.arrowLeft [ ClickableSvg.disabled True ]
+            , viewExampleTable icon attributes
             , viewExample
                 """
 ClickableSvg.button "Go to tutorial"
@@ -169,6 +160,34 @@ Tooltip.view
     }
 
 
+viewExampleTable : Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
+viewExampleTable icon attributes =
+    Html.table []
+        [ Html.thead []
+            [ Html.tr []
+                [ Html.th [] [ Html.text "button" ]
+                , Html.th [] [ Html.text "link" ]
+                ]
+            ]
+        , Html.tbody []
+            [ Html.tr []
+                [ Html.td []
+                    [ ClickableSvg.button "Button example"
+                        icon
+                        (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
+                            :: attributes
+                        )
+                    ]
+                , Html.td []
+                    [ ClickableSvg.link "Link example"
+                        icon
+                        (ClickableSvg.linkSpa "some_link" :: attributes)
+                    ]
+                ]
+            ]
+        ]
+
+
 viewExample : String -> Html.Html msg -> Html.Html msg
 viewExample code html =
     Html.div
@@ -193,7 +212,7 @@ viewCode renderStrategy =
 type alias State =
     { tooltipPreview : Bool
     , tooltipShareTo : Bool
-    , settings : Control Settings
+    , settings : Control (Settings Msg)
     }
 
 
@@ -211,7 +230,7 @@ type Msg
     = ShowItWorked String
     | SetPreviewTooltip Bool
     | SetShareTooltip Bool
-    | SetControls (Control Settings)
+    | SetControls (Control (Settings Msg))
 
 
 {-| -}
@@ -235,19 +254,42 @@ update msg state =
             ( { state | settings = settings }, Cmd.none )
 
 
-type alias Settings =
-    { disabled : ClickableSvg.Attribute Never
-    , withBorder : ClickableSvg.Attribute Never
-    , theme : ClickableSvg.Attribute Never
-    , icon : Svg
-    , width : ClickableSvg.Attribute Never
-    , height : ClickableSvg.Attribute Never
+type alias Settings msg =
+    { icon : Svg
+    , disabled : ClickableSvg.Attribute msg
+    , withBorder : ClickableSvg.Attribute msg
+    , theme : ClickableSvg.Attribute msg
+    , width : ClickableSvg.Attribute msg
+    , height : ClickableSvg.Attribute msg
     }
 
 
-initSettings : Control Settings
+applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
+applySettings settings =
+    let
+        { icon, disabled, withBorder, theme, width, height } =
+            Control.currentValue settings
+    in
+    ( icon, [ disabled, withBorder, theme, width, height ] )
+
+
+initSettings : Control (Settings msg)
 initSettings =
     Control.record Settings
+        |> Control.field "icon"
+            (Control.choice
+                [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
+                , ( "unarchive", Control.value UiIcon.unarchive )
+                , ( "share", Control.value UiIcon.share )
+                , ( "preview", Control.value UiIcon.preview )
+                , ( "skip", Control.value UiIcon.skip )
+                , ( "copyToClipboard", Control.value UiIcon.copyToClipboard )
+                , ( "gift", Control.value UiIcon.gift )
+                , ( "home", Control.value UiIcon.home )
+                , ( "library", Control.value UiIcon.library )
+                , ( "searchInCicle", Control.value UiIcon.searchInCicle )
+                ]
+            )
         |> Control.field "disabled"
             (Control.map ClickableSvg.disabled (Control.bool False))
         |> Control.field "withBorder"
@@ -268,24 +310,10 @@ initSettings =
                 , ( "danger", Control.value ClickableSvg.danger )
                 ]
             )
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
-                , ( "unarchive", Control.value UiIcon.unarchive )
-                , ( "share", Control.value UiIcon.share )
-                , ( "preview", Control.value UiIcon.preview )
-                , ( "skip", Control.value UiIcon.skip )
-                , ( "copyToClipboard", Control.value UiIcon.copyToClipboard )
-                , ( "gift", Control.value UiIcon.gift )
-                , ( "home", Control.value UiIcon.home )
-                , ( "library", Control.value UiIcon.library )
-                , ( "searchInCicle", Control.value UiIcon.searchInCicle )
-                ]
-            )
         |> Control.field "width"
             (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
         |> Control.field "height"
-            (Control.map (Css.px >> ClickableSvg.height) (controlNumber 20))
+            (Control.map (Css.px >> ClickableSvg.height) (controlNumber 30))
 
 
 controlNumber : Float -> Control Float
