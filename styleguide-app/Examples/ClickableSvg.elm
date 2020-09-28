@@ -163,37 +163,51 @@ Tooltip.view
 viewExampleTable : Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
 viewExampleTable icon attributes =
     let
-        cell =
+        viewExampleRow index ( themeName, theme ) =
+            Html.tr []
+                [ cell index [ Html.text themeName ]
+                , cell index
+                    [ ClickableSvg.button "Button example"
+                        icon
+                        (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
+                            :: theme
+                            :: attributes
+                        )
+                    ]
+                , cell index
+                    [ ClickableSvg.link "Link example"
+                        icon
+                        (ClickableSvg.linkSpa "some_link" :: theme :: attributes)
+                    ]
+                ]
+
+        cell index =
             Html.td
                 [ Attributes.css
-                    [ Css.backgroundColor Colors.gray96
-                    , Css.padding (Css.px 30)
+                    [ if modBy 2 index == 0 then
+                        Css.backgroundColor Colors.gray96
+
+                      else
+                        Css.backgroundColor Colors.white
+                    , Css.padding (Css.px 10)
                     ]
                 ]
     in
     Html.table []
         [ Html.thead []
             [ Html.tr []
-                [ Html.th [] [ Html.text "button" ]
+                [ Html.th [] [ Html.text "theme" ]
+                , Html.th [] [ Html.text "button" ]
                 , Html.th [] [ Html.text "link" ]
                 ]
             ]
-        , Html.tbody []
-            [ Html.tr []
-                [ cell
-                    [ ClickableSvg.button "Button example"
-                        icon
-                        (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
-                            :: attributes
-                        )
-                    ]
-                , cell
-                    [ ClickableSvg.link "Link example"
-                        icon
-                        (ClickableSvg.linkSpa "some_link" :: attributes)
-                    ]
+        , Html.tbody [] <|
+            List.indexedMap viewExampleRow
+                [ ( "primary", ClickableSvg.primary )
+                , ( "secondary", ClickableSvg.secondary )
+                , ( "danger", ClickableSvg.danger )
+                , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
-            ]
         ]
 
 
@@ -267,7 +281,6 @@ type alias Settings msg =
     { icon : Svg
     , disabled : ClickableSvg.Attribute msg
     , withBorder : ClickableSvg.Attribute msg
-    , theme : ClickableSvg.Attribute msg
     , width : ClickableSvg.Attribute msg
     , height : ClickableSvg.Attribute msg
     }
@@ -276,10 +289,10 @@ type alias Settings msg =
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, withBorder, theme, width, height } =
+        { icon, disabled, withBorder, width, height } =
             Control.currentValue settings
     in
-    ( icon, [ disabled, withBorder, theme, width, height ] )
+    ( icon, [ disabled, withBorder, width, height ] )
 
 
 initSettings : Control (Settings msg)
@@ -311,14 +324,6 @@ initSettings =
                         ClickableSvg.css []
                 )
                 (Control.bool False)
-            )
-        |> Control.field "theme"
-            (Control.choice
-                [ ( "primary", Control.value ClickableSvg.primary )
-                , ( "secondary", Control.value ClickableSvg.secondary )
-                , ( "danger", Control.value ClickableSvg.danger )
-                , ( "dangerSecondary", Control.value ClickableSvg.dangerSecondary )
-                ]
             )
         |> Control.field "width"
             (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
