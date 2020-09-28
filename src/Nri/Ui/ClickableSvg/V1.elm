@@ -339,10 +339,7 @@ renderButton ((ButtonOrLink config) as button_) =
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
-        [ config.icon
-            |> Svg.withWidth config.width
-            |> Svg.withHeight config.height
-            |> Svg.toHtml
+        [ renderIcon config
         ]
         |> showTooltip config.label config.tooltip
 
@@ -376,12 +373,28 @@ renderLink ((ButtonOrLink config) as link_) =
                )
             ++ config.customAttributes
         )
-        [ config.icon
-            |> Svg.withWidth config.width
-            |> Svg.withHeight config.height
-            |> Svg.toHtml
+        [ renderIcon config
         ]
         |> showTooltip config.label config.tooltip
+
+
+renderIcon : ButtonOrLinkAttributes msg -> Html msg
+renderIcon config =
+    let
+        ( iconWidth, iconHeight ) =
+            if config.hasBorder then
+                ( Css.width (Css.calc config.width Css.minus (Css.px <| 2 * withBorderVerticalPadding))
+                , Css.height (Css.calc config.height Css.minus (Css.px <| 2 * withBorderHorizontalPadding))
+                )
+
+            else
+                ( Css.width config.width
+                , Css.height config.height
+                )
+    in
+    config.icon
+        |> Svg.withCss [ iconWidth, iconHeight ]
+        |> Svg.toHtml
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
@@ -395,7 +408,7 @@ buttonOrLinkStyles config =
                 ( Colors.azure, Colors.azureDark, Css.pointer )
     in
     [ Css.property "transition"
-        "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
+        "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
 
     -- Colors, text decoration, cursor
     , Css.backgroundColor Css.transparent
@@ -410,21 +423,35 @@ buttonOrLinkStyles config =
 
     -- Margins, borders, padding
     , Css.margin Css.zero
-    , Css.padding Css.zero
-    , if config.hasBorder then
-        Css.batch
+    , Css.batch <|
+        if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
             , Css.border3 (Css.px 1) Css.solid mainColor
             , Css.borderBottomWidth (Css.px 2)
-            , Css.hover [ Css.color hoverColor ]
+            , Css.hover [ Css.borderColor hoverColor ]
+            , Css.padding3 (Css.px (withBorderVerticalPadding + 1))
+                (Css.px withBorderHorizontalPadding)
+                (Css.px (withBorderVerticalPadding - 1))
             ]
 
-      else
-        Css.borderWidth Css.zero
+        else
+            [ Css.borderWidth Css.zero
+            , Css.padding Css.zero
+            ]
 
     -- Sizing
     , Css.boxSizing Css.contentBox
-    , Css.lineHeight (Css.num 1)
     , Css.width config.width
     , Css.height config.height
+    , Css.lineHeight (Css.num 1)
     ]
+
+
+withBorderVerticalPadding : Float
+withBorderVerticalPadding =
+    2
+
+
+withBorderHorizontalPadding : Float
+withBorderHorizontalPadding =
+    4
