@@ -480,6 +480,7 @@ buttonOrLinkStyles config =
             ]
 
     -- Sizing
+    , Css.display Css.inlineBlock
     , Css.boxSizing Css.contentBox
     , Css.width config.width
     , Css.height config.height
