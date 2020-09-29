@@ -5,6 +5,8 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , width, height
     , disabled
+    , withBorder
+    , primary, secondary, danger, dangerSecondary
     , custom, css
     , withTooltipAbove, withTooltipBelow
     )
@@ -42,6 +44,9 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 ## Customization
 
+@docs withBorder
+@docs primary, secondary, danger, dangerSecondary
+
 @docs custom, css
 
 
@@ -53,7 +58,7 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
-import Css exposing (Style)
+import Css exposing (Color, Style)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
@@ -184,6 +189,98 @@ disabled disabled_ =
 -- CUSTOMIZATION
 
 
+{-| Display a border around the icon.
+-}
+withBorder : Attribute msg
+withBorder =
+    set (\config -> { config | hasBorder = True })
+
+
+type Theme
+    = Primary
+    | Secondary
+    | Danger
+    | DangerSecondary
+
+
+type alias AppliedTheme =
+    { main_ : Color
+    , mainHovered : Color
+    , background : Color
+    , backgroundHovered : Color
+    }
+
+
+disabledTheme : AppliedTheme
+disabledTheme =
+    { main_ = Colors.gray75
+    , mainHovered = Colors.gray75
+    , background = Colors.white
+    , backgroundHovered = Colors.white
+    }
+
+
+applyTheme : Theme -> AppliedTheme
+applyTheme theme =
+    case theme of
+        Primary ->
+            { main_ = Colors.white
+            , mainHovered = Colors.white
+            , background = Colors.azure
+            , backgroundHovered = Colors.azureDark
+            }
+
+        Secondary ->
+            { main_ = Colors.azure
+            , mainHovered = Colors.azureDark
+            , background = Colors.white
+            , backgroundHovered = Colors.glacier
+            }
+
+        Danger ->
+            { main_ = Colors.white
+            , mainHovered = Colors.white
+            , background = Colors.red
+            , backgroundHovered = Colors.redDark
+            }
+
+        DangerSecondary ->
+            { main_ = Colors.red
+            , mainHovered = Colors.redDark
+            , background = Colors.white
+            , backgroundHovered = Colors.redLight
+            }
+
+
+{-| white/transparent icon on an azure background.
+-}
+primary : Attribute msg
+primary =
+    set (\attributes -> { attributes | theme = Primary })
+
+
+{-| This is the default: a blue icon on a transparent background, or a blue icon
+on a white/glacier icon with a blue border.
+-}
+secondary : Attribute msg
+secondary =
+    set (\attributes -> { attributes | theme = Secondary })
+
+
+{-| White/transparent icon on a red background.
+-}
+danger : Attribute msg
+danger =
+    set (\attributes -> { attributes | theme = Danger })
+
+
+{-| Red icon on a white/transparent background.
+-}
+dangerSecondary : Attribute msg
+dangerSecondary =
+    set (\attributes -> { attributes | theme = DangerSecondary })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -259,13 +356,15 @@ withTooltip position { id, isOpen, onShow } =
         )
 
 
-{-| -}
+{-| DEPRECATED: prefer to use the Tooltip module directly.
+-}
 withTooltipAbove : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipAbove =
     withTooltip Tooltip.OnTop
 
 
-{-| -}
+{-| DEPRECATED: prefer to use the Tooltip module directly.
+-}
 withTooltipBelow : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
 withTooltipBelow =
     withTooltip Tooltip.OnBottom
@@ -294,6 +393,8 @@ build label icon =
         , customAttributes = []
         , customStyles = []
         , tooltip = Nothing
+        , hasBorder = False
+        , theme = Secondary
         }
 
 
@@ -311,6 +412,8 @@ type alias ButtonOrLinkAttributes msg =
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , tooltip : Maybe (TooltipSettings msg)
+    , hasBorder : Bool
+    , theme : Theme
     }
 
 
@@ -326,10 +429,7 @@ renderButton ((ButtonOrLink config) as button_) =
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
-        [ config.icon
-            |> Svg.withWidth config.width
-            |> Svg.withHeight config.height
-            |> Svg.toHtml
+        [ renderIcon config
         ]
         |> showTooltip config.label config.tooltip
 
@@ -363,49 +463,136 @@ renderLink ((ButtonOrLink config) as link_) =
                )
             ++ config.customAttributes
         )
-        [ config.icon
-            |> Svg.withWidth config.width
-            |> Svg.withHeight config.height
-            |> Svg.toHtml
+        [ renderIcon config
         ]
         |> showTooltip config.label config.tooltip
 
 
+renderIcon : ButtonOrLinkAttributes msg -> Html msg
+renderIcon config =
+    config.icon
+        |> Svg.withCss
+            (if config.hasBorder then
+                [ Css.width
+                    (Css.calc config.width
+                        Css.minus
+                        (Css.px <|
+                            (2 * withBorderHorizontalPadding)
+                                + withBorderLeftBorderWidth
+                                + withBorderRightBorderWidth
+                        )
+                    )
+                , Css.height
+                    (Css.calc config.height
+                        Css.minus
+                        (Css.px <|
+                            withBorderTopPadding
+                                + withBorderBottomPadding
+                                + withBorderTopBorderWidth
+                                + withBorderBottomBorderWidth
+                        )
+                    )
+                ]
+
+             else
+                [ Css.width config.width
+                , Css.height config.height
+                ]
+            )
+        |> Svg.toHtml
+
+
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
 buttonOrLinkStyles config =
-    [ -- Colors, text decoration, cursor
-      Css.backgroundColor Css.transparent
-    , Css.textDecoration Css.none
-    , if config.disabled then
-        Css.batch
-            [ Css.color Colors.gray75
-            , Css.visited [ Css.color Colors.gray75 ]
-            , Css.hover
-                [ Css.textDecoration Css.none
-                , Css.color Colors.gray75
-                , Css.cursor Css.notAllowed
-                ]
-            ]
+    let
+        ( { main_, mainHovered, background, backgroundHovered }, cursor ) =
+            if config.disabled then
+                ( disabledTheme, Css.notAllowed )
 
-      else
-        Css.batch
-            [ Css.color Colors.azure
-            , Css.visited [ Css.color Colors.azure ]
-            , Css.hover
-                [ Css.textDecoration Css.none
-                , Css.color Colors.azureDark
-                , Css.cursor Css.pointer
-                ]
-            ]
+            else
+                ( applyTheme config.theme, Css.pointer )
+    in
+    [ Css.property "transition"
+        "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
+
+    -- Colors, text decoration, cursor
+    , Css.textDecoration Css.none
+    , Css.color main_
+    , Css.visited [ Css.color main_ ]
+    , Css.hover
+        [ Css.textDecoration Css.none
+        , Css.color mainHovered
+        , Css.cursor cursor
+        ]
 
     -- Margins, borders, padding
     , Css.margin Css.zero
-    , Css.padding Css.zero
-    , Css.borderWidth Css.zero
+    , Css.textAlign Css.center
+    , Css.batch <|
+        if config.hasBorder then
+            [ Css.borderRadius (Css.px 8)
+            , Css.borderColor main_
+            , Css.borderStyle Css.solid
+            , Css.borderTopWidth (Css.px withBorderTopBorderWidth)
+            , Css.borderRightWidth (Css.px withBorderRightBorderWidth)
+            , Css.borderBottomWidth (Css.px withBorderBottomBorderWidth)
+            , Css.borderLeftWidth (Css.px withBorderLeftBorderWidth)
+            , Css.backgroundColor background
+            , Css.hover
+                [ Css.borderColor mainHovered
+                , Css.backgroundColor backgroundHovered
+                ]
+            , Css.padding3
+                (Css.px withBorderTopPadding)
+                (Css.px withBorderHorizontalPadding)
+                (Css.px withBorderBottomPadding)
+            ]
+
+        else
+            [ Css.borderWidth Css.zero
+            , Css.padding Css.zero
+            , Css.backgroundColor Css.transparent
+            ]
 
     -- Sizing
-    , Css.boxSizing Css.contentBox
-    , Css.lineHeight (Css.num 1)
+    , Css.display Css.inlineBlock
+    , Css.boxSizing Css.borderBox
     , Css.width config.width
     , Css.height config.height
+    , Css.lineHeight (Css.num 1)
     ]
+
+
+withBorderTopBorderWidth : Float
+withBorderTopBorderWidth =
+    1
+
+
+withBorderRightBorderWidth : Float
+withBorderRightBorderWidth =
+    1
+
+
+withBorderBottomBorderWidth : Float
+withBorderBottomBorderWidth =
+    2
+
+
+withBorderLeftBorderWidth : Float
+withBorderLeftBorderWidth =
+    1
+
+
+withBorderTopPadding : Float
+withBorderTopPadding =
+    4
+
+
+withBorderBottomPadding : Float
+withBorderBottomPadding =
+    3
+
+
+withBorderHorizontalPadding : Float
+withBorderHorizontalPadding =
+    5
