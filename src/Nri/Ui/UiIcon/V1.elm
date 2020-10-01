@@ -5,7 +5,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , footsteps, compass, speedometer, bulb, help, checklist
     , hat, keychain
     , sprout, sapling, tree
-    , person, class, leaderboard, performance
+    , person, couple, class, leaderboard, performance
     , calendar, clock
     , missingDocument, document, documents, newspaper, openBook
     , edit, pen
@@ -29,7 +29,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs footsteps, compass, speedometer, bulb, help, checklist
 @docs hat, keychain
 @docs sprout, sapling, tree
-@docs person, class, leaderboard, performance
+@docs person, couple, class, leaderboard, performance
 @docs calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook
 @docs edit, pen
@@ -434,6 +434,25 @@ person =
         , Attributes.viewBox "0 0 18 18"
         ]
         [ Svg.path [ Attributes.d "M8.6,9.4c2.6,0,4.7-2.1,4.7-4.7c0-2.6-2.1-4.7-4.7-4.7C6,0,3.9,2.1,3.9,4.7C3.9,7.3,6,9.4,8.6,9.4L8.6,9.4z M0,17.6C0,17.8,0.2,18,0.4,18h16.4c0.2,0,0.4-0.2,0.4-0.4v-0.8c0-3.2-2.1-5.9-6.3-5.9H6.3C2.1,11,0,13.7,0,16.8V17.6z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+couple : Nri.Ui.Svg.V1.Svg
+couple =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 100 100"
+        ]
+        [ Svg.g []
+            [ Svg.path [ Attributes.d "m43 30.398c0 8.5625-6.9414 15.5-15.5 15.5s-15.5-6.9375-15.5-15.5c0-8.5586 6.9414-15.5 15.5-15.5s15.5 6.9414 15.5 15.5" ] []
+            , Svg.path [ Attributes.d "m85.699 40.301c0 7.9531-6.4453 14.398-14.398 14.398s-14.402-6.4453-14.402-14.398 6.4492-14.402 14.402-14.402 14.398 6.4492 14.398 14.402" ] []
+            , Svg.path [ Attributes.d "m90.102 48.699c-0.60156-0.30078-1.1992-0.39844-1.8008-0.19922-0.60156 0.19922-1.1016 0.69922-1.3984 1.1992-2.7031 6.3008-8.9023 10.301-15.602 10.301-6.8008 0-12.898-4-15.602-10.301-0.30078-0.60156-0.80078-1-1.3984-1.1992-0.60156-0.19922-1.3008-0.10156-1.8008 0.19922-5 3.1016-8 8.3984-8 14.199v5.5c0 9.2031 7.5 16.602 16.699 16.602h20.199c9.1016 0 16.602-7.3984 16.602-16.602v-5.5c0-5.7969-3-11.098-7.8984-14.199z" ] []
+            , Svg.path [ Attributes.d "m40.102 67.301v-5.5c0-6.6016 3.3984-12.602 9-16.102 0.30078-0.19922 0.5-0.30078 0.80078-0.39844-0.90234-1.3008-1.9023-2.5-3.2031-3.5-0.69922-0.60156-1.8984-0.39844-2.3008 0.5-3.1992 6-9.6016 10.102-16.898 10.102-7.3008 0-13.602-4.1016-16.898-10.102-0.5-0.80078-1.6016-1.1016-2.3008-0.5-3.1992 2.5977-5.3008 6.5977-5.3008 11.199v4c0 8.8008 7.1992 16 16 16h18.602c0.5 0 1 0 1.5-0.10156 0.89844-0.10156 1.5-0.89844 1.3008-1.8008-0.20312-1.2969-0.30078-2.4961-0.30078-3.7969z" ] []
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
