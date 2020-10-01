@@ -692,8 +692,8 @@ viewFooter children =
                 , Css.flexDirection Css.column
                 , Css.flexGrow (Css.int 2)
                 , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                , Css.paddingBottom (Css.px 40)
+                , Css.margin4 (Css.px 30) Css.zero Css.zero Css.zero
+                , Css.paddingBottom (Css.px 30)
                 , Css.width (Css.pct 100)
                 ]
             ]
