@@ -97,6 +97,7 @@ view config =
             , Css.color Colors.gray20
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
+            , Css.fontWeight (Css.int 600)
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap

@@ -145,7 +145,6 @@ view config =
                 , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
-                    , color Colors.azure
                     , backgroundColor Colors.white
                     , border zero
                     , padding (px 4)
@@ -206,6 +205,7 @@ viewArrow { isOpen } =
             [ width (px 12)
             , height (px 7)
             , marginLeft (px 5)
+            , color Colors.azure
             , Css.flexShrink (Css.num 0)
             , descendants
                 [ Css.Global.svg [ display block ]
@@ -569,6 +569,7 @@ styleTitle =
         , overflow hidden
         , Css.displayFlex
         , Css.alignItems Css.center
+        , color Colors.gray20
         ]
     ]
 
@@ -645,6 +646,7 @@ styleIconContainer =
         , marginRight (px 5)
         , display inlineBlock
         , Css.flexShrink (Css.num 0)
+        , color Colors.azure
         ]
     ]
 
@@ -653,7 +655,7 @@ styleContent : Bool -> Alignment -> Attribute msg
 styleContent contentVisible alignment =
     css
         [ padding (px 25)
-        , border3 (px 1) solid Colors.azure
+        , border3 (px 1) solid Colors.gray85
         , minWidth (px 202)
         , position absolute
         , borderRadius (px 8)
@@ -661,13 +663,14 @@ styleContent contentVisible alignment =
         , zIndex (int 2)
         , backgroundColor Colors.white
         , listStyle Css.none
+        , Css.property "box-shadow" "0 0 10px 0 rgba(0,0,0,0.1)"
         , zIndex (int 2)
         , before
             [ property "content" "\"\""
             , position absolute
             , top (px -12)
             , border3 (px 6) solid transparent
-            , borderBottomColor Colors.azure
+            , borderBottomColor Colors.gray85
             ]
         , after
             [ property "content" "\"\""
