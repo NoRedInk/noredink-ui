@@ -149,9 +149,10 @@ view_ model =
                 (Dict.values model.moduleStates)
 
         mainContentHeader heading =
-            Heading.h2
+            Heading.h1
                 [ Heading.customAttr (id "maincontent")
                 , Heading.customAttr (tabindex -1)
+                , Heading.css [ marginBottom (px 30) ]
                 ]
                 [ Html.text heading ]
     in
@@ -256,10 +257,11 @@ navigation route openAtomicDesignTypes =
             [ flexBasis (px 200)
             , backgroundColor Colors.gray96
             , marginRight (px 40)
-            , padding (px 25)
+            , padding (px 20)
             , VendorPrefixed.value "position" "sticky"
             , top (px 55)
             , flexShrink zero
+            , borderRadius (px 8)
             ]
         , attribute "aria-label" "Main Navigation"
         ]

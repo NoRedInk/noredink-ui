@@ -408,7 +408,6 @@ modalStyles =
     , margin2 (px 50) auto
 
     -- Size
-    , minHeight (vh 40)
     , width (px 600)
     , backgroundColor Colors.white
 
@@ -624,7 +623,7 @@ viewInnerContent ({ visibleTitle } as config) =
             [ Attrs.css
                 [ Css.overflowY Css.auto
                 , Css.overflowX Css.hidden
-                , Css.minHeight (Css.px 150)
+                , Css.minHeight (Css.px 50)
                 , Css.maxHeight
                     (Css.calc (Css.vh 100)
                         Css.minus
@@ -693,8 +692,8 @@ viewFooter children =
                 , Css.flexDirection Css.column
                 , Css.flexGrow (Css.int 2)
                 , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 20) Css.zero Css.zero Css.zero
-                , Css.paddingBottom (Css.px 40)
+                , Css.margin4 (Css.px 30) Css.zero Css.zero Css.zero
+                , Css.paddingBottom (Css.px 30)
                 , Css.width (Css.pct 100)
                 ]
             ]
