@@ -3,10 +3,12 @@ module Example exposing (Example, view, wrapMsg, wrapState)
 import AtomicDesignType exposing (AtomicDesignType)
 import Category exposing (Category)
 import Css exposing (..)
+import Css.Global exposing (a, descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
 
@@ -99,16 +101,16 @@ view example =
                 , alignItems center
                 , justifyContent flexStart
                 , flexWrap Css.wrap
-                , padding (px 4)
-                , backgroundColor glacier
+                , Fonts.baseFont
+                , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
             [ Html.styled Html.h2
-                [ color gray20
-                , fontFamilies [ qt "Source Code Pro", "Consolas", "Courier", "monospace" ]
+                [ color navy
                 , fontSize (px 20)
                 , marginTop zero
                 , marginBottom zero
+                , Fonts.baseFont
                 ]
                 []
                 [ Html.a
@@ -129,7 +131,16 @@ view example =
                 |> viewLink "Source"
             ]
         , KeyboardSupport.view example.keyboardSupport
-        , Html.div [ Attributes.css [ padding2 (px 20) zero ] ] (example.view example.state)
+        , Html.div
+            [ Attributes.css
+                [ padding (px 40)
+                , boxShadow5 zero (px 2) (px 4) zero (rgba 0 0 0 0.25)
+                , border3 (px 1) solid gray92
+                , borderRadius (px 20)
+                , margin3 (px 10) zero (px 40)
+                ]
+            ]
+            (example.view example.state)
         ]
 
 
