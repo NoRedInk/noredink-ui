@@ -208,7 +208,7 @@ viewEntry :
 viewEntry { headerId, headerLevel, viewHeader, viewContent, styleOptions, caret, toggle, entry, isExpanded, arrowDown, arrowUp } =
     let
         newStyleOptions =
-            case Maybe.map (\styles_ -> styles_ entry) styleOptions of
+            case Maybe.map (\toStyles -> toStyles entry) styleOptions of
                 Just { entryStyles, entryExpandedStyles, entryClosedStyles, headerStyles, headerExpandedStyles, headerClosedStyles, contentStyles } ->
                     { entryStyles = defaultStyleOptions.entryStyles ++ entryStyles
                     , entryExpandedStyles = defaultStyleOptions.entryExpandedStyles ++ entryExpandedStyles
