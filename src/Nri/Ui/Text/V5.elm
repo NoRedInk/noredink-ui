@@ -1,5 +1,5 @@
 module Nri.Ui.Text.V5 exposing
-    ( caption, mediumBody, smallBody, smallBodyGray
+    ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
     , Attribute, noBreak, css
     , noWidow
@@ -48,7 +48,7 @@ API. See the Nri.Ui.Heading.V2 docs for details.
 
 ## Paragraph styles
 
-@docs caption, mediumBody, smallBody, smallBodyGray
+@docs caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
 
 
 ## User-authored content blocks:
@@ -140,6 +140,13 @@ mediumBody attributes content =
             }
         ]
         content
+
+
+{-| `mediumBody`, but with a lighter gray color than the default.
+-}
+mediumBodyGray : List Attribute -> List (Html msg) -> Html msg
+mediumBodyGray attributes content =
+    mediumBody (css [ Css.color gray45 ] :: attributes) content
 
 
 {-| This is some small body copy.
