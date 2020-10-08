@@ -48,6 +48,9 @@ example =
                 , Pennant.disabledPremiumFlag
                     |> Svg.withHeight (Css.px 60)
                     |> Svg.toHtml
+                , Pennant.expiredPremiumFlag
+                    |> Svg.withHeight (Css.px 60)
+                    |> Svg.toHtml
                 ]
             ]
     }
