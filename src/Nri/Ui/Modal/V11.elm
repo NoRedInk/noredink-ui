@@ -421,8 +421,7 @@ titleStyles color visibleTitle =
     if visibleTitle then
         [ Fonts.baseFont
         , Css.fontWeight (Css.int 700)
-        , Css.paddingTop (Css.px 40)
-        , Css.paddingBottom (Css.px 20)
+        , Css.padding3 (Css.px 40) (Css.px 40) (Css.px 20)
         , Css.margin Css.zero
         , Css.fontSize (Css.px 20)
         , Css.textAlign Css.center
