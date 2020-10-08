@@ -10,6 +10,7 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
+import Examples.IconExamples as IconExamples
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -41,13 +42,19 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \_ ->
-            [ Html.div [ css [ Css.displayFlex, Css.width (Css.px 200) ] ]
-                [ Pennant.premiumFlag
-                    |> Svg.withHeight (Css.px 60)
-                    |> Svg.toHtml
-                , Pennant.disabledPremiumFlag
-                    |> Svg.withHeight (Css.px 60)
-                    |> Svg.toHtml
+            [ IconExamples.viewWithCustomStyles "Premium Pennants"
+                [ ( "premiumFlag"
+                  , Pennant.premiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
+                , ( "expiredPremiumFlag"
+                  , Pennant.expiredPremiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
+                , ( "disabledPremiumFlag"
+                  , Pennant.disabledPremiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
                 ]
             ]
     }
