@@ -46,7 +46,8 @@ example =
                 , ( "sortArrow", UiIcon.sortArrow )
                 ]
             , IconExamples.view "Actions"
-                [ ( "unarchive", UiIcon.unarchive )
+                [ ( "archive", UiIcon.archive )
+                , ( "unarchive", UiIcon.unarchive )
                 , ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
                 , ( "activity", UiIcon.activity )
