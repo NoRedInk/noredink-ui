@@ -1,6 +1,7 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper, sortArrow
-    , archive, unarchive, share, preview, skip, copyToClipboard, gift
+    , archive, unarchive
+    , share, preview, skip, copyToClipboard, gift
     , activity
     , footsteps, compass, speedometer, bulb, help, checklist
     , hat, keychain
@@ -24,7 +25,8 @@ module Nri.Ui.UiIcon.V1 exposing
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
 @docs seeMore, openClose, download, sort, gear, flipper, sortArrow
-@docs archive, unarchive, share, preview, skip, copyToClipboard, gift
+@docs archive, unarchive
+@docs share, preview, skip, copyToClipboard, gift
 @docs activity
 @docs footsteps, compass, speedometer, bulb, help, checklist
 @docs hat, keychain

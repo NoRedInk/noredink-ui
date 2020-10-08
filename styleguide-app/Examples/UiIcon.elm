@@ -45,10 +45,12 @@ example =
                 , ( "gear", UiIcon.gear )
                 , ( "sortArrow", UiIcon.sortArrow )
                 ]
-            , IconExamples.view "Actions"
+            , IconExamples.view "Archive & Unarchive"
                 [ ( "archive", UiIcon.archive )
                 , ( "unarchive", UiIcon.unarchive )
-                , ( "share", UiIcon.share )
+                ]
+            , IconExamples.view "Actions"
+                [ ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
                 , ( "activity", UiIcon.activity )
                 , ( "skip", UiIcon.skip )
