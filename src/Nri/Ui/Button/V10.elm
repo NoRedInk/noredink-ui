@@ -846,26 +846,16 @@ sizeStyle size width =
         , Css.Global.descendants
             [ Css.Global.img
                 [ Css.height (Css.px config.imageHeight)
-                , Css.marginRight (Css.px <| config.imageHeight / 6)
+                , Css.width Css.auto
+                , Css.marginRight (Css.px 5)
                 , Css.position Css.relative
-                , Css.bottom (Css.px 2)
                 , Css.verticalAlign Css.middle
                 ]
             , Css.Global.svg
-                [ Css.height (Css.px config.imageHeight) |> Css.important
-                , Css.width (Css.px config.imageHeight) |> Css.important
-                , Css.marginRight (Css.px <| config.imageHeight / 6)
+                [ Css.height (Css.px config.imageHeight)
+                , Css.width Css.auto
+                , Css.marginRight (Css.px 5)
                 , Css.position Css.relative
-                , Css.bottom (Css.px 2)
-                , Css.verticalAlign Css.middle
-                ]
-            , Css.Global.svg
-                [ Css.important <| Css.height (Css.px config.imageHeight)
-                , Css.important <| Css.width Css.auto
-                , Css.maxWidth (Css.px (config.imageHeight * 1.25))
-                , Css.paddingRight (Css.px <| config.imageHeight / 6)
-                , Css.position Css.relative
-                , Css.bottom (Css.px 2)
                 , Css.verticalAlign Css.middle
                 ]
             ]
