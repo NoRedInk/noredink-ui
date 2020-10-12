@@ -605,6 +605,8 @@ viewLabel maybeSvg label_ =
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
         , Css.overflowWrap Css.breakWord -- Ensure that words that exceed the button width break instead of disappearing
         , Css.padding2 (Css.px 2) Css.zero -- Without a bit of bottom padding, text that extends below the baseline, like "g" gets cut off
+        , Css.displayFlex
+        , Css.alignItems Css.center
         ]
         []
         (case maybeSvg of
@@ -848,15 +850,13 @@ sizeStyle size width =
                 [ Css.height (Css.px config.imageHeight)
                 , Css.width Css.auto
                 , Css.marginRight (Css.px 5)
-                , Css.position Css.relative
-                , Css.verticalAlign Css.middle
+                , Css.flexShrink Css.zero
                 ]
             , Css.Global.svg
                 [ Css.height (Css.px config.imageHeight)
                 , Css.width Css.auto
                 , Css.marginRight (Css.px 5)
-                , Css.position Css.relative
-                , Css.verticalAlign Css.middle
+                , Css.flexShrink Css.zero
                 ]
             ]
         ]
