@@ -605,6 +605,8 @@ viewLabel maybeSvg label_ =
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
         , Css.overflowWrap Css.breakWord -- Ensure that words that exceed the button width break instead of disappearing
         , Css.padding2 (Css.px 2) Css.zero -- Without a bit of bottom padding, text that extends below the baseline, like "g" gets cut off
+        , Css.displayFlex
+        , Css.alignItems Css.center
         ]
         []
         (case maybeSvg of
@@ -846,27 +848,15 @@ sizeStyle size width =
         , Css.Global.descendants
             [ Css.Global.img
                 [ Css.height (Css.px config.imageHeight)
-                , Css.marginRight (Css.px <| config.imageHeight / 6)
-                , Css.position Css.relative
-                , Css.bottom (Css.px 2)
-                , Css.verticalAlign Css.middle
+                , Css.width Css.auto
+                , Css.marginRight (Css.px 5)
+                , Css.flexShrink Css.zero
                 ]
             , Css.Global.svg
-                [ Css.height (Css.px config.imageHeight) |> Css.important
-                , Css.width (Css.px config.imageHeight) |> Css.important
-                , Css.marginRight (Css.px <| config.imageHeight / 6)
-                , Css.position Css.relative
-                , Css.bottom (Css.px 2)
-                , Css.verticalAlign Css.middle
-                ]
-            , Css.Global.svg
-                [ Css.important <| Css.height (Css.px config.imageHeight)
-                , Css.important <| Css.width Css.auto
-                , Css.maxWidth (Css.px (config.imageHeight * 1.25))
-                , Css.paddingRight (Css.px <| config.imageHeight / 6)
-                , Css.position Css.relative
-                , Css.bottom (Css.px 2)
-                , Css.verticalAlign Css.middle
+                [ Css.height (Css.px config.imageHeight)
+                , Css.width Css.auto
+                , Css.marginRight (Css.px 5)
+                , Css.flexShrink Css.zero
                 ]
             ]
         ]
