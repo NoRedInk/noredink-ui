@@ -259,7 +259,7 @@ styles positioning numEntries index isSelected =
 
 sharedSegmentStyles : Int -> Int -> Style
 sharedSegmentStyles numEntries index =
-    [ padding2 (px 6) (px 20)
+    [ padding2 (px 6) (px 15)
     , height (px 45)
     , Fonts.baseFont
     , fontSize (px 15)
