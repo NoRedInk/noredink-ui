@@ -6,6 +6,7 @@ import Css exposing (..)
 import Css.Global exposing (a, descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -84,7 +85,12 @@ wrapState wrapState_ unwrapState example =
 
 
 view : Example state msg -> Html msg
-view example =
+view =
+    Lazy.lazy view_
+
+
+view_ : Example state msg -> Html msg
+view_ example =
     let
         fullName =
             "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
