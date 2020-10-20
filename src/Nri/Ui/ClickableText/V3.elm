@@ -305,6 +305,7 @@ clickableTextStyles =
     , Css.padding Css.zero
     , Css.display Css.inlineBlock
     , Css.verticalAlign Css.textBottom
+    , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
     ]
 
 
