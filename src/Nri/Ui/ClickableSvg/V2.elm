@@ -215,6 +215,8 @@ type alias AppliedTheme =
     , mainHovered : Color
     , background : Color
     , backgroundHovered : Color
+    , includeBorder : Bool
+    , borderBottom : Color
     }
 
 
@@ -224,6 +226,8 @@ disabledTheme =
     , mainHovered = Colors.gray75
     , background = Colors.white
     , backgroundHovered = Colors.white
+    , includeBorder = True
+    , borderBottom = Colors.gray75
     }
 
 
@@ -235,6 +239,8 @@ applyTheme theme =
             , mainHovered = Colors.white
             , background = Colors.azure
             , backgroundHovered = Colors.azureDark
+            , includeBorder = False
+            , borderBottom = Colors.azureDark
             }
 
         Secondary ->
@@ -242,6 +248,8 @@ applyTheme theme =
             , mainHovered = Colors.azureDark
             , background = Colors.white
             , backgroundHovered = Colors.glacier
+            , includeBorder = True
+            , borderBottom = Colors.azure
             }
 
         Danger ->
@@ -249,6 +257,8 @@ applyTheme theme =
             , mainHovered = Colors.white
             , background = Colors.red
             , backgroundHovered = Colors.redDark
+            , includeBorder = False
+            , borderBottom = Colors.redDark
             }
 
         DangerSecondary ->
@@ -256,6 +266,8 @@ applyTheme theme =
             , mainHovered = Colors.redDark
             , background = Colors.white
             , backgroundHovered = Colors.redLight
+            , includeBorder = True
+            , borderBottom = Colors.red
             }
 
 
@@ -365,17 +377,25 @@ type alias ButtonOrLinkAttributes msg =
 
 renderButton : ButtonOrLink msg -> Html msg
 renderButton ((ButtonOrLink config) as button_) =
+    let
+        theme =
+            if config.disabled then
+                disabledTheme
+
+            else
+                applyTheme config.theme
+    in
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.type_ "button"
-         , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
          , Widget.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
-        [ renderIcon config
+        [ renderIcon config theme.includeBorder
         ]
 
 
@@ -393,10 +413,17 @@ renderLink ((ButtonOrLink config) as link_) =
     let
         ( linkFunctionName, extraAttrs ) =
             ClickableAttributes.toLinkAttributes config.clickableAttributes
+
+        theme =
+            if config.disabled then
+                disabledTheme
+
+            else
+                applyTheme config.theme
     in
     Html.a
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
-         , Attributes.css (buttonOrLinkStyles config ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Widget.disabled config.disabled
          , Widget.label config.label
          ]
@@ -408,18 +435,18 @@ renderLink ((ButtonOrLink config) as link_) =
                )
             ++ config.customAttributes
         )
-        [ renderIcon config
+        [ renderIcon config theme.includeBorder
         ]
 
 
-renderIcon : ButtonOrLinkAttributes msg -> Html msg
-renderIcon config =
+renderIcon : ButtonOrLinkAttributes msg -> Bool -> Html msg
+renderIcon config includeBorder =
     let
         size =
             getSize config.size
 
         bordersAndPadding =
-            getBorder config.size config.width config.height
+            getBorder config.size config.width config.height includeBorder
 
         iconWidth =
             if config.hasBorder then
@@ -454,18 +481,18 @@ renderIcon config =
         |> Svg.toHtml
 
 
-buttonOrLinkStyles : ButtonOrLinkAttributes msg -> List Style
-buttonOrLinkStyles config =
+buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
+buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, borderBottom, includeBorder } =
     let
-        ( { main_, mainHovered, background, backgroundHovered }, cursor ) =
+        cursor =
             if config.disabled then
-                ( disabledTheme, Css.notAllowed )
+                Css.notAllowed
 
             else
-                ( applyTheme config.theme, Css.pointer )
+                Css.pointer
 
         bordersAndPadding =
-            getBorder config.size config.width config.height
+            getBorder config.size config.width config.height includeBorder
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
@@ -487,14 +514,21 @@ buttonOrLinkStyles config =
         if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
             , Css.borderColor main_
+            , Css.borderBottomColor borderBottom
             , Css.borderStyle Css.solid
-            , Css.borderTopWidth (Css.px bordersAndPadding.topBorder)
-            , Css.borderRightWidth (Css.px bordersAndPadding.rightBorder)
+            , if includeBorder then
+                Css.batch
+                    [ Css.borderTopWidth (Css.px bordersAndPadding.topBorder)
+                    , Css.borderRightWidth (Css.px bordersAndPadding.rightBorder)
+                    , Css.borderLeftWidth (Css.px bordersAndPadding.leftBorder)
+                    ]
+
+              else
+                Css.borderWidth Css.zero
             , Css.borderBottomWidth (Css.px bordersAndPadding.bottomBorder)
-            , Css.borderLeftWidth (Css.px bordersAndPadding.leftBorder)
             , Css.backgroundColor background
             , Css.hover
-                [ Css.borderColor mainHovered
+                [ Css.borderColor borderBottom
                 , Css.backgroundColor backgroundHovered
                 ]
             , Css.padding4
@@ -551,6 +585,7 @@ getBorder :
     Size
     -> Maybe Float
     -> Maybe Float
+    -> Bool
     ->
         { topBorder : Float
         , topPadding : Float
@@ -561,7 +596,7 @@ getBorder :
         , leftBorder : Float
         , leftPadding : Float
         }
-getBorder size width height =
+getBorder size width height includeBorder =
     let
         w =
             Maybe.withDefault (getSize size) width
@@ -634,13 +669,20 @@ getBorder size width height =
                 , leftBorder = 1
                 , leftPadding = 12
                 }
+
+        orZero value =
+            if includeBorder then
+                value
+
+            else
+                0
     in
-    { topBorder = verticalSettings.topBorder
-    , topPadding = verticalSettings.topPadding
+    { topBorder = orZero verticalSettings.topBorder
     , bottomBorder = verticalSettings.bottomBorder
+    , rightBorder = orZero horizontalSettings.rightBorder
+    , leftBorder = orZero horizontalSettings.leftBorder
+    , topPadding = verticalSettings.topPadding
     , bottomPadding = verticalSettings.bottomPadding
-    , rightBorder = horizontalSettings.rightBorder
     , rightPadding = horizontalSettings.rightPadding
-    , leftBorder = horizontalSettings.leftBorder
     , leftPadding = horizontalSettings.leftPadding
     }
