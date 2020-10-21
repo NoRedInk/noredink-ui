@@ -4,6 +4,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
+    , exactWidth
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
@@ -28,6 +29,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ## Sizing
 
 @docs small, medium, large
+@docs exactWidth
 
 
 ## State
@@ -164,6 +166,13 @@ medium =
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
+
+
+{-| Define a size in `px` for the button's total width.
+-}
+exactWidth : Int -> Attribute msg
+exactWidth inPx =
+    set (\attributes -> { attributes | width = Just (toFloat inPx) })
 
 
 
@@ -319,6 +328,7 @@ build label icon =
         , icon = icon
         , disabled = False
         , size = Small
+        , width = Nothing
         , customAttributes = []
         , customStyles = []
         , hasBorder = False
@@ -336,6 +346,7 @@ type alias ButtonOrLinkAttributes msg =
     , icon : Svg
     , disabled : Bool
     , size : Size
+    , width : Maybe Float
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , hasBorder : Bool
@@ -426,10 +437,9 @@ renderIcon config =
     config.icon
         |> Svg.withCss
             [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.center
             , Css.maxWidth (Css.px iconWidth)
             , Css.height (Css.px iconHeight)
+            , Css.margin Css.auto
             ]
         |> Svg.toHtml
 
@@ -482,7 +492,7 @@ buttonOrLinkStyles config =
                 (Css.px bordersAndPadding.rightPadding)
                 (Css.px bordersAndPadding.bottomPadding)
                 (Css.px bordersAndPadding.leftPadding)
-            , Css.width (Css.px (getSize config.size))
+            , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
             , Css.height (Css.px (getSize config.size))
             ]
 
@@ -496,6 +506,12 @@ buttonOrLinkStyles config =
     , Css.display Css.inlineBlock
     , Css.boxSizing Css.borderBox
     , Css.lineHeight (Css.num 1)
+    , case config.width of
+        Just width ->
+            Css.width (Css.px width)
+
+        Nothing ->
+            Css.batch []
     ]
 
 
