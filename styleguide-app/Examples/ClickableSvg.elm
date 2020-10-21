@@ -220,16 +220,17 @@ update msg state =
 type alias Settings msg =
     { icon : Svg
     , disabled : ClickableSvg.Attribute msg
+    , size : ClickableSvg.Attribute msg
     }
 
 
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled } =
+        { icon, disabled, size } =
             Control.currentValue settings
     in
-    ( icon, [ disabled ] )
+    ( icon, [ disabled, size ] )
 
 
 initSettings : Control (Settings msg)
@@ -251,6 +252,13 @@ initSettings =
             )
         |> Control.field "disabled"
             (Control.map ClickableSvg.disabled (Control.bool False))
+        |> Control.field "size"
+            (Control.choice
+                [ ( "small", Control.value ClickableSvg.small )
+                , ( "medium", Control.value ClickableSvg.medium )
+                , ( "large", Control.value ClickableSvg.large )
+                ]
+            )
 
 
 controlNumber : Float -> Control Float

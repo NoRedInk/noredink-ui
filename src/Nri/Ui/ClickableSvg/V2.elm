@@ -3,6 +3,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , small, medium, large
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
@@ -25,6 +26,8 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 
 ## Sizing
+
+@docs small, medium, large
 
 
 ## State
@@ -132,6 +135,35 @@ linkExternal url =
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
     setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
+
+
+
+-- SIZING
+
+
+type Size
+    = Small
+    | Medium
+    | Large
+
+
+{-| This is the default.
+-}
+small : Attribute msg
+small =
+    set (\attributes -> { attributes | size = Small })
+
+
+{-| -}
+medium : Attribute msg
+medium =
+    set (\attributes -> { attributes | size = Medium })
+
+
+{-| -}
+large : Attribute msg
+large =
+    set (\attributes -> { attributes | size = Large })
 
 
 
@@ -286,6 +318,7 @@ build label icon =
         , label = label
         , icon = icon
         , disabled = False
+        , size = Small
         , customAttributes = []
         , customStyles = []
         , hasBorder = False
@@ -302,6 +335,7 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , icon : Svg
     , disabled : Bool
+    , size : Size
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , hasBorder : Bool
@@ -360,14 +394,26 @@ renderLink ((ButtonOrLink config) as link_) =
 
 renderIcon : ButtonOrLinkAttributes msg -> Html msg
 renderIcon config =
+    let
+        ( iconWidth, iconHeight ) =
+            case config.size of
+                Small ->
+                    ( Css.px 17, Css.px 17 )
+
+                Medium ->
+                    ( Css.px 30, Css.px 30 )
+
+                Large ->
+                    ( Css.px 30, Css.px 30 )
+    in
     config.icon
         |> Svg.withCss
-            (if config.hasBorder then
-                []
-
-             else
-                []
-            )
+            [ Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.center
+            , Css.maxWidth iconWidth
+            , Css.height iconHeight
+            ]
         |> Svg.toHtml
 
 
