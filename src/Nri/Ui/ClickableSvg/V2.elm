@@ -392,31 +392,22 @@ renderLink ((ButtonOrLink config) as link_) =
         ]
 
 
-getSize : Size -> Float
-getSize size =
-    case size of
-        Small ->
-            17
-
-        Medium ->
-            30
-
-        Large ->
-            40
-
-
 renderIcon : ButtonOrLinkAttributes msg -> Html msg
 renderIcon config =
     let
         size =
             getSize config.size
 
+        bordersAndPadding =
+            getBorder config.size
+
         iconWidth =
             if config.hasBorder then
                 size
-                    - (withBorderHorizontalPadding * 2)
-                    - withBorderLeftBorderWidth
-                    - withBorderRightBorderWidth
+                    - bordersAndPadding.leftPadding
+                    - bordersAndPadding.rightPadding
+                    - bordersAndPadding.leftBorder
+                    - bordersAndPadding.rightBorder
 
             else
                 size
@@ -424,10 +415,10 @@ renderIcon config =
         iconHeight =
             if config.hasBorder then
                 size
-                    - withBorderTopPadding
-                    - withBorderBottomPadding
-                    - withBorderTopBorderWidth
-                    - withBorderBottomBorderWidth
+                    - bordersAndPadding.topPadding
+                    - bordersAndPadding.bottomPadding
+                    - bordersAndPadding.topBorder
+                    - bordersAndPadding.bottomBorder
 
             else
                 size
@@ -452,6 +443,9 @@ buttonOrLinkStyles config =
 
             else
                 ( applyTheme config.theme, Css.pointer )
+
+        bordersAndPadding =
+            getBorder config.size
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
@@ -474,19 +468,20 @@ buttonOrLinkStyles config =
             [ Css.borderRadius (Css.px 8)
             , Css.borderColor main_
             , Css.borderStyle Css.solid
-            , Css.borderTopWidth (Css.px withBorderTopBorderWidth)
-            , Css.borderRightWidth (Css.px withBorderRightBorderWidth)
-            , Css.borderBottomWidth (Css.px withBorderBottomBorderWidth)
-            , Css.borderLeftWidth (Css.px withBorderLeftBorderWidth)
+            , Css.borderTopWidth (Css.px bordersAndPadding.topBorder)
+            , Css.borderRightWidth (Css.px bordersAndPadding.rightBorder)
+            , Css.borderBottomWidth (Css.px bordersAndPadding.bottomBorder)
+            , Css.borderLeftWidth (Css.px bordersAndPadding.leftBorder)
             , Css.backgroundColor background
             , Css.hover
                 [ Css.borderColor mainHovered
                 , Css.backgroundColor backgroundHovered
                 ]
-            , Css.padding3
-                (Css.px withBorderTopPadding)
-                (Css.px withBorderHorizontalPadding)
-                (Css.px withBorderBottomPadding)
+            , Css.padding4
+                (Css.px bordersAndPadding.topPadding)
+                (Css.px bordersAndPadding.rightPadding)
+                (Css.px bordersAndPadding.bottomPadding)
+                (Css.px bordersAndPadding.leftPadding)
             , Css.width (Css.px (getSize config.size))
             , Css.height (Css.px (getSize config.size))
             ]
@@ -504,36 +499,62 @@ buttonOrLinkStyles config =
     ]
 
 
-withBorderTopBorderWidth : Float
-withBorderTopBorderWidth =
-    1
+getSize : Size -> Float
+getSize size =
+    case size of
+        Small ->
+            17
+
+        Medium ->
+            30
+
+        Large ->
+            40
 
 
-withBorderRightBorderWidth : Float
-withBorderRightBorderWidth =
-    1
+getBorder :
+    Size
+    ->
+        { topBorder : Float
+        , topPadding : Float
+        , rightBorder : Float
+        , rightPadding : Float
+        , bottomBorder : Float
+        , bottomPadding : Float
+        , leftBorder : Float
+        , leftPadding : Float
+        }
+getBorder size =
+    case size of
+        Small ->
+            { topBorder = 1
+            , topPadding = 2
+            , rightBorder = 1
+            , rightPadding = 2
+            , bottomBorder = 1
+            , bottomPadding = 2
+            , leftBorder = 1
+            , leftPadding = 2
+            }
 
+        Medium ->
+            { topBorder = 1
+            , topPadding = 4
+            , rightBorder = 1
+            , rightPadding = 5
+            , bottomBorder = 2
+            , bottomPadding = 3
+            , leftBorder = 1
+            , leftPadding = 5
+            }
 
-withBorderBottomBorderWidth : Float
-withBorderBottomBorderWidth =
-    2
-
-
-withBorderLeftBorderWidth : Float
-withBorderLeftBorderWidth =
-    1
-
-
-withBorderTopPadding : Float
-withBorderTopPadding =
-    4
-
-
-withBorderBottomPadding : Float
-withBorderBottomPadding =
-    3
-
-
-withBorderHorizontalPadding : Float
-withBorderHorizontalPadding =
-    5
+        Large ->
+            { topBorder = 1
+            , topPadding = 4
+            , rightBorder = 1
+            , rightPadding = 7
+            , bottomBorder = 3
+            , bottomPadding = 3
+            , leftBorder = 1
+            , leftPadding = 7
+            }
