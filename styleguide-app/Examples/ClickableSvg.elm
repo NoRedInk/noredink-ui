@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -31,7 +31,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 example : Example State Msg
 example =
     { name = "ClickableSvg"
-    , version = 1
+    , version = 2
     , categories = [ Buttons, Icons ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
