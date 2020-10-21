@@ -3,7 +3,6 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , width, height
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
@@ -26,8 +25,6 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 
 ## Sizing
-
-@docs width, height
 
 
 ## State
@@ -135,32 +132,6 @@ linkExternal url =
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
     setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
-
-
-
--- SIZING
-
-
-{-| Default width is 17px.
-
-Note: changing this width will change the width of the icon. The button or link
-may be wider if you add a border or margin to it.
-
--}
-width : Css.Px -> Attribute msg
-width px =
-    set (\attributes -> { attributes | width = px })
-
-
-{-| Default height is 17px.
-
-Note: changing this height will change the height of the icon. The button or link
-may be taller if you add a border or margin to it.
-
--}
-height : Css.Px -> Attribute msg
-height px =
-    set (\attributes -> { attributes | height = px })
 
 
 
@@ -314,8 +285,6 @@ build label icon =
         { clickableAttributes = ClickableAttributes.init
         , label = label
         , icon = icon
-        , height = Css.px 17
-        , width = Css.px 17
         , disabled = False
         , customAttributes = []
         , customStyles = []
@@ -332,8 +301,6 @@ type alias ButtonOrLinkAttributes msg =
     { clickableAttributes : ClickableAttributes msg
     , label : String
     , icon : Svg
-    , height : Css.Px
-    , width : Css.Px
     , disabled : Bool
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
@@ -396,31 +363,10 @@ renderIcon config =
     config.icon
         |> Svg.withCss
             (if config.hasBorder then
-                [ Css.width
-                    (Css.calc config.width
-                        Css.minus
-                        (Css.px <|
-                            (2 * withBorderHorizontalPadding)
-                                + withBorderLeftBorderWidth
-                                + withBorderRightBorderWidth
-                        )
-                    )
-                , Css.height
-                    (Css.calc config.height
-                        Css.minus
-                        (Css.px <|
-                            withBorderTopPadding
-                                + withBorderBottomPadding
-                                + withBorderTopBorderWidth
-                                + withBorderBottomBorderWidth
-                        )
-                    )
-                ]
+                []
 
              else
-                [ Css.width config.width
-                , Css.height config.height
-                ]
+                []
             )
         |> Svg.toHtml
 
@@ -480,8 +426,6 @@ buttonOrLinkStyles config =
     -- Sizing
     , Css.display Css.inlineBlock
     , Css.boxSizing Css.borderBox
-    , Css.width config.width
-    , Css.height config.height
     , Css.lineHeight (Css.num 1)
     ]
 

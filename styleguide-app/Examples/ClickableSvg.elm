@@ -53,9 +53,7 @@ Tooltip.view
         \\attrs ->
             ClickableSvg.button "Preview"
                 UiIcon.preview
-                [ ClickableSvg.width (Css.px 20)
-                , ClickableSvg.height (Css.px 20)
-                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
                 , ClickableSvg.custom attrs
                 ]
     , id = "preview-tooltip"
@@ -74,9 +72,7 @@ Tooltip.view
                         \attrs ->
                             ClickableSvg.button "Preview"
                                 UiIcon.preview
-                                [ ClickableSvg.width (Css.px 20)
-                                , ClickableSvg.height (Css.px 20)
-                                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+                                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
                                 , ClickableSvg.custom attrs
                                 ]
                     , id = "preview-tooltip"
@@ -224,18 +220,16 @@ update msg state =
 type alias Settings msg =
     { icon : Svg
     , disabled : ClickableSvg.Attribute msg
-    , width : ClickableSvg.Attribute msg
-    , height : ClickableSvg.Attribute msg
     }
 
 
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, width, height } =
+        { icon, disabled } =
             Control.currentValue settings
     in
-    ( icon, [ disabled, width, height ] )
+    ( icon, [ disabled ] )
 
 
 initSettings : Control (Settings msg)
@@ -257,10 +251,6 @@ initSettings =
             )
         |> Control.field "disabled"
             (Control.map ClickableSvg.disabled (Control.bool False))
-        |> Control.field "width"
-            (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
-        |> Control.field "height"
-            (Control.map (Css.px >> ClickableSvg.height) (controlNumber 30))
 
 
 controlNumber : Float -> Control Float
