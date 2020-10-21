@@ -519,13 +519,13 @@ getSize : Size -> Float
 getSize size =
     case size of
         Small ->
-            17
+            36
 
         Medium ->
-            30
+            45
 
         Large ->
-            40
+            56
 
 
 getBorder :
@@ -546,31 +546,31 @@ getBorder size =
             { topBorder = 1
             , topPadding = 2
             , rightBorder = 1
-            , rightPadding = 2
-            , bottomBorder = 1
+            , rightPadding = 4
+            , bottomBorder = 2
             , bottomPadding = 2
             , leftBorder = 1
-            , leftPadding = 2
+            , leftPadding = 4
             }
 
         Medium ->
             { topBorder = 1
-            , topPadding = 4
+            , topPadding = 2
             , rightBorder = 1
-            , rightPadding = 5
-            , bottomBorder = 2
-            , bottomPadding = 3
+            , rightPadding = 4
+            , bottomBorder = 3
+            , bottomPadding = 2
             , leftBorder = 1
-            , leftPadding = 5
+            , leftPadding = 4
             }
 
         Large ->
             { topBorder = 1
-            , topPadding = 4
+            , topPadding = 2
             , rightBorder = 1
-            , rightPadding = 7
-            , bottomBorder = 3
-            , bottomPadding = 3
+            , rightPadding = 4
+            , bottomBorder = 4
+            , bottomPadding = 2
             , leftBorder = 1
-            , leftPadding = 7
+            , leftPadding = 4
             }
