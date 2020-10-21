@@ -4,7 +4,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
-    , exactWidth
+    , exactWidth, exactHeight
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
@@ -29,7 +29,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ## Sizing
 
 @docs small, medium, large
-@docs exactWidth
+@docs exactWidth, exactHeight
 
 
 ## State
@@ -168,11 +168,18 @@ large =
     set (\attributes -> { attributes | size = Large })
 
 
-{-| Define a size in `px` for the button's total width.
+{-| Define a size in `px` for the element's total width.
 -}
 exactWidth : Int -> Attribute msg
 exactWidth inPx =
     set (\attributes -> { attributes | width = Just (toFloat inPx) })
+
+
+{-| Define a size in `px` for the element's total height.
+-}
+exactHeight : Int -> Attribute msg
+exactHeight inPx =
+    set (\attributes -> { attributes | height = Just (toFloat inPx) })
 
 
 
@@ -329,6 +336,7 @@ build label icon =
         , disabled = False
         , size = Small
         , width = Nothing
+        , height = Nothing
         , customAttributes = []
         , customStyles = []
         , hasBorder = False
@@ -347,6 +355,7 @@ type alias ButtonOrLinkAttributes msg =
     , disabled : Bool
     , size : Size
     , width : Maybe Float
+    , height : Maybe Float
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , hasBorder : Bool
@@ -421,7 +430,7 @@ renderIcon config =
                     - bordersAndPadding.rightBorder
 
             else
-                size
+                Maybe.withDefault size config.width
 
         iconHeight =
             if config.hasBorder then
@@ -432,7 +441,7 @@ renderIcon config =
                     - bordersAndPadding.bottomBorder
 
             else
-                size
+                Maybe.withDefault size config.height
     in
     config.icon
         |> Svg.withCss
@@ -493,6 +502,7 @@ buttonOrLinkStyles config =
                 (Css.px bordersAndPadding.bottomPadding)
                 (Css.px bordersAndPadding.leftPadding)
             , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
+            , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
             , Css.height (Css.px (getSize config.size))
             ]
 
@@ -503,12 +513,17 @@ buttonOrLinkStyles config =
             ]
 
     -- Sizing
-    , Css.display Css.inlineBlock
+    , Css.displayFlex
     , Css.boxSizing Css.borderBox
-    , Css.lineHeight (Css.num 1)
     , case config.width of
         Just width ->
             Css.width (Css.px width)
+
+        Nothing ->
+            Css.batch []
+    , case config.height of
+        Just height ->
+            Css.height (Css.px height)
 
         Nothing ->
             Css.batch []

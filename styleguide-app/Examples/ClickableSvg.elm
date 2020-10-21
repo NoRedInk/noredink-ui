@@ -222,16 +222,17 @@ type alias Settings msg =
     , disabled : ClickableSvg.Attribute msg
     , size : ClickableSvg.Attribute msg
     , width : Maybe (ClickableSvg.Attribute msg)
+    , height : Maybe (ClickableSvg.Attribute msg)
     }
 
 
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, size, width } =
+        { icon, disabled, size, width, height } =
             Control.currentValue settings
     in
-    ( icon, List.filterMap identity [ Just disabled, Just size, width ] )
+    ( icon, List.filterMap identity [ Just disabled, Just size, width, height ] )
 
 
 initSettings : Control (Settings msg)
@@ -262,6 +263,8 @@ initSettings =
             )
         |> Control.field "exactWidth"
             (Control.maybe False (Control.map ClickableSvg.exactWidth (controlInt 40)))
+        |> Control.field "exactHeight"
+            (Control.maybe False (Control.map ClickableSvg.exactHeight (controlInt 20)))
 
 
 controlInt : Int -> Control Int
