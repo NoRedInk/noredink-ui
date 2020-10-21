@@ -447,7 +447,8 @@ renderIcon config =
         |> Svg.withCss
             [ Css.displayFlex
             , Css.maxWidth (Css.px iconWidth)
-            , Css.height (Css.px iconHeight)
+            , Css.maxHeight (Css.px iconHeight)
+            , Css.height (Css.pct 100)
             , Css.margin Css.auto
             ]
         |> Svg.toHtml
@@ -501,8 +502,6 @@ buttonOrLinkStyles config =
                 (Css.px bordersAndPadding.rightPadding)
                 (Css.px bordersAndPadding.bottomPadding)
                 (Css.px bordersAndPadding.leftPadding)
-            , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
-            , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
             , Css.height (Css.px (getSize config.size))
             ]
 
@@ -513,20 +512,10 @@ buttonOrLinkStyles config =
             ]
 
     -- Sizing
-    , Css.displayFlex
+    , Css.display Css.inlineBlock
     , Css.boxSizing Css.borderBox
-    , case config.width of
-        Just width ->
-            Css.width (Css.px width)
-
-        Nothing ->
-            Css.batch []
-    , case config.height of
-        Just height ->
-            Css.height (Css.px height)
-
-        Nothing ->
-            Css.batch []
+    , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
+    , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
     ]
 
 
