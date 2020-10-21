@@ -581,25 +581,25 @@ getBorder size width height =
             else if h < mediumSize then
                 -- Small size vertical settings
                 { topBorder = 1
-                , topPadding = 2
+                , topPadding = 7
                 , bottomBorder = 2
-                , bottomPadding = 2
+                , bottomPadding = 7
                 }
 
             else if h < largeSize then
                 -- Medium size vertical settings
                 { topBorder = 1
-                , topPadding = 2
+                , topPadding = 10
                 , bottomBorder = 3
-                , bottomPadding = 2
+                , bottomPadding = 8
                 }
 
             else
                 -- Large size vertical settings
                 { topBorder = 1
-                , topPadding = 2
+                , topPadding = 13
                 , bottomBorder = 4
-                , bottomPadding = 2
+                , bottomPadding = 11
                 }
 
         horizontalSettings =
@@ -614,25 +614,25 @@ getBorder size width height =
             else if w < mediumSize then
                 -- Small size horizontal settings
                 { rightBorder = 1
-                , rightPadding = 4
+                , rightPadding = 7
                 , leftBorder = 1
-                , leftPadding = 4
+                , leftPadding = 7
                 }
 
             else if w < largeSize then
                 -- Medium size horizontal settings
                 { rightBorder = 1
-                , rightPadding = 4
+                , rightPadding = 9
                 , leftBorder = 1
-                , leftPadding = 4
+                , leftPadding = 9
                 }
 
             else
                 -- Large size horizontal settings
                 { rightBorder = 1
-                , rightPadding = 4
+                , rightPadding = 12
                 , leftBorder = 1
-                , leftPadding = 4
+                , leftPadding = 12
                 }
     in
     { topBorder = verticalSettings.topBorder
