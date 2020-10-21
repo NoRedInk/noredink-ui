@@ -419,7 +419,7 @@ renderIcon config =
             getSize config.size
 
         bordersAndPadding =
-            getBorder config.size
+            getBorder config.size config.width config.height
 
         iconWidth =
             if config.hasBorder then
@@ -464,7 +464,7 @@ buttonOrLinkStyles config =
                 ( applyTheme config.theme, Css.pointer )
 
         bordersAndPadding =
-            getBorder config.size
+            getBorder config.size config.width config.height
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
@@ -534,17 +534,34 @@ getSize : Size -> Float
 getSize size =
     case size of
         Small ->
-            36
+            smallSize
 
         Medium ->
-            45
+            mediumSize
 
         Large ->
-            56
+            largeSize
+
+
+smallSize : Float
+smallSize =
+    36
+
+
+mediumSize : Float
+mediumSize =
+    45
+
+
+largeSize : Float
+largeSize =
+    56
 
 
 getBorder :
     Size
+    -> Maybe Float
+    -> Maybe Float
     ->
         { topBorder : Float
         , topPadding : Float
@@ -555,37 +572,86 @@ getBorder :
         , leftBorder : Float
         , leftPadding : Float
         }
-getBorder size =
-    case size of
-        Small ->
-            { topBorder = 1
-            , topPadding = 2
-            , rightBorder = 1
-            , rightPadding = 4
-            , bottomBorder = 2
-            , bottomPadding = 2
-            , leftBorder = 1
-            , leftPadding = 4
-            }
+getBorder size width height =
+    let
+        w =
+            Maybe.withDefault (getSize size) width
 
-        Medium ->
-            { topBorder = 1
-            , topPadding = 2
-            , rightBorder = 1
-            , rightPadding = 4
-            , bottomBorder = 3
-            , bottomPadding = 2
-            , leftBorder = 1
-            , leftPadding = 4
-            }
+        h =
+            Maybe.withDefault (getSize size) height
 
-        Large ->
-            { topBorder = 1
-            , topPadding = 2
-            , rightBorder = 1
-            , rightPadding = 4
-            , bottomBorder = 4
-            , bottomPadding = 2
-            , leftBorder = 1
-            , leftPadding = 4
-            }
+        verticalSettings =
+            if h < smallSize then
+                -- Teeny size vertical settings
+                { topBorder = 1
+                , topPadding = 1
+                , bottomBorder = 2
+                , bottomPadding = 1
+                }
+
+            else if h < mediumSize then
+                -- Small size vertical settings
+                { topBorder = 1
+                , topPadding = 2
+                , bottomBorder = 2
+                , bottomPadding = 2
+                }
+
+            else if h < largeSize then
+                -- Medium size vertical settings
+                { topBorder = 1
+                , topPadding = 2
+                , bottomBorder = 3
+                , bottomPadding = 2
+                }
+
+            else
+                -- Large size vertical settings
+                { topBorder = 1
+                , topPadding = 2
+                , bottomBorder = 4
+                , bottomPadding = 2
+                }
+
+        horizontalSettings =
+            if w < smallSize then
+                -- Teeny size horizontal settings
+                { rightBorder = 1
+                , rightPadding = 2
+                , leftBorder = 1
+                , leftPadding = 2
+                }
+
+            else if w < mediumSize then
+                -- Small size horizontal settings
+                { rightBorder = 1
+                , rightPadding = 4
+                , leftBorder = 1
+                , leftPadding = 4
+                }
+
+            else if w < largeSize then
+                -- Medium size horizontal settings
+                { rightBorder = 1
+                , rightPadding = 4
+                , leftBorder = 1
+                , leftPadding = 4
+                }
+
+            else
+                -- Large size horizontal settings
+                { rightBorder = 1
+                , rightPadding = 4
+                , leftBorder = 1
+                , leftPadding = 4
+                }
+    in
+    { topBorder = verticalSettings.topBorder
+    , topPadding = verticalSettings.topPadding
+    , bottomBorder = verticalSettings.bottomBorder
+    , bottomPadding = verticalSettings.bottomPadding
+    , rightBorder = horizontalSettings.rightBorder
+    , rightPadding = horizontalSettings.rightPadding
+    , leftBorder = horizontalSettings.leftBorder
+    , leftPadding = horizontalSettings.leftPadding
+    }
