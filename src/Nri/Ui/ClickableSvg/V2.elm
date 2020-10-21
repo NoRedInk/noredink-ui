@@ -392,27 +392,53 @@ renderLink ((ButtonOrLink config) as link_) =
         ]
 
 
+getSize : Size -> Float
+getSize size =
+    case size of
+        Small ->
+            17
+
+        Medium ->
+            30
+
+        Large ->
+            40
+
+
 renderIcon : ButtonOrLinkAttributes msg -> Html msg
 renderIcon config =
     let
-        ( iconWidth, iconHeight ) =
-            case config.size of
-                Small ->
-                    ( Css.px 17, Css.px 17 )
+        size =
+            getSize config.size
 
-                Medium ->
-                    ( Css.px 30, Css.px 30 )
+        iconWidth =
+            if config.hasBorder then
+                size
+                    - (withBorderHorizontalPadding * 2)
+                    - withBorderLeftBorderWidth
+                    - withBorderRightBorderWidth
 
-                Large ->
-                    ( Css.px 30, Css.px 30 )
+            else
+                size
+
+        iconHeight =
+            if config.hasBorder then
+                size
+                    - withBorderTopPadding
+                    - withBorderBottomPadding
+                    - withBorderTopBorderWidth
+                    - withBorderBottomBorderWidth
+
+            else
+                size
     in
     config.icon
         |> Svg.withCss
             [ Css.displayFlex
             , Css.alignItems Css.center
             , Css.justifyContent Css.center
-            , Css.maxWidth iconWidth
-            , Css.height iconHeight
+            , Css.maxWidth (Css.px iconWidth)
+            , Css.height (Css.px iconHeight)
             ]
         |> Svg.toHtml
 
@@ -461,6 +487,8 @@ buttonOrLinkStyles config =
                 (Css.px withBorderTopPadding)
                 (Css.px withBorderHorizontalPadding)
                 (Css.px withBorderBottomPadding)
+            , Css.width (Css.px (getSize config.size))
+            , Css.height (Css.px (getSize config.size))
             ]
 
         else
