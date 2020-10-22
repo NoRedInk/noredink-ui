@@ -83,7 +83,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
 import Nri.Ui
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg
@@ -453,8 +453,8 @@ toggleTip { label } attributes_ =
             \events ->
                 ClickableSvg.button label
                     UiIcon.help
-                    [ ClickableSvg.width (Css.px 20)
-                    , ClickableSvg.height (Css.px 20)
+                    [ ClickableSvg.exactWidth 20
+                    , ClickableSvg.exactHeight 20
                     , ClickableSvg.custom events
                     , ClickableSvg.css
                         [ -- Take up enough room within the document flow

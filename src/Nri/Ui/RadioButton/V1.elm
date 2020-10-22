@@ -19,7 +19,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
 import Json.Decode
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -250,8 +250,8 @@ internalView config =
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag
                             [ ClickableSvg.onClick config.premiumMsg
-                            , ClickableSvg.width (px 26)
-                            , ClickableSvg.height (px 24)
+                            , ClickableSvg.exactWidth 26
+                            , ClickableSvg.exactHeight 24
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
                     )

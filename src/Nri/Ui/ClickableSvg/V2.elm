@@ -53,7 +53,6 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
 
 
 {-| -}
