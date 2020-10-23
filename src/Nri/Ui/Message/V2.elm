@@ -61,7 +61,7 @@ import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Markdown
 import Nri.Ui
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
@@ -682,8 +682,8 @@ tinyDismissButton msg =
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
             [ ClickableSvg.onClick msg
-            , ClickableSvg.width (px 16)
-            , ClickableSvg.height (px 16)
+            , ClickableSvg.exactWidth 16
+            , ClickableSvg.exactHeight 16
             , ClickableSvg.css
                 [ Css.verticalAlign Css.middle
                 , Css.marginLeft (Css.px 5)
@@ -702,8 +702,8 @@ largeDismissButton msg =
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
             [ ClickableSvg.onClick msg
-            , ClickableSvg.width (px 16)
-            , ClickableSvg.height (px 16)
+            , ClickableSvg.exactWidth 16
+            , ClickableSvg.exactHeight 16
             ]
         ]
 
@@ -717,7 +717,7 @@ bannerDismissButton msg =
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
             [ ClickableSvg.onClick msg
-            , ClickableSvg.width (px 16)
-            , ClickableSvg.height (px 16)
+            , ClickableSvg.exactWidth 16
+            , ClickableSvg.exactHeight 16
             ]
         ]

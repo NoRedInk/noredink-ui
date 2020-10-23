@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -31,7 +31,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 example : Example State Msg
 example =
     { name = "ClickableSvg"
-    , version = 1
+    , version = 2
     , categories = [ Buttons, Icons ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
@@ -53,9 +53,7 @@ Tooltip.view
         \\attrs ->
             ClickableSvg.button "Preview"
                 UiIcon.preview
-                [ ClickableSvg.width (Css.px 20)
-                , ClickableSvg.height (Css.px 20)
-                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
                 , ClickableSvg.custom attrs
                 ]
     , id = "preview-tooltip"
@@ -74,9 +72,7 @@ Tooltip.view
                         \attrs ->
                             ClickableSvg.button "Preview"
                                 UiIcon.preview
-                                [ ClickableSvg.width (Css.px 20)
-                                , ClickableSvg.height (Css.px 20)
-                                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
+                                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
                                 , ClickableSvg.custom attrs
                                 ]
                     , id = "preview-tooltip"
@@ -224,18 +220,19 @@ update msg state =
 type alias Settings msg =
     { icon : Svg
     , disabled : ClickableSvg.Attribute msg
-    , width : ClickableSvg.Attribute msg
-    , height : ClickableSvg.Attribute msg
+    , size : ClickableSvg.Attribute msg
+    , width : Maybe (ClickableSvg.Attribute msg)
+    , height : Maybe (ClickableSvg.Attribute msg)
     }
 
 
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, width, height } =
+        { icon, disabled, size, width, height } =
             Control.currentValue settings
     in
-    ( icon, [ disabled, width, height ] )
+    ( icon, List.filterMap identity [ Just disabled, Just size, width, height ] )
 
 
 initSettings : Control (Settings msg)
@@ -257,13 +254,20 @@ initSettings =
             )
         |> Control.field "disabled"
             (Control.map ClickableSvg.disabled (Control.bool False))
-        |> Control.field "width"
-            (Control.map (Css.px >> ClickableSvg.width) (controlNumber 30))
-        |> Control.field "height"
-            (Control.map (Css.px >> ClickableSvg.height) (controlNumber 30))
+        |> Control.field "size"
+            (Control.choice
+                [ ( "small", Control.value ClickableSvg.small )
+                , ( "medium", Control.value ClickableSvg.medium )
+                , ( "large", Control.value ClickableSvg.large )
+                ]
+            )
+        |> Control.field "exactWidth"
+            (Control.maybe False (Control.map ClickableSvg.exactWidth (controlInt 40)))
+        |> Control.field "exactHeight"
+            (Control.maybe False (Control.map ClickableSvg.exactHeight (controlInt 20)))
 
 
-controlNumber : Float -> Control Float
-controlNumber default =
-    Control.map (String.toFloat >> Maybe.withDefault default)
-        (Control.string (String.fromFloat default))
+controlInt : Int -> Control Int
+controlInt default =
+    Control.map (String.toInt >> Maybe.withDefault default)
+        (Control.string (String.fromInt default))
