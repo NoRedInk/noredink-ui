@@ -100,6 +100,7 @@ init =
             (Control.choice
                 [ ( "exactWidth 120", Control.value (Button.exactWidth 120) )
                 , ( "exactWidth 70", Control.value (Button.exactWidth 70) )
+                , ( "boundedWidth 100 180", Control.value (Button.boundedWidth { min = 100, max = 180 }) )
                 , ( "unboundedWidth", Control.value Button.unboundedWidth )
                 , ( "fillContainerWidth", Control.value Button.fillContainerWidth )
                 ]
