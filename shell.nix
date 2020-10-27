@@ -12,6 +12,8 @@ stdenv.mkDerivation {
     gnumake
     niv.niv
     jq
+    haskellPackages.ormolu
+    (haskellPackages.ghcWithPackages (ps: [ ps.shake ]))
 
     # node dependencies
     nodejs

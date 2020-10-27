@@ -242,3 +242,5 @@ documentation.json
 /tests/axe-report.json
 /tests/deprecated-imports-report.txt
 /tests/VerifyExamples
+
+/_build
