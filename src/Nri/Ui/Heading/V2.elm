@@ -1,6 +1,6 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
-    , style, Style(..), css, error, errorIf
+    , Attribute, style, Style(..), css, error, errorIf
     , customAttr
     )
 
@@ -8,7 +8,7 @@ module Nri.Ui.Heading.V2 exposing
 
 @docs h1, h2, h3, h4, h5
 
-@docs style, Style, css, error, errorIf
+@docs Attribute, style, Style, css, error, errorIf
 
 @docs customAttr
 
@@ -106,6 +106,9 @@ view tag customizations attrs content =
         content
 
 
+{-| Like an `Html.Attribute msg`, but specifically for headings. Use things
+like `style` and `errorIf` in this module to construct them.
+-}
 type Attribute msg
     = Style_ Style
     | Css (List Css.Style)
