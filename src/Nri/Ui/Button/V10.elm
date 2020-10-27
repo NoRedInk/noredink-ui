@@ -5,7 +5,7 @@ module Nri.Ui.Button.V10 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
-    , exactWidth, unboundedWidth, fillContainerWidth
+    , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , delete
@@ -42,7 +42,7 @@ module Nri.Ui.Button.V10 exposing
 ## Sizing
 
 @docs small, medium, large
-@docs exactWidth, unboundedWidth, fillContainerWidth
+@docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
 
 
 ## Change the color scheme
@@ -253,6 +253,7 @@ type ButtonWidth
     = WidthExact Int
     | WidthUnbounded
     | WidthFillContainer
+    | WidthBounded { min : Int, max : Int }
 
 
 {-| Sizes for buttons and links that have button classes
@@ -275,6 +276,15 @@ exactWidth inPx =
 unboundedWidth : Attribute msg
 unboundedWidth =
     set (\attributes -> { attributes | width = WidthUnbounded })
+
+
+{-| Make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidth : { min : Int, max : Int } -> Attribute msg
+boundedWidth bounds =
+    set (\attributes -> { attributes | width = WidthBounded bounds })
 
 
 {-| -}
@@ -823,6 +833,13 @@ sizeStyle size width =
                     , Css.paddingRight (Css.px 16)
                     , Css.minWidth (Css.px config.minWidth)
                     , Css.width (Css.pct 100)
+                    ]
+
+                WidthBounded { min, max } ->
+                    [ Css.maxWidth (Css.px (toFloat max))
+                    , Css.minWidth (Css.px (toFloat min))
+                    , Css.paddingRight (Css.px 16)
+                    , Css.paddingLeft (Css.px 16)
                     ]
 
         lineHeightPx =
