@@ -19,3 +19,7 @@ main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
     need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
     Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
     writeFileChanged out report
+
+  "log/percy-tests" %> \out -> do
+    Stdout report <- cmd "script/percy-tests.sh"
+    writeFileChanged out report
