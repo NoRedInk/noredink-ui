@@ -65,3 +65,13 @@ main =
     "logs/documentation.json" %> \out -> do
       need ["log/node_modules.txt"]
       cmd_ "elm" "make" "--docs" out
+
+    "styleguide-app/bundle.js" %> \out -> do
+      need ["lib/index.js", "styleguide-app/manifest.js", "log/node_modules.txt"]
+      cmd_ "npx" "browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
+
+    "styleguide-app/elm.js" %> \out -> do
+      need ["styleguide-app/bundle.js"] -- ported directly from Make... why is this needed?
+      elmSources <- getDirectoryFiles "." ["styleguide/**/*.elm", "src/**/*.elm"]
+      need elmSources
+      cmd_ (Cwd "styleguide-app") "npx" "elm" "make" "Main.elm" "--output" (takeFileName out)
