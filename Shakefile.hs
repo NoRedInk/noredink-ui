@@ -7,6 +7,12 @@ main :: IO ()
 main =
   -- TODO: better shake options. Parallelism, hash changes.
   shakeArgs shakeOptions {shakeFiles = "_build"} $ do
+    "log/format.txt" %> \out -> do
+      let placesToLook = ["src", "tests", "styleguide-app"]
+      elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
+      need elmFiles
+      Stdout report <- cmd "elm-format" "--validate" placesToLook
+      writeFileChanged out report
     -----------------
     -- DANGER ZONE --
     -----------------
@@ -69,11 +75,6 @@ main =
     "log/check-exposed.txt" %> \out -> do
       need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
       Stdout report <- cmd "script/check-exposed.py"
-      writeFileChanged out report
-
-    "log/format.txt" %> \out -> do
-      need ["log/node_modules.txt"]
-      Stdout report <- cmd "npx" "elm-format" "--validate" "src" "tests" "styleguide-app"
       writeFileChanged out report
 
     "log/node_modules.txt" %> \out -> do
