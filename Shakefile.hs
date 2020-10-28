@@ -54,3 +54,10 @@ main =
       need ["package.json", "package-lock.json"]
       cmd_ "npm" "install"
       writeFileChanged out "1"
+
+    phony "clean" $ do
+      removeFilesAfter "elm-stuff" ["//*"]
+      removeFilesAfter "log" ["//*"]
+      removeFilesAfter "node_modules" ["//*"]
+      removeFilesAfter "public" ["//*"]
+      removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
