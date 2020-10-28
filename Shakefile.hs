@@ -7,12 +7,20 @@ main :: IO ()
 main =
   -- TODO: better shake options. Parallelism, hash changes.
   shakeArgs shakeOptions {shakeFiles = "_build"} $ do
+    -- things that should be kept under version control
+    "tests/elm-verify-examples.json" %> \out -> do
+      need ["elm.json"]
+      Stdout newConfig <- cmd "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
+      writeFileChanged out newConfig
+
+    -- temporary files, used to produce CI reports
     "log/format.txt" %> \out -> do
       let placesToLook = ["src", "tests", "styleguide-app"]
       elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
       need elmFiles
       Stdout report <- cmd "elm-format" "--validate" placesToLook
       writeFileChanged out report
+
     -----------------
     -- DANGER ZONE --
     -----------------
@@ -39,10 +47,6 @@ main =
       need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
 
     -- actual rules
-    "tests/elm-verify-examples.json" %> \out -> do
-      need ["elm.json"]
-      Stdout newConfig <- cmd "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
-      writeFileChanged out newConfig
 
     "log/axe-report.json" %> \out -> do
       need ["public", "script/run-axe.sh", "script/axe-puppeteer.js"]
