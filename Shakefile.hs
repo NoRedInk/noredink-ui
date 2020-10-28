@@ -7,6 +7,15 @@ main :: IO ()
 main =
   -- TODO: better shake options. Parallelism, hash changes.
   shakeArgs shakeOptions {shakeFiles = "_build"} $ do
+    -----------------
+    -- DANGER ZONE --
+    -----------------
+    --
+    -- everything below this line has been translated extremely literally from
+    -- the old Makefile, and probably has serious issues. As I make sure all
+    -- the dependencies are actually tracked and satisfied, they'll move above
+    -- this line.
+
     phony "clean" $ do
       removeFilesAfter "elm-stuff" ["//*"]
       removeFilesAfter "log" ["//*"]
