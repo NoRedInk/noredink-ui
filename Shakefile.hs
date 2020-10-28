@@ -7,6 +7,20 @@ main :: IO ()
 main =
   -- TODO: better shake options. Parallelism, hash changes.
   shakeArgs shakeOptions {shakeFiles = "_build"} $ do
+    phony "clean" $ do
+      removeFilesAfter "elm-stuff" ["//*"]
+      removeFilesAfter "log" ["//*"]
+      removeFilesAfter "node_modules" ["//*"]
+      removeFilesAfter "public" ["//*"]
+      removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
+
+    phony "test" $ do
+      need ["log/node_modules.txt", "tests/elm-verify-examples.json"]
+      cmd_ "npx" "elm-verify-examples"
+      cmd_ "npx" "elm-test"
+      need ["log/axe-report.txt", "log/percy-tests.txt", "log/deprecated-imports-report.txt"]
+
+    -- actual rules
     "tests/elm-verify-examples.json" %> \out -> do
       need ["elm.json"]
       Stdout newConfig <- cmd "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
@@ -17,12 +31,12 @@ main =
       Stdout report <- cmd "script/run-axe.sh"
       writeFileChanged out report
 
-    "log/axe-report" %> \out -> do
+    "log/axe-report.txt" %> \out -> do
       need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
       Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
       writeFileChanged out report
 
-    "log/percy-tests" %> \out -> do
+    "log/percy-tests.txt" %> \out -> do
       Stdout report <- cmd "script/percy-tests.sh"
       writeFileChanged out report
 
@@ -55,13 +69,6 @@ main =
       Stdout report <- cmd "npm" "install"
       writeFileChanged out report
 
-    phony "clean" $ do
-      removeFilesAfter "elm-stuff" ["//*"]
-      removeFilesAfter "log" ["//*"]
-      removeFilesAfter "node_modules" ["//*"]
-      removeFilesAfter "public" ["//*"]
-      removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
-
     "logs/documentation.json" %> \out -> do
       need ["log/node_modules.txt"]
       cmd_ "elm" "make" "--docs" out
@@ -87,3 +94,5 @@ main =
             ++ map (("public" </> "assets") </>) styleguideAssets
         )
       writeFileChanged out "done"
+
+    phony "public" $ need ["log/public.txt"]
