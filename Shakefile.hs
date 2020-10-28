@@ -23,3 +23,17 @@ main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
   "log/percy-tests" %> \out -> do
     Stdout report <- cmd "script/percy-tests.sh"
     writeFileChanged out report
+
+  -- deprecated imports
+  --
+  -- still need something to error when they fail (i.e. when running the
+  -- `check` subcommand)
+
+  "log/deprecated-imports-report.txt" %> \out -> do
+    need ["script/deprecated-imports.py"]
+    Stdout report <- cmd "script/deprecated-imports.py report"
+    writeFileChanged out report
+
+  "log/deprecated-imports.csv" %> \out -> do
+    need ["script/deprecated-imports.py"]
+    cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
