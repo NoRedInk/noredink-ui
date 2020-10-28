@@ -37,3 +37,8 @@ main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
   "log/deprecated-imports.csv" %> \out -> do
     need ["script/deprecated-imports.py"]
     cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
+
+  "log/exposed.txt" %> \out -> do
+    need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
+    Stdout report <- cmd "script/check-exposed.py"
+    writeFileChanged out report
