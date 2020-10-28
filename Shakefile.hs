@@ -22,6 +22,7 @@ main =
       writeFileChanged out report
 
     "log/percy-tests.txt" %> \out -> do
+      -- warning: not fsatrace-able
       percyToken <- getEnv "PERCY_TOKEN"
       case percyToken of
         Nothing -> do
@@ -33,18 +34,7 @@ main =
 
     -- dev deps we get dynamically instead of from Nix (frowny face)
     "log/npm-install.txt" %> \out -> do
-      -- npm installation really makes and updates a directory
-      -- (node_modules). Shake is fine with allowing this, but in the interests
-      -- of being able to get meaningful information from the fsatrace linter
-      -- we also manually track what it's doing.
-      beforeNodePackages <- getDirectoryFiles "." ["node_modules/**/*"]
-      needed beforeNodePackages
-
-      -- why does npm even read these? It's a huge mystery.
-      gitHeads <- getDirectoryFiles "." [".git/refs/heads/*"]
-      trackAllow (["README.md", ".git/HEAD"] ++ gitHeads)
-
-      -- the actual command + receipt writing
+      -- warning: not fsatrace-able
       need ["package.json", "package-lock.json"]
       Stdout report <- cmd "npm install"
       writeFileChanged out report
