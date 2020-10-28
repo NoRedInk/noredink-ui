@@ -42,3 +42,13 @@ main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
     need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
     Stdout report <- cmd "script/check-exposed.py"
     writeFileChanged out report
+
+  "log/format.txt" %> \out -> do
+    need ["log/node_modules.txt"]
+    Stdout report <- cmd "npx" "elm-format" "--validate" "src" "tests" "styleguide-app"
+    writeFileChanged out report
+
+  "log/node_modules.txt" %> \out -> do
+    need ["package.json", "package-lock.json"]
+    cmd_ "npm" "install"
+    writeFileChanged out "1"
