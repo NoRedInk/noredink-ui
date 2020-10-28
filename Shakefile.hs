@@ -75,3 +75,15 @@ main =
       elmSources <- getDirectoryFiles "." ["styleguide/**/*.elm", "src/**/*.elm"]
       need elmSources
       cmd_ (Cwd "styleguide-app") "npx" "elm" "make" "Main.elm" "--output" (takeFileName out)
+
+    -- public folder for styleguide
+    "public/**/*" %> \out ->
+      copyFileChanged (replaceDirectory1 out "styleguide-app") out
+
+    "log/public.txt" %> \out -> do
+      styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
+      need
+        ( ["public/index.html", "public/elm.js", "public/bundle.js"]
+            ++ map (("public" </> "assets") </>) styleguideAssets
+        )
+      writeFileChanged out "done"
