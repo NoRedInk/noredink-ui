@@ -61,3 +61,7 @@ main =
       removeFilesAfter "node_modules" ["//*"]
       removeFilesAfter "public" ["//*"]
       removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
+
+    "logs/documentation.json" %> \out -> do
+      need ["log/node_modules.txt"]
+      cmd_ "elm" "make" "--docs" out
