@@ -18,6 +18,12 @@ stdenv.mkDerivation {
     nodejs
     nodePackages.npm
 
+    # elm dependencies
+    elmPackages.elm
+    elmPackages.elm-format
+    elmPackages.elm-test
+    elmPackages.elm-verify-examples
+
     # preview dependencies
     entr
     python3
