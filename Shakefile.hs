@@ -21,6 +21,34 @@ main =
       Stdout report <- cmd "elm-format" "--validate" placesToLook
       writeFileChanged out report
 
+    "log/percy-tests.txt" %> \out -> do
+      percyToken <- getEnv "PERCY_TOKEN"
+      case percyToken of
+        Nothing -> do
+          writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
+        Just _ -> do
+          need ["log/npm-install.txt"]
+          Stdout report <- cmd "script/percy-tests.sh"
+          writeFileChanged out report
+
+    -- dev deps we get dynamically instead of from Nix (frowny face)
+    "log/npm-install.txt" %> \out -> do
+      -- npm installation really makes and updates a directory
+      -- (node_modules). Shake is fine with allowing this, but in the interests
+      -- of being able to get meaningful information from the fsatrace linter
+      -- we also manually track what it's doing.
+      beforeNodePackages <- getDirectoryFiles "." ["node_modules/**/*"]
+      needed beforeNodePackages
+
+      -- why does npm even read these? It's a huge mystery.
+      gitHeads <- getDirectoryFiles "." [".git/refs/heads/*"]
+      trackAllow (["README.md", ".git/HEAD"] ++ gitHeads)
+
+      -- the actual command + receipt writing
+      need ["package.json", "package-lock.json"]
+      Stdout report <- cmd "npm install"
+      writeFileChanged out report
+
     -----------------
     -- DANGER ZONE --
     -----------------
@@ -56,10 +84,6 @@ main =
     "log/axe-report.txt" %> \out -> do
       need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
       Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
-      writeFileChanged out report
-
-    "log/percy-tests.txt" %> \out -> do
-      Stdout report <- cmd "script/percy-tests.sh"
       writeFileChanged out report
 
     -- deprecated imports
