@@ -52,8 +52,8 @@ main =
 
     "log/node_modules.txt" %> \out -> do
       need ["package.json", "package-lock.json"]
-      cmd_ "npm" "install"
-      writeFileChanged out "1"
+      Stdout report <- cmd "npm" "install"
+      writeFileChanged out report
 
     phony "clean" $ do
       removeFilesAfter "elm-stuff" ["//*"]
