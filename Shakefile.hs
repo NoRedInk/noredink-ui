@@ -20,6 +20,9 @@ main =
       cmd_ "npx" "elm-test"
       need ["log/axe-report.txt", "log/percy-tests.txt", "log/deprecated-imports-report.txt"]
 
+    phony "ci" $ do
+      need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
+
     -- actual rules
     "tests/elm-verify-examples.json" %> \out -> do
       need ["elm.json"]
@@ -54,7 +57,7 @@ main =
       need ["script/deprecated-imports.py"]
       cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
 
-    "log/exposed.txt" %> \out -> do
+    "log/check-exposed.txt" %> \out -> do
       need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
       Stdout report <- cmd "script/check-exposed.py"
       writeFileChanged out report
@@ -69,7 +72,7 @@ main =
       Stdout report <- cmd "npm" "install"
       writeFileChanged out report
 
-    "logs/documentation.json" %> \out -> do
+    "log/documentation.json" %> \out -> do
       need ["log/node_modules.txt"]
       cmd_ "elm" "make" "--docs" out
 
