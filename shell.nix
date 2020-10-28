@@ -3,7 +3,6 @@ let
   nixpkgs = import sources.nixpkgs { };
   niv = import sources.niv { };
 in with nixpkgs;
-
 stdenv.mkDerivation {
   name = "noredink-ui";
   buildInputs = [
@@ -22,5 +21,5 @@ stdenv.mkDerivation {
     # preview dependencies
     entr
     python3
-  ];
+  ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace ];
 }
