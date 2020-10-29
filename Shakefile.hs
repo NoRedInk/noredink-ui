@@ -19,6 +19,15 @@ main =
         shakeChange = ChangeModtimeAndDigest
       }
     $ do
+      -- phonies. These provide a nice public API for using shake (`shake
+      -- clean`, `shake test`, etc.)
+      phony "clean" $ do
+        removeFilesAfter "elm-stuff" ["//*"]
+        removeFilesAfter "log" ["//*"]
+        removeFilesAfter "node_modules" ["//*"]
+        removeFilesAfter "public" ["//*"]
+        removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
+
       -- things that should be kept under version control
       "tests/elm-verify-examples.json" %> \out -> do
         need ["elm.json"]
@@ -116,13 +125,6 @@ main =
       -- the old Makefile, and probably has serious issues. As I make sure all
       -- the dependencies are actually tracked and satisfied, they'll move above
       -- this line.
-
-      phony "clean" $ do
-        removeFilesAfter "elm-stuff" ["//*"]
-        removeFilesAfter "log" ["//*"]
-        removeFilesAfter "node_modules" ["//*"]
-        removeFilesAfter "public" ["//*"]
-        removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
 
       phony "test" $ do
         need ["log/node_modules.txt", "tests/elm-verify-examples.json"]
