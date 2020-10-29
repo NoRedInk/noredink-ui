@@ -48,6 +48,18 @@ main =
         Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
         writeFileChanged out report
 
+      "log/deprecated-imports-report.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
+        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
+        -- still need to do something when this fails (e.g. run "check" instead of "report")
+        Stdout report <- cmd "script/deprecated-imports.py report"
+        writeFileChanged out report
+
+      "log/deprecated-imports.csv" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
+        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
+        cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
+
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
@@ -83,19 +95,6 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      -- deprecated imports
-      --
-      -- still need something to error when they fail (i.e. when running the
-      -- `check` subcommand)
-      "log/deprecated-imports-report.txt" %> \out -> do
-        need ["script/deprecated-imports.py"]
-        Stdout report <- cmd "script/deprecated-imports.py report"
-        writeFileChanged out report
-
-      "log/deprecated-imports.csv" %> \out -> do
-        need ["script/deprecated-imports.py"]
-        cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
 
       "log/check-exposed.txt" %> \out -> do
         need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
