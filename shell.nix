@@ -10,6 +10,8 @@ stdenv.mkDerivation {
     git
     niv.niv
     jq
+
+    # building with Shake
     haskellPackages.ormolu
     (haskellPackages.ghcWithPackages (ps: [ ps.shake ]))
 
