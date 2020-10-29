@@ -11,7 +11,6 @@ main =
       { shakeFiles = "_build",
         shakeLintIgnore = ["node_modules/**/*"],
         shakeThreads = 0,
-        shakeStaunch = True,
         shakeChange = ChangeModtimeAndDigest
       }
     $ do
