@@ -14,4 +14,4 @@ docker run \
   --mount "type=volume,source=$VOLUME_NAME,target=/nix" \
   --workdir /app \
   lnl7/nix:latest \
-  nix-shell
+  nix-shell --command 'mkdir -p /etc/ssl/certs && ln -s $NIX_SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt && return'

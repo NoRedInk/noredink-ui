@@ -28,5 +28,5 @@ stdenv.mkDerivation {
     # preview dependencies
     entr
     python3
-  ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace ];
+  ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
 }
