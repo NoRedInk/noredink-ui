@@ -9,7 +9,12 @@ main =
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
-        shakeLintIgnore = ["node_modules/**/*", ".git/**/*", "elm-stuff/**/*"],
+        shakeLintIgnore =
+          [ "node_modules/**/*",
+            ".git/**/*",
+            "elm-stuff/**/*",
+            "styleguide-app/elm-stuff/**/*"
+          ],
         shakeThreads = 0,
         shakeChange = ChangeModtimeAndDigest
       }
@@ -76,6 +81,11 @@ main =
         need (["package.json", "lib/index.js", "styleguide-app/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
         cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
 
+      "_build/elm.js" %> \out -> do
+        elmSources <- getDirectoryFiles "." ["styleguide-app/**/*.elm", "src/**/*.elm"]
+        need elmSources
+        cmd_ (Cwd "styleguide-app") "elm" "make" "Main.elm" "--output" (".." </> out)
+
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
@@ -111,12 +121,6 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      "styleguide-app/elm.js" %> \out -> do
-        need ["styleguide-app/bundle.js"] -- ported directly from Make... why is this needed?
-        elmSources <- getDirectoryFiles "." ["styleguide/**/*.elm", "src/**/*.elm"]
-        need elmSources
-        cmd_ (Cwd "styleguide-app") "npx" "elm" "make" "Main.elm" "--output" (takeFileName out)
 
       -- public folder for styleguide
       "public/**/*" %> \out ->
