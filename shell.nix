@@ -28,5 +28,8 @@ stdenv.mkDerivation {
     # preview dependencies
     entr
     python3
+
+    # stuff we need for running builds in a `nix-shell --pure` environment.
+    which
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
 }
