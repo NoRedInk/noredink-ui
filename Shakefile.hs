@@ -28,6 +28,8 @@ main =
         removeFilesAfter "public" ["//*"]
         removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
 
+      phony "public" $ need ["log/public.txt"]
+
       phony "test" $ do
         need
           [ "log/npm-install.txt",
@@ -153,5 +155,3 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      phony "public" $ need ["log/public.txt"]
