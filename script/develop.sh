@@ -5,7 +5,7 @@ if test -d public; then
     rm -rf public
 fi
 
-make -j public
+shake public
 
 cat <<EOF
 == 👋 Hello! ==================================================================
@@ -32,4 +32,4 @@ cleanup() {
 trap cleanup EXIT INT
 
 # start a watcher. This loops forever, so we don't need to loop ourselves.
-find src styleguide-app -type f -not -ipath '*elm-stuff*' | entr -c -p make public
+find src styleguide-app -type f -not -ipath '*elm-stuff*' | entr -c -p shake public
