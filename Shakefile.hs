@@ -20,6 +20,11 @@ main =
         Stdout newConfig <- cmd "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
         writeFileChanged out newConfig
 
+      "script/deprecated-imports.csv" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
+        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
+        cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
+
       -- temporary files, used to produce CI reports
       "log/format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide-app"]
@@ -54,11 +59,6 @@ main =
         -- still need to do something when this fails (e.g. run "check" instead of "report")
         Stdout report <- cmd "script/deprecated-imports.py report"
         writeFileChanged out report
-
-      "log/deprecated-imports.csv" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
-        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
-        cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
 
       "log/check-exposed.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
