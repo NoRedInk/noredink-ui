@@ -11,7 +11,6 @@ main =
       { shakeFiles = "_build",
         shakeLintIgnore =
           [ "node_modules/**/*",
-            ".git/**/*",
             "elm-stuff/**/*",
             "styleguide-app/elm-stuff/**/*"
           ],
@@ -142,7 +141,8 @@ main =
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
         -- them as used here to avoid getting linter errors.
-        needed ["README.md"]
+        gitHeads <- getDirectoryFiles "." [".git/refs/heads/*"]
+        needed (["README.md", ".git/HEAD"] ++ gitHeads)
 
         -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
