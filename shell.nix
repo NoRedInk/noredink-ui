@@ -12,7 +12,6 @@ stdenv.mkDerivation {
     jq
     haskellPackages.ormolu
     (haskellPackages.ghcWithPackages (ps: [ ps.shake ]))
-    less
 
     # node dependencies
     nodejs
