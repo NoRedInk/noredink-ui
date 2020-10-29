@@ -10,7 +10,7 @@ fi
 jq -r -f script/axe-report.jq "$JSON_FILE"
 
 NUM_ERRORS="$(jq '.violations | map(.nodes | length) | add' "$JSON_FILE")"
-if [ -z "$NUM_ERRORS" ];
+if test "$NUM_ERRORS" != 0;
 then
     echo "$NUM_ERRORS accessibility errors"
     echo
