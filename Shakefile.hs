@@ -71,6 +71,11 @@ main =
         need elmFiles
         cmd_ "elm" "make" "--docs" out
 
+      "_build/bundle.js" %> \out -> do
+        libJsFiles <- getDirectoryFiles "." ["lib/**/*.js"]
+        need (["package.json", "lib/index.js", "styleguide-app/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
+        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
+
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
@@ -106,10 +111,6 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      "styleguide-app/bundle.js" %> \out -> do
-        need ["lib/index.js", "styleguide-app/manifest.js", "log/node_modules.txt"]
-        cmd_ "npx" "browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
 
       "styleguide-app/elm.js" %> \out -> do
         need ["styleguide-app/bundle.js"] -- ported directly from Make... why is this needed?
