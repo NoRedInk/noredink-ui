@@ -8,7 +8,6 @@ stdenv.mkDerivation {
   buildInputs = [
     # base dependencies
     git
-    gnumake
     niv.niv
     jq
     haskellPackages.ormolu
