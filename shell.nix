@@ -13,6 +13,7 @@ stdenv.mkDerivation {
     jq
     haskellPackages.ormolu
     (haskellPackages.ghcWithPackages (ps: [ ps.shake ]))
+    less
 
     # node dependencies
     nodejs
@@ -27,5 +28,5 @@ stdenv.mkDerivation {
     # preview dependencies
     entr
     python3
-  ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace ];
+  ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace ];
 }
