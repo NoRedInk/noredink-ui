@@ -22,7 +22,6 @@ main =
       writeFileChanged out report
 
     "log/percy-tests.txt" %> \out -> do
-      -- warning: not fsatrace-able
       percyToken <- getEnv "PERCY_TOKEN"
       case percyToken of
         Nothing -> do
@@ -32,9 +31,18 @@ main =
           Stdout report <- cmd "script/percy-tests.sh"
           writeFileChanged out report
 
+    "log/axe-report.json" %> \out -> do
+      need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js"]
+      Stdout report <- cmd "script/run-axe.sh"
+      writeFileChanged out report
+
+    "log/axe-report.txt" %> \out -> do
+      need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
+      Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
+      writeFileChanged out report
+
     -- dev deps we get dynamically instead of from Nix (frowny face)
     "log/npm-install.txt" %> \out -> do
-      -- warning: not fsatrace-able
       need ["package.json", "package-lock.json"]
       Stdout report <- cmd "npm install"
       writeFileChanged out report
@@ -64,23 +72,10 @@ main =
     phony "ci" $ do
       need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
 
-    -- actual rules
-
-    "log/axe-report.json" %> \out -> do
-      need ["public", "script/run-axe.sh", "script/axe-puppeteer.js"]
-      Stdout report <- cmd "script/run-axe.sh"
-      writeFileChanged out report
-
-    "log/axe-report.txt" %> \out -> do
-      need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
-      Stdout report <- cmd "script/format-axe-report.sh" "log/axe-report.json"
-      writeFileChanged out report
-
     -- deprecated imports
     --
     -- still need something to error when they fail (i.e. when running the
     -- `check` subcommand)
-
     "log/deprecated-imports-report.txt" %> \out -> do
       need ["script/deprecated-imports.py"]
       Stdout report <- cmd "script/deprecated-imports.py report"
@@ -93,11 +88,6 @@ main =
     "log/check-exposed.txt" %> \out -> do
       need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
       Stdout report <- cmd "script/check-exposed.py"
-      writeFileChanged out report
-
-    "log/node_modules.txt" %> \out -> do
-      need ["package.json", "package-lock.json"]
-      Stdout report <- cmd "npm" "install"
       writeFileChanged out report
 
     "log/documentation.json" %> \out -> do
