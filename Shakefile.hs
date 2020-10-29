@@ -28,6 +28,17 @@ main =
         removeFilesAfter "public" ["//*"]
         removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
 
+      phony "test" $ do
+        need
+          [ "log/npm-install.txt",
+            "tests/elm-verify-examples.json",
+            "log/elm-verify-examples.txt",
+            "log/elm-test.txt",
+            "log/axe-report.txt",
+            "log/percy-tests.txt",
+            "log/deprecated-imports-report.txt"
+          ]
+
       -- things that should be kept under version control
       "tests/elm-verify-examples.json" %> \out -> do
         need ["elm.json"]
@@ -40,6 +51,20 @@ main =
         cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
 
       -- temporary files, used to produce CI reports
+      "log/elm-test.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["tests/**/*.elm"]
+        -- I'm not sure why elm-test needs package.json, but fsatracing it
+        -- reveals the dep, so in it goes!
+        need (["package.json", "elm.json"] ++ elmFiles)
+        Stdout report <- cmd "elm-test"
+        writeFileChanged out report
+
+      "log/elm-verify-examples.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
+        need (["tests/elm-verify-examples.json"] ++ elmFiles)
+        Stdout report <- cmd "elm-verify-examples"
+        writeFileChanged out report
+
       "log/format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
@@ -125,12 +150,6 @@ main =
       -- the old Makefile, and probably has serious issues. As I make sure all
       -- the dependencies are actually tracked and satisfied, they'll move above
       -- this line.
-
-      phony "test" $ do
-        need ["log/node_modules.txt", "tests/elm-verify-examples.json"]
-        cmd_ "npx" "elm-verify-examples"
-        cmd_ "npx" "elm-test"
-        need ["log/axe-report.txt", "log/percy-tests.txt", "log/deprecated-imports-report.txt"]
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
