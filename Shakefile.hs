@@ -9,7 +9,7 @@ main =
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
-        shakeLintIgnore = ["node_modules/**/*", ".git/**/*"],
+        shakeLintIgnore = ["node_modules/**/*", ".git/**/*", "elm-stuff/**/*"],
         shakeThreads = 0,
         shakeChange = ChangeModtimeAndDigest
       }
@@ -66,6 +66,11 @@ main =
         Stdout report <- cmd "script/check-exposed.py"
         writeFileChanged out report
 
+      "log/documentation.json" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
+        need elmFiles
+        cmd_ "elm" "make" "--docs" out
+
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
@@ -101,10 +106,6 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      "log/documentation.json" %> \out -> do
-        need ["log/node_modules.txt"]
-        cmd_ "elm" "make" "--docs" out
 
       "styleguide-app/bundle.js" %> \out -> do
         need ["lib/index.js", "styleguide-app/manifest.js", "log/node_modules.txt"]
