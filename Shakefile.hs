@@ -9,7 +9,7 @@ main =
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
-        shakeLintIgnore = ["node_modules/**/*"],
+        shakeLintIgnore = ["node_modules/**/*", ".git/**/*"],
         shakeThreads = 0,
         shakeChange = ChangeModtimeAndDigest
       }
@@ -50,6 +50,11 @@ main =
 
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
+        -- npm looks in some unrelated files for whatever reason. We mark
+        -- them as used here to avoid getting linter errors.
+        needed ["README.md"]
+
+        -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
         Stdout report <- cmd "npm install"
         writeFileChanged out report
