@@ -76,15 +76,26 @@ main =
         need elmFiles
         cmd_ "elm" "make" "--docs" out
 
-      "_build/bundle.js" %> \out -> do
+      "public/bundle.js" %> \out -> do
         libJsFiles <- getDirectoryFiles "." ["lib/**/*.js"]
         need (["package.json", "lib/index.js", "styleguide-app/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
         cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
 
-      "_build/elm.js" %> \out -> do
+      "public/elm.js" %> \out -> do
         elmSources <- getDirectoryFiles "." ["styleguide-app/**/*.elm", "src/**/*.elm"]
         need elmSources
         cmd_ (Cwd "styleguide-app") "elm" "make" "Main.elm" "--output" (".." </> out)
+
+      "public/**/*" %> \out ->
+        copyFileChanged (replaceDirectory1 out "styleguide-app") out
+
+      "log/public.txt" %> \out -> do
+        styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
+        need
+          ( ["public/index.html", "public/elm.js", "public/bundle.js"]
+              ++ map (("public" </> "assets") </>) styleguideAssets
+          )
+        writeFileChanged out "build styleguide app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
@@ -121,17 +132,5 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      -- public folder for styleguide
-      "public/**/*" %> \out ->
-        copyFileChanged (replaceDirectory1 out "styleguide-app") out
-
-      "log/public.txt" %> \out -> do
-        styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
-        need
-          ( ["public/index.html", "public/elm.js", "public/bundle.js"]
-              ++ map (("public" </> "assets") </>) styleguideAssets
-          )
-        writeFileChanged out "done"
 
       phony "public" $ need ["log/public.txt"]
