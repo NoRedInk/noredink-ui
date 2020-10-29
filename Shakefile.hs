@@ -60,6 +60,12 @@ main =
         need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
         cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
 
+      "log/check-exposed.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
+        need (["elm.json", "script/check-exposed.py"] ++ elmFiles)
+        Stdout report <- cmd "script/check-exposed.py"
+        writeFileChanged out report
+
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
         -- npm looks in some unrelated files for whatever reason. We mark
@@ -95,11 +101,6 @@ main =
 
       phony "ci" $ do
         need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
-
-      "log/check-exposed.txt" %> \out -> do
-        need ["script/check-exposed.py"] -- TODO: need Elm files, elm JSON
-        Stdout report <- cmd "script/check-exposed.py"
-        writeFileChanged out report
 
       "log/documentation.json" %> \out -> do
         need ["log/node_modules.txt"]
