@@ -5,17 +5,24 @@ import Development.Shake.Util
 
 main :: IO ()
 main =
-  -- TODO: better shake options. Parallelism, hash changes.
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
+        shakeThreads = 0,
+        shakeChange = ChangeModtimeAndDigest,
+        -- we ignore a lot of generated/downloaded dependency files so
+        -- that the output of `shake --lint-fsatrace` is usable. There
+        -- are probably a few untracked dependencies due to these ignores
+        -- (in particular relying on scripts in `node_modules`) but the
+        -- additional benefits are marginal compared to the effort required
+        -- to get everything 100% buttoned down. Long term, it'd be better to
+        -- move node dependencies into nix (either by using proper packages
+        -- where available or npm2nix where not.)
         shakeLintIgnore =
           [ "node_modules/**/*",
             "elm-stuff/**/*",
             "styleguide-app/elm-stuff/**/*"
-          ],
-        shakeThreads = 0,
-        shakeChange = ChangeModtimeAndDigest
+          ]
       }
     $ do
       -- phonies. These provide a nice public API for using shake (`shake
