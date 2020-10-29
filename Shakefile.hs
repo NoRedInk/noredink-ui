@@ -38,8 +38,13 @@ main =
             "log/elm-test.txt",
             "log/axe-report.txt",
             "log/percy-tests.txt",
-            "log/deprecated-imports-report.txt"
+            "log/deprecated-imports-report.txt",
+            "log/check-exposed.txt",
+            "log/format.txt",
+            "log/documentation.json"
           ]
+
+      phony "ci" $ do need ["test", "public"]
 
       -- things that should be kept under version control
       "tests/elm-verify-examples.json" %> \out -> do
@@ -143,15 +148,3 @@ main =
         need ["package.json", "package-lock.json"]
         Stdout report <- cmd "npm install"
         writeFileChanged out report
-
-      -----------------
-      -- DANGER ZONE --
-      -----------------
-      --
-      -- everything below this line has been translated extremely literally from
-      -- the old Makefile, and probably has serious issues. As I make sure all
-      -- the dependencies are actually tracked and satisfied, they'll move above
-      -- this line.
-
-      phony "ci" $ do
-        need ["log/check-exposed.txt", "test", "log/format.txt", "log/documentation.json", "public"]
