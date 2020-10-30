@@ -10,4 +10,4 @@ install:
   - nix-shell
 
 script:
-  - nix-shell --pure --run 'shake ci'
+  - nix-shell --pure --run 'shake --verbose ci'
