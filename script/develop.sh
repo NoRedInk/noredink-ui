@@ -34,4 +34,4 @@ cleanup() {
 trap cleanup EXIT INT
 
 # start a watcher. This loops forever, so we don't need to loop ourselves.
-find src styleguide-app -type f -not -ipath '*elm-stuff*' | entr -c -p shake --compact "$SHAKE_TARGET"
+git ls-files | entr -c -p shake --compact "$SHAKE_TARGET"
