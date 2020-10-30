@@ -92,7 +92,7 @@ main =
             cmd (WithStdout True) (FileStdout out) "script/percy-tests.js"
 
       "log/axe-report.json" %> \out -> do
-        need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js"]
+        need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js", "log/public.txt"]
         cmd (WithStdout True) (FileStdout out) "script/run-axe.sh"
 
       "log/axe-report.txt" %> \out -> do
