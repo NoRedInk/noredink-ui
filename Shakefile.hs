@@ -141,7 +141,7 @@ main =
         -- npm looks in some unrelated files for whatever reason. We mark
         -- them as used here to avoid getting linter errors.
         gitHeads <- getDirectoryFiles "." [".git/refs/heads/*"]
-        needed (["README.md", ".git/HEAD"] ++ gitHeads)
+        trackRead (["README.md", ".git/HEAD"] ++ gitHeads)
 
         -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
