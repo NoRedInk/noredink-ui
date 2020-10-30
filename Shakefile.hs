@@ -58,6 +58,7 @@ main =
         cmd (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
 
       "script/deprecated-imports.csv" %> \out -> do
+        getEnv "DEPRECATED_MODULES"
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
         need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
         cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
@@ -99,10 +100,10 @@ main =
         cmd (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
 
       "log/deprecated-imports-report.txt" %> \out -> do
+        getEnv "DEPRECATED_MODULES"
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
         need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
-        -- still need to do something when this fails (e.g. run "check" instead of "report")
-        cmd (FileStdout out) "script/deprecated-imports.py" "report"
+        cmd (FileStdout out) "script/deprecated-imports.py" "check"
 
       "log/check-exposed.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
