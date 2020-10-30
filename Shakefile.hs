@@ -55,7 +55,7 @@ main =
       -- things that should be kept under version control
       "tests/elm-verify-examples.json" %> \out -> do
         need ["elm.json"]
-        writeStdoutIfChanged out (cmd "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json")
+        cmd (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
 
       "script/deprecated-imports.csv" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
@@ -68,46 +68,46 @@ main =
         -- I'm not sure why elm-test needs package.json, but fsatracing it
         -- reveals the dep, so in it goes!
         need (["package.json", "elm.json"] ++ elmFiles)
-        writeStdoutIfChanged out (cmd "elm-test")
+        cmd (FileStdout out) "elm-test"
 
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
         need (["tests/elm-verify-examples.json"] ++ elmFiles)
-        writeStdoutIfChanged out (cmd "elm-verify-examples")
+        cmd (FileStdout out) "elm-verify-examples"
 
       "log/format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
-        writeStdoutIfChanged out (cmd "elm-format" "--validate" placesToLook)
+        cmd (FileStdout out) "elm-format" "--validate" placesToLook
 
       "log/percy-tests.txt" %> \out -> do
         percyToken <- getEnv "PERCY_TOKEN"
         case percyToken of
           Nothing -> do
-            writeStdoutIfChanged out (cmd "echo" "Skipped running Percy tests, PERCY_TOKEN not set.")
+            writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
           Just _ -> do
             need ["log/npm-install.txt"]
-            writeStdoutIfChanged out (cmd "script/percy-tests.js")
+            cmd (FileStdout out) "script/percy-tests.js"
 
       "log/axe-report.json" %> \out -> do
         need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js"]
-        writeStdoutIfChanged out (cmd "script/run-axe.sh")
+        cmd (FileStdout out) "script/run-axe.sh"
 
       "log/axe-report.txt" %> \out -> do
         need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
-        writeStdoutIfChanged out (cmd "script/format-axe-report.sh" "log/axe-report.json")
+        cmd (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
 
       "log/deprecated-imports-report.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
         need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
         -- still need to do something when this fails (e.g. run "check" instead of "report")
-        writeStdoutIfChanged out (cmd "script/deprecated-imports.py" "report")
+        cmd (FileStdout out) "script/deprecated-imports.py" "report"
 
       "log/check-exposed.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
         need (["elm.json", "script/check-exposed.py"] ++ elmFiles)
-        writeStdoutIfChanged out (cmd "script/check-exposed.py")
+        cmd (FileStdout out) "script/check-exposed.py"
 
       "log/documentation.json" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
@@ -133,7 +133,7 @@ main =
           ( ["public/index.html", "public/elm.js", "public/bundle.js"]
               ++ map (("public" </> "assets") </>) styleguideAssets
           )
-        writeFileChanged out "build styleguide app successfully"
+        writeFileChanged out "built styleguide app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do
@@ -144,9 +144,4 @@ main =
 
         -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
-        writeStdoutIfChanged out (cmd "npm" "install")
-
-writeStdoutIfChanged :: FilePath -> Action (Stdout String) -> Action ()
-writeStdoutIfChanged out action = do
-  (Stdout stdout) <- action
-  writeFileChanged out stdout
+        cmd (FileStdout out) (FileStderr out) "npm" "install"
