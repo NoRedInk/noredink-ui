@@ -55,7 +55,7 @@ main =
       -- things that should be kept under version control
       "tests/elm-verify-examples.json" %> \out -> do
         need ["elm.json"]
-        cmd (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
+        cmd (WithStdout True) (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
 
       "script/deprecated-imports.csv" %> \out -> do
         getEnv "DEPRECATED_MODULES"
@@ -69,18 +69,18 @@ main =
         -- I'm not sure why elm-test needs package.json, but fsatracing it
         -- reveals the dep, so in it goes!
         need (["package.json", "elm.json"] ++ elmFiles)
-        cmd (FileStdout out) "elm-test"
+        cmd (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
         need (["tests/elm-verify-examples.json"] ++ elmFiles)
-        cmd (FileStdout out) "elm-verify-examples"
+        cmd (WithStdout True) (FileStdout out) "elm-verify-examples"
 
       "log/format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
-        cmd (FileStdout out) "elm-format" "--validate" placesToLook
+        cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
 
       "log/percy-tests.txt" %> \out -> do
         percyToken <- getEnv "PERCY_TOKEN"
@@ -89,26 +89,26 @@ main =
             writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
           Just _ -> do
             need ["log/npm-install.txt"]
-            cmd (FileStdout out) "script/percy-tests.js"
+            cmd (WithStdout True) (FileStdout out) "script/percy-tests.js"
 
       "log/axe-report.json" %> \out -> do
         need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js"]
-        cmd (FileStdout out) "script/run-axe.sh"
+        cmd (WithStdout True) (FileStdout out) "script/run-axe.sh"
 
       "log/axe-report.txt" %> \out -> do
         need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
-        cmd (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
+        cmd (WithStdout True) (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
 
       "log/deprecated-imports-report.txt" %> \out -> do
         getEnv "DEPRECATED_MODULES"
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
         need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
-        cmd (FileStdout out) "script/deprecated-imports.py" "check"
+        cmd (WithStdout True) (FileStdout out) "script/deprecated-imports.py" "check"
 
       "log/check-exposed.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
         need (["elm.json", "script/check-exposed.py"] ++ elmFiles)
-        cmd (FileStdout out) "script/check-exposed.py"
+        cmd (WithStdout True) (FileStdout out) "script/check-exposed.py"
 
       "log/documentation.json" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
@@ -145,4 +145,4 @@ main =
 
         -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
-        cmd (FileStdout out) (FileStderr out) "npm" "install"
+        cmd (WithStdout True) (FileStdout out) (FileStderr out) "npm" "install"
