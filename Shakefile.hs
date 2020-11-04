@@ -2,9 +2,14 @@ import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
+import qualified GHC.IO.Encoding
+import qualified System.IO
 
 main :: IO ()
-main =
+main = do
+  -- Work around `hGetContents: invalid argument (invalid byte sequence)` bug on
+  -- Nix: https://github.com/dhall-lang/dhall-haskell/issues/865
+  GHC.IO.Encoding.setLocaleEncoding System.IO.utf8
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
