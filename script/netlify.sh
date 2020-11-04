@@ -6,8 +6,8 @@ set -xeuo pipefail
 # https://github.com/netlify/build-image) but for now it's way simpler to just
 # accept that Netlify will need separate instructions.
 
-# get our dependencies
-npm install
+# get our dependencies (--ignore-scripts=false is needed for puppeteer)
+npm install --ignore-scripts=false
 npm install elm
 
 # make sure we're building into a clean folder
