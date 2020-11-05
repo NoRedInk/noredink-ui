@@ -10,7 +10,7 @@ main = do
   shakeArgs
     shakeOptions
       { shakeFiles = "_build",
-        shakeThreads = 24
+        shakeThreads = 15
       }
     $ do
       phony "public" $ need ["_build/asd"]
