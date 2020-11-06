@@ -336,7 +336,7 @@ testId id_ =
     Attribute
         (\attrs ->
             { attrs | customAttributes =
-                ExtraAttributes.testId id_ :: customAttributes
+                ExtraAttributes.testId id_ :: attrs.customAttributes
             }
         )
 
