@@ -9,7 +9,15 @@ module Nri.Ui.Modal.V11 exposing
     , isOpen
     )
 
-{-| Changes from V10:
+{-|
+
+# Patch changes:
+
+    - adds `testId` helper
+    - adds data-nri-descriptions to the header, content, and footer
+
+
+# Changes from V10:
 
   - remove `initOpen`
   - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`

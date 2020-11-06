@@ -24,6 +24,8 @@ Post-release patches:
   - fix overlay for onClick toolTip having a border
   - mark customTriggerAttributes as deprecated
   - add containerCss
+  - adds `nriDescription` and `testId`
+
 
 Changes from V1:
 

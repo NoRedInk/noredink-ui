@@ -1,6 +1,13 @@
 module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDescription, testId)
 
-{-| Extras for working with Html.Attributes.
+{-|
+
+# Patch changes:
+
+    - adds `nriDescription` and `testId` helpers
+
+
+Extras for working with Html.Attributes.
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 

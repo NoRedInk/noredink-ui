@@ -18,6 +18,7 @@ module Nri.Ui.Button.V10 exposing
 # Patch changes:
 
   - uses ClickableAttributes
+  - adds `nriDescription`, `testId`, and `id` helpers
 
 
 # Changes from V9:

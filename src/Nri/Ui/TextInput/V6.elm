@@ -9,6 +9,9 @@ module Nri.Ui.TextInput.V6 exposing
 
 {-|
 
+# Patch changes:
+
+  - adds `nriDescription` and `testId` helpers
 
 # Changes from V5
 

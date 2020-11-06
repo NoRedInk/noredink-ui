@@ -18,7 +18,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `css` helper
   - removes underline on hover and recolors to azureDark
   - removes bottom border
-
+  - adds `nriDescription`, `testId`, and `id` helpers
 
 # Changes from V2
 

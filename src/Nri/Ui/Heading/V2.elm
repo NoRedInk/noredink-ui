@@ -5,7 +5,14 @@ module Nri.Ui.Heading.V2 exposing
     , customAttr
     )
 
-{-| Headings with customization options for accessibility.
+{-|
+
+# Patch changes:
+
+    - adds `nriDescription`, `testId`, and `id` helpers
+
+
+Headings with customization options for accessibility.
 
 @docs h1, h2, h3, h4, h5
 
