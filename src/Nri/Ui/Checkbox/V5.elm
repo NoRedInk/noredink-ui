@@ -170,7 +170,7 @@ checkboxContainer model =
                     ]
                 ]
             , Css.Global.descendants
-                [ Css.Global.input [ position absolute, top (px 15), left (px 10) ]
+                [ Css.Global.input [ position absolute, top (calc (pct 50) minus (px 10)), left (px 10) ]
                 ]
             ]
         , Attributes.id (model.identifier ++ "-container")
