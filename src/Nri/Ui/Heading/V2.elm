@@ -1,7 +1,7 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
-    , Attribute, style, Style(..), css, error, errorIf
-    , custom
+    , Attribute, style, Style(..), error, errorIf
+    , custom, css
     , customAttr
     )
 
@@ -9,9 +9,9 @@ module Nri.Ui.Heading.V2 exposing
 
 @docs h1, h2, h3, h4, h5
 
-@docs Attribute, style, Style, css, error, errorIf
+@docs Attribute, style, Style, error, errorIf
 
-@docs custom
+@docs custom, css
 @docs customAttr
 
 -}
@@ -164,9 +164,12 @@ errorIf cond =
     else
         Skip
 
-{-| Set some custom attributes. You can do _anything_ here, but please don't make
-headers interactive! Use buttons or links instead so that keyboard and screen
+{-| Set some custom attributes.
+
+Please don't make headers interactive! Use buttons or links instead so that keyboard and screen
 reader users can use the site too.
+
+For style customizations, be sure to use the Heading.css helper.
 -}
 custom :  Html.Styled.Attribute msg -> Attribute msg
 custom =
