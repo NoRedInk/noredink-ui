@@ -18,7 +18,7 @@ module Nri.Ui.Heading.V2 exposing
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -103,7 +103,7 @@ view tag customizations attrs content =
             List.foldl customize customizations attrs
     in
     tag
-        (Html.Styled.Attributes.css [ getStyles final.style, Css.batch final.css ]
+        (Attributes.css [ getStyles final.style, Css.batch final.css ]
             :: final.attributes
         )
         content
@@ -172,7 +172,7 @@ reader users can use the site too.
 
 For style customizations, be sure to use the Heading.css helper.
 -}
-custom :  Html.Styled.Attribute msg -> Attribute msg
+custom :  List (Html.Styled.Attribute msg) -> Attribute msg
 custom =
     Attributes_
 
