@@ -161,7 +161,11 @@ checkboxContainer model =
         [ css
             [ display block
             , height inherit
-            --, Css.Global.descendants [ Css.Global.input [ display none ] ]
+            , position relative
+            , focusWithin
+                [ outline auto ]
+            , Css.Global.descendants
+                [ Css.Global.input [ position absolute, top (px 15), left (px 15) ] ]
             ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
@@ -201,17 +205,6 @@ viewEnabledLabel model labelView icon =
         , Aria.controls model.identifier
         , Widget.disabled False
         , Widget.checked (selectedToMaybe model.selected)
-        , Attributes.tabindex 0
-        , HtmlExtra.onKeyUp
-            { defaultOptions | preventDefault = True }
-            (\keyCode ->
-                -- 32 is the space bar, 13 is enter
-                if keyCode == 32 || keyCode == 13 then
-                    Just (onCheck model)
-
-                else
-                    Nothing
-            )
         , labelClass model.selected
         , css
             [ positioning
@@ -219,9 +212,8 @@ viewEnabledLabel model labelView icon =
             , cursor pointer
             ]
         ]
-        [ --viewIcon [] icon
-        --,
-            labelView model.label
+        [ viewIcon [] icon
+        , labelView model.label
         ]
 
 
