@@ -8,7 +8,9 @@ module Nri.Ui.Tooltip.V2 exposing
     , smallPadding, normalPadding, customPadding
     , onClick, onHover
     , open
-    , css, custom, customTriggerAttributes, containerCss
+    , css, containerCss
+    , custom, customTriggerAttributes
+    , nriDescription, testId
     , primaryLabel, auxillaryDescription
     )
 
@@ -66,7 +68,9 @@ Example usage:
 @docs smallPadding, normalPadding, customPadding
 @docs onClick, onHover
 @docs open
-@docs css, custom, customTriggerAttributes, containerCss
+@docs css, containerCss
+@docs custom, customTriggerAttributes
+@docs nriDescription, testId
 @docs primaryLabel, auxillaryDescription
 
 -}
@@ -86,6 +90,7 @@ import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
@@ -287,6 +292,18 @@ Instead, please use the `css` helper.
 custom : List (Html.Attribute Never) -> Attribute msg
 custom attributes =
     Attribute (\config -> { config | attributes = config.attributes ++ attributes })
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
 
 
 {-| DEPRECATED -- a future release will remove this helper.
