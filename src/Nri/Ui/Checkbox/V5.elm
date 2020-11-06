@@ -299,14 +299,20 @@ viewIcon styles icon =
             [ position absolute
             , left zero
             , top (calc (pct 50) minus (px 18))
-            , height (px 27)
             , border3 (px 2) solid transparent
             , padding (px 2)
             , borderRadius (px 3)
+            , height (Css.px 27)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
-        [ Html.div [ css [ backgroundColor Colors.white ] ]
+        [ Html.div
+            [ css
+                [ display inlineBlock
+                , backgroundColor Colors.white
+                , height (Css.px 27)
+                ]
+            ]
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
