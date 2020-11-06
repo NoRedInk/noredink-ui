@@ -1,10 +1,12 @@
-module Nri.Ui.RadioButton.V1 exposing (view, premium)
+module Nri.Ui.RadioButton.V2 exposing (view, premium)
 
-{-| Changes from monolith version:
-    - uses Nri.Ui.Data.PremiumLevel rather than monolith version
-    - uses Nri.Ui.Html.* rather than deprecated monolith extras
-    - removes Role.radio from the radio input's label
+{-| Changes from V1:
+
+- adds an outline when a radio button is focused
+- remove NoOp/event swallowing (it broke default radio button behavior)
+
 @docs view, premium
+
 -}
 
 import Accessibility.Styled exposing (..)
@@ -12,6 +14,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
+import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
@@ -62,11 +65,14 @@ view config =
 
 
 {-| A radio button that should be used for premium content.
+
 This radio button is locked when the premium level of the content
 is greater than the premium level of the teacher.
+
   - `onChange`: A message for when the user selected the radio button
   - `onLockedClick`: A message for when the user clicks a radio button they don't have PremiumLevel for.
     If you get this message, you should show an `Nri.Premium.Model.view`
+
 -}
 premium :
     { label : String
@@ -149,13 +155,18 @@ internalView config =
                 config.noOpMsg
     in
     Html.span
-        [ -- This is necessary to prevent event propagation.
-          -- See https://github.com/elm-lang/html/issues/96
-          Html.Styled.Attributes.map (always onContainerClick) <|
-            stopPropagationOn "click"
-                (Json.Decode.succeed ( "stop click propagation", True ))
-        , id (id_ ++ "-container")
+        [ id (id_ ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
+        , css
+            [ position relative
+            , pseudoClass "focus-within"
+                [ Css.Global.descendants
+                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                        [ borderColor (rgb 0 95 204)
+                        ]
+                    ]
+                ]
+            ]
         ]
         [ radio config.name
             (config.valueToString config.value)
@@ -168,23 +179,13 @@ internalView config =
               else
                 Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , css [ display none ]
+            , css [ position absolute, top (px 4), left (px 4) ]
             ]
         , Html.label
             [ for id_
             , Widget.disabled config.isLocked
             , Widget.checked (Just isChecked)
             , Aria.controls id_
-            , if not config.isLocked then
-                tabindex 0
-
-              else
-                Attributes.none
-            , if not config.isLocked && not config.isDisabled then
-                onEnterAndSpacePreventDefault (config.onSelect config.value)
-
-              else
-                Attributes.none
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
@@ -228,7 +229,7 @@ internalView config =
                         Style.invisible
 
                     ( True, False ) ->
-                        []
+                        [ css [ verticalAlign middle ] ]
 
                     ( True, True ) ->
                         [ css
@@ -305,12 +306,20 @@ radioInputIcon config =
             , position absolute
             , left zero
             , top zero
-            , Css.width (px 30)
-            , Css.height (px 30)
             , Css.property "transition" ".3s all"
+            , border3 (px 2) solid transparent
+            , borderRadius (px 50)
+            , padding (px 2)
+            , displayFlex
+            , justifyContent center
+            , alignItems center
             ]
         ]
-        [ Nri.Ui.Svg.V1.toHtml image ]
+        [ image
+            |> Nri.Ui.Svg.V1.withHeight (Css.px 26)
+            |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
+            |> Nri.Ui.Svg.V1.toHtml
+        ]
 
 
 unselectedSvg : Svg
