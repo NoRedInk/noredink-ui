@@ -162,10 +162,16 @@ checkboxContainer model =
             [ display block
             , height inherit
             , position relative
-            , focusWithin
-                [ outline auto ]
+            , pseudoClass "focus-within"
+                [ Css.Global.descendants
+                    [ Css.Global.class "checkbox-icon-container"
+                        [ borderColor (rgb 0 95 204)
+                        ]
+                    ]
+                ]
             , Css.Global.descendants
-                [ Css.Global.input [ position absolute, top (px 15), left (px 15) ] ]
+                [ Css.Global.input [ position absolute, top (px 15), left (px 10) ]
+                ]
             ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
@@ -292,11 +298,14 @@ viewIcon styles icon =
         [ css
             [ position absolute
             , left zero
-            , top (calc (pct 50) minus (px 14))
-            , width (px 24)
-            , height (px 24)
+            , top (calc (pct 50) minus (px 18))
+            , height (px 27)
+            , border3 (px 2) solid transparent
+            , padding (px 2)
+            , borderRadius (px 3)
             , Css.batch styles
             ]
+        , Attributes.class "checkbox-icon-container"
         ]
         [ Nri.Ui.Svg.V1.toHtml icon
         ]
