@@ -11,6 +11,7 @@ module Nri.Ui.Modal.V11 exposing
 
 {-|
 
+
 # Patch changes:
 
     - adds `testId` helper
@@ -165,7 +166,6 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Color.Transparent as Transparent
-import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Css exposing (..)
 import Css.Transitions
 import Html.Styled as Root
@@ -176,6 +176,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
@@ -343,8 +344,9 @@ testId : String -> Attribute
 testId id_ =
     Attribute
         (\attrs ->
-            { attrs | customAttributes =
-                ExtraAttributes.testId id_ :: attrs.customAttributes
+            { attrs
+                | customAttributes =
+                    ExtraAttributes.testId id_ :: attrs.customAttributes
             }
         )
 

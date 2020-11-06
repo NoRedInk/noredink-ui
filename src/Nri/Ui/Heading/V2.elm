@@ -7,10 +7,10 @@ module Nri.Ui.Heading.V2 exposing
 
 {-|
 
+
 # Patch changes:
 
     - adds `nriDescription`, `testId`, and `id` helpers
-
 
 Headings with customization options for accessibility.
 
@@ -172,14 +172,16 @@ errorIf cond =
     else
         Skip
 
+
 {-| Set some custom attributes.
 
 Please don't make headers interactive! Use buttons or links instead so that keyboard and screen
 reader users can use the site too.
 
 For style customizations, be sure to use the Heading.css helper.
+
 -}
-custom :  List (Html.Styled.Attribute msg) -> Attribute msg
+custom : List (Html.Styled.Attribute msg) -> Attribute msg
 custom =
     Attributes_
 

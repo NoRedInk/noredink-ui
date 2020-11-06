@@ -26,7 +26,6 @@ Post-release patches:
   - add containerCss
   - adds `nriDescription` and `testId`
 
-
 Changes from V1:
 
   - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}

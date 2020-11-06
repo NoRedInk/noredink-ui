@@ -20,6 +20,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - removes bottom border
   - adds `nriDescription`, `testId`, and `id` helpers
 
+
 # Changes from V2
 
   - Changes API to be attributes-based rather than config-based

@@ -9,9 +9,11 @@ module Nri.Ui.TextInput.V6 exposing
 
 {-|
 
+
 # Patch changes:
 
   - adds `nriDescription` and `testId` helpers
+
 
 # Changes from V5
 
@@ -234,6 +236,7 @@ to be more consistent with other helpers.
 
 Also, we should probably change the implemenation from `attr :: config.custom` to
 `config.custom ++ attributes` for a more intuitive and consistent API.
+
 -}
 custom : Html.Attribute msg -> Attribute msg
 custom attr =
