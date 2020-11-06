@@ -16,7 +16,7 @@ import Json.Decode exposing (Decoder)
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
+import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Util
 
