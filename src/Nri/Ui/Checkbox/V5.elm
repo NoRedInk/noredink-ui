@@ -303,11 +303,12 @@ viewIcon styles icon =
             , border3 (px 2) solid transparent
             , padding (px 2)
             , borderRadius (px 3)
-            , Css.batch styles
             ]
         , Attributes.class "checkbox-icon-container"
         ]
-        [ Nri.Ui.Svg.V1.toHtml icon
+        [ Html.div [ css [ backgroundColor Colors.white ] ]
+            [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
+            ]
         ]
 
 
