@@ -70,7 +70,6 @@ import Css exposing (Style)
 import Css.Global
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Html.Styled.Events as Events
 import Markdown.Block
 import Markdown.Inline
@@ -78,6 +77,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes

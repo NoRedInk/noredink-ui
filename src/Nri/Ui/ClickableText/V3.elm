@@ -6,7 +6,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
-    , custom, css
+    , custom, css, nriDescription, testId, id
     )
 
 {-|
@@ -62,7 +62,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 @docs icon
-@docs custom, css
+@docs custom, css, nriDescription, testId, id
 
 -}
 
@@ -73,6 +73,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -126,6 +127,24 @@ custom attributes =
                 | customAttributes = List.append config.customAttributes attributes
             }
         )
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| -}

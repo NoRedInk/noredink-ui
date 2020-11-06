@@ -51,8 +51,8 @@ import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Color, Style)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
