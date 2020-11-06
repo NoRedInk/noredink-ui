@@ -1,7 +1,8 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
-    , Attribute, placeholder, hiddenLabel, onBlur, autofocus, css, custom
+    , Attribute, placeholder, hiddenLabel, onBlur, autofocus
+    , css, custom, nriDescription, testId
     , disabled, loading, errorIf, errorMessage
     , writing
     )
@@ -23,7 +24,8 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus, css, custom
+@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus
+@docs css, custom, nriDescription, testId
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
 
@@ -222,16 +224,24 @@ css styles =
         \config -> { config | css = styles :: config.css }
 
 
-{-| Add any attribute to the input.
-
-NOTE: This is meant for short-term workarounds, and if you use this,
-consider adding to the TextInput API to support what you need.
-
+{-| Add any attribute to the input. Don't use this helper for adding css!
 -}
 custom : Html.Attribute msg -> Attribute msg
 custom attr =
     Attribute <|
         \config -> { config | custom = attr :: config.custom }
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ Extra.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ Extra.testId id_ ]
 
 
 {-| This is private. The public API only exposes `Attribute`.
