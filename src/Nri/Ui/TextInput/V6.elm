@@ -225,6 +225,12 @@ css styles =
 
 
 {-| Add any attribute to the input. Don't use this helper for adding css!
+
+TODO: in V7, change this helper's type to `List (Html.Attribute msg) -> Attribute msg`,
+to be more consistent with other helpers.
+
+Also, we should probably change the implemenation from `attr :: config.custom` to
+`config.custom ++ attributes` for a more intuitive and consistent API.
 -}
 custom : Html.Attribute msg -> Attribute msg
 custom attr =
@@ -235,13 +241,13 @@ custom attr =
 {-| -}
 nriDescription : String -> Attribute msg
 nriDescription description =
-    custom [ Extra.nriDescription description ]
+    custom (Extra.nriDescription description)
 
 
 {-| -}
 testId : String -> Attribute msg
 testId id_ =
-    custom [ Extra.testId id_ ]
+    custom (Extra.testId id_)
 
 
 {-| This is private. The public API only exposes `Attribute`.
