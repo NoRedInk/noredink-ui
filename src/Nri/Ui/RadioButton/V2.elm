@@ -43,7 +43,6 @@ view :
     , selectedValue : Maybe a
     , onSelect : a -> msg
     , showLabel : Bool
-    , noOpMsg : msg
     , valueToString : a -> String
     }
     -> Html msg
@@ -57,8 +56,7 @@ view config =
         , isLocked = False
         , isDisabled = False
         , onSelect = config.onSelect
-        , premiumMsg = config.noOpMsg
-        , noOpMsg = config.noOpMsg
+        , premiumMsg = Nothing
         , valueToString = config.valueToString
         , showPennant = False
         }
@@ -83,7 +81,6 @@ premium :
     , contentPremiumLevel : PremiumLevel
     , onSelect : a -> msg
     , premiumMsg : msg
-    , noOpMsg : msg
     , valueToString : a -> String
     , showPennant : Bool
     , isDisabled : Bool
@@ -107,8 +104,7 @@ premium config =
         , onSelect = config.onSelect
         , showLabel = True
         , valueToString = config.valueToString
-        , premiumMsg = config.premiumMsg
-        , noOpMsg = config.noOpMsg
+        , premiumMsg = Just config.premiumMsg
         , showPennant =
             case config.contentPremiumLevel of
                 PremiumLevel.Premium ->
@@ -131,8 +127,7 @@ type alias InternalConfig a msg =
     , isDisabled : Bool
     , onSelect : a -> msg
     , showLabel : Bool
-    , premiumMsg : msg
-    , noOpMsg : msg
+    , premiumMsg : Maybe msg
     , valueToString : a -> String
     , showPennant : Bool
     }
@@ -146,13 +141,6 @@ internalView config =
 
         id_ =
             config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
-
-        onContainerClick =
-            if config.isLocked then
-                config.premiumMsg
-
-            else
-                config.noOpMsg
     in
     Html.span
         [ id (id_ ++ "-container")
@@ -244,7 +232,8 @@ internalView config =
                     (\() ->
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag
-                            [ ClickableSvg.onClick config.premiumMsg
+                            [ Maybe.map ClickableSvg.onClick config.premiumMsg
+                                |> Maybe.withDefault (ClickableSvg.custom [])
                             , ClickableSvg.exactWidth 26
                             , ClickableSvg.exactHeight 24
                             , ClickableSvg.css [ marginLeft (px 8) ]

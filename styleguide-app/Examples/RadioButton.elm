@@ -23,7 +23,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V10 as Modal
-import Nri.Ui.RadioButton.V1 as RadioButton
+import Nri.Ui.RadioButton.V2 as RadioButton
 import Nri.Ui.Text.V5 as Text
 
 
@@ -31,7 +31,7 @@ import Nri.Ui.Text.V5 as Text
 example : Example State Msg
 example =
     { name = "RadioButton"
-    , version = 1
+    , version = 2
     , state = init
     , update = update
     , subscriptions = subscriptions
@@ -39,8 +39,16 @@ example =
     , categories = [ Layout ]
     , atomicDesignType = Atom
     , keyboardSupport =
-        -- TODO: fix keyboard support.
-        []
+        [ { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Move the focus & select the radio button to the left"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Move the focus & select the radio button to the right"
+          }
+        , { keys = [ Arrow KeyboardSupport.Space ]
+          , result = "Select the current radio button"
+          }
+        ]
     }
 
 
@@ -88,7 +96,6 @@ viewVanilla state =
             , name = "radio-button-examples"
             , selectedValue = state.selectedValue
             , onSelect = Select
-            , noOpMsg = NoOp
             , valueToString = identity
             }
         , RadioButton.view
@@ -98,7 +105,6 @@ viewVanilla state =
             , name = "radio-button-examples"
             , selectedValue = state.selectedValue
             , onSelect = Select
-            , noOpMsg = NoOp
             , valueToString = identity
             }
         ]
@@ -115,7 +121,6 @@ viewInvisibleLabel state =
             , name = "Secret"
             , selectedValue = state.selectedValue
             , onSelect = Select
-            , noOpMsg = NoOp
             , valueToString = \_ -> "i-m-a-secret-but-not-to-screen-readers"
             }
         ]
@@ -149,7 +154,6 @@ viewPremium state =
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
             , premiumMsg = ModalMsg (Modal.open "fake-id")
-            , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
@@ -170,7 +174,6 @@ viewPremium state =
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
             , premiumMsg = ModalMsg (Modal.open "fake-id")
-            , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
@@ -191,7 +194,6 @@ viewPremium state =
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
             , premiumMsg = ModalMsg (Modal.open "fake-id")
-            , noOpMsg = NoOp
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = True
