@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , icon, custom, css
+    , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
@@ -30,7 +30,7 @@ module Nri.Ui.Button.V10 exposing
 
 @docs button, link
 @docs Attribute
-@docs icon, custom, css
+@docs icon, custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -70,6 +70,7 @@ import Css exposing (Style)
 import Css.Global
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Html.Styled.Events as Events
 import Markdown.Block
 import Markdown.Inline
@@ -148,6 +149,24 @@ custom attributes =
                 | customAttributes = List.append config.customAttributes attributes
             }
         )
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| -}
