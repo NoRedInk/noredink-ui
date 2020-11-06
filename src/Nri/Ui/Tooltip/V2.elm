@@ -556,7 +556,7 @@ viewTooltip_ { trigger, id } tooltip =
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
-        , viewTooltip (Just id) tooltip
+        , viewTooltip id tooltip
         ]
 
 
@@ -611,17 +611,17 @@ hoverBridge { isOpen, direction, alignment } =
         text ""
 
 
-viewTooltip : Maybe String -> Tooltip msg -> Html msg
-viewTooltip maybeTooltipId config =
+viewTooltip : String -> Tooltip msg -> Html msg
+viewTooltip tooltipId config =
     if config.isOpen then
-        viewOpenTooltip maybeTooltipId config
+        viewOpenTooltip tooltipId config
 
     else
         text ""
 
 
-viewOpenTooltip : Maybe String -> Tooltip msg -> Html msg
-viewOpenTooltip maybeTooltipId config =
+viewOpenTooltip : String -> Tooltip msg -> Html msg
+viewOpenTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
@@ -654,13 +654,7 @@ viewOpenTooltip maybeTooltipId config =
              , Role.toolTip
              ]
                 ++ config.attributes
-                ++ (case maybeTooltipId of
-                        Just tooltipId ->
-                            [ Attributes.id tooltipId ]
-
-                        Nothing ->
-                            []
-                   )
+                ++ [ Attributes.id tooltipId ]
             )
             config.content
         ]
