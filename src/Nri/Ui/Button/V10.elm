@@ -508,7 +508,7 @@ renderLink ((ButtonOrLink config) as link_) =
 -- DELETE BUTTON
 
 
-{-| A delete button (blue X)
+{-| DEPRECATED: this should be removed in Button.V11.
 -}
 delete : { label : String, onClick : msg } -> Html msg
 delete config =
