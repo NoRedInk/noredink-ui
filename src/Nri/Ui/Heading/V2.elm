@@ -1,7 +1,7 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
     , Attribute, style, Style(..), error, errorIf
-    , custom, css
+    , custom, css, nriDescription, testId, id
     , customAttr
     )
 
@@ -11,7 +11,7 @@ module Nri.Ui.Heading.V2 exposing
 
 @docs Attribute, style, Style, error, errorIf
 
-@docs custom, css
+@docs custom, css, nriDescription, testId, id
 @docs customAttr
 
 -}
@@ -21,6 +21,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
 
 {-| Make a first-level heading (styled like a top-level heading by default.)
@@ -174,6 +175,24 @@ For style customizations, be sure to use the Heading.css helper.
 custom :  Html.Styled.Attribute msg -> Attribute msg
 custom =
     Attributes_
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| Please prefer `custom` for API consistency.
