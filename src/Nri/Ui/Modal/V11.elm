@@ -5,7 +5,7 @@ module Nri.Ui.Modal.V11 exposing
     , Attribute
     , info, warning
     , showTitle, hideTitle
-    , custom, css
+    , testId, css, custom
     , isOpen
     )
 
@@ -139,7 +139,7 @@ view model =
 @docs Attribute
 @docs info, warning
 @docs showTitle, hideTitle
-@docs custom, css
+@docs testId, css, custom
 
 
 ### State checks
@@ -157,6 +157,7 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Color.Transparent as Transparent
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Css exposing (..)
 import Css.Transitions
 import Html.Styled as Root
@@ -325,6 +326,17 @@ custom customAttributes =
             { attrs
                 | customAttributes =
                     List.append attrs.customAttributes customAttributes
+            }
+        )
+
+
+{-| -}
+testId : String -> Attribute
+testId id_ =
+    Attribute
+        (\attrs ->
+            { attrs | customAttributes =
+                ExtraAttributes.testId id_ :: customAttributes
             }
         )
 
