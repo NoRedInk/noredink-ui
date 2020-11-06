@@ -531,6 +531,7 @@ viewBackdrop wrapMsg color =
             , backgroundColor color
             ]
         , onClick (wrapMsg EscOrOverlayClicked)
+        , ExtraAttributes.nriDescription "modal-backdrop"
         ]
         []
 
@@ -561,6 +562,7 @@ viewModal config =
         [ h1
             [ id modalTitleId
             , Attrs.css (titleStyles config.titleColor config.visibleTitle)
+            , ExtraAttributes.nriDescription "modal-title"
             ]
             [ text config.title ]
         , div
@@ -629,6 +631,7 @@ viewInnerContent ({ visibleTitle } as config) =
     in
     div
         [ Attrs.css (modalTitleStyles ++ modalFooterStyles)
+        , ExtraAttributes.nriDescription "modal-content"
         ]
         [ div
             [ Attrs.css
@@ -707,6 +710,7 @@ viewFooter children =
                 , Css.paddingBottom (Css.px 30)
                 , Css.width (Css.pct 100)
                 ]
+            , ExtraAttributes.nriDescription "modal-footer"
             ]
             children
 
