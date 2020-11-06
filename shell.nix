@@ -26,8 +26,8 @@ stdenv.mkDerivation {
     elmPackages.elm-verify-examples
 
     # preview dependencies
-    entr
     python3
+    watchexec
 
     # stuff we need for running builds in a `nix-shell --pure` environment.
     which

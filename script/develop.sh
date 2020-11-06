@@ -17,9 +17,7 @@ changes, I'll try to be smart about what should change (things end up in the
 "public" directory if you want to check my work.) If you remove a file and it's
 still showing up, delete the "public" directory and restart me.
 
-To rebuild manually, hit SPC.
-
-To quit, hit "q" or ctrl-c.
+To quit, hit ctrl-c.
 
 == thaaat's it from me! =======================================================
 
@@ -34,4 +32,4 @@ cleanup() {
 trap cleanup EXIT INT
 
 # start a watcher. This loops forever, so we don't need to loop ourselves.
-git ls-files | entr -c -p shake --compact "$SHAKE_TARGET"
+exec watchexec --clear --postpone -- shake --compact "$SHAKE_TARGET"
