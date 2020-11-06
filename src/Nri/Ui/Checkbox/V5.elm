@@ -161,7 +161,7 @@ checkboxContainer model =
         [ css
             [ display block
             , height inherit
-            , Css.Global.descendants [ Css.Global.input [ display none ] ]
+            --, Css.Global.descendants [ Css.Global.input [ display none ] ]
             ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
@@ -219,8 +219,9 @@ viewEnabledLabel model labelView icon =
             , cursor pointer
             ]
         ]
-        [ viewIcon [] icon
-        , labelView model.label
+        [ --viewIcon [] icon
+        --,
+            labelView model.label
         ]
 
 
