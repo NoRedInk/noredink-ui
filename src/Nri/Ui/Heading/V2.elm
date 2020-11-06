@@ -1,6 +1,7 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
     , Attribute, style, Style(..), css, error, errorIf
+    , custom
     , customAttr
     )
 
@@ -10,6 +11,7 @@ module Nri.Ui.Heading.V2 exposing
 
 @docs Attribute, style, Style, css, error, errorIf
 
+@docs custom
 @docs customAttr
 
 -}
@@ -112,7 +114,7 @@ like `style` and `errorIf` in this module to construct them.
 type Attribute msg
     = Style_ Style
     | Css (List Css.Style)
-    | Attribute_ (Html.Styled.Attribute msg)
+    | Attributes_ (List (Html.Styled.Attribute msg))
     | Skip
 
 
@@ -162,14 +164,20 @@ errorIf cond =
     else
         Skip
 
-
-{-| Set some custom attribute. You can do _anything_ here, but please don't make
+{-| Set some custom attributes. You can do _anything_ here, but please don't make
 headers interactive! Use buttons or links instead so that keyboard and screen
 reader users can use the site too.
 -}
+custom :  Html.Styled.Attribute msg -> Attribute msg
+custom =
+    Attributes_
+
+
+{-| Please prefer `custom` for API consistency.
+-}
 customAttr : Html.Styled.Attribute msg -> Attribute msg
-customAttr =
-    Attribute_
+customAttr attr =
+    Attributes_ [ attr ]
 
 
 type alias Customizations msg =
@@ -188,8 +196,8 @@ customize attr customizations =
         Css css_ ->
             { customizations | css = customizations.css ++ css_ }
 
-        Attribute_ attribute ->
-            { customizations | attributes = customizations.attributes ++ [ attribute ] }
+        Attributes_ attributes ->
+            { customizations | attributes = customizations.attributes ++ attributes }
 
         Skip ->
             customizations
