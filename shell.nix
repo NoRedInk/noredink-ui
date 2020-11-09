@@ -31,6 +31,7 @@ stdenv.mkDerivation {
 
     # stuff we need for running builds in a `nix-shell --pure` environment.
     which
+    netcat-gnu
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
 
   # environment variables
