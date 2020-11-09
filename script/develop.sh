@@ -27,7 +27,6 @@ EOF
 ./script/serve.sh public &
 SERVER_PID=$!
 cleanup() {
-    echo "hi"
     kill "$SERVER_PID"
 }
 trap cleanup EXIT INT
