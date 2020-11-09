@@ -1,32 +1,13 @@
-sudo: false
-
-language: node_js
-node_js:
-  - "10"
+language: nix
 
 cache:
   directories:
+    - /nix
     - node_modules
-    - sysconfcpus
     - ~/.elm
 
-before_install:
-  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-  - | # epic build time improvement - see https://github.com/elm-lang/elm-compiler/issues/1473#issuecomment-245704142
-    if [ ! -d sysconfcpus/bin ];
-    then
-      git clone https://github.com/obmarg/libsysconfcpus.git;
-      cd libsysconfcpus;
-      ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
-      make && make install;
-      cd ..;
-    fi
-
 install:
-  - travis_retry $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make -B setup
+  - nix-shell
 
 script:
-  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make ci
-
-notifications:
-  email: false
+  - nix-shell --pure --run 'shake --verbose ci'
