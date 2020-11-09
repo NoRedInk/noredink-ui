@@ -782,7 +782,7 @@ sizeStyle size width =
                 Small ->
                     { fontSize = 15
                     , height = 36
-                    , imageHeight = 15
+                    , imageHeight = 12
                     , shadowHeight = 2
                     , minWidth = 75
                     }
@@ -790,7 +790,7 @@ sizeStyle size width =
                 Medium ->
                     { fontSize = 15
                     , height = 45
-                    , imageHeight = 15
+                    , imageHeight = 14
                     , shadowHeight = 3
                     , minWidth = 100
                     }
@@ -798,7 +798,7 @@ sizeStyle size width =
                 Large ->
                     { fontSize = 20
                     , height = 56
-                    , imageHeight = 20
+                    , imageHeight = 16
                     , shadowHeight = 4
                     , minWidth = 200
                     }

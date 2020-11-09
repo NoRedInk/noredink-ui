@@ -121,10 +121,12 @@ init =
 iconChoice : Control.Control (Maybe Svg)
 iconChoice =
     Control.choice
-        [ ( "Nothing", Control.value Nothing )
-        , ( "Just Performance", Control.value (Just UiIcon.performance) )
-        , ( "Just Share", Control.value (Just UiIcon.share) )
-        , ( "Just Download", Control.value (Just UiIcon.download) )
+        [ ( "none", Control.value Nothing )
+        , ( "preview", Control.value (Just UiIcon.preview) )
+        , ( "arrowLeft", Control.value (Just UiIcon.arrowLeft) )
+        , ( "performance", Control.value (Just UiIcon.performance) )
+        , ( "share", Control.value (Just UiIcon.share) )
+        , ( "download", Control.value (Just UiIcon.download) )
         ]
 
 
