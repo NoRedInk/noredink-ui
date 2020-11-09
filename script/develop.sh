@@ -27,9 +27,10 @@ EOF
 ./script/serve.sh public &
 SERVER_PID=$!
 cleanup() {
+    echo "hi"
     kill "$SERVER_PID"
 }
 trap cleanup EXIT INT
 
 # start a watcher. This loops forever, so we don't need to loop ourselves.
-exec watchexec --clear --postpone -- shake --compact "$SHAKE_TARGET"
+watchexec --clear --postpone -- shake --compact "$SHAKE_TARGET"
