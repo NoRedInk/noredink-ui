@@ -64,12 +64,12 @@ If you'd like to test your widget in the monolith before publishing, run `script
 Run tests with
 
 ```
-make test
+shake test
 ```
 
 ### CI (Travis)
 
-Travis will run `make ci` to verify everything looks good.
+Travis will run `shake ci` to verify everything looks good.
 You can run this locally to catch errors before you push!
 
 ## Deploying
