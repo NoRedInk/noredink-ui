@@ -18,5 +18,6 @@ mkdir public
 (cd styleguide-app && npx elm make Main.elm --output ../public/elm.js)
 npx browserify --entry styleguide-app/manifest.js --outfile public/bundle.js
 
-# copy assets
+# copy static files
 cp -r styleguide-app/assets public/assets
+cp styleguide-app/index.html public/index.html
