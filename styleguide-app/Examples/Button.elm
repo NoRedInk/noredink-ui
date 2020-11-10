@@ -140,10 +140,6 @@ viewButtonExamples (State control) =
         |> fromUnstyled
     , buttons model
     , toggleButtons
-    , Button.delete
-        { label = "Delete Something"
-        , onClick = ShowItWorked "ButtonExample" "delete"
-        }
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary

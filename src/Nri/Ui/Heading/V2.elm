@@ -1,24 +1,34 @@
 module Nri.Ui.Heading.V2 exposing
     ( h1, h2, h3, h4, h5
-    , Attribute, style, Style(..), css, error, errorIf
+    , Attribute, style, Style(..), error, errorIf
+    , custom, css, nriDescription, testId, id
     , customAttr
     )
 
-{-| Headings with customization options for accessibility.
+{-|
+
+
+# Patch changes:
+
+    - adds `nriDescription`, `testId`, and `id` helpers
+
+Headings with customization options for accessibility.
 
 @docs h1, h2, h3, h4, h5
 
-@docs Attribute, style, Style, css, error, errorIf
+@docs Attribute, style, Style, error, errorIf
 
+@docs custom, css, nriDescription, testId, id
 @docs customAttr
 
 -}
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
 
 {-| Make a first-level heading (styled like a top-level heading by default.)
@@ -100,7 +110,7 @@ view tag customizations attrs content =
             List.foldl customize customizations attrs
     in
     tag
-        (Html.Styled.Attributes.css [ getStyles final.style, Css.batch final.css ]
+        (Attributes.css [ getStyles final.style, Css.batch final.css ]
             :: final.attributes
         )
         content
@@ -112,7 +122,7 @@ like `style` and `errorIf` in this module to construct them.
 type Attribute msg
     = Style_ Style
     | Css (List Css.Style)
-    | Attribute_ (Html.Styled.Attribute msg)
+    | Attributes_ (List (Html.Styled.Attribute msg))
     | Skip
 
 
@@ -163,13 +173,42 @@ errorIf cond =
         Skip
 
 
-{-| Set some custom attribute. You can do _anything_ here, but please don't make
-headers interactive! Use buttons or links instead so that keyboard and screen
+{-| Set some custom attributes.
+
+Please don't make headers interactive! Use buttons or links instead so that keyboard and screen
 reader users can use the site too.
+
+For style customizations, be sure to use the Heading.css helper.
+
+-}
+custom : List (Html.Styled.Attribute msg) -> Attribute msg
+custom =
+    Attributes_
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
+
+
+{-| Please prefer `custom` for API consistency.
 -}
 customAttr : Html.Styled.Attribute msg -> Attribute msg
-customAttr =
-    Attribute_
+customAttr attr =
+    Attributes_ [ attr ]
 
 
 type alias Customizations msg =
@@ -188,8 +227,8 @@ customize attr customizations =
         Css css_ ->
             { customizations | css = customizations.css ++ css_ }
 
-        Attribute_ attribute ->
-            { customizations | attributes = customizations.attributes ++ [ attribute ] }
+        Attributes_ attributes ->
+            { customizations | attributes = customizations.attributes ++ attributes }
 
         Skip ->
             customizations

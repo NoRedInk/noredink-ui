@@ -5,11 +5,20 @@ module Nri.Ui.Modal.V11 exposing
     , Attribute
     , info, warning
     , showTitle, hideTitle
-    , custom, css
+    , testId, css, custom
     , isOpen
     )
 
-{-| Changes from V10:
+{-|
+
+
+# Patch changes:
+
+    - adds `testId` helper
+    - adds data-nri-descriptions to the header, content, and footer
+
+
+# Changes from V10:
 
   - remove `initOpen`
   - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
@@ -139,7 +148,7 @@ view model =
 @docs Attribute
 @docs info, warning
 @docs showTitle, hideTitle
-@docs custom, css
+@docs testId, css, custom
 
 
 ### State checks
@@ -167,6 +176,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
@@ -325,6 +335,18 @@ custom customAttributes =
             { attrs
                 | customAttributes =
                     List.append attrs.customAttributes customAttributes
+            }
+        )
+
+
+{-| -}
+testId : String -> Attribute
+testId id_ =
+    Attribute
+        (\attrs ->
+            { attrs
+                | customAttributes =
+                    ExtraAttributes.testId id_ :: attrs.customAttributes
             }
         )
 
@@ -519,6 +541,7 @@ viewBackdrop wrapMsg color =
             , backgroundColor color
             ]
         , onClick (wrapMsg EscOrOverlayClicked)
+        , ExtraAttributes.nriDescription "modal-backdrop"
         ]
         []
 
@@ -549,6 +572,7 @@ viewModal config =
         [ h1
             [ id modalTitleId
             , Attrs.css (titleStyles config.titleColor config.visibleTitle)
+            , ExtraAttributes.nriDescription "modal-title"
             ]
             [ text config.title ]
         , div
@@ -617,6 +641,7 @@ viewInnerContent ({ visibleTitle } as config) =
     in
     div
         [ Attrs.css (modalTitleStyles ++ modalFooterStyles)
+        , ExtraAttributes.nriDescription "modal-content"
         ]
         [ div
             [ Attrs.css
@@ -695,6 +720,7 @@ viewFooter children =
                 , Css.paddingBottom (Css.px 30)
                 , Css.width (Css.pct 100)
                 ]
+            , ExtraAttributes.nriDescription "modal-footer"
             ]
             children
 
