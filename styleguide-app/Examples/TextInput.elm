@@ -98,6 +98,7 @@ example =
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
                         , exampleConfig.maybeLoadingAttribute
+                        , Just (TextInput.id "hey-this-is-a-test-id")
                         ]
                     )
                     state.numberInputValue

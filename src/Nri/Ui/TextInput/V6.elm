@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email
     , Attribute, placeholder, hiddenLabel, onBlur, autofocus
-    , css, custom, nriDescription, testId
+    , css, custom, nriDescription, id, testId
     , disabled, loading, errorIf, errorMessage
     , writing
     )
@@ -30,7 +30,7 @@ module Nri.Ui.TextInput.V6 exposing
 ## Attributes
 
 @docs Attribute, placeholder, hiddenLabel, onBlur, autofocus
-@docs css, custom, nriDescription, testId
+@docs css, custom, nriDescription, id, testId
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
 
@@ -244,6 +244,17 @@ custom attr =
         \config -> { config | custom = attr :: config.custom }
 
 
+{-| Set a custom ID for this text input and label. If you don't set this,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one text input with the same label on
+the page. Use this to be more specific and avoid issues with duplicate IDs!
+-}
+id : String -> Attribute msg
+id id_ =
+    Attribute <|
+        \config -> { config | id = Just id_ }
+
+
 {-| -}
 nriDescription : String -> Attribute msg
 nriDescription description =
@@ -268,6 +279,7 @@ type alias Config msg =
     , onBlur : Maybe msg
     , autofocus : Bool
     , css : List (List Css.Style)
+    , id : Maybe String
     , custom : List (Html.Attribute msg)
     }
 
@@ -287,6 +299,7 @@ emptyConfig =
     , placeholder = Nothing
     , onBlur = Nothing
     , autofocus = False
+    , id = Nothing
     , css = []
     , custom = []
     }
@@ -316,7 +329,12 @@ view_ : String -> InputType value msg -> Config msg -> value -> Html msg
 view_ label (InputType inputType) config currentValue =
     let
         idValue =
-            generateId label
+            case config.id of
+                Just id_ ->
+                    id_
+
+                Nothing ->
+                    generateId label
 
         placeholder_ =
             config.placeholder
