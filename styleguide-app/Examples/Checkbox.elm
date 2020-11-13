@@ -52,7 +52,14 @@ example =
             ]
     , categories = [ Inputs ]
     , atomicDesignType = Molecule
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Enter ]
+          , result = "Select or deselect the checkbox"
+          }
+        , { keys = [ Space ]
+          , result = "Select or deselect the checkbox (may cause page scroll)"
+          }
+        ]
     }
 
 
