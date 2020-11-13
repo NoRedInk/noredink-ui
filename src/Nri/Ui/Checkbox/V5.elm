@@ -189,9 +189,12 @@ viewCheckbox :
 viewCheckbox model =
     Html.checkbox model.identifier
         (selectedToMaybe model.selected)
-        [ Events.onCheck (\_ -> onCheck model)
-        , Attributes.id model.identifier
-        , Attributes.disabled model.disabled
+        [ Attributes.id model.identifier
+        , if model.disabled then
+            Widget.disabled True
+
+          else
+            Events.onCheck (\_ -> onCheck model)
         ]
 
 
@@ -209,7 +212,6 @@ viewEnabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
-        , Widget.disabled False
         , Widget.checked (selectedToMaybe model.selected)
         , labelClass model.selected
         , css
@@ -240,7 +242,6 @@ viewDisabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
-        , Widget.disabled True
         , Widget.checked (selectedToMaybe model.selected)
         , labelClass model.selected
         , css
