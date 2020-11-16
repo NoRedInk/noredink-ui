@@ -100,7 +100,7 @@ spec =
                         , isLocked = False
                         , isPremium = False
                         }
-                        |> Query.has [ Selector.disabled False ]
+                        |> Query.hasNot [ Selector.attribute (Attributes.attribute "aria-disabled" "true") ]
             , test "is disabled when disabled = True" <|
                 \() ->
                     premiumView
@@ -109,6 +109,6 @@ spec =
                         , isLocked = False
                         , isPremium = False
                         }
-                        |> Query.has [ Selector.disabled True ]
+                        |> Query.has [ Selector.attribute (Attributes.attribute "aria-disabled" "true") ]
             ]
         ]
