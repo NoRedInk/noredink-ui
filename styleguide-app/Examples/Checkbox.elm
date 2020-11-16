@@ -46,7 +46,7 @@ example =
             , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
             , viewDisabledCheckbox "styleguide-checkbox-disabled" state
-            , viewMultilineCheckboxes
+            , viewMultilineCheckboxes state
             , h3 [] [ text "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
             ]
@@ -141,16 +141,20 @@ viewDisabledCheckbox id state =
         }
 
 
-viewMultilineCheckboxes : Html Msg
-viewMultilineCheckboxes =
+viewMultilineCheckboxes : State -> Html Msg
+viewMultilineCheckboxes state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
         [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
-        , Checkbox.viewWithLabel
-            { identifier = "fake-not-selected"
+        , let
+            id =
+                "styleguide-checkbox-multiline"
+          in
+          Checkbox.viewWithLabel
+            { identifier = id
             , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake-not-selected"
-            , selected = Checkbox.NotSelected
+            , setterMsg = ToggleCheck id
+            , selected = isSelected id state
             , disabled = False
             , theme = Checkbox.Square
             }
