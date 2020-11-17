@@ -161,7 +161,17 @@ checkboxContainer model =
         [ css
             [ display block
             , height inherit
-            , Css.Global.descendants [ Css.Global.input [ display none ] ]
+            , position relative
+            , pseudoClass "focus-within"
+                [ Css.Global.descendants
+                    [ Css.Global.class "checkbox-icon-container"
+                        [ borderColor (rgb 0 95 204)
+                        ]
+                    ]
+                ]
+            , Css.Global.descendants
+                [ Css.Global.input [ position absolute, top (calc (pct 50) minus (px 10)), left (px 10) ]
+                ]
             ]
         , Attributes.id (model.identifier ++ "-container")
         , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
@@ -179,9 +189,12 @@ viewCheckbox :
 viewCheckbox model =
     Html.checkbox model.identifier
         (selectedToMaybe model.selected)
-        [ Events.onCheck (\_ -> onCheck model)
-        , Attributes.id model.identifier
-        , Attributes.disabled model.disabled
+        [ Attributes.id model.identifier
+        , if model.disabled then
+            Widget.disabled True
+
+          else
+            Events.onCheck (\_ -> onCheck model)
         ]
 
 
@@ -199,19 +212,7 @@ viewEnabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
-        , Widget.disabled False
         , Widget.checked (selectedToMaybe model.selected)
-        , Attributes.tabindex 0
-        , HtmlExtra.onKeyUp
-            { defaultOptions | preventDefault = True }
-            (\keyCode ->
-                -- 32 is the space bar, 13 is enter
-                if keyCode == 32 || keyCode == 13 then
-                    Just (onCheck model)
-
-                else
-                    Nothing
-            )
         , labelClass model.selected
         , css
             [ positioning
@@ -241,7 +242,6 @@ viewDisabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
         , Aria.controls model.identifier
-        , Widget.disabled True
         , Widget.checked (selectedToMaybe model.selected)
         , labelClass model.selected
         , css
@@ -299,13 +299,23 @@ viewIcon styles icon =
         [ css
             [ position absolute
             , left zero
-            , top (calc (pct 50) minus (px 14))
-            , width (px 24)
-            , height (px 24)
-            , Css.batch styles
+            , top (calc (pct 50) minus (px 18))
+            , border3 (px 2) solid transparent
+            , padding (px 2)
+            , borderRadius (px 3)
+            , height (Css.px 27)
             ]
+        , Attributes.class "checkbox-icon-container"
         ]
-        [ Nri.Ui.Svg.V1.toHtml icon
+        [ Html.div
+            [ css
+                [ display inlineBlock
+                , backgroundColor Colors.white
+                , height (Css.px 27)
+                ]
+            ]
+            [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
+            ]
         ]
 
 
