@@ -163,7 +163,12 @@ internalView config =
               else
                 Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , css [ position absolute, top (px 4), left (px 4) ]
+            , css
+                [ position absolute
+                , top (px 4)
+                , left (px 4)
+                , opacity zero
+                ]
             ]
         , Html.label
             [ for id_
