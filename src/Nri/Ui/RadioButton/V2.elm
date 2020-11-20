@@ -2,8 +2,8 @@ module Nri.Ui.RadioButton.V2 exposing (view, premium)
 
 {-| Changes from V1:
 
-- adds an outline when a radio button is focused
-- remove NoOp/event swallowing (it broke default radio button behavior)
+  - adds an outline when a radio button is focused
+  - remove NoOp/event swallowing (it broke default radio button behavior)
 
 @docs view, premium
 
@@ -42,7 +42,6 @@ view :
     , name : String
     , selectedValue : Maybe a
     , onSelect : a -> msg
-    , showLabel : Bool
     , valueToString : a -> String
     }
     -> Html msg
@@ -52,7 +51,6 @@ view config =
         , value = config.value
         , name = config.name
         , selectedValue = config.selectedValue
-        , showLabel = config.showLabel
         , isLocked = False
         , isDisabled = False
         , onSelect = config.onSelect
@@ -102,7 +100,6 @@ premium config =
         , isLocked = isLocked
         , isDisabled = config.isDisabled
         , onSelect = config.onSelect
-        , showLabel = True
         , valueToString = config.valueToString
         , premiumMsg = Just config.premiumMsg
         , showPennant =
@@ -126,7 +123,6 @@ type alias InternalConfig a msg =
     , isLocked : Bool
     , isDisabled : Bool
     , onSelect : a -> msg
-    , showLabel : Bool
     , premiumMsg : Maybe msg
     , valueToString : a -> String
     , showPennant : Bool
@@ -179,15 +175,7 @@ internalView config =
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ if not config.showLabel then
-                    -- Invisible label styles
-                    Css.batch
-                        [ Css.height (px 28) -- Hardcode height for invisible labels so radio button image appears- normally, label height is set by the text
-                        , padding4 (px 4) zero (px 4) (px 28)
-                        ]
-
-                  else
-                    padding4 (px 4) zero (px 4) (px 40)
+                [ padding4 (px 4) zero (px 4) (px 40)
                 , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
@@ -212,20 +200,16 @@ internalView config =
                 , isChecked = isChecked
                 }
             , span
-                (case ( config.showLabel, config.showPennant ) of
-                    ( False, _ ) ->
-                        Style.invisible
-
-                    ( True, False ) ->
-                        [ css [ verticalAlign middle ] ]
-
-                    ( True, True ) ->
-                        [ css
-                            [ displayFlex
-                            , alignItems center
-                            , Css.height (px 20)
-                            ]
+                (if config.showPennant then
+                    [ css
+                        [ displayFlex
+                        , alignItems center
+                        , Css.height (px 20)
                         ]
+                    ]
+
+                 else
+                    [ css [ verticalAlign middle ] ]
                 )
                 [ Html.text config.label
                 , viewIf

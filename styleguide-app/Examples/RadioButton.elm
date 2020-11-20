@@ -58,7 +58,6 @@ view model =
     [ Heading.h3 [] [ Html.text "RadioButton" ]
     , Heading.h4 [] [ Html.text "view" ]
     , viewVanilla model
-    , viewInvisibleLabel model
     , Heading.h4 [] [ Html.text "premium" ]
     , viewPremium model
     , Modal.info
@@ -91,7 +90,6 @@ viewVanilla state =
     div [ css [ Css.margin (Css.px 8) ] ]
         [ RadioButton.view
             { label = "Cats"
-            , showLabel = True
             , value = "Cats"
             , name = "radio-button-examples"
             , selectedValue = state.selectedValue
@@ -100,28 +98,11 @@ viewVanilla state =
             }
         , RadioButton.view
             { label = "Dogs"
-            , showLabel = True
             , value = "Dogs"
             , name = "radio-button-examples"
             , selectedValue = state.selectedValue
             , onSelect = Select
             , valueToString = identity
-            }
-        ]
-
-
-viewInvisibleLabel : State -> Html Msg
-viewInvisibleLabel state =
-    div [ css [ Css.margin (Css.px 8) ] ]
-        [ Heading.h4 [] [ Html.text "Invisible Label" ]
-        , RadioButton.view
-            { label = "Shh"
-            , showLabel = False
-            , value = "I'm a secret... but not to screen readers"
-            , name = "Secret"
-            , selectedValue = state.selectedValue
-            , onSelect = Select
-            , valueToString = \_ -> "i-m-a-secret-but-not-to-screen-readers"
             }
         ]
 
