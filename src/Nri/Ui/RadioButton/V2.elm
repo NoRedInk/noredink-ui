@@ -156,7 +156,7 @@ internalView config =
             (config.valueToString config.value)
             isChecked
             [ id id_
-            , Html.Styled.Attributes.disabled config.isLocked
+            , Widget.disabled (config.isLocked || config.isDisabled)
             , if not config.isDisabled then
                 onClick (config.onSelect config.value)
 
