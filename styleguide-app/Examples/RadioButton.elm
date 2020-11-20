@@ -39,13 +39,13 @@ example =
     , categories = [ Layout ]
     , atomicDesignType = Atom
     , keyboardSupport =
-        [ { keys = [ Arrow KeyboardSupport.Left ]
+        [ { keys = [ Arrow Left ]
           , result = "Move the focus & select the radio button to the left"
           }
-        , { keys = [ Arrow KeyboardSupport.Right ]
+        , { keys = [ Arrow Right ]
           , result = "Move the focus & select the radio button to the right"
           }
-        , { keys = [ Arrow KeyboardSupport.Space ]
+        , { keys = [ Space ]
           , result = "Select the current radio button"
           }
         ]
