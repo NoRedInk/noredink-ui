@@ -172,9 +172,6 @@ internalView config =
             ]
         , Html.label
             [ for id_
-            , Widget.disabled config.isLocked
-            , Widget.checked (Just isChecked)
-            , Aria.controls id_
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
