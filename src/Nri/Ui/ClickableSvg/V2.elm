@@ -8,10 +8,15 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
-    , custom, css
+    , custom, css, nriDescription, testId, id
     )
 
 {-|
+
+
+# Patch changes:
+
+    - adds `nriDescription`, `testId`, and `id` helpers
 
 
 # Create a button or link
@@ -42,7 +47,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 @docs withBorder
 @docs primary, secondary, danger, dangerSecondary
 
-@docs custom, css
+@docs custom, css, nriDescription, testId, id
 
 -}
 
@@ -52,6 +57,7 @@ import Css exposing (Color, Style)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -314,6 +320,24 @@ custom attributes =
                 | customAttributes = List.append config.customAttributes attributes
             }
         )
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| -}

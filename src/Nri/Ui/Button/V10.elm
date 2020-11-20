@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , icon, custom, css
+    , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large
@@ -18,6 +18,7 @@ module Nri.Ui.Button.V10 exposing
 # Patch changes:
 
   - uses ClickableAttributes
+  - adds `nriDescription`, `testId`, and `id` helpers
 
 
 # Changes from V9:
@@ -30,7 +31,7 @@ module Nri.Ui.Button.V10 exposing
 
 @docs button, link
 @docs Attribute
-@docs icon, custom, css
+@docs icon, custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -77,6 +78,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
@@ -148,6 +150,24 @@ custom attributes =
                 | customAttributes = List.append config.customAttributes attributes
             }
         )
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| -}
@@ -508,7 +528,7 @@ renderLink ((ButtonOrLink config) as link_) =
 -- DELETE BUTTON
 
 
-{-| A delete button (blue X)
+{-| DEPRECATED: this should be removed in Button.V11.
 -}
 delete : { label : String, onClick : msg } -> Html msg
 delete config =

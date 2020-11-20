@@ -1,10 +1,17 @@
-module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank)
+module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDescription, testId)
 
-{-| Extras for working with Html.Attributes.
+{-|
+
+
+# Patch changes:
+
+    - adds `nriDescription` and `testId` helpers
+
+Extras for working with Html.Attributes.
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 
-@docs none, includeIf, targetBlank
+@docs none, includeIf, targetBlank, nriDescription, testId
 
 -}
 
@@ -55,3 +62,16 @@ targetBlank =
     [ Attributes.target "_blank"
     , Attributes.rel "noopener noreferrer"
     ]
+
+
+{-| See Cypress best practices: <https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements>
+-}
+testId : String -> Attribute msg
+testId id =
+    Attributes.attribute "data-testid" id
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    Attributes.attribute "data-nri-description" description

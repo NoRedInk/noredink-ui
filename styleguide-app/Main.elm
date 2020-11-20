@@ -15,7 +15,7 @@ import Html.Attributes
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Css.VendorPrefixed as VendorPrefixed
+import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Routes as Routes exposing (Route(..))
