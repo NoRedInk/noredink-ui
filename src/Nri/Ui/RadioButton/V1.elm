@@ -1,10 +1,13 @@
 module Nri.Ui.RadioButton.V1 exposing (view, premium)
 
 {-| Changes from monolith version:
-    - uses Nri.Ui.Data.PremiumLevel rather than monolith version
-    - uses Nri.Ui.Html.* rather than deprecated monolith extras
-    - removes Role.radio from the radio input's label
+
+  - uses Nri.Ui.Data.PremiumLevel rather than monolith version
+  - uses Nri.Ui.Html.\* rather than deprecated monolith extras
+  - removes Role.radio from the radio input's label
+
 @docs view, premium
+
 -}
 
 import Accessibility.Styled exposing (..)
@@ -64,9 +67,11 @@ view config =
 {-| A radio button that should be used for premium content.
 This radio button is locked when the premium level of the content
 is greater than the premium level of the teacher.
+
   - `onChange`: A message for when the user selected the radio button
   - `onLockedClick`: A message for when the user clicks a radio button they don't have PremiumLevel for.
     If you get this message, you should show an `Nri.Premium.Model.view`
+
 -}
 premium :
     { label : String
