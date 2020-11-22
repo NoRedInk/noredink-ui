@@ -2,6 +2,46 @@
 # be overwritten!
 
 roots = ['styleguide-app']
+[forbidden.Accessibility]
+hint = 'Use Accessibility.Styled'
+
+[forbidden."Accessibility.Aria"]
+hint = 'Use Accessibility.Styled.Aria'
+
+[forbidden."Accessibility.Key"]
+hint = 'Use Accessibility.Styled.Key'
+
+[forbidden."Accessibility.Landmark"]
+hint = 'Use Accessibility.Styled.Landmark'
+
+[forbidden."Accessibility.Live"]
+hint = 'Use Accessibility.Styled.Live'
+
+[forbidden."Accessibility.Role"]
+hint = 'Use Accessibility.Styled.Role'
+usages = [
+    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
+]
+
+[forbidden."Accessibility.Style"]
+hint = 'Use Accessibility.Styled.Style'
+
+[forbidden."Accessibility.Widget"]
+hint = 'Use Accessibility.Widgetd.Widget'
+
+[forbidden.Html]
+hint = 'Use Html.Styled'
+usages = [
+    'styleguide-app/../src/Nri/Ui/Button/V8.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
+    'styleguide-app/Examples/Modal.elm',
+    'styleguide-app/Main.elm',
+]
+
 [forbidden."Nri.Ui.Accordion.V1"]
 hint = 'latest is V2'
 

@@ -34,8 +34,4 @@ stdenv.mkDerivation {
     which
     netcat-gnu
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
-
-  # environment variables
-  DEPRECATED_MODULES =
-    "Html,Accessibility,Accessibility.Aria,Accessibility.Key,Accessibility.Landmark,Accessibility.Live,Accessibility.Role,Accessibility.Style,Accessibility.Widget";
 }
