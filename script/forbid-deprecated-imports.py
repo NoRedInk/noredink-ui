@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 import json
+import os.path as path
 import re
 import subprocess
 
-with open('elm.json', 'r') as fh:
+HERE = path.realpath(path.abspath(path.join(path.dirname(__file__), '..')))
+
+with open(path.join(HERE, 'elm.json'), 'r') as fh:
     modules = json.load(fh)["exposed-modules"]
 
 widgets = {}
