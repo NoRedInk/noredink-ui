@@ -49,7 +49,7 @@ main = do
             "log/elm-test.txt",
             "log/axe-report.txt",
             "log/percy-tests.txt",
-            "log/deprecated-imports-report.txt",
+            "log/forbidden-imports-report.txt",
             "log/check-exposed.txt",
             "log/format.txt",
             "log/documentation.json"
@@ -62,11 +62,9 @@ main = do
         need ["elm.json"]
         cmd (WithStdout True) (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
 
-      "script/deprecated-imports.csv" %> \out -> do
-        getEnv "DEPRECATED_MODULES"
-        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
-        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
-        cmd_ "script/deprecated-imports.py" "--imports-file" out "update"
+      "forbidden-imports.toml" %> \out -> do
+        need ["elm.json", "script/forbid-deprecated-imports.py"]
+        cmd (WithStdout True) "script/forbid-deprecated-imports.py"
 
       -- temporary files, used to produce CI reports
       "log/elm-test.txt" %> \out -> do
@@ -104,11 +102,11 @@ main = do
         need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
         cmd (WithStdout True) (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
 
-      "log/deprecated-imports-report.txt" %> \out -> do
-        getEnv "DEPRECATED_MODULES"
+      "log/forbidden-imports-report.txt" %> \out -> do
+        need ["forbidden-imports.toml"]
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
-        need (["elm.json", "script/deprecated-imports.py"] ++ elmFiles)
-        cmd (WithStdout True) (FileStdout out) "script/deprecated-imports.py" "check"
+        need (["forbidden-imports.toml"] ++ elmFiles)
+        cmd (WithStdout True) (FileStdout out) "elm-forbid-import" "check"
 
       "log/check-exposed.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
