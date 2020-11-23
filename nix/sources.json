@@ -1,7 +1,7 @@
 {
     "elm-forbid-import": {
         "branch": "main",
-        "repo": "ssh://git@git.bytes.zone:2222/brian/elm-forbid-import.git",
+        "repo": "https://git.bytes.zone/brian/elm-forbid-import.git",
         "rev": "a678d730d2a7fc551472db7a0beabc510638fbec",
         "type": "git"
     },
