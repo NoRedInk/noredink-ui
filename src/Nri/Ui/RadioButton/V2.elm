@@ -1,10 +1,9 @@
-module Nri.Ui.RadioButton.V1 exposing (view, premium)
+module Nri.Ui.RadioButton.V2 exposing (view, premium)
 
-{-| Changes from monolith version:
+{-| Changes from V1:
 
-  - uses Nri.Ui.Data.PremiumLevel rather than monolith version
-  - uses Nri.Ui.Html.\* rather than deprecated monolith extras
-  - removes Role.radio from the radio input's label
+  - adds an outline when a radio button is focused
+  - remove NoOp/event swallowing (it broke default radio button behavior)
 
 @docs view, premium
 
@@ -15,6 +14,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
+import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
@@ -42,8 +42,6 @@ view :
     , name : String
     , selectedValue : Maybe a
     , onSelect : a -> msg
-    , showLabel : Bool
-    , noOpMsg : msg
     , valueToString : a -> String
     }
     -> Html msg
@@ -53,18 +51,17 @@ view config =
         , value = config.value
         , name = config.name
         , selectedValue = config.selectedValue
-        , showLabel = config.showLabel
         , isLocked = False
         , isDisabled = False
         , onSelect = config.onSelect
-        , premiumMsg = config.noOpMsg
-        , noOpMsg = config.noOpMsg
+        , premiumMsg = Nothing
         , valueToString = config.valueToString
         , showPennant = False
         }
 
 
 {-| A radio button that should be used for premium content.
+
 This radio button is locked when the premium level of the content
 is greater than the premium level of the teacher.
 
@@ -82,7 +79,6 @@ premium :
     , contentPremiumLevel : PremiumLevel
     , onSelect : a -> msg
     , premiumMsg : msg
-    , noOpMsg : msg
     , valueToString : a -> String
     , showPennant : Bool
     , isDisabled : Bool
@@ -104,10 +100,8 @@ premium config =
         , isLocked = isLocked
         , isDisabled = config.isDisabled
         , onSelect = config.onSelect
-        , showLabel = True
         , valueToString = config.valueToString
-        , premiumMsg = config.premiumMsg
-        , noOpMsg = config.noOpMsg
+        , premiumMsg = Just config.premiumMsg
         , showPennant =
             case config.contentPremiumLevel of
                 PremiumLevel.Premium ->
@@ -129,9 +123,7 @@ type alias InternalConfig a msg =
     , isLocked : Bool
     , isDisabled : Bool
     , onSelect : a -> msg
-    , showLabel : Bool
-    , premiumMsg : msg
-    , noOpMsg : msg
+    , premiumMsg : Maybe msg
     , valueToString : a -> String
     , showPennant : Bool
     }
@@ -145,65 +137,47 @@ internalView config =
 
         id_ =
             config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
-
-        onContainerClick =
-            if config.isLocked then
-                config.premiumMsg
-
-            else
-                config.noOpMsg
     in
     Html.span
-        [ -- This is necessary to prevent event propagation.
-          -- See https://github.com/elm-lang/html/issues/96
-          Html.Styled.Attributes.map (always onContainerClick) <|
-            stopPropagationOn "click"
-                (Json.Decode.succeed ( "stop click propagation", True ))
-        , id (id_ ++ "-container")
+        [ id (id_ ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
+        , css
+            [ position relative
+            , pseudoClass "focus-within"
+                [ Css.Global.descendants
+                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                        [ borderColor (rgb 0 95 204)
+                        ]
+                    ]
+                ]
+            ]
         ]
         [ radio config.name
             (config.valueToString config.value)
             isChecked
             [ id id_
-            , Html.Styled.Attributes.disabled config.isLocked
+            , Widget.disabled (config.isLocked || config.isDisabled)
             , if not config.isDisabled then
                 onClick (config.onSelect config.value)
 
               else
                 Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , css [ display none ]
+            , css
+                [ position absolute
+                , top (px 4)
+                , left (px 4)
+                , opacity zero
+                ]
             ]
         , Html.label
             [ for id_
-            , Widget.disabled config.isLocked
-            , Widget.checked (Just isChecked)
-            , Aria.controls id_
-            , if not config.isLocked then
-                tabindex 0
-
-              else
-                Attributes.none
-            , if not config.isLocked && not config.isDisabled then
-                onEnterAndSpacePreventDefault (config.onSelect config.value)
-
-              else
-                Attributes.none
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ if not config.showLabel then
-                    -- Invisible label styles
-                    Css.batch
-                        [ Css.height (px 28) -- Hardcode height for invisible labels so radio button image appears- normally, label height is set by the text
-                        , padding4 (px 4) zero (px 4) (px 28)
-                        ]
-
-                  else
-                    padding4 (px 4) zero (px 4) (px 40)
+                [ padding4 (px 4) zero (px 4) (px 40)
                 , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
@@ -228,27 +202,24 @@ internalView config =
                 , isChecked = isChecked
                 }
             , span
-                (case ( config.showLabel, config.showPennant ) of
-                    ( False, _ ) ->
-                        Style.invisible
-
-                    ( True, False ) ->
-                        []
-
-                    ( True, True ) ->
-                        [ css
-                            [ displayFlex
-                            , alignItems center
-                            , Css.height (px 20)
-                            ]
+                (if config.showPennant then
+                    [ css
+                        [ displayFlex
+                        , alignItems center
+                        , Css.height (px 20)
                         ]
+                    ]
+
+                 else
+                    [ css [ verticalAlign middle ] ]
                 )
                 [ Html.text config.label
                 , viewIf
                     (\() ->
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag
-                            [ ClickableSvg.onClick config.premiumMsg
+                            [ Maybe.map ClickableSvg.onClick config.premiumMsg
+                                |> Maybe.withDefault (ClickableSvg.custom [])
                             , ClickableSvg.exactWidth 26
                             , ClickableSvg.exactHeight 24
                             , ClickableSvg.css [ marginLeft (px 8) ]
@@ -310,12 +281,20 @@ radioInputIcon config =
             , position absolute
             , left zero
             , top zero
-            , Css.width (px 30)
-            , Css.height (px 30)
             , Css.property "transition" ".3s all"
+            , border3 (px 2) solid transparent
+            , borderRadius (px 50)
+            , padding (px 2)
+            , displayFlex
+            , justifyContent center
+            , alignItems center
             ]
         ]
-        [ Nri.Ui.Svg.V1.toHtml image ]
+        [ image
+            |> Nri.Ui.Svg.V1.withHeight (Css.px 26)
+            |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
+            |> Nri.Ui.Svg.V1.toHtml
+        ]
 
 
 unselectedSvg : Svg
