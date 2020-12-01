@@ -73,6 +73,9 @@ usages = ['styleguide-app/Examples/RadioButton.elm']
 [forbidden."Nri.Ui.Modal.V3"]
 hint = 'latest is V11'
 
+[forbidden."Nri.Ui.RadioButton.V1"]
+hint = 'latest is V2'
+
 [forbidden."Nri.Ui.SegmentedControl.V11"]
 hint = 'latest is V13'
 
