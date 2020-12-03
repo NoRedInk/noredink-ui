@@ -1,0 +1,118 @@
+# WARNING: this file is managed with `elm-forbid-imports`. Manual edits will
+# be overwritten!
+
+roots = ['styleguide-app']
+[forbidden.Accessibility]
+hint = 'Use Accessibility.Styled'
+
+[forbidden."Accessibility.Aria"]
+hint = 'Use Accessibility.Styled.Aria'
+
+[forbidden."Accessibility.Key"]
+hint = 'Use Accessibility.Styled.Key'
+
+[forbidden."Accessibility.Landmark"]
+hint = 'Use Accessibility.Styled.Landmark'
+
+[forbidden."Accessibility.Live"]
+hint = 'Use Accessibility.Styled.Live'
+
+[forbidden."Accessibility.Role"]
+hint = 'Use Accessibility.Styled.Role'
+usages = [
+    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
+]
+
+[forbidden."Accessibility.Style"]
+hint = 'Use Accessibility.Styled.Style'
+
+[forbidden."Accessibility.Widget"]
+hint = 'Use Accessibility.Widgetd.Widget'
+
+[forbidden.Html]
+hint = 'Use Html.Styled'
+usages = [
+    'styleguide-app/../src/Nri/Ui/Button/V8.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
+    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
+    'styleguide-app/Examples/Modal.elm',
+    'styleguide-app/Main.elm',
+]
+
+[forbidden."Nri.Ui.Accordion.V1"]
+hint = 'latest is V2'
+
+[forbidden."Nri.Ui.Button.V8"]
+hint = 'latest is V10'
+usages = ['styleguide-app/../src/Nri/Ui/SlideModal/V2.elm']
+
+[forbidden."Nri.Ui.ClickableSvg.V1"]
+hint = 'latest is V2'
+usages = ['styleguide-app/Examples/Tooltip.elm']
+
+[forbidden."Nri.Ui.Icon.V3"]
+hint = 'latest is V5'
+usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
+
+[forbidden."Nri.Ui.Icon.V4"]
+hint = 'latest is V5'
+
+[forbidden."Nri.Ui.InputStyles.V2"]
+hint = 'latest is V3'
+
+[forbidden."Nri.Ui.Message.V1"]
+hint = 'latest is V2'
+
+[forbidden."Nri.Ui.Modal.V10"]
+hint = 'latest is V11'
+usages = ['styleguide-app/Examples/RadioButton.elm']
+
+[forbidden."Nri.Ui.Modal.V3"]
+hint = 'latest is V11'
+
+[forbidden."Nri.Ui.RadioButton.V1"]
+hint = 'latest is V2'
+
+[forbidden."Nri.Ui.SegmentedControl.V11"]
+hint = 'latest is V13'
+
+[forbidden."Nri.Ui.SegmentedControl.V12"]
+hint = 'latest is V13'
+
+[forbidden."Nri.Ui.Select.V5"]
+hint = 'latest is V7'
+
+[forbidden."Nri.Ui.Table.V4"]
+hint = 'latest is V5'
+
+[forbidden."Nri.Ui.Tabs.V6"]
+hint = 'latest is V7'
+
+[forbidden."Nri.Ui.Text.V2"]
+hint = 'latest is V5'
+usages = [
+    'styleguide-app/../src/Nri/Ui/Page/V3.elm',
+    'styleguide-app/../src/Nri/Ui/SlideModal/V2.elm',
+    'styleguide-app/Examples/DisclosureIndicator.elm',
+]
+
+[forbidden."Nri.Ui.Text.V4"]
+hint = 'latest is V5'
+usages = [
+    'styleguide-app/Examples/Accordion.elm',
+    'styleguide-app/Examples/Icon.elm',
+    'styleguide-app/Examples/IconExamples.elm',
+    'styleguide-app/Examples/Loading.elm',
+    'styleguide-app/Examples/Modal.elm',
+    'styleguide-app/Examples/Tooltip.elm',
+]
+
+[forbidden."Nri.Ui.Tooltip.V1"]
+hint = 'latest is V2'
+usages = [
+    'styleguide-app/../src/Nri/Ui/ClickableSvg/V1.elm',
+    'styleguide-app/../src/Nri/Ui/Menu/V1.elm',
+]
