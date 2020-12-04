@@ -2,7 +2,7 @@
     "elm-forbid-import": {
         "branch": "main",
         "repo": "https://git.bytes.zone/brian/elm-forbid-import.git",
-        "rev": "4df62b7ee9102e953f61fcb09964dbe654004db1",
+        "rev": "ddfcfff1fce67ad9820c6476a2ba0949efbb8a3b",
         "type": "git"
     },
     "niv": {

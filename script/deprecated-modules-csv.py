@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+import csv
 import json
 import os.path as path
 import re
-import subprocess
+import sys
 
 HERE = path.realpath(path.abspath(path.join(path.dirname(__file__), '..')))
 
@@ -29,12 +30,13 @@ for module in modules:
     else:
         widgets[widget] = (current_version, [])
 
+writer = csv.writer(sys.stdout)
+
 for (widget, (latest, deprecated)) in widgets.items():
     for version in deprecated:
-        subprocess.check_call([
-            'elm-forbid-import',
-            'forbid',
+        writer.writerow((
             '{}.V{}'.format(widget, version),
-            '--hint',
-            'latest is V{}'.format(latest),
-        ])
+            'upgrade to V{}'.format(latest),
+        ))
+
+sys.stdout.close()
