@@ -30,6 +30,7 @@ main = do
           ]
       }
     $ do
+      want ["test"]
       -- phonies. These provide a nice public API for using shake (`shake
       -- clean`, `shake test`, etc.)
       phony "clean" $ do
