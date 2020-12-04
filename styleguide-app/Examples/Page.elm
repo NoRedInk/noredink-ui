@@ -67,5 +67,10 @@ example =
                 { link = "Page.noPermission Custom"
                 , recoveryText = Page.Custom "Hit the road, Jack"
                 }
+            , Heading.h3 [] [ Html.text "Page: Logged Out, recovery text: Custom" ]
+            , Page.loggedOut
+                { link = "Page.loggedOut Custom"
+                , recoveryText = Page.Custom "And don't you come back no mo no mo no mo"
+                }
             ]
     }
