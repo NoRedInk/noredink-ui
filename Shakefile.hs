@@ -62,9 +62,17 @@ main = do
         need ["elm.json"]
         cmd (WithStdout True) (FileStdout out) "jq" "--indent" "4" ["{ root: \"../src\", tests: .[\"exposed-modules\"] }"] "elm.json"
 
+      "deprecated-modules.csv" %> \out -> do
+        need ["elm.json", "script/deprecated-modules-csv.py"]
+        cmd (WithStdout True) (FileStdout out) "script/deprecated-modules-csv.py"
+
       "forbidden-imports.toml" %> \out -> do
-        need ["elm.json", "script/forbid-deprecated-imports.py"]
-        cmd (WithStdout True) "script/forbid-deprecated-imports.py"
+        -- we always want to consume our own published deprecated modules list
+        -- so that we're not presenting outdated stuff in the styleguide! This
+        -- file can change separately from the CSV, but should always have at
+        -- least the deprecated modules in it.
+        need ["deprecated-modules.csv"]
+        cmd "elm-forbid-import" "forbid-from-csv" "deprecated-modules.csv"
 
       -- temporary files, used to produce CI reports
       "log/elm-test.txt" %> \out -> do

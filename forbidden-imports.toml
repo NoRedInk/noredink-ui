@@ -43,56 +43,56 @@ usages = [
 ]
 
 [forbidden."Nri.Ui.Accordion.V1"]
-hint = 'latest is V2'
+hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Button.V8"]
-hint = 'latest is V10'
+hint = 'upgrade to V10'
 usages = ['styleguide-app/../src/Nri/Ui/SlideModal/V2.elm']
 
 [forbidden."Nri.Ui.ClickableSvg.V1"]
-hint = 'latest is V2'
+hint = 'upgrade to V2'
 usages = ['styleguide-app/Examples/Tooltip.elm']
 
 [forbidden."Nri.Ui.Icon.V3"]
-hint = 'latest is V5'
+hint = 'upgrade to V5'
 usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
 
 [forbidden."Nri.Ui.Icon.V4"]
-hint = 'latest is V5'
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.InputStyles.V2"]
-hint = 'latest is V3'
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Message.V1"]
-hint = 'latest is V2'
+hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Modal.V10"]
-hint = 'latest is V11'
+hint = 'upgrade to V11'
 usages = ['styleguide-app/Examples/RadioButton.elm']
 
 [forbidden."Nri.Ui.Modal.V3"]
-hint = 'latest is V11'
+hint = 'upgrade to V11'
 
 [forbidden."Nri.Ui.RadioButton.V1"]
-hint = 'latest is V2'
+hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.SegmentedControl.V11"]
-hint = 'latest is V13'
+hint = 'upgrade to V13'
 
 [forbidden."Nri.Ui.SegmentedControl.V12"]
-hint = 'latest is V13'
+hint = 'upgrade to V13'
 
 [forbidden."Nri.Ui.Select.V5"]
-hint = 'latest is V7'
+hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Table.V4"]
-hint = 'latest is V5'
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.Tabs.V6"]
-hint = 'latest is V7'
+hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Text.V2"]
-hint = 'latest is V5'
+hint = 'upgrade to V5'
 usages = [
     'styleguide-app/../src/Nri/Ui/Page/V3.elm',
     'styleguide-app/../src/Nri/Ui/SlideModal/V2.elm',
@@ -100,7 +100,7 @@ usages = [
 ]
 
 [forbidden."Nri.Ui.Text.V4"]
-hint = 'latest is V5'
+hint = 'upgrade to V5'
 usages = [
     'styleguide-app/Examples/Accordion.elm',
     'styleguide-app/Examples/Icon.elm',
@@ -111,7 +111,7 @@ usages = [
 ]
 
 [forbidden."Nri.Ui.Tooltip.V1"]
-hint = 'latest is V2'
+hint = 'upgrade to V2'
 usages = [
     'styleguide-app/../src/Nri/Ui/ClickableSvg/V1.elm',
     'styleguide-app/../src/Nri/Ui/Menu/V1.elm',
