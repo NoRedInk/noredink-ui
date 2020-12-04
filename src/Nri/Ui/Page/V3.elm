@@ -1,11 +1,11 @@
 module Nri.Ui.Page.V3 exposing
-    ( DefaultPage, broken, blocked, notFound, noPermission
+    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
-@docs DefaultPage, broken, blocked, notFound, noPermission
+@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut
 @docs RecoveryText
 
 -}
@@ -14,6 +14,7 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Text.V2 as Text
 
 
@@ -48,6 +49,7 @@ notFound defaultPage =
         , subtitle = "Feel free to browse around, or check out our help center."
         , defaultPage = Just defaultPage
         , details = Nothing
+        , showHelpButton = True
         }
 
 
@@ -61,6 +63,7 @@ broken defaultPage =
         , subtitle = "You can try again, or check out our help center."
         , defaultPage = Just defaultPage
         , details = Nothing
+        , showHelpButton = True
         }
 
 
@@ -74,6 +77,7 @@ blocked details =
         , subtitle = "You can try again, or check out our help center."
         , defaultPage = Nothing
         , details = Just details
+        , showHelpButton = True
         }
 
 
@@ -87,6 +91,21 @@ noPermission defaultPage =
         , subtitle = "Talk to a site administrator if you believe you should have access to this page."
         , defaultPage = Just defaultPage
         , details = Nothing
+        , showHelpButton = True
+        }
+
+
+{-| When the user has been logged out.
+-}
+loggedOut : DefaultPage msg -> Html msg
+loggedOut defaultPage =
+    view
+        { emoji = "🙃"
+        , title = "You were logged out."
+        , subtitle = "Please log in again to continue working."
+        , defaultPage = Just defaultPage
+        , details = Nothing
+        , showHelpButton = False
         }
 
 
@@ -100,6 +119,7 @@ type alias Config msg =
     , subtitle : String
     , defaultPage : Maybe (DefaultPage msg)
     , details : Maybe String
+    , showHelpButton : Bool
     }
 
 
@@ -111,14 +131,18 @@ view config =
         , Text.tagline [ Html.text config.subtitle ]
         , viewButton
             [ viewExit config ]
-        , viewButton
-            [ Button.link "Get help!"
-                [ Button.linkExternal "https://noredink.zendesk.com/hc/en-us"
-                , Button.large
-                , Button.exactWidth 260
-                , Button.secondary
-                ]
-            ]
+        , viewIf
+            (\_ ->
+                viewButton
+                    [ Button.link "Get help!"
+                        [ Button.linkExternal "https://noredink.zendesk.com/hc/en-us"
+                        , Button.large
+                        , Button.exactWidth 260
+                        , Button.secondary
+                        ]
+                    ]
+            )
+            config.showHelpButton
         , case config.details of
             Just details ->
                 viewButton [ viewDetails details ]
