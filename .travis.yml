@@ -1,13 +1,30 @@
 language: nix
+sudo: false
+
+env:
+  global:
+    - CACHIX_CACHE=noredink-ui
 
 cache:
   directories:
-    - /nix
     - node_modules
     - ~/.elm
 
 install:
+  # set up cachix
+  # see https://docs.cachix.org/continuous-integration-setup/travis-ci.html
+  - echo "trusted-users = $USER" | sudo tee -a /etc/nix/nix.conf
+  - sudo systemctl restart nix-daemon
+  - nix-env -iA nixpkgs.cachix
+  - cachix use $CACHIX_CACHE
+  - cachix use noredink
+  - nix path-info --all > /tmp/store-path-pre-build
+
+  # get our dependencies
   - nix-shell
 
 script:
   - nix-shell --pure --run 'shake --verbose ci'
+
+after_success:
+  - comm -13 <(sort /tmp/store-path-pre-build | grep -v '\.drv$') <(nix path-info --all | grep -v '\.drv$' | sort) | cachix push $CACHIX_CACHE
