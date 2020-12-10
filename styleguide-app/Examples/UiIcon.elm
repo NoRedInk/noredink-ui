@@ -108,6 +108,7 @@ example =
             , IconExamples.view "Notifs"
                 [ ( "flag", UiIcon.flag )
                 , ( "star", UiIcon.star )
+                , ( "starFilled", UiIcon.starFilled )
                 , ( "starOutline", UiIcon.starOutline )
                 ]
             , IconExamples.view "Math"

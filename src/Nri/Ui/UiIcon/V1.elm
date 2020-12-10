@@ -14,7 +14,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
-    , flag, star, starOutline
+    , flag, star, starFilled, starOutline
     , equals, plus
     , key, lock, premiumLock
     , badge
@@ -39,7 +39,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
-@docs flag, star, starOutline
+@docs flag, star, starFilled, starOutline
 @docs equals, plus
 @docs key, lock, premiumLock
 @docs badge
@@ -817,6 +817,23 @@ star =
                 ]
                 []
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+starFilled : Nri.Ui.Svg.V1.Svg
+starFilled =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 25 24"
+        ]
+        [ Svg.path
+            [ Attributes.d "M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z"
+            , Attributes.fill "currentcolor"
+            ]
+            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
