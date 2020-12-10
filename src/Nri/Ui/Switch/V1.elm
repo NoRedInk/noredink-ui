@@ -93,7 +93,7 @@ view attrs isOn =
     WildWildHtml.label
         [ Attributes.id (config.id ++ "-container")
         , Attributes.css
-            [ Css.displayFlex
+            [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
             , Css.position Css.relative
             , Css.pseudoClass "focus-within"
