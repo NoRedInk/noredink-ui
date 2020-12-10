@@ -100,6 +100,13 @@ view attrs isOn =
                 [ Global.descendants
                     [ Global.svg [ Css.borderColor Colors.azure ] ]
                 ]
+            , Css.cursor
+                (if config.onSwitch == Nothing then
+                    Css.default
+
+                 else
+                    Css.pointer
+                )
             ]
         , Aria.controls config.id
         , Widget.checked (Just isOn)
@@ -113,7 +120,6 @@ view attrs isOn =
             (viewSwitch
                 { id = config.id
                 , isOn = isOn
-                , enabled = config.onSwitch /= Nothing
                 }
             )
         , case config.label of
@@ -159,7 +165,6 @@ viewCheckbox config =
 viewSwitch :
     { id : String
     , isOn : Bool
-    , enabled : Bool
     }
     -> Svg
 viewSwitch config =
@@ -175,12 +180,7 @@ viewSwitch config =
         , SvgAttributes.height "30"
         , SvgAttributes.viewBox "0 0 41 30"
         , SvgAttributes.css
-            [ if config.enabled then
-                Css.cursor Css.pointer
-
-              else
-                Css.batch []
-            , Css.zIndex (Css.int 1)
+            [ Css.zIndex (Css.int 1)
             , Css.border3 (Css.px 2) Css.solid Css.transparent
             , Css.padding (Css.px 3)
             , Css.borderRadius (Css.px 21)
