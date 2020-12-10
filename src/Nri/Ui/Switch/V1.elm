@@ -217,7 +217,7 @@ viewSwitch config =
                 , SvgAttributes.height "106.7%"
                 , SvgAttributes.x "-2.5%"
                 , SvgAttributes.y "-3.3%"
-                , SvgAttributes.filterUnits "objectboundingBox"
+                , SvgAttributes.filterUnits "objectBoundingBox"
                 ]
                 [ Svg.feOffset
                     [ SvgAttributes.dy "2"
@@ -271,7 +271,7 @@ viewSwitch config =
                 , Svg.use
                     [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
                     , SvgAttributes.fill "#000"
-                    , SvgAttributes.filter ("url(" ++ shadowFilterId ++ ")")
+                    , SvgAttributes.filter ("url(#" ++ shadowFilterId ++ ")")
                     ]
                     []
                 ]
