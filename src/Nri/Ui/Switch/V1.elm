@@ -136,25 +136,20 @@ viewCheckbox :
 viewCheckbox config =
     Html.checkbox config.id
         (Just config.checked)
-        (List.concat
-            [ [ Attributes.id config.id
-              , Attributes.css
-                    [ Css.position Css.absolute
-                    , Css.top (Css.px 10)
-                    , Css.left (Css.px 10)
-                    , Css.zIndex (Css.int 0)
-                    ]
-              ]
-            , case config.onCheck of
-                Just onCheck ->
-                    [ Events.onCheck onCheck ]
-
-                Nothing ->
-                    [ Attributes.disabled True
-                    , Widget.disabled True
-                    ]
+        [ Attributes.id config.id
+        , Attributes.css
+            [ Css.position Css.absolute
+            , Css.top (Css.px 10)
+            , Css.left (Css.px 10)
+            , Css.zIndex (Css.int 0)
             ]
-        )
+        , case config.onCheck of
+            Just onCheck ->
+                Events.onCheck onCheck
+
+            Nothing ->
+                Widget.disabled True
+        ]
 
 
 viewSwitch :
