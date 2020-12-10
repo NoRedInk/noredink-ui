@@ -93,6 +93,7 @@ view attrs isOn =
         , Attributes.css
             [ Css.displayFlex
             , Css.alignItems Css.middle
+            , Css.position Css.relative
             ]
         ]
         [ viewCheckbox
@@ -133,6 +134,7 @@ viewCheckbox config =
                     [ Css.position Css.absolute
                     , Css.top (Css.px 10)
                     , Css.left (Css.px 10)
+                    , Css.zIndex (Css.int 0)
                     ]
               ]
             , case config.onCheck of
@@ -171,6 +173,7 @@ viewSwitch config =
 
               else
                 Css.batch []
+            , Css.zIndex (Css.int 1)
             ]
         ]
         [ Svg.defs []
