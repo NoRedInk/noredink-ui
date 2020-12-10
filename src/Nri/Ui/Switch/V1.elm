@@ -1,8 +1,8 @@
-module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, id, label)
+module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label)
 
 {-|
 
-@docs view, Attribute, onSwitch, id, label
+@docs view, Attribute, onSwitch, disabled, id, label
 
 -}
 
@@ -22,11 +22,19 @@ type Attribute msg
     = OnSwitch (Bool -> msg)
     | Id String
     | Label (Html msg)
+    | Disabled
 
 
 onSwitch : (Bool -> msg) -> Attribute msg
 onSwitch =
     OnSwitch
+
+
+{-| note that this will be the default
+-}
+disabled : Attribute msg
+disabled =
+    Disabled
 
 
 id : String -> Attribute msg
@@ -63,6 +71,9 @@ customize attr config =
     case attr of
         OnSwitch onSwitch_ ->
             { config | onSwitch = Just onSwitch_ }
+
+        Disabled ->
+            { config | onSwitch = Nothing }
 
         Id id_ ->
             { config | id = id_ }

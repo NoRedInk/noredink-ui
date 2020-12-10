@@ -52,14 +52,16 @@ example =
             , Heading.h3 [] [ Html.text "Disabled" ]
             , Text.mediumBody []
                 [ Switch.view
-                    [ Switch.id "switch-disabled-on"
+                    [ Switch.disabled
+                    , Switch.id "switch-disabled-on"
                     , Switch.label (Html.text "Permanently on")
                     ]
                     True
                 ]
             , Text.mediumBody []
                 [ Switch.view
-                    [ Switch.id "switch-disabled-off"
+                    [ Switch.disabled
+                    , Switch.id "switch-disabled-off"
                     , Switch.label (Html.text "Permanently off")
                     ]
                     False
