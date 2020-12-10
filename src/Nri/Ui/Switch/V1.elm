@@ -285,8 +285,7 @@ viewSwitch config =
                     , transition "transform 0.2s ease-in-out"
                     ]
                 ]
-                [ -- <circle cx="15" cy="15" r="14.5" fill="#FFF"/>
-                  Svg.circle
+                [ Svg.circle
                     [ SvgAttributes.cx "15"
                     , SvgAttributes.cy "15"
                     , SvgAttributes.r "14.5"
@@ -304,8 +303,6 @@ viewSwitch config =
                     , SvgAttributes.class "switch-slider"
                     ]
                     []
-
-                -- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 15.865L12.323 20 21.554 10"/>
                 , Svg.path
                     [ SvgAttributes.strokeLinecap "round"
                     , SvgAttributes.strokeLinejoin "round"
