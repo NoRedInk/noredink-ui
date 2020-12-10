@@ -93,7 +93,7 @@ view attrs isOn =
         [ Attributes.id (config.id ++ "-container")
         , Attributes.css
             [ Css.displayFlex
-            , Css.alignItems Css.middle
+            , Css.alignItems Css.center
             , Css.position Css.relative
             ]
         , Aria.controls config.id
