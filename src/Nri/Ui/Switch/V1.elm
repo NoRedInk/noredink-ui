@@ -10,6 +10,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Css
+import Css.Global as Global
 import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -95,6 +96,10 @@ view attrs isOn =
             [ Css.displayFlex
             , Css.alignItems Css.center
             , Css.position Css.relative
+            , Css.pseudoClass "focus-within"
+                [ Global.descendants
+                    [ Global.svg [ Css.borderColor Colors.azure ] ]
+                ]
             ]
         , Aria.controls config.id
         , Widget.checked (Just isOn)
@@ -177,6 +182,9 @@ viewSwitch config =
               else
                 Css.batch []
             , Css.zIndex (Css.int 1)
+            , Css.border3 (Css.px 2) Css.solid Css.transparent
+            , Css.padding (Css.px 3)
+            , Css.borderRadius (Css.px 21)
             ]
         ]
         [ Svg.defs []
