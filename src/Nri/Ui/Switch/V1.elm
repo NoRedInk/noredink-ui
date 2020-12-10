@@ -256,7 +256,7 @@ viewSwitch config =
 
                           else
                             Css.fill Colors.gray92
-                        , transition "fill 0.4s"
+                        , transition "fill 0.2s"
                         ]
                     ]
                     []
@@ -274,7 +274,7 @@ viewSwitch config =
 
                       else
                         Css.transform (Css.translateX (Css.px 0))
-                    , transition "transform 0.4s"
+                    , transition "transform 0.2s ease-in-out"
                     ]
                 ]
                 [ -- <circle cx="15" cy="15" r="14.5" fill="#FFF"/>
@@ -311,7 +311,7 @@ viewSwitch config =
                           else
                             -- gray75, but can't use the Color type here
                             Css.property "stroke" "rgba(255,255,255,0)"
-                        , transition "stroke 0.4s"
+                        , transition "stroke 0.2s"
                         ]
                     ]
                     []
