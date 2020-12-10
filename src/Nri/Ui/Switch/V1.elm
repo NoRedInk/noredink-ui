@@ -99,7 +99,12 @@ view attrs isOn =
             , Css.position Css.relative
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
-                    [ Global.svg [ Css.borderColor Colors.azure ] ]
+                    [ Global.class "switch-slider"
+                        [ -- azure, but can't use the Color type here
+                          Css.property "stroke" "#146AFF"
+                        , Css.property "stroke-width" "3px"
+                        ]
+                    ]
                 ]
             , Css.cursor
                 (if config.onSwitch == Nothing then
@@ -129,6 +134,7 @@ view attrs isOn =
                     [ Attributes.css
                         [ Css.fontWeight (Css.int 600)
                         , Css.color Colors.navy
+                        , Css.paddingLeft (Css.px 5)
                         ]
                     ]
                     [ label_ ]
@@ -177,14 +183,11 @@ viewSwitch config =
             config.id ++ "-shadow-box"
     in
     Svg.svg
-        [ SvgAttributes.width "40"
-        , SvgAttributes.height "30"
-        , SvgAttributes.viewBox "0 0 41 30"
+        [ SvgAttributes.width "43"
+        , SvgAttributes.height "32"
+        , SvgAttributes.viewBox "0 0 43 32"
         , SvgAttributes.css
             [ Css.zIndex (Css.int 1)
-            , Css.border3 (Css.px 2) Css.solid Css.transparent
-            , Css.padding (Css.px 3)
-            , Css.borderRadius (Css.px 21)
             ]
         ]
         [ Svg.defs []
