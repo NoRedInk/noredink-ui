@@ -8,9 +8,14 @@ module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, id, label)
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Widget as Widget
+import Css
 import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Svg.V1 exposing (Svg)
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttributes
 
 
 type Attribute msg
@@ -81,7 +86,12 @@ view attrs isOn =
             }
         , WildWildHtml.label
             [ Attributes.for config.id ]
-            [ Html.text "TODO: switch"
+            [ Nri.Ui.Svg.V1.toHtml
+                (viewSwitch
+                    { id = config.id
+                    , isOn = isOn
+                    }
+                )
             , Maybe.withDefault (Html.text "") config.label
             ]
         ]
@@ -108,3 +118,139 @@ viewCheckbox config =
                     ]
             ]
         )
+
+
+viewSwitch :
+    { id : String
+    , isOn : Bool
+    }
+    -> Svg
+viewSwitch config =
+    let
+        shadowFilterId =
+            config.id ++ "-shadow-filter"
+
+        shadowBoxId =
+            config.id ++ "-shadow-box"
+    in
+    Svg.svg
+        [ SvgAttributes.width "40"
+        , SvgAttributes.height "30"
+        , SvgAttributes.viewBox "0 0 41 30"
+        , SvgAttributes.css [ Css.cursor Css.pointer ]
+        ]
+        [ Svg.defs []
+            [ Svg.filter
+                [ SvgAttributes.id shadowFilterId
+                , SvgAttributes.width "105%"
+                , SvgAttributes.height "106.7%"
+                , SvgAttributes.x "-2.5%"
+                , SvgAttributes.y "-3.3%"
+                , SvgAttributes.filterUnits "objectboundingBox"
+                ]
+                [ Svg.feOffset
+                    [ SvgAttributes.dy "2"
+                    , SvgAttributes.in_ "SourceAlpha"
+                    , SvgAttributes.result "shadowOffsetInner1"
+                    ]
+                    []
+                , Svg.feComposite
+                    [ SvgAttributes.in_ "shadowOffsetInner1"
+                    , SvgAttributes.in2 "SourceAlpha"
+                    , SvgAttributes.k2 "-1"
+                    , SvgAttributes.k3 "1"
+                    , SvgAttributes.operator "arithmetic"
+                    , SvgAttributes.result "shadowInnerInner1"
+                    ]
+                    []
+                , Svg.feColorMatrix
+                    [ SvgAttributes.in_ "shadowInnerInner1"
+                    , SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
+                    ]
+                    []
+                ]
+            , Svg.rect
+                [ SvgAttributes.id shadowBoxId
+                , SvgAttributes.width "40"
+                , SvgAttributes.height "30"
+                , SvgAttributes.x "0"
+                , SvgAttributes.y "0"
+                , SvgAttributes.rx "15"
+                ]
+                []
+            ]
+        , Svg.g
+            [ SvgAttributes.fill "none"
+            , SvgAttributes.fillRule "even-odd"
+            ]
+            [ Svg.g []
+                [ Svg.use
+                    [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
+                    , SvgAttributes.css
+                        [ if config.isOn then
+                            Css.fill Colors.glacier
+
+                          else
+                            Css.fill Colors.gray92
+                        , Css.property "transition" "fill 0.4s"
+                        ]
+                    ]
+                    []
+                , Svg.use
+                    [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
+                    , SvgAttributes.fill "#000"
+                    , SvgAttributes.filter ("url(" ++ shadowFilterId ++ ")")
+                    ]
+                    []
+                ]
+            , Svg.g
+                [ SvgAttributes.css
+                    [ if config.isOn then
+                        Css.transform (Css.translateX (Css.px 11))
+
+                      else
+                        Css.batch []
+                    , Css.property "transition" "transform 0.4s"
+                    ]
+                ]
+                [ -- <circle cx="15" cy="15" r="14.5" fill="#FFF"/>
+                  Svg.circle
+                    [ SvgAttributes.cx "15"
+                    , SvgAttributes.cy "15"
+                    , SvgAttributes.r "14.5"
+                    , SvgAttributes.fill "#FFF"
+                    , SvgAttributes.css
+                        [ if config.isOn then
+                            -- azure, but can't use the Color type here
+                            Css.property "stroke" "#146AFF"
+
+                          else
+                            -- gray75, but can't use the Color type here
+                            Css.property "stroke" "#EBEBEB"
+                        , Css.property "transition" "stroke 0.4s"
+                        ]
+                    ]
+                    []
+
+                -- <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 15.865L12.323 20 21.554 10"/>
+                , Svg.path
+                    [ SvgAttributes.strokeLinecap "round"
+                    , SvgAttributes.strokeLinejoin "round"
+                    , SvgAttributes.strokeWidth "3"
+                    , SvgAttributes.d "M8 15.865L12.323 20 21.554 10"
+                    , SvgAttributes.css
+                        [ if config.isOn then
+                            -- azure, but can't use the Color type here
+                            Css.property "stroke" "#146AFF"
+
+                          else
+                            -- gray75, but can't use the Color type here
+                            Css.property "stroke" "rgba(255,255,255,0)"
+                        , Css.property "transition" "stroke 0.4s"
+                        ]
+                    ]
+                    []
+                ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
