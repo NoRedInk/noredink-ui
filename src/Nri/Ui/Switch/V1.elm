@@ -11,6 +11,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Global as Global
+import Css.Media
 import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -229,6 +230,7 @@ viewSwitch config =
         , Svg.g
             [ SvgAttributes.fill "none"
             , SvgAttributes.fillRule "even-odd"
+            , SvgAttributes.transform "translate(1, 1)"
             ]
             [ Svg.g []
                 [ Svg.use
@@ -239,7 +241,7 @@ viewSwitch config =
 
                           else
                             Css.fill Colors.gray92
-                        , Css.property "transition" "fill 0.4s"
+                        , transition "fill 0.4s"
                         ]
                     ]
                     []
@@ -256,8 +258,8 @@ viewSwitch config =
                         Css.transform (Css.translateX (Css.px 11))
 
                       else
-                        Css.batch []
-                    , Css.property "transition" "transform 0.4s"
+                        Css.transform (Css.translateX (Css.px 0))
+                    , transition "transform 0.4s"
                     ]
                 ]
                 [ -- <circle cx="15" cy="15" r="14.5" fill="#FFF"/>
@@ -274,8 +276,9 @@ viewSwitch config =
                           else
                             -- gray75, but can't use the Color type here
                             Css.property "stroke" "#EBEBEB"
-                        , Css.property "transition" "stroke 0.4s"
+                        , transition "stroke 0.1s"
                         ]
+                    , SvgAttributes.class "switch-slider"
                     ]
                     []
 
@@ -293,7 +296,7 @@ viewSwitch config =
                           else
                             -- gray75, but can't use the Color type here
                             Css.property "stroke" "rgba(255,255,255,0)"
-                        , Css.property "transition" "stroke 0.4s"
+                        , transition "stroke 0.4s"
                         ]
                     ]
                     []
@@ -301,3 +304,10 @@ viewSwitch config =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+
+
+transition : String -> Css.Style
+transition transitionRules =
+    Css.Media.withMediaQuery
+        [ "(prefers-reduced-motion: no-preference)" ]
+        [ Css.property "transition" transitionRules ]
