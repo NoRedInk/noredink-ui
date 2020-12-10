@@ -107,7 +107,13 @@ viewCheckbox config =
     Html.checkbox config.id
         (Just config.checked)
         (List.concat
-            [ [ Attributes.id config.id ]
+            [ [ Attributes.id config.id
+              , Attributes.css
+                    [ Css.position Css.absolute
+                    , Css.top (Css.px 10)
+                    , Css.left (Css.px 10)
+                    ]
+              ]
             , case config.onCheck of
                 Just onCheck ->
                     [ Events.onCheck onCheck ]
