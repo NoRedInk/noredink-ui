@@ -11,20 +11,45 @@ cache:
     - ~/.elm
 
 install:
-  # set up cachix
-  # see https://docs.cachix.org/continuous-integration-setup/travis-ci.html
+  # This setup script comes from the cachix docs[1], but we annotate it here so
+  # it's easier to maintain.
+  #
+  # [1]: https://docs.cachix.org/continuous-integration-setup/travis-ci.html
+
+  # First, we need to tell Nix that the current user is trusted to make changes to
+  # the system configuration, so that we can do exactly that in the next step.
   - echo "trusted-users = $USER" | sudo tee -a /etc/nix/nix.conf
   - sudo systemctl restart nix-daemon
+
+  # Next, we need to tell Nix to use our cache to avoid building fresh every time.
+  # Under the covers, this means trusting the signing key and adding the
+  # our-cache-name.cachix.org as a substituter. But we don't really need to worry
+  # a lot about the mechanism here, since the `cachix use` statement here will
+  # take care of everything for us if it has the right permissions.
   - nix-env -iA nixpkgs.cachix
   - cachix use $CACHIX_CACHE
-  - cachix use noredink
+
+  # Next, we list all the paths that Nix currently knows about so that we don't
+  # waste time trying to push them later.
   - nix path-info --all > /tmp/store-path-pre-build
 
-  # get our dependencies
-  - nix-shell
+  # Finally, we run `nix-shell` with a no-op command to download our real
+  # dependencies. This step should now take advantage of the cachix cache and
+  # avoid rebuilding any upstream software we depend on! (At the time of this
+  # writing, that measn we avoid compiling `niv` and `elm-forbid-import` on every
+  # run.)
+  #
+  # Note that this step is technically not necessary--running our build command in
+  # `nix-shell` below would also take care of this--but getting dependencies here
+  # lets us collapse the (huge) download list in the Travis UI.
+  - nix-shell --run 'true'
 
 script:
   - nix-shell --pure --run 'shake --verbose ci'
 
 after_success:
+  # After we successfully build, we want to cache whatever we can. That means that
+  # when dependencies change, we should only build them once. The invocation below
+  # just gets the difference between the derivations we had before the build and
+  # the derivations we have now, and pushes the new ones.
   - comm -13 <(sort /tmp/store-path-pre-build | grep -v '\.drv$') <(nix path-info --all | grep -v '\.drv$' | sort) | cachix push $CACHIX_CACHE
