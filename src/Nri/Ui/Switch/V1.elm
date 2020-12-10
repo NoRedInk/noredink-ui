@@ -317,7 +317,6 @@ viewSwitch config =
                             Css.property "stroke" "#146AFF"
 
                           else
-                            -- gray75, but can't use the Color type here
                             Css.property "stroke" "rgba(255,255,255,0)"
                         , transition "stroke 0.2s"
                         ]
