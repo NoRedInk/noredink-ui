@@ -21,6 +21,7 @@ import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
 
+{-| -}
 type Attribute msg
     = OnSwitch (Bool -> msg)
     | Id String
@@ -28,26 +29,34 @@ type Attribute msg
     | Disabled
 
 
+{-| Specify what happens when the switch is toggled.
+-}
 onSwitch : (Bool -> msg) -> Attribute msg
 onSwitch =
     OnSwitch
 
 
-{-| note that this will be the default
+{-| Explicitly specify that you want this switch to be disabled. If you don't
+specify `onSwitch`, this is the default, but it's provided so you don't have
+to resort to `filterMap` or similar to build a clean list of attributes.
 -}
 disabled : Attribute msg
 disabled =
     Disabled
 
 
+{-| Set the HTML ID of the switch toggle. If you have only one on the page,
+you don't need to set this, but you should definitely set it if you have
+more than one.
+-}
 id : String -> Attribute msg
 id =
     Id
 
 
-{-| Labeling text requirements: should be descriptive but not interactive
-(that is, this API would be `Html Never` if it was ergonomic to do so)
-and should be styled so that it can be displayed inline.
+{-| Add labeling text to the switch. This text should be descriptive and
+able to be displayed inline. It should _not_ be interactive (if it were
+ergonomic to make this argument `Html Never`, we would!)
 -}
 label : Html msg -> Attribute msg
 label =
@@ -85,6 +94,9 @@ customize attr config =
             { config | label = Just label_ }
 
 
+{-| Render a switch. The boolean here indicates whether the switch is on
+or not.
+-}
 view : List (Attribute msg) -> Bool -> Html msg
 view attrs isOn =
     let
