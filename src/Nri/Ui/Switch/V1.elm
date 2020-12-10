@@ -77,24 +77,33 @@ view attrs isOn =
         config =
             List.foldl customize defaultConfig attrs
     in
-    WildWildHtml.span
-        [ Attributes.id (config.id ++ "-container") ]
+    WildWildHtml.label
+        [ Attributes.id (config.id ++ "-container")
+        , Attributes.css
+            [ Css.displayFlex
+            , Css.alignItems Css.middle
+            ]
+        ]
         [ viewCheckbox
             { id = config.id
             , onCheck = config.onSwitch
             , checked = isOn
             }
-        , WildWildHtml.label
-            [ Attributes.for config.id ]
-            [ Nri.Ui.Svg.V1.toHtml
-                (viewSwitch
-                    { id = config.id
-                    , isOn = isOn
-                    , enabled = config.onSwitch /= Nothing
-                    }
-                )
-            , Maybe.withDefault (Html.text "") config.label
-            ]
+        , Nri.Ui.Svg.V1.toHtml
+            (viewSwitch
+                { id = config.id
+                , isOn = isOn
+                , enabled = config.onSwitch /= Nothing
+                }
+            )
+        , case config.label of
+            Just label_ ->
+                Html.span
+                    [ Attributes.css [ Css.paddingLeft (Css.px 5) ] ]
+                    [ label_ ]
+
+            Nothing ->
+                Html.text ""
         ]
 
 
