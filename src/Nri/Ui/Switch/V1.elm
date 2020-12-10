@@ -90,6 +90,7 @@ view attrs isOn =
                 (viewSwitch
                     { id = config.id
                     , isOn = isOn
+                    , enabled = config.onSwitch /= Nothing
                     }
                 )
             , Maybe.withDefault (Html.text "") config.label
@@ -129,6 +130,7 @@ viewCheckbox config =
 viewSwitch :
     { id : String
     , isOn : Bool
+    , enabled : Bool
     }
     -> Svg
 viewSwitch config =
@@ -143,7 +145,13 @@ viewSwitch config =
         [ SvgAttributes.width "40"
         , SvgAttributes.height "30"
         , SvgAttributes.viewBox "0 0 41 30"
-        , SvgAttributes.css [ Css.cursor Css.pointer ]
+        , SvgAttributes.css
+            [ if config.enabled then
+                Css.cursor Css.pointer
+
+              else
+                Css.batch []
+            ]
         ]
         [ Svg.defs []
             [ Svg.filter
