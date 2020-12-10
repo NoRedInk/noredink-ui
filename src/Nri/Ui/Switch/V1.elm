@@ -298,7 +298,7 @@ viewSwitch config =
 
                           else
                             -- gray75, but can't use the Color type here
-                            Css.property "stroke" "#EBEBEB"
+                            Css.property "stroke" "#BFBFBF"
                         , transition "stroke 0.1s"
                         ]
                     , SvgAttributes.class "switch-slider"
