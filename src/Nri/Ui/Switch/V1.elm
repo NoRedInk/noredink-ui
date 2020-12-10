@@ -7,6 +7,7 @@ module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Css
 import Html.Styled as WildWildHtml
@@ -95,6 +96,8 @@ view attrs isOn =
             , Css.alignItems Css.middle
             , Css.position Css.relative
             ]
+        , Aria.controls config.id
+        , Widget.checked (Just isOn)
         ]
         [ viewCheckbox
             { id = config.id
