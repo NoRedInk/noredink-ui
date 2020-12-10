@@ -119,11 +119,11 @@ view attrs isOn =
                     ]
                 ]
             , Css.cursor
-                (if config.onSwitch == Nothing then
-                    Css.default
+                (if config.onSwitch /= Nothing then
+                    Css.pointer
 
                  else
-                    Css.pointer
+                    Css.notAllowed
                 )
             ]
         , Aria.controls config.id
@@ -138,6 +138,7 @@ view attrs isOn =
             (viewSwitch
                 { id = config.id
                 , isOn = isOn
+                , enabled = config.onSwitch /= Nothing
                 }
             )
         , case config.label of
@@ -171,6 +172,7 @@ viewCheckbox config =
             , Css.top (Css.px 10)
             , Css.left (Css.px 10)
             , Css.zIndex (Css.int 0)
+            , Css.opacity (Css.num 0)
             ]
         , case config.onCheck of
             Just onCheck ->
@@ -184,6 +186,7 @@ viewCheckbox config =
 viewSwitch :
     { id : String
     , isOn : Bool
+    , enabled : Bool
     }
     -> Svg
 viewSwitch config =
@@ -200,6 +203,11 @@ viewSwitch config =
         , SvgAttributes.viewBox "0 0 43 32"
         , SvgAttributes.css
             [ Css.zIndex (Css.int 1)
+            , if config.enabled then
+                Css.opacity (Css.num 1)
+
+              else
+                Css.opacity (Css.num 0.4)
             ]
         ]
         [ Svg.defs []
