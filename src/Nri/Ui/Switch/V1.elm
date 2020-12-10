@@ -119,7 +119,11 @@ view attrs isOn =
         , case config.label of
             Just label_ ->
                 Html.span
-                    [ Attributes.css [ Css.paddingLeft (Css.px 5) ] ]
+                    [ Attributes.css
+                        [ Css.fontWeight (Css.int 600)
+                        , Css.color Colors.navy
+                        ]
+                    ]
                     [ label_ ]
 
             Nothing ->
