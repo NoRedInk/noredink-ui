@@ -30,6 +30,7 @@ import Examples.Slide as Slide
 import Examples.SlideModal as SlideModal
 import Examples.SortableTable as SortableTable
 import Examples.Svg as Svg
+import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
 import Examples.Text as Text
@@ -593,6 +594,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Switch.example
+        |> Example.wrapMsg SwitchMsg
+            (\msg ->
+                case msg of
+                    SwitchMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState SwitchState
+            (\msg ->
+                case msg of
+                    SwitchState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Table.example
         |> Example.wrapMsg TableMsg
             (\msg ->
@@ -778,6 +798,7 @@ type State
     | SlideModalState SlideModal.State
     | SortableTableState SortableTable.State
     | SvgState Svg.State
+    | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
     | TextState Text.State
@@ -818,6 +839,7 @@ type Msg
     | SlideModalMsg SlideModal.Msg
     | SortableTableMsg SortableTable.Msg
     | SvgMsg Svg.Msg
+    | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
     | TextMsg Text.Msg
