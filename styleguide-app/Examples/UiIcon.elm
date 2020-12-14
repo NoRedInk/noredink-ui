@@ -111,6 +111,9 @@ example =
                 , ( "starFilled", UiIcon.starFilled )
                 , ( "starOutline", UiIcon.starOutline )
                 ]
+            , IconExamples.view "Badges & Levels"
+                [ ( "badge", UiIcon.badge )
+                ]
             , IconExamples.view "Math"
                 [ ( "equals", UiIcon.equals )
                 , ( "plus", UiIcon.plus )
@@ -119,9 +122,6 @@ example =
                 [ ( "key", UiIcon.key )
                 , ( "lock", UiIcon.lock )
                 , ( "premiumLock", UiIcon.premiumLock )
-                ]
-            , IconExamples.view "Badges & Levels"
-                [ ( "badge", UiIcon.badge )
                 ]
             , IconExamples.view "Tips & Tricks"
                 [ ( "hat", UiIcon.hat )
