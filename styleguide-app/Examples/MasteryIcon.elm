@@ -43,6 +43,7 @@ example =
                 , ( "levelOne", MasteryIcon.levelOne )
                 , ( "levelTwo", MasteryIcon.levelTwo )
                 , ( "levelThree", MasteryIcon.levelThree )
+                , ( "levelFour", MasteryIcon.levelFour )
                 ]
             ]
     }
