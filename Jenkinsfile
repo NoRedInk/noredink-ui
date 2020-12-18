@@ -10,6 +10,7 @@ pipeline {
     agent {
         docker {
             image "nixos/nix"
+            args "-v /nix:/nix"
         }
     }
 
