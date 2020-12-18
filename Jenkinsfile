@@ -9,7 +9,7 @@ properties([
 pipeline {
     agent {
         docker {
-            image "lnl7/nix"
+            image "nixos/nix"
         }
     }
 
