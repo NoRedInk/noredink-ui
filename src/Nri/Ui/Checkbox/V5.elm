@@ -11,6 +11,7 @@ module Nri.Ui.Checkbox.V5 exposing
 
   - Use Nri.Ui.Svg.V1 rather than a custom Icon type specific to this module
   - Make the filter ids within the svg unique (now the id depends on the checkbox identifier)
+  - Explicitly box-sizing content-box on the label (<https://github.com/NoRedInk/NoRedInk/pull/30886#issuecomment-737854831>)
 
 
 # Changes from V5:
@@ -304,6 +305,7 @@ viewIcon styles icon =
             , padding (px 2)
             , borderRadius (px 3)
             , height (Css.px 27)
+            , boxSizing contentBox
             ]
         , Attributes.class "checkbox-icon-container"
         ]
