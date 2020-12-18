@@ -15,7 +15,9 @@ pipeline {
 
     stages {
         stage("build") {
-            sh("nix-shell --pure --run 'shake --verbose ci'")
+            steps {
+                sh("nix-shell --pure --run 'shake --verbose ci'")
+            }
         }
     }
 }
