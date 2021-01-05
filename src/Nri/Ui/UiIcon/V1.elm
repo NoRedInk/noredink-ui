@@ -844,14 +844,13 @@ starOutline =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 24"
+        , Attributes.viewBox "-1 -0.5 27 25"
         ]
         [ Svg.path
             [ Attributes.fill "none"
-            , Attributes.fillRule "evenodd"
             , Attributes.stroke "currentcolor"
-            , Attributes.strokeWidth "2"
-            , Attributes.d "M12.501 1L9.378 7.26A2 2 0 0 1 7.89 8.344L1 9.398l4.966 4.936a2 2 0 0 1 .564 1.742L5.397 23l6.18-3.216a2 2 0 0 1 1.846 0L19.603 23l-1.133-6.924a2 2 0 0 1 .564-1.742L24 9.398l-6.89-1.054a2 2 0 0 1-1.488-1.085L12.502 1z"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.d "M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z"
             ]
             []
         ]
