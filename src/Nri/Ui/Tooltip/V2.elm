@@ -531,7 +531,17 @@ viewTooltip_ { trigger, id } tooltip =
         tooltip.containerStyles
         containerEvents
         [ Html.div
-            []
+            [ Attributes.css
+                [ -- using display flex not so that the wrapping div fits its
+                  -- contents exactly. otherwise, it will be at least of the
+                  -- size of a line of text, adding some extra vertical space
+                  -- when the trigger is short (making it look like vertical
+                  -- alignment is broken). if you ever need to change this back
+                  -- to `block` or `inline-block`, consider adjusting the
+                  -- `font-size` to zero to achieve a similar effect.
+                  Css.displayFlex
+                ]
+            ]
             [ trigger
                 ([ if tooltip.isOpen then
                     case tooltip.purpose of
