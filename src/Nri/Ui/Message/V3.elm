@@ -1,7 +1,7 @@
 module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
-    , custom, css, testId, id
+    , icon, custom, css, testId, id
     , tiny, large, banner
     , plaintext, markdown, html
     , tip, error, alert, success, customTheme
@@ -14,13 +14,14 @@ module Nri.Ui.Message.V3 exposing
     - adds `custom`
     - adds `testId`, and `id` helpers
     - adds `css` helper
+    - add top-level `icon` helper
 
 
 # View
 
 @docs somethingWentWrong
 @docs view, Attribute
-@docs custom, css, testId, id
+@docs icon, custom, css, testId, id
 
 
 ## Size
@@ -93,8 +94,8 @@ view attributes_ =
         color_ =
             getColor attributes.size attributes.theme
 
-        icon =
-            getIcon attributes.size attributes.theme
+        icon_ =
+            getIcon attributes.icon attributes.size attributes.theme
 
         ( description, containerStyles ) =
             case attributes.size of
@@ -156,7 +157,7 @@ view attributes_ =
         )
         (case attributes.size of
             Tiny ->
-                [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon ]
+                [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
                 , div [] html_
                 , case attributes.onDismiss of
                     Nothing ->
@@ -167,7 +168,7 @@ view attributes_ =
                 ]
 
             Large ->
-                [ icon
+                [ icon_
                 , div
                     [ Attributes.css
                         [ minWidth (px 100)
@@ -194,7 +195,7 @@ view attributes_ =
                         , width (Css.pct 100)
                         ]
                     ]
-                    [ icon
+                    [ icon_
                     , Nri.Ui.styled div
                         "banner-alert-notification"
                         [ fontSize (px 20)
@@ -338,9 +339,15 @@ success =
 
 
 {-| -}
-customTheme : { color : Color, backgroundColor : Color, icon : Svg } -> Attribute msg
+customTheme : { color : Color, backgroundColor : Color } -> Attribute msg
 customTheme custom_ =
     Attribute <| \config -> { config | theme = Custom custom_ }
+
+
+{-| -}
+icon : Svg -> Attribute msg
+icon icon_ =
+    Attribute <| \config -> { config | icon = Just icon_ }
 
 
 {-| Use this helper to add custom attributes.
@@ -438,6 +445,7 @@ type alias BannerConfig msg =
     , content : Content msg
     , theme : Theme
     , size : Size
+    , icon : Maybe Svg
     , customAttributes : List (Html.Attribute Never)
     , customStyles : List Style
     }
@@ -453,6 +461,7 @@ configFromAttributes attr =
         , content = Plain ""
         , theme = Tip
         , size = Tiny
+        , icon = Nothing
         , customAttributes = []
         , customStyles = []
         }
@@ -510,11 +519,7 @@ type Theme
     | Alert
     | Tip
     | Success
-    | Custom
-        { color : Color
-        , backgroundColor : Color
-        , icon : Svg
-        }
+    | Custom { color : Color, backgroundColor : Color }
 
 
 getColor : Size -> Theme -> Color
@@ -571,8 +576,8 @@ getBackgroundColor size theme =
             Css.backgroundColor backgroundColor
 
 
-getIcon : Size -> Theme -> Html msg
-getIcon size theme =
+getIcon : Maybe Svg -> Size -> Theme -> Html msg
+getIcon customIcon size theme =
     let
         ( iconSize, marginRight ) =
             case size of
@@ -585,8 +590,8 @@ getIcon size theme =
                 Banner ->
                     ( px 50, Css.marginRight (Css.px 20) )
     in
-    case theme of
-        Error ->
+    case ( customIcon, theme ) of
+        ( Nothing, Error ) ->
             UiIcon.exclamation
                 |> NriSvg.withColor Colors.purple
                 |> NriSvg.withWidth iconSize
@@ -595,7 +600,7 @@ getIcon size theme =
                 |> NriSvg.withLabel "Error"
                 |> NriSvg.toHtml
 
-        Alert ->
+        ( Nothing, Alert ) ->
             let
                 color =
                     case size of
@@ -613,7 +618,7 @@ getIcon size theme =
                 |> NriSvg.withLabel "Alert"
                 |> NriSvg.toHtml
 
-        Tip ->
+        ( Nothing, Tip ) ->
             case size of
                 Tiny ->
                     UiIcon.bulb
@@ -654,7 +659,7 @@ getIcon size theme =
                             |> NriSvg.toHtml
                         ]
 
-        Success ->
+        ( Nothing, Success ) ->
             UiIcon.checkmarkInCircle
                 |> NriSvg.withColor Colors.green
                 |> NriSvg.withWidth iconSize
@@ -663,12 +668,15 @@ getIcon size theme =
                 |> NriSvg.withLabel "Success"
                 |> NriSvg.toHtml
 
-        Custom { icon } ->
-            icon
+        ( Just icon_, _ ) ->
+            icon_
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.toHtml
+
+        ( Nothing, Custom _ ) ->
+            Html.text ""
 
 
 

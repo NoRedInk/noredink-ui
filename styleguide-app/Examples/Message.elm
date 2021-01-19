@@ -28,12 +28,13 @@ init =
     { show = True
     , control =
         Control.record
-            (\a b c d e -> List.filterMap identity [ a, b, c, d, e ])
+            (\a b c d e f -> List.filterMap identity [ a, b, c, d, e, f ])
             |> Control.field "theme" controlTheme
             |> Control.field "content" (Control.map Just controlContent)
             |> Control.field "role" controlRole
             |> Control.field "dismissable" controlDismissable
             |> Control.field "css" controlCss
+            |> Control.field "icon" controlIcon
     }
 
 
@@ -51,7 +52,7 @@ controlTheme =
 
 controlCustomTheme : Control (Message.Attribute msg)
 controlCustomTheme =
-    Control.record (\a b c -> Message.customTheme { color = a, backgroundColor = b, icon = c })
+    Control.record (\a b -> Message.customTheme { color = a, backgroundColor = b })
         |> Control.field "color"
             (Control.choice
                 [ ( "aquaDark", Control.value Colors.aquaDark )
@@ -62,13 +63,16 @@ controlCustomTheme =
                 [ ( "gray92", Control.value Colors.gray92 )
                 ]
             )
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "premiumFlag", Control.value Pennant.premiumFlag )
-                , ( "lock", Control.value UiIcon.lock )
-                , ( "clock", Control.value UiIcon.clock )
-                ]
-            )
+
+
+controlIcon : Control (Maybe (Message.Attribute msg))
+controlIcon =
+    Control.choice
+        [ ( "not set", Control.value Nothing )
+        , ( "premiumFlag", Control.value (Just (Message.icon Pennant.premiumFlag)) )
+        , ( "lock", Control.value (Just (Message.icon UiIcon.lock)) )
+        , ( "clock", Control.value (Just (Message.icon UiIcon.clock)) )
+        ]
 
 
 controlContent : Control (Message.Attribute msg)
