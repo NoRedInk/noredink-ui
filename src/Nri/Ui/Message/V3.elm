@@ -1,4 +1,4 @@
-module Nri.Ui.Message.V2 exposing
+module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
     , tiny, large, banner
@@ -8,16 +8,9 @@ module Nri.Ui.Message.V2 exposing
     , onDismiss
     )
 
-{-| Changes from V1:
+{-| Changes from V2:
 
-  - adds `alertRole`, `alertDialogRole` role attributes
-  - rename `BannerAttribute` -> `Attribute`
-  - accept `Attribute`s on any `Message` type
-  - ☠️ remove `mapContent`
-  - expose `plaintext`, `markdown`, and `html` Attribute helpers instead of having `Content(..)` in the view APIs
-  - expose theme `Attribute` helpers instead of having `Theme(..)` in the view APIs
-  - exposes a singular `view` function (`tiny`, `large`, and `banner` are now `Attribute`s)
-  - uses `alertRole` in `somethingWentWrong`
+  - TODO
 
 
 # View

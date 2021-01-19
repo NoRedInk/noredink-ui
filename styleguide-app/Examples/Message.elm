@@ -11,7 +11,7 @@ import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Message.V2 as Message
+import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
