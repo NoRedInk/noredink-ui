@@ -1,6 +1,7 @@
 module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
+    , custom, css, nriDescription, testId, id
     , tiny, large, banner
     , plaintext, markdown, html
     , tip, error, alert, success, customTheme
@@ -10,13 +11,16 @@ module Nri.Ui.Message.V3 exposing
 
 {-| Changes from V2:
 
-  - TODO
+    - adds `custom`
+    - adds `nriDescription`, `testId`, and `id` helpers
+    - adds `css` helper
 
 
 # View
 
 @docs somethingWentWrong
 @docs view, Attribute
+@docs custom, css, nriDescription, testId, id
 
 
 ## Size
@@ -50,13 +54,14 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
 import Markdown
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -97,8 +102,9 @@ view attributes_ =
         , color color_
         , boxSizing borderBox
         , styleOverrides
+        , Css.batch attributes.customStyles
         ]
-        role
+        (role ++ attributes.customAttributes)
         [ case attributes.size of
             Tiny ->
                 Nri.Ui.styled div
@@ -140,7 +146,7 @@ view attributes_ =
                     []
                     [ icon
                     , div
-                        [ css
+                        [ Attributes.css
                             [ minWidth (px 100)
                             , flexBasis (px 100)
                             , flexGrow (int 1)
@@ -170,7 +176,7 @@ view attributes_ =
                     ]
                     []
                     [ span
-                        [ css
+                        [ Attributes.css
                             [ alignItems center
                             , displayFlex
                             , justifyContent center
@@ -219,7 +225,7 @@ somethingWentWrong errorMessageForEngineers =
             ]
         , details []
             [ summary
-                [ css
+                [ Attributes.css
                     [ Fonts.baseFont
                     , fontSize (px 14)
                     , color Colors.gray45
@@ -227,7 +233,7 @@ somethingWentWrong errorMessageForEngineers =
                 ]
                 [ text "Details for NoRedInk engineers" ]
             , code
-                [ css
+                [ Attributes.css
                     [ display block
                     , whiteSpace normal
                     , overflowWrap breakWord
@@ -327,6 +333,50 @@ customTheme custom_ =
     Attribute <| \config -> { config | theme = Custom custom_ }
 
 
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute msg
+custom attributes =
+    Attribute <|
+        \config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Attributes.id id_ ]
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    Attribute <|
+        \config ->
+            { config
+                | customStyles = List.append config.customStyles styles
+            }
+
+
 {-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
 -}
 onDismiss : msg -> Attribute msg
@@ -384,6 +434,8 @@ type alias BannerConfig msg =
     , content : Content msg
     , theme : Theme
     , size : Size
+    , customAttributes : List (Html.Attribute Never)
+    , customStyles : List Style
     }
 
 
@@ -397,6 +449,8 @@ configFromAttributes attr =
         , content = Plain ""
         , theme = Tip
         , size = Tiny
+        , customAttributes = []
+        , customStyles = []
         }
         attr
 
@@ -577,7 +631,7 @@ getIcon size theme =
 
                 Banner ->
                     div
-                        [ css
+                        [ Attributes.css
                             [ borderRadius (pct 50)
                             , height (px 50)
                             , width (px 50)
@@ -622,7 +676,7 @@ type Role
     | AlertDialog
 
 
-getRoleAttribute : Maybe Role -> List (Html.Attribute msg)
+getRoleAttribute : Maybe Role -> List (Html.Attribute Never)
 getRoleAttribute role =
     case role of
         Just AlertRole ->
