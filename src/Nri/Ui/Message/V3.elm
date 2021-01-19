@@ -1,7 +1,7 @@
 module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
-    , custom, css, nriDescription, testId, id
+    , custom, css, testId, id
     , tiny, large, banner
     , plaintext, markdown, html
     , tip, error, alert, success, customTheme
@@ -12,7 +12,7 @@ module Nri.Ui.Message.V3 exposing
 {-| Changes from V2:
 
     - adds `custom`
-    - adds `nriDescription`, `testId`, and `id` helpers
+    - adds `testId`, and `id` helpers
     - adds `css` helper
 
 
@@ -20,7 +20,7 @@ module Nri.Ui.Message.V3 exposing
 
 @docs somethingWentWrong
 @docs view, Attribute
-@docs custom, css, nriDescription, testId, id
+@docs custom, css, testId, id
 
 
 ## Size
@@ -357,12 +357,6 @@ custom attributes =
             { config
                 | customAttributes = List.append config.customAttributes attributes
             }
-
-
-{-| -}
-nriDescription : String -> Attribute msg
-nriDescription description =
-    custom [ ExtraAttributes.nriDescription description ]
 
 
 {-| -}
