@@ -11,10 +11,7 @@ module Nri.Ui.Message.V3 exposing
 
 {-| Changes from V2:
 
-    - adds `custom`
-    - adds `testId`, and `id` helpers
-    - adds `css` helper
-    - add top-level `icon` helper
+    - adds helpers: `custom`,`css`,`icon`,`testId`,`id`
 
 
 # View
