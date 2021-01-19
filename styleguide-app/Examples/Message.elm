@@ -19,15 +19,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 type alias State =
     { show : Bool
-    , control : Control ExampleConfig
-    }
-
-
-type alias ExampleConfig =
-    { theme : Maybe (Message.Attribute Msg)
-    , content : Message.Attribute Msg
-    , role : Maybe (Message.Attribute Msg)
-    , dismissable : Maybe (Message.Attribute Msg)
+    , control : Control (List (Message.Attribute Msg))
     }
 
 
@@ -35,11 +27,13 @@ init : State
 init =
     { show = True
     , control =
-        Control.record ExampleConfig
+        Control.record
+            (\a b c d e -> List.filterMap identity [ a, b, c, d, e ])
             |> Control.field "theme" controlTheme
-            |> Control.field "content" controlContent
+            |> Control.field "content" (Control.map Just controlContent)
             |> Control.field "role" controlRole
             |> Control.field "dismissable" controlDismissable
+            |> Control.field "css" controlCss
     }
 
 
@@ -138,9 +132,30 @@ controlDismissable =
         Control.value (Message.onDismiss Dismiss)
 
 
+controlCss : Control (Maybe (Message.Attribute Msg))
+controlCss =
+    Control.choice
+        [ ( "not set", Control.value Nothing )
+        , ( "css [ border3 (px 1) dashed red ]"
+          , Control.value
+                (Just (Message.css [ Css.border3 (Css.px 1) Css.dashed Colors.red ]))
+          )
+        , ( "css [ border3 (px 2) solid purple, borderRadius4 (px 8) (px 8) zero zero ]"
+          , Control.value
+                (Just
+                    (Message.css
+                        [ Css.border3 (Css.px 2) Css.solid Colors.purple
+                        , Css.borderRadius4 (Css.px 8) (Css.px 8) Css.zero Css.zero
+                        ]
+                    )
+                )
+          )
+        ]
+
+
 type Msg
     = Dismiss
-    | UpdateControl (Control ExampleConfig)
+    | UpdateControl (Control (List (Message.Attribute Msg)))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -166,17 +181,8 @@ example =
     , view =
         \state ->
             let
-                { role, theme, dismissable, content } =
-                    Control.currentValue state.control
-
-                attributes : List (Message.Attribute Msg)
                 attributes =
-                    List.filterMap identity
-                        [ theme
-                        , Just content
-                        , role
-                        , dismissable
-                        ]
+                    Control.currentValue state.control
 
                 orDismiss view =
                     if state.show then
