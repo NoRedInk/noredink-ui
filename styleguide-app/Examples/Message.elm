@@ -11,7 +11,7 @@ import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Message.V2 as Message
+import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -19,15 +19,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 type alias State =
     { show : Bool
-    , control : Control ExampleConfig
-    }
-
-
-type alias ExampleConfig =
-    { theme : Maybe (Message.Attribute Msg)
-    , content : Message.Attribute Msg
-    , role : Maybe (Message.Attribute Msg)
-    , dismissable : Maybe (Message.Attribute Msg)
+    , control : Control (List (Message.Attribute Msg))
     }
 
 
@@ -35,11 +27,14 @@ init : State
 init =
     { show = True
     , control =
-        Control.record ExampleConfig
+        Control.record
+            (\a b c d e f -> List.filterMap identity [ a, b, c, d, e, f ])
             |> Control.field "theme" controlTheme
-            |> Control.field "content" controlContent
+            |> Control.field "content" (Control.map Just controlContent)
             |> Control.field "role" controlRole
             |> Control.field "dismissable" controlDismissable
+            |> Control.field "css" controlCss
+            |> Control.field "icon" controlIcon
     }
 
 
@@ -57,7 +52,7 @@ controlTheme =
 
 controlCustomTheme : Control (Message.Attribute msg)
 controlCustomTheme =
-    Control.record (\a b c -> Message.customTheme { color = a, backgroundColor = b, icon = c })
+    Control.record (\a b -> Message.customTheme { color = a, backgroundColor = b })
         |> Control.field "color"
             (Control.choice
                 [ ( "aquaDark", Control.value Colors.aquaDark )
@@ -68,13 +63,16 @@ controlCustomTheme =
                 [ ( "gray92", Control.value Colors.gray92 )
                 ]
             )
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "premiumFlag", Control.value Pennant.premiumFlag )
-                , ( "lock", Control.value UiIcon.lock )
-                , ( "clock", Control.value UiIcon.clock )
-                ]
-            )
+
+
+controlIcon : Control (Maybe (Message.Attribute msg))
+controlIcon =
+    Control.choice
+        [ ( "not set", Control.value Nothing )
+        , ( "premiumFlag", Control.value (Just (Message.icon Pennant.premiumFlag)) )
+        , ( "lock", Control.value (Just (Message.icon UiIcon.lock)) )
+        , ( "clock", Control.value (Just (Message.icon UiIcon.clock)) )
+        ]
 
 
 controlContent : Control (Message.Attribute msg)
@@ -138,9 +136,30 @@ controlDismissable =
         Control.value (Message.onDismiss Dismiss)
 
 
+controlCss : Control (Maybe (Message.Attribute Msg))
+controlCss =
+    Control.choice
+        [ ( "not set", Control.value Nothing )
+        , ( "css [ border3 (px 1) dashed red ]"
+          , Control.value
+                (Just (Message.css [ Css.border3 (Css.px 1) Css.dashed Colors.red ]))
+          )
+        , ( "css [ border3 (px 2) solid purple, borderRadius4 (px 8) (px 8) zero zero ]"
+          , Control.value
+                (Just
+                    (Message.css
+                        [ Css.border3 (Css.px 2) Css.solid Colors.purple
+                        , Css.borderRadius4 (Css.px 8) (Css.px 8) Css.zero Css.zero
+                        ]
+                    )
+                )
+          )
+        ]
+
+
 type Msg
     = Dismiss
-    | UpdateControl (Control ExampleConfig)
+    | UpdateControl (Control (List (Message.Attribute Msg)))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -166,17 +185,8 @@ example =
     , view =
         \state ->
             let
-                { role, theme, dismissable, content } =
-                    Control.currentValue state.control
-
-                attributes : List (Message.Attribute Msg)
                 attributes =
-                    List.filterMap identity
-                        [ theme
-                        , Just content
-                        , role
-                        , dismissable
-                        ]
+                    Control.currentValue state.control
 
                 orDismiss view =
                     if state.show then
