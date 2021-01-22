@@ -59,7 +59,7 @@ view (System system _) =
     system
         |> ParticleSystem.viewCustom viewConfetti
             (Html.div
-                [ Attributes.style "position" "absolute"
+                [ Attributes.style "position" "fixed"
                 , Attributes.style "top" "0"
                 , Attributes.style "left" "0"
                 , Attributes.style "width" "100%"
