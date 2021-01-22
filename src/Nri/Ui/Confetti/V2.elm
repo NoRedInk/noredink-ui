@@ -17,6 +17,7 @@ Changes from V1:
 -}
 
 import Css exposing (Color)
+import Css.Media exposing (withMediaQuery)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -66,6 +67,8 @@ view (System system _) =
                     , Css.width (Css.pct 100)
                     , Css.height (Css.vh 100)
                     , Css.pointerEvents Css.none
+                    , withMediaQuery [ "(prefers-reduced-motion)" ]
+                        [ Css.display Css.none ]
                     ]
                 ]
             )
