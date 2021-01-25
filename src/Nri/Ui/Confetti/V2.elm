@@ -17,6 +17,7 @@ Changes from V1:
 -}
 
 import Css exposing (Color)
+import Css.Media exposing (withMediaQuery)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -59,12 +60,16 @@ view (System system _) =
     system
         |> ParticleSystem.viewCustom viewConfetti
             (Html.div
-                [ Attributes.style "position" "absolute"
-                , Attributes.style "top" "0"
-                , Attributes.style "left" "0"
-                , Attributes.style "width" "100%"
-                , Attributes.style "height" "100vh"
-                , Attributes.style "pointer-events" "none"
+                [ Attributes.css
+                    [ Css.position Css.fixed
+                    , Css.top Css.zero
+                    , Css.left Css.zero
+                    , Css.width (Css.pct 100)
+                    , Css.height (Css.vh 100)
+                    , Css.pointerEvents Css.none
+                    , withMediaQuery [ "(prefers-reduced-motion)" ]
+                        [ Css.display Css.none ]
+                    ]
                 ]
             )
 
