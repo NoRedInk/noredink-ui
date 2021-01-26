@@ -175,7 +175,7 @@ update msg state =
 example : Example State Msg
 example =
     { name = "Message"
-    , version = 2
+    , version = 3
     , categories = [ Messaging ]
     , atomicDesignType = Molecule
     , keyboardSupport = []
