@@ -149,6 +149,7 @@ view attrs isOn =
                         , Css.color Colors.navy
                         , Css.paddingLeft (Css.px 5)
                         ]
+                    , Attributes.for config.id
                     ]
                     [ label_ ]
 
