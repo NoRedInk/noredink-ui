@@ -279,7 +279,7 @@ positioning : Style
 positioning =
     batch
         [ display inlineBlock
-        , padding4 (px 13) zero (px 13) (px 35)
+        , padding4 (px 13) zero (px 13) (px 40)
         , position relative
         ]
 
