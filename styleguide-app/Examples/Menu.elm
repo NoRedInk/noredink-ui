@@ -32,7 +32,19 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
     , atomicDesignType = Molecule
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Space ], result = "Opens the menu" }
+        , { keys = [ Enter ], result = "Opens the menu" }
+        , { keys = [ Tab ], result = "Takes focus out of the menu to the next focusable element." }
+        , { keys = [ Tab, Shift ], result = "Takes focus out of the menu to the previous focusable element." }
+        , { keys = [ Arrow KeyboardSupport.Up ]
+          , result = "While menu is open, moves the focus to the previous menu item button (wraps focus to the last menu item)"
+          }
+        , { keys = [ Arrow KeyboardSupport.Down ]
+          , result = "While menu is closed, moves the focus to the next menu item button (wraps focus to the first menu item)"
+          }
+        , { keys = [ Esc ], result = "Closes the menu" }
+        ]
     , view = view
     }
 
