@@ -16,7 +16,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Menu.V1 as Menu
+import Nri.Ui.Menu.V2 as Menu
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
@@ -26,7 +26,7 @@ import Set exposing (Set)
 example : Example State Msg
 example =
     { name = "Menu"
-    , version = 1
+    , version = 2
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
