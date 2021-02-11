@@ -233,40 +233,6 @@ viewTitle config =
         ]
 
 
-viewEntry : Entry msg -> Html msg
-viewEntry entry_ =
-    case entry_ of
-        Single id view_ ->
-            div
-                [ class "MenuEntryContainer"
-                , css
-                    [ padding2 (px 5) zero
-                    , position relative
-                    , firstChild
-                        [ paddingTop zero ]
-                    , lastChild
-                        [ paddingBottom zero ]
-                    ]
-                ]
-                [ view_
-                    [ Role.menuItem
-                    , Attributes.id id
-                    , Key.tabbable False
-                    ]
-                ]
-
-        Batch title childList ->
-            case childList of
-                [] ->
-                    Html.text ""
-
-                _ ->
-                    fieldset styleGroupContainer <|
-                        legend styleGroupTitle
-                            [ span styleGroupTitleText [ Html.text title ] ]
-                            :: List.map viewEntry childList
-
-
 {-|
 
   - `entries`: the entries of the menu
@@ -294,36 +260,11 @@ viewCustom :
     -> Html msg
 viewCustom config content =
     let
-        getFirstIdString elem =
-            case elem of
-                Single idString _ ->
-                    Just idString
-
-                Batch _ entries ->
-                    List.foldl
-                        (\e acc ->
-                            case acc of
-                                Just _ ->
-                                    acc
-
-                                Nothing ->
-                                    getFirstIdString e
-                        )
-                        Nothing
-                        entries
+        firstIds =
+            getFirstIds config.entries
 
         maybeFirstFocusableElementId =
-            List.foldl
-                (\elem acc ->
-                    case acc of
-                        Nothing ->
-                            getFirstIdString elem
-
-                        Just v ->
-                            acc
-                )
-                Nothing
-                config.entries
+            List.head firstIds
 
         contentVisible =
             config.isOpen && not config.isDisabled
@@ -382,9 +323,103 @@ viewCustom config content =
                         |> Maybe.withDefault (Css.batch [])
                     ]
                 ]
-                (List.map viewEntry config.entries)
+                (List.map2
+                    (\e upId ->
+                        viewEntry config.focus
+                            { upId = upId
+                            , downId = "TODO"
+                            , entry_ = e
+                            }
+                    )
+                    config.entries
+                    (config.buttonId :: firstIds)
+                )
             ]
         ]
+
+
+getFirstIds : List (Entry msg) -> List String
+getFirstIds entries =
+    let
+        getFirstIdString elem =
+            case elem of
+                Single idString _ ->
+                    Just idString
+
+                Batch _ es ->
+                    List.foldl
+                        (\e acc ->
+                            case acc of
+                                Just _ ->
+                                    acc
+
+                                Nothing ->
+                                    getFirstIdString e
+                        )
+                        Nothing
+                        es
+    in
+    List.foldr
+        (\elem acc ->
+            getFirstIdString elem :: acc
+        )
+        []
+        entries
+        |> List.filterMap identity
+
+
+viewEntry :
+    (String -> msg)
+    ->
+        { upId : String
+        , downId : String
+        , entry_ : Entry msg
+        }
+    -> Html msg
+viewEntry focus { upId, downId, entry_ } =
+    case entry_ of
+        Single id view_ ->
+            div
+                [ class "MenuEntryContainer"
+                , css
+                    [ padding2 (px 5) zero
+                    , position relative
+                    , firstChild
+                        [ paddingTop zero ]
+                    , lastChild
+                        [ paddingBottom zero ]
+                    ]
+                ]
+                [ view_
+                    [ Role.menuItem
+                    , Attributes.id id
+                    , Key.tabbable False
+                    , Key.onKeyDown
+                        [ Key.up (focus upId)
+                        , Key.down (focus downId)
+                        ]
+                    ]
+                ]
+
+        Batch title childList ->
+            case childList of
+                [] ->
+                    Html.text ""
+
+                _ ->
+                    fieldset styleGroupContainer <|
+                        legend styleGroupTitle
+                            [ span styleGroupTitleText [ Html.text title ] ]
+                            :: List.map2
+                                (\e newUpId ->
+                                    viewEntry focus
+                                        { upId = newUpId
+                                        , downId = "TODO"
+                                        , entry_ = e
+                                        }
+                                )
+                                childList
+                                (upId :: getFirstIds childList)
 
 
 
