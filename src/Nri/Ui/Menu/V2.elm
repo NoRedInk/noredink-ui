@@ -10,6 +10,8 @@ module Nri.Ui.Menu.V2 exposing
   - adds `focus` to configuration
   - renames `onToggle` to `toggle` (just for consistency)
   - remove `iconButton` and `iconLink` (use ClickableSvg instead)
+  - use ClickableSvg for the iconButtonWithMenu helper
+  - use Tooltip.V2 instead of Tooltip.V1
 
 A togglable menu view and related buttons.
 
@@ -36,13 +38,15 @@ import Css exposing (..)
 import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
-import Html.Styled.Events exposing (onClick, onMouseDown)
+import Html.Styled.Events as Events exposing (onClick, onMouseDown)
+import Json.Decode
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
 
@@ -365,43 +369,42 @@ iconButtonWithMenu config =
           else
             Html.text ""
         , div styleInnerContainer
-            [ let
-                perhapsOnclick =
-                    if config.isDisabled then
-                        []
+            [ div styleIconButtonContainer
+                [ Tooltip.view
+                    { trigger =
+                        \attrs ->
+                            ClickableSvg.button config.label
+                                config.icon
+                                [ ClickableSvg.disabled config.isDisabled
+                                , ClickableSvg.custom
+                                    (attrs
+                                        ++ (if config.isDisabled then
+                                                []
 
-                    else
-                        -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
-                        [ onMouseDown (config.toggle (not config.isOpen)) ]
-              in
-              div styleIconButtonContainer
-                [ tooltip [ text config.label ]
-                    |> Tooltip.primaryLabel
-                        { trigger = Tooltip.OnHover
-                        , onTrigger = config.onShowTooltip
-                        , isOpen = config.isTooltipOpen
-                        , triggerHtml =
-                            button
-                                ([ Attributes.id buttonId
-                                 , class "IconButton"
-                                 , css
-                                    (disabled
-                                        [ opacity (num 0.4)
-                                        , cursor notAllowed
-                                        ]
-                                        :: buttonLinkResets
+                                            else
+                                                [ Events.custom "click"
+                                                    (Json.Decode.succeed
+                                                        { preventDefault = True
+                                                        , stopPropagation = True
+                                                        , message = config.toggle (not config.isOpen)
+                                                        }
+                                                    )
+                                                ]
+                                           )
                                     )
-                                 , Widget.disabled config.isDisabled
-                                 , Attributes.disabled config.isDisabled
-                                 , Widget.label config.label
-                                 ]
-                                    ++ perhapsOnclick
-                                )
-                                [ independentIcon config.icon
+                                , ClickableSvg.exactWidth 25
+                                , ClickableSvg.exactHeight 25
+                                , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
                                 ]
-                        , extraButtonAttrs = []
-                        , id = buttonId ++ "-tooltip"
-                        }
+                    , id = buttonId ++ "-tooltip"
+                    }
+                    [ Tooltip.plaintext config.label
+                    , Tooltip.primaryLabel
+                    , Tooltip.onHover config.onShowTooltip
+                    , Tooltip.open config.isTooltipOpen
+                    , Tooltip.smallPadding
+                    , Tooltip.fitToContent
+                    ]
                 ]
             , viewDropdown
                 { alignment = config.alignment
@@ -441,14 +444,6 @@ buttonLinkResets =
     , display inlineBlock
     , verticalAlign middle
     ]
-
-
-tooltip : List (Html msg) -> Tooltip msg
-tooltip =
-    Tooltip.tooltip
-        >> Tooltip.withPosition Tooltip.OnTop
-        >> Tooltip.withWidth Tooltip.FitToContent
-        >> Tooltip.withPadding Tooltip.SmallPadding
 
 
 {-| -}
