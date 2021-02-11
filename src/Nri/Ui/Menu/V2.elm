@@ -323,16 +323,17 @@ viewCustom config content =
                         |> Maybe.withDefault (Css.batch [])
                     ]
                 ]
-                (List.map2
-                    (\e upId ->
+                (List.map3
+                    (\e upId downId ->
                         viewEntry config.focus
                             { upId = upId
-                            , downId = "TODO"
+                            , downId = downId
                             , entry_ = e
                             }
                     )
                     config.entries
                     (config.buttonId :: firstIds)
+                    (getLastIds config.entries ++ [ config.buttonId ])
                 )
             ]
         ]
@@ -359,10 +360,34 @@ getFirstIds entries =
                         Nothing
                         es
     in
-    List.foldr
-        (\elem acc ->
-            getFirstIdString elem :: acc
-        )
+    List.foldr (\elem acc -> getFirstIdString elem :: acc)
+        []
+        entries
+        |> List.filterMap identity
+
+
+getLastIds : List (Entry msg) -> List String
+getLastIds entries =
+    let
+        getLastIdString elem =
+            case elem of
+                Single idString _ ->
+                    Just idString
+
+                Batch _ es ->
+                    List.foldr
+                        (\e acc ->
+                            case acc of
+                                Just _ ->
+                                    acc
+
+                                Nothing ->
+                                    getLastIdString e
+                        )
+                        Nothing
+                        es
+    in
+    List.foldl (\elem acc -> getLastIdString elem :: acc)
         []
         entries
         |> List.filterMap identity
@@ -407,19 +432,24 @@ viewEntry focus { upId, downId, entry_ } =
                     Html.text ""
 
                 _ ->
+                    let
+                        firstIds =
+                            getFirstIds childList
+                    in
                     fieldset styleGroupContainer <|
                         legend styleGroupTitle
                             [ span styleGroupTitleText [ Html.text title ] ]
-                            :: List.map2
-                                (\e newUpId ->
+                            :: List.map3
+                                (\e newUpId newDownId ->
                                     viewEntry focus
                                         { upId = newUpId
-                                        , downId = "TODO"
+                                        , downId = downId
                                         , entry_ = e
                                         }
                                 )
                                 childList
-                                (upId :: getFirstIds childList)
+                                (upId :: firstIds)
+                                (getLastIds childList ++ [ downId ])
 
 
 
