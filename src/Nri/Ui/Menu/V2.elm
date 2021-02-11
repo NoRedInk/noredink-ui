@@ -165,7 +165,6 @@ view config =
                         else
                             []
                     ]
-                 , Events.onClick (config.toggle (not config.isOpen))
                  , config.buttonWidth
                     -- TODO: don't set this value as an inline style unnecessarily
                     |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
@@ -326,23 +325,7 @@ iconButtonWithMenu config =
                         ClickableSvg.button config.label
                             config.icon
                             [ ClickableSvg.disabled config.isDisabled
-                            , ClickableSvg.custom
-                                (attrs
-                                    ++ buttonAttributes
-                                    ++ (if config.isDisabled then
-                                            []
-
-                                        else
-                                            [ Events.custom "click"
-                                                (Json.Decode.succeed
-                                                    { preventDefault = True
-                                                    , stopPropagation = True
-                                                    , message = config.toggle (not config.isOpen)
-                                                    }
-                                                )
-                                            ]
-                                       )
-                                )
+                            , ClickableSvg.custom (attrs ++ buttonAttributes)
                             , ClickableSvg.exactWidth 25
                             , ClickableSvg.exactHeight 25
                             , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
@@ -397,6 +380,17 @@ viewMenu config content =
                 , Widget.expanded config.isOpen
                 , Aria.controls config.menuId
                 , Attributes.id config.buttonId
+                , if config.isDisabled then
+                    AttributesExtra.none
+
+                  else
+                    Events.custom "click"
+                        (Json.Decode.succeed
+                            { preventDefault = True
+                            , stopPropagation = True
+                            , message = config.toggle (not config.isOpen)
+                            }
+                        )
                 ]
             , viewDropdown
                 { alignment = config.alignment
