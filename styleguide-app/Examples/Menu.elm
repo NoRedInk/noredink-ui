@@ -15,10 +15,12 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Menu.V2 as Menu
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
@@ -57,8 +59,8 @@ view state =
         viewConfiguration =
             Control.currentValue state.viewConfiguration
 
-        iconButtonWithMenuConfiguration =
-            Control.currentValue state.iconButtonWithMenuConfiguration
+        viewCustomConfiguration =
+            Control.currentValue state.viewCustomConfiguration
 
         isOpen name =
             case state.openMenu of
@@ -103,23 +105,41 @@ view state =
         ]
     , div
         [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.iconButtonWithMenu" ]
-        , viewControl SetIconButtonWithMenuConfiguration state.iconButtonWithMenuConfiguration
-        , Menu.iconButtonWithMenu
-            { isTooltipOpen = Set.member "iconButtonWithMenu" state.openTooltips
-            , onShowTooltip = ShowTooltip "iconButtonWithMenu"
-            , buttonId = "icon-button-with-menu__button"
+        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.viewCustom" ]
+        , viewControl SetIconButtonWithMenuConfiguration state.viewCustomConfiguration
+        , Menu.viewCustom
+            { buttonId = "icon-button-with-menu__button"
             , menuId = "icon-button-with-menu__menu"
-            , label = "Menu.iconButtonWithMenu: Click me!"
             , isOpen = isOpen "icon-button-with-menu"
             , toggle = menuToggler "icon-button-with-menu"
             , focus = Focus
-            , icon = iconButtonWithMenuConfiguration.icon
-            , alignment = iconButtonWithMenuConfiguration.alignment
-            , isDisabled = iconButtonWithMenuConfiguration.isDisabled
-            , menuWidth = iconButtonWithMenuConfiguration.menuWidth
+            , alignment = viewCustomConfiguration.alignment
+            , isDisabled = viewCustomConfiguration.isDisabled
+            , menuWidth = viewCustomConfiguration.menuWidth
             , entries = []
             }
+          <|
+            \buttonAttributes ->
+                Tooltip.view
+                    { trigger =
+                        \attrs ->
+                            ClickableSvg.button "Menu.viewCustom: Click me!"
+                                viewCustomConfiguration.icon
+                                [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
+                                , ClickableSvg.custom (attrs ++ buttonAttributes)
+                                , ClickableSvg.exactWidth 25
+                                , ClickableSvg.exactHeight 25
+                                , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                                ]
+                    , id = "viewCustom-example-tooltip"
+                    }
+                    [ Tooltip.plaintext "Menu.viewCustom: Click me!"
+                    , Tooltip.primaryLabel
+                    , Tooltip.onHover (ShowTooltip "viewCustom")
+                    , Tooltip.open (Set.member "viewCustom" state.openTooltips)
+                    , Tooltip.smallPadding
+                    , Tooltip.fitToContent
+                    ]
         ]
     ]
 
@@ -140,7 +160,7 @@ init =
     , checkboxChecked = False
     , openTooltips = Set.empty
     , viewConfiguration = initViewConfiguration
-    , iconButtonWithMenuConfiguration = initIconButtonWithMenuConfiguration
+    , viewCustomConfiguration = initIconButtonWithMenuConfiguration
     }
 
 
@@ -150,7 +170,7 @@ type alias State =
     , checkboxChecked : Bool
     , openTooltips : Set String
     , viewConfiguration : Control ViewConfiguration
-    , iconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
+    , viewCustomConfiguration : Control IconButtonWithMenuConfiguration
     }
 
 
@@ -268,7 +288,7 @@ update msg state =
             ( { state | viewConfiguration = configuration }, Cmd.none )
 
         SetIconButtonWithMenuConfiguration configuration ->
-            ( { state | iconButtonWithMenuConfiguration = configuration }, Cmd.none )
+            ( { state | viewCustomConfiguration = configuration }, Cmd.none )
 
         Focus idString ->
             ( state, Task.attempt Focused (Dom.focus idString) )

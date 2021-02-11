@@ -1,6 +1,6 @@
 module Nri.Ui.Menu.V2 exposing
     ( view, Alignment(..), TitleWrapping(..)
-    , iconButtonWithMenu
+    , viewCustom
     , Entry, group, none, entry
     )
 
@@ -10,10 +10,8 @@ module Nri.Ui.Menu.V2 exposing
   - adds `focus` to configuration
   - renames `onToggle` to `toggle` (just for consistency)
   - remove `iconButton` and `iconLink` (use ClickableSvg instead)
-  - use ClickableSvg for the iconButtonWithMenu helper
-  - use Tooltip.V2 instead of Tooltip.V1
-  - change which id you pass in to the component (it's more useful to have a focusable element's id outside the component)
-  - explicitly pass in a buttonId and a menuId
+  - replace iconButtonWithMenu helper with a custom helper
+  - explicitly pass in a buttonId and a menuId (instead of the container id)
   - when wrapping the menu title, use the title in the description rather than an HTML id string
 
 A togglable menu view and related buttons.
@@ -24,7 +22,7 @@ A togglable menu view and related buttons.
 ## Menu buttons
 
 @docs view, Alignment, TitleWrapping
-@docs iconButtonWithMenu
+@docs viewCustom
 
 
 ## Menu content
@@ -43,13 +41,11 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
 
@@ -136,7 +132,7 @@ view :
     }
     -> Html msg
 view config =
-    viewMenu config <|
+    viewCustom config <|
         \buttonAttributes ->
             Html.button
                 ([ classList [ ( "ToggleButton", True ), ( "WithBorder", config.hasBorder ) ]
@@ -283,67 +279,19 @@ viewEntry entry_ =
             Html.text ""
 
 
-{-| Configure the icon button & menu
+{-|
 
-  - `icon`: the icon
-  - `label`: the text to display in the tooltip
-  - `isTooltipOpen`: whether the tooltip is open when hovering over the icon
-  - `onShowTooltip`: the message for toggling the tooltip
   - `entries`: the entries of the menu
-  - `isOpen`: whether the menu is opened
   - `toggle`: a message to trigger when then menu wants to invert its open state
   - `focus`: a message to control the focus in the DOM, takes an HTML id string
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
   - `menuWidth` : optionally fix the width of the popover
-  - `buttonId`: a unique string id for the menu elements
-  - `menuId`: a unique string identifier for the men
+  - `buttonId`: a unique string identifier for the button that opens/closes the menu
+  - `menuId`: a unique string identifier for the menu
 
 -}
-iconButtonWithMenu :
-    { icon : Svg.Svg
-    , label : String
-    , isTooltipOpen : Bool
-    , onShowTooltip : Bool -> msg
-    , entries : List (Entry msg)
-    , isOpen : Bool
-    , toggle : Bool -> msg
-    , focus : String -> msg
-    , alignment : Alignment
-    , isDisabled : Bool
-    , menuWidth : Maybe Int
-    , buttonId : String
-    , menuId : String
-    }
-    -> Html msg
-iconButtonWithMenu config =
-    viewMenu config <|
-        \buttonAttributes ->
-            Tooltip.view
-                { trigger =
-                    \attrs ->
-                        ClickableSvg.button config.label
-                            config.icon
-                            [ ClickableSvg.disabled config.isDisabled
-                            , ClickableSvg.custom (attrs ++ buttonAttributes)
-                            , ClickableSvg.exactWidth 25
-                            , ClickableSvg.exactHeight 25
-                            , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-                            ]
-                , id = config.buttonId ++ "-tooltip"
-                }
-                [ Tooltip.plaintext config.label
-                , Tooltip.primaryLabel
-                , Tooltip.onHover config.onShowTooltip
-                , Tooltip.open config.isTooltipOpen
-                , Tooltip.smallPadding
-                , Tooltip.fitToContent
-                , Tooltip.containerCss [ display inlineBlock, position relative ]
-                ]
-
-
-{-| -}
-viewMenu :
+viewCustom :
     { config
         | entries : List (Entry msg)
         , isOpen : Bool
@@ -357,7 +305,7 @@ viewMenu :
     }
     -> (List (Attribute msg) -> Html msg)
     -> Html msg
-viewMenu config content =
+viewCustom config content =
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: Key.onKeyDown [ Key.escape (config.toggle False) ]
