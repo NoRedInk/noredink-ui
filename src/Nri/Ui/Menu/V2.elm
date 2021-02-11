@@ -15,6 +15,7 @@ module Nri.Ui.Menu.V2 exposing
   - when wrapping the menu title, use the title in the description rather than an HTML id string
   - separate out the data for the viewCustom menu and the data used to make a nice looking shared default button
   - remove None
+  - change the Single API to allow passing-in of the id and passing-back of the menu item attributes
 
 A togglable menu view and related buttons.
 
@@ -59,22 +60,28 @@ import String.Extra
 {-| Represents zero or more entries within the menu content
 -}
 type Entry msg
-    = Single (Html msg)
+    = Single String (List (Attribute msg) -> Html msg)
     | Batch String (List (Entry msg))
 
 
-{-| Represents a group of entries with a named legend
+{-| Represents a group of entries with a named legend.
 -}
 group : String -> List (Entry msg) -> Entry msg
-group =
-    Batch
+group legendName entries =
+    Batch legendName entries
 
 
-{-| Represents a single entry
+{-| Represents a single entry.
+
+Pass in the id you'd like for your menu item, which will be used to manage the focus.
+
+    Menu.entry "my-button-id"
+        (\attributes -> Button.button "One great button" [ Button.custom attributes ])
+
 -}
-entry : Html msg -> Entry msg
-entry =
-    Single
+entry : String -> (List (Attribute msg) -> Html msg) -> Entry msg
+entry id =
+    Single id
 
 
 {-| Determines how we deal with long titles. Should we make the menu expand in
@@ -259,8 +266,23 @@ viewDropdown config =
 viewEntry : Entry msg -> Html msg
 viewEntry entry_ =
     case entry_ of
-        Single child ->
-            div (Role.menuItem :: styleMenuEntryContainer) [ child ]
+        Single id view_ ->
+            div
+                [ class "MenuEntryContainer"
+                , css
+                    [ padding2 (px 5) zero
+                    , position relative
+                    , firstChild
+                        [ paddingTop zero ]
+                    , lastChild
+                        [ paddingBottom zero ]
+                    ]
+                ]
+                [ view_
+                    [ Role.menuItem
+                    , Attributes.id id
+                    ]
+                ]
 
         Batch title childList ->
             case childList of
@@ -382,20 +404,6 @@ styleOverlay =
         , left zero
         , top zero
         , zIndex (int 1)
-        ]
-    ]
-
-
-styleMenuEntryContainer : List (Attribute msg)
-styleMenuEntryContainer =
-    [ class "MenuEntryContainer"
-    , css
-        [ padding2 (px 5) zero
-        , position relative
-        , firstChild
-            [ paddingTop zero ]
-        , lastChild
-            [ paddingBottom zero ]
         ]
     ]
 

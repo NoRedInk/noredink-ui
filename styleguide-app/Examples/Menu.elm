@@ -84,16 +84,20 @@ view state =
             , menuWidth = viewConfiguration.menuWidth
             , entries =
                 [ Menu.group "Buttons"
-                    [ Menu.entry <|
-                        ClickableText.button "Hello"
-                            [ ClickableText.onClick (ConsoleLog "Hello")
-                            , ClickableText.small
-                            ]
-                    , Menu.entry <|
-                        ClickableText.button "Performance"
-                            [ ClickableText.onClick (ConsoleLog "Performance")
-                            , ClickableText.small
-                            ]
+                    [ Menu.entry "hello-button" <|
+                        \attrs ->
+                            ClickableText.button "Hello"
+                                [ ClickableText.onClick (ConsoleLog "Hello")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "performance-button" <|
+                        \attrs ->
+                            ClickableText.button "Performance"
+                                [ ClickableText.onClick (ConsoleLog "Performance")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
                     ]
                 ]
             }
