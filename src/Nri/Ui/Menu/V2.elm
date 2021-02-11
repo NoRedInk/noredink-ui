@@ -413,16 +413,6 @@ iconButtonWithMenu config =
         ]
 
 
-independentIcon : Svg -> Html msg
-independentIcon icon =
-    icon
-        |> Svg.withColor Colors.azure
-        |> Svg.withWidth (Css.px 25)
-        |> Svg.withHeight (Css.px 25)
-        |> Svg.withCss [ Css.margin (Css.px 10) ]
-        |> Svg.toHtml
-
-
 
 -- STYLES
 
