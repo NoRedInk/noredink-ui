@@ -7,8 +7,7 @@ module Nri.Ui.Menu.V2 exposing
 {-| Changes from V1:
 
   - Improves keyboard support
-  - adds `focus` to configuration
-  - renames `onToggle` to `toggle` (just for consistency)
+  - replaces `onToggle` with `focusAndToggle`
   - remove `iconButton` and `iconLink` (use ClickableSvg instead)
   - replace iconButtonWithMenu helper with a custom helper
   - explicitly pass in a buttonId and a menuId (instead of the container id)
@@ -102,8 +101,7 @@ type Alignment
 {-| Menu/pulldown configuration:
 
   - `entries`: the entries of the menu
-  - `toggle`: a message to trigger when then menu wants to invert its open state
-  - `focus`: a message to control the focus in the DOM, takes an HTML id string
+  - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
   - `menuWidth` : optionally fix the width of the popover
@@ -122,8 +120,7 @@ Button configuration:
 view :
     { entries : List (Entry msg)
     , isOpen : Bool
-    , toggle : Bool -> msg
-    , focus : String -> msg
+    , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
     , alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
@@ -236,8 +233,7 @@ viewTitle config =
 {-|
 
   - `entries`: the entries of the menu
-  - `toggle`: a message to trigger when then menu wants to invert its open state
-  - `focus`: a message to control the focus in the DOM, takes an HTML id string
+  - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
   - `menuWidth` : optionally fix the width of the popover
@@ -248,8 +244,7 @@ viewTitle config =
 viewCustom :
     { entries : List (Entry msg)
     , isOpen : Bool
-    , toggle : Bool -> msg
-    , focus : String -> msg
+    , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
     , alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
@@ -271,12 +266,24 @@ viewCustom config content =
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDown [ Key.escape (config.toggle False) ]
+            :: Key.onKeyDown
+                [ Key.escape
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Just config.buttonId
+                        }
+                    )
+                ]
             :: styleContainer
         )
         [ if config.isOpen then
             div
-                (Events.onClick (config.toggle False)
+                (Events.onClick
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
                     :: class "Nri-Menu-Overlay"
                     :: styleOverlay
                 )
@@ -292,7 +299,12 @@ viewCustom config content =
                 , case ( config.isOpen, maybeFirstFocusableElementId ) of
                     ( True, Just firstFocusableElementId ) ->
                         Key.onKeyDown
-                            [ Key.down (config.focus firstFocusableElementId)
+                            [ Key.down
+                                (config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just firstFocusableElementId
+                                    }
+                                )
                             ]
 
                     _ ->
@@ -307,7 +319,11 @@ viewCustom config content =
                         (Json.Decode.succeed
                             { preventDefault = True
                             , stopPropagation = True
-                            , message = config.toggle (not config.isOpen)
+                            , message =
+                                config.focusAndToggle
+                                    { isOpen = not config.isOpen
+                                    , focus = Nothing
+                                    }
                             }
                         )
                 ]
@@ -325,7 +341,8 @@ viewCustom config content =
                 ]
                 (List.map3
                     (\e upId downId ->
-                        viewEntry config.focus
+                        viewEntry config.isOpen
+                            config.focusAndToggle
                             { upId = upId
                             , downId = downId
                             , entry_ = e
@@ -394,14 +411,15 @@ getLastIds entries =
 
 
 viewEntry :
-    (String -> msg)
+    Bool
+    -> ({ isOpen : Bool, focus : Maybe String } -> msg)
     ->
         { upId : String
         , downId : String
         , entry_ : Entry msg
         }
     -> Html msg
-viewEntry focus { upId, downId, entry_ } =
+viewEntry isOpen focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
             div
@@ -420,8 +438,18 @@ viewEntry focus { upId, downId, entry_ } =
                     , Attributes.id id
                     , Key.tabbable False
                     , Key.onKeyDown
-                        [ Key.up (focus upId)
-                        , Key.down (focus downId)
+                        [ Key.up
+                            (focusAndToggle
+                                { isOpen = isOpen
+                                , focus = Just upId
+                                }
+                            )
+                        , Key.down
+                            (focusAndToggle
+                                { isOpen = isOpen
+                                , focus = Just downId
+                                }
+                            )
                         ]
                     ]
                 ]
@@ -441,7 +469,8 @@ viewEntry focus { upId, downId, entry_ } =
                             [ span styleGroupTitleText [ Html.text title ] ]
                             :: List.map3
                                 (\e newUpId newDownId ->
-                                    viewEntry focus
+                                    viewEntry isOpen
+                                        focusAndToggle
                                         { upId = newUpId
                                         , downId = downId
                                         , entry_ = e

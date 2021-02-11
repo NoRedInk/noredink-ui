@@ -75,8 +75,7 @@ view state =
         , viewControl SetViewConfiguration state.viewConfiguration
         , Menu.view
             { isOpen = isOpen "1stPeriodEnglish"
-            , toggle = menuToggler "1stPeriodEnglish"
-            , focus = Focus
+            , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
             , buttonId = "1stPeriodEnglish__button"
             , menuId = "1stPeriodEnglish__menu"
             , alignment = viewConfiguration.alignment
@@ -116,8 +115,7 @@ view state =
             { buttonId = "icon-button-with-menu__button"
             , menuId = "icon-button-with-menu__menu"
             , isOpen = isOpen "icon-button-with-menu"
-            , toggle = menuToggler "icon-button-with-menu"
-            , focus = Focus
+            , focusAndToggle = FocusAndToggle "icon-button-with-menu"
             , alignment = viewCustomConfiguration.alignment
             , isDisabled = viewCustomConfiguration.isDisabled
             , menuWidth = viewCustomConfiguration.menuWidth
@@ -253,12 +251,11 @@ initIconButtonWithMenuConfiguration =
 
 {-| -}
 type Msg
-    = SetMenu (Maybe Id)
-    | ShowTooltip String Bool
+    = ShowTooltip String Bool
     | ConsoleLog String
     | SetViewConfiguration (Control ViewConfiguration)
     | SetIconButtonWithMenuConfiguration (Control IconButtonWithMenuConfiguration)
-    | Focus String
+    | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | NoOp
 
@@ -267,9 +264,6 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetMenu maybeId ->
-            ( { state | openMenu = maybeId }, Cmd.none )
-
         ShowTooltip key isOpen ->
             ( { state
                 | openTooltips =
@@ -295,8 +289,18 @@ update msg state =
         SetIconButtonWithMenuConfiguration configuration ->
             ( { state | viewCustomConfiguration = configuration }, Cmd.none )
 
-        Focus idString ->
-            ( state, Task.attempt Focused (Dom.focus idString) )
+        FocusAndToggle id { isOpen, focus } ->
+            ( { state
+                | openMenu =
+                    if isOpen then
+                        Just id
+
+                    else
+                        Nothing
+              }
+            , Maybe.map (\idString -> Task.attempt Focused (Dom.focus idString)) focus
+                |> Maybe.withDefault Cmd.none
+            )
 
         Focused _ ->
             ( state, Cmd.none )
@@ -315,12 +319,3 @@ type alias Id =
 
 type alias Value =
     String
-
-
-menuToggler : Id -> Bool -> Msg
-menuToggler id desiresToBeOpen =
-    if desiresToBeOpen then
-        SetMenu (Just id)
-
-    else
-        SetMenu Nothing
