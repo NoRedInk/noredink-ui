@@ -281,6 +281,7 @@ viewEntry entry_ =
                 [ view_
                     [ Role.menuItem
                     , Attributes.id id
+                    , Key.tabbable False
                     ]
                 ]
 
@@ -322,6 +323,38 @@ viewCustom :
     -> (List (Attribute msg) -> Html msg)
     -> Html msg
 viewCustom config content =
+    let
+        getFirstIdString elem =
+            case elem of
+                Single idString _ ->
+                    Just idString
+
+                Batch _ entries ->
+                    List.foldl
+                        (\e acc ->
+                            case acc of
+                                Just _ ->
+                                    acc
+
+                                Nothing ->
+                                    getFirstIdString e
+                        )
+                        Nothing
+                        entries
+
+        maybeFirstFocusableElementId =
+            List.foldl
+                (\elem acc ->
+                    case acc of
+                        Nothing ->
+                            getFirstIdString elem
+
+                        Just v ->
+                            acc
+                )
+                Nothing
+                config.entries
+    in
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: Key.onKeyDown [ Key.escape (config.toggle False) ]
@@ -342,6 +375,14 @@ viewCustom config content =
                 [ Widget.disabled config.isDisabled
                 , Widget.hasMenuPopUp
                 , Widget.expanded config.isOpen
+                , case ( config.isOpen, maybeFirstFocusableElementId ) of
+                    ( True, Just firstFocusableElementId ) ->
+                        Key.onKeyDown
+                            [ Key.down (config.focus firstFocusableElementId)
+                            ]
+
+                    _ ->
+                        AttributesExtra.none
                 , Aria.controls config.menuId
                 , Attributes.id config.buttonId
                 , if config.isDisabled then
