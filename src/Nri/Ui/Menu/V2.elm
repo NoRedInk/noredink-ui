@@ -12,6 +12,8 @@ module Nri.Ui.Menu.V2 exposing
   - remove `iconButton` and `iconLink` (use ClickableSvg instead)
   - use ClickableSvg for the iconButtonWithMenu helper
   - use Tooltip.V2 instead of Tooltip.V1
+  - change which id you pass in to the component (it's more useful to have a focusable element's id outside the component)
+  - when wrapping the menu title, use the title in the description rather than an HTML id string
 
 A togglable menu view and related buttons.
 
@@ -111,7 +113,7 @@ type Alignment
   - `isDisabled`: whether the menu can be openned
   - `buttonWidth`: optionally fix the width of the button to a number of pixels
   - `menuWidth` : optionally fix the width of the popover
-  - `id`: a unique string id for the menu elements
+  - `buttonId`: a unique string identifier for the button that opens/closes the menu
 
 -}
 view :
@@ -127,19 +129,16 @@ view :
     , isDisabled : Bool
     , buttonWidth : Maybe Int
     , menuWidth : Maybe Int
-    , id : String
+    , buttonId : String
     }
     -> Html msg
 view config =
     let
-        buttonId =
-            config.id ++ "-button"
-
         menuId =
-            config.id ++ "-menu"
+            config.buttonId ++ "-menu"
     in
     div
-        (Attributes.id config.id
+        (Attributes.id (config.buttonId ++ "__container")
             :: Key.onKeyDown [ Key.escape (config.toggle False) ]
             :: styleContainer
         )
@@ -187,14 +186,14 @@ view config =
                 , Widget.hasMenuPopUp
                 , Widget.expanded config.isOpen
                 , controls menuId
-                , Attributes.id buttonId
+                , Attributes.id config.buttonId
                 , config.buttonWidth
                     -- TODO: don't set this value as an inline style unnecessarily
                     |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
                     |> Maybe.withDefault AttributesExtra.none
                 ]
                 [ div styleButtonInner
-                    [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title, dataDescription = config.id }
+                    [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title }
                     , viewArrow { isOpen = config.isOpen }
                     ]
                 ]
@@ -203,7 +202,7 @@ view config =
                 , isOpen = config.isOpen
                 , isDisabled = config.isDisabled
                 , menuId = menuId
-                , buttonId = buttonId
+                , buttonId = config.buttonId
                 , menuWidth = config.menuWidth
                 , entries = config.entries
                 }
@@ -236,15 +235,12 @@ viewArrow { isOpen } =
         [ Svg.toHtml UiIcon.arrowDown ]
 
 
-type alias TitleConfig =
+viewTitle :
     { icon : Maybe Svg.Svg
     , wrapping : TitleWrapping
     , title : String
-    , dataDescription : String
     }
-
-
-viewTitle : TitleConfig -> Html msg
+    -> Html msg
 viewTitle config =
     div styleTitle
         [ viewJust (\icon -> span styleIconContainer [ Svg.toHtml icon ])
@@ -252,7 +248,7 @@ viewTitle config =
         , span
             (case config.wrapping of
                 WrapAndExpandTitle ->
-                    [ Attributes.attribute "data-nri-description" config.dataDescription ]
+                    [ Attributes.attribute "data-nri-description" config.title ]
 
                 TruncateTitle ->
                     [ class "Truncated"
@@ -267,7 +263,7 @@ viewTitle config =
         ]
 
 
-type alias DropdownConfig msg =
+viewDropdown :
     { alignment : Alignment
     , isOpen : Bool
     , isDisabled : Bool
@@ -276,9 +272,7 @@ type alias DropdownConfig msg =
     , menuWidth : Maybe Int
     , entries : List (Entry msg)
     }
-
-
-viewDropdown : DropdownConfig msg -> Html msg
+    -> Html msg
 viewDropdown config =
     let
         contentVisible =
