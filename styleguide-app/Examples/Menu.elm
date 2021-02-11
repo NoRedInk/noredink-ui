@@ -79,13 +79,8 @@ view state =
             , focus = Focus
             , buttonId = "1stPeriodEnglish__button"
             , menuId = "1stPeriodEnglish__menu"
-            , title = "1st Period English with Mx. Trainer"
-            , icon = viewConfiguration.icon
-            , hasBorder = viewConfiguration.hasBorder
             , alignment = viewConfiguration.alignment
-            , wrapping = viewConfiguration.wrapping
             , isDisabled = viewConfiguration.isDisabled
-            , buttonWidth = viewConfiguration.buttonWidth
             , menuWidth = viewConfiguration.menuWidth
             , entries =
                 [ Menu.group "Buttons"
@@ -101,6 +96,12 @@ view state =
                             ]
                     ]
                 ]
+            }
+            { title = "1st Period English with Mx. Trainer"
+            , icon = viewConfiguration.icon
+            , hasBorder = viewConfiguration.hasBorder
+            , wrapping = viewConfiguration.wrapping
+            , buttonWidth = viewConfiguration.buttonWidth
             }
         ]
     , div

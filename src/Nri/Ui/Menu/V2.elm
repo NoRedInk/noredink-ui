@@ -13,6 +13,7 @@ module Nri.Ui.Menu.V2 exposing
   - replace iconButtonWithMenu helper with a custom helper
   - explicitly pass in a buttonId and a menuId (instead of the container id)
   - when wrapping the menu title, use the title in the description rather than an HTML id string
+  - separate out the data for the viewCustom menu and the data used to make a nice looking shared default button
 
 A togglable menu view and related buttons.
 
@@ -98,44 +99,50 @@ type Alignment
     | Right
 
 
-{-| Configure the menu
+{-| Menu/pulldown configuration:
 
-  - `icon`: display a particular icon to the left of the title
   - `entries`: the entries of the menu
-  - `title`: the text to display in the menu button
   - `toggle`: a message to trigger when then menu wants to invert its open state
   - `focus`: a message to control the focus in the DOM, takes an HTML id string
-  - `hasBorder`: whether the menu button has a border
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
-  - `buttonWidth`: optionally fix the width of the button to a number of pixels
   - `menuWidth` : optionally fix the width of the popover
   - `buttonId`: a unique string identifier for the button that opens/closes the menu
   - `menuId`: a unique string identifier for the menu
 
+Button configuration:
+
+  - `icon`: display a particular icon to the left of the title
+  - `title`: the text to display in the menu button
+  - `wrapping`: WrapAndExpandTitle | TruncateTitle
+  - `hasBorder`: whether the menu button has a border
+  - `buttonWidth`: optionally fix the width of the button to a number of pixels
+
 -}
 view :
-    { icon : Maybe Svg.Svg
-    , entries : List (Entry msg)
-    , title : String
+    { entries : List (Entry msg)
     , isOpen : Bool
     , toggle : Bool -> msg
     , focus : String -> msg
-    , hasBorder : Bool
     , alignment : Alignment
-    , wrapping : TitleWrapping
     , isDisabled : Bool
-    , buttonWidth : Maybe Int
     , menuWidth : Maybe Int
     , buttonId : String
     , menuId : String
     }
+    ->
+        { icon : Maybe Svg.Svg
+        , title : String
+        , wrapping : TitleWrapping
+        , hasBorder : Bool
+        , buttonWidth : Maybe Int
+        }
     -> Html msg
-view config =
-    viewCustom config <|
+view menuConfig buttonConfig =
+    viewCustom menuConfig <|
         \buttonAttributes ->
             Html.button
-                ([ classList [ ( "ToggleButton", True ), ( "WithBorder", config.hasBorder ) ]
+                ([ classList [ ( "ToggleButton", True ), ( "WithBorder", buttonConfig.hasBorder ) ]
                  , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
@@ -151,7 +158,7 @@ view config =
                         , cursor notAllowed
                         ]
                     , Css.batch <|
-                        if config.hasBorder then
+                        if buttonConfig.hasBorder then
                             [ border3 (px 1) solid Colors.gray75
                             , borderBottom3 (px 3) solid Colors.gray75
                             , borderRadius (px 8)
@@ -161,7 +168,7 @@ view config =
                         else
                             []
                     ]
-                 , config.buttonWidth
+                 , buttonConfig.buttonWidth
                     -- TODO: don't set this value as an inline style unnecessarily
                     |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
                     |> Maybe.withDefault AttributesExtra.none
@@ -169,8 +176,8 @@ view config =
                     ++ buttonAttributes
                 )
                 [ div styleButtonInner
-                    [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title }
-                    , viewArrow { isOpen = config.isOpen }
+                    [ viewTitle { icon = buttonConfig.icon, wrapping = buttonConfig.wrapping, title = buttonConfig.title }
+                    , viewArrow { isOpen = menuConfig.isOpen }
                     ]
                 ]
 
@@ -292,16 +299,15 @@ viewEntry entry_ =
 
 -}
 viewCustom :
-    { config
-        | entries : List (Entry msg)
-        , isOpen : Bool
-        , toggle : Bool -> msg
-        , focus : String -> msg
-        , alignment : Alignment
-        , isDisabled : Bool
-        , menuWidth : Maybe Int
-        , buttonId : String
-        , menuId : String
+    { entries : List (Entry msg)
+    , isOpen : Bool
+    , toggle : Bool -> msg
+    , focus : String -> msg
+    , alignment : Alignment
+    , isDisabled : Bool
+    , menuWidth : Maybe Int
+    , buttonId : String
+    , menuId : String
     }
     -> (List (Attribute msg) -> Html msg)
     -> Html msg
