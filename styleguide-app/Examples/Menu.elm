@@ -8,6 +8,7 @@ module Examples.Menu exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (..)
 import AtomicDesignType exposing (AtomicDesignType(..))
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -20,6 +21,7 @@ import Nri.Ui.Menu.V2 as Menu
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
+import Task
 
 
 {-| -}
@@ -72,6 +74,7 @@ view state =
         , Menu.view
             { isOpen = isOpen "1stPeriodEnglish"
             , onToggle = menuToggler "1stPeriodEnglish"
+            , focus = Focus
             , id = "1stPeriodEnglish"
             , title = "1st Period English with Mx. Trainer"
             , icon = viewConfiguration.icon
@@ -227,6 +230,8 @@ type Msg
     | ConsoleLog String
     | SetViewConfiguration (Control ViewConfiguration)
     | SetIconButtonWithMenuConfiguration (Control IconButtonWithMenuConfiguration)
+    | Focus String
+    | Focused (Result Dom.Error ())
     | NoOp
 
 
@@ -256,14 +261,20 @@ update msg state =
             in
             ( state, Cmd.none )
 
-        NoOp ->
-            ( state, Cmd.none )
-
         SetViewConfiguration configuration ->
             ( { state | viewConfiguration = configuration }, Cmd.none )
 
         SetIconButtonWithMenuConfiguration configuration ->
             ( { state | iconButtonWithMenuConfiguration = configuration }, Cmd.none )
+
+        Focus idString ->
+            ( state, Task.attempt Focused (Dom.focus idString) )
+
+        Focused _ ->
+            ( state, Cmd.none )
+
+        NoOp ->
+            ( state, Cmd.none )
 
 
 

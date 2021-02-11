@@ -97,6 +97,7 @@ type Alignment
   - `entries`: the entries of the menu
   - `title`: the text to display in the menu button
   - `onToggle`: a message to trigger when then menu wants to invert its open state
+  - `focus`: a message to control the focus in the DOM, takes an HTML id string
   - `hasBorder`: whether the menu button has a border
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
@@ -111,6 +112,7 @@ view :
     , title : String
     , isOpen : Bool
     , onToggle : Bool -> msg
+    , focus : String -> msg
     , hasBorder : Bool
     , alignment : Alignment
     , wrapping : TitleWrapping
