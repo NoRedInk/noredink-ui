@@ -316,65 +316,9 @@ viewEntry entry_ =
             Html.text ""
 
 
-{-| Display an icon button consistent with menu button.
-
-Prefer to use ClickableSvg with the `withTooltipAbove` helper.
-
--}
-iconButton :
-    { icon : Svg.Svg
-    , label : String
-    , isTooltipOpen : Bool
-    , onShowTooltip : Bool -> msg
-    , onClick : msg
-    , isDisabled : Bool
-    , id : String
-    }
-    -> Html msg
-iconButton config =
-    let
-        perhapsOnclick =
-            if config.isDisabled then
-                []
-
-            else
-                -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
-                [ onMouseDown config.onClick ]
-    in
-    div styleIconButtonContainer
-        [ tooltip [ text config.label ]
-            |> Tooltip.primaryLabel
-                { trigger = Tooltip.OnHover
-                , onTrigger = config.onShowTooltip
-                , isOpen = config.isTooltipOpen
-                , triggerHtml =
-                    button
-                        ([ Attributes.id config.id
-                         , class "IconButton"
-                         , css
-                            (disabled
-                                [ opacity (num 0.4)
-                                , cursor notAllowed
-                                ]
-                                :: buttonLinkResets
-                            )
-                         , Widget.disabled config.isDisabled
-                         , Attributes.disabled config.isDisabled
-                         , Widget.label config.label
-                         ]
-                            ++ perhapsOnclick
-                        )
-                        [ independentIcon config.icon
-                        ]
-                , extraButtonAttrs = []
-                , id = config.id ++ "-tooltip"
-                }
-        ]
-
-
 {-| Configure the icon button & menu
 
-  - `icon`: the icon that will be used in the iconButton
+  - `icon`: the icon
   - `label`: the text to display in the tooltip
   - `isTooltipOpen`: whether the tooltip is open when hovering over the icon
   - `onShowTooltip`: the message for toggling the tooltip
@@ -421,15 +365,44 @@ iconButtonWithMenu config =
           else
             Html.text ""
         , div styleInnerContainer
-            [ iconButton
-                { icon = config.icon
-                , isDisabled = config.isDisabled
-                , label = config.label
-                , onClick = config.toggle (not config.isOpen)
-                , isTooltipOpen = config.isTooltipOpen
-                , onShowTooltip = config.onShowTooltip
-                , id = buttonId
-                }
+            [ let
+                perhapsOnclick =
+                    if config.isDisabled then
+                        []
+
+                    else
+                        -- Uses onMouseDown instead of onClick to prevent a race condition with the tooltip that can make the menu un-openable for mysterious causes
+                        [ onMouseDown (config.toggle (not config.isOpen)) ]
+              in
+              div styleIconButtonContainer
+                [ tooltip [ text config.label ]
+                    |> Tooltip.primaryLabel
+                        { trigger = Tooltip.OnHover
+                        , onTrigger = config.onShowTooltip
+                        , isOpen = config.isTooltipOpen
+                        , triggerHtml =
+                            button
+                                ([ Attributes.id buttonId
+                                 , class "IconButton"
+                                 , css
+                                    (disabled
+                                        [ opacity (num 0.4)
+                                        , cursor notAllowed
+                                        ]
+                                        :: buttonLinkResets
+                                    )
+                                 , Widget.disabled config.isDisabled
+                                 , Attributes.disabled config.isDisabled
+                                 , Widget.label config.label
+                                 ]
+                                    ++ perhapsOnclick
+                                )
+                                [ independentIcon config.icon
+                                ]
+                        , extraButtonAttrs = []
+                        , id = buttonId ++ "-tooltip"
+                        }
+                ]
             , viewDropdown
                 { alignment = config.alignment
                 , isOpen = config.isOpen
