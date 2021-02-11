@@ -167,11 +167,9 @@ view menuConfig buttonConfig =
 
                         else
                             []
+                    , Maybe.map (\w -> Css.width (Css.px (toFloat w))) buttonConfig.buttonWidth
+                        |> Maybe.withDefault (Css.batch [])
                     ]
-                 , buttonConfig.buttonWidth
-                    -- TODO: don't set this value as an inline style unnecessarily
-                    |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
-                    |> Maybe.withDefault AttributesExtra.none
                  ]
                     ++ buttonAttributes
                 )
@@ -257,10 +255,10 @@ viewDropdown config =
         , Aria.labelledBy config.buttonId
         , Attributes.id config.menuId
         , Widget.hidden (not config.isOpen)
-        , config.menuWidth
-            -- TODO: don't set this style inline unnecessarily
-            |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
-            |> Maybe.withDefault AttributesExtra.none
+        , css
+            [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
+                |> Maybe.withDefault (Css.batch [])
+            ]
         ]
         (List.map viewEntry config.entries)
 
