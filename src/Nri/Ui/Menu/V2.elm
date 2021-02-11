@@ -233,36 +233,6 @@ viewTitle config =
         ]
 
 
-viewDropdown :
-    { alignment : Alignment
-    , isOpen : Bool
-    , isDisabled : Bool
-    , menuId : String
-    , buttonId : String
-    , menuWidth : Maybe Int
-    , entries : List (Entry msg)
-    }
-    -> Html msg
-viewDropdown config =
-    let
-        contentVisible =
-            config.isOpen && not config.isDisabled
-    in
-    div
-        [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
-        , styleContent contentVisible config.alignment
-        , Role.menu
-        , Aria.labelledBy config.buttonId
-        , Attributes.id config.menuId
-        , Widget.hidden (not config.isOpen)
-        , css
-            [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
-                |> Maybe.withDefault (Css.batch [])
-            ]
-        ]
-        (List.map viewEntry config.entries)
-
-
 viewEntry : Entry msg -> Html msg
 viewEntry entry_ =
     case entry_ of
@@ -354,6 +324,9 @@ viewCustom config content =
                 )
                 Nothing
                 config.entries
+
+        contentVisible =
+            config.isOpen && not config.isDisabled
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
@@ -397,15 +370,19 @@ viewCustom config content =
                             }
                         )
                 ]
-            , viewDropdown
-                { alignment = config.alignment
-                , isOpen = config.isOpen
-                , isDisabled = config.isDisabled
-                , menuId = config.menuId
-                , buttonId = config.buttonId
-                , menuWidth = config.menuWidth
-                , entries = config.entries
-                }
+            , div
+                [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
+                , styleContent contentVisible config.alignment
+                , Role.menu
+                , Aria.labelledBy config.buttonId
+                , Attributes.id config.menuId
+                , Widget.hidden (not config.isOpen)
+                , css
+                    [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
+                        |> Maybe.withDefault (Css.batch [])
+                    ]
+                ]
+                (List.map viewEntry config.entries)
             ]
         ]
 
