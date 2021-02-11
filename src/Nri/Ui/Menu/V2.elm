@@ -1,8 +1,6 @@
 module Nri.Ui.Menu.V2 exposing
     ( view, Alignment(..), TitleWrapping(..)
-    , iconButton
     , iconButtonWithMenu
-    , iconLink
     , Entry, group, none, entry
     )
 
@@ -11,6 +9,7 @@ module Nri.Ui.Menu.V2 exposing
   - Improves keyboard support
   - adds `focus` to configuration
   - renames `onToggle` to `toggle` (just for consistency)
+  - remove `iconButton` and `iconLink` (use ClickableSvg instead)
 
 A togglable menu view and related buttons.
 
@@ -20,9 +19,7 @@ A togglable menu view and related buttons.
 ## Menu buttons
 
 @docs view, Alignment, TitleWrapping
-@docs iconButton
 @docs iconButtonWithMenu
-@docs iconLink
 
 
 ## Menu content
@@ -443,63 +440,6 @@ iconButtonWithMenu config =
                 , entries = config.entries
                 }
             ]
-        ]
-
-
-{-| Display an icon link consistent with menu button styles.
-
-Prefer to use ClickableSvg with the `withTooltipAbove` helper.
-
--}
-iconLink :
-    { icon : Svg.Svg
-    , label : String
-    , isTooltipOpen : Bool
-    , onShowTooltip : Bool -> msg
-    , linkUrl : String
-    , isDisabled : Bool
-    }
-    -> Html msg
-iconLink config =
-    let
-        perhapsHref =
-            if config.isDisabled then
-                []
-
-            else
-                [ Attributes.href config.linkUrl ]
-    in
-    div styleIconButtonContainer
-        [ tooltip [ text config.label ]
-            |> Tooltip.primaryLabel
-                { trigger = Tooltip.OnHover
-                , onTrigger = config.onShowTooltip
-                , isOpen = config.isTooltipOpen
-                , triggerHtml =
-                    a
-                        ([ class "IconLink"
-                         , css
-                            (buttonLinkResets
-                                ++ (if config.isDisabled then
-                                        [ opacity (num 0.4)
-                                        , cursor notAllowed
-                                        ]
-
-                                    else
-                                        []
-                                   )
-                            )
-                         , Widget.disabled config.isDisabled
-                         , Attributes.id (String.Extra.dasherize config.label)
-                         , Widget.label config.label
-                         ]
-                            ++ perhapsHref
-                        )
-                        [ independentIcon config.icon
-                        ]
-                , extraButtonAttrs = []
-                , id = String.replace " " "-" config.label ++ "-tooltip"
-                }
         ]
 
 
