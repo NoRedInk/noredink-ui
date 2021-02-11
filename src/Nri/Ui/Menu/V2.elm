@@ -32,6 +32,7 @@ A togglable menu view and related buttons.
 -}
 
 import Accessibility.Styled.Aria as Aria exposing (controls)
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
@@ -136,7 +137,11 @@ view config =
         menuId =
             config.id ++ "-menu"
     in
-    div (Attributes.id config.id :: styleContainer)
+    div
+        (Attributes.id config.id
+            :: Key.onKeyDown [ Key.escape (config.toggle False) ]
+            :: styleContainer
+        )
         [ if config.isOpen then
             div
                 (onClick (config.toggle False)
