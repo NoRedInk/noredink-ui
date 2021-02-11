@@ -6,7 +6,13 @@ module Nri.Ui.Menu.V2 exposing
     , Entry, group, none, entry
     )
 
-{-| A togglable menu view and related buttons.
+{-| Changes from V1:
+
+  - Improves keyboard support
+  - adds `focus` to configuration
+  - renames `onToggle` to `toggle` (just for consistency)
+
+A togglable menu view and related buttons.
 
 <https://zpl.io/a75OrE2>
 
@@ -96,7 +102,7 @@ type Alignment
   - `icon`: display a particular icon to the left of the title
   - `entries`: the entries of the menu
   - `title`: the text to display in the menu button
-  - `onToggle`: a message to trigger when then menu wants to invert its open state
+  - `toggle`: a message to trigger when then menu wants to invert its open state
   - `focus`: a message to control the focus in the DOM, takes an HTML id string
   - `hasBorder`: whether the menu button has a border
   - `alignment`: where the menu popover should appear relative to the button
@@ -111,7 +117,7 @@ view :
     , entries : List (Entry msg)
     , title : String
     , isOpen : Bool
-    , onToggle : Bool -> msg
+    , toggle : Bool -> msg
     , focus : String -> msg
     , hasBorder : Bool
     , alignment : Alignment
@@ -133,7 +139,7 @@ view config =
     div (Attributes.id config.id :: styleContainer)
         [ if config.isOpen then
             div
-                (onClick (config.onToggle False)
+                (onClick (config.toggle False)
                     :: class "Nri-Menu-Overlay"
                     :: styleOverlay
                 )
@@ -169,7 +175,7 @@ view config =
                         else
                             []
                     ]
-                , onClick <| config.onToggle (not config.isOpen)
+                , onClick <| config.toggle (not config.isOpen)
                 , Attributes.disabled config.isDisabled
                 , Widget.disabled config.isDisabled
                 , Widget.hasMenuPopUp
@@ -372,7 +378,7 @@ iconButton config =
   - `onShowTooltip`: the message for toggling the tooltip
   - `entries`: the entries of the menu
   - `isOpen`: whether the menu is opened
-  - `onToggle`: a message to trigger when then menu wants to invert its open state
+  - `toggle`: a message to trigger when then menu wants to invert its open state
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
   - `id`: a unique string id for the menu elements
@@ -386,7 +392,7 @@ iconButtonWithMenu :
     , onShowTooltip : Bool -> msg
     , entries : List (Entry msg)
     , isOpen : Bool
-    , onToggle : Bool -> msg
+    , toggle : Bool -> msg
     , alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
@@ -404,7 +410,7 @@ iconButtonWithMenu config =
     div (Attributes.id config.id :: styleContainer)
         [ if config.isOpen then
             div
-                (onClick (config.onToggle False)
+                (onClick (config.toggle False)
                     :: Attributes.class "Nri-Menu-Overlay"
                     :: styleOverlay
                 )
@@ -417,7 +423,7 @@ iconButtonWithMenu config =
                 { icon = config.icon
                 , isDisabled = config.isDisabled
                 , label = config.label
-                , onClick = config.onToggle (not config.isOpen)
+                , onClick = config.toggle (not config.isOpen)
                 , isTooltipOpen = config.isTooltipOpen
                 , onShowTooltip = config.onShowTooltip
                 , id = buttonId

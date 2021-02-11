@@ -73,7 +73,7 @@ view state =
         , viewControl SetViewConfiguration state.viewConfiguration
         , Menu.view
             { isOpen = isOpen "1stPeriodEnglish"
-            , onToggle = menuToggler "1stPeriodEnglish"
+            , toggle = menuToggler "1stPeriodEnglish"
             , focus = Focus
             , id = "1stPeriodEnglish"
             , title = "1st Period English with Mx. Trainer"
@@ -110,7 +110,7 @@ view state =
             , id = "icon-button-with-menu"
             , label = "Menu.iconButtonWithMenu: Click me!"
             , isOpen = isOpen "icon-button-with-menu"
-            , onToggle = menuToggler "icon-button-with-menu"
+            , toggle = menuToggler "icon-button-with-menu"
             , icon = iconButtonWithMenuConfiguration.icon
             , alignment = iconButtonWithMenuConfiguration.alignment
             , isDisabled = iconButtonWithMenuConfiguration.isDisabled
