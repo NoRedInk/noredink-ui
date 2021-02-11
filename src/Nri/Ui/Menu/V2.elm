@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V2 exposing
     ( view, Alignment(..), TitleWrapping(..)
     , viewCustom
-    , Entry, group, none, entry
+    , Entry, group, entry
     )
 
 {-| Changes from V1:
@@ -14,6 +14,7 @@ module Nri.Ui.Menu.V2 exposing
   - explicitly pass in a buttonId and a menuId (instead of the container id)
   - when wrapping the menu title, use the title in the description rather than an HTML id string
   - separate out the data for the viewCustom menu and the data used to make a nice looking shared default button
+  - remove None
 
 A togglable menu view and related buttons.
 
@@ -28,7 +29,7 @@ A togglable menu view and related buttons.
 
 ## Menu content
 
-@docs Entry, group, none, entry
+@docs Entry, group, entry
 
 -}
 
@@ -60,7 +61,6 @@ import String.Extra
 type Entry msg
     = Single (Html msg)
     | Batch String (List (Entry msg))
-    | None
 
 
 {-| Represents a group of entries with a named legend
@@ -75,13 +75,6 @@ group =
 entry : Html msg -> Entry msg
 entry =
     Single
-
-
-{-| Represents no entries. Useful for conditionals
--}
-none : Entry msg
-none =
-    None
 
 
 {-| Determines how we deal with long titles. Should we make the menu expand in
@@ -279,9 +272,6 @@ viewEntry entry_ =
                         legend styleGroupTitle
                             [ span styleGroupTitleText [ Html.text title ] ]
                             :: List.map viewEntry childList
-
-        None ->
-            Html.text ""
 
 
 {-|
