@@ -13,6 +13,7 @@ module Nri.Ui.Menu.V2 exposing
   - use ClickableSvg for the iconButtonWithMenu helper
   - use Tooltip.V2 instead of Tooltip.V1
   - change which id you pass in to the component (it's more useful to have a focusable element's id outside the component)
+  - explicitly pass in a buttonId and a menuId
   - when wrapping the menu title, use the title in the description rather than an HTML id string
 
 A togglable menu view and related buttons.
@@ -32,7 +33,7 @@ A togglable menu view and related buttons.
 
 -}
 
-import Accessibility.Styled.Aria as Aria exposing (controls)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
@@ -40,7 +41,7 @@ import Css exposing (..)
 import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
-import Html.Styled.Events as Events exposing (onClick, onMouseDown)
+import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -114,6 +115,7 @@ type Alignment
   - `buttonWidth`: optionally fix the width of the button to a number of pixels
   - `menuWidth` : optionally fix the width of the popover
   - `buttonId`: a unique string identifier for the button that opens/closes the menu
+  - `menuId`: a unique string identifier for the menu
 
 -}
 view :
@@ -130,32 +132,15 @@ view :
     , buttonWidth : Maybe Int
     , menuWidth : Maybe Int
     , buttonId : String
+    , menuId : String
     }
     -> Html msg
 view config =
-    let
-        menuId =
-            config.buttonId ++ "-menu"
-    in
-    div
-        (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDown [ Key.escape (config.toggle False) ]
-            :: styleContainer
-        )
-        [ if config.isOpen then
-            div
-                (onClick (config.toggle False)
-                    :: class "Nri-Menu-Overlay"
-                    :: styleOverlay
-                )
-                []
-
-          else
-            Html.text ""
-        , div styleInnerContainer
-            [ Html.button
-                [ classList [ ( "ToggleButton", True ), ( "WithBorder", config.hasBorder ) ]
-                , css
+    viewMenu config <|
+        \buttonAttributes ->
+            Html.button
+                ([ classList [ ( "ToggleButton", True ), ( "WithBorder", config.hasBorder ) ]
+                 , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
                     , backgroundColor Colors.white
@@ -180,34 +165,19 @@ view config =
                         else
                             []
                     ]
-                , onClick <| config.toggle (not config.isOpen)
-                , Attributes.disabled config.isDisabled
-                , Widget.disabled config.isDisabled
-                , Widget.hasMenuPopUp
-                , Widget.expanded config.isOpen
-                , controls menuId
-                , Attributes.id config.buttonId
-                , config.buttonWidth
+                 , Events.onClick (config.toggle (not config.isOpen))
+                 , config.buttonWidth
                     -- TODO: don't set this value as an inline style unnecessarily
                     |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
                     |> Maybe.withDefault AttributesExtra.none
-                ]
+                 ]
+                    ++ buttonAttributes
+                )
                 [ div styleButtonInner
                     [ viewTitle { icon = config.icon, wrapping = config.wrapping, title = config.title }
                     , viewArrow { isOpen = config.isOpen }
                     ]
                 ]
-            , viewDropdown
-                { alignment = config.alignment
-                , isOpen = config.isOpen
-                , isDisabled = config.isDisabled
-                , menuId = menuId
-                , buttonId = config.buttonId
-                , menuWidth = config.menuWidth
-                , entries = config.entries
-                }
-            ]
-        ]
 
 
 viewArrow : { isOpen : Bool } -> Html msg
@@ -323,10 +293,12 @@ viewEntry entry_ =
   - `entries`: the entries of the menu
   - `isOpen`: whether the menu is opened
   - `toggle`: a message to trigger when then menu wants to invert its open state
+  - `focus`: a message to control the focus in the DOM, takes an HTML id string
   - `alignment`: where the menu popover should appear relative to the button
   - `isDisabled`: whether the menu can be openned
-  - `id`: a unique string id for the menu elements
   - `menuWidth` : optionally fix the width of the popover
+  - `buttonId`: a unique string id for the menu elements
+  - `menuId`: a unique string identifier for the men
 
 -}
 iconButtonWithMenu :
@@ -337,25 +309,81 @@ iconButtonWithMenu :
     , entries : List (Entry msg)
     , isOpen : Bool
     , toggle : Bool -> msg
+    , focus : String -> msg
     , alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
-    , id : String
+    , buttonId : String
+    , menuId : String
     }
     -> Html msg
 iconButtonWithMenu config =
-    let
-        buttonId =
-            config.id ++ "-button"
+    viewMenu config <|
+        \buttonAttributes ->
+            Tooltip.view
+                { trigger =
+                    \attrs ->
+                        ClickableSvg.button config.label
+                            config.icon
+                            [ ClickableSvg.disabled config.isDisabled
+                            , ClickableSvg.custom
+                                (attrs
+                                    ++ buttonAttributes
+                                    ++ (if config.isDisabled then
+                                            []
 
-        menuId =
-            config.id ++ "-menu"
-    in
-    div (Attributes.id config.id :: styleContainer)
+                                        else
+                                            [ Events.custom "click"
+                                                (Json.Decode.succeed
+                                                    { preventDefault = True
+                                                    , stopPropagation = True
+                                                    , message = config.toggle (not config.isOpen)
+                                                    }
+                                                )
+                                            ]
+                                       )
+                                )
+                            , ClickableSvg.exactWidth 25
+                            , ClickableSvg.exactHeight 25
+                            , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                            ]
+                , id = config.buttonId ++ "-tooltip"
+                }
+                [ Tooltip.plaintext config.label
+                , Tooltip.primaryLabel
+                , Tooltip.onHover config.onShowTooltip
+                , Tooltip.open config.isTooltipOpen
+                , Tooltip.smallPadding
+                , Tooltip.fitToContent
+                , Tooltip.containerCss [ display inlineBlock, position relative ]
+                ]
+
+
+{-| -}
+viewMenu :
+    { config
+        | entries : List (Entry msg)
+        , isOpen : Bool
+        , toggle : Bool -> msg
+        , focus : String -> msg
+        , alignment : Alignment
+        , isDisabled : Bool
+        , menuWidth : Maybe Int
+        , buttonId : String
+        , menuId : String
+    }
+    -> (List (Attribute msg) -> Html msg)
+    -> Html msg
+viewMenu config content =
+    div
+        (Attributes.id (config.buttonId ++ "__container")
+            :: Key.onKeyDown [ Key.escape (config.toggle False) ]
+            :: styleContainer
+        )
         [ if config.isOpen then
             div
-                (onClick (config.toggle False)
-                    :: Attributes.class "Nri-Menu-Overlay"
+                (Events.onClick (config.toggle False)
+                    :: class "Nri-Menu-Overlay"
                     :: styleOverlay
                 )
                 []
@@ -363,49 +391,19 @@ iconButtonWithMenu config =
           else
             Html.text ""
         , div styleInnerContainer
-            [ div styleIconButtonContainer
-                [ Tooltip.view
-                    { trigger =
-                        \attrs ->
-                            ClickableSvg.button config.label
-                                config.icon
-                                [ ClickableSvg.disabled config.isDisabled
-                                , ClickableSvg.custom
-                                    (attrs
-                                        ++ (if config.isDisabled then
-                                                []
-
-                                            else
-                                                [ Events.custom "click"
-                                                    (Json.Decode.succeed
-                                                        { preventDefault = True
-                                                        , stopPropagation = True
-                                                        , message = config.toggle (not config.isOpen)
-                                                        }
-                                                    )
-                                                ]
-                                           )
-                                    )
-                                , ClickableSvg.exactWidth 25
-                                , ClickableSvg.exactHeight 25
-                                , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-                                ]
-                    , id = buttonId ++ "-tooltip"
-                    }
-                    [ Tooltip.plaintext config.label
-                    , Tooltip.primaryLabel
-                    , Tooltip.onHover config.onShowTooltip
-                    , Tooltip.open config.isTooltipOpen
-                    , Tooltip.smallPadding
-                    , Tooltip.fitToContent
-                    ]
+            [ content
+                [ Widget.disabled config.isDisabled
+                , Widget.hasMenuPopUp
+                , Widget.expanded config.isOpen
+                , Aria.controls config.menuId
+                , Attributes.id config.buttonId
                 ]
             , viewDropdown
                 { alignment = config.alignment
                 , isOpen = config.isOpen
                 , isDisabled = config.isDisabled
-                , menuId = menuId
-                , buttonId = buttonId
+                , menuId = config.menuId
+                , buttonId = config.buttonId
                 , menuWidth = config.menuWidth
                 , entries = config.entries
                 }
@@ -613,15 +611,5 @@ styleContainer =
     , css
         [ position relative
         , display inlineBlock
-        ]
-    ]
-
-
-styleIconButtonContainer : List (Attribute msg)
-styleIconButtonContainer =
-    [ class "IconButtonContainer"
-    , css
-        [ display inlineBlock
-        , position relative
         ]
     ]
