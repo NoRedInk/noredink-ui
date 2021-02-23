@@ -106,6 +106,11 @@ example =
                 , ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )
                 ]
+            , IconExamples.view "Math"
+                [ ( "equals", UiIcon.equals )
+                , ( "plus", UiIcon.plus )
+                , ( "null", UiIcon.null )
+                ]
             , IconExamples.view "Notifs"
                 [ ( "flag", UiIcon.flag )
                 , ( "star", UiIcon.star )
@@ -114,11 +119,6 @@ example =
                 ]
             , IconExamples.view "Badges & Levels"
                 [ ( "badge", UiIcon.badge )
-                ]
-            , IconExamples.view "Math"
-                [ ( "equals", UiIcon.equals )
-                , ( "plus", UiIcon.plus )
-                , ( "null", UiIcon.null )
                 ]
             , IconExamples.view "Lock & Key"
                 [ ( "key", UiIcon.key )
