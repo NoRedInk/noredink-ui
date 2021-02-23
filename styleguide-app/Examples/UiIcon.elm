@@ -82,6 +82,7 @@ example =
                 , ( "documents", UiIcon.documents )
                 , ( "newspaper", UiIcon.newspaper )
                 , ( "openBook", UiIcon.openBook )
+                , ( "openBooks", UiIcon.openBooks )
                 ]
             , IconExamples.view "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
