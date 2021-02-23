@@ -15,7 +15,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
     , flag, star, starFilled, starOutline
-    , equals, plus
+    , equals, plus, null
     , key, lock, premiumLock
     , badge
     , bold, italic, underline, list, link, undo, redo
@@ -40,7 +40,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
-@docs equals, plus
+@docs equals, plus, null
 @docs key, lock, premiumLock
 @docs badge
 @docs bold, italic, underline, list, link, undo, redo
@@ -1570,5 +1570,19 @@ openBooks =
                     ]
                 ]
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+null : Nri.Ui.Svg.V1.Svg
+null =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 100 100"
+        ]
+        [ Svg.path [ Attributes.d "m50 3.332c11.688 0 22.375 4.293 30.559 11.398l9.5078-9.5234c1.2188-1.2227 3.1719-1.3164 4.4961-0.20703 1.3281 1.1055 1.5898 3.043 0.60547 4.4609l-0.37891 0.46484-9.5117 9.5078h-0.003906c10.391 12.004 13.969 28.465 9.4961 43.699-4.4766 15.234-16.391 27.148-31.621 31.621-15.234 4.4766-31.699 0.89844-43.703-9.4922l-9.5117 9.5312c-1.2188 1.2227-3.1719 1.3164-4.4961 0.20703-1.3281-1.1055-1.5898-3.043-0.60547-4.4609l0.37891-0.46484 9.5117-9.5078h0.003906c-7.8555-9.0625-11.922-20.805-11.352-32.785s5.7305-23.281 14.414-31.559c8.6797-8.2773 20.215-12.891 32.211-12.891zm30.539 20.832-56.375 56.375h0.003907c10.305 8.7227 24.316 11.656 37.258 7.8008 12.938-3.8516 23.062-13.977 26.914-26.914 3.8555-12.941 0.92188-26.953-7.8008-37.258zm-30.539-14.164c-10.223 0-20.062 3.9141-27.488 10.941-7.4297 7.0273-11.883 16.629-12.449 26.84-0.57031 10.207 2.793 20.246 9.3984 28.051l56.375-56.375-0.003907 0.003907c-7.2148-6.1211-16.371-9.4766-25.832-9.4609z" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
