@@ -82,6 +82,7 @@ example =
                 , ( "documents", UiIcon.documents )
                 , ( "newspaper", UiIcon.newspaper )
                 , ( "openBook", UiIcon.openBook )
+                , ( "openBooks", UiIcon.openBooks )
                 ]
             , IconExamples.view "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
@@ -105,6 +106,11 @@ example =
                 , ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )
                 ]
+            , IconExamples.view "Math"
+                [ ( "equals", UiIcon.equals )
+                , ( "plus", UiIcon.plus )
+                , ( "null", UiIcon.null )
+                ]
             , IconExamples.view "Notifs"
                 [ ( "flag", UiIcon.flag )
                 , ( "star", UiIcon.star )
@@ -113,10 +119,6 @@ example =
                 ]
             , IconExamples.view "Badges & Levels"
                 [ ( "badge", UiIcon.badge )
-                ]
-            , IconExamples.view "Math"
-                [ ( "equals", UiIcon.equals )
-                , ( "plus", UiIcon.plus )
                 ]
             , IconExamples.view "Lock & Key"
                 [ ( "key", UiIcon.key )
