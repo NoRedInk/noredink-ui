@@ -42,10 +42,10 @@ example =
         , { keys = [ Tab ], result = "Takes focus out of the menu to the next focusable element." }
         , { keys = [ Tab, Shift ], result = "Takes focus out of the menu to the previous focusable element." }
         , { keys = [ Arrow KeyboardSupport.Up ]
-          , result = "While menu is open, moves the focus to the previous menu item button (wraps focus to the last menu item)"
+          , result = "If menu is closed, opens the menu & selects the last menu item.\nIf menu is open, moves the focus to the previous menu item."
           }
         , { keys = [ Arrow KeyboardSupport.Down ]
-          , result = "While menu is closed, moves the focus to the next menu item button (wraps focus to the first menu item)"
+          , result = "If menu is closed, opens the menu & selects the first menu item.\nIf menu is open, moves the focus to the next menu item."
           }
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
@@ -82,20 +82,36 @@ view state =
             , isDisabled = viewConfiguration.isDisabled
             , menuWidth = viewConfiguration.menuWidth
             , entries =
-                [ Menu.group "Buttons"
-                    [ Menu.entry "hello-button" <|
+                [ Menu.entry "hello-button" <|
+                    \attrs ->
+                        ClickableText.button "Hello"
+                            [ ClickableText.onClick (ConsoleLog "Hello")
+                            , ClickableText.small
+                            , ClickableText.custom attrs
+                            ]
+                , Menu.entry "performance-button" <|
+                    \attrs ->
+                        ClickableText.button "Performance"
+                            [ ClickableText.onClick (ConsoleLog "Performance")
+                            , ClickableText.small
+                            , ClickableText.custom attrs
+                            ]
+                , Menu.group "Menu group"
+                    [ Menu.entry "gift-button" <|
                         \attrs ->
-                            ClickableText.button "Hello"
-                                [ ClickableText.onClick (ConsoleLog "Hello")
+                            ClickableText.button "Gift"
+                                [ ClickableText.onClick (ConsoleLog "Gift")
                                 , ClickableText.small
                                 , ClickableText.custom attrs
+                                , ClickableText.icon UiIcon.gift
                                 ]
-                    , Menu.entry "performance-button" <|
+                    , Menu.entry "null-button" <|
                         \attrs ->
-                            ClickableText.button "Performance"
-                                [ ClickableText.onClick (ConsoleLog "Performance")
+                            ClickableText.button "Nope!"
+                                [ ClickableText.onClick (ConsoleLog "Nope!")
                                 , ClickableText.small
                                 , ClickableText.custom attrs
+                                , ClickableText.icon UiIcon.null
                                 ]
                     ]
                 ]

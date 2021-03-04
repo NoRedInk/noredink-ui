@@ -255,11 +255,11 @@ viewCustom :
     -> Html msg
 viewCustom config content =
     let
-        firstIds =
-            getFirstIds config.entries
+        ids =
+            getIds config.entries
 
-        maybeFirstFocusableElementId =
-            List.head firstIds
+        ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
+            ( List.head ids, List.head (List.reverse ids) )
 
         contentVisible =
             config.isOpen && not config.isDisabled
@@ -296,13 +296,21 @@ viewCustom config content =
                 [ Widget.disabled config.isDisabled
                 , Widget.hasMenuPopUp
                 , Widget.expanded config.isOpen
-                , case ( config.isOpen, maybeFirstFocusableElementId ) of
-                    ( True, Just firstFocusableElementId ) ->
+                , -- Whether the menu is open or closed, move to the
+                  -- first menu item if the "down" arrow is pressed
+                  case ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
+                    ( Just firstFocusableElementId, Just lastFocusableElementId ) ->
                         Key.onKeyDown
                             [ Key.down
                                 (config.focusAndToggle
                                     { isOpen = True
                                     , focus = Just firstFocusableElementId
+                                    }
+                                )
+                            , Key.up
+                                (config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just lastFocusableElementId
                                     }
                                 )
                             ]
@@ -339,87 +347,59 @@ viewCustom config content =
                         |> Maybe.withDefault (Css.batch [])
                     ]
                 ]
-                (List.map3
-                    (\e upId downId ->
-                        viewEntry config.isOpen
-                            config.focusAndToggle
-                            { upId = upId
-                            , downId = downId
-                            , entry_ = e
-                            }
-                    )
-                    config.entries
-                    (config.buttonId :: firstIds)
-                    (getLastIds config.entries ++ [ config.buttonId ])
-                )
+                (viewEntries config.focusAndToggle config.entries)
             ]
         ]
 
 
-getFirstIds : List (Entry msg) -> List String
-getFirstIds entries =
+getIds : List (Entry msg) -> List String
+getIds entries =
     let
-        getFirstIdString elem =
+        getIdString elem =
             case elem of
                 Single idString _ ->
-                    Just idString
+                    [ idString ]
 
                 Batch _ es ->
-                    List.foldl
-                        (\e acc ->
-                            case acc of
-                                Just _ ->
-                                    acc
-
-                                Nothing ->
-                                    getFirstIdString e
-                        )
-                        Nothing
-                        es
+                    getIds es
     in
-    List.foldr (\elem acc -> getFirstIdString elem :: acc)
-        []
-        entries
-        |> List.filterMap identity
+    List.concatMap getIdString entries
 
 
-getLastIds : List (Entry msg) -> List String
-getLastIds entries =
+viewEntries :
+    ({ isOpen : Bool, focus : Maybe String } -> msg)
+    -> List (Entry msg)
+    -> List (Html msg)
+viewEntries focusAndToggle entries =
     let
-        getLastIdString elem =
-            case elem of
-                Single idString _ ->
-                    Just idString
+        ids =
+            getIds entries
 
-                Batch _ es ->
-                    List.foldr
-                        (\e acc ->
-                            case acc of
-                                Just _ ->
-                                    acc
-
-                                Nothing ->
-                                    getLastIdString e
-                        )
-                        Nothing
-                        es
+        ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
+            ( List.head ids, List.head (List.reverse ids) )
     in
-    List.foldl (\elem acc -> getLastIdString elem :: acc)
-        []
+    List.map3
+        (\e upId downId ->
+            viewEntry focusAndToggle
+                { upId = upId
+                , downId = downId
+                , entry_ = e
+                }
+        )
         entries
-        |> List.filterMap identity
+        (Maybe.withDefault "" maybeLastFocusableElementId :: ids)
+        (List.drop 1 ids ++ [ Maybe.withDefault "" maybeFirstFocusableElementId ])
 
 
 viewEntry :
-    Bool
-    -> ({ isOpen : Bool, focus : Maybe String } -> msg)
+    ({ isOpen : Bool, focus : Maybe String } -> msg)
     ->
         { upId : String
         , downId : String
         , entry_ : Entry msg
         }
     -> Html msg
-viewEntry isOpen focusAndToggle { upId, downId, entry_ } =
+viewEntry focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
             div
@@ -440,13 +420,13 @@ viewEntry isOpen focusAndToggle { upId, downId, entry_ } =
                     , Key.onKeyDown
                         [ Key.up
                             (focusAndToggle
-                                { isOpen = isOpen
+                                { isOpen = True
                                 , focus = Just upId
                                 }
                             )
                         , Key.down
                             (focusAndToggle
-                                { isOpen = isOpen
+                                { isOpen = True
                                 , focus = Just downId
                                 }
                             )
@@ -460,25 +440,10 @@ viewEntry isOpen focusAndToggle { upId, downId, entry_ } =
                     Html.text ""
 
                 _ ->
-                    let
-                        firstIds =
-                            getFirstIds childList
-                    in
                     fieldset styleGroupContainer <|
                         legend styleGroupTitle
                             [ span styleGroupTitleText [ Html.text title ] ]
-                            :: List.map3
-                                (\e newUpId newDownId ->
-                                    viewEntry isOpen
-                                        focusAndToggle
-                                        { upId = newUpId
-                                        , downId = downId
-                                        , entry_ = e
-                                        }
-                                )
-                                childList
-                                (upId :: firstIds)
-                                (getLastIds childList ++ [ downId ])
+                            :: viewEntries focusAndToggle childList
 
 
 
