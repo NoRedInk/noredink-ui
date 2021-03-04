@@ -70,7 +70,7 @@ group legendName entries =
     Batch legendName entries
 
 
-{-| Represents a single entry.
+{-| Represents a single **focusable** entry.
 
 Pass in the id you'd like for your menu item, which will be used to manage the focus.
 
@@ -255,11 +255,8 @@ viewCustom :
     -> Html msg
 viewCustom config content =
     let
-        ids =
-            getIds config.entries
-
         ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
-            ( List.head ids, List.head (List.reverse ids) )
+            ( List.head (getFirstIds config.entries), List.head (getLastIds config.entries) )
 
         contentVisible =
             config.isOpen && not config.isDisabled
@@ -347,36 +344,59 @@ viewCustom config content =
                         |> Maybe.withDefault (Css.batch [])
                     ]
                 ]
-                (viewEntries config.focusAndToggle config.entries)
+                (viewEntries
+                    { focusAndToggle = config.focusAndToggle
+                    , previousId = Maybe.withDefault "" maybeLastFocusableElementId
+                    , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
+                    }
+                    config.entries
+                )
             ]
         ]
 
 
-getIds : List (Entry msg) -> List String
-getIds entries =
+getFirstIds : List (Entry msg) -> List String
+getFirstIds entries =
     let
         getIdString elem =
             case elem of
                 Single idString _ ->
-                    [ idString ]
+                    Just idString
 
                 Batch _ es ->
-                    getIds es
+                    Maybe.andThen getIdString (List.head es)
     in
-    List.concatMap getIdString entries
+    List.filterMap getIdString entries
+
+
+getLastIds : List (Entry msg) -> List String
+getLastIds entries =
+    let
+        getIdString elem =
+            case elem of
+                Single idString _ ->
+                    Just idString
+
+                Batch _ es ->
+                    Maybe.andThen getIdString (List.head (List.reverse es))
+    in
+    List.filterMap getIdString (List.reverse entries)
 
 
 viewEntries :
-    ({ isOpen : Bool, focus : Maybe String } -> msg)
+    { focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
+    , previousId : String
+    , nextId : String
+    }
     -> List (Entry msg)
     -> List (Html msg)
-viewEntries focusAndToggle entries =
+viewEntries { previousId, nextId, focusAndToggle } entries =
     let
-        ids =
-            getIds entries
+        firstIds =
+            getFirstIds entries
 
-        ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
-            ( List.head ids, List.head (List.reverse ids) )
+        lastIds =
+            getLastIds entries
     in
     List.map3
         (\e upId downId ->
@@ -387,17 +407,13 @@ viewEntries focusAndToggle entries =
                 }
         )
         entries
-        (Maybe.withDefault "" maybeLastFocusableElementId :: ids)
-        (List.drop 1 ids ++ [ Maybe.withDefault "" maybeFirstFocusableElementId ])
+        (previousId :: List.reverse lastIds)
+        (List.drop 1 firstIds ++ [ nextId ])
 
 
 viewEntry :
     ({ isOpen : Bool, focus : Maybe String } -> msg)
-    ->
-        { upId : String
-        , downId : String
-        , entry_ : Entry msg
-        }
+    -> { upId : String, downId : String, entry_ : Entry msg }
     -> Html msg
 viewEntry focusAndToggle { upId, downId, entry_ } =
     case entry_ of
@@ -443,7 +459,12 @@ viewEntry focusAndToggle { upId, downId, entry_ } =
                     fieldset styleGroupContainer <|
                         legend styleGroupTitle
                             [ span styleGroupTitleText [ Html.text title ] ]
-                            :: viewEntries focusAndToggle childList
+                            :: viewEntries
+                                { focusAndToggle = focusAndToggle
+                                , previousId = upId
+                                , nextId = downId
+                                }
+                                childList
 
 
 
