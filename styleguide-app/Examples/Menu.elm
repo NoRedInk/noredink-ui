@@ -39,8 +39,8 @@ example =
     , keyboardSupport =
         [ { keys = [ Space ], result = "Opens the menu" }
         , { keys = [ Enter ], result = "Opens the menu" }
-        , { keys = [ Tab ], result = "Takes focus out of the menu to the next focusable element." }
-        , { keys = [ Tab, Shift ], result = "Takes focus out of the menu to the previous focusable element." }
+        , { keys = [ Tab ], result = "Takes focus out of the menu to the next focusable element & closes the menu." }
+        , { keys = [ Tab, Shift ], result = "Takes focus out of the menu to the previous focusable element & closes the menu." }
         , { keys = [ Arrow KeyboardSupport.Up ]
           , result = "If menu is closed, opens the menu & selects the last menu item.\nIf menu is open, moves the focus to the previous menu item."
           }

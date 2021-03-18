@@ -270,6 +270,18 @@ viewCustom config content =
                         , focus = Just config.buttonId
                         }
                     )
+                , Key.tab
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+                , Key.tabBack
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
                 ]
             :: styleContainer
         )
