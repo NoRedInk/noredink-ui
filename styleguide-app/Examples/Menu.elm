@@ -134,39 +134,47 @@ view state =
         [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
         [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.viewCustom" ]
         , viewControl SetIconButtonWithMenuConfiguration state.viewCustomConfiguration
-
-        --, Menu.viewCustom
-        --    { buttonId = "icon-button-with-menu__button"
-        --    , menuId = "icon-button-with-menu__menu"
-        --    , isOpen = isOpen "icon-button-with-menu"
-        --    , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-        --    , alignment = viewCustomConfiguration.alignment
-        --    , isDisabled = viewCustomConfiguration.isDisabled
-        --    , menuWidth = viewCustomConfiguration.menuWidth
-        --    , entries = []
-        --    }
-        --  <|
-        --    \buttonAttributes ->
-        --        Tooltip.view
-        --            { trigger =
-        --                \attrs ->
-        --                    ClickableSvg.button "Menu.viewCustom: Click me!"
-        --                        viewCustomConfiguration.icon
-        --                        [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
-        --                        , ClickableSvg.custom (attrs ++ buttonAttributes)
-        --                        , ClickableSvg.exactWidth 25
-        --                        , ClickableSvg.exactHeight 25
-        --                        , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-        --                        ]
-        --            , id = "viewCustom-example-tooltip"
-        --            }
-        --            [ Tooltip.plaintext "Menu.viewCustom: Click me!"
-        --            , Tooltip.primaryLabel
-        --            , Tooltip.onHover (ShowTooltip "viewCustom")
-        --            , Tooltip.open (Set.member "viewCustom" state.openTooltips)
-        --            , Tooltip.smallPadding
-        --            , Tooltip.fitToContent
-        --            ]
+        , Menu.viewCustom
+            { buttonId = "icon-button-with-menu__button"
+            , menuId = "icon-button-with-menu__menu"
+            , isOpen = isOpen "icon-button-with-menu"
+            , focusAndToggle = FocusAndToggle "icon-button-with-menu"
+            , alignment = viewCustomConfiguration.alignment
+            , isDisabled = viewCustomConfiguration.isDisabled
+            , menuWidth = viewCustomConfiguration.menuWidth
+            , entries =
+                [ Menu.entry "see-more-button" <|
+                    \attrs ->
+                        ClickableText.button "See more"
+                            [ ClickableText.onClick (ConsoleLog "See more")
+                            , ClickableText.small
+                            , ClickableText.custom attrs
+                            , ClickableText.icon UiIcon.seeMore
+                            ]
+                ]
+            }
+          <|
+            \buttonAttributes ->
+                Tooltip.view
+                    { trigger =
+                        \attrs ->
+                            ClickableSvg.button "Menu.viewCustom: Click me!"
+                                viewCustomConfiguration.icon
+                                [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
+                                , ClickableSvg.custom (attrs ++ buttonAttributes)
+                                , ClickableSvg.exactWidth 25
+                                , ClickableSvg.exactHeight 25
+                                , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                                ]
+                    , id = "viewCustom-example-tooltip"
+                    }
+                    [ Tooltip.plaintext "Menu.viewCustom: Click me!"
+                    , Tooltip.primaryLabel
+                    , Tooltip.onHover (ShowTooltip "viewCustom")
+                    , Tooltip.open (Set.member "viewCustom" state.openTooltips)
+                    , Tooltip.smallPadding
+                    , Tooltip.fitToContent
+                    ]
         ]
     ]
 
