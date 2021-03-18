@@ -150,10 +150,14 @@ view menuConfig buttonConfig =
                     , height (pct 100)
                     , fontWeight (int 600)
                     , cursor pointer
-                    , disabled
-                        [ opacity (num 0.4)
-                        , cursor notAllowed
-                        ]
+                    , if menuConfig.isDisabled then
+                        Css.batch
+                            [ opacity (num 0.4)
+                            , cursor notAllowed
+                            ]
+
+                      else
+                        Css.batch []
                     , Css.batch <|
                         if buttonConfig.hasBorder then
                             [ border3 (px 1) solid Colors.gray75
