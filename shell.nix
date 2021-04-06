@@ -24,7 +24,7 @@ stdenv.mkDerivation {
     elmPackages.elm-format
     elmPackages.elm-test
     elmPackages.elm-verify-examples
-    (import sources.elm-forbid-import { pkgs = nixpkgs; })
+    (pkgs.callPackage sources.elm-forbid-import { })
 
     # preview dependencies
     python3
