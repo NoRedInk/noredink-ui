@@ -54,6 +54,7 @@ type alias Radio value msg =
     , idString : String
     , label : Html msg
     , attributes : List (Attribute msg)
+    , tooltip : List (Tooltip.Attribute msg)
     , icon : Maybe Svg
     }
 
@@ -61,7 +62,7 @@ type alias Radio value msg =
 {-| Creates a set of radio buttons styled to look like a segmented control.
 
   - `onSelect`: the message to produce when an option is selected (clicked) by the user
-  - `toString`: function to get the radio value as a string
+  - `idString`: function to get the radio value as a string
   - `options`: the list of options available
   - `selected`: if present, the value of the currently-selected option
   - `positioning`: how to position and size the segmented control
@@ -88,30 +89,37 @@ viewRadioGroup config =
                 isSelected =
                     Just option.value == config.selected
             in
-            Html.Styled.label
-                [ css
-                    -- ensure that the focus state is visible, even
-                    -- though the radio button that technically has focus
-                    -- is not
-                    (Css.pseudoClass "focus-within"
-                        [ Css.property "outline-style" "auto" ]
-                        :: styles config.positioning numOptions index isSelected
-                    )
-                ]
-                [ radio name option.idString isSelected <|
-                    (Events.onCheck (\_ -> config.onSelect option.value)
-                        :: css [ Css.opacity Css.zero ]
-                        :: Attributes.attribute "data-nri-checked"
-                            (if isSelected then
-                                "true"
-
-                             else
-                                "false"
+            Tooltip.view
+                { id = option.idString ++ "-tooltip"
+                , trigger =
+                    \tooltipAttrs ->
+                        Html.Styled.label
+                            (css
+                                -- ensure that the focus state is visible, even
+                                -- though the radio button that technically has focus
+                                -- is not
+                                (Css.pseudoClass "focus-within"
+                                    [ Css.property "outline-style" "auto" ]
+                                    :: styles config.positioning numOptions index isSelected
+                                )
+                                :: tooltipAttrs
                             )
-                        :: Style.invisible
-                    )
-                , div [] [ viewIcon option.icon, option.label ]
-                ]
+                            [ radio name option.idString isSelected <|
+                                (Events.onCheck (\_ -> config.onSelect option.value)
+                                    :: css [ Css.opacity Css.zero ]
+                                    :: Attributes.attribute "data-nri-checked"
+                                        (if isSelected then
+                                            "true"
+
+                                         else
+                                            "false"
+                                        )
+                                    :: Style.invisible
+                                )
+                            , div [] [ viewIcon option.icon, option.label ]
+                            ]
+                }
+                option.tooltip
 
         name =
             dashify (String.toLower config.legend)

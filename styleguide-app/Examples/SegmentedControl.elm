@@ -63,7 +63,7 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions options.content)
+                , options = List.take options.count (buildRadioOptions state.radioTooltip options.content)
                 , selected = state.optionallySelected
                 , positioning = options.positioning
                 }
@@ -146,10 +146,11 @@ buildOptions { content, longContent, tooltips } openTooltip =
     ]
 
 
-buildRadioOptions : Content -> List (SegmentedControl.Radio Int msg)
-buildRadioOptions content =
+buildRadioOptions : Maybe Int -> Content -> List (SegmentedControl.Radio Int Msg)
+buildRadioOptions currentlyHovered content =
     let
-        buildOption value icon =
+        buildOption : Int -> ( String, Svg ) -> SegmentedControl.Radio Int Msg
+        buildOption value ( text, icon ) =
             let
                 ( icon_, label ) =
                     getIconAndLabel content
@@ -160,18 +161,33 @@ buildRadioOptions content =
             , label = label
             , value = value
             , idString = String.fromInt value
+            , tooltip =
+                [ Tooltip.plaintext text
+                , Tooltip.open (currentlyHovered == Just value)
+                , Tooltip.fitToContent
+                , Tooltip.onHover
+                    (\hovered ->
+                        HoverRadio
+                            (if hovered then
+                                Just value
+
+                             else
+                                Nothing
+                            )
+                    )
+                ]
             , attributes = []
             }
     in
     List.indexedMap buildOption
-        [ UiIcon.leaderboard
-        , UiIcon.person
-        , UiIcon.performance
-        , UiIcon.gift
-        , UiIcon.document
-        , UiIcon.key
-        , UiIcon.badge
-        , UiIcon.hat
+        [ ( "Leaderboard", UiIcon.leaderboard )
+        , ( "Person", UiIcon.person )
+        , ( "Performance", UiIcon.performance )
+        , ( "Gift", UiIcon.gift )
+        , ( "Document", UiIcon.document )
+        , ( "Key", UiIcon.key )
+        , ( "Badge", UiIcon.badge )
+        , ( "Hat", UiIcon.hat )
         ]
 
 
@@ -181,6 +197,7 @@ type alias State =
     , pageTooltip : Maybe Page
     , optionallySelected : Maybe Int
     , optionsControl : Control Options
+    , radioTooltip : Maybe Int
     }
 
 
@@ -191,6 +208,7 @@ init =
     , pageTooltip = Nothing
     , optionallySelected = Nothing
     , optionsControl = optionsControl
+    , radioTooltip = Nothing
     }
 
 
@@ -256,6 +274,7 @@ type Msg
     | Focused (Result Dom.Error ())
     | PageTooltip Page Bool
     | SelectRadio Int
+    | HoverRadio (Maybe Int)
     | ChangeOptions (Control Options)
 
 
@@ -293,5 +312,10 @@ update msg state =
 
         ChangeOptions newOptions ->
             ( { state | optionsControl = newOptions }
+            , Cmd.none
+            )
+
+        HoverRadio hovered ->
+            ( { state | radioTooltip = hovered }
             , Cmd.none
             )
