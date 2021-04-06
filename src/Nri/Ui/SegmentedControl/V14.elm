@@ -4,14 +4,9 @@ module Nri.Ui.SegmentedControl.V14 exposing
     , Positioning(..), Width(..)
     )
 
-{-| Post-release patches:
+{-| Changes from V13:
 
-  - Fixes <https://github.com/NoRedInk/noredink-ui/issues/608>
-
-Changes from V12:
-
-  - Adds tooltip support
-  - combine onFocus and onSelect into focusAndSelect msg handler (for tooltips)
+  - Adds tooltip support to `viewRadioGroup`
 
 @docs Option, view
 @docs Radio, viewRadioGroup
