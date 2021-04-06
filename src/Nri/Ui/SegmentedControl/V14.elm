@@ -88,38 +88,45 @@ viewRadioGroup config =
             let
                 isSelected =
                     Just option.value == config.selected
-            in
-            Tooltip.view
-                { id = option.idString ++ "-tooltip"
-                , trigger =
-                    \tooltipAttrs ->
-                        Html.Styled.label
-                            (css
-                                -- ensure that the focus state is visible, even
-                                -- though the radio button that technically has focus
-                                -- is not
-                                (Css.pseudoClass "focus-within"
-                                    [ Css.property "outline-style" "auto" ]
-                                    :: styles config.positioning numOptions index isSelected
-                                )
-                                :: tooltipAttrs
-                            )
-                            [ radio name option.idString isSelected <|
-                                (Events.onCheck (\_ -> config.onSelect option.value)
-                                    :: css [ Css.opacity Css.zero ]
-                                    :: Attributes.attribute "data-nri-checked"
-                                        (if isSelected then
-                                            "true"
 
-                                         else
-                                            "false"
-                                        )
-                                    :: Style.invisible
-                                )
-                            , div [] [ viewIcon option.icon, option.label ]
-                            ]
-                }
-                option.tooltip
+                inner : List (Attribute msg) -> Html msg
+                inner extraAttrs =
+                    Html.Styled.label
+                        (css
+                            -- ensure that the focus state is visible, even
+                            -- though the radio button that technically has focus
+                            -- is not
+                            (Css.pseudoClass "focus-within"
+                                [ Css.property "outline-style" "auto" ]
+                                :: styles config.positioning numOptions index isSelected
+                            )
+                            :: extraAttrs
+                        )
+                        [ radio name option.idString isSelected <|
+                            (Events.onCheck (\_ -> config.onSelect option.value)
+                                :: css [ Css.opacity Css.zero ]
+                                :: Attributes.attribute "data-nri-checked"
+                                    (if isSelected then
+                                        "true"
+
+                                     else
+                                        "false"
+                                    )
+                                :: Style.invisible
+                            )
+                        , div [] [ viewIcon option.icon, option.label ]
+                        ]
+            in
+            case option.tooltip of
+                [] ->
+                    inner []
+
+                _ ->
+                    Tooltip.view
+                        { id = option.idString ++ "-tooltip"
+                        , trigger = inner
+                        }
+                        option.tooltip
 
         name =
             dashify (String.toLower config.legend)
