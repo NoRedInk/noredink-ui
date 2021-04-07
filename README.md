@@ -82,6 +82,32 @@ Run the following to bump && publish the version in `elm.json`:
 elm bump
 ```
 
+If you get something like this:
+
+```
+-- PROBLEM LOADING DOCS --------------------------------------------------------
+
+I need the docs for 12.17.0 to compute the next version number, so I fetched:
+
+    https://package.elm-lang.org/packages/NoRedInk/noredink-ui/12.17.0/docs.json
+
+I got the data back, but it was not what I was expecting. The response body
+contains 195076 bytes. Here is the beginning:
+
+    [{"name":"Nri.Ui","comment":" A collection of helpers for working with No...
+
+Does this error keep showing up? Maybe there is something weird with your
+internet connection. We have gotten reports that schools, businesses, airports,
+etc. sometimes intercept requests and add things to the body or change its
+contents entirely. Could that be the problem?
+```
+
+Then run it with 0.19.0 explicitly (0.19.1 has some problems with big docs):
+
+```
+npx -p elm@0.19.0-no-deps elm bump
+```
+
 Commit and push your changes in a PR. Once it's approved and merged,
 then:
 
