@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
 import Debug.Control as Control exposing (Control)
+import EventExtras
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Html.Styled as Html exposing (Html)
@@ -53,8 +54,8 @@ Tooltip.view
         \\attrs ->
             ClickableSvg.button "Preview"
                 UiIcon.preview
-                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
-                , ClickableSvg.custom attrs
+                [ ClickableSvg.custom attrs,
+                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
                 ]
     , id = "preview-tooltip"
     }
@@ -72,8 +73,8 @@ Tooltip.view
                         \attrs ->
                             ClickableSvg.button "Preview"
                                 UiIcon.preview
-                                [ ClickableSvg.onClick (ShowItWorked "You clicked the preview button!")
-                                , ClickableSvg.custom attrs
+                                [ ClickableSvg.custom attrs
+                                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
                                 ]
                     , id = "preview-tooltip"
                     }
