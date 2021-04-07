@@ -80,10 +80,13 @@ hint = 'upgrade to V11'
 hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.SegmentedControl.V11"]
-hint = 'upgrade to V13'
+hint = 'upgrade to V14'
 
 [forbidden."Nri.Ui.SegmentedControl.V12"]
-hint = 'upgrade to V13'
+hint = 'upgrade to V14'
+
+[forbidden."Nri.Ui.SegmentedControl.V13"]
+hint = 'upgrade to V14'
 
 [forbidden."Nri.Ui.Select.V5"]
 hint = 'upgrade to V7'
