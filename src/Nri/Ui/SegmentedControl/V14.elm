@@ -126,7 +126,13 @@ viewRadioGroup config =
                         { id = option.idString ++ "-tooltip"
                         , trigger = inner
                         }
-                        option.tooltip
+                        (case config.positioning of
+                            Left FillContainer ->
+                                Tooltip.containerCss [ Css.width (Css.pct 100) ] :: option.tooltip
+
+                            _ ->
+                                option.tooltip
+                        )
 
         name =
             dashify (String.toLower config.legend)
