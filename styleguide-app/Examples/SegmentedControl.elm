@@ -63,7 +63,7 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions state.radioTooltip options.content)
+                , options = List.take options.count (buildRadioOptions options state.radioTooltip options.content)
                 , selected = state.optionallySelected
                 , positioning = options.positioning
                 }
@@ -146,8 +146,8 @@ buildOptions { content, longContent, tooltips } openTooltip =
     ]
 
 
-buildRadioOptions : Maybe Int -> Content -> List (SegmentedControl.Radio Int Msg)
-buildRadioOptions currentlyHovered content =
+buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List (SegmentedControl.Radio Int Msg)
+buildRadioOptions options currentlyHovered content =
     let
         buildOption : Int -> ( String, Svg ) -> SegmentedControl.Radio Int Msg
         buildOption value ( text, icon ) =
@@ -162,20 +162,24 @@ buildRadioOptions currentlyHovered content =
             , value = value
             , idString = String.fromInt value
             , tooltip =
-                [ Tooltip.plaintext text
-                , Tooltip.open (currentlyHovered == Just value)
-                , Tooltip.fitToContent
-                , Tooltip.onHover
-                    (\hovered ->
-                        HoverRadio
-                            (if hovered then
-                                Just value
+                if options.tooltips then
+                    [ Tooltip.plaintext text
+                    , Tooltip.open (currentlyHovered == Just value)
+                    , Tooltip.fitToContent
+                    , Tooltip.onHover
+                        (\hovered ->
+                            HoverRadio
+                                (if hovered then
+                                    Just value
 
-                             else
-                                Nothing
-                            )
-                    )
-                ]
+                                 else
+                                    Nothing
+                                )
+                        )
+                    ]
+
+                else
+                    []
             , attributes = []
             }
     in
