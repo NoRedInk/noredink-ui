@@ -4,12 +4,14 @@ Nri.Ui.ClickableSvg.V1,upgrade to V2
 Nri.Ui.Icon.V3,upgrade to V5
 Nri.Ui.Icon.V4,upgrade to V5
 Nri.Ui.InputStyles.V2,upgrade to V3
-Nri.Ui.Message.V1,upgrade to V2
+Nri.Ui.Message.V1,upgrade to V3
+Nri.Ui.Message.V2,upgrade to V3
 Nri.Ui.Modal.V3,upgrade to V11
 Nri.Ui.Modal.V10,upgrade to V11
 Nri.Ui.RadioButton.V1,upgrade to V2
-Nri.Ui.SegmentedControl.V11,upgrade to V13
-Nri.Ui.SegmentedControl.V12,upgrade to V13
+Nri.Ui.SegmentedControl.V11,upgrade to V14
+Nri.Ui.SegmentedControl.V12,upgrade to V14
+Nri.Ui.SegmentedControl.V13,upgrade to V14
 Nri.Ui.Select.V5,upgrade to V7
 Nri.Ui.Table.V4,upgrade to V5
 Nri.Ui.Tabs.V6,upgrade to V7

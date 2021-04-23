@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "12.17.0",
+    "version": "12.18.1",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",
@@ -55,6 +55,7 @@
         "Nri.Ui.SegmentedControl.V11",
         "Nri.Ui.SegmentedControl.V12",
         "Nri.Ui.SegmentedControl.V13",
+        "Nri.Ui.SegmentedControl.V14",
         "Nri.Ui.Select.V5",
         "Nri.Ui.Select.V7",
         "Nri.Ui.Slide.V1",
