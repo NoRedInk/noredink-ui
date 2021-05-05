@@ -10,14 +10,14 @@ module Examples.Accordion exposing
 
 -}
 
+import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
@@ -67,7 +67,7 @@ view model =
         defaultCaret =
             DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
 
-        defaultClass =
+        entryClass =
             "first-accordion-example"
     in
     [ Heading.h3 [] [ Html.text "Accordion.view" ]
@@ -75,9 +75,9 @@ view model =
         { entries =
             [ AccordionEntry
                 { caret = defaultCaret
-                , content = \_ -> Html.text "Content for the first accordion"
-                , entryClass = defaultClass
-                , headerContent = Html.text "Default Look"
+                , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
+                , entryClass = entryClass
+                , headerContent = Html.text "Apples"
                 , headerId = "accordion-entry__1"
                 , headerLevel = Accordion.H4
                 , isExpanded = Set.member 1 model
@@ -85,74 +85,85 @@ view model =
                 }
                 [ AccordionEntry
                     { caret = defaultCaret
-                    , content = \_ -> Html.text "Content for the Accordion Child"
-                    , entryClass = defaultClass
-                    , headerContent = Html.text "Accordion Child"
-                    , headerId = "accordion-entry__2"
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "Basket of Gala Apples"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Malus-Gala.jpg/1205px-Malus-Gala.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Gala_(apple)" ]
+                                    [ Html.text "Wikipedia article on Gala Apples" ]
+                                ]
+                    , entryClass = entryClass
+                    , headerContent = Html.text "Gala"
+                    , headerId = "accordion-entry__11"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 2 model
-                    , toggle = Just (Toggle 2)
+                    , isExpanded = Set.member 11 model
+                    , toggle = Just (Toggle 11)
+                    }
+                    []
+                , AccordionEntry
+                    { caret = defaultCaret
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "Freshly-washed Granny Smith Apple"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/One_Green_Apple.jpg/1280px-One_Green_Apple.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Granny_Smith" ]
+                                    [ Html.text "Wikipedia article on Granny Smith Apples" ]
+                                ]
+                    , entryClass = entryClass
+                    , headerContent = Html.text "Granny Smith"
+                    , headerId = "accordion-entry__12"
+                    , headerLevel = Accordion.H5
+                    , isExpanded = Set.member 12 model
+                    , toggle = Just (Toggle 12)
+                    }
+                    []
+                , AccordionEntry
+                    { caret = defaultCaret
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "3 Fuji Apples resting on gingham fabric"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Fuji_apples.jpg/1920px-Fuji_apples.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Fuji_(apple)" ]
+                                    [ Html.text "Wikipedia article on Fuji Apples" ]
+                                ]
+                    , entryClass = entryClass
+                    , headerContent = Html.text "Fuji"
+                    , headerId = "accordion-entry__13"
+                    , headerLevel = Accordion.H5
+                    , isExpanded = Set.member 13 model
+                    , toggle = Just (Toggle 13)
                     }
                     []
                 ]
             , AccordionEntry
-                { caret =
-                    \isOpen ->
-                        UiIcon.seeMore
-                            |> Svg.withWidth (Css.px 17)
-                            |> Svg.withHeight (Css.px 17)
-                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
-                            |> Svg.withColor
-                                (if isOpen then
-                                    Colors.azureDark
-
-                                 else
-                                    Colors.azure
-                                )
-                            |> Svg.toHtml
-                , content = \_ -> Html.text "Content for the third accordion"
-                , entryClass = defaultClass
-                , headerContent = Html.text "Custom Carets!"
-                , headerId = "accordion-entry__3"
+                { caret = defaultCaret
+                , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
+                , entryClass = entryClass
+                , headerContent = Html.text "Oranges"
+                , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 3 model
-                , toggle = Just (Toggle 3)
+                , isExpanded = Set.member 2 model
+                , toggle = Just (Toggle 2)
                 }
                 []
             , AccordionEntry
-                { caret =
-                    \_ ->
-                        UiIcon.null
-                            |> Svg.withWidth (Css.px 17)
-                            |> Svg.withHeight (Css.px 17)
-                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
-                            |> Svg.withColor Colors.gray85
-                            |> Svg.toHtml
-                , content = \_ -> Html.text "Content for the fourth accordion"
-                , entryClass = defaultClass
-                , headerContent = Html.text "This accordion can't be opened."
+                { caret = defaultCaret
+                , content = \_ -> Html.text "There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy."
+                , entryClass = entryClass
+                , headerContent = Html.text "Berries"
                 , headerId = "accordion-entry__4"
                 , headerLevel = Accordion.H5
                 , isExpanded = Set.member 4 model
-                , toggle = Nothing
-                }
-                []
-            , AccordionEntry
-                { caret =
-                    \_ ->
-                        UiIcon.null
-                            |> Svg.withWidth (Css.px 17)
-                            |> Svg.withHeight (Css.px 17)
-                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
-                            |> Svg.withColor Colors.gray85
-                            |> Svg.toHtml
-                , content = \_ -> Html.text "Content for the fifth accordion"
-                , entryClass = defaultClass
-                , headerContent = Html.text "This accordion can't be closed."
-                , headerId = "accordion-entry__5"
-                , headerLevel = Accordion.H5
-                , isExpanded = True
-                , toggle = Nothing
+                , toggle = Just (Toggle 4)
                 }
                 []
             , AccordionEntry
