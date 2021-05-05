@@ -164,7 +164,17 @@ view model =
                 }
                 []
             , AccordionEntry
-                { caret = defaultCaret
+                { caret =
+                    \isOpen ->
+                        (if isOpen then
+                            UiIcon.tree
+
+                         else
+                            UiIcon.sprout
+                        )
+                            |> Svg.withWidth (Css.px 30)
+                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                            |> Svg.toHtml
                 , content =
                     \_ ->
                         Html.div
@@ -178,7 +188,7 @@ view model =
                                 [ Html.img "Wild Apple" [ src "https://upload.wikimedia.org/wikipedia/commons/9/92/95apple.jpeg" ] ]
                             ]
                 , entryClass = "fixed-positioning-accordion-example"
-                , headerContent = Html.text "Fixed Position Example: Expand & Scroll!"
+                , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
                 , headerLevel = Accordion.H4
                 , isExpanded = Set.member 6 model
