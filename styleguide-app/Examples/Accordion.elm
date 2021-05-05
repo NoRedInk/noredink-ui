@@ -66,9 +66,6 @@ view model =
     let
         defaultCaret =
             DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
-
-        entryClass =
-            "first-accordion-example"
     in
     [ Heading.h3 [] [ Html.text "Accordion.view" ]
     , Accordion.view
@@ -76,7 +73,7 @@ view model =
             [ AccordionEntry
                 { caret = defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
-                , entryClass = entryClass
+                , entryClass = "accordion-example"
                 , headerContent = Html.text "Apples"
                 , headerId = "accordion-entry__1"
                 , headerLevel = Accordion.H4
@@ -95,7 +92,7 @@ view model =
                                 , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Gala_(apple)" ]
                                     [ Html.text "Wikipedia article on Gala Apples" ]
                                 ]
-                    , entryClass = entryClass
+                    , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
                     , headerLevel = Accordion.H5
@@ -115,7 +112,7 @@ view model =
                                 , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Granny_Smith" ]
                                     [ Html.text "Wikipedia article on Granny Smith Apples" ]
                                 ]
-                    , entryClass = entryClass
+                    , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
                     , headerLevel = Accordion.H5
@@ -135,7 +132,7 @@ view model =
                                 , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Fuji_(apple)" ]
                                     [ Html.text "Wikipedia article on Fuji Apples" ]
                                 ]
-                    , entryClass = entryClass
+                    , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
                     , headerLevel = Accordion.H5
@@ -147,7 +144,7 @@ view model =
             , AccordionEntry
                 { caret = defaultCaret
                 , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
-                , entryClass = entryClass
+                , entryClass = "accordion-example"
                 , headerContent = Html.text "Oranges"
                 , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H4
@@ -158,7 +155,7 @@ view model =
             , AccordionEntry
                 { caret = defaultCaret
                 , content = \_ -> Html.text "There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy."
-                , entryClass = entryClass
+                , entryClass = "accordion-example"
                 , headerContent = Html.text "Berries"
                 , headerId = "accordion-entry__4"
                 , headerLevel = Accordion.H5
@@ -177,7 +174,8 @@ view model =
                                 , Css.padding (Css.px 20)
                                 ]
                             ]
-                            [ Html.text "Content for the accordion"
+                            [ Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Apple#/media/File:95apple.jpeg" ]
+                                [ Html.img "Wild Apple" [ src "https://upload.wikimedia.org/wikipedia/commons/9/92/95apple.jpeg" ] ]
                             ]
                 , entryClass = "fixed-positioning-accordion-example"
                 , headerContent = Html.text "Fixed Position Example: Expand & Scroll!"
@@ -192,10 +190,12 @@ view model =
         }
     , Accordion.styleAccordion
         { entryStyles =
-            [ Css.marginLeft (Css.px 16)
-            , Css.Global.withClass "fixed-positioning-accordion-example"
-                [ Css.position Css.relative
+            [ Css.Global.withClass "fixed-positioning-accordion-example"
+                [ Css.marginLeft (Css.px -20)
+                , Css.position Css.relative
                 ]
+            , Css.Global.withClass "accordion-example-child"
+                [ Css.marginLeft (Css.px 16) ]
             ]
         , entryExpandedStyles =
             [ Css.Global.withClass "fixed-positioning-accordion-example"
