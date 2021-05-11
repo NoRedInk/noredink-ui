@@ -10,20 +10,25 @@ module Examples.Accordion exposing
 
 -}
 
+import Accessibility.Styled as Html exposing (Html)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
-import Dict exposing (Dict)
+import Css.Global
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Accordion.V2 as Accordion
+import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V4 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
+import Set exposing (Set)
 import Task
 
 
@@ -31,7 +36,7 @@ import Task
 example : Example State Msg
 example =
     { name = "Accordion"
-    , version = 2
+    , version = 3
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -45,6 +50,12 @@ example =
         , { keys = [ Arrow KeyboardSupport.Down ]
           , result = "Moves the focus to the next accordion header button (wraps focus to the first header button)"
           }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Moves the focus to the first accordion header button in a nested list of accordions"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Moves the focus to the parent accordion header button from a a nested accordion"
+          }
         ]
     }
 
@@ -52,89 +63,176 @@ example =
 {-| -}
 view : State -> List (Html Msg)
 view model =
-    [ Heading.h3 [] [ Html.text "Accordion.view with default styles" ]
+    let
+        defaultCaret =
+            DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+    in
+    [ Heading.h3 [] [ Html.text "Accordion.view" ]
     , Accordion.view
         { entries =
-            [ { id = 1, title = "Entry 1", content = "Content for the first accordion" }
-            , { id = 2, title = "Entry 2", content = "Content for the second accordion" }
-            , { id = 3, title = "Super long entry that is very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long", content = "Content for the third accordion" }
-            ]
-                |> List.map
-                    (\entry ->
-                        { headerId = "accordion-entry__" ++ String.fromInt entry.id
-                        , entry = entry
-                        , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
-                        }
-                    )
-        , headerLevel = Accordion.H4
-        , viewHeader = .title >> Html.text
-        , viewContent = \{ content } -> Text.smallBody [ Html.text content ]
-        , customStyles = Nothing
-        , toggle = \entry toExpand -> Toggle entry.id toExpand
-        , focus = Focus
-        , caret = Accordion.DefaultCaret
-        }
-    , Heading.h3 [] [ Html.text "Accordion.view with custom styles from peer reviews" ]
-    , Accordion.view
-        { entries =
-            [ { id = 4
-              , title = "Firstname Lastname"
-              , content =
-                    Html.div
-                        [ css [ Fonts.baseFont, fontSize (px 13) ]
-                        ]
-                        [ Html.text "has not started writing" ]
-              }
-            , { id = 5
-              , title = "LongFirstnameAnd EvenLongerLastname"
-              , content =
-                    Html.div
-                        [ css [ Fonts.baseFont, fontSize (px 13) ] ]
-                        [ Html.text "has started writing" ]
-              }
-            ]
-                |> List.map
-                    (\entry ->
-                        { headerId = "accordion-entry__" ++ String.fromInt entry.id
-                        , entry = entry
-                        , isExpanded = Dict.get entry.id model |> Maybe.withDefault False
-                        }
-                    )
-        , headerLevel = Accordion.H4
-        , viewHeader = .title >> Html.text
-        , viewContent = .content
-        , customStyles =
-            Just
-                (\_ ->
-                    { entryStyles =
-                        [ borderTop3 (px 1) solid Colors.gray75
-                        , marginBottom zero
-                        , width (px 284)
-                        ]
-                    , entryExpandedStyles = []
-                    , entryClosedStyles = []
-                    , headerStyles =
-                        [ height (px 46)
-                        , paddingLeft (px 8)
-                        , paddingRight (px 8)
-                        , Css.alignItems Css.center
-                        ]
-                    , headerExpandedStyles =
-                        [ backgroundColor Colors.gray96
-                        , borderRadius zero
-                        ]
-                    , headerClosedStyles = [ backgroundColor transparent ]
-                    , contentStyles =
-                        [ backgroundColor Colors.gray96
-                        , paddingLeft (px 8)
-                        , paddingRight (px 8)
-                        , paddingBottom (px 8)
-                        ]
+            [ AccordionEntry
+                { caret = defaultCaret
+                , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
+                , entryClass = "accordion-example"
+                , headerContent = Html.text "Apples"
+                , headerId = "accordion-entry__1"
+                , headerLevel = Accordion.H4
+                , isExpanded = Set.member 1 model
+                , toggle = Just (Toggle 1)
+                }
+                [ AccordionEntry
+                    { caret = defaultCaret
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "Basket of Gala Apples"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Malus-Gala.jpg/1205px-Malus-Gala.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Gala_(apple)" ]
+                                    [ Html.text "Wikipedia article on Gala Apples" ]
+                                ]
+                    , entryClass = "accordion-example-child"
+                    , headerContent = Html.text "Gala"
+                    , headerId = "accordion-entry__11"
+                    , headerLevel = Accordion.H5
+                    , isExpanded = Set.member 11 model
+                    , toggle = Just (Toggle 11)
                     }
-                )
-        , toggle = \entry toExpand -> Toggle entry.id toExpand
+                    []
+                , AccordionEntry
+                    { caret = defaultCaret
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "Freshly-washed Granny Smith Apple"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/One_Green_Apple.jpg/1280px-One_Green_Apple.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Granny_Smith" ]
+                                    [ Html.text "Wikipedia article on Granny Smith Apples" ]
+                                ]
+                    , entryClass = "accordion-example-child"
+                    , headerContent = Html.text "Granny Smith"
+                    , headerId = "accordion-entry__12"
+                    , headerLevel = Accordion.H5
+                    , isExpanded = Set.member 12 model
+                    , toggle = Just (Toggle 12)
+                    }
+                    []
+                , AccordionEntry
+                    { caret = defaultCaret
+                    , content =
+                        \_ ->
+                            Html.div []
+                                [ Html.img "3 Fuji Apples resting on gingham fabric"
+                                    [ css [ Css.maxWidth (Css.px 100), Css.maxHeight (Css.px 100) ]
+                                    , src "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Fuji_apples.jpg/1920px-Fuji_apples.jpg"
+                                    ]
+                                , Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Fuji_(apple)" ]
+                                    [ Html.text "Wikipedia article on Fuji Apples" ]
+                                ]
+                    , entryClass = "accordion-example-child"
+                    , headerContent = Html.text "Fuji"
+                    , headerId = "accordion-entry__13"
+                    , headerLevel = Accordion.H5
+                    , isExpanded = Set.member 13 model
+                    , toggle = Just (Toggle 13)
+                    }
+                    []
+                ]
+            , AccordionEntry
+                { caret = defaultCaret
+                , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
+                , entryClass = "accordion-example"
+                , headerContent = Html.text "Oranges"
+                , headerId = "accordion-entry__2"
+                , headerLevel = Accordion.H4
+                , isExpanded = Set.member 2 model
+                , toggle = Just (Toggle 2)
+                }
+                []
+            , AccordionEntry
+                { caret = defaultCaret
+                , content = \_ -> Html.text "There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy."
+                , entryClass = "accordion-example"
+                , headerContent = Html.text "Berries"
+                , headerId = "accordion-entry__4"
+                , headerLevel = Accordion.H5
+                , isExpanded = Set.member 4 model
+                , toggle = Just (Toggle 4)
+                }
+                []
+            , AccordionEntry
+                { caret =
+                    \isOpen ->
+                        (if isOpen then
+                            UiIcon.tree
+
+                         else
+                            UiIcon.sprout
+                        )
+                            |> Svg.withWidth (Css.px 30)
+                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                            |> Svg.toHtml
+                , content =
+                    \_ ->
+                        Html.div
+                            [ css
+                                [ Css.backgroundColor Colors.gray92
+                                , Css.minHeight (Css.vh 100)
+                                , Css.padding (Css.px 20)
+                                ]
+                            ]
+                            [ Html.a [ Attributes.href "https://en.wikipedia.org/wiki/Apple#/media/File:95apple.jpeg" ]
+                                [ Html.img "Wild Apple" [ src "https://upload.wikimedia.org/wikipedia/commons/9/92/95apple.jpeg" ] ]
+                            ]
+                , entryClass = "fixed-positioning-accordion-example"
+                , headerContent = Html.text "Advanced Example: Expand & Scroll!"
+                , headerId = "accordion-entry__6"
+                , headerLevel = Accordion.H4
+                , isExpanded = Set.member 6 model
+                , toggle = Just (Toggle 6)
+                }
+                []
+            ]
         , focus = Focus
-        , caret = Accordion.DefaultCaret
+        }
+    , Accordion.styleAccordion
+        { entryStyles =
+            [ Css.Global.withClass "fixed-positioning-accordion-example"
+                [ Css.marginLeft (Css.px -20)
+                , Css.position Css.relative
+                ]
+            , Css.Global.withClass "accordion-example-child"
+                [ Css.marginLeft (Css.px 16) ]
+            ]
+        , entryExpandedStyles =
+            [ Css.Global.withClass "fixed-positioning-accordion-example"
+                [ Css.Global.children
+                    [ Css.Global.h4
+                        [ Css.position Css.sticky
+                        , Css.property "position" "-webkit-sticky"
+                        , Css.top (Css.px -8)
+                        ]
+                    ]
+                ]
+            ]
+        , entryClosedStyles = []
+        , headerStyles =
+            [ Css.Global.withClass "fixed-positioning-accordion-example"
+                [ Css.padding (Css.px 20)
+                ]
+            ]
+        , headerExpandedStyles =
+            [ Css.Global.withClass "fixed-positioning-accordion-example"
+                [ Css.backgroundColor Colors.gray96
+                , Css.borderRadius (Css.px 8)
+                , Css.boxShadow5 Css.zero Css.zero (px 10) zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                ]
+            ]
+        , headerClosedStyles = []
+        , contentStyles = []
         }
     ]
 
@@ -148,26 +246,26 @@ type Msg
 {-| -}
 init : State
 init =
-    Dict.fromList
-        [ ( 1, False )
-        , ( 2, False )
-        , ( 3, False )
-        , ( 4, False )
-        , ( 5, False )
-        ]
+    Set.empty
 
 
 {-| -}
 type alias State =
-    Dict Int Bool
+    Set Int
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        Toggle id toExpanded ->
-            ( Dict.insert id toExpanded model, Cmd.none )
+        Toggle id expand ->
+            ( if expand then
+                Set.insert id model
+
+              else
+                Set.remove id model
+            , Cmd.none
+            )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
