@@ -1,11 +1,11 @@
 module Nri.Ui.Page.V3 exposing
-    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut
+    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut, httpError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
-@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut
+@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, httpError
 @docs RecoveryText
 
 -}
@@ -13,6 +13,7 @@ module Nri.Ui.Page.V3 exposing
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Http
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Text.V2 as Text
@@ -107,6 +108,32 @@ loggedOut defaultPage =
         , details = Nothing
         , showHelpButton = False
         }
+
+
+{-| -}
+httpError : DefaultPage msg -> Http.Error -> Html msg
+httpError defaultPage error =
+    case error of
+        Http.BadUrl _ ->
+            broken defaultPage
+
+        Http.Timeout ->
+            broken defaultPage
+
+        Http.NetworkError ->
+            broken defaultPage
+
+        Http.BadStatus 401 ->
+            loggedOut defaultPage
+
+        Http.BadStatus 404 ->
+            notFound defaultPage
+
+        Http.BadStatus _ ->
+            broken defaultPage
+
+        Http.BadBody _ ->
+            broken defaultPage
 
 
 
