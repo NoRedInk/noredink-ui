@@ -96,6 +96,20 @@ noPermission defaultPage =
         }
 
 
+{-| When a request fails due to a connectivity failure.
+-}
+networkError : Html msg
+networkError =
+    view
+        { emoji = "\u{1F91D}"
+        , title = "Are you connected to the Internet?"
+        , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
+        , defaultPage = Nothing
+        , details = Nothing
+        , showHelpButton = False
+        }
+
+
 {-| When the user has been logged out.
 -}
 loggedOut : DefaultPage msg -> Html msg
@@ -121,7 +135,7 @@ httpError defaultPage error =
             broken defaultPage
 
         Http.NetworkError ->
-            broken defaultPage
+            networkError
 
         Http.BadStatus 401 ->
             loggedOut defaultPage
