@@ -1,13 +1,13 @@
 module Nri.Ui.Page.V3 exposing
     ( httpError
-    , DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut
+    , DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
 @docs httpError
-@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut
+@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
 
 -}

@@ -75,28 +75,24 @@ example =
                 , recoveryText = recoveryText
                 }
                 (Control.currentValue model.httpError)
-            , Heading.h3 [] [ Html.text "Page.notFound" ]
-            , Page.notFound
-                { link = ShowItWorked "Page.notFound"
-                , recoveryText = recoveryText
-                }
-            , Heading.h3 [] [ Html.text "Page.broken" ]
-            , Page.broken
-                { link = ShowItWorked "Page.broken"
-                , recoveryText = recoveryText
-                }
-            , Heading.h3 [] [ Html.text "Page.noPermission" ]
-            , Page.noPermission
-                { link = ShowItWorked "Page.noPermission"
-                , recoveryText = recoveryText
-                }
-            , Heading.h3 [] [ Html.text "Page.loggedOut" ]
-            , Page.loggedOut
-                { link = ShowItWorked "Page.loggedOut Custom"
-                , recoveryText = recoveryText
-                }
+            , viewExample "Page.broken" Page.broken recoveryText
+
+            --, viewExample "Page.blocked" Page.blocked recoveryText
+            , viewExample "Page.notFound" Page.notFound recoveryText
+            , viewExample "Page.noPermission" Page.noPermission recoveryText
+            , viewExample "Page.loggedOut" Page.loggedOut recoveryText
+            , viewExample "Page.timeOut" Page.timeOut recoveryText
+            , viewExample "Page.networkError" Page.networkError recoveryText
             ]
     }
+
+
+viewExample : String -> (Page.DefaultPage Msg -> Html Msg) -> RecoveryText -> Html Msg
+viewExample viewName view recoveryText =
+    Html.div []
+        [ Heading.h3 [] [ Html.text viewName ]
+        , view { link = ShowItWorked viewName, recoveryText = recoveryText }
+        ]
 
 
 initHttpError : Control Http.Error
