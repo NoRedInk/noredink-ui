@@ -13,8 +13,10 @@ import Css.Global exposing (Snippet, adjacentSiblings, children, class, descenda
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
 import Http
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Page.V3 as Page exposing (RecoveryText(..))
 
@@ -68,28 +70,42 @@ example =
                     Control.currentValue model.recoveryText
             in
             [ Html.fromUnstyled (Control.view SetRecoveryText model.recoveryText)
-            , Heading.h3 [] [ Html.text "Page.httpError" ]
-            , Html.fromUnstyled (Control.view SetHttpError model.httpError)
-            , Page.httpError
-                { link = ShowItWorked "Page.httpError"
-                , recoveryText = recoveryText
-                }
-                (Control.currentValue model.httpError)
-            , viewExample "Page.broken" Page.broken recoveryText
-            , viewExample "Page.blockedV4" (Page.blockedV4 "Error message details") recoveryText
-            , viewExample "Page.notFound" Page.notFound recoveryText
-            , viewExample "Page.noPermission" Page.noPermission recoveryText
-            , viewExample "Page.loggedOut" Page.loggedOut recoveryText
-            , viewExample "Page.timeOut" Page.timeOut recoveryText
-            , viewExample "Page.networkError" Page.networkError recoveryText
+            , viewExample "Page.httpError error" (Page.httpError (Control.currentValue model.httpError)) recoveryText [ Html.fromUnstyled (Control.view SetHttpError model.httpError) ]
+            , viewExample "Page.broken" Page.broken recoveryText []
+            , viewExample "Page.blockedV4" (Page.blockedV4 "Error message details") recoveryText []
+            , viewExample "Page.notFound" Page.notFound recoveryText []
+            , viewExample "Page.noPermission" Page.noPermission recoveryText []
+            , viewExample "Page.loggedOut" Page.loggedOut recoveryText []
+            , viewExample "Page.timeOut" Page.timeOut recoveryText []
+            , viewExample "Page.networkError" Page.networkError recoveryText []
             ]
     }
 
 
-viewExample : String -> (Page.DefaultPage Msg -> Html Msg) -> RecoveryText -> Html Msg
-viewExample viewName view recoveryText =
-    Html.div []
+viewExample :
+    String
+    -> (Page.DefaultPage Msg -> Html Msg)
+    -> RecoveryText
+    -> List (Html Msg)
+    -> Html Msg
+viewExample viewName view recoveryText extras =
+    Html.div
+        [ css
+            [ Css.marginTop (Css.px 20)
+            , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
+            , Css.paddingTop (Css.px 20)
+            , Css.marginBottom (Css.px 20)
+            ]
+        ]
         [ Heading.h3 [] [ Html.text viewName ]
+        , Html.div [] extras
+        , Html.code []
+            [ Html.text <|
+                viewName
+                    ++ " {  link = msg, recoveryText = "
+                    ++ Debug.toString recoveryText
+                    ++ " }"
+            ]
         , view { link = ShowItWorked viewName, recoveryText = recoveryText }
         ]
 
@@ -102,7 +118,7 @@ initHttpError =
         , ( "Network Error", Control.value Http.NetworkError )
         , ( "Bad Status: 401", Control.value (Http.BadStatus 401) )
         , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
-        , ( "Bad Status: ???", Control.value (Http.BadStatus 301) )
+        , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
         , ( "Bad Body (often, a JSON decoding problem)"
           , Control.value
                 (Http.BadBody
@@ -133,7 +149,7 @@ initHttpError =
 initRecoveryText : Control RecoveryText
 initRecoveryText =
     Control.choice
-        [ ( "Page.ReturnTo", Control.map Page.ReturnTo (Control.string "Home") )
-        , ( "Page.Reload", Control.value Page.Reload )
+        [ ( "Page.Reload", Control.value Page.Reload )
+        , ( "Page.ReturnTo", Control.map Page.ReturnTo (Control.string "Home") )
         , ( "Page.Custom", Control.map Custom (Control.string "Hit the road, Jack") )
         ]

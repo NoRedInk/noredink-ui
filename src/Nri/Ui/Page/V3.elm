@@ -158,8 +158,8 @@ loggedOut defaultPage =
 
 
 {-| -}
-httpError : DefaultPage msg -> Http.Error -> Html msg
-httpError defaultPage error =
+httpError : Http.Error -> DefaultPage msg -> Html msg
+httpError error defaultPage =
     case error of
         Http.BadUrl _ ->
             broken defaultPage
