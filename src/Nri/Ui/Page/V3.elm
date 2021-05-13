@@ -120,7 +120,7 @@ noPermission defaultPage =
 networkError : DefaultPage msg -> Html msg
 networkError defaultPage =
     view
-        { emoji = "\u{1F91D}"
+        { emoji = "🤝"
         , title = "Are you connected to the Internet?"
         , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
         , defaultPage = Just defaultPage
