@@ -134,7 +134,7 @@ networkError defaultPage =
 timeOut : DefaultPage msg -> Html msg
 timeOut defaultPage =
     view
-        { emoji = "⏰"
+        { emoji = "⏱"
         , title = "There was a problem!"
         , subtitle = "This request took too long to complete."
         , defaultPage = Just defaultPage
