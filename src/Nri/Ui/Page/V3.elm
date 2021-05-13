@@ -1,11 +1,11 @@
 module Nri.Ui.Page.V3 exposing
-    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut, httpError
+    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, httpError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
-@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, httpError
+@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, httpError
 @docs RecoveryText
 
 -}
@@ -98,13 +98,27 @@ noPermission defaultPage =
 
 {-| When a request fails due to a connectivity failure.
 -}
-networkError : Html msg
-networkError =
+networkError : DefaultPage msg -> Html msg
+networkError defaultPage =
     view
         { emoji = "\u{1F91D}"
         , title = "Are you connected to the Internet?"
         , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
-        , defaultPage = Nothing
+        , defaultPage = Just defaultPage
+        , details = Nothing
+        , showHelpButton = False
+        }
+
+
+{-| When a request takes too long to complete.
+-}
+timeOut : DefaultPage msg -> Html msg
+timeOut defaultPage =
+    view
+        { emoji = "⏰"
+        , title = "There was a problem!"
+        , subtitle = "This request took too long to complete."
+        , defaultPage = Just defaultPage
         , details = Nothing
         , showHelpButton = False
         }
@@ -132,10 +146,10 @@ httpError defaultPage error =
             broken defaultPage
 
         Http.Timeout ->
-            broken defaultPage
+            timeOut defaultPage
 
         Http.NetworkError ->
-            networkError
+            networkError defaultPage
 
         Http.BadStatus 401 ->
             loggedOut defaultPage
