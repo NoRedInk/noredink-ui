@@ -76,8 +76,7 @@ example =
                 }
                 (Control.currentValue model.httpError)
             , viewExample "Page.broken" Page.broken recoveryText
-
-            --, viewExample "Page.blocked" Page.blocked recoveryText
+            , viewExample "Page.blockedV4" (Page.blockedV4 "Error message details") recoveryText
             , viewExample "Page.notFound" Page.notFound recoveryText
             , viewExample "Page.noPermission" Page.noPermission recoveryText
             , viewExample "Page.loggedOut" Page.loggedOut recoveryText

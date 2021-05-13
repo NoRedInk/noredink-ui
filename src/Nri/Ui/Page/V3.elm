@@ -1,13 +1,13 @@
 module Nri.Ui.Page.V3 exposing
     ( httpError
-    , DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
+    , DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
 @docs httpError
-@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
+@docs DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
 
 -}
@@ -70,7 +70,10 @@ broken defaultPage =
         }
 
 
-{-| For HTTP errors and other broken states, where link goes to "/".
+{-| DEPRECATED: please use blockedV4.
+
+For HTTP errors and other broken states, where link goes to "/".
+
 -}
 blocked : String -> Html msg
 blocked details =
@@ -79,6 +82,20 @@ blocked details =
         , title = "There was a problem!"
         , subtitle = "You can try again, or check out our help center."
         , defaultPage = Nothing
+        , details = Just details
+        , showHelpButton = True
+        }
+
+
+{-| Error page with details for engineers.
+-}
+blockedV4 : String -> DefaultPage msg -> Html msg
+blockedV4 details defaultPage =
+    view
+        { emoji = "😵"
+        , title = "There was a problem!"
+        , subtitle = "You can try again, or check out our help center."
+        , defaultPage = Just defaultPage
         , details = Just details
         , showHelpButton = True
         }
@@ -159,11 +176,11 @@ httpError defaultPage error =
         Http.BadStatus 404 ->
             notFound defaultPage
 
-        Http.BadStatus _ ->
-            broken defaultPage
+        Http.BadStatus status ->
+            blockedV4 ("HTTP error status: " ++ String.fromInt status) defaultPage
 
-        Http.BadBody _ ->
-            broken defaultPage
+        Http.BadBody body ->
+            blockedV4 body defaultPage
 
 
 
