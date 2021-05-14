@@ -234,33 +234,43 @@ somethingWentWrong errorMessageForEngineers =
             [ tiny
             , error
             , alertRole
-            , plaintext "Sorry, something went wrong.  Please try again later."
+            , plaintext somethingWentWrongMessage
             ]
-        , details []
-            [ summary
-                [ Attributes.css
-                    [ Fonts.baseFont
-                    , fontSize (px 14)
-                    , color Colors.gray45
-                    ]
+        , viewCodeDetails errorMessageForEngineers
+        ]
+
+
+somethingWentWrongMessage : String
+somethingWentWrongMessage =
+    "Sorry, something went wrong.  Please try again later."
+
+
+viewCodeDetails : String -> Html msg
+viewCodeDetails errorMessageForEngineers =
+    details []
+        [ summary
+            [ Attributes.css
+                [ Fonts.baseFont
+                , fontSize (px 14)
+                , color Colors.gray45
                 ]
-                [ text "Details for NoRedInk engineers" ]
-            , code
-                [ Attributes.css
-                    [ display block
-                    , whiteSpace normal
-                    , overflowWrap breakWord
-                    , color Colors.gray45
-                    , backgroundColor Colors.gray96
-                    , border3 (px 1) solid Colors.gray92
-                    , borderRadius (px 3)
-                    , padding2 (px 2) (px 4)
-                    , fontSize (px 12)
-                    , fontFamily monospace
-                    ]
-                ]
-                [ text errorMessageForEngineers ]
             ]
+            [ text "Details for NoRedInk engineers" ]
+        , code
+            [ Attributes.css
+                [ display block
+                , whiteSpace normal
+                , overflowWrap breakWord
+                , color Colors.gray45
+                , backgroundColor Colors.gray96
+                , border3 (px 1) solid Colors.gray92
+                , borderRadius (px 3)
+                , padding2 (px 2) (px 4)
+                , fontSize (px 12)
+                , fontFamily monospace
+                ]
+            ]
+            [ text errorMessageForEngineers ]
         ]
 
 
