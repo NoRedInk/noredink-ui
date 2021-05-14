@@ -106,31 +106,43 @@ view attributes_ =
     in
     case attributes.size of
         Tiny ->
-            div
-                ([ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
-                 , Attributes.css
-                    (baseStyles
-                        ++ [ displayFlex
-                           , justifyContent start
-                           , alignItems center
-                           , paddingTop (px 6)
-                           , paddingBottom (px 8)
-                           , fontSize (px 13)
-                           ]
-                    )
-                 ]
-                    ++ role
-                    ++ attributes.customAttributes
-                )
-                [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
-                , div [] attributes.content
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
+            let
+                tinyMessage =
+                    div
+                        ([ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
+                         , Attributes.css
+                            (baseStyles
+                                ++ [ displayFlex
+                                   , justifyContent start
+                                   , alignItems center
+                                   , paddingTop (px 6)
+                                   , paddingBottom (px 8)
+                                   , fontSize (px 13)
+                                   ]
+                            )
+                         ]
+                            ++ role
+                            ++ attributes.customAttributes
+                        )
+                        [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
+                        , div [] attributes.content
+                        , case attributes.onDismiss of
+                            Nothing ->
+                                text ""
 
-                    Just msg ->
-                        tinyDismissButton msg
-                ]
+                            Just msg ->
+                                tinyDismissButton msg
+                        ]
+            in
+            case attributes.codeDetails of
+                Just details ->
+                    div []
+                        [ tinyMessage
+                        , viewCodeDetails details
+                        ]
+
+                Nothing ->
+                    tinyMessage
 
         Large ->
             div
@@ -232,14 +244,12 @@ view attributes_ =
 -}
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
-    div []
-        [ view
-            [ tiny
-            , error
-            , alertRole
-            , plaintext somethingWentWrongMessage
-            ]
-        , viewCodeDetails errorMessageForEngineers
+    view
+        [ tiny
+        , error
+        , alertRole
+        , plaintext somethingWentWrongMessage
+        , codeDetails errorMessageForEngineers
         ]
 
 
@@ -373,6 +383,11 @@ httpError error_ =
                             -- TODO!
                             []
             }
+
+
+codeDetails : String -> Attribute msg
+codeDetails code =
+    Attribute <| \config -> { config | codeDetails = Just code }
 
 
 {-| This is the default theme for a Message.
