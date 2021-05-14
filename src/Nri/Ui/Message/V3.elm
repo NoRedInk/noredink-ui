@@ -499,6 +499,7 @@ type alias BannerConfig msg =
     { onDismiss : Maybe msg
     , role : Maybe Role
     , content : List (Html msg)
+    , codeDetails : Maybe String
     , theme : Theme
     , size : Size
     , icon : Maybe Svg
@@ -515,6 +516,7 @@ configFromAttributes attr =
         { onDismiss = Nothing
         , role = Nothing
         , content = []
+        , codeDetails = Nothing
         , theme = Tip
         , size = Tiny
         , icon = Nothing
