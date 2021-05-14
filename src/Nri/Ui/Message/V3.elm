@@ -96,66 +96,32 @@ view attributes_ =
         icon_ =
             getIcon attributes.icon attributes.size attributes.theme
 
-        ( description, containerStyles ) =
-            case attributes.size of
-                Tiny ->
-                    ( "Nri-Ui-Message--tiny"
-                    , [ displayFlex
-                      , justifyContent start
-                      , alignItems center
-                      , paddingTop (px 6)
-                      , paddingBottom (px 8)
-                      , fontSize (px 13)
-                      ]
-                    )
-
-                Large ->
-                    ( "Nri-Ui-Message-large"
-                    , [ displayFlex
-                      , alignItems center
-
-                      -- Box
-                      , borderRadius (px 8)
-                      , padding (px 20)
-                      , backgroundColor_
-
-                      -- Fonts
-                      , fontSize (px 15)
-                      , fontWeight (int 600)
-                      , lineHeight (px 21)
-                      ]
-                    )
-
-                Banner ->
-                    ( "Nri-Ui-Message-banner"
-                    , [ displayFlex
-                      , justifyContent center
-                      , alignItems center
-                      , backgroundColor_
-
-                      -- Fonts
-                      , fontSize (px 20)
-                      , fontWeight (int 700)
-                      , lineHeight (px 27)
-                      ]
-                    )
-    in
-    div
-        ([ ExtraAttributes.nriDescription description
-         , Attributes.css
+        baseStyles =
             [ Fonts.baseFont
             , color color_
             , boxSizing borderBox
             , styleOverrides
-            , Css.batch containerStyles
             , Css.batch attributes.customStyles
             ]
-         ]
-            ++ role
-            ++ attributes.customAttributes
-        )
-        (case attributes.size of
-            Tiny ->
+    in
+    case attributes.size of
+        Tiny ->
+            div
+                ([ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
+                 , Attributes.css
+                    (baseStyles
+                        ++ [ displayFlex
+                           , justifyContent start
+                           , alignItems center
+                           , paddingTop (px 6)
+                           , paddingBottom (px 8)
+                           , fontSize (px 13)
+                           ]
+                    )
+                 ]
+                    ++ role
+                    ++ attributes.customAttributes
+                )
                 [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
                 , div [] attributes.content
                 , case attributes.onDismiss of
@@ -166,7 +132,29 @@ view attributes_ =
                         tinyDismissButton msg
                 ]
 
-            Large ->
+        Large ->
+            div
+                ([ ExtraAttributes.nriDescription "Nri-Ui-Message-large"
+                 , Attributes.css
+                    (baseStyles
+                        ++ [ displayFlex
+                           , alignItems center
+
+                           -- Box
+                           , borderRadius (px 8)
+                           , padding (px 20)
+                           , backgroundColor_
+
+                           -- Fonts
+                           , fontSize (px 15)
+                           , fontWeight (int 600)
+                           , lineHeight (px 21)
+                           ]
+                    )
+                 ]
+                    ++ role
+                    ++ attributes.customAttributes
+                )
                 [ icon_
                 , div
                     [ Attributes.css
@@ -184,7 +172,26 @@ view attributes_ =
                         largeDismissButton msg
                 ]
 
-            Banner ->
+        Banner ->
+            div
+                ([ ExtraAttributes.nriDescription "Nri-Ui-Message-banner"
+                 , Attributes.css
+                    (baseStyles
+                        ++ [ displayFlex
+                           , justifyContent center
+                           , alignItems center
+                           , backgroundColor_
+
+                           -- Fonts
+                           , fontSize (px 20)
+                           , fontWeight (int 700)
+                           , lineHeight (px 27)
+                           ]
+                    )
+                 ]
+                    ++ role
+                    ++ attributes.customAttributes
+                )
                 [ span
                     [ Attributes.css
                         [ alignItems center
@@ -215,7 +222,6 @@ view attributes_ =
                     Just msg ->
                         bannerDismissButton msg
                 ]
-        )
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
