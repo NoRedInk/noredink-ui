@@ -527,7 +527,30 @@ contentToHtml content =
         Html html_ ->
             html_
 
-        HttpError error_ ->
+        HttpError (Http.BadUrl _) ->
+            []
+
+        HttpError Http.Timeout ->
+            -- TODO!
+            []
+
+        HttpError Http.NetworkError ->
+            -- TODO!
+            []
+
+        HttpError (Http.BadStatus 401) ->
+            -- TODO!
+            []
+
+        HttpError (Http.BadStatus 404) ->
+            -- TODO!
+            []
+
+        HttpError (Http.BadStatus status) ->
+            -- TODO!
+            []
+
+        HttpError (Http.BadBody body) ->
             -- TODO!
             []
 
