@@ -10,21 +10,46 @@ import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
+import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
+import Http
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Page.V3 as Page
+import Nri.Ui.Page.V3 as Page exposing (RecoveryText(..))
 
 
 {-| -}
 type alias State =
-    ()
+    { httpError : Control Http.Error
+    , recoveryText : Control RecoveryText
+    }
 
 
 {-| -}
-type alias Msg =
-    String
+type Msg
+    = ShowItWorked String
+    | SetHttpError (Control Http.Error)
+    | SetRecoveryText (Control RecoveryText)
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg model =
+    case msg of
+        ShowItWorked message ->
+            let
+                _ =
+                    Debug.log "Clicked: " message
+            in
+            ( model, Cmd.none )
+
+        SetHttpError controls ->
+            ( { model | httpError = controls }, Cmd.none )
+
+        SetRecoveryText controls ->
+            ( { model | recoveryText = controls }, Cmd.none )
 
 
 {-| -}
@@ -35,42 +60,96 @@ example =
     , categories = [ Pages ]
     , atomicDesignType = Page
     , keyboardSupport = []
-    , state = ()
-    , update =
-        \msg model ->
-            let
-                _ =
-                    Debug.log "Clicked: " msg
-            in
-            ( model, Cmd.none )
+    , state = { httpError = initHttpError, recoveryText = initRecoveryText }
+    , update = update
     , subscriptions = \_ -> Sub.none
     , view =
-        \_ ->
-            [ Css.Global.global
-                [ selector "[data-page-container]"
-                    [ Css.displayFlex
-                    , Css.flexWrap Css.wrap
-                    ]
-                ]
-            , Heading.h3 [] [ Html.text "Page: Not Found, recovery text: ReturnTo" ]
-            , Page.notFound
-                { link = "Page.notFound ReturnTo"
-                , recoveryText = Page.ReturnTo "the main page"
-                }
-            , Heading.h3 [] [ Html.text "Page: Broken, recovery text: Reload" ]
-            , Page.broken
-                { link = "Page.broken Reload"
-                , recoveryText = Page.Reload
-                }
-            , Heading.h3 [] [ Html.text "Page: No Permission, recovery text: Custom" ]
-            , Page.noPermission
-                { link = "Page.noPermission Custom"
-                , recoveryText = Page.Custom "Hit the road, Jack"
-                }
-            , Heading.h3 [] [ Html.text "Page: Logged Out, recovery text: Custom" ]
-            , Page.loggedOut
-                { link = "Page.loggedOut Custom"
-                , recoveryText = Page.Custom "And don't you come back no mo no mo no mo"
-                }
+        \model ->
+            let
+                recoveryText =
+                    Control.currentValue model.recoveryText
+            in
+            [ Html.fromUnstyled (Control.view SetRecoveryText model.recoveryText)
+            , viewExample "Page.httpError error" (Page.httpError (Control.currentValue model.httpError)) recoveryText [ Html.fromUnstyled (Control.view SetHttpError model.httpError) ]
+            , viewExample "Page.broken" Page.broken recoveryText []
+            , viewExample "Page.blockedV4" (Page.blockedV4 "Error message details") recoveryText []
+            , viewExample "Page.notFound" Page.notFound recoveryText []
+            , viewExample "Page.noPermission" Page.noPermission recoveryText []
+            , viewExample "Page.loggedOut" Page.loggedOut recoveryText []
+            , viewExample "Page.timeOut" Page.timeOut recoveryText []
+            , viewExample "Page.networkError" Page.networkError recoveryText []
             ]
     }
+
+
+viewExample :
+    String
+    -> (Page.DefaultPage Msg -> Html Msg)
+    -> RecoveryText
+    -> List (Html Msg)
+    -> Html Msg
+viewExample viewName view recoveryText extras =
+    Html.div
+        [ css
+            [ Css.marginTop (Css.px 20)
+            , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
+            , Css.paddingTop (Css.px 20)
+            , Css.marginBottom (Css.px 20)
+            ]
+        ]
+        [ Heading.h3 [] [ Html.text viewName ]
+        , Html.div [] extras
+        , Html.code []
+            [ Html.text <|
+                viewName
+                    ++ " {  link = msg, recoveryText = "
+                    ++ Debug.toString recoveryText
+                    ++ " }"
+            ]
+        , view { link = ShowItWorked viewName, recoveryText = recoveryText }
+        ]
+
+
+initHttpError : Control Http.Error
+initHttpError =
+    Control.choice
+        [ ( "Bad Url", Control.value (Http.BadUrl "/request-url") )
+        , ( "Timeout", Control.value Http.Timeout )
+        , ( "Network Error", Control.value Http.NetworkError )
+        , ( "Bad Status: 401", Control.value (Http.BadStatus 401) )
+        , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
+        , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
+        , ( "Bad Body (often, a JSON decoding problem)"
+          , Control.value
+                (Http.BadBody
+                    """
+                        The Json.Decode.oneOf at json.draft failed in the following 2 ways:
+
+
+
+                        (1) Problem with the given value:
+
+                            null
+
+                            Expecting an OBJECT with a field named `content`
+
+
+
+                        (2) Problem with the given value:
+
+                            null
+
+                            Expecting an OBJECT with a field named `code`
+                        """
+                )
+          )
+        ]
+
+
+initRecoveryText : Control RecoveryText
+initRecoveryText =
+    Control.choice
+        [ ( "Page.Reload", Control.value Page.Reload )
+        , ( "Page.ReturnTo", Control.map Page.ReturnTo (Control.string "Home") )
+        , ( "Page.Custom", Control.map Custom (Control.string "Hit the road, Jack") )
+        ]

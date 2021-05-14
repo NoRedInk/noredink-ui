@@ -1,11 +1,13 @@
 module Nri.Ui.Page.V3 exposing
-    ( DefaultPage, broken, blocked, notFound, noPermission, loggedOut
+    ( httpError
+    , DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
-@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut
+@docs httpError
+@docs DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
 
 -}
@@ -13,6 +15,7 @@ module Nri.Ui.Page.V3 exposing
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Http
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Text.V2 as Text
@@ -67,7 +70,10 @@ broken defaultPage =
         }
 
 
-{-| For HTTP errors and other broken states, where link goes to "/".
+{-| DEPRECATED: please use blockedV4.
+
+For HTTP errors and other broken states, where link goes to "/".
+
 -}
 blocked : String -> Html msg
 blocked details =
@@ -76,6 +82,20 @@ blocked details =
         , title = "There was a problem!"
         , subtitle = "You can try again, or check out our help center."
         , defaultPage = Nothing
+        , details = Just details
+        , showHelpButton = True
+        }
+
+
+{-| Error page with details for engineers.
+-}
+blockedV4 : String -> DefaultPage msg -> Html msg
+blockedV4 details defaultPage =
+    view
+        { emoji = "😵"
+        , title = "There was a problem!"
+        , subtitle = "You can try again, or check out our help center."
+        , defaultPage = Just defaultPage
         , details = Just details
         , showHelpButton = True
         }
@@ -95,6 +115,34 @@ noPermission defaultPage =
         }
 
 
+{-| When a request fails due to a connectivity failure.
+-}
+networkError : DefaultPage msg -> Html msg
+networkError defaultPage =
+    view
+        { emoji = "🤝"
+        , title = "Are you connected to the Internet?"
+        , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
+        , defaultPage = Just defaultPage
+        , details = Nothing
+        , showHelpButton = False
+        }
+
+
+{-| When a request takes too long to complete.
+-}
+timeOut : DefaultPage msg -> Html msg
+timeOut defaultPage =
+    view
+        { emoji = "⏱"
+        , title = "There was a problem!"
+        , subtitle = "This request took too long to complete."
+        , defaultPage = Just defaultPage
+        , details = Nothing
+        , showHelpButton = False
+        }
+
+
 {-| When the user has been logged out.
 -}
 loggedOut : DefaultPage msg -> Html msg
@@ -107,6 +155,32 @@ loggedOut defaultPage =
         , details = Nothing
         , showHelpButton = False
         }
+
+
+{-| -}
+httpError : Http.Error -> DefaultPage msg -> Html msg
+httpError error defaultPage =
+    case error of
+        Http.BadUrl _ ->
+            broken defaultPage
+
+        Http.Timeout ->
+            timeOut defaultPage
+
+        Http.NetworkError ->
+            networkError defaultPage
+
+        Http.BadStatus 401 ->
+            loggedOut defaultPage
+
+        Http.BadStatus 404 ->
+            notFound defaultPage
+
+        Http.BadStatus status ->
+            blockedV4 ("HTTP error status: " ++ String.fromInt status) defaultPage
+
+        Http.BadBody body ->
+            blockedV4 body defaultPage
 
 
 
