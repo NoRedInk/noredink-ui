@@ -87,9 +87,6 @@ view attributes_ =
         role =
             getRoleAttribute attributes.role
 
-        html_ =
-            contentToHtml attributes.content
-
         backgroundColor_ =
             getBackgroundColor attributes.size attributes.theme
 
@@ -160,7 +157,7 @@ view attributes_ =
         (case attributes.size of
             Tiny ->
                 [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
-                , div [] html_
+                , div [] attributes.content
                 , case attributes.onDismiss of
                     Nothing ->
                         text ""
@@ -178,7 +175,7 @@ view attributes_ =
                         , flexGrow (int 1)
                         ]
                     ]
-                    html_
+                    attributes.content
                 , case attributes.onDismiss of
                     Nothing ->
                         text ""
@@ -209,7 +206,7 @@ view attributes_ =
                         , Fonts.baseFont
                         ]
                         []
-                        html_
+                        attributes.content
                     ]
                 , case attributes.onDismiss of
                     Nothing ->
@@ -307,28 +304,69 @@ banner =
     Attribute <| \config -> { config | size = Banner }
 
 
-{-| -}
+{-| Provide a plain-text string.
+-}
 plaintext : String -> Attribute msg
 plaintext content =
-    Attribute <| \config -> { config | content = Plain content }
+    Attribute <| \config -> { config | content = [ text content ] }
 
 
-{-| -}
+{-| Provide a string that will be rendered as markdown.
+-}
 markdown : String -> Attribute msg
 markdown content =
-    Attribute <| \config -> { config | content = Markdown content }
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    Markdown.toHtml Nothing content
+                        |> List.map fromUnstyled
+            }
 
 
-{-| -}
+{-| Provide a list of custom HTML.
+-}
 html : List (Html msg) -> Attribute msg
 html content =
-    Attribute <| \config -> { config | content = Html content }
+    Attribute <| \config -> { config | content = content }
 
 
-{-| -}
+{-| Provide an HTTP error, which will be translated to user-friendly text.
+-}
 httpError : Http.Error -> Attribute msg
 httpError error_ =
-    Attribute <| \config -> { config | content = HttpError error_ }
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    case error_ of
+                        Http.BadUrl _ ->
+                            []
+
+                        Http.Timeout ->
+                            -- TODO!
+                            []
+
+                        Http.NetworkError ->
+                            -- TODO!
+                            []
+
+                        Http.BadStatus 401 ->
+                            -- TODO!
+                            []
+
+                        Http.BadStatus 404 ->
+                            -- TODO!
+                            []
+
+                        Http.BadStatus status ->
+                            -- TODO!
+                            []
+
+                        Http.BadBody body ->
+                            -- TODO!
+                            []
+            }
 
 
 {-| This is the default theme for a Message.
@@ -460,7 +498,7 @@ type Attribute msg
 type alias BannerConfig msg =
     { onDismiss : Maybe msg
     , role : Maybe Role
-    , content : Content msg
+    , content : List (Html msg)
     , theme : Theme
     , size : Size
     , icon : Maybe Svg
@@ -476,7 +514,7 @@ configFromAttributes attr =
     List.foldl (\(Attribute set) -> set)
         { onDismiss = Nothing
         , role = Nothing
-        , content = Plain ""
+        , content = []
         , theme = Tip
         , size = Tiny
         , icon = Nothing
@@ -494,65 +532,6 @@ type Size
     = Tiny
     | Large
     | Banner
-
-
-
--- Message contents
-
-
-{-| Prefer using the simplest variant that meets your needs.
-
-  - `Plain`: provide a plain-text string
-  - `Markdown`: provide a string that will be rendered as markdown
-  - `Html`: provide custom HTML
-  - `HttpError`: provide an HTTP error, which will be rendered as user-friendly messages
-
--}
-type Content msg
-    = Plain String
-    | Markdown String
-    | Html (List (Html msg))
-    | HttpError Http.Error
-
-
-contentToHtml : Content msg -> List (Html msg)
-contentToHtml content =
-    case content of
-        Plain stringContent ->
-            [ text stringContent ]
-
-        Markdown markdownContent ->
-            Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
-
-        Html html_ ->
-            html_
-
-        HttpError (Http.BadUrl _) ->
-            []
-
-        HttpError Http.Timeout ->
-            -- TODO!
-            []
-
-        HttpError Http.NetworkError ->
-            -- TODO!
-            []
-
-        HttpError (Http.BadStatus 401) ->
-            -- TODO!
-            []
-
-        HttpError (Http.BadStatus 404) ->
-            -- TODO!
-            []
-
-        HttpError (Http.BadStatus status) ->
-            -- TODO!
-            []
-
-        HttpError (Http.BadBody body) ->
-            -- TODO!
-            []
 
 
 
