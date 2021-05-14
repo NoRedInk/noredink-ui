@@ -149,39 +149,43 @@ view attributes_ =
                 ([ ExtraAttributes.nriDescription "Nri-Ui-Message-large"
                  , Attributes.css
                     (baseStyles
-                        ++ [ displayFlex
-                           , alignItems center
-
-                           -- Box
-                           , borderRadius (px 8)
+                        ++ [ -- Box
+                             borderRadius (px 8)
                            , padding (px 20)
                            , backgroundColor_
-
-                           -- Fonts
-                           , fontSize (px 15)
-                           , fontWeight (int 600)
-                           , lineHeight (px 21)
                            ]
                     )
                  ]
                     ++ role
                     ++ attributes.customAttributes
                 )
-                [ icon_
-                , div
+                [ div
                     [ Attributes.css
-                        [ minWidth (px 100)
-                        , flexBasis (px 100)
-                        , flexGrow (int 1)
+                        [ displayFlex
+                        , alignItems center
+
+                        -- Fonts
+                        , fontSize (px 15)
+                        , fontWeight (int 600)
+                        , lineHeight (px 21)
                         ]
                     ]
-                    attributes.content
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
+                    [ icon_
+                    , div
+                        [ Attributes.css
+                            [ minWidth (px 100)
+                            , flexBasis (px 100)
+                            , flexGrow (int 1)
+                            ]
+                        ]
+                        attributes.content
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
 
-                    Just msg ->
-                        largeDismissButton msg
+                        Just msg ->
+                            largeDismissButton msg
+                    ]
                 , case attributes.codeDetails of
                     Just details ->
                         viewCodeDetails details
@@ -194,51 +198,52 @@ view attributes_ =
             div
                 ([ ExtraAttributes.nriDescription "Nri-Ui-Message-banner"
                  , Attributes.css
-                    (baseStyles
-                        ++ [ displayFlex
-                           , justifyContent center
-                           , alignItems center
-                           , backgroundColor_
-
-                           -- Fonts
-                           , fontSize (px 20)
-                           , fontWeight (int 700)
-                           , lineHeight (px 27)
-                           ]
-                    )
+                    (baseStyles ++ [ backgroundColor_, padding (px 20) ])
                  ]
                     ++ role
                     ++ attributes.customAttributes
                 )
-                [ span
+                [ div
                     [ Attributes.css
                         [ alignItems center
                         , displayFlex
                         , justifyContent center
-                        , padding (px 20)
-                        , width (Css.pct 100)
                         ]
                     ]
-                    [ icon_
-                    , Nri.Ui.styled div
-                        "banner-alert-notification"
-                        [ fontSize (px 20)
-                        , fontWeight (int 700)
-                        , lineHeight (px 27)
-                        , maxWidth (px 600)
-                        , minWidth (px 100)
-                        , flexShrink (int 1)
-                        , Fonts.baseFont
-                        ]
-                        []
-                        attributes.content
-                    ]
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
+                    [ div
+                        [ Attributes.css
+                            [ alignItems center
+                            , displayFlex
+                            , justifyContent center
+                            , width (Css.pct 100)
 
-                    Just msg ->
-                        bannerDismissButton msg
+                            -- Fonts
+                            , fontSize (px 20)
+                            , fontWeight (int 700)
+                            , lineHeight (px 27)
+                            ]
+                        ]
+                        [ icon_
+                        , Nri.Ui.styled div
+                            "banner-alert-notification"
+                            [ fontSize (px 20)
+                            , fontWeight (int 700)
+                            , lineHeight (px 27)
+                            , maxWidth (px 600)
+                            , minWidth (px 100)
+                            , flexShrink (int 1)
+                            , Fonts.baseFont
+                            ]
+                            []
+                            attributes.content
+                        ]
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
+
+                        Just msg ->
+                            bannerDismissButton msg
+                    ]
                 , case attributes.codeDetails of
                     Just details ->
                         viewCodeDetails details
@@ -373,7 +378,7 @@ httpError error_ =
 
                 Http.Timeout ->
                     ( Nothing
-                    , [ text "There was a problem! This request took too long to complete." ]
+                    , [ text "This request took too long to complete." ]
                     )
 
                 Http.NetworkError ->
@@ -823,8 +828,7 @@ largeDismissButton : msg -> Html msg
 largeDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20)
-        ]
+        [ padding2 Css.zero (px 20) ]
         []
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
@@ -839,7 +843,7 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 (px 30) (px 40) ]
+        [ padding2 Css.zero (px 20) ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
