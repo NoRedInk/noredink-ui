@@ -3,7 +3,7 @@ module Nri.Ui.Message.V3 exposing
     , view, Attribute
     , icon, custom, css, testId, id
     , tiny, large, banner
-    , plaintext, markdown, html
+    , plaintext, markdown, html, httpError
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
@@ -12,6 +12,10 @@ module Nri.Ui.Message.V3 exposing
 {-| Changes from V2:
 
     - adds helpers: `custom`,`css`,`icon`,`testId`,`id`
+
+Patch changes:
+
+  - add `httpError`
 
 
 # View
@@ -28,7 +32,7 @@ module Nri.Ui.Message.V3 exposing
 
 ## Content
 
-@docs plaintext, markdown, html
+@docs plaintext, markdown, html, httpError
 
 
 ## Theme
@@ -54,6 +58,7 @@ import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
+import Http
 import Markdown
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -310,6 +315,12 @@ html content =
     Attribute <| \config -> { config | content = Html content }
 
 
+{-| -}
+httpError : Http.Error -> Attribute msg
+httpError error_ =
+    Attribute <| \config -> { config | content = HttpError error_ }
+
+
 {-| This is the default theme for a Message.
 -}
 tip : Attribute msg
@@ -484,12 +495,14 @@ type Size
   - `Plain`: provide a plain-text string
   - `Markdown`: provide a string that will be rendered as markdown
   - `Html`: provide custom HTML
+  - `HttpError`: provide an HTTP error, which will be rendered as user-friendly messages
 
 -}
 type Content msg
     = Plain String
     | Markdown String
     | Html (List (Html msg))
+    | HttpError Http.Error
 
 
 contentToHtml : Content msg -> List (Html msg)
@@ -503,6 +516,10 @@ contentToHtml content =
 
         Html html_ ->
             html_
+
+        HttpError error_ ->
+            -- TODO!
+            []
 
 
 
