@@ -363,38 +363,45 @@ html content =
 -}
 httpError : Http.Error -> Attribute msg
 httpError error_ =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    case error_ of
-                        Http.BadUrl _ ->
-                            []
+    let
+        ( codeDetails_, content ) =
+            case error_ of
+                Http.BadUrl url ->
+                    ( Just ("Bad url: " ++ url)
+                    , [ text somethingWentWrongMessage ]
+                    )
 
-                        Http.Timeout ->
-                            -- TODO!
-                            []
+                Http.Timeout ->
+                    ( Nothing
+                    , [ text "There was a problem! This request took too long to complete." ]
+                    )
 
-                        Http.NetworkError ->
-                            -- TODO!
-                            []
+                Http.NetworkError ->
+                    ( Nothing
+                    , [ text "Something went wrong, and we think the problem is probably with your internet connection." ]
+                    )
 
-                        Http.BadStatus 401 ->
-                            -- TODO!
-                            []
+                Http.BadStatus 401 ->
+                    ( Nothing
+                    , [ text "You were logged out. Please log in again to continue working." ]
+                    )
 
-                        Http.BadStatus 404 ->
-                            -- TODO!
-                            []
+                Http.BadStatus 404 ->
+                    ( Nothing
+                    , [ text "We couldn’t find that!" ]
+                    )
 
-                        Http.BadStatus status ->
-                            -- TODO!
-                            []
+                Http.BadStatus status ->
+                    ( Just ("Bad status: " ++ String.fromInt status)
+                    , [ text somethingWentWrongMessage ]
+                    )
 
-                        Http.BadBody body ->
-                            -- TODO!
-                            []
-            }
+                Http.BadBody body ->
+                    ( Just body
+                    , [ text somethingWentWrongMessage ]
+                    )
+    in
+    Attribute <| \config -> { config | content = content, codeDetails = codeDetails_ }
 
 
 codeDetails : String -> Attribute msg
