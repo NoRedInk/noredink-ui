@@ -3,6 +3,7 @@ module Examples.Message exposing (Msg, State, example)
 import Accessibility.Styled as Html exposing (..)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
@@ -117,6 +118,9 @@ controlContent =
                     , text " to check out NoRedInk."
                     ]
                 )
+          )
+        , ( "httpError"
+          , Control.map Message.httpError CommonControls.httpError
           )
         ]
 
