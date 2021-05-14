@@ -182,6 +182,12 @@ view attributes_ =
 
                     Just msg ->
                         largeDismissButton msg
+                , case attributes.codeDetails of
+                    Just details ->
+                        viewCodeDetails details
+
+                    Nothing ->
+                        text ""
                 ]
 
         Banner ->
@@ -233,6 +239,12 @@ view attributes_ =
 
                     Just msg ->
                         bannerDismissButton msg
+                , case attributes.codeDetails of
+                    Just details ->
+                        viewCodeDetails details
+
+                    Nothing ->
+                        text ""
                 ]
 
 
