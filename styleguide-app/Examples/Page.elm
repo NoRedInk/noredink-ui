@@ -8,6 +8,7 @@ module Examples.Page exposing (example, State, Msg)
 
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Debug.Control as Control exposing (Control)
@@ -60,7 +61,7 @@ example =
     , categories = [ Pages ]
     , atomicDesignType = Page
     , keyboardSupport = []
-    , state = { httpError = initHttpError, recoveryText = initRecoveryText }
+    , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
     , update = update
     , subscriptions = \_ -> Sub.none
     , view =
@@ -107,42 +108,6 @@ viewExample viewName view recoveryText extras =
                     ++ " }"
             ]
         , view { link = ShowItWorked viewName, recoveryText = recoveryText }
-        ]
-
-
-initHttpError : Control Http.Error
-initHttpError =
-    Control.choice
-        [ ( "Bad Url", Control.value (Http.BadUrl "/request-url") )
-        , ( "Timeout", Control.value Http.Timeout )
-        , ( "Network Error", Control.value Http.NetworkError )
-        , ( "Bad Status: 401", Control.value (Http.BadStatus 401) )
-        , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
-        , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
-        , ( "Bad Body (often, a JSON decoding problem)"
-          , Control.value
-                (Http.BadBody
-                    """
-                        The Json.Decode.oneOf at json.draft failed in the following 2 ways:
-
-
-
-                        (1) Problem with the given value:
-
-                            null
-
-                            Expecting an OBJECT with a field named `content`
-
-
-
-                        (2) Problem with the given value:
-
-                            null
-
-                            Expecting an OBJECT with a field named `code`
-                        """
-                )
-          )
         ]
 
 

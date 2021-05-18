@@ -3,7 +3,7 @@ module Nri.Ui.Message.V3 exposing
     , view, Attribute
     , icon, custom, css, testId, id
     , tiny, large, banner
-    , plaintext, markdown, html
+    , plaintext, markdown, html, httpError
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
@@ -12,6 +12,10 @@ module Nri.Ui.Message.V3 exposing
 {-| Changes from V2:
 
     - adds helpers: `custom`,`css`,`icon`,`testId`,`id`
+
+Patch changes:
+
+  - add `httpError`
 
 
 # View
@@ -28,7 +32,7 @@ module Nri.Ui.Message.V3 exposing
 
 ## Content
 
-@docs plaintext, markdown, html
+@docs plaintext, markdown, html, httpError
 
 
 ## Theme
@@ -54,6 +58,7 @@ import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
+import Http
 import Markdown
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -82,9 +87,6 @@ view attributes_ =
         role =
             getRoleAttribute attributes.role
 
-        html_ =
-            contentToHtml attributes.content
-
         backgroundColor_ =
             getBackgroundColor attributes.size attributes.theme
 
@@ -94,126 +96,161 @@ view attributes_ =
         icon_ =
             getIcon attributes.icon attributes.size attributes.theme
 
-        ( description, containerStyles ) =
-            case attributes.size of
-                Tiny ->
-                    ( "Nri-Ui-Message--tiny"
-                    , [ displayFlex
-                      , justifyContent start
-                      , alignItems center
-                      , paddingTop (px 6)
-                      , paddingBottom (px 8)
-                      , fontSize (px 13)
-                      ]
-                    )
-
-                Large ->
-                    ( "Nri-Ui-Message-large"
-                    , [ displayFlex
-                      , alignItems center
-
-                      -- Box
-                      , borderRadius (px 8)
-                      , padding (px 20)
-                      , backgroundColor_
-
-                      -- Fonts
-                      , fontSize (px 15)
-                      , fontWeight (int 600)
-                      , lineHeight (px 21)
-                      ]
-                    )
-
-                Banner ->
-                    ( "Nri-Ui-Message-banner"
-                    , [ displayFlex
-                      , justifyContent center
-                      , alignItems center
-                      , backgroundColor_
-
-                      -- Fonts
-                      , fontSize (px 20)
-                      , fontWeight (int 700)
-                      , lineHeight (px 27)
-                      ]
-                    )
-    in
-    div
-        ([ ExtraAttributes.nriDescription description
-         , Attributes.css
+        baseStyles =
             [ Fonts.baseFont
             , color color_
             , boxSizing borderBox
             , styleOverrides
-            , Css.batch containerStyles
             , Css.batch attributes.customStyles
             ]
-         ]
-            ++ role
-            ++ attributes.customAttributes
-        )
-        (case attributes.size of
-            Tiny ->
-                [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
-                , div [] html_
-                , case attributes.onDismiss of
-                    Nothing ->
-                        text ""
+    in
+    case attributes.size of
+        Tiny ->
+            let
+                tinyMessage =
+                    div
+                        ([ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
+                         , Attributes.css
+                            (baseStyles
+                                ++ [ displayFlex
+                                   , justifyContent start
+                                   , alignItems center
+                                   , paddingTop (px 6)
+                                   , paddingBottom (px 8)
+                                   , fontSize (px 13)
+                                   ]
+                            )
+                         ]
+                            ++ role
+                            ++ attributes.customAttributes
+                        )
+                        [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
+                        , div [] attributes.content
+                        , case attributes.onDismiss of
+                            Nothing ->
+                                text ""
 
-                    Just msg ->
-                        tinyDismissButton msg
-                ]
+                            Just msg ->
+                                tinyDismissButton msg
+                        ]
+            in
+            case attributes.codeDetails of
+                Just details ->
+                    div []
+                        [ tinyMessage
+                        , viewCodeDetails details
+                        ]
 
-            Large ->
-                [ icon_
-                , div
+                Nothing ->
+                    tinyMessage
+
+        Large ->
+            div
+                ([ ExtraAttributes.nriDescription "Nri-Ui-Message-large"
+                 , Attributes.css
+                    (baseStyles
+                        ++ [ -- Box
+                             borderRadius (px 8)
+                           , padding (px 20)
+                           , backgroundColor_
+                           ]
+                    )
+                 ]
+                    ++ role
+                    ++ attributes.customAttributes
+                )
+                [ div
                     [ Attributes.css
-                        [ minWidth (px 100)
-                        , flexBasis (px 100)
-                        , flexGrow (int 1)
+                        [ displayFlex
+                        , alignItems center
+
+                        -- Fonts
+                        , fontSize (px 15)
+                        , fontWeight (int 600)
+                        , lineHeight (px 21)
                         ]
                     ]
-                    html_
-                , case attributes.onDismiss of
+                    [ icon_
+                    , div
+                        [ Attributes.css
+                            [ minWidth (px 100)
+                            , flexBasis (px 100)
+                            , flexGrow (int 1)
+                            ]
+                        ]
+                        attributes.content
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
+
+                        Just msg ->
+                            largeDismissButton msg
+                    ]
+                , case attributes.codeDetails of
+                    Just details ->
+                        viewCodeDetails details
+
                     Nothing ->
                         text ""
-
-                    Just msg ->
-                        largeDismissButton msg
                 ]
 
-            Banner ->
-                [ span
+        Banner ->
+            div
+                ([ ExtraAttributes.nriDescription "Nri-Ui-Message-banner"
+                 , Attributes.css
+                    (baseStyles ++ [ backgroundColor_, padding (px 20) ])
+                 ]
+                    ++ role
+                    ++ attributes.customAttributes
+                )
+                [ div
                     [ Attributes.css
                         [ alignItems center
                         , displayFlex
                         , justifyContent center
-                        , padding (px 20)
-                        , width (Css.pct 100)
                         ]
                     ]
-                    [ icon_
-                    , Nri.Ui.styled div
-                        "banner-alert-notification"
-                        [ fontSize (px 20)
-                        , fontWeight (int 700)
-                        , lineHeight (px 27)
-                        , maxWidth (px 600)
-                        , minWidth (px 100)
-                        , flexShrink (int 1)
-                        , Fonts.baseFont
+                    [ div
+                        [ Attributes.css
+                            [ alignItems center
+                            , displayFlex
+                            , justifyContent center
+                            , width (Css.pct 100)
+
+                            -- Fonts
+                            , fontSize (px 20)
+                            , fontWeight (int 700)
+                            , lineHeight (px 27)
+                            ]
                         ]
-                        []
-                        html_
+                        [ icon_
+                        , Nri.Ui.styled div
+                            "banner-alert-notification"
+                            [ fontSize (px 20)
+                            , fontWeight (int 700)
+                            , lineHeight (px 27)
+                            , maxWidth (px 600)
+                            , minWidth (px 100)
+                            , flexShrink (int 1)
+                            , Fonts.baseFont
+                            ]
+                            []
+                            attributes.content
+                        ]
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
+
+                        Just msg ->
+                            bannerDismissButton msg
                     ]
-                , case attributes.onDismiss of
+                , case attributes.codeDetails of
+                    Just details ->
+                        viewCodeDetails details
+
                     Nothing ->
                         text ""
-
-                    Just msg ->
-                        bannerDismissButton msg
                 ]
-        )
 
 
 {-| Shows an appropriate error message for when something unhandled happened.
@@ -224,38 +261,46 @@ view attributes_ =
 -}
 somethingWentWrong : String -> Html msg
 somethingWentWrong errorMessageForEngineers =
-    div []
-        [ view
-            [ tiny
-            , error
-            , alertRole
-            , plaintext "Sorry, something went wrong.  Please try again later."
-            ]
-        , details []
-            [ summary
-                [ Attributes.css
-                    [ Fonts.baseFont
-                    , fontSize (px 14)
-                    , color Colors.gray45
-                    ]
+    view
+        [ tiny
+        , error
+        , alertRole
+        , plaintext somethingWentWrongMessage
+        , codeDetails errorMessageForEngineers
+        ]
+
+
+somethingWentWrongMessage : String
+somethingWentWrongMessage =
+    "Sorry, something went wrong.  Please try again later."
+
+
+viewCodeDetails : String -> Html msg
+viewCodeDetails errorMessageForEngineers =
+    details []
+        [ summary
+            [ Attributes.css
+                [ Fonts.baseFont
+                , fontSize (px 14)
+                , color Colors.gray45
                 ]
-                [ text "Details for NoRedInk engineers" ]
-            , code
-                [ Attributes.css
-                    [ display block
-                    , whiteSpace normal
-                    , overflowWrap breakWord
-                    , color Colors.gray45
-                    , backgroundColor Colors.gray96
-                    , border3 (px 1) solid Colors.gray92
-                    , borderRadius (px 3)
-                    , padding2 (px 2) (px 4)
-                    , fontSize (px 12)
-                    , fontFamily monospace
-                    ]
-                ]
-                [ text errorMessageForEngineers ]
             ]
+            [ text "Details for NoRedInk engineers" ]
+        , code
+            [ Attributes.css
+                [ display block
+                , whiteSpace normal
+                , overflowWrap breakWord
+                , color Colors.gray45
+                , backgroundColor Colors.gray96
+                , border3 (px 1) solid Colors.gray92
+                , borderRadius (px 3)
+                , padding2 (px 2) (px 4)
+                , fontSize (px 12)
+                , fontFamily monospace
+                ]
+            ]
+            [ text errorMessageForEngineers ]
         ]
 
 
@@ -292,22 +337,81 @@ banner =
     Attribute <| \config -> { config | size = Banner }
 
 
-{-| -}
+{-| Provide a plain-text string.
+-}
 plaintext : String -> Attribute msg
 plaintext content =
-    Attribute <| \config -> { config | content = Plain content }
+    Attribute <| \config -> { config | content = [ text content ] }
 
 
-{-| -}
+{-| Provide a string that will be rendered as markdown.
+-}
 markdown : String -> Attribute msg
 markdown content =
-    Attribute <| \config -> { config | content = Markdown content }
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    Markdown.toHtml Nothing content
+                        |> List.map fromUnstyled
+            }
 
 
-{-| -}
+{-| Provide a list of custom HTML.
+-}
 html : List (Html msg) -> Attribute msg
 html content =
-    Attribute <| \config -> { config | content = Html content }
+    Attribute <| \config -> { config | content = content }
+
+
+{-| Provide an HTTP error, which will be translated to user-friendly text.
+-}
+httpError : Http.Error -> Attribute msg
+httpError error_ =
+    let
+        ( codeDetails_, content ) =
+            case error_ of
+                Http.BadUrl url ->
+                    ( Just ("Bad url: " ++ url)
+                    , [ text somethingWentWrongMessage ]
+                    )
+
+                Http.Timeout ->
+                    ( Nothing
+                    , [ text "This request took too long to complete." ]
+                    )
+
+                Http.NetworkError ->
+                    ( Nothing
+                    , [ text "Something went wrong, and we think the problem is probably with your internet connection." ]
+                    )
+
+                Http.BadStatus 401 ->
+                    ( Nothing
+                    , [ text "You were logged out. Please log in again to continue working." ]
+                    )
+
+                Http.BadStatus 404 ->
+                    ( Nothing
+                    , [ text "We couldn’t find that!" ]
+                    )
+
+                Http.BadStatus status ->
+                    ( Just ("Bad status: " ++ String.fromInt status)
+                    , [ text somethingWentWrongMessage ]
+                    )
+
+                Http.BadBody body ->
+                    ( Just body
+                    , [ text somethingWentWrongMessage ]
+                    )
+    in
+    Attribute <| \config -> { config | content = content, codeDetails = codeDetails_ }
+
+
+codeDetails : String -> Attribute msg
+codeDetails code =
+    Attribute <| \config -> { config | codeDetails = Just code }
 
 
 {-| This is the default theme for a Message.
@@ -439,7 +543,8 @@ type Attribute msg
 type alias BannerConfig msg =
     { onDismiss : Maybe msg
     , role : Maybe Role
-    , content : Content msg
+    , content : List (Html msg)
+    , codeDetails : Maybe String
     , theme : Theme
     , size : Size
     , icon : Maybe Svg
@@ -455,7 +560,8 @@ configFromAttributes attr =
     List.foldl (\(Attribute set) -> set)
         { onDismiss = Nothing
         , role = Nothing
-        , content = Plain ""
+        , content = []
+        , codeDetails = Nothing
         , theme = Tip
         , size = Tiny
         , icon = Nothing
@@ -473,36 +579,6 @@ type Size
     = Tiny
     | Large
     | Banner
-
-
-
--- Message contents
-
-
-{-| Prefer using the simplest variant that meets your needs.
-
-  - `Plain`: provide a plain-text string
-  - `Markdown`: provide a string that will be rendered as markdown
-  - `Html`: provide custom HTML
-
--}
-type Content msg
-    = Plain String
-    | Markdown String
-    | Html (List (Html msg))
-
-
-contentToHtml : Content msg -> List (Html msg)
-contentToHtml content =
-    case content of
-        Plain stringContent ->
-            [ text stringContent ]
-
-        Markdown markdownContent ->
-            Markdown.toHtml Nothing markdownContent |> List.map fromUnstyled
-
-        Html html_ ->
-            html_
 
 
 
@@ -752,8 +828,7 @@ largeDismissButton : msg -> Html msg
 largeDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20)
-        ]
+        [ padding2 Css.zero (px 20) ]
         []
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
@@ -768,7 +843,7 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 (px 30) (px 40) ]
+        [ padding2 Css.zero (px 20) ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x

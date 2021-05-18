@@ -3,6 +3,7 @@ module Examples.Message exposing (Msg, State, example)
 import Accessibility.Styled as Html exposing (..)
 import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
@@ -118,6 +119,9 @@ controlContent =
                     ]
                 )
           )
+        , ( "httpError"
+          , Control.map Message.httpError CommonControls.httpError
+          )
         ]
 
 
@@ -195,9 +199,10 @@ example =
                     else
                         text "Nice! The messages were dismissed. 👍"
             in
-            [ Control.view UpdateControl state.control
+            [ Heading.h3 [ Heading.css [ Css.marginBottom (Css.px 20) ] ]
+                [ text "Message.view" ]
+            , Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , Heading.h3 [] [ text "Message.view" ]
             , orDismiss <|
                 Html.table [ css [ width (pct 100) ] ]
                     [ Html.tbody []
@@ -215,7 +220,14 @@ example =
                             ]
                         ]
                     ]
-            , Heading.h3 [] [ text "Message.somethingWentWrong" ]
+            , Heading.h3
+                [ Heading.css
+                    [ Css.marginTop (Css.px 20)
+                    , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
+                    , Css.paddingTop (Css.px 20)
+                    ]
+                ]
+                [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
     }
