@@ -106,7 +106,6 @@ type Attribute msg
 
 type alias Tooltip msg =
     { direction : Direction
-    , alignment : Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -127,8 +126,7 @@ buildAttributes =
         defaultTooltip : Tooltip msg
         defaultTooltip =
             { direction = OnTop
-            , alignment = Middle
-            , tail = WithTail
+            , tail = WithTail Middle
             , content = []
             , attributes = []
             , containerStyles =
@@ -162,13 +160,8 @@ html content =
 
 
 type Tail
-    = WithTail
+    = WithTail Alignment
     | WithoutTail
-
-
-withoutTail : Attribute msg
-withoutTail =
-    Attribute (\config -> { config | tail = WithoutTail })
 
 
 {-| Where should the tail be positioned relative to the tooltip?
@@ -179,9 +172,24 @@ type Alignment
     | End Px
 
 
+withoutTail : Attribute msg
+withoutTail =
+    Attribute (\config -> { config | tail = WithoutTail })
+
+
 withAligment : Alignment -> Attribute msg
 withAligment alignment =
-    Attribute (\config -> { config | alignment = alignment })
+    Attribute (\config -> { config | tail = WithTail alignment })
+
+
+tailAlignment : Tail -> Alignment
+tailAlignment tail =
+    case tail of
+        WithTail alignment ->
+            alignment
+
+        WithoutTail ->
+            Middle
 
 
 {-| Put the tail at the "start" of the tooltip.
@@ -650,7 +658,7 @@ viewOpenTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , positionTooltip config.direction config.alignment
+            , positionTooltip config.direction (tailAlignment config.tail)
             , Css.boxSizing Css.borderBox
             ]
         ]
@@ -670,7 +678,7 @@ viewOpenTooltip tooltipId config =
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.tail config.direction config.alignment
+             , pointerBox config.tail config.direction (tailAlignment config.tail)
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -757,7 +765,7 @@ pointerBox tail direction alignment =
         , Css.border3 (Css.px 1) Css.solid Colors.navy
         , positioning direction alignment
         , case tail of
-            WithTail ->
+            WithTail _ ->
                 tailForDirection direction
 
             WithoutTail ->
