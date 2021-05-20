@@ -2,6 +2,7 @@ module Nri.Ui.Tooltip.V2 exposing
     ( view, toggleTip
     , Attribute
     , plaintext, html
+    , withoutTail
     , onTop, onBottom, onLeft, onRight
     , alignStart, alignMiddle, alignEnd
     , exactWidth, fitToContent
@@ -754,12 +755,7 @@ pointerBox tail direction alignment =
     Attributes.css
         [ Css.backgroundColor Colors.navy
         , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , case tail of
-            WithTail ->
-                arrowInPosition direction alignment
-
-            WithoutTail ->
-                Css.batch []
+        , arrowInPosition tail direction alignment
         , Fonts.baseFont
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
@@ -817,8 +813,8 @@ tooltipContainerStyles =
 -- ARROWS
 
 
-arrowInPosition : Direction -> Alignment -> Style
-arrowInPosition position alignment =
+arrowInPosition : Tail -> Direction -> Alignment -> Style
+arrowInPosition tail position alignment =
     let
         topBottomAlignment =
             case alignment of
@@ -841,6 +837,14 @@ arrowInPosition position alignment =
 
                 End _ ->
                     Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+
+        ifTooltipHasTail styles =
+            case tail of
+                WithTail ->
+                    styles
+
+                WithoutTail ->
+                    Css.batch []
     in
     case position of
         OnTop ->
@@ -850,7 +854,7 @@ arrowInPosition position alignment =
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.top (Css.pct 100)
                     }
-                , bottomArrow
+                , ifTooltipHasTail bottomArrow
                 ]
 
         OnBottom ->
@@ -860,7 +864,7 @@ arrowInPosition position alignment =
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.bottom (Css.pct 100)
                     }
-                , topArrow
+                , ifTooltipHasTail topArrow
                 ]
 
         OnRight ->
@@ -870,7 +874,7 @@ arrowInPosition position alignment =
                     { xAlignment = Css.right (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
-                , leftArrow
+                , ifTooltipHasTail leftArrow
                 ]
 
         OnLeft ->
@@ -880,7 +884,7 @@ arrowInPosition position alignment =
                     { xAlignment = Css.left (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
-                , rightArrow
+                , ifTooltipHasTail rightArrow
                 ]
 
 
