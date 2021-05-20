@@ -95,7 +95,6 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
 
@@ -558,7 +557,7 @@ viewTooltip_ { trigger, id } tooltip =
                 ]
             ]
             [ trigger
-                ([ if tooltip.isOpen then
+                ((if tooltip.isOpen then
                     case tooltip.purpose of
                         PrimaryLabel ->
                             Aria.labeledBy id
@@ -566,14 +565,14 @@ viewTooltip_ { trigger, id } tooltip =
                         AuxillaryDescription ->
                             Aria.describedBy [ id ]
 
-                   else
+                  else
                     -- when our tooltips are closed, they're not rendered in the
                     -- DOM. This means that the ID references above would be
                     -- invalid and jumping to a reference would not work, so we
                     -- skip labels and descriptions if the tooltip is closed.
                     Attributes.property "data-closed-tooltip" Encode.null
-                 ]
-                    ++ buttonEvents
+                 )
+                    :: buttonEvents
                     ++ tooltip.triggerAttributes
                 )
             , hoverBridge tooltip
@@ -589,7 +588,7 @@ viewTooltip_ { trigger, id } tooltip =
 {-| This is a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
 -}
 hoverBridge : Tooltip msg -> Html msg
-hoverBridge { isOpen, direction, alignment } =
+hoverBridge { isOpen, direction } =
     let
         bridgeLength =
             tailSize + 5
@@ -806,14 +805,6 @@ viewCloseTooltipOverlay msg =
         , Key.tabbable False
         ]
         []
-
-
-tooltipContainerStyles : List Style
-tooltipContainerStyles =
-    [ Css.display Css.inlineBlock
-    , Css.textAlign Css.left
-    , Css.position Css.relative
-    ]
 
 
 
