@@ -172,6 +172,12 @@ type Alignment
     | End Px
 
 
+{-| Makes it so that the tooltip does not have a tail!
+
+This will center the tooltip relative to the trigger content, superseding any
+custom alignment set by `alignStart` and `alignEnd`.
+
+-}
 withoutTail : Attribute msg
 withoutTail =
     Attribute (\config -> { config | tail = WithoutTail })
