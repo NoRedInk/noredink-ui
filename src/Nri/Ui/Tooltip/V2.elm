@@ -43,6 +43,7 @@ Changes from V1:
   - extraButtonAttrs becomes attribute `customTriggerAttributes`
   - isOpen field becomes the `open` attribute
   - fold toggleTip and view into each other, so there's less to maintain
+  - adds withoutTail
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 
@@ -171,7 +172,7 @@ withoutTail =
     Attribute (\config -> { config | tail = WithoutTail })
 
 
-{-| Where should the arrow be positioned relative to the tooltip?
+{-| Where should the tail be positioned relative to the tooltip?
 -}
 type Alignment
     = Start Px
@@ -184,7 +185,7 @@ withAligment alignment =
     Attribute (\config -> { config | alignment = alignment })
 
 
-{-| Put the arrow at the "start" of the tooltip.
+{-| Put the tail at the "start" of the tooltip.
 For onTop & onBottom tooltips, this means "left".
 For onLeft & onRight tooltip, this means "top".
 
@@ -198,7 +199,7 @@ alignStart position =
     withAligment (Start position)
 
 
-{-| Put the arrow at the "middle" of the tooltip. This is the default behavior.
+{-| Put the tail at the "middle" of the tooltip. This is the default behavior.
 
      __________
     |___  ____|
@@ -210,7 +211,7 @@ alignMiddle =
     withAligment Middle
 
 
-{-| Put the arrow at the "end" of the tooltip.
+{-| Put the tail at the "end" of the tooltip.
 For onTop & onBottom tooltips, this means "right".
 For onLeft & onRight tooltip, this means "bottom".
 
@@ -591,13 +592,13 @@ hoverBridge : Tooltip msg -> Html msg
 hoverBridge { isOpen, direction, alignment } =
     let
         bridgeLength =
-            arrowSize + 5
+            tailSize + 5
     in
     if isOpen then
         Nri.Ui.styled Html.div
             "tooltip-hover-bridge"
             [ Css.boxSizing Css.borderBox
-            , Css.padding (Css.px arrowSize)
+            , Css.padding (Css.px tailSize)
             , Css.position Css.absolute
             , Css.batch <|
                 case direction of
@@ -605,13 +606,13 @@ hoverBridge { isOpen, direction, alignment } =
                         [ Css.top (Css.px -bridgeLength)
                         , Css.left Css.zero
                         , Css.width (Css.pct 100)
-                        , Css.height (Css.px arrowSize)
+                        , Css.height (Css.px tailSize)
                         ]
 
                     OnRight ->
                         [ Css.right (Css.px -bridgeLength)
                         , Css.top Css.zero
-                        , Css.width (Css.px arrowSize)
+                        , Css.width (Css.px tailSize)
                         , Css.height (Css.pct 100)
                         ]
 
@@ -619,13 +620,13 @@ hoverBridge { isOpen, direction, alignment } =
                         [ Css.bottom (Css.px -bridgeLength)
                         , Css.left Css.zero
                         , Css.width (Css.pct 100)
-                        , Css.height (Css.px arrowSize)
+                        , Css.height (Css.px tailSize)
                         ]
 
                     OnLeft ->
                         [ Css.left (Css.px -bridgeLength)
                         , Css.top Css.zero
-                        , Css.width (Css.px arrowSize)
+                        , Css.width (Css.px tailSize)
                         , Css.height (Css.pct 100)
                         ]
             ]
@@ -685,8 +686,8 @@ viewOpenTooltip tooltipId config =
         ]
 
 
-arrowSize : Float
-arrowSize =
+tailSize : Float
+tailSize =
     8
 
 
@@ -700,7 +701,7 @@ offCenterOffset =
     20
 
 
-{-| This returns an absolute positioning style attribute for the popout container for a given arrow position.
+{-| This returns an absolute positioning style attribute for the popout container for a given tail position.
 -}
 positionTooltip : Direction -> Alignment -> Style
 positionTooltip direction alignment =
@@ -731,22 +732,22 @@ positionTooltip direction alignment =
         case direction of
             OnTop ->
                 [ ltrPosition
-                , Css.top (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
                 ]
 
             OnBottom ->
                 [ ltrPosition
-                , Css.bottom (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
                 ]
 
             OnLeft ->
                 [ topToBottomPosition
-                , Css.left (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
                 ]
 
             OnRight ->
                 [ topToBottomPosition
-                , Css.right (Css.calc (Css.px (negate arrowSize)) Css.minus (Css.px 2))
+                , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
                 ]
 
 
@@ -816,7 +817,7 @@ tooltipContainerStyles =
 
 
 
--- ARROWS
+-- TAILS
 
 
 positioning : Direction -> Alignment -> Style
@@ -836,19 +837,19 @@ positioning direction alignment =
         rightLeftAlignment =
             case alignment of
                 Start _ ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
 
                 Middle ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat arrowSize ++ "px + 50%)")
+                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
 
                 End _ ->
-                    Css.property "bottom" ("calc(-" ++ String.fromFloat arrowSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+                    Css.property "bottom" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
     in
     case direction of
         OnTop ->
             Css.batch
                 [ Css.property "transform" "translate(-50%, -100%)"
-                , getArrowPositioning
+                , getTailPositioning
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.top (Css.pct 100)
                     }
@@ -857,7 +858,7 @@ positioning direction alignment =
         OnBottom ->
             Css.batch
                 [ Css.property "transform" "translate(-50%, 0)"
-                , getArrowPositioning
+                , getTailPositioning
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.bottom (Css.pct 100)
                     }
@@ -866,7 +867,7 @@ positioning direction alignment =
         OnRight ->
             Css.batch
                 [ Css.property "transform" "translate(0, -50%)"
-                , getArrowPositioning
+                , getTailPositioning
                     { xAlignment = Css.right (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
@@ -875,7 +876,7 @@ positioning direction alignment =
         OnLeft ->
             Css.batch
                 [ Css.property "transform" "translate(-100%, -50%)"
-                , getArrowPositioning
+                , getTailPositioning
                     { xAlignment = Css.left (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
@@ -886,92 +887,92 @@ tailForDirection : Direction -> Style
 tailForDirection direction =
     case direction of
         OnTop ->
-            bottomArrow
+            bottomTail
 
         OnBottom ->
-            topArrow
+            topTail
 
         OnRight ->
-            leftArrow
+            leftTail
 
         OnLeft ->
-            rightArrow
+            rightTail
 
 
-bottomArrow : Style
-bottomArrow =
+bottomTail : Style
+bottomTail =
     Css.batch
         [ Css.before
             [ Css.borderTopColor tooltipColor
-            , Css.property "border-width" (String.fromFloat (arrowSize + 1) ++ "px")
-            , Css.marginLeft (Css.px (-arrowSize - 1))
+            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+            , Css.marginLeft (Css.px (-tailSize - 1))
             ]
         , Css.after
             [ Css.borderTopColor tooltipColor
-            , Css.property "border-width" (String.fromFloat arrowSize ++ "px")
-            , Css.marginLeft (Css.px -arrowSize)
+            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
+            , Css.marginLeft (Css.px -tailSize)
             ]
         ]
 
 
-topArrow : Style
-topArrow =
+topTail : Style
+topTail =
     Css.batch
         [ Css.before
             [ Css.borderBottomColor tooltipColor
-            , Css.property "border-width" (String.fromFloat (arrowSize + 1) ++ "px")
-            , Css.marginLeft (Css.px (-arrowSize - 1))
+            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+            , Css.marginLeft (Css.px (-tailSize - 1))
             ]
         , Css.after
             [ Css.borderBottomColor tooltipColor
-            , Css.property "border-width" (String.fromFloat arrowSize ++ "px")
-            , Css.marginLeft (Css.px -arrowSize)
+            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
+            , Css.marginLeft (Css.px -tailSize)
             ]
         ]
 
 
-rightArrow : Style
-rightArrow =
+rightTail : Style
+rightTail =
     Css.batch
         [ Css.before
             [ Css.borderLeftColor tooltipColor
-            , Css.property "border-width" (String.fromFloat (arrowSize + 1) ++ "px")
+            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
             [ Css.borderLeftColor tooltipColor
-            , Css.property "border-width" (String.fromFloat arrowSize ++ "px")
+            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
             , Css.marginTop (Css.px 1)
             , Css.marginRight (Css.px 2)
             ]
         ]
 
 
-leftArrow : Style
-leftArrow =
+leftTail : Style
+leftTail =
     Css.batch
         [ Css.before
             [ Css.borderRightColor tooltipColor
-            , Css.property "border-width" (String.fromFloat (arrowSize + 1) ++ "px")
+            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
             [ Css.borderRightColor tooltipColor
-            , Css.property "border-width" (String.fromFloat arrowSize ++ "px")
+            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
             , Css.marginTop (Css.px 1)
             , Css.marginLeft (Css.px 2)
             ]
         ]
 
 
-getArrowPositioning : { xAlignment : Style, yAlignment : Style } -> Style
-getArrowPositioning config =
+getTailPositioning : { xAlignment : Style, yAlignment : Style } -> Style
+getTailPositioning config =
     Css.batch
-        [ Css.before (positionArrow config)
-        , Css.after (positionArrow config)
+        [ Css.before (positionTail config)
+        , Css.after (positionTail config)
         ]
 
 
-positionArrow : { xAlignment : Style, yAlignment : Style } -> List Style
-positionArrow { xAlignment, yAlignment } =
+positionTail : { xAlignment : Style, yAlignment : Style } -> List Style
+positionTail { xAlignment, yAlignment } =
     [ xAlignment
     , yAlignment
     , Css.property "border" "solid transparent"
