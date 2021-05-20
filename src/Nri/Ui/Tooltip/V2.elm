@@ -63,6 +63,7 @@ Example usage:
 @docs view, toggleTip
 @docs Attribute
 @docs plaintext, html
+@docs withoutTail
 @docs onTop, onBottom, onLeft, onRight
 @docs alignStart, alignMiddle, alignEnd
 @docs exactWidth, fitToContent
@@ -105,6 +106,7 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , alignment : Alignment
+    , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
     , containerStyles : List Style
@@ -125,6 +127,7 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , alignment = Middle
+            , tail = WithTail
             , content = []
             , attributes = []
             , containerStyles =
@@ -155,6 +158,16 @@ plaintext content =
 html : List (Html msg) -> Attribute msg
 html content =
     Attribute (\config -> { config | content = content })
+
+
+type Tail
+    = WithTail
+    | WithoutTail
+
+
+withoutTail : Attribute msg
+withoutTail =
+    Attribute (\config -> { config | tail = WithoutTail })
 
 
 {-| Where should the arrow be positioned relative to the tooltip?
@@ -656,7 +669,7 @@ viewOpenTooltip tooltipId config =
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.direction config.alignment
+             , pointerBox config.tail config.direction config.alignment
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -736,12 +749,17 @@ positionTooltip direction alignment =
                 ]
 
 
-pointerBox : Direction -> Alignment -> Html.Attribute msg
-pointerBox direction alignment =
+pointerBox : Tail -> Direction -> Alignment -> Html.Attribute msg
+pointerBox tail direction alignment =
     Attributes.css
         [ Css.backgroundColor Colors.navy
         , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , arrowInPosition direction alignment
+        , case tail of
+            WithTail ->
+                arrowInPosition direction alignment
+
+            WithoutTail ->
+                Css.batch []
         , Fonts.baseFont
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
