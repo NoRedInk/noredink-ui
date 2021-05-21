@@ -153,6 +153,7 @@ viewToggleTip openTooltip =
 
 type alias ExampleSettings =
     { content : Tooltip.Attribute Never
+    , withoutTail : Bool
     , direction : Tooltip.Attribute Never
     , alignment : Tooltip.Attribute Never
     , width : Tooltip.Attribute Never
@@ -164,6 +165,7 @@ initStaticExampleSettings : Control ExampleSettings
 initStaticExampleSettings =
     Control.record ExampleSettings
         |> Control.field "content" controlContent
+        |> Control.field "withoutTail" controlTail
         |> Control.field "direction" controlDirection
         |> Control.field "alignment" controlAlignment
         |> Control.field "width" controlWidth
@@ -204,6 +206,11 @@ controlContent =
                 |> Control.value
           )
         ]
+
+
+controlTail : Control Bool
+controlTail =
+    Control.bool False
 
 
 controlDirection : Control (Tooltip.Attribute Never)
@@ -262,6 +269,12 @@ viewCustomizableExample controlSettings =
             , settings.width
             , settings.padding
             ]
+                ++ (if settings.withoutTail then
+                        [ Tooltip.withoutTail ]
+
+                    else
+                        []
+                   )
     in
     Html.div []
         [ Control.view SetStaticExampleSettings controlSettings
