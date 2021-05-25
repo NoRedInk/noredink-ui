@@ -179,7 +179,8 @@ allTabs openTooltipId =
         , Tabs.panelHtml (Html.text "First Panel")
         ]
     , Tabs.build { id = Second, idString = "tab-1" }
-        [ Tabs.tabString "Second Tab"
+        [ Tabs.tabString "Second Tab (disabled)"
+        , Tabs.disabled True
         , Tabs.panelHtml (Html.text "Second Panel")
         ]
     , Tabs.build { id = Third, idString = "tab-2" }
