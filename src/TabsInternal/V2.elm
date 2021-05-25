@@ -44,6 +44,7 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
+    , disabled : Bool
     }
 
 
@@ -59,6 +60,7 @@ fromList { id, idString } attributes =
             , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
+            , disabled = False
             }
     in
     List.foldl (\applyAttr acc -> applyAttr acc) defaults attributes
@@ -125,6 +127,7 @@ viewTab_ config index tab =
                     ++ tagSpecificAttributes
                     ++ tab.tabAttributes
                     ++ [ Attributes.tabindex tabIndex
+                       , Attributes.disabled tab.disabled
                        , Widget.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
@@ -160,7 +163,13 @@ keyEvents { focusAndSelect, tabs } thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just { select = tab.id, focus = Just (tabToId tab.idString) } )
+                    ( True
+                    , if tab.disabled then
+                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
+
+                      else
+                        Nothing
+                    )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
