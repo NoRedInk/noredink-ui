@@ -127,7 +127,10 @@ viewTab_ config index tab =
                     ++ tagSpecificAttributes
                     ++ tab.tabAttributes
                     ++ [ Attributes.tabindex tabIndex
-                       , Attributes.disabled tab.disabled
+                       , -- check for isSelected because otherwise users won't
+                         -- be able to focus on the current tab with the
+                         -- keyboard.
+                         Attributes.disabled (not isSelected && tab.disabled)
                        , Widget.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
