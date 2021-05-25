@@ -2,9 +2,9 @@ module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
     , Tab, Attribute, build
-    , tabString, tabHtml, withTooltip
-    , panelHtml
+    , tabString, tabHtml, withTooltip, disabled
     , spaHref
+    , panelHtml
     )
 
 {-| Changes from V6:
@@ -16,8 +16,8 @@ module Nri.Ui.Tabs.V7 exposing
 @docs view
 @docs Alignment
 @docs Tab, Attribute, build
-@docs tabString, tabHtml, withTooltip
-@docs panelHtml
+@docs tabString, tabHtml, withTooltip, disabled
+@docs th@docs panelHtml
 @docs spaHref
 
 -}
@@ -60,6 +60,13 @@ tabHtml content =
 withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
 withTooltip attributes =
     Attribute (\tab -> { tab | tabTooltip = attributes })
+
+
+{-| Makes it so that the tab can't be clicked or focused via keyboard navigation
+-}
+disabled : Bool -> Attribute id msg
+disabled isDisabled =
+    Attribute (\tab -> { tab | disabled = isDisabled })
 
 
 {-| -}
