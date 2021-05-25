@@ -168,10 +168,10 @@ keyEvents { focusAndSelect, tabs } thisTab keyCode =
                 ( True, Nothing ) ->
                     ( True
                     , if tab.disabled then
-                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
+                        Nothing
 
                       else
-                        Nothing
+                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
                     )
 
                 ( False, Nothing ) ->
