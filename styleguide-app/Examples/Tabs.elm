@@ -46,6 +46,7 @@ type alias Settings =
     { title : Maybe String
     , alignment : Alignment
     , customSpacing : Maybe Float
+    , labelledBy : Maybe String
     }
 
 
@@ -71,6 +72,7 @@ initSettings =
                     ]
                 )
             )
+        |> Control.field "labelledBy" (Control.maybe False (Control.string "someId"))
 
 
 type Id
@@ -149,14 +151,14 @@ example =
                 , customSpacing = settings.customSpacing
                 , focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = allTabs model.openTooltip
+                , tabs = allTabs model.openTooltip settings.labelledBy
                 }
             ]
     }
 
 
-allTabs : Maybe Id -> List (Tab Id Msg)
-allTabs openTooltipId =
+allTabs : Maybe Id -> Maybe String -> List (Tab Id Msg)
+allTabs openTooltipId labelledBy =
     let
         bulbIcon =
             UiIcon.bulb
@@ -167,17 +169,25 @@ allTabs openTooltipId =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        [ Tabs.spaHref "/#/doodad/Tabs"
-        , Tabs.tabString "1"
-        , Tabs.withTooltip
+        ([ Tabs.spaHref "/#/doodad/Tabs"
+         , Tabs.tabString "1"
+         , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
             , Tooltip.onHover (ToggleTooltip First)
             , Tooltip.alignStart (Css.px 75)
             , Tooltip.primaryLabel
             , Tooltip.open (openTooltipId == Just First)
             ]
-        , Tabs.panelHtml (Html.text "First Panel")
-        ]
+         , Tabs.panelHtml (Html.text "First Panel")
+         ]
+            ++ (case labelledBy of
+                    Nothing ->
+                        []
+
+                    Just labelledById ->
+                        [ Tabs.labelledBy labelledById ]
+               )
+        )
     , Tabs.build { id = Second, idString = "tab-1" }
         [ Tabs.tabString "Second Tab"
         , Tabs.panelHtml (Html.text "Second Panel")
