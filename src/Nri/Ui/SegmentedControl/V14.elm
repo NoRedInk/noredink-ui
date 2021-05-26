@@ -207,6 +207,7 @@ view config =
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
             , disabled = False
+            , labelledBy = Nothing
             }
 
         { tabList, tabPanels } =

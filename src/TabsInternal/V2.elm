@@ -45,6 +45,7 @@ type alias Tab id msg =
     , panelView : Html msg
     , spaHref : Maybe String
     , disabled : Bool
+    , labelledBy : Maybe String
     }
 
 
@@ -61,6 +62,7 @@ fromList { id, idString } attributes =
             , panelView = Html.text ""
             , spaHref = Nothing
             , disabled = False
+            , labelledBy = Nothing
             }
     in
     List.foldl (\applyAttr acc -> applyAttr acc) defaults attributes
@@ -137,14 +139,24 @@ viewTab_ config index tab =
                        , Events.on "keyup" <|
                             Json.Decode.andThen (keyEvents config tab) Events.keyCode
                        ]
+                    ++ (case tab.labelledBy of
+                            Nothing ->
+                                []
+
+                            Just labelledById ->
+                                [ Aria.labelledBy labelledById ]
+                       )
                 )
                 tab.tabView
     in
-    case tab.tabTooltip of
-        [] ->
+    -- If the labelledByAttribute gets passed in, we're using an external
+    -- tooltip, so we override any existing internal tooltip to not create
+    -- accessibility problems.
+    case ( tab.labelledBy, tab.tabTooltip ) of
+        ( Just _, _ ) ->
             buttonOrLink []
 
-        tooltipAttributes ->
+        ( Nothing, tooltipAttributes ) ->
             Tooltip.view
                 { id = "tab-tooltip__" ++ tabToId tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers
