@@ -2,7 +2,7 @@ module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
     , Tab, Attribute, build
-    , tabString, tabHtml, withTooltip
+    , tabString, tabHtml, withTooltip, labelledBy
     , panelHtml
     , spaHref
     )
@@ -16,12 +16,13 @@ module Nri.Ui.Tabs.V7 exposing
 @docs view
 @docs Alignment
 @docs Tab, Attribute, build
-@docs tabString, tabHtml, withTooltip
+@docs tabString, tabHtml, withTooltip, labelledBy
 @docs panelHtml
 @docs spaHref
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -60,6 +61,14 @@ tabHtml content =
 withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
 withTooltip attributes =
     Attribute (\tab -> { tab | tabTooltip = attributes })
+
+
+{-| Sets an overriding labelledBy on the tab for an external tooltip.
+This assumes an external tooltip is set and disables any internal tooltip configured.
+-}
+labelledBy : String -> Attribute id msg
+labelledBy labelledById =
+    Attribute (\tab -> { tab | labelledBy = Just labelledById })
 
 
 {-| -}
