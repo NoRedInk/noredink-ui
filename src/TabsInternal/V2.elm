@@ -44,6 +44,7 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
+    , disabled : Bool
     , labelledBy : Maybe String
     }
 
@@ -60,6 +61,7 @@ fromList { id, idString } attributes =
             , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
+            , disabled = False
             , labelledBy = Nothing
             }
     in
@@ -127,6 +129,10 @@ viewTab_ config index tab =
                     ++ tagSpecificAttributes
                     ++ tab.tabAttributes
                     ++ [ Attributes.tabindex tabIndex
+                       , -- check for isSelected because otherwise users won't
+                         -- be able to focus on the current tab with the
+                         -- keyboard.
+                         Attributes.disabled (not isSelected && tab.disabled)
                        , Widget.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
@@ -172,7 +178,13 @@ keyEvents { focusAndSelect, tabs } thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just { select = tab.id, focus = Just (tabToId tab.idString) } )
+                    ( True
+                    , if tab.disabled then
+                        Nothing
+
+                      else
+                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
+                    )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
