@@ -63,6 +63,8 @@ withTooltip attributes =
     Attribute (\tab -> { tab | tabTooltip = attributes })
 
 
+{-| Makes it so that the tab can't be clicked or focused via keyboard navigation
+-}
 disabled : Bool -> Attribute id msg
 disabled isDisabled =
     Attribute (\tab -> { tab | disabled = isDisabled })
