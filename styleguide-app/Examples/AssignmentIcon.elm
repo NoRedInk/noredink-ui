@@ -12,7 +12,6 @@ import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
-import Nri.Ui.Icon.V5 as Icon
 
 
 {-| -}

@@ -14,7 +14,6 @@ import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
-import Examples.Icon as Icon
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.MasteryIcon as MasteryIcon
@@ -285,25 +284,6 @@ all =
             (\msg ->
                 case msg of
                     HeadingState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , Icon.example
-        |> Example.wrapMsg IconMsg
-            (\msg ->
-                case msg of
-                    IconMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState IconState
-            (\msg ->
-                case msg of
-                    IconState childState ->
                         Just childState
 
                     _ ->
@@ -782,7 +762,6 @@ type State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeadingState Heading.State
-    | IconState Icon.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MasteryIconState MasteryIcon.State
@@ -823,7 +802,6 @@ type Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
-    | IconMsg Icon.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MasteryIconMsg MasteryIcon.Msg
