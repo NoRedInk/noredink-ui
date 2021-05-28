@@ -7,7 +7,6 @@ module Examples.Svg exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
-import Color exposing (Color)
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -21,6 +20,7 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V7 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import SolidColor exposing (SolidColor)
 
 
 {-| -}
@@ -53,8 +53,8 @@ viewSettings state =
             [ Html.text "Color: "
             , Html.input
                 [ Attributes.type_ "color"
-                , Attributes.value (Color.toHex state.color)
-                , Events.onInput (SetColor << Color.fromHex)
+                , Attributes.value (SolidColor.toHex state.color)
+                , Events.onInput (SetColor << SolidColor.fromHex)
                 ]
                 []
             ]
@@ -95,7 +95,7 @@ viewResults : State -> Html.Html Msg
 viewResults state =
     let
         ( red, green, blue ) =
-            Color.toRGB state.color
+            SolidColor.toRGB state.color
     in
     Html.div [ Attributes.css [ Css.displayFlex ] ]
         [ Html.pre
@@ -139,7 +139,7 @@ viewResults state =
 
 {-| -}
 type alias State =
-    { color : Color
+    { color : SolidColor
     , width : Float
     , height : Float
     , label : String
@@ -158,7 +158,7 @@ init =
 
 {-| -}
 type Msg
-    = SetColor (Result String Color)
+    = SetColor (Result String SolidColor)
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
     | SetLabel String

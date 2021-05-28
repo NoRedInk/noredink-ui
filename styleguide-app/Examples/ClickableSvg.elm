@@ -7,7 +7,6 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
-import Color exposing (Color)
 import Css
 import Debug.Control as Control exposing (Control)
 import EventExtras

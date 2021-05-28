@@ -7,7 +7,6 @@ module Examples.Colors exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Color exposing (highContrast)
 import Css
 import Example exposing (Example)
 import Html.Styled as Html
@@ -16,6 +15,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import SolidColor exposing (highContrast)
 
 
 type alias ColorExample =
