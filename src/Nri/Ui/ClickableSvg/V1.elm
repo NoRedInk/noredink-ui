@@ -8,7 +8,6 @@ module Nri.Ui.ClickableSvg.V1 exposing
     , withBorder
     , primary, secondary, danger, dangerSecondary
     , custom, css
-    , withTooltipAbove, withTooltipBelow
     )
 
 {-|
@@ -49,11 +48,6 @@ module Nri.Ui.ClickableSvg.V1 exposing
 
 @docs custom, css
 
-
-## Tooltips
-
-@docs withTooltipAbove, withTooltipBelow
-
 -}
 
 import Accessibility.Styled.Widget as Widget
@@ -63,7 +57,6 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V1 as Tooltip exposing (Tooltip)
 
 
 {-| -}
@@ -310,67 +303,6 @@ css styles =
 
 
 
--- TOOLTIPS
-
-
-type alias TooltipSettings msg =
-    { position : Tooltip.Position
-    , isOpen : Bool
-    , onShow : Bool -> msg
-    , id : String
-    }
-
-
-showTooltip : String -> Maybe (TooltipSettings msg) -> Html msg -> Html msg
-showTooltip label maybeSettings buttonOrLink =
-    case maybeSettings of
-        Just { position, onShow, isOpen, id } ->
-            let
-                tooltipSettings =
-                    { trigger = Tooltip.OnHover
-                    , onTrigger = onShow
-                    , isOpen = isOpen
-                    , triggerHtml = buttonOrLink
-                    , extraButtonAttrs = []
-                    , id = id ++ "__clickable-svg-tooltip"
-                    }
-            in
-            Tooltip.tooltip [ Html.text label ]
-                |> Tooltip.withPosition position
-                |> Tooltip.withWidth Tooltip.FitToContent
-                |> Tooltip.withPadding Tooltip.SmallPadding
-                |> Tooltip.primaryLabel tooltipSettings
-
-        Nothing ->
-            buttonOrLink
-
-
-withTooltip : Tooltip.Position -> { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
-withTooltip position { id, isOpen, onShow } =
-    set
-        (\config ->
-            { config
-                | tooltip =
-                    Just { position = position, id = id, isOpen = isOpen, onShow = onShow }
-            }
-        )
-
-
-{-| DEPRECATED: prefer to use the Tooltip module directly.
--}
-withTooltipAbove : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
-withTooltipAbove =
-    withTooltip Tooltip.OnTop
-
-
-{-| DEPRECATED: prefer to use the Tooltip module directly.
--}
-withTooltipBelow : { id : String, isOpen : Bool, onShow : Bool -> msg } -> Attribute msg
-withTooltipBelow =
-    withTooltip Tooltip.OnBottom
-
-
-
 -- INTERNALS
 
 
@@ -392,7 +324,6 @@ build label icon =
         , disabled = False
         , customAttributes = []
         , customStyles = []
-        , tooltip = Nothing
         , hasBorder = False
         , theme = Secondary
         }
@@ -411,7 +342,6 @@ type alias ButtonOrLinkAttributes msg =
     , disabled : Bool
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
-    , tooltip : Maybe (TooltipSettings msg)
     , hasBorder : Bool
     , theme : Theme
     }
@@ -431,7 +361,6 @@ renderButton ((ButtonOrLink config) as button_) =
         )
         [ renderIcon config
         ]
-        |> showTooltip config.label config.tooltip
 
 
 type Link
@@ -465,7 +394,6 @@ renderLink ((ButtonOrLink config) as link_) =
         )
         [ renderIcon config
         ]
-        |> showTooltip config.label config.tooltip
 
 
 renderIcon : ButtonOrLinkAttributes msg -> Html msg
