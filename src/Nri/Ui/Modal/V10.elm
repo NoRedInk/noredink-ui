@@ -53,7 +53,6 @@ import Accessibility.Styled.Widget as Widget
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
-import Color.Transparent as Transparent
 import Css exposing (..)
 import Css.Transitions
 import Html.Styled as Root
@@ -65,6 +64,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
+import TransparentColor as Transparent
 
 
 {-| -}

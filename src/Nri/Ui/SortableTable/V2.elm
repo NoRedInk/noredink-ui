@@ -14,7 +14,6 @@ module Nri.Ui.SortableTable.V2 exposing
 
 -}
 
-import Color
 import Css exposing (..)
 import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
@@ -24,6 +23,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Table.V5
+import SolidColor
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as SvgAttributes
 
@@ -365,4 +365,4 @@ sortArrow direction active =
 
 toCssString : Css.Color -> String
 toCssString =
-    Color.toRGBString << Nri.Ui.Colors.Extra.fromCssColor
+    SolidColor.toRGBString << Nri.Ui.Colors.Extra.fromCssColor

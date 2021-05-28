@@ -17,7 +17,6 @@ import Accessibility.Styled.Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
-import Color
 import Css
 import Css.Animations
 import Css.Global
@@ -33,6 +32,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Slide.V1 as Slide exposing (AnimationDirection(..))
 import Nri.Ui.Text.V2 as Text
+import SolidColor
 
 
 {-| -}
@@ -412,7 +412,7 @@ dot type_ =
 
         animateBackgroundColor color =
             Nri.Ui.Colors.Extra.fromCssColor color
-                |> Color.toRGBString
+                |> SolidColor.toRGBString
                 |> Css.Animations.property "background-color"
     in
     case type_ of
