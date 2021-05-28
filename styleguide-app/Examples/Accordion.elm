@@ -26,7 +26,6 @@ import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V4 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task

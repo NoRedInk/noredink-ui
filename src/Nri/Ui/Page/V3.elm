@@ -17,8 +17,8 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.Text.V2 as Text
 
 
 {-| The default page information is for the button
@@ -201,8 +201,8 @@ view : Config msg -> Html msg
 view config =
     viewContainer
         [ viewEmoji [ Html.text config.emoji ]
-        , Text.heading [ Html.text config.title ]
-        , Text.tagline [ Html.text config.subtitle ]
+        , Heading.h1 [] [ Html.text config.title ]
+        , Heading.h2 [] [ Html.text config.subtitle ]
         , viewButton
             [ viewExit config ]
         , viewIf
