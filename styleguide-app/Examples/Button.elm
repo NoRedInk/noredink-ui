@@ -6,7 +6,6 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -30,7 +29,6 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     }
 

@@ -6,7 +6,6 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -17,7 +16,6 @@ import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Set exposing (Set)
-import Sort.Set
 
 
 {-| -}
@@ -51,7 +49,6 @@ example =
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
-    , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ Space ]
           , result = "Select or deselect the checkbox (may cause page scroll)"

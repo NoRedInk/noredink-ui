@@ -7,7 +7,6 @@ module Examples.Modal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
@@ -111,7 +110,6 @@ example =
     { name = "Modal"
     , version = 11
     , categories = [ Modals ]
-    , atomicDesignType = Organism
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."

@@ -7,7 +7,6 @@ module Examples.Menu exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -35,7 +34,6 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Widgets ]
-    , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ Space ], result = "Opens the menu" }
         , { keys = [ Enter ], result = "Opens the menu" }

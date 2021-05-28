@@ -6,7 +6,6 @@ module Examples.Text.Writing exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled exposing (text)
@@ -29,7 +28,6 @@ example =
     { name = "Text.Writing"
     , version = 1
     , categories = [ Text ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

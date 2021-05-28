@@ -6,7 +6,6 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
@@ -34,7 +33,6 @@ example =
     { name = "ClickableSvg"
     , version = 2
     , categories = [ Buttons, Icons ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update

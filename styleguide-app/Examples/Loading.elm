@@ -6,7 +6,6 @@ module Examples.Loading exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Events
 import Category exposing (Category(..))
 import Css
@@ -91,7 +90,6 @@ example =
     { name = "Loading"
     , version = 1
     , categories = [ Pages ]
-    , atomicDesignType = Page
     , keyboardSupport = []
     , state = init
     , update = update

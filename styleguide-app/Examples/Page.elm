@@ -6,7 +6,6 @@ module Examples.Page exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import CommonControls
 import Css
@@ -59,7 +58,6 @@ example =
     { name = "Page"
     , version = 3
     , categories = [ Pages ]
-    , atomicDesignType = Page
     , keyboardSupport = []
     , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
     , update = update

@@ -10,7 +10,6 @@ module Examples.RadioButton exposing
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
@@ -37,7 +36,6 @@ example =
     , subscriptions = subscriptions
     , view = view
     , categories = [ Layout ]
-    , atomicDesignType = Atom
     , keyboardSupport =
         [ { keys = [ Arrow Left ]
           , result = "Move the focus & select the radio button to the left"

@@ -6,7 +6,6 @@ module Examples.Svg exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (Color)
 import Css
@@ -30,7 +29,6 @@ example =
     { name = "Svg"
     , version = 1
     , categories = [ Icons ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = init
     , update = update

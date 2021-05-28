@@ -1,13 +1,11 @@
 module Examples.Message exposing (Msg, State, example)
 
 import Accessibility.Styled as Html exposing (..)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled exposing (styled)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
@@ -181,7 +179,6 @@ example =
     { name = "Message"
     , version = 3
     , categories = [ Messaging ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update

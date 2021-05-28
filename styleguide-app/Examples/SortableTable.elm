@@ -6,7 +6,6 @@ module Examples.SortableTable exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
@@ -38,7 +37,6 @@ example =
     { name = "SortableTable"
     , version = 2
     , categories = [ Tables, Layout ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update

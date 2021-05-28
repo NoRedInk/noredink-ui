@@ -6,7 +6,6 @@ module Examples.Confetti exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Events
 import Category exposing (Category(..))
 import Css exposing (Color)
@@ -25,7 +24,6 @@ example =
     { name = "Confetti"
     , version = 2
     , categories = [ Animations ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = Confetti.init 700
     , update = update

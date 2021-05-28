@@ -7,7 +7,6 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -29,7 +28,6 @@ example =
     { name = "Tooltip"
     , version = 2
     , categories = [ Widgets ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update

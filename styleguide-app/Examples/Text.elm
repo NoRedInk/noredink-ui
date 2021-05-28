@@ -6,7 +6,6 @@ module Examples.Text exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -33,7 +32,6 @@ example =
     { name = "Text"
     , version = 5
     , categories = [ Text ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

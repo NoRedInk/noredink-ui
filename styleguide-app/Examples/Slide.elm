@@ -7,7 +7,6 @@ module Examples.Slide exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -39,7 +38,6 @@ example =
     { name = "Slide"
     , version = 1
     , categories = [ Animations ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = init
     , update = update

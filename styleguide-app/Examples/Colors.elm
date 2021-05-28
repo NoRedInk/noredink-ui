@@ -6,7 +6,6 @@ module Examples.Colors exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Color exposing (highContrast)
 import Css
@@ -38,7 +37,6 @@ example =
     { name = "Colors"
     , version = 1
     , categories = [ Colors ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
