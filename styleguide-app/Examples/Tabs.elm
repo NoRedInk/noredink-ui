@@ -10,7 +10,6 @@ module Examples.Tabs exposing
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -123,7 +122,6 @@ example =
     { name = "Tabs"
     , version = 7
     , categories = [ Layout ]
-    , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"

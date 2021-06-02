@@ -6,7 +6,6 @@ module Examples.Switch exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType
 import Category
 import Example exposing (Example)
 import Html.Styled as Html
@@ -68,6 +67,5 @@ example =
                 ]
             ]
     , categories = [ Category.Inputs ]
-    , atomicDesignType = AtomicDesignType.Atom
     , keyboardSupport = [{- TODO -}]
     }

@@ -13,14 +13,14 @@ module Nri.Ui.Colors.Extra exposing
 
 -}
 
-import Color
 import Css
+import SolidColor exposing (SolidColor)
 
 
 {-| -}
-fromCssColor : Css.Color -> Color.Color
+fromCssColor : Css.Color -> SolidColor
 fromCssColor color =
-    Color.fromRGB
+    SolidColor.fromRGB
         ( toFloat color.red
         , toFloat color.green
         , toFloat color.blue
@@ -28,11 +28,11 @@ fromCssColor color =
 
 
 {-| -}
-toCssColor : Color.Color -> Css.Color
+toCssColor : SolidColor -> Css.Color
 toCssColor color =
     let
         ( red, green, blue ) =
-            Color.toRGB color
+            SolidColor.toRGB color
     in
     Css.rgb (round red) (round green) (round blue)
 

@@ -7,7 +7,6 @@ module Examples.Modal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
@@ -22,7 +21,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 import Task
 
 
@@ -111,7 +110,6 @@ example =
     { name = "Modal"
     , version = 11
     , categories = [ Modals ]
-    , atomicDesignType = Organism
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."
@@ -230,7 +228,7 @@ launchModalButton settings =
 
 viewModalContent : String -> Html msg
 viewModalContent content =
-    Text.mediumBody [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
+    Text.mediumBody [] [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
 
 
 continueButtonId : String

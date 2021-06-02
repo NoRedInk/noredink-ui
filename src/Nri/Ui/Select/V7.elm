@@ -6,7 +6,6 @@ module Nri.Ui.Select.V7 exposing (Choice, view)
 
 -}
 
-import Color
 import Css
 import Dict
 import Html.Styled as Html exposing (Html)
@@ -19,6 +18,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Util
+import SolidColor
 
 
 {-| A single possible choice.
@@ -153,7 +153,7 @@ selectArrowsCss : Css.Style
 selectArrowsCss =
     let
         color =
-            Color.toRGBString (ColorsExtra.fromCssColor Colors.azure)
+            SolidColor.toRGBString (ColorsExtra.fromCssColor Colors.azure)
     in
     Css.batch
         [ """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12px" height="16px" viewBox="0 0 12 16"><g fill=" """

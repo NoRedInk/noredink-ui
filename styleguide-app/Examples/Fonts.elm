@@ -6,7 +6,6 @@ module Examples.Fonts exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
@@ -32,7 +31,6 @@ example =
     { name = "Fonts"
     , version = 1
     , categories = [ Text ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

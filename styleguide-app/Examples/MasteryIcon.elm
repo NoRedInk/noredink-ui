@@ -6,7 +6,6 @@ module Examples.MasteryIcon exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -31,7 +30,6 @@ example =
     { name = "MasteryIcon"
     , version = 1
     , categories = [ Icons ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

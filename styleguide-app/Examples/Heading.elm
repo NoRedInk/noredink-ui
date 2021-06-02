@@ -6,7 +6,6 @@ module Examples.Heading exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -32,7 +31,6 @@ example =
     { name = "Heading"
     , version = 2
     , categories = [ Text, Layout ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

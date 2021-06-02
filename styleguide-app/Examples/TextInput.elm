@@ -7,7 +7,6 @@ module Examples.TextInput exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
@@ -55,7 +54,6 @@ example =
     { name = "TextInput"
     , version = 6
     , categories = [ Inputs ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update

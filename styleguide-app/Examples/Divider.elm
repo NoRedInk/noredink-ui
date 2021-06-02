@@ -6,7 +6,6 @@ module Examples.Divider exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -32,7 +31,6 @@ example =
     { name = "Divider"
     , version = 2
     , categories = [ Layout ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = {}
     , update = \_ state -> ( state, Cmd.none )

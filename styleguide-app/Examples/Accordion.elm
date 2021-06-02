@@ -11,7 +11,6 @@ module Examples.Accordion exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
@@ -26,7 +25,6 @@ import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V4 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
@@ -42,7 +40,6 @@ example =
     , subscriptions = \_ -> Sub.none
     , view = view
     , categories = [ Layout ]
-    , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ Arrow KeyboardSupport.Up ]
           , result = "Moves the focus to the previous accordion header button (wraps focus to the last header button)"

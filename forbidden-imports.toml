@@ -35,15 +35,12 @@ hint = 'Use Accessibility.Widgetd.Widget'
 hint = 'Use Html.Styled'
 usages = [
     'styleguide-app/../src/Nri/Ui/Button/V8.elm',
-    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
-    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
-    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
     'styleguide-app/Examples/Modal.elm',
     'styleguide-app/Main.elm',
 ]
 
 [forbidden."Nri.Ui.Accordion.V1"]
-hint = 'upgrade to V2'
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Button.V8"]
 hint = 'upgrade to V10'
@@ -62,6 +59,9 @@ hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.InputStyles.V2"]
 hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.Menu.V1"]
+hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Message.V1"]
 hint = 'upgrade to V3'
@@ -118,7 +118,4 @@ usages = [
 
 [forbidden."Nri.Ui.Tooltip.V1"]
 hint = 'upgrade to V2'
-usages = [
-    'styleguide-app/../src/Nri/Ui/ClickableSvg/V1.elm',
-    'styleguide-app/../src/Nri/Ui/Menu/V1.elm',
-]
+usages = ['styleguide-app/../src/Nri/Ui/Menu/V1.elm']

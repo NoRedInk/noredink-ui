@@ -17,7 +17,6 @@ import Accessibility.Styled.Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
-import Color
 import Css
 import Css.Animations
 import Css.Global
@@ -31,8 +30,9 @@ import Nri.Ui.Button.V8 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Slide.V1 as Slide exposing (AnimationDirection(..))
-import Nri.Ui.Text.V2 as Text
+import SolidColor
 
 
 {-| -}
@@ -148,7 +148,7 @@ viewModal config (State { previousPanel }) summary =
                 , panelContainer config.height
                     [ Slide.animateOut direction ]
                     [ viewIcon panelView.icon
-                    , Text.subHeading
+                    , Heading.h4 []
                         [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
                         ]
                     , viewContent panelView.content
@@ -167,7 +167,7 @@ viewModalContent config summary styles =
       , panelContainer config.height
             styles
             [ viewIcon summary.current.icon
-            , Text.subHeading
+            , Heading.h4 []
                 [ span
                     [ Html.Styled.Attributes.id (panelId summary.current)
                     , css [ Css.margin2 Css.zero (Css.px 21) ]
@@ -412,7 +412,7 @@ dot type_ =
 
         animateBackgroundColor color =
             Nri.Ui.Colors.Extra.fromCssColor color
-                |> Color.toRGBString
+                |> SolidColor.toRGBString
                 |> Css.Animations.property "background-color"
     in
     case type_ of

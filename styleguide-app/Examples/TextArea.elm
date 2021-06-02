@@ -6,7 +6,6 @@ module Examples.TextArea exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Dict exposing (Dict)
 import Example exposing (Example)
@@ -44,7 +43,6 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , view =
         \state ->

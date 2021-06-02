@@ -1,6 +1,5 @@
 module Example exposing (Example, view, wrapMsg, wrapState)
 
-import AtomicDesignType exposing (AtomicDesignType)
 import Category exposing (Category)
 import Css exposing (..)
 import Css.Global exposing (a, descendants)
@@ -21,7 +20,6 @@ type alias Example state msg =
     , subscriptions : state -> Sub msg
     , view : state -> List (Html msg)
     , categories : List Category
-    , atomicDesignType : AtomicDesignType
     , keyboardSupport : List KeyboardSupport
     }
 
@@ -47,7 +45,6 @@ wrapMsg wrapMsg_ unwrapMsg example =
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
-    , atomicDesignType = example.atomicDesignType
     , keyboardSupport = example.keyboardSupport
     }
 
@@ -79,7 +76,6 @@ wrapState wrapState_ unwrapState example =
             >> Maybe.map example.view
             >> Maybe.withDefault []
     , categories = example.categories
-    , atomicDesignType = example.atomicDesignType
     , keyboardSupport = example.keyboardSupport
     }
 

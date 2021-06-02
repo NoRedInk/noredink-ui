@@ -7,7 +7,6 @@ module Examples.SlideModal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -37,7 +36,6 @@ example =
     { name = "SlideModal"
     , version = 2
     , categories = [ Modals ]
-    , atomicDesignType = Organism
     , keyboardSupport = []
     , state = init
     , update = update

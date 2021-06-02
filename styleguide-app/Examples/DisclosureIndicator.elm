@@ -6,7 +6,6 @@ module Examples.DisclosureIndicator exposing (Msg, State, example)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
@@ -17,7 +16,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Text.V2 as Text
+import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -33,14 +32,13 @@ example =
     { name = "DisclosureIndicator"
     , version = 2
     , categories = [ Widgets ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Text.smallBodyGray [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
+            [ Text.smallBodyGray [] [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
                 [ Button.button "Toggle large indicator"
                     [ Button.onClick ToggleLarge, Button.small, Button.secondary ]

@@ -11,7 +11,6 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -69,7 +68,6 @@ example =
                 }
             ]
     , categories = [ Widgets, Layout ]
-    , atomicDesignType = Molecule
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Control's content"

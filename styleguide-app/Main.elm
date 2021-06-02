@@ -1,7 +1,6 @@
 module Main exposing (init, main)
 
 import Accessibility.Styled as Html exposing (Html, img, text)
-import AtomicDesignType exposing (AtomicDesignType)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -40,7 +39,6 @@ type alias Model =
     { -- Global UI
       route : Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
-    , atomicDesignTypes : Set AtomicDesignType
     , navigationKey : Key
     }
 
@@ -51,7 +49,6 @@ init () url key =
       , moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
-      , atomicDesignTypes = Set.fromList AtomicDesignType.sorter AtomicDesignType.all
       , navigationKey = key
       }
     , Cmd.none
@@ -62,7 +59,6 @@ type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
-    | ToggleAtomicDesignType AtomicDesignType Bool
     | SkipToMainContent
     | NoOp
 
@@ -99,21 +95,6 @@ update action model =
         OnUrlChange route ->
             ( { model | route = Routes.fromLocation route }, Cmd.none )
 
-        ToggleAtomicDesignType atomicDesignType isOpen ->
-            ( { model
-                | atomicDesignTypes =
-                    (if isOpen then
-                        Set.insert
-
-                     else
-                        Set.remove
-                    )
-                        atomicDesignType
-                        model.atomicDesignTypes
-              }
-            , Cmd.none
-            )
-
         SkipToMainContent ->
             ( model
             , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
@@ -141,12 +122,7 @@ view_ : Model -> Html Msg
 view_ model =
     let
         examples filterBy =
-            List.filter
-                (\m ->
-                    filterBy m
-                        && Set.memberOf model.atomicDesignTypes m.atomicDesignType
-                )
-                (Dict.values model.moduleStates)
+            List.filter (\m -> filterBy m) (Dict.values model.moduleStates)
 
         mainContentHeader heading =
             Heading.h1
@@ -163,7 +139,7 @@ view_ model =
             , minHeight (vh 100)
             ]
         ]
-        [ navigation model.route model.atomicDesignTypes
+        [ navigation model.route
         , Html.main_ [ css [ flexGrow (int 1), sectionStyles ] ]
             (case model.route of
                 Routes.Doodad doodad ->
@@ -209,8 +185,8 @@ view_ model =
         ]
 
 
-navigation : Route -> Set AtomicDesignType -> Html Msg
-navigation route openAtomicDesignTypes =
+navigation : Route -> Html Msg
+navigation route =
     let
         isActive category =
             case route of
@@ -297,26 +273,7 @@ navigation route openAtomicDesignTypes =
                 [ css [ margin4 zero zero (px 40) zero, padding zero ]
                 , id "categories"
                 ]
-        , Html.fieldset []
-            (Html.legend [] [ text "Atomic Design type" ]
-                :: List.map (checkAtomicDesignType openAtomicDesignTypes) AtomicDesignType.all
-            )
         ]
-
-
-checkAtomicDesignType : Set AtomicDesignType -> AtomicDesignType -> Html Msg
-checkAtomicDesignType openAtomicDesignTypes atomicDesignType =
-    let
-        isChecked =
-            Set.memberOf openAtomicDesignTypes atomicDesignType
-
-        name =
-            AtomicDesignType.toString atomicDesignType
-    in
-    Html.labelAfter [ css [ display block ] ] (text name) <|
-        Html.checkbox name
-            (Just isChecked)
-            [ Events.onCheck (ToggleAtomicDesignType atomicDesignType) ]
 
 
 sectionStyles : Css.Style

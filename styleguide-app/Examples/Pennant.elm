@@ -6,7 +6,6 @@ module Examples.Pennant exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
@@ -35,7 +34,6 @@ example =
     { name = "Pennant"
     , version = 2
     , categories = [ Icons ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

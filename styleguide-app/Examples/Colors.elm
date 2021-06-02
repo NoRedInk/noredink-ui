@@ -6,9 +6,7 @@ module Examples.Colors exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
-import Color exposing (highContrast)
 import Css
 import Example exposing (Example)
 import Html.Styled as Html
@@ -17,6 +15,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import SolidColor exposing (highContrast)
 
 
 type alias ColorExample =
@@ -38,7 +37,6 @@ example =
     { name = "Colors"
     , version = 1
     , categories = [ Colors ]
-    , atomicDesignType = Atom
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

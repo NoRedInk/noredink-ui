@@ -6,7 +6,6 @@ module Examples.Loading exposing (example, State, Msg)
 
 -}
 
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Browser.Events
 import Category exposing (Category(..))
 import Css
@@ -21,7 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Loading.V1 as Loading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -91,7 +90,6 @@ example =
     { name = "Loading"
     , version = 1
     , categories = [ Pages ]
-    , atomicDesignType = Page
     , keyboardSupport = []
     , state = init
     , update = update
@@ -115,7 +113,7 @@ example =
                     [ Loading.spinningPencil
                         |> Svg.withColor Colors.blue
                         |> Svg.toHtml
-                    , Text.caption [ Html.text "By default, the spinningPencil is white. Showing as blue for visibility." ]
+                    , Text.caption [] [ Html.text "By default, the spinningPencil is white. Showing as blue for visibility." ]
                     , Loading.spinningDots
                         |> Svg.toHtml
                     ]

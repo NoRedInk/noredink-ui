@@ -7,19 +7,18 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import AtomicDesignType exposing (AtomicDesignType(..))
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.ClickableSvg.V1 as ClickableSvg
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V4 as Text
+import Nri.Ui.Text.V5 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -29,7 +28,6 @@ example =
     { name = "Tooltip"
     , version = 2
     , categories = [ Widgets ]
-    , atomicDesignType = Molecule
     , keyboardSupport = []
     , state = init
     , update = update
@@ -79,7 +77,7 @@ update msg model =
 view : State -> List (Html Msg)
 view model =
     [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
-    , Text.mediumBody
+    , Text.mediumBody []
         [ Html.text "Label the Tooltip as either being the "
         , viewPrimaryLabelTooltip model.openTooltip
         , Html.text " or the "
