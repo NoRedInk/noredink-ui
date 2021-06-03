@@ -148,7 +148,7 @@ viewModal config (State { previousPanel }) summary =
                 , panelContainer config.height
                     [ Slide.animateOut direction ]
                     [ viewIcon panelView.icon
-                    , Heading.h4 []
+                    , Heading.h3 []
                         [ span [ Html.Styled.Attributes.id (panelId panelView) ] [ Html.text panelView.title ]
                         ]
                     , viewContent panelView.content
@@ -167,7 +167,7 @@ viewModalContent config summary styles =
       , panelContainer config.height
             styles
             [ viewIcon summary.current.icon
-            , Heading.h4 []
+            , Heading.h3 []
                 [ span
                     [ Html.Styled.Attributes.id (panelId summary.current)
                     , css [ Css.margin2 Css.zero (Css.px 21) ]
