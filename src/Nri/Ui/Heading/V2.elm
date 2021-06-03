@@ -32,9 +32,6 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
 
 {-| Make a first-level heading (styled like a top-level heading by default.)
-
-Use this to upgrade from `Nri.Ui.Text.V2.heading`.
-
 -}
 h1 : List (Attribute msg) -> List (Html msg) -> Html msg
 h1 =
@@ -46,9 +43,6 @@ h1 =
 
 
 {-| Make a second-level heading (styled like a tagline by default.)
-
-Use this to upgrade from `Nri.Ui.Text.V2.tagline`.
-
 -}
 h2 : List (Attribute msg) -> List (Html msg) -> Html msg
 h2 =
@@ -60,9 +54,6 @@ h2 =
 
 
 {-| Make a third-level heading (styled like a subhead by default.)
-
-Use this to upgrade from `Nri.Ui.Text.V2.subHeading`.
-
 -}
 h3 : List (Attribute msg) -> List (Html msg) -> Html msg
 h3 =
@@ -74,9 +65,6 @@ h3 =
 
 
 {-| Make a fourth-level heading (styled like a small heading by default.)
-
-Use this to upgrade from `Nri.Ui.Text.V2.smallHeading`.
-
 -}
 h4 : List (Attribute msg) -> List (Html msg) -> Html msg
 h4 =
