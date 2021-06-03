@@ -9,10 +9,6 @@ module Nri.Ui.Text.V5 exposing
 
   - adjusts link styles
 
-Changes from V3:
-
-  - Removes Headings (they now live in Nri.Ui.Heading.V2)
-
 Changes from V4:
 
   - Added `Attribute` for customizing styles
@@ -32,18 +28,7 @@ Changes from V4:
 
 ## Headings
 
-Headings now live in Nri.Ui.Heading.V2. Here's a mapping to help with upgrades:
-
-    | Nri.Ui.Text.V3    | Nri.Ui.Heading.V2 |
-    |===================|===================|
-    | Text.heading      | Heading.h1        |
-    | Text.tagline      | Heading.h2        |
-    | Text.subHeading   | Heading.h3        |
-    | Text.smallHeading | Heading.h4        |
-
-If you look at your new code and go "hmm, those shouldn't be at this level of
-heading" then you can customize the tag apart from the style using the new
-API. See the Nri.Ui.Heading.V2 docs for details.
+You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
 
 
 ## Paragraph styles
