@@ -46,6 +46,7 @@ type alias Tab id msg =
     , spaHref : Maybe String
     , disabled : Bool
     , labelledBy : Maybe String
+    , describedBy : List String
     }
 
 
@@ -63,6 +64,7 @@ fromList { id, idString } attributes =
             , spaHref = Nothing
             , disabled = False
             , labelledBy = Nothing
+            , describedBy = []
             }
     in
     List.foldl (\applyAttr acc -> applyAttr acc) defaults attributes
@@ -145,6 +147,13 @@ viewTab_ config index tab =
 
                             Just labelledById ->
                                 [ Aria.labelledBy labelledById ]
+                       )
+                    ++ (case tab.describedBy of
+                            [] ->
+                                []
+
+                            ids ->
+                                [ Aria.describedBy ids ]
                        )
                 )
                 tab.tabView

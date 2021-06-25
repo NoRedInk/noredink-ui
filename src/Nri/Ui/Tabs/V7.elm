@@ -2,7 +2,7 @@ module Nri.Ui.Tabs.V7 exposing
     ( view
     , Alignment(..)
     , Tab, Attribute, build
-    , tabString, tabHtml, withTooltip, disabled, labelledBy
+    , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
     , panelHtml
     , spaHref
     )
@@ -16,7 +16,7 @@ module Nri.Ui.Tabs.V7 exposing
 @docs view
 @docs Alignment
 @docs Tab, Attribute, build
-@docs tabString, tabHtml, withTooltip, disabled, labelledBy
+@docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
 @docs panelHtml
 @docs spaHref
 
@@ -76,6 +76,18 @@ This assumes an external tooltip is set and disables any internal tooltip config
 labelledBy : String -> Attribute id msg
 labelledBy labelledById =
     Attribute (\tab -> { tab | labelledBy = Just labelledById })
+
+
+{-| Like [`labelledBy`](#labelledBy), but it describes the given element
+instead of labeling it.
+
+This attribute can be used multiple times if more than one element describes
+this tab.
+
+-}
+describedBy : String -> Attribute id msg
+describedBy describedById =
+    Attribute (\tab -> { tab | describedBy = describedById :: tab.describedBy })
 
 
 {-| -}
