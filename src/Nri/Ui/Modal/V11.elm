@@ -445,8 +445,8 @@ buildAttributes attrs =
     List.foldl applyAttrs defaultAttributes attrs
 
 
-modalStyles : List Style
-modalStyles =
+modalStyles : ContainmentMode -> List Style
+modalStyles containmentMode =
     [ position relative
 
     -- Border
@@ -459,9 +459,13 @@ modalStyles =
     -- Size
     , width (px 600)
     , backgroundColor Colors.white
+    , case containmentMode of
+        Box ->
+            -- the modal should grow up to the viewport minus a 50px margin
+            maxHeight (calc (pct 100) minus (px 100))
 
-    -- the modal should grow up to the viewport minus a 50px margin
-    , maxHeight (calc (pct 100) minus (px 100))
+        Scrollable ->
+            Css.batch []
     ]
 
 
@@ -519,12 +523,20 @@ view config attrsList model =
                     , left zero
                     , width (pct 100)
                     , height (pct 100)
-                    , displayFlex
-                    , alignItems center
+                    , overflowY scroll
+                    , case attrs.containmentMode of
+                        Box ->
+                            Css.batch
+                                [ displayFlex
+                                , alignItems center
+                                ]
+
+                        Scrollable ->
+                            Css.batch []
                     ]
                 ]
                 [ viewBackdrop config.wrapMsg attrs.overlayColor
-                , div [ Attrs.css (List.append modalStyles attrs.customStyles) ]
+                , div [ Attrs.css (modalStyles attrs.containmentMode ++ attrs.customStyles) ]
                     [ viewModal
                         { title = config.title
                         , titleColor = attrs.titleColor
@@ -538,6 +550,7 @@ view config attrsList model =
                                 Nothing
                         , content = config.content
                         , footer = config.footer
+                        , containmentMode = attrs.containmentMode
                         }
                     ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
@@ -562,7 +575,7 @@ viewBackdrop wrapMsg color =
         -- well via the ESC key, so imo it's fine to have this div
         -- be clickable but not focusable.
         [ Attrs.css
-            [ position absolute
+            [ position fixed
             , width (pct 100)
             , height (pct 100)
             , backgroundColor color
@@ -586,6 +599,7 @@ viewModal :
     , closeButton : Maybe msg
     , content : List (Html msg)
     , footer : List (Html msg)
+    , containmentMode : ContainmentMode
     }
     -> Html msg
 viewModal config =
@@ -617,6 +631,7 @@ viewInnerContent :
         , visibleTitle : Bool
         , closeButton : Maybe msg
         , footer : List (Html msg)
+        , containmentMode : ContainmentMode
     }
     -> Html msg
 viewInnerContent ({ visibleTitle } as config) =
@@ -672,14 +687,21 @@ viewInnerContent ({ visibleTitle } as config) =
         ]
         [ div
             [ Attrs.css
-                [ Css.overflowY Css.auto
-                , Css.overflowX Css.hidden
-                , Css.minHeight (Css.px 50)
-                , Css.maxHeight
-                    (Css.calc (Css.vh 100)
-                        Css.minus
-                        (Css.px (footerHeight + titleHeight + 145))
-                    )
+                [ case config.containmentMode of
+                    Box ->
+                        Css.batch
+                            [ Css.overflowY Css.auto
+                            , Css.overflowX Css.hidden
+                            , Css.maxHeight
+                                (Css.calc (Css.vh 100)
+                                    Css.minus
+                                    (Css.px (footerHeight + titleHeight + 145))
+                                )
+                            , Css.minHeight (Css.px 50)
+                            ]
+
+                    Scrollable ->
+                        Css.batch []
                 , Css.width (Css.pct 100)
                 , Css.boxSizing Css.borderBox
                 , Css.paddingLeft (Css.px 40)
