@@ -5,6 +5,7 @@ module Nri.Ui.Modal.V11 exposing
     , Attribute
     , info, warning
     , showTitle, hideTitle
+    , box, scrollable
     , testId, css, custom
     , isOpen
     )
@@ -149,6 +150,7 @@ view model =
 @docs Attribute
 @docs info, warning
 @docs showTitle, hideTitle
+@docs box, scrollable
 @docs testId, css, custom
 
 
@@ -315,6 +317,28 @@ hideTitle =
     Attribute (\attrs -> { attrs | visibleTitle = False })
 
 
+type ContainmentMode
+    = Box
+    | Scrollable
+
+
+{-| Contain the modal content in a scrollable box in the middle of the
+page. This is the default; see [`scrollable`](#scrollable) for an alternative.
+-}
+box : Attribute
+box =
+    Attribute (\attrs -> { attrs | containmentMode = Box })
+
+
+{-| Make the entire modal scrollable. That is: if this is set, the modal will
+grow to the full height of the content, and the content, header, and footer
+will scroll up and down on the page.
+-}
+scrollable : Attribute
+scrollable =
+    Attribute (\attrs -> { attrs | containmentMode = Scrollable })
+
+
 {-| Do NOT use this function for attaching styles -- use the `css` helper instead.
 
     import Html.Styled.Attribute exposing (id)
@@ -381,6 +405,7 @@ type alias Attributes =
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     , closeButton : Bool
+    , containmentMode : ContainmentMode
     }
 
 
@@ -392,6 +417,7 @@ defaultAttributes =
     , customStyles = []
     , customAttributes = []
     , closeButton = False
+    , containmentMode = Box
     }
 
 

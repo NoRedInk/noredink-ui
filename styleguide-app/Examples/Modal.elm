@@ -57,6 +57,7 @@ type alias ViewSettings =
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
+    , scrollable : Bool
     }
 
 
@@ -76,6 +77,8 @@ initViewSettings =
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
+        -- TODO: false by default
+        |> Control.field "Scrollable" (Control.bool True)
 
 
 controlTitleVisibility : Control Modal.Attribute
@@ -182,6 +185,12 @@ example =
 
                       else
                         []
+                    , [ if settings.scrollable then
+                            Modal.scrollable
+
+                        else
+                            Modal.box
+                      ]
                     , Control.currentValue state.attributes
                     ]
                 )
