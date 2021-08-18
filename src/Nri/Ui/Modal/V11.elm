@@ -16,6 +16,7 @@ module Nri.Ui.Modal.V11 exposing
 
     - adds `testId` helper
     - adds data-nri-descriptions to the header, content, and footer
+    - adds a long version to the modal
 
 
 # Changes from V10:
