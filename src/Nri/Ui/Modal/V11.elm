@@ -667,40 +667,10 @@ viewInnerContent ({ visibleTitle } as config) =
 
                   else
                     Css.paddingBottom (Css.px 40)
-                , if visibleFooter then
-                    shadow (Transparent.customOpacity 0.15) (Css.px 16)
-
-                  else
-                    shadow (Transparent.customOpacity 0.4) (Css.px 30)
                 ]
             ]
             children
         ]
-
-
-shadow : Transparent.Opacity -> Css.Px -> Css.Style
-shadow opacity bottomShadowHeight =
-    let
-        to =
-            Transparent.fromRGBA { red = 0, green = 0, blue = 0, alpha = opacity }
-                |> Transparent.toRGBAString
-    in
-    Css.batch
-        [ -- Shadows for indicating that the content is scrollable
-          [ "/* TOP shadow */"
-          , "top linear-gradient(to top, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
-          , "top linear-gradient(to top, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.15)) scroll,"
-          , ""
-          , "/* BOTTOM shadow */"
-          , "bottom linear-gradient(to bottom, rgb(255, 255, 255), rgb(255, 255, 255)) local,"
-          , "bottom linear-gradient(to bottom, rgba(255, 255, 255, 0), " ++ to ++ ") scroll"
-          ]
-            |> String.join "\n"
-            |> Css.property "background"
-        , Css.backgroundSize2 (Css.pct 100) bottomShadowHeight
-        , Css.backgroundRepeat Css.noRepeat
-        ]
-
 
 {-| -}
 viewFooter : List (Html msg) -> Html msg
