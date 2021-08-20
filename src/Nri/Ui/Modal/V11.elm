@@ -672,6 +672,7 @@ viewInnerContent ({ visibleTitle } as config) =
             children
         ]
 
+
 {-| -}
 viewFooter : List (Html msg) -> Html msg
 viewFooter children =
