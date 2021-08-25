@@ -12,10 +12,11 @@ jobs:
 
       - uses: cachix/install-nix-action@v13
 
-      # - uses: cachix/cachix-action@v10
-      #   with:
-      #     name: noredink-ui
-      #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      #     extraPullNames: niv
+      - uses: cachix/cachix-action@v10
+        with:
+          name: noredink-ui
+          # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush: true
+          extraPullNames: niv
 
       - run: nix-shell --pure --run 'shake --verbose ci'
