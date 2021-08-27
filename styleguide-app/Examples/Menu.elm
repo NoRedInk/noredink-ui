@@ -17,7 +17,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Menu.V2 as Menu
+import Nri.Ui.Menu.V3 as Menu
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -29,7 +29,7 @@ import Task
 example : Example State Msg
 example =
     { name = "Menu"
-    , version = 2
+    , version = 3
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -69,16 +69,18 @@ view state =
                     False
     in
     [ div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.view" ]
+        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.button" ]
         , viewControl SetViewConfiguration state.viewConfiguration
         , Menu.view
+            ([ Menu.buttonId "1stPeriodEnglish__button"
+             , Menu.menuId "1stPeriodEnglish__menu"
+             , Menu.alignment viewConfiguration.alignment
+             , Menu.isDisabled viewConfiguration.isDisabled
+             ]
+                |> withOptionalAttribute Menu.menuWidth viewConfiguration.menuWidth
+            )
             { isOpen = isOpen "1stPeriodEnglish"
             , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-            , buttonId = "1stPeriodEnglish__button"
-            , menuId = "1stPeriodEnglish__menu"
-            , alignment = viewConfiguration.alignment
-            , isDisabled = viewConfiguration.isDisabled
-            , menuWidth = viewConfiguration.menuWidth
             , entries =
                 [ Menu.entry "hello-button" <|
                     \attrs ->
@@ -120,27 +122,30 @@ view state =
                             , ClickableText.custom attrs
                             ]
                 ]
-            }
-            { title = "1st Period English with Mx. Trainer"
-            , icon = viewConfiguration.icon
-            , hasBorder = viewConfiguration.hasBorder
-            , wrapping = viewConfiguration.wrapping
-            , buttonWidth = viewConfiguration.buttonWidth
+            , button =
+                Menu.button
+                    ([ Menu.hasBorder viewConfiguration.hasBorder
+                     , Menu.wrapping viewConfiguration.wrapping
+                     ]
+                        |> withOptionalAttribute Menu.icon viewConfiguration.icon
+                        |> withOptionalAttribute Menu.buttonWidth viewConfiguration.buttonWidth
+                    )
+                    "1st Period English with Mx. Trainer"
             }
         ]
     , div
         [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.viewCustom" ]
+        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.custom" ]
         , viewControl SetIconButtonWithMenuConfiguration state.viewCustomConfiguration
-        , Menu.viewCustom
-            { buttonId = "icon-button-with-menu__button"
-            , menuId = "icon-button-with-menu__menu"
-            , isOpen = isOpen "icon-button-with-menu"
-            , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-            , alignment = viewCustomConfiguration.alignment
-            , isDisabled = viewCustomConfiguration.isDisabled
-            , menuWidth = viewCustomConfiguration.menuWidth
-            , entries =
+        , Menu.view
+            ([ Menu.buttonId "icon-button-with-menu__button"
+             , Menu.menuId "icon-button-with-menu__menu"
+             , Menu.alignment viewCustomConfiguration.alignment
+             , Menu.isDisabled viewCustomConfiguration.isDisabled
+             ]
+                |> withOptionalAttribute Menu.menuWidth viewCustomConfiguration.menuWidth
+            )
+            { entries =
                 [ Menu.entry "see-more-button" <|
                     \attrs ->
                         ClickableText.button "See more"
@@ -150,29 +155,32 @@ view state =
                             , ClickableText.icon UiIcon.seeMore
                             ]
                 ]
+            , isOpen = isOpen "icon-button-with-menu"
+            , focusAndToggle = FocusAndToggle "icon-button-with-menu"
+            , button =
+                Menu.custom <|
+                    \buttonAttributes ->
+                        Tooltip.view
+                            { trigger =
+                                \attrs ->
+                                    ClickableSvg.button "Menu.viewCustom: Click me!"
+                                        viewCustomConfiguration.icon
+                                        [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
+                                        , ClickableSvg.custom (attrs ++ buttonAttributes)
+                                        , ClickableSvg.exactWidth 25
+                                        , ClickableSvg.exactHeight 25
+                                        , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                                        ]
+                            , id = "viewCustom-example-tooltip"
+                            }
+                            [ Tooltip.plaintext "Menu.viewCustom: Click me!"
+                            , Tooltip.primaryLabel
+                            , Tooltip.onHover (ShowTooltip "viewCustom")
+                            , Tooltip.open (Set.member "viewCustom" state.openTooltips)
+                            , Tooltip.smallPadding
+                            , Tooltip.fitToContent
+                            ]
             }
-          <|
-            \buttonAttributes ->
-                Tooltip.view
-                    { trigger =
-                        \attrs ->
-                            ClickableSvg.button "Menu.viewCustom: Click me!"
-                                viewCustomConfiguration.icon
-                                [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
-                                , ClickableSvg.custom (attrs ++ buttonAttributes)
-                                , ClickableSvg.exactWidth 25
-                                , ClickableSvg.exactHeight 25
-                                , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-                                ]
-                    , id = "viewCustom-example-tooltip"
-                    }
-                    [ Tooltip.plaintext "Menu.viewCustom: Click me!"
-                    , Tooltip.primaryLabel
-                    , Tooltip.onHover (ShowTooltip "viewCustom")
-                    , Tooltip.open (Set.member "viewCustom" state.openTooltips)
-                    , Tooltip.smallPadding
-                    , Tooltip.fitToContent
-                    ]
         ]
     ]
 
@@ -349,3 +357,13 @@ type alias Id =
 
 type alias Value =
     String
+
+
+withOptionalAttribute : (value -> attr) -> Maybe value -> List attr -> List attr
+withOptionalAttribute newAttribute maybeValue attributes =
+    case maybeValue of
+        Just value ->
+            newAttribute value :: attributes
+
+        Nothing ->
+            attributes
