@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -11,6 +11,7 @@ module Nri.Ui.Menu.V3 exposing
 {-| Changes from V2:
 
   - Adpoted attribute pattern
+  - Added option to customize the z-index
 
 A togglable menu view and related buttons.
 
@@ -25,7 +26,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
 @docs Alignment
 
 
@@ -96,6 +97,7 @@ type alias MenuConfig msg =
     , menuWidth : Maybe Int
     , buttonId : String
     , menuId : String
+    , zIndex : Int
     }
 
 
@@ -178,6 +180,13 @@ menuId value =
     Attribute <| \config -> { config | menuId = value }
 
 
+{-| The CSS `z-index` used to render the menu. Defaults to `1`.
+-}
+menuZIndex : Int -> Attribute msg
+menuZIndex value =
+    Attribute <| \config -> { config | zIndex = value }
+
+
 {-| Menu/pulldown configuration:
 
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
@@ -201,6 +210,7 @@ view attributes config =
             , menuWidth = Nothing
             , buttonId = ""
             , menuId = ""
+            , zIndex = 1
             }
 
         menuConfig =
@@ -420,7 +430,7 @@ viewCustom config =
                         }
                     )
                     :: class "Nri-Menu-Overlay"
-                    :: styleOverlay
+                    :: styleOverlay config
                 )
                 []
 
@@ -480,7 +490,7 @@ viewCustom config =
                     customButton buttonAttributes
             , div
                 [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
-                , styleContent contentVisible config.alignment
+                , styleContent contentVisible config
                 , Role.menu
                 , Aria.labelledBy config.buttonId
                 , Attributes.id config.menuId
@@ -490,7 +500,7 @@ viewCustom config =
                         |> Maybe.withDefault (Css.batch [])
                     ]
                 ]
-                (viewEntries
+                (viewEntries config
                     { focusAndToggle = config.focusAndToggle
                     , previousId = Maybe.withDefault "" maybeLastFocusableElementId
                     , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
@@ -530,13 +540,15 @@ getLastIds entries =
 
 
 viewEntries :
-    { focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
-    , previousId : String
-    , nextId : String
-    }
+    MenuConfig msg
+    ->
+        { focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
+        , previousId : String
+        , nextId : String
+        }
     -> List (Entry msg)
     -> List (Html msg)
-viewEntries { previousId, nextId, focusAndToggle } entries =
+viewEntries config { previousId, nextId, focusAndToggle } entries =
     let
         firstIds =
             getFirstIds entries
@@ -546,7 +558,8 @@ viewEntries { previousId, nextId, focusAndToggle } entries =
     in
     List.map3
         (\e upId downId ->
-            viewEntry focusAndToggle
+            viewEntry config
+                focusAndToggle
                 { upId = upId
                 , downId = downId
                 , entry_ = e
@@ -558,10 +571,11 @@ viewEntries { previousId, nextId, focusAndToggle } entries =
 
 
 viewEntry :
-    ({ isOpen : Bool, focus : Maybe String } -> msg)
+    MenuConfig msg
+    -> ({ isOpen : Bool, focus : Maybe String } -> msg)
     -> { upId : String, downId : String, entry_ : Entry msg }
     -> Html msg
-viewEntry focusAndToggle { upId, downId, entry_ } =
+viewEntry config focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
             div
@@ -604,8 +618,8 @@ viewEntry focusAndToggle { upId, downId, entry_ } =
                 _ ->
                     fieldset styleGroupContainer <|
                         legend styleGroupTitle
-                            [ span styleGroupTitleText [ Html.text title ] ]
-                            :: viewEntries
+                            [ span (styleGroupTitleText config) [ Html.text title ] ]
+                            :: viewEntries config
                                 { focusAndToggle = focusAndToggle
                                 , previousId = upId
                                 , nextId = downId
@@ -625,8 +639,8 @@ styleInnerContainer =
     ]
 
 
-styleOverlay : List (Html.Attribute msg)
-styleOverlay =
+styleOverlay : MenuConfig msg -> List (Html.Attribute msg)
+styleOverlay config =
     [ class "Overlay"
     , css
         [ position fixed
@@ -634,7 +648,7 @@ styleOverlay =
         , height (pct 100)
         , left zero
         , top zero
-        , zIndex (int 1)
+        , zIndex (int config.zIndex)
         ]
     ]
 
@@ -678,14 +692,14 @@ styleGroupTitle =
     ]
 
 
-styleGroupTitleText : List (Html.Attribute msg)
-styleGroupTitleText =
+styleGroupTitleText : MenuConfig msg -> List (Html.Attribute msg)
+styleGroupTitleText config =
     [ class "GroupTitleText"
     , css
         [ backgroundColor Colors.white
         , marginLeft (px 22)
         , padding2 zero (px 5)
-        , zIndex (int 2)
+        , zIndex (int <| config.zIndex + 1)
         , position relative
         ]
     ]
@@ -729,8 +743,8 @@ styleIconContainer =
     ]
 
 
-styleContent : Bool -> Alignment -> Html.Attribute msg
-styleContent contentVisible align =
+styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
+styleContent contentVisible config =
     css
         [ padding (px 25)
         , border3 (px 1) solid Colors.gray85
@@ -738,11 +752,10 @@ styleContent contentVisible align =
         , position absolute
         , borderRadius (px 8)
         , marginTop (px 10)
-        , zIndex (int 2)
+        , zIndex (int <| config.zIndex + 1)
         , backgroundColor Colors.white
         , listStyle Css.none
         , Css.property "box-shadow" "0 0 10px 0 rgba(0,0,0,0.1)"
-        , zIndex (int 2)
         , before
             [ property "content" "\"\""
             , position absolute
@@ -758,7 +771,7 @@ styleContent contentVisible align =
             , border3 (px 5) solid transparent
             , borderBottomColor Colors.white
             ]
-        , case align of
+        , case config.alignment of
             Left ->
                 Css.batch
                     [ left zero
