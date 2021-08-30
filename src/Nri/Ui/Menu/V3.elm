@@ -1,22 +1,45 @@
 module Nri.Ui.Menu.V3 exposing
-    ( Alignment(..)
-    , Attribute
+    ( view, button, custom
+    , Attribute, Button, ButtonAttribute
+    , alignment, isDisabled, menuWidth, buttonId, menuId
+    , Alignment(..)
+    , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
-    , alignment
-    , button
-    , buttonId
-    , buttonWidth
-    , custom
-    , entry
-    , group
-    , hasBorder
-    , icon
-    , isDisabled
-    , menuId
-    , menuWidth
-    , view
-    , wrapping
+    , Entry, group, entry
     )
+
+{-| Changes from V2:
+
+  - Adpoted attribute pattern
+
+A togglable menu view and related buttons.
+
+<https://zpl.io/a75OrE2>
+
+
+## Menu rendering
+
+@docs view, button, custom
+@docs Attribute, Button, ButtonAttribute
+
+
+## Menu attributes
+
+@docs alignment, isDisabled, menuWidth, buttonId, menuId
+@docs Alignment
+
+
+## Button attributes
+
+@docs icon, wrapping, hasBorder, buttonWidth
+@docs TitleWrapping
+
+
+## Menu content
+
+@docs Entry, group, entry
+
+-}
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
@@ -36,14 +59,17 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+{-| -}
 type ButtonAttribute
     = ButtonAttribute (ButtonConfig -> ButtonConfig)
 
 
+{-| -}
 type Attribute msg
     = Attribute (MenuConfig msg -> MenuConfig msg)
 
 
+{-| -}
 type Button msg
     = StandardButton (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
@@ -85,21 +111,29 @@ type alias ButtonConfig =
 -- Generators for ButtonAttribute
 
 
+{-| Display a particular icon to the left of the title
+-}
 icon : Svg.Svg -> ButtonAttribute
 icon svg =
     ButtonAttribute <| \config -> { config | icon = Just svg }
 
 
+{-| Determines how we deal with long titles. If not specified it defaults to `WrapAndExpandTitle`.
+-}
 wrapping : TitleWrapping -> ButtonAttribute
 wrapping value =
     ButtonAttribute <| \config -> { config | wrapping = value }
 
 
+{-| Whether the menu button has a border. If not specified it defaults to `True`.
+-}
 hasBorder : Bool -> ButtonAttribute
 hasBorder value =
     ButtonAttribute <| \config -> { config | hasBorder = value }
 
 
+{-| Fix the width of the button to a number of pixels
+-}
 buttonWidth : Int -> ButtonAttribute
 buttonWidth value =
     ButtonAttribute <| \config -> { config | buttonWidth = Just value }
@@ -109,31 +143,51 @@ buttonWidth value =
 -- Generators for Attribute
 
 
+{-| Where the menu popover should appear relative to the button
+-}
 alignment : Alignment -> Attribute msg
 alignment value =
     Attribute <| \config -> { config | alignment = value }
 
 
+{-| Whether the menu can be openned
+-}
 isDisabled : Bool -> Attribute msg
 isDisabled value =
     Attribute <| \config -> { config | isDisabled = value }
 
 
+{-| Fix the width of the popover |
+-}
 menuWidth : Int -> Attribute msg
 menuWidth value =
     Attribute <| \config -> { config | menuWidth = Just value }
 
 
+{-| A unique string identifier for the button that opens/closes the menu
+-}
 buttonId : String -> Attribute msg
 buttonId value =
     Attribute <| \config -> { config | buttonId = value }
 
 
+{-| A unique string identifier for the menu
+-}
 menuId : String -> Attribute msg
 menuId value =
     Attribute <| \config -> { config | menuId = value }
 
 
+{-| Menu/pulldown configuration:
+
+  - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
+  - `config`: Configuration parameters:
+      - `button`: the `Button` to open the menu
+      - `entries`: the entries of the menu
+      - `isOpen`: whether the menu is currently open or not
+      - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
+
+-}
 view : List (Attribute msg) -> Config msg -> Html msg
 view attributes config =
     let
@@ -202,6 +256,8 @@ type Alignment
     | Right
 
 
+{-| Defines a standard `Button` for the menu
+-}
 button : List ButtonAttribute -> String -> Button msg
 button attributes title =
     let
@@ -262,6 +318,8 @@ button attributes title =
         )
 
 
+{-| Defines a custom `Button` for the menu
+-}
 custom : (List (Html.Attribute msg) -> Html msg) -> Button msg
 custom builder =
     CustomButton builder
