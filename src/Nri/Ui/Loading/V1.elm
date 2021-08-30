@@ -46,7 +46,7 @@ loading_ : List Css.Style -> Html msg
 loading_ withCss =
     Html.div
         [ Attributes.css
-            ([ Css.backgroundColor Colors.blueDeep
+            ([ Css.backgroundColor Colors.white
              , Css.position Css.fixed
              , Css.displayFlex
              , Css.alignItems Css.center
@@ -69,7 +69,7 @@ spinningPencil : Nri.Ui.Svg.V1.Svg
 spinningPencil =
     UiIcon.edit
         |> Nri.Ui.Svg.V1.withLabel "Loading..."
-        |> Nri.Ui.Svg.V1.withColor Colors.white
+        |> Nri.Ui.Svg.V1.withColor Colors.blueDeep
         |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
         |> Nri.Ui.Svg.V1.withCss circlingCss
