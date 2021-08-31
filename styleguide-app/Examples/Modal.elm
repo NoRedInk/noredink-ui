@@ -239,7 +239,7 @@ continueButtonId =
 continueButton : Html Msg
 continueButton =
     Button.button "Continue"
-        [ Button.premium
+        [ Button.primary
         , Button.onClick CloseModal
         , Button.custom [ Attributes.id continueButtonId ]
         , Button.large
