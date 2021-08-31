@@ -72,12 +72,13 @@ view state =
         [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.button" ]
         , viewControl SetViewConfiguration state.viewConfiguration
         , Menu.view
-            ([ Menu.buttonId "1stPeriodEnglish__button"
-             , Menu.menuId "1stPeriodEnglish__menu"
-             , Menu.alignment viewConfiguration.alignment
-             , Menu.isDisabled viewConfiguration.isDisabled
-             ]
-                |> withOptionalAttribute Menu.menuWidth viewConfiguration.menuWidth
+            (List.filterMap identity
+                [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                , Just <| Menu.alignment viewConfiguration.alignment
+                , Just <| Menu.isDisabled viewConfiguration.isDisabled
+                , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
+                ]
             )
             { isOpen = isOpen "1stPeriodEnglish"
             , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
@@ -124,11 +125,12 @@ view state =
                 ]
             , button =
                 Menu.button
-                    ([ Menu.hasBorder viewConfiguration.hasBorder
-                     , Menu.wrapping viewConfiguration.wrapping
-                     ]
-                        |> withOptionalAttribute Menu.icon viewConfiguration.icon
-                        |> withOptionalAttribute Menu.buttonWidth viewConfiguration.buttonWidth
+                    (List.filterMap identity
+                        [ Just <| Menu.hasBorder viewConfiguration.hasBorder
+                        , Just <| Menu.wrapping viewConfiguration.wrapping
+                        , Maybe.map Menu.icon viewConfiguration.icon
+                        , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
+                        ]
                     )
                     "1st Period English with Mx. Trainer"
             }
@@ -138,12 +140,13 @@ view state =
         [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.custom" ]
         , viewControl SetIconButtonWithMenuConfiguration state.viewCustomConfiguration
         , Menu.view
-            ([ Menu.buttonId "icon-button-with-menu__button"
-             , Menu.menuId "icon-button-with-menu__menu"
-             , Menu.alignment viewCustomConfiguration.alignment
-             , Menu.isDisabled viewCustomConfiguration.isDisabled
-             ]
-                |> withOptionalAttribute Menu.menuWidth viewCustomConfiguration.menuWidth
+            (List.filterMap identity
+                [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                , Just <| Menu.menuId "icon-button-with-menu__menu"
+                , Just <| Menu.alignment viewCustomConfiguration.alignment
+                , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
+                , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
+                ]
             )
             { entries =
                 [ Menu.entry "see-more-button" <|
@@ -357,13 +360,3 @@ type alias Id =
 
 type alias Value =
     String
-
-
-withOptionalAttribute : (value -> attr) -> Maybe value -> List attr -> List attr
-withOptionalAttribute newAttribute maybeValue attributes =
-    case maybeValue of
-        Just value ->
-            newAttribute value :: attributes
-
-        Nothing ->
-            attributes
