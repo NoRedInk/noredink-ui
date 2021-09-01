@@ -314,6 +314,7 @@ viewIcon styles icon =
                 [ display inlineBlock
                 , backgroundColor Colors.white
                 , height (Css.px 27)
+                , borderRadius (px 4)
                 ]
             ]
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
