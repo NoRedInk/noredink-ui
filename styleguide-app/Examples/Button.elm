@@ -59,6 +59,7 @@ type ButtonType
 type Msg
     = SetDebugControlsState (Control Model)
     | ShowItWorked String String
+    | ToggleToggleButton Int
     | NoOp
 
 
@@ -77,6 +78,16 @@ update msg state =
                     Debug.log group message
             in
             ( state, Cmd.none )
+
+        ToggleToggleButton id ->
+            ( { state | pressedToggleButtons =
+                if Set.member id state.pressedToggleButtons then
+                    Set.remove id state.pressedToggleButtons
+                else
+                    Set.insert id state.pressedToggleButtons
+                }
+            , Cmd.none
+            )
 
         NoOp ->
             ( state, Cmd.none )
@@ -238,15 +249,15 @@ toggleButtons pressedToggleButtons =
         [ Heading.h3 [] [ text "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
-                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
-                , onSelect = ShowItWorked "ButtonExample" "onSelect"
+                { onDeselect = ToggleToggleButton 0
+                , onSelect = ToggleToggleButton 0
                 , label = "5"
                 , pressed = Set.member 0 pressedToggleButtons
                 }
             , Button.toggleButton
-                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
-                , onSelect = ShowItWorked "ButtonExample" "onSelect"
-                , label = "5"
+                { onDeselect = ToggleToggleButton 1
+                , onSelect = ToggleToggleButton 1
+                , label = "Kindergarten"
                 , pressed = Set.member 1 pressedToggleButtons
                 }
             ]
