@@ -17,6 +17,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Set exposing (Set)
 
 
 {-| -}
@@ -36,6 +37,7 @@ example =
 {-| -}
 type alias State =
     { debugControlsState : Control Model
+    , pressedToggleButtons : Set Int
     }
 
 
@@ -43,6 +45,7 @@ type alias State =
 init : State
 init =
     { debugControlsState = initDebugControls
+    , pressedToggleButtons = Set.singleton 1
     }
 
 
@@ -146,7 +149,7 @@ viewButtonExamples state =
     [ Control.view SetDebugControlsState state.debugControlsState
         |> fromUnstyled
     , buttons model
-    , toggleButtons
+    , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
@@ -229,8 +232,8 @@ buttons model =
         |> table []
 
 
-toggleButtons : Html Msg
-toggleButtons =
+toggleButtons : Set Int -> Html Msg
+toggleButtons pressedToggleButtons =
     div []
         [ Heading.h3 [] [ text "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
@@ -238,13 +241,13 @@ toggleButtons =
                 { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
                 , onSelect = ShowItWorked "ButtonExample" "onSelect"
                 , label = "5"
-                , pressed = False
+                , pressed = Set.member 0 pressedToggleButtons
                 }
             , Button.toggleButton
                 { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
                 , onSelect = ShowItWorked "ButtonExample" "onSelect"
                 , label = "5"
-                , pressed = True
+                , pressed = Set.member 1 pressedToggleButtons
                 }
             ]
         ]
