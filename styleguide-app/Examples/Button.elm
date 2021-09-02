@@ -34,8 +34,16 @@ example =
 
 
 {-| -}
-type State
-    = State (Control Model)
+type alias State =
+    { debugControlsState : Control Model
+    }
+
+
+{-| -}
+init : State
+init =
+    { debugControlsState = initDebugControls
+    }
 
 
 {-| -}
@@ -46,7 +54,7 @@ type ButtonType
 
 {-| -}
 type Msg
-    = SetState State
+    = SetDebugControlsState (Control Model)
     | ShowItWorked String String
     | NoOp
 
@@ -55,8 +63,10 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetState newState ->
-            ( newState, Cmd.none )
+        SetDebugControlsState newDebugControlsState ->
+            ( { state | debugControlsState = newDebugControlsState }
+            , Cmd.none
+            )
 
         ShowItWorked group message ->
             let
@@ -83,8 +93,8 @@ type alias Model =
 
 
 {-| -}
-init : State
-init =
+initDebugControls : Control Model
+initDebugControls =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
         |> Control.field "icon" iconChoice
@@ -113,7 +123,6 @@ init =
                 , ( "success", Control.value Button.success )
                 ]
             )
-        |> State
 
 
 iconChoice : Control.Control (Maybe Svg)
@@ -129,12 +138,12 @@ iconChoice =
 
 
 viewButtonExamples : State -> Html Msg
-viewButtonExamples (State control) =
+viewButtonExamples state =
     let
         model =
-            Control.currentValue control
+            Control.currentValue state.debugControlsState
     in
-    [ Control.view (State >> SetState) control
+    [ Control.view SetDebugControlsState state.debugControlsState
         |> fromUnstyled
     , buttons model
     , toggleButtons
