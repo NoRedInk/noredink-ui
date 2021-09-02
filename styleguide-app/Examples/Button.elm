@@ -80,12 +80,14 @@ update msg state =
             ( state, Cmd.none )
 
         ToggleToggleButton id ->
-            ( { state | pressedToggleButtons =
-                if Set.member id state.pressedToggleButtons then
-                    Set.remove id state.pressedToggleButtons
-                else
-                    Set.insert id state.pressedToggleButtons
-                }
+            ( { state
+                | pressedToggleButtons =
+                    if Set.member id state.pressedToggleButtons then
+                        Set.remove id state.pressedToggleButtons
+
+                    else
+                        Set.insert id state.pressedToggleButtons
+              }
             , Cmd.none
             )
 
