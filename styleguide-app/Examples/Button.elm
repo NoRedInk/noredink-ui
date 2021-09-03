@@ -17,6 +17,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Set exposing (Set)
 
 
 {-| -}
@@ -34,8 +35,18 @@ example =
 
 
 {-| -}
-type State
-    = State (Control Model)
+type alias State =
+    { debugControlsState : Control Model
+    , pressedToggleButtons : Set Int
+    }
+
+
+{-| -}
+init : State
+init =
+    { debugControlsState = initDebugControls
+    , pressedToggleButtons = Set.singleton 1
+    }
 
 
 {-| -}
@@ -46,8 +57,9 @@ type ButtonType
 
 {-| -}
 type Msg
-    = SetState State
+    = SetDebugControlsState (Control Model)
     | ShowItWorked String String
+    | ToggleToggleButton Int
     | NoOp
 
 
@@ -55,8 +67,10 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetState newState ->
-            ( newState, Cmd.none )
+        SetDebugControlsState newDebugControlsState ->
+            ( { state | debugControlsState = newDebugControlsState }
+            , Cmd.none
+            )
 
         ShowItWorked group message ->
             let
@@ -64,6 +78,18 @@ update msg state =
                     Debug.log group message
             in
             ( state, Cmd.none )
+
+        ToggleToggleButton id ->
+            ( { state
+                | pressedToggleButtons =
+                    if Set.member id state.pressedToggleButtons then
+                        Set.remove id state.pressedToggleButtons
+
+                    else
+                        Set.insert id state.pressedToggleButtons
+              }
+            , Cmd.none
+            )
 
         NoOp ->
             ( state, Cmd.none )
@@ -83,8 +109,8 @@ type alias Model =
 
 
 {-| -}
-init : State
-init =
+initDebugControls : Control Model
+initDebugControls =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
         |> Control.field "icon" iconChoice
@@ -113,7 +139,6 @@ init =
                 , ( "success", Control.value Button.success )
                 ]
             )
-        |> State
 
 
 iconChoice : Control.Control (Maybe Svg)
@@ -129,15 +154,15 @@ iconChoice =
 
 
 viewButtonExamples : State -> Html Msg
-viewButtonExamples (State control) =
+viewButtonExamples state =
     let
         model =
-            Control.currentValue control
+            Control.currentValue state.debugControlsState
     in
-    [ Control.view (State >> SetState) control
+    [ Control.view SetDebugControlsState state.debugControlsState
         |> fromUnstyled
     , buttons model
-    , toggleButtons
+    , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
@@ -220,22 +245,22 @@ buttons model =
         |> table []
 
 
-toggleButtons : Html Msg
-toggleButtons =
+toggleButtons : Set Int -> Html Msg
+toggleButtons pressedToggleButtons =
     div []
         [ Heading.h3 [] [ text "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
-                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
-                , onSelect = ShowItWorked "ButtonExample" "onSelect"
+                { onDeselect = ToggleToggleButton 0
+                , onSelect = ToggleToggleButton 0
                 , label = "5"
-                , pressed = False
+                , pressed = Set.member 0 pressedToggleButtons
                 }
             , Button.toggleButton
-                { onDeselect = ShowItWorked "ButtonExample" "onDeselect"
-                , onSelect = ShowItWorked "ButtonExample" "onSelect"
-                , label = "5"
-                , pressed = True
+                { onDeselect = ToggleToggleButton 1
+                , onSelect = ToggleToggleButton 1
+                , label = "Kindergarten"
+                , pressed = Set.member 1 pressedToggleButtons
                 }
             ]
         ]
