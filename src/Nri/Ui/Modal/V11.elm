@@ -663,7 +663,7 @@ viewInnerContent ({ visibleTitle } as config) =
                   else
                     Css.paddingTop (Css.px 40)
                 , if visibleFooter then
-                    Css.paddingBottom Css.zero
+                    Css.paddingBottom (Css.px 30)
 
                   else
                     Css.paddingBottom (Css.px 40)
@@ -687,9 +687,11 @@ viewFooter children =
                 , Css.flexDirection Css.column
                 , Css.flexGrow (Css.int 2)
                 , Css.flexWrap Css.noWrap
-                , Css.margin4 (Css.px 30) Css.zero Css.zero Css.zero
-                , Css.paddingBottom (Css.px 30)
+                , Css.padding2 (Css.px 30) Css.zero
                 , Css.width (Css.pct 100)
+                , Css.backgroundColor Colors.gray96
+                , Css.borderTop3 (Css.px 1) Css.solid Colors.gray92
+                , Css.borderRadius4 Css.zero Css.zero (Css.px 20) (Css.px 20)
                 ]
             , ExtraAttributes.nriDescription "modal-footer"
             ]
