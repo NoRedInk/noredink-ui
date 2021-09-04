@@ -85,7 +85,7 @@ view model =
 
 viewVanilla : State -> Html Msg
 viewVanilla state =
-    div [ css [ Css.margin (Css.px 8) ] ]
+    div []
         [ RadioButton.view
             { label = "Cats"
             , value = "Cats"
