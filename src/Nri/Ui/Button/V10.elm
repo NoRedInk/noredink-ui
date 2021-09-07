@@ -597,6 +597,7 @@ toggleButton config =
         (styledName "toggleButton")
         [ buttonStyles Medium WidthUnbounded secondaryColors []
         , toggledStyles
+        , Css.verticalAlign Css.middle
         ]
         [ Events.onClick
             (if config.pressed then
