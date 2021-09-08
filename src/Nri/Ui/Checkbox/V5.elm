@@ -164,11 +164,10 @@ checkboxContainer model =
             , height inherit
             , position relative
             , pseudoClass "focus-within"
-                [ Css.Global.descendants
-                    [ Css.Global.class "checkbox-icon-container"
-                        [ borderColor (rgb 0 95 204)
-                        ]
-                    ]
+                [ border3 (px 2) solid Colors.azure
+                , borderRadius (px 4)
+                , marginLeft (px -2)
+                , marginTop (px -2)
                 ]
             , Css.Global.descendants
                 [ Css.Global.input [ position absolute, top (calc (pct 50) minus (px 10)), left (px 10) ]
