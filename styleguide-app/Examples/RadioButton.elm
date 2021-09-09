@@ -111,7 +111,7 @@ viewPremium state =
         premiumConfig =
             Control.currentValue state.premiumControl
     in
-    div [ css [ Css.margin (Css.px 8) ] ]
+    div []
         [ Heading.h4 [] [ Html.text "Premium Radio Buttons" ]
         , Html.div [ css [ Css.margin (Css.px 8) ] ]
             [ Control.view SetPremiumControl state.premiumControl
