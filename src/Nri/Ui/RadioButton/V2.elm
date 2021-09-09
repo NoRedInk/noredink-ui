@@ -143,7 +143,6 @@ internalView config =
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
-            , display inlineBlock
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
@@ -178,7 +177,7 @@ internalView config =
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ padding4 zero zero zero (px 35)
+                [ padding4 (px 4) zero (px 4) (px 40)
                 , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
@@ -193,10 +192,8 @@ internalView config =
                 , position relative
                 , outline none
                 , margin zero
-                , display inlineFlex
-                , alignItems center
+                , display inlineBlock
                 , color Colors.navy
-                , Css.height (px 27)
                 ]
             ]
             [ radioInputIcon
@@ -214,7 +211,7 @@ internalView config =
                     ]
 
                  else
-                    []
+                    [ css [ verticalAlign middle ] ]
                 )
                 [ Html.text config.label
                 , viewIf
@@ -285,7 +282,9 @@ radioInputIcon config =
             , left zero
             , top zero
             , Css.property "transition" ".3s all"
+            , border3 (px 2) solid transparent
             , borderRadius (px 50)
+            , padding (px 2)
             , displayFlex
             , justifyContent center
             , alignItems center
