@@ -279,7 +279,7 @@ positioning : Style
 positioning =
     batch
         [ display inlineBlock
-        , padding4 (px 13) zero (px 13) (px 35)
+        , padding4 (px 13) zero (px 13) (px 40)
         , position relative
         ]
 
@@ -300,8 +300,9 @@ viewIcon styles icon =
         [ css
             [ position absolute
             , left zero
-            , paddingTop (px 4)
             , top (calc (pct 50) minus (px 18))
+            , border3 (px 2) solid transparent
+            , padding (px 2)
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
