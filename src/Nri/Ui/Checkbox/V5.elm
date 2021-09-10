@@ -163,6 +163,7 @@ checkboxContainer model =
             [ display block
             , height inherit
             , position relative
+            , marginLeft (px -4)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "checkbox-icon-container"

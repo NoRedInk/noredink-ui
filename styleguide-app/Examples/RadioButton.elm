@@ -35,7 +35,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , view = view
-    , categories = [ Layout ]
+    , categories = [ Inputs ]
     , keyboardSupport =
         [ { keys = [ Arrow Left ]
           , result = "Move the focus & select the radio button to the left"
@@ -85,7 +85,7 @@ view model =
 
 viewVanilla : State -> Html Msg
 viewVanilla state =
-    div [ css [ Css.margin (Css.px 8) ] ]
+    div []
         [ RadioButton.view
             { label = "Cats"
             , value = "Cats"
@@ -111,7 +111,7 @@ viewPremium state =
         premiumConfig =
             Control.currentValue state.premiumControl
     in
-    div [ css [ Css.margin (Css.px 8) ] ]
+    div []
         [ Heading.h4 [] [ Html.text "Premium Radio Buttons" ]
         , Html.div [ css [ Css.margin (Css.px 8) ] ]
             [ Control.view SetPremiumControl state.premiumControl

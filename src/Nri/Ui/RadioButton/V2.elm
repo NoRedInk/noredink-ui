@@ -143,6 +143,9 @@ internalView config =
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
+            , marginLeft (px -4)
+            , display inlineBlock
+            , Css.height (px 34)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
@@ -177,7 +180,7 @@ internalView config =
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ padding4 (px 4) zero (px 4) (px 40)
+                [ padding4 (px 6) zero (px 4) (px 40)
                 , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
