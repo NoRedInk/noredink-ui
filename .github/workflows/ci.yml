@@ -15,8 +15,7 @@ jobs:
       - uses: cachix/cachix-action@v10
         with:
           name: noredink-ui
-          # authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          skipPush: true
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           extraPullNames: niv
 
       - run: nix-shell --pure --run 'shake --verbose ci'
