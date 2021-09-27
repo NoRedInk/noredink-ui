@@ -26,7 +26,7 @@ import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed as Keyed
 import Nri.Ui
 import Nri.Ui.AssetPath exposing (Asset(..))
-import Nri.Ui.Button.V8 as Button
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -330,7 +330,7 @@ viewActiveFooter { previous, current, upcoming } =
     viewFlexibleFooter
         { buttonLabel = current.buttonLabel
         , buttonMsg = nextPanel
-        , buttonState = Button.Enabled
+        , buttonState = Button.enabled
         }
         dots
 
@@ -338,7 +338,7 @@ viewActiveFooter { previous, current, upcoming } =
 viewFlexibleFooter :
     { buttonLabel : String
     , buttonMsg : msg
-    , buttonState : Button.ButtonState
+    , buttonState : Button.Attribute msg
     }
     -> List (Dot msg)
     -> Html msg
@@ -353,16 +353,12 @@ viewFlexibleFooter { buttonLabel, buttonMsg, buttonState } dotList =
         , Css.minHeight (Css.px 125) -- so the footer doesn't compress on Safari
         ]
         []
-        [ Button.button
-            { onClick = buttonMsg
-            , size = Button.Large
-            , style = Button.Primary
-            , width = Button.WidthExact 230
-            }
-            { label = buttonLabel
-            , state = buttonState
-            , icon = Nothing
-            }
+        [ Button.button buttonLabel
+            [ Button.onClick buttonMsg
+            , Button.large
+            , Button.exactWidth 230
+            , buttonState
+            ]
         , dotList
             |> List.map dot
             |> div [ css [ Css.marginTop (Css.px 16) ] ]
