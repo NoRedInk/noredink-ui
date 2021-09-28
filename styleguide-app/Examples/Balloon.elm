@@ -39,9 +39,9 @@ type alias State =
 
 type alias Settings =
     { copy : String
-    , theme : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
-    , position : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
-    , width : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
+    , theme : Maybe ( String, Balloon.Attribute )
+    , position : Maybe ( String, Balloon.Attribute )
+    , width : Maybe ( String, Balloon.Attribute )
     }
 
 
@@ -54,7 +54,7 @@ init =
         |> Control.field "width" (Control.maybe False widthOptions)
 
 
-themeOptions : Control ( String, Balloon.Attribute padding paddingUnits )
+themeOptions : Control ( String, Balloon.Attribute )
 themeOptions =
     Control.choice
         [ ( "green", Control.value ( "Balloon.green", Balloon.green ) )
@@ -65,7 +65,7 @@ themeOptions =
         ]
 
 
-positionOptions : Control ( String, Balloon.Attribute padding paddingUnits )
+positionOptions : Control ( String, Balloon.Attribute )
 positionOptions =
     Control.choice
         [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
@@ -75,7 +75,7 @@ positionOptions =
         ]
 
 
-widthOptions : Control ( String, Balloon.Attribute padding paddingUnits )
+widthOptions : Control ( String, Balloon.Attribute )
 widthOptions =
     Control.choice
         [ ( "px"

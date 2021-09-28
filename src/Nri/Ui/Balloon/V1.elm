@@ -3,7 +3,8 @@ module Nri.Ui.Balloon.V1 exposing
     , Attribute
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
-    , widthPx, widthPct, padding
+    , widthPx, widthPct
+    , paddingPx
     )
 
 {-| You propably want to use `Nri.Tooltip` not this.
@@ -19,7 +20,8 @@ Use these if you don't want the standard green balloon
 @docs Attribute
 @docs green, purple, orange, white, navy
 @docs onBottom, onLeft, onRight, onTop
-@docs widthPx, widthPct, padding, smallArrow
+@docs widthPx, widthPct
+@docs paddingPx
 
     balloon [ green, onTop ] (text "hello")
 
@@ -42,19 +44,19 @@ import Nri.Ui.Fonts.V1 as Fonts
     |_________|
 
 -}
-balloon : List (Attribute padding paddingUnits) -> Html msg -> Html msg
+balloon : List Attribute -> Html msg -> Html msg
 balloon customizations content =
     custom (customizationsToConfig customizations) content
 
 
 {-| Balloon's attributes.
 -}
-type Attribute padding paddingUnits
+type Attribute
     = Theme Theme
     | Position Position
     | WidthPx Float
     | WidthPct Float
-    | Padding (Length padding paddingUnits)
+    | PaddingPx Float
 
 
 {-| Balloon with the arrow on the bottom.
@@ -65,7 +67,7 @@ type Attribute padding paddingUnits
         \/
 
 -}
-onTop : Attribute padding paddingUnits
+onTop : Attribute
 onTop =
     Position OnTop
 
@@ -78,7 +80,7 @@ onTop =
      |_________|
 
 -}
-onRight : Attribute padding paddingUnits
+onRight : Attribute
 onRight =
     Position OnRight
 
@@ -90,7 +92,7 @@ onRight =
     |_________|
 
 -}
-onBottom : Attribute padding paddingUnits
+onBottom : Attribute
 onBottom =
     Position OnBottom
 
@@ -103,88 +105,88 @@ onBottom =
      |_________|
 
 -}
-onLeft : Attribute padding paddingUnits
+onLeft : Attribute
 onLeft =
     Position OnLeft
 
 
 {-| Green theme (This is the default theme.)
 -}
-green : Attribute padding paddingUnits
+green : Attribute
 green =
     Theme Green
 
 
 {-| Orange theme
 -}
-orange : Attribute padding paddingUnits
+orange : Attribute
 orange =
     Theme Orange
 
 
 {-| Purple theme
 -}
-purple : Attribute padding paddingUnits
+purple : Attribute
 purple =
     Theme Purple
 
 
 {-| White theme
 -}
-white : Attribute padding paddingUnits
+white : Attribute
 white =
     Theme White
 
 
 {-| Navy theme
 -}
-navy : Attribute padding paddingUnits
+navy : Attribute
 navy =
     Theme Navy
 
 
 {-| Width of the balloon in pixels.
 -}
-widthPx : Float -> Attribute padding paddingUnits
+widthPx : Float -> Attribute
 widthPx =
     WidthPx
 
 
 {-| Width of the balloon as a percentage of the element containing it.
 -}
-widthPct : Float -> Attribute padding paddingUnits
+widthPct : Float -> Attribute
 widthPct =
     WidthPct
 
 
-{-| Padding of the balloon
+{-| Padding of the balloon in pixels.
 -}
-padding : Length padding paddingUnits -> Attribute padding paddingUnits
-padding =
-    Padding
+paddingPx : Float -> Attribute
+paddingPx =
+    PaddingPx
 
 
 
 -- INTERNALS
 
 
-type alias Config padding paddingUnits =
+type alias Config =
     { position : Position
     , theme : Theme
     , width : Maybe Css.Style
-    , padding : Maybe (Length padding paddingUnits)
+    , padding : Css.Style
     , arrowSize : ArrowSize
     }
 
 
 {-| Default configuration
 -}
-defaultConfig : Config padding paddingUnits
+defaultConfig : Config
 defaultConfig =
     { position = NoArrow
     , theme = Green
     , width = Nothing
-    , padding = Nothing
+    , padding = Css.padding (px 20)
     , arrowSize = Medium
     }
 
@@ -213,7 +215,7 @@ type ArrowSize
     = Medium
 
 
-custom : Config padding paddingUnits -> Html msg -> Html msg
+custom : Config -> Html msg -> Html msg
 custom config content =
     container config.position
         [ viewBalloon config.theme config.width config.padding [ content ]
@@ -263,8 +265,8 @@ container position =
         []
 
 
-viewBalloon : Theme -> Maybe Css.Style -> Maybe (Length padding paddingUnits) -> List (Html msg) -> Html msg
-viewBalloon theme_ width_ paddingLength contents =
+viewBalloon : Theme -> Maybe Css.Style -> Css.Style -> List (Html msg) -> Html msg
+viewBalloon theme_ width_ padding contents =
     styled div
         (List.filterMap identity
             [ Just (display inlineBlock)
@@ -272,12 +274,7 @@ viewBalloon theme_ width_ paddingLength contents =
             , Just (textAlign left)
             , Just (position relative)
             , Just (Css.borderRadius (px 8))
-            , case paddingLength of
-                Just pl ->
-                    Just (Css.padding pl)
-
-                Nothing ->
-                    Just (Css.padding (px 20))
+            , Just padding
             , Just (balloonTheme theme_)
             , width_
             ]
@@ -448,12 +445,12 @@ arrowTheme theme =
                 ]
 
 
-customizationsToConfig : List (Attribute padding paddingUnits) -> Config padding paddingUnits
+customizationsToConfig : List Attribute -> Config
 customizationsToConfig customizations =
     List.foldl customize defaultConfig customizations
 
 
-customize : Attribute padding paddingUnits -> Config padding paddingUnits -> Config padding paddingUnits
+customize : Attribute -> Config -> Config
 customize customization config =
     case customization of
         Position position ->
@@ -468,5 +465,5 @@ customize customization config =
         WidthPct width_ ->
             { config | width = Just (Css.width (Css.pct width_)) }
 
-        Padding length ->
-            { config | padding = Just length }
+        PaddingPx length ->
+            { config | padding = Css.padding (Css.px length) }
