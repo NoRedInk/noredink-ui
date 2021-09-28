@@ -42,6 +42,7 @@ type alias Settings =
     , theme : Maybe ( String, Balloon.Attribute )
     , position : Maybe ( String, Balloon.Attribute )
     , width : Maybe ( String, Balloon.Attribute )
+    , padding : Maybe ( String, Balloon.Attribute )
     }
 
 
@@ -52,6 +53,7 @@ init =
         |> Control.field "theme" (Control.maybe False themeOptions)
         |> Control.field "position" (Control.maybe False positionOptions)
         |> Control.field "width" (Control.maybe False widthOptions)
+        |> Control.field "padding" (Control.maybe False paddingOptions)
 
 
 themeOptions : Control ( String, Balloon.Attribute )
@@ -91,6 +93,13 @@ widthOptions =
         ]
 
 
+paddingOptions : Control ( String, Balloon.Attribute )
+paddingOptions =
+    Control.map
+        (\w -> ( "Balloon.paddingPx " ++ String.fromFloat w, Balloon.paddingPx w ))
+        (controlFloat 10)
+
+
 controlFloat : Float -> Control Float
 controlFloat default =
     Control.map (String.toFloat >> Maybe.withDefault default)
@@ -122,6 +131,7 @@ view state =
                 [ settings.theme
                 , settings.position
                 , settings.width
+                , settings.padding
                 ]
     in
     [ Control.view SetDebugControlsState state |> fromUnstyled
