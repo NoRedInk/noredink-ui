@@ -397,6 +397,9 @@ view_ label (InputType inputType) config currentValue =
             maybeValue
                 |> Maybe.map attr
                 |> Maybe.withDefault Extra.none
+
+        stringValue =
+            inputType.toString currentValue
     in
     div
         ([ Attributes.css
@@ -424,7 +427,7 @@ view_ label (InputType inputType) config currentValue =
                                 ]
                         ]
                    , Attributes.placeholder placeholder_
-                   , value (inputType.toString currentValue)
+                   , value stringValue
                    , Attributes.disabled disabled_
                    , onInput inputType.fromString
                    , maybeAttr Events.onBlur config.onBlur
@@ -457,8 +460,11 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , viewJust
-            (\resetAction ->
+        , case ( config.onReset, stringValue ) of
+            ( _, "" ) ->
+                Html.text ""
+
+            ( Just resetAction, _ ) ->
                 ClickableSvg.button ("Reset " ++ label)
                     UiIcon.x
                     [ ClickableSvg.onClick resetAction
@@ -470,8 +476,9 @@ view_ label (InputType inputType) config currentValue =
                         , Css.top (Css.px 25)
                         ]
                     ]
-            )
-            config.onReset
+
+            ( Nothing, _ ) ->
+                Html.text ""
         , case errorMessage_ of
             Just m ->
                 Message.view
