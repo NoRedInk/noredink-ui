@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
-    , InputType, number, float, text, password, email
+    , InputType, number, float, text, password, email, search
     , Attribute, placeholder, hiddenLabel, onBlur, autofocus
     , css, custom, nriDescription, id, testId
     , disabled, loading, errorIf, errorMessage
@@ -24,7 +24,7 @@ module Nri.Ui.TextInput.V6 exposing
 
 ### Input types
 
-@docs InputType, number, float, text, password, email
+@docs InputType, number, float, text, password, email, search
 
 
 ## Attributes
@@ -126,6 +126,19 @@ email toMsg =
         , fieldType = "text"
         , inputMode = Just "email"
         , autocomplete = Just "email"
+        }
+
+
+{-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
+-}
+search : (String -> msg) -> InputType String msg
+search toMsg =
+    InputType
+        { toString = identity
+        , fromString = toMsg
+        , fieldType = "search"
+        , inputMode = Nothing
+        , autocomplete = Nothing
         }
 
 

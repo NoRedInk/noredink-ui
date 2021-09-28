@@ -24,6 +24,7 @@ type Msg
     | SetNumberInput (Maybe Int)
     | SetFloatInput (Maybe Float)
     | SetPassword String
+    | SetSearchTerm String
     | UpdateControl (Control ExampleConfig)
 
 
@@ -33,6 +34,7 @@ type alias State =
     , floatInputValue : Maybe Float
     , stringInputValues : Dict Id String
     , passwordInputValue : String
+    , searchInputValue : String
     , control : Control ExampleConfig
     }
 
@@ -153,6 +155,19 @@ example =
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
+                , Heading.h3 [] [ Html.text "TextInput.search" ]
+                , TextInput.view (exampleConfig.label ++ " (search)")
+                    (TextInput.search SetSearchTerm)
+                    (List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
+                        ]
+                    )
+                    state.searchInputValue
                 , Heading.h3 [] [ text "TextInput.onBlur" ]
                 , TextInput.view (exampleConfig.label ++ " (onBlur)")
                     (TextInput.text (SetTextInput 7))
@@ -198,6 +213,7 @@ init =
     , floatInputValue = Nothing
     , stringInputValues = Dict.empty
     , passwordInputValue = ""
+    , searchInputValue = ""
     , control =
         Control.record ExampleConfig
             |> Control.field "label" (Control.string "Assignment name")
@@ -234,6 +250,9 @@ update msg state =
 
         SetPassword password ->
             ( { state | passwordInputValue = password }, Cmd.none )
+
+        SetSearchTerm searchInputValue ->
+            ( { state | searchInputValue = searchInputValue }, Cmd.none )
 
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
