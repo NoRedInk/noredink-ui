@@ -48,6 +48,7 @@ type alias ExampleConfig =
     , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
     , maybeDisabledAttribute : Maybe (TextInput.Attribute Msg)
     , maybeLoadingAttribute : Maybe (TextInput.Attribute Msg)
+    , onBlur : Bool
     }
 
 
@@ -67,7 +68,7 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
-                attributes =
+                attributes { setField, onBlur } =
                     List.filterMap identity
                         [ exampleConfig.maybeErrorAttribute1
                         , exampleConfig.maybeErrorAttribute2
@@ -75,6 +76,11 @@ example =
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
                         , exampleConfig.maybeLoadingAttribute
+                        , if exampleConfig.onBlur then
+                            Just (TextInput.onBlur (setField onBlur))
+
+                          else
+                            Nothing
                         ]
             in
             [ Control.view UpdateControl state.control
@@ -89,48 +95,47 @@ example =
                 [ Heading.h3 [] [ text "TextInput.text" ]
                 , TextInput.view (exampleConfig.label ++ " (text)")
                     (TextInput.text (SetTextInput 1))
-                    attributes
+                    (attributes { setField = SetTextInput 1, onBlur = "Blurred!!!" })
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                 , Heading.h3 [] [ text "TextInput.number" ]
                 , TextInput.view (exampleConfig.label ++ " (number)")
                     (TextInput.number SetNumberInput)
-                    (TextInput.id "hey-this-is-a-test-id" :: attributes)
+                    (TextInput.id "hey-this-is-a-test-id"
+                        :: attributes { setField = SetNumberInput, onBlur = Just 10000000 }
+                    )
                     state.numberInputValue
                 , Heading.h3 [] [ text "TextInput.float" ]
                 , TextInput.view (exampleConfig.label ++ " (float)")
                     (TextInput.float SetFloatInput)
-                    attributes
+                    (attributes { setField = SetFloatInput, onBlur = Just 1.00000001 })
                     state.floatInputValue
                 , Heading.h3 [] [ text "TextInput.password" ]
                 , TextInput.view (exampleConfig.label ++ " (password)")
                     (TextInput.password SetPassword)
-                    attributes
+                    (attributes { setField = SetPassword, onBlur = "Blurred!!!" })
                     state.passwordInputValue
                 , Heading.h3 [] [ text "TextInput.email" ]
                 , TextInput.view (exampleConfig.label ++ " (email)")
                     (TextInput.email (SetTextInput 2))
-                    attributes
+                    (attributes { setField = SetTextInput 2, onBlur = "Blurred!!!" })
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.writing" ]
                 , TextInput.view (exampleConfig.label ++ " (writing)")
                     (TextInput.text (SetTextInput 4))
-                    (TextInput.writing :: attributes)
+                    (TextInput.writing
+                        :: attributes { setField = SetTextInput 4, onBlur = "Blurred!!!" }
+                    )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.search" ]
                 , TextInput.view (exampleConfig.label ++ " (search)")
                     (TextInput.search SetSearchTerm)
-                    attributes
+                    (attributes { setField = SetSearchTerm, onBlur = "Blurred!!!" })
                     state.searchInputValue
-                , Heading.h3 [] [ text "TextInput.onBlur" ]
-                , TextInput.view (exampleConfig.label ++ " (onBlur)")
-                    (TextInput.text (SetTextInput 7))
-                    (TextInput.onBlur (SetTextInput 7 "Blurred!") :: attributes)
-                    (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
                 , Heading.h3 [] [ text "TextInput.css" ]
                 , TextInput.view (exampleConfig.label ++ " (custom CSS)")
                     (TextInput.text (SetTextInput 8))
                     (TextInput.css [ Css.backgroundColor Colors.azure ]
-                        :: attributes
+                        :: attributes { setField = SetTextInput 8, onBlur = "Blurred!!!" }
                     )
                     (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
                 ]
@@ -164,6 +169,8 @@ init =
                 (Control.maybe False (Control.value TextInput.disabled))
             |> Control.field "TextInput.loading"
                 (Control.maybe False (Control.value TextInput.loading))
+            |> Control.field "TextInput.onBlur"
+                (Control.bool False)
     }
 
 
