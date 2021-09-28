@@ -135,7 +135,7 @@ view state =
                 ]
     in
     [ Control.view SetDebugControlsState state |> fromUnstyled
-    , Html.Styled.code [ css [ Css.display Css.block ] ]
+    , Html.Styled.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
         [ text <|
             "Balloon.balloon [ "
                 ++ String.join ", " (List.map Tuple.first attributes)
