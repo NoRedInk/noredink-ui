@@ -44,9 +44,12 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Message.V3 as Message
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
 
@@ -454,6 +457,21 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
+        , viewJust
+            (\resetAction ->
+                ClickableSvg.button ("Reset " ++ label)
+                    UiIcon.x
+                    [ ClickableSvg.onClick resetAction
+                    , ClickableSvg.exactWidth 14
+                    , ClickableSvg.exactHeight 14
+                    , ClickableSvg.css
+                        [ Css.position Css.absolute
+                        , Css.right (Css.px 10)
+                        , Css.top (Css.px 25)
+                        ]
+                    ]
+            )
+            config.onReset
         , case errorMessage_ of
             Just m ->
                 Message.view
