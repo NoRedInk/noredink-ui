@@ -12,10 +12,10 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Html.Styled exposing (Html, div, fromUnstyled, text)
+import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Balloon.V1 as Balloon
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 
 
 {-| -}
@@ -39,12 +39,38 @@ type alias State =
 
 type alias Settings =
     { copy : String
+    , theme : Maybe ( String, Balloon.Attribute Css.Px Css.Px Css.Px )
+    , position : Maybe ( String, Balloon.Attribute Css.Px Css.Px Css.Px )
     }
 
 
+init : Control Settings
 init =
     Control.record Settings
-        |> Control.field "copy" (Control.string "Conducting a growth quiz with a previously used passage is not recommended, as students will already be familiar with the material.")
+        |> Control.field "copy" (Control.string "Hello, world!")
+        |> Control.field "theme" (Control.maybe False themeOptions)
+        |> Control.field "position" (Control.maybe False positionOptions)
+
+
+themeOptions : Control ( String, Balloon.Attribute width padding paddingUnits )
+themeOptions =
+    Control.choice
+        [ ( "green", Control.value ( "Balloon.green", Balloon.green ) )
+        , ( "purple", Control.value ( "Balloon.purple", Balloon.purple ) )
+        , ( "orange", Control.value ( "Balloon.orange", Balloon.orange ) )
+        , ( "white", Control.value ( "Balloon.white", Balloon.white ) )
+        , ( "navy", Control.value ( "Balloon.navy", Balloon.navy ) )
+        ]
+
+
+positionOptions : Control ( String, Balloon.Attribute width padding paddingUnits )
+positionOptions =
+    Control.choice
+        [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
+        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
+        , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
+        , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
+        ]
 
 
 {-| -}
@@ -66,18 +92,19 @@ view state =
     let
         settings =
             Control.currentValue state
+
+        attributes =
+            List.filterMap identity [ settings.theme, settings.position ]
     in
     [ Control.view SetDebugControlsState state |> fromUnstyled
-    , Heading.h3 [] [ text "Balloon.balloon []" ]
-    , Balloon.balloon [] (text settings.copy)
-    , Heading.h3 [] [ text "Balloon.balloon [orange, onTop]" ]
-    , Balloon.balloon [ Balloon.onTop, Balloon.orange ] (text settings.copy)
-    , Heading.h3 [] [ text "Balloon.balloon [purple, onRight]" ]
-    , Balloon.balloon [ Balloon.onRight, Balloon.purple ] (text settings.copy)
-    , Heading.h3 [] [ text "Balloon.balloon [onBottom]" ]
-    , Balloon.balloon [ Balloon.onBottom ] (text settings.copy)
-    , Heading.h3 [] [ text "Balloon.balloon [white, onLeft]" ]
-    , Balloon.balloon [ Balloon.white, Balloon.onLeft ] (text settings.copy)
-    , Heading.h3 [] [ text "Balloon.balloon [navy, onRight]" ]
-    , Balloon.balloon [ Balloon.navy, Balloon.onRight ] (text settings.copy)
+    , Html.Styled.code [ css [ Css.display Css.block ] ]
+        [ text <|
+            "Balloon.balloon [ "
+                ++ String.join ", " (List.map Tuple.first attributes)
+                ++ " ] "
+                ++ "\""
+                ++ settings.copy
+                ++ "\""
+        ]
+    , Balloon.balloon (List.map Tuple.second attributes) (text settings.copy)
     ]
