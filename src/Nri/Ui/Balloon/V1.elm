@@ -152,7 +152,8 @@ widthPx =
     WidthPx
 
 
-{-| Width of the balloon as a percentage of the element containing it.
+{-| Warning: using a percentage-based width may change the positioning of the element
+in unexpected ways.
 -}
 widthPct : Float -> Attribute
 widthPct =
