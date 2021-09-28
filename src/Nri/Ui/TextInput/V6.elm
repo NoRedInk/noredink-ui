@@ -427,6 +427,8 @@ view_ label (InputType inputType) config currentValue =
                             Css.Global.withClass "override-sass-styles"
                                 [ Css.height (px 45)
                                 ]
+                        , Css.pseudoElement "-webkit-search-cancel-button"
+                            [ Css.display Css.none ]
                         ]
                    , Attributes.placeholder placeholder_
                    , value stringValue
