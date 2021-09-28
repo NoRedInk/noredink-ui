@@ -66,6 +66,16 @@ example =
             let
                 exampleConfig =
                     Control.currentValue state.control
+
+                attributes =
+                    List.filterMap identity
+                        [ exampleConfig.maybeErrorAttribute1
+                        , exampleConfig.maybeErrorAttribute2
+                        , exampleConfig.maybePlaceholderAttribute
+                        , exampleConfig.maybeShowLabelAttribute
+                        , exampleConfig.maybeDisabledAttribute
+                        , exampleConfig.maybeLoadingAttribute
+                        ]
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
@@ -79,122 +89,48 @@ example =
                 [ Heading.h3 [] [ text "TextInput.text" ]
                 , TextInput.view (exampleConfig.label ++ " (text)")
                     (TextInput.text (SetTextInput 1))
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    attributes
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                 , Heading.h3 [] [ text "TextInput.number" ]
                 , TextInput.view (exampleConfig.label ++ " (number)")
                     (TextInput.number SetNumberInput)
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        , Just (TextInput.id "hey-this-is-a-test-id")
-                        ]
-                    )
+                    (TextInput.id "hey-this-is-a-test-id" :: attributes)
                     state.numberInputValue
                 , Heading.h3 [] [ text "TextInput.float" ]
                 , TextInput.view (exampleConfig.label ++ " (float)")
                     (TextInput.float SetFloatInput)
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    attributes
                     state.floatInputValue
                 , Heading.h3 [] [ text "TextInput.password" ]
                 , TextInput.view (exampleConfig.label ++ " (password)")
                     (TextInput.password SetPassword)
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    attributes
                     state.passwordInputValue
                 , Heading.h3 [] [ text "TextInput.email" ]
                 , TextInput.view (exampleConfig.label ++ " (email)")
                     (TextInput.email (SetTextInput 2))
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    attributes
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.writing" ]
                 , TextInput.view (exampleConfig.label ++ " (writing)")
                     (TextInput.text (SetTextInput 4))
-                    (List.filterMap identity
-                        [ Just TextInput.writing
-                        , exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    (TextInput.writing :: attributes)
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                 , Heading.h3 [] [ Html.text "TextInput.search" ]
                 , TextInput.view (exampleConfig.label ++ " (search)")
                     (TextInput.search SetSearchTerm)
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    attributes
                     state.searchInputValue
                 , Heading.h3 [] [ text "TextInput.onBlur" ]
                 , TextInput.view (exampleConfig.label ++ " (onBlur)")
                     (TextInput.text (SetTextInput 7))
-                    (List.filterMap identity
-                        [ Just (TextInput.onBlur (SetTextInput 7 "Blurred!"))
-                        , exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        ]
-                    )
+                    (TextInput.onBlur (SetTextInput 7 "Blurred!") :: attributes)
                     (Maybe.withDefault "" <| Dict.get 7 state.stringInputValues)
                 , Heading.h3 [] [ text "TextInput.css" ]
                 , TextInput.view (exampleConfig.label ++ " (custom CSS)")
                     (TextInput.text (SetTextInput 8))
-                    (List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        , Just (TextInput.css [ Css.backgroundColor Colors.azure ])
-                        ]
+                    (TextInput.css [ Css.backgroundColor Colors.azure ]
+                        :: attributes
                     )
                     (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
                 ]
