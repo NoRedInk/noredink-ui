@@ -45,10 +45,12 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
@@ -460,11 +462,20 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case ( config.onReset, stringValue ) of
-            ( _, "" ) ->
-                Html.text ""
+        , case ( config.onReset, stringValue, inputType.fieldType ) of
+            ( Just _, "", "search" ) ->
+                UiIcon.search
+                    |> Svg.withWidth (Css.px 20)
+                    |> Svg.withHeight (Css.px 20)
+                    |> Svg.withColor Colors.gray75
+                    |> Svg.withCss
+                        [ Css.position Css.absolute
+                        , Css.right (Css.px 10)
+                        , Css.top (Css.px 22)
+                        ]
+                    |> Svg.toHtml
 
-            ( Just resetAction, _ ) ->
+            ( Just resetAction, _, _ ) ->
                 ClickableSvg.button ("Reset " ++ label)
                     UiIcon.x
                     [ ClickableSvg.onClick resetAction
@@ -477,7 +488,7 @@ view_ label (InputType inputType) config currentValue =
                         ]
                     ]
 
-            ( Nothing, _ ) ->
+            ( Nothing, _, _ ) ->
                 Html.text ""
         , case errorMessage_ of
             Just m ->
