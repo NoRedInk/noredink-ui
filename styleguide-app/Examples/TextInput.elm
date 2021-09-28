@@ -14,6 +14,7 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V6 as TextInput
 
@@ -192,12 +193,7 @@ example =
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
                         , exampleConfig.maybeLoadingAttribute
-                        , Just
-                            (TextInput.css
-                                [ margin (px 50)
-                                , transform (rotateZ <| deg 4)
-                                ]
-                            )
+                        , Just (TextInput.css [ Css.backgroundColor Colors.azure ])
                         ]
                     )
                     (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
