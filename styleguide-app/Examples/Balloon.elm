@@ -39,8 +39,9 @@ type alias State =
 
 type alias Settings =
     { copy : String
-    , theme : Maybe ( String, Balloon.Attribute Css.Px Css.Px Css.Px )
-    , position : Maybe ( String, Balloon.Attribute Css.Px Css.Px Css.Px )
+    , theme : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
+    , position : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
+    , width : Maybe ( String, Balloon.Attribute Css.Px Css.Px )
     }
 
 
@@ -50,9 +51,10 @@ init =
         |> Control.field "copy" (Control.string "Hello, world!")
         |> Control.field "theme" (Control.maybe False themeOptions)
         |> Control.field "position" (Control.maybe False positionOptions)
+        |> Control.field "width" (Control.maybe False widthOptions)
 
 
-themeOptions : Control ( String, Balloon.Attribute width padding paddingUnits )
+themeOptions : Control ( String, Balloon.Attribute padding paddingUnits )
 themeOptions =
     Control.choice
         [ ( "green", Control.value ( "Balloon.green", Balloon.green ) )
@@ -63,7 +65,7 @@ themeOptions =
         ]
 
 
-positionOptions : Control ( String, Balloon.Attribute width padding paddingUnits )
+positionOptions : Control ( String, Balloon.Attribute padding paddingUnits )
 positionOptions =
     Control.choice
         [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
@@ -71,6 +73,28 @@ positionOptions =
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
         , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         ]
+
+
+widthOptions : Control ( String, Balloon.Attribute padding paddingUnits )
+widthOptions =
+    Control.choice
+        [ ( "px"
+          , Control.map
+                (\w -> ( "Balloon.widthPx " ++ String.fromFloat w, Balloon.widthPx w ))
+                (controlFloat 50)
+          )
+        , ( "%"
+          , Control.map
+                (\w -> ( "Balloon.widthPct " ++ String.fromFloat w, Balloon.widthPct w ))
+                (controlFloat 50)
+          )
+        ]
+
+
+controlFloat : Float -> Control Float
+controlFloat default =
+    Control.map (String.toFloat >> Maybe.withDefault default)
+        (Control.string (String.fromFloat default))
 
 
 {-| -}
@@ -94,7 +118,11 @@ view state =
             Control.currentValue state
 
         attributes =
-            List.filterMap identity [ settings.theme, settings.position ]
+            List.filterMap identity
+                [ settings.theme
+                , settings.position
+                , settings.width
+                ]
     in
     [ Control.view SetDebugControlsState state |> fromUnstyled
     , Html.Styled.code [ css [ Css.display Css.block ] ]
