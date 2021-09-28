@@ -1,7 +1,8 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email, search
-    , Attribute, placeholder, hiddenLabel, onBlur, autofocus
+    , Attribute, placeholder, hiddenLabel, autofocus
+    , onBlur, onReset
     , css, custom, nriDescription, id, testId
     , disabled, loading, errorIf, errorMessage
     , writing
@@ -29,7 +30,8 @@ module Nri.Ui.TextInput.V6 exposing
 
 ## Attributes
 
-@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus
+@docs Attribute, placeholder, hiddenLabel, autofocus
+@docs onBlur, onReset
 @docs css, custom, nriDescription, id, testId
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
@@ -223,6 +225,13 @@ onBlur msg =
         \config -> { config | onBlur = Just msg }
 
 
+{-| -}
+onReset : msg -> Attribute msg
+onReset msg =
+    Attribute <|
+        \config -> { config | onReset = Just msg }
+
+
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute msg
@@ -290,6 +299,7 @@ type alias Config msg =
     , hideLabel : Bool
     , placeholder : Maybe String
     , onBlur : Maybe msg
+    , onReset : Maybe msg
     , autofocus : Bool
     , css : List (List Css.Style)
     , id : Maybe String
@@ -311,6 +321,7 @@ emptyConfig =
     , hideLabel = False
     , placeholder = Nothing
     , onBlur = Nothing
+    , onReset = Nothing
     , autofocus = False
     , id = Nothing
     , css = []
