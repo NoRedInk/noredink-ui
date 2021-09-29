@@ -438,7 +438,7 @@ modalStyles =
     , width (px 600)
     , backgroundColor Colors.white
 
-    -- the modal should grow up to the viewport minus a 50px margin
+    -- the modal should grow up to the viewport minus a 20px margin
     , maxHeight (calc (pct 100) minus (px 40))
     ]
 
