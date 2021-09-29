@@ -166,6 +166,7 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
+import Css.Media
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
@@ -425,16 +426,20 @@ modalStyles =
     -- Border
     , borderRadius (px 20)
     , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
+    , Css.Media.withMedia
+        [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+        [ borderRadius zero
+        ]
 
     -- Spacing
-    , margin2 (px 50) auto
+    , margin2 (px 20) auto
 
     -- Size
     , width (px 600)
     , backgroundColor Colors.white
 
     -- the modal should grow up to the viewport minus a 50px margin
-    , maxHeight (calc (pct 100) minus (px 100))
+    , maxHeight (calc (pct 100) minus (px 40))
     ]
 
 
@@ -448,6 +453,10 @@ titleStyles color visibleTitle =
         , Css.fontSize (Css.px 20)
         , Css.textAlign Css.center
         , Css.color color
+        , Css.Media.withMedia
+            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+            [ Css.padding3 (Css.px 20) (Css.px 20) Css.zero
+            ]
         ]
 
     else
@@ -657,6 +666,10 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.boxSizing Css.borderBox
                 , Css.paddingLeft (Css.px 40)
                 , Css.paddingRight (Css.px 40)
+                , Css.Media.withMedia
+                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                    [ Css.padding (Css.px 20)
+                    ]
                 , if visibleTitle then
                     Css.paddingTop Css.zero
 
@@ -688,10 +701,13 @@ viewFooter children =
                 , Css.flexGrow (Css.int 2)
                 , Css.flexWrap Css.noWrap
                 , Css.padding2 (Css.px 30) Css.zero
-                , Css.width (Css.pct 100)
                 , Css.backgroundColor Colors.gray96
                 , Css.borderTop3 (Css.px 1) Css.solid Colors.gray92
                 , Css.borderRadius4 Css.zero Css.zero (Css.px 20) (Css.px 20)
+                , Css.Media.withMedia
+                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                    [ Css.padding (Css.px 20)
+                    ]
                 ]
             , ExtraAttributes.nriDescription "modal-footer"
             ]
