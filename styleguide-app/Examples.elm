@@ -3,6 +3,7 @@ module Examples exposing (Msg, State, all)
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
+import Examples.Balloon as Balloon
 import Examples.Button as Button
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
@@ -74,6 +75,25 @@ all =
             (\msg ->
                 case msg of
                     AssignmentIconState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Balloon.example
+        |> Example.wrapMsg BalloonMsg
+            (\msg ->
+                case msg of
+                    BalloonMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState BalloonState
+            (\msg ->
+                case msg of
+                    BalloonState childState ->
                         Just childState
 
                     _ ->
@@ -731,6 +751,7 @@ all =
 type State
     = AccordionState Accordion.State
     | AssignmentIconState AssignmentIcon.State
+    | BalloonState Balloon.State
     | ButtonState Button.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
@@ -770,6 +791,7 @@ type State
 type Msg
     = AccordionMsg Accordion.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
+    | BalloonMsg Balloon.Msg
     | ButtonMsg Button.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
