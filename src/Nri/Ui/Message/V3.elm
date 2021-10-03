@@ -216,11 +216,14 @@ view attributes_ =
                             , displayFlex
                             , justifyContent center
                             , width (Css.pct 100)
-
-                            -- Fonts
                             , fontSize (px 20)
                             , fontWeight (int 700)
-                            , lineHeight (px 27)
+                            , lineHeight (num 1.4)
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ fontSize (px 15)
+                                , fontWeight (int 600)
+                                ]
                             ]
                         ]
                         [ icon_
@@ -228,11 +231,16 @@ view attributes_ =
                             "banner-alert-notification"
                             [ fontSize (px 20)
                             , fontWeight (int 700)
-                            , lineHeight (px 27)
+                            , lineHeight (num 1.4)
                             , maxWidth (px 600)
                             , minWidth (px 100)
                             , flexShrink (int 1)
                             , Fonts.baseFont
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ fontSize (px 15)
+                                , fontWeight (int 600)
+                                ]
                             ]
                             []
                             attributes.content
@@ -661,7 +669,7 @@ getIcon customIcon size theme =
                     ( px 35, Css.marginRight (Css.px 10) )
 
                 Banner ->
-                    ( px 50, Css.marginRight (Css.px 20) )
+                    ( px 35, Css.marginRight (Css.px 10) )
     in
     case ( customIcon, theme ) of
         ( Nothing, Error ) ->
@@ -717,18 +725,29 @@ getIcon customIcon size theme =
                             [ borderRadius (pct 50)
                             , height (px 50)
                             , width (px 50)
-                            , Css.marginRight (Css.px 20)
+                            , Css.marginRight (Css.px 10)
                             , backgroundColor Colors.navy
                             , displayFlex
                             , Css.flexShrink Css.zero
                             , alignItems center
                             , justifyContent center
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ height (px 35)
+                                , width (px 35)
+                                ]
                             ]
                         ]
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
                             |> NriSvg.withWidth (Css.px 32)
                             |> NriSvg.withHeight (Css.px 32)
+                            |> NriSvg.withCss
+                                [ Css.Media.withMedia
+                                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                    [ height (px 20)
+                                    ]
+                                ]
                             |> NriSvg.toHtml
                         ]
 
