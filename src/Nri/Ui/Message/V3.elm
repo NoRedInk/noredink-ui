@@ -119,6 +119,12 @@ view attributes_ =
                                    , paddingTop (px 6)
                                    , paddingBottom (px 8)
                                    , fontSize (px 13)
+                                   , Css.Global.children
+                                        [ Css.Global.div
+                                            [ nthChild "2"
+                                                [ marginTop (px -3) ]
+                                            ]
+                                        ]
                                    ]
                             )
                          ]
