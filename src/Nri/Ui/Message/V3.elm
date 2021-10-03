@@ -204,7 +204,12 @@ view attributes_ =
             div
                 ([ ExtraAttributes.nriDescription "Nri-Ui-Message-banner"
                  , Attributes.css
-                    (baseStyles ++ [ backgroundColor_, padding (px 20) ])
+                    (baseStyles
+                        ++ [ backgroundColor_
+                           , padding (px 20)
+                           , position relative
+                           ]
+                    )
                  ]
                     ++ role
                     ++ attributes.customAttributes
@@ -841,7 +846,14 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20) ]
+        [ padding (px 20)
+        , Css.Media.withMedia
+            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+            [ position absolute
+            , right zero
+            , padding (px 10)
+            ]
+        ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
