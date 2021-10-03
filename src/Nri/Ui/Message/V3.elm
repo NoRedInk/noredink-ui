@@ -101,7 +101,6 @@ view attributes_ =
             [ Fonts.baseFont
             , color color_
             , boxSizing borderBox
-            , styleOverrides
             , Css.batch attributes.customStyles
             ]
     in
@@ -798,33 +797,6 @@ getRoleAttribute role =
 
         Nothing ->
             []
-
-
-
--- Style overrides
-
-
-styleOverrides : Style
-styleOverrides =
-    Css.Global.descendants
-        [ Css.Global.a
-            [ textDecoration none
-            , color Colors.azure
-            , borderBottom3 (px 1) solid Colors.azure
-            , visited [ color Colors.azure ]
-            ]
-        , -- This global selector and overrides are necessary due to
-          -- old stylesheets used on the monolith that set the
-          -- `.txt p { font-size: 18px; }` -- without these overrides,
-          -- we may see giant ugly alerts.
-          -- Remove these if you want to! but be emotionally prepped
-          -- to deal with visual regressions. 🙏
-          Css.Global.p
-            [ margin zero
-            , fontSize (px 13)
-            , Fonts.baseFont
-            ]
-        ]
 
 
 
