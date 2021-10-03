@@ -121,7 +121,10 @@ view attributes_ =
                                    , Css.Global.children
                                         [ Css.Global.div
                                             [ nthChild "2"
-                                                [ marginTop (px -3) ]
+                                                [ marginTop (px -3)
+                                                , Css.Global.children
+                                                    [ Css.Global.p [ margin zero ] ]
+                                                ]
                                             ]
                                         ]
                                    ]
@@ -169,8 +172,6 @@ view attributes_ =
                     [ Attributes.css
                         [ displayFlex
                         , alignItems center
-
-                        -- Fonts
                         , fontSize (px 15)
                         , fontWeight (int 600)
                         , lineHeight (px 21)
