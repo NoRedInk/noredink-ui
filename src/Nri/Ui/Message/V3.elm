@@ -56,6 +56,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
+import Css.Media
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
 import Http
@@ -100,7 +101,6 @@ view attributes_ =
             [ Fonts.baseFont
             , color color_
             , boxSizing borderBox
-            , styleOverrides
             , Css.batch attributes.customStyles
             ]
     in
@@ -118,6 +118,15 @@ view attributes_ =
                                    , paddingTop (px 6)
                                    , paddingBottom (px 8)
                                    , fontSize (px 13)
+                                   , Css.Global.children
+                                        [ Css.Global.div
+                                            [ nthChild "2"
+                                                [ marginTop (px -3)
+                                                , Css.Global.children
+                                                    [ Css.Global.p [ margin zero ] ]
+                                                ]
+                                            ]
+                                        ]
                                    ]
                             )
                          ]
@@ -153,6 +162,7 @@ view attributes_ =
                              borderRadius (px 8)
                            , padding (px 20)
                            , backgroundColor_
+                           , position relative
                            ]
                     )
                  ]
@@ -163,8 +173,6 @@ view attributes_ =
                     [ Attributes.css
                         [ displayFlex
                         , alignItems center
-
-                        -- Fonts
                         , fontSize (px 15)
                         , fontWeight (int 600)
                         , lineHeight (px 21)
@@ -198,7 +206,12 @@ view attributes_ =
             div
                 ([ ExtraAttributes.nriDescription "Nri-Ui-Message-banner"
                  , Attributes.css
-                    (baseStyles ++ [ backgroundColor_, padding (px 20) ])
+                    (baseStyles
+                        ++ [ backgroundColor_
+                           , padding (px 20)
+                           , position relative
+                           ]
+                    )
                  ]
                     ++ role
                     ++ attributes.customAttributes
@@ -216,11 +229,14 @@ view attributes_ =
                             , displayFlex
                             , justifyContent center
                             , width (Css.pct 100)
-
-                            -- Fonts
                             , fontSize (px 20)
                             , fontWeight (int 700)
-                            , lineHeight (px 27)
+                            , lineHeight (num 1.4)
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ fontSize (px 15)
+                                , fontWeight (int 600)
+                                ]
                             ]
                         ]
                         [ icon_
@@ -228,11 +244,16 @@ view attributes_ =
                             "banner-alert-notification"
                             [ fontSize (px 20)
                             , fontWeight (int 700)
-                            , lineHeight (px 27)
+                            , lineHeight (num 1.4)
                             , maxWidth (px 600)
                             , minWidth (px 100)
                             , flexShrink (int 1)
                             , Fonts.baseFont
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ fontSize (px 15)
+                                , fontWeight (int 600)
+                                ]
                             ]
                             []
                             attributes.content
@@ -661,7 +682,7 @@ getIcon customIcon size theme =
                     ( px 35, Css.marginRight (Css.px 10) )
 
                 Banner ->
-                    ( px 50, Css.marginRight (Css.px 20) )
+                    ( px 35, Css.marginRight (Css.px 10) )
     in
     case ( customIcon, theme ) of
         ( Nothing, Error ) ->
@@ -717,18 +738,29 @@ getIcon customIcon size theme =
                             [ borderRadius (pct 50)
                             , height (px 50)
                             , width (px 50)
-                            , Css.marginRight (Css.px 20)
+                            , Css.marginRight (Css.px 10)
                             , backgroundColor Colors.navy
                             , displayFlex
                             , Css.flexShrink Css.zero
                             , alignItems center
                             , justifyContent center
+                            , Css.Media.withMedia
+                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                [ height (px 35)
+                                , width (px 35)
+                                ]
                             ]
                         ]
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
                             |> NriSvg.withWidth (Css.px 32)
                             |> NriSvg.withHeight (Css.px 32)
+                            |> NriSvg.withCss
+                                [ Css.Media.withMedia
+                                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                    [ height (px 20)
+                                    ]
+                                ]
                             |> NriSvg.toHtml
                         ]
 
@@ -775,33 +807,6 @@ getRoleAttribute role =
 
 
 
--- Style overrides
-
-
-styleOverrides : Style
-styleOverrides =
-    Css.Global.descendants
-        [ Css.Global.a
-            [ textDecoration none
-            , color Colors.azure
-            , borderBottom3 (px 1) solid Colors.azure
-            , visited [ color Colors.azure ]
-            ]
-        , -- This global selector and overrides are necessary due to
-          -- old stylesheets used on the monolith that set the
-          -- `.txt p { font-size: 18px; }` -- without these overrides,
-          -- we may see giant ugly alerts.
-          -- Remove these if you want to! but be emotionally prepped
-          -- to deal with visual regressions. 🙏
-          Css.Global.p
-            [ margin zero
-            , fontSize (px 13)
-            , Fonts.baseFont
-            ]
-        ]
-
-
-
 -- Dismiss buttons
 
 
@@ -828,7 +833,14 @@ largeDismissButton : msg -> Html msg
 largeDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20) ]
+        [ padding (px 20)
+        , Css.Media.withMedia
+            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+            [ position absolute
+            , right zero
+            , padding (px 10)
+            ]
+        ]
         []
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
@@ -843,7 +855,14 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20) ]
+        [ padding (px 20)
+        , Css.Media.withMedia
+            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+            [ position absolute
+            , right zero
+            , padding (px 10)
+            ]
+        ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
