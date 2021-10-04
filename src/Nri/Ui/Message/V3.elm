@@ -162,6 +162,7 @@ view attributes_ =
                              borderRadius (px 8)
                            , padding (px 20)
                            , backgroundColor_
+                           , position relative
                            ]
                     )
                  ]
@@ -832,7 +833,14 @@ largeDismissButton : msg -> Html msg
 largeDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 Css.zero (px 20) ]
+        [ padding (px 20)
+        , Css.Media.withMedia
+            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+            [ position absolute
+            , right zero
+            , padding (px 10)
+            ]
+        ]
         []
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
