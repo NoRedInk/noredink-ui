@@ -1,9 +1,13 @@
-module Nri.Ui.MediaQuery.V1 exposing (mobile, teacherStudentPage)
+module Nri.Ui.MediaQuery.V1 exposing
+    ( mobile, notMobile
+    , teacherStudentPage
+    )
 
 {-| Standard media queries for NRI responsive pages.
 Can be used to create a Snippet using Css.Global.media
 
-@docs mobile, teacherStudentPage
+@docs mobile, notMobile
+@docs teacherStudentPage
 
 -}
 
@@ -24,6 +28,13 @@ mobile =
         [ minWidth (px 1)
         , maxWidth (px 1000)
         ]
+
+
+{-| Non-mobile styles using a 1000px min-width
+-}
+notMobile : MediaQuery
+notMobile =
+    only screen [ minWidth (px 1000) ]
 
 
 {-| Teacher & student facing styles using a 700px max-width
