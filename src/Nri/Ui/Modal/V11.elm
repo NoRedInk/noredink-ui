@@ -737,7 +737,7 @@ viewCloseButton closeModal =
                 , Css.right Css.zero
 
                 -- make appear above lesson content
-                , Css.zIndex (Css.int 1)
+                , Css.zIndex (Css.int 10)
                 , Css.backgroundColor (rgba 255 255 255 0.5)
                 , Css.borderRadius (pct 50)
 
