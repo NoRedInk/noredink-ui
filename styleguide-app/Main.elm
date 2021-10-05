@@ -6,6 +6,7 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category
 import Css exposing (..)
+import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
@@ -17,6 +18,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
 import Task
@@ -135,6 +137,7 @@ view_ model =
     Html.div
         [ css
             [ displayFlex
+            , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
             , minHeight (vh 100)
             ]
@@ -230,14 +233,16 @@ navigation route =
     in
     Html.nav
         [ css
-            [ flexBasis (px 200)
-            , backgroundColor Colors.gray96
-            , marginRight (px 40)
-            , padding (px 20)
-            , VendorPrefixed.value "position" "sticky"
-            , top (px 55)
-            , flexShrink zero
-            , borderRadius (px 8)
+            [ backgroundColor Colors.gray96
+            , withMedia [ notMobile ]
+                [ VendorPrefixed.value "position" "sticky"
+                , top (px 55)
+                , flexShrink zero
+                , borderRadius (px 8)
+                , marginRight (px 40)
+                , padding (px 20)
+                , flexBasis (px 200)
+                ]
             ]
         , attribute "aria-label" "Main Navigation"
         ]

@@ -177,6 +177,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
@@ -426,8 +427,7 @@ modalStyles =
     -- Border
     , borderRadius (px 20)
     , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
-    , Css.Media.withMedia
-        [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+    , Css.Media.withMedia [ mobile ]
         [ borderRadius zero
         ]
 
@@ -453,8 +453,7 @@ titleStyles color visibleTitle =
         , Css.fontSize (Css.px 20)
         , Css.textAlign Css.center
         , Css.color color
-        , Css.Media.withMedia
-            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+        , Css.Media.withMedia [ mobile ]
             [ Css.padding3 (Css.px 20) (Css.px 20) Css.zero
             ]
         ]
@@ -666,8 +665,7 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.boxSizing Css.borderBox
                 , Css.paddingLeft (Css.px 40)
                 , Css.paddingRight (Css.px 40)
-                , Css.Media.withMedia
-                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                , Css.Media.withMedia [ mobile ]
                     [ Css.padding (Css.px 20)
                     ]
                 , if visibleTitle then
@@ -704,8 +702,7 @@ viewFooter children =
                 , Css.backgroundColor Colors.gray96
                 , Css.borderTop3 (Css.px 1) Css.solid Colors.gray92
                 , Css.borderRadius4 Css.zero Css.zero (Css.px 20) (Css.px 20)
-                , Css.Media.withMedia
-                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                , Css.Media.withMedia [ mobile ]
                     [ Css.padding (Css.px 20)
                     ]
                 ]
