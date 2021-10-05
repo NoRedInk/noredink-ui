@@ -1,13 +1,13 @@
 module Nri.Ui.MediaQuery.V1 exposing
     ( mobile, notMobile
-    , teacherStudentPage
+    , quizEngineMobile
     )
 
 {-| Standard media queries for NRI responsive pages.
 Can be used to create a Snippet using Css.Global.media
 
 @docs mobile, notMobile
-@docs teacherStudentPage
+@docs quizEngineMobile
 
 -}
 
@@ -44,8 +44,8 @@ notMobile =
 See: <http://stackoverflow.com/questions/25673707/ie11-triggers-css-transition-on-page-load-when-non-applied-media-query-exists/25850649#25850649>
 
 -}
-teacherStudentPage : MediaQuery
-teacherStudentPage =
+quizEngineMobile : MediaQuery
+quizEngineMobile =
     only screen
         [ minWidth (px 1)
         , maxWidth (px 700)
