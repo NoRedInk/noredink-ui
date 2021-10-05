@@ -736,14 +736,18 @@ viewCloseButton closeModal =
                 , Css.top Css.zero
                 , Css.right Css.zero
 
-                -- make the hitspace extend all the way to the corner
-                , Css.width (Css.px 40)
-                , Css.height (Css.px 40)
-                , Css.padding4 (Css.px 20) (Css.px 20) Css.zero Css.zero
+                -- make appear above lesson content
+                , Css.zIndex (Css.int 1)
+                , Css.backgroundColor (rgba 255 255 255 0.5)
+                , Css.borderRadius (pct 50)
+
+                -- make the hitspace extend all the way around x
+                , Css.width (Css.px 60)
+                , Css.height (Css.px 60)
+                , Css.padding (Css.px 20)
 
                 -- apply button styles
                 , Css.borderWidth Css.zero
-                , Css.backgroundColor Css.transparent
                 , Css.cursor Css.pointer
                 , Css.color Colors.azure
                 , Css.hover [ Css.color Colors.azureDark ]
