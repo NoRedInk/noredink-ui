@@ -437,9 +437,6 @@ modalStyles =
     -- Size
     , width (px 600)
     , backgroundColor Colors.white
-
-    -- the modal should grow up to the viewport minus a 20px margin
-    , maxHeight (calc (pct 100) minus (px 40))
     ]
 
 
@@ -615,14 +612,14 @@ viewInnerContent ({ visibleTitle } as config) =
 
         titleHeight =
             if visibleTitle then
-                45
+                85
 
             else
                 0
 
         footerHeight =
             if visibleFooter then
-                180
+                160
 
             else
                 0
@@ -659,7 +656,7 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.maxHeight
                     (Css.calc (Css.vh 100)
                         Css.minus
-                        (Css.px (footerHeight + titleHeight + 145))
+                        (Css.px (footerHeight + titleHeight + 40))
                     )
                 , Css.width (Css.pct 100)
                 , Css.boxSizing Css.borderBox
