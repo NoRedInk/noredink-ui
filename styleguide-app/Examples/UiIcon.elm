@@ -144,6 +144,9 @@ example =
             , IconExamples.view "Navigation"
                 [ ( "home", UiIcon.home )
                 , ( "library", UiIcon.library )
+                ]
+            , IconExamples.view "Search"
+                [ ( "search", UiIcon.search )
                 , ( "searchInCircle", UiIcon.searchInCicle )
                 ]
             ]

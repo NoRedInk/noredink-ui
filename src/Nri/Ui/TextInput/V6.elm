@@ -1,7 +1,8 @@
 module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
-    , InputType, number, float, text, password, email
-    , Attribute, placeholder, hiddenLabel, onBlur, autofocus
+    , InputType, number, float, text, password, email, search
+    , Attribute, placeholder, hiddenLabel, autofocus
+    , onBlur, onReset
     , css, custom, nriDescription, id, testId
     , disabled, loading, errorIf, errorMessage
     , writing
@@ -24,12 +25,13 @@ module Nri.Ui.TextInput.V6 exposing
 
 ### Input types
 
-@docs InputType, number, float, text, password, email
+@docs InputType, number, float, text, password, email, search
 
 
 ## Attributes
 
-@docs Attribute, placeholder, hiddenLabel, onBlur, autofocus
+@docs Attribute, placeholder, hiddenLabel, autofocus
+@docs onBlur, onReset
 @docs css, custom, nriDescription, id, testId
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
@@ -42,9 +44,14 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
 
@@ -129,6 +136,19 @@ email toMsg =
         }
 
 
+{-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
+-}
+search : (String -> msg) -> InputType String msg
+search toMsg =
+    InputType
+        { toString = identity
+        , fromString = toMsg
+        , fieldType = "search"
+        , inputMode = Nothing
+        , autocomplete = Nothing
+        }
+
+
 {-| An optional customization of a TextInput.
 -}
 type Attribute msg
@@ -210,6 +230,13 @@ onBlur msg =
         \config -> { config | onBlur = Just msg }
 
 
+{-| -}
+onReset : msg -> Attribute msg
+onReset msg =
+    Attribute <|
+        \config -> { config | onReset = Just msg }
+
+
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute msg
@@ -277,6 +304,7 @@ type alias Config msg =
     , hideLabel : Bool
     , placeholder : Maybe String
     , onBlur : Maybe msg
+    , onReset : Maybe msg
     , autofocus : Bool
     , css : List (List Css.Style)
     , id : Maybe String
@@ -298,6 +326,7 @@ emptyConfig =
     , hideLabel = False
     , placeholder = Nothing
     , onBlur = Nothing
+    , onReset = Nothing
     , autofocus = False
     , id = Nothing
     , css = []
@@ -370,6 +399,9 @@ view_ label (InputType inputType) config currentValue =
             maybeValue
                 |> Maybe.map attr
                 |> Maybe.withDefault Extra.none
+
+        stringValue =
+            inputType.toString currentValue
     in
     div
         ([ Attributes.css
@@ -395,9 +427,11 @@ view_ label (InputType inputType) config currentValue =
                             Css.Global.withClass "override-sass-styles"
                                 [ Css.height (px 45)
                                 ]
+                        , Css.pseudoElement "-webkit-search-cancel-button"
+                            [ Css.display Css.none ]
                         ]
                    , Attributes.placeholder placeholder_
-                   , value (inputType.toString currentValue)
+                   , value stringValue
                    , Attributes.disabled disabled_
                    , onInput inputType.fromString
                    , maybeAttr Events.onBlur config.onBlur
@@ -430,6 +464,34 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
+        , case ( config.onReset, stringValue, inputType.fieldType ) of
+            ( Just _, "", "search" ) ->
+                UiIcon.search
+                    |> Svg.withWidth (Css.px 20)
+                    |> Svg.withHeight (Css.px 20)
+                    |> Svg.withColor Colors.gray75
+                    |> Svg.withCss
+                        [ Css.position Css.absolute
+                        , Css.right (Css.px 10)
+                        , Css.top (Css.px 22)
+                        ]
+                    |> Svg.toHtml
+
+            ( Just resetAction, _, _ ) ->
+                ClickableSvg.button ("Reset " ++ label)
+                    UiIcon.x
+                    [ ClickableSvg.onClick resetAction
+                    , ClickableSvg.exactWidth 14
+                    , ClickableSvg.exactHeight 14
+                    , ClickableSvg.css
+                        [ Css.position Css.absolute
+                        , Css.right (Css.px 10)
+                        , Css.top (Css.px 25)
+                        ]
+                    ]
+
+            ( Nothing, _, _ ) ->
+                Html.text ""
         , case errorMessage_ of
             Just m ->
                 Message.view
