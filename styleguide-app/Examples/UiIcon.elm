@@ -140,8 +140,8 @@ example =
                 , ( "link", UiIcon.link )
                 , ( "undo", UiIcon.undo )
                 , ( "redo", UiIcon.redo )
-                , ( "openCurlie", UiIcon.openCurlie )
-                , ( "closeCurlie", UiIcon.closeCurlie )
+                , ( "openQuotationMark", UiIcon.openQuotationMark )
+                , ( "closeQuotationMark", UiIcon.closeQuotationMark )
                 ]
             , IconExamples.view "Navigation"
                 [ ( "home", UiIcon.home )

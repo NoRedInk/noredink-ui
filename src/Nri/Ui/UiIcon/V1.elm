@@ -21,7 +21,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , bold, italic, underline, list, link, undo, redo
     , home, library
     , search, searchInCicle
-    , openCurlie, closeCurlie
+    , openQuotationMark, closeQuotationMark
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -48,7 +48,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs bold, italic, underline, list, link, undo, redo
 @docs home, library
 @docs search, searchInCicle
-@docs openCurlie, closeCurlie
+@docs openQuotationMark, closeQuotationMark
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -1611,8 +1611,8 @@ null =
 
 
 {-| -}
-openCurlie : Nri.Ui.Svg.V1.Svg
-openCurlie =
+openQuotationMark : Nri.Ui.Svg.V1.Svg
+openQuotationMark =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
@@ -1630,8 +1630,8 @@ openCurlie =
 
 
 {-| -}
-closeCurlie : Nri.Ui.Svg.V1.Svg
-closeCurlie =
+closeQuotationMark : Nri.Ui.Svg.V1.Svg
+closeQuotationMark =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
