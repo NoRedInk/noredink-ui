@@ -233,7 +233,9 @@ tabStyles customSpacing index isSelected =
         baseStyles =
             [ Css.color Colors.navy
             , Css.position Css.relative
-            , Css.textDecoration Css.none
+
+            -- necessary because bourbon or bootstrap or whatever add underlines when tabs are used as links
+            , Css.textDecoration Css.none |> important
             , Css.property "background" "none"
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
