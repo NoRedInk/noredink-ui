@@ -27,20 +27,21 @@ type Attribute
     | Css (List Css.Style)
 
 
-{-| Changes the padding inside the container border around the content. See [`custom`](#custom).
+{-| Changes the padding inside the container border around the content.
 -}
 paddingPx : Float -> Attribute
 paddingPx =
     CustomPadding
 
 
-{-| Makes the container occupy the full height of the parent. See [`custom`](#custom).
+{-| Makes the container occupy the full height of the parent.
 -}
 fullHeight : Attribute
 fullHeight =
     FullHeight
 
 
+{-| -}
 css : List Css.Style -> Attribute
 css =
     Css
