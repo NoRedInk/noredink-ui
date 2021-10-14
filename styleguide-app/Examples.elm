@@ -10,6 +10,7 @@ import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
 import Examples.Confetti as Confetti
+import Examples.Container as Container
 import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
@@ -208,6 +209,25 @@ all =
             (\msg ->
                 case msg of
                     ConfettiState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Container.example
+        |> Example.wrapMsg ContainerMsg
+            (\msg ->
+                case msg of
+                    ContainerMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState ContainerState
+            (\msg ->
+                case msg of
+                    ContainerState childState ->
                         Just childState
 
                     _ ->
@@ -758,6 +778,7 @@ type State
     | ClickableTextState ClickableText.State
     | ColorsState Colors.State
     | ConfettiState Confetti.State
+    | ContainerState Container.State
     | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
@@ -798,6 +819,7 @@ type Msg
     | ClickableTextMsg ClickableText.Msg
     | ColorsMsg Colors.Msg
     | ConfettiMsg Confetti.Msg
+    | ContainerMsg Container.Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
