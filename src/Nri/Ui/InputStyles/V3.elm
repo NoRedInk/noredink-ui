@@ -41,11 +41,12 @@ label theme inError =
             batch
                 [ backgroundColor white
                 , left (px 10)
-                , top (px 1)
+                , top zero
                 , fontSize (px 12)
                 , Nri.Ui.Fonts.V1.baseFont
                 , position absolute
                 , fontWeight (int 600)
+                , borderRadius (px 4)
                 , property "transition" "all 0.4s ease"
                 ]
     in
@@ -53,7 +54,7 @@ label theme inError =
         Standard ->
             batch
                 [ sharedStyles
-                , padding2 zero (px 5)
+                , padding2 (px 2) (px 5)
                 , fontSize (px 12)
                 , color navy
                 , if inError then
