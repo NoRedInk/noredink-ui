@@ -1,12 +1,12 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink
-    , facebook, twitter, clever, cleverC, googleClassroom
+    , facebook, twitter, clever, cleverC, googleClassroom, googleG
     )
 
 {-|
 
 @docs noredink
-@docs facebook, twitter, clever, cleverC, googleClassroom
+@docs facebook, twitter, clever, cleverC, googleClassroom, googleG
 
 -}
 
@@ -158,5 +158,23 @@ googleClassroom =
                     ]
                 ]
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+googleG : Nri.Ui.Svg.V1.Svg
+googleG =
+    Svg.svg
+        [ Attributes.viewBox "0 0 43 44" ]
+        [ Svg.defs []
+            [ Svg.style []
+                [ Svg.text ".cls-1{fill:none;}.cls-2{clip-path:url(#clip-path);}.cls-3{fill:#fbbc05;}.cls-4{fill:#ea4335;}.cls-5{fill:#34a853;}.cls-6{fill:#4285f4;}" ]
+            , Svg.clipPath [ Attributes.id "clip-path" ] [ Svg.path [ Attributes.class "cls-1", Attributes.d "M42.5,18H22v8.5H33.8C32.7,31.9,28.1,35,22,35A13,13,0,0,1,22,9a12.72,12.72,0,0,1,8.1,2.9l6.4-6.4A22,22,0,1,0,22,44c11,0,21-8,21-22A18.25,18.25,0,0,0,42.5,18Z" ] [] ]
+            ]
+        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.class "cls-3", Attributes.d "M-2,35V9L15,22Z" ] [] ]
+        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.class "cls-4", Attributes.d "M-2,9,15,22l7-6.1L46,12V-2H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.class "cls-5", Attributes.d "M-2,35,28,12l7.9,1L46-2V46H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.class "cls-6", Attributes.d "M46,46,15,22l-4-3L46,9Z" ] [] ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
