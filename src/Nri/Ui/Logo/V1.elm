@@ -1,12 +1,12 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink
-    , facebook, twitter, clever, googleClassroom
+    , facebook, twitter, clever, cleverC, googleClassroom, googleG
     )
 
 {-|
 
 @docs noredink
-@docs facebook, twitter, clever, googleClassroom
+@docs facebook, twitter, clever, cleverC, googleClassroom, googleG
 
 -}
 
@@ -87,6 +87,30 @@ clever =
 
 
 {-| -}
+cleverC : Nri.Ui.Svg.V1.Svg
+cleverC =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 39 44"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.fill "#436CF2"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path [ Attributes.d "M0,21.7580775 C0,9.74321254 8.96637318,0 21.8178825,0 C29.708078,0 34.4301716,2.63016953 38.3153078,6.45581374 L32.4575445,13.2103396 C29.2296376,10.2814579 25.9422388,8.48824593 21.7580775,8.48824593 C14.7045264,8.48824593 9.62360245,14.3460092 9.62360245,21.5188573 C9.62360245,28.8113154 14.5849163,34.7890019 21.7580775,34.7890019 C26.5399762,34.7890019 29.4688578,32.8761798 32.7565697,29.8874931 L38.614333,35.8050615 C34.3105615,40.407545 29.5286628,43.2769347 21.4590522,43.2769347 C9.1454752,43.2769347 0,33.7726293 0,21.7580775 Z" ] [] ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
 twitter : Nri.Ui.Svg.V1.Svg
 twitter =
     Svg.svg
@@ -134,5 +158,29 @@ googleClassroom =
                     ]
                 ]
             ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+googleG : Nri.Ui.Svg.V1.Svg
+googleG =
+    Svg.svg
+        [ Attributes.viewBox "0 0 43 44" ]
+        [ Svg.defs []
+            [ Svg.style []
+                [ Svg.text ".googleG-icon-clip-path-class{clip-path:url(#googleG-icon-clip-path);}" ]
+            , Svg.clipPath [ Attributes.id "googleG-icon-clip-path" ]
+                [ Svg.path
+                    [ Attributes.fill "none"
+                    , Attributes.d "M42.5,18H22v8.5H33.8C32.7,31.9,28.1,35,22,35A13,13,0,0,1,22,9a12.72,12.72,0,0,1,8.1,2.9l6.4-6.4A22,22,0,1,0,22,44c11,0,21-8,21-22A18.25,18.25,0,0,0,42.5,18Z"
+                    ]
+                    []
+                ]
+            ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#fbbc05", Attributes.d "M-2,35V9L15,22Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#ea4335", Attributes.d "M-2,9,15,22l7-6.1L46,12V-2H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#34a853", Attributes.d "M-2,35,28,12l7.9,1L46-2V46H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#4285f4", Attributes.d "M46,46,15,22l-4-3L46,9Z" ] [] ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
