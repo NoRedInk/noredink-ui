@@ -169,8 +169,8 @@ googleG =
         [ Attributes.viewBox "0 0 43 44" ]
         [ Svg.defs []
             [ Svg.style []
-                [ Svg.text ".cls-2{clip-path:url(#clip-path);}" ]
-            , Svg.clipPath [ Attributes.id "clip-path" ]
+                [ Svg.text ".googleG-icon-clip-path-class{clip-path:url(#googleG-icon-clip-path);}" ]
+            , Svg.clipPath [ Attributes.id "googleG-icon-clip-path" ]
                 [ Svg.path
                     [ Attributes.fill "none"
                     , Attributes.d "M42.5,18H22v8.5H33.8C32.7,31.9,28.1,35,22,35A13,13,0,0,1,22,9a12.72,12.72,0,0,1,8.1,2.9l6.4-6.4A22,22,0,1,0,22,44c11,0,21-8,21-22A18.25,18.25,0,0,0,42.5,18Z"
@@ -178,9 +178,9 @@ googleG =
                     []
                 ]
             ]
-        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.fill "#fbbc05", Attributes.d "M-2,35V9L15,22Z" ] [] ]
-        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.fill "#ea4335", Attributes.d "M-2,9,15,22l7-6.1L46,12V-2H-2Z" ] [] ]
-        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.fill "#34a853", Attributes.d "M-2,35,28,12l7.9,1L46-2V46H-2Z" ] [] ]
-        , Svg.g [ Attributes.class "cls-2" ] [ Svg.path [ Attributes.fill "#4285f4", Attributes.d "M46,46,15,22l-4-3L46,9Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#fbbc05", Attributes.d "M-2,35V9L15,22Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#ea4335", Attributes.d "M-2,9,15,22l7-6.1L46,12V-2H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#34a853", Attributes.d "M-2,35,28,12l7.9,1L46-2V46H-2Z" ] [] ]
+        , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#4285f4", Attributes.d "M46,46,15,22l-4-3L46,9Z" ] [] ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
