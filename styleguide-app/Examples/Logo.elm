@@ -60,6 +60,10 @@ example =
                     , Css.color Colors.azure
                     ]
                   )
+                  , ( "cleverC"
+                  , Logo.cleverC
+                  , defaults
+                  )
                 , ( "google classroom"
                   , Logo.googleClassroom
                   , defaults
