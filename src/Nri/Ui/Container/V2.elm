@@ -50,7 +50,8 @@ css =
 {-| PRIVATE
 -}
 type alias Settings =
-    { padding : Float
+    { containerType : String
+    , padding : Float
     , fullHeight : Bool
     , css : List Css.Style
     }
@@ -73,15 +74,15 @@ applyAttribute attribute styles =
 
 {-| PRIVATE
 -}
-renderContainer : String -> Settings -> List Attribute -> List (Html msg) -> Html msg
-renderContainer name defaultStyles attributes content =
+renderContainer : Settings -> List Attribute -> List (Html msg) -> Html msg
+renderContainer defaultSettings attributes content =
     let
         settings : Settings
         settings =
-            List.foldl applyAttribute defaultStyles attributes
+            List.foldl applyAttribute defaultSettings attributes
     in
     Nri.Ui.styled div
-        name
+        settings.containerType
         ([ padding (px settings.padding)
          , if settings.fullHeight then
             height (pct 100)
@@ -99,8 +100,9 @@ renderContainer name defaultStyles attributes content =
 -}
 default : List Attribute -> Html msg -> Html msg
 default attributes content =
-    renderContainer "default-container"
-        { padding = 20
+    renderContainer
+        { containerType = "default-container"
+        , padding = 20
         , fullHeight = False
         , css =
             [ borderRadius (px 8)
@@ -117,8 +119,9 @@ default attributes content =
 -}
 gray : List Attribute -> Html msg -> Html msg
 gray attributes content =
-    renderContainer "gray-container"
-        { padding = 20
+    renderContainer
+        { containerType = "gray-container"
+        , padding = 20
         , fullHeight = False
         , css =
             [ borderRadius (px 8)
@@ -132,8 +135,9 @@ gray attributes content =
 {-| -}
 disabled : List Attribute -> Html msg -> Html msg
 disabled attributes content =
-    renderContainer "disabled-container"
-        { padding = 20
+    renderContainer
+        { containerType = "disabled-container"
+        , padding = 20
         , fullHeight = False
         , css =
             [ borderRadius (px 8)
@@ -149,8 +153,9 @@ disabled attributes content =
 {-| -}
 invalid : List Attribute -> Html msg -> Html msg
 invalid attributes content =
-    renderContainer "invalid-container"
-        { padding = 20
+    renderContainer
+        { containerType = "invalid-container"
+        , padding = 20
         , fullHeight = False
         , css =
             [ borderRadius (px 8)
@@ -167,8 +172,9 @@ invalid attributes content =
 -}
 pillow : List Attribute -> Html msg -> Html msg
 pillow attributes content =
-    renderContainer "pillow-container"
-        { padding = 40
+    renderContainer
+        { containerType = "pillow-container"
+        , padding = 40
         , fullHeight = False
         , css = pillowStyles
         }
@@ -193,8 +199,9 @@ pillowStyles =
 -}
 buttony : List Attribute -> Html msg -> Html msg
 buttony attributes content =
-    renderContainer "buttony-container"
-        { padding = 20
+    renderContainer
+        { containerType = "buttony-container"
+        , padding = 20
         , fullHeight = False
         , css = buttonyStyles
         }
