@@ -73,8 +73,8 @@ applyAttribute attribute styles =
 
 {-| PRIVATE
 -}
-renderContainer : String -> Settings -> List Style -> List Attribute -> List (Html msg) -> Html msg
-renderContainer name defaultStyles baseStyles attributes content =
+renderContainer : String -> Settings -> List Attribute -> List (Html msg) -> Html msg
+renderContainer name defaultStyles attributes content =
     let
         settings : Settings
         settings =
@@ -82,14 +82,13 @@ renderContainer name defaultStyles baseStyles attributes content =
     in
     Nri.Ui.styled div
         name
-        (baseStyles
-            ++ [ padding (px settings.padding)
-               , if settings.fullHeight then
-                    height (pct 100)
+        ([ padding (px settings.padding)
+         , if settings.fullHeight then
+            height (pct 100)
 
-                 else
-                    batch []
-               ]
+           else
+            batch []
+         ]
             ++ settings.css
         )
         []
@@ -103,13 +102,13 @@ default attributes content =
     renderContainer "default-container"
         { padding = 20
         , fullHeight = False
-        , css = []
+        , css =
+            [ borderRadius (px 8)
+            , border3 (px 1) solid Colors.gray92
+            , boxShadow5 zero (px 1) (px 1) zero (rgba 0 0 0 0.25)
+            , backgroundColor Colors.white
+            ]
         }
-        [ borderRadius (px 8)
-        , border3 (px 1) solid Colors.gray92
-        , boxShadow5 zero (px 1) (px 1) zero (rgba 0 0 0 0.25)
-        , backgroundColor Colors.white
-        ]
         attributes
         [ content ]
 
@@ -121,11 +120,11 @@ gray attributes content =
     renderContainer "gray-container"
         { padding = 20
         , fullHeight = False
-        , css = []
+        , css =
+            [ borderRadius (px 8)
+            , backgroundColor Colors.gray96
+            ]
         }
-        [ borderRadius (px 8)
-        , backgroundColor Colors.gray96
-        ]
         attributes
         [ content ]
 
@@ -136,13 +135,13 @@ disabled attributes content =
     renderContainer "disabled-container"
         { padding = 20
         , fullHeight = False
-        , css = []
+        , css =
+            [ borderRadius (px 8)
+            , border3 (px 1) solid Colors.gray92
+            , backgroundColor Colors.white
+            , color Colors.gray45
+            ]
         }
-        [ borderRadius (px 8)
-        , border3 (px 1) solid Colors.gray92
-        , backgroundColor Colors.white
-        , color Colors.gray45
-        ]
         attributes
         [ content ]
 
@@ -153,13 +152,13 @@ invalid attributes content =
     renderContainer "invalid-container"
         { padding = 20
         , fullHeight = False
-        , css = []
+        , css =
+            [ borderRadius (px 8)
+            , border3 (px 1) solid Colors.purpleLight
+            , boxShadow5 zero (px 1) (px 1) zero Colors.purple
+            , backgroundColor Colors.purpleLight
+            ]
         }
-        [ borderRadius (px 8)
-        , border3 (px 1) solid Colors.purpleLight
-        , boxShadow5 zero (px 1) (px 1) zero Colors.purple
-        , backgroundColor Colors.purpleLight
-        ]
         attributes
         [ content ]
 
@@ -171,9 +170,8 @@ pillow attributes content =
     renderContainer "pillow-container"
         { padding = 40
         , fullHeight = False
-        , css = []
+        , css = pillowStyles
         }
-        pillowStyles
         attributes
         [ content ]
 
@@ -198,9 +196,8 @@ buttony attributes content =
     renderContainer "buttony-container"
         { padding = 20
         , fullHeight = False
-        , css = []
+        , css = buttonyStyles
         }
-        buttonyStyles
         attributes
         [ content ]
 
