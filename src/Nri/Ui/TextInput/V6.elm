@@ -262,16 +262,7 @@ css styles =
 -}
 noMargin : Bool -> Attribute msg
 noMargin removeMargin =
-    Attribute <|
-        \config ->
-            { config
-                | inputCss =
-                    if removeMargin then
-                        Css.marginTop Css.zero :: config.inputCss
-
-                    else
-                        config.inputCss
-            }
+    Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
 {-| Add any attribute to the input. Don't use this helper for adding css!
@@ -324,7 +315,7 @@ type alias Config msg =
     , onBlur : Maybe msg
     , onReset : Maybe msg
     , autofocus : Bool
-    , inputCss : List Css.Style
+    , noMarginTop : Bool
     , css : List (List Css.Style)
     , id : Maybe String
     , custom : List (Html.Attribute msg)
@@ -348,7 +339,7 @@ emptyConfig =
     , onReset = Nothing
     , autofocus = False
     , id = Nothing
-    , inputCss = []
+    , noMarginTop = False
     , css = []
     , custom = []
     }
@@ -449,7 +440,11 @@ view_ label (InputType inputType) config currentValue =
                                 ]
                         , Css.pseudoElement "-webkit-search-cancel-button"
                             [ Css.display Css.none ]
-                        , Css.important (Css.batch config.inputCss)
+                        , if config.noMarginTop then
+                            Css.important (Css.marginTop Css.zero)
+
+                          else
+                            Css.batch []
                         ]
                    , Attributes.placeholder placeholder_
                    , value stringValue
@@ -480,7 +475,14 @@ view_ label (InputType inputType) config currentValue =
           in
           Html.label
             ([ for idValue
-             , Attributes.css [ InputStyles.label config.inputStyle isInError ]
+             , Attributes.css
+                [ InputStyles.label config.inputStyle isInError
+                , if config.noMarginTop then
+                    Css.top (Css.px -9)
+
+                  else
+                    Css.batch []
+                ]
              ]
                 ++ extraStyles
             )
