@@ -24,7 +24,7 @@ import Nri.Ui.Text.V5 as Text
 example : Example State Msg
 example =
     { name = "Container"
-    , version = 1
+    , version = 2
     , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
