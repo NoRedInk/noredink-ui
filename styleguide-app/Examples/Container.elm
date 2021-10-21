@@ -47,7 +47,7 @@ example =
             , Container.view (Container.default :: attributes)
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Gray Container" ]
-            , Html.text "A container that doesn't draw too much attention to itself."
+            , Html.text "A container that doesn’t draw too much attention to itself."
             , Container.view (Container.gray :: attributes)
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Pillow Container" ]
@@ -92,11 +92,11 @@ controlContent =
                 |> Control.map Container.plaintext
           )
         , ( "plain text (long)"
-          , Control.stringTextarea "TODO: Think of some good long plain text content!"
+          , Control.stringTextarea romeoAndJulietQuotation
                 |> Control.map Container.plaintext
           )
         , ( "markdown"
-          , Control.string "TODO: Think of some good markdown content!"
+          , Control.string romeoAndJulietQuotation
                 |> Control.map Container.markdown
           )
         , ( "HTML (short)"
@@ -110,6 +110,26 @@ controlContent =
                 )
           )
         ]
+
+
+romeoAndJulietQuotation : String
+romeoAndJulietQuotation =
+    """
+        Two households, both alike in dignity,
+        In fair Verona, where we lay our scene,
+        From ancient grudge break to new mutiny,
+        Where civil blood makes civil hands unclean.
+        From forth the fatal loins of these two foes
+        A pair of star-cross’d lovers take their life;
+        Whose misadventured piteous overthrows
+        Do with their death bury their parents’ strife.
+        The fearful passage of their death-mark’d love,
+        And the continuance of their parents’ rage,
+        Which, but their children’s end, nought could remove,
+        Is now the two hours’ traffic of our stage;
+        The which if you with patient ears attend,
+        What here shall miss, our toil shall strive to mend.
+    """
 
 
 {-| -}

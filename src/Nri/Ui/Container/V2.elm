@@ -10,7 +10,6 @@ module Nri.Ui.Container.V2 exposing
   - add remaining attributes to styleguide
   - fix markdown extra-margins (if possible)
   - adds optional default spacing?
-  - fix plaintext long and markdown long example content
   - document changes from V1 (e.g., how to upgrade from V1)
 
 
