@@ -35,38 +35,44 @@ example =
             [ Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Default Container" ]
             , Html.text "Your go-to container."
-            , Container.default
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.default
+                , Container.plaintext "Content, content..."
                 ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Gray Container" ]
             , Html.text "A container that doesn't draw too much attention to itself."
-            , Container.gray
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.gray
+                , Container.plaintext "Content, content..."
                 ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Pillow Container" ]
             , Html.text "When you want something big and soft."
-            , Container.pillow
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.pillow
+                , Container.plaintext "Content, content..."
                 ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Buttony Container" ]
             , Html.text "Used for clickable button card things."
-            , Container.buttony
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.buttony
+                , Container.plaintext "Content, content..."
                 ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Disabled Container" ]
             , Html.text "Used to indicate content is locked/inaccessible"
-            , Container.disabled
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.disabled
+                , Container.plaintext "Content, content..."
                 ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Invalid Container" ]
             , Html.text "Used to indicate content is invalid"
-            , Container.invalid
-                [ Container.plaintext "Content, content..."
+            , Container.view
+                [ Container.invalid
+                , Container.plaintext "Content, content..."
                 ]
             ]
     }

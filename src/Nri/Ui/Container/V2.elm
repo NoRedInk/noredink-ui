@@ -1,11 +1,13 @@
 module Nri.Ui.Container.V2 exposing
-    ( gray, default, disabled, invalid, pillow, buttony
+    ( view, Attribute
+    , gray, default, disabled, invalid, pillow, buttony
     , plaintext, markdown, html
-    , Attribute, paddingPx, fullHeight, css
+    , paddingPx, fullHeight, css
     )
 
 {-| Common NoRedInk Containers
 
+@docs view, Attribute
 @docs gray, default, disabled, invalid, pillow, buttony
 @docs plaintext, markdown, html
 @docs Attribute, paddingPx, fullHeight, css
@@ -56,13 +58,12 @@ fullHeight =
 {-| -}
 css : List Css.Style -> Attribute msg
 css css_ =
-    Attribute <| \config -> { config | css = css_ }
+    Attribute <| \config -> { config | css = config.css ++ css_ }
 
 
-{-| PRIVATE
--}
-renderContainer : Settings msg -> List (Attribute msg) -> Html msg
-renderContainer defaultSettings attributes =
+{-| -}
+view : List (Attribute msg) -> Html msg
+view attributes =
     let
         settings : Settings msg
         settings =
@@ -87,88 +88,103 @@ renderContainer defaultSettings attributes =
 
 {-| Used for the default container case.
 -}
-default : List (Attribute msg) -> Html msg
-default attributes =
-    renderContainer
-        { containerType = "default-container"
-        , padding = 20
-        , fullHeight = False
-        , css =
-            [ borderRadius (px 8)
-            , border3 (px 1) solid Colors.gray92
-            , boxShadow5 zero (px 1) (px 1) zero (rgba 0 0 0 0.25)
-            , backgroundColor Colors.white
-            ]
-        , content = []
-        }
-        attributes
+default : Attribute msg
+default =
+    Attribute identity
+
+
+defaultSettings : Settings msg
+defaultSettings =
+    { containerType = "default-container"
+    , padding = 20
+    , fullHeight = False
+    , css = defaultStyles
+    , content = []
+    }
+
+
+defaultStyles : List Css.Style
+defaultStyles =
+    [ borderRadius (px 8)
+    , border3 (px 1) solid Colors.gray92
+    , boxShadow5 zero (px 1) (px 1) zero (rgba 0 0 0 0.25)
+    , backgroundColor Colors.white
+    ]
 
 
 {-| Used when there are a lot of containers.
 -}
-gray : List (Attribute msg) -> Html msg
-gray attributes =
-    renderContainer
-        { containerType = "gray-container"
-        , padding = 20
-        , fullHeight = False
-        , css =
-            [ borderRadius (px 8)
-            , backgroundColor Colors.gray96
-            ]
-        , content = []
-        }
-        attributes
+gray : Attribute msg
+gray =
+    Attribute <|
+        \config ->
+            { config
+                | containerType = "gray-container"
+                , padding = 20
+                , css = grayStyles
+            }
+
+
+grayStyles : List Css.Style
+grayStyles =
+    [ borderRadius (px 8)
+    , backgroundColor Colors.gray96
+    ]
 
 
 {-| -}
-disabled : List (Attribute msg) -> Html msg
-disabled attributes =
-    renderContainer
-        { containerType = "disabled-container"
-        , padding = 20
-        , fullHeight = False
-        , css =
-            [ borderRadius (px 8)
-            , border3 (px 1) solid Colors.gray92
-            , backgroundColor Colors.white
-            , color Colors.gray45
-            ]
-        , content = []
-        }
-        attributes
+disabled : Attribute msg
+disabled =
+    Attribute <|
+        \config ->
+            { config
+                | containerType = "disabled-container"
+                , padding = 20
+                , css = disabledStyles
+            }
+
+
+disabledStyles : List Css.Style
+disabledStyles =
+    [ borderRadius (px 8)
+    , border3 (px 1) solid Colors.gray92
+    , backgroundColor Colors.white
+    , color Colors.gray45
+    ]
 
 
 {-| -}
-invalid : List (Attribute msg) -> Html msg
-invalid attributes =
-    renderContainer
-        { containerType = "invalid-container"
-        , padding = 20
-        , fullHeight = False
-        , css =
-            [ borderRadius (px 8)
-            , border3 (px 1) solid Colors.purpleLight
-            , boxShadow5 zero (px 1) (px 1) zero Colors.purple
-            , backgroundColor Colors.purpleLight
-            ]
-        , content = []
-        }
-        attributes
+invalid : Attribute msg
+invalid =
+    Attribute <|
+        \config ->
+            { config
+                | containerType = "invalid-container"
+                , padding = 20
+                , css = invalidStyles
+            }
+
+
+invalidStyles : List Css.Style
+invalidStyles =
+    [ borderRadius (px 8)
+    , border3 (px 1) solid Colors.purpleLight
+    , boxShadow5 zero (px 1) (px 1) zero Colors.purple
+    , backgroundColor Colors.purpleLight
+    ]
 
 
 {-| Used for containers of interactive elements.
 -}
-pillow : List (Attribute msg) -> Html msg
-pillow attributes =
-    renderContainer
-        { containerType = "pillow-container"
-        , padding = 40
-        , fullHeight = False
-        , css = pillowStyles
-        , content = []
-        }
-        attributes
+pillow : Attribute msg
+pillow =
+    Attribute <|
+        \config ->
+            { config
+                | containerType = "pillow-container"
+                , padding = 40
+                , css = pillowStyles
+            }
 
 
 pillowStyles : List Style
@@ -186,16 +202,14 @@ pillowStyles =
 
 {-| Used for clickable cards
 -}
-buttony : List (Attribute msg) -> Html msg
-buttony attributes =
-    renderContainer
-        { containerType = "buttony-container"
-        , padding = 20
-        , fullHeight = False
-        , css = buttonyStyles
-        , content = []
-        }
-        attributes
+buttony : Attribute msg
+buttony =
+    Attribute <|
+        \config ->
+            { config
+                | containerType = "buttony-container"
+                , css = buttonyStyles
+            }
 
 
 buttonyStyles : List Style
