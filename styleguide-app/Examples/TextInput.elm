@@ -48,6 +48,7 @@ type alias ExampleConfig =
     , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
     , maybeDisabledAttribute : Maybe (TextInput.Attribute Msg)
     , maybeLoadingAttribute : Maybe (TextInput.Attribute Msg)
+    , noMarginAttribute : TextInput.Attribute Msg
     , onBlur : Bool
     , onReset : Bool
     }
@@ -77,6 +78,7 @@ example =
                         , exampleConfig.maybeShowLabelAttribute
                         , exampleConfig.maybeDisabledAttribute
                         , exampleConfig.maybeLoadingAttribute
+                        , Just exampleConfig.noMarginAttribute
                         , if exampleConfig.onBlur then
                             Just (TextInput.onBlur (setField onBlur))
 
@@ -212,6 +214,8 @@ init =
                 (Control.maybe False (Control.value TextInput.disabled))
             |> Control.field "TextInput.loading"
                 (Control.maybe False (Control.value TextInput.loading))
+            |> Control.field "TextInput.noMargin"
+                (Control.map TextInput.noMargin (Control.bool False))
             |> Control.field "TextInput.onBlur"
                 (Control.bool False)
             |> Control.field "TextInput.onReset"
