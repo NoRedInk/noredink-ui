@@ -1,26 +1,41 @@
 module Nri.Ui.Container.V2 exposing
     ( view, Attribute
-    , gray, default, disabled, invalid, pillow, buttony
+    , paddingPx, fullHeight, custom, css, testId, id
     , plaintext, markdown, html
-    , paddingPx, fullHeight, css
+    , gray, default, disabled, invalid, pillow, buttony
     )
 
-{-| Common NoRedInk Containers
+{-|
+
+
+# Common NoRedInk Containers
+
+
+## View
 
 @docs view, Attribute
-@docs gray, default, disabled, invalid, pillow, buttony
+@docs paddingPx, fullHeight, custom, css, testId, id
+
+
+## Content
+
 @docs plaintext, markdown, html
-@docs Attribute, paddingPx, fullHeight, css
+
+
+## Themes
+
+@docs gray, default, disabled, invalid, pillow, buttony
 
 -}
 
 import Css exposing (..)
 import Css.Media exposing (withMedia)
-import Html.Styled exposing (..)
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
 import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V5 as Text
 
@@ -38,6 +53,7 @@ type alias Settings msg =
     , fullHeight : Bool
     , css : List Css.Style
     , content : List (Html msg)
+    , attributes : List (Html.Attribute msg)
     }
 
 
@@ -53,6 +69,29 @@ paddingPx padding =
 fullHeight : Attribute msg
 fullHeight =
     Attribute <| \config -> { config | fullHeight = True }
+
+
+{-| -}
+custom : List (Html.Attribute msg) -> Attribute msg
+custom attributes =
+    Attribute <|
+        \config ->
+            { config
+                | attributes =
+                    config.attributes ++ attributes
+            }
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    custom [ Html.Styled.Attributes.id id_ ]
 
 
 {-| -}
@@ -82,7 +121,7 @@ view attributes =
          ]
             ++ settings.css
         )
-        []
+        settings.attributes
         settings.content
 
 
@@ -100,6 +139,7 @@ defaultSettings =
     , fullHeight = False
     , css = defaultStyles
     , content = []
+    , attributes = []
     }
 
 
