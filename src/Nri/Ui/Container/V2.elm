@@ -8,7 +8,6 @@ module Nri.Ui.Container.V2 exposing
 {-| TODO before publish:
 
   - add remaining attributes to styleguide
-  - fix markdown extra-margins (if possible)
   - adds optional default spacing?
   - document changes from V1 (e.g., how to upgrade from V1)
 
@@ -290,6 +289,10 @@ plaintext content =
 
 
 {-| Provide a string that will be rendered as markdown.
+
+Note that you may need to remove extra margin added by default
+to `p` tags by user agents.
+
 -}
 markdown : String -> Attribute msg
 markdown content =
