@@ -77,7 +77,13 @@ fullHeight =
     Attribute <| \config -> { config | fullHeight = True }
 
 
-{-| -}
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
 custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute <|
