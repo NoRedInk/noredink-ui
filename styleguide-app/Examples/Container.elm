@@ -35,27 +35,39 @@ example =
             [ Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Default Container" ]
             , Html.text "Your go-to container."
-            , Container.default [] (Html.text "Content, content...")
+            , Container.default
+                [ Container.plaintext "Content, content..."
+                ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Gray Container" ]
             , Html.text "A container that doesn't draw too much attention to itself."
-            , Container.gray [] (Html.text "Content, content...")
+            , Container.gray
+                [ Container.plaintext "Content, content..."
+                ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Pillow Container" ]
             , Html.text "When you want something big and soft."
-            , Container.pillow [] (Html.text "Content, content...")
+            , Container.pillow
+                [ Container.plaintext "Content, content..."
+                ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Buttony Container" ]
             , Html.text "Used for clickable button card things."
-            , Container.buttony [] (Html.text "Content, content...")
+            , Container.buttony
+                [ Container.plaintext "Content, content..."
+                ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Disabled Container" ]
             , Html.text "Used to indicate content is locked/inaccessible"
-            , Container.disabled [] (Html.text "Content, content...")
+            , Container.disabled
+                [ Container.plaintext "Content, content..."
+                ]
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Invalid Container" ]
             , Html.text "Used to indicate content is invalid"
-            , Container.invalid [] (Html.text "Content, content...")
+            , Container.invalid
+                [ Container.plaintext "Content, content..."
+                ]
             ]
     }
 
