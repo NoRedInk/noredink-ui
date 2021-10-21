@@ -15,7 +15,7 @@ import Html.Styled.Events exposing (onClick)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Container.V1 as Container
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V5 as Text
 
@@ -33,17 +33,21 @@ example =
     , view =
         \state ->
             [ Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "General Container" ]
-            , Html.text "Used for the general container case."
-            , Container.general [] (Html.text "Content, content...")
+                [ Html.text "Default Container" ]
+            , Html.text "Your go-to container."
+            , Container.default [] (Html.text "Content, content...")
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Alternate Container" ]
-            , Html.text "Used when there are a lot of containers."
-            , Container.alternate [] (Html.text "Content, content...")
+                [ Html.text "Gray Container" ]
+            , Html.text "A container that doesn't draw too much attention to itself."
+            , Container.gray [] (Html.text "Content, content...")
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Interactable Container" ]
-            , Html.text "Usually used for larger containers with many elements inside."
-            , Container.interactable [] (Html.text "Content, content...")
+                [ Html.text "Pillow Container" ]
+            , Html.text "When you want something big and soft."
+            , Container.pillow [] (Html.text "Content, content...")
+            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
+                [ Html.text "Buttony Container" ]
+            , Html.text "Used for clickable button card things."
+            , Container.buttony [] (Html.text "Content, content...")
             , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
                 [ Html.text "Disabled Container" ]
             , Html.text "Used to indicate content is locked/inaccessible"
@@ -52,11 +56,6 @@ example =
                 [ Html.text "Invalid Container" ]
             , Html.text "Used to indicate content is invalid"
             , Container.invalid [] (Html.text "Content, content...")
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Interactable container with a label" ]
-            , Html.text "Used for helpful tidbits."
-            , Container.interactableWithLabel "The label" <|
-                Html.text "Content, content..."
             ]
     }
 
