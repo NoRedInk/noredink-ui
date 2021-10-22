@@ -9,6 +9,7 @@ module Examples.Balloon exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Html.Styled exposing (Html, div, fromUnstyled, text)
@@ -83,12 +84,12 @@ widthOptions =
         [ ( "px"
           , Control.map
                 (\w -> ( "Balloon.widthPx " ++ String.fromFloat w, Balloon.widthPx w ))
-                (controlFloat 50)
+                (ControlExtra.float 50)
           )
         , ( "%"
           , Control.map
                 (\w -> ( "Balloon.widthPct " ++ String.fromFloat w, Balloon.widthPct w ))
-                (controlFloat 50)
+                (ControlExtra.float 50)
           )
         ]
 
@@ -97,13 +98,7 @@ paddingOptions : Control ( String, Balloon.Attribute )
 paddingOptions =
     Control.map
         (\w -> ( "Balloon.paddingPx " ++ String.fromFloat w, Balloon.paddingPx w ))
-        (controlFloat 10)
-
-
-controlFloat : Float -> Control Float
-controlFloat default =
-    Control.map (String.toFloat >> Maybe.withDefault default)
-        (Control.string (String.fromFloat default))
+        (ControlExtra.float 10)
 
 
 {-| -}

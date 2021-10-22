@@ -9,6 +9,7 @@ module Examples.Container exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
@@ -79,9 +80,16 @@ type alias State =
 init : State
 init =
     { control =
-        Control.record List.singleton
-            |> Control.field "content" controlContent
+        ControlExtra.list
+            |> ControlExtra.optionalListItem "paddingPx" controlMaybePaddingPx
+            |> ControlExtra.listItem "content" controlContent
     }
+
+
+controlMaybePaddingPx : Control (Maybe (Container.Attribute msg))
+controlMaybePaddingPx =
+    Control.maybe False <|
+        Control.map Container.paddingPx (ControlExtra.float 20)
 
 
 controlContent : Control (Container.Attribute msg)
