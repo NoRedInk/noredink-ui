@@ -82,6 +82,7 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "paddingPx" controlMaybePaddingPx
+            |> ControlExtra.optionalListItem "fullHeight" controlMaybeFullHeight
             |> ControlExtra.listItem "content" controlContent
     }
 
@@ -90,6 +91,12 @@ controlMaybePaddingPx : Control (Maybe (Container.Attribute msg))
 controlMaybePaddingPx =
     Control.maybe False <|
         Control.map Container.paddingPx (ControlExtra.float 20)
+
+
+controlMaybeFullHeight : Control (Maybe (Container.Attribute msg))
+controlMaybeFullHeight =
+    Control.maybe False <|
+        Control.map Container.fullHeight (Control.bool False)
 
 
 controlContent : Control (Container.Attribute msg)

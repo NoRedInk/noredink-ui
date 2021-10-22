@@ -11,8 +11,18 @@ module Nri.Ui.Container.V2 exposing
   - adds optional default spacing?
   - document changes from V1 (e.g., how to upgrade from V1)
 
+Common NoRedInk Containers
 
-# Common NoRedInk Containers
+
+# Changelog
+
+
+## Changes from V1
+
+  - fullHeight accepts a bool value
+
+
+# Documentation
 
 
 ## View
@@ -70,9 +80,9 @@ paddingPx padding =
 
 {-| Makes the container occupy the full height of the parent.
 -}
-fullHeight : Attribute msg
-fullHeight =
-    Attribute <| \config -> { config | fullHeight = True }
+fullHeight : Bool -> Attribute msg
+fullHeight fullHeight_ =
+    Attribute <| \config -> { config | fullHeight = fullHeight_ }
 
 
 {-| Use this helper to add custom attributes.
