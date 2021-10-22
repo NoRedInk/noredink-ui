@@ -5,13 +5,7 @@ module Nri.Ui.Container.V2 exposing
     , gray, default, disabled, invalid, pillow, buttony
     )
 
-{-| TODO before publish:
-
-  - add remaining attributes to styleguide
-  - adds optional default spacing?
-  - document changes from V1 (e.g., how to upgrade from V1)
-
-Common NoRedInk Containers
+{-| Common NoRedInk Containers
 
 
 # Changelog
@@ -19,7 +13,16 @@ Common NoRedInk Containers
 
 ## Changes from V1
 
-  - remove fullHeight
+  - removes fullHeight
+  - changes the API from providing many themed functions that create HTML (`alternate`, `general`, etc.) to having a single `view` helper that takes a list of attributes (including themed attributes and content attributes)
+  - adds `custom`, `testId`, `id`
+  - adds `plaintext` helper and `markdown` helper
+  - renames themes from:
+      - `alternate` -> `gray`
+      - `general` -> `default`
+      - `interactable` -> `pillow`
+  - removes `interactableWithLabel` theme
+  - adds `buttony` theme
 
 
 # Documentation
