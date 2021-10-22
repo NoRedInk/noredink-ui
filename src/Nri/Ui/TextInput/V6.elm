@@ -35,7 +35,6 @@ module Nri.Ui.TextInput.V6 exposing
 @docs css, custom, nriDescription, id, testId, noMargin
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
-@docs custom
 
 -}
 
