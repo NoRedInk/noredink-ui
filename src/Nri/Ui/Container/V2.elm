@@ -1,6 +1,6 @@
 module Nri.Ui.Container.V2 exposing
     ( view, Attribute
-    , paddingPx, fullHeight, custom, css, testId, id
+    , paddingPx, custom, css, testId, id
     , plaintext, markdown, html
     , gray, default, disabled, invalid, pillow, buttony
     )
@@ -19,7 +19,7 @@ Common NoRedInk Containers
 
 ## Changes from V1
 
-  - fullHeight accepts a bool value
+  - remove fullHeight
 
 
 # Documentation
@@ -28,7 +28,7 @@ Common NoRedInk Containers
 ## View
 
 @docs view, Attribute
-@docs paddingPx, fullHeight, custom, css, testId, id
+@docs paddingPx, custom, css, testId, id
 
 
 ## Content
@@ -64,7 +64,6 @@ type Attribute msg
 type alias Settings msg =
     { containerType : String
     , padding : Float
-    , fullHeight : Bool
     , css : List Css.Style
     , content : List (Html msg)
     , attributes : List (Html.Attribute msg)
@@ -76,13 +75,6 @@ type alias Settings msg =
 paddingPx : Float -> Attribute msg
 paddingPx padding =
     Attribute <| \config -> { config | padding = padding }
-
-
-{-| Makes the container occupy the full height of the parent.
--}
-fullHeight : Bool -> Attribute msg
-fullHeight fullHeight_ =
-    Attribute <| \config -> { config | fullHeight = fullHeight_ }
 
 
 {-| Use this helper to add custom attributes.
@@ -132,15 +124,7 @@ view attributes =
     in
     Nri.Ui.styled div
         settings.containerType
-        ([ padding (px settings.padding)
-         , if settings.fullHeight then
-            height (pct 100)
-
-           else
-            batch []
-         ]
-            ++ settings.css
-        )
+        (padding (px settings.padding) :: settings.css)
         settings.attributes
         settings.content
 
@@ -156,7 +140,6 @@ defaultSettings : Settings msg
 defaultSettings =
     { containerType = "default-container"
     , padding = 20
-    , fullHeight = False
     , css = defaultStyles
     , content = []
     , attributes = []

@@ -80,8 +80,7 @@ viewExample : { name : String, description : String } -> List (Container.Attribu
 viewExample { name, description } attributes =
     Html.section
         [ css
-            [ Css.marginTop (Css.px 8)
-            , Css.minHeight (Css.px 150)
+            [ Css.marginTop (Css.px 20)
             ]
         ]
         [ Heading.h3 [] [ Html.text name ]
@@ -102,7 +101,6 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
-            |> ControlExtra.optionalListItem "fullHeight" controlFullHeight
             |> ControlExtra.optionalListItem "css" controlCss
             |> ControlExtra.listItem "content" controlContent
     }
@@ -113,16 +111,12 @@ controlPaddingPx =
     Control.map Container.paddingPx (ControlExtra.float 20)
 
 
-controlFullHeight : Control (Container.Attribute msg)
-controlFullHeight =
-    Control.map Container.fullHeight (Control.bool False)
-
-
 controlCss : Control (Container.Attribute msg)
 controlCss =
     Control.map Container.css
         (Control.value
-            [ Css.hover [ Css.backgroundColor Colors.glacier ]
+            [ Css.minHeight (Css.px 100)
+            , Css.hover [ Css.backgroundColor Colors.glacier ]
             ]
         )
 
