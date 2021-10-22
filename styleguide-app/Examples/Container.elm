@@ -81,22 +81,30 @@ init : State
 init =
     { control =
         ControlExtra.list
-            |> ControlExtra.optionalListItem "paddingPx" controlMaybePaddingPx
-            |> ControlExtra.optionalListItem "fullHeight" controlMaybeFullHeight
+            |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
+            |> ControlExtra.optionalListItem "fullHeight" controlFullHeight
+            |> ControlExtra.optionalListItem "css" controlCss
             |> ControlExtra.listItem "content" controlContent
     }
 
 
-controlMaybePaddingPx : Control (Maybe (Container.Attribute msg))
-controlMaybePaddingPx =
-    Control.maybe False <|
-        Control.map Container.paddingPx (ControlExtra.float 20)
+controlPaddingPx : Control (Container.Attribute msg)
+controlPaddingPx =
+    Control.map Container.paddingPx (ControlExtra.float 20)
 
 
-controlMaybeFullHeight : Control (Maybe (Container.Attribute msg))
-controlMaybeFullHeight =
-    Control.maybe False <|
-        Control.map Container.fullHeight (Control.bool False)
+controlFullHeight : Control (Container.Attribute msg)
+controlFullHeight =
+    Control.map Container.fullHeight (Control.bool False)
+
+
+controlCss : Control (Container.Attribute msg)
+controlCss =
+    Control.map Container.css
+        (Control.value
+            [ Css.hover [ Css.backgroundColor Colors.glacier ]
+            ]
+        )
 
 
 controlContent : Control (Container.Attribute msg)

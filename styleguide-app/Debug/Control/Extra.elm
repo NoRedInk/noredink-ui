@@ -36,8 +36,8 @@ listItem name accessor accumulator =
 
 
 {-| -}
-optionalListItem : String -> Control (Maybe a) -> Control (List a) -> Control (List a)
+optionalListItem : String -> Control a -> Control (List a) -> Control (List a)
 optionalListItem name accessor accumulator =
     Control.field name
-        (Control.map (List.singleton >> List.filterMap identity) accessor)
+        (Control.map (List.singleton >> List.filterMap identity) (Control.maybe False accessor))
         (Control.map (++) accumulator)
