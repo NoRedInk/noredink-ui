@@ -11,7 +11,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -42,32 +42,52 @@ example =
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Default Container" ]
-            , Html.text "Your go-to container."
-            , Container.view (Container.default :: attributes)
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Gray Container" ]
-            , Html.text "A container that doesn’t draw too much attention to itself."
-            , Container.view (Container.gray :: attributes)
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Pillow Container" ]
-            , Html.text "When you want something big and soft."
-            , Container.view (Container.pillow :: attributes)
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Buttony Container" ]
-            , Html.text "Used for clickable button card things."
-            , Container.view (Container.buttony :: attributes)
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Disabled Container" ]
-            , Html.text "Used to indicate content is locked/inaccessible"
-            , Container.view (Container.disabled :: attributes)
-            , Heading.h3 [ Heading.css [ Css.marginTop (Css.px 8) ] ]
-                [ Html.text "Invalid Container" ]
-            , Html.text "Used to indicate content is invalid"
-            , Container.view (Container.invalid :: attributes)
+            , viewExample
+                { name = "Default Container"
+                , description = "Your go-to container."
+                }
+                (Container.default :: attributes)
+            , viewExample
+                { name = "Gray Container"
+                , description = "A container that doesn’t draw too much attention to itself."
+                }
+                (Container.gray :: attributes)
+            , viewExample
+                { name = "Pillow Container"
+                , description = "When you want something big and soft."
+                }
+                (Container.pillow :: attributes)
+            , viewExample
+                { name = "Buttony Container"
+                , description = "Used for clickable button card things."
+                }
+                (Container.buttony :: attributes)
+            , viewExample
+                { name = "Disabled Container"
+                , description = "Used to indicate content is locked/inaccessible"
+                }
+                (Container.disabled :: attributes)
+            , viewExample
+                { name = "Invalid Container"
+                , description = "Used to indicate content is invalid"
+                }
+                (Container.invalid :: attributes)
             ]
     }
+
+
+viewExample : { name : String, description : String } -> List (Container.Attribute msg) -> Html msg
+viewExample { name, description } attributes =
+    Html.section
+        [ css
+            [ Css.marginTop (Css.px 8)
+            , Css.minHeight (Css.px 150)
+            ]
+        ]
+        [ Heading.h3 [] [ Html.text name ]
+        , Html.text description
+        , Container.view attributes
+        ]
 
 
 {-| -}
