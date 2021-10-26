@@ -3,7 +3,7 @@ module Nri.Ui.TextInput.V6 exposing
     , InputType, number, float, text, password, email, search
     , Attribute, placeholder, hiddenLabel, autofocus
     , onBlur, onReset
-    , css, custom, nriDescription, id, testId
+    , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage
     , writing
     )
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V6 exposing
 
 @docs Attribute, placeholder, hiddenLabel, autofocus
 @docs onBlur, onReset
-@docs css, custom, nriDescription, id, testId
+@docs css, custom, nriDescription, id, testId, noMargin
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
 
@@ -246,14 +246,22 @@ autofocus =
 
 
 {-| Adds CSS to the input container.
-This is meant to be used for margin, and child node attributes for display:flex, display:grid, etc.
+
 If you want to customize colors, borders, font sizes, etc, you should instead add to the TextInput API
 to support what you need.
+
 -}
 css : List Css.Style -> Attribute msg
 css styles =
     Attribute <|
         \config -> { config | css = styles :: config.css }
+
+
+{-| Remove default spacing from the Input.
+-}
+noMargin : Bool -> Attribute msg
+noMargin removeMargin =
+    Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
 {-| Add any attribute to the input. Don't use this helper for adding css!
@@ -306,6 +314,7 @@ type alias Config msg =
     , onBlur : Maybe msg
     , onReset : Maybe msg
     , autofocus : Bool
+    , noMarginTop : Bool
     , css : List (List Css.Style)
     , id : Maybe String
     , custom : List (Html.Attribute msg)
@@ -329,6 +338,7 @@ emptyConfig =
     , onReset = Nothing
     , autofocus = False
     , id = Nothing
+    , noMarginTop = False
     , css = []
     , custom = []
     }
@@ -429,6 +439,11 @@ view_ label (InputType inputType) config currentValue =
                                 ]
                         , Css.pseudoElement "-webkit-search-cancel-button"
                             [ Css.display Css.none ]
+                        , if config.noMarginTop then
+                            Css.important (Css.marginTop Css.zero)
+
+                          else
+                            Css.batch []
                         ]
                    , Attributes.placeholder placeholder_
                    , value stringValue
@@ -459,7 +474,14 @@ view_ label (InputType inputType) config currentValue =
           in
           Html.label
             ([ for idValue
-             , Attributes.css [ InputStyles.label config.inputStyle isInError ]
+             , Attributes.css
+                [ InputStyles.label config.inputStyle isInError
+                , if config.noMarginTop then
+                    Css.top (Css.px -9)
+
+                  else
+                    Css.batch []
+                ]
              ]
                 ++ extraStyles
             )
