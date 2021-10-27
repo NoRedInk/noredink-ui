@@ -11,14 +11,9 @@ module Nri.Ui.TextInput.V7 exposing
 {-|
 
 
-# Patch changes:
+# Changes from V6
 
-  - adds `nriDescription` and `testId` helpers
-
-
-# Changes from V5
-
-  - new Attributes-style API
+  - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
 
 @docs view, generateId
 
@@ -272,19 +267,17 @@ noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
-{-| Add any attribute to the input. Don't use this helper for adding css!
+{-| Use this helper to add custom attributes.
 
-TODO: in V7, change this helper's type to `List (Html.Attribute msg) -> Attribute msg`,
-to be more consistent with other helpers.
-
-Also, we should probably change the implemenation from `attr :: config.custom` to
-`config.custom ++ attributes` for a more intuitive and consistent API.
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
 
 -}
-custom : Html.Attribute msg -> Attribute msg
-custom attr =
+custom : List (Html.Attribute msg) -> Attribute msg
+custom attributes =
     Attribute <|
-        \config -> { config | custom = attr :: config.custom }
+        \config -> { config | custom = config.custom ++ attributes }
 
 
 {-| Set a custom ID for this text input and label. If you don't set this,
@@ -301,13 +294,13 @@ id id_ =
 {-| -}
 nriDescription : String -> Attribute msg
 nriDescription description =
-    custom (Extra.nriDescription description)
+    custom [ Extra.nriDescription description ]
 
 
 {-| -}
 testId : String -> Attribute msg
 testId id_ =
-    custom (Extra.testId id_)
+    custom [ Extra.testId id_ ]
 
 
 {-| This is private. The public API only exposes `Attribute`.
