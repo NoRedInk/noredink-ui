@@ -16,7 +16,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}

@@ -1,17 +1,11 @@
-module Nri.Ui.Text.V5 exposing
+module Nri.Ui.Text.V6 exposing
     ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
     , Attribute, noBreak, css
     , noWidow
     )
 
-{-| Post-release patches
-
-  - adjusts link styles
-
-Changes from V4:
-
-  - Added `Attribute` for customizing styles
+{-| Changes from V5:
 
 
 ## Understanding spacing
@@ -19,7 +13,6 @@ Changes from V4:
   - All text styles have a specific line-height. This is set so that when text in the given style
     is long enough to wrap, the spacing between wrapped lines looks good.
   - No text styles have padding.
-  - **Heading styles** do not have margin. It is up to the caller to add appropriate margin to the layout.
   - **Paragraph styles** only have bottom margin, but with **:last-child bottom margin set to zero**.
     This bottom margin is set to look good when multiple paragraphs of the same style follow one another.
       - If you want content after the paragraph and don't want the margin, put the paragraph in a `div` so that it will be the last-child, which will get rid of the bottom margin.

@@ -15,7 +15,7 @@ import Html.Styled.Attributes exposing (css, id)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

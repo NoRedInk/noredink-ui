@@ -11,7 +11,7 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V1 as Switch
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}

@@ -23,7 +23,7 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V10 as Modal
 import Nri.Ui.RadioButton.V2 as RadioButton
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}

@@ -17,7 +17,7 @@ import Html.Styled.Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}

@@ -13,7 +13,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -30,7 +30,7 @@ type alias Msg =
 example : Example State Msg
 example =
     { name = "Text"
-    , version = 5
+    , version = 6
     , categories = [ Text ]
     , keyboardSupport = []
     , state = ()

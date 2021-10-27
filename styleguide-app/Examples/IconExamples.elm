@@ -6,7 +6,7 @@ import Html.Styled.Attributes exposing (css, style, title)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 view : String -> List ( String, Svg.Svg ) -> Html msg

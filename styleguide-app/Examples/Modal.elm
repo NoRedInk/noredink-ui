@@ -21,7 +21,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 import Task
 
 
