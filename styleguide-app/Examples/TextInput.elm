@@ -19,6 +19,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V3 as Message
 import Nri.Ui.TextInput.V7 as TextInput
+import ViewHelpers exposing (viewExamples)
 
 
 {-| -}
@@ -75,109 +76,99 @@ example =
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , Html.div
-                [ css
-                    [ property "display" "grid"
-                    , property "grid-template-columns" "auto 1fr"
-                    , property "grid-gap" "10px"
-                    ]
-                ]
-                [ Heading.h3 [] [ text "TextInput.text" ]
-                , TextInput.view (exampleConfig.label ++ " (text)")
-                    (TextInput.text (SetTextInput 1))
-                    (attributes
-                        { setField = SetTextInput 1
-                        , onBlur = "Blurred!!!"
-                        , onReset = ""
-                        , onEnter = HitEnter
-                        }
-                    )
-                    (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
-                , Heading.h3 [] [ text "TextInput.number" ]
-                , TextInput.view (exampleConfig.label ++ " (number)")
-                    (TextInput.number SetNumberInput)
-                    (TextInput.id "hey-this-is-a-test-id"
-                        :: attributes
-                            { setField = SetNumberInput
-                            , onBlur = Just 10000000
+            , viewExamples
+                [ ( "TextInput.text"
+                  , TextInput.view (exampleConfig.label ++ " (text)")
+                        (TextInput.text (SetTextInput 1))
+                        (attributes
+                            { setField = SetTextInput 1
+                            , onBlur = "Blurred!!!"
+                            , onReset = ""
+                            , onEnter = HitEnter
+                            }
+                        )
+                        (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
+                  )
+                , ( "TextInput.number"
+                  , TextInput.view (exampleConfig.label ++ " (number)")
+                        (TextInput.number SetNumberInput)
+                        (TextInput.id "hey-this-is-a-test-id"
+                            :: attributes
+                                { setField = SetNumberInput
+                                , onBlur = Just 10000000
+                                , onReset = Nothing
+                                , onEnter = HitEnter
+                                }
+                        )
+                        state.numberInputValue
+                  )
+                , ( "TextInput.float"
+                  , TextInput.view (exampleConfig.label ++ " (float)")
+                        (TextInput.float SetFloatInput)
+                        (attributes
+                            { setField = SetFloatInput
+                            , onBlur = Just 1.00000001
                             , onReset = Nothing
                             , onEnter = HitEnter
                             }
-                    )
-                    state.numberInputValue
-                , Heading.h3 [] [ text "TextInput.float" ]
-                , TextInput.view (exampleConfig.label ++ " (float)")
-                    (TextInput.float SetFloatInput)
-                    (attributes
-                        { setField = SetFloatInput
-                        , onBlur = Just 1.00000001
-                        , onReset = Nothing
-                        , onEnter = HitEnter
-                        }
-                    )
-                    state.floatInputValue
-                , Heading.h3 [] [ text "TextInput.password" ]
-                , TextInput.view (exampleConfig.label ++ " (password)")
-                    (TextInput.password SetPassword)
-                    (attributes
-                        { setField = SetPassword
-                        , onBlur = "Blurred!!!"
-                        , onReset = ""
-                        , onEnter = HitEnter
-                        }
-                    )
-                    state.passwordInputValue
-                , Heading.h3 [] [ text "TextInput.email" ]
-                , TextInput.view (exampleConfig.label ++ " (email)")
-                    (TextInput.email (SetTextInput 2))
-                    (attributes
-                        { setField = SetTextInput 2
-                        , onBlur = "Blurred!!!"
-                        , onReset = ""
-                        , onEnter = HitEnter
-                        }
-                    )
-                    (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
-                , Heading.h3 [] [ Html.text "TextInput.writing" ]
-                , TextInput.view (exampleConfig.label ++ " (writing)")
-                    (TextInput.text (SetTextInput 4))
-                    (TextInput.writing
-                        :: attributes
-                            { setField = SetTextInput 4
+                        )
+                        state.floatInputValue
+                  )
+                , ( "TextInput.email"
+                  , TextInput.view (exampleConfig.label ++ " (email)")
+                        (TextInput.email (SetTextInput 2))
+                        (attributes
+                            { setField = SetTextInput 2
                             , onBlur = "Blurred!!!"
                             , onReset = ""
                             , onEnter = HitEnter
                             }
-                    )
-                    (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
-                , Heading.h3 [] [ Html.text "TextInput.search" ]
-                , TextInput.view (exampleConfig.label ++ " (search)")
-                    (TextInput.search SetSearchTerm)
-                    (attributes
-                        { setField = SetSearchTerm
-                        , onBlur = "Blurred!!!"
-                        , onReset = ""
-                        , onEnter = HitEnter
-                        }
-                    )
-                    state.searchInputValue
-                , Heading.h3 [] [ text "TextInput.css" ]
-                , TextInput.view (exampleConfig.label ++ " (custom CSS)")
-                    (TextInput.text (SetTextInput 8))
-                    (TextInput.css [ Css.backgroundColor Colors.azure ]
-                        :: attributes
-                            { setField = SetTextInput 8
+                        )
+                        (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
+                  )
+                , ( "TextInput.writing"
+                  , TextInput.view (exampleConfig.label ++ " (writing)")
+                        (TextInput.text (SetTextInput 4))
+                        (TextInput.writing
+                            :: attributes
+                                { setField = SetTextInput 4
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = HitEnter
+                                }
+                        )
+                        (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
+                  )
+                , ( "TextInput.search"
+                  , TextInput.view (exampleConfig.label ++ " (search)")
+                        (TextInput.search SetSearchTerm)
+                        (attributes
+                            { setField = SetSearchTerm
                             , onBlur = "Blurred!!!"
                             , onReset = ""
                             , onEnter = HitEnter
                             }
-                    )
-                    (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
-                , Message.view
-                    [ Message.tiny
-                    , Message.tip
-                    , Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
-                    ]
+                        )
+                        state.searchInputValue
+                  )
+                , ( "TextInput.css"
+                  , TextInput.view (exampleConfig.label ++ " (custom CSS)")
+                        (TextInput.text (SetTextInput 8))
+                        (TextInput.css [ Css.backgroundColor Colors.azure ]
+                            :: attributes
+                                { setField = SetTextInput 8
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = HitEnter
+                                }
+                        )
+                        (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
+                  )
+                ]
+            , Message.view
+                [ Message.tiny
+                , Message.tip
+                , Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
                 ]
             ]
     }

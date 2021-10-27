@@ -14,6 +14,7 @@ import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import ViewHelpers exposing (viewExamples)
 
 
 type alias State =
@@ -201,21 +202,10 @@ example =
             , Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , orDismiss <|
-                Html.table [ css [ width (pct 100) ] ]
-                    [ Html.tbody []
-                        [ tr []
-                            [ th [] [ Html.text "tiny" ]
-                            , td [] [ Message.view (Message.tiny :: attributes) ]
-                            ]
-                        , tr []
-                            [ th [] [ Html.text "large" ]
-                            , td [] [ Message.view (Message.large :: attributes) ]
-                            ]
-                        , tr []
-                            [ th [] [ Html.text "banner" ]
-                            , td [] [ Message.view (Message.banner :: attributes) ]
-                            ]
-                        ]
+                viewExamples
+                    [ ( "tiny", Message.view (Message.tiny :: attributes) )
+                    , ( "large", Message.view (Message.large :: attributes) )
+                    , ( "banner", Message.view (Message.banner :: attributes) )
                     ]
             , Heading.h3
                 [ Heading.css
