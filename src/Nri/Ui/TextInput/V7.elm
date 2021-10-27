@@ -1,4 +1,4 @@
-module Nri.Ui.TextInput.V6 exposing
+module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , InputType, number, float, text, password, email, search
     , Attribute, placeholder, hiddenLabel, autofocus

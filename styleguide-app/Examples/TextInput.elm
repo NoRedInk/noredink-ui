@@ -17,7 +17,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V3 as Message
-import Nri.Ui.TextInput.V6 as TextInput
+import Nri.Ui.TextInput.V7 as TextInput
 
 
 {-| -}
@@ -61,7 +61,7 @@ type alias ExampleConfig =
 example : Example State Msg
 example =
     { name = "TextInput"
-    , version = 6
+    , version = 7
     , categories = [ Inputs ]
     , keyboardSupport = []
     , state = init
