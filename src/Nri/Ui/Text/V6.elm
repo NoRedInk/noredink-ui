@@ -1,11 +1,14 @@
 module Nri.Ui.Text.V6 exposing
     ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
-    , Attribute, noBreak, css
+    , Attribute, noBreak, css, id, custom
+    , nriDescription, testId
     , noWidow
     )
 
 {-| Changes from V5:
+
+  - adds helpers: `custom`, `nriDescription`,`testId`,`id`
 
 
 ## Understanding spacing
@@ -36,7 +39,8 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
 
 ## Customizations
 
-@docs Attribute, noBreak, css
+@docs Attribute, noBreak, css, id, custom
+@docs nriDescription, testId
 
 
 ## Modifying strings to display nicely:
@@ -45,12 +49,13 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
 
 -}
 
+import Accessibility.Styled as Html exposing (..)
 import Css exposing (..)
 import Css.Global exposing (a, descendants)
-import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attrs
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
 
 {-| -}
@@ -61,6 +66,7 @@ type Attribute
 type alias Settings =
     { noBreak : Bool
     , styles : List Css.Style
+    , customAttributes : List (Html.Attribute Never)
     }
 
 
@@ -68,6 +74,7 @@ defaultSettings : Settings
 defaultSettings =
     { noBreak = False
     , styles = []
+    , customAttributes = []
     }
 
 
@@ -81,6 +88,40 @@ buildSettings =
 noBreak : Attribute
 noBreak =
     Attribute (\config -> { config | noBreak = True })
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute
+custom attributes =
+    Attribute <|
+        \config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+
+
+{-| -}
+nriDescription : String -> Attribute
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute
+id id_ =
+    custom [ Attributes.id id_ ]
 
 
 {-| Add some custom CSS to the text. If you find yourself using this a lot,
@@ -100,7 +141,7 @@ view attributes content =
             buildSettings attributes
     in
     p
-        [ Attrs.css
+        (Attributes.css
             [ if settings.noBreak then
                 whiteSpace noWrap
 
@@ -108,7 +149,8 @@ view attributes content =
                 batch []
             , batch settings.styles
             ]
-        ]
+            :: settings.customAttributes
+        )
         content
 
 
