@@ -98,6 +98,18 @@ example =
                         )
                         state.floatInputValue
                   )
+                , ( "password"
+                  , TextInput.view (exampleConfig.label ++ " (password)")
+                        (TextInput.password SetPassword)
+                        (attributes
+                            { setField = SetPassword
+                            , onBlur = "Blurred!!!"
+                            , onReset = ""
+                            , onEnter = "Entered!!!"
+                            }
+                        )
+                        state.passwordInputValue
+                  )
                 , ( "email"
                   , TextInput.view (exampleConfig.label ++ " (email)")
                         (TextInput.email (SetTextInput 2))
