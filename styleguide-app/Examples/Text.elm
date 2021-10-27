@@ -15,6 +15,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text
 
@@ -52,11 +53,6 @@ example =
                 , ( "ugSmallBody", Text.ugSmallBody )
                 ]
                 attributes
-            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
-            , Text.mediumBody
-                [ Text.css [ Css.padding (Css.px 20) ]
-                , Text.plaintext "I've got more padding than my siblings!"
-                ]
             ]
     }
 
@@ -90,6 +86,14 @@ init =
             |> ControlExtra.listItem "content" controlContent
             |> ControlExtra.listItem "noBreak"
                 (Control.map Text.noBreak (Control.bool False))
+            |> ControlExtra.optionalListItem "css"
+                (Control.value
+                    (Text.css
+                        [ Css.border3 (Css.px 1) Css.solid Colors.aqua
+                        , Css.color Colors.aquaDark
+                        ]
+                    )
+                )
     }
 
 
