@@ -17,6 +17,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V6 as TextInput
+import Nri.Ui.Message.V3 as Message
 
 
 {-| -}
@@ -27,6 +28,7 @@ type Msg
     | SetPassword String
     | SetSearchTerm String
     | UpdateControl (Control ExampleConfig)
+    | HitEnter
 
 
 {-| -}
@@ -37,6 +39,7 @@ type alias State =
     , passwordInputValue : String
     , searchInputValue : String
     , control : Control ExampleConfig
+    , enterCount : Int
     }
 
 
@@ -70,7 +73,7 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
-                attributes { setField, onBlur, onReset } =
+                attributes { setField, onBlur, onReset, onEnter } =
                     List.filterMap identity
                         [ exampleConfig.maybeErrorAttribute1
                         , exampleConfig.maybeErrorAttribute2
@@ -89,6 +92,7 @@ example =
 
                           else
                             Nothing
+                        , Just <| TextInput.onEnter onEnter
                         ]
             in
             [ Control.view UpdateControl state.control
@@ -107,6 +111,7 @@ example =
                         { setField = SetTextInput 1
                         , onBlur = "Blurred!!!"
                         , onReset = ""
+                        , onEnter = HitEnter
                         }
                     )
                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
@@ -118,6 +123,7 @@ example =
                             { setField = SetNumberInput
                             , onBlur = Just 10000000
                             , onReset = Nothing
+                        , onEnter = HitEnter
                             }
                     )
                     state.numberInputValue
@@ -128,6 +134,7 @@ example =
                         { setField = SetFloatInput
                         , onBlur = Just 1.00000001
                         , onReset = Nothing
+                        , onEnter = HitEnter
                         }
                     )
                     state.floatInputValue
@@ -138,6 +145,7 @@ example =
                         { setField = SetPassword
                         , onBlur = "Blurred!!!"
                         , onReset = ""
+                        , onEnter = HitEnter
                         }
                     )
                     state.passwordInputValue
@@ -148,6 +156,7 @@ example =
                         { setField = SetTextInput 2
                         , onBlur = "Blurred!!!"
                         , onReset = ""
+                        , onEnter = HitEnter
                         }
                     )
                     (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
@@ -159,6 +168,7 @@ example =
                             { setField = SetTextInput 4
                             , onBlur = "Blurred!!!"
                             , onReset = ""
+                        , onEnter = HitEnter
                             }
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
@@ -169,6 +179,7 @@ example =
                         { setField = SetSearchTerm
                         , onBlur = "Blurred!!!"
                         , onReset = ""
+                        , onEnter = HitEnter
                         }
                     )
                     state.searchInputValue
@@ -180,9 +191,15 @@ example =
                             { setField = SetTextInput 8
                             , onBlur = "Blurred!!!"
                             , onReset = ""
+                        , onEnter = HitEnter
                             }
                     )
                     (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
+                , Message.view [
+                    Message.tiny,
+                    Message.tip,
+                    Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
+                ]
                 ]
             ]
     }
@@ -220,6 +237,7 @@ init =
                 (Control.bool False)
             |> Control.field "TextInput.onReset"
                 (Control.bool False)
+    , enterCount = 0
     }
 
 
@@ -244,6 +262,9 @@ update msg state =
 
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
+
+        HitEnter ->
+            ({ state | enterCount = state.enterCount + 1}, Cmd.none)
 
 
 
