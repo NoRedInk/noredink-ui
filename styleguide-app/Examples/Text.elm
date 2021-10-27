@@ -7,12 +7,13 @@ module Examples.Text exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import CommonControls exposing (exampleHtml, quickBrownFox, romeoAndJulietQuotation)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Html.Styled as Html
-import Html.Styled.Attributes as Attributes
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text
@@ -31,25 +32,6 @@ example =
     , view =
         \state ->
             let
-                exampleHtml kind =
-                    [ Html.text "This is a "
-                    , Html.strong [] [ Html.text kind ]
-                    , Html.text ". "
-                    , Html.a
-                        [ Attributes.href "http://www.noredink.com"
-                        , Attributes.target "_blank"
-                        ]
-                        [ Html.text "The quick brown fox jumps over the lazy dog." ]
-                    , Html.text " Be on the lookout for a new and improved assignment creation form! Soon, you'll be able to easily see a summary of the content you're assigning, as well as an estimate for how long the assignment will take."
-                    ]
-
-                exampleUGHtml kind =
-                    [ Html.text "This is a "
-                    , Html.strong [] [ Html.text kind ]
-                    , Html.text ". The quick brown fox jumps over the lazy dog."
-                    , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
-                    ]
-
                 attributes =
                     Control.currentValue state.control
             in
@@ -57,13 +39,19 @@ example =
             , Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
-            , Text.mediumBody [ Text.html (exampleHtml "mediumBody") ]
-            , Text.smallBody [ Text.html (exampleHtml "smallBody") ]
-            , Text.smallBodyGray [ Text.html (exampleHtml "smallBodyGray") ]
-            , Text.caption [ Text.html (exampleHtml "caption") ]
+            , viewExamples
+                [ ( "mediumBody", Text.mediumBody )
+                , ( "smallBody", Text.smallBody )
+                , ( "smallBodyGray", Text.smallBodyGray )
+                , ( "caption", Text.caption )
+                ]
+                attributes
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
-            , Text.ugMediumBody [ Text.html (exampleUGHtml "ugMediumBody") ]
-            , Text.ugSmallBody [ Text.html (exampleUGHtml "ugSmallBody") ]
+            , viewExamples
+                [ ( "ugMediumBody", Text.ugMediumBody )
+                , ( "ugSmallBody", Text.ugSmallBody )
+                ]
+                attributes
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
             , Text.mediumBody
                 [ Text.css [ Css.padding (Css.px 20) ]
@@ -85,6 +73,21 @@ example =
     }
 
 
+viewExamples : List ( String, List (Text.Attribute msg) -> Html msg ) -> List (Text.Attribute msg) -> Html msg
+viewExamples examples attributes =
+    let
+        viewExample ( name, view ) =
+            Html.tr []
+                [ Html.th [] [ Html.text name ]
+                , Html.td [] [ view attributes ]
+                ]
+    in
+    Html.table [ css [ Css.width (Css.pct 100) ] ]
+        [ Html.tbody [] <|
+            List.map viewExample examples
+        ]
+
+
 {-| -}
 type alias State =
     { control : Control (List (Text.Attribute Msg))
@@ -94,8 +97,31 @@ type alias State =
 {-| -}
 init : State
 init =
-    { control = ControlExtra.list
+    { control =
+        ControlExtra.list
+            |> ControlExtra.listItem "content" controlContent
     }
+
+
+controlContent : Control (Text.Attribute msg)
+controlContent =
+    Control.choice
+        [ ( "HTML"
+          , Control.value (Text.html exampleHtml)
+          )
+        , ( "plain text (short)"
+          , Control.string quickBrownFox
+                |> Control.map Text.plaintext
+          )
+        , ( "plain text (long)"
+          , Control.stringTextarea romeoAndJulietQuotation
+                |> Control.map Text.plaintext
+          )
+        , ( "markdown"
+          , Control.string romeoAndJulietQuotation
+                |> Control.map Text.markdown
+          )
+        ]
 
 
 {-| -}
