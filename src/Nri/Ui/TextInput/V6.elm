@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V6 exposing
     ( view, generateId
     , InputType, number, float, text, password, email, search
     , Attribute, placeholder, hiddenLabel, autofocus
-    , onBlur, onReset
+    , onBlur, onReset, onEnter
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage
     , writing
@@ -31,7 +31,7 @@ module Nri.Ui.TextInput.V6 exposing
 ## Attributes
 
 @docs Attribute, placeholder, hiddenLabel, autofocus
-@docs onBlur, onReset
+@docs onBlur, onReset, onEnter
 @docs css, custom, nriDescription, id, testId, noMargin
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
@@ -44,6 +44,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events exposing (onInput)
+import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
@@ -237,6 +238,13 @@ onReset msg =
         \config -> { config | onReset = Just msg }
 
 
+{-| -}
+onEnter : msg -> Attribute msg
+onEnter msg =
+    Attribute <|
+        \config -> { config | onEnter = Just msg }
+
+
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute msg
@@ -313,6 +321,7 @@ type alias Config msg =
     , placeholder : Maybe String
     , onBlur : Maybe msg
     , onReset : Maybe msg
+    , onEnter : Maybe msg
     , autofocus : Bool
     , noMarginTop : Bool
     , css : List (List Css.Style)
@@ -336,6 +345,7 @@ emptyConfig =
     , placeholder = Nothing
     , onBlur = Nothing
     , onReset = Nothing
+    , onEnter = Nothing
     , autofocus = False
     , id = Nothing
     , noMarginTop = False
@@ -412,6 +422,19 @@ view_ label (InputType inputType) config currentValue =
 
         stringValue =
             inputType.toString currentValue
+
+        onEnter_ : msg -> Html.Attribute msg
+        onEnter_ msg =
+            (\event ->
+                case event.key of
+                    Just "Enter" ->
+                        Just msg
+
+                    _ ->
+                        Nothing
+            )
+                |> Keyboard.Event.considerKeyboardEvent
+                |> Events.on "keydown"
     in
     div
         ([ Attributes.css
@@ -454,6 +477,7 @@ view_ label (InputType inputType) config currentValue =
                    , type_ inputType.fieldType
                    , maybeAttr (attribute "inputmode") inputType.inputMode
                    , maybeAttr (attribute "autocomplete") inputType.autocomplete
+                   , maybeAttr onEnter_ config.onEnter
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
                         if isInError then

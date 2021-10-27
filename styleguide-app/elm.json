@@ -8,6 +8,7 @@
     "dependencies": {
         "direct": {
             "BrianHicks/elm-particle": "1.5.0",
+            "Gizra/elm-keyboard-event": "1.0.1",
             "avh4/elm-debug-controls": "2.2.1",
             "elm/browser": "1.0.2",
             "elm/core": "1.0.5",
@@ -30,6 +31,7 @@
         },
         "indirect": {
             "NoRedInk/datetimepicker-legacy": "1.0.4",
+            "SwiftsNamesake/proper-keyboard": "4.0.0",
             "elm/bytes": "1.0.8",
             "elm/file": "1.0.5",
             "elm/time": "1.0.0",
