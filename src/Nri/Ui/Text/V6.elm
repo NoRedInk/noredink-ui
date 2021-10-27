@@ -91,16 +91,25 @@ css styles =
     Attribute (\config -> { config | styles = config.styles ++ styles })
 
 
-styleForAttributes : Settings -> Style
-styleForAttributes config =
-    batch
-        [ if config.noBreak then
-            whiteSpace noWrap
+{-| -}
+view : List Attribute -> List (Html msg) -> Html msg
+view attributes content =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
+    p
+        [ Attrs.css
+            [ if settings.noBreak then
+                whiteSpace noWrap
 
-          else
-            batch []
-        , batch config.styles
+              else
+                batch []
+            , batch settings.styles
+            ]
         ]
+        content
 
 
 {-| This is some medium body copy.
@@ -112,17 +121,19 @@ mediumBody attributes content =
         settings =
             buildSettings attributes
     in
-    p
-        [ paragraphStyles
-            settings
-            { font = Fonts.baseFont
-            , color = gray20
-            , size = 18
-            , lineHeight = 28
-            , weight = 400
-            , margin = 10
-            }
-        ]
+    view
+        (css
+            (paragraphStyles
+                { font = Fonts.baseFont
+                , color = gray20
+                , size = 18
+                , lineHeight = 28
+                , weight = 400
+                , margin = 10
+                }
+            )
+            :: attributes
+        )
         content
 
 
@@ -137,22 +148,19 @@ mediumBodyGray attributes content =
 -}
 smallBody : List Attribute -> List (Html msg) -> Html msg
 smallBody attributes content =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
-    p
-        [ paragraphStyles
-            settings
-            { font = Fonts.baseFont
-            , color = gray20
-            , size = 15
-            , lineHeight = 23
-            , weight = 400
-            , margin = 7
-            }
-        ]
+    view
+        (css
+            (paragraphStyles
+                { font = Fonts.baseFont
+                , color = gray20
+                , size = 15
+                , lineHeight = 23
+                , weight = 400
+                , margin = 7
+                }
+            )
+            :: attributes
+        )
         content
 
 
@@ -160,125 +168,114 @@ smallBody attributes content =
 -}
 smallBodyGray : List Attribute -> List (Html msg) -> Html msg
 smallBodyGray attributes content =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
-    p
-        [ paragraphStyles settings
-            { font = Fonts.baseFont
-            , color = gray45
-            , size = 15
-            , lineHeight = 23
-            , weight = 400
-            , margin = 7
-            }
-        ]
+    view
+        (css
+            (paragraphStyles
+                { font = Fonts.baseFont
+                , color = gray45
+                , size = 15
+                , lineHeight = 23
+                , weight = 400
+                , margin = 7
+                }
+            )
+            :: attributes
+        )
         content
 
 
 paragraphStyles :
-    Settings
-    ->
-        { color : Color
-        , font : Style
-        , lineHeight : Float
-        , margin : Float
-        , size : Float
-        , weight : Int
-        }
-    -> Html.Styled.Attribute msg
-paragraphStyles settings config =
-    Attrs.css
-        [ config.font
-        , fontSize (px config.size)
-        , color config.color
-        , lineHeight (px config.lineHeight)
-        , fontWeight (int config.weight)
-        , padding zero
-        , textAlign left
-        , margin4 (px 0) (px 0) (px config.margin) (px 0)
-        , Css.Global.descendants
-            [ Css.Global.a
-                [ textDecoration none
-                , color azure
-                , borderBottom3 (px 1) solid azure
-                , visited
-                    [ color azure ]
-                ]
+    { color : Color
+    , font : Style
+    , lineHeight : Float
+    , margin : Float
+    , size : Float
+    , weight : Int
+    }
+    -> List Css.Style
+paragraphStyles config =
+    [ config.font
+    , fontSize (px config.size)
+    , color config.color
+    , lineHeight (px config.lineHeight)
+    , fontWeight (int config.weight)
+    , padding zero
+    , textAlign left
+    , margin4 (px 0) (px 0) (px config.margin) (px 0)
+    , Css.Global.descendants
+        [ Css.Global.a
+            [ textDecoration none
+            , color azure
+            , borderBottom3 (px 1) solid azure
+            , visited
+                [ color azure ]
             ]
-        , lastChild
-            [ margin zero
-            ]
-        , styleForAttributes settings
         ]
+    , lastChild
+        [ margin zero
+        ]
+    ]
 
 
 {-| This is a little note or caption.
 -}
 caption : List Attribute -> List (Html msg) -> Html msg
 caption attributes content =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
-    p
-        [ paragraphStyles settings
-            { font = Fonts.baseFont
-            , color = gray45
-            , size = 13
-            , lineHeight = 18
-            , weight = 400
-            , margin = 5
-            }
-        ]
+    view
+        (css
+            (paragraphStyles
+                { font = Fonts.baseFont
+                , color = gray45
+                , size = 13
+                , lineHeight = 18
+                , weight = 400
+                , margin = 5
+                }
+            )
+            :: attributes
+        )
         content
 
 
 {-| User-generated text.
 -}
 ugMediumBody : List Attribute -> List (Html msg) -> Html msg
-ugMediumBody attributes =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
-    p
-        [ Attrs.css
-            [ Fonts.quizFont
-            , fontSize (px 18)
-            , lineHeight (px 30)
-            , whiteSpace preLine
-            , color gray20
-            , margin zero
-            , styleForAttributes settings
-            ]
-        ]
+ugMediumBody attributes content =
+    view
+        (css
+            (whiteSpace preLine
+                :: paragraphStyles
+                    { font = Fonts.quizFont
+                    , color = gray20
+                    , size = 18
+                    , lineHeight = 30
+                    , weight = 400
+                    , margin = 0
+                    }
+            )
+            :: attributes
+        )
+        content
 
 
 {-| User-generated text.
 -}
 ugSmallBody : List Attribute -> List (Html msg) -> Html msg
 ugSmallBody attributes =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
-    p
-        [ Attrs.css
-            [ Fonts.quizFont
-            , fontSize (px 16)
-            , lineHeight (px 25)
-            , whiteSpace preLine
-            , color gray20
-            , margin zero
-            , styleForAttributes settings
-            ]
-        ]
+    view
+        (css
+            (whiteSpace preLine
+                :: paragraphStyles
+                    { font = Fonts.quizFont
+                    , color = gray20
+                    , size = 16
+                    , lineHeight = 25
+                    , weight = 400
+                    , margin = 0
+                    }
+            )
+            :: attributes
+        )
 
 
 {-| Eliminate widows (single words on their own line caused by
