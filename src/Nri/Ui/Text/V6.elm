@@ -71,6 +71,11 @@ defaultSettings =
     }
 
 
+buildSettings : List Attribute -> Settings
+buildSettings =
+    List.foldl (\(Attribute f) acc -> f acc) defaultSettings
+
+
 {-| Text with this attribute will never wrap.
 -}
 noBreak : Attribute
@@ -86,15 +91,8 @@ css styles =
     Attribute (\config -> { config | styles = config.styles ++ styles })
 
 
-styleForAttributes : List Attribute -> Style
-styleForAttributes attrs =
-    let
-        config : Settings
-        config =
-            List.foldl (\(Attribute f) acc -> f acc)
-                defaultSettings
-                attrs
-    in
+styleForAttributes : Settings -> Style
+styleForAttributes config =
     batch
         [ if config.noBreak then
             whiteSpace noWrap
@@ -109,9 +107,14 @@ styleForAttributes attrs =
 -}
 mediumBody : List Attribute -> List (Html msg) -> Html msg
 mediumBody attributes content =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
         [ paragraphStyles
-            attributes
+            settings
             { font = Fonts.baseFont
             , color = gray20
             , size = 18
@@ -134,9 +137,14 @@ mediumBodyGray attributes content =
 -}
 smallBody : List Attribute -> List (Html msg) -> Html msg
 smallBody attributes content =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
         [ paragraphStyles
-            attributes
+            settings
             { font = Fonts.baseFont
             , color = gray20
             , size = 15
@@ -152,9 +160,13 @@ smallBody attributes content =
 -}
 smallBodyGray : List Attribute -> List (Html msg) -> Html msg
 smallBodyGray attributes content =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
-        [ paragraphStyles
-            attributes
+        [ paragraphStyles settings
             { font = Fonts.baseFont
             , color = gray45
             , size = 15
@@ -167,7 +179,7 @@ smallBodyGray attributes content =
 
 
 paragraphStyles :
-    List Attribute
+    Settings
     ->
         { color : Color
         , font : Style
@@ -177,7 +189,7 @@ paragraphStyles :
         , weight : Int
         }
     -> Html.Styled.Attribute msg
-paragraphStyles attributes config =
+paragraphStyles settings config =
     Attrs.css
         [ config.font
         , fontSize (px config.size)
@@ -199,7 +211,7 @@ paragraphStyles attributes config =
         , lastChild
             [ margin zero
             ]
-        , styleForAttributes attributes
+        , styleForAttributes settings
         ]
 
 
@@ -207,9 +219,13 @@ paragraphStyles attributes config =
 -}
 caption : List Attribute -> List (Html msg) -> Html msg
 caption attributes content =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
-        [ paragraphStyles
-            attributes
+        [ paragraphStyles settings
             { font = Fonts.baseFont
             , color = gray45
             , size = 13
@@ -225,6 +241,11 @@ caption attributes content =
 -}
 ugMediumBody : List Attribute -> List (Html msg) -> Html msg
 ugMediumBody attributes =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
         [ Attrs.css
             [ Fonts.quizFont
@@ -233,7 +254,7 @@ ugMediumBody attributes =
             , whiteSpace preLine
             , color gray20
             , margin zero
-            , styleForAttributes attributes
+            , styleForAttributes settings
             ]
         ]
 
@@ -242,6 +263,11 @@ ugMediumBody attributes =
 -}
 ugSmallBody : List Attribute -> List (Html msg) -> Html msg
 ugSmallBody attributes =
+    let
+        settings : Settings
+        settings =
+            buildSettings attributes
+    in
     p
         [ Attrs.css
             [ Fonts.quizFont
@@ -250,7 +276,7 @@ ugSmallBody attributes =
             , whiteSpace preLine
             , color gray20
             , margin zero
-            , styleForAttributes attributes
+            , styleForAttributes settings
             ]
         ]
 
