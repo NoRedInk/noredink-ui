@@ -126,20 +126,6 @@ example =
                         )
                         (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                   )
-                , ( "writing"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.text (SetTextInput 4))
-                        (TextInput.writing
-                            :: TextInput.id "text-input__writing-example"
-                            :: attributes
-                                { setField = SetTextInput 4
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                        (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
-                  )
                 , ( "search"
                   , TextInput.view exampleConfig.label
                         (TextInput.search SetSearchTerm)
@@ -217,6 +203,8 @@ controlAttributes =
             (Control.value TextInput.disabled)
         |> ControlExtra.optionalListItem "loading"
             (Control.value TextInput.loading)
+        |> ControlExtra.optionalListItem "writing"
+            (Control.value TextInput.writing)
         |> ControlExtra.listItem "noMargin"
             (Control.map TextInput.noMargin (Control.bool False))
         |> ControlExtra.optionalListItem "css"
