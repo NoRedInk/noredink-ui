@@ -61,7 +61,7 @@ example =
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , viewExamples
-                [ ( "TextInput.text"
+                [ ( "text"
                   , TextInput.view (exampleConfig.label ++ " (text)")
                         (TextInput.text (SetTextInput 1))
                         (attributes
@@ -73,7 +73,7 @@ example =
                         )
                         (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                   )
-                , ( "TextInput.number"
+                , ( "number"
                   , TextInput.view (exampleConfig.label ++ " (number)")
                         (TextInput.number SetNumberInput)
                         (TextInput.id "hey-this-is-a-test-id"
@@ -86,7 +86,7 @@ example =
                         )
                         state.numberInputValue
                   )
-                , ( "TextInput.float"
+                , ( "float"
                   , TextInput.view (exampleConfig.label ++ " (float)")
                         (TextInput.float SetFloatInput)
                         (attributes
@@ -98,7 +98,7 @@ example =
                         )
                         state.floatInputValue
                   )
-                , ( "TextInput.email"
+                , ( "email"
                   , TextInput.view (exampleConfig.label ++ " (email)")
                         (TextInput.email (SetTextInput 2))
                         (attributes
@@ -110,7 +110,7 @@ example =
                         )
                         (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                   )
-                , ( "TextInput.writing"
+                , ( "writing"
                   , TextInput.view (exampleConfig.label ++ " (writing)")
                         (TextInput.text (SetTextInput 4))
                         (TextInput.writing
@@ -123,7 +123,7 @@ example =
                         )
                         (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                   )
-                , ( "TextInput.search"
+                , ( "search"
                   , TextInput.view (exampleConfig.label ++ " (search)")
                         (TextInput.search SetSearchTerm)
                         (attributes
@@ -177,31 +177,31 @@ initControl =
     Control.record ExampleConfig
         |> Control.field "label" (Control.string "Assignment name")
         |> Control.field "attributes" controlAttributes
-        |> Control.field "TextInput.onBlur" (Control.bool False)
-        |> Control.field "TextInput.onReset" (Control.bool False)
-        |> Control.field "TextInput.onEnter" (Control.bool False)
+        |> Control.field "onBlur" (Control.bool False)
+        |> Control.field "onReset" (Control.bool False)
+        |> Control.field "onEnter" (Control.bool False)
 
 
 controlAttributes : Control (List (TextInput.Attribute msg))
 controlAttributes =
     ControlExtra.list
-        |> ControlExtra.optionalListItem "TextInput.placeholder"
+        |> ControlExtra.optionalListItem "placeholder"
             (Control.map TextInput.placeholder <|
                 Control.string "Learning with commas"
             )
-        |> ControlExtra.optionalListItem "TextInput.hiddenLabel"
+        |> ControlExtra.optionalListItem "hiddenLabel"
             (Control.value TextInput.hiddenLabel)
-        |> ControlExtra.optionalListItem "TextInput.errorIf"
+        |> ControlExtra.optionalListItem "errorIf"
             (Control.map TextInput.errorIf <| Control.bool True)
-        |> ControlExtra.optionalListItem "TextInput.errorMessage"
+        |> ControlExtra.optionalListItem "errorMessage"
             (Control.map TextInput.errorMessage <| Control.maybe True <| Control.string "The statement must be true.")
-        |> ControlExtra.optionalListItem "TextInput.disabled"
+        |> ControlExtra.optionalListItem "disabled"
             (Control.value TextInput.disabled)
-        |> ControlExtra.optionalListItem "TextInput.loading"
+        |> ControlExtra.optionalListItem "loading"
             (Control.value TextInput.loading)
-        |> ControlExtra.listItem "TextInput.noMargin"
+        |> ControlExtra.listItem "noMargin"
             (Control.map TextInput.noMargin (Control.bool False))
-        |> ControlExtra.optionalListItem "TextInput.css"
+        |> ControlExtra.optionalListItem "css"
             (Control.value (TextInput.css [ Css.backgroundColor Colors.azure ]))
 
 
