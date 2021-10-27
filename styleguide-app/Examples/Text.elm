@@ -57,18 +57,6 @@ example =
                 [ Text.css [ Css.padding (Css.px 20) ]
                 , Text.plaintext "I've got more padding than my siblings!"
                 ]
-            , Html.div
-                [ Attributes.css
-                    [ Css.width (Css.px 80)
-                    , Css.border3 (Css.px 1) Css.solid (Css.hex "000")
-                    ]
-                ]
-                [ Text.mediumBody
-                    [ Text.noBreak
-                    , Text.plaintext
-                        "I won't ever break, no matter how narrow my container is."
-                    ]
-                ]
             ]
     }
 
@@ -100,6 +88,8 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.listItem "noBreak"
+                (Control.map Text.noBreak (Control.bool False))
     }
 
 

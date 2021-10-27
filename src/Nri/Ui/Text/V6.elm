@@ -11,6 +11,7 @@ module Nri.Ui.Text.V6 exposing
   - adds helpers: `custom`, `nriDescription`,`testId`,`id`
   - instead of view helpers that take HTML, offer attribute helpers supporting plaintext, markdown, and html content
   - :skull: remove noWidow, which is not used
+  - noBreak now takes a bool
 
 
 ## Understanding spacing
@@ -88,11 +89,14 @@ buildSettings =
     List.foldl (\(Attribute f) acc -> f acc) defaultSettings
 
 
-{-| Text with this attribute will never wrap.
+{-| Pass True to prevent text from ever wrapping.
+
+The default Text behavior is `noBreak False`, which means content will wrap.
+
 -}
-noBreak : Attribute msg
-noBreak =
-    Attribute (\config -> { config | noBreak = True })
+noBreak : Bool -> Attribute msg
+noBreak noBreak_ =
+    Attribute (\config -> { config | noBreak = noBreak_ })
 
 
 {-| Use this helper to add custom attributes.
