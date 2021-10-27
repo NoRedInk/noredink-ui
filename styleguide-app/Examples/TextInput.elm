@@ -10,6 +10,7 @@ import Accessibility.Styled as Html exposing (..)
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
@@ -18,17 +19,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V3 as Message
 import Nri.Ui.TextInput.V7 as TextInput
-
-
-{-| -}
-type Msg
-    = SetTextInput Id String
-    | SetNumberInput (Maybe Int)
-    | SetFloatInput (Maybe Float)
-    | SetPassword String
-    | SetSearchTerm String
-    | UpdateControl (Control ExampleConfig)
-    | HitEnter
 
 
 {-| -}
@@ -45,13 +35,7 @@ type alias State =
 
 type alias ExampleConfig =
     { label : String
-    , maybePlaceholderAttribute : Maybe (TextInput.Attribute Msg)
-    , maybeErrorAttribute1 : Maybe (TextInput.Attribute Msg)
-    , maybeErrorAttribute2 : Maybe (TextInput.Attribute Msg)
-    , maybeShowLabelAttribute : Maybe (TextInput.Attribute Msg)
-    , maybeDisabledAttribute : Maybe (TextInput.Attribute Msg)
-    , maybeLoadingAttribute : Maybe (TextInput.Attribute Msg)
-    , noMarginAttribute : TextInput.Attribute Msg
+    , attributes : List (TextInput.Attribute Msg)
     , onBlur : Bool
     , onReset : Bool
     }
@@ -74,26 +58,20 @@ example =
                     Control.currentValue state.control
 
                 attributes { setField, onBlur, onReset, onEnter } =
-                    List.filterMap identity
-                        [ exampleConfig.maybeErrorAttribute1
-                        , exampleConfig.maybeErrorAttribute2
-                        , exampleConfig.maybePlaceholderAttribute
-                        , exampleConfig.maybeShowLabelAttribute
-                        , exampleConfig.maybeDisabledAttribute
-                        , exampleConfig.maybeLoadingAttribute
-                        , Just exampleConfig.noMarginAttribute
-                        , if exampleConfig.onBlur then
-                            Just (TextInput.onBlur (setField onBlur))
+                    exampleConfig.attributes
+                        ++ List.filterMap identity
+                            [ if exampleConfig.onBlur then
+                                Just (TextInput.onBlur (setField onBlur))
 
-                          else
-                            Nothing
-                        , if exampleConfig.onReset then
-                            Just (TextInput.onReset (setField onReset))
+                              else
+                                Nothing
+                            , if exampleConfig.onReset then
+                                Just (TextInput.onReset (setField onReset))
 
-                          else
-                            Nothing
-                        , Just <| TextInput.onEnter onEnter
-                        ]
+                              else
+                                Nothing
+                            , Just <| TextInput.onEnter onEnter
+                            ]
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
@@ -216,29 +194,43 @@ init =
     , control =
         Control.record ExampleConfig
             |> Control.field "label" (Control.string "Assignment name")
-            |> Control.field "TextInput.placeholder"
-                (Control.maybe True <|
-                    Control.map TextInput.placeholder <|
-                        Control.string "Learning with commas"
-                )
-            |> Control.field "TextInput.hiddenLabel"
-                (Control.maybe False (Control.value TextInput.hiddenLabel))
-            |> Control.field "TextInput.errorIf"
-                (Control.maybe False (Control.map TextInput.errorIf <| Control.bool True))
-            |> Control.field "TextInput.errorMessage"
-                (Control.maybe False (Control.map TextInput.errorMessage <| Control.maybe True <| Control.string "The statement must be true."))
-            |> Control.field "TextInput.disabled"
-                (Control.maybe False (Control.value TextInput.disabled))
-            |> Control.field "TextInput.loading"
-                (Control.maybe False (Control.value TextInput.loading))
-            |> Control.field "TextInput.noMargin"
-                (Control.map TextInput.noMargin (Control.bool False))
-            |> Control.field "TextInput.onBlur"
-                (Control.bool False)
-            |> Control.field "TextInput.onReset"
-                (Control.bool False)
+            |> Control.field "attributes" controlAttributes
+            |> Control.field "TextInput.onBlur" (Control.bool False)
+            |> Control.field "TextInput.onReset" (Control.bool False)
     , enterCount = 0
     }
+
+
+controlAttributes : Control (List (TextInput.Attribute msg))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "TextInput.placeholder"
+            (Control.map TextInput.placeholder <|
+                Control.string "Learning with commas"
+            )
+        |> ControlExtra.optionalListItem "TextInput.hiddenLabel"
+            (Control.value TextInput.hiddenLabel)
+        |> ControlExtra.optionalListItem "TextInput.errorIf"
+            (Control.map TextInput.errorIf <| Control.bool True)
+        |> ControlExtra.optionalListItem "TextInput.errorMessage"
+            (Control.map TextInput.errorMessage <| Control.maybe True <| Control.string "The statement must be true.")
+        |> ControlExtra.optionalListItem "TextInput.disabled"
+            (Control.value TextInput.disabled)
+        |> ControlExtra.optionalListItem "TextInput.loading"
+            (Control.value TextInput.loading)
+        |> ControlExtra.listItem "TextInput.noMargin"
+            (Control.map TextInput.noMargin (Control.bool False))
+
+
+{-| -}
+type Msg
+    = SetTextInput Id String
+    | SetNumberInput (Maybe Int)
+    | SetFloatInput (Maybe Float)
+    | SetPassword String
+    | SetSearchTerm String
+    | UpdateControl (Control ExampleConfig)
+    | HitEnter
 
 
 {-| -}
