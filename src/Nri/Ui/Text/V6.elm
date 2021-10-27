@@ -4,13 +4,13 @@ module Nri.Ui.Text.V6 exposing
     , plaintext, markdown, html
     , Attribute, noBreak, css, id, custom
     , nriDescription, testId
-    , noWidow
     )
 
 {-| Changes from V5:
 
   - adds helpers: `custom`, `nriDescription`,`testId`,`id`
   - instead of view helpers that take HTML, offer attribute helpers supporting plaintext, markdown, and html content
+  - :skull: remove noWidow, which is not used
 
 
 ## Understanding spacing
@@ -48,11 +48,6 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
 
 @docs Attribute, noBreak, css, id, custom
 @docs nriDescription, testId
-
-
-## Modifying strings to display nicely:
-
-@docs noWidow
 
 -}
 
@@ -345,36 +340,3 @@ markdown content =
 html : List (Html msg) -> Attribute msg
 html content =
     Attribute <| \config -> { config | content = content }
-
-
-{-| Eliminate widows (single words on their own line caused by
-wrapping) by inserting a non-breaking space if there are at least two
-words.
--}
-noWidow : String -> String
-noWidow inputs =
-    let
-        -- this value is a unicode non-breaking space since Elm
-        -- doesn't support named character entities
-        nbsp =
-            "\u{00A0}"
-
-        words =
-            String.split " " inputs
-
-        insertPoint =
-            List.length words - 1
-    in
-    words
-        |> List.indexedMap
-            (\i word ->
-                if i == 0 then
-                    word
-
-                else if i == insertPoint && insertPoint > 0 then
-                    nbsp ++ word
-
-                else
-                    " " ++ word
-            )
-        |> String.join ""
