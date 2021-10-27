@@ -8,6 +8,8 @@ module Examples.Text exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Css
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
@@ -17,27 +19,17 @@ import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
-type alias State =
-    ()
-
-
-{-| -}
-type alias Msg =
-    ()
-
-
-{-| -}
 example : Example State Msg
 example =
     { name = "Text"
     , version = 6
     , categories = [ Text ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = init
+    , update = update
     , subscriptions = \_ -> Sub.none
     , view =
-        \_ ->
+        \state ->
             let
                 exampleHtml kind =
                     [ Html.text "This is a "
@@ -57,8 +49,13 @@ example =
                     , Html.text ". The quick brown fox jumps over the lazy dog."
                     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
                     ]
+
+                attributes =
+                    Control.currentValue state.control
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            , Control.view UpdateControl state.control
+                |> Html.fromUnstyled
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
             , Text.mediumBody [ Text.html (exampleHtml "mediumBody") ]
             , Text.smallBody [ Text.html (exampleHtml "smallBody") ]
@@ -86,3 +83,29 @@ example =
                 ]
             ]
     }
+
+
+{-| -}
+type alias State =
+    { control : Control (List (Text.Attribute Msg))
+    }
+
+
+{-| -}
+init : State
+init =
+    { control = ControlExtra.list
+    }
+
+
+{-| -}
+type Msg
+    = UpdateControl (Control (List (Text.Attribute Msg)))
+
+
+{-| -}
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )
