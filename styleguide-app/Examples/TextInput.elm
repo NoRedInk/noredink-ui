@@ -135,19 +135,6 @@ example =
                         )
                         state.searchInputValue
                   )
-                , ( "TextInput.css"
-                  , TextInput.view (exampleConfig.label ++ " (custom CSS)")
-                        (TextInput.text (SetTextInput 8))
-                        (TextInput.css [ Css.backgroundColor Colors.azure ]
-                            :: attributes
-                                { setField = SetTextInput 8
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                        (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
-                  )
                 ]
             ]
     }
@@ -214,6 +201,8 @@ controlAttributes =
             (Control.value TextInput.loading)
         |> ControlExtra.listItem "TextInput.noMargin"
             (Control.map TextInput.noMargin (Control.bool False))
+        |> ControlExtra.optionalListItem "TextInput.css"
+            (Control.value (TextInput.css [ Css.backgroundColor Colors.azure ]))
 
 
 {-| -}
