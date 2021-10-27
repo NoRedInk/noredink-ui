@@ -48,5 +48,5 @@ quizEngineMobile : MediaQuery
 quizEngineMobile =
     only screen
         [ minWidth (px 1)
-        , maxWidth (px 700)
+        , maxWidth (px 750)
         ]
