@@ -62,21 +62,22 @@ example =
                 |> Html.fromUnstyled
             , viewExamples
                 [ ( "text"
-                  , TextInput.view (exampleConfig.label ++ " (text)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.text (SetTextInput 1))
-                        (attributes
-                            { setField = SetTextInput 1
-                            , onBlur = "Blurred!!!"
-                            , onReset = ""
-                            , onEnter = "Entered!!!"
-                            }
+                        (TextInput.id "text-input__text-example"
+                            :: attributes
+                                { setField = SetTextInput 1
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
                         )
                         (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                   )
                 , ( "number"
-                  , TextInput.view (exampleConfig.label ++ " (number)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.number SetNumberInput)
-                        (TextInput.id "hey-this-is-a-test-id"
+                        (TextInput.id "text-input__number-example"
                             :: attributes
                                 { setField = SetNumberInput
                                 , onBlur = Just 10000000
@@ -87,45 +88,49 @@ example =
                         state.numberInputValue
                   )
                 , ( "float"
-                  , TextInput.view (exampleConfig.label ++ " (float)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.float SetFloatInput)
-                        (attributes
-                            { setField = SetFloatInput
-                            , onBlur = Just 1.00000001
-                            , onReset = Nothing
-                            , onEnter = Just 100000001.1
-                            }
+                        (TextInput.id "text-input__float-example"
+                            :: attributes
+                                { setField = SetFloatInput
+                                , onBlur = Just 1.00000001
+                                , onReset = Nothing
+                                , onEnter = Just 100000001.1
+                                }
                         )
                         state.floatInputValue
                   )
                 , ( "password"
-                  , TextInput.view (exampleConfig.label ++ " (password)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.password SetPassword)
-                        (attributes
-                            { setField = SetPassword
-                            , onBlur = "Blurred!!!"
-                            , onReset = ""
-                            , onEnter = "Entered!!!"
-                            }
+                        (TextInput.id "text-input__password-example"
+                            :: attributes
+                                { setField = SetPassword
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
                         )
                         state.passwordInputValue
                   )
                 , ( "email"
-                  , TextInput.view (exampleConfig.label ++ " (email)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.email (SetTextInput 2))
-                        (attributes
-                            { setField = SetTextInput 2
-                            , onBlur = "Blurred!!!"
-                            , onReset = ""
-                            , onEnter = "Entered!!!"
-                            }
+                        (TextInput.id "text-input__email-example"
+                            :: attributes
+                                { setField = SetTextInput 2
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
                         )
                         (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
                   )
                 , ( "writing"
-                  , TextInput.view (exampleConfig.label ++ " (writing)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.text (SetTextInput 4))
                         (TextInput.writing
+                            :: TextInput.id "text-input__writing-example"
                             :: attributes
                                 { setField = SetTextInput 4
                                 , onBlur = "Blurred!!!"
@@ -136,14 +141,15 @@ example =
                         (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
                   )
                 , ( "search"
-                  , TextInput.view (exampleConfig.label ++ " (search)")
+                  , TextInput.view exampleConfig.label
                         (TextInput.search SetSearchTerm)
-                        (attributes
-                            { setField = SetSearchTerm
-                            , onBlur = "Blurred!!!"
-                            , onReset = ""
-                            , onEnter = "Entered!!!"
-                            }
+                        (TextInput.id "text-input__search-example"
+                            :: attributes
+                                { setField = SetSearchTerm
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
                         )
                         state.searchInputValue
                   )
