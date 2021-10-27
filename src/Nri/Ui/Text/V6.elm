@@ -55,41 +55,44 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 {-| -}
 type Attribute
-    = NoBreak
-    | Css (List Style)
+    = Attribute (Settings -> Settings)
+
+
+type alias Settings =
+    { noBreak : Bool
+    , styles : List Css.Style
+    }
+
+
+defaultSettings : Settings
+defaultSettings =
+    { noBreak = False
+    , styles = []
+    }
 
 
 {-| Text with this attribute will never wrap.
 -}
 noBreak : Attribute
 noBreak =
-    NoBreak
+    Attribute (\config -> { config | noBreak = True })
 
 
 {-| Add some custom CSS to the text. If you find yourself using this a lot,
 please add a stricter attribute to noredink-ui!
 -}
 css : List Style -> Attribute
-css =
-    Css
+css styles =
+    Attribute (\config -> { config | styles = config.styles ++ styles })
 
 
 styleForAttributes : List Attribute -> Style
 styleForAttributes attrs =
     let
+        config : Settings
         config =
-            List.foldl
-                (\attr soFar ->
-                    case attr of
-                        NoBreak ->
-                            { soFar | noBreak = True }
-
-                        Css styles ->
-                            { soFar | styles = soFar.styles ++ styles }
-                )
-                { noBreak = False
-                , styles = []
-                }
+            List.foldl (\(Attribute f) acc -> f acc)
+                defaultSettings
                 attrs
     in
     batch
