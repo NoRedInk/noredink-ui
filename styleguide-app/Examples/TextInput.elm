@@ -16,8 +16,8 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.TextInput.V6 as TextInput
 import Nri.Ui.Message.V3 as Message
+import Nri.Ui.TextInput.V6 as TextInput
 
 
 {-| -}
@@ -123,7 +123,7 @@ example =
                             { setField = SetNumberInput
                             , onBlur = Just 10000000
                             , onReset = Nothing
-                        , onEnter = HitEnter
+                            , onEnter = HitEnter
                             }
                     )
                     state.numberInputValue
@@ -168,7 +168,7 @@ example =
                             { setField = SetTextInput 4
                             , onBlur = "Blurred!!!"
                             , onReset = ""
-                        , onEnter = HitEnter
+                            , onEnter = HitEnter
                             }
                     )
                     (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
@@ -191,15 +191,15 @@ example =
                             { setField = SetTextInput 8
                             , onBlur = "Blurred!!!"
                             , onReset = ""
-                        , onEnter = HitEnter
+                            , onEnter = HitEnter
                             }
                     )
                     (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
-                , Message.view [
-                    Message.tiny,
-                    Message.tip,
-                    Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
-                ]
+                , Message.view
+                    [ Message.tiny
+                    , Message.tip
+                    , Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
+                    ]
                 ]
             ]
     }
@@ -264,7 +264,7 @@ update msg state =
             ( { state | control = newControl }, Cmd.none )
 
         HitEnter ->
-            ({ state | enterCount = state.enterCount + 1}, Cmd.none)
+            ( { state | enterCount = state.enterCount + 1 }, Cmd.none )
 
 
 
