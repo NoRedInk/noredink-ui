@@ -23,26 +23,6 @@ import ViewHelpers exposing (viewExamples)
 
 
 {-| -}
-type alias State =
-    { numberInputValue : Maybe Int
-    , floatInputValue : Maybe Float
-    , stringInputValues : Dict Id String
-    , passwordInputValue : String
-    , searchInputValue : String
-    , control : Control ExampleConfig
-    , enterCount : Int
-    }
-
-
-type alias ExampleConfig =
-    { label : String
-    , attributes : List (TextInput.Attribute Msg)
-    , onBlur : Bool
-    , onReset : Bool
-    }
-
-
-{-| -}
 example : Example State Msg
 example =
     { name = "TextInput"
@@ -71,7 +51,11 @@ example =
 
                               else
                                 Nothing
-                            , Just <| TextInput.onEnter onEnter
+                            , if exampleConfig.onEnter then
+                                Just (TextInput.onEnter (setField onEnter))
+
+                              else
+                                Nothing
                             ]
             in
             [ Control.view UpdateControl state.control
@@ -84,7 +68,7 @@ example =
                             { setField = SetTextInput 1
                             , onBlur = "Blurred!!!"
                             , onReset = ""
-                            , onEnter = HitEnter
+                            , onEnter = "Entered!!!"
                             }
                         )
                         (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
@@ -97,7 +81,7 @@ example =
                                 { setField = SetNumberInput
                                 , onBlur = Just 10000000
                                 , onReset = Nothing
-                                , onEnter = HitEnter
+                                , onEnter = Just 20000000
                                 }
                         )
                         state.numberInputValue
@@ -109,7 +93,7 @@ example =
                             { setField = SetFloatInput
                             , onBlur = Just 1.00000001
                             , onReset = Nothing
-                            , onEnter = HitEnter
+                            , onEnter = Just 100000001.1
                             }
                         )
                         state.floatInputValue
@@ -121,7 +105,7 @@ example =
                             { setField = SetTextInput 2
                             , onBlur = "Blurred!!!"
                             , onReset = ""
-                            , onEnter = HitEnter
+                            , onEnter = "Entered!!!"
                             }
                         )
                         (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
@@ -134,7 +118,7 @@ example =
                                 { setField = SetTextInput 4
                                 , onBlur = "Blurred!!!"
                                 , onReset = ""
-                                , onEnter = HitEnter
+                                , onEnter = "Entered!!!"
                                 }
                         )
                         (Maybe.withDefault "" <| Dict.get 4 state.stringInputValues)
@@ -146,7 +130,7 @@ example =
                             { setField = SetSearchTerm
                             , onBlur = "Blurred!!!"
                             , onReset = ""
-                            , onEnter = HitEnter
+                            , onEnter = "Entered!!!"
                             }
                         )
                         state.searchInputValue
@@ -159,18 +143,24 @@ example =
                                 { setField = SetTextInput 8
                                 , onBlur = "Blurred!!!"
                                 , onReset = ""
-                                , onEnter = HitEnter
+                                , onEnter = "Entered!!!"
                                 }
                         )
                         (Maybe.withDefault "" <| Dict.get 8 state.stringInputValues)
                   )
                 ]
-            , Message.view
-                [ Message.tiny
-                , Message.tip
-                , Message.plaintext <| "Hit enter " ++ String.fromInt state.enterCount ++ " times"
-                ]
             ]
+    }
+
+
+{-| -}
+type alias State =
+    { numberInputValue : Maybe Int
+    , floatInputValue : Maybe Float
+    , stringInputValues : Dict Id String
+    , passwordInputValue : String
+    , searchInputValue : String
+    , control : Control ExampleConfig
     }
 
 
@@ -182,14 +172,27 @@ init =
     , stringInputValues = Dict.empty
     , passwordInputValue = ""
     , searchInputValue = ""
-    , control =
-        Control.record ExampleConfig
-            |> Control.field "label" (Control.string "Assignment name")
-            |> Control.field "attributes" controlAttributes
-            |> Control.field "TextInput.onBlur" (Control.bool False)
-            |> Control.field "TextInput.onReset" (Control.bool False)
-    , enterCount = 0
+    , control = initControl
     }
+
+
+type alias ExampleConfig =
+    { label : String
+    , attributes : List (TextInput.Attribute Msg)
+    , onBlur : Bool
+    , onReset : Bool
+    , onEnter : Bool
+    }
+
+
+initControl : Control ExampleConfig
+initControl =
+    Control.record ExampleConfig
+        |> Control.field "label" (Control.string "Assignment name")
+        |> Control.field "attributes" controlAttributes
+        |> Control.field "TextInput.onBlur" (Control.bool False)
+        |> Control.field "TextInput.onReset" (Control.bool False)
+        |> Control.field "TextInput.onEnter" (Control.bool False)
 
 
 controlAttributes : Control (List (TextInput.Attribute msg))
@@ -221,7 +224,6 @@ type Msg
     | SetPassword String
     | SetSearchTerm String
     | UpdateControl (Control ExampleConfig)
-    | HitEnter
 
 
 {-| -}
@@ -245,9 +247,6 @@ update msg state =
 
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
-
-        HitEnter ->
-            ( { state | enterCount = state.enterCount + 1 }, Cmd.none )
 
 
 
