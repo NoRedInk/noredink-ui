@@ -58,19 +58,20 @@ example =
                     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
                     ]
             in
-            [ Text.caption [] [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
-            , Text.mediumBody [] (exampleHtml "mediumBody")
-            , Text.smallBody [] (exampleHtml "smallBody")
-            , Text.smallBodyGray [] (exampleHtml "smallBodyGray")
-            , Text.caption [] (exampleHtml "caption")
+            , Text.mediumBody [ Text.html (exampleHtml "mediumBody") ]
+            , Text.smallBody [ Text.html (exampleHtml "smallBody") ]
+            , Text.smallBodyGray [ Text.html (exampleHtml "smallBodyGray") ]
+            , Text.caption [ Text.html (exampleHtml "caption") ]
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
-            , Text.ugMediumBody [] (exampleUGHtml "ugMediumBody")
-            , Text.ugSmallBody [] (exampleUGHtml "ugSmallBody")
+            , Text.ugMediumBody [ Text.html (exampleUGHtml "ugMediumBody") ]
+            , Text.ugSmallBody [ Text.html (exampleUGHtml "ugSmallBody") ]
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
             , Text.mediumBody
-                [ Text.css [ Css.padding (Css.px 20) ] ]
-                [ Html.text "I've got more padding than my siblings!" ]
+                [ Text.css [ Css.padding (Css.px 20) ]
+                , Text.plaintext "I've got more padding than my siblings!"
+                ]
             , Html.div
                 [ Attributes.css
                     [ Css.width (Css.px 80)
@@ -78,8 +79,10 @@ example =
                     ]
                 ]
                 [ Text.mediumBody
-                    [ Text.noBreak ]
-                    [ Html.text "I won't ever break, no matter how narrow my container is." ]
+                    [ Text.noBreak
+                    , Text.plaintext
+                        "I won't ever break, no matter how narrow my container is."
+                    ]
                 ]
             ]
     }

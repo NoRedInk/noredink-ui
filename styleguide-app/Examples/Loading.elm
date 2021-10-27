@@ -113,7 +113,7 @@ example =
                     [ Loading.spinningPencil
                         |> Svg.withColor Colors.blue
                         |> Svg.toHtml
-                    , Text.caption [] [ Html.text "By default, the spinningPencil is white. Showing as blue for visibility." ]
+                    , Text.caption [ Text.plaintext "By default, the spinningPencil is white. Showing as blue for visibility." ]
                     , Loading.spinningDots
                         |> Svg.toHtml
                     ]

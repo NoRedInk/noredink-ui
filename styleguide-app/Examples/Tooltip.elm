@@ -77,13 +77,15 @@ update msg model =
 view : State -> List (Html Msg)
 view model =
     [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
-    , Text.mediumBody []
-        [ Html.text "Label the Tooltip as either being the "
-        , viewPrimaryLabelTooltip model.openTooltip
-        , Html.text " or the "
-        , viewAuxillaryDescriptionToolip model.openTooltip
-        , Html.text " for the trigger content."
-        , viewToggleTip model.openTooltip
+    , Text.mediumBody
+        [ Text.html
+            [ Html.text "Label the Tooltip as either being the "
+            , viewPrimaryLabelTooltip model.openTooltip
+            , Html.text " or the "
+            , viewAuxillaryDescriptionToolip model.openTooltip
+            , Html.text " for the trigger content."
+            , viewToggleTip model.openTooltip
+            ]
         ]
     , viewCustomizableExample model.staticExampleSettings
     ]

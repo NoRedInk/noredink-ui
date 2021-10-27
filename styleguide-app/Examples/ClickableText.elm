@@ -94,21 +94,23 @@ viewExamples (State control) =
     [ Control.view (State >> SetState) control
         |> fromUnstyled
     , buttons model
-    , Text.smallBody []
-        [ text "Sometimes, we'll want our clickable links: "
-        , ClickableText.link model.label
-            [ ClickableText.small
-            , Maybe.map ClickableText.icon model.icon
-                |> Maybe.withDefault (ClickableText.custom [])
+    , Text.smallBody
+        [ Text.html
+            [ text "Sometimes, we'll want our clickable links: "
+            , ClickableText.link model.label
+                [ ClickableText.small
+                , Maybe.map ClickableText.icon model.icon
+                    |> Maybe.withDefault (ClickableText.custom [])
+                ]
+            , text " and clickable buttons: "
+            , ClickableText.button model.label
+                [ ClickableText.small
+                , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
+                , Maybe.map ClickableText.icon model.icon
+                    |> Maybe.withDefault (ClickableText.custom [])
+                ]
+            , text " to show up in-line."
             ]
-        , text " and clickable buttons: "
-        , ClickableText.button model.label
-            [ ClickableText.small
-            , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
-            , Maybe.map ClickableText.icon model.icon
-                |> Maybe.withDefault (ClickableText.custom [])
-            ]
-        , text " to show up in-line."
         ]
     ]
         |> div []

@@ -55,5 +55,5 @@ viewIcon ( name, icon, style ) =
             ]
         ]
         [ Html.div [ css style ] [ Svg.toHtml icon ]
-        , Text.smallBody [] [ Html.text name ]
+        , Text.smallBody [ Text.plaintext name ]
         ]

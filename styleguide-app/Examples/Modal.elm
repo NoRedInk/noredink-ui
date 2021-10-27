@@ -228,7 +228,10 @@ launchModalButton settings =
 
 viewModalContent : String -> Html msg
 viewModalContent content =
-    Text.mediumBody [] [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
+    Text.mediumBody
+        [ Text.css [ whiteSpace preLine ]
+        , Text.plaintext content
+        ]
 
 
 continueButtonId : String

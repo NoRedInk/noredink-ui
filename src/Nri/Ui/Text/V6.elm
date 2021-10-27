@@ -1,6 +1,7 @@
 module Nri.Ui.Text.V6 exposing
     ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
     , ugMediumBody, ugSmallBody
+    , plaintext, markdown, html
     , Attribute, noBreak, css, id, custom
     , nriDescription, testId
     , noWidow
@@ -9,6 +10,7 @@ module Nri.Ui.Text.V6 exposing
 {-| Changes from V5:
 
   - adds helpers: `custom`, `nriDescription`,`testId`,`id`
+  - instead of view helpers that take HTML, offer attribute helpers supporting plaintext, markdown, and html content
 
 
 ## Understanding spacing
@@ -37,6 +39,11 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
 @docs ugMediumBody, ugSmallBody
 
 
+# Content
+
+@docs plaintext, markdown, html
+
+
 ## Customizations
 
 @docs Attribute, noBreak, css, id, custom
@@ -53,39 +60,42 @@ import Accessibility.Styled as Html exposing (..)
 import Css exposing (..)
 import Css.Global exposing (a, descendants)
 import Html.Styled.Attributes as Attributes
+import Markdown
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
 
 {-| -}
-type Attribute
-    = Attribute (Settings -> Settings)
+type Attribute msg
+    = Attribute (Settings msg -> Settings msg)
 
 
-type alias Settings =
+type alias Settings msg =
     { noBreak : Bool
     , styles : List Css.Style
     , customAttributes : List (Html.Attribute Never)
+    , content : List (Html msg)
     }
 
 
-defaultSettings : Settings
+defaultSettings : Settings msg
 defaultSettings =
     { noBreak = False
     , styles = []
     , customAttributes = []
+    , content = []
     }
 
 
-buildSettings : List Attribute -> Settings
+buildSettings : List (Attribute msg) -> Settings msg
 buildSettings =
     List.foldl (\(Attribute f) acc -> f acc) defaultSettings
 
 
 {-| Text with this attribute will never wrap.
 -}
-noBreak : Attribute
+noBreak : Attribute msg
 noBreak =
     Attribute (\config -> { config | noBreak = True })
 
@@ -97,7 +107,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute
+custom : List (Html.Attribute Never) -> Attribute msg
 custom attributes =
     Attribute <|
         \config ->
@@ -107,19 +117,19 @@ custom attributes =
 
 
 {-| -}
-nriDescription : String -> Attribute
+nriDescription : String -> Attribute msg
 nriDescription description =
     custom [ ExtraAttributes.nriDescription description ]
 
 
 {-| -}
-testId : String -> Attribute
+testId : String -> Attribute msg
 testId id_ =
     custom [ ExtraAttributes.testId id_ ]
 
 
 {-| -}
-id : String -> Attribute
+id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
 
@@ -127,16 +137,16 @@ id id_ =
 {-| Add some custom CSS to the text. If you find yourself using this a lot,
 please add a stricter attribute to noredink-ui!
 -}
-css : List Style -> Attribute
+css : List Style -> Attribute msg
 css styles =
     Attribute (\config -> { config | styles = config.styles ++ styles })
 
 
 {-| -}
-view : List Attribute -> List (Html msg) -> Html msg
-view attributes content =
+view : List (Attribute msg) -> Html msg
+view attributes =
     let
-        settings : Settings
+        settings : Settings msg
         settings =
             buildSettings attributes
     in
@@ -151,18 +161,13 @@ view attributes content =
             ]
             :: settings.customAttributes
         )
-        content
+        settings.content
 
 
 {-| This is some medium body copy.
 -}
-mediumBody : List Attribute -> List (Html msg) -> Html msg
-mediumBody attributes content =
-    let
-        settings : Settings
-        settings =
-            buildSettings attributes
-    in
+mediumBody : List (Attribute msg) -> Html msg
+mediumBody attributes =
     view
         (css
             (paragraphStyles
@@ -176,20 +181,19 @@ mediumBody attributes content =
             )
             :: attributes
         )
-        content
 
 
 {-| `mediumBody`, but with a lighter gray color than the default.
 -}
-mediumBodyGray : List Attribute -> List (Html msg) -> Html msg
-mediumBodyGray attributes content =
-    mediumBody (css [ Css.color gray45 ] :: attributes) content
+mediumBodyGray : List (Attribute msg) -> Html msg
+mediumBodyGray attributes =
+    mediumBody (css [ Css.color gray45 ] :: attributes)
 
 
 {-| This is some small body copy.
 -}
-smallBody : List Attribute -> List (Html msg) -> Html msg
-smallBody attributes content =
+smallBody : List (Attribute msg) -> Html msg
+smallBody attributes =
     view
         (css
             (paragraphStyles
@@ -203,13 +207,12 @@ smallBody attributes content =
             )
             :: attributes
         )
-        content
 
 
 {-| This is some small body copy but it's gray.
 -}
-smallBodyGray : List Attribute -> List (Html msg) -> Html msg
-smallBodyGray attributes content =
+smallBodyGray : List (Attribute msg) -> Html msg
+smallBodyGray attributes =
     view
         (css
             (paragraphStyles
@@ -223,7 +226,6 @@ smallBodyGray attributes content =
             )
             :: attributes
         )
-        content
 
 
 paragraphStyles :
@@ -261,8 +263,8 @@ paragraphStyles config =
 
 {-| This is a little note or caption.
 -}
-caption : List Attribute -> List (Html msg) -> Html msg
-caption attributes content =
+caption : List (Attribute msg) -> Html msg
+caption attributes =
     view
         (css
             (paragraphStyles
@@ -276,13 +278,12 @@ caption attributes content =
             )
             :: attributes
         )
-        content
 
 
 {-| User-generated text.
 -}
-ugMediumBody : List Attribute -> List (Html msg) -> Html msg
-ugMediumBody attributes content =
+ugMediumBody : List (Attribute msg) -> Html msg
+ugMediumBody attributes =
     view
         (css
             (whiteSpace preLine
@@ -297,12 +298,11 @@ ugMediumBody attributes content =
             )
             :: attributes
         )
-        content
 
 
 {-| User-generated text.
 -}
-ugSmallBody : List Attribute -> List (Html msg) -> Html msg
+ugSmallBody : List (Attribute msg) -> Html msg
 ugSmallBody attributes =
     view
         (css
@@ -318,6 +318,33 @@ ugSmallBody attributes =
             )
             :: attributes
         )
+
+
+{-| Provide a plain-text string.
+-}
+plaintext : String -> Attribute msg
+plaintext content =
+    Attribute <| \config -> { config | content = [ text content ] }
+
+
+{-| Provide a string that will be rendered as markdown.
+-}
+markdown : String -> Attribute msg
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    Markdown.toHtml Nothing content
+                        |> List.map fromUnstyled
+            }
+
+
+{-| Provide a list of custom HTML.
+-}
+html : List (Html msg) -> Attribute msg
+html content =
+    Attribute <| \config -> { config | content = content }
 
 
 {-| Eliminate widows (single words on their own line caused by

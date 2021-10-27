@@ -65,7 +65,7 @@ view model =
             Modal.MultipleFocusableElements
                 (\{ firstFocusableElement, autofocusElement, lastFocusableElement, closeButton } ->
                     { content =
-                        [ Text.mediumBody [] [ text "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
+                        [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
                         , closeButton (autofocusElement :: firstFocusableElement)
                         ]
                     , footer =

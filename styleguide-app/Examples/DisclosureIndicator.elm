@@ -38,7 +38,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Text.smallBodyGray [] [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
+            [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
                 [ Button.button "Toggle large indicator"
                     [ Button.onClick ToggleLarge, Button.small, Button.secondary ]
