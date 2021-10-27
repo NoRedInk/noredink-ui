@@ -780,6 +780,7 @@ pointerBox tail direction alignment =
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
         , Css.color Colors.white
+        , Css.property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
         , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
         , Global.descendants [ Global.a [ Css.color Colors.white ] ]
         ]

@@ -275,6 +275,7 @@ viewBalloon theme_ width_ padding contents =
             , Just (textAlign left)
             , Just (position relative)
             , Just (Css.borderRadius (px 8))
+            , Just (property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)")
             , Just padding
             , Just (balloonTheme theme_)
             , width_
