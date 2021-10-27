@@ -197,13 +197,15 @@ interactableWithLabel label content =
             "label"
             labelStyles
             []
-            [ Text.smallBody []
-                [ div
-                    [ Html.Styled.Attributes.css
-                        [ margin (px 7)
+            [ Text.smallBody
+                [ Text.html
+                    [ div
+                        [ Html.Styled.Attributes.css
+                            [ margin (px 7)
+                            ]
                         ]
-                    ]
-                    [ text label
+                        [ text label
+                        ]
                     ]
                 ]
             ]
