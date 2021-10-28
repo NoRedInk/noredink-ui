@@ -58,67 +58,64 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
 
-{-| (Internal only)
--}
-type alias InputType value msg =
-    { toString : value -> String
-    , fromString : String -> msg
-    , fieldType : String
-    , inputMode : Maybe String
-    , autocomplete : Maybe String
-    }
-
-
 {-| An input that allows text entry
 -}
 text : (String -> msg) -> Attribute String msg
 text toMsg =
-    setInputType
-        { toString = identity
-        , fromString = toMsg
-        , fieldType = "text"
-        , inputMode = Nothing
-        , autocomplete = Nothing
-        }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just identity
+                , fromString = Just toMsg
+                , fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
 
 
 {-| An input that allows integer entry
 -}
 number : (Maybe Int -> msg) -> Attribute (Maybe Int) msg
 number toMsg =
-    setInputType
-        { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
-        , fromString = String.toInt >> toMsg
-        , fieldType = "number"
-        , inputMode = Nothing
-        , autocomplete = Nothing
-        }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just (Maybe.map String.fromInt >> Maybe.withDefault "")
+                , fromString = Just (String.toInt >> toMsg)
+                , fieldType = Just "number"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
 
 
 {-| An input that allows float entry
 -}
 float : (Maybe Float -> msg) -> Attribute (Maybe Float) msg
 float toMsg =
-    setInputType
-        { toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
-        , fromString = String.toFloat >> toMsg
-        , fieldType = "number"
-        , inputMode = Nothing
-        , autocomplete = Nothing
-        }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just (Maybe.map String.fromFloat >> Maybe.withDefault "")
+                , fromString = Just (String.toFloat >> toMsg)
+                , fieldType = Just "number"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
 
 
 {-| An input that allows password entry
 -}
 password : (String -> msg) -> Attribute String msg
 password toMsg =
-    setInputType
-        { toString = identity
-        , fromString = toMsg
-        , fieldType = "password"
-        , inputMode = Nothing
-        , autocomplete = Just "current-password"
-        }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just identity
+                , fromString = Just toMsg
+                , fieldType = Just "password"
+                , inputMode = Nothing
+                , autocomplete = Just "current-password"
+            }
 
 
 {-| An input that is optimized for email entry
@@ -130,31 +127,30 @@ with our validation UI.
 -}
 email : (String -> msg) -> Attribute String msg
 email toMsg =
-    setInputType
-        { toString = identity
-        , fromString = toMsg
-        , fieldType = "text"
-        , inputMode = Just "email"
-        , autocomplete = Just "email"
-        }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just identity
+                , fromString = Just toMsg
+                , fieldType = Just "text"
+                , inputMode = Just "email"
+                , autocomplete = Just "email"
+            }
 
 
 {-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
 -}
 search : (String -> msg) -> Attribute String msg
 search toMsg =
-    setInputType
-        { toString = identity
-        , fromString = toMsg
-        , fieldType = "search"
-        , inputMode = Nothing
-        , autocomplete = Nothing
-        }
-
-
-setInputType : InputType value msg -> Attribute value msg
-setInputType inputType =
-    Attribute <| \config -> { config | inputType = Just inputType }
+    Attribute <|
+        \config ->
+            { config
+                | toString = Just identity
+                , fromString = Just toMsg
+                , fieldType = Just "search"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
 
 
 {-| -}
@@ -346,7 +342,11 @@ type alias Config value msg =
     , id : Maybe String
     , custom : List (Html.Attribute msg)
     , currentValue : Maybe value
-    , inputType : Maybe (InputType value msg)
+    , toString : Maybe (value -> String)
+    , fromString : Maybe (String -> msg)
+    , fieldType : Maybe String
+    , inputMode : Maybe String
+    , autocomplete : Maybe String
     }
 
 
@@ -372,7 +372,11 @@ emptyConfig =
     , css = []
     , custom = []
     , currentValue = Nothing
-    , inputType = Nothing
+    , toString = Nothing
+    , fromString = Nothing
+    , fieldType = Nothing
+    , inputMode = Nothing
+    , autocomplete = Nothing
     }
 
 
@@ -416,7 +420,7 @@ view label attributes =
                     ( num 0.4, True )
 
         maybeStep =
-            case Maybe.map .fieldType config.inputType of
+            case config.fieldType of
                 Just "number" ->
                     [ step "any" ]
 
@@ -429,7 +433,8 @@ view label attributes =
                 |> Maybe.withDefault Extra.none
 
         stringValue =
-            Maybe.map2 (\{ toString } -> toString) config.inputType config.currentValue
+            config.currentValue
+                |> Maybe.map2 (\toString -> toString) config.toString
                 |> Maybe.withDefault ""
 
         onEnter_ : msg -> Html.Attribute msg
@@ -480,12 +485,12 @@ view label attributes =
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
-                   , maybeAttr (.fromString >> onInput) config.inputType
+                   , maybeAttr onInput config.fromString
                    , maybeAttr Events.onBlur config.onBlur
                    , Attributes.autofocus config.autofocus
-                   , maybeAttr (.fieldType >> type_) config.inputType
-                   , maybeAttr (attribute "inputmode") (Maybe.andThen .inputMode config.inputType)
-                   , maybeAttr (attribute "autocomplete") (Maybe.andThen .autocomplete config.inputType)
+                   , maybeAttr type_ config.fieldType
+                   , maybeAttr (attribute "inputmode") config.inputMode
+                   , maybeAttr (attribute "autocomplete") config.autocomplete
                    , maybeAttr onEnter_ config.onEnter
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
@@ -519,7 +524,7 @@ view label attributes =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case ( config.onReset, stringValue, Maybe.map .fieldType config.inputType ) of
+        , case ( config.onReset, stringValue, config.fieldType ) of
             ( Just _, "", Just "search" ) ->
                 UiIcon.search
                     |> Svg.withWidth (Css.px 20)
