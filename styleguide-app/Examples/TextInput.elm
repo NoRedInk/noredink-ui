@@ -41,18 +41,12 @@ example =
                 toExample { name, toString, inputType, onBlur, onReset, onEnter } index =
                     ( name
                     , TextInput.view exampleConfig.label
-                        (TextInput.id ("text-input__" ++ name ++ "-example")
-                            :: TextInput.map
-                                toString
-                                identity
-                                (SetInput index)
-                                inputType
-                            :: TextInput.onInput (SetInput index)
-                            :: TextInput.value
-                                (Maybe.withDefault "" <|
-                                    Dict.get index state.inputValues
-                                )
-                            :: exampleConfig.attributes
+                        (exampleConfig.attributes
+                            ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
+                               , TextInput.map toString identity (SetInput index) inputType
+                               , TextInput.onInput (SetInput index)
+                               , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
+                               ]
                             ++ List.filterMap identity
                                 [ if exampleConfig.onBlur then
                                     Just (TextInput.onBlur (SetInput index onBlur))
