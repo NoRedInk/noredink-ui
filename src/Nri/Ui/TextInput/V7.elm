@@ -308,7 +308,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute msg) -> Attribute value msg
+custom : List (Html.Attribute Never) -> Attribute value msg
 custom attributes =
     Attribute emptyEventsAndValues <|
         \config -> { config | custom = config.custom ++ attributes }
@@ -348,7 +348,7 @@ writing =
 {-| Customizations for the TextInput.
 -}
 type Attribute value msg
-    = Attribute (EventsAndValues value msg) (Config msg -> Config msg)
+    = Attribute (EventsAndValues value msg) (Config -> Config)
 
 
 type alias EventsAndValues value msg =
@@ -391,7 +391,7 @@ map f toString onInput_ (Attribute eventsAndValues configF) =
 
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config msg =
+type alias Config =
     { inputStyle : InputStyles.Theme
     , error : ErrorState
     , disabled : Bool
@@ -402,7 +402,7 @@ type alias Config msg =
     , noMarginTop : Bool
     , css : List (List Css.Style)
     , id : Maybe String
-    , custom : List (Html.Attribute msg)
+    , custom : List (Html.Attribute Never)
     , fieldType : Maybe String
     , inputMode : Maybe String
     , autocomplete : Maybe String
@@ -414,7 +414,7 @@ type ErrorState
     | Error { message : Maybe String }
 
 
-emptyConfig : Config msg
+emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , error = NoError
@@ -433,7 +433,7 @@ emptyConfig =
     }
 
 
-applyConfig : List (Attribute value msg) -> Config msg
+applyConfig : List (Attribute value msg) -> Config
 applyConfig attributes =
     List.foldl (\(Attribute _ update) config -> update config)
         emptyConfig
@@ -471,7 +471,7 @@ applyEvents =
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
-        config : Config msg
+        config : Config
         config =
             applyConfig attributes
 
@@ -551,7 +551,7 @@ view label attributes =
         )
         [ input
             (maybeStep
-                ++ List.reverse config.custom
+                ++ List.map (Attributes.map never) (List.reverse config.custom)
                 ++ [ Attributes.id idValue
                    , Attributes.css
                         [ InputStyles.input config.inputStyle isInError
