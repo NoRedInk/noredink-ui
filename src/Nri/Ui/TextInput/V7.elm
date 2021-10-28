@@ -1,6 +1,7 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , InputType, number, float, text, password, email, search
+    , number, float, text, password, email, search
+    , value
     , Attribute, placeholder, hiddenLabel, autofocus
     , onBlur, onReset, onEnter
     , css, custom, nriDescription, id, testId, noMargin
@@ -14,13 +15,19 @@ module Nri.Ui.TextInput.V7 exposing
 # Changes from V6
 
   - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
+  - change `view` API so it only takes a list of attributes (meaning the value and input type are now passed in as attributes)
 
 @docs view, generateId
 
 
 ### Input types
 
-@docs InputType, number, float, text, password, email, search
+@docs number, float, text, password, email, search
+
+
+### Input content
+
+@docs value
 
 
 ## Attributes
@@ -51,22 +58,22 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
 
-{-| -}
-type InputType value msg
-    = InputType
-        { toString : value -> String
-        , fromString : String -> msg
-        , fieldType : String
-        , inputMode : Maybe String
-        , autocomplete : Maybe String
-        }
+{-| (Internal only)
+-}
+type alias InputType value msg =
+    { toString : value -> String
+    , fromString : String -> msg
+    , fieldType : String
+    , inputMode : Maybe String
+    , autocomplete : Maybe String
+    }
 
 
 {-| An input that allows text entry
 -}
-text : (String -> msg) -> InputType String msg
+text : (String -> msg) -> Attribute String msg
 text toMsg =
-    InputType
+    setInputType
         { toString = identity
         , fromString = toMsg
         , fieldType = "text"
@@ -77,9 +84,9 @@ text toMsg =
 
 {-| An input that allows integer entry
 -}
-number : (Maybe Int -> msg) -> InputType (Maybe Int) msg
+number : (Maybe Int -> msg) -> Attribute (Maybe Int) msg
 number toMsg =
-    InputType
+    setInputType
         { toString = Maybe.map String.fromInt >> Maybe.withDefault ""
         , fromString = String.toInt >> toMsg
         , fieldType = "number"
@@ -90,9 +97,9 @@ number toMsg =
 
 {-| An input that allows float entry
 -}
-float : (Maybe Float -> msg) -> InputType (Maybe Float) msg
+float : (Maybe Float -> msg) -> Attribute (Maybe Float) msg
 float toMsg =
-    InputType
+    setInputType
         { toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
         , fromString = String.toFloat >> toMsg
         , fieldType = "number"
@@ -103,9 +110,9 @@ float toMsg =
 
 {-| An input that allows password entry
 -}
-password : (String -> msg) -> InputType String msg
+password : (String -> msg) -> Attribute String msg
 password toMsg =
-    InputType
+    setInputType
         { toString = identity
         , fromString = toMsg
         , fieldType = "password"
@@ -121,9 +128,9 @@ but not `type="email"` because that would enable browser-provided validation whi
 with our validation UI.
 
 -}
-email : (String -> msg) -> InputType String msg
+email : (String -> msg) -> Attribute String msg
 email toMsg =
-    InputType
+    setInputType
         { toString = identity
         , fromString = toMsg
         , fieldType = "text"
@@ -134,9 +141,9 @@ email toMsg =
 
 {-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
 -}
-search : (String -> msg) -> InputType String msg
+search : (String -> msg) -> Attribute String msg
 search toMsg =
-    InputType
+    setInputType
         { toString = identity
         , fromString = toMsg
         , fieldType = "search"
@@ -145,23 +152,27 @@ search toMsg =
         }
 
 
-{-| An optional customization of a TextInput.
--}
-type Attribute msg
-    = Attribute (Config msg -> Config msg)
+setInputType : InputType value msg -> Attribute value msg
+setInputType inputType =
+    Attribute <| \config -> { config | inputType = Just inputType }
+
+
+{-| -}
+value : value -> Attribute value msg
+value value_ =
+    Attribute <| \config -> { config | currentValue = Just value_ }
 
 
 {-| If not explicit placeholder is given, the input label will be used as the placeholder.
 -}
-placeholder : String -> Attribute msg
+placeholder : String -> Attribute value msg
 placeholder text_ =
-    Attribute <|
-        \config -> { config | placeholder = Just text_ }
+    Attribute <| \config -> { config | placeholder = Just text_ }
 
 
 {-| This disables the input
 -}
-disabled : Attribute msg
+disabled : Attribute value msg
 disabled =
     Attribute <|
         \config -> { config | disabled = True }
@@ -169,7 +180,7 @@ disabled =
 
 {-| Use this while the form the input is a part of is being submitted.
 -}
-loading : Attribute msg
+loading : Attribute value msg
 loading =
     Attribute <|
         \config -> { config | loading = True }
@@ -178,7 +189,7 @@ loading =
 {-| Sets whether or not the field will be highlighted as having a validation error.
 If you are always passing `True`, then you don't need to use this attribute.
 -}
-errorIf : Bool -> Attribute msg
+errorIf : Bool -> Attribute value msg
 errorIf isInError =
     Attribute <|
         \config ->
@@ -195,7 +206,7 @@ errorIf isInError =
 {-| If `Just`, the field will be highlighted as having a validation error,
 and the given error message will be shown.
 -}
-errorMessage : Maybe String -> Attribute msg
+errorMessage : Maybe String -> Attribute value msg
 errorMessage maybeMessage =
     Attribute <|
         \config ->
@@ -212,7 +223,7 @@ errorMessage maybeMessage =
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
-hiddenLabel : Attribute msg
+hiddenLabel : Attribute value msg
 hiddenLabel =
     Attribute <|
         \config -> { config | hideLabel = True }
@@ -220,21 +231,21 @@ hiddenLabel =
 
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
 -}
-onBlur : msg -> Attribute msg
+onBlur : msg -> Attribute value msg
 onBlur msg =
     Attribute <|
         \config -> { config | onBlur = Just msg }
 
 
 {-| -}
-onReset : msg -> Attribute msg
+onReset : msg -> Attribute value msg
 onReset msg =
     Attribute <|
         \config -> { config | onReset = Just msg }
 
 
 {-| -}
-onEnter : msg -> Attribute msg
+onEnter : msg -> Attribute value msg
 onEnter msg =
     Attribute <|
         \config -> { config | onEnter = Just msg }
@@ -242,7 +253,7 @@ onEnter msg =
 
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
-autofocus : Attribute msg
+autofocus : Attribute value msg
 autofocus =
     Attribute <|
         \config -> { config | autofocus = True }
@@ -254,7 +265,7 @@ If you want to customize colors, borders, font sizes, etc, you should instead ad
 to support what you need.
 
 -}
-css : List Css.Style -> Attribute msg
+css : List Css.Style -> Attribute value msg
 css styles =
     Attribute <|
         \config -> { config | css = styles :: config.css }
@@ -262,7 +273,7 @@ css styles =
 
 {-| Remove default spacing from the Input.
 -}
-noMargin : Bool -> Attribute msg
+noMargin : Bool -> Attribute value msg
 noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
 
@@ -274,7 +285,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute msg) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute value msg
 custom attributes =
     Attribute <|
         \config -> { config | custom = config.custom ++ attributes }
@@ -285,27 +296,41 @@ we'll automatically generate one from the label you pass in, but this can
 cause problems if you have more than one text input with the same label on
 the page. Use this to be more specific and avoid issues with duplicate IDs!
 -}
-id : String -> Attribute msg
+id : String -> Attribute value msg
 id id_ =
     Attribute <|
         \config -> { config | id = Just id_ }
 
 
 {-| -}
-nriDescription : String -> Attribute msg
+nriDescription : String -> Attribute value msg
 nriDescription description =
     custom [ Extra.nriDescription description ]
 
 
 {-| -}
-testId : String -> Attribute msg
+testId : String -> Attribute value msg
 testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| Uses the "Writing" input style.
+-}
+writing : Attribute value msg
+writing =
+    Attribute <|
+        \config -> { config | inputStyle = InputStyles.Writing }
+
+
+{-| An optional customization of a TextInput.
+-}
+type Attribute value msg
+    = Attribute (Config value msg -> Config value msg)
+
+
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config msg =
+type alias Config value msg =
     { inputStyle : InputStyles.Theme
     , error : ErrorState
     , disabled : Bool
@@ -320,6 +345,8 @@ type alias Config msg =
     , css : List (List Css.Style)
     , id : Maybe String
     , custom : List (Html.Attribute msg)
+    , currentValue : Maybe value
+    , inputType : Maybe (InputType value msg)
     }
 
 
@@ -328,7 +355,7 @@ type ErrorState
     | Error { message : Maybe String }
 
 
-emptyConfig : Config msg
+emptyConfig : Config value msg
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , error = NoError
@@ -344,32 +371,19 @@ emptyConfig =
     , noMarginTop = False
     , css = []
     , custom = []
+    , currentValue = Nothing
+    , inputType = Nothing
     }
 
 
 {-| Render the TextInput as HTML.
-The input's label, InputType, and current value are all required. Other attributes are all optional.
 -}
-view : String -> InputType value msg -> List (Attribute msg) -> value -> Html msg
-view label inputType attributes currentValue =
+view : String -> List (Attribute value msg) -> Html msg
+view label attributes =
     let
         config =
             List.foldl (\(Attribute update) -> update) emptyConfig attributes
-    in
-    view_ label inputType config currentValue
 
-
-{-| Uses the "Writing" input style. See [`Nri.Ui.InputStyles.V2.Theme`](Nri-Ui-InputStyles-V2#Theme).
--}
-writing : Attribute msg
-writing =
-    Attribute <|
-        \config -> { config | inputStyle = InputStyles.Writing }
-
-
-view_ : String -> InputType value msg -> Config msg -> value -> Html msg
-view_ label (InputType inputType) config currentValue =
-    let
         idValue =
             case config.id of
                 Just id_ ->
@@ -402,11 +416,12 @@ view_ label (InputType inputType) config currentValue =
                     ( num 0.4, True )
 
         maybeStep =
-            if inputType.fieldType == "number" then
-                [ step "any" ]
+            case Maybe.map .fieldType config.inputType of
+                Just "number" ->
+                    [ step "any" ]
 
-            else
-                []
+                _ ->
+                    []
 
         maybeAttr attr maybeValue =
             maybeValue
@@ -414,7 +429,8 @@ view_ label (InputType inputType) config currentValue =
                 |> Maybe.withDefault Extra.none
 
         stringValue =
-            inputType.toString currentValue
+            Maybe.map2 (\{ toString } -> toString) config.inputType config.currentValue
+                |> Maybe.withDefault ""
 
         onEnter_ : msg -> Html.Attribute msg
         onEnter_ msg =
@@ -462,14 +478,14 @@ view_ label (InputType inputType) config currentValue =
                             Css.batch []
                         ]
                    , Attributes.placeholder placeholder_
-                   , value stringValue
+                   , Attributes.value stringValue
                    , Attributes.disabled disabled_
-                   , onInput inputType.fromString
+                   , maybeAttr (.fromString >> onInput) config.inputType
                    , maybeAttr Events.onBlur config.onBlur
                    , Attributes.autofocus config.autofocus
-                   , type_ inputType.fieldType
-                   , maybeAttr (attribute "inputmode") inputType.inputMode
-                   , maybeAttr (attribute "autocomplete") inputType.autocomplete
+                   , maybeAttr (.fieldType >> type_) config.inputType
+                   , maybeAttr (attribute "inputmode") (Maybe.andThen .inputMode config.inputType)
+                   , maybeAttr (attribute "autocomplete") (Maybe.andThen .autocomplete config.inputType)
                    , maybeAttr onEnter_ config.onEnter
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
@@ -503,8 +519,8 @@ view_ label (InputType inputType) config currentValue =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case ( config.onReset, stringValue, inputType.fieldType ) of
-            ( Just _, "", "search" ) ->
+        , case ( config.onReset, stringValue, Maybe.map .fieldType config.inputType ) of
+            ( Just _, "", Just "search" ) ->
                 UiIcon.search
                     |> Svg.withWidth (Css.px 20)
                     |> Svg.withHeight (Css.px 20)
