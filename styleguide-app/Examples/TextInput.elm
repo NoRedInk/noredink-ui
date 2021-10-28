@@ -64,7 +64,8 @@ example =
                 [ ( "text"
                   , TextInput.view exampleConfig.label
                         (TextInput.id "text-input__text-example"
-                            :: TextInput.text (SetTextInput 1)
+                            :: TextInput.text
+                            :: TextInput.onInput (SetTextInput 1)
                             :: (TextInput.value <|
                                     (Maybe.withDefault "" <| Dict.get 1 state.stringInputValues)
                                )

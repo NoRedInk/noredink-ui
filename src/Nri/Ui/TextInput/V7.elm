@@ -1,9 +1,9 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , number, float, text, password, email, search
-    , value
+    , value, map
+    , onInput, onBlur, onReset, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
-    , onBlur, onReset, onEnter
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage
     , writing
@@ -16,6 +16,7 @@ module Nri.Ui.TextInput.V7 exposing
 
   - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
   - change `view` API so it only takes a list of attributes (meaning the value and input type are now passed in as attributes)
+  - split the event hander (e.g., `onInput`) from the input type (e.g., `password`)
 
 @docs view, generateId
 
@@ -27,13 +28,17 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input content
 
-@docs value
+@docs value, map
+
+
+### Event handlers
+
+@docs onInput, onBlur, onReset, onEnter
 
 
 ## Attributes
 
 @docs Attribute, placeholder, hiddenLabel, autofocus
-@docs onBlur, onReset, onEnter
 @docs css, custom, nriDescription, id, testId, noMargin
 @docs disabled, loading, errorIf, errorMessage
 @docs writing
@@ -45,7 +50,7 @@ import Css exposing (center, num, position, px, relative, textAlign)
 import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
-import Html.Styled.Events as Events exposing (onInput)
+import Html.Styled.Events as Events
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -60,62 +65,74 @@ import Nri.Ui.Util exposing (dashify)
 
 {-| An input that allows text entry
 -}
-text : (String -> msg) -> Attribute String msg
-text toMsg =
-    Attribute <|
-        \config ->
+text : Attribute String msg
+text =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+        }
+        (\config ->
             { config
-                | toString = Just identity
-                , fromString = Just toMsg
-                , fieldType = Just "text"
+                | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Nothing
             }
+        )
 
 
 {-| An input that allows integer entry
 -}
-number : (Maybe Int -> msg) -> Attribute (Maybe Int) msg
-number toMsg =
-    Attribute <|
-        \config ->
+number : Attribute (Maybe Int) msg
+number =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just (Maybe.map String.fromInt >> Maybe.withDefault "")
+            , fromString = Just String.toInt
+        }
+        (\config ->
             { config
-                | toString = Just (Maybe.map String.fromInt >> Maybe.withDefault "")
-                , fromString = Just (String.toInt >> toMsg)
-                , fieldType = Just "number"
+                | fieldType = Just "number"
                 , inputMode = Nothing
                 , autocomplete = Nothing
             }
+        )
 
 
 {-| An input that allows float entry
 -}
-float : (Maybe Float -> msg) -> Attribute (Maybe Float) msg
-float toMsg =
-    Attribute <|
-        \config ->
+float : Attribute (Maybe Float) msg
+float =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just (Maybe.map String.fromFloat >> Maybe.withDefault "")
+            , fromString = Just String.toFloat
+        }
+        (\config ->
             { config
-                | toString = Just (Maybe.map String.fromFloat >> Maybe.withDefault "")
-                , fromString = Just (String.toFloat >> toMsg)
-                , fieldType = Just "number"
+                | fieldType = Just "number"
                 , inputMode = Nothing
                 , autocomplete = Nothing
             }
+        )
 
 
 {-| An input that allows password entry
 -}
-password : (String -> msg) -> Attribute String msg
-password toMsg =
-    Attribute <|
-        \config ->
+password : Attribute String msg
+password =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+        }
+        (\config ->
             { config
-                | toString = Just identity
-                , fromString = Just toMsg
-                , fieldType = Just "password"
+                | fieldType = Just "password"
                 , inputMode = Nothing
                 , autocomplete = Just "current-password"
             }
+        )
 
 
 {-| An input that is optimized for email entry
@@ -125,52 +142,59 @@ but not `type="email"` because that would enable browser-provided validation whi
 with our validation UI.
 
 -}
-email : (String -> msg) -> Attribute String msg
-email toMsg =
-    Attribute <|
-        \config ->
+email : Attribute String msg
+email =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+        }
+        (\config ->
             { config
-                | toString = Just identity
-                , fromString = Just toMsg
-                , fieldType = Just "text"
+                | fieldType = Just "text"
                 , inputMode = Just "email"
                 , autocomplete = Just "email"
             }
+        )
 
 
 {-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
 -}
-search : (String -> msg) -> Attribute String msg
-search toMsg =
-    Attribute <|
-        \config ->
+search : Attribute String msg
+search =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+        }
+        (\config ->
             { config
-                | toString = Just identity
-                , fromString = Just toMsg
-                , fieldType = Just "search"
+                | fieldType = Just "search"
                 , inputMode = Nothing
                 , autocomplete = Nothing
             }
+        )
 
 
 {-| -}
 value : value -> Attribute value msg
 value value_ =
-    Attribute <| \config -> { config | currentValue = Just value_ }
+    Attribute { emptyEventsAndValues | currentValue = Just value_ } identity
 
 
 {-| If not explicit placeholder is given, the input label will be used as the placeholder.
 -}
 placeholder : String -> Attribute value msg
 placeholder text_ =
-    Attribute <| \config -> { config | placeholder = Just text_ }
+    Attribute emptyEventsAndValues <|
+        \config -> { config | placeholder = Just text_ }
 
 
 {-| This disables the input
 -}
 disabled : Attribute value msg
 disabled =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | disabled = True }
 
 
@@ -178,7 +202,7 @@ disabled =
 -}
 loading : Attribute value msg
 loading =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | loading = True }
 
 
@@ -187,7 +211,7 @@ If you are always passing `True`, then you don't need to use this attribute.
 -}
 errorIf : Bool -> Attribute value msg
 errorIf isInError =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config ->
             { config
                 | error =
@@ -204,7 +228,7 @@ and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute value msg
 errorMessage maybeMessage =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config ->
             { config
                 | error =
@@ -221,37 +245,40 @@ errorMessage maybeMessage =
 -}
 hiddenLabel : Attribute value msg
 hiddenLabel =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | hideLabel = True }
+
+
+{-| -}
+onInput : (value -> msg) -> Attribute value msg
+onInput msg =
+    Attribute { emptyEventsAndValues | onInput = Just msg } identity
 
 
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
 -}
 onBlur : msg -> Attribute value msg
 onBlur msg =
-    Attribute <|
-        \config -> { config | onBlur = Just msg }
+    Attribute { emptyEventsAndValues | onBlur = Just msg } identity
 
 
 {-| -}
 onReset : msg -> Attribute value msg
 onReset msg =
-    Attribute <|
-        \config -> { config | onReset = Just msg }
+    Attribute { emptyEventsAndValues | onReset = Just msg } identity
 
 
 {-| -}
 onEnter : msg -> Attribute value msg
 onEnter msg =
-    Attribute <|
-        \config -> { config | onEnter = Just msg }
+    Attribute { emptyEventsAndValues | onEnter = Just msg } identity
 
 
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute value msg
 autofocus =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | autofocus = True }
 
 
@@ -263,7 +290,7 @@ to support what you need.
 -}
 css : List Css.Style -> Attribute value msg
 css styles =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | css = styles :: config.css }
 
 
@@ -271,7 +298,7 @@ css styles =
 -}
 noMargin : Bool -> Attribute value msg
 noMargin removeMargin =
-    Attribute <| \config -> { config | noMarginTop = removeMargin }
+    Attribute emptyEventsAndValues <| \config -> { config | noMarginTop = removeMargin }
 
 
 {-| Use this helper to add custom attributes.
@@ -283,7 +310,7 @@ Instead, please use the `css` helper.
 -}
 custom : List (Html.Attribute msg) -> Attribute value msg
 custom attributes =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | custom = config.custom ++ attributes }
 
 
@@ -294,7 +321,7 @@ the page. Use this to be more specific and avoid issues with duplicate IDs!
 -}
 id : String -> Attribute value msg
 id id_ =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | id = Just id_ }
 
 
@@ -314,36 +341,68 @@ testId id_ =
 -}
 writing : Attribute value msg
 writing =
-    Attribute <|
+    Attribute emptyEventsAndValues <|
         \config -> { config | inputStyle = InputStyles.Writing }
 
 
-{-| An optional customization of a TextInput.
+{-| Customizations for the TextInput.
 -}
 type Attribute value msg
-    = Attribute (Config value msg -> Config value msg)
+    = Attribute (EventsAndValues value msg) (Config msg -> Config msg)
+
+
+type alias EventsAndValues value msg =
+    { currentValue : Maybe value
+    , toString : Maybe (value -> String)
+    , fromString : Maybe (String -> value)
+    , onInput : Maybe (value -> msg)
+    , onBlur : Maybe msg
+    , onReset : Maybe msg
+    , onEnter : Maybe msg
+    }
+
+
+emptyEventsAndValues : EventsAndValues value msg
+emptyEventsAndValues =
+    { currentValue = Nothing
+    , toString = Nothing
+    , fromString = Nothing
+    , onBlur = Nothing
+    , onReset = Nothing
+    , onEnter = Nothing
+    , onInput = Nothing
+    }
+
+
+{-| -}
+map : (a -> b) -> (b -> String) -> (b -> msg) -> Attribute a msg -> Attribute b msg
+map f toString onInput_ (Attribute eventsAndValues configF) =
+    Attribute
+        { currentValue = Maybe.map f eventsAndValues.currentValue
+        , toString = Just toString
+        , fromString = Maybe.map (\from -> from >> f) eventsAndValues.fromString
+        , onBlur = eventsAndValues.onBlur
+        , onReset = eventsAndValues.onReset
+        , onEnter = eventsAndValues.onEnter
+        , onInput = Just onInput_
+        }
+        configF
 
 
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config value msg =
+type alias Config msg =
     { inputStyle : InputStyles.Theme
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
     , hideLabel : Bool
     , placeholder : Maybe String
-    , onBlur : Maybe msg
-    , onReset : Maybe msg
-    , onEnter : Maybe msg
     , autofocus : Bool
     , noMarginTop : Bool
     , css : List (List Css.Style)
     , id : Maybe String
     , custom : List (Html.Attribute msg)
-    , currentValue : Maybe value
-    , toString : Maybe (value -> String)
-    , fromString : Maybe (String -> msg)
     , fieldType : Maybe String
     , inputMode : Maybe String
     , autocomplete : Maybe String
@@ -355,7 +414,7 @@ type ErrorState
     | Error { message : Maybe String }
 
 
-emptyConfig : Config value msg
+emptyConfig : Config msg
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , error = NoError
@@ -363,21 +422,48 @@ emptyConfig =
     , loading = False
     , hideLabel = False
     , placeholder = Nothing
-    , onBlur = Nothing
-    , onReset = Nothing
-    , onEnter = Nothing
     , autofocus = False
     , id = Nothing
     , noMarginTop = False
     , css = []
     , custom = []
-    , currentValue = Nothing
-    , toString = Nothing
-    , fromString = Nothing
     , fieldType = Nothing
     , inputMode = Nothing
     , autocomplete = Nothing
     }
+
+
+applyConfig : List (Attribute value msg) -> Config msg
+applyConfig attributes =
+    List.foldl (\(Attribute _ update) config -> update config)
+        emptyConfig
+        attributes
+
+
+orExisting : (acc -> Maybe a) -> acc -> acc -> Maybe a
+orExisting f new previous =
+    case f previous of
+        Just just ->
+            Just just
+
+        Nothing ->
+            f new
+
+
+applyEvents : List (Attribute value msg) -> EventsAndValues value msg
+applyEvents =
+    List.foldl
+        (\(Attribute eventsAndValues _) existing ->
+            { currentValue = orExisting .currentValue eventsAndValues existing
+            , toString = orExisting .toString eventsAndValues existing
+            , fromString = orExisting .fromString eventsAndValues existing
+            , onBlur = orExisting .onBlur eventsAndValues existing
+            , onReset = orExisting .onReset eventsAndValues existing
+            , onEnter = orExisting .onEnter eventsAndValues existing
+            , onInput = orExisting .onInput eventsAndValues existing
+            }
+        )
+        emptyEventsAndValues
 
 
 {-| Render the TextInput as HTML.
@@ -385,8 +471,13 @@ emptyConfig =
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
+        config : Config msg
         config =
-            List.foldl (\(Attribute update) -> update) emptyConfig attributes
+            applyConfig attributes
+
+        eventsAndValues : EventsAndValues value msg
+        eventsAndValues =
+            applyEvents attributes
 
         idValue =
             case config.id of
@@ -433,8 +524,8 @@ view label attributes =
                 |> Maybe.withDefault Extra.none
 
         stringValue =
-            config.currentValue
-                |> Maybe.map2 (\toString -> toString) config.toString
+            eventsAndValues.currentValue
+                |> Maybe.map2 identity eventsAndValues.toString
                 |> Maybe.withDefault ""
 
         onEnter_ : msg -> Html.Attribute msg
@@ -485,13 +576,17 @@ view label attributes =
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
-                   , maybeAttr onInput config.fromString
-                   , maybeAttr Events.onBlur config.onBlur
+                   , maybeAttr Events.onInput
+                        (Maybe.map2 (>>)
+                            eventsAndValues.fromString
+                            eventsAndValues.onInput
+                        )
+                   , maybeAttr Events.onBlur eventsAndValues.onBlur
                    , Attributes.autofocus config.autofocus
                    , maybeAttr type_ config.fieldType
                    , maybeAttr (attribute "inputmode") config.inputMode
                    , maybeAttr (attribute "autocomplete") config.autocomplete
-                   , maybeAttr onEnter_ config.onEnter
+                   , maybeAttr onEnter_ eventsAndValues.onEnter
                    , class "override-sass-styles"
                    , Attributes.attribute "aria-invalid" <|
                         if isInError then
@@ -524,7 +619,7 @@ view label attributes =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case ( config.onReset, stringValue, config.fieldType ) of
+        , case ( eventsAndValues.onReset, stringValue, config.fieldType ) of
             ( Just _, "", Just "search" ) ->
                 UiIcon.search
                     |> Svg.withWidth (Css.px 20)
