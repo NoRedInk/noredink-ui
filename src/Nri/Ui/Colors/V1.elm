@@ -1,7 +1,6 @@
 module Nri.Ui.Colors.V1 exposing
     ( aqua, aquaDark, aquaLight, azure, azureDark
     , white
-    , blue
     , cornflower, cornflowerDark, cornflowerLight, cyan
     , frost
     , gray20, gray45, gray75, gray85, gray92, gray96
@@ -33,7 +32,6 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 
 @docs aqua, aquaDark, aquaLight, azure, azureDark
 @docs white
-@docs blue
 @docs cornflower, cornflowerDark, cornflowerLight, cyan
 @docs frost
 @docs gray20, gray45, gray75, gray85, gray92, gray96
@@ -96,13 +94,6 @@ azure =
 azureDark : Css.Color
 azureDark =
     hex "#004cc9"
-
-
-{-| See <https://noredink-ui.netlify.com/#category/Colors>
--}
-blue : Css.Color
-blue =
-    hex "#40a8e4"
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>
