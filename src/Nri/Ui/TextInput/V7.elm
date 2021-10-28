@@ -676,7 +676,11 @@ searchIcon config =
         |> Svg.withCss
             [ Css.position Css.absolute
             , Css.right (Css.px 10)
-            , Css.top (Css.px 22)
+            , if config.noMarginTop then
+                Css.top (Css.px (22 - 9))
+
+              else
+                Css.top (Css.px 22)
             ]
         |> Svg.toHtml
 
@@ -691,6 +695,10 @@ resetButton config =
         , ClickableSvg.css
             [ Css.position Css.absolute
             , Css.right (Css.px 10)
-            , Css.top (Css.px 25)
+            , if config.noMarginTop then
+                Css.top (Css.px (25 - 9))
+
+              else
+                Css.top (Css.px 25)
             ]
         ]
