@@ -166,15 +166,7 @@ search =
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
-            , floatingContent =
-                Just
-                    (\label stringValue onInput_ ->
-                        if stringValue == "" then
-                            searchIcon
-
-                        else
-                            resetButton label (onInput_ "")
-                    )
+            , floatingContent = Just viewSearchFloatingContent
         }
         (\config ->
             { config
@@ -361,7 +353,7 @@ type alias EventsAndValues value msg =
     , onInput : Maybe (value -> msg)
     , onBlur : Maybe msg
     , onEnter : Maybe msg
-    , floatingContent : Maybe (String -> String -> (String -> msg) -> Html msg)
+    , floatingContent : Maybe (FloatingContentConfig msg -> Html msg)
     }
 
 
@@ -624,7 +616,15 @@ view label attributes =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , Maybe.map2 (\view_ -> view_ label stringValue)
+        , Maybe.map2
+            (\view_ onStringInput_ ->
+                view_
+                    { label = label
+                    , stringValue = stringValue
+                    , onInput = onStringInput_
+                    , noMarginTop = config.noMarginTop
+                    }
+            )
             eventsAndValues.floatingContent
             onStringInput
             |> Maybe.withDefault (Html.text "")
@@ -650,8 +650,25 @@ generateId labelText =
     "Nri-Ui-TextInput-" ++ dashify labelText
 
 
-searchIcon : Html msg
-searchIcon =
+type alias FloatingContentConfig msg =
+    { label : String
+    , stringValue : String
+    , onInput : String -> msg
+    , noMarginTop : Bool
+    }
+
+
+viewSearchFloatingContent : FloatingContentConfig msg -> Html msg
+viewSearchFloatingContent config =
+    if config.stringValue == "" then
+        searchIcon config
+
+    else
+        resetButton config
+
+
+searchIcon : { settings | noMarginTop : Bool } -> Html msg
+searchIcon config =
     UiIcon.search
         |> Svg.withWidth (Css.px 20)
         |> Svg.withHeight (Css.px 20)
@@ -664,11 +681,11 @@ searchIcon =
         |> Svg.toHtml
 
 
-resetButton : String -> msg -> Html msg
-resetButton label resetAction =
-    ClickableSvg.button ("Reset " ++ label)
+resetButton : FloatingContentConfig msg -> Html msg
+resetButton config =
+    ClickableSvg.button ("Reset " ++ config.label)
         UiIcon.x
-        [ ClickableSvg.onClick resetAction
+        [ ClickableSvg.onClick (config.onInput "")
         , ClickableSvg.exactWidth 14
         , ClickableSvg.exactHeight 14
         , ClickableSvg.css
