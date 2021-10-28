@@ -38,8 +38,13 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
+                sharedAttributes : List (TextInput.Attribute value Msg)
+                sharedAttributes =
+                    List.map (TextInput.map never (\_ -> "") (\_ -> NoOp))
+                        exampleConfig.attributes
+
                 attributes { setField, onBlur, onReset, onEnter } =
-                    exampleConfig.attributes
+                    sharedAttributes
                         ++ List.filterMap identity
                             [ if exampleConfig.onBlur then
                                 Just (TextInput.onBlur (setField onBlur))
@@ -77,72 +82,76 @@ example =
                                 }
                         )
                   )
-
-                --, ( "number"
-                --  , TextInput.view exampleConfig.label
-                --        (TextInput.number SetNumberInput)
-                --        (TextInput.id "text-input__number-example"
-                --            :: attributes
-                --                { setField = SetNumberInput
-                --                , onBlur = Just 10000000
-                --                , onReset = Nothing
-                --                , onEnter = Just 20000000
-                --                }
-                --        )
-                --        state.numberInputValue
-                --  )
-                --, ( "float"
-                --  , TextInput.view exampleConfig.label
-                --        (TextInput.float SetFloatInput)
-                --        (TextInput.id "text-input__float-example"
-                --            :: attributes
-                --                { setField = SetFloatInput
-                --                , onBlur = Just 1.00000001
-                --                , onReset = Nothing
-                --                , onEnter = Just 100000001.1
-                --                }
-                --        )
-                --        state.floatInputValue
-                --  )
-                --, ( "password"
-                --  , TextInput.view exampleConfig.label
-                --        (TextInput.password SetPassword)
-                --        (TextInput.id "text-input__password-example"
-                --            :: attributes
-                --                { setField = SetPassword
-                --                , onBlur = "Blurred!!!"
-                --                , onReset = ""
-                --                , onEnter = "Entered!!!"
-                --                }
-                --        )
-                --        state.passwordInputValue
-                --  )
-                --, ( "email"
-                --  , TextInput.view exampleConfig.label
-                --        (TextInput.email (SetTextInput 2))
-                --        (TextInput.id "text-input__email-example"
-                --            :: attributes
-                --                { setField = SetTextInput 2
-                --                , onBlur = "Blurred!!!"
-                --                , onReset = ""
-                --                , onEnter = "Entered!!!"
-                --                }
-                --        )
-                --        (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
-                --  )
-                --, ( "search"
-                --  , TextInput.view exampleConfig.label
-                --        (TextInput.search SetSearchTerm)
-                --        (TextInput.id "text-input__search-example"
-                --            :: attributes
-                --                { setField = SetSearchTerm
-                --                , onBlur = "Blurred!!!"
-                --                , onReset = ""
-                --                , onEnter = "Entered!!!"
-                --                }
-                --        )
-                --        state.searchInputValue
-                --  )
+                , ( "number"
+                  , TextInput.view exampleConfig.label
+                        (TextInput.id "text-input__number-example"
+                            :: TextInput.number
+                            :: TextInput.onInput SetNumberInput
+                            :: TextInput.value state.numberInputValue
+                            :: attributes
+                                { setField = SetNumberInput
+                                , onBlur = Just 10000000
+                                , onReset = Nothing
+                                , onEnter = Just 20000000
+                                }
+                        )
+                  )
+                , ( "float"
+                  , TextInput.view exampleConfig.label
+                        (TextInput.id "text-input__float-example"
+                            :: TextInput.float
+                            :: TextInput.onInput SetFloatInput
+                            :: TextInput.value state.floatInputValue
+                            :: attributes
+                                { setField = SetFloatInput
+                                , onBlur = Just 1.00000001
+                                , onReset = Nothing
+                                , onEnter = Just 100000001.1
+                                }
+                        )
+                  )
+                , ( "password"
+                  , TextInput.view exampleConfig.label
+                        (TextInput.id "text-input__password-example"
+                            :: TextInput.password
+                            :: TextInput.onInput SetPassword
+                            :: TextInput.value state.passwordInputValue
+                            :: attributes
+                                { setField = SetPassword
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
+                        )
+                  )
+                , ( "email"
+                  , TextInput.view exampleConfig.label
+                        (TextInput.id "text-input__email-example"
+                            :: TextInput.email
+                            :: TextInput.onInput (SetTextInput 2)
+                            :: TextInput.value (Maybe.withDefault "" <| Dict.get 2 state.stringInputValues)
+                            :: attributes
+                                { setField = SetTextInput 2
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
+                        )
+                  )
+                , ( "search"
+                  , TextInput.view exampleConfig.label
+                        (TextInput.id "text-input__search-example"
+                            :: TextInput.search
+                            :: TextInput.onInput SetSearchTerm
+                            :: TextInput.value state.searchInputValue
+                            :: attributes
+                                { setField = SetSearchTerm
+                                , onBlur = "Blurred!!!"
+                                , onReset = ""
+                                , onEnter = "Entered!!!"
+                                }
+                        )
+                  )
                 ]
             ]
     }
@@ -173,7 +182,7 @@ init =
 
 type alias ExampleConfig =
     { label : String
-    , attributes : List (TextInput.Attribute String Msg)
+    , attributes : List (TextInput.Attribute Never Msg)
     , onBlur : Bool
     , onReset : Bool
     , onEnter : Bool
@@ -190,7 +199,7 @@ initControl =
         |> Control.field "onEnter" (Control.bool False)
 
 
-controlAttributes : Control (List (TextInput.Attribute String msg))
+controlAttributes : Control (List (TextInput.Attribute Never msg))
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "placeholder"
@@ -223,6 +232,7 @@ type Msg
     | SetPassword String
     | SetSearchTerm String
     | UpdateControl (Control ExampleConfig)
+    | NoOp
 
 
 {-| -}
@@ -246,6 +256,9 @@ update msg state =
 
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
+
+        NoOp ->
+            ( state, Cmd.none )
 
 
 
