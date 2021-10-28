@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , number, float, text, password, email, search
     , value, map
-    , onInput, onBlur, onReset, onEnter
+    , onInput, onBlur, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage
@@ -33,7 +33,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Event handlers
 
-@docs onInput, onBlur, onReset, onEnter
+@docs onInput, onBlur, onEnter
 
 
 ## Attributes
@@ -166,6 +166,15 @@ search =
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
+            , floatingContent =
+                Just
+                    (\label stringValue onInput_ ->
+                        if stringValue == "" then
+                            searchIcon
+
+                        else
+                            resetButton label (onInput_ "")
+                    )
         }
         (\config ->
             { config
@@ -263,12 +272,6 @@ onBlur msg =
 
 
 {-| -}
-onReset : msg -> Attribute value msg
-onReset msg =
-    Attribute { emptyEventsAndValues | onReset = Just msg } identity
-
-
-{-| -}
 onEnter : msg -> Attribute value msg
 onEnter msg =
     Attribute { emptyEventsAndValues | onEnter = Just msg } identity
@@ -357,8 +360,8 @@ type alias EventsAndValues value msg =
     , fromString : Maybe (String -> value)
     , onInput : Maybe (value -> msg)
     , onBlur : Maybe msg
-    , onReset : Maybe msg
     , onEnter : Maybe msg
+    , floatingContent : Maybe (String -> String -> (String -> msg) -> Html msg)
     }
 
 
@@ -368,9 +371,9 @@ emptyEventsAndValues =
     , toString = Nothing
     , fromString = Nothing
     , onBlur = Nothing
-    , onReset = Nothing
     , onEnter = Nothing
     , onInput = Nothing
+    , floatingContent = Nothing
     }
 
 
@@ -382,9 +385,9 @@ map f toString onInput_ (Attribute eventsAndValues configF) =
         , toString = Just toString
         , fromString = Maybe.map (\from -> from >> f) eventsAndValues.fromString
         , onBlur = eventsAndValues.onBlur
-        , onReset = eventsAndValues.onReset
         , onEnter = eventsAndValues.onEnter
         , onInput = Just onInput_
+        , floatingContent = eventsAndValues.floatingContent
         }
         configF
 
@@ -458,7 +461,7 @@ applyEvents =
             , toString = orExisting .toString eventsAndValues existing
             , fromString = orExisting .fromString eventsAndValues existing
             , onBlur = orExisting .onBlur eventsAndValues existing
-            , onReset = orExisting .onReset eventsAndValues existing
+            , floatingContent = orExisting .floatingContent eventsAndValues existing
             , onEnter = orExisting .onEnter eventsAndValues existing
             , onInput = orExisting .onInput eventsAndValues existing
             }
@@ -540,6 +543,12 @@ view label attributes =
             )
                 |> Keyboard.Event.considerKeyboardEvent
                 |> Events.on "keydown"
+
+        onStringInput : Maybe (String -> msg)
+        onStringInput =
+            Maybe.map2 (>>)
+                eventsAndValues.fromString
+                eventsAndValues.onInput
     in
     div
         ([ Attributes.css
@@ -576,11 +585,7 @@ view label attributes =
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
-                   , maybeAttr Events.onInput
-                        (Maybe.map2 (>>)
-                            eventsAndValues.fromString
-                            eventsAndValues.onInput
-                        )
+                   , maybeAttr Events.onInput onStringInput
                    , maybeAttr Events.onBlur eventsAndValues.onBlur
                    , Attributes.autofocus config.autofocus
                    , maybeAttr type_ config.fieldType
@@ -619,34 +624,10 @@ view label attributes =
                 ++ extraStyles
             )
             [ Html.text label ]
-        , case ( eventsAndValues.onReset, stringValue, config.fieldType ) of
-            ( Just _, "", Just "search" ) ->
-                UiIcon.search
-                    |> Svg.withWidth (Css.px 20)
-                    |> Svg.withHeight (Css.px 20)
-                    |> Svg.withColor Colors.gray75
-                    |> Svg.withCss
-                        [ Css.position Css.absolute
-                        , Css.right (Css.px 10)
-                        , Css.top (Css.px 22)
-                        ]
-                    |> Svg.toHtml
-
-            ( Just resetAction, _, _ ) ->
-                ClickableSvg.button ("Reset " ++ label)
-                    UiIcon.x
-                    [ ClickableSvg.onClick resetAction
-                    , ClickableSvg.exactWidth 14
-                    , ClickableSvg.exactHeight 14
-                    , ClickableSvg.css
-                        [ Css.position Css.absolute
-                        , Css.right (Css.px 10)
-                        , Css.top (Css.px 25)
-                        ]
-                    ]
-
-            ( Nothing, _, _ ) ->
-                Html.text ""
+        , Maybe.map2 (\view_ -> view_ label stringValue)
+            eventsAndValues.floatingContent
+            onStringInput
+            |> Maybe.withDefault (Html.text "")
         , case errorMessage_ of
             Just m ->
                 Message.view
@@ -667,3 +648,32 @@ This is for use when you need the DOM element id for use in javascript (such as 
 generateId : String -> String
 generateId labelText =
     "Nri-Ui-TextInput-" ++ dashify labelText
+
+
+searchIcon : Html msg
+searchIcon =
+    UiIcon.search
+        |> Svg.withWidth (Css.px 20)
+        |> Svg.withHeight (Css.px 20)
+        |> Svg.withColor Colors.gray75
+        |> Svg.withCss
+            [ Css.position Css.absolute
+            , Css.right (Css.px 10)
+            , Css.top (Css.px 22)
+            ]
+        |> Svg.toHtml
+
+
+resetButton : String -> msg -> Html msg
+resetButton label resetAction =
+    ClickableSvg.button ("Reset " ++ label)
+        UiIcon.x
+        [ ClickableSvg.onClick resetAction
+        , ClickableSvg.exactWidth 14
+        , ClickableSvg.exactHeight 14
+        , ClickableSvg.css
+            [ Css.position Css.absolute
+            , Css.right (Css.px 10)
+            , Css.top (Css.px 25)
+            ]
+        ]

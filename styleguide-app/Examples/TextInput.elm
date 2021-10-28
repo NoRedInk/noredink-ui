@@ -38,7 +38,7 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
-                toExample { name, toString, inputType, onBlur, onReset, onEnter } index =
+                toExample { name, toString, inputType, onBlur, onEnter } index =
                     ( name
                     , TextInput.view exampleConfig.label
                         (exampleConfig.attributes
@@ -50,11 +50,6 @@ example =
                             ++ List.filterMap identity
                                 [ if exampleConfig.onBlur then
                                     Just (TextInput.onBlur (SetInput index onBlur))
-
-                                  else
-                                    Nothing
-                                , if exampleConfig.onReset then
-                                    Just (TextInput.onReset (SetInput index onReset))
 
                                   else
                                     Nothing
@@ -75,7 +70,6 @@ example =
                     , toString = identity
                     , inputType = TextInput.text
                     , onBlur = "Blurred!!!"
-                    , onReset = ""
                     , onEnter = "Entered!!!"
                     }
                 , toExample
@@ -83,7 +77,6 @@ example =
                     , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
                     , inputType = TextInput.number
                     , onBlur = "10000000"
-                    , onReset = ""
                     , onEnter = "20000000"
                     }
                 , toExample
@@ -91,7 +84,6 @@ example =
                     , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
                     , inputType = TextInput.float
                     , onBlur = "1.00000001"
-                    , onReset = ""
                     , onEnter = "100000001.1"
                     }
                 , toExample
@@ -99,7 +91,6 @@ example =
                     , toString = identity
                     , inputType = TextInput.password
                     , onBlur = "Blurred!!!"
-                    , onReset = ""
                     , onEnter = "Entered!!!"
                     }
                 , toExample
@@ -107,7 +98,6 @@ example =
                     , toString = identity
                     , inputType = TextInput.email
                     , onBlur = "Blurred!!!"
-                    , onReset = ""
                     , onEnter = "Entered!!!"
                     }
                 , toExample
@@ -115,7 +105,6 @@ example =
                     , toString = identity
                     , inputType = TextInput.search
                     , onBlur = "Blurred!!!"
-                    , onReset = ""
                     , onEnter = "Entered!!!"
                     }
                 ]
@@ -142,7 +131,6 @@ type alias ExampleConfig =
     { label : String
     , attributes : List (TextInput.Attribute String Msg)
     , onBlur : Bool
-    , onReset : Bool
     , onEnter : Bool
     }
 
@@ -153,7 +141,6 @@ initControl =
         |> Control.field "label" (Control.string "Assignment name")
         |> Control.field "attributes" controlAttributes
         |> Control.field "onBlur" (Control.bool False)
-        |> Control.field "onReset" (Control.bool False)
         |> Control.field "onEnter" (Control.bool False)
 
 
