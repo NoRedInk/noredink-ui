@@ -38,129 +38,92 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
-                attributes { setField, onBlur, onReset, onEnter } =
-                    exampleConfig.attributes
-                        ++ List.filterMap identity
-                            [ if exampleConfig.onBlur then
-                                Just (TextInput.onBlur (setField onBlur))
+                toExample { name, toString, inputType, onBlur, onReset, onEnter } index =
+                    ( name
+                    , TextInput.view exampleConfig.label
+                        (TextInput.id ("text-input__" ++ name ++ "-example")
+                            :: TextInput.map
+                                toString
+                                identity
+                                (SetInput index)
+                                inputType
+                            :: TextInput.onInput (SetInput index)
+                            :: TextInput.value
+                                (Maybe.withDefault "" <|
+                                    Dict.get index state.inputValues
+                                )
+                            :: exampleConfig.attributes
+                            ++ List.filterMap identity
+                                [ if exampleConfig.onBlur then
+                                    Just (TextInput.onBlur (SetInput index onBlur))
 
-                              else
-                                Nothing
-                            , if exampleConfig.onReset then
-                                Just (TextInput.onReset (setField onReset))
+                                  else
+                                    Nothing
+                                , if exampleConfig.onReset then
+                                    Just (TextInput.onReset (SetInput index onReset))
 
-                              else
-                                Nothing
-                            , if exampleConfig.onEnter then
-                                Just (TextInput.onEnter (setField onEnter))
+                                  else
+                                    Nothing
+                                , if exampleConfig.onEnter then
+                                    Just (TextInput.onEnter (SetInput index onEnter))
 
-                              else
-                                Nothing
-                            ]
+                                  else
+                                    Nothing
+                                ]
+                        )
+                    )
             in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , viewExamples
-                [ ( "text"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__text-example"
-                            :: TextInput.text
-                            :: TextInput.onInput (SetInput 1)
-                            :: (TextInput.value <|
-                                    (Maybe.withDefault "" <| Dict.get 1 state.inputValues)
-                               )
-                            :: attributes
-                                { setField = SetInput 1
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                  )
-                , ( "number"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__number-example"
-                            :: TextInput.map
-                                (Maybe.map String.fromInt >> Maybe.withDefault "")
-                                identity
-                                (SetInput 100)
-                                TextInput.number
-                            :: TextInput.onInput (SetInput 100)
-                            :: TextInput.value
-                                (Maybe.withDefault "" <|
-                                    Dict.get 100 state.inputValues
-                                )
-                            :: attributes
-                                { setField = SetInput 100
-                                , onBlur = "10000000"
-                                , onReset = ""
-                                , onEnter = "20000000"
-                                }
-                        )
-                  )
-                , ( "float"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__float-example"
-                            :: TextInput.map
-                                (Maybe.map String.fromFloat >> Maybe.withDefault "")
-                                identity
-                                (SetInput 1000)
-                                TextInput.float
-                            :: TextInput.onInput (SetInput 1000)
-                            :: TextInput.value
-                                (Maybe.withDefault "" <|
-                                    Dict.get 1000 state.inputValues
-                                )
-                            :: attributes
-                                { setField = SetInput 1000
-                                , onBlur = "1.00000001"
-                                , onReset = ""
-                                , onEnter = "100000001.1"
-                                }
-                        )
-                  )
-                , ( "password"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__password-example"
-                            :: TextInput.password
-                            :: TextInput.onInput (SetInput 10)
-                            :: TextInput.value (Maybe.withDefault "" <| Dict.get 10 state.inputValues)
-                            :: attributes
-                                { setField = SetInput 10
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                  )
-                , ( "email"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__email-example"
-                            :: TextInput.email
-                            :: TextInput.onInput (SetInput 2)
-                            :: TextInput.value (Maybe.withDefault "" <| Dict.get 2 state.inputValues)
-                            :: attributes
-                                { setField = SetInput 2
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                  )
-                , ( "search"
-                  , TextInput.view exampleConfig.label
-                        (TextInput.id "text-input__search-example"
-                            :: TextInput.search
-                            :: TextInput.onInput (SetInput 11)
-                            :: TextInput.value (Maybe.withDefault "" <| Dict.get 11 state.inputValues)
-                            :: attributes
-                                { setField = SetInput 11
-                                , onBlur = "Blurred!!!"
-                                , onReset = ""
-                                , onEnter = "Entered!!!"
-                                }
-                        )
-                  )
+            , (viewExamples << List.indexedMap (\i toView -> toView i))
+                [ toExample
+                    { name = "text"
+                    , toString = identity
+                    , inputType = TextInput.text
+                    , onBlur = "Blurred!!!"
+                    , onReset = ""
+                    , onEnter = "Entered!!!"
+                    }
+                , toExample
+                    { name = "number"
+                    , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
+                    , inputType = TextInput.number
+                    , onBlur = "10000000"
+                    , onReset = ""
+                    , onEnter = "20000000"
+                    }
+                , toExample
+                    { name = "float"
+                    , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
+                    , inputType = TextInput.float
+                    , onBlur = "1.00000001"
+                    , onReset = ""
+                    , onEnter = "100000001.1"
+                    }
+                , toExample
+                    { name = "password"
+                    , toString = identity
+                    , inputType = TextInput.password
+                    , onBlur = "Blurred!!!"
+                    , onReset = ""
+                    , onEnter = "Entered!!!"
+                    }
+                , toExample
+                    { name = "email"
+                    , toString = identity
+                    , inputType = TextInput.email
+                    , onBlur = "Blurred!!!"
+                    , onReset = ""
+                    , onEnter = "Entered!!!"
+                    }
+                , toExample
+                    { name = "search"
+                    , toString = identity
+                    , inputType = TextInput.search
+                    , onBlur = "Blurred!!!"
+                    , onReset = ""
+                    , onEnter = "Entered!!!"
+                    }
                 ]
             ]
     }
