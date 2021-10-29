@@ -1,7 +1,6 @@
 module Nri.Ui.InputStyles.V3 exposing
     ( label, Theme(..), input
-    , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
-    , defaultMarginTop
+    , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
     )
 
 {-| InputStyles used by the TextInput and TextArea widgets.
@@ -11,7 +10,7 @@ module Nri.Ui.InputStyles.V3 exposing
 
 ## Shared hardcoded values
 
-@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
 
 
 ## Changelog
@@ -111,6 +110,7 @@ label theme inError =
                 ]
 
 
+{-| -}
 defaultMarginTop : Float
 defaultMarginTop =
     9

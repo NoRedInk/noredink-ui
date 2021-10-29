@@ -13,9 +13,7 @@ spec =
         [ test "it uses the same DOM id that generateId produces" <|
             \() ->
                 TextInput.view "myLabel"
-                    (TextInput.text identity)
-                    []
-                    ""
+                    [ TextInput.text identity ]
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.has
