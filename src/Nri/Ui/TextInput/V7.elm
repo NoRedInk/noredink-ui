@@ -5,7 +5,7 @@ module Nri.Ui.TextInput.V7 exposing
     , onBlur, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
     , css, custom, nriDescription, id, testId, noMargin
-    , disabled, loading, errorIf, errorMessage
+    , disabled, loading, errorIf, errorMessage, guidance
     , writing
     )
 
@@ -41,7 +41,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 @docs Attribute, placeholder, hiddenLabel, autofocus
 @docs css, custom, nriDescription, id, testId, noMargin
-@docs disabled, loading, errorIf, errorMessage
+@docs disabled, loading, errorIf, errorMessage, guidance
 @docs writing
 
 -}
@@ -277,6 +277,14 @@ errorMessage maybeMessage =
             }
 
 
+{-| A guidance message shows below the input, unless an error message is showing instead.
+-}
+guidance : String -> Attribute value msg
+guidance message =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | guidance = Just message }
+
+
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute value msg
@@ -417,6 +425,7 @@ map f toString (Attribute eventsAndValues configF) =
 -}
 type alias Config =
     { inputStyle : InputStyles.Theme
+    , guidance : Maybe String
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
@@ -441,6 +450,7 @@ type ErrorState
 emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
+    , guidance = Nothing
     , error = NoError
     , disabled = False
     , loading = False

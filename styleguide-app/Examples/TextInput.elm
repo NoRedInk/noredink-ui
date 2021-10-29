@@ -164,7 +164,9 @@ controlAttributes =
         |> ControlExtra.optionalListItem "errorIf"
             (Control.map TextInput.errorIf <| Control.bool True)
         |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map TextInput.errorMessage <| Control.maybe True <| Control.string "The statement must be true.")
+            (Control.map (Just >> TextInput.errorMessage) <| Control.string "The statement must be true.")
+        |> ControlExtra.optionalListItem "guidance"
+            (Control.map TextInput.guidance <| Control.string "The statement must be true.")
         |> ControlExtra.optionalListItem "disabled"
             (Control.value TextInput.disabled)
         |> ControlExtra.optionalListItem "loading"
