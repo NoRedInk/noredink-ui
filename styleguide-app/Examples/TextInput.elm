@@ -87,11 +87,11 @@ example =
                     , onEnter = "100000001.1"
                     }
                 , toExample
-                    { name = "password"
+                    { name = "newPassword"
                     , toString = identity
                     , inputType =
                         \onInput ->
-                            TextInput.password
+                            TextInput.newPassword
                                 { onInput = onInput
                                 , showPassword = state.showPassword
                                 , setShowPassword = SetShowPassword

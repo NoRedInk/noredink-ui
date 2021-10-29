@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, password, email, search
+    , number, float, text, newPassword, currentPassword, email, search
     , value, map
     , onBlur, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
@@ -18,13 +18,14 @@ module Nri.Ui.TextInput.V7 exposing
   - change `view` API so it only takes a list of attributes (meaning the value and input type are now passed in as attributes)
   - make the search icon and reset pattern the default for `search`
   - add "Show password" and "Hide password" as default behavior for `password` inputs
+  - split password into `newPassword` and `currentPassword` to fix the autocomplete behavior
 
 @docs view, generateId
 
 
 ### Input types
 
-@docs number, float, text, password, email, search
+@docs number, float, text, newPassword, currentPassword, email, search
 
 
 ### Input content
@@ -124,7 +125,7 @@ float onInput_ =
         )
 
 
-{-| An input that allows password entry.
+{-| An input that allows password entry with autocomplete value "new-password"
 
 If the user types at least one character into the input box, a
 floating control "Show password" will appear. When clicked, the
@@ -132,13 +133,43 @@ input type will change from "password" to "text", in order
 to enable the user to check what they've typed.
 
 -}
-password :
+newPassword :
     { onInput : String -> msg
     , showPassword : Bool
     , setShowPassword : Bool -> msg
     }
     -> Attribute String msg
-password settings =
+newPassword =
+    password "new-password"
+
+
+{-| An input that allows password entry with autocomplete value "current-password"
+
+If the user types at least one character into the input box, a
+floating control "Show password" will appear. When clicked, the
+input type will change from "password" to "text", in order
+to enable the user to check what they've typed.
+
+-}
+currentPassword :
+    { onInput : String -> msg
+    , showPassword : Bool
+    , setShowPassword : Bool -> msg
+    }
+    -> Attribute String msg
+currentPassword =
+    password "current-password"
+
+
+password :
+    String
+    ->
+        { onInput : String -> msg
+        , showPassword : Bool
+        , setShowPassword : Bool -> msg
+        }
+    -> Attribute String msg
+password autocomplete settings =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
@@ -165,12 +196,7 @@ password settings =
                         else
                             "password"
                 , inputMode = Nothing
-                , autocomplete =
-                    Just
-                        -- TODO: this should not always be "current-password" --
-                        -- we want "new-password" when users are, uh,
-                        -- creating or confirming a new password!
-                        "current-password"
+                , autocomplete = Just autocomplete
             }
         )
 
