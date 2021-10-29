@@ -89,7 +89,13 @@ example =
                 , toExample
                     { name = "password"
                     , toString = identity
-                    , inputType = TextInput.password
+                    , inputType =
+                        \onInput ->
+                            TextInput.password
+                                { onInput = onInput
+                                , showPassword = state.showPassword
+                                , setShowPassword = SetShowPassword
+                                }
                     , onBlur = "Blurred!!!"
                     , onEnter = "Entered!!!"
                     }
@@ -115,6 +121,7 @@ example =
 {-| -}
 type alias State =
     { inputValues : Dict Int String
+    , showPassword : Bool
     , control : Control ExampleConfig
     }
 
@@ -123,6 +130,7 @@ type alias State =
 init : State
 init =
     { inputValues = Dict.empty
+    , showPassword = False
     , control = initControl
     }
 
@@ -172,6 +180,7 @@ controlAttributes =
 {-| -}
 type Msg
     = SetInput Int String
+    | SetShowPassword Bool
     | UpdateControl (Control ExampleConfig)
 
 
@@ -181,6 +190,11 @@ update msg state =
     case msg of
         SetInput id string ->
             ( { state | inputValues = Dict.insert id string state.inputValues }
+            , Cmd.none
+            )
+
+        SetShowPassword showPassword ->
+            ( { state | showPassword = showPassword }
             , Cmd.none
             )
 

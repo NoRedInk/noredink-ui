@@ -124,18 +124,38 @@ float onInput_ =
 
 {-| An input that allows password entry
 -}
-password : (String -> msg) -> Attribute String msg
-password onInput_ =
+password :
+    { onInput : String -> msg
+    , showPassword : Bool
+    , setShowPassword : Bool -> msg
+    }
+    -> Attribute String msg
+password settings =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
-            , onInput = Just onInput_
-            , floatingContent = Just viewPasswordFloatingContent
+            , onInput = Just settings.onInput
+            , floatingContent =
+                Just <|
+                    viewPasswordFloatingContent
+                        (if settings.showPassword then
+                            "Hide password"
+
+                         else
+                            "Show password"
+                        )
+                        (settings.setShowPassword (not settings.showPassword))
         }
         (\config ->
             { config
-                | fieldType = Just "password"
+                | fieldType =
+                    Just <|
+                        if settings.showPassword then
+                            "text"
+
+                        else
+                            "password"
                 , inputMode = Nothing
                 , autocomplete = Just "current-password"
             }
@@ -701,8 +721,8 @@ resetButton config =
         ]
 
 
-viewPasswordFloatingContent : FloatingContentConfig msg -> Html msg
-viewPasswordFloatingContent config =
+viewPasswordFloatingContent : String -> msg -> FloatingContentConfig msg -> Html msg
+viewPasswordFloatingContent label toggle config =
     if config.stringValue == "" then
         Html.text ""
 
@@ -711,8 +731,9 @@ viewPasswordFloatingContent config =
         -- a checkbox styled to look like a clickable text, or
         -- adding additional aria attributes connecting this clickable
         -- text to the password field.
-        ClickableText.button "Show password"
-            [ ClickableText.small
+        ClickableText.button label
+            [ ClickableText.onClick toggle
+            , ClickableText.small
             , ClickableText.css
                 [ Css.position Css.absolute
                 , Css.right (Css.px 15)
