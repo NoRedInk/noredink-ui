@@ -46,6 +46,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Accessibility
 import Css exposing (center, num, position, px, relative, textAlign)
 import Css.Global
@@ -61,6 +62,7 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
@@ -587,6 +589,12 @@ view label attributes =
             (maybeStep
                 ++ List.map (Attributes.map never) (List.reverse config.custom)
                 ++ [ Attributes.id idValue
+                   , case ( errorMessage_, config.guidance ) of
+                        ( Nothing, Just _ ) ->
+                            Aria.describedBy [ idValue ++ "_guidance" ]
+
+                        _ ->
+                            Extra.none
                    , Attributes.css
                         [ InputStyles.input config.inputStyle isInError
                         , if config.inputStyle == InputStyles.Writing then
@@ -661,8 +669,8 @@ view label attributes =
             eventsAndValues.floatingContent
             eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
-        , case errorMessage_ of
-            Just m ->
+        , case ( errorMessage_, config.guidance ) of
+            ( Just m, _ ) ->
                 Message.view
                     [ Message.tiny
                     , Message.error
@@ -670,7 +678,19 @@ view label attributes =
                     , Message.alertRole
                     ]
 
-            Nothing ->
+            ( _, Just guidanceMessage ) ->
+                Text.caption
+                    [ Text.id (idValue ++ "_guidance")
+                    , Text.plaintext guidanceMessage
+                    , -- Match the vertical styles of the error message
+                      Text.css
+                        [ Css.paddingTop (Css.px 6)
+                        , Css.paddingBottom (Css.px 8)
+                        , Css.lineHeight (Css.px 23)
+                        ]
+                    ]
+
+            _ ->
                 Html.text ""
         ]
 
