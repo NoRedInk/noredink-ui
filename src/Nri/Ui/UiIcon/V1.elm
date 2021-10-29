@@ -209,14 +209,15 @@ performance =
         , Attributes.fill "currentcolor"
         , Attributes.viewBox "0 0 30 30"
         ]
-        [ Svg.polygon [ Attributes.points "22.1,24.6 22.1,8.4 17.8,7.1 17.8,24.6 " ] []
-        , Svg.polygon [ Attributes.points "24.2,7.7 24.2,24.6 28.5,24.6 28.5,5 26.3,3.5 " ] []
-        , Svg.polygon [ Attributes.points "5,15.6 5,24.6 9.3,24.6 9.3,12.3 5.8,16.5 " ] []
-        , Svg.polygon [ Attributes.points "11.4,24.6 15.7,24.6 15.7,6.5 14.5,6.2 11.4,9.8 " ] []
-        , Svg.path [ Attributes.fill "none", Attributes.d "M33.6,26.9H30v1.2c0,1.6-0.4,1.8-1.8,1.8H1.8C0.4,30,0,29.7,0,28.2V1.9c0-1.4,0.3-1.8,1.8-1.8H3v-5.5h30.6V26.9z" ] []
-        , Svg.path [ Attributes.d "M3.1,26.9V3.2V0.1H1.8C0.3,0.1,0,0.5,0,1.9v26.2C0,29.7,0.4,30,1.8,30h26.3c1.5,0,1.8-0.3,1.8-1.8V27h-3.1H3.1V26.9z" ] []
-        , Svg.path [ Attributes.fill "none", Attributes.d "M-715-401V715H309V-401H-715z" ] []
-        , Svg.path [ Attributes.fill "none", Attributes.d "M-737.2-385.9v1116h1024v-1116L-737.2-385.9L-737.2-385.9z" ] []
+        [ Svg.path
+            [ Attributes.d "M2.575,22.5 L2.55333333,2.47096774 L2.55333333,5.68434189e-14 L1.53166667,5.68434189e-14 C0.275833333,5.68434189e-14 0,0.345967742 0,1.48225806 L0.0216666667,23.4887097 C0.0216666667,24.7185484 0.3275,24.9709677 1.55333333,24.9709677 L23.4891667,24.9709677 C24.7191667,24.9709677 25.0216667,24.7483871 25.0216667,23.4887097 L25.0216667,22.5 L22.4675,22.5 L2.575,22.5 Z" ]
+            []
+        , Svg.rect
+            [ Attributes.x "4.224", Attributes.y "11.9331996", Attributes.width "3.55583333", Attributes.height "9.42432817", Attributes.rx "1" ]
+            []
+        , Svg.rect [ Attributes.x "9.47510076", Attributes.y "5.31243234", Attributes.width "3.55583333", Attributes.height "16.0450955", Attributes.rx "1" ] []
+        , Svg.rect [ Attributes.x "14.7262015", Attributes.y "8.69585911", Attributes.width "3.55583333", Attributes.height "12.6616687", Attributes.rx "1" ] []
+        , Svg.rect [ Attributes.x "19.9773023", Attributes.y "3.19919812", Attributes.width "3.55583333", Attributes.height "18.1583297", Attributes.rx "1" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
