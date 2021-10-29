@@ -165,7 +165,12 @@ password settings =
                         else
                             "password"
                 , inputMode = Nothing
-                , autocomplete = Just "current-password"
+                , autocomplete =
+                    Just
+                        -- TODO: this should not always be "current-password" --
+                        -- we want "new-password" when users are, uh,
+                        -- creating or confirming a new password!
+                        "current-password"
             }
         )
 
