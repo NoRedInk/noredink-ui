@@ -18,7 +18,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -77,13 +77,15 @@ update msg model =
 view : State -> List (Html Msg)
 view model =
     [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
-    , Text.mediumBody []
-        [ Html.text "Label the Tooltip as either being the "
-        , viewPrimaryLabelTooltip model.openTooltip
-        , Html.text " or the "
-        , viewAuxillaryDescriptionToolip model.openTooltip
-        , Html.text " for the trigger content."
-        , viewToggleTip model.openTooltip
+    , Text.mediumBody
+        [ Text.html
+            [ Html.text "Label the Tooltip as either being the "
+            , viewPrimaryLabelTooltip model.openTooltip
+            , Html.text " or the "
+            , viewAuxillaryDescriptionToolip model.openTooltip
+            , Html.text " for the trigger content."
+            , viewToggleTip model.openTooltip
+            ]
         ]
     , viewCustomizableExample model.staticExampleSettings
     ]

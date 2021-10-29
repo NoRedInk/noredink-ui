@@ -23,7 +23,7 @@ import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V10 as Modal
 import Nri.Ui.RadioButton.V2 as RadioButton
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -65,7 +65,7 @@ view model =
             Modal.MultipleFocusableElements
                 (\{ firstFocusableElement, autofocusElement, lastFocusableElement, closeButton } ->
                     { content =
-                        [ Text.mediumBody [] [ text "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
+                        [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
                         , closeButton (autofocusElement :: firstFocusableElement)
                         ]
                     , footer =

@@ -11,7 +11,7 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V1 as Switch
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -34,36 +34,42 @@ example =
     , view =
         \interactiveIsOn ->
             [ Heading.h3 [] [ Html.text "Interactive" ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.onSwitch Switch
-                    , Switch.id "switch-interactive"
-                    , Switch.label
-                        (if interactiveIsOn then
-                            Html.text "On"
+            , Text.mediumBody
+                [ Text.html
+                    [ Switch.view
+                        [ Switch.onSwitch Switch
+                        , Switch.id "switch-interactive"
+                        , Switch.label
+                            (if interactiveIsOn then
+                                Html.text "On"
 
-                         else
-                            Html.text "Off"
-                        )
+                             else
+                                Html.text "Off"
+                            )
+                        ]
+                        interactiveIsOn
                     ]
-                    interactiveIsOn
                 ]
             , Heading.h3 [] [ Html.text "Disabled" ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.disabled
-                    , Switch.id "switch-disabled-on"
-                    , Switch.label (Html.text "Permanently on")
+            , Text.mediumBody
+                [ Text.html
+                    [ Switch.view
+                        [ Switch.disabled
+                        , Switch.id "switch-disabled-on"
+                        , Switch.label (Html.text "Permanently on")
+                        ]
+                        True
                     ]
-                    True
                 ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.disabled
-                    , Switch.id "switch-disabled-off"
-                    , Switch.label (Html.text "Permanently off")
+            , Text.mediumBody
+                [ Text.html
+                    [ Switch.view
+                        [ Switch.disabled
+                        , Switch.id "switch-disabled-off"
+                        , Switch.label (Html.text "Permanently off")
+                        ]
+                        False
                     ]
-                    False
                 ]
             ]
     , categories = [ Category.Inputs ]

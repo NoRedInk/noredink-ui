@@ -16,7 +16,7 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -38,7 +38,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , view =
         \state ->
-            [ Text.smallBodyGray [] [ Html.text "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
+            [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
                 [ Button.button "Toggle large indicator"
                     [ Button.onClick ToggleLarge, Button.small, Button.secondary ]

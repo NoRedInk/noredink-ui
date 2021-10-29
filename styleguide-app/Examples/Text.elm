@@ -7,79 +7,125 @@ module Examples.Text exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import CommonControls exposing (exampleHtml, quickBrownFox, romeoAndJulietQuotation)
 import Css
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Html.Styled as Html
-import Html.Styled.Attributes as Attributes
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Text.V5 as Text
-
-
-{-| -}
-type alias State =
-    ()
-
-
-{-| -}
-type alias Msg =
-    ()
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
 example : Example State Msg
 example =
     { name = "Text"
-    , version = 5
+    , version = 6
     , categories = [ Text ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = init
+    , update = update
     , subscriptions = \_ -> Sub.none
     , view =
-        \_ ->
+        \state ->
             let
-                exampleHtml kind =
-                    [ Html.text "This is a "
-                    , Html.strong [] [ Html.text kind ]
-                    , Html.text ". "
-                    , Html.a
-                        [ Attributes.href "http://www.noredink.com"
-                        , Attributes.target "_blank"
-                        ]
-                        [ Html.text "The quick brown fox jumps over the lazy dog." ]
-                    , Html.text " Be on the lookout for a new and improved assignment creation form! Soon, you'll be able to easily see a summary of the content you're assigning, as well as an estimate for how long the assignment will take."
-                    ]
-
-                exampleUGHtml kind =
-                    [ Html.text "This is a "
-                    , Html.strong [] [ Html.text kind ]
-                    , Html.text ". The quick brown fox jumps over the lazy dog."
-                    , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
-                    ]
+                attributes =
+                    Control.currentValue state.control
             in
-            [ Text.caption [] [ Html.text "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            , Control.view UpdateControl state.control
+                |> Html.fromUnstyled
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
-            , Text.mediumBody [] (exampleHtml "mediumBody")
-            , Text.smallBody [] (exampleHtml "smallBody")
-            , Text.smallBodyGray [] (exampleHtml "smallBodyGray")
-            , Text.caption [] (exampleHtml "caption")
+            , viewExamples
+                [ ( "mediumBody", Text.mediumBody )
+                , ( "smallBody", Text.smallBody )
+                , ( "smallBodyGray", Text.smallBodyGray )
+                , ( "caption", Text.caption )
+                ]
+                attributes
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
-            , Text.ugMediumBody [] (exampleUGHtml "ugMediumBody")
-            , Text.ugSmallBody [] (exampleUGHtml "ugSmallBody")
-            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "One-Off Styles" ]
-            , Text.mediumBody
-                [ Text.css [ Css.padding (Css.px 20) ] ]
-                [ Html.text "I've got more padding than my siblings!" ]
-            , Html.div
-                [ Attributes.css
-                    [ Css.width (Css.px 80)
-                    , Css.border3 (Css.px 1) Css.solid (Css.hex "000")
-                    ]
+            , viewExamples
+                [ ( "ugMediumBody", Text.ugMediumBody )
+                , ( "ugSmallBody", Text.ugSmallBody )
                 ]
-                [ Text.mediumBody
-                    [ Text.noBreak ]
-                    [ Html.text "I won't ever break, no matter how narrow my container is." ]
-                ]
+                attributes
             ]
     }
+
+
+viewExamples : List ( String, List (Text.Attribute msg) -> Html msg ) -> List (Text.Attribute msg) -> Html msg
+viewExamples examples attributes =
+    let
+        viewExample ( name, view ) =
+            Html.tr []
+                [ Html.th [] [ Html.text name ]
+                , Html.td [] [ view attributes ]
+                ]
+    in
+    Html.table [ css [ Css.width (Css.pct 100) ] ]
+        [ Html.tbody [] <|
+            List.map viewExample examples
+        ]
+
+
+{-| -}
+type alias State =
+    { control : Control (List (Text.Attribute Msg))
+    }
+
+
+{-| -}
+init : State
+init =
+    { control =
+        ControlExtra.list
+            |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.listItem "noBreak"
+                (Control.map Text.noBreak (Control.bool False))
+            |> ControlExtra.optionalListItem "css"
+                (Control.value
+                    (Text.css
+                        [ Css.border3 (Css.px 1) Css.solid Colors.aqua
+                        , Css.color Colors.aquaDark
+                        ]
+                    )
+                )
+    }
+
+
+controlContent : Control (Text.Attribute msg)
+controlContent =
+    Control.choice
+        [ ( "HTML"
+          , Control.value (Text.html exampleHtml)
+          )
+        , ( "plain text (short)"
+          , Control.string quickBrownFox
+                |> Control.map Text.plaintext
+          )
+        , ( "plain text (long)"
+          , Control.stringTextarea romeoAndJulietQuotation
+                |> Control.map Text.plaintext
+          )
+        , ( "markdown"
+          , Control.string romeoAndJulietQuotation
+                |> Control.map Text.markdown
+          )
+        ]
+
+
+{-| -}
+type Msg
+    = UpdateControl (Control (List (Text.Attribute Msg)))
+
+
+{-| -}
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )

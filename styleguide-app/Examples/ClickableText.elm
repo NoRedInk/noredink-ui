@@ -15,7 +15,7 @@ import Html.Styled.Attributes exposing (css, id)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -94,21 +94,23 @@ viewExamples (State control) =
     [ Control.view (State >> SetState) control
         |> fromUnstyled
     , buttons model
-    , Text.smallBody []
-        [ text "Sometimes, we'll want our clickable links: "
-        , ClickableText.link model.label
-            [ ClickableText.small
-            , Maybe.map ClickableText.icon model.icon
-                |> Maybe.withDefault (ClickableText.custom [])
+    , Text.smallBody
+        [ Text.html
+            [ text "Sometimes, we'll want our clickable links: "
+            , ClickableText.link model.label
+                [ ClickableText.small
+                , Maybe.map ClickableText.icon model.icon
+                    |> Maybe.withDefault (ClickableText.custom [])
+                ]
+            , text " and clickable buttons: "
+            , ClickableText.button model.label
+                [ ClickableText.small
+                , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
+                , Maybe.map ClickableText.icon model.icon
+                    |> Maybe.withDefault (ClickableText.custom [])
+                ]
+            , text " to show up in-line."
             ]
-        , text " and clickable buttons: "
-        , ClickableText.button model.label
-            [ ClickableText.small
-            , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
-            , Maybe.map ClickableText.icon model.icon
-                |> Maybe.withDefault (ClickableText.custom [])
-            ]
-        , text " to show up in-line."
         ]
     ]
         |> div []
