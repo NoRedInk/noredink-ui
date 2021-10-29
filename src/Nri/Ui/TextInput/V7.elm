@@ -707,6 +707,10 @@ viewPasswordFloatingContent config =
         Html.text ""
 
     else
+        -- TODO: consider using a "toggle" clickable text button,
+        -- a checkbox styled to look like a clickable text, or
+        -- adding additional aria attributes connecting this clickable
+        -- text to the password field.
         ClickableText.button "Show password"
             [ ClickableText.small
             , ClickableText.css
