@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , number, float, text, password, email, search
     , value, map
-    , onInput, onBlur, onEnter
+    , onBlur, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage
@@ -16,7 +16,8 @@ module Nri.Ui.TextInput.V7 exposing
 
   - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
   - change `view` API so it only takes a list of attributes (meaning the value and input type are now passed in as attributes)
-  - split the event hander (e.g., `onInput`) from the input type (e.g., `password`)
+  - make the search icon and reset pattern the default for `search`
+  - add "Show password" and "Hide password" as default behavior for `password` inputs
 
 @docs view, generateId
 
@@ -33,7 +34,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Event handlers
 
-@docs onInput, onBlur, onEnter
+@docs onBlur, onEnter
 
 
 ## Attributes
@@ -66,12 +67,13 @@ import Nri.Ui.Util exposing (dashify)
 
 {-| An input that allows text entry
 -}
-text : Attribute String msg
-text =
+text : (String -> msg) -> Attribute String msg
+text onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
         }
         (\config ->
             { config
@@ -84,12 +86,13 @@ text =
 
 {-| An input that allows integer entry
 -}
-number : Attribute (Maybe Int) msg
-number =
+number : (Maybe Int -> msg) -> Attribute (Maybe Int) msg
+number onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just (Maybe.map String.fromInt >> Maybe.withDefault "")
             , fromString = Just String.toInt
+            , onInput = Just (String.toInt >> onInput_)
         }
         (\config ->
             { config
@@ -102,12 +105,13 @@ number =
 
 {-| An input that allows float entry
 -}
-float : Attribute (Maybe Float) msg
-float =
+float : (Maybe Float -> msg) -> Attribute (Maybe Float) msg
+float onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just (Maybe.map String.fromFloat >> Maybe.withDefault "")
             , fromString = Just String.toFloat
+            , onInput = Just (String.toFloat >> onInput_)
         }
         (\config ->
             { config
@@ -120,12 +124,13 @@ float =
 
 {-| An input that allows password entry
 -}
-password : Attribute String msg
-password =
+password : (String -> msg) -> Attribute String msg
+password onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
+            , onInput = Just onInput_
             , floatingContent = Just viewPasswordFloatingContent
         }
         (\config ->
@@ -144,12 +149,13 @@ but not `type="email"` because that would enable browser-provided validation whi
 with our validation UI.
 
 -}
-email : Attribute String msg
-email =
+email : (String -> msg) -> Attribute String msg
+email onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
+            , onInput = Just onInput_
         }
         (\config ->
             { config
@@ -162,13 +168,14 @@ email =
 
 {-| An input with ["search" type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) specified.
 -}
-search : Attribute String msg
-search =
+search : (String -> msg) -> Attribute String msg
+search onInput_ =
     Attribute
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
             , floatingContent = Just viewSearchFloatingContent
+            , onInput = Just onInput_
         }
         (\config ->
             { config
@@ -250,12 +257,6 @@ hiddenLabel : Attribute value msg
 hiddenLabel =
     Attribute emptyEventsAndValues <|
         \config -> { config | hideLabel = True }
-
-
-{-| -}
-onInput : (value -> msg) -> Attribute value msg
-onInput msg =
-    Attribute { emptyEventsAndValues | onInput = Just msg } identity
 
 
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
@@ -352,7 +353,7 @@ type alias EventsAndValues value msg =
     { currentValue : Maybe value
     , toString : Maybe (value -> String)
     , fromString : Maybe (String -> value)
-    , onInput : Maybe (value -> msg)
+    , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
     , onEnter : Maybe msg
     , floatingContent : Maybe (FloatingContentConfig msg -> Html msg)
@@ -372,15 +373,15 @@ emptyEventsAndValues =
 
 
 {-| -}
-map : (a -> b) -> (b -> String) -> (b -> msg) -> Attribute a msg -> Attribute b msg
-map f toString onInput_ (Attribute eventsAndValues configF) =
+map : (a -> b) -> (b -> String) -> Attribute a msg -> Attribute b msg
+map f toString (Attribute eventsAndValues configF) =
     Attribute
         { currentValue = Maybe.map f eventsAndValues.currentValue
         , toString = Just toString
         , fromString = Maybe.map (\from -> from >> f) eventsAndValues.fromString
         , onBlur = eventsAndValues.onBlur
         , onEnter = eventsAndValues.onEnter
-        , onInput = Just onInput_
+        , onInput = eventsAndValues.onInput
         , floatingContent = eventsAndValues.floatingContent
         }
         configF
@@ -537,12 +538,6 @@ view label attributes =
             )
                 |> Keyboard.Event.considerKeyboardEvent
                 |> Events.on "keydown"
-
-        onStringInput : Maybe (String -> msg)
-        onStringInput =
-            Maybe.map2 (>>)
-                eventsAndValues.fromString
-                eventsAndValues.onInput
     in
     div
         ([ Attributes.css
@@ -579,7 +574,7 @@ view label attributes =
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
-                   , maybeAttr Events.onInput onStringInput
+                   , maybeAttr Events.onInput eventsAndValues.onInput
                    , maybeAttr Events.onBlur eventsAndValues.onBlur
                    , Attributes.autofocus config.autofocus
                    , maybeAttr type_ config.fieldType
@@ -628,7 +623,7 @@ view label attributes =
                     }
             )
             eventsAndValues.floatingContent
-            onStringInput
+            eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
         , case errorMessage_ of
             Just m ->

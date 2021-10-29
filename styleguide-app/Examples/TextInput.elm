@@ -43,8 +43,8 @@ example =
                     , TextInput.view exampleConfig.label
                         (exampleConfig.attributes
                             ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
-                               , TextInput.map toString identity (SetInput index) inputType
-                               , TextInput.onInput (SetInput index)
+                               , inputType (toString >> SetInput index)
+                                    |> TextInput.map toString identity
                                , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
                                ]
                             ++ List.filterMap identity
