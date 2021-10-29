@@ -53,10 +53,11 @@ import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.InputStyles.V3 as InputStyles
+import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -125,6 +126,7 @@ password =
         { emptyEventsAndValues
             | toString = Just identity
             , fromString = Just identity
+            , floatingContent = Just viewPasswordFloatingContent
         }
         (\config ->
             { config
@@ -607,7 +609,7 @@ view label attributes =
              , Attributes.css
                 [ InputStyles.label config.inputStyle isInError
                 , if config.noMarginTop then
-                    Css.top (Css.px -9)
+                    Css.top (Css.px -defaultMarginTop)
 
                   else
                     Css.batch []
@@ -677,7 +679,7 @@ searchIcon config =
             [ Css.position Css.absolute
             , Css.right (Css.px 10)
             , if config.noMarginTop then
-                Css.top (Css.px (22 - 9))
+                Css.top (Css.px (22 - defaultMarginTop))
 
               else
                 Css.top (Css.px 22)
@@ -696,9 +698,30 @@ resetButton config =
             [ Css.position Css.absolute
             , Css.right (Css.px 10)
             , if config.noMarginTop then
-                Css.top (Css.px (25 - 9))
+                Css.top (Css.px (25 - defaultMarginTop))
 
               else
                 Css.top (Css.px 25)
             ]
         ]
+
+
+viewPasswordFloatingContent : FloatingContentConfig msg -> Html msg
+viewPasswordFloatingContent config =
+    if config.stringValue == "" then
+        Html.text ""
+
+    else
+        ClickableText.button "Show password"
+            [ ClickableText.small
+            , ClickableText.css
+                [ Css.position Css.absolute
+                , Css.right (Css.px 15)
+                , if config.noMarginTop then
+                    Css.top (Css.px (22 - defaultMarginTop))
+
+                  else
+                    Css.top (Css.px 22)
+                , Css.fontSize (Css.px 13)
+                ]
+            ]
