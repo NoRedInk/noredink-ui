@@ -122,7 +122,13 @@ float onInput_ =
         )
 
 
-{-| An input that allows password entry
+{-| An input that allows password entry.
+
+If the user types at least one character into the input box, a
+floating control "Show password" will appear. When clicked, the
+input type will change from "password" to "text", in order
+to enable the user to check what they've typed.
+
 -}
 password :
     { onInput : String -> msg
