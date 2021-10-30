@@ -201,7 +201,7 @@ controlTail : Control (Tooltip.Attribute Never)
 controlTail =
     Control.map
         (\bool ->
-            if True then
+            if bool then
                 Tooltip.withoutTail
 
             else
