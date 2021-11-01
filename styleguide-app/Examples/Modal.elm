@@ -242,10 +242,9 @@ continueButtonId =
 continueButton : Html Msg
 continueButton =
     Button.button "Continue"
-        [ Button.primary
-        , Button.onClick CloseModal
-        , Button.custom [ Attributes.id continueButtonId ]
-        , Button.large
+        [ Button.onClick CloseModal
+        , Button.id continueButtonId
+        , Button.modal
         ]
 
 
@@ -258,9 +257,8 @@ closeClickableText : Html Msg
 closeClickableText =
     ClickableText.button "Close"
         [ ClickableText.onClick CloseModal
-        , ClickableText.large
-        , ClickableText.custom [ Attributes.id closeClickableTextId ]
-        , ClickableText.css [ Css.marginTop (Css.px 15) ]
+        , ClickableText.modal
+        , ClickableText.id closeClickableTextId
         ]
 
 
