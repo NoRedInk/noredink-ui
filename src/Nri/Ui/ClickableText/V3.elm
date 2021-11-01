@@ -2,7 +2,7 @@ module Nri.Ui.ClickableText.V3 exposing
     ( button
     , link
     , Attribute
-    , small, medium, large
+    , small, medium, large, modal
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
@@ -19,6 +19,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - removes underline on hover and recolors to azureDark
   - removes bottom border
   - adds `nriDescription`, `testId`, and `id` helpers
+  - adds `modal` helper, for use in modal footers, same as applying large and Css.marginTop (Css.px 15)
 
 
 # Changes from V2
@@ -54,7 +55,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Sizing
 
-@docs small, medium, large
+@docs small, medium, large, modal
 
 
 ## Behavior
@@ -99,6 +100,19 @@ medium =
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
+
+
+{-| For use in Modal footers (adds `large` and `Css.marginTop (Css.px 15)`)
+-}
+modal : Attribute msg
+modal =
+    set
+        (\attributes ->
+            { attributes
+                | size = Large
+                , customStyles = List.append attributes.customStyles [ Css.marginTop (Css.px 15) ]
+            }
+        )
 
 
 type Size
