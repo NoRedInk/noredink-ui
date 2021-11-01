@@ -11,6 +11,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html as Root
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -44,10 +45,10 @@ init =
 
 controlAttributes : Control (List Modal.Attribute)
 controlAttributes =
-    Control.record (\a b c -> a :: b :: c :: [])
-        |> Control.field "Theme" controlTheme
-        |> Control.field "Title visibility" controlTitleVisibility
-        |> Control.field "Custom css" controlCss
+    ControlExtra.list
+        |> ControlExtra.listItem "Theme" controlTheme
+        |> ControlExtra.listItem "Title visibility" controlTitleVisibility
+        |> ControlExtra.listItem "Custom css" controlCss
 
 
 type alias ViewSettings =
