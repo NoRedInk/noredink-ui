@@ -197,6 +197,7 @@ password autocomplete settings =
                             "password"
                 , inputMode = Nothing
                 , autocomplete = Just autocomplete
+                , inputCss = Css.paddingRight (Css.px 135) :: config.inputCss
             }
         )
 
@@ -241,6 +242,7 @@ search onInput_ =
                 | fieldType = Just "search"
                 , inputMode = Nothing
                 , autocomplete = Nothing
+                , inputCss = Css.paddingRight (Css.px 30) :: config.inputCss
             }
         )
 
@@ -347,7 +349,7 @@ autofocus =
         \config -> { config | autofocus = True }
 
 
-{-| Adds CSS to the input container.
+{-| Adds CSS to the element containing the input.
 
 If you want to customize colors, borders, font sizes, etc, you should instead add to the TextInput API
 to support what you need.
@@ -356,7 +358,7 @@ to support what you need.
 css : List Css.Style -> Attribute value msg
 css styles =
     Attribute emptyEventsAndValues <|
-        \config -> { config | css = styles :: config.css }
+        \config -> { config | containerCss = config.containerCss ++ styles }
 
 
 {-| Remove default spacing from the Input.
@@ -458,6 +460,7 @@ map f toString (Attribute eventsAndValues configF) =
 -}
 type alias Config =
     { inputStyle : InputStyles.Theme
+    , inputCss : List Css.Style
     , guidance : Maybe String
     , error : ErrorState
     , disabled : Bool
@@ -466,7 +469,7 @@ type alias Config =
     , placeholder : Maybe String
     , autofocus : Bool
     , noMarginTop : Bool
-    , css : List (List Css.Style)
+    , containerCss : List Css.Style
     , id : Maybe String
     , custom : List (Html.Attribute Never)
     , fieldType : Maybe String
@@ -483,6 +486,7 @@ type ErrorState
 emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
+    , inputCss = []
     , guidance = Nothing
     , error = NoError
     , disabled = False
@@ -492,7 +496,7 @@ emptyConfig =
     , autofocus = False
     , id = Nothing
     , noMarginTop = False
-    , css = []
+    , containerCss = []
     , custom = []
     , fieldType = Nothing
     , inputMode = Nothing
@@ -609,13 +613,12 @@ view label attributes =
                 |> Events.on "keydown"
     in
     div
-        ([ Attributes.css
-            [ position relative
-            , Css.opacity opacity
-            ]
-         ]
-            ++ List.map Attributes.css (List.reverse config.css)
-        )
+        [ Attributes.css
+            (position relative
+                :: Css.opacity opacity
+                :: config.containerCss
+            )
+        ]
         [ input
             (maybeStep
                 ++ List.map (Attributes.map never) (List.reverse config.custom)
@@ -645,6 +648,7 @@ view label attributes =
 
                           else
                             Css.batch []
+                        , Css.batch config.inputCss |> Css.important
                         ]
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
