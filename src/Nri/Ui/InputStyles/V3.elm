@@ -1,6 +1,6 @@
 module Nri.Ui.InputStyles.V3 exposing
     ( label, Theme(..), input
-    , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+    , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
     )
 
 {-| InputStyles used by the TextInput and TextArea widgets.
@@ -10,10 +10,12 @@ module Nri.Ui.InputStyles.V3 exposing
 
 ## Shared hardcoded values
 
-@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight
+@docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
 
 
 ## Changelog
+
+  - patch: expose defaultMarginTop
 
   - V3: add UserGenerated
 
@@ -108,6 +110,12 @@ label theme inError =
                 ]
 
 
+{-| -}
+defaultMarginTop : Float
+defaultMarginTop =
+    9
+
+
 {-| In order to use these styles in an input module, you will need to add the class "override-sass-styles". This is because sass styles in the monolith have higher precendence than the class styles here.
 -}
 input : Theme -> Bool -> Style
@@ -127,7 +135,7 @@ input theme isInError =
                 , display inlineBlock
                 , verticalAlign top
                 , marginBottom zero
-                , marginTop (px 9)
+                , marginTop (px defaultMarginTop)
                 , boxShadow6 inset zero (px 3) zero zero gray92
                 , property "transition" "border-color 0.4s ease"
                 , boxSizing borderBox

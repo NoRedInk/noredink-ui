@@ -125,6 +125,9 @@ usages = [
 [forbidden."Nri.Ui.Text.V5"]
 hint = 'upgrade to V6'
 
+[forbidden."Nri.Ui.TextInput.V6"]
+hint = 'upgrade to V7'
+
 [forbidden."Nri.Ui.Tooltip.V1"]
 hint = 'upgrade to V2'
 usages = ['styleguide-app/../src/Nri/Ui/Menu/V1.elm']
