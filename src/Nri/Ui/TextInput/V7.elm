@@ -2,7 +2,7 @@ module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , number, float, text, newPassword, currentPassword, email, search
     , value, map
-    , onBlur, onEnter
+    , onFocus, onBlur, onEnter
     , Attribute, placeholder, hiddenLabel, autofocus
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage, guidance
@@ -35,7 +35,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Event handlers
 
-@docs onBlur, onEnter
+@docs onFocus, onBlur, onEnter
 
 
 ## Attributes
@@ -328,6 +328,13 @@ hiddenLabel =
         \config -> { config | hideLabel = True }
 
 
+{-| Causes the TextInput to produce the given `msg` when the field is focused.
+-}
+onFocus : msg -> Attribute value msg
+onFocus msg =
+    Attribute { emptyEventsAndValues | onFocus = Just msg } identity
+
+
 {-| Causes the TextInput to produce the given `msg` when the field is blurred.
 -}
 onBlur : msg -> Attribute value msg
@@ -423,6 +430,7 @@ type alias EventsAndValues value msg =
     , toString : Maybe (value -> String)
     , fromString : Maybe (String -> value)
     , onInput : Maybe (String -> msg)
+    , onFocus : Maybe msg
     , onBlur : Maybe msg
     , onEnter : Maybe msg
     , floatingContent : Maybe (FloatingContentConfig msg -> Html msg)
@@ -434,6 +442,7 @@ emptyEventsAndValues =
     { currentValue = Nothing
     , toString = Nothing
     , fromString = Nothing
+    , onFocus = Nothing
     , onBlur = Nothing
     , onEnter = Nothing
     , onInput = Nothing
@@ -448,6 +457,7 @@ map f toString (Attribute eventsAndValues configF) =
         { currentValue = Maybe.map f eventsAndValues.currentValue
         , toString = Just toString
         , fromString = Maybe.map (\from -> from >> f) eventsAndValues.fromString
+        , onFocus = eventsAndValues.onFocus
         , onBlur = eventsAndValues.onBlur
         , onEnter = eventsAndValues.onEnter
         , onInput = eventsAndValues.onInput
@@ -528,6 +538,7 @@ applyEvents =
             { currentValue = orExisting .currentValue eventsAndValues existing
             , toString = orExisting .toString eventsAndValues existing
             , fromString = orExisting .fromString eventsAndValues existing
+            , onFocus = orExisting .onFocus eventsAndValues existing
             , onBlur = orExisting .onBlur eventsAndValues existing
             , floatingContent = orExisting .floatingContent eventsAndValues existing
             , onEnter = orExisting .onEnter eventsAndValues existing
@@ -654,6 +665,7 @@ view label attributes =
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
                    , maybeAttr Events.onInput eventsAndValues.onInput
+                   , maybeAttr Events.onFocus eventsAndValues.onFocus
                    , maybeAttr Events.onBlur eventsAndValues.onBlur
                    , Attributes.autofocus config.autofocus
                    , maybeAttr type_ config.fieldType

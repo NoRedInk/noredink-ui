@@ -38,7 +38,7 @@ example =
                 exampleConfig =
                     Control.currentValue state.control
 
-                toExample { name, toString, inputType, onBlur, onEnter } index =
+                toExample { name, toString, inputType, onFocus, onBlur, onEnter } index =
                     ( name
                     , TextInput.view exampleConfig.label
                         (exampleConfig.attributes
@@ -48,7 +48,12 @@ example =
                                , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
                                ]
                             ++ List.filterMap identity
-                                [ if exampleConfig.onBlur then
+                                [ if exampleConfig.onFocus then
+                                    Just (TextInput.onFocus (SetInput index onFocus))
+
+                                  else
+                                    Nothing
+                                , if exampleConfig.onBlur then
                                     Just (TextInput.onBlur (SetInput index onBlur))
 
                                   else
@@ -69,6 +74,7 @@ example =
                     { name = "text"
                     , toString = identity
                     , inputType = TextInput.text
+                    , onFocus = "Focused!!!"
                     , onBlur = "Blurred!!!"
                     , onEnter = "Entered!!!"
                     }
@@ -76,6 +82,7 @@ example =
                     { name = "number"
                     , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
                     , inputType = TextInput.number
+                    , onFocus = "1234"
                     , onBlur = "10000000"
                     , onEnter = "20000000"
                     }
@@ -83,6 +90,7 @@ example =
                     { name = "float"
                     , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
                     , inputType = TextInput.float
+                    , onFocus = "123"
                     , onBlur = "1.00000001"
                     , onEnter = "100000001.1"
                     }
@@ -96,6 +104,7 @@ example =
                                 , showPassword = state.showPassword
                                 , setShowPassword = SetShowPassword
                                 }
+                    , onFocus = "Focused!!!"
                     , onBlur = "Blurred!!!"
                     , onEnter = "Entered!!!"
                     }
@@ -103,6 +112,7 @@ example =
                     { name = "email"
                     , toString = identity
                     , inputType = TextInput.email
+                    , onFocus = "Focused!!!"
                     , onBlur = "Blurred!!!"
                     , onEnter = "Entered!!!"
                     }
@@ -110,6 +120,7 @@ example =
                     { name = "search"
                     , toString = identity
                     , inputType = TextInput.search
+                    , onFocus = "Focused!!!"
                     , onBlur = "Blurred!!!"
                     , onEnter = "Entered!!!"
                     }
@@ -138,6 +149,7 @@ init =
 type alias ExampleConfig =
     { label : String
     , attributes : List (TextInput.Attribute String Msg)
+    , onFocus : Bool
     , onBlur : Bool
     , onEnter : Bool
     }
@@ -148,6 +160,7 @@ initControl =
     Control.record ExampleConfig
         |> Control.field "label" (Control.string "Assignment name")
         |> Control.field "attributes" controlAttributes
+        |> Control.field "onFocus" (Control.bool False)
         |> Control.field "onBlur" (Control.bool False)
         |> Control.field "onEnter" (Control.bool False)
 
