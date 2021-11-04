@@ -15,7 +15,7 @@ import Html.Styled
 import Html.Styled.Attributes
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V8 as Select
+import Nri.Ui.Select.V8 as Select exposing (Choice)
 
 
 {-| -}
@@ -38,20 +38,14 @@ example =
             [ Control.view UpdateAttributes state.attributes
                 |> Html.Styled.fromUnstyled
             , Select.view "Tortilla Selector"
-                { choices =
-                    [ { label = "Tacos", value = "Tacos" }
-                    , { label = "Burritos", value = "Burritos" }
-                    , { label = "Enchiladas", value = "Enchiladas" }
-                    ]
-                , valueToString = identity
+                { valueToString = identity
                 }
                 attributes
                 |> Html.Styled.map ConsoleLog
             , Html.Styled.div
                 [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
                 [ Select.view "Selector with Overflowed Text"
-                    { choices = []
-                    , valueToString = identity
+                    { valueToString = identity
                     }
                     [ Select.defaultDisplayText "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
                     ]
@@ -81,6 +75,8 @@ type alias Settings =
 initControls : Control Settings
 initControls =
     ControlExtra.list
+        |> ControlExtra.listItem "choices"
+            (Control.map Select.choices initChoices)
         |> ControlExtra.optionalListItem "defaultDisplayText"
             (Control.map Select.defaultDisplayText <|
                 Control.string "Select a tasty tortilla based treat!"
@@ -91,6 +87,23 @@ initControls =
             (Control.map (Just >> Select.errorMessage) <|
                 Control.string "The right item must be selected."
             )
+
+
+initChoices : Control (List (Choice String))
+initChoices =
+    ControlExtra.list
+        |> initChoice "value-1" "Tacos"
+        |> initChoice "value-2" "Burritos"
+        |> initChoice "value-3" "Enchiladas"
+
+
+initChoice : String -> String -> Control (List (Choice String)) -> Control (List (Choice String))
+initChoice value default =
+    let
+        toChoice label =
+            { label = label, value = value }
+    in
+    ControlExtra.listItem value (Control.map toChoice (Control.string default))
 
 
 {-| -}

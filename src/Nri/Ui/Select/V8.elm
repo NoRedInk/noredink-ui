@@ -1,5 +1,6 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
+    , Choice, choices
     , value
     , Attribute, defaultDisplayText
     , custom, nriDescription, id, testId
@@ -11,14 +12,15 @@ module Nri.Ui.Select.V8 exposing
 
 # Changes from V5
 
-    -  view adds a label
-    - `Choice` is no longer exposed
-    - adds `generateId`
+    - view adds a label
+    - adds standard custom, nriDescription, etc. attributes
 
 @docs view, generateId
 
 
 ### Input types
+
+@docs Choice, choices
 
 
 ### Input content
@@ -121,6 +123,18 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| A single possible choice.
+-}
+type alias Choice value =
+    { label : String, value : value }
+
+
+{-| -}
+choices : List (Choice value) -> Attribute value
+choices choices_ =
+    Attribute (\config -> { config | choices = choices_ })
+
+
 {-| Customizations for the Select.
 -}
 type Attribute value
@@ -137,6 +151,7 @@ applyConfig attributes =
 type alias Config value =
     { id : Maybe String
     , value : Maybe value
+    , choices : List (Choice value)
     , defaultDisplayText : Maybe String
     , error : ErrorState
     , custom : List (Html.Attribute Never)
@@ -147,16 +162,11 @@ defaultConfig : Config value
 defaultConfig =
     { id = Nothing
     , value = Nothing
+    , choices = []
     , defaultDisplayText = Nothing
     , error = InputErrorInternal.init
     , custom = []
     }
-
-
-{-| A single possible choice.
--}
-type alias Choice a =
-    { label : String, value : a }
 
 
 {-| A select dropdown. Remember to add a label!
@@ -164,8 +174,7 @@ type alias Choice a =
 view :
     String
     ->
-        { choices : List (Choice a)
-        , valueToString : a -> String
+        { valueToString : a -> String
         }
     -> List (Attribute a)
     -> Html a
@@ -195,7 +204,7 @@ view label config attributes =
             ]
             [ Html.text label ]
         , viewSelect
-            { choices = config.choices
+            { choices = config_.choices
             , current = config_.value
             , id = id_
             , custom = config_.custom
