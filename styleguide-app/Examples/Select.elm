@@ -39,13 +39,6 @@ example =
                 |> Html.Styled.fromUnstyled
             , Select.view "Tortilla Selector" attributes
                 |> Html.Styled.map ConsoleLog
-            , Html.Styled.div
-                [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
-                [ Select.view "Selector with Overflowed Text"
-                    [ Select.defaultDisplayText "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
-                    ]
-                    |> Html.Styled.map ConsoleLog
-                ]
             ]
     }
 
@@ -86,19 +79,20 @@ initControls =
 
 initChoices : Control (List (Choice String))
 initChoices =
-    ControlExtra.list
-        |> initChoice "value-1" "Tacos"
-        |> initChoice "value-2" "Burritos"
-        |> initChoice "value-3" "Enchiladas"
-
-
-initChoice : String -> String -> Control (List (Choice String)) -> Control (List (Choice String))
-initChoice value default =
-    let
-        toChoice label =
-            { label = label, value = value }
-    in
-    ControlExtra.listItem value (Control.map toChoice (Control.string default))
+    Control.choice
+        [ ( "Short choices"
+          , [ { label = "Tacos", value = "tacos" }
+            , { label = "Burritos", value = "burritos" }
+            , { label = "Enchiladas", value = "enchiladas" }
+            ]
+                |> Control.value
+          )
+        , ( "Overflowing text choices"
+          , [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = "design-coastlines" }
+            ]
+                |> Control.value
+          )
+        ]
 
 
 {-| -}
