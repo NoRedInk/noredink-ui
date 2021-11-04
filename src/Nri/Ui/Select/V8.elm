@@ -1,5 +1,6 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
+    , value
     , Attribute
     , id
     , errorIf, errorMessage
@@ -21,6 +22,8 @@ module Nri.Ui.Select.V8 exposing
 
 
 ### Input content
+
+@docs value
 
 
 ### Input handlers
@@ -58,9 +61,15 @@ we'll automatically generate one from the label you pass in, but this can
 cause problems if you have more than one text input with the same label on
 the page. Use this to be more specific and avoid issues with duplicate IDs!
 -}
-id : String -> Attribute
+id : String -> Attribute value
 id id_ =
     Attribute (\config -> { config | id = Just id_ })
+
+
+{-| -}
+value : Maybe value -> Attribute value
+value value_ =
+    Attribute (\config -> { config | value = value_ })
 
 
 {-| Sets whether or not the field will be highlighted as having a validation error.
@@ -68,7 +77,7 @@ id id_ =
 If you have an error message to display, use `errorMessage` instead.
 
 -}
-errorIf : Bool -> Attribute
+errorIf : Bool -> Attribute value
 errorIf =
     Attribute << InputErrorInternal.setErrorIf
 
@@ -76,33 +85,35 @@ errorIf =
 {-| If `Just`, the field will be highlighted as having a validation error,
 and the given error message will be shown.
 -}
-errorMessage : Maybe String -> Attribute
+errorMessage : Maybe String -> Attribute value
 errorMessage =
     Attribute << InputErrorInternal.setErrorMessage
 
 
 {-| Customizations for the Select.
 -}
-type Attribute
-    = Attribute (Config -> Config)
+type Attribute value
+    = Attribute (Config value -> Config value)
 
 
-applyConfig : List Attribute -> Config
+applyConfig : List (Attribute value) -> Config value
 applyConfig attributes =
     List.foldl (\(Attribute update) config -> update config)
         defaultConfig
         attributes
 
 
-type alias Config =
+type alias Config value =
     { id : Maybe String
+    , value : Maybe value
     , error : ErrorState
     }
 
 
-defaultConfig : Config
+defaultConfig : Config value
 defaultConfig =
     { id = Nothing
+    , value = Nothing
     , error = InputErrorInternal.init
     }
 
@@ -119,11 +130,10 @@ view :
     String
     ->
         { choices : List (Choice a)
-        , current : Maybe a
         , valueToString : a -> String
         , defaultDisplayText : Maybe String
         }
-    -> List Attribute
+    -> List (Attribute a)
     -> Html a
 view label config attributes =
     let
@@ -152,7 +162,7 @@ view label config attributes =
             [ Html.text label ]
         , viewSelect
             { choices = config.choices
-            , current = config.current
+            , current = config_.value
             , id = id_
             , valueToString = config.valueToString
             , defaultDisplayText = config.defaultDisplayText

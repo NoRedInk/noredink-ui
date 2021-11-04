@@ -31,14 +31,14 @@ example =
     , view =
         \state ->
             let
+                attributes : Settings
                 attributes =
                     Control.currentValue state.attributes
             in
             [ Control.view UpdateAttributes state.attributes
                 |> Html.Styled.fromUnstyled
             , Select.view "Tortilla Selector"
-                { current = Nothing
-                , choices =
+                { choices =
                     [ { label = "Tacos", value = "Tacos" }
                     , { label = "Burritos", value = "Burritos" }
                     , { label = "Enchiladas", value = "Enchiladas" }
@@ -51,8 +51,7 @@ example =
             , Html.Styled.div
                 [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
                 [ Select.view "Selector with Overflowed Text"
-                    { current = Nothing
-                    , choices = []
+                    { choices = []
                     , valueToString = identity
                     , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
                     }
@@ -65,7 +64,7 @@ example =
 
 {-| -}
 type alias State =
-    { attributes : Control (List Select.Attribute)
+    { attributes : Control Settings
     }
 
 
@@ -76,7 +75,11 @@ init =
     }
 
 
-initControls : Control (List Select.Attribute)
+type alias Settings =
+    List (Select.Attribute String)
+
+
+initControls : Control Settings
 initControls =
     ControlExtra.list
         |> ControlExtra.optionalListItem "errorIf"
@@ -88,7 +91,7 @@ initControls =
 {-| -}
 type Msg
     = ConsoleLog String
-    | UpdateAttributes (Control (List Select.Attribute))
+    | UpdateAttributes (Control Settings)
 
 
 {-| -}
