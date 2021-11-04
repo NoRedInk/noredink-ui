@@ -95,7 +95,10 @@ hint = 'upgrade to V14'
 hint = 'upgrade to V14'
 
 [forbidden."Nri.Ui.Select.V5"]
-hint = 'upgrade to V7'
+hint = 'upgrade to V8'
+
+[forbidden."Nri.Ui.Select.V7"]
+hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'

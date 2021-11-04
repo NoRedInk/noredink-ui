@@ -13,14 +13,14 @@ import Html.Styled
 import Html.Styled.Attributes
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V7 as Select
+import Nri.Ui.Select.V8 as Select
 
 
 {-| -}
 example : Example State Msg
 example =
     { name = "Select"
-    , version = 7
+    , version = 8
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

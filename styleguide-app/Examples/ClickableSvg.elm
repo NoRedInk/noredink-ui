@@ -20,7 +20,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V7 as Select
+import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon

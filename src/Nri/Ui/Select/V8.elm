@@ -1,6 +1,6 @@
-module Nri.Ui.Select.V7 exposing (Choice, view)
+module Nri.Ui.Select.V8 exposing (Choice, view)
 
-{-| Build a select input.
+{-| Build a select input with a label, optional guidance, and error messaging.
 
 @docs Choice, view
 
