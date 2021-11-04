@@ -44,7 +44,6 @@ example =
                     , { label = "Enchiladas", value = "Enchiladas" }
                     ]
                 , valueToString = identity
-                , defaultDisplayText = Just "Select a tasty tortilla based treat!"
                 }
                 attributes
                 |> Html.Styled.map ConsoleLog
@@ -53,9 +52,9 @@ example =
                 [ Select.view "Selector with Overflowed Text"
                     { choices = []
                     , valueToString = identity
-                    , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
                     }
-                    []
+                    [ Select.defaultDisplayText "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
+                    ]
                     |> Html.Styled.map ConsoleLog
                 ]
             ]
@@ -82,10 +81,16 @@ type alias Settings =
 initControls : Control Settings
 initControls =
     ControlExtra.list
+        |> ControlExtra.optionalListItem "defaultDisplayText"
+            (Control.map Select.defaultDisplayText <|
+                Control.string "Select a tasty tortilla based treat!"
+            )
         |> ControlExtra.optionalListItem "errorIf"
             (Control.map Select.errorIf <| Control.bool True)
         |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map (Just >> Select.errorMessage) <| Control.string "The right item must be selected.")
+            (Control.map (Just >> Select.errorMessage) <|
+                Control.string "The right item must be selected."
+            )
 
 
 {-| -}

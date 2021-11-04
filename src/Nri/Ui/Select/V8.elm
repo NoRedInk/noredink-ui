@@ -1,8 +1,8 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
     , value
-    , Attribute
-    , id
+    , Attribute, defaultDisplayText
+    , custom, nriDescription, id, testId
     , errorIf, errorMessage
     )
 
@@ -31,7 +31,7 @@ module Nri.Ui.Select.V8 exposing
 
 ### Attributes
 
-@docs Attribute, placeholder, hiddenLabel, autofocus
+@docs Attribute, defaultDisplayText, hiddenLabel, autofocus
 @docs css, custom, nriDescription, id, testId, noMargin
 @docs disabled, loading, errorIf, errorMessage, guidance
 
@@ -49,6 +49,7 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Message.V3 as Message
@@ -56,14 +57,10 @@ import Nri.Ui.Util
 import SolidColor
 
 
-{-| Set a custom ID for this text input and label. If you don't set this,
-we'll automatically generate one from the label you pass in, but this can
-cause problems if you have more than one text input with the same label on
-the page. Use this to be more specific and avoid issues with duplicate IDs!
--}
-id : String -> Attribute value
-id id_ =
-    Attribute (\config -> { config | id = Just id_ })
+{-| -}
+defaultDisplayText : String -> Attribute value
+defaultDisplayText text =
+    Attribute (\config -> { config | defaultDisplayText = Just text })
 
 
 {-| -}
@@ -90,6 +87,40 @@ errorMessage =
     Attribute << InputErrorInternal.setErrorMessage
 
 
+{-| Set a custom ID for this text input and label. If you don't set this,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one text input with the same label on
+the page. Use this to be more specific and avoid issues with duplicate IDs!
+-}
+id : String -> Attribute value
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute value
+custom attributes =
+    Attribute (\config -> { config | custom = config.custom ++ attributes })
+
+
+{-| -}
+nriDescription : String -> Attribute value
+nriDescription description =
+    custom [ Extra.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute value
+testId id_ =
+    custom [ Extra.testId id_ ]
+
+
 {-| Customizations for the Select.
 -}
 type Attribute value
@@ -106,7 +137,9 @@ applyConfig attributes =
 type alias Config value =
     { id : Maybe String
     , value : Maybe value
+    , defaultDisplayText : Maybe String
     , error : ErrorState
+    , custom : List (Html.Attribute Never)
     }
 
 
@@ -114,7 +147,9 @@ defaultConfig : Config value
 defaultConfig =
     { id = Nothing
     , value = Nothing
+    , defaultDisplayText = Nothing
     , error = InputErrorInternal.init
+    , custom = []
     }
 
 
@@ -131,7 +166,6 @@ view :
     ->
         { choices : List (Choice a)
         , valueToString : a -> String
-        , defaultDisplayText : Maybe String
         }
     -> List (Attribute a)
     -> Html a
@@ -164,8 +198,9 @@ view label config attributes =
             { choices = config.choices
             , current = config_.value
             , id = id_
+            , custom = config_.custom
             , valueToString = config.valueToString
-            , defaultDisplayText = config.defaultDisplayText
+            , defaultDisplayText = config_.defaultDisplayText
             , isInError = isInError_
             }
         , viewJust
@@ -188,6 +223,7 @@ viewSelect :
     , valueToString : a -> String
     , defaultDisplayText : Maybe String
     , isInError : Bool
+    , custom : List (Html.Attribute Never)
     }
     -> Html a
 viewSelect config =
@@ -266,9 +302,10 @@ viewSelect config =
             -- Icons
             , selectArrowsCss
             ]
-            [ onSelectHandler
-            , Attributes.id config.id
-            ]
+            (onSelectHandler
+                :: Attributes.id config.id
+                :: List.map (Attributes.map never) config.custom
+            )
 
 
 viewDefaultChoice : Maybe a -> String -> Html a
