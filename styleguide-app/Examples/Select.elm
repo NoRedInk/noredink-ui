@@ -30,14 +30,12 @@ example =
     , keyboardSupport = []
     , view =
         \state ->
-            let
-                attributes : Settings
-                attributes =
-                    Control.currentValue state.attributes
-            in
-            [ Control.view UpdateAttributes state.attributes
+            [ Control.view UpdateLabel state.label
                 |> Html.Styled.fromUnstyled
-            , Select.view "Tortilla Selector" attributes
+            , Control.view UpdateAttributes state.attributes
+                |> Html.Styled.fromUnstyled
+            , Select.view (Control.currentValue state.label)
+                (Control.currentValue state.attributes)
                 |> Html.Styled.map ConsoleLog
             ]
     }
@@ -45,14 +43,16 @@ example =
 
 {-| -}
 type alias State =
-    { attributes : Control Settings
+    { label : Control String
+    , attributes : Control Settings
     }
 
 
 {-| -}
 init : State
 init =
-    { attributes = initControls
+    { label = Control.string "Tortilla Selector"
+    , attributes = initControls
     }
 
 
@@ -98,6 +98,7 @@ initChoices =
 {-| -}
 type Msg
     = ConsoleLog String
+    | UpdateLabel (Control String)
     | UpdateAttributes (Control Settings)
 
 
@@ -111,6 +112,11 @@ update msg state =
                     Debug.log "SelectExample" message
             in
             ( state, Cmd.none )
+
+        UpdateLabel label ->
+            ( { state | label = label }
+            , Cmd.none
+            )
 
         UpdateAttributes attributes ->
             ( { state | attributes = attributes }
