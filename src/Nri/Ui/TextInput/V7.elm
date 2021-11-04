@@ -4,7 +4,7 @@ module Nri.Ui.TextInput.V7 exposing
     , value, map
     , onFocus, onBlur, onEnter
     , Attribute, placeholder, autofocus
-    , hiddenLabel
+    , hiddenLabel, visibleLabel
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage, guidance
     , writing

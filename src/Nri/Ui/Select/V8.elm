@@ -12,10 +12,11 @@ module Nri.Ui.Select.V8 exposing
 {-| Build a select input with a label, optional guidance, and error messaging.
 
 
-# Changes from V5
+# Changes from V7
 
     - view adds a label
     - adds standard custom, nriDescription, etc. attributes
+    - switches to a list-based attribuet API from a record-based API
 
 @docs view, generateId
 
@@ -30,17 +31,13 @@ module Nri.Ui.Select.V8 exposing
 @docs value
 
 
-### Input handlers
-
-
 ### Attributes
 
-@docs Attribute, defaultDisplayText, autofocus
+@docs Attribute, defaultDisplayText
 @docs hiddenLabel, visibleLabel
 @docs errorIf, errorMessage
 @docs custom, nriDescription, id, testId
 @docs containerCss, noMargin
-@docs disabled, loading, guidance
 
 -}
 
