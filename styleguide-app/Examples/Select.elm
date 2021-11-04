@@ -37,16 +37,11 @@ example =
             in
             [ Control.view UpdateAttributes state.attributes
                 |> Html.Styled.fromUnstyled
-            , Select.view "Tortilla Selector"
-                { valueToString = identity
-                }
-                attributes
+            , Select.view "Tortilla Selector" attributes
                 |> Html.Styled.map ConsoleLog
             , Html.Styled.div
                 [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
                 [ Select.view "Selector with Overflowed Text"
-                    { valueToString = identity
-                    }
                     [ Select.defaultDisplayText "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
                     ]
                     |> Html.Styled.map ConsoleLog
@@ -76,7 +71,7 @@ initControls : Control Settings
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices"
-            (Control.map Select.choices initChoices)
+            (Control.map (Select.choices identity) initChoices)
         |> ControlExtra.optionalListItem "defaultDisplayText"
             (Control.map Select.defaultDisplayText <|
                 Control.string "Select a tasty tortilla based treat!"

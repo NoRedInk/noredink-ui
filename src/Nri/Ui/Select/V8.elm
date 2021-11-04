@@ -130,9 +130,15 @@ type alias Choice value =
 
 
 {-| -}
-choices : List (Choice value) -> Attribute value
-choices choices_ =
-    Attribute (\config -> { config | choices = choices_ })
+choices : (value -> String) -> List (Choice value) -> Attribute value
+choices valueToString choices_ =
+    Attribute
+        (\config ->
+            { config
+                | valueToString = Just valueToString
+                , choices = choices_
+            }
+        )
 
 
 {-| Customizations for the Select.
@@ -152,6 +158,7 @@ type alias Config value =
     { id : Maybe String
     , value : Maybe value
     , choices : List (Choice value)
+    , valueToString : Maybe (value -> String)
     , defaultDisplayText : Maybe String
     , error : ErrorState
     , custom : List (Html.Attribute Never)
@@ -163,31 +170,25 @@ defaultConfig =
     { id = Nothing
     , value = Nothing
     , choices = []
+    , valueToString = Nothing
     , defaultDisplayText = Nothing
     , error = InputErrorInternal.init
     , custom = []
     }
 
 
-{-| A select dropdown. Remember to add a label!
--}
-view :
-    String
-    ->
-        { valueToString : a -> String
-        }
-    -> List (Attribute a)
-    -> Html a
-view label config attributes =
+{-| -}
+view : String -> List (Attribute a) -> Html a
+view label attributes =
     let
-        config_ =
+        config =
             applyConfig attributes
 
         isInError_ =
-            InputErrorInternal.getIsInError config_.error
+            InputErrorInternal.getIsInError config.error
 
         id_ =
-            Maybe.withDefault (generateId label) config_.id
+            Maybe.withDefault (generateId label) config.id
     in
     Html.div
         [ css
@@ -204,12 +205,12 @@ view label config attributes =
             ]
             [ Html.text label ]
         , viewSelect
-            { choices = config_.choices
-            , current = config_.value
+            { choices = config.choices
+            , current = config.value
             , id = id_
-            , custom = config_.custom
+            , custom = config.custom
             , valueToString = config.valueToString
-            , defaultDisplayText = config_.defaultDisplayText
+            , defaultDisplayText = config.defaultDisplayText
             , isInError = isInError_
             }
         , viewJust
@@ -221,7 +222,7 @@ view label config attributes =
                     , Message.alertRole
                     ]
             )
-            (InputErrorInternal.getErrorMessage config_.error)
+            (InputErrorInternal.getErrorMessage config.error)
         ]
 
 
@@ -229,7 +230,7 @@ viewSelect :
     { choices : List (Choice a)
     , current : Maybe a
     , id : String
-    , valueToString : a -> String
+    , valueToString : Maybe (a -> String)
     , defaultDisplayText : Maybe String
     , isInError : Bool
     , custom : List (Html.Attribute Never)
@@ -237,9 +238,24 @@ viewSelect :
     -> Html a
 viewSelect config =
     let
+        stringChoices =
+            case config.valueToString of
+                Just valueToString ->
+                    List.map
+                        (\choice ->
+                            { label = choice.label
+                            , idAndValue = generateId (valueToString choice.value)
+                            , value = choice.value
+                            }
+                        )
+                        config.choices
+
+                Nothing ->
+                    []
+
         valueLookup =
-            config.choices
-                |> List.map (\x -> ( generateId (config.valueToString x.value), x.value ))
+            stringChoices
+                |> List.map (\x -> ( x.idAndValue, x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -272,8 +288,8 @@ viewSelect config =
             else
                 config.current
     in
-    config.choices
-        |> List.map (viewChoice currentVal config.valueToString)
+    stringChoices
+        |> List.map (viewChoice currentVal)
         |> (++) defaultOption
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
@@ -326,8 +342,8 @@ viewDefaultChoice current displayText =
         [ Html.text displayText ]
 
 
-viewChoice : Maybe a -> (a -> String) -> Choice a -> Html a
-viewChoice current toString choice =
+viewChoice : Maybe a -> { value : a, idAndValue : String, label : String } -> Html a
+viewChoice current choice =
     let
         isSelected =
             current
@@ -335,8 +351,8 @@ viewChoice current toString choice =
                 |> Maybe.withDefault False
     in
     Html.option
-        [ Attributes.id (generateId (toString choice.value))
-        , Attributes.value (generateId (toString choice.value))
+        [ Attributes.id choice.idAndValue
+        , Attributes.value choice.idAndValue
         , Attributes.selected isSelected
         ]
         [ Html.text choice.label ]
