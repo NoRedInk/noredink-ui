@@ -38,7 +38,7 @@ module Nri.Ui.TextInput.V7 exposing
 @docs onFocus, onBlur, onEnter
 
 
-## Attributes
+### Attributes
 
 @docs Attribute, placeholder, hiddenLabel, autofocus
 @docs css, custom, nriDescription, id, testId, noMargin
@@ -742,7 +742,7 @@ view label attributes =
         ]
 
 
-{-| Gives you the DOM element id that will be used by a `TextInput.view` with the given label.
+{-| Gives you the default DOM element id that will be used by a `TextInput.view` with the given label.
 This is for use when you need the DOM element id for use in javascript (such as trigger an event to focus a particular text input)
 -}
 generateId : String -> String

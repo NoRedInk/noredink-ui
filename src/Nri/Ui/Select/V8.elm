@@ -1,15 +1,41 @@
-module Nri.Ui.Select.V8 exposing (Choice, view)
+module Nri.Ui.Select.V8 exposing
+    ( view, generateId
+    , id
+    )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
 
-@docs Choice, view
+
+# Changes from V5
+
+    -  view adds a label
+    - `Choice` is no longer exposed
+    - adds `generateId`
+
+@docs view, generateId
+
+
+### Input types
+
+
+### Input content
+
+
+### Input handlers
+
+
+### Attributes
+
+@docs Attribute, placeholder, hiddenLabel, autofocus
+@docs css, custom, nriDescription, id, testId, noMargin
+@docs disabled, loading, errorIf, errorMessage, guidance
 
 -}
 
+import Accessibility.Styled as Html exposing (Html)
 import Css
 import Dict
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
+import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode exposing (Decoder)
 import Nri.Ui
@@ -17,8 +43,43 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Util
 import SolidColor
+
+
+{-| Set a custom ID for this text input and label. If you don't set this,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one text input with the same label on
+the page. Use this to be more specific and avoid issues with duplicate IDs!
+-}
+id : String -> Attribute
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
+{-| Customizations for the Select.
+-}
+type Attribute
+    = Attribute (Config -> Config)
+
+
+applyConfig : List Attribute -> Config
+applyConfig attributes =
+    List.foldl (\(Attribute update) config -> update config)
+        defaultConfig
+        attributes
+
+
+type alias Config =
+    { id : Maybe String
+    }
+
+
+defaultConfig : Config
+defaultConfig =
+    { id = Nothing
+    }
 
 
 {-| A single possible choice.
@@ -30,6 +91,50 @@ type alias Choice a =
 {-| A select dropdown. Remember to add a label!
 -}
 view :
+    String
+    ->
+        { choices : List (Choice a)
+        , current : Maybe a
+        , valueToString : a -> String
+        , defaultDisplayText : Maybe String
+        , isInError : Bool
+        }
+    -> List Attribute
+    -> Html a
+view label config attributes =
+    let
+        config_ =
+            applyConfig attributes
+
+        id_ =
+            Maybe.withDefault (generateId label) config_.id
+    in
+    Html.div
+        [ css
+            [ Css.position Css.relative
+            , Css.marginTop (Css.px defaultMarginTop)
+            ]
+        ]
+        [ Html.label
+            [ Attributes.for id_
+            , css
+                [ InputStyles.label InputStyles.Standard config.isInError
+                , Css.top (Css.px -defaultMarginTop)
+                ]
+            ]
+            [ Html.text label ]
+        , viewSelect
+            { choices = config.choices
+            , current = config.current
+            , id = id_
+            , valueToString = config.valueToString
+            , defaultDisplayText = config.defaultDisplayText
+            , isInError = config.isInError
+            }
+        ]
+
+
+viewSelect :
     { choices : List (Choice a)
     , current : Maybe a
     , id : String
@@ -38,11 +143,11 @@ view :
     , isInError : Bool
     }
     -> Html a
-view config =
+viewSelect config =
     let
         valueLookup =
             config.choices
-                |> List.map (\x -> ( niceId (config.valueToString x.value), x.value ))
+                |> List.map (\x -> ( generateId (config.valueToString x.value), x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -137,15 +242,17 @@ viewChoice current toString choice =
                 |> Maybe.withDefault False
     in
     Html.option
-        [ Attributes.id (niceId (toString choice.value))
-        , Attributes.value (niceId (toString choice.value))
+        [ Attributes.id (generateId (toString choice.value))
+        , Attributes.value (generateId (toString choice.value))
         , Attributes.selected isSelected
         ]
         [ Html.text choice.label ]
 
 
-niceId : String -> String
-niceId x =
+{-| Pass in the label to generate the default DOM element id used by a `Select.view` with the given label.
+-}
+generateId : String -> String
+generateId x =
     "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
 
 

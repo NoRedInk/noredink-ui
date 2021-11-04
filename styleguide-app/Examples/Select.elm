@@ -28,47 +28,38 @@ example =
     , keyboardSupport = []
     , view =
         \state ->
-            [ Html.Styled.label
-                [ Html.Styled.Attributes.for "tortilla-selector" ]
-                [ Heading.h3 [] [ Html.Styled.text "Tortilla Selector" ] ]
-            , Select.view
+            [ Select.view "Tortilla Selector"
                 { current = Nothing
                 , choices =
                     [ { label = "Tacos", value = "Tacos" }
                     , { label = "Burritos", value = "Burritos" }
                     , { label = "Enchiladas", value = "Enchiladas" }
                     ]
-                , id = "tortilla-selector"
                 , valueToString = identity
                 , defaultDisplayText = Just "Select a tasty tortilla based treat!"
                 , isInError = False
                 }
+                []
                 |> Html.Styled.map ConsoleLog
-            , Html.Styled.label
-                [ Html.Styled.Attributes.for "errored-selector" ]
-                [ Heading.h3 [] [ Html.Styled.text "Errored Selector" ] ]
-            , Select.view
+            , Select.view "Errored Selector"
                 { current = Nothing
                 , choices = []
-                , id = "errored-selector"
                 , valueToString = identity
                 , defaultDisplayText = Just "Please select an option"
                 , isInError = True
                 }
+                []
                 |> Html.Styled.map ConsoleLog
-            , Html.Styled.label
-                [ Html.Styled.Attributes.for "overflowed-selector" ]
-                [ Heading.h3 [] [ Html.Styled.text "Selector with Overflowed Text" ] ]
             , Html.Styled.div
                 [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
-                [ Select.view
+                [ Select.view "Selector with Overflowed Text"
                     { current = Nothing
                     , choices = []
-                    , id = "overflowed-selector"
                     , valueToString = identity
                     , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
                     , isInError = False
                     }
+                    []
                     |> Html.Styled.map ConsoleLog
                 ]
             ]
