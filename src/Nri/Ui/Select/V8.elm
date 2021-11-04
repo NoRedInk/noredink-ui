@@ -1,5 +1,6 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
+    , Attribute
     , id
     , errorIf, errorMessage
     )
