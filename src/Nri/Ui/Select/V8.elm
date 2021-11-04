@@ -46,7 +46,9 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
+import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Util
 import SolidColor
 
@@ -156,6 +158,16 @@ view label config attributes =
             , defaultDisplayText = config.defaultDisplayText
             , isInError = isInError_
             }
+        , viewJust
+            (\m ->
+                Message.view
+                    [ Message.tiny
+                    , Message.error
+                    , Message.plaintext m
+                    , Message.alertRole
+                    ]
+            )
+            (InputErrorInternal.getErrorMessage config_.error)
         ]
 
 
