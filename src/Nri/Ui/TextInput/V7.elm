@@ -54,6 +54,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
+import InputErrorInternal exposing (ErrorState)
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -278,38 +279,18 @@ loading =
 
 
 {-| Sets whether or not the field will be highlighted as having a validation error.
-If you are always passing `True`, then you don't need to use this attribute.
 -}
 errorIf : Bool -> Attribute value msg
-errorIf isInError =
-    Attribute emptyEventsAndValues <|
-        \config ->
-            { config
-                | error =
-                    if isInError then
-                        Error { message = Nothing }
-
-                    else
-                        NoError
-            }
+errorIf =
+    Attribute emptyEventsAndValues << InputErrorInternal.setErrorIf
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
 and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute value msg
-errorMessage maybeMessage =
-    Attribute emptyEventsAndValues <|
-        \config ->
-            { config
-                | error =
-                    case maybeMessage of
-                        Nothing ->
-                            NoError
-
-                        Just message ->
-                            Error { message = Just message }
-            }
+errorMessage =
+    Attribute emptyEventsAndValues << InputErrorInternal.setErrorMessage
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
@@ -488,17 +469,12 @@ type alias Config =
     }
 
 
-type ErrorState
-    = NoError
-    | Error { message : Maybe String }
-
-
 emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , inputCss = []
     , guidance = Nothing
-    , error = NoError
+    , error = InputErrorInternal.init
     , disabled = False
     , loading = False
     , hideLabel = False
@@ -573,13 +549,11 @@ view label attributes =
             config.placeholder
                 |> Maybe.withDefault label
 
-        ( isInError, errorMessage_ ) =
-            case config.error of
-                NoError ->
-                    ( False, Nothing )
+        isInError =
+            InputErrorInternal.getIsInError config.error
 
-                Error { message } ->
-                    ( True, message )
+        errorMessage_ =
+            InputErrorInternal.getErrorMessage config.error
 
         ( opacity, disabled_ ) =
             case ( config.disabled, config.loading ) of

@@ -1,6 +1,7 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
     , id
+    , errorIf, errorMessage
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -37,6 +38,7 @@ import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import InputErrorInternal exposing (ErrorState)
 import Json.Decode exposing (Decoder)
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
@@ -58,6 +60,24 @@ id id_ =
     Attribute (\config -> { config | id = Just id_ })
 
 
+{-| Sets whether or not the field will be highlighted as having a validation error.
+
+If you have an error message to display, use `errorMessage` instead.
+
+-}
+errorIf : Bool -> Attribute
+errorIf =
+    Attribute << InputErrorInternal.setErrorIf
+
+
+{-| If `Just`, the field will be highlighted as having a validation error,
+and the given error message will be shown.
+-}
+errorMessage : Maybe String -> Attribute
+errorMessage =
+    Attribute << InputErrorInternal.setErrorMessage
+
+
 {-| Customizations for the Select.
 -}
 type Attribute
@@ -73,12 +93,14 @@ applyConfig attributes =
 
 type alias Config =
     { id : Maybe String
+    , error : ErrorState
     }
 
 
 defaultConfig : Config
 defaultConfig =
     { id = Nothing
+    , error = InputErrorInternal.init
     }
 
 
@@ -97,7 +119,6 @@ view :
         , current : Maybe a
         , valueToString : a -> String
         , defaultDisplayText : Maybe String
-        , isInError : Bool
         }
     -> List Attribute
     -> Html a
@@ -105,6 +126,9 @@ view label config attributes =
     let
         config_ =
             applyConfig attributes
+
+        isInError_ =
+            InputErrorInternal.getIsInError config_.error
 
         id_ =
             Maybe.withDefault (generateId label) config_.id
@@ -118,7 +142,7 @@ view label config attributes =
         [ Html.label
             [ Attributes.for id_
             , css
-                [ InputStyles.label InputStyles.Standard config.isInError
+                [ InputStyles.label InputStyles.Standard isInError_
                 , Css.top (Css.px -defaultMarginTop)
                 ]
             ]
@@ -129,7 +153,7 @@ view label config attributes =
             , id = id_
             , valueToString = config.valueToString
             , defaultDisplayText = config.defaultDisplayText
-            , isInError = config.isInError
+            , isInError = isInError_
             }
         ]
 

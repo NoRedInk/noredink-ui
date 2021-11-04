@@ -37,7 +37,6 @@ example =
                     ]
                 , valueToString = identity
                 , defaultDisplayText = Just "Select a tasty tortilla based treat!"
-                , isInError = False
                 }
                 []
                 |> Html.Styled.map ConsoleLog
@@ -46,9 +45,9 @@ example =
                 , choices = []
                 , valueToString = identity
                 , defaultDisplayText = Just "Please select an option"
-                , isInError = True
                 }
-                []
+                [ Select.errorIf True
+                ]
                 |> Html.Styled.map ConsoleLog
             , Html.Styled.div
                 [ Html.Styled.Attributes.css [ Css.maxWidth (Css.px 400) ] ]
@@ -57,7 +56,6 @@ example =
                     , choices = []
                     , valueToString = identity
                     , defaultDisplayText = Just "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that?"
-                    , isInError = False
                     }
                     []
                     |> Html.Styled.map ConsoleLog
