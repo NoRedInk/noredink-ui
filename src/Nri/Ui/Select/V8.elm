@@ -6,6 +6,7 @@ module Nri.Ui.Select.V8 exposing
     , hiddenLabel, visibleLabel
     , errorIf, errorMessage
     , custom, nriDescription, id, testId
+    , containerCss, noMargin
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -37,7 +38,8 @@ module Nri.Ui.Select.V8 exposing
 @docs Attribute, defaultDisplayText, autofocus
 @docs hiddenLabel, visibleLabel
 @docs errorIf, errorMessage
-@docs css, custom, nriDescription, id, testId, noMargin
+@docs custom, nriDescription, id, testId
+@docs containerCss, noMargin
 @docs disabled, loading, guidance
 
 -}
@@ -141,6 +143,21 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| Adds CSS to the element containing the input.
+-}
+containerCss : List Css.Style -> Attribute value
+containerCss styles =
+    Attribute <|
+        \config -> { config | containerCss = config.containerCss ++ styles }
+
+
+{-| Remove default spacing from the Input.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | noMarginTop = removeMargin }
+
+
 {-| A single possible choice.
 -}
 type alias Choice value =
@@ -181,6 +198,7 @@ type alias Config value =
     , error : ErrorState
     , hideLabel : Bool
     , noMarginTop : Bool
+    , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
     }
 
@@ -195,6 +213,7 @@ defaultConfig =
     , error = InputErrorInternal.init
     , hideLabel = False
     , noMarginTop = False
+    , containerCss = []
     , custom = []
     }
 
@@ -214,9 +233,15 @@ view label attributes =
     in
     Html.div
         [ css
-            [ Css.position Css.relative
-            , Css.marginTop (Css.px InputStyles.defaultMarginTop)
-            ]
+            ([ Css.position Css.relative
+             , if config.noMarginTop then
+                Css.batch []
+
+               else
+                Css.paddingTop (Css.px InputStyles.defaultMarginTop)
+             ]
+                ++ config.containerCss
+            )
         ]
         [ InputLabelInternal.view
             { for = id_

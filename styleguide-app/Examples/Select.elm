@@ -14,6 +14,7 @@ import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V8 as Select exposing (Choice)
 
@@ -41,23 +42,28 @@ example =
                 |> Html.Styled.fromUnstyled
             , Control.view UpdateAttributes state.attributes
                 |> Html.Styled.fromUnstyled
-            , Html.Styled.code
-                [ css
-                    [ Css.display Css.block
-                    , Css.margin2 (Css.px 20) Css.zero
-                    , Css.whiteSpace Css.preWrap
+            , Html.Styled.div
+                [ css [ Css.displayFlex, Css.alignItems Css.flexStart ]
+                ]
+                [ Html.Styled.code
+                    [ css
+                        [ Css.display Css.block
+                        , Css.margin2 (Css.px 20) Css.zero
+                        , Css.whiteSpace Css.preWrap
+                        , Css.maxWidth (Css.px 500)
+                        ]
                     ]
+                    [ Html.Styled.text <|
+                        "Select.view \""
+                            ++ label
+                            ++ "\""
+                            ++ "\n    [ "
+                            ++ String.join "\n    , " attributesCode
+                            ++ "\n    ] "
+                    ]
+                , Select.view label attributes
+                    |> Html.Styled.map ConsoleLog
                 ]
-                [ Html.Styled.text <|
-                    "Select.view \""
-                        ++ label
-                        ++ "\""
-                        ++ "\n    [ "
-                        ++ String.join "\n    , " attributesCode
-                        ++ "\n    ] "
-                ]
-            , Select.view label attributes
-                |> Html.Styled.map ConsoleLog
             ]
     }
 
@@ -104,14 +110,39 @@ initControls =
                 )
                 (Control.string "Select a tasty tortilla based treat!")
             )
-        |> ControlExtra.listItem "errorIf"
+        |> ControlExtra.optionalListItem "containerCss"
+            (Control.choice
+                [ ( "flex-basis: 300px"
+                  , Control.value
+                        ( "Select.containerCss [ Css.flexBasis (Css.px 300) ]"
+                        , Select.containerCss [ Css.flexBasis (Css.px 300) ]
+                        )
+                  )
+                , ( "background-color: lichen"
+                  , Control.value
+                        ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
+                        , Select.containerCss [ Css.backgroundColor Colors.lichen ]
+                        )
+                  )
+                ]
+            )
+        |> ControlExtra.optionalListItem "noMargin"
+            (Control.map
+                (\bool ->
+                    ( "Select.noMargin " ++ Debug.toString bool
+                    , Select.noMargin bool
+                    )
+                )
+                (Control.bool True)
+            )
+        |> ControlExtra.optionalListItem "errorIf"
             (Control.map
                 (\bool ->
                     ( "Select.errorIf " ++ Debug.toString bool
                     , Select.errorIf bool
                     )
                 )
-                (Control.bool False)
+                (Control.bool True)
             )
         |> ControlExtra.optionalListItem "errorMessage"
             (Control.map
