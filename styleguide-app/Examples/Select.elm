@@ -93,6 +93,8 @@ initControls =
                 )
                 initChoices
             )
+        |> ControlExtra.optionalListItem "hiddenLabel"
+            (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
         |> ControlExtra.optionalListItem "defaultDisplayText"
             (Control.map
                 (\str ->

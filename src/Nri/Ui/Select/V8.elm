@@ -3,8 +3,9 @@ module Nri.Ui.Select.V8 exposing
     , Choice, choices
     , value
     , Attribute, defaultDisplayText
-    , custom, nriDescription, id, testId
+    , hiddenLabel, visibleLabel
     , errorIf, errorMessage
+    , custom, nriDescription, id, testId
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -33,9 +34,11 @@ module Nri.Ui.Select.V8 exposing
 
 ### Attributes
 
-@docs Attribute, defaultDisplayText, hiddenLabel, autofocus
+@docs Attribute, defaultDisplayText, autofocus
+@docs hiddenLabel, visibleLabel
+@docs errorIf, errorMessage
 @docs css, custom, nriDescription, id, testId, noMargin
-@docs disabled, loading, errorIf, errorMessage, guidance
+@docs disabled, loading, guidance
 
 -}
 
@@ -45,6 +48,7 @@ import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorInternal exposing (ErrorState)
+import InputLabelInternal
 import Json.Decode exposing (Decoder)
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
@@ -53,7 +57,7 @@ import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
+import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Util
 import SolidColor
@@ -87,6 +91,20 @@ and the given error message will be shown.
 errorMessage : Maybe String -> Attribute value
 errorMessage =
     Attribute << InputErrorInternal.setErrorMessage
+
+
+{-| Hides the visible label. (There will still be an invisible label for screen readers.)
+-}
+hiddenLabel : Attribute value
+hiddenLabel =
+    Attribute (\config -> { config | hideLabel = True })
+
+
+{-| Default behavior.
+-}
+visibleLabel : Attribute value
+visibleLabel =
+    Attribute (\config -> { config | hideLabel = False })
 
 
 {-| Set a custom ID for this text input and label. If you don't set this,
@@ -161,6 +179,8 @@ type alias Config value =
     , valueToString : Maybe (value -> String)
     , defaultDisplayText : Maybe String
     , error : ErrorState
+    , hideLabel : Bool
+    , noMarginTop : Bool
     , custom : List (Html.Attribute Never)
     }
 
@@ -173,6 +193,8 @@ defaultConfig =
     , valueToString = Nothing
     , defaultDisplayText = Nothing
     , error = InputErrorInternal.init
+    , hideLabel = False
+    , noMarginTop = False
     , custom = []
     }
 
@@ -193,17 +215,15 @@ view label attributes =
     Html.div
         [ css
             [ Css.position Css.relative
-            , Css.marginTop (Css.px defaultMarginTop)
+            , Css.marginTop (Css.px InputStyles.defaultMarginTop)
             ]
         ]
-        [ Html.label
-            [ Attributes.for id_
-            , css
-                [ InputStyles.label InputStyles.Standard isInError_
-                , Css.top (Css.px -defaultMarginTop)
-                ]
-            ]
-            [ Html.text label ]
+        [ InputLabelInternal.view
+            { for = id_
+            , label = label
+            , theme = InputStyles.Standard
+            }
+            config
         , viewSelect
             { choices = config.choices
             , current = config.value
