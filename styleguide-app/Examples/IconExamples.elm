@@ -15,7 +15,6 @@ preview icons =
         [ css
             [ Css.displayFlex
             , Css.justifyContent Css.spaceBetween
-            , Css.marginTop (Css.px 8)
             , Css.color Colors.gray45
             ]
         ]

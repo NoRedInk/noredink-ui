@@ -112,6 +112,7 @@ preview_ navigate example =
         , Container.html
             (ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)
+                , ClickableText.css [ Css.marginBottom (Css.px 10) ]
                 ]
                 :: List.map (Html.map never) example.preview
             )
