@@ -7,9 +7,11 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
 
@@ -94,7 +96,7 @@ preview =
 preview_ : Example state msg -> Html msg
 preview_ example =
     Container.view
-        [ Container.html [ exampleName example ]
+        [ Container.html [ exampleLink example ]
         ]
 
 
@@ -121,14 +123,9 @@ view_ example =
                 , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
-            [ exampleName example
-            , String.replace "." "-" (fullName example)
-                |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                |> viewLink "Docs"
-            , String.replace "." "/" (fullName example)
-                ++ ".elm"
-                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
-                |> viewLink "Source"
+            [ exampleLink example
+            , docsLink example
+            , srcLink example
             ]
         , KeyboardSupport.view example.keyboardSupport
         , Html.div
@@ -144,34 +141,43 @@ view_ example =
         ]
 
 
-exampleName : Example state msg -> Html msg
-exampleName example =
-    Html.styled Html.h2
-        [ color navy
-        , fontSize (px 20)
-        , marginTop zero
-        , marginBottom zero
-        , Fonts.baseFont
-        ]
-        []
-        [ Html.a
-            [ Attributes.href ("#/doodad/" ++ example.name)
-            , Attributes.class "module-example__doodad-link"
-            , -- this data attribute is used to name the Percy screenshots
-              String.replace "." "-" example.name
-                |> Attributes.attribute "data-percy-name"
+exampleLink : Example state msg -> Html msg
+exampleLink example =
+    Heading.h2 []
+        [ ClickableText.link (fullName example)
+            [ ClickableText.href ("#/doodad/" ++ example.name)
+            , ClickableText.large
+            , ClickableText.custom
+                [ -- this data attribute is used to name the Percy screenshots
+                  String.replace "." "-" example.name
+                    |> Attributes.attribute "data-percy-name"
+                ]
             ]
-            [ Html.text (fullName example) ]
         ]
 
 
-viewLink : String -> String -> Html msg
-viewLink text href =
-    Html.a
-        ([ Attributes.href href
-         , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
-         ]
-            ++ targetBlank
-        )
-        [ Html.text text
+docsLink : Example state msg -> Html msg
+docsLink example =
+    let
+        link =
+            "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
+                ++ String.replace "." "-" (fullName example)
+    in
+    ClickableText.link "Docs"
+        [ ClickableText.linkExternal link
+        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
+        ]
+
+
+srcLink : Example state msg -> Html msg
+srcLink example =
+    let
+        link =
+            String.replace "." "/" (fullName example)
+                ++ ".elm"
+                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
+    in
+    ClickableText.link "Source"
+        [ ClickableText.linkExternal link
+        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
         ]
