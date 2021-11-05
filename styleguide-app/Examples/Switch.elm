@@ -31,6 +31,7 @@ example =
     , state = True
     , update = \(Switch new) _ -> ( new, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view =
         \interactiveIsOn ->
             [ Heading.h3 [] [ Html.text "Interactive" ]

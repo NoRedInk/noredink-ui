@@ -22,6 +22,7 @@ type alias Example state msg =
     , state : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
+    , preview : List (Html Never)
     , view : state -> List (Html msg)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
@@ -52,6 +53,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 Nothing ->
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
+    , preview = []
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
@@ -80,6 +82,7 @@ wrapState wrapState_ unwrapState example =
         unwrapState
             >> Maybe.map example.subscriptions
             >> Maybe.withDefault Sub.none
+    , preview = []
     , view =
         unwrapState
             >> Maybe.map example.view
@@ -107,10 +110,11 @@ preview_ navigate example =
             ]
         , Container.custom [ Events.onClick (navigate (exampleHref example)) ]
         , Container.html
-            [ ClickableText.link example.name
+            (ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)
                 ]
-            ]
+                :: List.map (Html.map never) example.preview
+            )
         ]
 
 

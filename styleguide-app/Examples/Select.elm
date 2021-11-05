@@ -26,6 +26,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , keyboardSupport = []
+    , preview = []
     , view =
         \state ->
             [ Html.Styled.label

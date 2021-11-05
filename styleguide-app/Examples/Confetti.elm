@@ -33,6 +33,7 @@ example =
                 [ Browser.Events.onResize WindowResized
                 , Confetti.subscriptions ConfettiMsg state
                 ]
+    , preview = []
     , view =
         \state ->
             [ Button.button "Launch confetti!"

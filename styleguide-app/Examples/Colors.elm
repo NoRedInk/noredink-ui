@@ -41,6 +41,7 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view =
         \_ ->
             [ [ ( "gray20", Colors.gray20, "Main text" )

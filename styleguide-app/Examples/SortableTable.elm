@@ -41,6 +41,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view =
         \{ sortState } ->
             let

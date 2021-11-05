@@ -125,6 +125,7 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
+    , preview = []
     , view =
         \state ->
             let

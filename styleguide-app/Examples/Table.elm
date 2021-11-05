@@ -37,6 +37,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Tables, Layout ]
     , keyboardSupport = []
+    , preview = []
     , view =
         \() ->
             let

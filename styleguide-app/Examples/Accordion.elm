@@ -38,6 +38,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view = view
     , categories = [ Layout ]
     , keyboardSupport =

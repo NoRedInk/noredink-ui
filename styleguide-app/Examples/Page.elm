@@ -62,6 +62,7 @@ example =
     , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view =
         \model ->
             let

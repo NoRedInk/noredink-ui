@@ -35,5 +35,6 @@ example =
     , state = {}
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view = \state -> [ Divider.view "Dividing Line" ]
     }

@@ -30,6 +30,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview = []
     , view =
         \state ->
             let
