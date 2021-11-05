@@ -36,7 +36,12 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ DisclosureIndicator.medium [] False
+        , DisclosureIndicator.medium [] True
+        , DisclosureIndicator.large [] False
+        , DisclosureIndicator.large [] True
+        ]
     , view =
         \state ->
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
