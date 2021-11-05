@@ -41,7 +41,12 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ ( "green", Colors.green )
+        , ( "purple", Colors.purple )
+        , ( "mustard", Colors.mustard )
+        ]
+            |> List.map viewPreviewSwatch
     , view =
         \_ ->
             [ [ ( "gray20", Colors.gray20, "Main text" )
@@ -116,6 +121,24 @@ example =
                 |> viewColors
             ]
     }
+
+
+viewPreviewSwatch : ( String, Css.Color ) -> Html.Html msg
+viewPreviewSwatch ( name, color ) =
+    Html.div
+        [ Attributes.css
+            [ Css.textAlign Css.center
+            , Css.padding2 (Css.px 8) Css.zero
+            , Css.margin2 (Css.px 4) Css.zero
+            , Css.borderRadius (Css.px 4)
+            , Css.backgroundColor color
+            , Nri.Ui.Colors.Extra.fromCssColor color
+                |> highContrast
+                |> Nri.Ui.Colors.Extra.toCssColor
+                |> Css.color
+            ]
+        ]
+        [ Html.text name ]
 
 
 viewColors : List ColorExample -> Html.Html msg
