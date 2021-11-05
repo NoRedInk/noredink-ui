@@ -7,8 +7,9 @@ module Examples.Fonts exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import Css exposing (Style)
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Fonts.V1 as Fonts
@@ -35,7 +36,12 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ ( "baseFont", Fonts.baseFont )
+        , ( "quizFont", Fonts.quizFont )
+        , ( "ugFont", Fonts.ugFont )
+        ]
+            |> List.map viewPreview
     , view =
         \_ ->
             [ Heading.h3 [] [ Html.text "baseFont" ]
@@ -49,3 +55,20 @@ example =
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
             ]
     }
+
+
+viewPreview : ( String, Style ) -> Html msg
+viewPreview ( name, font ) =
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.spaceBetween
+            , font
+            , Css.fontSize (Css.px 14)
+            ]
+        ]
+        [ Html.p [ css [ Css.margin2 (Css.px 8) Css.zero ] ]
+            [ Html.text name ]
+        , Html.p [ css [ Css.margin2 (Css.px 8) Css.zero ] ]
+            [ Html.text "AaBbCc" ]
+        ]
