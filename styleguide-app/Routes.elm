@@ -22,7 +22,7 @@ toString route_ =
             "#/category/" ++ Debug.toString c
 
         All ->
-            ""
+            "#/"
 
 
 route : Parser Route

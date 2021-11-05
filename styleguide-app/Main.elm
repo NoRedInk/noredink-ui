@@ -13,14 +13,13 @@ import Examples
 import Html.Attributes
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.Page.V3 as Page
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
 import Task
@@ -108,7 +107,10 @@ update action model =
             )
 
         ChangeRoute route ->
-            ( model, Browser.Navigation.pushUrl model.navigationKey (Routes.toString route) )
+            ( model
+            , Browser.Navigation.pushUrl model.navigationKey
+                (Routes.toString route)
+            )
 
         SkipToMainContent ->
             ( model
@@ -138,15 +140,43 @@ view_ model =
     let
         examples filterBy =
             List.filter (\m -> filterBy m) (Dict.values model.moduleStates)
-
-        mainContentHeader heading =
-            Heading.h1
-                [ Heading.customAttr (id "maincontent")
-                , Heading.customAttr (tabindex -1)
-                , Heading.css [ marginBottom (px 30) ]
-                ]
-                [ Html.text heading ]
     in
+    case model.route of
+        Routes.Doodad doodad ->
+            case List.head (examples (\m -> m.name == doodad)) of
+                Just example ->
+                    Html.main_ []
+                        [ Example.view model.previousRoute example
+                            |> Html.map (UpdateModuleStates example.name)
+                        ]
+
+                Nothing ->
+                    Page.notFound
+                        { link = ChangeRoute Routes.All
+                        , recoveryText = Page.ReturnTo "Component Library"
+                        }
+
+        Routes.Category category ->
+            withSideNav model.route
+                [ mainContentHeader (Category.forDisplay category)
+                , examples
+                    (\doodad ->
+                        Set.memberOf
+                            (Set.fromList Category.sorter doodad.categories)
+                            category
+                    )
+                    |> viewPreviews (Category.forId category)
+                ]
+
+        Routes.All ->
+            withSideNav model.route
+                [ mainContentHeader "All"
+                , viewPreviews "all" (examples (\_ -> True))
+                ]
+
+
+withSideNav : Route -> List (Html Msg) -> Html Msg
+withSideNav currentRoute content =
     Html.div
         [ css
             [ displayFlex
@@ -154,7 +184,7 @@ view_ model =
             , alignItems flexStart
             ]
         ]
-        [ navigation model.route
+        [ navigation currentRoute
         , Html.main_
             [ css
                 [ flexGrow (int 1)
@@ -162,44 +192,18 @@ view_ model =
                 , Css.minHeight (Css.vh 100)
                 ]
             ]
-            (case model.route of
-                Routes.Doodad doodad ->
-                    case List.head (examples (\m -> m.name == doodad)) of
-                        Just example ->
-                            [ mainContentHeader ("Viewing " ++ doodad ++ " doodad only")
-                            , Html.div [ id (String.replace "." "-" example.name) ]
-                                [ Example.view example
-                                    |> Html.map (UpdateModuleStates example.name)
-                                ]
-                            , ClickableSvg.link ("Close " ++ example.name ++ " example")
-                                UiIcon.x
-                                [ ClickableSvg.href
-                                    (Maybe.withDefault Routes.All model.previousRoute
-                                        |> Routes.toString
-                                    )
-                                ]
-                            ]
-
-                        Nothing ->
-                            [ Html.text <| "Oops! We couldn't find " ++ doodad ]
-
-                Routes.Category category ->
-                    [ mainContentHeader (Category.forDisplay category)
-                    , examples
-                        (\doodad ->
-                            Set.memberOf
-                                (Set.fromList Category.sorter doodad.categories)
-                                category
-                        )
-                        |> viewPreviews (Category.forId category)
-                    ]
-
-                Routes.All ->
-                    [ mainContentHeader "All"
-                    , viewPreviews "all" (examples (\_ -> True))
-                    ]
-            )
+            content
         ]
+
+
+mainContentHeader : String -> Html msg
+mainContentHeader heading =
+    Heading.h1
+        [ Heading.customAttr (id "maincontent")
+        , Heading.customAttr (tabindex -1)
+        , Heading.css [ marginBottom (px 30) ]
+        ]
+        [ Html.text heading ]
 
 
 viewPreviews : String -> List (Example state msg) -> Html Msg

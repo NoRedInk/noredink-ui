@@ -8,12 +8,14 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors exposing (..)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
 
 
@@ -127,18 +129,19 @@ preview_ navigate example =
         ]
 
 
-view : Example state msg -> Html msg
+view : Maybe Route -> Example state msg -> Html msg
 view =
-    Lazy.lazy view_
+    Lazy.lazy2 view_
 
 
-view_ : Example state msg -> Html msg
-view_ example =
+view_ : Maybe Route -> Example state msg -> Html msg
+view_ previousRoute example =
     Html.div
         [ -- this class makes the axe accessibility checking output easier to parse
           String.replace "." "-" example.name
             |> (++) "module-example__"
             |> Attributes.class
+        , Attributes.id (String.replace "." "-" example.name)
         ]
         [ Html.div
             [ Attributes.css
@@ -155,16 +158,14 @@ view_ example =
             , srcLink example
             ]
         , KeyboardSupport.view example.keyboardSupport
-        , Html.div
-            [ Attributes.css
-                [ padding (px 40)
-                , boxShadow5 zero (px 2) (px 4) zero (rgba 0 0 0 0.25)
-                , border3 (px 1) solid gray92
-                , borderRadius (px 20)
-                , margin3 (px 10) zero (px 40)
-                ]
+        , Html.div [] (example.view example.state)
+        , ClickableSvg.link ("Close " ++ example.name ++ " example")
+            UiIcon.x
+            [ ClickableSvg.href
+                (Maybe.withDefault Routes.All previousRoute
+                    |> Routes.toString
+                )
             ]
-            (example.view example.state)
         ]
 
 
