@@ -130,12 +130,36 @@ preview_ navigate example =
 
 
 view : Maybe Route -> Example state msg -> Html msg
-view =
-    Lazy.lazy2 view_
+view previousRoute example =
+    Container.view
+        [ Container.pillow
+        , Container.css
+            [ Css.position Css.relative
+            , Css.margin (Css.px 10)
+            , Css.minHeight (Css.calc (Css.vh 100) Css.minus (Css.px 20))
+            , Css.boxSizing Css.borderBox
+            ]
+        , Container.html
+            [ Lazy.lazy view_ example
+            , ClickableSvg.link ("Close " ++ example.name ++ " example")
+                UiIcon.x
+                [ ClickableSvg.href
+                    (Maybe.withDefault Routes.All previousRoute
+                        |> Routes.toString
+                    )
+                , ClickableSvg.small
+                , ClickableSvg.css
+                    [ Css.position Css.absolute
+                    , Css.top (Css.px 15)
+                    , Css.right (Css.px 15)
+                    ]
+                ]
+            ]
+        ]
 
 
-view_ : Maybe Route -> Example state msg -> Html msg
-view_ previousRoute example =
+view_ : Example state msg -> Html msg
+view_ example =
     Html.div
         [ -- this class makes the axe accessibility checking output easier to parse
           String.replace "." "-" example.name
@@ -159,13 +183,6 @@ view_ previousRoute example =
             ]
         , KeyboardSupport.view example.keyboardSupport
         , Html.div [] (example.view example.state)
-        , ClickableSvg.link ("Close " ++ example.name ++ " example")
-            UiIcon.x
-            [ ClickableSvg.href
-                (Maybe.withDefault Routes.All previousRoute
-                    |> Routes.toString
-                )
-            ]
         ]
 
 
