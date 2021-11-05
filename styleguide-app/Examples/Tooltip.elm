@@ -33,7 +33,31 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ Html.div
+            [ css
+                [ Css.marginTop (Css.px 60)
+                , Css.alignSelf Css.center
+                ]
+            ]
+            [ Tooltip.view
+                { id = "preview-tooltip"
+                , trigger =
+                    \attributes ->
+                        ClickableSvg.button "example-preview-tooltip-icon"
+                            UiIcon.gear
+                            [ ClickableSvg.custom attributes
+                            , ClickableSvg.small
+                            ]
+                }
+                [ Tooltip.plaintext "This is a tooltip."
+                , Tooltip.open True
+                , Tooltip.onTop
+                , Tooltip.smallPadding
+                , Tooltip.fitToContent
+                ]
+            ]
+        ]
     , view = view
     }
 
