@@ -1,6 +1,6 @@
 module Main exposing (init, main)
 
-import Accessibility.Styled as Html exposing (Html, img, text)
+import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -10,10 +10,10 @@ import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
-import Html as RootHtml
 import Html.Attributes
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
@@ -143,11 +143,16 @@ view_ model =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , minHeight (vh 100)
             ]
         ]
         [ navigation model.route
-        , Html.main_ [ css [ flexGrow (int 1), sectionStyles ] ]
+        , Html.main_
+            [ css
+                [ flexGrow (int 1)
+                , margin2 (px 40) zero
+                , Css.minHeight (Css.vh 100)
+                ]
+            ]
             (case model.route of
                 Routes.Doodad doodad ->
                     case List.head (examples (\m -> m.name == doodad)) of
@@ -207,21 +212,21 @@ navigation route =
                     False
 
         link active hash displayName =
-            Html.a
-                [ css
-                    [ backgroundColor transparent
-                    , borderStyle none
-                    , textDecoration none
+            ClickableText.link displayName
+                [ ClickableText.small
+                , ClickableText.css
+                    [ Css.color Colors.navy
+                    , Css.display Css.block
+                    , Css.padding (Css.px 8)
+                    , Css.borderRadius (Css.px 8)
                     , if active then
-                        color Colors.navy
+                        Css.backgroundColor Colors.glacier
 
                       else
-                        color Colors.azure
-                    , Fonts.baseFont
+                        Css.batch []
                     ]
-                , Attributes.href hash
+                , ClickableText.href hash
                 ]
-                [ Html.text displayName ]
 
         navLink category =
             link (isActive category)
@@ -231,7 +236,7 @@ navigation route =
         toNavLi element =
             Html.li
                 [ css
-                    [ margin2 (px 10) zero
+                    [ margin zero
                     , listStyle none
                     , textDecoration none
                     ]
@@ -276,18 +281,12 @@ navigation route =
             , id "skip"
             ]
             [ Html.text "Skip to main content" ]
-        , Heading.h4 [] [ Html.text "Categories" ]
         , (link (route == Routes.All) "#/" "All"
             :: List.map navLink Category.all
           )
             |> List.map toNavLi
             |> Html.ul
-                [ css [ margin4 zero zero (px 40) zero, padding zero ]
+                [ css [ margin zero, padding zero ]
                 , id "categories"
                 ]
         ]
-
-
-sectionStyles : Css.Style
-sectionStyles =
-    Css.batch [ margin2 (px 40) zero ]
