@@ -34,16 +34,12 @@ example =
     , preview =
         [ Switch.view
             [ Switch.label (Html.text "Toggle On")
-
-            -- TODO
-            -- Switch.custom [ Key.tabbable False ]
+            , Switch.custom [ Key.tabbable False ]
             ]
             False
         , Switch.view
             [ Switch.label (Html.text "Toggle Off")
-
-            -- TODO
-            -- Switch.custom [ Key.tabbable False ]
+            , Switch.custom [ Key.tabbable False ]
             ]
             True
         ]
