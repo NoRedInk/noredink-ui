@@ -17,6 +17,7 @@ import Html.Styled.Attributes exposing (css)
 import Http
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Page.V3 as Page exposing (RecoveryText(..))
 
@@ -62,7 +63,32 @@ example =
     , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ -- faking a mini version of the Page component to give styleguide users a sense of what the
+          -- component might look like
+          Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.flexDirection Css.column
+                , Css.backgroundColor Colors.white
+                , Css.borderRadius (Css.px 4)
+                , Css.padding (Css.px 20)
+                ]
+            ]
+            [ Html.div [ css [ Css.fontSize (Css.px 40) ] ] [ Html.text "😵" ]
+            , Html.p
+                [ css
+                    [ Css.color Colors.navy
+                    , Fonts.baseFont
+                    , Css.fontWeight Css.bold
+                    , Css.textAlign Css.center
+                    , Css.margin Css.zero
+                    ]
+                ]
+                [ Html.text "There was a problem!" ]
+            ]
+        ]
     , view =
         \model ->
             let

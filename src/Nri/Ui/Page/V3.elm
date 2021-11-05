@@ -23,7 +23,7 @@ import Nri.Ui.Html.V3 exposing (viewIf)
 
 {-| The default page information is for the button
 which will direct the user back to the main page of
-the SPA. Specify it's name and the message which will
+the SPA. Specify its name and the message which will
 navigate to the page.
 -}
 type alias DefaultPage msg =
