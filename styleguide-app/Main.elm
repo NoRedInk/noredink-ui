@@ -13,12 +13,14 @@ import Examples
 import Html.Attributes
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
 import Task
@@ -40,6 +42,7 @@ main =
 type alias Model =
     { -- Global UI
       route : Route
+    , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
     }
@@ -48,6 +51,7 @@ type alias Model =
 init : () -> Url -> Key -> ( Model, Cmd Msg )
 init () url key =
     ( { route = Routes.fromLocation url
+      , previousRoute = Nothing
       , moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
@@ -61,7 +65,7 @@ type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
-    | ChangeUrl String
+    | ChangeRoute Route
     | SkipToMainContent
     | NoOp
 
@@ -96,10 +100,15 @@ update action model =
                     ( model, Browser.Navigation.load loc )
 
         OnUrlChange route ->
-            ( { model | route = Routes.fromLocation route }, Cmd.none )
+            ( { model
+                | route = Routes.fromLocation route
+                , previousRoute = Just model.route
+              }
+            , Cmd.none
+            )
 
-        ChangeUrl url ->
-            ( model, Browser.Navigation.pushUrl model.navigationKey url )
+        ChangeRoute route ->
+            ( model, Browser.Navigation.pushUrl model.navigationKey (Routes.toString route) )
 
         SkipToMainContent ->
             ( model
@@ -162,6 +171,13 @@ view_ model =
                                 [ Example.view example
                                     |> Html.map (UpdateModuleStates example.name)
                                 ]
+                            , ClickableSvg.link ("Close " ++ example.name ++ " example")
+                                UiIcon.x
+                                [ ClickableSvg.href
+                                    (Maybe.withDefault Routes.All model.previousRoute
+                                        |> Routes.toString
+                                    )
+                                ]
                             ]
 
                         Nothing ->
@@ -189,7 +205,7 @@ view_ model =
 viewPreviews : String -> List (Example state msg) -> Html Msg
 viewPreviews containerId examples =
     examples
-        |> List.map (\example -> Example.preview ChangeUrl example)
+        |> List.map (\example -> Example.preview ChangeRoute example)
         |> Html.div
             [ id containerId
             , css
@@ -230,7 +246,7 @@ navigation route =
 
         navLink category =
             link (isActive category)
-                ("#/category/" ++ Debug.toString category)
+                (Routes.toString (Routes.Category category))
                 (Category.forDisplay category)
 
         toNavLi element =

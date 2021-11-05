@@ -14,6 +14,7 @@ import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
+import Routes exposing (Route)
 
 
 type alias Example state msg =
@@ -92,12 +93,12 @@ wrapState wrapState_ unwrapState example =
     }
 
 
-preview : (String -> msg2) -> Example state msg -> Html msg2
+preview : (Route -> msg2) -> Example state msg -> Html msg2
 preview navigate =
     Lazy.lazy (preview_ navigate)
 
 
-preview_ : (String -> msg2) -> Example state msg -> Html msg2
+preview_ : (Route -> msg2) -> Example state msg -> Html msg2
 preview_ navigate example =
     Container.view
         [ Container.gray
@@ -108,7 +109,7 @@ preview_ navigate example =
                 , Css.cursor Css.pointer
                 ]
             ]
-        , Container.custom [ Events.onClick (navigate (exampleHref example)) ]
+        , Container.custom [ Events.onClick (navigate (Routes.Doodad example.name)) ]
         , Container.html
             (ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)
@@ -169,7 +170,7 @@ view_ example =
 
 exampleHref : Example state msg -> String
 exampleHref example =
-    "#/doodad/" ++ example.name
+    Routes.toString (Routes.Doodad example.name)
 
 
 exampleLink : Example state msg -> Html msg

@@ -23,6 +23,7 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
 
 
@@ -117,9 +118,14 @@ update msg model =
             )
 
 
+exampleName : String
+exampleName =
+    "Tabs"
+
+
 example : Example State Msg
 example =
-    { name = "Tabs"
+    { name = exampleName
     , version = 7
     , categories = [ Layout ]
     , keyboardSupport =
@@ -168,7 +174,7 @@ allTabs openTooltipId labelledBy =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.spaHref "/#/doodad/Tabs"
+        ([ Tabs.spaHref <| Routes.toString (Routes.Doodad exampleName)
          , Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"

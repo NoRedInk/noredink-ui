@@ -1,4 +1,4 @@
-module Routes exposing (Route(..), fromLocation)
+module Routes exposing (Route(..), fromLocation, toString)
 
 import Browser.Navigation as Navigation
 import Category
@@ -10,6 +10,19 @@ type Route
     = Doodad String
     | Category Category.Category
     | All
+
+
+toString : Route -> String
+toString route_ =
+    case route_ of
+        Doodad exampleName ->
+            "#/doodad/" ++ exampleName
+
+        Category c ->
+            "#/category/" ++ Debug.toString c
+
+        All ->
+            ""
 
 
 route : Parser Route
