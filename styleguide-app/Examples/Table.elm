@@ -37,7 +37,29 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Tables, Layout ]
     , keyboardSupport = []
-    , preview = []
+    , preview =
+        [ Table.view
+            [ Table.string
+                { header = "A"
+                , value = .a
+                , width = px 50
+                , cellStyles = always []
+                }
+            , Table.string
+                { header = "B"
+                , value = .b
+                , width = px 50
+                , cellStyles = always []
+                }
+            ]
+            [ { a = "Row 1 A"
+              , b = "Row 1 B"
+              }
+            , { a = "Row 2 A"
+              , b = "Row 2 B"
+              }
+            ]
+        ]
     , view =
         \() ->
             let
