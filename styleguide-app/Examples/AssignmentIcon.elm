@@ -35,11 +35,18 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
-            [ AssignmentIcon.diagnostic
-            , AssignmentIcon.practice
-            , AssignmentIcon.quiz
-            , AssignmentIcon.quickWrite
-            , AssignmentIcon.guidedDraft
+            [ AssignmentIcon.planningDiagnosticCircled
+            , AssignmentIcon.unitDiagnosticCircled
+            , AssignmentIcon.practiceCircled
+            , AssignmentIcon.quizCircled
+            , AssignmentIcon.quickWriteCircled
+            , AssignmentIcon.guidedDraftCircled
+            , AssignmentIcon.peerReviewCircled
+            , AssignmentIcon.selfReviewCircled
+            , AssignmentIcon.startPrimary
+            , AssignmentIcon.assessment
+            , AssignmentIcon.standards
+            , AssignmentIcon.writing
             ]
     , view =
         \_ ->
