@@ -35,7 +35,12 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ Heading.h1 [] [ Html.text "h1" ]
+        , Heading.h2 [] [ Html.text "h2" ]
+        , Heading.h3 [] [ Html.text "h3" ]
+        , Heading.h4 [] [ Html.text "h4" ]
+        ]
     , view =
         \_ ->
             [ Heading.h1 [] [ Html.text "This is the main page heading." ]
