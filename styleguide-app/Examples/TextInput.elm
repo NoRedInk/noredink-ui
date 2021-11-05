@@ -32,7 +32,13 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ TextInput.view "Text Input" []
+        , TextInput.view "Errored"
+            [ TextInput.value "invalid content"
+            , TextInput.errorIf True
+            ]
+        ]
     , view =
         \state ->
             let
