@@ -33,7 +33,14 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        IconExamples.preview
+            [ UiIcon.seeMore
+            , UiIcon.copyToClipboard
+            , UiIcon.speechBalloon
+            , UiIcon.arrowPointingRight
+            , UiIcon.checkmark
+            ]
     , view =
         \_ ->
             [ IconExamples.view "Interface"

@@ -33,7 +33,14 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        IconExamples.preview
+            [ AssignmentIcon.diagnostic
+            , AssignmentIcon.practice
+            , AssignmentIcon.quiz
+            , AssignmentIcon.quickWrite
+            , AssignmentIcon.guidedDraft
+            ]
     , view =
         \_ ->
             [ IconExamples.view "Diagnostic"

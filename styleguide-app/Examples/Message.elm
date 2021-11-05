@@ -177,7 +177,11 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ Message.view [ Message.plaintext "Tiny tip" ]
+        , Message.view [ Message.success, Message.plaintext "Tiny success" ]
+        , Message.view [ Message.error, Message.plaintext "Tiny error" ]
+        ]
     , view =
         \state ->
             let

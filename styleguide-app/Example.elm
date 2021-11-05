@@ -53,7 +53,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 Nothing ->
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
-    , preview = []
+    , preview = example.preview
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
@@ -82,7 +82,7 @@ wrapState wrapState_ unwrapState example =
         unwrapState
             >> Maybe.map example.subscriptions
             >> Maybe.withDefault Sub.none
-    , preview = []
+    , preview = example.preview
     , view =
         unwrapState
             >> Maybe.map example.view
