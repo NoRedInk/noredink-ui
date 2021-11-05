@@ -18,11 +18,15 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -125,7 +129,50 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
-    , preview = []
+    , preview =
+        [ -- faking a mini version of the Modal component to give styleguide users a sense of what the
+          -- component might look like
+          div
+            [ css
+                [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
+                , Css.borderRadius (Css.px 4)
+                , Css.padding2 (Css.px 25) Css.zero
+                , Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.center
+                ]
+            ]
+            [ div
+                [ css
+                    [ Css.backgroundColor Colors.white
+                    , Css.padding (Css.px 10)
+                    , Css.borderRadius (Css.px 10)
+                    , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
+                    , Css.textAlign Css.center
+                    , Css.color Colors.navy
+                    , Fonts.baseFont
+                    , Css.margin Css.auto
+                    , Css.width (Css.px 100)
+                    , Css.height (Css.px 60)
+                    , Css.fontSize (Css.px 10)
+                    , Css.fontWeight Css.bold
+                    , Css.position Css.relative
+                    ]
+                ]
+                [ text "Modal"
+                , ClickableSvg.button "Close"
+                    UiIcon.x
+                    [ ClickableSvg.exactWidth 10
+                    , ClickableSvg.exactHeight 10
+                    , ClickableSvg.css
+                        [ Css.position absolute
+                        , Css.top (Css.px 10)
+                        , Css.right (Css.px 10)
+                        ]
+                    ]
+                ]
+            ]
+        ]
     , view =
         \state ->
             let
