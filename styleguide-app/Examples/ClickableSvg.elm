@@ -36,7 +36,11 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ ClickableSvg.link "ClickableSvg small" UiIcon.link [ ClickableSvg.small ]
+        , ClickableSvg.link "ClickableSvg medium" UiIcon.link [ ClickableSvg.medium ]
+        , ClickableSvg.link "ClickableSvg large" UiIcon.link [ ClickableSvg.large ]
+        ]
     , view =
         \state ->
             let
