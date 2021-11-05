@@ -166,26 +166,33 @@ view_ model =
                                 (Set.fromList Category.sorter doodad.categories)
                                 category
                         )
-                        |> List.map
-                            (\example ->
-                                Example.preview example
-                                    |> Html.map (UpdateModuleStates example.name)
-                            )
-                        |> Html.div [ id (Category.forId category) ]
+                        |> viewPreviews (Category.forId category)
                     ]
 
                 Routes.All ->
                     [ mainContentHeader "All"
-                    , examples (\_ -> True)
-                        |> List.map
-                            (\example ->
-                                Example.preview example
-                                    |> Html.map (UpdateModuleStates example.name)
-                            )
-                        |> Html.div []
+                    , viewPreviews "all" (examples (\_ -> True))
                     ]
             )
         ]
+
+
+viewPreviews : String -> List (Example state Examples.Msg) -> Html Msg
+viewPreviews containerId examples =
+    examples
+        |> List.map
+            (\example ->
+                Example.preview example
+                    |> Html.map (UpdateModuleStates example.name)
+            )
+        |> Html.div
+            [ id containerId
+            , css
+                [ Css.displayFlex
+                , Css.flexWrap Css.wrap
+                , Css.property "gap" "10px"
+                ]
+            ]
 
 
 navigation : Route -> Html Msg

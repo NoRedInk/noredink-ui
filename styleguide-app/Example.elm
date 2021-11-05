@@ -8,7 +8,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Colors.V1 as Colors exposing (..)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
@@ -96,7 +96,19 @@ preview =
 preview_ : Example state msg -> Html msg
 preview_ example =
     Container.view
-        [ Container.html [ exampleLink example ]
+        [ Container.gray
+        , Container.css
+            [ Css.flexBasis (Css.px 150)
+            , Css.hover
+                [ Css.backgroundColor Colors.glacier
+                , Css.cursor Css.pointer
+                ]
+            ]
+        , Container.html
+            [ ClickableText.link example.name
+                [ ClickableText.href (exampleHref example)
+                ]
+            ]
         ]
 
 
@@ -141,11 +153,16 @@ view_ example =
         ]
 
 
+exampleHref : Example state msg -> String
+exampleHref example =
+    "#/doodad/" ++ example.name
+
+
 exampleLink : Example state msg -> Html msg
 exampleLink example =
     Heading.h2 []
         [ ClickableText.link (fullName example)
-            [ ClickableText.href ("#/doodad/" ++ example.name)
+            [ ClickableText.href (exampleHref example)
             , ClickableText.large
             , ClickableText.custom
                 [ -- this data attribute is used to name the Percy screenshots
