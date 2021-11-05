@@ -32,7 +32,20 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ ClickableText.link "Small"
+            [ ClickableText.icon UiIcon.link
+            , ClickableText.small
+            ]
+        , ClickableText.link "Medium"
+            [ ClickableText.icon UiIcon.link
+            , ClickableText.medium
+            ]
+        , ClickableText.link "Large"
+            [ ClickableText.icon UiIcon.link
+            , ClickableText.large
+            ]
+        ]
     , view = \state -> [ viewExamples state ]
     , categories = [ Buttons ]
     , keyboardSupport = []

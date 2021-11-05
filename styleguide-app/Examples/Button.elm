@@ -29,7 +29,10 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Button.link "Primary" [ Button.small, Button.fillContainerWidth ]
+        [ Button.link "Primary"
+            [ Button.small
+            , Button.fillContainerWidth
+            ]
         , Button.link "Secondary"
             [ Button.small
             , Button.fillContainerWidth
