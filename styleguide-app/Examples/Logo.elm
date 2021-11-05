@@ -10,9 +10,12 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
+import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}
@@ -35,7 +38,14 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        Html.div [ css [ Css.marginBottom (Css.px 8) ] ] [ Svg.toHtml Logo.noredink ]
+            :: IconExamples.preview
+                [ Logo.facebook
+                , Logo.twitter
+                , Logo.cleverC
+                , Logo.googleG
+                ]
     , view =
         \_ ->
             [ IconExamples.viewWithCustomStyles "NRI"
