@@ -33,7 +33,7 @@ example =
         [ Balloon.balloon
             [ Balloon.onTop
             , Balloon.navy
-            , Balloon.paddingPx 4
+            , Balloon.paddingPx 15
             ]
             (text "This is a balloon.")
         ]

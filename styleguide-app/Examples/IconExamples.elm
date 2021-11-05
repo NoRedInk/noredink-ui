@@ -14,12 +14,13 @@ preview icons =
     [ Html.div
         [ css
             [ Css.displayFlex
-            , Css.justifyContent Css.spaceBetween
+            , Css.flexWrap Css.wrap
+            , Css.property "gap" "10px"
             , Css.color Colors.gray45
             ]
         ]
         (List.map
-            (Svg.withWidth (Css.px 18) >> Svg.withHeight (Css.px 18) >> Svg.toHtml)
+            (Svg.withWidth (Css.px 30) >> Svg.withHeight (Css.px 30) >> Svg.toHtml)
             icons
         )
     ]

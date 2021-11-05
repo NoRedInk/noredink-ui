@@ -28,7 +28,21 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ Button.link "Primary" [ Button.small, Button.fillContainerWidth ]
+        , Button.link "Secondary"
+            [ Button.small
+            , Button.fillContainerWidth
+            , Button.secondary
+            , Button.css [ Css.marginTop (Css.px 8) ]
+            ]
+        , Button.link "Premium"
+            [ Button.small
+            , Button.fillContainerWidth
+            , Button.premium
+            , Button.css [ Css.marginTop (Css.px 8) ]
+            ]
+        ]
     , view = \state -> [ viewButtonExamples state ]
     , categories = [ Buttons ]
     , keyboardSupport = []

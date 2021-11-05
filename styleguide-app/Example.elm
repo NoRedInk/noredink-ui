@@ -114,7 +114,14 @@ preview_ navigate example =
                 [ ClickableText.href (exampleHref example)
                 , ClickableText.css [ Css.marginBottom (Css.px 10) ]
                 ]
-                :: List.map (Html.map never) example.preview
+                :: [ Html.div
+                        [ Attributes.css
+                            [ Css.displayFlex
+                            , Css.flexDirection Css.column
+                            ]
+                        ]
+                        (List.map (Html.map never) example.preview)
+                   ]
             )
         ]
 
