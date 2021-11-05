@@ -6,7 +6,7 @@ module Nri.Ui.Css.V1 exposing (styleIf, styleJust)
 
 -}
 
-import Css exposing (Style, property)
+import Css exposing (Style, batch)
 
 
 {-| Apply a style only if a condition is `True`.
@@ -17,7 +17,7 @@ styleIf view condition =
         view ()
 
     else
-        property "-nri" "noop"
+        batch []
 
 
 {-| Apply a style if the `Maybe` is a `Just`, otherwise apply nothing.
@@ -29,4 +29,4 @@ styleJust view maybe =
             view whatever
 
         Nothing ->
-            property "-nri" "noop"
+            batch []
