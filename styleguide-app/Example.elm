@@ -5,6 +5,7 @@ import Css exposing (..)
 import Css.Global exposing (a, descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -88,13 +89,13 @@ wrapState wrapState_ unwrapState example =
     }
 
 
-preview : Example state msg -> Html msg
-preview =
-    Lazy.lazy preview_
+preview : (String -> msg2) -> Example state msg -> Html msg2
+preview navigate =
+    Lazy.lazy (preview_ navigate)
 
 
-preview_ : Example state msg -> Html msg
-preview_ example =
+preview_ : (String -> msg2) -> Example state msg -> Html msg2
+preview_ navigate example =
     Container.view
         [ Container.gray
         , Container.css
@@ -104,6 +105,7 @@ preview_ example =
                 , Css.cursor Css.pointer
                 ]
             ]
+        , Container.custom [ Events.onClick (navigate (exampleHref example)) ]
         , Container.html
             [ ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)

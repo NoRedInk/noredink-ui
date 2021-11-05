@@ -61,6 +61,7 @@ type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
+    | ChangeUrl String
     | SkipToMainContent
     | NoOp
 
@@ -96,6 +97,9 @@ update action model =
 
         OnUrlChange route ->
             ( { model | route = Routes.fromLocation route }, Cmd.none )
+
+        ChangeUrl url ->
+            ( model, Browser.Navigation.pushUrl model.navigationKey url )
 
         SkipToMainContent ->
             ( model
@@ -177,14 +181,10 @@ view_ model =
         ]
 
 
-viewPreviews : String -> List (Example state Examples.Msg) -> Html Msg
+viewPreviews : String -> List (Example state msg) -> Html Msg
 viewPreviews containerId examples =
     examples
-        |> List.map
-            (\example ->
-                Example.preview example
-                    |> Html.map (UpdateModuleStates example.name)
-            )
+        |> List.map (\example -> Example.preview ChangeUrl example)
         |> Html.div
             [ id containerId
             , css
