@@ -168,7 +168,7 @@ view_ model =
                         )
                         |> List.map
                             (\example ->
-                                Example.view example
+                                Example.preview example
                                     |> Html.map (UpdateModuleStates example.name)
                             )
                         |> Html.div [ id (Category.forId category) ]
@@ -179,7 +179,7 @@ view_ model =
                     , examples (\_ -> True)
                         |> List.map
                             (\example ->
-                                Example.view example
+                                Example.preview example
                                     |> Html.map (UpdateModuleStates example.name)
                             )
                         |> Html.div []

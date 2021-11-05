@@ -1,4 +1,4 @@
-module Example exposing (Example, view, wrapMsg, wrapState)
+module Example exposing (Example, preview, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css exposing (..)
@@ -8,6 +8,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
@@ -22,6 +23,11 @@ type alias Example state msg =
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
+
+
+fullName : Example state msg -> String
+fullName example =
+    "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
 
 
 wrapMsg :
@@ -80,6 +86,18 @@ wrapState wrapState_ unwrapState example =
     }
 
 
+preview : Example state msg -> Html msg
+preview =
+    Lazy.lazy preview_
+
+
+preview_ : Example state msg -> Html msg
+preview_ example =
+    Container.view
+        [ Container.html [ exampleName example ]
+        ]
+
+
 view : Example state msg -> Html msg
 view =
     Lazy.lazy view_
@@ -87,10 +105,6 @@ view =
 
 view_ : Example state msg -> Html msg
 view_ example =
-    let
-        fullName =
-            "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
-    in
     Html.div
         [ -- this class makes the axe accessibility checking output easier to parse
           String.replace "." "-" example.name
@@ -107,27 +121,11 @@ view_ example =
                 , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
-            [ Html.styled Html.h2
-                [ color navy
-                , fontSize (px 20)
-                , marginTop zero
-                , marginBottom zero
-                , Fonts.baseFont
-                ]
-                []
-                [ Html.a
-                    [ Attributes.href ("#/doodad/" ++ example.name)
-                    , Attributes.class "module-example__doodad-link"
-                    , -- this data attribute is used to name the Percy screenshots
-                      String.replace "." "-" example.name
-                        |> Attributes.attribute "data-percy-name"
-                    ]
-                    [ Html.text fullName ]
-                ]
-            , String.replace "." "-" fullName
+            [ exampleName example
+            , String.replace "." "-" (fullName example)
                 |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
                 |> viewLink "Docs"
-            , String.replace "." "/" fullName
+            , String.replace "." "/" (fullName example)
                 ++ ".elm"
                 |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
                 |> viewLink "Source"
@@ -143,6 +141,27 @@ view_ example =
                 ]
             ]
             (example.view example.state)
+        ]
+
+
+exampleName : Example state msg -> Html msg
+exampleName example =
+    Html.styled Html.h2
+        [ color navy
+        , fontSize (px 20)
+        , marginTop zero
+        , marginBottom zero
+        , Fonts.baseFont
+        ]
+        []
+        [ Html.a
+            [ Attributes.href ("#/doodad/" ++ example.name)
+            , Attributes.class "module-example__doodad-link"
+            , -- this data attribute is used to name the Percy screenshots
+              String.replace "." "-" example.name
+                |> Attributes.attribute "data-percy-name"
+            ]
+            [ Html.text (fullName example) ]
         ]
 
 
