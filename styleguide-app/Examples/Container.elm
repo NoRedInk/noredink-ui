@@ -35,7 +35,17 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ Container.view []
+        , Container.view
+            [ Container.invalid
+            , Container.css [ Css.marginTop (Css.px 8) ]
+            ]
+        , Container.view
+            [ Container.disabled
+            , Container.css [ Css.marginTop (Css.px 8) ]
+            ]
+        ]
     , view =
         \state ->
             let

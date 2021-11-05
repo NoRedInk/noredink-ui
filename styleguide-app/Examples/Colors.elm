@@ -14,6 +14,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import SolidColor exposing (highContrast)
 
@@ -132,10 +133,8 @@ viewPreviewSwatch ( name, color ) =
             , Css.margin2 (Css.px 4) Css.zero
             , Css.borderRadius (Css.px 4)
             , Css.backgroundColor color
-            , Nri.Ui.Colors.Extra.fromCssColor color
-                |> highContrast
-                |> Nri.Ui.Colors.Extra.toCssColor
-                |> Css.color
+            , Css.color color
+            , Css.fontSize (Css.px 14)
             ]
         ]
         [ Html.text name ]
