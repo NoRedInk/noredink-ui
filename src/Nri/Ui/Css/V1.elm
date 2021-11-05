@@ -1,4 +1,4 @@
-module Nri.Ui.Css.V1 exposing (..)
+module Nri.Ui.Css.V1 exposing (styleIf, styleJust)
 
 import Css exposing (Style, property)
 
