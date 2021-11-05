@@ -6,6 +6,7 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -32,18 +33,21 @@ example =
         [ Button.link "Primary"
             [ Button.small
             , Button.fillContainerWidth
+            , Button.custom [ Key.tabbable False ]
             ]
         , Button.link "Secondary"
             [ Button.small
             , Button.fillContainerWidth
             , Button.secondary
             , Button.css [ Css.marginTop (Css.px 8) ]
+            , Button.custom [ Key.tabbable False ]
             ]
         , Button.link "Premium"
             [ Button.small
             , Button.fillContainerWidth
             , Button.premium
             , Button.css [ Css.marginTop (Css.px 8) ]
+            , Button.custom [ Key.tabbable False ]
             ]
         ]
     , view = \state -> [ viewButtonExamples state ]

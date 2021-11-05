@@ -7,6 +7,7 @@ module Examples.Modal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
+import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
@@ -160,7 +161,7 @@ example =
                     ]
                 ]
                 [ text "Modal"
-                , ClickableSvg.button "Close"
+                , ClickableSvg.link "Close"
                     UiIcon.x
                     [ ClickableSvg.exactWidth 10
                     , ClickableSvg.exactHeight 10
@@ -169,6 +170,7 @@ example =
                         , Css.top (Css.px 10)
                         , Css.right (Css.px 10)
                         ]
+                    , ClickableSvg.custom [ Key.tabbable False ]
                     ]
                 ]
             ]

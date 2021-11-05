@@ -6,6 +6,7 @@ module Examples.ClickableText exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -36,14 +37,17 @@ example =
         [ ClickableText.link "Small"
             [ ClickableText.icon UiIcon.link
             , ClickableText.small
+            , ClickableText.custom [ Key.tabbable False ]
             ]
         , ClickableText.link "Medium"
             [ ClickableText.icon UiIcon.link
             , ClickableText.medium
+            , ClickableText.custom [ Key.tabbable False ]
             ]
         , ClickableText.link "Large"
             [ ClickableText.icon UiIcon.link
             , ClickableText.large
+            , ClickableText.custom [ Key.tabbable False ]
             ]
         ]
     , view = \state -> [ viewExamples state ]

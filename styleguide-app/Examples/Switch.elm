@@ -6,6 +6,7 @@ module Examples.Switch exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category
 import Example exposing (Example)
 import Html.Styled as Html
@@ -31,8 +32,20 @@ example =
     , update = \(Switch new) _ -> ( new, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Switch.view [ Switch.label (Html.text "Toggle On") ] False
-        , Switch.view [ Switch.label (Html.text "Toggle Off") ] True
+        [ Switch.view
+            [ Switch.label (Html.text "Toggle On")
+
+            -- TODO
+            -- Switch.custom [ Key.tabbable False ]
+            ]
+            False
+        , Switch.view
+            [ Switch.label (Html.text "Toggle Off")
+
+            -- TODO
+            -- Switch.custom [ Key.tabbable False ]
+            ]
+            True
         ]
     , view =
         \interactiveIsOn ->

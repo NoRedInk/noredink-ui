@@ -7,6 +7,7 @@ module Examples.TextInput exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
@@ -33,10 +34,13 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ TextInput.view "Text Input" []
+        [ TextInput.view "Text Input"
+            [ TextInput.custom [ Key.tabbable False ]
+            ]
         , TextInput.view "Errored"
             [ TextInput.value "invalid content"
             , TextInput.errorIf True
+            , TextInput.custom [ Key.tabbable False ]
             ]
         ]
     , view =

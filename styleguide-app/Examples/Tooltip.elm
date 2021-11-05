@@ -7,6 +7,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -48,6 +49,7 @@ example =
                             UiIcon.gear
                             [ ClickableSvg.custom attributes
                             , ClickableSvg.small
+                            , ClickableSvg.custom [ Key.tabbable False ]
                             ]
                 }
                 [ Tooltip.plaintext "This is a tooltip."
