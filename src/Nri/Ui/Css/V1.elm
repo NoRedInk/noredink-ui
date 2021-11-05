@@ -1,5 +1,11 @@
 module Nri.Ui.Css.V1 exposing (styleIf, styleJust)
 
+{-|
+
+@docs styleIf, styleJust
+
+-}
+
 import Css exposing (Style, property)
 
 
@@ -14,7 +20,7 @@ styleIf view condition =
         property "-nri" "noop"
 
 
-{-| View value of if `Maybe` is a `Just`, otherwise show nothing.
+{-| Apply a style if the `Maybe` is a `Just`, otherwise apply nothing.
 -}
 styleJust : (a -> Style) -> Maybe a -> Style
 styleJust view maybe =
