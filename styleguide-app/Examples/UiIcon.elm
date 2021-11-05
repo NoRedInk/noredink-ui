@@ -36,10 +36,17 @@ example =
     , preview =
         IconExamples.preview
             [ UiIcon.seeMore
-            , UiIcon.copyToClipboard
+            , UiIcon.archive
+            , UiIcon.share
+            , UiIcon.footsteps
+            , UiIcon.person
+            , UiIcon.calendar
+            , UiIcon.missingDocument
             , UiIcon.speechBalloon
-            , UiIcon.arrowPointingRight
+            , UiIcon.edit
+            , UiIcon.arrowTop
             , UiIcon.checkmark
+            , UiIcon.equals
             ]
     , view =
         \_ ->
