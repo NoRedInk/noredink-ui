@@ -14,7 +14,6 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Html as Root
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
