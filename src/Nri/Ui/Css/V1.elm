@@ -9,15 +9,17 @@ module Nri.Ui.Css.V1 exposing (styleIf, styleJust)
 import Css exposing (Style, batch)
 
 
-{-| Apply a style only if a condition is `True`.
+{-| Apply a list of styles only if a condition is `True`.
 -}
-styleIf : Bool -> Style -> Style
-styleIf condition view =
-    if condition then
-        view
+styleIf : Bool -> List Style -> Style
+styleIf condition stuff =
+    batch
+        (if condition then
+            stuff
 
-    else
-        batch []
+         else
+            []
+        )
 
 
 {-| Apply a style if the `Maybe` is a `Just`, otherwise apply nothing.
