@@ -6,6 +6,7 @@ module Examples.Select exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -29,7 +30,14 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , keyboardSupport = []
-    , preview = []
+    , preview =
+        [ Select.view "Label" [ Select.custom [ Key.tabbable False ] ]
+        , Select.view "Hidden label"
+            [ Select.hiddenLabel
+            , Select.defaultDisplayText "Hidden label"
+            , Select.custom [ Key.tabbable False ]
+            ]
+        ]
     , view =
         \state ->
             let
