@@ -16,7 +16,7 @@ module Nri.Ui.Select.V8 exposing
 
     - view adds a label
     - adds standard custom, nriDescription, etc. attributes
-    - switches to a list-based attribuet API from a record-based API
+    - switches to a list-based attribute API from a record-based API
 
 @docs view, generateId
 
