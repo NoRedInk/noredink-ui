@@ -11,10 +11,10 @@ import Css exposing (Style, batch)
 
 {-| Apply a style only if a condition is `True`.
 -}
-styleIf : (() -> Style) -> Bool -> Style
-styleIf view condition =
+styleIf : Bool -> Style -> Style
+styleIf condition view =
     if condition then
-        view ()
+        view
 
     else
         batch []
