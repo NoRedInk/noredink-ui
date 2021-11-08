@@ -38,6 +38,12 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview =
+        IconExamples.preview
+            [ Pennant.premiumFlag
+            , Pennant.expiredPremiumFlag
+            , Pennant.disabledPremiumFlag
+            ]
     , view =
         \_ ->
             [ IconExamples.viewWithCustomStyles "Premium Pennants"

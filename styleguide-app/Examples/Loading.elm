@@ -94,6 +94,7 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
+    , preview = []
     , view =
         \{ showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then

@@ -770,6 +770,7 @@ resetButton config =
               else
                 Css.top (Css.px 25)
             ]
+        , ClickableSvg.custom [ Attributes.type_ "button" ]
         ]
 
 
@@ -796,4 +797,5 @@ viewPasswordFloatingContent label toggle config =
                     Css.top (Css.px 22)
                 , Css.fontSize (Css.px 13)
                 ]
+            , ClickableText.custom [ Attributes.type_ "button" ]
             ]

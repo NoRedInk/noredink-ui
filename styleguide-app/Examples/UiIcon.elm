@@ -33,6 +33,21 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview =
+        IconExamples.preview
+            [ UiIcon.seeMore
+            , UiIcon.archive
+            , UiIcon.share
+            , UiIcon.footsteps
+            , UiIcon.person
+            , UiIcon.calendar
+            , UiIcon.missingDocument
+            , UiIcon.speechBalloon
+            , UiIcon.edit
+            , UiIcon.arrowTop
+            , UiIcon.checkmark
+            , UiIcon.equals
+            ]
     , view =
         \_ ->
             [ IconExamples.view "Interface"

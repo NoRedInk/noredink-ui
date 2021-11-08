@@ -6,6 +6,7 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -35,6 +36,23 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ ClickableSvg.link "ClickableSvg small"
+            UiIcon.link
+            [ ClickableSvg.small
+            , ClickableSvg.custom [ Key.tabbable False ]
+            ]
+        , ClickableSvg.link "ClickableSvg medium"
+            UiIcon.link
+            [ ClickableSvg.medium
+            , ClickableSvg.custom [ Key.tabbable False ]
+            ]
+        , ClickableSvg.link "ClickableSvg large"
+            UiIcon.link
+            [ ClickableSvg.large
+            , ClickableSvg.custom [ Key.tabbable False ]
+            ]
+        ]
     , view =
         \state ->
             let

@@ -33,11 +33,7 @@ hint = 'Use Accessibility.Widgetd.Widget'
 
 [forbidden.Html]
 hint = 'Use Html.Styled'
-usages = [
-    'styleguide-app/../src/Nri/Ui/Button/V8.elm',
-    'styleguide-app/Examples/Modal.elm',
-    'styleguide-app/Main.elm',
-]
+usages = ['styleguide-app/../src/Nri/Ui/Button/V8.elm']
 
 [forbidden."Nri.Ui.Accordion.V1"]
 hint = 'upgrade to V3'

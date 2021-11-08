@@ -34,6 +34,7 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
+    , preview = []
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
