@@ -14,6 +14,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import SolidColor exposing (highContrast)
 
@@ -41,6 +42,12 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ ( "green", Colors.green )
+        , ( "purple", Colors.purple )
+        , ( "mustard", Colors.mustard )
+        ]
+            |> List.map viewPreviewSwatch
     , view =
         \_ ->
             [ [ ( "gray20", Colors.gray20, "Main text" )
@@ -115,6 +122,22 @@ example =
                 |> viewColors
             ]
     }
+
+
+viewPreviewSwatch : ( String, Css.Color ) -> Html.Html msg
+viewPreviewSwatch ( name, color ) =
+    Html.div
+        [ Attributes.css
+            [ Css.textAlign Css.center
+            , Css.padding2 (Css.px 8) Css.zero
+            , Css.margin2 (Css.px 4) Css.zero
+            , Css.borderRadius (Css.px 4)
+            , Css.backgroundColor color
+            , Css.color color
+            , Css.fontSize (Css.px 14)
+            ]
+        ]
+        [ Html.text name ]
 
 
 viewColors : List ColorExample -> Html.Html msg

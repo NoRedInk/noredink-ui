@@ -19,10 +19,13 @@ import Html.Styled as Html exposing (Html, fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Zipper exposing (Zipper)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
 
 
@@ -117,9 +120,14 @@ update msg model =
             )
 
 
+exampleName : String
+exampleName =
+    "Tabs"
+
+
 example : Example State Msg
 example =
-    { name = "Tabs"
+    { name = exampleName
     , version = 7
     , categories = [ Layout ]
     , keyboardSupport =
@@ -136,6 +144,49 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ -- faking a mini version of the Tabs component to give styleguide users a sense of what the
+          -- component might look like
+          Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
+            [ Html.div
+                [ css
+                    [ Css.backgroundColor Colors.white
+                    , Css.padding (Css.px 4)
+                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
+                    , Css.border3 (Css.px 1) Css.solid Colors.navy
+                    , Css.borderBottomWidth Css.zero
+                    ]
+                ]
+                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
+            , Html.div
+                [ css [ Css.width (Css.px 4), Css.borderBottom3 (Css.px 1) Css.solid Colors.navy ]
+                ]
+                []
+            , Html.div
+                [ css
+                    [ Css.backgroundColor Colors.frost
+                    , Css.padding (Css.px 4)
+                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
+                    , Css.border3 (Css.px 1) Css.solid Colors.navy
+                    ]
+                ]
+                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
+            , Html.div
+                [ css
+                    [ Css.width (Css.px 30)
+                    , Css.borderBottom3 (Css.px 1) Css.solid Colors.navy
+                    ]
+                ]
+                []
+            , Html.div
+                [ css
+                    [ Css.paddingTop (Css.px 4)
+                    , Css.minWidth (Css.px 100)
+                    ]
+                ]
+                [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
+            ]
+        ]
     , view =
         \model ->
             let
@@ -167,7 +218,7 @@ allTabs openTooltipId labelledBy =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.spaHref "/#/doodad/Tabs"
+        ([ Tabs.spaHref <| Routes.toString (Routes.Doodad exampleName)
          , Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"

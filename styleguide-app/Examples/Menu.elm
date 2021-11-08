@@ -47,6 +47,7 @@ example =
           }
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
+    , preview = []
     , view = view
     }
 

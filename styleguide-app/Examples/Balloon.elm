@@ -29,6 +29,14 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Balloon.balloon
+            [ Balloon.onTop
+            , Balloon.navy
+            , Balloon.paddingPx 15
+            ]
+            (text "This is a balloon.")
+        ]
     , view = view
     }
 

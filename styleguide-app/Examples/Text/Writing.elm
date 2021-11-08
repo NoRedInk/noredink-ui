@@ -32,6 +32,7 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview = [ TextWriting.footnote [ text "This is a footnote. " ] ]
     , view =
         \_ ->
             let
