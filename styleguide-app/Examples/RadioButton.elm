@@ -10,6 +10,7 @@ module Examples.RadioButton exposing
 
 -}
 
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
@@ -21,9 +22,10 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Modal.V10 as Modal
+import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V2 as RadioButton
 import Nri.Ui.Text.V6 as Text
+import Task
 
 
 {-| -}
@@ -59,27 +61,24 @@ view model =
     , viewVanilla model
     , Heading.h4 [] [ Html.text "premium" ]
     , viewPremium model
-    , Modal.info
+    , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
-        , focusManager =
-            Modal.MultipleFocusableElements
-                (\{ firstFocusableElement, autofocusElement, lastFocusableElement, closeButton } ->
-                    { content =
-                        [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ]
-                        , closeButton (autofocusElement :: firstFocusableElement)
-                        ]
-                    , footer =
-                        [ Button.button "Okay"
-                            [ Button.large
-                            , Button.onClick (ModalMsg Modal.close)
-                            , Button.custom lastFocusableElement
-                            ]
-                        ]
-                    }
-                )
+        , content = [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ] ]
+        , footer =
+            [ Button.button "Okay"
+                [ Button.modal
+                , Button.onClick CloseModal
+                , Button.id "close-premium-modal"
+                ]
+            ]
+        , focusTrap =
+            { focus = Focus
+            , firstId = Modal.closeButtonId
+            , lastId = "close-premium-modal"
+            }
         }
-        []
+        [ Modal.closeButton ]
         model.modal
     ]
 
@@ -133,7 +132,7 @@ viewPremium state =
             -- While we could change premiumMsg to be String -> msg now,
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = ModalMsg (Modal.open "fake-id")
+            , premiumMsg = OpenModal "hedgehogs-free"
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
@@ -153,7 +152,7 @@ viewPremium state =
             -- While we could change premiumMsg to be String -> msg now,
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = ModalMsg (Modal.open "fake-id")
+            , premiumMsg = OpenModal "hedgehogs-premium"
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
@@ -173,7 +172,7 @@ viewPremium state =
             -- While we could change premiumMsg to be String -> msg now,
             -- and use the correct id, there's not much point in doing
             -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = ModalMsg (Modal.open "fake-id")
+            , premiumMsg = OpenModal "hedgehogs-premium"
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = True
@@ -217,16 +216,29 @@ initPremiumControls =
 
 
 type Msg
-    = ModalMsg Modal.Msg
+    = OpenModal String
+    | ModalMsg Modal.Msg
+    | CloseModal
     | Select String
     | SetPremiumControl (Control PremiumConfig)
-    | NoOp
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
+        OpenModal returnFocusTo ->
+            let
+                ( modal, cmd ) =
+                    Modal.open
+                        { startFocusOn = Modal.closeButtonId
+                        , returnFocusTo = returnFocusTo
+                        }
+            in
+            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+
         ModalMsg modalMsg ->
             let
                 ( modal, cmd ) =
@@ -236,13 +248,23 @@ update msg model =
             in
             ( { model | modal = modal }, Cmd.map ModalMsg cmd )
 
+        CloseModal ->
+            let
+                ( modal, cmd ) =
+                    Modal.close model.modal
+            in
+            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
 
         SetPremiumControl premiumControl ->
             ( { model | premiumControl = premiumControl }, Cmd.none )
 
-        NoOp ->
+        Focus focus ->
+            ( model, Task.attempt Focused (Dom.focus focus) )
+
+        Focused _ ->
             ( model, Cmd.none )
 
 
