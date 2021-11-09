@@ -4,7 +4,6 @@ import Expect exposing (Expectation)
 import Html
 import Html.Attributes as Attr
 import Html.Styled
-import Nri.Ui.Select.V5
 import Nri.Ui.Select.V7
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -13,77 +12,19 @@ import Test.Html.Selector exposing (..)
 
 spec : Test
 spec =
-    describe "view"
-        [ describe "V5"
-            (viewSuiteV5
-                (\config ->
-                    { choices = config.choices
-                    , current = config.current
-                    , id = Nothing
-                    , valueToString = identity
-                    }
-                        |> Nri.Ui.Select.V5.view
-                        |> Html.Styled.toUnstyled
-                )
-            )
-        , describe "V7"
-            (viewSuiteV7
-                (\config ->
-                    { choices = config.choices
-                    , current = config.current
-                    , id = "fake-id"
-                    , valueToString = identity
-                    , defaultDisplayText = config.defaultDisplayText
-                    , isInError = False
-                    }
-                        |> Nri.Ui.Select.V7.view
-                        |> Html.Styled.toUnstyled
-                )
-            )
-        ]
-
-
-viewSuiteV5 :
-    ({ choices : List { label : String, value : String }, current : String } -> Html.Html msg)
-    -> List Test
-viewSuiteV5 view =
-    [ test "shows all options" <|
-        \() ->
-            viewTestV5
-                view
-                "Tacos"
-                [ "Tacos", "Burritos", "Enchiladas" ]
-                |> Query.find [ tag "select" ]
-                |> Query.findAll [ tag "option" ]
-                |> Query.count (Expect.equal 3)
-    , test "selects the current option" <|
-        \() ->
-            viewTestV5
-                view
-                "Burritos"
-                [ "Tacos", "Burritos", "Enchiladas" ]
-                |> Query.find
-                    [ tag "option"
-                    , attribute <| Attr.selected True
-                    ]
-                |> Query.has [ text "Burritos" ]
-    ]
-
-
-viewTestV5 :
-    ({ choices : List { label : a, value : a }, current : b } -> Html.Html msg)
-    -> b
-    -> List a
-    -> Query.Single msg
-viewTestV5 view selected items =
-    Query.fromHtml
-        (Html.div []
-            [ view
-                { choices = List.map (\x -> { label = x, value = x }) items
-                , current = selected
+    describe "view" <|
+        viewSuiteV7
+            (\config ->
+                { choices = config.choices
+                , current = config.current
+                , id = "fake-id"
+                , valueToString = identity
+                , defaultDisplayText = config.defaultDisplayText
+                , isInError = False
                 }
-            ]
-        )
+                    |> Nri.Ui.Select.V7.view
+                    |> Html.Styled.toUnstyled
+            )
 
 
 viewSuiteV6 :
