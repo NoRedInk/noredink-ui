@@ -10,13 +10,15 @@ module Examples.RadioButton exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Style exposing (invisible)
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
@@ -24,6 +26,8 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V10 as Modal
 import Nri.Ui.RadioButton.V2 as RadioButton
 import Nri.Ui.Text.V6 as Text
+import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -54,11 +58,13 @@ example =
 {-| -}
 view : State -> List (Html Msg)
 view model =
-    [ Heading.h3 [] [ Html.text "RadioButton" ]
-    , Heading.h4 [] [ Html.text "view" ]
-    , viewVanilla model
-    , Heading.h4 [] [ Html.text "premium" ]
-    , viewPremium model
+    [ -- Heading.h3 [] [ Html.text "RadioButton" ]
+      -- , Heading.h4 [] [ Html.text "view" ]
+      -- , viewVanilla model
+      viewDisclosures model
+
+    --, Heading.h4 [] [ Html.text "premium" ]
+    --, viewPremium model
     , Modal.info
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -94,6 +100,8 @@ viewVanilla state =
             , selectedValue = state.selectedValue
             , onSelect = Select
             , valueToString = identity
+            , disclosure = Nothing
+            , describedBy = []
             }
         , RadioButton.view
             { label = "Dogs"
@@ -102,6 +110,62 @@ viewVanilla state =
             , selectedValue = state.selectedValue
             , onSelect = Select
             , valueToString = identity
+            , disclosure = Nothing
+            , describedBy = []
+            }
+        ]
+
+
+viewDisclosures : State -> Html Msg
+viewDisclosures state =
+    div []
+        [ RadioButton.view
+            { label = "Reset to default class password"
+            , value = "DefaultPassword"
+            , name = "radio-button-examples"
+            , selectedValue = state.selectedValue
+            , onSelect = Select
+            , valueToString = identity
+            , describedBy = [ "default-class-password" ]
+            , disclosure =
+                Just <|
+                    Html.div []
+                        -- [ Html.span
+                        --     []
+                        [ Text.mediumBody
+                            [ Text.html
+                                [ Html.span invisible [ Html.text "The default class password is" ]
+                                , Html.text "quantum entanglement 60"
+                                ]
+                            , Text.id "default-class-password"
+                            ]
+
+                        --   ]
+                        , Button.button "Copy password"
+                            [ Button.icon UiIcon.copyToClipboard
+                            , Button.secondary
+                            , Button.small
+                            ]
+                        ]
+            }
+        , RadioButton.view
+            { label = "Choose a custom password"
+            , value = "CustomPassword"
+            , name = "radio-button-examples"
+            , selectedValue = state.selectedValue
+            , onSelect = Select
+            , valueToString = identity
+            , describedBy = []
+            , disclosure =
+                Just <|
+                    Html.div []
+                        [ TextInput.view "Choose a custom password"
+                            [ TextInput.placeholder ""
+                            , TextInput.autofocus
+                            , TextInput.hiddenLabel
+                            , TextInput.guidance "Passwords must be at least 8 characters long"
+                            ]
+                        ]
             }
         ]
 
@@ -137,6 +201,8 @@ viewPremium state =
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
+            , disclosure = Nothing
+            , describedBy = []
             }
         , RadioButton.premium
             { label = "Hedgehodge (Premium)"
@@ -157,6 +223,8 @@ viewPremium state =
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = False
+            , disclosure = Nothing
+            , describedBy = []
             }
         , RadioButton.premium
             { label = "Disabled"
@@ -177,6 +245,8 @@ viewPremium state =
             , valueToString = identity
             , showPennant = premiumConfig.showPennant
             , isDisabled = True
+            , disclosure = Nothing
+            , describedBy = []
             }
         ]
 
