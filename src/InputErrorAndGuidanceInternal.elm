@@ -126,23 +126,23 @@ view idValue config =
                 , Message.error
                 , Message.plaintext m
                 , Message.alertRole
-                , Message.css spacing
+                , Message.css
+                    [ Css.important (Css.paddingTop Css.zero)
+                    , Css.important (Css.paddingBottom Css.zero)
+                    , Css.marginTop (Css.px 5)
+                    ]
                 ]
 
         ( _, Just guidanceMessage ) ->
             Text.caption
                 [ Text.id (idValue ++ "_guidance")
                 , Text.plaintext guidanceMessage
-                , Text.css spacing
+                , Text.css
+                    [ Css.important (Css.paddingTop Css.zero)
+                    , Css.important (Css.paddingBottom Css.zero)
+                    , Css.important (Css.marginTop (Css.px 8))
+                    ]
                 ]
 
         _ ->
             Html.text ""
-
-
-spacing : List Style
-spacing =
-    [ Css.important (Css.paddingTop Css.zero)
-    , Css.important (Css.paddingBottom Css.zero)
-    , Css.marginTop (Css.px 5)
-    ]
