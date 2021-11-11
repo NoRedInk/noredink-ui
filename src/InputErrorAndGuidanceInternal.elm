@@ -16,7 +16,8 @@ module InputErrorAndGuidanceInternal exposing
 {-| -}
 type ErrorState
     = NoError
-    | Error { message : Maybe String }
+    | Error
+    | ErrorWithMessage String
 
 
 {-| -}
@@ -31,7 +32,7 @@ setErrorIf isInError_ config =
     { config
         | error =
             if isInError_ then
-                Error { message = Nothing }
+                Error
 
             else
                 NoError
@@ -48,7 +49,7 @@ setErrorMessage maybeMessage config =
                     NoError
 
                 Just message ->
-                    Error { message = Just message }
+                    ErrorWithMessage message
     }
 
 
@@ -76,7 +77,10 @@ getIsInError error =
         NoError ->
             False
 
-        Error _ ->
+        Error ->
+            True
+
+        ErrorWithMessage _ ->
             True
 
 
@@ -87,5 +91,8 @@ getErrorMessage error =
         NoError ->
             Nothing
 
-        Error { message } ->
-            message
+        Error ->
+            Nothing
+
+        ErrorWithMessage message ->
+            Just message
