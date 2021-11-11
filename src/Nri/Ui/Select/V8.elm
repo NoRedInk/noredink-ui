@@ -4,7 +4,7 @@ module Nri.Ui.Select.V8 exposing
     , value
     , Attribute, defaultDisplayText
     , hiddenLabel, visibleLabel
-    , errorIf, errorMessage
+    , errorIf, errorMessage, guidance
     , custom, nriDescription, id, testId
     , containerCss, noMargin
     )
@@ -35,7 +35,7 @@ module Nri.Ui.Select.V8 exposing
 
 @docs Attribute, defaultDisplayText
 @docs hiddenLabel, visibleLabel
-@docs errorIf, errorMessage
+@docs errorIf, errorMessage, guidance
 @docs custom, nriDescription, id, testId
 @docs containerCss, noMargin
 
@@ -46,7 +46,7 @@ import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import InputErrorAndGuidanceInternal exposing (ErrorState)
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
 import Json.Decode exposing (Decoder)
 import Nri.Ui
@@ -57,7 +57,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles
-import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Util
 import SolidColor
 
@@ -90,6 +89,13 @@ and the given error message will be shown.
 errorMessage : Maybe String -> Attribute value
 errorMessage =
     Attribute << InputErrorAndGuidanceInternal.setErrorMessage
+
+
+{-| A guidance message shows below the input, unless an error message is showing instead.
+-}
+guidance : String -> Attribute value
+guidance =
+    Attribute << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -193,6 +199,7 @@ type alias Config value =
     , valueToString : Maybe (value -> String)
     , defaultDisplayText : Maybe String
     , error : ErrorState
+    , guidance : Guidance
     , hideLabel : Bool
     , noMarginTop : Bool
     , containerCss : List Css.Style
@@ -208,6 +215,7 @@ defaultConfig =
     , valueToString = Nothing
     , defaultDisplayText = Nothing
     , error = InputErrorAndGuidanceInternal.noError
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
     , hideLabel = False
     , noMarginTop = False
     , containerCss = []
@@ -255,16 +263,7 @@ view label attributes =
             , defaultDisplayText = config.defaultDisplayText
             , isInError = isInError_
             }
-        , viewJust
-            (\m ->
-                Message.view
-                    [ Message.tiny
-                    , Message.error
-                    , Message.plaintext m
-                    , Message.alertRole
-                    ]
-            )
-            (InputErrorAndGuidanceInternal.getErrorMessage config.error)
+        , InputErrorAndGuidanceInternal.view id_ config
         ]
 
 
