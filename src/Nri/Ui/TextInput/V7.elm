@@ -56,7 +56,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import InputErrorInternal exposing (ErrorState)
+import InputErrorAndGuidanceInternal exposing (ErrorState)
 import InputLabelInternal
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -285,7 +285,7 @@ loading =
 -}
 errorIf : Bool -> Attribute value msg
 errorIf =
-    Attribute emptyEventsAndValues << InputErrorInternal.setErrorIf
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setErrorIf
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
@@ -293,7 +293,7 @@ and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute value msg
 errorMessage =
-    Attribute emptyEventsAndValues << InputErrorInternal.setErrorMessage
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setErrorMessage
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
@@ -485,7 +485,7 @@ emptyConfig =
     { inputStyle = InputStyles.Standard
     , inputCss = []
     , guidance = Nothing
-    , error = InputErrorInternal.init
+    , error = InputErrorAndGuidanceInternal.init
     , disabled = False
     , loading = False
     , hideLabel = False
@@ -561,10 +561,10 @@ view label attributes =
                 |> Maybe.withDefault label
 
         isInError =
-            InputErrorInternal.getIsInError config.error
+            InputErrorAndGuidanceInternal.getIsInError config.error
 
         errorMessage_ =
-            InputErrorInternal.getErrorMessage config.error
+            InputErrorAndGuidanceInternal.getErrorMessage config.error
 
         ( opacity, disabled_ ) =
             case ( config.disabled, config.loading ) of

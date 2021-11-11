@@ -1,4 +1,4 @@
-module InputErrorInternal exposing
+module InputErrorAndGuidanceInternal exposing
     ( ErrorState, init
     , setErrorIf, setErrorMessage
     , getIsInError, getErrorMessage

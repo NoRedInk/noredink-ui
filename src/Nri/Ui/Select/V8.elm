@@ -46,7 +46,7 @@ import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import InputErrorInternal exposing (ErrorState)
+import InputErrorAndGuidanceInternal exposing (ErrorState)
 import InputLabelInternal
 import Json.Decode exposing (Decoder)
 import Nri.Ui
@@ -81,7 +81,7 @@ If you have an error message to display, use `errorMessage` instead.
 -}
 errorIf : Bool -> Attribute value
 errorIf =
-    Attribute << InputErrorInternal.setErrorIf
+    Attribute << InputErrorAndGuidanceInternal.setErrorIf
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
@@ -89,7 +89,7 @@ and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute value
 errorMessage =
-    Attribute << InputErrorInternal.setErrorMessage
+    Attribute << InputErrorAndGuidanceInternal.setErrorMessage
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -207,7 +207,7 @@ defaultConfig =
     , choices = []
     , valueToString = Nothing
     , defaultDisplayText = Nothing
-    , error = InputErrorInternal.init
+    , error = InputErrorAndGuidanceInternal.init
     , hideLabel = False
     , noMarginTop = False
     , containerCss = []
@@ -223,7 +223,7 @@ view label attributes =
             applyConfig attributes
 
         isInError_ =
-            InputErrorInternal.getIsInError config.error
+            InputErrorAndGuidanceInternal.getIsInError config.error
 
         id_ =
             Maybe.withDefault (generateId label) config.id
@@ -264,7 +264,7 @@ view label attributes =
                     , Message.alertRole
                     ]
             )
-            (InputErrorInternal.getErrorMessage config.error)
+            (InputErrorAndGuidanceInternal.getErrorMessage config.error)
         ]
 
 
