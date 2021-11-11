@@ -113,7 +113,7 @@ label theme inError =
 {-| -}
 defaultMarginTop : Float
 defaultMarginTop =
-    9
+    5
 
 
 {-| In order to use these styles in an input module, you will need to add the class "override-sass-styles". This is because sass styles in the monolith have higher precendence than the class styles here.
