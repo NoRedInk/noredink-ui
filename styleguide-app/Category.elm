@@ -21,8 +21,7 @@ import Sort exposing (Sorter)
 
 {-| -}
 type Category
-    = Tables
-    | Inputs
+    = Inputs
     | Buttons
     | Icons
     | Layout
@@ -41,7 +40,6 @@ all =
     , Icons
     , Inputs
     , Layout
-    , Tables
     , Text
     , Messaging
     ]
@@ -52,9 +50,6 @@ all =
 fromString : String -> Result String Category
 fromString string =
     case string of
-        "Tables" ->
-            Ok Tables
-
         "Inputs" ->
             Ok Inputs
 
@@ -87,9 +82,6 @@ fromString string =
 forDisplay : Category -> String
 forDisplay category =
     case category of
-        Tables ->
-            "Tables"
-
         Inputs ->
             "Inputs"
 
@@ -125,9 +117,6 @@ sorter =
 forId : Category -> String
 forId category =
     case category of
-        Tables ->
-            "tables"
-
         Inputs ->
             "inputs"
 

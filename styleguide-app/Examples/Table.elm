@@ -35,7 +35,7 @@ example =
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
-    , categories = [ Tables, Layout ]
+    , categories = [ Layout ]
     , keyboardSupport = []
     , preview =
         [ Table.view
