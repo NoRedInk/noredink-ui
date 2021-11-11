@@ -68,7 +68,7 @@ example =
                 , positioning = options.positioning
                 }
             ]
-    , categories = [ Widgets, Layout ]
+    , categories = [ Layout, Inputs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Control's content"

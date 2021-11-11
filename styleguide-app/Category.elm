@@ -25,7 +25,6 @@ type Category
     | Inputs
     | Buttons
     | Icons
-    | Widgets
     | Layout
     | Messaging
     | Atoms
@@ -44,7 +43,6 @@ all =
     , Layout
     , Tables
     , Text
-    , Widgets
     , Messaging
     ]
 
@@ -59,9 +57,6 @@ fromString string =
 
         "Inputs" ->
             Ok Inputs
-
-        "Widgets" ->
-            Ok Widgets
 
         "Layout" ->
             Ok Layout
@@ -97,9 +92,6 @@ forDisplay category =
 
         Inputs ->
             "Inputs"
-
-        Widgets ->
-            "Widgets"
 
         Layout ->
             "Layout"
@@ -138,9 +130,6 @@ forId category =
 
         Inputs ->
             "inputs"
-
-        Widgets ->
-            "widgets"
 
         Layout ->
             "layout"

@@ -29,7 +29,7 @@ example : Example State Msg
 example =
     { name = "Tooltip"
     , version = 2
-    , categories = [ Widgets ]
+    , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
     , update = update

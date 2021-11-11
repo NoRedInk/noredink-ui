@@ -33,7 +33,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , categories = [ Widgets ]
+    , categories = [ Layout ]
     , keyboardSupport =
         [ { keys = [ Space ], result = "Opens the menu" }
         , { keys = [ Enter ], result = "Opens the menu" }
