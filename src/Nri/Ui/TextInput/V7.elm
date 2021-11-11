@@ -618,12 +618,7 @@ view label attributes =
             (maybeStep
                 ++ List.map (Attributes.map never) (List.reverse config.custom)
                 ++ [ Attributes.id idValue
-                   , case ( errorMessage_, config.guidance ) of
-                        ( Nothing, Just _ ) ->
-                            Aria.describedBy [ idValue ++ "_guidance" ]
-
-                        _ ->
-                            Extra.none
+                   , InputErrorAndGuidanceInternal.describedBy idValue config
                    , Attributes.css
                         [ InputStyles.input config.inputStyle isInError
                         , if config.inputStyle == InputStyles.Writing then

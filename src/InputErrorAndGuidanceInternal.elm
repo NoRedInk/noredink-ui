@@ -2,6 +2,7 @@ module InputErrorAndGuidanceInternal exposing
     ( ErrorState, noError, setErrorIf, setErrorMessage
     , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
+    , describedBy
     )
 
 {-|
@@ -9,8 +10,13 @@ module InputErrorAndGuidanceInternal exposing
 @docs ErrorState, noError, setErrorIf, setErrorMessage
 @docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
+@docs describedBy
 
 -}
+
+import Accessibility.Styled.Aria as Aria
+import Html.Styled as Html
+import Nri.Ui.Html.Attributes.V2
 
 
 {-| -}
@@ -96,3 +102,13 @@ getErrorMessage error =
 
         ErrorWithMessage message ->
             Just message
+
+
+describedBy : String -> { config | guidance : Guidance, error : ErrorState } -> Html.Attribute msg
+describedBy idValue config =
+    case ( getErrorMessage config.error, config.guidance ) of
+        ( Nothing, Just _ ) ->
+            Aria.describedBy [ idValue ++ "_guidance" ]
+
+        _ ->
+            Nri.Ui.Html.Attributes.V2.none
