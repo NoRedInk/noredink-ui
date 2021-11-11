@@ -65,9 +65,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
-import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
@@ -679,29 +677,7 @@ view label attributes =
             eventsAndValues.floatingContent
             eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
-        , case ( errorMessage_, config.guidance ) of
-            ( Just m, _ ) ->
-                Message.view
-                    [ Message.tiny
-                    , Message.error
-                    , Message.plaintext m
-                    , Message.alertRole
-                    ]
-
-            ( _, Just guidanceMessage ) ->
-                Text.caption
-                    [ Text.id (idValue ++ "_guidance")
-                    , Text.plaintext guidanceMessage
-                    , -- Match the vertical styles of the error message
-                      Text.css
-                        [ Css.paddingTop (Css.px 6)
-                        , Css.paddingBottom (Css.px 8)
-                        , Css.lineHeight (Css.px 23)
-                        ]
-                    ]
-
-            _ ->
-                Html.text ""
+        , InputErrorAndGuidanceInternal.view idValue config
         ]
 
 

@@ -2,7 +2,7 @@ module InputErrorAndGuidanceInternal exposing
     ( ErrorState, noError, setErrorIf, setErrorMessage
     , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
-    , describedBy
+    , describedBy, view
     )
 
 {-|
@@ -10,13 +10,16 @@ module InputErrorAndGuidanceInternal exposing
 @docs ErrorState, noError, setErrorIf, setErrorMessage
 @docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
-@docs describedBy
+@docs describedBy, view
 
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Html.Styled as Html
+import Css
+import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
+import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -112,3 +115,30 @@ describedBy idValue config =
 
         _ ->
             Nri.Ui.Html.Attributes.V2.none
+
+
+view : String -> { config | guidance : Guidance, error : ErrorState } -> Html msg
+view idValue config =
+    case ( getErrorMessage config.error, config.guidance ) of
+        ( Just m, _ ) ->
+            Message.view
+                [ Message.tiny
+                , Message.error
+                , Message.plaintext m
+                , Message.alertRole
+                ]
+
+        ( _, Just guidanceMessage ) ->
+            Text.caption
+                [ Text.id (idValue ++ "_guidance")
+                , Text.plaintext guidanceMessage
+                , -- Match the vertical styles of the error message
+                  Text.css
+                    [ Css.paddingTop (Css.px 6)
+                    , Css.paddingBottom (Css.px 8)
+                    , Css.lineHeight (Css.px 23)
+                    ]
+                ]
+
+        _ ->
+            Html.text ""
