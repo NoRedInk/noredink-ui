@@ -162,6 +162,16 @@ initControls =
                 )
                 (Control.string "The right item must be selected.")
             )
+        |> ControlExtra.optionalListItem "guidance"
+            (Control.map
+                (\str ->
+                    ( "Select.guidance \"" ++ str ++ "\""
+                    , Select.guidance str
+                    )
+                )
+             <|
+                Control.string "The right item must be selected."
+            )
 
 
 initChoices : Control ( String, List (Choice String) )
