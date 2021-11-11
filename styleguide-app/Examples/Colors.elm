@@ -37,7 +37,7 @@ example : Example State Msg
 example =
     { name = "Colors"
     , version = 1
-    , categories = [ Colors ]
+    , categories = [ Atoms ]
     , keyboardSupport = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )

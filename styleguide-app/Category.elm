@@ -29,7 +29,7 @@ type Category
     | Layout
     | Messaging
     | Modals
-    | Colors
+    | Atoms
     | Text
     | Pages
     | Animations
@@ -39,8 +39,8 @@ type Category
 all : List Category
 all =
     [ Animations
+    , Atoms
     , Buttons
-    , Colors
     , Icons
     , Inputs
     , Layout
@@ -82,8 +82,8 @@ fromString string =
         "Modals" ->
             Ok Modals
 
-        "Colors" ->
-            Ok Colors
+        "Atoms" ->
+            Ok Atoms
 
         "Text" ->
             Ok Text
@@ -126,8 +126,8 @@ forDisplay category =
         Modals ->
             "Modals"
 
-        Colors ->
-            "Colors"
+        Atoms ->
+            "Atoms"
 
         Text ->
             "Text and Fonts"
@@ -173,8 +173,8 @@ forId category =
         Modals ->
             "modals"
 
-        Colors ->
-            "colors"
+        Atoms ->
+            "atoms"
 
         Text ->
             "text-and-fonts"
