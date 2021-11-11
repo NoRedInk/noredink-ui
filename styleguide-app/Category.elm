@@ -30,7 +30,6 @@ type Category
     | Messaging
     | Atoms
     | Text
-    | Pages
     | Animations
 
 
@@ -43,7 +42,6 @@ all =
     , Icons
     , Inputs
     , Layout
-    , Pages
     , Tables
     , Text
     , Widgets
@@ -83,9 +81,6 @@ fromString string =
         "Text" ->
             Ok Text
 
-        "Pages" ->
-            Ok Pages
-
         "Animations" ->
             Ok Animations
 
@@ -123,9 +118,6 @@ forDisplay category =
 
         Text ->
             "Text and Fonts"
-
-        Pages ->
-            "Pages"
 
         Animations ->
             "Animations"
@@ -167,9 +159,6 @@ forId category =
 
         Text ->
             "text-and-fonts"
-
-        Pages ->
-            "pages"
 
         Animations ->
             "animations"
