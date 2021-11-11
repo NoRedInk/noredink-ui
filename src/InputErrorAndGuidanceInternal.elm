@@ -1,12 +1,12 @@
 module InputErrorAndGuidanceInternal exposing
-    ( ErrorState, init
+    ( ErrorState, noError
     , setErrorIf, setErrorMessage
     , getIsInError, getErrorMessage
     )
 
 {-|
 
-@docs ErrorState, init
+@docs ErrorState, noError
 @docs setErrorIf, setErrorMessage
 @docs getIsInError, getErrorMessage
 
@@ -20,8 +20,8 @@ type ErrorState
 
 
 {-| -}
-init : ErrorState
-init =
+noError : ErrorState
+noError =
     NoError
 
 
