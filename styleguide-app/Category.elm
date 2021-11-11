@@ -28,7 +28,6 @@ type Category
     | Widgets
     | Layout
     | Messaging
-    | Modals
     | Atoms
     | Text
     | Pages
@@ -44,7 +43,6 @@ all =
     , Icons
     , Inputs
     , Layout
-    , Modals
     , Pages
     , Tables
     , Text
@@ -78,9 +76,6 @@ fromString string =
 
         "Messaging" ->
             Ok Messaging
-
-        "Modals" ->
-            Ok Modals
 
         "Atoms" ->
             Ok Atoms
@@ -122,9 +117,6 @@ forDisplay category =
 
         Messaging ->
             "Alerts and Messages"
-
-        Modals ->
-            "Modals"
 
         Atoms ->
             "Atoms"
@@ -169,9 +161,6 @@ forId category =
 
         Messaging ->
             "alerts-and-messages"
-
-        Modals ->
-            "modals"
 
         Atoms ->
             "atoms"
