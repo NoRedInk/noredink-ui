@@ -1,13 +1,13 @@
 module InputErrorAndGuidanceInternal exposing
-    ( ErrorState, noError
-    , setErrorIf, setErrorMessage
+    ( ErrorState, noError, setErrorIf, setErrorMessage
+    , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
     )
 
 {-|
 
-@docs ErrorState, noError
-@docs setErrorIf, setErrorMessage
+@docs ErrorState, noError, setErrorIf, setErrorMessage
+@docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
 
 -}
@@ -50,6 +50,23 @@ setErrorMessage maybeMessage config =
                 Just message ->
                     Error { message = Just message }
     }
+
+
+{-| -}
+type alias Guidance =
+    Maybe String
+
+
+{-| -}
+noGuidance : Guidance
+noGuidance =
+    Nothing
+
+
+{-| -}
+setGuidance : String -> { config | guidance : Guidance } -> { config | guidance : Guidance }
+setGuidance guidance config =
+    { config | guidance = Just guidance }
 
 
 {-| -}

@@ -56,7 +56,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import InputErrorAndGuidanceInternal exposing (ErrorState)
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -299,9 +299,8 @@ errorMessage =
 {-| A guidance message shows below the input, unless an error message is showing instead.
 -}
 guidance : String -> Attribute value msg
-guidance message =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | guidance = Just message }
+guidance =
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -463,7 +462,7 @@ map f toString (Attribute eventsAndValues configF) =
 type alias Config =
     { inputStyle : InputStyles.Theme
     , inputCss : List Css.Style
-    , guidance : Maybe String
+    , guidance : Guidance
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
@@ -484,7 +483,7 @@ emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , inputCss = []
-    , guidance = Nothing
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
     , error = InputErrorAndGuidanceInternal.noError
     , disabled = False
     , loading = False
