@@ -15,7 +15,7 @@ module InputErrorAndGuidanceInternal exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Css
+import Css exposing (Style)
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
 import Nri.Ui.Message.V3 as Message
@@ -126,19 +126,23 @@ view idValue config =
                 , Message.error
                 , Message.plaintext m
                 , Message.alertRole
+                , Message.css spacing
                 ]
 
         ( _, Just guidanceMessage ) ->
             Text.caption
                 [ Text.id (idValue ++ "_guidance")
                 , Text.plaintext guidanceMessage
-                , -- Match the vertical styles of the error message
-                  Text.css
-                    [ Css.paddingTop (Css.px 6)
-                    , Css.paddingBottom (Css.px 8)
-                    , Css.lineHeight (Css.px 23)
-                    ]
+                , Text.css spacing
                 ]
 
         _ ->
             Html.text ""
+
+
+spacing : List Style
+spacing =
+    [ Css.important (Css.paddingTop Css.zero)
+    , Css.important (Css.paddingBottom Css.zero)
+    , Css.marginTop (Css.px 5)
+    ]
