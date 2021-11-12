@@ -140,7 +140,8 @@ view idValue config =
                 , Text.css
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
-                    , Css.important (Css.marginTop (Css.px 8))
+                    , Css.important (Css.marginTop (Css.px 5))
+                    , Css.lineHeight (Css.int 1)
                     ]
                 ]
 
