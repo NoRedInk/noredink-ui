@@ -59,7 +59,7 @@ example =
                         [ Css.display Css.block
                         , Css.margin2 (Css.px 20) Css.zero
                         , Css.whiteSpace Css.preWrap
-                        , Css.maxWidth (Css.px 500)
+                        , Css.flexBasis (Css.px 500)
                         ]
                     ]
                     [ Html.Styled.text <|
