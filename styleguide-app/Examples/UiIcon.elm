@@ -65,7 +65,6 @@ example =
             , IconExamples.view "Actions"
                 [ ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
-                , ( "mail", UiIcon.mail )
                 , ( "activity", UiIcon.activity )
                 , ( "skip", UiIcon.skip )
                 , ( "copyToClipboard", UiIcon.copyToClipboard )
@@ -100,6 +99,7 @@ example =
                 ]
             , IconExamples.view "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
+                , ( "mail", UiIcon.mail )
                 ]
             , IconExamples.view "Writing Utensils"
                 [ ( "edit", UiIcon.edit )

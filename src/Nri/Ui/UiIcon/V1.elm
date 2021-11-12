@@ -1,7 +1,7 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper, sortArrow
     , archive, unarchive
-    , share, preview, skip, copyToClipboard, gift, mail
+    , share, preview, skip, copyToClipboard, gift
     , activity
     , footsteps, compass, speedometer, bulb, help, checklist
     , hat, keychain
@@ -10,7 +10,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen
-    , speechBalloon
+    , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
@@ -28,7 +28,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 @docs seeMore, openClose, download, sort, gear, flipper, sortArrow
 @docs archive, unarchive
-@docs share, preview, skip, copyToClipboard, gift, mail
+@docs share, preview, skip, copyToClipboard, gift
 @docs activity
 @docs footsteps, compass, speedometer, bulb, help, checklist
 @docs hat, keychain
@@ -37,7 +37,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen
-@docs speechBalloon
+@docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
