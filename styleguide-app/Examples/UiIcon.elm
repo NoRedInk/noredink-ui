@@ -65,6 +65,7 @@ example =
             , IconExamples.view "Actions"
                 [ ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
+                , ( "mail", UiIcon.mail )
                 , ( "activity", UiIcon.activity )
                 , ( "skip", UiIcon.skip )
                 , ( "copyToClipboard", UiIcon.copyToClipboard )
