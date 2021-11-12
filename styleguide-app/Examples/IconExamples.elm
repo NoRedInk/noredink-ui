@@ -1,4 +1,4 @@
-module Examples.IconExamples exposing (view, viewWithCustomStyles)
+module Examples.IconExamples exposing (preview, view, viewWithCustomStyles)
 
 import Css
 import Html.Styled as Html exposing (Html)
@@ -6,7 +6,24 @@ import Html.Styled.Attributes exposing (css, style, title)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
+
+
+preview : List Svg.Svg -> List (Html msg)
+preview icons =
+    [ Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.property "gap" "10px"
+            , Css.color Colors.gray45
+            ]
+        ]
+        (List.map
+            (Svg.withWidth (Css.px 30) >> Svg.withHeight (Css.px 30) >> Svg.toHtml)
+            icons
+        )
+    ]
 
 
 view : String -> List ( String, Svg.Svg ) -> Html msg
@@ -55,5 +72,5 @@ viewIcon ( name, icon, style ) =
             ]
         ]
         [ Html.div [ css style ] [ Svg.toHtml icon ]
-        , Text.smallBody [] [ Html.text name ]
+        , Text.smallBody [ Text.plaintext name ]
         ]

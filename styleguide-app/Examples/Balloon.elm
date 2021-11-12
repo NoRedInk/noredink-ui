@@ -29,32 +29,39 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Balloon.balloon
+            [ Balloon.onTop
+            , Balloon.navy
+            , Balloon.paddingPx 15
+            ]
+            (text "This is a balloon.")
+        ]
     , view = view
     }
 
 
 {-| -}
 type alias State =
-    Control Settings
-
-
-type alias Settings =
-    { copy : String
-    , theme : Maybe ( String, Balloon.Attribute )
-    , position : Maybe ( String, Balloon.Attribute )
-    , width : Maybe ( String, Balloon.Attribute )
-    , padding : Maybe ( String, Balloon.Attribute )
+    { copy : Control String
+    , attributes : Control (List ( String, Balloon.Attribute ))
     }
 
 
-init : Control Settings
+init : State
 init =
-    Control.record Settings
-        |> Control.field "copy" (Control.string "Hello, world!")
-        |> Control.field "theme" (Control.maybe False themeOptions)
-        |> Control.field "position" (Control.maybe False positionOptions)
-        |> Control.field "width" (Control.maybe False widthOptions)
-        |> Control.field "padding" (Control.maybe False paddingOptions)
+    { copy = Control.string "Hello, world!"
+    , attributes = controlAttributes
+    }
+
+
+controlAttributes : Control (List ( String, Balloon.Attribute ))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "theme" themeOptions
+        |> ControlExtra.optionalListItem "position" positionOptions
+        |> ControlExtra.optionalListItem "width" widthOptions
+        |> ControlExtra.optionalListItem "padding" paddingOptions
 
 
 themeOptions : Control ( String, Balloon.Attribute )
@@ -103,14 +110,20 @@ paddingOptions =
 
 {-| -}
 type Msg
-    = SetDebugControlsState (Control Settings)
+    = SetCopy (Control String)
+    | SetAttributes (Control (List ( String, Balloon.Attribute )))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetDebugControlsState newDebugControlsState ->
-            ( newDebugControlsState
+        SetCopy copy ->
+            ( { state | copy = copy }
+            , Cmd.none
+            )
+
+        SetAttributes attributes ->
+            ( { state | attributes = attributes }
             , Cmd.none
             )
 
@@ -118,26 +131,22 @@ update msg state =
 view : State -> List (Html Msg)
 view state =
     let
-        settings =
-            Control.currentValue state
+        copy =
+            Control.currentValue state.copy
 
         attributes =
-            List.filterMap identity
-                [ settings.theme
-                , settings.position
-                , settings.width
-                , settings.padding
-                ]
+            Control.currentValue state.attributes
     in
-    [ Control.view SetDebugControlsState state |> fromUnstyled
+    [ Control.view SetCopy state.copy |> fromUnstyled
+    , Control.view SetAttributes state.attributes |> fromUnstyled
     , Html.Styled.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
         [ text <|
             "Balloon.balloon [ "
                 ++ String.join ", " (List.map Tuple.first attributes)
                 ++ " ] "
                 ++ "\""
-                ++ settings.copy
+                ++ copy
                 ++ "\""
         ]
-    , Balloon.balloon (List.map Tuple.second attributes) (text settings.copy)
+    , Balloon.balloon (List.map Tuple.second attributes) (text copy)
     ]

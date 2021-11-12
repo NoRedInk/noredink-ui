@@ -1,8 +1,8 @@
-module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label)
+module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label, custom)
 
 {-|
 
-@docs view, Attribute, onSwitch, disabled, id, label
+@docs view, Attribute, onSwitch, disabled, id, label, custom
 
 -}
 
@@ -27,6 +27,7 @@ type Attribute msg
     | Id String
     | Label (Html msg)
     | Disabled
+    | Custom (List (Html.Attribute Never))
 
 
 {-| Specify what happens when the switch is toggled.
@@ -63,10 +64,18 @@ label =
     Label
 
 
+{-| Pass custom attributes through to be attached to the underlying input.
+-}
+custom : List (Html.Attribute Never) -> Attribute msg
+custom =
+    Custom
+
+
 type alias Config msg =
     { onSwitch : Maybe (Bool -> msg)
     , id : String
     , label : Maybe (Html msg)
+    , attributes : List (Html.Attribute Never)
     }
 
 
@@ -75,6 +84,7 @@ defaultConfig =
     { onSwitch = Nothing
     , id = "nri-ui-switch-with-default-id"
     , label = Nothing
+    , attributes = []
     }
 
 
@@ -92,6 +102,9 @@ customize attr config =
 
         Label label_ ->
             { config | label = Just label_ }
+
+        Custom custom_ ->
+            { config | attributes = custom_ }
 
 
 {-| Render a switch. The boolean here indicates whether the switch is on
@@ -133,6 +146,7 @@ view attrs isOn =
             { id = config.id
             , onCheck = config.onSwitch
             , checked = isOn
+            , attributes = config.attributes
             }
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
@@ -162,26 +176,29 @@ viewCheckbox :
     { id : String
     , onCheck : Maybe (Bool -> msg)
     , checked : Bool
+    , attributes : List (Html.Attribute Never)
     }
     -> Html msg
 viewCheckbox config =
     Html.checkbox config.id
         (Just config.checked)
-        [ Attributes.id config.id
-        , Attributes.css
+        ([ Attributes.id config.id
+         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
             , Css.left (Css.px 10)
             , Css.zIndex (Css.int 0)
             , Css.opacity (Css.num 0)
             ]
-        , case config.onCheck of
+         , case config.onCheck of
             Just onCheck ->
                 Events.onCheck onCheck
 
             Nothing ->
                 Widget.disabled True
-        ]
+         ]
+            ++ List.map (Attributes.map never) config.attributes
+        )
 
 
 viewSwitch :

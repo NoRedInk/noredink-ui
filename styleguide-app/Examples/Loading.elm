@@ -20,7 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Loading.V1 as Loading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -94,6 +94,7 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
+    , preview = []
     , view =
         \{ showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then
@@ -113,7 +114,7 @@ example =
                     [ Loading.spinningPencil
                         |> Svg.withColor Colors.azure
                         |> Svg.toHtml
-                    , Text.caption [] [ Html.text "By default, the spinningPencil is white. Showing as blue for visibility." ]
+                    , Text.caption [ Text.plaintext "By default, the spinningPencil is white. Showing as blue for visibility." ]
                     , Loading.spinningDots
                         |> Svg.toHtml
                     ]

@@ -25,6 +25,7 @@ import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
@@ -38,6 +39,21 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ -- faking a mini version of the Accordion component to give styleguide users a sense of what the
+          -- component might look like
+          Html.div []
+            [ Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+                [ defaultCaret False
+                , Text.smallBody [ Text.plaintext "Closed" ]
+                ]
+            , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
+                [ defaultCaret True
+                , Text.smallBody [ Text.plaintext "Open" ]
+                ]
+            , Text.caption [ Text.plaintext "Accordion content." ]
+            ]
+        ]
     , view = view
     , categories = [ Layout ]
     , keyboardSupport =
@@ -57,13 +73,14 @@ example =
     }
 
 
+defaultCaret : Bool -> Html msg
+defaultCaret =
+    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+
+
 {-| -}
 view : State -> List (Html Msg)
 view model =
-    let
-        defaultCaret =
-            DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
-    in
     [ Heading.h3 [] [ Html.text "Accordion.view" ]
     , Accordion.view
         { entries =

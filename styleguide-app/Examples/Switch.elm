@@ -6,12 +6,12 @@ module Examples.Switch exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Category
 import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V1 as Switch
-import Nri.Ui.Text.V5 as Text
 
 
 {-| -}
@@ -31,40 +31,47 @@ example =
     , state = True
     , update = \(Switch new) _ -> ( new, Cmd.none )
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Switch.view
+            [ Switch.label (Html.text "Toggle On")
+            , Switch.custom [ Key.tabbable False ]
+            ]
+            False
+        , Switch.view
+            [ Switch.label (Html.text "Toggle Off")
+            , Switch.custom [ Key.tabbable False ]
+            ]
+            True
+        ]
     , view =
         \interactiveIsOn ->
             [ Heading.h3 [] [ Html.text "Interactive" ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.onSwitch Switch
-                    , Switch.id "switch-interactive"
-                    , Switch.label
-                        (if interactiveIsOn then
-                            Html.text "On"
+            , Switch.view
+                [ Switch.onSwitch Switch
+                , Switch.id "switch-interactive"
+                , Switch.label
+                    (if interactiveIsOn then
+                        Html.text "On"
 
-                         else
-                            Html.text "Off"
-                        )
-                    ]
-                    interactiveIsOn
+                     else
+                        Html.text "Off"
+                    )
                 ]
-            , Heading.h3 [] [ Html.text "Disabled" ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.disabled
-                    , Switch.id "switch-disabled-on"
-                    , Switch.label (Html.text "Permanently on")
-                    ]
-                    True
+                interactiveIsOn
+            , Heading.h3 [] [ Html.text "Disabled (On)" ]
+            , Switch.view
+                [ Switch.disabled
+                , Switch.id "switch-disabled-on"
+                , Switch.label (Html.text "Permanently on")
                 ]
-            , Text.mediumBody []
-                [ Switch.view
-                    [ Switch.disabled
-                    , Switch.id "switch-disabled-off"
-                    , Switch.label (Html.text "Permanently off")
-                    ]
-                    False
+                True
+            , Heading.h3 [] [ Html.text "Disabled (Off)" ]
+            , Switch.view
+                [ Switch.disabled
+                , Switch.id "switch-disabled-off"
+                , Switch.label (Html.text "Permanently off")
                 ]
+                False
             ]
     , categories = [ Category.Inputs ]
     , keyboardSupport = [{- TODO -}]

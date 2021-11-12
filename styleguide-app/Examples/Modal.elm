@@ -7,21 +7,26 @@ module Examples.Modal exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
+import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Html as Root
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -44,10 +49,10 @@ init =
 
 controlAttributes : Control (List Modal.Attribute)
 controlAttributes =
-    Control.record (\a b c -> a :: b :: c :: [])
-        |> Control.field "Theme" controlTheme
-        |> Control.field "Title visibility" controlTitleVisibility
-        |> Control.field "Custom css" controlCss
+    ControlExtra.list
+        |> ControlExtra.listItem "Theme" controlTheme
+        |> ControlExtra.listItem "Title visibility" controlTitleVisibility
+        |> ControlExtra.listItem "Custom css" controlCss
 
 
 type alias ViewSettings =
@@ -124,6 +129,51 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
+    , preview =
+        [ -- faking a mini version of the Modal component to give styleguide users a sense of what the
+          -- component might look like
+          div
+            [ css
+                [ Css.backgroundColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.navy)
+                , Css.borderRadius (Css.px 4)
+                , Css.padding2 (Css.px 25) Css.zero
+                , Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.center
+                ]
+            ]
+            [ div
+                [ css
+                    [ Css.backgroundColor Colors.white
+                    , Css.padding (Css.px 10)
+                    , Css.borderRadius (Css.px 10)
+                    , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 10) Css.zero (Css.rgba 0 0 0 0.35)
+                    , Css.textAlign Css.center
+                    , Css.color Colors.navy
+                    , Fonts.baseFont
+                    , Css.margin Css.auto
+                    , Css.width (Css.px 100)
+                    , Css.height (Css.px 60)
+                    , Css.fontSize (Css.px 10)
+                    , Css.fontWeight Css.bold
+                    , Css.position Css.relative
+                    ]
+                ]
+                [ text "Modal"
+                , ClickableSvg.link "Close"
+                    UiIcon.x
+                    [ ClickableSvg.exactWidth 10
+                    , ClickableSvg.exactHeight 10
+                    , ClickableSvg.css
+                        [ Css.position absolute
+                        , Css.top (Css.px 10)
+                        , Css.right (Css.px 10)
+                        ]
+                    , ClickableSvg.custom [ Key.tabbable False ]
+                    ]
+                ]
+            ]
+        ]
     , view =
         \state ->
             let
@@ -228,7 +278,10 @@ launchModalButton settings =
 
 viewModalContent : String -> Html msg
 viewModalContent content =
-    Text.mediumBody [] [ span [ css [ whiteSpace preLine ] ] [ text content ] ]
+    Text.mediumBody
+        [ Text.css [ whiteSpace preLine ]
+        , Text.plaintext content
+        ]
 
 
 continueButtonId : String
@@ -239,10 +292,9 @@ continueButtonId =
 continueButton : Html Msg
 continueButton =
     Button.button "Continue"
-        [ Button.primary
-        , Button.onClick CloseModal
-        , Button.custom [ Attributes.id continueButtonId ]
-        , Button.large
+        [ Button.onClick CloseModal
+        , Button.id continueButtonId
+        , Button.modal
         ]
 
 
@@ -255,9 +307,8 @@ closeClickableText : Html Msg
 closeClickableText =
     ClickableText.button "Close"
         [ ClickableText.onClick CloseModal
-        , ClickableText.large
-        , ClickableText.custom [ Attributes.id closeClickableTextId ]
-        , ClickableText.css [ Css.marginTop (Css.px 15) ]
+        , ClickableText.modal
+        , ClickableText.id closeClickableTextId
         ]
 
 

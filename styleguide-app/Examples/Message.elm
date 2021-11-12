@@ -5,6 +5,7 @@ import Category exposing (Category(..))
 import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -14,6 +15,7 @@ import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import ViewHelpers exposing (viewExamples)
 
 
 type alias State =
@@ -26,26 +28,24 @@ init : State
 init =
     { show = True
     , control =
-        Control.record
-            (\a b c d e f -> List.filterMap identity [ a, b, c, d, e, f ])
-            |> Control.field "theme" controlTheme
-            |> Control.field "content" (Control.map Just controlContent)
-            |> Control.field "role" controlRole
-            |> Control.field "dismissable" controlDismissable
-            |> Control.field "css" controlCss
-            |> Control.field "icon" controlIcon
+        ControlExtra.list
+            |> ControlExtra.optionalListItem "theme" controlTheme
+            |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.optionalListItem "role" controlRole
+            |> ControlExtra.optionalListItem "dismissable" controlDismissable
+            |> ControlExtra.optionalListItem "css" controlCss
+            |> ControlExtra.optionalListItem "icon" controlIcon
     }
 
 
-controlTheme : Control (Maybe (Message.Attribute msg))
+controlTheme : Control (Message.Attribute msg)
 controlTheme =
     Control.choice
-        [ ( "not set", Control.value Nothing )
-        , ( "tip", Control.value (Just Message.tip) )
-        , ( "error", Control.value (Just Message.error) )
-        , ( "alert", Control.value (Just Message.alert) )
-        , ( "success", Control.value (Just Message.success) )
-        , ( "customTheme", Control.map Just controlCustomTheme )
+        [ ( "tip", Control.value Message.tip )
+        , ( "error", Control.value Message.error )
+        , ( "alert", Control.value Message.alert )
+        , ( "success", Control.value Message.success )
+        , ( "customTheme", controlCustomTheme )
         ]
 
 
@@ -64,13 +64,12 @@ controlCustomTheme =
             )
 
 
-controlIcon : Control (Maybe (Message.Attribute msg))
+controlIcon : Control (Message.Attribute msg)
 controlIcon =
     Control.choice
-        [ ( "not set", Control.value Nothing )
-        , ( "premiumFlag", Control.value (Just (Message.icon Pennant.premiumFlag)) )
-        , ( "lock", Control.value (Just (Message.icon UiIcon.lock)) )
-        , ( "clock", Control.value (Just (Message.icon UiIcon.clock)) )
+        [ ( "premiumFlag", Control.value (Message.icon Pennant.premiumFlag) )
+        , ( "lock", Control.value (Message.icon UiIcon.lock) )
+        , ( "clock", Control.value (Message.icon UiIcon.clock) )
         ]
 
 
@@ -123,37 +122,32 @@ controlContent =
         ]
 
 
-controlRole : Control (Maybe (Message.Attribute msg))
+controlRole : Control (Message.Attribute msg)
 controlRole =
     Control.choice
-        [ ( "not set", Control.value Nothing )
-        , ( "alertRole", Control.value (Just Message.alertRole) )
-        , ( "alertDialogRole", Control.value (Just Message.alertDialogRole) )
+        [ ( "alertRole", Control.value Message.alertRole )
+        , ( "alertDialogRole", Control.value Message.alertDialogRole )
         ]
 
 
-controlDismissable : Control (Maybe (Message.Attribute Msg))
+controlDismissable : Control (Message.Attribute Msg)
 controlDismissable =
-    Control.maybe False <|
-        Control.value (Message.onDismiss Dismiss)
+    Control.value (Message.onDismiss Dismiss)
 
 
-controlCss : Control (Maybe (Message.Attribute Msg))
+controlCss : Control (Message.Attribute Msg)
 controlCss =
     Control.choice
-        [ ( "not set", Control.value Nothing )
-        , ( "css [ border3 (px 1) dashed red ]"
+        [ ( "css [ border3 (px 1) dashed red ]"
           , Control.value
-                (Just (Message.css [ Css.border3 (Css.px 1) Css.dashed Colors.red ]))
+                (Message.css [ Css.border3 (Css.px 1) Css.dashed Colors.red ])
           )
         , ( "css [ border3 (px 2) solid purple, borderRadius4 (px 8) (px 8) zero zero ]"
           , Control.value
-                (Just
-                    (Message.css
-                        [ Css.border3 (Css.px 2) Css.solid Colors.purple
-                        , Css.borderRadius4 (Css.px 8) (Css.px 8) Css.zero Css.zero
-                        ]
-                    )
+                (Message.css
+                    [ Css.border3 (Css.px 2) Css.solid Colors.purple
+                    , Css.borderRadius4 (Css.px 8) (Css.px 8) Css.zero Css.zero
+                    ]
                 )
           )
         ]
@@ -183,6 +177,11 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Message.view [ Message.plaintext "Tiny tip" ]
+        , Message.view [ Message.success, Message.plaintext "Tiny success" ]
+        , Message.view [ Message.error, Message.plaintext "Tiny error" ]
+        ]
     , view =
         \state ->
             let
@@ -201,21 +200,10 @@ example =
             , Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , orDismiss <|
-                Html.table [ css [ width (pct 100) ] ]
-                    [ Html.tbody []
-                        [ tr []
-                            [ th [] [ Html.text "tiny" ]
-                            , td [] [ Message.view (Message.tiny :: attributes) ]
-                            ]
-                        , tr []
-                            [ th [] [ Html.text "large" ]
-                            , td [] [ Message.view (Message.large :: attributes) ]
-                            ]
-                        , tr []
-                            [ th [] [ Html.text "banner" ]
-                            , td [] [ Message.view (Message.banner :: attributes) ]
-                            ]
-                        ]
+                viewExamples
+                    [ ( "tiny", Message.view (Message.tiny :: attributes) )
+                    , ( "large", Message.view (Message.large :: attributes) )
+                    , ( "banner", Message.view (Message.banner :: attributes) )
                     ]
             , Heading.h3
                 [ Heading.css

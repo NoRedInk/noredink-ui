@@ -4,7 +4,7 @@ module Nri.Ui.Button.V10 exposing
     , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , small, medium, large
+    , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
@@ -19,6 +19,7 @@ module Nri.Ui.Button.V10 exposing
 
   - uses ClickableAttributes
   - adds `nriDescription`, `testId`, and `id` helpers
+  - adds `modal` helper, an alias for `large` size
 
 
 # Changes from V9:
@@ -42,7 +43,7 @@ module Nri.Ui.Button.V10 exposing
 
 ## Sizing
 
-@docs small, medium, large
+@docs small, medium, large, modal
 @docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
 
 
@@ -263,6 +264,13 @@ medium =
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
+
+
+{-| Alias for Button.large
+-}
+modal : Attribute msg
+modal =
+    large
 
 
 

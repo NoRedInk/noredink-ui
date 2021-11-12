@@ -1,15 +1,22 @@
-module Example exposing (Example, view, wrapMsg, wrapState)
+module Example exposing (Example, preview, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css exposing (..)
 import Css.Global exposing (a, descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
-import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.V1 as Colors exposing (..)
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
+import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes exposing (Route)
 
 
 type alias Example state msg =
@@ -18,10 +25,16 @@ type alias Example state msg =
     , state : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
+    , preview : List (Html Never)
     , view : state -> List (Html msg)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
+
+
+fullName : Example state msg -> String
+fullName example =
+    "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
 
 
 wrapMsg :
@@ -43,6 +56,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 Nothing ->
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
+    , preview = example.preview
     , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
@@ -71,6 +85,7 @@ wrapState wrapState_ unwrapState example =
         unwrapState
             >> Maybe.map example.subscriptions
             >> Maybe.withDefault Sub.none
+    , preview = example.preview
     , view =
         unwrapState
             >> Maybe.map example.view
@@ -80,22 +95,77 @@ wrapState wrapState_ unwrapState example =
     }
 
 
-view : Example state msg -> Html msg
-view =
-    Lazy.lazy view_
+preview : (Route -> msg2) -> Example state msg -> Html msg2
+preview navigate =
+    Lazy.lazy (preview_ navigate)
+
+
+preview_ : (Route -> msg2) -> Example state msg -> Html msg2
+preview_ navigate example =
+    Container.view
+        [ Container.gray
+        , Container.css
+            [ Css.flexBasis (Css.px 150)
+            , Css.hover
+                [ Css.backgroundColor Colors.glacier
+                , Css.cursor Css.pointer
+                ]
+            ]
+        , Container.custom [ Events.onClick (navigate (Routes.Doodad example.name)) ]
+        , Container.html
+            (ClickableText.link example.name
+                [ ClickableText.href (exampleHref example)
+                , ClickableText.css [ Css.marginBottom (Css.px 10) ]
+                ]
+                :: [ Html.div
+                        [ Attributes.css
+                            [ Css.displayFlex
+                            , Css.flexDirection Css.column
+                            ]
+                        ]
+                        (List.map (Html.map never) example.preview)
+                   ]
+            )
+        ]
+
+
+view : Maybe Route -> Example state msg -> Html msg
+view previousRoute example =
+    Container.view
+        [ Container.pillow
+        , Container.css
+            [ Css.position Css.relative
+            , Css.margin (Css.px 10)
+            , Css.minHeight (Css.calc (Css.vh 100) Css.minus (Css.px 20))
+            , Css.boxSizing Css.borderBox
+            ]
+        , Container.html
+            [ Lazy.lazy view_ example
+            , ClickableSvg.link ("Close " ++ example.name ++ " example")
+                UiIcon.x
+                [ ClickableSvg.href
+                    (Maybe.withDefault Routes.All previousRoute
+                        |> Routes.toString
+                    )
+                , ClickableSvg.small
+                , ClickableSvg.css
+                    [ Css.position Css.absolute
+                    , Css.top (Css.px 15)
+                    , Css.right (Css.px 15)
+                    ]
+                ]
+            ]
+        ]
 
 
 view_ : Example state msg -> Html msg
 view_ example =
-    let
-        fullName =
-            "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
-    in
     Html.div
         [ -- this class makes the axe accessibility checking output easier to parse
           String.replace "." "-" example.name
             |> (++) "module-example__"
             |> Attributes.class
+        , Attributes.id (String.replace "." "-" example.name)
         ]
         [ Html.div
             [ Attributes.css
@@ -107,52 +177,57 @@ view_ example =
                 , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
-            [ Html.styled Html.h2
-                [ color navy
-                , fontSize (px 20)
-                , marginTop zero
-                , marginBottom zero
-                , Fonts.baseFont
-                ]
-                []
-                [ Html.a
-                    [ Attributes.href ("#/doodad/" ++ example.name)
-                    , Attributes.class "module-example__doodad-link"
-                    , -- this data attribute is used to name the Percy screenshots
-                      String.replace "." "-" example.name
-                        |> Attributes.attribute "data-percy-name"
-                    ]
-                    [ Html.text fullName ]
-                ]
-            , String.replace "." "-" fullName
-                |> (++) "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                |> viewLink "Docs"
-            , String.replace "." "/" fullName
-                ++ ".elm"
-                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
-                |> viewLink "Source"
+            [ exampleLink example
+            , docsLink example
+            , srcLink example
             ]
         , KeyboardSupport.view example.keyboardSupport
-        , Html.div
-            [ Attributes.css
-                [ padding (px 40)
-                , boxShadow5 zero (px 2) (px 4) zero (rgba 0 0 0 0.25)
-                , border3 (px 1) solid gray92
-                , borderRadius (px 20)
-                , margin3 (px 10) zero (px 40)
-                ]
-            ]
-            (example.view example.state)
+        , Html.div [] (example.view example.state)
         ]
 
 
-viewLink : String -> String -> Html msg
-viewLink text href =
-    Html.a
-        ([ Attributes.href href
-         , Attributes.css [ Css.display Css.block, marginLeft (px 20) ]
-         ]
-            ++ targetBlank
-        )
-        [ Html.text text
+exampleHref : Example state msg -> String
+exampleHref example =
+    Routes.toString (Routes.Doodad example.name)
+
+
+exampleLink : Example state msg -> Html msg
+exampleLink example =
+    Heading.h2 []
+        [ ClickableText.link (fullName example)
+            [ ClickableText.href (exampleHref example)
+            , ClickableText.large
+            , ClickableText.custom
+                [ -- this data attribute is used to name the Percy screenshots
+                  String.replace "." "-" example.name
+                    |> Attributes.attribute "data-percy-name"
+                ]
+            ]
+        ]
+
+
+docsLink : Example state msg -> Html msg
+docsLink example =
+    let
+        link =
+            "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
+                ++ String.replace "." "-" (fullName example)
+    in
+    ClickableText.link "Docs"
+        [ ClickableText.linkExternal link
+        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
+        ]
+
+
+srcLink : Example state msg -> Html msg
+srcLink example =
+    let
+        link =
+            String.replace "." "/" (fullName example)
+                ++ ".elm"
+                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
+    in
+    ClickableText.link "Source"
+        [ ClickableText.linkExternal link
+        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
         ]

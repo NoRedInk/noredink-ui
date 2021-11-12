@@ -1,7 +1,8 @@
 let
   sources = import ./nix/sources.nix;
-  nixpkgs = import sources.nixpkgs { };
-  niv = import sources.niv { };
+  system = if builtins.currentSystem == "aarch64-darwin" then "x86_64-darwin" else builtins.currentSystem;
+  nixpkgs = import sources.nixpkgs { inherit system; };
+  niv = nixpkgs.callPackage sources.niv { };
 in with nixpkgs;
 stdenv.mkDerivation {
   name = "noredink-ui";

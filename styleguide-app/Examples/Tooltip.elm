@@ -7,9 +7,11 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -18,7 +20,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V5 as Text
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -32,13 +34,39 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Html.div
+            [ css
+                [ Css.marginTop (Css.px 60)
+                , Css.alignSelf Css.center
+                ]
+            ]
+            [ Tooltip.view
+                { id = "preview-tooltip"
+                , trigger =
+                    \attributes ->
+                        ClickableSvg.button "example-preview-tooltip-icon"
+                            UiIcon.gear
+                            [ ClickableSvg.custom attributes
+                            , ClickableSvg.small
+                            , ClickableSvg.custom [ Key.tabbable False ]
+                            ]
+                }
+                [ Tooltip.plaintext "This is a tooltip."
+                , Tooltip.open True
+                , Tooltip.onTop
+                , Tooltip.smallPadding
+                , Tooltip.fitToContent
+                ]
+            ]
+        ]
     , view = view
     }
 
 
 type alias State =
     { openTooltip : Maybe TooltipType
-    , staticExampleSettings : Control ExampleSettings
+    , staticExampleSettings : Control (List (Tooltip.Attribute Never))
     }
 
 
@@ -57,7 +85,7 @@ type TooltipType
 
 type Msg
     = ToggleTooltip TooltipType Bool
-    | SetStaticExampleSettings (Control ExampleSettings)
+    | SetStaticExampleSettings (Control (List (Tooltip.Attribute Never)))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -77,13 +105,15 @@ update msg model =
 view : State -> List (Html Msg)
 view model =
     [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
-    , Text.mediumBody []
-        [ Html.text "Label the Tooltip as either being the "
-        , viewPrimaryLabelTooltip model.openTooltip
-        , Html.text " or the "
-        , viewAuxillaryDescriptionToolip model.openTooltip
-        , Html.text " for the trigger content."
-        , viewToggleTip model.openTooltip
+    , Text.mediumBody
+        [ Text.html
+            [ Html.text "Label the Tooltip as either being the "
+            , viewPrimaryLabelTooltip model.openTooltip
+            , Html.text " or the "
+            , viewAuxillaryDescriptionToolip model.openTooltip
+            , Html.text " for the trigger content."
+            , viewToggleTip model.openTooltip
+            ]
         ]
     , viewCustomizableExample model.staticExampleSettings
     ]
@@ -149,25 +179,15 @@ viewToggleTip openTooltip =
         ]
 
 
-type alias ExampleSettings =
-    { content : Tooltip.Attribute Never
-    , withoutTail : Bool
-    , direction : Tooltip.Attribute Never
-    , alignment : Tooltip.Attribute Never
-    , width : Tooltip.Attribute Never
-    , padding : Tooltip.Attribute Never
-    }
-
-
-initStaticExampleSettings : Control ExampleSettings
+initStaticExampleSettings : Control (List (Tooltip.Attribute Never))
 initStaticExampleSettings =
-    Control.record ExampleSettings
-        |> Control.field "content" controlContent
-        |> Control.field "withoutTail" controlTail
-        |> Control.field "direction" controlDirection
-        |> Control.field "alignment" controlAlignment
-        |> Control.field "width" controlWidth
-        |> Control.field "padding" controlPadding
+    ControlExtra.list
+        |> ControlExtra.listItem "content" controlContent
+        |> ControlExtra.listItem "direction" controlDirection
+        |> ControlExtra.listItem "alignment" controlAlignment
+        |> ControlExtra.listItem "withoutTail" controlTail
+        |> ControlExtra.listItem "width" controlWidth
+        |> ControlExtra.listItem "padding" controlPadding
 
 
 controlContent : Control (Tooltip.Attribute Never)
@@ -206,9 +226,19 @@ controlContent =
         ]
 
 
-controlTail : Control Bool
+controlTail : Control (Tooltip.Attribute Never)
 controlTail =
-    Control.bool False
+    Control.map
+        (\bool ->
+            if bool then
+                Tooltip.withoutTail
+
+            else
+                -- TODO: change `withoutTail` to take
+                -- a bool or expose a `withTail` from Tooltip.
+                Tooltip.css []
+        )
+        (Control.bool False)
 
 
 controlDirection : Control (Tooltip.Attribute Never)
@@ -253,26 +283,14 @@ controlPadding =
         ]
 
 
-viewCustomizableExample : Control ExampleSettings -> Html Msg
+viewCustomizableExample : Control (List (Tooltip.Attribute Never)) -> Html Msg
 viewCustomizableExample controlSettings =
     let
         settings =
             Control.currentValue controlSettings
 
         attributes =
-            [ Tooltip.open True
-            , settings.content
-            , settings.direction
-            , settings.alignment
-            , settings.width
-            , settings.padding
-            ]
-                ++ (if settings.withoutTail then
-                        [ Tooltip.withoutTail ]
-
-                    else
-                        []
-                   )
+            Tooltip.open True :: settings
     in
     Html.div []
         [ Control.view SetStaticExampleSettings controlSettings
