@@ -10,7 +10,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen
-    , speechBalloon
+    , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
@@ -37,7 +37,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen
-@docs speechBalloon
+@docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
@@ -1645,5 +1645,19 @@ closeQuotationMark =
             ]
             []
         , Svg.path [ Attributes.d "M39.09,49.47V41.34a19.49,19.49,0,0,0,12-4.17q5.54-4.17,5.54-9.91c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05,10.77,10.77,0,0,1-3.31-8.37,12.77,12.77,0,0,1,3.41-8.92Q44.76.67,50.78.66A14,14,0,0,1,62.36,6.1Q66.63,11.53,66.64,21q0,13.13-8,20.64A28.82,28.82,0,0,1,39.09,49.47Zm-37.87,0V41.34A20,20,0,0,0,13,37.24q5.7-4.11,5.71-10c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05A10.77,10.77,0,0,1,.05,13.31a12.63,12.63,0,0,1,3.46-9Q7,.66,12.91.66A14.13,14.13,0,0,1,24.36,6Q28.77,11.4,28.77,21q0,13.19-8.07,20.68A29,29,0,0,1,1.22,49.47Z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+mail : Nri.Ui.Svg.V1.Svg
+mail =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 88 63"
+        ]
+        [ Svg.path [ Attributes.d "M78.125,0 L9.375,0 C4.1992,0 0,4.1992 0,9.375 L0,53.125 C0,58.3008 4.1992,62.5 9.375,62.5 L78.125,62.5 C83.3008,62.5 87.5,58.3008 87.5,53.125 L87.5,9.375 C87.5,4.1992 83.3008,0 78.125,0 Z M75.8438,6.25 L45.6558,27.562 C44.4956,28.31591 43.0035,28.31591 41.8433,27.562 L11.6553,6.25 L75.8438,6.25 Z M78.125,56.25 L9.375,56.25 C7.6484,56.25 6.25,54.8516 6.25,53.125 L6.25,10.063 L38.25,32.657 C41.5586,34.95 45.9414,34.95 49.25,32.657 L81.25,10.063 L81.25,53.125 C81.25,53.95312 80.92188,54.75 80.33594,55.3359 C79.75,55.92184 78.95314,56.25 78.12504,56.25 L78.125,56.25 Z" ] []
         ]
         |> Nri.Ui.Svg.V1.fromHtml

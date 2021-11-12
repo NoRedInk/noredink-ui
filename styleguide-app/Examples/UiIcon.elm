@@ -99,6 +99,7 @@ example =
                 ]
             , IconExamples.view "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
+                , ( "mail", UiIcon.mail )
                 ]
             , IconExamples.view "Writing Utensils"
                 [ ( "edit", UiIcon.edit )
