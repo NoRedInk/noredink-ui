@@ -89,7 +89,7 @@ example : Example State Msg
 example =
     { name = "Loading"
     , version = 1
-    , categories = [ Pages ]
+    , categories = [ Animations ]
     , keyboardSupport = []
     , state = init
     , update = update

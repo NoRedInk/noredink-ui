@@ -35,7 +35,7 @@ example : Example State Msg
 example =
     { name = "SlideModal"
     , version = 2
-    , categories = [ Modals ]
+    , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
     , update = update

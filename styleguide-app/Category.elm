@@ -21,17 +21,13 @@ import Sort exposing (Sorter)
 
 {-| -}
 type Category
-    = Tables
-    | Inputs
+    = Inputs
     | Buttons
     | Icons
-    | Widgets
     | Layout
     | Messaging
-    | Modals
-    | Colors
+    | Atoms
     | Text
-    | Pages
     | Animations
 
 
@@ -39,16 +35,12 @@ type Category
 all : List Category
 all =
     [ Animations
+    , Atoms
     , Buttons
-    , Colors
     , Icons
     , Inputs
     , Layout
-    , Modals
-    , Pages
-    , Tables
     , Text
-    , Widgets
     , Messaging
     ]
 
@@ -58,14 +50,8 @@ all =
 fromString : String -> Result String Category
 fromString string =
     case string of
-        "Tables" ->
-            Ok Tables
-
         "Inputs" ->
             Ok Inputs
-
-        "Widgets" ->
-            Ok Widgets
 
         "Layout" ->
             Ok Layout
@@ -79,17 +65,11 @@ fromString string =
         "Messaging" ->
             Ok Messaging
 
-        "Modals" ->
-            Ok Modals
-
-        "Colors" ->
-            Ok Colors
+        "Atoms" ->
+            Ok Atoms
 
         "Text" ->
             Ok Text
-
-        "Pages" ->
-            Ok Pages
 
         "Animations" ->
             Ok Animations
@@ -102,14 +82,8 @@ fromString string =
 forDisplay : Category -> String
 forDisplay category =
     case category of
-        Tables ->
-            "Tables"
-
         Inputs ->
             "Inputs"
-
-        Widgets ->
-            "Widgets"
 
         Layout ->
             "Layout"
@@ -123,17 +97,11 @@ forDisplay category =
         Messaging ->
             "Alerts and Messages"
 
-        Modals ->
-            "Modals"
-
-        Colors ->
-            "Colors"
+        Atoms ->
+            "Atoms"
 
         Text ->
             "Text and Fonts"
-
-        Pages ->
-            "Pages"
 
         Animations ->
             "Animations"
@@ -149,14 +117,8 @@ sorter =
 forId : Category -> String
 forId category =
     case category of
-        Tables ->
-            "tables"
-
         Inputs ->
             "inputs"
-
-        Widgets ->
-            "widgets"
 
         Layout ->
             "layout"
@@ -170,17 +132,11 @@ forId category =
         Messaging ->
             "alerts-and-messages"
 
-        Modals ->
-            "modals"
-
-        Colors ->
-            "colors"
+        Atoms ->
+            "atoms"
 
         Text ->
             "text-and-fonts"
-
-        Pages ->
-            "pages"
 
         Animations ->
             "animations"

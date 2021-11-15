@@ -31,7 +31,7 @@ example : Example State Msg
 example =
     { name = "DisclosureIndicator"
     , version = 2
-    , categories = [ Widgets ]
+    , categories = [ Icons ]
     , keyboardSupport = []
     , state = init
     , update = update

@@ -36,7 +36,7 @@ example : Example State Msg
 example =
     { name = "SortableTable"
     , version = 2
-    , categories = [ Tables, Layout ]
+    , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
     , update = update

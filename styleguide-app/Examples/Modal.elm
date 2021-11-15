@@ -114,7 +114,7 @@ example : Example State Msg
 example =
     { name = "Modal"
     , version = 11
-    , categories = [ Modals ]
+    , categories = [ Layout ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."

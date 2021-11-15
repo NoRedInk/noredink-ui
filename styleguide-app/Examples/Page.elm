@@ -58,7 +58,7 @@ example : Example State Msg
 example =
     { name = "Page"
     , version = 3
-    , categories = [ Pages ]
+    , categories = [ Messaging ]
     , keyboardSupport = []
     , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
     , update = update
