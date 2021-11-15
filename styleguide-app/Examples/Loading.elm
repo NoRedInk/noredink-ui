@@ -112,7 +112,7 @@ example =
             , if showSpinners then
                 Html.div []
                     [ Loading.spinningPencil
-                        |> Svg.withColor Colors.blue
+                        |> Svg.withColor Colors.azure
                         |> Svg.toHtml
                     , Text.caption [ Text.plaintext "By default, the spinningPencil is white. Showing as blue for visibility." ]
                     , Loading.spinningDots

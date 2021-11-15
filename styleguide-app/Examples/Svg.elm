@@ -149,7 +149,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { color = fromCssColor Colors.blue
+    { color = fromCssColor Colors.azure
     , width = 30
     , height = 30
     , label = "Newspaper"

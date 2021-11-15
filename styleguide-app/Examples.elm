@@ -17,7 +17,6 @@ import Examples.Fonts as Fonts
 import Examples.Heading as Heading
 import Examples.Loading as Loading
 import Examples.Logo as Logo
-import Examples.MasteryIcon as MasteryIcon
 import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
@@ -341,25 +340,6 @@ all =
             (\msg ->
                 case msg of
                     LogoState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , MasteryIcon.example
-        |> Example.wrapMsg MasteryIconMsg
-            (\msg ->
-                case msg of
-                    MasteryIconMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState MasteryIconState
-            (\msg ->
-                case msg of
-                    MasteryIconState childState ->
                         Just childState
 
                     _ ->
@@ -765,7 +745,6 @@ type State
     | HeadingState Heading.State
     | LoadingState Loading.State
     | LogoState Logo.State
-    | MasteryIconState MasteryIcon.State
     | MenuState Menu.State
     | MessageState Message.State
     | ModalState Modal.State
@@ -805,7 +784,6 @@ type Msg
     | HeadingMsg Heading.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
-    | MasteryIconMsg MasteryIcon.Msg
     | MenuMsg Menu.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
