@@ -23,7 +23,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.RadioButton.V2 as RadioButton
+import Nri.Ui.RadioButton.V3 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Task
 
@@ -32,7 +32,7 @@ import Task
 example : Example State Msg
 example =
     { name = "RadioButton"
-    , version = 2
+    , version = 3
     , state = init
     , update = update
     , subscriptions = subscriptions
