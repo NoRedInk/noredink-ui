@@ -56,7 +56,7 @@ import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import InputErrorInternal exposing (ErrorState)
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
 import Keyboard.Event exposing (KeyboardEvent)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -65,9 +65,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
-import Nri.Ui.Message.V3 as Message
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
 
@@ -285,7 +283,7 @@ loading =
 -}
 errorIf : Bool -> Attribute value msg
 errorIf =
-    Attribute emptyEventsAndValues << InputErrorInternal.setErrorIf
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setErrorIf
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
@@ -293,15 +291,14 @@ and the given error message will be shown.
 -}
 errorMessage : Maybe String -> Attribute value msg
 errorMessage =
-    Attribute emptyEventsAndValues << InputErrorInternal.setErrorMessage
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setErrorMessage
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
 -}
 guidance : String -> Attribute value msg
-guidance message =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | guidance = Just message }
+guidance =
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -463,7 +460,7 @@ map f toString (Attribute eventsAndValues configF) =
 type alias Config =
     { inputStyle : InputStyles.Theme
     , inputCss : List Css.Style
-    , guidance : Maybe String
+    , guidance : Guidance
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
@@ -484,8 +481,8 @@ emptyConfig : Config
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , inputCss = []
-    , guidance = Nothing
-    , error = InputErrorInternal.init
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
+    , error = InputErrorAndGuidanceInternal.noError
     , disabled = False
     , loading = False
     , hideLabel = False
@@ -561,10 +558,10 @@ view label attributes =
                 |> Maybe.withDefault label
 
         isInError =
-            InputErrorInternal.getIsInError config.error
+            InputErrorAndGuidanceInternal.getIsInError config.error
 
         errorMessage_ =
-            InputErrorInternal.getErrorMessage config.error
+            InputErrorAndGuidanceInternal.getErrorMessage config.error
 
         ( opacity, disabled_ ) =
             case ( config.disabled, config.loading ) of
@@ -619,12 +616,7 @@ view label attributes =
             (maybeStep
                 ++ List.map (Attributes.map never) (List.reverse config.custom)
                 ++ [ Attributes.id idValue
-                   , case ( errorMessage_, config.guidance ) of
-                        ( Nothing, Just _ ) ->
-                            Aria.describedBy [ idValue ++ "_guidance" ]
-
-                        _ ->
-                            Extra.none
+                   , InputErrorAndGuidanceInternal.describedBy idValue config
                    , Attributes.css
                         [ InputStyles.input config.inputStyle isInError
                         , if config.inputStyle == InputStyles.Writing then
@@ -685,29 +677,7 @@ view label attributes =
             eventsAndValues.floatingContent
             eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
-        , case ( errorMessage_, config.guidance ) of
-            ( Just m, _ ) ->
-                Message.view
-                    [ Message.tiny
-                    , Message.error
-                    , Message.plaintext m
-                    , Message.alertRole
-                    ]
-
-            ( _, Just guidanceMessage ) ->
-                Text.caption
-                    [ Text.id (idValue ++ "_guidance")
-                    , Text.plaintext guidanceMessage
-                    , -- Match the vertical styles of the error message
-                      Text.css
-                        [ Css.paddingTop (Css.px 6)
-                        , Css.paddingBottom (Css.px 8)
-                        , Css.lineHeight (Css.px 23)
-                        ]
-                    ]
-
-            _ ->
-                Html.text ""
+        , InputErrorAndGuidanceInternal.view idValue config
         ]
 
 
