@@ -214,12 +214,6 @@ internalView config =
                         , display inlineBlock
                         , color Colors.navy
                         ]
-
-                    -- , case config.disclosure of
-                    --     Just _ ->
-                    --         Aria.describedBy [ "disclosure-" ++ id_ ]
-                    --     Nothing ->
-                    --         attribute "data-todo" "remove-this"
                     ]
                     [ radioInputIcon
                         { isLocked = config.isLocked
