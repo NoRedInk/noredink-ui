@@ -33,6 +33,83 @@ import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
 
+{-| Customizations for the RadioButton.
+-}
+type Attribute value msg
+    = Attribute (EventsAndValues value msg) (Config -> Config)
+
+
+type alias EventsAndValues value msg =
+    { value : Maybe value
+    , selectedValue : Maybe value
+    , onSelect : Maybe (value -> msg)
+    , valueToString : Maybe (value -> String)
+    , premiumMsg : Maybe msg
+    }
+
+
+emptyEventsAndValues : EventsAndValues value msg
+emptyEventsAndValues =
+    { value = Nothing
+    , selectedValue = Nothing
+    , onSelect = Nothing
+    , valueToString = Nothing
+    , premiumMsg = Nothing
+    }
+
+
+{-| This is private. The public API only exposes `Attribute`.
+-}
+type alias Config =
+    { label : String
+    , name : String
+    , isLocked : Bool
+    , isDisabled : Bool
+    , showPennant : Bool
+    }
+
+
+emptyConfig : Config
+emptyConfig =
+    { label = ""
+    , name = ""
+    , isLocked = False
+    , isDisabled = False
+    , showPennant = False
+    }
+
+
+applyConfig : List (Attribute value msg) -> Config
+applyConfig attributes =
+    List.foldl (\(Attribute _ update) config -> update config)
+        emptyConfig
+        attributes
+
+
+orExisting : (acc -> Maybe a) -> acc -> acc -> Maybe a
+orExisting f new previous =
+    case f previous of
+        Just just ->
+            Just just
+
+        Nothing ->
+            f new
+
+
+applyEvents : List (Attribute value msg) -> EventsAndValues value msg
+applyEvents =
+    List.foldl
+        (\(Attribute eventsAndValues _) existing ->
+            { value = orExisting .value eventsAndValues existing
+            , selectedValue = orExisting .selectedValue eventsAndValues existing
+            , onSelect = orExisting .onSelect eventsAndValues existing
+            , valueToString = orExisting .valueToString eventsAndValues existing
+            , premiumMsg = orExisting .premiumMsg eventsAndValues existing
+            }
+        )
+        emptyEventsAndValues
+
+
 {-| View a single radio button.
 If used in a group, all radio buttons in the group should have the same name attribute.
 -}
@@ -137,6 +214,18 @@ internalView config =
 
         id_ =
             config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
+
+        attributes : List (Attribute a msg)
+        attributes =
+            []
+
+        eventsAndValues : EventsAndValues a msg
+        eventsAndValues =
+            applyEvents attributes
+
+        config_ : Config
+        config_ =
+            applyConfig attributes
     in
     Html.span
         [ id (id_ ++ "-container")
@@ -232,19 +321,6 @@ internalView config =
                 ]
             ]
         ]
-
-
-onEnterAndSpacePreventDefault : msg -> Attribute msg
-onEnterAndSpacePreventDefault msg =
-    Nri.Ui.Html.V3.onKeyUp
-        { stopPropagation = False, preventDefault = True }
-        (\code ->
-            if code == 13 || code == 32 then
-                Just msg
-
-            else
-                Nothing
-        )
 
 
 radioInputIcon :
