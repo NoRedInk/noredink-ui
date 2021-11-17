@@ -81,6 +81,9 @@ hint = 'upgrade to V11'
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.RadioButton.V2"]
+hint = 'upgrade to V3'
+
 [forbidden."Nri.Ui.SegmentedControl.V11"]
 hint = 'upgrade to V14'
 
