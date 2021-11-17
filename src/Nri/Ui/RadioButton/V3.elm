@@ -1,11 +1,14 @@
-module Nri.Ui.RadioButton.V3 exposing (view, premium)
+module Nri.Ui.RadioButton.V3 exposing
+    ( view, premium
+    , disabled, enabled
+    )
 
-{-| Changes from V1:
+{-| Changes from V2:
 
-  - adds an outline when a radio button is focused
-  - remove NoOp/event swallowing (it broke default radio button behavior)
+  - list based API instead of record based
 
 @docs view, premium
+@docs disabled, enabled
 
 -}
 
@@ -31,6 +34,22 @@ import String exposing (toLower)
 import String.Extra exposing (dasherize)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
+
+
+{-| This disables the input
+-}
+disabled : Attribute value msg
+disabled =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | isDisabled = True }
+
+
+{-| This enables the input, this is the default behavior
+-}
+enabled : Attribute value msg
+enabled =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | isDisabled = False }
 
 
 {-| Customizations for the RadioButton.
@@ -130,7 +149,6 @@ view config =
         , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = False
-        , isDisabled = False
         , onSelect = config.onSelect
         , premiumMsg = Nothing
         , valueToString = config.valueToString
@@ -176,7 +194,6 @@ premium config =
         , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = isLocked
-        , isDisabled = config.isDisabled
         , onSelect = config.onSelect
         , valueToString = config.valueToString
         , premiumMsg = Just config.premiumMsg
@@ -191,7 +208,12 @@ premium config =
                 PremiumLevel.Free ->
                     False
         }
-        []
+        [ if config.isDisabled then
+            disabled
+
+          else
+            enabled
+        ]
 
 
 type alias InternalConfig a msg =
@@ -200,7 +222,6 @@ type alias InternalConfig a msg =
     , name : String
     , selectedValue : Maybe a
     , isLocked : Bool
-    , isDisabled : Bool
     , onSelect : a -> msg
     , premiumMsg : Maybe msg
     , valueToString : a -> String
@@ -246,8 +267,8 @@ internalView config attributes =
             (config.valueToString config.value)
             isChecked
             [ id id_
-            , Widget.disabled (config.isLocked || config.isDisabled)
-            , if not config.isDisabled then
+            , Widget.disabled (config.isLocked || config_.isDisabled)
+            , if not config_.isDisabled then
                 onClick (config.onSelect config.value)
 
               else
@@ -268,7 +289,7 @@ internalView config attributes =
                 ]
             , css
                 [ padding4 (px 6) zero (px 4) (px 40)
-                , if config.isDisabled then
+                , if config_.isDisabled then
                     Css.batch
                         [ color Colors.gray45
                         , cursor notAllowed
@@ -288,7 +309,7 @@ internalView config attributes =
             ]
             [ radioInputIcon
                 { isLocked = config.isLocked
-                , isDisabled = config.isDisabled
+                , isDisabled = config_.isDisabled
                 , isChecked = isChecked
                 }
             , span

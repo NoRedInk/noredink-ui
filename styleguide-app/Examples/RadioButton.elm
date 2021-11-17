@@ -94,7 +94,8 @@ viewVanilla state =
             , onSelect = Select
             , valueToString = identity
             }
-            []
+            [ RadioButton.disabled
+            ]
         , RadioButton.view
             { label = "Dogs"
             , value = "Dogs"
@@ -103,7 +104,7 @@ viewVanilla state =
             , onSelect = Select
             , valueToString = identity
             }
-            []
+            [ RadioButton.enabled ]
         ]
 
 
