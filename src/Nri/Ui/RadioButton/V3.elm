@@ -115,12 +115,13 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , value : a
+    , value : value
     , name : String
-    , selectedValue : Maybe a
-    , onSelect : a -> msg
-    , valueToString : a -> String
+    , selectedValue : Maybe value
+    , onSelect : value -> msg
+    , valueToString : value -> String
     }
+    -> List (Attribute value msg)
     -> Html msg
 view config =
     internalView
@@ -190,6 +191,7 @@ premium config =
                 PremiumLevel.Free ->
                     False
         }
+        []
 
 
 type alias InternalConfig a msg =
@@ -206,18 +208,14 @@ type alias InternalConfig a msg =
     }
 
 
-internalView : InternalConfig a msg -> Html msg
-internalView config =
+internalView : InternalConfig a msg -> List (Attribute a msg) -> Html msg
+internalView config attributes =
     let
         isChecked =
             config.selectedValue == Just config.value
 
         id_ =
             config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
-
-        attributes : List (Attribute a msg)
-        attributes =
-            []
 
         eventsAndValues : EventsAndValues a msg
         eventsAndValues =
