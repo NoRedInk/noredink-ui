@@ -86,8 +86,7 @@ viewVanilla : State -> Html Msg
 viewVanilla state =
     div []
         [ RadioButton.view
-            { label = selectionToString Dogs
-            }
+            (selectionToString Dogs)
             [ RadioButton.enabled
             , RadioButton.value Dogs
             , RadioButton.name "pets"
@@ -96,8 +95,7 @@ viewVanilla state =
             , RadioButton.valueToString selectionToString
             ]
         , RadioButton.view
-            { label = selectionToString Cats
-            }
+            (selectionToString Cats)
             [ RadioButton.enabled
             , RadioButton.value Cats
             , RadioButton.name "pets"
@@ -106,8 +104,7 @@ viewVanilla state =
             , RadioButton.valueToString selectionToString
             ]
         , RadioButton.view
-            { label = selectionToString Robots
-            }
+            (selectionToString Robots)
             [ RadioButton.disabled
             , RadioButton.value Robots
             , RadioButton.name "pets"

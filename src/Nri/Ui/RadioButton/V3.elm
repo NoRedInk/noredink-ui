@@ -120,8 +120,7 @@ emptyEventsAndValues =
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config =
-    { label : Maybe String
-    , name : Maybe String
+    { name : Maybe String
     , isLocked : Bool
     , isDisabled : Bool
     , showPennant : Bool
@@ -130,8 +129,7 @@ type alias Config =
 
 emptyConfig : Config
 emptyConfig =
-    { label = Nothing
-    , name = Nothing
+    { name = Nothing
     , isLocked = False
     , isDisabled = False
     , showPennant = False
@@ -173,13 +171,12 @@ applyEvents =
 If used in a group, all radio buttons in the group should have the same name attribute.
 -}
 view :
-    { label : String
-    }
+    String
     -> List (Attribute value msg)
     -> Html msg
-view config =
+view label =
     internalView
-        { label = config.label
+        { label = label
         , isLocked = False
         , premiumMsg = Nothing
         , showPennant = False
