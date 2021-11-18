@@ -4,6 +4,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , value, selectedValue, valueToString
     , onSelect
     , name
+    , premium
     )
 
 {-| Changes from V2:
@@ -15,6 +16,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs value, selectedValue, valueToString
 @docs onSelect
 @docs name
+@docs premium
 
 -}
 
@@ -92,6 +94,18 @@ valueToString valueToString_ =
     Attribute { emptyEventsAndValues | valueToString = Just valueToString_ } identity
 
 
+{-| Lock the content if the teacher does not have premium access
+-}
+premium : { teacherPremiumLevel : PremiumLevel, contentPremiumLevel : PremiumLevel } -> Attribute value msg
+premium { teacherPremiumLevel, contentPremiumLevel } =
+    Attribute emptyEventsAndValues <|
+        \config ->
+            { config
+                | teacherPremiumLevel = Just teacherPremiumLevel
+                , contentPremiumLevel = Just contentPremiumLevel
+            }
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -121,7 +135,8 @@ emptyEventsAndValues =
 -}
 type alias Config =
     { name : Maybe String
-    , isLocked : Bool
+    , teacherPremiumLevel : Maybe PremiumLevel
+    , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
     , showPennant : Bool
     }
@@ -130,7 +145,8 @@ type alias Config =
 emptyConfig : Config
 emptyConfig =
     { name = Nothing
-    , isLocked = False
+    , teacherPremiumLevel = Nothing
+    , contentPremiumLevel = Nothing
     , isDisabled = False
     , showPennant = False
     }
@@ -177,7 +193,6 @@ view :
 view label =
     internalView
         { label = label
-        , isLocked = False
         , premiumMsg = Nothing
         , showPennant = False
         }
@@ -185,7 +200,6 @@ view label =
 
 type alias InternalConfig msg =
     { label : String
-    , isLocked : Bool
     , premiumMsg : Maybe msg
     , showPennant : Bool
     }
@@ -211,6 +225,18 @@ internalView config attributes =
         unvalidatedRadioConfig : ( Maybe value, Maybe String, Maybe (value -> String) )
         unvalidatedRadioConfig =
             ( eventsAndValues.value, config_.name, eventsAndValues.valueToString )
+
+        isLocked : Bool
+        isLocked =
+            case ( config_.contentPremiumLevel, config_.teacherPremiumLevel ) of
+                ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
+                    not <|
+                        PremiumLevel.allowedFor
+                            contentPremiumLevel
+                            teacherPremiumLevel
+
+                _ ->
+                    False
     in
     case unvalidatedRadioConfig of
         ( Just value_, Just name_, Just valueToString_ ) ->
@@ -239,7 +265,7 @@ internalView config attributes =
                     (valueToString_ value_)
                     isChecked
                     [ id id_
-                    , Widget.disabled (config.isLocked || config_.isDisabled)
+                    , Widget.disabled (isLocked || config_.isDisabled)
                     , case ( eventsAndValues.onSelect, config_.isDisabled ) of
                         ( Just onSelect_, False ) ->
                             onClick (onSelect_ value_)
@@ -281,7 +307,7 @@ internalView config attributes =
                         ]
                     ]
                     [ radioInputIcon
-                        { isLocked = config.isLocked
+                        { isLocked = isLocked
                         , isDisabled = config_.isDisabled
                         , isChecked = isChecked
                         }

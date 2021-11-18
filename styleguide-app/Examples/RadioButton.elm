@@ -105,7 +105,10 @@ viewVanilla state =
             ]
         , RadioButton.view
             (selectionToString Robots)
-            [ RadioButton.disabled
+            [ RadioButton.premium
+                { teacherPremiumLevel = PremiumLevel.Premium
+                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                }
             , RadioButton.value Robots
             , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
