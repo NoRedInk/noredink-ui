@@ -1,7 +1,8 @@
 module Nri.Ui.RadioButton.V3 exposing
     ( view
     , disabled, enabled
-    , value, name
+    , value, selectedValue
+    , name
     )
 
 {-| Changes from V2:
@@ -10,7 +11,8 @@ module Nri.Ui.RadioButton.V3 exposing
 
 @docs view
 @docs disabled, enabled
-@docs value, name
+@docs value, selectedValue
+@docs name
 
 -}
 
@@ -62,10 +64,18 @@ name name_ =
         \config -> { config | name = name_ }
 
 
-{-| -}
+{-| Sets the value of one radio button
+-}
 value : value -> Attribute value msg
 value value_ =
     Attribute { emptyEventsAndValues | value = Just value_ } identity
+
+
+{-| Specifies what the current value of a group of radio buttons should be
+-}
+selectedValue : Maybe value -> Attribute value msg
+selectedValue value_ =
+    Attribute { emptyEventsAndValues | selectedValue = value_ } identity
 
 
 {-| Customizations for the RadioButton.
@@ -150,7 +160,6 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , selectedValue : Maybe value
     , onSelect : value -> msg
     , valueToString : value -> String
     }
@@ -159,7 +168,6 @@ view :
 view config =
     internalView
         { label = config.label
-        , selectedValue = config.selectedValue
         , isLocked = False
         , onSelect = config.onSelect
         , premiumMsg = Nothing
@@ -170,7 +178,6 @@ view config =
 
 type alias InternalConfig value msg =
     { label : String
-    , selectedValue : Maybe value
     , isLocked : Bool
     , onSelect : value -> msg
     , premiumMsg : Maybe msg
@@ -183,7 +190,10 @@ internalView : InternalConfig value msg -> List (Attribute value msg) -> Html ms
 internalView config attributes =
     let
         isChecked =
-            config.selectedValue == eventsAndValues.value
+            -- why not guard and make sure neither is Nothing?
+            -- Because if value is Nothing we do not render a radio
+            eventsAndValues.selectedValue
+                == eventsAndValues.value
 
         eventsAndValues : EventsAndValues value msg
         eventsAndValues =
