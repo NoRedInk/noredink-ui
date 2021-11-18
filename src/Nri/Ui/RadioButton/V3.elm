@@ -1,9 +1,9 @@
 module Nri.Ui.RadioButton.V3 exposing
     ( view
     , disabled, enabled
-    , value, selectedValue
-    , name
+    , value, selectedValue, valueToString
     , onSelect
+    , name
     )
 
 {-| Changes from V2:
@@ -12,8 +12,8 @@ module Nri.Ui.RadioButton.V3 exposing
 
 @docs view
 @docs disabled, enabled
-@docs value, selectedValue
-@docs docs onSelect
+@docs value, selectedValue, valueToString
+@docs onSelect
 @docs name
 
 -}
@@ -85,6 +85,11 @@ selectedValue value_ =
 onSelect : (value -> msg) -> Attribute value msg
 onSelect onSelect_ =
     Attribute { emptyEventsAndValues | onSelect = Just onSelect_ } identity
+
+
+valueToString : (value -> String) -> Attribute value msg
+valueToString valueToString_ =
+    Attribute { emptyEventsAndValues | valueToString = Just valueToString_ } identity
 
 
 {-| Customizations for the RadioButton.
@@ -169,7 +174,6 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , valueToString : value -> String
     }
     -> List (Attribute value msg)
     -> Html msg
@@ -178,21 +182,19 @@ view config =
         { label = config.label
         , isLocked = False
         , premiumMsg = Nothing
-        , valueToString = config.valueToString
         , showPennant = False
         }
 
 
-type alias InternalConfig value msg =
+type alias InternalConfig msg =
     { label : String
     , isLocked : Bool
     , premiumMsg : Maybe msg
-    , valueToString : value -> String
     , showPennant : Bool
     }
 
 
-internalView : InternalConfig value msg -> List (Attribute value msg) -> Html msg
+internalView : InternalConfig msg -> List (Attribute value msg) -> Html msg
 internalView config attributes =
     let
         isChecked =
@@ -209,15 +211,15 @@ internalView config attributes =
         config_ =
             applyConfig attributes
 
-        unvalidatedRadioConfig : ( Maybe value, Maybe String )
+        unvalidatedRadioConfig : ( Maybe value, Maybe String, Maybe (value -> String) )
         unvalidatedRadioConfig =
-            ( eventsAndValues.value, config_.name )
+            ( eventsAndValues.value, config_.name, eventsAndValues.valueToString )
     in
     case unvalidatedRadioConfig of
-        ( Just value_, Just name_ ) ->
+        ( Just value_, Just name_, Just valueToString_ ) ->
             let
                 id_ =
-                    name_ ++ "-" ++ dasherize (toLower (config.valueToString value_))
+                    name_ ++ "-" ++ dasherize (toLower (valueToString_ value_))
             in
             Html.span
                 [ id (id_ ++ "-container")
@@ -237,7 +239,7 @@ internalView config attributes =
                     ]
                 ]
                 [ radio name_
-                    (config.valueToString value_)
+                    (valueToString_ value_)
                     isChecked
                     [ id id_
                     , Widget.disabled (config.isLocked || config_.isDisabled)

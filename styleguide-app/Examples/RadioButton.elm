@@ -86,41 +86,60 @@ viewVanilla : State -> Html Msg
 viewVanilla state =
     div []
         [ RadioButton.view
-            { label = "Cats"
-            , valueToString = identity
+            { label = selectionToString Dogs
             }
             [ RadioButton.enabled
-            , RadioButton.value "Felines"
-            , RadioButton.name "radio-button-examples"
+            , RadioButton.value Dogs
+            , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
+            , RadioButton.valueToString selectionToString
             ]
         , RadioButton.view
-            { label = "Dogs"
-            , valueToString = identity
+            { label = selectionToString Cats
             }
             [ RadioButton.enabled
-            , RadioButton.value "Canines"
-            , RadioButton.name "radio-button-examples"
+            , RadioButton.value Cats
+            , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
+            , RadioButton.valueToString selectionToString
             ]
         , RadioButton.view
-            { label = "Robots"
-            , valueToString = identity
+            { label = selectionToString Robots
             }
             [ RadioButton.disabled
-            , RadioButton.value "Robots"
-            , RadioButton.name "radio-button-examples"
+            , RadioButton.value Robots
+            , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
+            , RadioButton.valueToString selectionToString
             ]
         ]
 
 
+type Selection
+    = Dogs
+    | Cats
+    | Robots
+
+
+selectionToString : Selection -> String
+selectionToString selection =
+    case selection of
+        Dogs ->
+            "Dogs"
+
+        Cats ->
+            "Cats"
+
+        Robots ->
+            "Robots"
+
+
 {-| -}
 type alias State =
-    { selectedValue : Maybe String
+    { selectedValue : Maybe Selection
     , modal : Modal.Model
     , premiumControl : Control PremiumConfig
     }
@@ -157,7 +176,7 @@ type Msg
     = OpenModal String
     | ModalMsg Modal.Msg
     | CloseModal
-    | Select String
+    | Select Selection
     | SetPremiumControl (Control PremiumConfig)
     | Focus String
     | Focused (Result Dom.Error ())
