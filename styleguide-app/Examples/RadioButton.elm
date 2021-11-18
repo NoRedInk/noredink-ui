@@ -60,7 +60,6 @@ view model =
     , Heading.h4 [] [ Html.text "view" ]
     , viewVanilla model
     , Heading.h4 [] [ Html.text "premium" ]
-    , viewPremium model
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -88,99 +87,24 @@ viewVanilla state =
     div []
         [ RadioButton.view
             { label = "Cats"
-            , selectedValue = state.selectedValue
             , onSelect = Debug.log "selected" >> Select
             , valueToString = identity
             }
             [ RadioButton.enabled
             , RadioButton.value "Felines"
             , RadioButton.name "radio-button-examples"
+            , RadioButton.selectedValue state.selectedValue
             ]
         , RadioButton.view
             { label = "Dogs"
-            , selectedValue = state.selectedValue
             , onSelect = Debug.log "selected" >> Select
             , valueToString = identity
             }
             [ RadioButton.enabled
             , RadioButton.value "Canines"
             , RadioButton.name "radio-button-examples"
+            , RadioButton.selectedValue state.selectedValue
             ]
-        ]
-
-
-viewPremium : State -> Html Msg
-viewPremium state =
-    let
-        premiumConfig =
-            Control.currentValue state.premiumControl
-    in
-    div []
-        [ Heading.h4 [] [ Html.text "Premium Radio Buttons" ]
-        , Html.div [ css [ Css.margin (Css.px 8) ] ]
-            [ Control.view SetPremiumControl state.premiumControl
-                |> Html.fromUnstyled
-            ]
-        , RadioButton.premium
-            { label = "Hedgehog (Free)"
-            , value = "Hedgehogs"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.Free
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-free"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = False
-            }
-        , RadioButton.premium
-            { label = "Hedgehodge (Premium)"
-            , value = "Hedgehodges"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-premium"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = False
-            }
-        , RadioButton.premium
-            { label = "Disabled"
-            , value = "Disabled"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-premium"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = True
-            }
         ]
 
 

@@ -1,5 +1,5 @@
 module Nri.Ui.RadioButton.V3 exposing
-    ( view, premium
+    ( view
     , disabled, enabled
     , value, name
     )
@@ -8,7 +8,7 @@ module Nri.Ui.RadioButton.V3 exposing
 
   - list based API instead of record based
 
-@docs view, premium
+@docs view
 @docs disabled, enabled
 @docs value, name
 
@@ -166,64 +166,6 @@ view config =
         , valueToString = config.valueToString
         , showPennant = False
         }
-
-
-{-| A radio button that should be used for premium content.
-
-This radio button is locked when the premium level of the content
-is greater than the premium level of the teacher.
-
-  - `onChange`: A message for when the user selected the radio button
-  - `onLockedClick`: A message for when the user clicks a radio button they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Premium.Model.view`
-
--}
-premium :
-    { label : String
-    , value : a
-    , name : String
-    , selectedValue : Maybe a
-    , teacherPremiumLevel : PremiumLevel
-    , contentPremiumLevel : PremiumLevel
-    , onSelect : a -> msg
-    , premiumMsg : msg
-    , valueToString : a -> String
-    , showPennant : Bool
-    , isDisabled : Bool
-    }
-    -> Html msg
-premium config =
-    let
-        isLocked =
-            not <|
-                PremiumLevel.allowedFor
-                    config.contentPremiumLevel
-                    config.teacherPremiumLevel
-    in
-    internalView
-        { label = config.label
-        , selectedValue = config.selectedValue
-        , isLocked = isLocked
-        , onSelect = config.onSelect
-        , valueToString = config.valueToString
-        , premiumMsg = Just config.premiumMsg
-        , showPennant =
-            case config.contentPremiumLevel of
-                PremiumLevel.Premium ->
-                    config.showPennant
-
-                PremiumLevel.PremiumWithWriting ->
-                    config.showPennant
-
-                PremiumLevel.Free ->
-                    False
-        }
-        [ if config.isDisabled then
-            disabled
-
-          else
-            enabled
-        ]
 
 
 type alias InternalConfig value msg =
