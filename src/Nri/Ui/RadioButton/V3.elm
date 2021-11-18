@@ -1,6 +1,6 @@
 module Nri.Ui.RadioButton.V3 exposing
     ( view, premium
-    , disabled, enabled
+    , disabled, enabled, value
     )
 
 {-| Changes from V2:
@@ -8,7 +8,7 @@ module Nri.Ui.RadioButton.V3 exposing
   - list based API instead of record based
 
 @docs view, premium
-@docs disabled, enabled
+@docs disabled, enabled, value
 
 -}
 
@@ -50,6 +50,12 @@ enabled : Attribute value msg
 enabled =
     Attribute emptyEventsAndValues <|
         \config -> { config | isDisabled = False }
+
+
+{-| -}
+value : value -> Attribute value msg
+value value_ =
+    Attribute { emptyEventsAndValues | value = Just value_ } identity
 
 
 {-| Customizations for the RadioButton.
@@ -134,7 +140,6 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , value : value
     , name : String
     , selectedValue : Maybe value
     , onSelect : value -> msg
@@ -145,7 +150,6 @@ view :
 view config =
     internalView
         { label = config.label
-        , value = config.value
         , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = False
@@ -190,7 +194,6 @@ premium config =
     in
     internalView
         { label = config.label
-        , value = config.value
         , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = isLocked
@@ -216,130 +219,139 @@ premium config =
         ]
 
 
-type alias InternalConfig a msg =
+type alias InternalConfig value msg =
     { label : String
-    , value : a
     , name : String
-    , selectedValue : Maybe a
+    , selectedValue : Maybe value
     , isLocked : Bool
-    , onSelect : a -> msg
+    , onSelect : value -> msg
     , premiumMsg : Maybe msg
-    , valueToString : a -> String
+    , valueToString : value -> String
     , showPennant : Bool
     }
 
 
-internalView : InternalConfig a msg -> List (Attribute a msg) -> Html msg
+internalView : InternalConfig value msg -> List (Attribute value msg) -> Html msg
 internalView config attributes =
     let
         isChecked =
-            config.selectedValue == Just config.value
+            config.selectedValue == eventsAndValues.value
 
-        id_ =
-            config.name ++ "-" ++ dasherize (toLower (config.valueToString config.value))
-
-        eventsAndValues : EventsAndValues a msg
+        eventsAndValues : EventsAndValues value msg
         eventsAndValues =
             applyEvents attributes
 
         config_ : Config
         config_ =
             applyConfig attributes
+
+        unvalidatedRadioConfig : Maybe value
+        unvalidatedRadioConfig =
+            eventsAndValues.value
     in
-    Html.span
-        [ id (id_ ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
-        , css
-            [ position relative
-            , marginLeft (px -4)
-            , display inlineBlock
-            , Css.height (px 34)
-            , pseudoClass "focus-within"
-                [ Css.Global.descendants
-                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                        [ borderColor (rgb 0 95 204)
-                        ]
-                    ]
-                ]
-            ]
-        ]
-        [ radio config.name
-            (config.valueToString config.value)
-            isChecked
-            [ id id_
-            , Widget.disabled (config.isLocked || config_.isDisabled)
-            , if not config_.isDisabled then
-                onClick (config.onSelect config.value)
-
-              else
-                Attributes.none
-            , class "Nri-RadioButton-HiddenRadioInput"
-            , css
-                [ position absolute
-                , top (px 4)
-                , left (px 4)
-                , opacity zero
-                ]
-            ]
-        , Html.label
-            [ for id_
-            , classList
-                [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
-                ]
-            , css
-                [ padding4 (px 6) zero (px 4) (px 40)
-                , if config_.isDisabled then
-                    Css.batch
-                        [ color Colors.gray45
-                        , cursor notAllowed
-                        ]
-
-                  else
-                    cursor pointer
-                , fontSize (px 15)
-                , Fonts.baseFont
-                , Css.property "font-weight" "600"
-                , position relative
-                , outline none
-                , margin zero
-                , display inlineBlock
-                , color Colors.navy
-                ]
-            ]
-            [ radioInputIcon
-                { isLocked = config.isLocked
-                , isDisabled = config_.isDisabled
-                , isChecked = isChecked
-                }
-            , span
-                (if config.showPennant then
-                    [ css
-                        [ displayFlex
-                        , alignItems center
-                        , Css.height (px 20)
-                        ]
-                    ]
-
-                 else
-                    [ css [ verticalAlign middle ] ]
-                )
-                [ Html.text config.label
-                , viewIf
-                    (\() ->
-                        ClickableSvg.button "Premium"
-                            Pennant.premiumFlag
-                            [ Maybe.map ClickableSvg.onClick config.premiumMsg
-                                |> Maybe.withDefault (ClickableSvg.custom [])
-                            , ClickableSvg.exactWidth 26
-                            , ClickableSvg.exactHeight 24
-                            , ClickableSvg.css [ marginLeft (px 8) ]
+    case unvalidatedRadioConfig of
+        Just realValue ->
+            let
+                id_ =
+                    config.name ++ "-" ++ dasherize (toLower (config.valueToString realValue))
+            in
+            Html.span
+                [ id (id_ ++ "-container")
+                , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
+                , css
+                    [ position relative
+                    , marginLeft (px -4)
+                    , display inlineBlock
+                    , Css.height (px 34)
+                    , pseudoClass "focus-within"
+                        [ Css.Global.descendants
+                            [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                                [ borderColor (rgb 0 95 204)
+                                ]
                             ]
-                    )
-                    config.showPennant
+                        ]
+                    ]
                 ]
-            ]
-        ]
+                [ radio config.name
+                    (config.valueToString realValue)
+                    isChecked
+                    [ id id_
+                    , Widget.disabled (config.isLocked || config_.isDisabled)
+                    , if not config_.isDisabled then
+                        onClick (config.onSelect realValue)
+
+                      else
+                        Attributes.none
+                    , class "Nri-RadioButton-HiddenRadioInput"
+                    , css
+                        [ position absolute
+                        , top (px 4)
+                        , left (px 4)
+                        , opacity zero
+                        ]
+                    ]
+                , Html.label
+                    [ for id_
+                    , classList
+                        [ ( "Nri-RadioButton-RadioButton", True )
+                        , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                        ]
+                    , css
+                        [ padding4 (px 6) zero (px 4) (px 40)
+                        , if config_.isDisabled then
+                            Css.batch
+                                [ color Colors.gray45
+                                , cursor notAllowed
+                                ]
+
+                          else
+                            cursor pointer
+                        , fontSize (px 15)
+                        , Fonts.baseFont
+                        , Css.property "font-weight" "600"
+                        , position relative
+                        , outline none
+                        , margin zero
+                        , display inlineBlock
+                        , color Colors.navy
+                        ]
+                    ]
+                    [ radioInputIcon
+                        { isLocked = config.isLocked
+                        , isDisabled = config_.isDisabled
+                        , isChecked = isChecked
+                        }
+                    , span
+                        (if config.showPennant then
+                            [ css
+                                [ displayFlex
+                                , alignItems center
+                                , Css.height (px 20)
+                                ]
+                            ]
+
+                         else
+                            [ css [ verticalAlign middle ] ]
+                        )
+                        [ Html.text config.label
+                        , viewIf
+                            (\() ->
+                                ClickableSvg.button "Premium"
+                                    Pennant.premiumFlag
+                                    [ Maybe.map ClickableSvg.onClick config.premiumMsg
+                                        |> Maybe.withDefault (ClickableSvg.custom [])
+                                    , ClickableSvg.exactWidth 26
+                                    , ClickableSvg.exactHeight 24
+                                    , ClickableSvg.css [ marginLeft (px 8) ]
+                                    ]
+                            )
+                            config.showPennant
+                        ]
+                    ]
+                ]
+
+        Nothing ->
+            text "no radio button here"
 
 
 radioInputIcon :
