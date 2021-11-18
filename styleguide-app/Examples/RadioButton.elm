@@ -88,7 +88,6 @@ viewVanilla state =
     div []
         [ RadioButton.view
             { label = "Cats"
-            , name = "radio-button-examples"
             , selectedValue = state.selectedValue
             , onSelect = Debug.log "selected" >> Select
             , valueToString = identity
@@ -99,13 +98,13 @@ viewVanilla state =
             ]
         , RadioButton.view
             { label = "Dogs"
-            , name = "radio-button-examples"
             , selectedValue = state.selectedValue
             , onSelect = Debug.log "selected" >> Select
             , valueToString = identity
             }
             [ RadioButton.enabled
             , RadioButton.value "Canines"
+            , RadioButton.name "radio-button-examples"
             ]
         ]
 

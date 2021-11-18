@@ -1,6 +1,7 @@
 module Nri.Ui.RadioButton.V3 exposing
     ( view, premium
-    , disabled, enabled, value
+    , disabled, enabled
+    , value, name
     )
 
 {-| Changes from V2:
@@ -8,7 +9,8 @@ module Nri.Ui.RadioButton.V3 exposing
   - list based API instead of record based
 
 @docs view, premium
-@docs disabled, enabled, value
+@docs disabled, enabled
+@docs value, name
 
 -}
 
@@ -50,6 +52,14 @@ enabled : Attribute value msg
 enabled =
     Attribute emptyEventsAndValues <|
         \config -> { config | isDisabled = False }
+
+
+{-| Every radio button in the same group should have the same name
+-}
+name : String -> Attribute value msg
+name name_ =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | name = name_ }
 
 
 {-| -}
@@ -140,7 +150,6 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , name : String
     , selectedValue : Maybe value
     , onSelect : value -> msg
     , valueToString : value -> String
@@ -150,7 +159,6 @@ view :
 view config =
     internalView
         { label = config.label
-        , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = False
         , onSelect = config.onSelect
@@ -194,7 +202,6 @@ premium config =
     in
     internalView
         { label = config.label
-        , name = config.name
         , selectedValue = config.selectedValue
         , isLocked = isLocked
         , onSelect = config.onSelect
@@ -221,7 +228,6 @@ premium config =
 
 type alias InternalConfig value msg =
     { label : String
-    , name : String
     , selectedValue : Maybe value
     , isLocked : Bool
     , onSelect : value -> msg
@@ -253,7 +259,7 @@ internalView config attributes =
         Just realValue ->
             let
                 id_ =
-                    config.name ++ "-" ++ dasherize (toLower (config.valueToString realValue))
+                    config_.name ++ "-" ++ dasherize (toLower (config.valueToString realValue))
             in
             Html.span
                 [ id (id_ ++ "-container")
@@ -272,7 +278,7 @@ internalView config attributes =
                         ]
                     ]
                 ]
-                [ radio config.name
+                [ radio config_.name
                     (config.valueToString realValue)
                     isChecked
                     [ id id_
