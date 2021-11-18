@@ -63,7 +63,7 @@ enabled =
 name : String -> Attribute value msg
 name name_ =
     Attribute emptyEventsAndValues <|
-        \config -> { config | name = name_ }
+        \config -> { config | name = Just name_ }
 
 
 {-| Sets the value of one radio button
@@ -115,8 +115,8 @@ emptyEventsAndValues =
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config =
-    { label : String
-    , name : String
+    { label : Maybe String
+    , name : Maybe String
     , isLocked : Bool
     , isDisabled : Bool
     , showPennant : Bool
@@ -125,8 +125,8 @@ type alias Config =
 
 emptyConfig : Config
 emptyConfig =
-    { label = ""
-    , name = ""
+    { label = Nothing
+    , name = Nothing
     , isLocked = False
     , isDisabled = False
     , showPennant = False
@@ -209,15 +209,15 @@ internalView config attributes =
         config_ =
             applyConfig attributes
 
-        unvalidatedRadioConfig : Maybe value
+        unvalidatedRadioConfig : ( Maybe value, Maybe String )
         unvalidatedRadioConfig =
-            eventsAndValues.value
+            ( eventsAndValues.value, config_.name )
     in
     case unvalidatedRadioConfig of
-        Just realValue ->
+        ( Just value_, Just name_ ) ->
             let
                 id_ =
-                    config_.name ++ "-" ++ dasherize (toLower (config.valueToString realValue))
+                    name_ ++ "-" ++ dasherize (toLower (config.valueToString value_))
             in
             Html.span
                 [ id (id_ ++ "-container")
@@ -236,14 +236,14 @@ internalView config attributes =
                         ]
                     ]
                 ]
-                [ radio config_.name
-                    (config.valueToString realValue)
+                [ radio name_
+                    (config.valueToString value_)
                     isChecked
                     [ id id_
                     , Widget.disabled (config.isLocked || config_.isDisabled)
                     , case ( eventsAndValues.onSelect, config_.isDisabled ) of
                         ( Just onSelect_, False ) ->
-                            onClick (onSelect_ realValue)
+                            onClick (onSelect_ value_)
 
                         _ ->
                             Attributes.none
@@ -315,7 +315,7 @@ internalView config attributes =
                     ]
                 ]
 
-        Nothing ->
+        _ ->
             text "no radio button here"
 
 
