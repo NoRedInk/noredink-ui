@@ -3,6 +3,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , disabled, enabled
     , value, selectedValue
     , name
+    , onSelect
     )
 
 {-| Changes from V2:
@@ -12,6 +13,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs view
 @docs disabled, enabled
 @docs value, selectedValue
+@docs docs onSelect
 @docs name
 
 -}
@@ -76,6 +78,13 @@ value value_ =
 selectedValue : Maybe value -> Attribute value msg
 selectedValue value_ =
     Attribute { emptyEventsAndValues | selectedValue = value_ } identity
+
+
+{-| What message
+-}
+onSelect : (value -> msg) -> Attribute value msg
+onSelect onSelect_ =
+    Attribute { emptyEventsAndValues | onSelect = Just onSelect_ } identity
 
 
 {-| Customizations for the RadioButton.
@@ -160,7 +169,6 @@ If used in a group, all radio buttons in the group should have the same name att
 -}
 view :
     { label : String
-    , onSelect : value -> msg
     , valueToString : value -> String
     }
     -> List (Attribute value msg)
@@ -169,7 +177,6 @@ view config =
     internalView
         { label = config.label
         , isLocked = False
-        , onSelect = config.onSelect
         , premiumMsg = Nothing
         , valueToString = config.valueToString
         , showPennant = False
@@ -179,7 +186,6 @@ view config =
 type alias InternalConfig value msg =
     { label : String
     , isLocked : Bool
-    , onSelect : value -> msg
     , premiumMsg : Maybe msg
     , valueToString : value -> String
     , showPennant : Bool
@@ -235,11 +241,12 @@ internalView config attributes =
                     isChecked
                     [ id id_
                     , Widget.disabled (config.isLocked || config_.isDisabled)
-                    , if not config_.isDisabled then
-                        onClick (config.onSelect realValue)
+                    , case ( eventsAndValues.onSelect, config_.isDisabled ) of
+                        ( Just onSelect_, False ) ->
+                            onClick (onSelect_ realValue)
 
-                      else
-                        Attributes.none
+                        _ ->
+                            Attributes.none
                     , class "Nri-RadioButton-HiddenRadioInput"
                     , css
                         [ position absolute

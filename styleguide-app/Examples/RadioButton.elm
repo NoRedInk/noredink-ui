@@ -87,23 +87,33 @@ viewVanilla state =
     div []
         [ RadioButton.view
             { label = "Cats"
-            , onSelect = Select
             , valueToString = identity
             }
             [ RadioButton.enabled
             , RadioButton.value "Felines"
             , RadioButton.name "radio-button-examples"
             , RadioButton.selectedValue state.selectedValue
+            , RadioButton.onSelect Select
             ]
         , RadioButton.view
             { label = "Dogs"
-            , onSelect = Select
             , valueToString = identity
             }
             [ RadioButton.enabled
             , RadioButton.value "Canines"
             , RadioButton.name "radio-button-examples"
             , RadioButton.selectedValue state.selectedValue
+            , RadioButton.onSelect Select
+            ]
+        , RadioButton.view
+            { label = "Robots"
+            , valueToString = identity
+            }
+            [ RadioButton.disabled
+            , RadioButton.value "Robots"
+            , RadioButton.name "radio-button-examples"
+            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.onSelect Select
             ]
         ]
 
