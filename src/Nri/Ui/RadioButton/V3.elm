@@ -5,7 +5,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , onSelect
     , name
     , premium, showPennant
-    , disclosure
+    , disclosure, block, inline
     , describedBy
     , none
     )
@@ -21,7 +21,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs onSelect
 @docs name
 @docs premium, showPennant
-@docs disclosure
+@docs disclosure, block, inline
 @docs describedBy
 @docs none
 
@@ -145,6 +145,29 @@ none =
     Attribute emptyEventsAndValues identity
 
 
+{-| Displays the radio button as a gray block with a small black label.
+Designed to have the disclosure content be more prominent
+-}
+block : Attribute value msg
+block =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | display = GrayBlock }
+
+
+{-| Displays the radio button as an inline span with a large blue label.
+Designed to have the disclosure content be inline if present at all
+-}
+inline : Attribute value msg
+inline =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | display = Inline }
+
+
+type Display
+    = GrayBlock
+    | Inline
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -181,6 +204,7 @@ type alias Config =
     , isDisabled : Bool
     , showPennant : Bool
     , describedByIds : List String
+    , display : Display
     }
 
 
@@ -192,6 +216,7 @@ emptyConfig =
     , isDisabled = False
     , showPennant = False
     , describedByIds = []
+    , display = Inline
     }
 
 
@@ -240,12 +265,6 @@ Renders nothing if the attributes list does not contain value, name, and valueTo
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
-        isChecked =
-            -- why not guard and make sure neither is Nothing?
-            -- Because if value is Nothing we do not render a radio
-            eventsAndValues.selectedValue
-                == eventsAndValues.value
-
         eventsAndValues : EventsAndValues value msg
         eventsAndValues =
             applyEvents attributes
@@ -257,10 +276,52 @@ view label attributes =
         unvalidatedRadioConfig : ( Maybe value, Maybe String, Maybe (value -> String) )
         unvalidatedRadioConfig =
             ( eventsAndValues.value, config_.name, eventsAndValues.valueToString )
+    in
+    case unvalidatedRadioConfig of
+        ( Just value_, Just name_, Just valueToString_ ) ->
+            let
+                internalConfig =
+                    { value = value_
+                    , name = name_
+                    , valueToString = valueToString_
+                    , eventsAndValues = eventsAndValues
+                    , config = config_
+                    , label = label
+                    }
+            in
+            case config_.display of
+                Inline ->
+                    viewInline internalConfig
+
+                GrayBlock ->
+                    viewBlock internalConfig
+
+        _ ->
+            text "no radio button here"
+
+
+type alias InternalConfig value msg =
+    { value : value
+    , name : String
+    , valueToString : value -> String
+    , eventsAndValues : EventsAndValues value msg
+    , config : Config
+    , label : String
+    }
+
+
+viewBlock : InternalConfig value msg -> Html msg
+viewBlock internalConfig =
+    let
+        isChecked =
+            -- why not guard and make sure neither is Nothing?
+            -- Because if value is Nothing we do not render a radio
+            internalConfig.eventsAndValues.selectedValue
+                == internalConfig.eventsAndValues.value
 
         isLocked : Bool
         isLocked =
-            case ( config_.contentPremiumLevel, config_.teacherPremiumLevel ) of
+            case ( internalConfig.config.contentPremiumLevel, internalConfig.config.teacherPremiumLevel ) of
                 ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
                     not <|
                         PremiumLevel.allowedFor
@@ -271,142 +332,305 @@ view label attributes =
                     False
 
         showPennant_ =
-            case eventsAndValues.premiumMsg of
+            case internalConfig.eventsAndValues.premiumMsg of
                 Just _ ->
                     True
 
                 _ ->
                     False
+
+        id_ =
+            internalConfig.name ++ "-" ++ (dasherize <| toLower <| internalConfig.valueToString internalConfig.value)
+
+        disclosureIdAndElement : Maybe ( String, Html msg )
+        disclosureIdAndElement =
+            case ( internalConfig.eventsAndValues.disclosedContent, isChecked ) of
+                ( [], _ ) ->
+                    Nothing
+
+                ( _, False ) ->
+                    Nothing
+
+                ( (_ :: _) as childNodes, True ) ->
+                    let
+                        disclosureId =
+                            id_ ++ "-disclosure-content"
+                    in
+                    Just <| ( disclosureId, div [ id disclosureId ] childNodes )
     in
-    case unvalidatedRadioConfig of
-        ( Just value_, Just name_, Just valueToString_ ) ->
-            let
-                id_ =
-                    name_ ++ "-" ++ (dasherize <| toLower <| valueToString_ value_)
+    Html.div
+        [ id (id_ ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
+        , css
+            [ position relative
+            , display Css.block
+            , Css.height (px 34)
+            , Css.width <| pct 100
+            , Css.backgroundColor Colors.gray96
+            , padding <| Css.px 20
+            , marginBottom <| Css.px 10
+            , borderRadius <| Css.px 8
+            ]
+        ]
+        [ radio internalConfig.name
+            (internalConfig.valueToString internalConfig.value)
+            isChecked
+            [ id id_
+            , Widget.disabled (isLocked || internalConfig.config.isDisabled)
+            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
+                ( Just onSelect_, False ) ->
+                    onClick (onSelect_ internalConfig.value)
 
-                disclosureIdAndElement : Maybe ( String, Html msg )
-                disclosureIdAndElement =
-                    case ( eventsAndValues.disclosedContent, isChecked ) of
-                        ( [], _ ) ->
-                            Nothing
+                _ ->
+                    Attributes.none
+            , class "Nri-RadioButton-HiddenRadioInput"
+            , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
+            , case internalConfig.config.describedByIds of
+                (_ :: _) as describedByIds ->
+                    Aria.describedBy describedByIds
 
-                        ( _, False ) ->
-                            Nothing
-
-                        ( (_ :: _) as childNodes, True ) ->
-                            let
-                                disclosureId =
-                                    id_ ++ "-disclosure-content"
-                            in
-                            Just <| ( disclosureId, div [ id disclosureId ] childNodes )
-            in
-            Html.span
-                [ id (id_ ++ "-container")
-                , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
-                , css
-                    [ position relative
-                    , marginLeft (px -4)
-                    , display inlineBlock
-                    , Css.height (px 34)
-                    , pseudoClass "focus-within"
-                        [ Css.Global.descendants
-                            [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                                [ borderColor (rgb 0 95 204)
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-                [ radio name_
-                    (valueToString_ value_)
-                    isChecked
-                    [ id id_
-                    , Widget.disabled (isLocked || config_.isDisabled)
-                    , case ( eventsAndValues.onSelect, config_.isDisabled ) of
-                        ( Just onSelect_, False ) ->
-                            onClick (onSelect_ value_)
-
-                        _ ->
-                            Attributes.none
-                    , class "Nri-RadioButton-HiddenRadioInput"
-                    , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
-                    , case config_.describedByIds of
-                        (_ :: _) as describedByIds ->
-                            Aria.describedBy describedByIds
-
-                        [] ->
-                            Attributes.none
-                    , css
-                        [ position absolute
-                        , top (px 4)
-                        , left (px 4)
-                        , opacity zero
-                        ]
-                    ]
-                , Html.label
-                    [ for id_
-                    , classList
-                        [ ( "Nri-RadioButton-RadioButton", True )
-                        , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
-                        ]
-                    , css
-                        [ padding4 (px 6) zero (px 4) (px 40)
-                        , if config_.isDisabled then
-                            Css.batch
-                                [ color Colors.gray45
-                                , cursor notAllowed
-                                ]
-
-                          else
-                            cursor pointer
-                        , fontSize (px 15)
-                        , Fonts.baseFont
-                        , Css.property "font-weight" "600"
-                        , position relative
-                        , outline Css.none
-                        , margin zero
-                        , display inlineBlock
-                        , color Colors.navy
-                        ]
-                    ]
-                    [ radioInputIcon
-                        { isLocked = isLocked
-                        , isDisabled = config_.isDisabled
-                        , isChecked = isChecked
-                        }
-                    , span
-                        (if showPennant_ then
-                            [ css
-                                [ displayFlex
-                                , alignItems center
-                                , Css.height (px 20)
-                                ]
-                            ]
-
-                         else
-                            [ css [ verticalAlign middle ] ]
-                        )
-                        [ Html.text label
-                        , viewJust
-                            (\premiumMsg ->
-                                ClickableSvg.button "Premium"
-                                    Pennant.premiumFlag
-                                    [ ClickableSvg.onClick premiumMsg
-                                    , ClickableSvg.exactWidth 26
-                                    , ClickableSvg.exactHeight 24
-                                    , ClickableSvg.css [ marginLeft (px 8) ]
+                [] ->
+                    Attributes.none
+            , css
+                [ position absolute
+                , top (px 4)
+                , left (px 4)
+                , opacity zero
+                , pseudoClass "focus"
+                    [ Css.Global.adjacentSiblings
+                        [ Css.Global.everything
+                            [ Css.Global.descendants
+                                [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                                    [ borderColor (rgb 0 95 204)
                                     ]
-                            )
-                            eventsAndValues.premiumMsg
+                                ]
+                            ]
                         ]
                     ]
-                , viewJust
-                    Tuple.second
-                    disclosureIdAndElement
                 ]
+            ]
+        , Html.label
+            [ for id_
+            , classList
+                [ ( "Nri-RadioButton-RadioButton", True )
+                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                ]
+            , css <|
+                [ position relative
+                , outline Css.none
+                , margin zero
+                , Fonts.baseFont
+                , if internalConfig.config.isDisabled then
+                    Css.batch
+                        [ color Colors.gray45
+                        , cursor notAllowed
+                        ]
 
-        _ ->
-            text "no radio button here"
+                  else
+                    cursor pointer
+                , padding4 zero zero zero (px 40)
+                ]
+            ]
+            [ radioInputIcon
+                { isLocked = isLocked
+                , isDisabled = internalConfig.config.isDisabled
+                , isChecked = isChecked
+                }
+            , span
+                (if showPennant_ then
+                    [ css
+                        [ display inlineFlex
+                        , alignItems center
+                        , Css.height (px 20)
+                        ]
+                    ]
+
+                 else
+                    [ css [ verticalAlign middle ] ]
+                )
+                [ Html.text internalConfig.label
+                , viewJust
+                    (\premiumMsg ->
+                        ClickableSvg.button "Premium"
+                            Pennant.premiumFlag
+                            [ ClickableSvg.onClick premiumMsg
+                            , ClickableSvg.exactWidth 26
+                            , ClickableSvg.exactHeight 24
+                            , ClickableSvg.css [ marginLeft (px 8) ]
+                            ]
+                    )
+                    internalConfig.eventsAndValues.premiumMsg
+                ]
+            ]
+        , viewJust
+            Tuple.second
+            disclosureIdAndElement
+        ]
+
+
+viewInline : InternalConfig value msg -> Html msg
+viewInline internalConfig =
+    let
+        isChecked =
+            -- why not guard and make sure neither is Nothing?
+            -- Because if value is Nothing we do not render a radio
+            internalConfig.eventsAndValues.selectedValue
+                == internalConfig.eventsAndValues.value
+
+        isLocked : Bool
+        isLocked =
+            case ( internalConfig.config.contentPremiumLevel, internalConfig.config.teacherPremiumLevel ) of
+                ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
+                    not <|
+                        PremiumLevel.allowedFor
+                            contentPremiumLevel
+                            teacherPremiumLevel
+
+                _ ->
+                    False
+
+        showPennant_ =
+            case internalConfig.eventsAndValues.premiumMsg of
+                Just _ ->
+                    True
+
+                _ ->
+                    False
+
+        id_ =
+            internalConfig.name ++ "-" ++ (dasherize <| toLower <| internalConfig.valueToString internalConfig.value)
+
+        disclosureIdAndElement : Maybe ( String, Html msg )
+        disclosureIdAndElement =
+            case ( internalConfig.eventsAndValues.disclosedContent, isChecked ) of
+                ( [], _ ) ->
+                    Nothing
+
+                ( _, False ) ->
+                    Nothing
+
+                ( (_ :: _) as childNodes, True ) ->
+                    let
+                        disclosureId =
+                            id_ ++ "-disclosure-content"
+                    in
+                    Just <| ( disclosureId, div [ id disclosureId ] childNodes )
+    in
+    Html.span
+        [ id (id_ ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
+        , css
+            [ position relative
+            , marginLeft (px -4)
+            , display inlineBlock
+            , Css.height (px 34)
+            , pseudoClass "focus-within"
+                [ Css.Global.descendants
+                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                        [ borderColor (rgb 0 95 204)
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        [ radio internalConfig.name
+            (internalConfig.valueToString internalConfig.value)
+            isChecked
+            [ id id_
+            , Widget.disabled (isLocked || internalConfig.config.isDisabled)
+            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
+                ( Just onSelect_, False ) ->
+                    onClick (onSelect_ internalConfig.value)
+
+                _ ->
+                    Attributes.none
+            , class "Nri-RadioButton-HiddenRadioInput"
+            , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
+            , case internalConfig.config.describedByIds of
+                (_ :: _) as describedByIds ->
+                    Aria.describedBy describedByIds
+
+                [] ->
+                    Attributes.none
+            , css
+                [ position absolute
+                , top (px 4)
+                , left (px 4)
+                , opacity zero
+                , pseudoClass "focus"
+                    [ Css.Global.adjacentSiblings
+                        [ Css.Global.everything
+                            [ Css.Global.descendants
+                                [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
+                                    [ borderColor (rgb 0 95 204)
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        , Html.label
+            [ for id_
+            , classList
+                [ ( "Nri-RadioButton-RadioButton", True )
+                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                ]
+            , css <|
+                [ position relative
+                , outline Css.none
+                , margin zero
+                , Fonts.baseFont
+                , if internalConfig.config.isDisabled then
+                    Css.batch
+                        [ color Colors.gray45
+                        , cursor notAllowed
+                        ]
+
+                  else
+                    cursor pointer
+                , padding4 (px 6) zero (px 4) (px 40)
+                , fontSize (px 15)
+                , Css.property "font-weight" "600"
+                , display inlineBlock
+                , color Colors.navy
+                ]
+            ]
+            [ radioInputIcon
+                { isLocked = isLocked
+                , isDisabled = internalConfig.config.isDisabled
+                , isChecked = isChecked
+                }
+            , span
+                (if showPennant_ then
+                    [ css
+                        [ display inlineFlex
+                        , alignItems center
+                        , Css.height (px 20)
+                        ]
+                    ]
+
+                 else
+                    [ css [ verticalAlign middle ] ]
+                )
+                [ Html.text internalConfig.label
+                , viewJust
+                    (\premiumMsg ->
+                        ClickableSvg.button "Premium"
+                            Pennant.premiumFlag
+                            [ ClickableSvg.onClick premiumMsg
+                            , ClickableSvg.exactWidth 26
+                            , ClickableSvg.exactHeight 24
+                            , ClickableSvg.css [ marginLeft (px 8) ]
+                            ]
+                    )
+                    internalConfig.eventsAndValues.premiumMsg
+                ]
+            ]
+        , viewJust
+            Tuple.second
+            disclosureIdAndElement
+        ]
 
 
 radioInputIcon :

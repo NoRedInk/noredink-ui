@@ -95,6 +95,7 @@ viewVanilla state =
             , RadioButton.valueToString selectionToString
             , RadioButton.describedBy
                 [ "dogs-description" ]
+            , RadioButton.block
             ]
         , RadioButton.view
             (selectionToString Cats)
@@ -112,8 +113,9 @@ viewVanilla state =
             , RadioButton.disclosure
                 [ span
                     [ Attributes.id "cats-description" ]
-                    [ text "Cats kind of do their own thing" ]
+                    [ Text.mediumBody [ Text.plaintext "Cats kind of do their own thing" ] ]
                 ]
+            , RadioButton.block
             ]
         , RadioButton.view
             (selectionToString Robots)
@@ -127,6 +129,7 @@ viewVanilla state =
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.showPennant <| OpenModal ""
+            , RadioButton.block
             ]
         , RadioButton.view
             (selectionToString Robots)
@@ -138,7 +141,8 @@ viewVanilla state =
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
-            , RadioButton.showPennant <| OpenModal ""
+            , RadioButton.showPennant <| OpenModal "pets-robots"
+            , RadioButton.block
             ]
         , p
             [ Attributes.id "dogs-description" ]
