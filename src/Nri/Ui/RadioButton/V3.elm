@@ -82,13 +82,16 @@ selectedValue value_ =
     Attribute { emptyEventsAndValues | selectedValue = value_ } identity
 
 
-{-| What message
+{-| Fire a message parameterized by the value type when selecting a radio option
 -}
 onSelect : (value -> msg) -> Attribute value msg
 onSelect onSelect_ =
     Attribute { emptyEventsAndValues | onSelect = Just onSelect_ } identity
 
 
+{-| Since <input>s transact in strings we need to be able to give every radio button in a group
+a unique string value. This function should be the same for every RadioButton in a group.
+-}
 valueToString : (value -> String) -> Attribute value msg
 valueToString valueToString_ =
     Attribute { emptyEventsAndValues | valueToString = Just valueToString_ } identity
