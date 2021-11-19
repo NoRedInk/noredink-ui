@@ -265,22 +265,17 @@ Renders nothing if the attributes list does not contain value, name, and valueTo
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
-        eventsAndValues : EventsAndValues value msg
-        eventsAndValues =
-            applyEvents attributes
-
-        config : Config
-        config =
+        config_ =
             applyConfig attributes
     in
-    case makeInternalConfig label config eventsAndValues of
-        Just internalConfig ->
-            case config.display of
+    case internalConfig label config_ (applyEvents attributes) of
+        Just config ->
+            case config_.display of
                 Inline ->
-                    viewInline internalConfig
+                    viewInline config
 
                 GrayBlock ->
-                    viewBlock internalConfig
+                    viewBlock config
 
         _ ->
             text "no radio button here"
@@ -312,8 +307,8 @@ type alias InternalConfig value msg =
     }
 
 
-makeInternalConfig : String -> Config -> EventsAndValues value msg -> Maybe (InternalConfig value msg)
-makeInternalConfig label config eventsAndValues =
+internalConfig : String -> Config -> EventsAndValues value msg -> Maybe (InternalConfig value msg)
+internalConfig label config eventsAndValues =
     case ( eventsAndValues.value, config.name, eventsAndValues.valueToString ) of
         ( Just value_, Just name_, Just valueToString_ ) ->
             let
@@ -378,10 +373,10 @@ makeInternalConfig label config eventsAndValues =
 
 
 viewBlock : InternalConfig value msg -> Html msg
-viewBlock internalConfig =
+viewBlock config =
     Html.div
-        [ id (internalConfig.id ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", internalConfig.showPennant ) ]
+        [ id (config.id ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
             , display Css.block
@@ -393,20 +388,20 @@ viewBlock internalConfig =
             , borderRadius <| Css.px 8
             ]
         ]
-        [ radio internalConfig.name
-            (internalConfig.valueToString internalConfig.value)
-            internalConfig.isChecked
-            [ id internalConfig.id
-            , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
-            , case ( internalConfig.onSelect, internalConfig.isDisabled ) of
+        [ radio config.name
+            (config.valueToString config.value)
+            config.isChecked
+            [ id config.id
+            , Widget.disabled (config.isLocked || config.isDisabled)
+            , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
-                    onClick (onSelect_ internalConfig.value)
+                    onClick (onSelect_ config.value)
 
                 _ ->
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
-            , case internalConfig.describedByIds of
+            , maybeAttr (Tuple.first >> Aria.controls) config.disclosureIdAndElement
+            , case config.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
 
@@ -431,17 +426,17 @@ viewBlock internalConfig =
                 ]
             ]
         , Html.label
-            [ for internalConfig.id
+            [ for config.id
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", internalConfig.isChecked )
+                , ( "Nri-RadioButton-RadioButtonChecked", config.isChecked )
                 ]
             , css <|
                 [ position relative
                 , outline Css.none
                 , margin zero
                 , Fonts.baseFont
-                , if internalConfig.isDisabled then
+                , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
                         , cursor notAllowed
@@ -453,12 +448,12 @@ viewBlock internalConfig =
                 ]
             ]
             [ radioInputIcon
-                { isLocked = internalConfig.isLocked
-                , isDisabled = internalConfig.isDisabled
-                , isChecked = internalConfig.isChecked
+                { isLocked = config.isLocked
+                , isDisabled = config.isDisabled
+                , isChecked = config.isChecked
                 }
             , span
-                (if internalConfig.showPennant then
+                (if config.showPennant then
                     [ css
                         [ display inlineFlex
                         , alignItems center
@@ -469,7 +464,7 @@ viewBlock internalConfig =
                  else
                     [ css [ verticalAlign middle ] ]
                 )
-                [ Html.text internalConfig.label
+                [ Html.text config.label
                 , viewJust
                     (\premiumMsg ->
                         ClickableSvg.button "Premium"
@@ -480,20 +475,20 @@ viewBlock internalConfig =
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
                     )
-                    internalConfig.premiumMsg
+                    config.premiumMsg
                 ]
             ]
         , viewJust
             Tuple.second
-            internalConfig.disclosureIdAndElement
+            config.disclosureIdAndElement
         ]
 
 
 viewInline : InternalConfig value msg -> Html msg
-viewInline internalConfig =
+viewInline config =
     Html.span
-        [ id (internalConfig.id ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", internalConfig.showPennant ) ]
+        [ id (config.id ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
             , marginLeft (px -4)
@@ -508,20 +503,20 @@ viewInline internalConfig =
                 ]
             ]
         ]
-        [ radio internalConfig.name
-            (internalConfig.valueToString internalConfig.value)
-            internalConfig.isChecked
-            [ id internalConfig.id
-            , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
-            , case ( internalConfig.onSelect, internalConfig.isDisabled ) of
+        [ radio config.name
+            (config.valueToString config.value)
+            config.isChecked
+            [ id config.id
+            , Widget.disabled (config.isLocked || config.isDisabled)
+            , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
-                    onClick (onSelect_ internalConfig.value)
+                    onClick (onSelect_ config.value)
 
                 _ ->
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
-            , case internalConfig.describedByIds of
+            , maybeAttr (Tuple.first >> Aria.controls) config.disclosureIdAndElement
+            , case config.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
 
@@ -546,17 +541,17 @@ viewInline internalConfig =
                 ]
             ]
         , Html.label
-            [ for internalConfig.id
+            [ for config.id
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", internalConfig.isChecked )
+                , ( "Nri-RadioButton-RadioButtonChecked", config.isChecked )
                 ]
             , css <|
                 [ position relative
                 , outline Css.none
                 , margin zero
                 , Fonts.baseFont
-                , if internalConfig.isDisabled then
+                , if config.isDisabled then
                     Css.batch
                         [ color Colors.gray45
                         , cursor notAllowed
@@ -572,12 +567,12 @@ viewInline internalConfig =
                 ]
             ]
             [ radioInputIcon
-                { isLocked = internalConfig.isLocked
-                , isDisabled = internalConfig.isDisabled
-                , isChecked = internalConfig.isChecked
+                { isLocked = config.isLocked
+                , isDisabled = config.isDisabled
+                , isChecked = config.isChecked
                 }
             , span
-                (if internalConfig.showPennant then
+                (if config.showPennant then
                     [ css
                         [ display inlineFlex
                         , alignItems center
@@ -588,7 +583,7 @@ viewInline internalConfig =
                  else
                     [ css [ verticalAlign middle ] ]
                 )
-                [ Html.text internalConfig.label
+                [ Html.text config.label
                 , viewJust
                     (\premiumMsg ->
                         ClickableSvg.button "Premium"
@@ -599,12 +594,12 @@ viewInline internalConfig =
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
                     )
-                    internalConfig.premiumMsg
+                    config.premiumMsg
                 ]
             ]
         , viewJust
             Tuple.second
-            internalConfig.disclosureIdAndElement
+            config.disclosureIdAndElement
         ]
 
 
