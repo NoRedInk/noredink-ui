@@ -269,27 +269,13 @@ view label attributes =
         eventsAndValues =
             applyEvents attributes
 
-        config_ : Config
-        config_ =
+        config : Config
+        config =
             applyConfig attributes
-
-        unvalidatedRadioConfig : ( Maybe value, Maybe String, Maybe (value -> String) )
-        unvalidatedRadioConfig =
-            ( eventsAndValues.value, config_.name, eventsAndValues.valueToString )
     in
-    case unvalidatedRadioConfig of
-        ( Just value_, Just name_, Just valueToString_ ) ->
-            let
-                internalConfig =
-                    { value = value_
-                    , name = name_
-                    , valueToString = valueToString_
-                    , eventsAndValues = eventsAndValues
-                    , config = config_
-                    , label = label
-                    }
-            in
-            case config_.display of
+    case makeInternalConfig label config eventsAndValues of
+        Just internalConfig ->
+            case config.display of
                 Inline ->
                     viewInline internalConfig
 
@@ -301,13 +287,33 @@ view label attributes =
 
 
 type alias InternalConfig value msg =
-    { value : value
+    { -- user specified values
+      value : value
     , name : String
     , valueToString : value -> String
     , eventsAndValues : EventsAndValues value msg
     , config : Config
     , label : String
+
+    -- TODO: computed values that both view helpers need
     }
+
+
+makeInternalConfig : String -> Config -> EventsAndValues value msg -> Maybe (InternalConfig value msg)
+makeInternalConfig label config eventsAndValues =
+    case ( eventsAndValues.value, config.name, eventsAndValues.valueToString ) of
+        ( Just value_, Just name_, Just valueToString_ ) ->
+            Just
+                { value = value_
+                , name = name_
+                , valueToString = valueToString_
+                , eventsAndValues = eventsAndValues
+                , config = config
+                , label = label
+                }
+
+        _ ->
+            Nothing
 
 
 viewBlock : InternalConfig value msg -> Html msg

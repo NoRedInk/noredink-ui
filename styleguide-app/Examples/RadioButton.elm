@@ -137,12 +137,27 @@ viewVanilla state =
                 { teacherPremiumLevel = PremiumLevel.Premium
                 , contentPremiumLevel = PremiumLevel.PremiumWithWriting
                 }
+            , RadioButton.value Robots
             , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.showPennant <| OpenModal "pets-robots"
-            , RadioButton.block
+            , RadioButton.inline
+            ]
+        , RadioButton.view
+            (selectionToString Robots)
+            [ RadioButton.premium
+                { teacherPremiumLevel = PremiumLevel.Premium
+                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                }
+            , RadioButton.value Robots
+            , RadioButton.name "pets"
+            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.onSelect Select
+            , RadioButton.valueToString selectionToString
+            , RadioButton.showPennant <| OpenModal "pets-robots"
+            , RadioButton.inline
             ]
         , p
             [ Attributes.id "dogs-description" ]
