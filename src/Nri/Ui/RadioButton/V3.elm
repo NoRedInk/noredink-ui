@@ -289,7 +289,6 @@ view label attributes =
 type alias InternalConfig value msg =
     { -- user specified Attributes
       name : String
-    , valueToString : value -> String
     , label : String
     , teacherPremiumLevel : Maybe PremiumLevel
     , contentPremiumLevel : Maybe PremiumLevel
@@ -297,8 +296,12 @@ type alias InternalConfig value msg =
     , describedByIds : List String
 
     -- user specified messages and values TODO unpack eventsAndValues
-    , eventsAndValues : EventsAndValues value msg
     , value : value
+    , selectedValue : Maybe value
+    , onSelect : Maybe (value -> msg)
+    , valueToString : value -> String
+    , premiumMsg : Maybe msg
+    , disclosedContent : List (Html msg)
 
     -- computed values that both view helpers need
     , isChecked : Bool
@@ -328,14 +331,17 @@ makeInternalConfig label config eventsAndValues =
             in
             Just
                 { name = name_
-                , valueToString = valueToString_
                 , label = label
                 , teacherPremiumLevel = config.teacherPremiumLevel
                 , contentPremiumLevel = config.contentPremiumLevel
                 , isDisabled = config.isDisabled
                 , describedByIds = config.describedByIds
-                , eventsAndValues = eventsAndValues
                 , value = value_
+                , selectedValue = eventsAndValues.selectedValue
+                , onSelect = eventsAndValues.onSelect
+                , valueToString = valueToString_
+                , premiumMsg = eventsAndValues.premiumMsg
+                , disclosedContent = eventsAndValues.disclosedContent
                 , isChecked = isChecked
                 , isLocked =
                     case ( config.contentPremiumLevel, config.teacherPremiumLevel ) of
@@ -392,7 +398,7 @@ viewBlock internalConfig =
             internalConfig.isChecked
             [ id internalConfig.id
             , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
-            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.isDisabled ) of
+            , case ( internalConfig.onSelect, internalConfig.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
 
@@ -474,7 +480,7 @@ viewBlock internalConfig =
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
                     )
-                    internalConfig.eventsAndValues.premiumMsg
+                    internalConfig.premiumMsg
                 ]
             ]
         , viewJust
@@ -507,7 +513,7 @@ viewInline internalConfig =
             internalConfig.isChecked
             [ id internalConfig.id
             , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
-            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.isDisabled ) of
+            , case ( internalConfig.onSelect, internalConfig.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
 
@@ -593,7 +599,7 @@ viewInline internalConfig =
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
                     )
-                    internalConfig.eventsAndValues.premiumMsg
+                    internalConfig.premiumMsg
                 ]
             ]
         , viewJust
