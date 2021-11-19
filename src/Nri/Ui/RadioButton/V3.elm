@@ -287,15 +287,20 @@ view label attributes =
 
 
 type alias InternalConfig value msg =
-    { -- user specified values
-      value : value
-    , name : String
+    { -- user specified Attributes
+      name : String
     , valueToString : value -> String
-    , eventsAndValues : EventsAndValues value msg
-    , config : Config
     , label : String
+    , teacherPremiumLevel : Maybe PremiumLevel
+    , contentPremiumLevel : Maybe PremiumLevel
+    , isDisabled : Bool
+    , describedByIds : List String
 
-    -- TODO: computed values that both view helpers need
+    -- user specified messages and values TODO unpack eventsAndValues
+    , eventsAndValues : EventsAndValues value msg
+    , value : value
+
+    -- computed values that both view helpers need
     , isChecked : Bool
     , isLocked : Bool
     , showPennant : Bool
@@ -322,12 +327,15 @@ makeInternalConfig label config eventsAndValues =
                     id_ ++ "-disclosure-content"
             in
             Just
-                { value = value_
-                , name = name_
+                { name = name_
                 , valueToString = valueToString_
-                , eventsAndValues = eventsAndValues
-                , config = config
                 , label = label
+                , teacherPremiumLevel = config.teacherPremiumLevel
+                , contentPremiumLevel = config.contentPremiumLevel
+                , isDisabled = config.isDisabled
+                , describedByIds = config.describedByIds
+                , eventsAndValues = eventsAndValues
+                , value = value_
                 , isChecked = isChecked
                 , isLocked =
                     case ( config.contentPremiumLevel, config.teacherPremiumLevel ) of
@@ -383,8 +391,8 @@ viewBlock internalConfig =
             (internalConfig.valueToString internalConfig.value)
             internalConfig.isChecked
             [ id internalConfig.id
-            , Widget.disabled (internalConfig.isLocked || internalConfig.config.isDisabled)
-            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
+            , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
+            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
 
@@ -392,7 +400,7 @@ viewBlock internalConfig =
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
             , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
-            , case internalConfig.config.describedByIds of
+            , case internalConfig.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
 
@@ -427,7 +435,7 @@ viewBlock internalConfig =
                 , outline Css.none
                 , margin zero
                 , Fonts.baseFont
-                , if internalConfig.config.isDisabled then
+                , if internalConfig.isDisabled then
                     Css.batch
                         [ color Colors.gray45
                         , cursor notAllowed
@@ -440,7 +448,7 @@ viewBlock internalConfig =
             ]
             [ radioInputIcon
                 { isLocked = internalConfig.isLocked
-                , isDisabled = internalConfig.config.isDisabled
+                , isDisabled = internalConfig.isDisabled
                 , isChecked = internalConfig.isChecked
                 }
             , span
@@ -498,8 +506,8 @@ viewInline internalConfig =
             (internalConfig.valueToString internalConfig.value)
             internalConfig.isChecked
             [ id internalConfig.id
-            , Widget.disabled (internalConfig.isLocked || internalConfig.config.isDisabled)
-            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
+            , Widget.disabled (internalConfig.isLocked || internalConfig.isDisabled)
+            , case ( internalConfig.eventsAndValues.onSelect, internalConfig.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
 
@@ -507,7 +515,7 @@ viewInline internalConfig =
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
             , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
-            , case internalConfig.config.describedByIds of
+            , case internalConfig.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
 
@@ -542,7 +550,7 @@ viewInline internalConfig =
                 , outline Css.none
                 , margin zero
                 , Fonts.baseFont
-                , if internalConfig.config.isDisabled then
+                , if internalConfig.isDisabled then
                     Css.batch
                         [ color Colors.gray45
                         , cursor notAllowed
@@ -559,7 +567,7 @@ viewInline internalConfig =
             ]
             [ radioInputIcon
                 { isLocked = internalConfig.isLocked
-                , isDisabled = internalConfig.config.isDisabled
+                , isDisabled = internalConfig.isDisabled
                 , isChecked = internalConfig.isChecked
                 }
             , span
