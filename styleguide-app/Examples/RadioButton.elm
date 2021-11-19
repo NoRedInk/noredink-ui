@@ -114,6 +114,7 @@ viewVanilla state =
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
+            , RadioButton.showPennant <| OpenModal ""
             ]
         ]
 

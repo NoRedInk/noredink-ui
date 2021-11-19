@@ -4,7 +4,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , value, selectedValue, valueToString
     , onSelect
     , name
-    , premium
+    , premium, showPennant
     )
 
 {-| Changes from V2:
@@ -16,7 +16,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs value, selectedValue, valueToString
 @docs onSelect
 @docs name
-@docs premium
+@docs premium, showPennant
 
 -}
 
@@ -35,7 +35,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Attributes
-import Nri.Ui.Html.V3 exposing (viewIf)
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg, fromHtml)
 import String exposing (toLower)
@@ -104,6 +104,13 @@ premium { teacherPremiumLevel, contentPremiumLevel } =
                 | teacherPremiumLevel = Just teacherPremiumLevel
                 , contentPremiumLevel = Just contentPremiumLevel
             }
+
+
+{-| Show the pennant and attach this onClick handler
+-}
+showPennant : msg -> Attribute value msg
+showPennant premiumMsg =
+    Attribute { emptyEventsAndValues | premiumMsg = Just premiumMsg } identity
 
 
 {-| Customizations for the RadioButton.
@@ -192,20 +199,14 @@ view :
     -> Html msg
 view label =
     internalView
-        { label = label
-        , premiumMsg = Nothing
-        , showPennant = False
-        }
+        { label = label }
 
 
-type alias InternalConfig msg =
-    { label : String
-    , premiumMsg : Maybe msg
-    , showPennant : Bool
-    }
+type alias InternalConfig =
+    { label : String }
 
 
-internalView : InternalConfig msg -> List (Attribute value msg) -> Html msg
+internalView : InternalConfig -> List (Attribute value msg) -> Html msg
 internalView config attributes =
     let
         isChecked =
@@ -237,6 +238,14 @@ internalView config attributes =
 
                 _ ->
                     False
+
+        showPennant_ =
+            case eventsAndValues.premiumMsg of
+                Just _ ->
+                    True
+
+                _ ->
+                    False
     in
     case unvalidatedRadioConfig of
         ( Just value_, Just name_, Just valueToString_ ) ->
@@ -246,7 +255,7 @@ internalView config attributes =
             in
             Html.span
                 [ id (id_ ++ "-container")
-                , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
+                , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
                 , css
                     [ position relative
                     , marginLeft (px -4)
@@ -312,7 +321,7 @@ internalView config attributes =
                         , isChecked = isChecked
                         }
                     , span
-                        (if config.showPennant then
+                        (if showPennant_ then
                             [ css
                                 [ displayFlex
                                 , alignItems center
@@ -324,18 +333,17 @@ internalView config attributes =
                             [ css [ verticalAlign middle ] ]
                         )
                         [ Html.text config.label
-                        , viewIf
-                            (\() ->
+                        , viewJust
+                            (\premiumMsg ->
                                 ClickableSvg.button "Premium"
                                     Pennant.premiumFlag
-                                    [ Maybe.map ClickableSvg.onClick config.premiumMsg
-                                        |> Maybe.withDefault (ClickableSvg.custom [])
+                                    [ ClickableSvg.onClick premiumMsg
                                     , ClickableSvg.exactWidth 26
                                     , ClickableSvg.exactHeight 24
                                     , ClickableSvg.css [ marginLeft (px 8) ]
                                     ]
                             )
-                            config.showPennant
+                            eventsAndValues.premiumMsg
                         ]
                     ]
                 ]
