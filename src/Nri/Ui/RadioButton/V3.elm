@@ -5,6 +5,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , onSelect
     , name
     , premium, showPennant
+    , disclosure
     )
 
 {-| Changes from V2:
@@ -17,6 +18,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs onSelect
 @docs name
 @docs premium, showPennant
+@docs disclosure
 
 -}
 
@@ -116,6 +118,13 @@ showPennant premiumMsg =
     Attribute { emptyEventsAndValues | premiumMsg = Just premiumMsg } identity
 
 
+{-| Content that shows when this RadioButton is selected
+-}
+disclosure : List (Html msg) -> Attribute value msg
+disclosure childNodes =
+    Attribute { emptyEventsAndValues | disclosedContent = childNodes } identity
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -128,6 +137,7 @@ type alias EventsAndValues value msg =
     , onSelect : Maybe (value -> msg)
     , valueToString : Maybe (value -> String)
     , premiumMsg : Maybe msg
+    , disclosedContent : List (Html msg)
     }
 
 
@@ -138,6 +148,7 @@ emptyEventsAndValues =
     , onSelect = Nothing
     , valueToString = Nothing
     , premiumMsg = Nothing
+    , disclosedContent = []
     }
 
 
@@ -188,6 +199,7 @@ applyEvents =
             , onSelect = orExisting .onSelect eventsAndValues existing
             , valueToString = orExisting .valueToString eventsAndValues existing
             , premiumMsg = orExisting .premiumMsg eventsAndValues existing
+            , disclosedContent = eventsAndValues.disclosedContent ++ existing.disclosedContent
             }
         )
         emptyEventsAndValues
@@ -207,6 +219,13 @@ view label =
 
 type alias InternalConfig =
     { label : String }
+
+
+maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
+maybeAttr attr maybeValue =
+    maybeValue
+        |> Maybe.map attr
+        |> Maybe.withDefault Attributes.none
 
 
 internalView : InternalConfig -> List (Attribute value msg) -> Html msg
@@ -254,7 +273,23 @@ internalView config attributes =
         ( Just value_, Just name_, Just valueToString_ ) ->
             let
                 id_ =
-                    name_ ++ "-" ++ dasherize (toLower (valueToString_ value_))
+                    name_ ++ "-" ++ (dasherize <| toLower <| valueToString_ value_)
+
+                disclosureIdAndElement : Maybe ( String, Html msg )
+                disclosureIdAndElement =
+                    case ( eventsAndValues.disclosedContent, isChecked ) of
+                        ( [], _ ) ->
+                            Nothing
+
+                        ( _, False ) ->
+                            Nothing
+
+                        ( (_ :: _) as childNodes, True ) ->
+                            let
+                                disclosureId =
+                                    id_ ++ "-disclosure-content"
+                            in
+                            Just <| ( disclosureId, div [ id disclosureId ] childNodes )
             in
             Html.span
                 [ id (id_ ++ "-container")
@@ -285,6 +320,7 @@ internalView config attributes =
                         _ ->
                             Attributes.none
                     , class "Nri-RadioButton-HiddenRadioInput"
+                    , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
                     , css
                         [ position absolute
                         , top (px 4)
@@ -349,6 +385,9 @@ internalView config attributes =
                             eventsAndValues.premiumMsg
                         ]
                     ]
+                , viewJust
+                    Tuple.second
+                    disclosureIdAndElement
                 ]
 
         _ ->

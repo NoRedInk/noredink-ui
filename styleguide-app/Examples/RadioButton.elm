@@ -102,6 +102,7 @@ viewVanilla state =
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
+            , RadioButton.disclosure [ text "more cat info" ]
             ]
         , RadioButton.view
             (selectionToString Robots)
@@ -110,6 +111,18 @@ viewVanilla state =
                 , contentPremiumLevel = PremiumLevel.PremiumWithWriting
                 }
             , RadioButton.value Robots
+            , RadioButton.name "pets"
+            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.onSelect Select
+            , RadioButton.valueToString selectionToString
+            , RadioButton.showPennant <| OpenModal ""
+            ]
+        , RadioButton.view
+            (selectionToString Robots)
+            [ RadioButton.premium
+                { teacherPremiumLevel = PremiumLevel.Premium
+                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                }
             , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
