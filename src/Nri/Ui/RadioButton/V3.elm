@@ -296,6 +296,11 @@ type alias InternalConfig value msg =
     , label : String
 
     -- TODO: computed values that both view helpers need
+    , isChecked : Bool
+    , isLocked : Bool
+    , showPennant : Bool
+    , id : String
+    , disclosureIdAndElement : Maybe ( String, Html msg )
     }
 
 
@@ -303,6 +308,19 @@ makeInternalConfig : String -> Config -> EventsAndValues value msg -> Maybe (Int
 makeInternalConfig label config eventsAndValues =
     case ( eventsAndValues.value, config.name, eventsAndValues.valueToString ) of
         ( Just value_, Just name_, Just valueToString_ ) ->
+            let
+                isChecked =
+                    -- why not guard and make sure neither is Nothing?
+                    -- Because if value is Nothing we do not render a radio
+                    eventsAndValues.selectedValue
+                        == eventsAndValues.value
+
+                id_ =
+                    name_ ++ "-" ++ (dasherize <| toLower <| valueToString_ value_)
+
+                disclosureId =
+                    id_ ++ "-disclosure-content"
+            in
             Just
                 { value = value_
                 , name = name_
@@ -310,6 +328,35 @@ makeInternalConfig label config eventsAndValues =
                 , eventsAndValues = eventsAndValues
                 , config = config
                 , label = label
+                , isChecked = isChecked
+                , isLocked =
+                    case ( config.contentPremiumLevel, config.teacherPremiumLevel ) of
+                        ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
+                            not <|
+                                PremiumLevel.allowedFor
+                                    contentPremiumLevel
+                                    teacherPremiumLevel
+
+                        _ ->
+                            False
+                , showPennant =
+                    case eventsAndValues.premiumMsg of
+                        Just _ ->
+                            True
+
+                        _ ->
+                            False
+                , id = id_
+                , disclosureIdAndElement =
+                    case ( eventsAndValues.disclosedContent, isChecked ) of
+                        ( [], _ ) ->
+                            Nothing
+
+                        ( _, False ) ->
+                            Nothing
+
+                        ( (_ :: _) as childNodes, True ) ->
+                            Just <| ( disclosureId, div [ id disclosureId ] childNodes )
                 }
 
         _ ->
@@ -318,55 +365,9 @@ makeInternalConfig label config eventsAndValues =
 
 viewBlock : InternalConfig value msg -> Html msg
 viewBlock internalConfig =
-    let
-        isChecked =
-            -- why not guard and make sure neither is Nothing?
-            -- Because if value is Nothing we do not render a radio
-            internalConfig.eventsAndValues.selectedValue
-                == internalConfig.eventsAndValues.value
-
-        isLocked : Bool
-        isLocked =
-            case ( internalConfig.config.contentPremiumLevel, internalConfig.config.teacherPremiumLevel ) of
-                ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
-                    not <|
-                        PremiumLevel.allowedFor
-                            contentPremiumLevel
-                            teacherPremiumLevel
-
-                _ ->
-                    False
-
-        showPennant_ =
-            case internalConfig.eventsAndValues.premiumMsg of
-                Just _ ->
-                    True
-
-                _ ->
-                    False
-
-        id_ =
-            internalConfig.name ++ "-" ++ (dasherize <| toLower <| internalConfig.valueToString internalConfig.value)
-
-        disclosureIdAndElement : Maybe ( String, Html msg )
-        disclosureIdAndElement =
-            case ( internalConfig.eventsAndValues.disclosedContent, isChecked ) of
-                ( [], _ ) ->
-                    Nothing
-
-                ( _, False ) ->
-                    Nothing
-
-                ( (_ :: _) as childNodes, True ) ->
-                    let
-                        disclosureId =
-                            id_ ++ "-disclosure-content"
-                    in
-                    Just <| ( disclosureId, div [ id disclosureId ] childNodes )
-    in
     Html.div
-        [ id (id_ ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
+        [ id (internalConfig.id ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", internalConfig.showPennant ) ]
         , css
             [ position relative
             , display Css.block
@@ -380,9 +381,9 @@ viewBlock internalConfig =
         ]
         [ radio internalConfig.name
             (internalConfig.valueToString internalConfig.value)
-            isChecked
-            [ id id_
-            , Widget.disabled (isLocked || internalConfig.config.isDisabled)
+            internalConfig.isChecked
+            [ id internalConfig.id
+            , Widget.disabled (internalConfig.isLocked || internalConfig.config.isDisabled)
             , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
@@ -390,7 +391,7 @@ viewBlock internalConfig =
                 _ ->
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
+            , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
             , case internalConfig.config.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
@@ -416,10 +417,10 @@ viewBlock internalConfig =
                 ]
             ]
         , Html.label
-            [ for id_
+            [ for internalConfig.id
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                , ( "Nri-RadioButton-RadioButtonChecked", internalConfig.isChecked )
                 ]
             , css <|
                 [ position relative
@@ -438,12 +439,12 @@ viewBlock internalConfig =
                 ]
             ]
             [ radioInputIcon
-                { isLocked = isLocked
+                { isLocked = internalConfig.isLocked
                 , isDisabled = internalConfig.config.isDisabled
-                , isChecked = isChecked
+                , isChecked = internalConfig.isChecked
                 }
             , span
-                (if showPennant_ then
+                (if internalConfig.showPennant then
                     [ css
                         [ display inlineFlex
                         , alignItems center
@@ -470,61 +471,15 @@ viewBlock internalConfig =
             ]
         , viewJust
             Tuple.second
-            disclosureIdAndElement
+            internalConfig.disclosureIdAndElement
         ]
 
 
 viewInline : InternalConfig value msg -> Html msg
 viewInline internalConfig =
-    let
-        isChecked =
-            -- why not guard and make sure neither is Nothing?
-            -- Because if value is Nothing we do not render a radio
-            internalConfig.eventsAndValues.selectedValue
-                == internalConfig.eventsAndValues.value
-
-        isLocked : Bool
-        isLocked =
-            case ( internalConfig.config.contentPremiumLevel, internalConfig.config.teacherPremiumLevel ) of
-                ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
-                    not <|
-                        PremiumLevel.allowedFor
-                            contentPremiumLevel
-                            teacherPremiumLevel
-
-                _ ->
-                    False
-
-        showPennant_ =
-            case internalConfig.eventsAndValues.premiumMsg of
-                Just _ ->
-                    True
-
-                _ ->
-                    False
-
-        id_ =
-            internalConfig.name ++ "-" ++ (dasherize <| toLower <| internalConfig.valueToString internalConfig.value)
-
-        disclosureIdAndElement : Maybe ( String, Html msg )
-        disclosureIdAndElement =
-            case ( internalConfig.eventsAndValues.disclosedContent, isChecked ) of
-                ( [], _ ) ->
-                    Nothing
-
-                ( _, False ) ->
-                    Nothing
-
-                ( (_ :: _) as childNodes, True ) ->
-                    let
-                        disclosureId =
-                            id_ ++ "-disclosure-content"
-                    in
-                    Just <| ( disclosureId, div [ id disclosureId ] childNodes )
-    in
     Html.span
-        [ id (id_ ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", showPennant_ ) ]
+        [ id (internalConfig.id ++ "-container")
+        , classList [ ( "Nri-RadioButton-PremiumClass", internalConfig.showPennant ) ]
         , css
             [ position relative
             , marginLeft (px -4)
@@ -541,9 +496,9 @@ viewInline internalConfig =
         ]
         [ radio internalConfig.name
             (internalConfig.valueToString internalConfig.value)
-            isChecked
-            [ id id_
-            , Widget.disabled (isLocked || internalConfig.config.isDisabled)
+            internalConfig.isChecked
+            [ id internalConfig.id
+            , Widget.disabled (internalConfig.isLocked || internalConfig.config.isDisabled)
             , case ( internalConfig.eventsAndValues.onSelect, internalConfig.config.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ internalConfig.value)
@@ -551,7 +506,7 @@ viewInline internalConfig =
                 _ ->
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
+            , maybeAttr (Tuple.first >> Aria.controls) internalConfig.disclosureIdAndElement
             , case internalConfig.config.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
@@ -577,10 +532,10 @@ viewInline internalConfig =
                 ]
             ]
         , Html.label
-            [ for id_
+            [ for internalConfig.id
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                , ( "Nri-RadioButton-RadioButtonChecked", internalConfig.isChecked )
                 ]
             , css <|
                 [ position relative
@@ -603,12 +558,12 @@ viewInline internalConfig =
                 ]
             ]
             [ radioInputIcon
-                { isLocked = isLocked
+                { isLocked = internalConfig.isLocked
                 , isDisabled = internalConfig.config.isDisabled
-                , isChecked = isChecked
+                , isChecked = internalConfig.isChecked
                 }
             , span
-                (if showPennant_ then
+                (if internalConfig.showPennant then
                     [ css
                         [ display inlineFlex
                         , alignItems center
@@ -635,7 +590,7 @@ viewInline internalConfig =
             ]
         , viewJust
             Tuple.second
-            disclosureIdAndElement
+            internalConfig.disclosureIdAndElement
         ]
 
 
