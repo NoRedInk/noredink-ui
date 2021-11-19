@@ -206,22 +206,6 @@ applyEvents =
         emptyEventsAndValues
 
 
-{-| View a single radio button.
-If used in a group, all radio buttons in the group should have the same name attribute.
--}
-view :
-    String
-    -> List (Attribute value msg)
-    -> Html msg
-view label =
-    internalView
-        { label = label }
-
-
-type alias InternalConfig =
-    { label : String }
-
-
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
 maybeAttr attr maybeValue =
     maybeValue
@@ -229,8 +213,11 @@ maybeAttr attr maybeValue =
         |> Maybe.withDefault Attributes.none
 
 
-internalView : InternalConfig -> List (Attribute value msg) -> Html msg
-internalView config attributes =
+{-| View a single radio button.
+Renders nothing if the attributes list does not contain value, name, and valueToString.
+-}
+view : String -> List (Attribute value msg) -> Html msg
+view label attributes =
     let
         isChecked =
             -- why not guard and make sure neither is Nothing?
@@ -372,7 +359,7 @@ internalView config attributes =
                          else
                             [ css [ verticalAlign middle ] ]
                         )
-                        [ Html.text config.label
+                        [ Html.text label
                         , viewJust
                             (\premiumMsg ->
                                 ClickableSvg.button "Premium"
