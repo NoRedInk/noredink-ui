@@ -17,7 +17,7 @@ import Debug.Control as Control exposing (Control)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
@@ -93,6 +93,8 @@ viewVanilla state =
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
+            , RadioButton.describedBy
+                [ "dogs-description" ]
             ]
         , RadioButton.view
             (selectionToString Cats)
@@ -102,7 +104,16 @@ viewVanilla state =
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
-            , RadioButton.disclosure [ text "more cat info" ]
+            , if state.selectedValue == Just Cats then
+                RadioButton.describedBy [ "cats-description" ]
+
+              else
+                RadioButton.none
+            , RadioButton.disclosure
+                [ span
+                    [ Attributes.id "cats-description" ]
+                    [ text "Cats kind of do their own thing" ]
+                ]
             ]
         , RadioButton.view
             (selectionToString Robots)
@@ -129,6 +140,9 @@ viewVanilla state =
             , RadioButton.valueToString selectionToString
             , RadioButton.showPennant <| OpenModal ""
             ]
+        , p
+            [ Attributes.id "dogs-description" ]
+            [ text "Dogs are gregarious" ]
         ]
 
 

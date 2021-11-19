@@ -6,6 +6,8 @@ module Nri.Ui.RadioButton.V3 exposing
     , name
     , premium, showPennant
     , disclosure
+    , describedBy
+    , none
     )
 
 {-| Changes from V2:
@@ -20,6 +22,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs name
 @docs premium, showPennant
 @docs disclosure
+@docs describedBy
 
 -}
 
@@ -27,7 +30,7 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
-import Css exposing (..)
+import Css as Css exposing (..)
 import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
@@ -126,6 +129,21 @@ disclosure childNodes =
     Attribute { emptyEventsAndValues | disclosedContent = childNodes } identity
 
 
+{-| Set the Aria describedby attribute if given a non-empty list of IDs
+-}
+describedBy : List String -> Attribute value msg
+describedBy ids =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | describedByIds = ids }
+
+
+{-| Has no effect; useful for conditionals and cases
+-}
+none : Attribute value msg
+none =
+    Attribute emptyEventsAndValues identity
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -161,6 +179,7 @@ type alias Config =
     , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
     , showPennant : Bool
+    , describedByIds : List String
     }
 
 
@@ -171,6 +190,7 @@ emptyConfig =
     , contentPremiumLevel = Nothing
     , isDisabled = False
     , showPennant = False
+    , describedByIds = []
     }
 
 
@@ -309,6 +329,12 @@ view label attributes =
                             Attributes.none
                     , class "Nri-RadioButton-HiddenRadioInput"
                     , maybeAttr (Tuple.first >> Aria.controls) disclosureIdAndElement
+                    , case config_.describedByIds of
+                        (_ :: _) as describedByIds ->
+                            Aria.describedBy describedByIds
+
+                        [] ->
+                            Attributes.none
                     , css
                         [ position absolute
                         , top (px 4)
@@ -336,7 +362,7 @@ view label attributes =
                         , Fonts.baseFont
                         , Css.property "font-weight" "600"
                         , position relative
-                        , outline none
+                        , outline Css.none
                         , margin zero
                         , display inlineBlock
                         , color Colors.navy
