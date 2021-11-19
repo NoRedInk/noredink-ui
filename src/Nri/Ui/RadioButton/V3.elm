@@ -11,6 +11,7 @@ module Nri.Ui.RadioButton.V3 exposing
 {-| Changes from V2:
 
   - list based API instead of record based
+  - add disclosure to show rich content when the radio is selected
 
 @docs view
 @docs disabled, enabled
