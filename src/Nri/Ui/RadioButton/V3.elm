@@ -23,6 +23,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs premium, showPennant
 @docs disclosure
 @docs describedBy
+@docs none
 
 -}
 
