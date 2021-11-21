@@ -6,8 +6,9 @@ module Nri.Ui.RadioButton.V3 exposing
     , name
     , premium, showPennant
     , disclosure, block, inline
+    , hiddenLabel, visibleLabel
     , describedBy
-    , none
+    , none, batch
     )
 
 {-| Changes from V2:
@@ -22,8 +23,9 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs name
 @docs premium, showPennant
 @docs disclosure, block, inline
+@docs hiddenLabel, visibleLabel
 @docs describedBy
-@docs none
+@docs none, batch
 
 -}
 
@@ -145,6 +147,13 @@ none =
     Attribute emptyEventsAndValues identity
 
 
+{-| Apply a list of attributes as one. Again useful for conditionals
+-}
+batch : List (Attribute value msg) -> Attribute value msg
+batch attributes =
+    Attribute (applyEvents attributes) (applyConfig attributes)
+
+
 {-| Displays the radio button as a gray block with a small black label.
 Designed to have the disclosure content be more prominent
 -}
@@ -161,6 +170,22 @@ inline : Attribute value msg
 inline =
     Attribute emptyEventsAndValues <|
         \config -> { config | display = Inline }
+
+
+{-| Hides the visible label. (There will still be an invisible label for screen readers.)
+-}
+hiddenLabel : Attribute value msg
+hiddenLabel =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | hideLabel = True }
+
+
+{-| Shows the visible label. This is the default behavior
+-}
+visibleLabel : Attribute value msg
+visibleLabel =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | hideLabel = False }
 
 
 type Display
@@ -205,6 +230,7 @@ type alias Config =
     , showPennant : Bool
     , describedByIds : List String
     , display : Display
+    , hideLabel : Bool
     }
 
 
@@ -217,13 +243,14 @@ emptyConfig =
     , showPennant = False
     , describedByIds = []
     , display = Inline
+    , hideLabel = False
     }
 
 
-applyConfig : List (Attribute value msg) -> Config
-applyConfig attributes =
+applyConfig : List (Attribute value msg) -> Config -> Config
+applyConfig attributes beginningConfig =
     List.foldl (\(Attribute _ update) config -> update config)
-        emptyConfig
+        beginningConfig
         attributes
 
 
@@ -266,7 +293,7 @@ view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
         config_ =
-            applyConfig attributes
+            applyConfig attributes emptyConfig
     in
     case internalConfig label config_ (applyEvents attributes) of
         Just config ->
@@ -289,6 +316,7 @@ type alias InternalConfig value msg =
     , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
     , describedByIds : List String
+    , hideLabel : Bool
 
     -- user specified messages and values TODO unpack eventsAndValues
     , value : value
@@ -331,6 +359,7 @@ internalConfig label config eventsAndValues =
                 , contentPremiumLevel = config.contentPremiumLevel
                 , isDisabled = config.isDisabled
                 , describedByIds = config.describedByIds
+                , hideLabel = config.hideLabel
                 , value = value_
                 , selectedValue = eventsAndValues.selectedValue
                 , onSelect = eventsAndValues.onSelect
@@ -459,7 +488,10 @@ viewBlock config =
                 , isChecked = config.isChecked
                 }
             , span
-                (if config.showPennant then
+                (if config.hideLabel then
+                    Style.invisible
+
+                 else if config.showPennant then
                     [ css
                         [ display inlineFlex
                         , alignItems center
@@ -472,6 +504,7 @@ viewBlock config =
                 )
                 [ Html.text config.label
                 , viewJust
+                    -- TODO move this to the right of the label and add it to the describedby list
                     (\premiumMsg ->
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag

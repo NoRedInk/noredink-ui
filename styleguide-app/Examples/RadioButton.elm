@@ -106,7 +106,10 @@ viewVanilla state =
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , if state.selectedValue == Just Cats then
-                RadioButton.describedBy [ "cats-description" ]
+                RadioButton.batch
+                    [ RadioButton.describedBy [ "cats-description" ]
+                    , RadioButton.hiddenLabel
+                    ]
 
               else
                 RadioButton.none
