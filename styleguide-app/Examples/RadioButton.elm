@@ -116,7 +116,7 @@ viewVanilla state =
             , RadioButton.disclosure
                 [ span
                     [ Attributes.id "cats-description" ]
-                    [ Text.mediumBody [ Text.plaintext "Cats kind of do their own thing" ] ]
+                    [ Text.smallBody [ Text.plaintext "Cats kind of do their own thing" ] ]
                 ]
             , RadioButton.block
             ]
@@ -151,16 +151,27 @@ viewVanilla state =
         , RadioButton.view
             (selectionToString Robots)
             [ RadioButton.premium
-                { teacherPremiumLevel = PremiumLevel.Premium
-                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                { teacherPremiumLevel = PremiumLevel.PremiumWithWriting
+                , contentPremiumLevel = PremiumLevel.Premium
                 }
             , RadioButton.value Robots
             , RadioButton.name "pets"
             , RadioButton.selectedValue state.selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
-            , RadioButton.showPennant <| OpenModal "pets-robots"
             , RadioButton.inline
+            , RadioButton.showPennant <| OpenModal "pets-robots"
+            , if state.selectedValue == Just Robots then
+                RadioButton.hiddenLabel
+
+              else
+                RadioButton.none
+            , RadioButton.disclosure
+                [ Text.smallBody
+                    [ Text.plaintext "With apologies to Karel Čapek"
+                    , Text.css [ Css.display Css.inlineBlock ]
+                    ]
+                ]
             ]
         , p
             [ Attributes.id "dogs-description" ]

@@ -331,7 +331,7 @@ type alias InternalConfig value msg =
     , isLocked : Bool
     , showPennant : Bool
     , id : String
-    , disclosureIdAndElement : Maybe ( String, Html msg )
+    , disclosureIdAndElement : Maybe ( String, List (Html msg) )
     }
 
 
@@ -394,7 +394,7 @@ internalConfig label config eventsAndValues =
                             Nothing
 
                         ( (_ :: _) as childNodes, True ) ->
-                            Just <| ( disclosureId, div [ id disclosureId ] childNodes )
+                            Just <| ( disclosureId, childNodes )
                 }
 
         _ ->
@@ -517,9 +517,18 @@ viewBlock config =
                     config.premiumMsg
                 ]
             ]
-        , viewJust
-            Tuple.second
-            config.disclosureIdAndElement
+        , case config.disclosureIdAndElement of
+            Just ( id_, childNodes ) ->
+                div
+                    [ id id_
+                    , css
+                        [ display inlineBlock
+                        ]
+                    ]
+                    childNodes
+
+            Nothing ->
+                text ""
         ]
 
 
@@ -622,9 +631,25 @@ viewInline config =
                  else
                     [ css [ verticalAlign middle ] ]
                 )
-                [ Html.text config.label
-                , viewJust
-                    (\premiumMsg ->
+                [ Html.span
+                    [ css <|
+                        if config.hideLabel then
+                            [ Css.height <| px 1
+                            , Css.width <| px 1
+                            , overflow Css.hidden
+                            , margin <| px -1
+                            , padding <| px 0
+                            , border <| px 0
+                            , display inlineBlock
+                            , textIndent <| px 1
+                            ]
+
+                        else
+                            []
+                    ]
+                    [ Html.text config.label ]
+                , case ( config.hideLabel, config.premiumMsg ) of
+                    ( False, Just premiumMsg ) ->
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag
                             [ ClickableSvg.onClick premiumMsg
@@ -632,13 +657,17 @@ viewInline config =
                             , ClickableSvg.exactHeight 24
                             , ClickableSvg.css [ marginLeft (px 8) ]
                             ]
-                    )
-                    config.premiumMsg
+
+                    _ ->
+                        text ""
                 ]
             ]
-        , viewJust
-            Tuple.second
-            config.disclosureIdAndElement
+        , case config.disclosureIdAndElement of
+            Just ( id_, childNodes ) ->
+                span [ id id_ ] childNodes
+
+            Nothing ->
+                text ""
         ]
 
 
