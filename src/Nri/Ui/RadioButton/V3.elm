@@ -374,13 +374,24 @@ internalConfig label config eventsAndValues =
 
 viewBlock : InternalConfig value msg -> Html msg
 viewBlock config =
-    Html.div
+    let
+        onClick_ =
+            case ( config.onSelect, config.isDisabled ) of
+                ( Just onSelect_, False ) ->
+                    onClick (onSelect_ config.value)
+
+                _ ->
+                    Attributes.none
+    in
+    button
         [ id (config.id ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
+        , onClick_
         , css
             [ position relative
-            , display Css.block
-            , Css.height (px 34)
+            , displayFlex
+            , border zero
+            , Css.minHeight (px 34)
             , Css.width <| pct 100
             , Css.backgroundColor Colors.gray96
             , padding <| Css.px 20
@@ -393,12 +404,7 @@ viewBlock config =
             config.isChecked
             [ id config.id
             , Widget.disabled (config.isLocked || config.isDisabled)
-            , case ( config.onSelect, config.isDisabled ) of
-                ( Just onSelect_, False ) ->
-                    onClick (onSelect_ config.value)
-
-                _ ->
-                    Attributes.none
+            , onClick_
             , class "Nri-RadioButton-HiddenRadioInput"
             , maybeAttr (Tuple.first >> Aria.controls) config.disclosureIdAndElement
             , case config.describedByIds of
