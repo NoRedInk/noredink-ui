@@ -205,8 +205,8 @@ initSelectionSettings =
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
     ControlExtra.list
-        |> ControlExtra.listItem "hiddenLabel" labelVisibility
-        |> ControlExtra.listItem "disabled" disabledOrEnabled
+        |> ControlExtra.optionalListItem "visibility" labelVisibility
+        |> ControlExtra.optionalListItem "status" disabledOrEnabled
         |> ControlExtra.optionalListItem "showPennant" showPennant
         |> ControlExtra.optionalListItem "premium"
             -- TODO: allow the teacher premium level to vary as well:
@@ -247,28 +247,18 @@ controlAttributes =
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
 labelVisibility =
-    Control.map
-        (\isHidden ->
-            if isHidden then
-                ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel )
-
-            else
-                ( "RadioButton.visibleLabel", RadioButton.visibleLabel )
-        )
-        (Control.bool False)
+    Control.choice
+        [ ( "hiddenLabel", Control.value ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel ) )
+        , ( "visibleLabel", Control.value ( "RadioButton.visibleLabel", RadioButton.visibleLabel ) )
+        ]
 
 
 disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
 disabledOrEnabled =
-    Control.map
-        (\isDisabled ->
-            if isDisabled then
-                ( "RadioButton.disabled", RadioButton.disabled )
-
-            else
-                ( "RadioButton.enabled", RadioButton.enabled )
-        )
-        (Control.bool False)
+    Control.choice
+        [ ( "disabled", Control.value ( "RadioButton.disabled", RadioButton.disabled ) )
+        , ( "enabled", Control.value ( "RadioButton.enabled", RadioButton.enabled ) )
+        ]
 
 
 showPennant : Control ( String, RadioButton.Attribute Selection Msg )
