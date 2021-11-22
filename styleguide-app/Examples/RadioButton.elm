@@ -93,7 +93,9 @@ viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
 viewExamplesCode selectionSettings selectedValue =
     let
         toExampleCode ( kind, settings ) =
-            "RadioButton.view\n\t[ "
+            "RadioButton.view { label = "
+                ++ selectionToString kind
+                ++ ", name = \"pets\"}\n\t[ "
                 ++ String.join "\n\t, " (List.map Tuple.first settings)
                 ++ "\n\t] "
     in
