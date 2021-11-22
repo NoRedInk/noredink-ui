@@ -6,6 +6,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , premium, showPennant
     , disclosure
     , hiddenLabel, visibleLabel
+    , custom
     , containerCss
     )
 
@@ -21,7 +22,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs premium, showPennant
 @docs disclosure
 @docs hiddenLabel, visibleLabel
-
+@docs custom
 @docs containerCss
 
 -}
@@ -33,7 +34,7 @@ import Accessibility.Styled.Widget as Widget
 import Css as Css exposing (..)
 import Css.Global
 import Html.Styled as Html
-import Html.Styled.Attributes exposing (..)
+import Html.Styled.Attributes as Attributes exposing (class, classList, css, for, id)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
 import Json.Decode
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -152,6 +153,19 @@ visibleLabel =
         \config -> { config | hideLabel = False }
 
 
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute value msg
+custom attributes =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | custom = config.custom ++ attributes }
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -189,6 +203,7 @@ type alias Config =
     , showPennant : Bool
     , hideLabel : Bool
     , containerCss : List Css.Style
+    , custom : List (Html.Attribute Never)
     }
 
 
@@ -201,6 +216,7 @@ emptyConfig =
     , showPennant = False
     , hideLabel = False
     , containerCss = []
+    , custom = []
     }
 
 
@@ -304,17 +320,17 @@ view { label, name } attributes =
         [ radio name
             stringValue
             isChecked
-            [ id id_
-            , Widget.disabled (isLocked || config.isDisabled)
-            , case ( eventsAndValues.onSelect, eventsAndValues.value, config.isDisabled ) of
+            ([ id id_
+             , Widget.disabled (isLocked || config.isDisabled)
+             , case ( eventsAndValues.onSelect, eventsAndValues.value, config.isDisabled ) of
                 ( Just onSelect_, Just value_, False ) ->
                     onClick (onSelect_ value_)
 
                 _ ->
                     Attributes.none
-            , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr Aria.controls disclosureId
-            , css
+             , class "Nri-RadioButton-HiddenRadioInput"
+             , maybeAttr Aria.controls disclosureId
+             , css
                 [ position absolute
                 , top (px 4)
                 , left (px 4)
@@ -331,7 +347,9 @@ view { label, name } attributes =
                         ]
                     ]
                 ]
-            ]
+             ]
+                ++ List.map (Attributes.map never) config.custom
+            )
         , Html.label
             [ for id_
             , classList
