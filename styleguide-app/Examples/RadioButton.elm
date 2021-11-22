@@ -69,7 +69,7 @@ view state =
                 ++ "TODO: Example code!"
                 ++ " ] "
         ]
-    , viewRadioButtons selectionSettings state.selectedValue
+    , viewExamples selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -92,19 +92,18 @@ view state =
     ]
 
 
-viewRadioButtons : SelectionSettings -> Maybe Selection -> Html Msg
-viewRadioButtons selectionSettings selectedValue =
-    div []
-        [ viewExample Dogs
-            (List.map Tuple.second selectionSettings.dogs)
-            selectedValue
-        , viewExample Cats
-            (List.map Tuple.second selectionSettings.cats)
-            selectedValue
-        , viewExample Rats
-            (List.map Tuple.second selectionSettings.robots)
-            selectedValue
-        ]
+viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamples selectionSettings selectedValue =
+    let
+        viewExample_ ( kind, settings ) =
+            viewExample kind (List.map Tuple.second settings) selectedValue
+    in
+    [ ( Dogs, selectionSettings.dogs )
+    , ( Cats, selectionSettings.cats )
+    , ( Rats, selectionSettings.rats )
+    ]
+        |> List.map viewExample_
+        |> div []
 
 
 viewExample :
@@ -165,7 +164,7 @@ init =
 type alias SelectionSettings =
     { dogs : List ( String, RadioButton.Attribute Selection Msg )
     , cats : List ( String, RadioButton.Attribute Selection Msg )
-    , robots : List ( String, RadioButton.Attribute Selection Msg )
+    , rats : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
