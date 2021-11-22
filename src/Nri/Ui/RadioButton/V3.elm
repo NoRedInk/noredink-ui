@@ -1,7 +1,6 @@
 module Nri.Ui.RadioButton.V3 exposing
     ( view, Attribute
     , disabled, enabled
-    , value, selectedValue, valueToString
     , onSelect
     , premium, showPennant
     , disclosure
@@ -17,7 +16,6 @@ module Nri.Ui.RadioButton.V3 exposing
 
 @docs view, Attribute
 @docs disabled, enabled
-@docs value, selectedValue, valueToString
 @docs onSelect
 @docs premium, showPennant
 @docs disclosure
@@ -67,33 +65,11 @@ enabled =
         \config -> { config | isDisabled = False }
 
 
-{-| Sets the value of one radio button
--}
-value : value -> Attribute value msg
-value value_ =
-    Attribute { emptyEventsAndValues | value = Just value_ } identity
-
-
-{-| Specifies what the current value of a group of radio buttons should be
--}
-selectedValue : Maybe value -> Attribute value msg
-selectedValue value_ =
-    Attribute { emptyEventsAndValues | selectedValue = value_ } identity
-
-
 {-| Fire a message parameterized by the value type when selecting a radio option
 -}
 onSelect : (value -> msg) -> Attribute value msg
 onSelect onSelect_ =
     Attribute { emptyEventsAndValues | onSelect = Just onSelect_ } identity
-
-
-{-| Since <input>s transact in strings we need to be able to give every radio button in a group
-a unique string value. This function should be the same for every RadioButton in a group.
--}
-valueToString : (value -> String) -> Attribute value msg
-valueToString valueToString_ =
-    Attribute { emptyEventsAndValues | valueToString = Just valueToString_ } identity
 
 
 {-| Lock Premium content if the user does not have Premium.
@@ -115,6 +91,8 @@ premium { teacherPremiumLevel, contentPremiumLevel } =
 {-| Show Premium pennant on Premium content.
 
 When the pennant is clicked, the msg that's passed in will fire.
+
+For RadioButton.V4, consider removing `showPennant` from the API.
 
 -}
 showPennant : msg -> Attribute value msg
@@ -173,10 +151,7 @@ type Attribute value msg
 
 
 type alias EventsAndValues value msg =
-    { value : Maybe value
-    , selectedValue : Maybe value
-    , onSelect : Maybe (value -> msg)
-    , valueToString : Maybe (value -> String)
+    { onSelect : Maybe (value -> msg)
     , premiumMsg : Maybe msg
     , disclosedContent : List (Html msg)
     }
@@ -184,10 +159,7 @@ type alias EventsAndValues value msg =
 
 emptyEventsAndValues : EventsAndValues value msg
 emptyEventsAndValues =
-    { value = Nothing
-    , selectedValue = Nothing
-    , onSelect = Nothing
-    , valueToString = Nothing
+    { onSelect = Nothing
     , premiumMsg = Nothing
     , disclosedContent = []
     }
@@ -241,10 +213,7 @@ applyEvents : List (Attribute value msg) -> EventsAndValues value msg
 applyEvents =
     List.foldl
         (\(Attribute eventsAndValues _) existing ->
-            { value = orExisting .value eventsAndValues existing
-            , selectedValue = orExisting .selectedValue eventsAndValues existing
-            , onSelect = orExisting .onSelect eventsAndValues existing
-            , valueToString = orExisting .valueToString eventsAndValues existing
+            { onSelect = orExisting .onSelect eventsAndValues existing
             , premiumMsg = orExisting .premiumMsg eventsAndValues existing
             , disclosedContent = eventsAndValues.disclosedContent ++ existing.disclosedContent
             }
@@ -261,8 +230,16 @@ maybeAttr attr maybeValue =
 
 {-| View a single radio button.
 -}
-view : { label : String, name : String } -> List (Attribute value msg) -> Html msg
-view { label, name } attributes =
+view :
+    { label : String
+    , name : String
+    , value : value
+    , valueToString : value -> String
+    , selectedValue : Maybe value
+    }
+    -> List (Attribute value msg)
+    -> Html msg
+view { label, name, value, valueToString, selectedValue } attributes =
     let
         config =
             applyConfig attributes emptyConfig
@@ -271,14 +248,13 @@ view { label, name } attributes =
             applyEvents attributes
 
         stringValue =
-            Maybe.map2 (\f v -> f v) eventsAndValues.valueToString eventsAndValues.value
-                |> Maybe.withDefault "default-radio-value"
+            valueToString value
 
         id_ =
             name ++ "-" ++ dasherize (toLower stringValue)
 
         isChecked =
-            eventsAndValues.selectedValue == eventsAndValues.value
+            selectedValue == Just value
 
         isLocked =
             Maybe.map2 PremiumLevel.allowedFor config.contentPremiumLevel config.teacherPremiumLevel
@@ -322,9 +298,9 @@ view { label, name } attributes =
             isChecked
             ([ id id_
              , Widget.disabled (isLocked || config.isDisabled)
-             , case ( eventsAndValues.onSelect, eventsAndValues.value, config.isDisabled ) of
-                ( Just onSelect_, Just value_, False ) ->
-                    onClick (onSelect_ value_)
+             , case ( eventsAndValues.onSelect, config.isDisabled ) of
+                ( Just onSelect_, False ) ->
+                    onClick (onSelect_ value)
 
                 _ ->
                     Attributes.none

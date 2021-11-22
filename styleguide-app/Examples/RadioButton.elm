@@ -92,10 +92,22 @@ view state =
 viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
 viewExamplesCode selectionSettings selectedValue =
     let
+        selectedValueString =
+            case selectedValue of
+                Just value ->
+                    "Just " ++ selectionToString value
+
+                Nothing ->
+                    "Nothing"
+
         toExampleCode ( kind, settings ) =
-            "RadioButton.view { label = "
-                ++ selectionToString kind
-                ++ ", name = \"pets\"}\n\t[ "
+            "RadioButton.view"
+                ++ ("\n\t{ label = " ++ selectionToString kind)
+                ++ "\n\t, name = \"pets\""
+                ++ ("\n\t, value = " ++ selectionToString kind)
+                ++ ("\n\t, selectedValue = " ++ selectedValueString)
+                ++ "\n\t, valueToString = toString"
+                ++ "\n\t}\n\t[ "
                 ++ String.join "\n\t, " (List.map Tuple.first settings)
                 ++ "\n\t] "
     in
@@ -116,31 +128,17 @@ viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
 viewExamples selectionSettings selectedValue =
     let
         viewExample_ ( kind, settings ) =
-            viewExample kind
-                (List.map Tuple.second settings)
-                selectedValue
+            RadioButton.view
+                { label = selectionToString kind
+                , name = "pets"
+                , value = kind
+                , selectedValue = selectedValue
+                , valueToString = selectionToString
+                }
+                (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
     div []
         (List.map viewExample_ (examples selectionSettings))
-
-
-viewExample :
-    Selection
-    -> List (RadioButton.Attribute Selection Msg)
-    -> Maybe Selection
-    -> Html Msg
-viewExample selection selectionSettings selectedValue =
-    RadioButton.view
-        { label = selectionToString selection
-        , name = "pets"
-        }
-        ([ RadioButton.value selection
-         , RadioButton.selectedValue selectedValue
-         , RadioButton.onSelect Select
-         , RadioButton.valueToString selectionToString
-         ]
-            ++ selectionSettings
-        )
 
 
 examples :
