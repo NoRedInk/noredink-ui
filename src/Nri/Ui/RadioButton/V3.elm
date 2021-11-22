@@ -473,7 +473,10 @@ premiumPennant onClick =
         [ ClickableSvg.onClick onClick
         , ClickableSvg.exactWidth 26
         , ClickableSvg.exactHeight 24
-        , ClickableSvg.css [ marginLeft (px 8) ]
+        , ClickableSvg.css
+            [ marginLeft (px 8)
+            , verticalAlign middle
+            ]
         ]
 
 
