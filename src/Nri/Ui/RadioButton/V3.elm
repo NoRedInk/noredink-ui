@@ -110,9 +110,13 @@ valueToString valueToString_ =
     Attribute { emptyEventsAndValues | valueToString = Just valueToString_ } identity
 
 
-{-| Lock the content if the teacher does not have premium access
+{-| Lock Premium content if the user does not have Premium.
 -}
-premium : { teacherPremiumLevel : PremiumLevel, contentPremiumLevel : PremiumLevel } -> Attribute value msg
+premium :
+    { teacherPremiumLevel : PremiumLevel
+    , contentPremiumLevel : PremiumLevel
+    }
+    -> Attribute value msg
 premium { teacherPremiumLevel, contentPremiumLevel } =
     Attribute emptyEventsAndValues <|
         \config ->
@@ -122,7 +126,10 @@ premium { teacherPremiumLevel, contentPremiumLevel } =
             }
 
 
-{-| Show the pennant and attach this onClick handler
+{-| Show Premium pennant on Premium content.
+
+When the pennant is clicked, the msg that's passed in will fire.
+
 -}
 showPennant : msg -> Attribute value msg
 showPennant premiumMsg =
@@ -441,23 +448,32 @@ view label attributes =
                             []
                     ]
                     [ Html.text label ]
-                , case ( config.hideLabel, eventsAndValues.premiumMsg ) of
-                    ( False, Just premiumMsg ) ->
-                        -- TODO: should this flag show when the content premium
-                        -- level is Free?? I somewhat think not!
-                        ClickableSvg.button "Premium"
-                            Pennant.premiumFlag
-                            [ ClickableSvg.onClick premiumMsg
-                            , ClickableSvg.exactWidth 26
-                            , ClickableSvg.exactHeight 24
-                            , ClickableSvg.css [ marginLeft (px 8) ]
-                            ]
+                , case ( config.contentPremiumLevel, eventsAndValues.premiumMsg ) of
+                    ( Nothing, _ ) ->
+                        text ""
+
+                    ( Just PremiumLevel.Free, _ ) ->
+                        text ""
+
+                    ( Just _, Just premiumMsg ) ->
+                        premiumPennant premiumMsg
 
                     _ ->
                         text ""
                 ]
             ]
         , disclosureElement
+        ]
+
+
+premiumPennant : msg -> Html msg
+premiumPennant onClick =
+    ClickableSvg.button "Premium"
+        Pennant.premiumFlag
+        [ ClickableSvg.onClick onClick
+        , ClickableSvg.exactWidth 26
+        , ClickableSvg.exactHeight 24
+        , ClickableSvg.css [ marginLeft (px 8) ]
         ]
 
 
