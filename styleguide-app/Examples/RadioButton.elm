@@ -128,8 +128,8 @@ viewRadioButtons selectionSettings selectedValue =
                 ++ List.map Tuple.second selectionSettings.cats
             )
         , RadioButton.view
-            (selectionToString Robots)
-            ([ RadioButton.value Robots
+            (selectionToString Rats)
+            ([ RadioButton.value Rats
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
@@ -145,7 +145,7 @@ viewRadioButtons selectionSettings selectedValue =
 type Selection
     = Dogs
     | Cats
-    | Robots
+    | Rats
 
 
 selectionToString : Selection -> String
@@ -157,8 +157,8 @@ selectionToString selection =
         Cats ->
             "Cats"
 
-        Robots ->
-            "Robots"
+        Rats ->
+            "Rats"
 
 
 {-| -}
@@ -190,7 +190,7 @@ initSelectionSettings =
     Control.record SelectionSettings
         |> Control.field "Dogs" controlAttributes
         |> Control.field "Cats" controlAttributes
-        |> Control.field "Robots" controlAttributes
+        |> Control.field "Rats" controlAttributes
 
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
