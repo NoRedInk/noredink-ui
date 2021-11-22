@@ -15,6 +15,7 @@ module Nri.Ui.RadioButton.V3 exposing
 
   - list based API instead of record based
   - add disclosure to show rich content when the radio is selected
+  - when the radio button is disabled don't attach onSelect listener
 
 @docs view, Attribute
 @docs disabled, enabled
