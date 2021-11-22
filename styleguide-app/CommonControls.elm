@@ -1,9 +1,18 @@
-module CommonControls exposing (exampleHtml, httpError, quickBrownFox, romeoAndJulietQuotation)
+module CommonControls exposing (exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation)
 
 import Debug.Control as Control exposing (Control)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
+
+
+premiumLevel : Control ( String, PremiumLevel )
+premiumLevel =
+    Control.choice
+        [ ( "Free", Control.value ( "Free", Free ) )
+        , ( "PremiumWithWriting", Control.value ( "PremiumWithWriting", PremiumWithWriting ) )
+        ]
 
 
 httpError : Control Http.Error

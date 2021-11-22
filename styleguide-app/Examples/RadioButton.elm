@@ -12,6 +12,7 @@ module Examples.RadioButton exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import CommonControls exposing (premiumLevel)
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -132,11 +133,7 @@ viewRadioButtons selectionSettings selectedValue =
             )
         , RadioButton.view
             (selectionToString Robots)
-            ([ RadioButton.premium
-                { teacherPremiumLevel = PremiumLevel.Premium
-                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-                }
-             , RadioButton.value Robots
+            ([ RadioButton.value Robots
              , RadioButton.name "pets"
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
@@ -207,6 +204,24 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.listItem "disabled" disabledOrEnabled
         |> ControlExtra.optionalListItem "showPennant" showPennant
+        |> ControlExtra.optionalListItem "premium"
+            -- TODO: allow the teacher premium level to vary as well:
+            (Control.map
+                (\( contentLevel, clevel ) ->
+                    ( """
+                    RadioButton.premium
+                        { teacherPremiumLevel = PremiumLevel.Premium
+                        , contentPremiumLevel = """
+                        ++ contentLevel
+                        ++ "}"
+                    , RadioButton.premium
+                        { teacherPremiumLevel = PremiumLevel.Premium
+                        , contentPremiumLevel = clevel
+                        }
+                    )
+                )
+                premiumLevel
+            )
 
 
 disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
