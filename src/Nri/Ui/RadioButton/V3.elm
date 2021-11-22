@@ -416,6 +416,7 @@ viewBlock config =
         [ id (config.id ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , onClick_
+        , Aria.controls config.id
         , css
             [ position relative
             , displayFlex
