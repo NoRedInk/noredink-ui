@@ -95,40 +95,35 @@ view state =
 viewRadioButtons : SelectionSettings -> Maybe Selection -> Html Msg
 viewRadioButtons selectionSettings selectedValue =
     div []
-        [ RadioButton.view
-            { label = "Dogs"
-            , name = "pets"
-            }
-            ([ RadioButton.value Dogs
-             , RadioButton.selectedValue selectedValue
-             , RadioButton.onSelect Select
-             , RadioButton.valueToString selectionToString
-             ]
-                ++ List.map Tuple.second selectionSettings.dogs
-            )
-        , RadioButton.view
-            { label = "Cats"
-            , name = "pets"
-            }
-            ([ RadioButton.value Cats
-             , RadioButton.selectedValue selectedValue
-             , RadioButton.onSelect Select
-             , RadioButton.valueToString selectionToString
-             ]
-                ++ List.map Tuple.second selectionSettings.cats
-            )
-        , RadioButton.view
-            { label = "Rats"
-            , name = "pets"
-            }
-            ([ RadioButton.value Rats
-             , RadioButton.selectedValue selectedValue
-             , RadioButton.onSelect Select
-             , RadioButton.valueToString selectionToString
-             ]
-                ++ List.map Tuple.second selectionSettings.robots
-            )
+        [ viewExample Dogs
+            (List.map Tuple.second selectionSettings.dogs)
+            selectedValue
+        , viewExample Cats
+            (List.map Tuple.second selectionSettings.cats)
+            selectedValue
+        , viewExample Rats
+            (List.map Tuple.second selectionSettings.robots)
+            selectedValue
         ]
+
+
+viewExample :
+    Selection
+    -> List (RadioButton.Attribute Selection Msg)
+    -> Maybe Selection
+    -> Html Msg
+viewExample selection selectionSettings selectedValue =
+    RadioButton.view
+        { label = selectionToString selection
+        , name = "pets"
+        }
+        ([ RadioButton.value selection
+         , RadioButton.selectedValue selectedValue
+         , RadioButton.onSelect Select
+         , RadioButton.valueToString selectionToString
+         ]
+            ++ selectionSettings
+        )
 
 
 type Selection
