@@ -5,7 +5,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , premium, showPennant
     , disclosure
     , hiddenLabel, visibleLabel
-    , custom
+    , custom, nriDescription, testId
     , containerCss
     )
 
@@ -20,7 +20,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs premium, showPennant
 @docs disclosure
 @docs hiddenLabel, visibleLabel
-@docs custom
+@docs custom, nriDescription, testId
 @docs containerCss
 
 -}
@@ -39,7 +39,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 as Attributes
+import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg, fromHtml)
@@ -144,6 +144,18 @@ custom attributes =
         \config -> { config | custom = config.custom ++ attributes }
 
 
+{-| -}
+nriDescription : String -> Attribute value msg
+nriDescription description =
+    custom [ Extra.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute value msg
+testId id_ =
+    custom [ Extra.testId id_ ]
+
+
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
@@ -225,7 +237,7 @@ maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
 maybeAttr attr maybeValue =
     maybeValue
         |> Maybe.map attr
-        |> Maybe.withDefault Attributes.none
+        |> Maybe.withDefault Extra.none
 
 
 {-| View a single radio button.
@@ -303,7 +315,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     onClick (onSelect_ value)
 
                 _ ->
-                    Attributes.none
+                    Extra.none
              , class "Nri-RadioButton-HiddenRadioInput"
              , maybeAttr Aria.controls disclosureId
              , css
