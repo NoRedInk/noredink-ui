@@ -7,8 +7,6 @@ module Nri.Ui.RadioButton.V3 exposing
     , premium, showPennant
     , disclosure
     , hiddenLabel, visibleLabel
-    , describedBy
-    , none, batch
     , containerCss
     )
 
@@ -25,8 +23,6 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs premium, showPennant
 @docs disclosure
 @docs hiddenLabel, visibleLabel
-@docs describedBy
-@docs none, batch
 
 @docs containerCss
 
@@ -142,34 +138,12 @@ disclosure childNodes =
     Attribute { emptyEventsAndValues | disclosedContent = childNodes } identity
 
 
-{-| Set the Aria describedby attribute if given a non-empty list of IDs
--}
-describedBy : List String -> Attribute value msg
-describedBy ids =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | describedByIds = ids }
-
-
 {-| Adds CSS to the element containing the input.
 -}
 containerCss : List Css.Style -> Attribute value msg
 containerCss styles =
     Attribute emptyEventsAndValues <|
         \config -> { config | containerCss = config.containerCss ++ styles }
-
-
-{-| Has no effect; useful for conditionals and cases
--}
-none : Attribute value msg
-none =
-    Attribute emptyEventsAndValues identity
-
-
-{-| Apply a list of attributes as one. Again useful for conditionals
--}
-batch : List (Attribute value msg) -> Attribute value msg
-batch attributes =
-    Attribute (applyEvents attributes) (applyConfig attributes)
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -223,7 +197,6 @@ type alias Config =
     , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
     , showPennant : Bool
-    , describedByIds : List String
     , hideLabel : Bool
     , containerCss : List Css.Style
     }
@@ -236,7 +209,6 @@ emptyConfig =
     , contentPremiumLevel = Nothing
     , isDisabled = False
     , showPennant = False
-    , describedByIds = []
     , hideLabel = False
     , containerCss = []
     }
@@ -363,12 +335,6 @@ view label attributes =
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
             , maybeAttr Aria.controls disclosureId
-            , case config.describedByIds of
-                (_ :: _) as describedByIds ->
-                    Aria.describedBy describedByIds
-
-                [] ->
-                    Attributes.none
             , css
                 [ position absolute
                 , top (px 4)

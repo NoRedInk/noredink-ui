@@ -101,7 +101,6 @@ viewRadioButtons selectionSettings selectedValue =
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
-             , RadioButton.describedBy [ "dogs-description" ]
              ]
                 ++ List.map Tuple.second selectionSettings.dogs
             )
@@ -111,19 +110,6 @@ viewRadioButtons selectionSettings selectedValue =
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
-             , if selectedValue == Just Cats then
-                RadioButton.batch
-                    [ RadioButton.describedBy [ "cats-description" ]
-                    , RadioButton.hiddenLabel
-                    ]
-
-               else
-                RadioButton.none
-             , RadioButton.disclosure
-                [ span
-                    [ Attributes.id "cats-description" ]
-                    [ Text.smallBody [ Text.plaintext "Cats kind of do their own thing" ] ]
-                ]
              ]
                 ++ List.map Tuple.second selectionSettings.cats
             )
@@ -136,9 +122,6 @@ viewRadioButtons selectionSettings selectedValue =
              ]
                 ++ List.map Tuple.second selectionSettings.robots
             )
-        , p
-            [ Attributes.id "dogs-description" ]
-            [ text "Dogs are gregarious" ]
         ]
 
 
@@ -237,6 +220,7 @@ controlAttributes =
                   )
                 ]
             )
+        |> ControlExtra.optionalListItem "extra content" controlDisclosure
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
@@ -271,6 +255,19 @@ showPennant =
         ( "RadioButton.showPennant OpenPremiumModal"
         , RadioButton.showPennant (OpenModal "dogs")
         )
+
+
+controlDisclosure : Control ( String, RadioButton.Attribute Selection Msg )
+controlDisclosure =
+    Control.map
+        (\content ->
+            ( "RadioButton.disclosure [ Text.smallBody [ Text.plaintext \""
+                ++ content
+                ++ "\" ]"
+            , RadioButton.disclosure [ Text.smallBody [ Text.plaintext content ] ]
+            )
+        )
+        (Control.string "These pets occupy themselves.")
 
 
 type Msg
