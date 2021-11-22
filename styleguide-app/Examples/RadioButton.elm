@@ -98,7 +98,6 @@ viewRadioButtons selectionSettings selectedValue =
         [ RadioButton.view
             (selectionToString Dogs)
             ([ RadioButton.value Dogs
-             , RadioButton.name "pets"
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
@@ -110,7 +109,6 @@ viewRadioButtons selectionSettings selectedValue =
         , RadioButton.view
             (selectionToString Cats)
             ([ RadioButton.value Cats
-             , RadioButton.name "pets"
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
@@ -134,7 +132,6 @@ viewRadioButtons selectionSettings selectedValue =
         , RadioButton.view
             (selectionToString Robots)
             ([ RadioButton.value Robots
-             , RadioButton.name "pets"
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
@@ -202,6 +199,16 @@ initSelectionSettings =
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
     ControlExtra.list
+        |> ControlExtra.listItem "name"
+            (Control.choice
+                [ ( "pets"
+                  , Control.value
+                        ( "RadioButton.name \"pets\""
+                        , RadioButton.name "pets"
+                        )
+                  )
+                ]
+            )
         |> ControlExtra.listItem "disabled" disabledOrEnabled
         |> ControlExtra.optionalListItem "showPennant" showPennant
         |> ControlExtra.optionalListItem "premium"
