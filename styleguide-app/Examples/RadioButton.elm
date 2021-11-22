@@ -218,6 +218,12 @@ controlAttributes =
                         , RadioButton.containerCss [ Css.width (Css.pct 100) ]
                         )
                   )
+                , ( "10px right margin"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
+                        , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
+                        )
+                  )
                 ]
             )
         |> ControlExtra.optionalListItem "extra content" controlDisclosure
