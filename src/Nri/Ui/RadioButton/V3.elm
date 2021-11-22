@@ -276,121 +276,58 @@ maybeAttr attr maybeValue =
 
 
 {-| View a single radio button.
-Renders nothing if the attributes list does not contain value, name, and valueToString.
 -}
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
-        config_ =
+        config =
             applyConfig attributes emptyConfig
+
+        eventsAndValues =
+            applyEvents attributes
+
+        name_ =
+            -- TODO: name should probably be a required property,
+            -- since radio button group keyboard behavior won't
+            -- work without it
+            case config.name of
+                Just n ->
+                    n
+
+                Nothing ->
+                    "default-radio-button-group"
+
+        stringValue =
+            Maybe.map2 (\f v -> f v) eventsAndValues.valueToString eventsAndValues.value
+                |> Maybe.withDefault "default-radio-value"
+
+        id_ =
+            name_ ++ "-" ++ dasherize (toLower stringValue)
+
+        isChecked =
+            eventsAndValues.selectedValue == eventsAndValues.value
+
+        isLocked =
+            Maybe.map2 PremiumLevel.allowedFor config.contentPremiumLevel config.teacherPremiumLevel
+                |> Maybe.withDefault True
+                |> not
+
+        ( disclosureId, disclosureElement ) =
+            case ( eventsAndValues.disclosedContent, isChecked ) of
+                ( [], _ ) ->
+                    ( Nothing, text "" )
+
+                ( _, False ) ->
+                    ( Nothing, text "" )
+
+                ( (_ :: _) as childNodes, True ) ->
+                    ( Just (id_ ++ "-disclosure-content")
+                    , span [ id (id_ ++ "-disclosure-content") ]
+                        childNodes
+                    )
     in
-    case internalConfig label config_ (applyEvents attributes) of
-        Just config ->
-            view_ config
-
-        _ ->
-            text "no radio button here"
-
-
-type alias InternalConfig value msg =
-    { -- user specified Attributes
-      name : String
-    , label : String
-    , teacherPremiumLevel : Maybe PremiumLevel
-    , contentPremiumLevel : Maybe PremiumLevel
-    , isDisabled : Bool
-    , describedByIds : List String
-    , hideLabel : Bool
-
-    -- user specified messages and values TODO unpack eventsAndValues
-    , value : value
-    , selectedValue : Maybe value
-    , onSelect : Maybe (value -> msg)
-    , valueToString : value -> String
-    , premiumMsg : Maybe msg
-    , disclosedContent : List (Html msg)
-    , containerCss : List Css.Style
-
-    -- computed values that both view helpers need
-    , isChecked : Bool
-    , isLocked : Bool
-    , showPennant : Bool
-    , id : String
-    , disclosureIdAndElement : Maybe ( String, List (Html msg) )
-    }
-
-
-internalConfig : String -> Config -> EventsAndValues value msg -> Maybe (InternalConfig value msg)
-internalConfig label config eventsAndValues =
-    case ( eventsAndValues.value, config.name, eventsAndValues.valueToString ) of
-        ( Just value_, Just name_, Just valueToString_ ) ->
-            let
-                isChecked =
-                    -- why not guard and make sure neither is Nothing?
-                    -- Because if value is Nothing we do not render a radio
-                    eventsAndValues.selectedValue
-                        == eventsAndValues.value
-
-                id_ =
-                    name_ ++ "-" ++ (dasherize <| toLower <| valueToString_ value_)
-
-                disclosureId =
-                    id_ ++ "-disclosure-content"
-            in
-            Just
-                { name = name_
-                , label = label
-                , teacherPremiumLevel = config.teacherPremiumLevel
-                , contentPremiumLevel = config.contentPremiumLevel
-                , isDisabled = config.isDisabled
-                , describedByIds = config.describedByIds
-                , hideLabel = config.hideLabel
-                , value = value_
-                , selectedValue = eventsAndValues.selectedValue
-                , onSelect = eventsAndValues.onSelect
-                , valueToString = valueToString_
-                , premiumMsg = eventsAndValues.premiumMsg
-                , disclosedContent = eventsAndValues.disclosedContent
-                , isChecked = isChecked
-                , containerCss = config.containerCss
-                , isLocked =
-                    case ( config.contentPremiumLevel, config.teacherPremiumLevel ) of
-                        ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
-                            not <|
-                                PremiumLevel.allowedFor
-                                    contentPremiumLevel
-                                    teacherPremiumLevel
-
-                        _ ->
-                            False
-                , showPennant =
-                    case eventsAndValues.premiumMsg of
-                        Just _ ->
-                            True
-
-                        _ ->
-                            False
-                , id = id_
-                , disclosureIdAndElement =
-                    case ( eventsAndValues.disclosedContent, isChecked ) of
-                        ( [], _ ) ->
-                            Nothing
-
-                        ( _, False ) ->
-                            Nothing
-
-                        ( (_ :: _) as childNodes, True ) ->
-                            Just <| ( disclosureId, childNodes )
-                }
-
-        _ ->
-            Nothing
-
-
-view_ : InternalConfig value msg -> Html msg
-view_ config =
     Html.span
-        [ id (config.id ++ "-container")
+        [ id (id_ ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
@@ -407,19 +344,19 @@ view_ config =
             , Css.batch config.containerCss
             ]
         ]
-        [ radio config.name
-            (config.valueToString config.value)
-            config.isChecked
-            [ id config.id
-            , Widget.disabled (config.isLocked || config.isDisabled)
-            , case ( config.onSelect, config.isDisabled ) of
-                ( Just onSelect_, False ) ->
-                    onClick (onSelect_ config.value)
+        [ radio name_
+            stringValue
+            isChecked
+            [ id id_
+            , Widget.disabled (isLocked || config.isDisabled)
+            , case ( eventsAndValues.onSelect, eventsAndValues.value, config.isDisabled ) of
+                ( Just onSelect_, Just value_, False ) ->
+                    onClick (onSelect_ value_)
 
                 _ ->
                     Attributes.none
             , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) config.disclosureIdAndElement
+            , maybeAttr Aria.controls disclosureId
             , case config.describedByIds of
                 (_ :: _) as describedByIds ->
                     Aria.describedBy describedByIds
@@ -445,12 +382,12 @@ view_ config =
                 ]
             ]
         , Html.label
-            [ for config.id
+            [ for id_
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", config.isChecked )
+                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
-            , css <|
+            , css
                 [ position relative
                 , outline Css.none
                 , margin zero
@@ -471,9 +408,9 @@ view_ config =
                 ]
             ]
             [ radioInputIcon
-                { isLocked = config.isLocked
+                { isLocked = isLocked
                 , isDisabled = config.isDisabled
-                , isChecked = config.isChecked
+                , isChecked = isChecked
                 }
             , span
                 (if config.showPennant then
@@ -503,9 +440,11 @@ view_ config =
                         else
                             []
                     ]
-                    [ Html.text config.label ]
-                , case ( config.hideLabel, config.premiumMsg ) of
+                    [ Html.text label ]
+                , case ( config.hideLabel, eventsAndValues.premiumMsg ) of
                     ( False, Just premiumMsg ) ->
+                        -- TODO: should this flag show when the content premium
+                        -- level is Free?? I somewhat think not!
                         ClickableSvg.button "Premium"
                             Pennant.premiumFlag
                             [ ClickableSvg.onClick premiumMsg
@@ -518,12 +457,7 @@ view_ config =
                         text ""
                 ]
             ]
-        , case config.disclosureIdAndElement of
-            Just ( id_, childNodes ) ->
-                span [ id id_ ] childNodes
-
-            Nothing ->
-                text ""
+        , disclosureElement
         ]
 
 
