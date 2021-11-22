@@ -63,7 +63,7 @@ view model =
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
-        , content = [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ] ]
+        , content = [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a Premium pennant is clicked." ] ]
         , footer =
             [ Button.button "Okay"
                 [ Button.modal
