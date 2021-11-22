@@ -394,8 +394,7 @@ view label attributes =
                 [ Html.span
                     [ css <|
                         if config.hideLabel then
-                            [ Css.height <| px 1
-                            , Css.width <| px 1
+                            [ Css.width <| px 1
                             , overflow Css.hidden
                             , margin <| px -1
                             , padding <| px 0
