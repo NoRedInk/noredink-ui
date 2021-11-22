@@ -420,17 +420,12 @@ view label attributes =
                 , isChecked = isChecked
                 }
             , span
-                (if config.showPennant then
-                    [ css
-                        [ display inlineFlex
-                        , alignItems center
-                        , Css.height (px 20)
-                        ]
+                [ css
+                    [ display inlineFlex
+                    , alignItems center
+                    , Css.height (px 20)
                     ]
-
-                 else
-                    [ css [ verticalAlign middle ] ]
-                )
+                ]
                 [ Html.span
                     [ css <|
                         if config.hideLabel then
