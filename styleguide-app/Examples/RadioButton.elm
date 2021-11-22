@@ -214,10 +214,7 @@ controlAttributes =
             -- TODO: allow the teacher premium level to vary as well:
             (Control.map
                 (\( contentLevel, clevel ) ->
-                    ( """
-                    RadioButton.premium
-                        { teacherPremiumLevel = PremiumLevel.Premium
-                        , contentPremiumLevel = """
+                    ( "RadioButton.premium { teacherPremiumLevel = PremiumLevel.Premium, contentPremiumLevel = "
                         ++ contentLevel
                         ++ "}"
                     , RadioButton.premium
