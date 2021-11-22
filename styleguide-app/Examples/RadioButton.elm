@@ -13,7 +13,7 @@ module Examples.RadioButton exposing
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import CommonControls exposing (premiumLevel)
-import Css exposing (..)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
@@ -61,13 +61,10 @@ view state =
         selectionSettings =
             Control.currentValue state.selectionSettings
     in
-    [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
-    , Html.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
-        [ text <|
-            "RadioButton.view [ "
-                --++ String.join ", " (List.map Tuple.first selectionSettings)
-                ++ "TODO: Example code!"
-                ++ " ] "
+    [ div
+        [ css [ Css.displayFlex ] ]
+        [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
+        , viewExamplesCode selectionSettings state.selectedValue
         ]
     , viewExamples selectionSettings state.selectedValue
     , Modal.view
@@ -92,18 +89,37 @@ view state =
     ]
 
 
+viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamplesCode selectionSettings selectedValue =
+    let
+        toExampleCode ( kind, settings ) =
+            "RadioButton.view\n\t[ "
+                ++ String.join "\n\t, " (List.map Tuple.first settings)
+                ++ "\n\t] "
+    in
+    Html.code
+        [ css
+            [ Css.display Css.block
+            , Css.marginLeft (Css.px 20)
+            ]
+        ]
+        [ Html.pre []
+            [ text
+                ("  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings)))
+            ]
+        ]
+
+
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
 viewExamples selectionSettings selectedValue =
     let
         viewExample_ ( kind, settings ) =
-            viewExample kind (List.map Tuple.second settings) selectedValue
+            viewExample kind
+                (List.map Tuple.second settings)
+                selectedValue
     in
-    [ ( Dogs, selectionSettings.dogs )
-    , ( Cats, selectionSettings.cats )
-    , ( Rats, selectionSettings.rats )
-    ]
-        |> List.map viewExample_
-        |> div []
+    div []
+        (List.map viewExample_ (examples selectionSettings))
 
 
 viewExample :
@@ -123,6 +139,16 @@ viewExample selection selectionSettings selectedValue =
          ]
             ++ selectionSettings
         )
+
+
+examples :
+    SelectionSettings
+    -> List ( Selection, List ( String, RadioButton.Attribute Selection Msg ) )
+examples selectionSettings =
+    [ ( Dogs, selectionSettings.dogs )
+    , ( Cats, selectionSettings.cats )
+    , ( Rats, selectionSettings.rats )
+    ]
 
 
 type Selection
