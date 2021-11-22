@@ -209,6 +209,7 @@ controlAttributes =
                   )
                 ]
             )
+        |> ControlExtra.listItem "hiddenLabel" labelVisibility
         |> ControlExtra.listItem "disabled" disabledOrEnabled
         |> ControlExtra.optionalListItem "showPennant" showPennant
         |> ControlExtra.optionalListItem "premium"
@@ -229,6 +230,19 @@ controlAttributes =
                 )
                 premiumLevel
             )
+
+
+labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
+labelVisibility =
+    Control.map
+        (\isHidden ->
+            if isHidden then
+                ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel )
+
+            else
+                ( "RadioButton.visibleLabel", RadioButton.visibleLabel )
+        )
+        (Control.bool False)
 
 
 disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
