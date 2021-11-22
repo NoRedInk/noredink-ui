@@ -102,7 +102,6 @@ viewRadioButtons selectionSettings selectedValue =
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
              , RadioButton.describedBy [ "dogs-description" ]
-             , RadioButton.block
              ]
                 ++ List.map Tuple.second selectionSettings.dogs
             )
@@ -125,7 +124,6 @@ viewRadioButtons selectionSettings selectedValue =
                     [ Attributes.id "cats-description" ]
                     [ Text.smallBody [ Text.plaintext "Cats kind of do their own thing" ] ]
                 ]
-             , RadioButton.block
              ]
                 ++ List.map Tuple.second selectionSettings.cats
             )
@@ -135,7 +133,6 @@ viewRadioButtons selectionSettings selectedValue =
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
-             , RadioButton.block
              ]
                 ++ List.map Tuple.second selectionSettings.robots
             )
@@ -229,6 +226,16 @@ controlAttributes =
                     )
                 )
                 premiumLevel
+            )
+        |> ControlExtra.optionalListItem "containerCss"
+            (Control.choice
+                [ ( "100% width"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
+                        , RadioButton.containerCss [ Css.width (Css.pct 100) ]
+                        )
+                  )
+                ]
             )
 
 

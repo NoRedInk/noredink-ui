@@ -5,10 +5,11 @@ module Nri.Ui.RadioButton.V3 exposing
     , onSelect
     , name
     , premium, showPennant
-    , disclosure, block, inline
+    , disclosure
     , hiddenLabel, visibleLabel
     , describedBy
     , none, batch
+    , containerCss
     )
 
 {-| Changes from V2:
@@ -23,10 +24,12 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs onSelect
 @docs name
 @docs premium, showPennant
-@docs disclosure, block, inline
+@docs disclosure
 @docs hiddenLabel, visibleLabel
 @docs describedBy
 @docs none, batch
+
+@docs containerCss
 
 -}
 
@@ -141,6 +144,14 @@ describedBy ids =
         \config -> { config | describedByIds = ids }
 
 
+{-| Adds CSS to the element containing the input.
+-}
+containerCss : List Css.Style -> Attribute value msg
+containerCss styles =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | containerCss = config.containerCss ++ styles }
+
+
 {-| Has no effect; useful for conditionals and cases
 -}
 none : Attribute value msg
@@ -153,24 +164,6 @@ none =
 batch : List (Attribute value msg) -> Attribute value msg
 batch attributes =
     Attribute (applyEvents attributes) (applyConfig attributes)
-
-
-{-| Displays the radio button as a gray block with a small black label.
-Designed to have the disclosure content be more prominent
--}
-block : Attribute value msg
-block =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | display = GrayBlock }
-
-
-{-| Displays the radio button as an inline span with a large blue label.
-Designed to have the disclosure content be inline if present at all
--}
-inline : Attribute value msg
-inline =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | display = Inline }
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -187,11 +180,6 @@ visibleLabel : Attribute value msg
 visibleLabel =
     Attribute emptyEventsAndValues <|
         \config -> { config | hideLabel = False }
-
-
-type Display
-    = GrayBlock
-    | Inline
 
 
 {-| Customizations for the RadioButton.
@@ -230,8 +218,8 @@ type alias Config =
     , isDisabled : Bool
     , showPennant : Bool
     , describedByIds : List String
-    , display : Display
     , hideLabel : Bool
+    , containerCss : List Css.Style
     }
 
 
@@ -243,8 +231,8 @@ emptyConfig =
     , isDisabled = False
     , showPennant = False
     , describedByIds = []
-    , display = Inline
     , hideLabel = False
+    , containerCss = []
     }
 
 
@@ -298,12 +286,7 @@ view label attributes =
     in
     case internalConfig label config_ (applyEvents attributes) of
         Just config ->
-            case config_.display of
-                Inline ->
-                    viewInline config
-
-                GrayBlock ->
-                    viewBlock config
+            view_ config
 
         _ ->
             text "no radio button here"
@@ -326,6 +309,7 @@ type alias InternalConfig value msg =
     , valueToString : value -> String
     , premiumMsg : Maybe msg
     , disclosedContent : List (Html msg)
+    , containerCss : List Css.Style
 
     -- computed values that both view helpers need
     , isChecked : Bool
@@ -368,6 +352,7 @@ internalConfig label config eventsAndValues =
                 , premiumMsg = eventsAndValues.premiumMsg
                 , disclosedContent = eventsAndValues.disclosedContent
                 , isChecked = isChecked
+                , containerCss = config.containerCss
                 , isLocked =
                     case ( config.contentPremiumLevel, config.teacherPremiumLevel ) of
                         ( Just contentPremiumLevel, Just teacherPremiumLevel ) ->
@@ -402,140 +387,8 @@ internalConfig label config eventsAndValues =
             Nothing
 
 
-viewBlock : InternalConfig value msg -> Html msg
-viewBlock config =
-    let
-        onClick_ =
-            case ( config.onSelect, config.isDisabled ) of
-                ( Just onSelect_, False ) ->
-                    onClick (onSelect_ config.value)
-
-                _ ->
-                    Attributes.none
-    in
-    button
-        [ id (config.id ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
-        , onClick_
-        , Aria.controls config.id
-        , css
-            [ position relative
-            , displayFlex
-            , border zero
-            , Css.minHeight (px 34)
-            , Css.width <| pct 100
-            , Css.backgroundColor Colors.gray96
-            , padding <| Css.px 20
-            , marginBottom <| Css.px 10
-            , borderRadius <| Css.px 8
-            ]
-        ]
-        [ radio config.name
-            (config.valueToString config.value)
-            config.isChecked
-            [ id config.id
-            , Widget.disabled (config.isLocked || config.isDisabled)
-            , onClick_
-            , class "Nri-RadioButton-HiddenRadioInput"
-            , maybeAttr (Tuple.first >> Aria.controls) config.disclosureIdAndElement
-            , case config.describedByIds of
-                (_ :: _) as describedByIds ->
-                    Aria.describedBy describedByIds
-
-                [] ->
-                    Attributes.none
-            , css
-                [ position absolute
-                , top (px 4)
-                , left (px 4)
-                , opacity zero
-                , pseudoClass "focus"
-                    [ Css.Global.adjacentSiblings
-                        [ Css.Global.everything
-                            [ Css.Global.descendants
-                                [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                                    [ borderColor (rgb 0 95 204)
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        , Html.label
-            [ for config.id
-            , classList
-                [ ( "Nri-RadioButton-RadioButton", True )
-                , ( "Nri-RadioButton-RadioButtonChecked", config.isChecked )
-                ]
-            , css <|
-                [ position relative
-                , outline Css.none
-                , margin zero
-                , Fonts.baseFont
-                , if config.isDisabled then
-                    Css.batch
-                        [ color Colors.gray45
-                        , cursor notAllowed
-                        ]
-
-                  else
-                    cursor pointer
-                , padding4 zero zero zero (px 40)
-                ]
-            ]
-            [ radioInputIcon
-                { isLocked = config.isLocked
-                , isDisabled = config.isDisabled
-                , isChecked = config.isChecked
-                }
-            , span
-                (if config.hideLabel then
-                    Style.invisible
-
-                 else if config.showPennant then
-                    [ css
-                        [ display inlineFlex
-                        , alignItems center
-                        , Css.height (px 20)
-                        ]
-                    ]
-
-                 else
-                    [ css [ verticalAlign middle ] ]
-                )
-                [ Html.text config.label
-                , viewJust
-                    -- TODO move this to the right of the label and add it to the describedby list
-                    (\premiumMsg ->
-                        ClickableSvg.button "Premium"
-                            Pennant.premiumFlag
-                            [ ClickableSvg.onClick premiumMsg
-                            , ClickableSvg.exactWidth 26
-                            , ClickableSvg.exactHeight 24
-                            , ClickableSvg.css [ marginLeft (px 8) ]
-                            ]
-                    )
-                    config.premiumMsg
-                ]
-            ]
-        , case config.disclosureIdAndElement of
-            Just ( id_, childNodes ) ->
-                div
-                    [ id id_
-                    , css
-                        [ display inlineBlock
-                        ]
-                    ]
-                    childNodes
-
-            Nothing ->
-                text ""
-        ]
-
-
-viewInline : InternalConfig value msg -> Html msg
-viewInline config =
+view_ : InternalConfig value msg -> Html msg
+view_ config =
     Html.span
         [ id (config.id ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
@@ -551,6 +404,7 @@ viewInline config =
                         ]
                     ]
                 ]
+            , Css.batch config.containerCss
             ]
         ]
         [ radio config.name
