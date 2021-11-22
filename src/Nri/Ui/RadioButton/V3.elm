@@ -1,5 +1,5 @@
 module Nri.Ui.RadioButton.V3 exposing
-    ( view
+    ( view, Attribute
     , disabled, enabled
     , value, selectedValue, valueToString
     , onSelect
@@ -16,7 +16,7 @@ module Nri.Ui.RadioButton.V3 exposing
   - list based API instead of record based
   - add disclosure to show rich content when the radio is selected
 
-@docs view
+@docs view, Attribute
 @docs disabled, enabled
 @docs value, selectedValue, valueToString
 @docs onSelect

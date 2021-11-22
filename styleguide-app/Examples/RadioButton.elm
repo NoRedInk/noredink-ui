@@ -14,7 +14,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Dict exposing (Dict)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -55,11 +55,20 @@ example =
 
 {-| -}
 view : State -> List (Html Msg)
-view model =
-    [ Heading.h3 [] [ Html.text "RadioButton" ]
-    , Heading.h4 [] [ Html.text "view" ]
-    , viewVanilla model
-    , Heading.h4 [] [ Html.text "premium" ]
+view state =
+    let
+        selectionSettings =
+            Control.currentValue state.selectionSettings
+    in
+    [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
+    , Html.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
+        [ text <|
+            "RadioButton.view [ "
+                --++ String.join ", " (List.map Tuple.first selectionSettings)
+                ++ "TODO: Example code!"
+                ++ " ] "
+        ]
+    , viewRadioButtons selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -78,19 +87,19 @@ view model =
             }
         }
         [ Modal.closeButton ]
-        model.modal
+        state.modal
     ]
 
 
-viewVanilla : State -> Html Msg
-viewVanilla state =
+viewRadioButtons : SelectionSettings -> Maybe Selection -> Html Msg
+viewRadioButtons selectionSettings selectedValue =
     div []
         [ RadioButton.view
             (selectionToString Dogs)
             [ RadioButton.enabled
             , RadioButton.value Dogs
             , RadioButton.name "pets"
-            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.selectedValue selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.describedBy
@@ -102,10 +111,10 @@ viewVanilla state =
             [ RadioButton.enabled
             , RadioButton.value Cats
             , RadioButton.name "pets"
-            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.selectedValue selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
-            , if state.selectedValue == Just Cats then
+            , if selectedValue == Just Cats then
                 RadioButton.batch
                     [ RadioButton.describedBy [ "cats-description" ]
                     , RadioButton.hiddenLabel
@@ -128,7 +137,7 @@ viewVanilla state =
                 }
             , RadioButton.value Robots
             , RadioButton.name "pets"
-            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.selectedValue selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.showPennant <| OpenModal ""
@@ -142,7 +151,7 @@ viewVanilla state =
                 }
             , RadioButton.value Robots
             , RadioButton.name "pets"
-            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.selectedValue selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.showPennant <| OpenModal "pets-robots"
@@ -156,12 +165,12 @@ viewVanilla state =
                 }
             , RadioButton.value Robots
             , RadioButton.name "pets"
-            , RadioButton.selectedValue state.selectedValue
+            , RadioButton.selectedValue selectedValue
             , RadioButton.onSelect Select
             , RadioButton.valueToString selectionToString
             , RadioButton.inline
             , RadioButton.showPennant <| OpenModal "pets-robots"
-            , if state.selectedValue == Just Robots then
+            , if selectedValue == Just Robots then
                 RadioButton.hiddenLabel
 
               else
@@ -202,7 +211,7 @@ selectionToString selection =
 type alias State =
     { selectedValue : Maybe Selection
     , modal : Modal.Model
-    , premiumControl : Control PremiumConfig
+    , selectionSettings : Control SelectionSettings
     }
 
 
@@ -211,26 +220,28 @@ init : State
 init =
     { selectedValue = Nothing
     , modal = Modal.init
-    , premiumControl = initPremiumControls
+    , selectionSettings = initSelectionSettings
     }
 
 
-type alias PremiumConfig =
-    { teacherPremiumLevel : PremiumLevel
-    , showPennant : Bool
+type alias SelectionSettings =
+    { dogs : List ( String, RadioButton.Attribute Selection Msg )
+    , cats : List ( String, RadioButton.Attribute Selection Msg )
+    , robots : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
-initPremiumControls : Control PremiumConfig
-initPremiumControls =
-    Control.record PremiumConfig
-        |> Control.field "teacherPremiumLevel"
-            (Control.choice
-                [ ( "Free", Control.value PremiumLevel.Free )
-                , ( "Premium", Control.value PremiumLevel.PremiumWithWriting )
-                ]
-            )
-        |> Control.field "showPennant" (Control.bool False)
+initSelectionSettings : Control SelectionSettings
+initSelectionSettings =
+    Control.record SelectionSettings
+        |> Control.field "Dogs" controlAttributes
+        |> Control.field "Cats" controlAttributes
+        |> Control.field "Robots" controlAttributes
+
+
+controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
+controlAttributes =
+    ControlExtra.list
 
 
 type Msg
@@ -238,7 +249,7 @@ type Msg
     | ModalMsg Modal.Msg
     | CloseModal
     | Select Selection
-    | SetPremiumControl (Control PremiumConfig)
+    | SetSelectionSettings (Control SelectionSettings)
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -276,8 +287,10 @@ update msg model =
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
 
-        SetPremiumControl premiumControl ->
-            ( { model | premiumControl = premiumControl }, Cmd.none )
+        SetSelectionSettings selectionSettings ->
+            ( { model | selectionSettings = selectionSettings }
+            , Cmd.none
+            )
 
         Focus focus ->
             ( model, Task.attempt Focused (Dom.focus focus) )
