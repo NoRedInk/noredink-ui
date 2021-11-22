@@ -141,7 +141,6 @@ viewRadioButtons selectionSettings selectedValue =
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
              , RadioButton.valueToString selectionToString
-             , RadioButton.showPennant <| OpenModal ""
              , RadioButton.block
              ]
                 ++ List.map Tuple.second selectionSettings.robots
@@ -207,6 +206,7 @@ controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg 
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.listItem "disabled" disabledOrEnabled
+        |> ControlExtra.optionalListItem "showPennant" showPennant
 
 
 disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
@@ -220,6 +220,14 @@ disabledOrEnabled =
                 ( "RadioButton.enabled", RadioButton.enabled )
         )
         (Control.bool False)
+
+
+showPennant : Control ( String, RadioButton.Attribute Selection Msg )
+showPennant =
+    Control.value
+        ( "RadioButton.showPennant OpenPremiumModal"
+        , RadioButton.showPennant (OpenModal "dogs")
+        )
 
 
 type Msg
