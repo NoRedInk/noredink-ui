@@ -3,7 +3,6 @@ module Nri.Ui.RadioButton.V3 exposing
     , disabled, enabled
     , value, selectedValue, valueToString
     , onSelect
-    , name
     , premium, showPennant
     , disclosure
     , hiddenLabel, visibleLabel
@@ -19,7 +18,6 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs disabled, enabled
 @docs value, selectedValue, valueToString
 @docs onSelect
-@docs name
 @docs premium, showPennant
 @docs disclosure
 @docs hiddenLabel, visibleLabel
@@ -66,14 +64,6 @@ enabled : Attribute value msg
 enabled =
     Attribute emptyEventsAndValues <|
         \config -> { config | isDisabled = False }
-
-
-{-| Every radio button in the same group should have the same name
--}
-name : String -> Attribute value msg
-name name_ =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | name = Just name_ }
 
 
 {-| Sets the value of one radio button
@@ -255,8 +245,8 @@ maybeAttr attr maybeValue =
 
 {-| View a single radio button.
 -}
-view : String -> List (Attribute value msg) -> Html msg
-view label attributes =
+view : { label : String, name : String } -> List (Attribute value msg) -> Html msg
+view { label, name } attributes =
     let
         config =
             applyConfig attributes emptyConfig
@@ -264,23 +254,12 @@ view label attributes =
         eventsAndValues =
             applyEvents attributes
 
-        name_ =
-            -- TODO: name should probably be a required property,
-            -- since radio button group keyboard behavior won't
-            -- work without it
-            case config.name of
-                Just n ->
-                    n
-
-                Nothing ->
-                    "default-radio-button-group"
-
         stringValue =
             Maybe.map2 (\f v -> f v) eventsAndValues.valueToString eventsAndValues.value
                 |> Maybe.withDefault "default-radio-value"
 
         id_ =
-            name_ ++ "-" ++ dasherize (toLower stringValue)
+            name ++ "-" ++ dasherize (toLower stringValue)
 
         isChecked =
             eventsAndValues.selectedValue == eventsAndValues.value
@@ -322,7 +301,7 @@ view label attributes =
             , Css.batch config.containerCss
             ]
         ]
-        [ radio name_
+        [ radio name
             stringValue
             isChecked
             [ id id_

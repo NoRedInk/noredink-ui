@@ -96,7 +96,9 @@ viewRadioButtons : SelectionSettings -> Maybe Selection -> Html Msg
 viewRadioButtons selectionSettings selectedValue =
     div []
         [ RadioButton.view
-            (selectionToString Dogs)
+            { label = "Dogs"
+            , name = "pets"
+            }
             ([ RadioButton.value Dogs
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
@@ -105,7 +107,9 @@ viewRadioButtons selectionSettings selectedValue =
                 ++ List.map Tuple.second selectionSettings.dogs
             )
         , RadioButton.view
-            (selectionToString Cats)
+            { label = "Cats"
+            , name = "pets"
+            }
             ([ RadioButton.value Cats
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
@@ -114,7 +118,9 @@ viewRadioButtons selectionSettings selectedValue =
                 ++ List.map Tuple.second selectionSettings.cats
             )
         , RadioButton.view
-            (selectionToString Rats)
+            { label = "Rats"
+            , name = "pets"
+            }
             ([ RadioButton.value Rats
              , RadioButton.selectedValue selectedValue
              , RadioButton.onSelect Select
@@ -179,16 +185,6 @@ initSelectionSettings =
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
     ControlExtra.list
-        |> ControlExtra.listItem "name"
-            (Control.choice
-                [ ( "pets"
-                  , Control.value
-                        ( "RadioButton.name \"pets\""
-                        , RadioButton.name "pets"
-                        )
-                  )
-                ]
-            )
         |> ControlExtra.listItem "hiddenLabel" labelVisibility
         |> ControlExtra.listItem "disabled" disabledOrEnabled
         |> ControlExtra.optionalListItem "showPennant" showPennant
