@@ -1,12 +1,12 @@
 module Nri.Ui.RadioButton.V3 exposing
-    ( view, Attribute
-    , disabled, enabled
-    , onSelect
+    ( view
     , premium, showPennant
     , disclosure
+    , onSelect
+    , Attribute
     , hiddenLabel, visibleLabel
-    , custom, nriDescription, id, testId
-    , containerCss
+    , containerCss, custom, nriDescription, id, testId
+    , disabled, enabled
     )
 
 {-| Changes from V2:
@@ -15,14 +15,26 @@ module Nri.Ui.RadioButton.V3 exposing
   - add disclosure to show rich content when the radio is selected
   - allow customization of the id
 
-@docs view, Attribute
-@docs disabled, enabled
-@docs onSelect
+@docs view
+
+
+### Content
+
 @docs premium, showPennant
 @docs disclosure
+
+
+### Event handlers
+
+@docs onSelect
+
+
+### Attributes
+
+@docs Attribute
 @docs hiddenLabel, visibleLabel
-@docs custom, nriDescription, id, testId
-@docs containerCss
+@docs containerCss, custom, nriDescription, id, testId
+@docs disabled, enabled
 
 -}
 
