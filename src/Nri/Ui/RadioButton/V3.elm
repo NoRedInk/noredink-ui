@@ -372,19 +372,27 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , outline Css.none
                 , margin zero
                 , Fonts.baseFont
-                , if config.isDisabled then
-                    Css.batch
+                , Css.batch
+                    (if config.isDisabled then
                         [ color Colors.gray45
                         , cursor notAllowed
                         ]
 
-                  else
-                    cursor pointer
+                     else if isInError then
+                        [ color Colors.purple
+                        , cursor pointer
+                        ]
+
+                     else
+                        [ color Colors.navy
+                        , cursor pointer
+                        ]
+                    )
                 , padding4 (px 6) zero (px 4) (px 40)
                 , fontSize (px 15)
                 , Css.property "font-weight" "600"
                 , display inlineBlock
-                , color Colors.navy
+                , Css.property "transition" "all 0.4s ease"
                 ]
             ]
             [ radioInputIcon
