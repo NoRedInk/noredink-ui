@@ -5,7 +5,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , premium, showPennant
     , disclosure
     , hiddenLabel, visibleLabel
-    , custom, nriDescription, testId
+    , custom, nriDescription, id, testId
     , containerCss
     )
 
@@ -13,6 +13,7 @@ module Nri.Ui.RadioButton.V3 exposing
 
   - list based API instead of record based
   - add disclosure to show rich content when the radio is selected
+  - allow customization of the id
 
 @docs view, Attribute
 @docs disabled, enabled
@@ -20,7 +21,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs premium, showPennant
 @docs disclosure
 @docs hiddenLabel, visibleLabel
-@docs custom, nriDescription, testId
+@docs custom, nriDescription, id, testId
 @docs containerCss
 
 -}
@@ -32,7 +33,7 @@ import Accessibility.Styled.Widget as Widget
 import Css as Css exposing (..)
 import Css.Global
 import Html.Styled as Html
-import Html.Styled.Attributes as Attributes exposing (class, classList, css, for, id)
+import Html.Styled.Attributes as Attributes exposing (class, classList, css, for)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
 import Json.Decode
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -131,6 +132,17 @@ visibleLabel =
         \config -> { config | hideLabel = False }
 
 
+{-| Set a custom ID for this text input and label. If you don't set this,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one radio input with the same label on
+the page. You might also use this helper if you're manually managing focus.
+-}
+id : String -> Attribute value msg
+id id_ =
+    Attribute emptyEventsAndValues <|
+        \config -> { config | id = Just id_ }
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -181,6 +193,7 @@ emptyEventsAndValues =
 -}
 type alias Config =
     { name : Maybe String
+    , id : Maybe String
     , teacherPremiumLevel : Maybe PremiumLevel
     , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
@@ -194,6 +207,7 @@ type alias Config =
 emptyConfig : Config
 emptyConfig =
     { name = Nothing
+    , id = Nothing
     , teacherPremiumLevel = Nothing
     , contentPremiumLevel = Nothing
     , isDisabled = False
@@ -263,7 +277,12 @@ view { label, name, value, valueToString, selectedValue } attributes =
             valueToString value
 
         id_ =
-            name ++ "-" ++ dasherize (toLower stringValue)
+            case config.id of
+                Just specificId ->
+                    specificId
+
+                Nothing ->
+                    name ++ "-" ++ dasherize (toLower stringValue)
 
         isChecked =
             selectedValue == Just value
@@ -283,12 +302,12 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
                 ( (_ :: _) as childNodes, True ) ->
                     ( Just (id_ ++ "-disclosure-content")
-                    , span [ id (id_ ++ "-disclosure-content") ]
+                    , span [ Attributes.id (id_ ++ "-disclosure-content") ]
                         childNodes
                     )
     in
     Html.span
-        [ id (id_ ++ "-container")
+        [ Attributes.id (id_ ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
@@ -308,7 +327,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
         [ radio name
             stringValue
             isChecked
-            ([ id id_
+            ([ Attributes.id id_
              , Widget.disabled (isLocked || config.isDisabled)
              , case ( eventsAndValues.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
