@@ -147,14 +147,12 @@ examples :
 examples selectionSettings =
     [ ( Dogs, selectionSettings.dogs )
     , ( Cats, selectionSettings.cats )
-    , ( Rats, selectionSettings.rats )
     ]
 
 
 type Selection
     = Dogs
     | Cats
-    | Rats
 
 
 selectionToString : Selection -> String
@@ -165,9 +163,6 @@ selectionToString selection =
 
         Cats ->
             "Cats"
-
-        Rats ->
-            "Rats"
 
 
 {-| -}
@@ -190,7 +185,6 @@ init =
 type alias SelectionSettings =
     { dogs : List ( String, RadioButton.Attribute Selection Msg )
     , cats : List ( String, RadioButton.Attribute Selection Msg )
-    , rats : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
@@ -199,7 +193,6 @@ initSelectionSettings =
     Control.record SelectionSettings
         |> Control.field "Dogs" controlAttributes
         |> Control.field "Cats" controlAttributes
-        |> Control.field "Rats" controlAttributes
 
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
