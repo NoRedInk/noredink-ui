@@ -333,6 +333,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id idValue
              , Widget.disabled (isLocked || config.isDisabled)
+             , InputErrorAndGuidanceInternal.describedBy idValue config
              , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ value)
