@@ -54,23 +54,21 @@ import Svg.Styled.Attributes as SvgAttributes
 -}
 disabled : Attribute value msg
 disabled =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | isDisabled = True }
+    Attribute <| \config -> { config | isDisabled = True }
 
 
 {-| This enables the input, this is the default behavior
 -}
 enabled : Attribute value msg
 enabled =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | isDisabled = False }
+    Attribute <| \config -> { config | isDisabled = False }
 
 
 {-| Fire a message parameterized by the value type when selecting a radio option
 -}
 onSelect : (value -> msg) -> Attribute value msg
 onSelect onSelect_ =
-    Attribute { emptyEventsAndValues | onSelect = Just onSelect_ } identity
+    Attribute <| \config -> { config | onSelect = Just onSelect_ }
 
 
 {-| Lock Premium content if the user does not have Premium.
@@ -81,7 +79,7 @@ premium :
     }
     -> Attribute value msg
 premium { teacherPremiumLevel, contentPremiumLevel } =
-    Attribute emptyEventsAndValues <|
+    Attribute <|
         \config ->
             { config
                 | teacherPremiumLevel = Just teacherPremiumLevel
@@ -98,38 +96,35 @@ For RadioButton.V4, consider removing `showPennant` from the API.
 -}
 showPennant : msg -> Attribute value msg
 showPennant premiumMsg =
-    Attribute { emptyEventsAndValues | premiumMsg = Just premiumMsg } identity
+    Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
 
 
 {-| Content that shows when this RadioButton is selected
 -}
 disclosure : List (Html msg) -> Attribute value msg
 disclosure childNodes =
-    Attribute { emptyEventsAndValues | disclosedContent = childNodes } identity
+    Attribute <| \config -> { config | disclosedContent = childNodes }
 
 
 {-| Adds CSS to the element containing the input.
 -}
 containerCss : List Css.Style -> Attribute value msg
 containerCss styles =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | containerCss = config.containerCss ++ styles }
+    Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute value msg
 hiddenLabel =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | hideLabel = True }
+    Attribute <| \config -> { config | hideLabel = True }
 
 
 {-| Shows the visible label. This is the default behavior
 -}
 visibleLabel : Attribute value msg
 visibleLabel =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | hideLabel = False }
+    Attribute <| \config -> { config | hideLabel = False }
 
 
 {-| Set a custom ID for this text input and label. If you don't set this,
@@ -139,8 +134,7 @@ the page. You might also use this helper if you're manually managing focus.
 -}
 id : String -> Attribute value msg
 id id_ =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | id = Just id_ }
+    Attribute <| \config -> { config | id = Just id_ }
 
 
 {-| Use this helper to add custom attributes.
@@ -152,8 +146,7 @@ Instead, please use the `css` helper.
 -}
 custom : List (Html.Attribute Never) -> Attribute value msg
 custom attributes =
-    Attribute emptyEventsAndValues <|
-        \config -> { config | custom = config.custom ++ attributes }
+    Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
 
 {-| -}
@@ -171,27 +164,12 @@ testId id_ =
 {-| Customizations for the RadioButton.
 -}
 type Attribute value msg
-    = Attribute (EventsAndValues value msg) (Config -> Config)
-
-
-type alias EventsAndValues value msg =
-    { onSelect : Maybe (value -> msg)
-    , premiumMsg : Maybe msg
-    , disclosedContent : List (Html msg)
-    }
-
-
-emptyEventsAndValues : EventsAndValues value msg
-emptyEventsAndValues =
-    { onSelect = Nothing
-    , premiumMsg = Nothing
-    , disclosedContent = []
-    }
+    = Attribute (Config value msg -> Config value msg)
 
 
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config =
+type alias Config value msg =
     { name : Maybe String
     , id : Maybe String
     , teacherPremiumLevel : Maybe PremiumLevel
@@ -201,10 +179,13 @@ type alias Config =
     , hideLabel : Bool
     , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
+    , onSelect : Maybe (value -> msg)
+    , premiumMsg : Maybe msg
+    , disclosedContent : List (Html msg)
     }
 
 
-emptyConfig : Config
+emptyConfig : Config value msg
 emptyConfig =
     { name = Nothing
     , id = Nothing
@@ -215,36 +196,17 @@ emptyConfig =
     , hideLabel = False
     , containerCss = []
     , custom = []
+    , onSelect = Nothing
+    , premiumMsg = Nothing
+    , disclosedContent = []
     }
 
 
-applyConfig : List (Attribute value msg) -> Config -> Config
+applyConfig : List (Attribute value msg) -> Config value msg -> Config value msg
 applyConfig attributes beginningConfig =
-    List.foldl (\(Attribute _ update) config -> update config)
+    List.foldl (\(Attribute update) config -> update config)
         beginningConfig
         attributes
-
-
-orExisting : (acc -> Maybe a) -> acc -> acc -> Maybe a
-orExisting f new previous =
-    case f previous of
-        Just just ->
-            Just just
-
-        Nothing ->
-            f new
-
-
-applyEvents : List (Attribute value msg) -> EventsAndValues value msg
-applyEvents =
-    List.foldl
-        (\(Attribute eventsAndValues _) existing ->
-            { onSelect = orExisting .onSelect eventsAndValues existing
-            , premiumMsg = orExisting .premiumMsg eventsAndValues existing
-            , disclosedContent = eventsAndValues.disclosedContent ++ existing.disclosedContent
-            }
-        )
-        emptyEventsAndValues
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -270,9 +232,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
         config =
             applyConfig attributes emptyConfig
 
-        eventsAndValues =
-            applyEvents attributes
-
         stringValue =
             valueToString value
 
@@ -293,7 +252,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 |> not
 
         ( disclosureId, disclosureElement ) =
-            case ( eventsAndValues.disclosedContent, isChecked ) of
+            case ( config.disclosedContent, isChecked ) of
                 ( [], _ ) ->
                     ( Nothing, text "" )
 
@@ -329,7 +288,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id id_
              , Widget.disabled (isLocked || config.isDisabled)
-             , case ( eventsAndValues.onSelect, config.isDisabled ) of
+             , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ value)
 
@@ -411,7 +370,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             []
                     ]
                     [ Html.text label ]
-                , case ( config.contentPremiumLevel, eventsAndValues.premiumMsg ) of
+                , case ( config.contentPremiumLevel, config.premiumMsg ) of
                     ( Nothing, _ ) ->
                         text ""
 
