@@ -62,11 +62,11 @@ view state =
             Control.currentValue state.selectionSettings
     in
     [ div
-        [ css [ Css.displayFlex ] ]
+        [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
         [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
+        , viewExamples selectionSettings state.selectedValue
         , viewExamplesCode selectionSettings state.selectedValue
         ]
-    , viewExamples selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -137,7 +137,7 @@ viewExamples selectionSettings selectedValue =
                 }
                 (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
-    div []
+    div [ css [ Css.flexBasis (Css.px 300) ] ]
         (List.map viewExample_ (examples selectionSettings))
 
 
