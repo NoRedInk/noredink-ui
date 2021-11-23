@@ -6,7 +6,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , Attribute
     , hiddenLabel, visibleLabel
     , containerCss, custom, nriDescription, id, testId
-    , disabled, enabled
+    , disabled, enabled, errorIf, errorMessage, guidance
     )
 
 {-| Changes from V2:
@@ -34,7 +34,7 @@ module Nri.Ui.RadioButton.V3 exposing
 @docs Attribute
 @docs hiddenLabel, visibleLabel
 @docs containerCss, custom, nriDescription, id, testId
-@docs disabled, enabled
+@docs disabled, enabled, errorIf, errorMessage, guidance
 
 -}
 
@@ -47,6 +47,7 @@ import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (class, classList, css, for)
 import Html.Styled.Events exposing (onClick, stopPropagationOn)
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Json.Decode
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -74,6 +75,28 @@ disabled =
 enabled : Attribute value msg
 enabled =
     Attribute <| \config -> { config | isDisabled = False }
+
+
+{-| Sets whether or not the field will be highlighted as having a validation error.
+-}
+errorIf : Bool -> Attribute value msg
+errorIf =
+    Attribute << InputErrorAndGuidanceInternal.setErrorIf
+
+
+{-| If `Just`, the field will be highlighted as having a validation error,
+and the given error message will be shown.
+-}
+errorMessage : Maybe String -> Attribute value msg
+errorMessage =
+    Attribute << InputErrorAndGuidanceInternal.setErrorMessage
+
+
+{-| A guidance message shows below the input, unless an error message is showing instead.
+-}
+guidance : String -> Attribute value msg
+guidance =
+    Attribute << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Fire a message parameterized by the value type when selecting a radio option
@@ -187,6 +210,8 @@ type alias Config value msg =
     , teacherPremiumLevel : Maybe PremiumLevel
     , contentPremiumLevel : Maybe PremiumLevel
     , isDisabled : Bool
+    , guidance : Guidance
+    , error : ErrorState
     , showPennant : Bool
     , hideLabel : Bool
     , containerCss : List Css.Style
@@ -204,6 +229,8 @@ emptyConfig =
     , teacherPremiumLevel = Nothing
     , contentPremiumLevel = Nothing
     , isDisabled = False
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
+    , error = InputErrorAndGuidanceInternal.noError
     , showPennant = False
     , hideLabel = False
     , containerCss = []
@@ -247,7 +274,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
         stringValue =
             valueToString value
 
-        id_ =
+        idValue =
             case config.id of
                 Just specificId ->
                     specificId
@@ -272,13 +299,19 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     ( Nothing, text "" )
 
                 ( (_ :: _) as childNodes, True ) ->
-                    ( Just (id_ ++ "-disclosure-content")
-                    , span [ Attributes.id (id_ ++ "-disclosure-content") ]
+                    ( Just (idValue ++ "-disclosure-content")
+                    , span [ Attributes.id (idValue ++ "-disclosure-content") ]
                         childNodes
                     )
+
+        isInError =
+            InputErrorAndGuidanceInternal.getIsInError config.error
+
+        errorMessage_ =
+            InputErrorAndGuidanceInternal.getErrorMessage config.error
     in
     Html.span
-        [ Attributes.id (id_ ++ "-container")
+        [ Attributes.id (idValue ++ "-container")
         , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
@@ -298,7 +331,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
         [ radio name
             stringValue
             isChecked
-            ([ Attributes.id id_
+            ([ Attributes.id idValue
              , Widget.disabled (isLocked || config.isDisabled)
              , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->
@@ -329,7 +362,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 ++ List.map (Attributes.map never) config.custom
             )
         , Html.label
-            [ for id_
+            [ for idValue
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
@@ -397,6 +430,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 ]
             ]
         , disclosureElement
+        , InputErrorAndGuidanceInternal.view idValue config
         ]
 
 

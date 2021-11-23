@@ -239,7 +239,37 @@ controlAttributes =
                   )
                 ]
             )
-        |> ControlExtra.optionalListItem "extra content" controlDisclosure
+        |> ControlExtra.optionalListItem "disclosure" controlDisclosure
+        |> ControlExtra.optionalListItem "errorIf"
+            (Control.map
+                (\inError ->
+                    ( "RadioButton.errorIf " ++ Debug.toString inError
+                    , RadioButton.errorIf inError
+                    )
+                )
+             <|
+                Control.bool True
+            )
+        |> ControlExtra.optionalListItem "errorMessage"
+            (Control.map
+                (\message ->
+                    ( "RadioButton.errorMessage (Just \"" ++ message ++ "\")"
+                    , RadioButton.errorMessage (Just message)
+                    )
+                )
+             <|
+                Control.string "The statement must be true."
+            )
+        |> ControlExtra.optionalListItem "guidance"
+            (Control.map
+                (\content ->
+                    ( "RadioButton.guidance \"" ++ content ++ "\""
+                    , RadioButton.guidance content
+                    )
+                )
+             <|
+                Control.string "The statement must be true."
+            )
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
