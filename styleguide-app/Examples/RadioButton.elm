@@ -12,18 +12,19 @@ module Examples.RadioButton exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import Css exposing (..)
+import CommonControls exposing (premiumLevel)
+import Css
 import Debug.Control as Control exposing (Control)
-import Dict exposing (Dict)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.RadioButton.V2 as RadioButton
+import Nri.Ui.RadioButton.V3 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Task
 
@@ -32,7 +33,7 @@ import Task
 example : Example State Msg
 example =
     { name = "RadioButton"
-    , version = 2
+    , version = 3
     , state = init
     , update = update
     , subscriptions = subscriptions
@@ -55,16 +56,21 @@ example =
 
 {-| -}
 view : State -> List (Html Msg)
-view model =
-    [ Heading.h3 [] [ Html.text "RadioButton" ]
-    , Heading.h4 [] [ Html.text "view" ]
-    , viewVanilla model
-    , Heading.h4 [] [ Html.text "premium" ]
-    , viewPremium model
+view state =
+    let
+        selectionSettings =
+            Control.currentValue state.selectionSettings
+    in
+    [ div
+        [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
+        [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
+        , viewExamples selectionSettings state.selectedValue
+        , viewExamplesCode selectionSettings state.selectedValue
+        ]
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
-        , content = [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a locked radio button is clicked." ] ]
+        , content = [ Text.mediumBody [ Text.plaintext "Often, we'll launch a modal showing the benefits of premium when a Premium pennant is clicked." ] ]
         , footer =
             [ Button.button "Okay"
                 [ Button.modal
@@ -79,112 +85,91 @@ view model =
             }
         }
         [ Modal.closeButton ]
-        model.modal
+        state.modal
     ]
 
 
-viewVanilla : State -> Html Msg
-viewVanilla state =
-    div []
-        [ RadioButton.view
-            { label = "Cats"
-            , value = "Cats"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , onSelect = Select
-            , valueToString = identity
-            }
-        , RadioButton.view
-            { label = "Dogs"
-            , value = "Dogs"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , onSelect = Select
-            , valueToString = identity
-            }
-        ]
-
-
-viewPremium : State -> Html Msg
-viewPremium state =
+viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamplesCode selectionSettings selectedValue =
     let
-        premiumConfig =
-            Control.currentValue state.premiumControl
+        selectedValueString =
+            case selectedValue of
+                Just value ->
+                    "Just " ++ selectionToString value
+
+                Nothing ->
+                    "Nothing"
+
+        toExampleCode ( kind, settings ) =
+            "RadioButton.view"
+                ++ ("\n\t{ label = " ++ selectionToString kind)
+                ++ "\n\t, name = \"pets\""
+                ++ ("\n\t, value = " ++ selectionToString kind)
+                ++ ("\n\t, selectedValue = " ++ selectedValueString)
+                ++ "\n\t, valueToString = toString"
+                ++ "\n\t}\n\t[ "
+                ++ String.join "\n\t, " (List.map Tuple.first settings)
+                ++ "\n\t] "
     in
-    div []
-        [ Heading.h4 [] [ Html.text "Premium Radio Buttons" ]
-        , Html.div [ css [ Css.margin (Css.px 8) ] ]
-            [ Control.view SetPremiumControl state.premiumControl
-                |> Html.fromUnstyled
+    Html.code
+        [ css
+            [ Css.display Css.block
+            , Css.marginLeft (Css.px 20)
             ]
-        , RadioButton.premium
-            { label = "Hedgehog (Free)"
-            , value = "Hedgehogs"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.Free
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-free"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = False
-            }
-        , RadioButton.premium
-            { label = "Hedgehodge (Premium)"
-            , value = "Hedgehodges"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-premium"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = False
-            }
-        , RadioButton.premium
-            { label = "Disabled"
-            , value = "Disabled"
-            , name = "radio-button-examples"
-            , selectedValue = state.selectedValue
-            , teacherPremiumLevel = premiumConfig.teacherPremiumLevel
-            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-            , onSelect = Select
-
-            -- TODO:
-            -- the next version of the RadioComponent will handle focus correctly,
-            -- including re-capturing the focus when the modal closes.
-            -- While we could change premiumMsg to be String -> msg now,
-            -- and use the correct id, there's not much point in doing
-            -- so yet since the radio doesn't handle focus correctly.
-            , premiumMsg = OpenModal "hedgehogs-premium"
-            , valueToString = identity
-            , showPennant = premiumConfig.showPennant
-            , isDisabled = True
-            }
         ]
+        [ Html.pre []
+            [ text
+                ("  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings)))
+            ]
+        ]
+
+
+viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamples selectionSettings selectedValue =
+    let
+        viewExample_ ( kind, settings ) =
+            RadioButton.view
+                { label = selectionToString kind
+                , name = "pets"
+                , value = kind
+                , selectedValue = selectedValue
+                , valueToString = selectionToString
+                }
+                (RadioButton.onSelect Select :: List.map Tuple.second settings)
+    in
+    div [ css [ Css.flexBasis (Css.px 300) ] ]
+        (List.map viewExample_ (examples selectionSettings))
+
+
+examples :
+    SelectionSettings
+    -> List ( Selection, List ( String, RadioButton.Attribute Selection Msg ) )
+examples selectionSettings =
+    [ ( Dogs, selectionSettings.dogs )
+    , ( Cats, selectionSettings.cats )
+    ]
+
+
+type Selection
+    = Dogs
+    | Cats
+
+
+selectionToString : Selection -> String
+selectionToString selection =
+    case selection of
+        Dogs ->
+            "Dogs"
+
+        Cats ->
+            "Cats"
 
 
 {-| -}
 type alias State =
-    { selectedValue : Maybe String
+    { selectedValue : Maybe Selection
     , modal : Modal.Model
-    , premiumControl : Control PremiumConfig
+    , selectionSettings : Control SelectionSettings
     }
 
 
@@ -193,34 +178,136 @@ init : State
 init =
     { selectedValue = Nothing
     , modal = Modal.init
-    , premiumControl = initPremiumControls
+    , selectionSettings = initSelectionSettings
     }
 
 
-type alias PremiumConfig =
-    { teacherPremiumLevel : PremiumLevel
-    , showPennant : Bool
+type alias SelectionSettings =
+    { dogs : List ( String, RadioButton.Attribute Selection Msg )
+    , cats : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
-initPremiumControls : Control PremiumConfig
-initPremiumControls =
-    Control.record PremiumConfig
-        |> Control.field "teacherPremiumLevel"
+initSelectionSettings : Control SelectionSettings
+initSelectionSettings =
+    Control.record SelectionSettings
+        |> Control.field "Dogs" controlAttributes
+        |> Control.field "Cats" controlAttributes
+
+
+controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "visibility" labelVisibility
+        |> ControlExtra.optionalListItem "status" disabledOrEnabled
+        |> ControlExtra.optionalListItem "showPennant" showPennant
+        |> ControlExtra.optionalListItem "premium"
+            -- TODO: allow the teacher premium level to vary as well:
+            (Control.map
+                (\( contentLevel, clevel ) ->
+                    ( "RadioButton.premium { teacherPremiumLevel = PremiumLevel.Premium, contentPremiumLevel = "
+                        ++ contentLevel
+                        ++ "}"
+                    , RadioButton.premium
+                        { teacherPremiumLevel = PremiumLevel.Premium
+                        , contentPremiumLevel = clevel
+                        }
+                    )
+                )
+                premiumLevel
+            )
+        |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "Free", Control.value PremiumLevel.Free )
-                , ( "Premium", Control.value PremiumLevel.PremiumWithWriting )
+                [ ( "100% width"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
+                        , RadioButton.containerCss [ Css.width (Css.pct 100) ]
+                        )
+                  )
+                , ( "10px right margin"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
+                        , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
+                        )
+                  )
                 ]
             )
-        |> Control.field "showPennant" (Control.bool False)
+        |> ControlExtra.optionalListItem "disclosure" controlDisclosure
+        |> ControlExtra.optionalListItem "errorIf"
+            (Control.map
+                (\inError ->
+                    ( "RadioButton.errorIf " ++ Debug.toString inError
+                    , RadioButton.errorIf inError
+                    )
+                )
+             <|
+                Control.bool True
+            )
+        |> ControlExtra.optionalListItem "errorMessage"
+            (Control.map
+                (\message ->
+                    ( "RadioButton.errorMessage (Just \"" ++ message ++ "\")"
+                    , RadioButton.errorMessage (Just message)
+                    )
+                )
+             <|
+                Control.string "The statement must be true."
+            )
+        |> ControlExtra.optionalListItem "guidance"
+            (Control.map
+                (\content ->
+                    ( "RadioButton.guidance \"" ++ content ++ "\""
+                    , RadioButton.guidance content
+                    )
+                )
+             <|
+                Control.string "The statement must be true."
+            )
+
+
+labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
+labelVisibility =
+    Control.choice
+        [ ( "hiddenLabel", Control.value ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel ) )
+        , ( "visibleLabel", Control.value ( "RadioButton.visibleLabel", RadioButton.visibleLabel ) )
+        ]
+
+
+disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
+disabledOrEnabled =
+    Control.choice
+        [ ( "disabled", Control.value ( "RadioButton.disabled", RadioButton.disabled ) )
+        , ( "enabled", Control.value ( "RadioButton.enabled", RadioButton.enabled ) )
+        ]
+
+
+showPennant : Control ( String, RadioButton.Attribute Selection Msg )
+showPennant =
+    Control.value
+        ( "RadioButton.showPennant OpenPremiumModal"
+        , RadioButton.showPennant (OpenModal "dogs")
+        )
+
+
+controlDisclosure : Control ( String, RadioButton.Attribute Selection Msg )
+controlDisclosure =
+    Control.map
+        (\content ->
+            ( "RadioButton.disclosure [ Text.smallBody [ Text.plaintext \""
+                ++ content
+                ++ "\" ]"
+            , RadioButton.disclosure [ Text.smallBody [ Text.plaintext content ] ]
+            )
+        )
+        (Control.string "These pets occupy themselves.")
 
 
 type Msg
     = OpenModal String
     | ModalMsg Modal.Msg
     | CloseModal
-    | Select String
-    | SetPremiumControl (Control PremiumConfig)
+    | Select Selection
+    | SetSelectionSettings (Control SelectionSettings)
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -258,8 +345,10 @@ update msg model =
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
 
-        SetPremiumControl premiumControl ->
-            ( { model | premiumControl = premiumControl }, Cmd.none )
+        SetSelectionSettings selectionSettings ->
+            ( { model | selectionSettings = selectionSettings }
+            , Cmd.none
+            )
 
         Focus focus ->
             ( model, Task.attempt Focused (Dom.focus focus) )
