@@ -14,6 +14,7 @@ module Nri.Ui.RadioButton.V3 exposing
   - list based API instead of record based
   - add disclosure to show rich content when the radio is selected
   - allow customization of the id
+  - add gray and azure borders to make the radios easier to distinguish visually
 
 @docs view
 
@@ -543,6 +544,7 @@ unselectedSvg =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+        |> withImageBorder Colors.gray85
 
 
 selectedSvg : Svg
@@ -587,6 +589,7 @@ selectedSvg =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+        |> withImageBorder Colors.azure
 
 
 lockedSvg : Svg
@@ -634,3 +637,12 @@ lockedSvg =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+        |> withImageBorder Colors.gray85
+
+
+withImageBorder : Color -> Svg -> Svg
+withImageBorder color =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.border3 (px 1) solid color
+        , Css.borderRadius (Css.pct 50)
+        ]
