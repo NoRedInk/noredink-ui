@@ -21,6 +21,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V11 as Modal
@@ -228,6 +229,22 @@ controlAttributes =
                   , Control.value
                         ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
                         , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
+                        )
+                  )
+                ]
+            )
+        |> ControlExtra.optionalListItem "labelCss"
+            (Control.choice
+                [ ( "backgroundColor highlightMagenta"
+                  , Control.value
+                        ( "RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
+                        , RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
+                        )
+                  )
+                , ( "1px ochreDark border"
+                  , Control.value
+                        ( "RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]"
+                        , RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]
                         )
                   )
                 ]
