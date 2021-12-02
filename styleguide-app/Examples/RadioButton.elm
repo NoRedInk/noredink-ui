@@ -77,6 +77,19 @@ preview =
         , valueToString = identity
         }
         [ RadioButton.custom [ Key.tabbable False ] ]
+    , RadioButton.view
+        { label = "Premium"
+        , name = "preview-radio-inputs"
+        , value = "Premium"
+        , selectedValue = selectedValue
+        , valueToString = identity
+        }
+        [ RadioButton.custom [ Key.tabbable False ]
+        , RadioButton.premium
+            { teacherPremiumLevel = PremiumLevel.Free
+            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+            }
+        ]
     ]
 
 
