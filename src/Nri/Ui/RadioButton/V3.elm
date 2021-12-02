@@ -5,7 +5,7 @@ module Nri.Ui.RadioButton.V3 exposing
     , onSelect
     , Attribute
     , hiddenLabel, visibleLabel
-    , containerCss, custom, nriDescription, id, testId
+    , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, errorIf, errorMessage, guidance
     )
 
@@ -34,7 +34,7 @@ module Nri.Ui.RadioButton.V3 exposing
 
 @docs Attribute
 @docs hiddenLabel, visibleLabel
-@docs containerCss, custom, nriDescription, id, testId
+@docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs disabled, enabled, errorIf, errorMessage, guidance
 
 -}
@@ -149,6 +149,16 @@ containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
+{-| Adds CSS to the element containing the label text.
+
+Note that these styles don't apply to the literal HTML label element, since it contains the icon SVG as well.
+
+-}
+labelCss : List Css.Style -> Attribute value msg
+labelCss styles =
+    Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
+
+
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute value msg
@@ -216,6 +226,7 @@ type alias Config value msg =
     , showPennant : Bool
     , hideLabel : Bool
     , containerCss : List Css.Style
+    , labelCss : List Css.Style
     , custom : List (Html.Attribute Never)
     , onSelect : Maybe (value -> msg)
     , premiumMsg : Maybe msg
@@ -235,6 +246,7 @@ emptyConfig =
     , showPennant = False
     , hideLabel = False
     , containerCss = []
+    , labelCss = []
     , custom = []
     , onSelect = Nothing
     , premiumMsg = Nothing
@@ -422,7 +434,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             ]
 
                         else
-                            []
+                            config.labelCss
                     ]
                     [ Html.text label ]
                 , case ( config.contentPremiumLevel, config.premiumMsg ) of
