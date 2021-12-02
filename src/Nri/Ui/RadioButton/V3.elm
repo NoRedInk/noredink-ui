@@ -213,7 +213,6 @@ type alias Config value msg =
     , isDisabled : Bool
     , guidance : Guidance
     , error : ErrorState
-    , showPennant : Bool
     , hideLabel : Bool
     , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
@@ -232,7 +231,6 @@ emptyConfig =
     , isDisabled = False
     , guidance = InputErrorAndGuidanceInternal.noGuidance
     , error = InputErrorAndGuidanceInternal.noError
-    , showPennant = False
     , hideLabel = False
     , containerCss = []
     , custom = []
@@ -313,7 +311,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
     in
     Html.span
         [ Attributes.id (idValue ++ "-container")
-        , classList [ ( "Nri-RadioButton-PremiumClass", config.showPennant ) ]
         , css
             [ position relative
             , marginLeft (px -4)
