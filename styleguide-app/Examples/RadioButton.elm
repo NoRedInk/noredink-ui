@@ -10,6 +10,7 @@ module Examples.RadioButton exposing
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import CommonControls exposing (premiumLevel)
@@ -37,7 +38,7 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
-    , preview = []
+    , preview = preview
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -52,6 +53,31 @@ example =
           }
         ]
     }
+
+
+preview : List (Html Never)
+preview =
+    let
+        selectedValue =
+            Just "Selected"
+    in
+    [ RadioButton.view
+        { label = "Unselected"
+        , name = "preview-radio-inputs"
+        , value = "Unselected"
+        , selectedValue = selectedValue
+        , valueToString = identity
+        }
+        [ RadioButton.custom [ Key.tabbable False ] ]
+    , RadioButton.view
+        { label = "Selected"
+        , name = "preview-radio-inputs"
+        , value = "Selected"
+        , selectedValue = selectedValue
+        , valueToString = identity
+        }
+        [ RadioButton.custom [ Key.tabbable False ] ]
+    ]
 
 
 {-| -}
