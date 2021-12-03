@@ -238,6 +238,8 @@ sharedEntryStyles =
     , fontSize (px 15)
     , fontWeight (int 600)
     , marginBottom (px 10)
+    , textAlign left
+    , cursor pointer
     ]
 
 
