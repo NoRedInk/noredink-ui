@@ -59,10 +59,10 @@ type Entry route msg
 
 
 {-| -}
-entry : String -> route -> List (Attribute route msg) -> Entry route msg
-entry title route attributes =
+entry : String -> List (Attribute route msg) -> Entry route msg
+entry title attributes =
     attributes
-        |> List.foldl (\(Attribute attribute) b -> attribute b) (build title route)
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
         |> Entry
 
 
@@ -121,7 +121,7 @@ viewSkipLink onSkip =
 viewSidebarEntry : Config route msg -> List Css.Style -> Entry route msg -> Html msg
 viewSidebarEntry config extraStyles (Entry entry_) =
     if PremiumLevel.allowedFor entry_.premiumLevel config.userPremiumLevel then
-        if anyLinkDescendants (.route >> config.isCurrentRoute) entry_ then
+        if anyLinkDescendants (isCurrentRoute config) entry_ then
             div [ Attributes.css extraStyles ]
                 (styled span
                     (sharedEntryStyles
@@ -145,6 +145,12 @@ viewSidebarEntry config extraStyles (Entry entry_) =
         viewLockedEntry entry_.title extraStyles
 
 
+isCurrentRoute : Config route msg -> EntryConfig route msg -> Bool
+isCurrentRoute config { route } =
+    Maybe.map config.isCurrentRoute route
+        |> Maybe.withDefault False
+
+
 anyLinkDescendants : (EntryConfig route msg -> Bool) -> EntryConfig route msg -> Bool
 anyLinkDescendants f { children } =
     List.any (\(Entry entry_) -> f entry_ || anyLinkDescendants f entry_) children
@@ -165,7 +171,7 @@ viewSidebarLeaf config extraStyles entryConfig =
         ("Nri-Ui-SideNav-" ++ linkFunctionName)
         (sharedEntryStyles
             ++ extraStyles
-            ++ (if config.isCurrentRoute entryConfig.route then
+            ++ (if isCurrentRoute config entryConfig then
                     [ backgroundColor Colors.glacier
                     , color Colors.navy
                     , fontWeight bold
@@ -243,7 +249,7 @@ sharedEntryStyles =
 type alias EntryConfig route msg =
     { icon : Maybe Svg
     , title : String
-    , route : route
+    , route : Maybe route
     , clickableAttributes : ClickableAttributes route msg
     , customAttributes : List (Html.Styled.Attribute msg)
     , customStyles : List Style
@@ -252,11 +258,11 @@ type alias EntryConfig route msg =
     }
 
 
-build : String -> route -> EntryConfig route msg
-build title route =
+build : String -> EntryConfig route msg
+build title =
     { icon = Nothing
     , title = title
-    , route = route
+    , route = Nothing
     , clickableAttributes = ClickableAttributes.init
     , customAttributes = []
     , customStyles = []
@@ -354,25 +360,35 @@ secondary =
 
 
 setClickableAttributes :
-    (ClickableAttributes route msg -> ClickableAttributes route msg)
+    Maybe route
+    -> (ClickableAttributes route msg -> ClickableAttributes route msg)
     -> Attribute route msg
-setClickableAttributes apply =
+setClickableAttributes route apply =
     Attribute
         (\attributes ->
-            { attributes | clickableAttributes = apply attributes.clickableAttributes }
+            { attributes
+                | route =
+                    case route of
+                        Just r ->
+                            Just r
+
+                        Nothing ->
+                            attributes.route
+                , clickableAttributes = apply attributes.clickableAttributes
+            }
         )
 
 
 {-| -}
 onClick : msg -> Attribute route msg
 onClick msg =
-    setClickableAttributes (ClickableAttributes.onClick msg)
+    setClickableAttributes Nothing (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : route -> Attribute route msg
-href url =
-    setClickableAttributes (ClickableAttributes.href url)
+href route =
+    setClickableAttributes (Just route) (ClickableAttributes.href route)
 
 
 {-| Use this link for routing within a single page app.
@@ -383,29 +399,34 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 
 -}
 linkSpa : route -> Attribute route msg
-linkSpa url =
-    setClickableAttributes (ClickableAttributes.linkSpa url)
+linkSpa route =
+    setClickableAttributes (Just route)
+        (ClickableAttributes.linkSpa route)
 
 
 {-| -}
 linkWithMethod : { method : String, url : route } -> Attribute route msg
 linkWithMethod config =
-    setClickableAttributes (ClickableAttributes.linkWithMethod config)
+    setClickableAttributes (Just config.url)
+        (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : route } -> Attribute route msg
 linkWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkWithTracking config)
+    setClickableAttributes (Just config.url)
+        (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : route -> Attribute route msg
 linkExternal url =
-    setClickableAttributes (ClickableAttributes.linkExternal url)
+    setClickableAttributes (Just url)
+        (ClickableAttributes.linkExternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : route } -> Attribute route msg
 linkExternalWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
+    setClickableAttributes (Just config.url)
+        (ClickableAttributes.linkExternalWithTracking config)

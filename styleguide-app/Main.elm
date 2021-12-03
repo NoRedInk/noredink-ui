@@ -228,28 +228,19 @@ navigation currentRoute =
     let
         toNavLinkConfig : Category -> SideNav.Entry Route Msg
         toNavLinkConfig category =
-            SideNav.entry
-                (Category.forDisplay category)
-                (Routes.Category category)
-                [ -- TODO: we shouldn't require manually adding the href
-                  SideNav.href (Routes.Category category)
+            SideNav.entry (Category.forDisplay category)
+                [ SideNav.href (Routes.Category category)
                 ]
 
         navLinks : List (SideNav.Entry Route Msg)
         navLinks =
-            SideNav.entry "All"
-                Routes.All
-                [ SideNav.href Routes.All
-                ]
+            SideNav.entry "All" [ SideNav.href Routes.All ]
                 :: List.map toNavLinkConfig Category.all
                 ++ [ SideNav.entry "Example of Locked Premium content"
-                        Routes.All
                         [ SideNav.premiumLevel PremiumLevel.PremiumWithWriting
                             NoOp
                         ]
                    , SideNav.entry "Create your own"
-                        -- TODO: support _no_ route
-                        Routes.All
                         [ SideNav.icon UiIcon.gear
                         , SideNav.secondary
 
