@@ -243,16 +243,6 @@ navigation currentRoute =
         navLinks =
             SideNav.entry "All" [ SideNav.href Routes.All ]
                 :: List.map toNavLinkConfig Category.all
-                ++ [ SideNav.entry "Example of Locked Premium content"
-                        [ SideNav.premiumLevel PremiumLevel.PremiumWithWriting
-                            NoOp
-                        ]
-                   , SideNav.entry "Create your own"
-                        [ SideNav.icon UiIcon.gear
-                        , SideNav.secondary
-                        , SideNav.linkExternal "external-link"
-                        ]
-                   ]
     in
     SideNav.view
         { userPremiumLevel = PremiumLevel.Free
