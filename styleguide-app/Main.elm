@@ -233,19 +233,14 @@ viewPreviews containerId examples =
 navigation : Route -> Html Msg
 navigation currentRoute =
     let
-        toNavLinkConfig : String -> Route -> SideNav.Entry Route Msg
-        toNavLinkConfig name route =
-            SideNav.entry name [ SideNav.href route ]
-
-        navLinks : List (SideNav.Entry Route Msg)
-        navLinks =
-            toNavLinkConfig "All" Routes.All
-                :: List.map
-                    (\category ->
-                        toNavLinkConfig (Category.forDisplay category)
-                            (Routes.Category category)
-                    )
-                    Category.all
+        categoryNavLinks : List (SideNav.Entry Route Msg)
+        categoryNavLinks =
+            List.map
+                (\category ->
+                    SideNav.entry (Category.forDisplay category)
+                        [ SideNav.href (Routes.Category category) ]
+                )
+                Category.all
     in
     SideNav.view
         { userPremiumLevel = PremiumLevel.Free
@@ -259,4 +254,6 @@ navigation currentRoute =
                 ]
             ]
         }
-        navLinks
+        (SideNav.entry "All" [ SideNav.href Routes.All ]
+            :: categoryNavLinks
+        )
