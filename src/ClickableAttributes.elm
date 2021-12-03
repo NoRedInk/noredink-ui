@@ -26,6 +26,7 @@ import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 type alias ClickableAttributes route msg =
     { linkType : Link
     , url : Maybe route
+    , urlString : Maybe String
     , onClick : Maybe msg
     }
 
@@ -44,6 +45,7 @@ init : ClickableAttributes route msg
 init =
     { linkType = Default
     , url = Nothing
+    , urlString = Nothing
     , onClick = Nothing
     }
 
@@ -74,20 +76,28 @@ linkWithMethod { method, url } clickableAttributes =
 
 {-| -}
 linkWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkWithTracking { track, url } _ =
-    { linkType = WithTracking, url = Just url, onClick = Just track }
+linkWithTracking { track, url } clickableAttributes =
+    { clickableAttributes
+        | linkType = WithTracking
+        , url = Just url
+        , onClick = Just track
+    }
 
 
 {-| -}
-linkExternal : route -> ClickableAttributes route msg -> ClickableAttributes route msg
+linkExternal : String -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkExternal url clickableAttributes =
-    { clickableAttributes | linkType = External, url = Just url }
+    { clickableAttributes | linkType = External, urlString = Just url }
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkExternalWithTracking { track, url } _ =
-    { linkType = ExternalWithTracking, url = Just url, onClick = Just track }
+linkExternalWithTracking : { track : msg, url : String } -> ClickableAttributes route msg -> ClickableAttributes route msg
+linkExternalWithTracking { track, url } clickableAttributes =
+    { clickableAttributes
+        | linkType = ExternalWithTracking
+        , urlString = Just url
+        , onClick = Just track
+    }
 
 
 {-| -}
@@ -106,8 +116,15 @@ toLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( Strin
 toLinkAttributes routeToString clickableAttributes =
     let
         stringUrl =
-            Maybe.map routeToString clickableAttributes.url
-                |> Maybe.withDefault "#"
+            case ( clickableAttributes.urlString, clickableAttributes.url ) of
+                ( Just url, _ ) ->
+                    url
+
+                ( _, Just route ) ->
+                    routeToString route
+
+                ( Nothing, Nothing ) ->
+                    "#"
     in
     case clickableAttributes.linkType of
         Default ->

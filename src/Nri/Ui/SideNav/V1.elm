@@ -419,14 +419,12 @@ linkWithTracking config =
 
 
 {-| -}
-linkExternal : route -> Attribute route msg
+linkExternal : String -> Attribute route msg
 linkExternal url =
-    setClickableAttributes (Just url)
-        (ClickableAttributes.linkExternal url)
+    setClickableAttributes Nothing (ClickableAttributes.linkExternal url)
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : route } -> Attribute route msg
+linkExternalWithTracking : { track : msg, url : String } -> Attribute route msg
 linkExternalWithTracking config =
-    setClickableAttributes (Just config.url)
-        (ClickableAttributes.linkExternalWithTracking config)
+    setClickableAttributes Nothing (ClickableAttributes.linkExternalWithTracking config)

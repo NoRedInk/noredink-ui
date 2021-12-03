@@ -243,8 +243,7 @@ navigation currentRoute =
                    , SideNav.entry "Create your own"
                         [ SideNav.icon UiIcon.gear
                         , SideNav.secondary
-
-                        --, SideNav.linkExternal "external-link"
+                        , SideNav.linkExternal "external-link"
                         ]
                    ]
     in
