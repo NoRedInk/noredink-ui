@@ -70,6 +70,7 @@ type alias Config route msg =
     { userPremiumLevel : PremiumLevel
     , isCurrentRoute : route -> Bool
     , onSkipNav : msg
+    , css : List Style
     }
 
 
@@ -77,23 +78,13 @@ type alias Config route msg =
 view : Config route msg -> List (SidebarEntry route msg) -> Html msg
 view config entries =
     styled nav
-        [ width (px 300)
+        [ flexBasis (px 250)
+        , flexShrink (num 0)
         , borderRadius (px 8)
         , backgroundColor Colors.gray96
         , padding (px 20)
         , marginRight (px 20)
-        , position sticky
-        , property "position" "-webkit-sticky"
-        , top (px 20)
-        , overflowY auto
-        , minWidth (px 250)
-        , Media.withMedia
-            [ Media.all [ Media.maxWidth (px 600) ] ]
-            -- custom, smaller breakpoint since the sidebar nav allows access to subcategories
-            -- in the assignment library
-            [ width (pct 100)
-            , margin2 (px 20) zero
-            ]
+        , batch config.css
         ]
         []
         (viewSkipLink config.onSkipNav

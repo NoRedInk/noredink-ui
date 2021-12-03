@@ -239,6 +239,12 @@ navigation currentRoute =
         { userPremiumLevel = PremiumLevel.Free
         , isCurrentRoute = (==) currentRoute
         , onSkipNav = SkipToMainContent
+        , css =
+            [ withMedia [ notMobile ]
+                [ VendorPrefixed.value "position" "sticky"
+                , top (px 55)
+                ]
+            ]
         }
         [ SideNav.link
             { title = "All"
