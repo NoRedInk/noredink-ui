@@ -65,14 +65,15 @@ externalLink =
 
 
 {-| -}
-type alias Config route =
+type alias Config route msg =
     { userPremiumLevel : PremiumLevel
     , isCurrentRoute : route -> Bool
+    , onSkipNav : msg
     }
 
 
 {-| -}
-view : Config route -> List (SidebarEntry route msg) -> Html msg
+view : Config route msg -> List (SidebarEntry route msg) -> Html msg
 view config entries =
     styled nav
         [ width (px 300)
@@ -94,10 +95,38 @@ view config entries =
             ]
         ]
         []
-        (List.map (viewSidebarEntry config []) entries)
+        (viewSkipLink config.onSkipNav
+            :: List.map (viewSidebarEntry config []) entries
+        )
 
 
-viewSidebarEntry : Config route -> List Css.Style -> SidebarEntry route msg -> Html msg
+viewSkipLink : msg -> Html msg
+viewSkipLink onSkip =
+    button
+        [ css
+            [ backgroundColor transparent
+            , borderStyle none
+            , textDecoration none
+            , color Colors.azure
+            , Fonts.baseFont
+            , Css.marginBottom (px 20)
+            , Css.pseudoClass "not(:focus)"
+                [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
+                , Css.position Css.absolute
+                , Css.height (Css.px 1)
+                , Css.width (Css.px 1)
+                , Css.overflow Css.hidden
+                , Css.margin (Css.px -1)
+                , Css.padding Css.zero
+                , Css.border Css.zero
+                ]
+            ]
+        , Events.onClick onSkip
+        ]
+        [ text "Skip to main content" ]
+
+
+viewSidebarEntry : Config route msg -> List Css.Style -> SidebarEntry route msg -> Html msg
 viewSidebarEntry config extraStyles sidebarEntry =
     case sidebarEntry of
         ExternalLink { plaintext, icon, url } ->
@@ -160,7 +189,7 @@ anyLinkDescendants f { children } =
 
 
 viewSidebarLeaf :
-    Config route
+    Config route msg
     -> LinkConfig route msg
     -> Html msg
 viewSidebarLeaf config { title, route, attributes } =

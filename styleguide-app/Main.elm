@@ -224,7 +224,6 @@ viewPreviews containerId examples =
 
 navigation : Route -> Html Msg
 navigation currentRoute =
-    -- TODO: add the skip link back in
     -- TODO: add the "All" section back in
     let
         toNavLinkConfig : Category -> SideNav.LinkConfig Route Msg
@@ -241,4 +240,5 @@ navigation currentRoute =
         |> SideNav.view
             { userPremiumLevel = PremiumLevel.Free
             , isCurrentRoute = (==) currentRoute
+            , onSkipNav = SkipToMainContent
             }
