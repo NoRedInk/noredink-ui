@@ -70,6 +70,7 @@ entry title route attributes =
 type alias Config route msg =
     { userPremiumLevel : PremiumLevel
     , isCurrentRoute : route -> Bool
+    , routeToString : route -> String
     , onSkipNav : msg
     , css : List Style
     }
@@ -157,7 +158,8 @@ viewSidebarLeaf :
 viewSidebarLeaf config extraStyles entryConfig =
     let
         ( linkFunctionName, attributes ) =
-            ClickableAttributes.toLinkAttributes entryConfig.clickableAttributes
+            ClickableAttributes.toLinkAttributes config.routeToString
+                entryConfig.clickableAttributes
     in
     Nri.Ui.styled Html.Styled.a
         ("Nri-Ui-SideNav-" ++ linkFunctionName)
@@ -242,7 +244,7 @@ type alias EntryConfig route msg =
     { icon : Maybe Svg
     , title : String
     , route : route
-    , clickableAttributes : ClickableAttributes msg
+    , clickableAttributes : ClickableAttributes route msg
     , customAttributes : List (Html.Styled.Attribute msg)
     , customStyles : List Style
     , children : List (Entry route msg)
@@ -352,7 +354,7 @@ secondary =
 
 
 setClickableAttributes :
-    (ClickableAttributes msg -> ClickableAttributes msg)
+    (ClickableAttributes route msg -> ClickableAttributes route msg)
     -> Attribute route msg
 setClickableAttributes apply =
     Attribute
@@ -368,7 +370,7 @@ onClick msg =
 
 
 {-| -}
-href : String -> Attribute route msg
+href : route -> Attribute route msg
 href url =
     setClickableAttributes (ClickableAttributes.href url)
 
@@ -380,30 +382,30 @@ This will make a normal <a> tag, but change the Events.onClick behavior to avoid
 See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
 
 -}
-linkSpa : String -> Attribute route msg
+linkSpa : route -> Attribute route msg
 linkSpa url =
     setClickableAttributes (ClickableAttributes.linkSpa url)
 
 
 {-| -}
-linkWithMethod : { method : String, url : String } -> Attribute route msg
+linkWithMethod : { method : String, url : route } -> Attribute route msg
 linkWithMethod config =
     setClickableAttributes (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
-linkWithTracking : { track : msg, url : String } -> Attribute route msg
+linkWithTracking : { track : msg, url : route } -> Attribute route msg
 linkWithTracking config =
     setClickableAttributes (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
-linkExternal : String -> Attribute route msg
+linkExternal : route -> Attribute route msg
 linkExternal url =
     setClickableAttributes (ClickableAttributes.linkExternal url)
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : String } -> Attribute route msg
+linkExternalWithTracking : { track : msg, url : route } -> Attribute route msg
 linkExternalWithTracking config =
     setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)

@@ -232,14 +232,14 @@ navigation currentRoute =
                 (Category.forDisplay category)
                 (Routes.Category category)
                 [ -- TODO: we shouldn't require manually adding the href
-                  SideNav.href (Routes.toString (Routes.Category category))
+                  SideNav.href (Routes.Category category)
                 ]
 
         navLinks : List (SideNav.Entry Route Msg)
         navLinks =
             SideNav.entry "All"
                 Routes.All
-                [ SideNav.href (Routes.toString Routes.All)
+                [ SideNav.href Routes.All
                 ]
                 :: List.map toNavLinkConfig Category.all
                 ++ [ SideNav.entry "Example of Locked Premium content"
@@ -252,13 +252,15 @@ navigation currentRoute =
                         Routes.All
                         [ SideNav.icon UiIcon.gear
                         , SideNav.secondary
-                        , SideNav.linkExternal "external-link"
+
+                        --, SideNav.linkExternal "external-link"
                         ]
                    ]
     in
     SideNav.view
         { userPremiumLevel = PremiumLevel.Free
         , isCurrentRoute = (==) currentRoute
+        , routeToString = Routes.toString
         , onSkipNav = SkipToMainContent
         , css =
             [ withMedia [ notMobile ]

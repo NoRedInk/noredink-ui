@@ -23,9 +23,9 @@ import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 
 
 {-| -}
-type alias ClickableAttributes msg =
+type alias ClickableAttributes route msg =
     { linkType : Link
-    , url : String
+    , url : Maybe route
     , onClick : Maybe msg
     }
 
@@ -40,58 +40,58 @@ type Link
 
 
 {-| -}
-init : ClickableAttributes msg
+init : ClickableAttributes route msg
 init =
     { linkType = Default
-    , url = "#"
+    , url = Nothing
     , onClick = Nothing
     }
 
 
 {-| -}
-onClick : msg -> ClickableAttributes msg -> ClickableAttributes msg
+onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
 onClick msg clickableAttributes =
     { clickableAttributes | onClick = Just msg }
 
 
 {-| -}
-href : String -> ClickableAttributes msg -> ClickableAttributes msg
+href : route -> ClickableAttributes route msg -> ClickableAttributes route msg
 href url clickableAttributes =
-    { clickableAttributes | url = url }
+    { clickableAttributes | url = Just url }
 
 
 {-| -}
-linkSpa : String -> ClickableAttributes msg -> ClickableAttributes msg
+linkSpa : route -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkSpa url clickableAttributes =
-    { clickableAttributes | linkType = SinglePageApp, url = url }
+    { clickableAttributes | linkType = SinglePageApp, url = Just url }
 
 
 {-| -}
-linkWithMethod : { method : String, url : String } -> ClickableAttributes msg -> ClickableAttributes msg
+linkWithMethod : { method : String, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkWithMethod { method, url } clickableAttributes =
-    { clickableAttributes | linkType = WithMethod method, url = url }
+    { clickableAttributes | linkType = WithMethod method, url = Just url }
 
 
 {-| -}
-linkWithTracking : { track : msg, url : String } -> ClickableAttributes msg -> ClickableAttributes msg
+linkWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkWithTracking { track, url } _ =
-    { linkType = WithTracking, url = url, onClick = Just track }
+    { linkType = WithTracking, url = Just url, onClick = Just track }
 
 
 {-| -}
-linkExternal : String -> ClickableAttributes msg -> ClickableAttributes msg
+linkExternal : route -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkExternal url clickableAttributes =
-    { clickableAttributes | linkType = External, url = url }
+    { clickableAttributes | linkType = External, url = Just url }
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : String } -> ClickableAttributes msg -> ClickableAttributes msg
+linkExternalWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
 linkExternalWithTracking { track, url } _ =
-    { linkType = ExternalWithTracking, url = url, onClick = Just track }
+    { linkType = ExternalWithTracking, url = Just url, onClick = Just track }
 
 
 {-| -}
-toButtonAttributes : ClickableAttributes msg -> List (Attribute msg)
+toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
     case clickableAttributes.onClick of
         Just handler ->
@@ -102,12 +102,17 @@ toButtonAttributes clickableAttributes =
 
 
 {-| -}
-toLinkAttributes : ClickableAttributes msg -> ( String, List (Attribute msg) )
-toLinkAttributes clickableAttributes =
+toLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toLinkAttributes routeToString clickableAttributes =
+    let
+        stringUrl =
+            Maybe.map routeToString clickableAttributes.url
+                |> Maybe.withDefault "#"
+    in
     case clickableAttributes.linkType of
         Default ->
             ( "link"
-            , [ Attributes.href clickableAttributes.url
+            , [ Attributes.href stringUrl
               , Attributes.target "_self"
               ]
             )
@@ -116,17 +121,17 @@ toLinkAttributes clickableAttributes =
             ( "linkSpa"
             , case clickableAttributes.onClick of
                 Just handler ->
-                    [ Attributes.href clickableAttributes.url
+                    [ Attributes.href stringUrl
                     , EventExtras.onClickPreventDefaultForLinkWithHref handler
                     ]
 
                 Nothing ->
-                    [ Attributes.href clickableAttributes.url ]
+                    [ Attributes.href stringUrl ]
             )
 
         WithMethod method ->
             ( "linkWithMethod"
-            , [ Attributes.href clickableAttributes.url
+            , [ Attributes.href stringUrl
               , Attributes.attribute "data-method" method
               ]
             )
@@ -135,18 +140,18 @@ toLinkAttributes clickableAttributes =
             ( "linkWithTracking"
             , case clickableAttributes.onClick of
                 Just track ->
-                    [ Attributes.href clickableAttributes.url
+                    [ Attributes.href stringUrl
                     , Events.preventDefaultOn "click"
                         (Json.Decode.succeed ( track, True ))
                     ]
 
                 Nothing ->
-                    [ Attributes.href clickableAttributes.url ]
+                    [ Attributes.href stringUrl ]
             )
 
         External ->
             ( "linkExternal"
-            , Attributes.href clickableAttributes.url
+            , Attributes.href stringUrl
                 :: targetBlank
             )
 
@@ -154,13 +159,13 @@ toLinkAttributes clickableAttributes =
             ( "linkExternalWithTracking"
             , case clickableAttributes.onClick of
                 Just handler ->
-                    [ Attributes.href clickableAttributes.url
+                    [ Attributes.href stringUrl
                     , Events.onClick handler
                     , Events.on "auxclick" (Json.Decode.succeed handler)
                     ]
                         ++ targetBlank
 
                 Nothing ->
-                    Attributes.href clickableAttributes.url
+                    Attributes.href stringUrl
                         :: targetBlank
             )

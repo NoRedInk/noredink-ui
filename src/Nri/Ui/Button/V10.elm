@@ -187,7 +187,7 @@ css styles =
 
 
 setClickableAttributes :
-    (ClickableAttributes msg -> ClickableAttributes msg)
+    (ClickableAttributes String msg -> ClickableAttributes String msg)
     -> Attribute msg
 setClickableAttributes apply =
     set
@@ -467,7 +467,7 @@ type ButtonOrLink msg
 
 
 type alias ButtonOrLinkAttributes msg =
-    { clickableAttributes : ClickableAttributes msg
+    { clickableAttributes : ClickableAttributes String msg
     , size : ButtonSize
     , style : ColorPalette
     , width : ButtonWidth
@@ -523,7 +523,7 @@ renderLink ((ButtonOrLink config) as link_) =
             getColorPalette link_
 
         ( linkFunctionName, attributes ) =
-            ClickableAttributes.toLinkAttributes config.clickableAttributes
+            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
