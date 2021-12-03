@@ -1,6 +1,6 @@
 module Nri.Ui.SideNav.V1 exposing
     ( view, Config
-    , entry, Entry
+    , entry, html, Entry
     , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -11,7 +11,7 @@ module Nri.Ui.SideNav.V1 exposing
 {-|
 
 @docs view, Config
-@docs entry, Entry
+@docs entry, html, Entry
 @docs icon, custom, css, nriDescription, testId, id
 
 
@@ -56,6 +56,7 @@ import String.Extra exposing (dasherize)
 -}
 type Entry route msg
     = Entry (EntryConfig route msg)
+    | Html (List (Html msg))
 
 
 {-| -}
@@ -64,6 +65,12 @@ entry title attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
         |> Entry
+
+
+{-| -}
+html : List (Html msg) -> Entry route msg
+html =
+    Html
 
 
 {-| -}
@@ -119,7 +126,17 @@ viewSkipLink onSkip =
 
 
 viewSidebarEntry : Config route msg -> List Css.Style -> Entry route msg -> Html msg
-viewSidebarEntry config extraStyles (Entry entry_) =
+viewSidebarEntry config extraStyles entry_ =
+    case entry_ of
+        Entry entryConfig ->
+            viewSidebarEntry_ config extraStyles entryConfig
+
+        Html html_ ->
+            div [ Attributes.css extraStyles ] html_
+
+
+viewSidebarEntry_ : Config route msg -> List Css.Style -> EntryConfig route msg -> Html msg
+viewSidebarEntry_ config extraStyles entry_ =
     if PremiumLevel.allowedFor entry_.premiumLevel config.userPremiumLevel then
         if anyLinkDescendants (isCurrentRoute config) entry_ then
             div [ Attributes.css extraStyles ]
@@ -153,7 +170,16 @@ isCurrentRoute config { route } =
 
 anyLinkDescendants : (EntryConfig route msg -> Bool) -> EntryConfig route msg -> Bool
 anyLinkDescendants f { children } =
-    List.any (\(Entry entry_) -> f entry_ || anyLinkDescendants f entry_) children
+    List.any
+        (\entry_ ->
+            case entry_ of
+                Entry entryConfig ->
+                    f entryConfig || anyLinkDescendants f entryConfig
+
+                Html _ ->
+                    False
+        )
+        children
 
 
 viewSidebarLeaf :
