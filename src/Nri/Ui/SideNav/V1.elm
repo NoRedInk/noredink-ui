@@ -1,6 +1,6 @@
 module Nri.Ui.SideNav.V1 exposing
     ( view, Config
-    , entry, html, Entry
+    , entry, entryWithChildren, html, Entry
     , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -11,7 +11,7 @@ module Nri.Ui.SideNav.V1 exposing
 {-|
 
 @docs view, Config
-@docs entry, html, Entry
+@docs entry, entryWithChildren, html, Entry
 @docs icon, custom, css, nriDescription, testId, id
 
 
@@ -55,7 +55,7 @@ import String.Extra exposing (dasherize)
 {-| Use `entry` to create a sidebar entry.
 -}
 type Entry route msg
-    = Entry (EntryConfig route msg)
+    = Entry (List (Entry route msg)) (EntryConfig route msg)
     | Html (List (Html msg))
 
 
@@ -64,7 +64,15 @@ entry : String -> List (Attribute route msg) -> Entry route msg
 entry title attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
-        |> Entry
+        |> Entry []
+
+
+{-| -}
+entryWithChildren : String -> List (Attribute route msg) -> List (Entry route msg) -> Entry route msg
+entryWithChildren title attributes children =
+    attributes
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
+        |> Entry children
 
 
 {-| -}
@@ -128,37 +136,32 @@ viewSkipLink onSkip =
 viewSidebarEntry : Config route msg -> List Css.Style -> Entry route msg -> Html msg
 viewSidebarEntry config extraStyles entry_ =
     case entry_ of
-        Entry entryConfig ->
-            viewSidebarEntry_ config extraStyles entryConfig
+        Entry children entryConfig ->
+            if PremiumLevel.allowedFor entryConfig.premiumLevel config.userPremiumLevel then
+                if anyLinkDescendants (isCurrentRoute config) children then
+                    div [ Attributes.css extraStyles ]
+                        (styled span
+                            (sharedEntryStyles
+                                ++ [ backgroundColor Colors.gray92
+                                   , color Colors.navy
+                                   , fontWeight bold
+                                   , cursor default
+                                   , marginBottom (px 10)
+                                   ]
+                            )
+                            []
+                            [ text entryConfig.title ]
+                            :: List.map (viewSidebarEntry config [ marginLeft (px 20) ]) children
+                        )
+
+                else
+                    viewSidebarLeaf config extraStyles entryConfig
+
+            else
+                viewLockedEntry extraStyles entryConfig
 
         Html html_ ->
             div [ Attributes.css extraStyles ] html_
-
-
-viewSidebarEntry_ : Config route msg -> List Css.Style -> EntryConfig route msg -> Html msg
-viewSidebarEntry_ config extraStyles entry_ =
-    if PremiumLevel.allowedFor entry_.premiumLevel config.userPremiumLevel then
-        if anyLinkDescendants (isCurrentRoute config) entry_ then
-            div [ Attributes.css extraStyles ]
-                (styled span
-                    (sharedEntryStyles
-                        ++ [ backgroundColor Colors.gray92
-                           , color Colors.navy
-                           , fontWeight bold
-                           , cursor default
-                           ]
-                    )
-                    []
-                    [ text entry_.title ]
-                    :: List.map (viewSidebarEntry config [ marginLeft (px 20) ])
-                        entry_.children
-                )
-
-        else
-            viewSidebarLeaf config extraStyles entry_
-
-    else
-        viewLockedEntry extraStyles entry_
 
 
 isCurrentRoute : Config route msg -> EntryConfig route msg -> Bool
@@ -167,13 +170,13 @@ isCurrentRoute config { route } =
         |> Maybe.withDefault False
 
 
-anyLinkDescendants : (EntryConfig route msg -> Bool) -> EntryConfig route msg -> Bool
-anyLinkDescendants f { children } =
+anyLinkDescendants : (EntryConfig route msg -> Bool) -> List (Entry route msg) -> Bool
+anyLinkDescendants f children =
     List.any
         (\entry_ ->
             case entry_ of
-                Entry entryConfig ->
-                    f entryConfig || anyLinkDescendants f entryConfig
+                Entry children_ entryConfig ->
+                    f entryConfig || anyLinkDescendants f children_
 
                 Html _ ->
                     False
@@ -277,7 +280,6 @@ type alias EntryConfig route msg =
     , clickableAttributes : ClickableAttributes route msg
     , customAttributes : List (Html.Styled.Attribute msg)
     , customStyles : List Style
-    , children : List (Entry route msg)
     , premiumLevel : PremiumLevel
     , onLockedContent : Maybe msg
     }
@@ -291,7 +293,6 @@ build title =
     , clickableAttributes = ClickableAttributes.init
     , customAttributes = []
     , customStyles = []
-    , children = []
     , premiumLevel = PremiumLevel.Free
     , onLockedContent = Nothing
     }
