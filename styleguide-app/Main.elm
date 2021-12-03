@@ -226,46 +226,34 @@ viewPreviews containerId examples =
 navigation : Route -> Html Msg
 navigation currentRoute =
     let
-        toNavLinkConfig : Category -> SideNav.EntryConfig Route Msg
+        toNavLinkConfig : Category -> SideNav.Entry Route Msg
         toNavLinkConfig category =
-            { icon = Nothing
-            , title = Category.forDisplay category
-            , route = Routes.Category category
-            , attributes = [ href (Routes.toString (Routes.Category category)) ]
-            , children = []
-            , premiumLevel = PremiumLevel.Free
-            }
+            SideNav.entry
+                (Category.forDisplay category)
+                (Routes.Category category)
+                [ -- TODO: we shouldn't require manually adding the href
+                  SideNav.href (Routes.toString (Routes.Category category))
+                ]
 
         navLinks : List (SideNav.Entry Route Msg)
         navLinks =
-            SideNav.entry
-                { icon = Nothing
-                , title = "All"
-                , route = Routes.All
-                , attributes = [ href (Routes.toString Routes.All) ]
-                , children = []
-                , premiumLevel = PremiumLevel.Free
-                }
-                :: List.map (toNavLinkConfig >> SideNav.entry) Category.all
-                ++ [ SideNav.entry
-                        { icon = Nothing
-                        , title = "Example of Locked Premium content"
-                        , route = Routes.All
-                        , attributes = [ href (Routes.toString Routes.All) ]
-                        , children = []
-                        , premiumLevel = PremiumLevel.PremiumWithWriting
-                        }
-                   , SideNav.entry
-                        { icon = Just UiIcon.gear
-                        , title = "Create your own"
-                        , route = Routes.All
-                        , attributes =
-                            [ href (Routes.toString Routes.All)
-                            , css SideNav.withBorderStyles
-                            ]
-                        , children = []
-                        , premiumLevel = PremiumLevel.Free
-                        }
+            SideNav.entry "All"
+                Routes.All
+                [ SideNav.href (Routes.toString Routes.All)
+                ]
+                :: List.map toNavLinkConfig Category.all
+                ++ [ SideNav.entry "Example of Locked Premium content"
+                        Routes.All
+                        [ SideNav.premiumLevel PremiumLevel.PremiumWithWriting
+                            NoOp
+                        ]
+                   , SideNav.entry "Create your own"
+                        -- TODO: support _no_ route
+                        Routes.All
+                        [ SideNav.icon UiIcon.gear
+                        , SideNav.secondary
+                        , SideNav.linkExternal "external-link"
+                        ]
                    ]
     in
     SideNav.view
