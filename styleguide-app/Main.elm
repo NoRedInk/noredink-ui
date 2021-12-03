@@ -148,7 +148,12 @@ view_ model =
         Routes.Doodad doodad ->
             case List.head (examples (\m -> m.name == doodad)) of
                 Just example ->
-                    Html.main_ []
+                    Html.main_
+                        [ css
+                            [ maxWidth (Css.px 1400)
+                            , margin auto
+                            ]
+                        ]
                         [ Example.view model.previousRoute example
                             |> Html.map (UpdateModuleStates example.name)
                         ]
@@ -185,6 +190,8 @@ withSideNav currentRoute content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
+            , maxWidth (Css.px 1400)
+            , margin auto
             ]
         ]
         [ navigation currentRoute
