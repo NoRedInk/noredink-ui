@@ -1,14 +1,13 @@
 module Nri.Ui.SideNav.V1 exposing
     ( view, Config, SidebarEntry
     , link, LinkConfig
-    , externalLink, ExternalLinkConfig
+    , withBorderStyles
     )
 
 {-|
 
 @docs view, Config, SidebarEntry
 @docs link, LinkConfig
-@docs externalLink, ExternalLinkConfig
 
 -}
 
@@ -22,22 +21,23 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
 
 
-{-| Use `link` or `externalLink` to create a sidebar link.
+{-| Use `link` to create a sidebar link.
 -}
 type SidebarEntry route msg
     = Link (LinkConfig route msg)
-    | ExternalLink ExternalLinkConfig
 
 
 {-| -}
 type alias LinkConfig route msg =
-    { title : String
+    { icon : Maybe Svg
+    , title : String
     , route : route
     , attributes : List (Html.Styled.Attribute msg)
     , children : List (SidebarEntry route msg)
@@ -49,20 +49,6 @@ type alias LinkConfig route msg =
 link : LinkConfig route msg -> SidebarEntry route msg
 link =
     Link
-
-
-{-| -}
-type alias ExternalLinkConfig =
-    { icon : Svg
-    , plaintext : String
-    , url : String
-    }
-
-
-{-| -}
-externalLink : ExternalLinkConfig -> SidebarEntry route msg
-externalLink =
-    ExternalLink
 
 
 {-| -}
@@ -119,25 +105,6 @@ viewSkipLink onSkip =
 viewSidebarEntry : Config route msg -> List Css.Style -> SidebarEntry route msg -> Html msg
 viewSidebarEntry config extraStyles sidebarEntry =
     case sidebarEntry of
-        ExternalLink { plaintext, icon, url } ->
-            styled a
-                (sharedEntryStyles
-                    ++ extraStyles
-                    ++ [ backgroundColor Colors.white
-                       , boxShadow3 zero (px 2) Colors.gray75
-                       , border3 (px 1) solid Colors.gray75
-                       , marginBottom (px 10)
-                       ]
-                )
-                [ Attributes.href url ]
-                [ icon
-                    |> Svg.withWidth (px 20)
-                    |> Svg.withHeight (px 20)
-                    |> Svg.withCss [ marginRight (px 5) ]
-                    |> Svg.toHtml
-                , text plaintext
-                ]
-
         Link entry ->
             if PremiumLevel.allowedFor entry.premiumLevel config.userPremiumLevel then
                 if anyLinkDescendants (.route >> config.isCurrentRoute) entry then
@@ -166,16 +133,7 @@ viewSidebarEntry config extraStyles sidebarEntry =
 
 anyLinkDescendants : (LinkConfig route msg -> Bool) -> LinkConfig route msg -> Bool
 anyLinkDescendants f { children } =
-    List.any
-        (\child ->
-            case child of
-                Link entry ->
-                    f entry || anyLinkDescendants f entry
-
-                ExternalLink _ ->
-                    False
-        )
-        children
+    List.any (\(Link entry) -> f entry || anyLinkDescendants f entry) children
 
 
 viewSidebarLeaf :
@@ -183,7 +141,7 @@ viewSidebarLeaf :
     -> List Style
     -> LinkConfig route msg
     -> Html msg
-viewSidebarLeaf config extraStyles { title, route, attributes } =
+viewSidebarLeaf config extraStyles { icon, title, route, attributes } =
     styled Html.Styled.a
         (sharedEntryStyles
             ++ extraStyles
@@ -199,7 +157,17 @@ viewSidebarLeaf config extraStyles { title, route, attributes } =
                )
         )
         attributes
-        [ text title ]
+        [ viewJust
+            (\icon_ ->
+                icon_
+                    |> Svg.withWidth (px 20)
+                    |> Svg.withHeight (px 20)
+                    |> Svg.withCss [ marginRight (px 5) ]
+                    |> Svg.toHtml
+            )
+            icon
+        , text title
+        ]
 
 
 viewLockedEntry : String -> List Style -> Html msg
@@ -210,18 +178,9 @@ viewLockedEntry title extraStyles =
             "browse-and-assign-locked-entry__" ++ dasherize (toLower title)
     in
     styled Html.Styled.button
-        [ paddingLeft (px 20)
-        , paddingRight (px 20)
-        , displayFlex
-        , alignItems center
-        , Fonts.baseFont
-        , fontSize (px 15)
-        , textDecoration none
-        , color Colors.gray45
-        , height (px 45)
-        , borderStyle none
-        , backgroundColor Colors.gray96
-        , textAlign left
+        [ batch sharedEntryStyles
+        , important (color Colors.gray45)
+        , borderWidth zero
         , batch extraStyles
         ]
         [ -- TODO: reimplement lock click behavior!
@@ -237,7 +196,7 @@ viewLockedEntry title extraStyles =
         ]
 
 
-sharedEntryStyles : List Css.Style
+sharedEntryStyles : List Style
 sharedEntryStyles =
     [ paddingLeft (px 20)
     , paddingRight (px 20)
@@ -247,7 +206,18 @@ sharedEntryStyles =
     , alignItems center
     , Fonts.baseFont
     , color Colors.navy
+    , backgroundColor transparent
     , textDecoration none
     , fontSize (px 15)
     , fontWeight (int 600)
+    , marginBottom (px 10)
+    ]
+
+
+withBorderStyles : List Style
+withBorderStyles =
+    -- TODO: add a convenient way to use these styels
+    [ backgroundColor Colors.white
+    , boxShadow3 zero (px 2) Colors.gray75
+    , border3 (px 1) solid Colors.gray75
     ]

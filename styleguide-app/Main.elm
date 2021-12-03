@@ -22,6 +22,7 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V1 as SideNav
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
 import Task
@@ -227,7 +228,8 @@ navigation currentRoute =
     let
         toNavLinkConfig : Category -> SideNav.LinkConfig Route Msg
         toNavLinkConfig category =
-            { title = Category.forDisplay category
+            { icon = Nothing
+            , title = Category.forDisplay category
             , route = Routes.Category category
             , attributes = [ href (Routes.toString (Routes.Category category)) ]
             , children = []
@@ -237,13 +239,43 @@ navigation currentRoute =
         navLinks : List (SideNav.SidebarEntry Route Msg)
         navLinks =
             SideNav.link
-                { title = "All"
+                { icon = Nothing
+                , title = "All"
                 , route = Routes.All
                 , attributes = [ href (Routes.toString Routes.All) ]
                 , children = []
                 , premiumLevel = PremiumLevel.Free
                 }
                 :: List.map (toNavLinkConfig >> SideNav.link) Category.all
+                ++ [ SideNav.link
+                        { icon = Nothing
+                        , title = "Special Examples"
+                        , route = Routes.All
+                        , attributes = []
+                        , children =
+                            [ SideNav.link
+                                { icon = Nothing
+                                , title = "Example of Locked Premium content"
+                                , route = Routes.All
+                                , attributes = [ href (Routes.toString Routes.All) ]
+                                , children = []
+                                , premiumLevel = PremiumLevel.PremiumWithWriting
+                                }
+                            , SideNav.link
+                                { icon = Just UiIcon.gear
+                                , title = "Create your own"
+                                , route = Routes.All
+                                , attributes =
+                                    [ href (Routes.toString Routes.All)
+                                    , css SideNav.withBorderStyles
+                                    ]
+                                , children = []
+                                , premiumLevel = PremiumLevel.Free
+                                }
+                            ]
+                        , premiumLevel = PremiumLevel.Free
+                        }
+                   ]
     in
     SideNav.view
         { userPremiumLevel = PremiumLevel.Free
