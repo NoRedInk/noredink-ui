@@ -1,12 +1,12 @@
 module Nri.Ui.SideNav.V1 exposing
-    ( view, Config
+    ( view, Config, SidebarEntry
     , link, LinkConfig
     , externalLink, ExternalLinkConfig
     )
 
 {-|
 
-@docs view, Config
+@docs view, Config, SidebarEntry
 @docs link, LinkConfig
 @docs externalLink, ExternalLinkConfig
 

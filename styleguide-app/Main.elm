@@ -224,7 +224,6 @@ viewPreviews containerId examples =
 
 navigation : Route -> Html Msg
 navigation currentRoute =
-    -- TODO: add the "All" section back in
     let
         toNavLinkConfig : Category -> SideNav.LinkConfig Route Msg
         toNavLinkConfig category =
@@ -234,6 +233,17 @@ navigation currentRoute =
             , children = []
             , premiumLevel = PremiumLevel.Free
             }
+
+        navLinks : List (SideNav.SidebarEntry Route Msg)
+        navLinks =
+            SideNav.link
+                { title = "All"
+                , route = Routes.All
+                , attributes = [ href (Routes.toString Routes.All) ]
+                , children = []
+                , premiumLevel = PremiumLevel.Free
+                }
+                :: List.map (toNavLinkConfig >> SideNav.link) Category.all
     in
     SideNav.view
         { userPremiumLevel = PremiumLevel.Free
@@ -246,11 +256,4 @@ navigation currentRoute =
                 ]
             ]
         }
-        [ SideNav.link
-            { title = "All"
-            , route = Routes.All
-            , attributes = [ href (Routes.toString Routes.All) ]
-            , children = List.map (toNavLinkConfig >> SideNav.link) Category.all
-            , premiumLevel = PremiumLevel.Free
-            }
-        ]
+        navLinks
