@@ -226,7 +226,7 @@ viewPreviews containerId examples =
 navigation : Route -> Html Msg
 navigation currentRoute =
     let
-        toNavLinkConfig : Category -> SideNav.LinkConfig Route Msg
+        toNavLinkConfig : Category -> SideNav.EntryConfig Route Msg
         toNavLinkConfig category =
             { icon = Nothing
             , title = Category.forDisplay category
@@ -236,9 +236,9 @@ navigation currentRoute =
             , premiumLevel = PremiumLevel.Free
             }
 
-        navLinks : List (SideNav.SidebarEntry Route Msg)
+        navLinks : List (SideNav.Entry Route Msg)
         navLinks =
-            SideNav.link
+            SideNav.entry
                 { icon = Nothing
                 , title = "All"
                 , route = Routes.All
@@ -246,33 +246,24 @@ navigation currentRoute =
                 , children = []
                 , premiumLevel = PremiumLevel.Free
                 }
-                :: List.map (toNavLinkConfig >> SideNav.link) Category.all
-                ++ [ SideNav.link
+                :: List.map (toNavLinkConfig >> SideNav.entry) Category.all
+                ++ [ SideNav.entry
                         { icon = Nothing
-                        , title = "Special Examples"
+                        , title = "Example of Locked Premium content"
                         , route = Routes.All
-                        , attributes = []
-                        , children =
-                            [ SideNav.link
-                                { icon = Nothing
-                                , title = "Example of Locked Premium content"
-                                , route = Routes.All
-                                , attributes = [ href (Routes.toString Routes.All) ]
-                                , children = []
-                                , premiumLevel = PremiumLevel.PremiumWithWriting
-                                }
-                            , SideNav.link
-                                { icon = Just UiIcon.gear
-                                , title = "Create your own"
-                                , route = Routes.All
-                                , attributes =
-                                    [ href (Routes.toString Routes.All)
-                                    , css SideNav.withBorderStyles
-                                    ]
-                                , children = []
-                                , premiumLevel = PremiumLevel.Free
-                                }
+                        , attributes = [ href (Routes.toString Routes.All) ]
+                        , children = []
+                        , premiumLevel = PremiumLevel.PremiumWithWriting
+                        }
+                   , SideNav.entry
+                        { icon = Just UiIcon.gear
+                        , title = "Create your own"
+                        , route = Routes.All
+                        , attributes =
+                            [ href (Routes.toString Routes.All)
+                            , css SideNav.withBorderStyles
                             ]
+                        , children = []
                         , premiumLevel = PremiumLevel.Free
                         }
                    ]

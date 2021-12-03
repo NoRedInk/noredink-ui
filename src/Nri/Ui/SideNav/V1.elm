@@ -1,13 +1,13 @@
 module Nri.Ui.SideNav.V1 exposing
-    ( view, Config, SidebarEntry
-    , link, LinkConfig
+    ( view, Config, Entry
+    , entry, EntryConfig
     , withBorderStyles
     )
 
 {-|
 
-@docs view, Config, SidebarEntry
-@docs link, LinkConfig
+@docs view, Config, Entry
+@docs entry, EntryConfig
 
 -}
 
@@ -28,27 +28,27 @@ import String exposing (toLower)
 import String.Extra exposing (dasherize)
 
 
-{-| Use `link` to create a sidebar link.
+{-| Use `entry` to create a sidebar entry.
 -}
-type SidebarEntry route msg
-    = Link (LinkConfig route msg)
+type Entry route msg
+    = Entry (EntryConfig route msg)
 
 
 {-| -}
-type alias LinkConfig route msg =
+type alias EntryConfig route msg =
     { icon : Maybe Svg
     , title : String
     , route : route
     , attributes : List (Html.Styled.Attribute msg)
-    , children : List (SidebarEntry route msg)
+    , children : List (Entry route msg)
     , premiumLevel : PremiumLevel
     }
 
 
 {-| -}
-link : LinkConfig route msg -> SidebarEntry route msg
-link =
-    Link
+entry : EntryConfig route msg -> Entry route msg
+entry =
+    Entry
 
 
 {-| -}
@@ -61,7 +61,7 @@ type alias Config route msg =
 
 
 {-| -}
-view : Config route msg -> List (SidebarEntry route msg) -> Html msg
+view : Config route msg -> List (Entry route msg) -> Html msg
 view config entries =
     styled nav
         [ flexBasis (px 250)
@@ -102,44 +102,42 @@ viewSkipLink onSkip =
         ]
 
 
-viewSidebarEntry : Config route msg -> List Css.Style -> SidebarEntry route msg -> Html msg
-viewSidebarEntry config extraStyles sidebarEntry =
-    case sidebarEntry of
-        Link entry ->
-            if PremiumLevel.allowedFor entry.premiumLevel config.userPremiumLevel then
-                if anyLinkDescendants (.route >> config.isCurrentRoute) entry then
-                    div [ css extraStyles ]
-                        (styled span
-                            (sharedEntryStyles
-                                ++ [ backgroundColor Colors.gray92
-                                   , marginBottom (px 10)
-                                   , color Colors.navy
-                                   , fontWeight bold
-                                   , cursor default
-                                   ]
-                            )
-                            []
-                            [ text entry.title ]
-                            :: List.map (viewSidebarEntry config [ marginLeft (px 20) ])
-                                entry.children
-                        )
+viewSidebarEntry : Config route msg -> List Css.Style -> Entry route msg -> Html msg
+viewSidebarEntry config extraStyles (Entry entry_) =
+    if PremiumLevel.allowedFor entry_.premiumLevel config.userPremiumLevel then
+        if anyLinkDescendants (.route >> config.isCurrentRoute) entry_ then
+            div [ css extraStyles ]
+                (styled span
+                    (sharedEntryStyles
+                        ++ [ backgroundColor Colors.gray92
+                           , marginBottom (px 10)
+                           , color Colors.navy
+                           , fontWeight bold
+                           , cursor default
+                           ]
+                    )
+                    []
+                    [ text entry_.title ]
+                    :: List.map (viewSidebarEntry config [ marginLeft (px 20) ])
+                        entry_.children
+                )
 
-                else
-                    viewSidebarLeaf config extraStyles entry
+        else
+            viewSidebarLeaf config extraStyles entry_
 
-            else
-                viewLockedEntry entry.title extraStyles
+    else
+        viewLockedEntry entry_.title extraStyles
 
 
-anyLinkDescendants : (LinkConfig route msg -> Bool) -> LinkConfig route msg -> Bool
+anyLinkDescendants : (EntryConfig route msg -> Bool) -> EntryConfig route msg -> Bool
 anyLinkDescendants f { children } =
-    List.any (\(Link entry) -> f entry || anyLinkDescendants f entry) children
+    List.any (\(Entry entry_) -> f entry_ || anyLinkDescendants f entry_) children
 
 
 viewSidebarLeaf :
     Config route msg
     -> List Style
-    -> LinkConfig route msg
+    -> EntryConfig route msg
     -> Html msg
 viewSidebarLeaf config extraStyles { icon, title, route, attributes } =
     styled Html.Styled.a
