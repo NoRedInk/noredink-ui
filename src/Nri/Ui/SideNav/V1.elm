@@ -18,6 +18,7 @@ import Css.Media as Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -102,15 +103,14 @@ view config entries =
 
 viewSkipLink : msg -> Html msg
 viewSkipLink onSkip =
-    button
-        [ css
-            [ backgroundColor transparent
-            , borderStyle none
-            , textDecoration none
-            , color Colors.azure
-            , Fonts.baseFont
-            , Css.marginBottom (px 20)
-            , Css.pseudoClass "not(:focus)"
+    ClickableText.button "Skip to main content"
+        [ ClickableText.icon UiIcon.arrowPointingRight
+        , ClickableText.small
+        , ClickableText.css
+            [ Css.pseudoClass "not(:focus)"
+                -- TODO: use Accessibility.Styled.Style.invisibleStyle
+                -- when we're on a higher version of tesk9/accessible-html-with-css
+                -- than 2.2.1
                 [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
                 , Css.position Css.absolute
                 , Css.height (Css.px 1)
@@ -121,9 +121,8 @@ viewSkipLink onSkip =
                 , Css.border Css.zero
                 ]
             ]
-        , Events.onClick onSkip
+        , ClickableText.onClick onSkip
         ]
-        [ text "Skip to main content" ]
 
 
 viewSidebarEntry : Config route msg -> List Css.Style -> SidebarEntry route msg -> Html msg
