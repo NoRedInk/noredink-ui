@@ -235,10 +235,16 @@ navigation currentRoute =
             , premiumLevel = PremiumLevel.Free
             }
     in
-    Category.all
-        |> List.map (toNavLinkConfig >> SideNav.link)
-        |> SideNav.view
-            { userPremiumLevel = PremiumLevel.Free
-            , isCurrentRoute = (==) currentRoute
-            , onSkipNav = SkipToMainContent
+    SideNav.view
+        { userPremiumLevel = PremiumLevel.Free
+        , isCurrentRoute = (==) currentRoute
+        , onSkipNav = SkipToMainContent
+        }
+        [ SideNav.link
+            { title = "All"
+            , route = Routes.All
+            , attributes = [ href (Routes.toString Routes.All) ]
+            , children = List.map (toNavLinkConfig >> SideNav.link) Category.all
+            , premiumLevel = PremiumLevel.Free
             }
+        ]

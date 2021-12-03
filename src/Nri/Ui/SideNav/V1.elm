@@ -167,10 +167,10 @@ viewSidebarEntry config extraStyles sidebarEntry =
                         )
 
                 else
-                    viewSidebarLeaf config entry
+                    viewSidebarLeaf config extraStyles entry
 
             else
-                viewLockedEntry entry.title
+                viewLockedEntry entry.title extraStyles
 
 
 anyLinkDescendants : (LinkConfig route msg -> Bool) -> LinkConfig route msg -> Bool
@@ -189,11 +189,13 @@ anyLinkDescendants f { children } =
 
 viewSidebarLeaf :
     Config route msg
+    -> List Style
     -> LinkConfig route msg
     -> Html msg
-viewSidebarLeaf config { title, route, attributes } =
+viewSidebarLeaf config extraStyles { title, route, attributes } =
     styled Html.Styled.a
         (sharedEntryStyles
+            ++ extraStyles
             ++ (if config.isCurrentRoute route then
                     [ backgroundColor Colors.glacier
                     , color Colors.navy
@@ -209,8 +211,8 @@ viewSidebarLeaf config { title, route, attributes } =
         [ text title ]
 
 
-viewLockedEntry : String -> Html msg
-viewLockedEntry title =
+viewLockedEntry : String -> List Style -> Html msg
+viewLockedEntry title extraStyles =
     let
         lockedEntryId =
             -- TODO: pass in ids
@@ -229,6 +231,7 @@ viewLockedEntry title =
         , borderStyle none
         , backgroundColor Colors.gray96
         , textAlign left
+        , batch extraStyles
         ]
         [ -- TODO: reimplement lock click behavior!
           --Events.onClick (launchPremiumModal lockedEntryId) ,
