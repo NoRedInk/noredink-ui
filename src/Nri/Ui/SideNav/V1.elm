@@ -1,8 +1,14 @@
-module Nri.Ui.SideNav.V1 exposing (view, Config)
+module Nri.Ui.SideNav.V1 exposing
+    ( view, Config
+    , link, LinkConfig
+    , externalLink, ExternalLinkConfig
+    )
 
 {-|
 
 @docs view, Config
+@docs link, LinkConfig
+@docs externalLink, ExternalLinkConfig
 
 -}
 
