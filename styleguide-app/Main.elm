@@ -235,14 +235,7 @@ navigation currentRoute =
     let
         toNavLinkConfig : String -> Route -> SideNav.Entry Route Msg
         toNavLinkConfig name route =
-            SideNav.entry name
-                [ SideNav.href route
-                , SideNav.css
-                    [ withMedia [ mobile ]
-                        [ Css.marginBottom Css.zero
-                        ]
-                    ]
-                ]
+            SideNav.entry name [ SideNav.href route ]
 
         navLinks : List (SideNav.Entry Route Msg)
         navLinks =
@@ -263,10 +256,6 @@ navigation currentRoute =
             [ withMedia [ notMobile ]
                 [ VendorPrefixed.value "position" "sticky"
                 , top (px 55)
-                ]
-            , withMedia [ mobile ]
-                [ Css.padding Css.zero
-                , Css.margin Css.zero
                 ]
             ]
         }

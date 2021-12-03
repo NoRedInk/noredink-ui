@@ -143,7 +143,6 @@ viewSidebarEntry_ config extraStyles entry_ =
                 (styled span
                     (sharedEntryStyles
                         ++ [ backgroundColor Colors.gray92
-                           , marginBottom (px 10)
                            , color Colors.navy
                            , fontWeight bold
                            , cursor default
@@ -261,7 +260,6 @@ sharedEntryStyles =
     , textDecoration none
     , fontSize (px 15)
     , fontWeight (int 600)
-    , marginBottom (px 10)
     , textAlign left
     , cursor pointer
     ]
