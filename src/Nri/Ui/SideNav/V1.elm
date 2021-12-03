@@ -142,7 +142,7 @@ viewSidebarEntry config extraStyles (Entry entry_) =
             viewSidebarLeaf config extraStyles entry_
 
     else
-        viewLockedEntry entry_.title extraStyles
+        viewLockedEntry extraStyles entry_
 
 
 isCurrentRoute : Config route msg -> EntryConfig route msg -> Bool
@@ -197,29 +197,27 @@ viewSidebarLeaf config extraStyles entryConfig =
         ]
 
 
-viewLockedEntry : String -> List Style -> Html msg
-viewLockedEntry title extraStyles =
-    let
-        lockedEntryId =
-            -- TODO: pass in ids
-            "browse-and-assign-locked-entry__" ++ dasherize (toLower title)
-    in
+viewLockedEntry : List Style -> EntryConfig route msg -> Html msg
+viewLockedEntry extraStyles entryConfig =
     styled Html.Styled.button
         [ batch sharedEntryStyles
         , important (color Colors.gray45)
         , borderWidth zero
         , batch extraStyles
         ]
-        [ -- TODO: reimplement lock click behavior!
-          --Events.onClick (launchPremiumModal lockedEntryId) ,
-          Attributes.id lockedEntryId
-        ]
+        (case entryConfig.onLockedContent of
+            Just event ->
+                Events.onClick event :: entryConfig.customAttributes
+
+            Nothing ->
+                entryConfig.customAttributes
+        )
         [ UiIcon.premiumLock
             |> Svg.withWidth (px 17)
             |> Svg.withHeight (px 25)
             |> Svg.withCss [ marginRight (px 10), minWidth (px 17) ]
             |> Svg.toHtml
-        , text title
+        , text entryConfig.title
         ]
 
 
@@ -257,6 +255,7 @@ type alias EntryConfig route msg =
     , customStyles : List Style
     , children : List (Entry route msg)
     , premiumLevel : PremiumLevel
+    , onLockedContent : Maybe msg
     }
 
 
@@ -270,6 +269,7 @@ build title =
     , customStyles = []
     , children = []
     , premiumLevel = PremiumLevel.Free
+    , onLockedContent = Nothing
     }
 
 
@@ -286,8 +286,13 @@ icon icon_ =
 {-| -}
 premiumLevel : PremiumLevel -> msg -> Attribute route msg
 premiumLevel level ifLocked =
-    -- TODO: adds the lock click behavior
-    Attribute (\attributes -> { attributes | premiumLevel = level })
+    Attribute
+        (\attributes ->
+            { attributes
+                | premiumLevel = level
+                , onLockedContent = Just ifLocked
+            }
+        )
 
 
 {-| Use this helper to add custom attributes.
