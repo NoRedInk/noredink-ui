@@ -2,6 +2,7 @@ module Nri.Ui.PremiumCheckbox.V7 exposing
     ( view
     , selected, partiallySelected
     , premium, showPennant
+    , disabled, enabled
     )
 
 {-|
@@ -20,6 +21,12 @@ module Nri.Ui.PremiumCheckbox.V7 exposing
 
 @docs premium, showPennant
 
+
+### Attributes
+
+@docs Attribute
+@docs disabled, enabled
+
 -}
 
 import Accessibility.Styled as Html exposing (Html)
@@ -32,6 +39,20 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Util exposing (removePunctuation)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
+
+
+{-| This disables the input
+-}
+disabled : Attribute msg
+disabled =
+    Attribute <| \config -> { config | isDisabled = True }
+
+
+{-| This enables the input, this is the default behavior
+-}
+enabled : Attribute msg
+enabled =
+    Attribute <| \config -> { config | isDisabled = False }
 
 
 {-| Lock Premium content if the user does not have Premium.

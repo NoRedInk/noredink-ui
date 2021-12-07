@@ -185,10 +185,6 @@ viewPremiumCheckboxes state =
     Html.div []
         [ PremiumCheckbox.view
             { label = "Identify Adjectives 1 (Premium)"
-
-            --, disabled = False
-            --, isLocked = False
-            --, isPremium = True
             , onChange = ToggleCheck "premium-1"
             }
             [ PremiumCheckbox.premium
@@ -200,10 +196,6 @@ viewPremiumCheckboxes state =
             ]
         , PremiumCheckbox.view
             { label = "Identify Adjectives 2 (Free)"
-
-            --, disabled = False
-            --, isLocked = False
-            --, isPremium = False
             , onChange = ToggleCheck "premium-2"
             }
             [ PremiumCheckbox.premium
@@ -215,10 +207,6 @@ viewPremiumCheckboxes state =
             ]
         , PremiumCheckbox.view
             { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
-
-            --, disabled = True
-            --, isLocked = True
-            --, isPremium = True
             , onChange = ToggleCheck "premium-3"
             }
             [ PremiumCheckbox.premium
