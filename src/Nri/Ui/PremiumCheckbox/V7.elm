@@ -50,13 +50,14 @@ view config =
         [ if config.isPremium then
             premiumFlag
                 |> Svg.withLabel "Premium"
-                |> Svg.withWidth (Css.px 25)
+                |> Svg.withWidth (Css.px iconWidth)
                 |> Svg.withHeight (Css.px 30)
-                |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
                 |> Svg.toHtml
 
           else
-            Html.text ""
+            -- left-align the checkbox with checkboxes that _do_ have the premium pennant
+            Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
         , Checkbox.viewWithLabel
             { identifier = config.id
             , label = config.label
@@ -76,3 +77,13 @@ view config =
                     Checkbox.Square
             }
         ]
+
+
+iconWidth : Float
+iconWidth =
+    25
+
+
+iconRightMargin : Float
+iconRightMargin =
+    8
