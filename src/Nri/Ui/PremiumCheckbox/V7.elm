@@ -1,5 +1,6 @@
 module Nri.Ui.PremiumCheckbox.V7 exposing
     ( view
+    , selected, partiallySelected
     , premium, showPennant
     )
 
@@ -12,6 +13,7 @@ module Nri.Ui.PremiumCheckbox.V7 exposing
   - list based API instead of record based
 
 @docs view
+@docs selected, partiallySelected
 
 
 ### Content
@@ -56,6 +58,28 @@ When a locked premium checkbox is clicked, the msg that's passed in will fire.
 showPennant : msg -> Attribute msg
 showPennant premiumMsg =
     Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
+
+
+setSelectionStatus : Checkbox.IsSelected -> Attribute msg
+setSelectionStatus status =
+    Attribute (\config -> { config | selected = status })
+
+
+{-| -}
+selected : Bool -> Attribute msg
+selected isSelected =
+    setSelectionStatus <|
+        if isSelected then
+            Checkbox.Selected
+
+        else
+            Checkbox.NotSelected
+
+
+{-| -}
+partiallySelected : Attribute msg
+partiallySelected =
+    setSelectionStatus Checkbox.PartiallySelected
 
 
 {-| Customizations for the RadioButton.

@@ -186,11 +186,6 @@ viewPremiumCheckboxes state =
         [ PremiumCheckbox.view
             { label = "Identify Adjectives 1 (Premium)"
 
-            --, selected =
-            --    if Set.member "premium-1" state.isChecked then
-            --        Checkbox.Selected
-            --    else
-            --        Checkbox.NotSelected
             --, disabled = False
             --, isLocked = False
             --, isPremium = True
@@ -201,15 +196,11 @@ viewPremiumCheckboxes state =
                 , contentPremiumLevel = PremiumLevel.PremiumWithWriting
                 }
             , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.selected (Set.member "premium-1" state.isChecked)
             ]
         , PremiumCheckbox.view
             { label = "Identify Adjectives 2 (Free)"
 
-            --, selected =
-            --    if Set.member "premium-2" state.isChecked then
-            --        Checkbox.Selected
-            --    else
-            --        Checkbox.NotSelected
             --, disabled = False
             --, isLocked = False
             --, isPremium = False
@@ -220,15 +211,11 @@ viewPremiumCheckboxes state =
                 , contentPremiumLevel = PremiumLevel.Free
                 }
             , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
             ]
         , PremiumCheckbox.view
             { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
 
-            --, selected =
-            --    if Set.member "premium-3" state.isChecked then
-            --        Checkbox.Selected
-            --    else
-            --        Checkbox.NotSelected
             --, disabled = True
             --, isLocked = True
             --, isPremium = True
@@ -239,6 +226,7 @@ viewPremiumCheckboxes state =
                 , contentPremiumLevel = PremiumLevel.PremiumWithWriting
                 }
             , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
             ]
         ]
 
