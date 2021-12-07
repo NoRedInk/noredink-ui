@@ -185,49 +185,61 @@ viewPremiumCheckboxes state =
     Html.div []
         [ PremiumCheckbox.view
             { label = "Identify Adjectives 1 (Premium)"
-            , id = "premium-checkbox-identify-adjectives-premium"
-            , selected =
-                if Set.member "premium-1" state.isChecked then
-                    Checkbox.Selected
 
-                else
-                    Checkbox.NotSelected
-            , disabled = False
-            , isLocked = False
-            , isPremium = True
+            --, selected =
+            --    if Set.member "premium-1" state.isChecked then
+            --        Checkbox.Selected
+            --    else
+            --        Checkbox.NotSelected
+            --, disabled = False
+            --, isLocked = False
+            --, isPremium = True
             , onChange = ToggleCheck "premium-1"
-            , onLockedClick = NoOp
             }
+            [ PremiumCheckbox.premium
+                { teacherPremiumLevel = PremiumLevel.PremiumWithWriting
+                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                }
+            , PremiumCheckbox.showPennant NoOp
+            ]
         , PremiumCheckbox.view
             { label = "Identify Adjectives 2 (Free)"
-            , id = "premium-checkbox-identify-adjectives-free"
-            , selected =
-                if Set.member "premium-2" state.isChecked then
-                    Checkbox.Selected
 
-                else
-                    Checkbox.NotSelected
-            , disabled = False
-            , isLocked = False
-            , isPremium = False
+            --, selected =
+            --    if Set.member "premium-2" state.isChecked then
+            --        Checkbox.Selected
+            --    else
+            --        Checkbox.NotSelected
+            --, disabled = False
+            --, isLocked = False
+            --, isPremium = False
             , onChange = ToggleCheck "premium-2"
-            , onLockedClick = NoOp
             }
+            [ PremiumCheckbox.premium
+                { teacherPremiumLevel = PremiumLevel.PremiumWithWriting
+                , contentPremiumLevel = PremiumLevel.Free
+                }
+            , PremiumCheckbox.showPennant NoOp
+            ]
         , PremiumCheckbox.view
             { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
-            , id = "premium-checkbox-premium-disabled"
-            , selected =
-                if Set.member "premium-3" state.isChecked then
-                    Checkbox.Selected
 
-                else
-                    Checkbox.NotSelected
-            , disabled = True
-            , isLocked = True
-            , isPremium = True
+            --, selected =
+            --    if Set.member "premium-3" state.isChecked then
+            --        Checkbox.Selected
+            --    else
+            --        Checkbox.NotSelected
+            --, disabled = True
+            --, isLocked = True
+            --, isPremium = True
             , onChange = ToggleCheck "premium-3"
-            , onLockedClick = NoOp
             }
+            [ PremiumCheckbox.premium
+                { teacherPremiumLevel = PremiumLevel.Free
+                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
+                }
+            , PremiumCheckbox.showPennant NoOp
+            ]
         ]
 
 

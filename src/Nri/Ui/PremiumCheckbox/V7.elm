@@ -1,16 +1,22 @@
-module Nri.Ui.PremiumCheckbox.V7 exposing (view)
+module Nri.Ui.PremiumCheckbox.V7 exposing
+    ( view
+    , premium, showPennant
+    )
 
 {-|
-
-@docs view
-
-This module is used when there may or may not be Premium
-content to be "checked"!
 
 
 # Changes from V6
 
   - Move the Premium pennant to the left of the checkbox
+  - list based API instead of record based
+
+@docs view
+
+
+### Content
+
+@docs premium, showPennant
 
 -}
 
@@ -18,65 +24,147 @@ import Accessibility.Styled as Html exposing (Html)
 import Css
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Util exposing (removePunctuation)
+import String exposing (toLower)
+import String.Extra exposing (dasherize)
 
 
-{-| A checkbox that should be used for premium content
+{-| Lock Premium content if the user does not have Premium.
+-}
+premium :
+    { teacherPremiumLevel : PremiumLevel
+    , contentPremiumLevel : PremiumLevel
+    }
+    -> Attribute msg
+premium { teacherPremiumLevel, contentPremiumLevel } =
+    Attribute <|
+        \config ->
+            { config
+                | teacherPremiumLevel = Just teacherPremiumLevel
+                , contentPremiumLevel = Just contentPremiumLevel
+            }
 
-  - `onChange`: A message for when the user toggles the checkbox
-  - `onLockedClick`: A message for when the user clicks a checkbox they don't have PremiumLevel for.
-    If you get this message, you should show an `Nri.Ui.Premium.Model.view`
+
+{-| Show Premium pennant on Premium content.
+
+When a locked premium checkbox is clicked, the msg that's passed in will fire.
 
 -}
+showPennant : msg -> Attribute msg
+showPennant premiumMsg =
+    Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
+
+
+{-| Customizations for the RadioButton.
+-}
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
+
+
+{-| This is private. The public API only exposes `Attribute`.
+-}
+type alias Config msg =
+    { id : Maybe String
+    , teacherPremiumLevel : Maybe PremiumLevel
+    , contentPremiumLevel : Maybe PremiumLevel
+    , isDisabled : Bool
+    , containerCss : List Css.Style
+    , selected : Checkbox.IsSelected
+    , premiumMsg : Maybe msg
+    }
+
+
+emptyConfig : Config msg
+emptyConfig =
+    { id = Nothing
+    , teacherPremiumLevel = Nothing
+    , contentPremiumLevel = Nothing
+    , isDisabled = False
+    , containerCss =
+        [ Css.displayFlex
+        , Css.alignItems Css.center
+        ]
+    , selected = Checkbox.NotSelected
+    , premiumMsg = Nothing
+    }
+
+
+applyConfig : List (Attribute msg) -> Config msg -> Config msg
+applyConfig attributes beginningConfig =
+    List.foldl (\(Attribute update) config -> update config)
+        beginningConfig
+        attributes
+
+
+{-| -}
 view :
     { label : String
-    , id : String
-    , selected : Checkbox.IsSelected
-    , disabled : Bool
-    , isLocked : Bool
-    , isPremium : Bool
     , onChange : Bool -> msg
-    , onLockedClick : msg
     }
+    -> List (Attribute msg)
     -> Html msg
-view config =
-    Html.div
-        [ css
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            ]
-        ]
-        [ if config.isPremium then
-            premiumFlag
-                |> Svg.withLabel "Premium"
-                |> Svg.withWidth (Css.px iconWidth)
-                |> Svg.withHeight (Css.px 30)
-                |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
-                |> Svg.toHtml
+view { label, onChange } attributes =
+    let
+        config =
+            applyConfig attributes emptyConfig
 
-          else
-            -- left-align the checkbox with checkboxes that _do_ have the premium pennant
-            Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
+        idValue =
+            case config.id of
+                Just specificId ->
+                    specificId
+
+                Nothing ->
+                    "checkbox-" ++ dasherize (removePunctuation (toLower label))
+
+        isLocked =
+            Maybe.map2 PremiumLevel.allowedFor config.contentPremiumLevel config.teacherPremiumLevel
+                |> Maybe.withDefault True
+                |> not
+    in
+    Html.div [ css config.containerCss ]
+        [ case config.contentPremiumLevel of
+            Just PremiumLevel.Premium ->
+                viewPremiumFlag
+
+            Just PremiumLevel.PremiumWithWriting ->
+                viewPremiumFlag
+
+            _ ->
+                -- left-align the checkbox with checkboxes that _do_ have the premium pennant
+                Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
         , Checkbox.viewWithLabel
-            { identifier = config.id
-            , label = config.label
+            { identifier = idValue
+            , label = label
             , setterMsg =
-                if config.isLocked then
-                    \_ -> config.onLockedClick
+                case ( isLocked, config.premiumMsg ) of
+                    ( True, Just onLockedClick ) ->
+                        \_ -> onLockedClick
 
-                else
-                    config.onChange
+                    _ ->
+                        onChange
             , selected = config.selected
-            , disabled = config.disabled
+            , disabled = isLocked || config.isDisabled
             , theme =
-                if config.isLocked then
+                if isLocked then
                     Checkbox.Locked
 
                 else
                     Checkbox.Square
             }
         ]
+
+
+viewPremiumFlag : Html msg
+viewPremiumFlag =
+    premiumFlag
+        |> Svg.withLabel "Premium"
+        |> Svg.withWidth (Css.px iconWidth)
+        |> Svg.withHeight (Css.px 30)
+        |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
+        |> Svg.toHtml
 
 
 iconWidth : Float
