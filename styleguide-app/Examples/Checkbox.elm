@@ -14,7 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
+import Nri.Ui.PremiumCheckbox.V7 as PremiumCheckbox
 import Set exposing (Set)
 
 
