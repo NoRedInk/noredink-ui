@@ -87,7 +87,7 @@ link name icon attributes =
 
 
 setClickableAttributes :
-    (ClickableAttributes msg -> ClickableAttributes msg)
+    (ClickableAttributes String msg -> ClickableAttributes String msg)
     -> Attribute msg
 setClickableAttributes apply =
     set
@@ -384,7 +384,7 @@ type ButtonOrLink msg
 
 
 type alias ButtonOrLinkAttributes msg =
-    { clickableAttributes : ClickableAttributes msg
+    { clickableAttributes : ClickableAttributes String msg
     , label : String
     , icon : Svg
     , disabled : Bool
@@ -435,7 +435,7 @@ renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let
         ( linkFunctionName, extraAttrs ) =
-            ClickableAttributes.toLinkAttributes config.clickableAttributes
+            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
 
         theme =
             if config.disabled then

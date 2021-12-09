@@ -4,7 +4,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
-import Category
+import Category exposing (Category)
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
@@ -16,10 +16,13 @@ import Html.Styled.Events as Events
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
+import Nri.Ui.Data.PremiumLevel as PremiumLevel
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Page.V3 as Page
+import Nri.Ui.SideNav.V1 as SideNav
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
 import Task
@@ -145,7 +148,12 @@ view_ model =
         Routes.Doodad doodad ->
             case List.head (examples (\m -> m.name == doodad)) of
                 Just example ->
-                    Html.main_ []
+                    Html.main_
+                        [ css
+                            [ maxWidth (Css.px 1400)
+                            , margin auto
+                            ]
+                        ]
                         [ Example.view model.previousRoute example
                             |> Html.map (UpdateModuleStates example.name)
                         ]
@@ -182,6 +190,8 @@ withSideNav currentRoute content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
+            , maxWidth (Css.px 1400)
+            , margin auto
             ]
         ]
         [ navigation currentRoute
@@ -221,92 +231,29 @@ viewPreviews containerId examples =
 
 
 navigation : Route -> Html Msg
-navigation route =
+navigation currentRoute =
     let
-        isActive category =
-            case route of
-                Routes.Category routeCategory ->
-                    category == routeCategory
-
-                _ ->
-                    False
-
-        link active hash displayName =
-            ClickableText.link displayName
-                [ ClickableText.small
-                , ClickableText.css
-                    [ Css.color Colors.navy
-                    , Css.display Css.block
-                    , Css.padding (Css.px 8)
-                    , Css.borderRadius (Css.px 8)
-                    , if active then
-                        Css.backgroundColor Colors.glacier
-
-                      else
-                        Css.batch []
-                    ]
-                , ClickableText.href hash
-                ]
-
-        navLink category =
-            link (isActive category)
-                (Routes.toString (Routes.Category category))
-                (Category.forDisplay category)
-
-        toNavLi element =
-            Html.li
-                [ css
-                    [ margin zero
-                    , listStyle none
-                    , textDecoration none
-                    ]
-                ]
-                [ element ]
+        categoryNavLinks : List (SideNav.Entry Route Msg)
+        categoryNavLinks =
+            List.map
+                (\category ->
+                    SideNav.entry (Category.forDisplay category)
+                        [ SideNav.href (Routes.Category category) ]
+                )
+                Category.all
     in
-    Html.nav
-        [ css
-            [ backgroundColor Colors.gray96
-            , withMedia [ notMobile ]
+    SideNav.view
+        { userPremiumLevel = PremiumLevel.Free
+        , isCurrentRoute = (==) currentRoute
+        , routeToString = Routes.toString
+        , onSkipNav = SkipToMainContent
+        , css =
+            [ withMedia [ notMobile ]
                 [ VendorPrefixed.value "position" "sticky"
                 , top (px 55)
-                , flexShrink zero
-                , borderRadius (px 8)
-                , marginRight (px 40)
-                , padding (px 20)
-                , flexBasis (px 200)
                 ]
             ]
-        , attribute "aria-label" "Main Navigation"
-        ]
-        [ Html.button
-            [ css
-                [ backgroundColor transparent
-                , borderStyle none
-                , textDecoration none
-                , color Colors.azure
-                , Fonts.baseFont
-                , Css.marginBottom (px 20)
-                , Css.pseudoClass "not(:focus)"
-                    [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-                    , Css.position Css.absolute
-                    , Css.height (Css.px 1)
-                    , Css.width (Css.px 1)
-                    , Css.overflow Css.hidden
-                    , Css.margin (Css.px -1)
-                    , Css.padding Css.zero
-                    , Css.border Css.zero
-                    ]
-                ]
-            , Events.onClick SkipToMainContent
-            , id "skip"
-            ]
-            [ Html.text "Skip to main content" ]
-        , (link (route == Routes.All) "#/" "All"
-            :: List.map navLink Category.all
-          )
-            |> List.map toNavLi
-            |> Html.ul
-                [ css [ margin zero, padding zero ]
-                , id "categories"
-                ]
-        ]
+        }
+        (SideNav.entry "All" [ SideNav.href Routes.All ]
+            :: categoryNavLinks
+        )

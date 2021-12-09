@@ -178,7 +178,7 @@ css styles =
 
 
 setClickableAttributes :
-    (ClickableAttributes msg -> ClickableAttributes msg)
+    (ClickableAttributes String msg -> ClickableAttributes String msg)
     -> Attribute msg
 setClickableAttributes apply =
     set
@@ -269,7 +269,7 @@ link label_ attributes =
                 |> List.foldl (\(Attribute attribute) l -> attribute l) defaults
 
         ( name, clickableAttributes ) =
-            ClickableAttributes.toLinkAttributes config.clickableAttributes
+            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
@@ -366,7 +366,7 @@ dataDescriptor descriptor =
 
 
 type alias ClickableTextAttributes msg =
-    { clickableAttributes : ClickableAttributes msg
+    { clickableAttributes : ClickableAttributes String msg
     , label : String
     , size : Size
     , icon : Maybe Svg
