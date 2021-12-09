@@ -301,18 +301,19 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 |> Maybe.withDefault True
                 |> not
 
-        ( disclosureId, disclosureElement ) =
+        ( disclosureIds, disclosureElements ) =
             case ( config.disclosedContent, isChecked ) of
                 ( [], _ ) ->
-                    ( Nothing, text "" )
+                    ( [], [] )
 
                 ( _, False ) ->
-                    ( Nothing, text "" )
+                    ( [], [] )
 
-                ( (_ :: _) as childNodes, True ) ->
-                    ( Just (idValue ++ "-disclosure-content")
-                    , span [ Attributes.id (idValue ++ "-disclosure-content") ]
-                        childNodes
+                ( _, True ) ->
+                    ( List.indexedMap
+                        (\index _ -> (idValue ++ "-disclosure-content-") ++ String.fromInt index)
+                        config.disclosedContent
+                    , config.disclosedContent
                     )
 
         isInError =
@@ -338,7 +339,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , Css.batch config.containerCss
             ]
         ]
-        [ radio name
+        ([ radio name
             stringValue
             isChecked
             ([ Attributes.id idValue
@@ -351,7 +352,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 _ ->
                     Extra.none
              , class "Nri-RadioButton-HiddenRadioInput"
-             , maybeAttr Aria.controls disclosureId
+             , Attributes.attribute "aria-controls" (String.join " " disclosureIds)
              , css
                 [ position absolute
                 , top (px 4)
@@ -372,7 +373,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
              ]
                 ++ List.map (Attributes.map never) config.custom
             )
-        , Html.label
+         , Html.label
             [ for idValue
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
@@ -448,9 +449,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         text ""
                 ]
             ]
-        , disclosureElement
-        , InputErrorAndGuidanceInternal.view idValue config
-        ]
+         , InputErrorAndGuidanceInternal.view idValue config
+         ]
+            ++ disclosureElements
+        )
 
 
 premiumPennant : msg -> Html msg
