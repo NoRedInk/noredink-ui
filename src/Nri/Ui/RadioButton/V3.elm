@@ -327,6 +327,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
         , css
             [ position relative
             , marginLeft (px -4)
+            , Css.paddingLeft (Css.px 40)
             , display inlineBlock
             , Css.height (px 34)
             , pseudoClass "focus-within"
@@ -380,8 +381,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ position relative
-                , outline Css.none
+                [ outline Css.none
                 , margin zero
                 , Fonts.baseFont
                 , Css.batch
@@ -400,7 +400,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         , cursor pointer
                         ]
                     )
-                , padding4 (px 6) zero (px 4) (px 40)
+                , padding4 (px 6) zero (px 4) zero
                 , fontSize (px 15)
                 , Css.property "font-weight" "600"
                 , display inlineBlock
