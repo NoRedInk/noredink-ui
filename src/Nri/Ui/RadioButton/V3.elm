@@ -301,20 +301,17 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 |> Maybe.withDefault True
                 |> not
 
-        ( disclosureIds, disclosureElements ) =
-            case ( config.disclosedContent, isChecked ) of
-                ( [], _ ) ->
-                    ( [], [] )
-
-                ( _, False ) ->
-                    ( [], [] )
-
-                ( _, True ) ->
-                    ( List.indexedMap
-                        (\index _ -> (idValue ++ "-disclosure-content-") ++ String.fromInt index)
-                        config.disclosedContent
-                    , config.disclosedContent
+        ( disclosureIds, disclosedElements ) =
+            config.disclosedContent
+                |> List.indexedMap
+                    (\index element ->
+                        let
+                            id_ =
+                                (idValue ++ "-disclosure-content-") ++ String.fromInt index
+                        in
+                        ( id_, span [ Attributes.id id_ ] [ element ] )
                     )
+                |> List.unzip
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
@@ -354,7 +351,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 _ ->
                     Extra.none
              , class "Nri-RadioButton-HiddenRadioInput"
-             , Attributes.attribute "aria-controls" (String.join " " disclosureIds)
+             , Aria.describedBy disclosureIds
              , css
                 [ position absolute
                 , top (pct 50)
@@ -452,7 +449,12 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ]
          , InputErrorAndGuidanceInternal.view idValue config
          ]
-            ++ disclosureElements
+            ++ (if isChecked then
+                    disclosedElements
+
+                else
+                    []
+               )
         )
 
 
