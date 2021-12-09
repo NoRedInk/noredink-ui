@@ -328,6 +328,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
             [ position relative
             , marginLeft (px -4)
             , Css.paddingLeft (Css.px 40)
+            , Css.paddingTop (px 6)
+            , Css.paddingBottom (px 4)
             , display inlineBlock
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
@@ -381,7 +383,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 ]
             , css
                 [ outline Css.none
-                , margin zero
                 , Fonts.baseFont
                 , Css.batch
                     (if config.isDisabled then
@@ -399,7 +400,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         , cursor pointer
                         ]
                     )
-                , padding4 (px 6) zero (px 4) zero
+                , margin zero
+                , padding zero
                 , fontSize (px 15)
                 , Css.property "font-weight" "600"
                 , display inlineBlock
