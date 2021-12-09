@@ -155,9 +155,11 @@ viewExamplesCode selectionSettings selectedValue =
         [ css
             [ Css.display Css.block
             , Css.marginLeft (Css.px 20)
+            , Css.flexBasis (Css.px 300)
+            , Css.flexGrow Css.zero
             ]
         ]
-        [ Html.pre []
+        [ Html.pre [ css [ Css.whiteSpace Css.preWrap ] ]
             [ text
                 ("  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings)))
             ]
