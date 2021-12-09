@@ -329,7 +329,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , marginLeft (px -4)
             , Css.paddingLeft (Css.px 40)
             , display inlineBlock
-            , Css.height (px 34)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
@@ -356,7 +355,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
              , Attributes.attribute "aria-controls" (String.join " " disclosureIds)
              , css
                 [ position absolute
-                , top (px 4)
+                , top (pct 50)
                 , left (px 4)
                 , opacity zero
                 , pseudoClass "focus"
@@ -490,6 +489,15 @@ radioInputIcon config =
 
                 ( _, False, False ) ->
                     unselectedSvg
+
+        iconHeight =
+            26
+
+        borderWidth =
+            2
+
+        iconPadding =
+            2
     in
     div
         [ classList
@@ -505,18 +513,18 @@ radioInputIcon config =
                     []
             , position absolute
             , left zero
-            , top zero
+            , top (calc (pct 50) Css.minus (Css.px ((iconHeight + borderWidth + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
-            , border3 (px 2) solid transparent
+            , border3 (px borderWidth) solid transparent
             , borderRadius (px 50)
-            , padding (px 2)
+            , padding (px iconPadding)
             , displayFlex
             , justifyContent center
             , alignItems center
             ]
         ]
         [ image
-            |> Nri.Ui.Svg.V1.withHeight (Css.px 26)
+            |> Nri.Ui.Svg.V1.withHeight (Css.px iconHeight)
             |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
             |> Nri.Ui.Svg.V1.toHtml
         ]
