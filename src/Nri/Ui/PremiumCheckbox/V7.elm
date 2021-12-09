@@ -2,6 +2,7 @@ module Nri.Ui.PremiumCheckbox.V7 exposing
     ( view
     , selected, partiallySelected
     , premium, showPennant
+    , Attribute
     , disabled, enabled
     )
 
