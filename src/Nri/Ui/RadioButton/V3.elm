@@ -301,19 +301,17 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 |> Maybe.withDefault True
                 |> not
 
-        ( disclosureId, disclosureElement ) =
-            case ( config.disclosedContent, isChecked ) of
-                ( [], _ ) ->
-                    ( Nothing, text "" )
-
-                ( _, False ) ->
-                    ( Nothing, text "" )
-
-                ( (_ :: _) as childNodes, True ) ->
-                    ( Just (idValue ++ "-disclosure-content")
-                    , span [ Attributes.id (idValue ++ "-disclosure-content") ]
-                        childNodes
+        ( disclosureIds, disclosedElements ) =
+            config.disclosedContent
+                |> List.indexedMap
+                    (\index element ->
+                        let
+                            id_ =
+                                (idValue ++ "-disclosure-content-") ++ String.fromInt index
+                        in
+                        ( id_, span [ Attributes.id id_ ] [ element ] )
                     )
+                |> List.unzip
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
@@ -326,8 +324,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
         , css
             [ position relative
             , marginLeft (px -4)
+            , Css.paddingLeft (Css.px 40)
+            , Css.paddingTop (px 6)
+            , Css.paddingBottom (px 4)
             , display inlineBlock
-            , Css.height (px 34)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
@@ -338,7 +338,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , Css.batch config.containerCss
             ]
         ]
-        [ radio name
+        ([ radio name
             stringValue
             isChecked
             ([ Attributes.id idValue
@@ -351,10 +351,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 _ ->
                     Extra.none
              , class "Nri-RadioButton-HiddenRadioInput"
-             , maybeAttr Aria.controls disclosureId
+             , Aria.describedBy disclosureIds
              , css
                 [ position absolute
-                , top (px 4)
+                , top (pct 50)
                 , left (px 4)
                 , opacity zero
                 , pseudoClass "focus"
@@ -372,16 +372,14 @@ view { label, name, value, valueToString, selectedValue } attributes =
              ]
                 ++ List.map (Attributes.map never) config.custom
             )
-        , Html.label
+         , Html.label
             [ for idValue
             , classList
                 [ ( "Nri-RadioButton-RadioButton", True )
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ position relative
-                , outline Css.none
-                , margin zero
+                [ outline Css.none
                 , Fonts.baseFont
                 , Css.batch
                     (if config.isDisabled then
@@ -399,7 +397,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         , cursor pointer
                         ]
                     )
-                , padding4 (px 6) zero (px 4) (px 40)
+                , margin zero
+                , padding zero
                 , fontSize (px 15)
                 , Css.property "font-weight" "600"
                 , display inlineBlock
@@ -448,9 +447,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         text ""
                 ]
             ]
-        , disclosureElement
-        , InputErrorAndGuidanceInternal.view idValue config
-        ]
+         , InputErrorAndGuidanceInternal.view idValue config
+         ]
+            ++ (if isChecked then
+                    disclosedElements
+
+                else
+                    []
+               )
+        )
 
 
 premiumPennant : msg -> Html msg
@@ -488,6 +493,15 @@ radioInputIcon config =
 
                 ( _, False, False ) ->
                     unselectedSvg
+
+        iconHeight =
+            26
+
+        borderWidth =
+            2
+
+        iconPadding =
+            2
     in
     div
         [ classList
@@ -503,18 +517,18 @@ radioInputIcon config =
                     []
             , position absolute
             , left zero
-            , top zero
+            , top (calc (pct 50) Css.minus (Css.px ((iconHeight + borderWidth + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
-            , border3 (px 2) solid transparent
+            , border3 (px borderWidth) solid transparent
             , borderRadius (px 50)
-            , padding (px 2)
+            , padding (px iconPadding)
             , displayFlex
             , justifyContent center
             , alignItems center
             ]
         ]
         [ image
-            |> Nri.Ui.Svg.V1.withHeight (Css.px 26)
+            |> Nri.Ui.Svg.V1.withHeight (Css.px iconHeight)
             |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
             |> Nri.Ui.Svg.V1.toHtml
         ]
