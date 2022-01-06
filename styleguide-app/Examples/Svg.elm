@@ -104,21 +104,24 @@ viewResults state =
                 , Css.marginRight (Css.px 20)
                 ]
             ]
-            [ [ "color : Css.Color"
-              , "color ="
+            [ [ "color : Css.Color\n"
+              , "color =\n"
               , "    Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue
-              , ""
-              , ""
-              , "renderedSvg : Svg "
-              , "renderedSvg = "
-              , "   UiIcon.newspaper"
-              , "       |> Svg.withColor color"
-              , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
-              , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
-              , "       |> Svg.withLabel \"" ++ state.label ++ "\""
-              , "       |> Svg.toHtml"
+              , "\n\n\n"
+              , "renderedSvg : Svg\n"
+              , "renderedSvg =\n"
+              , "   UiIcon.newspaper\n"
+              , "       |> Svg.withColor color\n"
+              , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")\n"
+              , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")\n"
+              , if String.isEmpty state.label then
+                    ""
+
+                else
+                    "       |> Svg.withLabel \"" ++ state.label ++ "\"\n"
+              , "       |> Svg.toHtml\n"
               ]
-                |> String.join "\n"
+                |> String.join ""
                 |> Html.text
             ]
         , Html.div
@@ -131,7 +134,13 @@ viewResults state =
                 |> Svg.withColor (toCssColor state.color)
                 |> Svg.withWidth (Css.px state.width)
                 |> Svg.withHeight (Css.px state.height)
-                |> Svg.withLabel state.label
+                |> (\svg ->
+                        if String.isEmpty state.label then
+                            svg
+
+                        else
+                            Svg.withLabel state.label svg
+                   )
                 |> Svg.toHtml
             ]
         ]
