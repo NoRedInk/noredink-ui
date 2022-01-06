@@ -12,6 +12,7 @@ module Nri.Ui.Svg.V1 exposing
 
 -}
 
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
@@ -55,6 +56,8 @@ withColor color (Svg record) =
 
 See [Using the aria-label attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for
 guidelines of when and how to use this attribute.
+
+Note that when the label is _not_ present, `aria-hidden` will be added. See <https://css-tricks.com/accessible-svg-icons/> for a quick summary on why.
 
 -}
 withLabel : String -> Svg -> Svg
@@ -102,11 +105,9 @@ toHtml (Svg record) =
                   else
                     Just (Attributes.css (Css.display Css.inlineBlock :: css))
                 , Maybe.map Widget.label record.label
+                    |> Maybe.withDefault (Widget.hidden True)
+                    |> Just
+                , Just Role.img
                 ]
     in
-    case attributes of
-        [] ->
-            Html.map never record.icon
-
-        _ ->
-            Html.div attributes [ Html.map never record.icon ]
+    Html.div attributes [ Html.map never record.icon ]
