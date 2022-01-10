@@ -5,8 +5,18 @@ module Nri.Ui.MediaQuery.V1 exposing
     , quizEngineBreakpoint
     )
 
-{-| Standard media queries for NRI responsive pages.
-Can be used to create a Snippet using Css.Global.media
+{-| Standard media queries for responsive pages.
+
+    import Css
+    import Css.Media as Media
+    import Nri.Ui.MediaQuery.V1 as MediaQuery
+
+    style : Css.Style
+    style =
+        Media.withMedia
+            [ MediaQuery.mobile ]
+            [ Css.padding (Css.px 2)
+            ]
 
 @docs mobile, notMobile
 @docs mobileBreakpoint
