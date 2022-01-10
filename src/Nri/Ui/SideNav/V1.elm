@@ -33,6 +33,7 @@ module Nri.Ui.SideNav.V1 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
 import Css.Media as Media
@@ -116,17 +117,7 @@ viewSkipLink onSkip =
         , ClickableText.small
         , ClickableText.css
             [ Css.pseudoClass "not(:focus)"
-                -- TODO: use Accessibility.Styled.Style.invisibleStyle
-                -- when we're on a higher version of tesk9/accessible-html-with-css
-                -- than 2.2.1
-                [ Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-                , Css.position Css.absolute
-                , Css.height (Css.px 1)
-                , Css.width (Css.px 1)
-                , Css.overflow Css.hidden
-                , Css.margin (Css.px -1)
-                , Css.padding Css.zero
-                , Css.border Css.zero
+                [ Style.invisibleStyle
                 ]
             ]
         , ClickableText.onClick onSkip
