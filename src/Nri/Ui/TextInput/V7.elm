@@ -1,6 +1,7 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
     , number, float, text, newPassword, currentPassword, email, search
+    , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
     , Attribute, placeholder, autofocus
@@ -27,6 +28,7 @@ module Nri.Ui.TextInput.V7 exposing
 ### Input types
 
 @docs number, float, text, newPassword, currentPassword, email, search
+@docs readOnlyText
 
 
 ### Input content
@@ -85,6 +87,27 @@ text onInput_ =
                 | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Nothing
+            }
+        )
+
+
+{-| A read-only input for text values
+-}
+readOnlyText : Attribute String msg
+readOnlyText =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Nothing
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+                , readOnly = True
+                , inputCss = [ Css.backgroundColor Colors.frost ]
             }
         )
 
@@ -462,6 +485,7 @@ type alias Config =
     , inputCss : List Css.Style
     , guidance : Guidance
     , error : ErrorState
+    , readOnly : Bool
     , disabled : Bool
     , loading : Bool
     , hideLabel : Bool
@@ -483,6 +507,7 @@ emptyConfig =
     , inputCss = []
     , guidance = InputErrorAndGuidanceInternal.noGuidance
     , error = InputErrorAndGuidanceInternal.noError
+    , readOnly = False
     , disabled = False
     , loading = False
     , hideLabel = False
@@ -641,6 +666,7 @@ view label attributes =
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
+                   , Attributes.readonly config.readOnly
                    , maybeAttr Events.onInput eventsAndValues.onInput
                    , maybeAttr Events.onFocus eventsAndValues.onFocus
                    , maybeAttr Events.onBlur eventsAndValues.onBlur

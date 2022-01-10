@@ -45,99 +45,111 @@ example =
         ]
     , view =
         \state ->
-            let
-                exampleConfig =
-                    Control.currentValue state.control
-
-                toExample { name, toString, inputType, onFocus, onBlur, onEnter } index =
-                    ( name
-                    , TextInput.view exampleConfig.label
-                        (exampleConfig.attributes
-                            ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
-                               , inputType (toString >> SetInput index)
-                                    |> TextInput.map toString identity
-                               , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
-                               ]
-                            ++ List.filterMap identity
-                                [ if exampleConfig.onFocus then
-                                    Just (TextInput.onFocus (SetInput index onFocus))
-
-                                  else
-                                    Nothing
-                                , if exampleConfig.onBlur then
-                                    Just (TextInput.onBlur (SetInput index onBlur))
-
-                                  else
-                                    Nothing
-                                , if exampleConfig.onEnter then
-                                    Just (TextInput.onEnter (SetInput index onEnter))
-
-                                  else
-                                    Nothing
-                                ]
-                        )
-                    )
-            in
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
-            , (viewExamples << List.indexedMap (\i toView -> toView i))
-                [ toExample
-                    { name = "text"
-                    , toString = identity
-                    , inputType = TextInput.text
-                    , onFocus = "Focused!!!"
-                    , onBlur = "Blurred!!!"
-                    , onEnter = "Entered!!!"
-                    }
-                , toExample
-                    { name = "number"
-                    , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
-                    , inputType = TextInput.number
-                    , onFocus = "1234"
-                    , onBlur = "10000000"
-                    , onEnter = "20000000"
-                    }
-                , toExample
-                    { name = "float"
-                    , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
-                    , inputType = TextInput.float
-                    , onFocus = "123"
-                    , onBlur = "1.00000001"
-                    , onEnter = "100000001.1"
-                    }
-                , toExample
-                    { name = "newPassword"
-                    , toString = identity
-                    , inputType =
-                        \onInput ->
-                            TextInput.newPassword
-                                { onInput = onInput
-                                , showPassword = state.showPassword
-                                , setShowPassword = SetShowPassword
-                                }
-                    , onFocus = "Focused!!!"
-                    , onBlur = "Blurred!!!"
-                    , onEnter = "Entered!!!"
-                    }
-                , toExample
-                    { name = "email"
-                    , toString = identity
-                    , inputType = TextInput.email
-                    , onFocus = "Focused!!!"
-                    , onBlur = "Blurred!!!"
-                    , onEnter = "Entered!!!"
-                    }
-                , toExample
-                    { name = "search"
-                    , toString = identity
-                    , inputType = TextInput.search
-                    , onFocus = "Focused!!!"
-                    , onBlur = "Blurred!!!"
-                    , onEnter = "Entered!!!"
-                    }
-                ]
+            , viewExamples <|
+                ( "readOnlyText"
+                , TextInput.view "Shareable Assignment Link"
+                    [ TextInput.readOnlyText
+                    , TextInput.value "noredink.com/s/blueprint-code"
+                    ]
+                )
+                    :: customizableExamples state
             ]
     }
+
+
+customizableExamples : State -> List ( String, Html Msg )
+customizableExamples state =
+    let
+        exampleConfig =
+            Control.currentValue state.control
+
+        toExample { name, toString, inputType, onFocus, onBlur, onEnter } index =
+            ( name
+            , TextInput.view exampleConfig.label
+                (exampleConfig.attributes
+                    ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
+                       , inputType (toString >> SetInput index)
+                            |> TextInput.map toString identity
+                       , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
+                       ]
+                    ++ List.filterMap identity
+                        [ if exampleConfig.onFocus then
+                            Just (TextInput.onFocus (SetInput index onFocus))
+
+                          else
+                            Nothing
+                        , if exampleConfig.onBlur then
+                            Just (TextInput.onBlur (SetInput index onBlur))
+
+                          else
+                            Nothing
+                        , if exampleConfig.onEnter then
+                            Just (TextInput.onEnter (SetInput index onEnter))
+
+                          else
+                            Nothing
+                        ]
+                )
+            )
+    in
+    List.indexedMap (\i toView -> toView i)
+        [ toExample
+            { name = "text"
+            , toString = identity
+            , inputType = TextInput.text
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "number"
+            , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
+            , inputType = TextInput.number
+            , onFocus = "1234"
+            , onBlur = "10000000"
+            , onEnter = "20000000"
+            }
+        , toExample
+            { name = "float"
+            , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
+            , inputType = TextInput.float
+            , onFocus = "123"
+            , onBlur = "1.00000001"
+            , onEnter = "100000001.1"
+            }
+        , toExample
+            { name = "newPassword"
+            , toString = identity
+            , inputType =
+                \onInput ->
+                    TextInput.newPassword
+                        { onInput = onInput
+                        , showPassword = state.showPassword
+                        , setShowPassword = SetShowPassword
+                        }
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "email"
+            , toString = identity
+            , inputType = TextInput.email
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "search"
+            , toString = identity
+            , inputType = TextInput.search
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        ]
 
 
 {-| -}
