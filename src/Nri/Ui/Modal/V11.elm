@@ -610,19 +610,19 @@ viewInnerContent ({ visibleTitle } as config) =
         visibleFooter =
             not (List.isEmpty config.footer)
 
-        titleHeight =
+        ( titleDesktopHeight, titleMobileHeight ) =
             if visibleTitle then
-                85
+                ( 85, 45 )
 
             else
-                0
+                ( 0, 0 )
 
-        footerHeight =
+        ( footerDesktopHeight, footerMobileHeight ) =
             if visibleFooter then
-                160
+                ( 160, 137 )
 
             else
-                0
+                ( 0, 0 )
 
         modalTitleStyles =
             if visibleTitle then
@@ -656,7 +656,7 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.maxHeight
                     (Css.calc (Css.vh 100)
                         Css.minus
-                        (Css.px (footerHeight + titleHeight + 40))
+                        (Css.px (footerDesktopHeight + titleDesktopHeight + 40))
                     )
                 , Css.width (Css.pct 100)
                 , Css.boxSizing Css.borderBox
@@ -664,6 +664,11 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.paddingRight (Css.px 40)
                 , Css.Media.withMedia [ mobile ]
                     [ Css.padding (Css.px 20)
+                    , Css.maxHeight
+                        (Css.calc (Css.vh 100)
+                            Css.minus
+                            (Css.px (footerMobileHeight + titleMobileHeight))
+                        )
                     ]
                 , if visibleTitle then
                     Css.paddingTop Css.zero
