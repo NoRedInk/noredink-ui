@@ -192,7 +192,7 @@ canvas : Nri.Ui.Svg.V1.Svg
 canvas =
     Svg.svg
         [ Attributes.viewBox "200 250 400 115"
-        , Attributes.width "auto"
+        , Attributes.width "100%"
         , Attributes.height "100%"
         , Attributes.fill "#E72429"
         ]
@@ -232,7 +232,7 @@ schoology : Nri.Ui.Svg.V1.Svg
 schoology =
     Svg.svg
         [ Attributes.viewBox "0 0 928 163"
-        , Attributes.width "auto"
+        , Attributes.width "100%"
         , Attributes.height "100%"
         ]
         [ Svg.g [ Attributes.fillRule "nonzero" ]
