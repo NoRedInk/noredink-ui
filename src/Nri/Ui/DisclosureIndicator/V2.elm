@@ -59,8 +59,8 @@ view { styles, size, isOpen } =
                 ++ styles
             )
         ]
-        [ div
-            [ css
+        [ arrowLeft
+            |> NriSvg.withCss
                 [ Css.displayFlex
                 , Css.justifyContent Css.center
                 , Css.alignItems Css.center
@@ -72,7 +72,5 @@ view { styles, size, isOpen } =
                   else
                     transform (rotate (deg -180))
                 ]
-            ]
-            [ NriSvg.toHtml arrowLeft
-            ]
+            |> NriSvg.toHtml
         ]
