@@ -188,6 +188,7 @@ googleG =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
+{-| -}
 canvas : Nri.Ui.Svg.V1.Svg
 canvas =
     Svg.svg
@@ -228,6 +229,7 @@ canvas =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
+{-| -}
 schoology : Nri.Ui.Svg.V1.Svg
 schoology =
     Svg.svg
