@@ -57,13 +57,12 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Social Media & SSO"
-                [ ( "facebook"
-                  , Logo.facebook
-                  , defaults
-                  )
+            , IconExamples.viewWithCustomStyles "Social Media"
+                [ ( "facebook", Logo.facebook, defaults )
                 , ( "twitter", Logo.twitter, defaults )
-                , ( "clever"
+                ]
+            , IconExamples.viewWithCustomStyles "Clever"
+                [ ( "clever"
                   , Logo.clever
                   , [ Css.height (Css.px 25)
                     , Css.width (Css.px 100)
@@ -71,17 +70,29 @@ example =
                     , Css.color Colors.azure
                     ]
                   )
-                , ( "cleverC"
-                  , Logo.cleverC
-                  , defaults
-                  )
-                , ( "google classroom"
+                , ( "cleverC", Logo.cleverC, defaults )
+                ]
+            , IconExamples.viewWithCustomStyles "Google"
+                [ ( "googleClassroom"
                   , Logo.googleClassroom
                   , defaults
                   )
-                , ( "googleG"
-                  , Logo.googleG
-                  , defaults
+                , ( "googleG", Logo.googleG, defaults )
+                ]
+            , IconExamples.viewWithCustomStyles "LMS"
+                [ ( "canvas"
+                  , Logo.canvas
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 100)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
+                , ( "schoology"
+                  , Logo.schoology
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 100)
+                    , Css.margin (Css.px 4)
+                    ]
                   )
                 ]
             ]
