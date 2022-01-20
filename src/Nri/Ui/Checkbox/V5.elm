@@ -213,8 +213,6 @@ viewEnabledLabel :
 viewEnabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
-        , Aria.controls model.identifier
-        , Widget.checked (selectedToMaybe model.selected)
         , labelClass model.selected
         , css
             [ positioning
@@ -243,8 +241,6 @@ viewDisabledLabel :
 viewDisabledLabel model labelView icon =
     Html.Styled.label
         [ Attributes.for model.identifier
-        , Aria.controls model.identifier
-        , Widget.checked (selectedToMaybe model.selected)
         , labelClass model.selected
         , css
             [ positioning
