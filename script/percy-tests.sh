@@ -9,4 +9,5 @@ cleanup() {
 }
 trap cleanup EXIT INT
 
-npx percy exec -- node script/percy-tests.js
+npx percy snapshot script/snapshots.yml --base-url  http://localhost:8000
+

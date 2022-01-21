@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "devDependencies": {
-    "@percy/script": "^1.0.2",
+    "@percy/cli": "^1.0.0-beta.73",
     "browserify": "16.2.3",
     "request": "^2.88.0"
   },

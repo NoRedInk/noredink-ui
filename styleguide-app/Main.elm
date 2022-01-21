@@ -13,7 +13,6 @@ import Examples
 import Html.Attributes
 import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
-import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Data.PremiumLevel as PremiumLevel
