@@ -101,7 +101,7 @@ main = do
             writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
           Just _ -> do
             need ["log/npm-install.txt", "log/public.txt"]
-            cmd (WithStdout True) (FileStdout out) "script/percy-tests.js"
+            cmd (WithStdout True) (FileStdout out) "script/percy-tests.sh"
 
       "log/axe-report.json" %> \out -> do
         need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js", "log/public.txt"]
