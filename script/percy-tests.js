@@ -31,7 +31,7 @@ describe('Visual tests', function () {
 
   const defaultProcessing = async (name, location) => {
     await page.goto(location)
-    await page.waitFor(`#${name}`)
+    await page.waitFor(`#${name.replace(".", "-")}`)
     await percySnapshot(page, name)
     console.log(`Snapshot complete for ${name}`)
   }
@@ -49,8 +49,7 @@ describe('Visual tests', function () {
       await page.waitFor('[role="dialog"]')
       await percySnapshot(page, 'Full Warning Modal')
       await page.click('[aria-label="Close modal"]')
-    },
-    'Text.Writing': () => {}
+    }
   }
 
   it('All', async function () {
