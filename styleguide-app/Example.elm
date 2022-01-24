@@ -116,6 +116,7 @@ preview_ navigate example =
             (ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)
                 , ClickableText.css [ Css.marginBottom (Css.px 10) ]
+                , ClickableText.nriDescription "doodad-link"
                 ]
                 :: [ Html.div
                         [ Attributes.css
@@ -197,11 +198,6 @@ exampleLink example =
         [ ClickableText.link (fullName example)
             [ ClickableText.href (exampleHref example)
             , ClickableText.large
-            , ClickableText.custom
-                [ -- this data attribute is used to name the Percy screenshots
-                  String.replace "." "-" example.name
-                    |> Attributes.attribute "data-percy-name"
-                ]
             ]
         ]
 
