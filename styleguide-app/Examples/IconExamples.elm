@@ -71,6 +71,8 @@ viewIcon ( name, icon, style ) =
             , Css.margin (Css.px 8)
             ]
         ]
-        [ Html.div [ css style ] [ Svg.toHtml icon ]
+        [ icon
+            |> Svg.withCss style
+            |> Svg.toHtml
         , Text.smallBody [ Text.plaintext name ]
         ]
