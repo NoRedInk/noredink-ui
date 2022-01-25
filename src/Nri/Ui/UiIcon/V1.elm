@@ -17,12 +17,12 @@ module Nri.Ui.UiIcon.V1 exposing
     , flag, star, starFilled, starOutline
     , equals, plus, null
     , key, lock, premiumLock
-    , badge
+    , badge, tada
     , bold, italic, underline, list, link, undo, redo
     , home, library
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
-    , microscope, scale, tada
+    , microscope, scale
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -45,12 +45,12 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs flag, star, starFilled, starOutline
 @docs equals, plus, null
 @docs key, lock, premiumLock
-@docs badge
+@docs badge, tada
 @docs bold, italic, underline, list, link, undo, redo
 @docs home, library
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
-@docs microscope, scale, tada
+@docs microscope, scale
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors

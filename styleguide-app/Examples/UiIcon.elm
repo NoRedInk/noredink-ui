@@ -72,18 +72,22 @@ example =
                 ]
             , IconExamples.view "Guidance"
                 [ ( "footsteps", UiIcon.footsteps )
-                , ( "compass", UiIcon.compass )
-                , ( "speedometer", UiIcon.speedometer )
                 , ( "bulb", UiIcon.bulb )
                 , ( "help", UiIcon.help )
                 , ( "checklist", UiIcon.checklist )
+                ]
+            , IconExamples.view "Science & Measurement"
+                [ ( "compass", UiIcon.compass )
+                , ( "speedometer", UiIcon.speedometer )
+                , ( "performance", UiIcon.performance )
+                , ( "microscope", UiIcon.microscope )
+                , ( "scale", UiIcon.scale )
                 ]
             , IconExamples.view "Humans & Class"
                 [ ( "person", UiIcon.person )
                 , ( "couple", UiIcon.couple )
                 , ( "class", UiIcon.class )
                 , ( "leaderboard", UiIcon.leaderboard )
-                , ( "performance", UiIcon.performance )
                 ]
             , IconExamples.view "Time"
                 [ ( "calendar", UiIcon.calendar )
@@ -132,8 +136,9 @@ example =
                 , ( "starFilled", UiIcon.starFilled )
                 , ( "starOutline", UiIcon.starOutline )
                 ]
-            , IconExamples.view "Badges & Levels"
+            , IconExamples.view "Badges & Celebration"
                 [ ( "badge", UiIcon.badge )
+                , ( "tada", UiIcon.tada )
                 ]
             , IconExamples.view "Lock & Key"
                 [ ( "key", UiIcon.key )
