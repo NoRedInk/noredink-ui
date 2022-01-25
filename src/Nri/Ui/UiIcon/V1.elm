@@ -9,7 +9,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , person, couple, class, leaderboard, performance
     , calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
-    , edit, pen
+    , edit, pen, highlighter
     , speechBalloon, mail, envelope
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
@@ -22,7 +22,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , home, library
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
-    , highlighter, microscope, scale, tada
+    , microscope, scale, tada
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -37,7 +37,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs person, couple, class, leaderboard, performance
 @docs calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
-@docs edit, pen
+@docs edit, pen, highlighter
 @docs speechBalloon, mail, envelope
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
@@ -50,7 +50,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs home, library
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
-@docs highlighter, microscope, scale, tada, mail
+@docs microscope, scale, tada, mail
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -1672,6 +1672,7 @@ highlighter =
         [ Attributes.viewBox "0 0 25 25"
         , Attributes.width "100%"
         , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
         ]
         [ Svg.path
             [ Attributes.d "M13.13 17.764l-6.697-6.697L19.828.351l4.018 4.02L13.13 17.763zm-7.352-3.809l-.014-2.218 6.698 6.698-2.22-.013-4.478 2.691-2.679-2.678 2.693-4.48zm-2.693 5.819l1.339 1.34-.67.669H1.077l2.01-2.01zm-2.008 4.851V22.73h24.625v1.895H1.077z" ]

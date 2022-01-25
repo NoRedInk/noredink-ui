@@ -105,6 +105,7 @@ example =
             , IconExamples.view "Writing Utensils"
                 [ ( "edit", UiIcon.edit )
                 , ( "pen", UiIcon.pen )
+                , ( "highlighter", UiIcon.highlighter )
                 ]
             , IconExamples.view "Arrows"
                 [ ( "arrowTop", UiIcon.arrowTop )
