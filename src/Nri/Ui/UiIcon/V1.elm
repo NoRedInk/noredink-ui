@@ -1688,6 +1688,7 @@ scale =
         [ Attributes.viewBox "0 0 91 87"
         , Attributes.width "100%"
         , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
         ]
         [ Svg.path
             [ Attributes.d "M79.731 29.219a5.886 5.886 0 0 0-5.105-8.816l-23.594-4.704V5.887A5.888 5.888 0 0 0 45.145 0a5.886 5.886 0 0 0-5.887 5.887v9.812l-23.594 4.703a5.888 5.888 0 0 0-5.105 8.817L0 50.489h.004H0c0 8.633 7.023 15.656 15.656 15.656 8.633 0 15.66-7.024 15.66-15.656h-.004.004L20.765 29.223a5.862 5.862 0 0 0 .781-2.93h17.707v54.176h-4.722c-1.622 0-2.946 1.316-2.946 2.922 0 1.605 1.324 2.922 2.946 2.922h21.215c1.62 0 2.945-1.313 2.945-2.922 0-1.606-1.324-2.922-2.945-2.922h-4.72V26.293l17.708-.004c0 1.066.285 2.066.781 2.93L58.964 50.485h.004-.004c0 8.633 7.023 15.656 15.656 15.656 8.633 0 15.66-7.024 15.66-15.656h-.004.004L79.731 29.219zm-54.988 21.27H6.571l9.086-18.31 9.086 18.31zm49.88 0h-9.087l9.086-18.31 9.086 18.31h-9.086z" ]
@@ -1703,6 +1704,7 @@ microscope =
         [ Attributes.viewBox "0 0 71 100"
         , Attributes.width "100%"
         , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
         ]
         [ Svg.g
             [ Attributes.stroke "none"
@@ -1726,6 +1728,7 @@ tada =
         [ Attributes.viewBox "0 0 21 21"
         , Attributes.width "100%"
         , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
         ]
         [ Svg.g
             [ Attributes.stroke "none"
