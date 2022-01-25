@@ -28,6 +28,7 @@ toSprite id_ svg =
     Sprite { id = id_, svg = svg }
 
 
+{-| -}
 type SpriteId
     = SpriteId String
 
