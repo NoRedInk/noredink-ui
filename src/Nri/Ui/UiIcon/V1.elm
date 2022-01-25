@@ -10,7 +10,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen, highlighter
-    , speechBalloon, mail, envelope
+    , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
@@ -38,7 +38,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen, highlighter
-@docs speechBalloon, mail, envelope
+@docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
@@ -50,7 +50,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs home, library
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
-@docs microscope, scale, tada, mail
+@docs microscope, scale, tada
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -1715,22 +1715,6 @@ microscope =
                     []
                 ]
             ]
-        ]
-        |> Nri.Ui.Svg.V1.fromHtml
-
-
-{-| -}
-envelope : Nri.Ui.Svg.V1.Svg
-envelope =
-    Svg.svg
-        [ Attributes.viewBox "0 0 20 15"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        ]
-        [ Svg.path
-            [ Attributes.d "M20,2.02620854 L20,12.1235999 C19.968142,13.2117429 19.0753171,14.0848 17.97949,14.0848 L2.02139,14.0848 C0.9054316,14.0848 0,13.179368 0,12.063411 L0,2.02152 C0,0.90556 0.9054316,0.00013 2.02139,0.00013 L17.97865,0.00013 L17.9821489,3e-06 C19.0912651,0.00191596838 19.9915482,0.918449219 20,2.02620855 L20,2.02620854 Z M10.50497,6.9056 L16.80025,1.70581 L3.221303,1.70581 L9.473724,6.9056 C9.768124,7.15806 10.21057,7.15806 10.50497,6.9056 Z M6.357808,6.52648 L1.705599,2.67364 L1.705599,11.305221 L6.357808,6.52648 Z M7.684293,7.62105 L3.010819,12.399789 L16.96892,12.399789 L12.31587,7.62105 L11.60042,8.210695 C11.13659,8.589802 10.56833,8.778947 10.00008,8.778947 C9.430987,8.778947 8.862735,8.589811 8.399745,8.210695 L7.684293,7.62105 Z M13.6424,6.52648 L18.31587,11.326695 L18.31587,2.67364 L13.6424,6.52648 Z" ]
-            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
