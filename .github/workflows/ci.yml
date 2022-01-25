@@ -19,3 +19,5 @@ jobs:
           extraPullNames: niv
 
       - run: nix-shell --pure --run 'shake --verbose ci'
+        env:
+          PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
