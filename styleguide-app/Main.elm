@@ -22,6 +22,7 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V1 as SideNav
+import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes as Routes exposing (Route(..))
 import Sort.Set as Set exposing (Set)
@@ -134,7 +135,10 @@ subscriptions model =
 view : Model -> Document Msg
 view model =
     { title = "Style Guide"
-    , body = [ view_ model |> Html.toUnstyled ]
+    , body =
+        [ view_ model |> Html.toUnstyled
+        , Sprite.attach |> Html.map never |> Html.toUnstyled
+        ]
     }
 
 

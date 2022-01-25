@@ -156,7 +156,9 @@ example =
                 , ( "link", UiIcon.link )
                 , ( "undo", UiIcon.undo )
                 , ( "redo", UiIcon.redo )
-                , ( "openQuotationMark", UiIcon.openQuotationMark )
+                ]
+            , IconExamples.view "Punctuation"
+                [ ( "openQuotationMark", UiIcon.openQuotationMark )
                 , ( "closeQuotationMark", UiIcon.closeQuotationMark )
                 ]
             , IconExamples.view "Navigation"
