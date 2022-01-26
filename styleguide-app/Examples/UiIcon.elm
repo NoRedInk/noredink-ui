@@ -62,11 +62,16 @@ example =
                 [ ( "archive", UiIcon.archive )
                 , ( "unarchive", UiIcon.unarchive )
                 ]
+            , IconExamples.view "Media"
+                [ ( "playInCircle", UiIcon.playInCircle )
+                , ( "pauseInCircle", UiIcon.pauseInCircle )
+                , ( "stopInCircle", UiIcon.stopInCircle )
+                , ( "skip", UiIcon.skip )
+                ]
             , IconExamples.view "Actions"
                 [ ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
                 , ( "activity", UiIcon.activity )
-                , ( "skip", UiIcon.skip )
                 , ( "copyToClipboard", UiIcon.copyToClipboard )
                 , ( "gift", UiIcon.gift )
                 ]

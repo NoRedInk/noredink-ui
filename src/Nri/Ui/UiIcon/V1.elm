@@ -1,7 +1,8 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper, sortArrow
     , archive, unarchive
-    , share, preview, skip, copyToClipboard, gift
+    , playInCircle, pauseInCircle, stopInCircle, skip
+    , share, preview, copyToClipboard, gift
     , activity
     , footsteps, compass, speedometer, bulb, help, checklist
     , hat, keychain
@@ -28,7 +29,8 @@ module Nri.Ui.UiIcon.V1 exposing
 
 @docs seeMore, openClose, download, sort, gear, flipper, sortArrow
 @docs archive, unarchive
-@docs share, preview, skip, copyToClipboard, gift
+@docs playInCircle, pauseInCircle, stopInCircle, skip
+@docs share, preview, copyToClipboard, gift
 @docs activity
 @docs footsteps, compass, speedometer, bulb, help, checklist
 @docs hat, keychain
@@ -952,6 +954,110 @@ skip =
         , Attributes.viewBox "0 0 25 25"
         ]
         [ Svg.path [ Attributes.d "M24.8 23.437c0 .416-.16.811-.447 1.104-.286.293-.676.46-1.08.46h-.882c-.845 0-1.53-.7-1.53-1.564v-8.874L4.406 24.58l-.23.14h-.105a2.158 2.158 0 0 1-.917.203c-1.134.035-2.088-.859-2.154-2.016V2.063C1.04.89 2.003-.034 3.154.001c.341.006.676.09.977.252h.106l.138.079L20.86 10.407V1.566C20.86.7 21.545 0 22.39 0h.882c.404 0 .794.167 1.08.46.287.293.447.689.447 1.105l.001 21.87z" ] []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+playInCircle : Nri.Ui.Svg.V1.Svg
+playInCircle =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 20 20"
+        , Attributes.fill "none"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.d "M0,9.94708982 C0,15.4705895 4.4775,19.9470903 10,19.9470903 C15.5235,19.9470903 20,15.4705895 20,9.94708982 C20,4.4245901 15.5225,-0.0529096768 10,-0.0529096768 C4.4775,-0.0529096768 0,4.4245901 0,9.94708982 Z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.stroke "currentcolor"
+            , Attributes.strokeWidth "2"
+            , Attributes.d "M1,9.94708982 C1,14.9179442 5.02942411,18.9470903 10,18.9470903 C14.971215,18.9470903 19,14.918305 19,9.94708982 C19,4.97687486 14.9702153,0.947090323 10,0.947090323 C5.02978474,0.947090323 1,4.97687486 1,9.94708982 Z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M8.37860882,13.5652183 C8.20284659,13.6666319 7.98463651,13.6666319 7.80886972,13.5652183 C7.63310748,13.4640873 7.52400017,13.274934 7.52400017,13.072394 L7.52400017,6.82178664 C7.52400017,6.61810264 7.63310748,6.43008875 7.80886972,6.32896234 C7.98463651,6.22754879 8.20284659,6.22754879 8.37860882,6.32896234 L13.7911303,9.45483349 C13.9668971,9.55624704 14.0759998,9.74397834 14.0759998,9.94794493 C14.0759998,10.1504849 13.9680366,10.3384988 13.7911303,10.4396298 L8.37860882,13.5652183 Z"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+stopInCircle : Nri.Ui.Svg.V1.Svg
+stopInCircle =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 20 20"
+        , Attributes.fill "none"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.d "M0,9.9999995 C0,15.5234992 4.4775,20 10,20 C15.5235,20 20,15.5234992 20,9.9999995 C20,4.47749978 15.5225,0 10,0 C4.4775,0 0,4.47749978 0,9.9999995 Z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.stroke "currentcolor"
+            , Attributes.strokeWidth "2"
+            , Attributes.d "M1,9.9999995 C1,14.9708539 5.02942411,19 10,19 C14.971215,19 19,14.9712147 19,9.9999995 C19,5.02978454 14.9702153,1 10,1 C5.02978474,1 1,5.02978454 1,9.9999995 Z"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.fill "currentcolor"
+            , Attributes.x "7"
+            , Attributes.y "7"
+            , Attributes.width "6"
+            , Attributes.height "6"
+            , Attributes.rx "1"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+pauseInCircle : Nri.Ui.Svg.V1.Svg
+pauseInCircle =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 20 20"
+        , Attributes.fill "none"
+        ]
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.d "M0,9.9999995 C0,15.5234992 4.4775,20 10,20 C15.5235,20 20,15.5234992 20,9.9999995 C20,4.47749978 15.5225,0 10,0 C4.4775,0 0,4.47749978 0,9.9999995 Z"
+            ]
+            []
+        , Svg.path
+            [ Attributes.stroke "currentcolor"
+            , Attributes.strokeWidth "2"
+            , Attributes.d "M1,9.9999995 C1,14.9708539 5.02942411,19 10,19 C14.971215,19 19,14.9712147 19,9.9999995 C19,5.02978454 14.9702153,1 10,1 C5.02978474,1 1,5.02978454 1,9.9999995 Z"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.fill "currentcolor"
+            , Attributes.x "7"
+            , Attributes.y "7"
+            , Attributes.width "2"
+            , Attributes.height "6"
+            , Attributes.rx "0.5"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.fill "currentcolor"
+            , Attributes.x "11"
+            , Attributes.y "7"
+            , Attributes.width "2"
+            , Attributes.height "6"
+            , Attributes.rx "0.5"
+            ]
+            []
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
