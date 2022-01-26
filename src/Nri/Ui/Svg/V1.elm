@@ -2,6 +2,7 @@ module Nri.Ui.Svg.V1 exposing
     ( Svg
     , withColor, withLabel, withWidth, withHeight, withCss
     , fromHtml, toHtml
+    , toRawSvg
     )
 
 {-|
@@ -9,6 +10,7 @@ module Nri.Ui.Svg.V1 exposing
 @docs Svg
 @docs withColor, withLabel, withWidth, withHeight, withCss
 @docs fromHtml, toHtml
+@docs toRawSvg
 
 -}
 
@@ -17,6 +19,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Svg.Styled as Svg
 
 
 {-| Opaque type describing a non-interactable Html element.
@@ -111,3 +114,10 @@ toHtml (Svg record) =
                 ]
     in
     Html.div attributes [ Html.map never record.icon ]
+
+
+{-| Extract an svg, dropping any attributes passed through.
+-}
+toRawSvg : Svg -> Svg.Svg msg
+toRawSvg (Svg record) =
+    Html.map never record.icon
