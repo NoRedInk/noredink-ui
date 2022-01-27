@@ -1,13 +1,13 @@
 module Nri.Ui.Sprite.V1 exposing
     ( Sprite, attach
-    , SpriteId, use
+    , SpriteId, use, spriteIdToString
     , bold, italic, underline, list, link, undo, redo
     )
 
 {-|
 
 @docs Sprite, attach
-@docs SpriteId, use
+@docs SpriteId, use, spriteIdToString
 @docs bold, italic, underline, list, link, undo, redo
 
 -}
@@ -33,6 +33,7 @@ type SpriteId
     = SpriteId String
 
 
+{-| -}
 spriteIdToString : SpriteId -> String
 spriteIdToString (SpriteId id_) =
     id_
