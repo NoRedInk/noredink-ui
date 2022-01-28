@@ -64,9 +64,10 @@ init =
         |> Control.field "icon"
             (Control.maybe True <|
                 Control.choice
-                    [ ( "Preview", Control.value UiIcon.preview )
-                    , ( "Performance", Control.value UiIcon.performance )
-                    , ( "Edit", Control.value UiIcon.edit )
+                    [ ( "premiumLock", Control.value UiIcon.premiumLock )
+                    , ( "preview", Control.value UiIcon.preview )
+                    , ( "performance", Control.value UiIcon.performance )
+                    , ( "edit", Control.value UiIcon.edit )
                     ]
             )
         |> State

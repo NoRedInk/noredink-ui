@@ -76,7 +76,7 @@ import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
 label : String -> Attribute msg
@@ -294,12 +294,11 @@ viewContent config =
                         , Css.property "line-height" "normal"
                         ]
                     ]
-                    [ div
-                        [ Attributes.css
-                            [ Css.height fontSize
-                            , Css.maxWidth fontSize
-                            , Css.minWidth fontSize -- so it doesn't shrink when the label is long
-                            , case config.size of
+                    [ icon_
+                        |> Svg.withWidth fontSize
+                        |> Svg.withHeight fontSize
+                        |> Svg.withCss
+                            [ case config.size of
                                 Small ->
                                     Css.marginRight (Css.px 3)
 
@@ -309,8 +308,7 @@ viewContent config =
                                 Large ->
                                     Css.marginRight (Css.px 4)
                             ]
-                        ]
-                        [ NriSvg.toHtml icon_ ]
+                        |> Svg.toHtml
                     , span [] [ text config.label ]
                     ]
                 ]
