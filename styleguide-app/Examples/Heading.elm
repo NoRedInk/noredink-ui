@@ -13,6 +13,7 @@ import Html.Styled as Html
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import ViewHelpers exposing (viewExamples)
 
 
 {-| -}
@@ -43,10 +44,12 @@ example =
         ]
     , view =
         \_ ->
-            [ Heading.h1 [] [ Html.text "This is the main page heading." ]
-            , Heading.h2 [] [ Html.text "This is a tagline" ]
-            , Heading.h3 [] [ Html.text "This is a subHeading" ]
-            , Heading.h4 [] [ Html.text "This is a smallHeading" ]
+            [ viewExamples
+                [ ( "h1", Heading.h1 [] [ Html.text "This is the main page heading." ] )
+                , ( "h2", Heading.h2 [] [ Html.text "This is a tagline" ] )
+                , ( "h3", Heading.h3 [] [ Html.text "This is a subHeading" ] )
+                , ( "h4", Heading.h4 [] [ Html.text "This is a smallHeading" ] )
+                ]
             , Heading.h2 [ Heading.style Heading.Top ]
                 [ Html.text "Heading.h2 [ Heading.style Heading.Top ]" ]
             , Heading.h2 [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]
