@@ -18,4 +18,6 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           extraPullNames: niv
 
-      - run: nix-shell --pure --run 'shake --verbose ci'
+      - run: nix-shell --pure --keep PERCY_TOKEN --run 'shake --verbose ci'
+        env:
+          PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
