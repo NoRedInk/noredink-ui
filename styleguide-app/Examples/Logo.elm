@@ -71,6 +71,13 @@ example =
                     ]
                   )
                 , ( "cleverC", Logo.cleverC, defaults )
+                , ( "cleverLibrary"
+                  , Logo.cleverLibrary
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 100)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
                 ]
             , IconExamples.viewWithCustomStyles "Google"
                 [ ( "googleClassroom"
