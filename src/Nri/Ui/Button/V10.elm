@@ -640,7 +640,7 @@ buttonStyles size width colors customStyles =
 viewLabel : ButtonSize -> Maybe Svg -> String -> Html msg
 viewLabel size maybeSvg label_ =
     let
-        { imageHeight } =
+        { fontAndIconSize } =
             sizeConfig size
     in
     Nri.Ui.styled Html.span
@@ -658,10 +658,10 @@ viewLabel size maybeSvg label_ =
 
             Just svg ->
                 (svg
-                    |> NriSvg.withHeight (Css.px imageHeight)
+                    |> NriSvg.withWidth fontAndIconSize
+                    |> NriSvg.withHeight fontAndIconSize
                     |> NriSvg.withCss
-                        [ Css.width Css.auto
-                        , Css.flexShrink Css.zero
+                        [ Css.flexShrink Css.zero
                         , Css.marginRight (Css.px 5)
                         ]
                     |> NriSvg.toHtml
@@ -816,29 +816,26 @@ colorStyle colorPalette =
         ]
 
 
-sizeConfig : ButtonSize -> { fontSize : number, height : number, imageHeight : number, shadowHeight : number, minWidth : number }
+sizeConfig : ButtonSize -> { fontAndIconSize : Css.Px, height : number, shadowHeight : number, minWidth : number }
 sizeConfig size =
     case size of
         Small ->
-            { fontSize = 15
+            { fontAndIconSize = Css.px 15
             , height = 36
-            , imageHeight = 12
             , shadowHeight = 2
             , minWidth = 75
             }
 
         Medium ->
-            { fontSize = 15
+            { fontAndIconSize = Css.px 15
             , height = 45
-            , imageHeight = 14
             , shadowHeight = 3
             , minWidth = 100
             }
 
         Large ->
-            { fontSize = 20
+            { fontAndIconSize = Css.px 20
             , height = 56
-            , imageHeight = 16
             , shadowHeight = 4
             , minWidth = 200
             }
@@ -901,7 +898,7 @@ sizeStyle size width =
                     22
     in
     Css.batch
-        [ Css.fontSize (Css.px config.fontSize)
+        [ Css.fontSize config.fontAndIconSize
         , Css.borderRadius (Css.px 8)
         , Css.lineHeight (Css.px lineHeightPx)
         , Css.boxSizing Css.borderBox
