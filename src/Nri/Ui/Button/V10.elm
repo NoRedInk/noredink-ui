@@ -513,7 +513,7 @@ renderButton ((ButtonOrLink config) as button_) =
             :: Attributes.type_ "button"
             :: config.customAttributes
         )
-        [ viewLabel config.icon config.label ]
+        [ viewLabel config.size config.icon config.label ]
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -529,7 +529,7 @@ renderLink ((ButtonOrLink config) as link_) =
         (styledName linkFunctionName)
         [ buttonStyles config.size config.width colorPalette config.customStyles ]
         (attributes ++ config.customAttributes)
-        [ viewLabel config.icon config.label ]
+        [ viewLabel config.size config.icon config.label ]
 
 
 
@@ -624,7 +624,7 @@ toggleButton config =
         -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
         , Attributes.type_ "button"
         ]
-        [ viewLabel Nothing config.label ]
+        [ viewLabel Medium Nothing config.label ]
 
 
 buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
@@ -637,8 +637,12 @@ buttonStyles size width colors customStyles =
         ]
 
 
-viewLabel : Maybe Svg -> String -> Html msg
-viewLabel maybeSvg label_ =
+viewLabel : ButtonSize -> Maybe Svg -> String -> Html msg
+viewLabel size maybeSvg label_ =
+    let
+        { fontAndIconSize } =
+            sizeConfig size
+    in
     Nri.Ui.styled Html.span
         "button-label-span"
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
@@ -653,7 +657,16 @@ viewLabel maybeSvg label_ =
                 renderMarkdown label_
 
             Just svg ->
-                NriSvg.toHtml svg :: renderMarkdown label_
+                (svg
+                    |> NriSvg.withWidth fontAndIconSize
+                    |> NriSvg.withHeight fontAndIconSize
+                    |> NriSvg.withCss
+                        [ Css.flexShrink Css.zero
+                        , Css.marginRight (Css.px 5)
+                        ]
+                    |> NriSvg.toHtml
+                )
+                    :: renderMarkdown label_
         )
 
 
@@ -803,34 +816,36 @@ colorStyle colorPalette =
         ]
 
 
+sizeConfig : ButtonSize -> { fontAndIconSize : Css.Px, height : number, shadowHeight : number, minWidth : number }
+sizeConfig size =
+    case size of
+        Small ->
+            { fontAndIconSize = Css.px 15
+            , height = 36
+            , shadowHeight = 2
+            , minWidth = 75
+            }
+
+        Medium ->
+            { fontAndIconSize = Css.px 15
+            , height = 45
+            , shadowHeight = 3
+            , minWidth = 100
+            }
+
+        Large ->
+            { fontAndIconSize = Css.px 20
+            , height = 56
+            , shadowHeight = 4
+            , minWidth = 200
+            }
+
+
 sizeStyle : ButtonSize -> ButtonWidth -> Style
 sizeStyle size width =
     let
         config =
-            case size of
-                Small ->
-                    { fontSize = 15
-                    , height = 36
-                    , imageHeight = 12
-                    , shadowHeight = 2
-                    , minWidth = 75
-                    }
-
-                Medium ->
-                    { fontSize = 15
-                    , height = 45
-                    , imageHeight = 14
-                    , shadowHeight = 3
-                    , minWidth = 100
-                    }
-
-                Large ->
-                    { fontSize = 20
-                    , height = 56
-                    , imageHeight = 16
-                    , shadowHeight = 4
-                    , minWidth = 200
-                    }
+            sizeConfig size
 
         sizingAttributes =
             let
@@ -883,7 +898,7 @@ sizeStyle size width =
                     22
     in
     Css.batch
-        [ Css.fontSize (Css.px config.fontSize)
+        [ Css.fontSize config.fontAndIconSize
         , Css.borderRadius (Css.px 8)
         , Css.lineHeight (Css.px lineHeightPx)
         , Css.boxSizing Css.borderBox
@@ -891,18 +906,4 @@ sizeStyle size width =
         , Css.borderBottomWidth (Css.px config.shadowHeight)
         , Css.batch sizingAttributes
         , Css.batch widthAttributes
-        , Css.Global.descendants
-            [ Css.Global.img
-                [ Css.height (Css.px config.imageHeight)
-                , Css.width Css.auto
-                , Css.marginRight (Css.px 5)
-                , Css.flexShrink Css.zero
-                ]
-            , Css.Global.svg
-                [ Css.height (Css.px config.imageHeight)
-                , Css.width Css.auto
-                , Css.marginRight (Css.px 5)
-                , Css.flexShrink Css.zero
-                ]
-            ]
         ]

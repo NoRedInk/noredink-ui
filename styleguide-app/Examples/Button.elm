@@ -34,6 +34,7 @@ example =
             [ Button.small
             , Button.fillContainerWidth
             , Button.custom [ Key.tabbable False ]
+            , Button.icon UiIcon.link
             ]
         , Button.link "Secondary"
             [ Button.small
@@ -41,6 +42,7 @@ example =
             , Button.secondary
             , Button.css [ Css.marginTop (Css.px 8) ]
             , Button.custom [ Key.tabbable False ]
+            , Button.icon UiIcon.link
             ]
         , Button.link "Premium"
             [ Button.small
@@ -48,6 +50,7 @@ example =
             , Button.premium
             , Button.css [ Css.marginTop (Css.px 8) ]
             , Button.custom [ Key.tabbable False ]
+            , Button.icon UiIcon.link
             ]
         ]
     , view = \state -> [ viewButtonExamples state ]
@@ -135,7 +138,7 @@ initDebugControls : Control Model
 initDebugControls =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
-        |> Control.field "icon" iconChoice
+        |> Control.field "icon" (Control.maybe True iconChoice)
         |> Control.field "button type"
             (Control.choice
                 [ ( "button", Control.value Button )
@@ -163,15 +166,14 @@ initDebugControls =
             )
 
 
-iconChoice : Control.Control (Maybe Svg)
+iconChoice : Control.Control Svg
 iconChoice =
     Control.choice
-        [ ( "none", Control.value Nothing )
-        , ( "preview", Control.value (Just UiIcon.preview) )
-        , ( "arrowLeft", Control.value (Just UiIcon.arrowLeft) )
-        , ( "performance", Control.value (Just UiIcon.performance) )
-        , ( "share", Control.value (Just UiIcon.share) )
-        , ( "download", Control.value (Just UiIcon.download) )
+        [ ( "preview", Control.value UiIcon.preview )
+        , ( "arrowLeft", Control.value UiIcon.arrowLeft )
+        , ( "performance", Control.value UiIcon.performance )
+        , ( "share", Control.value UiIcon.share )
+        , ( "download", Control.value UiIcon.download )
         ]
 
 
