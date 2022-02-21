@@ -1,8 +1,8 @@
-module EventExtras exposing (onClickForLinkWithHref, onClickPreventDefaultForLinkWithHref, onClickStopPropagation)
+module EventExtras exposing (onClickForLinkWithHref, onClickPreventDefaultForLinkWithHref, onClickStopPropagation, onKeyDownPreventDefault)
 
 import Html.Styled as Html
 import Html.Styled.Events as Events
-import Json.Decode
+import Json.Decode exposing (Decoder)
 
 
 {-| This is necessary to use in single-page apps (SPA) when intercepting the
@@ -83,3 +83,19 @@ onWithStopPropagation : String -> msg -> Html.Attribute msg
 onWithStopPropagation name msg =
     Events.stopPropagationOn name
         (Json.Decode.succeed ( msg, True ))
+
+
+{-| Use with a list of key decoders.
+
+    import EventExtras exposing (onKeyDownPreventDefault)
+    import Accessibility.Styled.Key as Key
+
+    button
+        [ onKeyDownPreventDefault [ Key.down DoSomething ] ]
+        [ text "Try arrow down" ]
+
+-}
+onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
+onKeyDownPreventDefault decoders =
+    Events.preventDefaultOn "keydown"
+        (Json.Decode.map (\d -> ( d, True )) (Json.Decode.oneOf decoders))
