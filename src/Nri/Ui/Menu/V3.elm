@@ -1,5 +1,5 @@
 module Nri.Ui.Menu.V3 exposing
-    ( view, button, custom
+    ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
     , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
     , Alignment(..)
@@ -20,7 +20,7 @@ A togglable menu view and related buttons.
 
 ## Menu rendering
 
-@docs view, button, custom
+@docs view, button, custom, Config
 @docs Attribute, Button, ButtonAttribute
 
 
@@ -76,6 +76,7 @@ type Button msg
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
+{-| -}
 type alias Config msg =
     { button : Button msg
     , entries : List (Entry msg)
