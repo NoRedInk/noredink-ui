@@ -472,7 +472,8 @@ titleStyles color visibleTitle =
 -- VIEW
 
 
-{-| -}
+{-| `FocusTrap` comes from `Nri.Ui.FocusTrap.V1`.
+-}
 view :
     { title : String
     , wrapMsg : Msg -> msg
