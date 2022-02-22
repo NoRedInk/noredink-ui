@@ -48,6 +48,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global exposing (descendants)
+import EventExtras exposing (onKeyDownPreventDefault)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
@@ -447,7 +448,7 @@ viewCustom config =
                       -- first menu item if the "down" arrow is pressed
                       case ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
                         ( Just firstFocusableElementId, Just lastFocusableElementId ) ->
-                            Key.onKeyDown
+                            onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
                                         { isOpen = True
@@ -594,7 +595,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     [ Role.menuItem
                     , Attributes.id id
                     , Key.tabbable False
-                    , Key.onKeyDown
+                    , onKeyDownPreventDefault
                         [ Key.up
                             (focusAndToggle
                                 { isOpen = True
