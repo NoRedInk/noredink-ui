@@ -426,7 +426,7 @@ modalStyles =
 
     -- Border
     , borderRadius (px 20)
-    , boxShadow5 zero (px 1) (px 10) zero (rgba 0 0 0 0.35)
+    , property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
     , Css.Media.withMedia [ mobile ]
         [ borderRadius zero
         ]
