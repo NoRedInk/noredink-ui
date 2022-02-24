@@ -757,7 +757,7 @@ styleContent contentVisible config =
         , zIndex (int <| config.zIndex + 1)
         , backgroundColor Colors.white
         , listStyle Css.none
-        , Css.property "box-shadow" "0 0 10px 0 rgba(0,0,0,0.1)"
+        , Css.property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
         , before
             [ property "content" "\"\""
             , position absolute
