@@ -162,6 +162,7 @@ view attributes_ =
                              borderRadius (px 8)
                            , padding (px 20)
                            , backgroundColor_
+                           , property "box-shadow" "0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);"
                            , Css.Media.withMedia
                                 [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
                                 [ padding (px 15)
