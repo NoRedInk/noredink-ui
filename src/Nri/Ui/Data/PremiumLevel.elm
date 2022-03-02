@@ -19,7 +19,18 @@ type PremiumLevel
 -}
 allowedFor : PremiumLevel -> PremiumLevel -> Bool
 allowedFor requirement actor =
-    order requirement <= order actor
+    case requirement of
+        Free ->
+            True
+
+        PremiumPromo ->
+            True
+
+        Premium ->
+            actor /= Free
+
+        PremiumWithWriting ->
+            actor == PremiumWithWriting
 
 
 {-| The highest premium level in a list
