@@ -1,6 +1,7 @@
-module CommonControls exposing (exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
+module CommonControls exposing (disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
 
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
@@ -110,3 +111,13 @@ uiIcon =
                 ( name, Control.value ( "UiIcon." ++ name, value ) )
             )
         |> Control.choice
+
+
+disabledListItem : String -> (Bool -> b) -> Control (List ( String, b )) -> Control (List ( String, b ))
+disabledListItem moduleName f =
+    ControlExtra.optionalBoolListItem "disabled"
+        (\bool ->
+            ( moduleName ++ ".disabled True"
+            , f bool
+            )
+        )

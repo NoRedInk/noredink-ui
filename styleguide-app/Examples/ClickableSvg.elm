@@ -270,17 +270,15 @@ initSettings =
         |> Control.field "icon" CommonControls.uiIcon
         |> Control.field "attributes"
             (ControlExtra.list
-                |> ControlExtra.listItem "disabled"
-                    (Control.map ClickableSvg.disabled (Control.bool False))
-                |> ControlExtra.optionalListItem "exactSize"
-                    (Control.map ClickableSvg.exactSize (ControlExtra.int 36))
-                |> ControlExtra.optionalListItem "css"
-                    (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
-                |> ControlExtra.optionalListItem "mobileCss"
-                    (Control.map ClickableSvg.mobileCss (ControlExtra.css "padding: 10px;"))
-                |> ControlExtra.optionalListItem "quizEngineMobileCss"
-                    (Control.map ClickableSvg.quizEngineMobileCss (ControlExtra.css ""))
-                |> ControlExtra.optionalListItem "notMobileCss"
-                    (Control.map ClickableSvg.notMobileCss (ControlExtra.css ""))
-                |> Control.map (List.map (\v -> ( Debug.toString v, v )))
+                |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
+             --|> ControlExtra.optionalListItem "exactSize"
+             --    (Control.map ClickableSvg.exactSize (ControlExtra.int 36))
+             --|> ControlExtra.optionalListItem "css"
+             --    (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
+             --|> ControlExtra.optionalListItem "mobileCss"
+             --    (Control.map ClickableSvg.mobileCss (ControlExtra.css "padding: 10px;"))
+             --|> ControlExtra.optionalListItem "quizEngineMobileCss"
+             --    (Control.map ClickableSvg.quizEngineMobileCss (ControlExtra.css ""))
+             --|> ControlExtra.optionalListItem "notMobileCss"
+             --    (Control.map ClickableSvg.notMobileCss (ControlExtra.css ""))
             )
