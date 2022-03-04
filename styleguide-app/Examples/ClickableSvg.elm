@@ -10,6 +10,7 @@ import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import EventExtras
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -234,20 +235,17 @@ update msg state =
 
 type alias Settings msg =
     { icon : Svg
-    , disabled : ClickableSvg.Attribute msg
-    , size : ClickableSvg.Attribute msg
-    , width : Maybe (ClickableSvg.Attribute msg)
-    , height : Maybe (ClickableSvg.Attribute msg)
+    , attributes : List (ClickableSvg.Attribute msg)
     }
 
 
 applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
 applySettings settings =
     let
-        { icon, disabled, size, width, height } =
+        { icon, attributes } =
             Control.currentValue settings
     in
-    ( icon, List.filterMap identity [ Just disabled, Just size, width, height ] )
+    ( icon, attributes )
 
 
 initSettings : Control (Settings msg)
@@ -267,19 +265,22 @@ initSettings =
                 , ( "searchInCicle", Control.value UiIcon.searchInCicle )
                 ]
             )
-        |> Control.field "disabled"
-            (Control.map ClickableSvg.disabled (Control.bool False))
-        |> Control.field "size"
-            (Control.choice
-                [ ( "small", Control.value ClickableSvg.small )
-                , ( "medium", Control.value ClickableSvg.medium )
-                , ( "large", Control.value ClickableSvg.large )
-                ]
+        |> Control.field "attributes"
+            (ControlExtra.list
+                |> ControlExtra.listItem "disabled"
+                    (Control.map ClickableSvg.disabled (Control.bool False))
+                |> ControlExtra.listItem "size"
+                    (Control.choice
+                        [ ( "small", Control.value ClickableSvg.small )
+                        , ( "medium", Control.value ClickableSvg.medium )
+                        , ( "large", Control.value ClickableSvg.large )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "exactWidth"
+                    (Control.map ClickableSvg.exactWidth (controlInt 40))
+                |> ControlExtra.optionalListItem "exactHeight"
+                    (Control.map ClickableSvg.exactHeight (controlInt 20))
             )
-        |> Control.field "exactWidth"
-            (Control.maybe False (Control.map ClickableSvg.exactWidth (controlInt 40)))
-        |> Control.field "exactHeight"
-            (Control.maybe False (Control.map ClickableSvg.exactHeight (controlInt 20)))
 
 
 controlInt : Int -> Control Int
