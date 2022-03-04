@@ -28,6 +28,11 @@ int default =
 
 
 {-| Use with `listItem` and `optionalListItem`
+
+    list
+        |> listItem "first name" string
+        |> listItem "last name" string
+
 -}
 list : Control (List a)
 list =
