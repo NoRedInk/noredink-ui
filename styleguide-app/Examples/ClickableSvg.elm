@@ -8,6 +8,7 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -68,7 +69,8 @@ example =
                                     ++ fName
                                     ++ " \""
                                     ++ label
-                                    ++ "\""
+                                    ++ "\"\n\t"
+                                    ++ Tuple.first icon
                                     ++ ControlView.codeFromList attributes
                         in
                         [ { sectionName = "Button"
@@ -151,14 +153,14 @@ viewExampleTable { label, icon, attributes } =
 
         buttonExample attributes_ =
             ClickableSvg.button label
-                icon
+                (Tuple.second icon)
                 (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
                     :: attributes_
                 )
 
         linkExample attributes_ =
             ClickableSvg.link label
-                icon
+                (Tuple.second icon)
                 (ClickableSvg.linkSpa "some_link" :: attributes_)
     in
     Html.table []
@@ -256,7 +258,7 @@ update msg state =
 
 type alias Settings msg =
     { label : String
-    , icon : Svg
+    , icon : ( String, Svg )
     , attributes : List ( String, ClickableSvg.Attribute msg )
     }
 
@@ -265,20 +267,7 @@ initSettings : Control (Settings msg)
 initSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Back")
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
-                , ( "unarchive", Control.value UiIcon.unarchive )
-                , ( "share", Control.value UiIcon.share )
-                , ( "preview", Control.value UiIcon.preview )
-                , ( "skip", Control.value UiIcon.skip )
-                , ( "copyToClipboard", Control.value UiIcon.copyToClipboard )
-                , ( "gift", Control.value UiIcon.gift )
-                , ( "home", Control.value UiIcon.home )
-                , ( "library", Control.value UiIcon.library )
-                , ( "searchInCicle", Control.value UiIcon.searchInCicle )
-                ]
-            )
+        |> Control.field "icon" CommonControls.uiIcon
         |> Control.field "attributes"
             (ControlExtra.list
                 |> ControlExtra.listItem "disabled"

@@ -1,10 +1,12 @@
-module CommonControls exposing (exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation)
+module CommonControls exposing (exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
 
 import Debug.Control as Control exposing (Control)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Svg.V1 exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 premiumLevel : Control ( String, PremiumLevel )
@@ -88,3 +90,23 @@ exampleHtml =
         [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
+
+
+uiIcon : Control ( String, Svg )
+uiIcon =
+    [ ( "arrowLeft", UiIcon.arrowLeft )
+    , ( "unarchive", UiIcon.unarchive )
+    , ( "share", UiIcon.share )
+    , ( "preview", UiIcon.preview )
+    , ( "skip", UiIcon.skip )
+    , ( "copyToClipboard", UiIcon.copyToClipboard )
+    , ( "gift", UiIcon.gift )
+    , ( "home", UiIcon.home )
+    , ( "library", UiIcon.library )
+    , ( "searchInCicle", UiIcon.searchInCicle )
+    ]
+        |> List.map
+            (\( name, value ) ->
+                ( name, Control.value ( "UiIcon." ++ name, value ) )
+            )
+        |> Control.choice

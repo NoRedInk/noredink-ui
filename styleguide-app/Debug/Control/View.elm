@@ -32,7 +32,10 @@ viewExampleCode values =
             :: List.concatMap
                 (\{ sectionName, code } ->
                     [ Heading.h4 [] [ text sectionName ]
-                    , Html.Styled.code [] [ text code ]
+                    , Html.Styled.code
+                        [ css [ whiteSpace preWrap ]
+                        ]
+                        [ text code ]
                     ]
                 )
                 values
