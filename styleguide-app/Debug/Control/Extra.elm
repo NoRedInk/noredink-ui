@@ -1,11 +1,11 @@
 module Debug.Control.Extra exposing
-    ( float
+    ( float, int
     , list, listItem, optionalListItem
     )
 
 {-|
 
-@docs float
+@docs float, int
 @docs list, listItem, optionalListItem
 
 -}
@@ -18,6 +18,13 @@ float : Float -> Control Float
 float default =
     Control.map (String.toFloat >> Maybe.withDefault default)
         (Control.string (String.fromFloat default))
+
+
+{-| -}
+int : Int -> Control Int
+int default =
+    Control.map (String.toInt >> Maybe.withDefault default)
+        (Control.string (String.fromInt default))
 
 
 {-| Use with `listItem` and `optionalListItem`

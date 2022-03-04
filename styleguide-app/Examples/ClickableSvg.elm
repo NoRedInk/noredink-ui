@@ -270,13 +270,7 @@ initSettings =
                 |> ControlExtra.listItem "disabled"
                     (Control.map ClickableSvg.disabled (Control.bool False))
                 |> ControlExtra.optionalListItem "exactWidth"
-                    (Control.map ClickableSvg.exactWidth (controlInt 40))
+                    (Control.map ClickableSvg.exactWidth (ControlExtra.int 40))
                 |> ControlExtra.optionalListItem "exactHeight"
-                    (Control.map ClickableSvg.exactHeight (controlInt 20))
+                    (Control.map ClickableSvg.exactHeight (ControlExtra.int 20))
             )
-
-
-controlInt : Int -> Control Int
-controlInt default =
-    Control.map (String.toInt >> Maybe.withDefault default)
-        (Control.string (String.fromInt default))
