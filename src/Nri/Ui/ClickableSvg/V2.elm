@@ -3,7 +3,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , exactWidth, exactHeight
+    , exactSize, exactWidth, exactHeight
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
@@ -34,7 +34,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Sizing
 
-@docs exactWidth, exactHeight
+@docs exactSize, exactWidth, exactHeight
 
 
 ## State
@@ -187,6 +187,26 @@ medium =
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
+
+
+{-| Set the size in `px` for the element's width and height.
+
+Equivalent to:
+
+    [ exactWidth inPx
+    , exactHeight inPx
+    ]
+
+-}
+exactSize : Int -> Attribute msg
+exactSize inPx =
+    set
+        (\attributes ->
+            { attributes
+                | width = Just (toFloat inPx)
+                , height = Just (toFloat inPx)
+            }
+        )
 
 
 {-| Define a size in `px` for the element's total width.
