@@ -3,12 +3,12 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , small, medium, large
     , exactWidth, exactHeight
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
     , custom, css, nriDescription, testId, id
+    , small, medium, large
     )
 
 {-|
@@ -33,7 +33,6 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Sizing
 
-@docs small, medium, large
 @docs exactWidth, exactHeight
 
 
@@ -48,6 +47,13 @@ module Nri.Ui.ClickableSvg.V2 exposing
 @docs primary, secondary, danger, dangerSecondary
 
 @docs custom, css, nriDescription, testId, id
+
+
+### DEPRECATED
+
+In practice, we don't use these sizes. Remove them!
+
+@docs small, medium, large
 
 -}
 
@@ -154,20 +160,22 @@ type Size
     | Large
 
 
-{-| This is the default.
+{-| This is the default. This attribute will be removed in the next version of ClickableSvg!
 -}
 small : Attribute msg
 small =
     set (\attributes -> { attributes | size = Small })
 
 
-{-| -}
+{-| This attribute will be removed in the next version of ClickableSvg!
+-}
 medium : Attribute msg
 medium =
     set (\attributes -> { attributes | size = Medium })
 
 
-{-| -}
+{-| This attribute will be removed in the next version of ClickableSvg!
+-}
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
