@@ -1,15 +1,18 @@
 module Debug.Control.Extra exposing
     ( float, int
     , list, listItem, optionalListItem
+    , css
     )
 
 {-|
 
 @docs float, int
 @docs list, listItem, optionalListItem
+@docs css
 
 -}
 
+import Css
 import Debug.Control as Control exposing (Control)
 
 
@@ -53,3 +56,24 @@ optionalListItem name accessor accumulator =
     Control.field name
         (Control.map (List.singleton >> List.filterMap identity) (Control.maybe False accessor))
         (Control.map (++) accumulator)
+
+
+{-| -}
+css : String -> Control (List Css.Style)
+css exampleCss =
+    Control.map
+        (\rawStr ->
+            rawStr
+                |> String.split ";"
+                |> List.map
+                    (\segment ->
+                        case String.split ":" segment of
+                            name :: value :: [] ->
+                                Css.property name value
+
+                            _ ->
+                                -- Unable to parse css
+                                Css.property "" ""
+                    )
+        )
+        (Control.stringTextarea exampleCss)

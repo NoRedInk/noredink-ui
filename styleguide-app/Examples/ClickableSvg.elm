@@ -271,4 +271,6 @@ initSettings =
                     (Control.map ClickableSvg.disabled (Control.bool False))
                 |> ControlExtra.optionalListItem "exactSize"
                     (Control.map ClickableSvg.exactSize (ControlExtra.int 36))
+                |> ControlExtra.optionalListItem "css"
+                    (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
             )
