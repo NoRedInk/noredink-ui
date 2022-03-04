@@ -81,12 +81,12 @@ init =
                 |> CommonControls.mobileCss
                     { moduleName = "ClickableText"
                     , use = ClickableText.mobileCss
-                    , default = "padding: 10px;"
+                    , default = "[role=img] { display: none !important; }"
                     }
                 |> CommonControls.quizEngineMobileCss
                     { moduleName = "ClickableText"
                     , use = ClickableText.quizEngineMobileCss
-                    , default = ""
+                    , default = "[role=img] { display: none !important; }"
                     }
                 |> CommonControls.notMobileCss
                     { moduleName = "ClickableText"
