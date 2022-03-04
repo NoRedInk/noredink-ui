@@ -57,11 +57,11 @@ example =
     , view =
         \state ->
             let
-                ( icon, attributes ) =
-                    applySettings state.settings
+                { label, icon, attributes } =
+                    Control.currentValue state.settings
             in
             [ Html.fromUnstyled (Control.view SetControls state.settings)
-            , viewExampleTable icon attributes
+            , viewExampleTable label icon attributes
             , viewExample
                 """
 Tooltip.view
@@ -104,8 +104,8 @@ Tooltip.view
     }
 
 
-viewExampleTable : Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
-viewExampleTable icon attributes =
+viewExampleTable : String -> Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
+viewExampleTable label icon attributes =
     let
         viewExampleRow index ( themeName, theme ) =
             Html.tr []
@@ -129,14 +129,14 @@ viewExampleTable icon attributes =
                 ]
 
         buttonExample attributes_ =
-            ClickableSvg.button "Button example"
+            ClickableSvg.button label
                 icon
                 (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
                     :: attributes_
                 )
 
         linkExample attributes_ =
-            ClickableSvg.link "Link example"
+            ClickableSvg.link label
                 icon
                 (ClickableSvg.linkSpa "some_link" :: attributes_)
     in
@@ -234,23 +234,16 @@ update msg state =
 
 
 type alias Settings msg =
-    { icon : Svg
+    { label : String
+    , icon : Svg
     , attributes : List (ClickableSvg.Attribute msg)
     }
-
-
-applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
-applySettings settings =
-    let
-        { icon, attributes } =
-            Control.currentValue settings
-    in
-    ( icon, attributes )
 
 
 initSettings : Control (Settings msg)
 initSettings =
     Control.record Settings
+        |> Control.field "label" (Control.string "Back")
         |> Control.field "icon"
             (Control.choice
                 [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
