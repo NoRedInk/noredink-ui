@@ -278,25 +278,21 @@ initSettings =
                     )
                 |> CommonControls.css
                     { moduleName = "ClickableSvg"
-                    , helperName = "css"
                     , use = ClickableSvg.css
                     , default = "border: 2px solid red;"
                     }
-                |> CommonControls.css
+                |> CommonControls.mobileCss
                     { moduleName = "ClickableSvg"
-                    , helperName = "mobileCss"
                     , use = ClickableSvg.mobileCss
                     , default = "padding: 10px;"
                     }
-                |> CommonControls.css
+                |> CommonControls.quizEngineMobileCss
                     { moduleName = "ClickableSvg"
-                    , helperName = "quizEngineMobileCss"
                     , use = ClickableSvg.quizEngineMobileCss
                     , default = ""
                     }
-                |> CommonControls.css
+                |> CommonControls.notMobileCss
                     { moduleName = "ClickableSvg"
-                    , helperName = "notMobileCss"
                     , use = ClickableSvg.notMobileCss
                     , default = ""
                     }

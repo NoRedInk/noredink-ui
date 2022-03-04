@@ -73,6 +73,26 @@ init =
                         )
                         CommonControls.uiIcon
                     )
+                |> CommonControls.css
+                    { moduleName = "ClickableText"
+                    , use = ClickableText.css
+                    , default = "border: 2px solid red;"
+                    }
+                |> CommonControls.mobileCss
+                    { moduleName = "ClickableText"
+                    , use = ClickableText.mobileCss
+                    , default = "padding: 10px;"
+                    }
+                |> CommonControls.quizEngineMobileCss
+                    { moduleName = "ClickableText"
+                    , use = ClickableText.quizEngineMobileCss
+                    , default = ""
+                    }
+                |> CommonControls.notMobileCss
+                    { moduleName = "ClickableText"
+                    , use = ClickableText.notMobileCss
+                    , default = ""
+                    }
             )
         |> State
 

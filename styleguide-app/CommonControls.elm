@@ -1,4 +1,13 @@
-module CommonControls exposing (css, disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
+module CommonControls exposing
+    ( css, mobileCss, quizEngineMobileCss, notMobileCss
+    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon
+    )
+
+{-|
+
+@docs css, mobileCss, quizEngineMobileCss, notMobileCss
+
+-}
 
 import Css
 import Debug.Control as Control exposing (Control)
@@ -125,19 +134,52 @@ disabledListItem moduleName f =
 
 
 css :
-    { moduleName : String
-    , helperName : String
-    , use : List Css.Style -> b
-    , default : String
-    }
+    { moduleName : String, use : List Css.Style -> b, default : String }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
-css { moduleName, helperName, use, default } =
+css =
+    css_ "css"
+
+
+mobileCss :
+    { moduleName : String, use : List Css.Style -> b, default : String }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+mobileCss =
+    css_ "mobileCss"
+
+
+quizEngineMobileCss :
+    { moduleName : String, use : List Css.Style -> b, default : String }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+quizEngineMobileCss =
+    css_ "quizEngineMobileCss"
+
+
+notMobileCss :
+    { moduleName : String, use : List Css.Style -> b, default : String }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+notMobileCss =
+    css_ "notMobileCss"
+
+
+css_ :
+    String
+    ->
+        { moduleName : String
+        , use : List Css.Style -> b
+        , default : String
+        }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css_ helperName { moduleName, use, default } =
     ControlExtra.optionalListItem helperName
         (Control.map
-            (\( cssString, css_ ) ->
+            (\( cssString, cssValue ) ->
                 ( moduleName ++ "." ++ helperName ++ " " ++ cssString
-                , use css_
+                , use cssValue
                 )
             )
             (ControlExtra.css default)
