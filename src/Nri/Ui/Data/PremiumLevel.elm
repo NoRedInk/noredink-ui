@@ -11,7 +11,6 @@ module Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..), allowedFor, highest,
 type PremiumLevel
     = Free
     | Premium
-    | PremiumPromo
     | PremiumWithWriting
 
 
@@ -45,12 +44,9 @@ order : PremiumLevel -> Int
 order privileges =
     case privileges of
         PremiumWithWriting ->
-            3
-
-        Premium ->
             2
 
-        PremiumPromo ->
+        Premium ->
             1
 
         Free ->
