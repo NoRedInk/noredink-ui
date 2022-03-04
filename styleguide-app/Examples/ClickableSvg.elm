@@ -271,14 +271,33 @@ initSettings =
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
-             --|> ControlExtra.optionalListItem "exactSize"
-             --    (Control.map ClickableSvg.exactSize (ControlExtra.int 36))
-             --|> ControlExtra.optionalListItem "css"
-             --    (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
-             --|> ControlExtra.optionalListItem "mobileCss"
-             --    (Control.map ClickableSvg.mobileCss (ControlExtra.css "padding: 10px;"))
-             --|> ControlExtra.optionalListItem "quizEngineMobileCss"
-             --    (Control.map ClickableSvg.quizEngineMobileCss (ControlExtra.css ""))
-             --|> ControlExtra.optionalListItem "notMobileCss"
-             --    (Control.map ClickableSvg.notMobileCss (ControlExtra.css ""))
+                |> ControlExtra.optionalListItem "exactSize"
+                    (Control.map
+                        (\v -> ( "ClickableSvg.exactSize " ++ String.fromInt v, ClickableSvg.exactSize v ))
+                        (ControlExtra.int 36)
+                    )
+                |> CommonControls.css
+                    { moduleName = "ClickableSvg"
+                    , helperName = "css"
+                    , use = ClickableSvg.css
+                    , default = "border: 2px solid red;"
+                    }
+                |> CommonControls.css
+                    { moduleName = "ClickableSvg"
+                    , helperName = "mobileCss"
+                    , use = ClickableSvg.mobileCss
+                    , default = "padding: 10px;"
+                    }
+                |> CommonControls.css
+                    { moduleName = "ClickableSvg"
+                    , helperName = "quizEngineMobileCss"
+                    , use = ClickableSvg.quizEngineMobileCss
+                    , default = ""
+                    }
+                |> CommonControls.css
+                    { moduleName = "ClickableSvg"
+                    , helperName = "notMobileCss"
+                    , use = ClickableSvg.notMobileCss
+                    , default = ""
+                    }
             )

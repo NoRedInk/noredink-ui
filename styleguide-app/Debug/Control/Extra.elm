@@ -76,21 +76,26 @@ optionalBoolListItem name f accumulator =
 
 
 {-| -}
-css : String -> Control (List Css.Style)
+css : String -> Control ( String, List Css.Style )
 css exampleCss =
     Control.map
         (\rawStr ->
             rawStr
                 |> String.split ";"
-                |> List.map
+                |> List.filterMap
                     (\segment ->
                         case String.split ":" segment of
                             name :: value :: [] ->
-                                Css.property name value
+                                Just
+                                    ( "Css.property \"" ++ String.trim name ++ "\" \"" ++ String.trim value ++ "\""
+                                    , Css.property name value
+                                    )
 
                             _ ->
                                 -- Unable to parse css
-                                Css.property "" ""
+                                Nothing
                     )
+                |> List.unzip
+                |> Tuple.mapFirst (\props -> "[ " ++ String.join "," props ++ " ]")
         )
         (Control.stringTextarea exampleCss)

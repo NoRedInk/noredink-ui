@@ -1,5 +1,6 @@
-module CommonControls exposing (disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
+module CommonControls exposing (css, disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon)
 
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
@@ -120,4 +121,24 @@ disabledListItem moduleName f =
             ( moduleName ++ ".disabled True"
             , f bool
             )
+        )
+
+
+css :
+    { moduleName : String
+    , helperName : String
+    , use : List Css.Style -> b
+    , default : String
+    }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css { moduleName, helperName, use, default } =
+    ControlExtra.optionalListItem helperName
+        (Control.map
+            (\( cssString, css_ ) ->
+                ( moduleName ++ "." ++ helperName ++ " " ++ cssString
+                , use css_
+                )
+            )
+            (ControlExtra.css default)
         )
