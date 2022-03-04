@@ -269,13 +269,6 @@ initSettings =
             (ControlExtra.list
                 |> ControlExtra.listItem "disabled"
                     (Control.map ClickableSvg.disabled (Control.bool False))
-                |> ControlExtra.listItem "size"
-                    (Control.choice
-                        [ ( "small", Control.value ClickableSvg.small )
-                        , ( "medium", Control.value ClickableSvg.medium )
-                        , ( "large", Control.value ClickableSvg.large )
-                        ]
-                    )
                 |> ControlExtra.optionalListItem "exactWidth"
                     (Control.map ClickableSvg.exactWidth (controlInt 40))
                 |> ControlExtra.optionalListItem "exactHeight"
