@@ -268,4 +268,8 @@ initSettings =
                     (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
                 |> ControlExtra.optionalListItem "mobileCss"
                     (Control.map ClickableSvg.mobileCss (ControlExtra.css "padding: 10px;"))
+                |> ControlExtra.optionalListItem "quizEngineMobileCss"
+                    (Control.map ClickableSvg.quizEngineMobileCss (ControlExtra.css ""))
+                |> ControlExtra.optionalListItem "notMobileCss"
+                    (Control.map ClickableSvg.notMobileCss (ControlExtra.css ""))
             )
