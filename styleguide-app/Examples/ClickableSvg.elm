@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import EventExtras
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -56,12 +57,29 @@ example =
         ]
     , view =
         \state ->
-            let
-                { label, icon, attributes } =
-                    Control.currentValue state.settings
-            in
-            [ Html.fromUnstyled (Control.view SetControls state.settings)
-            , viewExampleTable label icon attributes
+            [ ControlView.view
+                { update = SetControls
+                , settings = state.settings
+                , toExampleCode =
+                    \{ label, icon, attributes } ->
+                        let
+                            toCode fName =
+                                "ClickableSvg."
+                                    ++ fName
+                                    ++ " \""
+                                    ++ label
+                                    ++ "\""
+                                    ++ ControlView.codeFromList attributes
+                        in
+                        [ { sectionName = "Button"
+                          , code = toCode "button"
+                          }
+                        , { sectionName = "Link"
+                          , code = toCode "link"
+                          }
+                        ]
+                }
+            , viewExampleTable (Control.currentValue state.settings)
             , viewExample
                 """
 Tooltip.view
@@ -104,16 +122,19 @@ Tooltip.view
     }
 
 
-viewExampleTable : String -> Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
-viewExampleTable label icon attributes =
+viewExampleTable : Settings Msg -> Html Msg
+viewExampleTable { label, icon, attributes } =
     let
+        sharedAttributes =
+            List.map Tuple.second attributes
+
         viewExampleRow index ( themeName, theme ) =
             Html.tr []
                 [ cell index [ Html.text themeName ]
-                , cell index [ buttonExample (theme :: attributes) ]
-                , cell index [ linkExample (theme :: attributes) ]
-                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: attributes) ]
-                , cell index [ linkExample (ClickableSvg.withBorder :: theme :: attributes) ]
+                , cell index [ buttonExample (theme :: sharedAttributes) ]
+                , cell index [ linkExample (theme :: sharedAttributes) ]
+                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: sharedAttributes) ]
+                , cell index [ linkExample (ClickableSvg.withBorder :: theme :: sharedAttributes) ]
                 ]
 
         cell index =
@@ -236,7 +257,7 @@ update msg state =
 type alias Settings msg =
     { label : String
     , icon : Svg
-    , attributes : List (ClickableSvg.Attribute msg)
+    , attributes : List ( String, ClickableSvg.Attribute msg )
     }
 
 
@@ -272,4 +293,5 @@ initSettings =
                     (Control.map ClickableSvg.quizEngineMobileCss (ControlExtra.css ""))
                 |> ControlExtra.optionalListItem "notMobileCss"
                     (Control.map ClickableSvg.notMobileCss (ControlExtra.css ""))
+                |> Control.map (List.map (\v -> ( Debug.toString v, v )))
             )
