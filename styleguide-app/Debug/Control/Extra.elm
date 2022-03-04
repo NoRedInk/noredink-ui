@@ -1,13 +1,13 @@
 module Debug.Control.Extra exposing
     ( float, int
-    , list, listItem, optionalListItem, optionalBoolListItem
+    , list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
     , css
     )
 
 {-|
 
 @docs float, int
-@docs list, listItem, optionalListItem, optionalBoolListItem
+@docs list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
 @docs css
 
 -}
@@ -52,9 +52,21 @@ listItem name accessor accumulator =
 
 {-| -}
 optionalListItem : String -> Control a -> Control (List a) -> Control (List a)
-optionalListItem name accessor accumulator =
+optionalListItem =
+    optionalListItem_ False
+
+
+{-| -}
+optionalListItemDefaultChecked : String -> Control a -> Control (List a) -> Control (List a)
+optionalListItemDefaultChecked =
+    optionalListItem_ True
+
+
+{-| -}
+optionalListItem_ : Bool -> String -> Control a -> Control (List a) -> Control (List a)
+optionalListItem_ default name accessor accumulator =
     Control.field name
-        (Control.map (List.singleton >> List.filterMap identity) (Control.maybe False accessor))
+        (Control.map (List.singleton >> List.filterMap identity) (Control.maybe default accessor))
         (Control.map (++) accumulator)
 
 

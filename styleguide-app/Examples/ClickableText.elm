@@ -8,8 +8,11 @@ module Examples.ClickableText exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
@@ -18,11 +21,6 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-{-| -}
-type State
-    = State (Control Model)
 
 
 {-| -}
@@ -57,25 +55,34 @@ example =
 
 
 {-| -}
+type State
+    = State (Control (Settings Msg))
+
+
+{-| -}
 init : State
 init =
-    Control.record Model
+    Control.record Settings
         |> Control.field "label" (Control.string "Clickable Text")
-        |> Control.field "icon"
-            (Control.maybe True <|
-                Control.choice
-                    [ ( "premiumLock", Control.value UiIcon.premiumLock )
-                    , ( "preview", Control.value UiIcon.preview )
-                    , ( "performance", Control.value UiIcon.performance )
-                    , ( "edit", Control.value UiIcon.edit )
-                    ]
+        |> Control.field "attributes"
+            (ControlExtra.list
+                |> ControlExtra.optionalListItemDefaultChecked "icon"
+                    (Control.map (\( name, icon ) -> ClickableText.icon icon)
+                        CommonControls.uiIcon
+                    )
             )
         |> State
 
 
+type alias Settings msg =
+    { label : String
+    , attributes : List (ClickableText.Attribute msg)
+    }
+
+
 {-| -}
 type Msg
-    = SetState State
+    = SetState (Control (Settings Msg))
     | ShowItWorked String String
 
 
@@ -83,8 +90,8 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetState newState ->
-            ( newState, Cmd.none )
+        SetState controls ->
+            ( State controls, Cmd.none )
 
         ShowItWorked group message ->
             let
@@ -98,36 +105,26 @@ update msg state =
 -- INTERNAL
 
 
-type alias Model =
-    { label : String
-    , icon : Maybe Svg
-    }
-
-
 viewExamples : State -> Html Msg
 viewExamples (State control) =
     let
-        model =
+        settings =
             Control.currentValue control
     in
-    [ Control.view (State >> SetState) control
+    [ Control.view SetState control
         |> fromUnstyled
-    , buttons model
+    , buttons settings
     , Text.smallBody
         [ Text.html
             [ text "Sometimes, we'll want our clickable links: "
-            , ClickableText.link model.label
-                [ ClickableText.small
-                , Maybe.map ClickableText.icon model.icon
-                    |> Maybe.withDefault (ClickableText.custom [])
-                ]
+            , ClickableText.link settings.label
+                (ClickableText.small :: settings.attributes)
             , text " and clickable buttons: "
-            , ClickableText.button model.label
-                [ ClickableText.small
-                , ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
-                , Maybe.map ClickableText.icon model.icon
-                    |> Maybe.withDefault (ClickableText.custom [])
-                ]
+            , ClickableText.button settings.label
+                (ClickableText.small
+                    :: ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
+                    :: settings.attributes
+                )
             , text " to show up in-line."
             ]
         ]
@@ -143,8 +140,8 @@ sizes =
     ]
 
 
-buttons : Model -> Html Msg
-buttons model =
+buttons : Settings Msg -> Html Msg
+buttons settings =
     let
         sizeRow label render =
             row label (List.map render sizes)
@@ -153,21 +150,17 @@ buttons model =
         [ sizeRow "" (\( size, sizeLabel ) -> th [] [ text sizeLabel ])
         , sizeRow ".link"
             (\( size, sizeLabel ) ->
-                ClickableText.link model.label
-                    [ size
-                    , Maybe.map ClickableText.icon model.icon
-                        |> Maybe.withDefault (ClickableText.custom [])
-                    ]
+                ClickableText.link settings.label
+                    (size :: settings.attributes)
                     |> exampleCell
             )
         , sizeRow ".button"
             (\( size, sizeLabel ) ->
-                ClickableText.button model.label
-                    [ size
-                    , ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
-                    , Maybe.map ClickableText.icon model.icon
-                        |> Maybe.withDefault (ClickableText.custom [])
-                    ]
+                ClickableText.button settings.label
+                    (size
+                        :: ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
+                        :: settings.attributes
+                    )
                     |> exampleCell
             )
         ]
