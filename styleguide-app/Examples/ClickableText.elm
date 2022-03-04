@@ -67,7 +67,10 @@ init =
         |> Control.field "attributes"
             (ControlExtra.list
                 |> ControlExtra.optionalListItemDefaultChecked "icon"
-                    (Control.map (\( name, icon ) -> ClickableText.icon icon)
+                    (Control.map
+                        (\( iconName, icon ) ->
+                            ( "ClickableText.icon " ++ iconName, ClickableText.icon icon )
+                        )
                         CommonControls.uiIcon
                     )
             )
@@ -76,7 +79,7 @@ init =
 
 type alias Settings msg =
     { label : String
-    , attributes : List (ClickableText.Attribute msg)
+    , attributes : List ( String, ClickableText.Attribute msg )
     }
 
 
@@ -110,20 +113,43 @@ viewExamples (State control) =
     let
         settings =
             Control.currentValue control
+
+        clickableAttributes =
+            List.map Tuple.second settings.attributes
     in
-    [ Control.view SetState control
-        |> fromUnstyled
+    [ ControlView.view
+        { update = SetState
+        , settings = control
+        , toExampleCode =
+            \{ label, attributes } ->
+                let
+                    toCode fName =
+                        "ClickableText."
+                            ++ fName
+                            ++ " \""
+                            ++ label
+                            ++ "\"\n\t"
+                            ++ ControlView.codeFromList attributes
+                in
+                [ { sectionName = "Button"
+                  , code = toCode "button"
+                  }
+                , { sectionName = "Link"
+                  , code = toCode "link"
+                  }
+                ]
+        }
     , buttons settings
     , Text.smallBody
         [ Text.html
             [ text "Sometimes, we'll want our clickable links: "
             , ClickableText.link settings.label
-                (ClickableText.small :: settings.attributes)
+                (ClickableText.small :: clickableAttributes)
             , text " and clickable buttons: "
             , ClickableText.button settings.label
                 (ClickableText.small
                     :: ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
-                    :: settings.attributes
+                    :: clickableAttributes
                 )
             , text " to show up in-line."
             ]
@@ -151,7 +177,7 @@ buttons settings =
         , sizeRow ".link"
             (\( size, sizeLabel ) ->
                 ClickableText.link settings.label
-                    (size :: settings.attributes)
+                    (size :: List.map Tuple.second settings.attributes)
                     |> exampleCell
             )
         , sizeRow ".button"
@@ -159,7 +185,7 @@ buttons settings =
                 ClickableText.button settings.label
                     (size
                         :: ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
-                        :: settings.attributes
+                        :: List.map Tuple.second settings.attributes
                     )
                     |> exampleCell
             )
