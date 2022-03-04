@@ -273,4 +273,6 @@ initSettings =
                     (Control.map ClickableSvg.exactSize (ControlExtra.int 36))
                 |> ControlExtra.optionalListItem "css"
                     (Control.map ClickableSvg.css (ControlExtra.css "border: 2px solid red;"))
+                |> ControlExtra.optionalListItem "mobileCss"
+                    (Control.map ClickableSvg.mobileCss (ControlExtra.css "padding: 10px;"))
             )
