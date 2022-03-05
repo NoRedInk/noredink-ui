@@ -12,6 +12,7 @@ import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
@@ -195,8 +196,28 @@ viewButtonExamples state =
         model =
             Control.currentValue state.debugControlsState
     in
-    [ Control.view SetDebugControlsState state.debugControlsState
-        |> fromUnstyled
+    [ ControlView.view
+        { update = SetDebugControlsState
+        , settings = state.debugControlsState
+        , toExampleCode =
+            \{ label, attributes } ->
+                let
+                    toCode fName =
+                        "Button."
+                            ++ fName
+                            ++ " \""
+                            ++ label
+                            ++ "\"\n\t"
+                            ++ ControlView.codeFromList attributes
+                in
+                [ { sectionName = "Button"
+                  , code = toCode "button"
+                  }
+                , { sectionName = "Link"
+                  , code = toCode "link"
+                  }
+                ]
+        }
     , buttons model
     , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
