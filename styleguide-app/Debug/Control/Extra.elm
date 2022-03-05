@@ -107,14 +107,14 @@ css exampleCss =
 selectorAndStyles : Regex.Regex
 selectorAndStyles =
     Maybe.withDefault Regex.never
-        (Regex.fromString "([\\s\\S]+)\\s*{\\s*([\\s\\S]*)\\s*}\\s*")
+        (Regex.fromString "([^{]+){([^}]*)}")
 
 
 toCss : List Regex.Match -> ( String, List Css.Style )
 toCss matches =
     List.concatMap
         (\match ->
-            case Debug.log "Matches" <| List.filterMap identity match.submatches of
+            case List.filterMap identity match.submatches of
                 selector :: styles :: [] ->
                     let
                         ( stylesStr, stylesVal ) =
@@ -130,7 +130,7 @@ toCss matches =
         )
         matches
         |> List.unzip
-        |> Tuple.mapFirst (\props -> "[ Css.Global.descendants [ " ++ String.join "," props ++ " ] ]")
+        |> Tuple.mapFirst (\props -> "\n\t\t[ Css.Global.descendants \n\t\t\t[ " ++ String.join "\n\t\t," props ++ " \n\t\t\t]\n\t\t]")
         |> Tuple.mapSecond (\props -> [ Css.Global.descendants props ])
 
 
