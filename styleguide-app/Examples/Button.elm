@@ -166,6 +166,26 @@ initDebugControls =
                         , ( "success", Button.success )
                         ]
                     )
+                |> CommonControls.css
+                    { moduleName = "Button"
+                    , use = Button.css
+                    , default = "border: 2px solid red;"
+                    }
+                |> CommonControls.mobileCss
+                    { moduleName = "Button"
+                    , use = Button.mobileCss
+                    , default = "[role=img] { display: none !important; }"
+                    }
+                |> CommonControls.quizEngineMobileCss
+                    { moduleName = "Button"
+                    , use = Button.quizEngineMobileCss
+                    , default = "[role=img] { display: none !important; }"
+                    }
+                |> CommonControls.notMobileCss
+                    { moduleName = "Button"
+                    , use = Button.notMobileCss
+                    , default = ""
+                    }
             )
 
 
