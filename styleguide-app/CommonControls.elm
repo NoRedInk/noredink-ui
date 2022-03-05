@@ -1,11 +1,13 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss
+    , choice
     , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon
     )
 
 {-|
 
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss
+@docs choice
 
 -}
 
@@ -22,9 +24,9 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 premiumLevel : Control ( String, PremiumLevel )
 premiumLevel =
-    Control.choice
-        [ ( "Free", Control.value ( "Free", Free ) )
-        , ( "PremiumWithWriting", Control.value ( "PremiumWithWriting", PremiumWithWriting ) )
+    choice "PremiumLevel"
+        [ ( "Free", Free )
+        , ( "PremiumWithWriting", PremiumWithWriting )
         ]
 
 
@@ -116,9 +118,15 @@ uiIcon =
     , ( "library", UiIcon.library )
     , ( "searchInCicle", UiIcon.searchInCicle )
     ]
+        |> choice "UiIcon"
+
+
+choice : String -> List ( String, value ) -> Control ( String, value )
+choice moduleName options =
+    options
         |> List.map
             (\( name, value ) ->
-                ( name, Control.value ( "UiIcon." ++ name, value ) )
+                ( name, Control.value ( moduleName ++ "." ++ name, value ) )
             )
         |> Control.choice
 
