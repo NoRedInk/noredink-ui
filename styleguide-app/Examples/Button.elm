@@ -8,8 +8,10 @@ module Examples.Button exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
@@ -126,10 +128,8 @@ update msg state =
 
 type alias Model =
     { label : String
-    , icon : Maybe Svg
     , buttonType : ButtonType
-    , width : Button.Attribute Msg
-    , state : Button.Attribute Msg
+    , attributes : List ( String, Button.Attribute Msg )
     }
 
 
@@ -138,43 +138,35 @@ initDebugControls : Control Model
 initDebugControls =
     Control.record Model
         |> Control.field "label" (Control.string "Label")
-        |> Control.field "icon" (Control.maybe True iconChoice)
         |> Control.field "button type"
             (Control.choice
                 [ ( "button", Control.value Button )
                 , ( "link", Control.value Link )
                 ]
             )
-        |> Control.field "width"
-            (Control.choice
-                [ ( "exactWidth 120", Control.value (Button.exactWidth 120) )
-                , ( "exactWidth 70", Control.value (Button.exactWidth 70) )
-                , ( "boundedWidth 100 180", Control.value (Button.boundedWidth { min = 100, max = 180 }) )
-                , ( "unboundedWidth", Control.value Button.unboundedWidth )
-                , ( "fillContainerWidth", Control.value Button.fillContainerWidth )
-                ]
+        |> Control.field "attributes"
+            (ControlExtra.list
+                |> CommonControls.icon "Button" Button.icon
+                |> ControlExtra.optionalListItem "width"
+                    (CommonControls.choice "Button"
+                        [ ( "exactWidth 120", Button.exactWidth 120 )
+                        , ( "exactWidth 70", Button.exactWidth 70 )
+                        , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
+                        , ( "unboundedWidth", Button.unboundedWidth )
+                        , ( "fillContainerWidth", Button.fillContainerWidth )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "state (button only)"
+                    (CommonControls.choice "Button"
+                        [ ( "enabled", Button.enabled )
+                        , ( "disabled", Button.disabled )
+                        , ( "error", Button.error )
+                        , ( "unfulfilled", Button.unfulfilled )
+                        , ( "loading", Button.loading )
+                        , ( "success", Button.success )
+                        ]
+                    )
             )
-        |> Control.field "state (button only)"
-            (Control.choice
-                [ ( "enabled", Control.value Button.enabled )
-                , ( "disabled", Control.value Button.disabled )
-                , ( "error", Control.value Button.error )
-                , ( "unfulfilled", Control.value Button.unfulfilled )
-                , ( "loading", Control.value Button.loading )
-                , ( "success", Control.value Button.success )
-                ]
-            )
-
-
-iconChoice : Control.Control Svg
-iconChoice =
-    Control.choice
-        [ ( "preview", Control.value UiIcon.preview )
-        , ( "arrowLeft", Control.value UiIcon.arrowLeft )
-        , ( "performance", Control.value UiIcon.performance )
-        , ( "share", Control.value UiIcon.share )
-        , ( "download", Control.value UiIcon.download )
-        ]
 
 
 viewButtonExamples : State -> Html Msg
@@ -238,19 +230,13 @@ buttons model =
 
         exampleCell setStyle setSize =
             buttonOrLink model.label
-                [ setSize
-                , setStyle
-                , model.width
-                , model.state
-                , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
-                , case model.icon of
-                    Just icon ->
-                        Button.icon icon
-
-                    Nothing ->
-                        Button.custom []
-                ]
+                ([ setSize
+                 , setStyle
+                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
+                 , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
+                 ]
+                    ++ List.map Tuple.second model.attributes
+                )
                 |> List.singleton
                 |> td
                     [ css

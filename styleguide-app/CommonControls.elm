@@ -1,13 +1,15 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss
     , choice
-    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation, uiIcon
+    , icon, uiIcon
+    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation
     )
 
 {-|
 
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss
 @docs choice
+@docs icon, uiIcon
 
 -}
 
@@ -103,6 +105,21 @@ exampleHtml =
         [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
+
+
+icon :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+icon moduleName f =
+    ControlExtra.optionalListItemDefaultChecked "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
 
 
 uiIcon : Control ( String, Svg )

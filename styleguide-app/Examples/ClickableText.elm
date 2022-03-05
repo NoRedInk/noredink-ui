@@ -66,13 +66,7 @@ init =
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "attributes"
             (ControlExtra.list
-                |> ControlExtra.optionalListItemDefaultChecked "icon"
-                    (Control.map
-                        (\( iconName, icon ) ->
-                            ( "ClickableText.icon " ++ iconName, ClickableText.icon icon )
-                        )
-                        CommonControls.uiIcon
-                    )
+                |> CommonControls.icon "ClickableText" ClickableText.icon
                 |> CommonControls.css
                     { moduleName = "ClickableText"
                     , use = ClickableText.css
