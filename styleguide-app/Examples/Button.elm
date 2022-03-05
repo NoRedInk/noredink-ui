@@ -127,8 +127,8 @@ update msg state =
 
 
 type alias Model =
-    { label : String
-    , buttonType : ButtonType
+    { buttonType : ButtonType
+    , label : String
     , attributes : List ( String, Button.Attribute Msg )
     }
 
@@ -137,13 +137,13 @@ type alias Model =
 initDebugControls : Control Model
 initDebugControls =
     Control.record Model
-        |> Control.field "label" (Control.string "Label")
-        |> Control.field "button type"
+        |> Control.field "type"
             (Control.choice
                 [ ( "button", Control.value Button )
                 , ( "link", Control.value Link )
                 ]
             )
+        |> Control.field "label" (Control.string "Label")
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon "Button" Button.icon
