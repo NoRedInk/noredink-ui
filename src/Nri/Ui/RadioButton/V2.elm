@@ -107,9 +107,6 @@ premium config =
                 PremiumLevel.Premium ->
                     config.showPennant
 
-                PremiumLevel.PremiumPromo ->
-                    config.showPennant
-
                 PremiumLevel.PremiumWithWriting ->
                     config.showPennant
 
