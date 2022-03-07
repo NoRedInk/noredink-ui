@@ -13,7 +13,7 @@ module Examples.RadioButton exposing
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import CommonControls exposing (premiumLevel)
+import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -23,10 +23,10 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V11 as Modal
-import Nri.Ui.RadioButton.V3 as RadioButton
+import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Task
 
@@ -86,10 +86,7 @@ preview =
         , valueToString = identity
         }
         [ RadioButton.custom [ Key.tabbable False ]
-        , RadioButton.premium
-            { teacherPremiumLevel = PremiumLevel.Free
-            , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-            }
+        , RadioButton.premium PremiumDisplay.PremiumLocked
         ]
     ]
 
@@ -246,17 +243,10 @@ controlAttributes =
         |> ControlExtra.optionalListItem "premium"
             -- TODO: allow the teacher premium level to vary as well:
             (Control.map
-                (\( contentLevel, clevel ) ->
-                    ( "RadioButton.premium { teacherPremiumLevel = PremiumLevel.Premium, contentPremiumLevel = "
-                        ++ contentLevel
-                        ++ "}"
-                    , RadioButton.premium
-                        { teacherPremiumLevel = PremiumLevel.Premium
-                        , contentPremiumLevel = clevel
-                        }
-                    )
+                (\( premiumDisplay, pDisplay ) ->
+                    ( "RadioButton.premium " ++ premiumDisplay, RadioButton.premium pDisplay )
                 )
-                premiumLevel
+                premiumDisplay
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
