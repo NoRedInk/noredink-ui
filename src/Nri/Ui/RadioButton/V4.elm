@@ -114,8 +114,6 @@ premium premiumDisplay =
 
 When the pennant is clicked, the msg that's passed in will fire.
 
-For RadioButton.V4, consider removing `showPennant` from the API.
-
 -}
 showPennant : msg -> Attribute value msg
 showPennant premiumMsg =
