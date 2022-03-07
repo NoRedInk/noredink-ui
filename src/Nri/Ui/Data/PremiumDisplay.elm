@@ -6,6 +6,7 @@ module Nri.Ui.Data.PremiumDisplay exposing (PremiumDisplay(..))
 
 -}
 
+
 {-| -}
 type PremiumDisplay
     = Free

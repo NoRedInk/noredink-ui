@@ -153,7 +153,6 @@ view { label, onChange } attributes =
 
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
-
     in
     Html.div [ css config.containerCss ]
         [ case config.premiumDisplay of

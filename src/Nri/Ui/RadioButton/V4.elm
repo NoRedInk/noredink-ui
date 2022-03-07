@@ -291,7 +291,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
-
     in
     Html.span
         [ Attributes.id (idValue ++ "-container")
