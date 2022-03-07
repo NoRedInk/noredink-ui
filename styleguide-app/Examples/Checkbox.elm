@@ -13,8 +13,8 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel(..))
-import Nri.Ui.PremiumCheckbox.V7 as PremiumCheckbox
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Set exposing (Set)
 
 
@@ -187,10 +187,7 @@ viewPremiumCheckboxes state =
             { label = "Identify Adjectives 1 (Premium)"
             , onChange = ToggleCheck "premium-1"
             }
-            [ PremiumCheckbox.premium
-                { teacherPremiumLevel = PremiumLevel.PremiumWithWriting
-                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-                }
+            [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
             , PremiumCheckbox.showPennant NoOp
             , PremiumCheckbox.selected (Set.member "premium-1" state.isChecked)
             ]
@@ -198,10 +195,7 @@ viewPremiumCheckboxes state =
             { label = "Identify Adjectives 2 (Free)"
             , onChange = ToggleCheck "premium-2"
             }
-            [ PremiumCheckbox.premium
-                { teacherPremiumLevel = PremiumLevel.PremiumWithWriting
-                , contentPremiumLevel = PremiumLevel.Free
-                }
+            [ PremiumCheckbox.premium PremiumDisplay.Free
             , PremiumCheckbox.showPennant NoOp
             , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
             ]
@@ -209,10 +203,7 @@ viewPremiumCheckboxes state =
             { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
             , onChange = ToggleCheck "premium-3"
             }
-            [ PremiumCheckbox.premium
-                { teacherPremiumLevel = PremiumLevel.Free
-                , contentPremiumLevel = PremiumLevel.PremiumWithWriting
-                }
+            [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
             , PremiumCheckbox.showPennant NoOp
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
             ]
