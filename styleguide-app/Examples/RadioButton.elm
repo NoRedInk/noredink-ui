@@ -35,7 +35,7 @@ import Task
 example : Example State Msg
 example =
     { name = "RadioButton"
-    , version = 3
+    , version = 4
     , state = init
     , update = update
     , subscriptions = subscriptions
