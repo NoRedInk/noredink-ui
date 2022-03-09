@@ -1,15 +1,21 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss
     , choice
-    , icon, uiIcon
-    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation
+    , icon, iconNotCheckedByDefault, uiIcon
+    , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+    , disabledListItem, premiumLevel
     )
 
 {-|
 
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss
 @docs choice
-@docs icon, uiIcon
+@docs icon, iconNotCheckedByDefault, uiIcon
+
+
+### Content
+
+@docs quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
 
 -}
 
@@ -73,6 +79,11 @@ quickBrownFox =
     "The quick brown fox jumps over the lazy dog."
 
 
+longPangrams : String
+longPangrams =
+    "Waltz, bad nymph, for quick jigs vex. Glib jocks quiz nymph to vex dwarf. Sphinx of black quartz, judge my vow. How vexingly quick daft zebras jump!"
+
+
 romeoAndJulietQuotation : String
 romeoAndJulietQuotation =
     """
@@ -91,6 +102,11 @@ romeoAndJulietQuotation =
         The which if you with patient ears attend,
         What here shall miss, our toil shall strive to mend.
     """
+
+
+markdown : String
+markdown =
+    "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
 
 
 exampleHtml : List (Html msg)
@@ -114,6 +130,21 @@ icon :
     -> Control (List ( String, value ))
 icon moduleName f =
     ControlExtra.optionalListItemDefaultChecked "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
+
+
+iconNotCheckedByDefault :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+iconNotCheckedByDefault moduleName f =
+    ControlExtra.optionalListItem "icon"
         (Control.map
             (\( iconName, iconValue ) ->
                 ( moduleName ++ ".icon " ++ iconName, f iconValue )
