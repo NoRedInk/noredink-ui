@@ -40,11 +40,18 @@ viewExampleCode values =
     viewSection "Generated Code" <|
         List.concatMap
             (\{ sectionName, code } ->
-                [ Heading.h4 [] [ text sectionName ]
-                , Html.Styled.code
-                    [ css [ whiteSpace preWrap ]
+                [ details []
+                    [ summary []
+                        [ Heading.h4
+                            [ Heading.css [ Css.display Css.inline ]
+                            ]
+                            [ text sectionName ]
+                        ]
+                    , Html.Styled.code
+                        [ css [ whiteSpace preWrap ]
+                        ]
+                        [ text code ]
                     ]
-                    [ text code ]
                 ]
             )
             values
