@@ -8,6 +8,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , icon
     , custom, nriDescription, testId, id
     , hideIconForMobile, hideIconFor
+    , hideTextForMobile, hideTextFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
@@ -24,6 +25,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `modal` helper, for use in modal footers, same as applying large and Css.marginTop (Css.px 15)
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconAt`
+  - adds `hideTextForMobile` and `hideTextAt`
 
 
 # Changes from V2
@@ -77,10 +79,12 @@ HTML `<a>` elements and are created here with `*Link` functions.
 ### CSS
 
 @docs hideIconForMobile, hideIconFor
+@docs hideTextForMobile, hideTextFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 -}
 
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
@@ -192,6 +196,26 @@ hideIconFor mediaQuery =
             [ Css.Global.descendants
                 [ Css.Global.selector "[role=img]"
                     [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+hideTextForMobile : Attribute msg
+hideTextForMobile =
+    hideTextFor MediaQuery.mobile
+
+
+{-| -}
+hideTextFor : MediaQuery -> Attribute msg
+hideTextFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ ExtraAttributes.nriDescriptionSelector "clickable-text-label"
+                    [ invisibleStyle
                     ]
                 ]
             ]
@@ -378,7 +402,7 @@ viewContent config =
                                     Css.marginRight (Css.px 4)
                             ]
                         |> Svg.toHtml
-                    , span [] [ text config.label ]
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
                     ]
                 ]
 

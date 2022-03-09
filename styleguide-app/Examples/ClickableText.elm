@@ -71,6 +71,10 @@ init =
                     (\_ ->
                         ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                     )
+                |> ControlExtra.optionalBoolListItem "hideTextForMobile"
+                    (\_ ->
+                        ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
+                    )
                 |> CommonControls.css
                     { moduleName = "ClickableText"
                     , use = ClickableText.css

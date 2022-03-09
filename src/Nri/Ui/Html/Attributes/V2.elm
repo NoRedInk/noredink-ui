@@ -1,4 +1,4 @@
-module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDescription, testId)
+module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDescription, nriDescriptionSelector, testId)
 
 {-|
 
@@ -11,10 +11,12 @@ Extras for working with Html.Attributes.
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 
-@docs none, includeIf, targetBlank, nriDescription, testId
+@docs none, includeIf, targetBlank, nriDescription, nriDescriptionSelector, testId
 
 -}
 
+import Css
+import Css.Global
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Json.Encode as Encode
@@ -75,3 +77,13 @@ testId id =
 nriDescription : String -> Attribute msg
 nriDescription description =
     Attributes.attribute "data-nri-description" description
+
+
+{-|
+
+    Note: this does not handle html escaping the description before building the query
+
+-}
+nriDescriptionSelector : String -> List Css.Style -> Css.Global.Snippet
+nriDescriptionSelector description =
+    Css.Global.selector (String.join "" [ "[data-nri-description=\"", description, "\"]" ])
