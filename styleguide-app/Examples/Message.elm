@@ -46,6 +46,21 @@ init =
                 , use = Message.css
                 , default = "border: 1px dashed red;"
                 }
+            |> CommonControls.mobileCss
+                { moduleName = "Message"
+                , use = Message.mobileCss
+                , default = "border: 2px solid orange;"
+                }
+            |> CommonControls.quizEngineMobileCss
+                { moduleName = "Message"
+                , use = Message.quizEngineMobileCss
+                , default = "border: 4px solid yellow !important;"
+                }
+            |> CommonControls.notMobileCss
+                { moduleName = "Message"
+                , use = Message.notMobileCss
+                , default = ""
+                }
     }
 
 

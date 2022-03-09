@@ -3,7 +3,7 @@ module Nri.Ui.Message.V3 exposing
     , view, Attribute
     , icon, custom, testId, id
     , hideIconForMobile, hideIconFor
-    , css
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
     , tiny, large, banner
     , plaintext, markdown, html, httpError
     , tip, error, alert, success, customTheme
