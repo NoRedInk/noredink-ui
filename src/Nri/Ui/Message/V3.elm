@@ -62,6 +62,7 @@ Changes from V2:
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
@@ -143,7 +144,12 @@ view attributes_ =
                             ++ role
                             ++ attributes.customAttributes
                         )
-                        [ Nri.Ui.styled div "Nri-Ui-Message--icon" [ alignSelf flexStart ] [] [ icon_ ]
+                        [ Nri.Ui.styled div
+                            "Nri-Ui-Message--icon"
+                            [ alignSelf flexStart ]
+                            []
+                            [ icon_
+                            ]
                         , div [] attributes.content
                         , case attributes.onDismiss of
                             Nothing ->
@@ -529,13 +535,8 @@ hideIconFor mediaQuery =
     css
         [ Css.Media.withMedia [ mediaQuery ]
             [ Css.Global.descendants
-                [ -- TODO: scope the icon selector so that arbitrary HTML that includes icons
-                  -- aren't imapcted
-                  Css.Global.selector "[role=img]"
-                    [ Css.display Css.none
-                    ]
-                , ExtraAttributes.nriDescriptionSelector bannerImageBackground
-                    [ Css.display Css.none
+                [ ExtraAttributes.nriDescriptionSelector messageIconDescription
+                    [ invisibleStyle
                     ]
                 ]
             ]
@@ -767,6 +768,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Error"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Alert ) ->
@@ -785,6 +787,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Alert"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Tip ) ->
@@ -796,6 +799,7 @@ getIcon customIcon size theme =
                         |> NriSvg.withHeight iconSize
                         |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                         |> NriSvg.withLabel "Tip"
+                        |> NriSvg.withNriDescription messageIconDescription
                         |> NriSvg.toHtml
 
                 Large ->
@@ -805,6 +809,7 @@ getIcon customIcon size theme =
                         |> NriSvg.withHeight iconSize
                         |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                         |> NriSvg.withLabel "Tip"
+                        |> NriSvg.withNriDescription messageIconDescription
                         |> NriSvg.toHtml
 
                 Banner ->
@@ -825,7 +830,7 @@ getIcon customIcon size theme =
                                 , width (px 35)
                                 ]
                             ]
-                        , ExtraAttributes.nriDescription bannerImageBackground
+                        , ExtraAttributes.nriDescription messageIconDescription
                         ]
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
@@ -847,6 +852,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Success"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Just icon_, _ ) ->
@@ -854,15 +860,16 @@ getIcon customIcon size theme =
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Custom _ ) ->
             Html.text ""
 
 
-bannerImageBackground : String
-bannerImageBackground =
-    "Nri-Ui-Message-banner-icon-background"
+messageIconDescription : String
+messageIconDescription =
+    "Nri-Ui-Message-icon"
 
 
 
