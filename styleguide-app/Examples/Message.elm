@@ -34,7 +34,7 @@ init =
                     , plaintext = Message.plaintext
                     , markdown = Message.markdown
                     , html = Message.html
-                    , httpError = Message.httpError
+                    , httpError = Just Message.httpError
                     }
                 )
             |> ControlExtra.optionalListItem "role" controlRole

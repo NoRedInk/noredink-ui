@@ -82,63 +82,71 @@ content :
     , plaintext : String -> attribute
     , markdown : String -> attribute
     , html : List (Html msg) -> attribute
-    , httpError : Http.Error -> attribute
+    , httpError : Maybe (Http.Error -> attribute)
     }
     -> Control ( String, attribute )
 content ({ moduleName } as config) =
     Control.choice
-        [ ( "plain text (short)"
-          , Control.string quickBrownFox
+        ([ ( "plain text (short)"
+           , Control.string quickBrownFox
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".plaintext \"" ++ str ++ "\""
                         , config.plaintext str
                         )
                     )
-          )
-        , ( "plain text (long, no newlines)"
-          , Control.string longPangrams
+           )
+         , ( "plain text (long, no newlines)"
+           , Control.string longPangrams
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".plaintext \"" ++ str ++ "\""
                         , config.plaintext str
                         )
                     )
-          )
-        , ( "plain text (long, with newlines)"
-          , Control.stringTextarea romeoAndJulietQuotation
+           )
+         , ( "plain text (long, with newlines)"
+           , Control.stringTextarea romeoAndJulietQuotation
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
                         , config.plaintext str
                         )
                     )
-          )
-        , ( "markdown"
-          , Control.string markdown
+           )
+         , ( "markdown"
+           , Control.string markdown
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".markdown \"" ++ str ++ "\""
                         , config.markdown str
                         )
                     )
-          )
-        , ( "HTML"
-          , Control.value
+           )
+         , ( "HTML"
+           , Control.value
                 ( moduleName ++ ".html [ ... ]"
                 , config.html exampleHtml
                 )
-          )
-        , ( "httpError"
-          , Control.map
-                (\error ->
-                    ( moduleName ++ ".httpError error"
-                    , config.httpError error
-                    )
-                )
-                httpError
-          )
-        ]
+           )
+         ]
+            ++ (case config.httpError of
+                    Just httpError_ ->
+                        [ ( "httpError"
+                          , Control.map
+                                (\error ->
+                                    ( moduleName ++ ".httpError error"
+                                    , httpError_ error
+                                    )
+                                )
+                                httpError
+                          )
+                        ]
+
+                    Nothing ->
+                        []
+               )
+        )
 
 
 quickBrownFox : String
