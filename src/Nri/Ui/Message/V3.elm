@@ -1,7 +1,9 @@
 module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
-    , icon, custom, css, testId, id
+    , icon, custom, testId, id
+    , hideIconForMobile, hideIconFor
+    , css
     , tiny, large, banner
     , plaintext, markdown, html, httpError
     , tip, error, alert, success, customTheme
@@ -9,20 +11,27 @@ module Nri.Ui.Message.V3 exposing
     , onDismiss
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
+  - adds `hideIconForMobile` and `hideIconFor`
+
+Changes from V2:
 
     - adds helpers: `custom`,`css`,`icon`,`testId`,`id`
-
-Patch changes:
-
-  - add `httpError`
 
 
 # View
 
 @docs somethingWentWrong
 @docs view, Attribute
-@docs icon, custom, css, testId, id
+@docs icon, custom, testId, id
+
+
+# CSS
+
+@docs hideIconForMobile, hideIconFor
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 
 ## Size
@@ -56,7 +65,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
-import Css.Media
+import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
 import Http
@@ -66,6 +75,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -508,6 +518,28 @@ id id_ =
 
 
 {-| -}
+hideIconForMobile : Attribute msg
+hideIconForMobile =
+    hideIconFor MediaQuery.mobile
+
+
+{-| -}
+hideIconFor : MediaQuery -> Attribute msg
+hideIconFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ -- TODO: scope the icon selector so that arbitrary HTML that includes icons
+                  -- aren't imapcted
+                  Css.Global.selector "[role=img]"
+                    [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
 css : List Style -> Attribute msg
 css styles =
     Attribute <|
@@ -515,6 +547,39 @@ css styles =
             { config
                 | customStyles = List.append config.customStyles styles
             }
+
+
+{-| Equivalent to:
+
+    Message.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    Message.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    Message.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
