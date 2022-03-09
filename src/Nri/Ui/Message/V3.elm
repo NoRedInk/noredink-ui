@@ -534,6 +534,7 @@ hideIconFor mediaQuery =
                   Css.Global.selector "[role=img]"
                     [ Css.display Css.none
                     ]
+                , bannerImageBackground
                 ]
             ]
         ]
@@ -822,6 +823,7 @@ getIcon customIcon size theme =
                                 , width (px 35)
                                 ]
                             ]
+                        , nriDescription bannerImageBackground
                         ]
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
@@ -854,6 +856,11 @@ getIcon customIcon size theme =
 
         ( Nothing, Custom _ ) ->
             Html.text ""
+
+
+bannerImageBackground : String
+bannerImageBackground =
+    "Nri-Ui-Message-banner-icon-background"
 
 
 
