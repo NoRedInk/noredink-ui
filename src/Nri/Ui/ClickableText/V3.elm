@@ -7,6 +7,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
     , custom, nriDescription, testId, id
+    , hideIconForMobile, hideIconFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
@@ -21,6 +22,8 @@ module Nri.Ui.ClickableText.V3 exposing
   - removes bottom border
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, for use in modal footers, same as applying large and Css.marginTop (Css.px 15)
+  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
+  - adds `hideIconForMobile` and `hideIconAt`
 
 
 # Changes from V2
@@ -73,13 +76,15 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ### CSS
 
+@docs hideIconForMobile, hideIconFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 -}
 
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
-import Css.Media
+import Css.Global
+import Css.Media exposing (MediaQuery)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
@@ -171,6 +176,26 @@ testId id_ =
 id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
+
+
+{-| -}
+hideIconForMobile : Attribute msg
+hideIconForMobile =
+    hideIconFor MediaQuery.mobile
+
+
+{-| -}
+hideIconFor : MediaQuery -> Attribute msg
+hideIconFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ Css.Global.selector "[role=img]"
+                    [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
 
 
 {-| -}

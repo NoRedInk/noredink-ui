@@ -67,6 +67,10 @@ init =
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon "ClickableText" ClickableText.icon
+                |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                    (\_ ->
+                        ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
+                    )
                 |> CommonControls.css
                     { moduleName = "ClickableText"
                     , use = ClickableText.css
