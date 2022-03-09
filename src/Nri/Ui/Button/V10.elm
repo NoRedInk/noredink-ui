@@ -8,7 +8,7 @@ module Nri.Ui.Button.V10 exposing
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, custom, nriDescription, testId, id
-    , hideIconForMobile
+    , hideIconForMobile, hideIconFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
@@ -27,7 +27,7 @@ adding a span around the text could potentially lead to regressions.
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, an alias for `large` size
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
-  - adds `hideIconForMobile` and `hideIconAt`
+  - adds `hideIconForMobile` and `hideIconFor`
 
 
 # Changes from V9:
@@ -71,7 +71,7 @@ adding a span around the text could potentially lead to regressions.
 
 ### CSS
 
-@docs hideIconForMobile, hideIconAt
+@docs hideIconForMobile, hideIconFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 
@@ -195,14 +195,14 @@ id id_ =
 {-| -}
 hideIconForMobile : Attribute msg
 hideIconForMobile =
-    hideIconAt MediaQuery.mobile
+    hideIconFor MediaQuery.mobile
 
 
 {-| -}
-hideIconAt : MediaQuery -> Attribute msg
-hideIconAt =
+hideIconFor : MediaQuery -> Attribute msg
+hideIconFor mediaQuery =
     css
-        [ Css.Media.withMedia [ MediaQuery.mobile ]
+        [ Css.Media.withMedia [ mediaQuery ]
             [ Css.Global.descendants
                 [ Css.Global.selector "[role=img]"
                     [ Css.display Css.none
