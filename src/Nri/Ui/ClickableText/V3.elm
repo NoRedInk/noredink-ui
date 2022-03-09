@@ -12,7 +12,10 @@ module Nri.Ui.ClickableText.V3 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
-{-|
+{-| Notes for V4:
+
+  - Remove the -v2- from dataDescriptor to avoid version specific
+  - Use dataDescriptor for clickable-text-label
 
 
 # Post-release patches
