@@ -28,7 +28,15 @@ init =
     , control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "theme" controlTheme
-            |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.listItem "content"
+                (CommonControls.content
+                    { moduleName = "Message"
+                    , plaintext = Message.plaintext
+                    , markdown = Message.markdown
+                    , html = Message.html
+                    , httpError = Message.httpError
+                    }
+                )
             |> ControlExtra.optionalListItem "role" controlRole
             |> ControlExtra.optionalBoolListItem "dismissable"
                 (\_ -> ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss ))
@@ -70,63 +78,6 @@ controlCustomTheme =
                 [ ( "gray92", Colors.gray92 )
                 ]
             )
-
-
-controlContent : Control ( String, Message.Attribute msg )
-controlContent =
-    Control.choice
-        [ ( "plain text (short)"
-          , Control.string CommonControls.quickBrownFox
-                |> Control.map
-                    (\str ->
-                        ( "Message.plaintext \"" ++ str ++ "\""
-                        , Message.plaintext str
-                        )
-                    )
-          )
-        , ( "plain text (long, no newlines)"
-          , Control.string CommonControls.longPangrams
-                |> Control.map
-                    (\str ->
-                        ( "Message.plaintext \"" ++ str ++ "\""
-                        , Message.plaintext str
-                        )
-                    )
-          )
-        , ( "plain text (long, with newlines)"
-          , Control.stringTextarea CommonControls.romeoAndJulietQuotation
-                |> Control.map
-                    (\str ->
-                        ( "Message.plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
-                        , Message.plaintext str
-                        )
-                    )
-          )
-        , ( "markdown"
-          , Control.string CommonControls.markdown
-                |> Control.map
-                    (\str ->
-                        ( "Message.markdown \"" ++ str ++ "\""
-                        , Message.markdown str
-                        )
-                    )
-          )
-        , ( "HTML"
-          , Control.value
-                ( "Message.html [ ... ]"
-                , Message.html CommonControls.exampleHtml
-                )
-          )
-        , ( "httpError"
-          , Control.map
-                (\error ->
-                    ( "Message.httpError error"
-                    , Message.httpError error
-                    )
-                )
-                CommonControls.httpError
-          )
-        ]
 
 
 controlRole : Control ( String, Message.Attribute msg )
