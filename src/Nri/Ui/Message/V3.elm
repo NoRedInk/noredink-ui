@@ -534,7 +534,9 @@ hideIconFor mediaQuery =
                   Css.Global.selector "[role=img]"
                     [ Css.display Css.none
                     ]
-                , bannerImageBackground
+                , ExtraAttributes.nriDescriptionSelector bannerImageBackground
+                    [ Css.display Css.none
+                    ]
                 ]
             ]
         ]
@@ -823,7 +825,7 @@ getIcon customIcon size theme =
                                 , width (px 35)
                                 ]
                             ]
-                        , nriDescription bannerImageBackground
+                        , ExtraAttributes.nriDescription bannerImageBackground
                         ]
                         [ UiIcon.bulb
                             |> NriSvg.withColor Colors.mustard
