@@ -33,8 +33,8 @@ init =
             |> ControlExtra.listItem "content" controlContent
             |> ControlExtra.optionalListItem "role" controlRole
             |> ControlExtra.optionalListItem "dismissable" controlDismissable
-            |> ControlExtra.optionalListItem "css" controlCss
             |> ControlExtra.optionalListItem "icon" controlIcon
+            |> ControlExtra.optionalListItem "css" controlCss
     }
 
 
@@ -66,11 +66,8 @@ controlCustomTheme =
 
 controlIcon : Control (Message.Attribute msg)
 controlIcon =
-    Control.choice
-        [ ( "premiumFlag", Control.value (Message.icon Pennant.premiumFlag) )
-        , ( "lock", Control.value (Message.icon UiIcon.lock) )
-        , ( "clock", Control.value (Message.icon UiIcon.clock) )
-        ]
+    Control.map (Tuple.second >> Message.icon)
+        CommonControls.uiIcon
 
 
 controlContent : Control (Message.Attribute msg)
