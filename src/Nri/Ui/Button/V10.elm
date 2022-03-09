@@ -8,12 +8,17 @@ module Nri.Ui.Button.V10 exposing
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, custom, nriDescription, testId, id
+    , hideIconForMobile
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
     )
 
-{-|
+{-| Notes for V11:
+
+The next version of `Button` should add a `hideTextForMobile` helper.
+This will require adding a selector for the text. We are not making this change in V10, as
+adding a span around the text could potentially lead to regressions.
 
 
 # Patch changes:
@@ -21,6 +26,8 @@ module Nri.Ui.Button.V10 exposing
   - uses ClickableAttributes
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, an alias for `large` size
+  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
+  - adds `hideIconForMobile` and `hideIconAt`
 
 
 # Changes from V9:
@@ -64,6 +71,7 @@ module Nri.Ui.Button.V10 exposing
 
 ### CSS
 
+@docs hideIconForMobile, hideIconAt
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 
@@ -76,11 +84,12 @@ module Nri.Ui.Button.V10 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
-import Css.Media
+import Css.Media exposing (MediaQuery)
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -181,6 +190,26 @@ testId id_ =
 id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
+
+
+{-| -}
+hideIconForMobile : Attribute msg
+hideIconForMobile =
+    hideIconAt MediaQuery.mobile
+
+
+{-| -}
+hideIconAt : MediaQuery -> Attribute msg
+hideIconAt =
+    css
+        [ Css.Media.withMedia [ MediaQuery.mobile ]
+            [ Css.Global.descendants
+                [ Css.Global.selector "[role=img]"
+                    [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
 
 
 {-| -}
