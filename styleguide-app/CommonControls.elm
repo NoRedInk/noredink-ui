@@ -27,6 +27,7 @@ import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -180,11 +181,11 @@ exampleHtml =
     [ Html.text "This is a "
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
-    , Html.a
-        [ Attributes.href "http://www.noredink.com"
-        , Attributes.target "_blank"
+    , ClickableText.link quickBrownFox
+        [ ClickableText.small
+        , ClickableText.icon UiIcon.starFilled
+        , ClickableText.href "http://www.noredink.com"
         ]
-        [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
 
