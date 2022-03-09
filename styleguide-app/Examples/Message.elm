@@ -41,6 +41,10 @@ init =
             |> ControlExtra.optionalBoolListItem "dismissable"
                 (\_ -> ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss ))
             |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
+            |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                (\_ ->
+                    ( "Message.hideIconForMobile", Message.hideIconForMobile )
+                )
             |> CommonControls.css
                 { moduleName = "Message"
                 , use = Message.css
