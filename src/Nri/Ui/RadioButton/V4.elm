@@ -1,6 +1,6 @@
 module Nri.Ui.RadioButton.V4 exposing
     ( view
-    , premium, showPennant
+    , premium, onPennantClick
     , disclosure
     , onSelect
     , Attribute
@@ -18,7 +18,7 @@ module Nri.Ui.RadioButton.V4 exposing
 
 ### Content
 
-@docs premium, showPennant
+@docs premium, onPennantClick
 @docs disclosure
 
 
@@ -110,13 +110,13 @@ premium premiumDisplay =
             { config | premiumDisplay = premiumDisplay }
 
 
-{-| Show Premium pennant on Premium content.
+{-| Makes the Premium pennant clickable.
 
 When the pennant is clicked, the msg that's passed in will fire.
 
 -}
-showPennant : msg -> Attribute value msg
-showPennant premiumMsg =
+onPennantClick : msg -> Attribute value msg
+onPennantClick premiumMsg =
     Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
 
 
@@ -408,10 +408,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     ( PremiumDisplay.Free, _ ) ->
                         text ""
 
-                    ( _, Nothing ) ->
-                        text ""
-
-                    ( _, Just premiumMsg ) ->
+                    ( _, premiumMsg ) ->
                         premiumPennant premiumMsg
                 ]
             ]
@@ -426,18 +423,27 @@ view { label, name, value, valueToString, selectedValue } attributes =
         )
 
 
-premiumPennant : msg -> Html msg
+premiumPennant : Maybe msg -> Html msg
 premiumPennant onClick =
+    let
+        attrs =
+            [ ClickableSvg.exactWidth 26
+            , ClickableSvg.exactHeight 24
+            , ClickableSvg.css
+                [ marginLeft (px 8)
+                , verticalAlign middle
+                ]
+            ]
+    in
     ClickableSvg.button "Premium"
         Pennant.premiumFlag
-        [ ClickableSvg.onClick onClick
-        , ClickableSvg.exactWidth 26
-        , ClickableSvg.exactHeight 24
-        , ClickableSvg.css
-            [ marginLeft (px 8)
-            , verticalAlign middle
-            ]
-        ]
+    <|
+        case onClick of
+            Just msg ->
+                ClickableSvg.onClick msg :: attrs
+
+            Nothing ->
+                attrs
 
 
 radioInputIcon :
