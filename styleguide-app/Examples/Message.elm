@@ -39,31 +39,25 @@ init =
                 )
             |> ControlExtra.optionalListItem "role" controlRole
             |> ControlExtra.optionalBoolListItem "dismissable"
-                (\_ -> ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss ))
+                ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
             |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
             |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                (\_ ->
-                    ( "Message.hideIconForMobile", Message.hideIconForMobile )
-                )
+                ( "Message.hideIconForMobile", Message.hideIconForMobile )
             |> CommonControls.css
                 { moduleName = "Message"
                 , use = Message.css
-                , default = "border: 1px dashed red;"
                 }
             |> CommonControls.mobileCss
                 { moduleName = "Message"
                 , use = Message.mobileCss
-                , default = "border: 2px solid orange;"
                 }
             |> CommonControls.quizEngineMobileCss
                 { moduleName = "Message"
                 , use = Message.quizEngineMobileCss
-                , default = "border: 4px solid yellow !important;"
                 }
             |> CommonControls.notMobileCss
                 { moduleName = "Message"
                 , use = Message.notMobileCss
-                , default = ""
                 }
     }
 

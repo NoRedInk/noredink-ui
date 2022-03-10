@@ -68,32 +68,24 @@ init =
             (ControlExtra.list
                 |> CommonControls.icon "ClickableText" ClickableText.icon
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                    (\_ ->
-                        ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
-                    )
+                    ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
-                    (\_ ->
-                        ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
-                    )
+                    ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                 |> CommonControls.css
                     { moduleName = "ClickableText"
                     , use = ClickableText.css
-                    , default = "border: 2px solid red;"
                     }
                 |> CommonControls.mobileCss
                     { moduleName = "ClickableText"
                     , use = ClickableText.mobileCss
-                    , default = "[role=img] { display: none !important; }"
                     }
                 |> CommonControls.quizEngineMobileCss
                     { moduleName = "ClickableText"
                     , use = ClickableText.quizEngineMobileCss
-                    , default = "[role=img] { display: none !important; }"
                     }
                 |> CommonControls.notMobileCss
                     { moduleName = "ClickableText"
                     , use = ClickableText.notMobileCss
-                    , default = ""
                     }
             )
         |> State
