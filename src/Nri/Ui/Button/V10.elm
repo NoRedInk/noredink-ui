@@ -1,18 +1,24 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
+    , icon, custom, nriDescription, testId, id
+    , hideIconForMobile, hideIconFor
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
     )
 
-{-|
+{-| Notes for V11:
+
+The next version of `Button` should add a `hideTextForMobile` helper.
+This will require adding a selector for the text. We are not making this change in V10, as
+adding a span around the text could potentially lead to regressions.
 
 
 # Patch changes:
@@ -20,6 +26,8 @@ module Nri.Ui.Button.V10 exposing
   - uses ClickableAttributes
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, an alias for `large` size
+  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
+  - adds `hideIconForMobile` and `hideIconFor`
 
 
 # Changes from V9:
@@ -32,7 +40,6 @@ module Nri.Ui.Button.V10 exposing
 
 @docs button, link
 @docs Attribute
-@docs icon, custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -57,6 +64,17 @@ module Nri.Ui.Button.V10 exposing
 @docs enabled, unfulfilled, disabled, error, loading, success
 
 
+## Customization
+
+@docs icon, custom, nriDescription, testId, id
+
+
+### CSS
+
+@docs hideIconForMobile, hideIconFor
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+
+
 # Commonly-used buttons
 
 @docs delete
@@ -66,10 +84,12 @@ module Nri.Ui.Button.V10 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
+import Css.Media exposing (MediaQuery)
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -80,6 +100,7 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
@@ -172,6 +193,26 @@ id id_ =
 
 
 {-| -}
+hideIconForMobile : Attribute msg
+hideIconForMobile =
+    hideIconFor MediaQuery.mobile
+
+
+{-| -}
+hideIconFor : MediaQuery -> Attribute msg
+hideIconFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ Css.Global.selector "[role=img]"
+                    [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
 css : List Style -> Attribute msg
 css styles =
     set
@@ -180,6 +221,39 @@ css styles =
                 | customStyles = List.append config.customStyles styles
             }
         )
+
+
+{-| Equivalent to:
+
+    Button.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    Button.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    Button.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 

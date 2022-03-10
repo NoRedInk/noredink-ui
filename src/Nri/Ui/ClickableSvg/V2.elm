@@ -3,12 +3,13 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , Attribute
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , small, medium, large
-    , exactWidth, exactHeight
+    , exactSize, exactWidth, exactHeight
     , disabled
     , withBorder
     , primary, secondary, danger, dangerSecondary
-    , custom, css, nriDescription, testId, id
+    , custom, nriDescription, testId, id
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , small, medium, large
     )
 
 {-|
@@ -33,8 +34,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Sizing
 
-@docs small, medium, large
-@docs exactWidth, exactHeight
+@docs exactSize, exactWidth, exactHeight
 
 
 ## State
@@ -47,17 +47,31 @@ module Nri.Ui.ClickableSvg.V2 exposing
 @docs withBorder
 @docs primary, secondary, danger, dangerSecondary
 
-@docs custom, css, nriDescription, testId, id
+@docs custom, nriDescription, testId, id
+
+
+### CSS
+
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+
+
+### DEPRECATED
+
+In practice, we don't use these sizes. Remove them!
+
+@docs small, medium, large
 
 -}
 
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Color, Style)
+import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -154,23 +168,45 @@ type Size
     | Large
 
 
-{-| This is the default.
+{-| This is the default. This attribute will be removed in the next version of ClickableSvg!
 -}
 small : Attribute msg
 small =
     set (\attributes -> { attributes | size = Small })
 
 
-{-| -}
+{-| This attribute will be removed in the next version of ClickableSvg!
+-}
 medium : Attribute msg
 medium =
     set (\attributes -> { attributes | size = Medium })
 
 
-{-| -}
+{-| This attribute will be removed in the next version of ClickableSvg!
+-}
 large : Attribute msg
 large =
     set (\attributes -> { attributes | size = Large })
+
+
+{-| Set the size in `px` for the element's width and height.
+
+Equivalent to:
+
+    [ exactWidth inPx
+    , exactHeight inPx
+    ]
+
+-}
+exactSize : Int -> Attribute msg
+exactSize inPx =
+    set
+        (\attributes ->
+            { attributes
+                | width = Just (toFloat inPx)
+                , height = Just (toFloat inPx)
+            }
+        )
 
 
 {-| Define a size in `px` for the element's total width.
@@ -349,6 +385,39 @@ css styles =
                 | customStyles = List.append config.customStyles styles
             }
         )
+
+
+{-| Equivalent to:
+
+    ClickableSvg.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableSvg.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableSvg.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 

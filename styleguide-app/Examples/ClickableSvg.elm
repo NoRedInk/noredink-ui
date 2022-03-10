@@ -8,8 +8,11 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import EventExtras
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
@@ -55,12 +58,30 @@ example =
         ]
     , view =
         \state ->
-            let
-                ( icon, attributes ) =
-                    applySettings state.settings
-            in
-            [ Html.fromUnstyled (Control.view SetControls state.settings)
-            , viewExampleTable icon attributes
+            [ ControlView.view
+                { update = SetControls
+                , settings = state.settings
+                , toExampleCode =
+                    \{ label, icon, attributes } ->
+                        let
+                            toCode fName =
+                                "ClickableSvg."
+                                    ++ fName
+                                    ++ " \""
+                                    ++ label
+                                    ++ "\"\n\t"
+                                    ++ Tuple.first icon
+                                    ++ ControlView.codeFromList attributes
+                        in
+                        [ { sectionName = "Button"
+                          , code = toCode "button"
+                          }
+                        , { sectionName = "Link"
+                          , code = toCode "link"
+                          }
+                        ]
+                }
+            , viewExampleTable (Control.currentValue state.settings)
             , viewExample
                 """
 Tooltip.view
@@ -103,16 +124,19 @@ Tooltip.view
     }
 
 
-viewExampleTable : Svg -> List (ClickableSvg.Attribute Msg) -> Html Msg
-viewExampleTable icon attributes =
+viewExampleTable : Settings Msg -> Html Msg
+viewExampleTable { label, icon, attributes } =
     let
+        sharedAttributes =
+            List.map Tuple.second attributes
+
         viewExampleRow index ( themeName, theme ) =
             Html.tr []
                 [ cell index [ Html.text themeName ]
-                , cell index [ buttonExample (theme :: attributes) ]
-                , cell index [ linkExample (theme :: attributes) ]
-                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: attributes) ]
-                , cell index [ linkExample (ClickableSvg.withBorder :: theme :: attributes) ]
+                , cell index [ buttonExample (theme :: sharedAttributes) ]
+                , cell index [ linkExample (theme :: sharedAttributes) ]
+                , cell index [ buttonExample (ClickableSvg.withBorder :: theme :: sharedAttributes) ]
+                , cell index [ linkExample (ClickableSvg.withBorder :: theme :: sharedAttributes) ]
                 ]
 
         cell index =
@@ -128,15 +152,15 @@ viewExampleTable icon attributes =
                 ]
 
         buttonExample attributes_ =
-            ClickableSvg.button "Button example"
-                icon
+            ClickableSvg.button label
+                (Tuple.second icon)
                 (ClickableSvg.onClick (ShowItWorked "You clicked the back button!")
                     :: attributes_
                 )
 
         linkExample attributes_ =
-            ClickableSvg.link "Link example"
-                icon
+            ClickableSvg.link label
+                (Tuple.second icon)
                 (ClickableSvg.linkSpa "some_link" :: attributes_)
     in
     Html.table []
@@ -233,56 +257,39 @@ update msg state =
 
 
 type alias Settings msg =
-    { icon : Svg
-    , disabled : ClickableSvg.Attribute msg
-    , size : ClickableSvg.Attribute msg
-    , width : Maybe (ClickableSvg.Attribute msg)
-    , height : Maybe (ClickableSvg.Attribute msg)
+    { label : String
+    , icon : ( String, Svg )
+    , attributes : List ( String, ClickableSvg.Attribute msg )
     }
-
-
-applySettings : Control (Settings msg) -> ( Svg, List (ClickableSvg.Attribute msg) )
-applySettings settings =
-    let
-        { icon, disabled, size, width, height } =
-            Control.currentValue settings
-    in
-    ( icon, List.filterMap identity [ Just disabled, Just size, width, height ] )
 
 
 initSettings : Control (Settings msg)
 initSettings =
     Control.record Settings
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "arrowLeft", Control.value UiIcon.arrowLeft )
-                , ( "unarchive", Control.value UiIcon.unarchive )
-                , ( "share", Control.value UiIcon.share )
-                , ( "preview", Control.value UiIcon.preview )
-                , ( "skip", Control.value UiIcon.skip )
-                , ( "copyToClipboard", Control.value UiIcon.copyToClipboard )
-                , ( "gift", Control.value UiIcon.gift )
-                , ( "home", Control.value UiIcon.home )
-                , ( "library", Control.value UiIcon.library )
-                , ( "searchInCicle", Control.value UiIcon.searchInCicle )
-                ]
+        |> Control.field "label" (Control.string "Back")
+        |> Control.field "icon" CommonControls.uiIcon
+        |> Control.field "attributes"
+            (ControlExtra.list
+                |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
+                |> ControlExtra.optionalListItem "exactSize"
+                    (Control.map
+                        (\v -> ( "ClickableSvg.exactSize " ++ String.fromInt v, ClickableSvg.exactSize v ))
+                        (ControlExtra.int 36)
+                    )
+                |> CommonControls.css
+                    { moduleName = "ClickableSvg"
+                    , use = ClickableSvg.css
+                    }
+                |> CommonControls.mobileCss
+                    { moduleName = "ClickableSvg"
+                    , use = ClickableSvg.mobileCss
+                    }
+                |> CommonControls.quizEngineMobileCss
+                    { moduleName = "ClickableSvg"
+                    , use = ClickableSvg.quizEngineMobileCss
+                    }
+                |> CommonControls.notMobileCss
+                    { moduleName = "ClickableSvg"
+                    , use = ClickableSvg.notMobileCss
+                    }
             )
-        |> Control.field "disabled"
-            (Control.map ClickableSvg.disabled (Control.bool False))
-        |> Control.field "size"
-            (Control.choice
-                [ ( "small", Control.value ClickableSvg.small )
-                , ( "medium", Control.value ClickableSvg.medium )
-                , ( "large", Control.value ClickableSvg.large )
-                ]
-            )
-        |> Control.field "exactWidth"
-            (Control.maybe False (Control.map ClickableSvg.exactWidth (controlInt 40)))
-        |> Control.field "exactHeight"
-            (Control.maybe False (Control.map ClickableSvg.exactHeight (controlInt 20)))
-
-
-controlInt : Int -> Control Int
-controlInt default =
-    Control.map (String.toInt >> Maybe.withDefault default)
-        (Control.string (String.fromInt default))

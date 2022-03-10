@@ -6,21 +6,19 @@ import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V3 as Message
-import Nri.Ui.Pennant.V2 as Pennant
-import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.UiIcon.V1 as UiIcon
 import ViewHelpers exposing (viewExamples)
 
 
 type alias State =
     { show : Bool
-    , control : Control (List (Message.Attribute Msg))
+    , control : Control (List ( String, Message.Attribute Msg ))
     }
 
 
@@ -30,132 +28,82 @@ init =
     , control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "theme" controlTheme
-            |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.listItem "content"
+                (CommonControls.content
+                    { moduleName = "Message"
+                    , plaintext = Message.plaintext
+                    , markdown = Message.markdown
+                    , html = Message.html
+                    , httpError = Just Message.httpError
+                    }
+                )
             |> ControlExtra.optionalListItem "role" controlRole
-            |> ControlExtra.optionalListItem "dismissable" controlDismissable
-            |> ControlExtra.optionalListItem "css" controlCss
-            |> ControlExtra.optionalListItem "icon" controlIcon
+            |> ControlExtra.optionalBoolListItem "dismissable"
+                ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
+            |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
+            |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                ( "Message.hideIconForMobile", Message.hideIconForMobile )
+            |> CommonControls.css
+                { moduleName = "Message"
+                , use = Message.css
+                }
+            |> CommonControls.mobileCss
+                { moduleName = "Message"
+                , use = Message.mobileCss
+                }
+            |> CommonControls.quizEngineMobileCss
+                { moduleName = "Message"
+                , use = Message.quizEngineMobileCss
+                }
+            |> CommonControls.notMobileCss
+                { moduleName = "Message"
+                , use = Message.notMobileCss
+                }
     }
 
 
-controlTheme : Control (Message.Attribute msg)
+controlTheme : Control ( String, Message.Attribute msg )
 controlTheme =
     Control.choice
-        [ ( "tip", Control.value Message.tip )
-        , ( "error", Control.value Message.error )
-        , ( "alert", Control.value Message.alert )
-        , ( "success", Control.value Message.success )
+        [ ( "tip", Control.value ( "Message.tip", Message.tip ) )
+        , ( "error", Control.value ( "Message.error", Message.error ) )
+        , ( "alert", Control.value ( "Message.alert", Message.alert ) )
+        , ( "success", Control.value ( "Message.success", Message.success ) )
         , ( "customTheme", controlCustomTheme )
         ]
 
 
-controlCustomTheme : Control (Message.Attribute msg)
+controlCustomTheme : Control ( String, Message.Attribute msg )
 controlCustomTheme =
-    Control.record (\a b -> Message.customTheme { color = a, backgroundColor = b })
+    Control.record
+        (\( aStr, a ) ( bStr, b ) ->
+            ( "Message.customTheme { color = " ++ aStr ++ ", backgroundColor = " ++ bStr ++ " }"
+            , Message.customTheme { color = a, backgroundColor = b }
+            )
+        )
         |> Control.field "color"
-            (Control.choice
-                [ ( "aquaDark", Control.value Colors.aquaDark )
+            (CommonControls.choice "Colors"
+                [ ( "aquaDark", Colors.aquaDark )
                 ]
             )
         |> Control.field "backgroundColor"
-            (Control.choice
-                [ ( "gray92", Control.value Colors.gray92 )
+            (CommonControls.choice "Colors"
+                [ ( "gray92", Colors.gray92 )
                 ]
             )
 
 
-controlIcon : Control (Message.Attribute msg)
-controlIcon =
-    Control.choice
-        [ ( "premiumFlag", Control.value (Message.icon Pennant.premiumFlag) )
-        , ( "lock", Control.value (Message.icon UiIcon.lock) )
-        , ( "clock", Control.value (Message.icon UiIcon.clock) )
-        ]
-
-
-controlContent : Control (Message.Attribute msg)
-controlContent =
-    Control.choice
-        [ ( "plain text (short)"
-          , Control.string "Comic books do count as literature."
-                |> Control.map Message.plaintext
-          )
-        , ( "plain text (long)"
-          , Control.stringTextarea "Share this link with students as an easy shortcut to join Jeffy's Favorite Class (no class code needed). The link works for students new to NoRedInk and those with existing accounts. Students only need to use this link once to join."
-                |> Control.map Message.plaintext
-          )
-        , ( "markdown"
-          , Control.string "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
-                |> Control.map Message.markdown
-          )
-        , ( "HTML (short)"
-          , Control.value
-                (Message.html
-                    [ code [] [ text "git status" ]
-                    , text " ⇄ "
-                    , Html.em [] [ text "tries again" ]
-                    ]
-                )
-          )
-        , ( "HTML (long)"
-          , Control.value
-                (Message.html
-                    [ text "Click "
-                    , a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                        [ text "here, yes, HERE, right here on this very long success message. "
-                        , text "Wow, how successful! You're the biggest success I've ever seen! "
-                        , text "You should feel great about yourself! Give yourself a very big round of applause! "
-                        , styled div
-                            [ display inlineBlock
-                            , width (px 20)
-                            ]
-                            []
-                            [ Svg.toHtml UiIcon.gear ]
-                        ]
-                    , text " to check out NoRedInk."
-                    ]
-                )
-          )
-        , ( "httpError"
-          , Control.map Message.httpError CommonControls.httpError
-          )
-        ]
-
-
-controlRole : Control (Message.Attribute msg)
+controlRole : Control ( String, Message.Attribute msg )
 controlRole =
-    Control.choice
-        [ ( "alertRole", Control.value Message.alertRole )
-        , ( "alertDialogRole", Control.value Message.alertDialogRole )
-        ]
-
-
-controlDismissable : Control (Message.Attribute Msg)
-controlDismissable =
-    Control.value (Message.onDismiss Dismiss)
-
-
-controlCss : Control (Message.Attribute Msg)
-controlCss =
-    Control.choice
-        [ ( "css [ border3 (px 1) dashed red ]"
-          , Control.value
-                (Message.css [ Css.border3 (Css.px 1) Css.dashed Colors.red ])
-          )
-        , ( "css [ border3 (px 2) solid purple, borderRadius4 (px 8) (px 8) zero zero ]"
-          , Control.value
-                (Message.css
-                    [ Css.border3 (Css.px 2) Css.solid Colors.purple
-                    , Css.borderRadius4 (Css.px 8) (Css.px 8) Css.zero Css.zero
-                    ]
-                )
-          )
+    CommonControls.choice "Message"
+        [ ( "alertRole", Message.alertRole )
+        , ( "alertDialogRole", Message.alertDialogRole )
         ]
 
 
 type Msg
     = Dismiss
-    | UpdateControl (Control (List (Message.Attribute Msg)))
+    | UpdateControl (Control (List ( String, Message.Attribute Msg )))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -186,7 +134,7 @@ example =
         \state ->
             let
                 attributes =
-                    Control.currentValue state.control
+                    List.map Tuple.second (Control.currentValue state.control)
 
                 orDismiss view =
                     if state.show then
@@ -195,13 +143,35 @@ example =
                     else
                         text "Nice! The messages were dismissed. 👍"
             in
-            [ Heading.h3 [ Heading.css [ Css.marginBottom (Css.px 20) ] ]
-                [ text "Message.view" ]
-            , Control.view UpdateControl state.control
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { update = UpdateControl
+                , settings = state.control
+                , toExampleCode =
+                    \settings ->
+                        let
+                            toCode maybeSize =
+                                "Message.view\n\t[ "
+                                    ++ (maybeSize
+                                            :: List.map (Tuple.first >> Just) settings
+                                            |> List.filterMap identity
+                                            |> String.join "\n\t, "
+                                       )
+                                    ++ "\n\t]"
+                        in
+                        [ { sectionName = "Tiny"
+                          , code = toCode Nothing
+                          }
+                        , { sectionName = "Large"
+                          , code = toCode (Just "Message.large")
+                          }
+                        , { sectionName = "Banner"
+                          , code = toCode (Just "Message.banner")
+                          }
+                        ]
+                }
             , orDismiss <|
                 viewExamples
-                    [ ( "tiny", Message.view (Message.tiny :: attributes) )
+                    [ ( "tiny", Message.view attributes )
                     , ( "large", Message.view (Message.large :: attributes) )
                     , ( "banner", Message.view (Message.banner :: attributes) )
                     ]

@@ -1,18 +1,45 @@
-module CommonControls exposing (exampleHtml, httpError, premiumDisplay, premiumLevel, quickBrownFox, romeoAndJulietQuotation)
+module CommonControls exposing
+    ( css, mobileCss, quizEngineMobileCss, notMobileCss
+    , choice
+    , icon, iconNotCheckedByDefault, uiIcon
+    , content
+    , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+    , disabledListItem, premiumLevel, premiumDisplay
+    )
 
+{-|
+
+@docs css, mobileCss, quizEngineMobileCss, notMobileCss
+@docs choice
+@docs icon, iconNotCheckedByDefault, uiIcon
+
+
+### Content
+
+@docs content
+@docs quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+
+-}
+
+import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Svg.V1 exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 premiumLevel : Control ( String, PremiumLevel )
 premiumLevel =
-    Control.choice
-        [ ( "Free", Control.value ( "Free", Free ) )
-        , ( "PremiumWithWriting", Control.value ( "PremiumWithWriting", PremiumWithWriting ) )
+    choice "PremiumLevel"
+        [ ( "Free", Free )
+        , ( "PremiumWithWriting", PremiumWithWriting )
         ]
 
 
@@ -61,9 +88,86 @@ httpError =
         ]
 
 
+content :
+    { moduleName : String
+    , plaintext : String -> attribute
+    , markdown : String -> attribute
+    , html : List (Html msg) -> attribute
+    , httpError : Maybe (Http.Error -> attribute)
+    }
+    -> Control ( String, attribute )
+content ({ moduleName } as config) =
+    Control.choice
+        ([ ( "plain text (short)"
+           , Control.string quickBrownFox
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "plain text (long, no newlines)"
+           , Control.string longPangrams
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "plain text (long, with newlines)"
+           , Control.stringTextarea romeoAndJulietQuotation
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "markdown"
+           , Control.string markdown
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                        , config.markdown str
+                        )
+                    )
+           )
+         , ( "HTML"
+           , Control.value
+                ( moduleName ++ ".html [ ... ]"
+                , config.html exampleHtml
+                )
+           )
+         ]
+            ++ (case config.httpError of
+                    Just httpError_ ->
+                        [ ( "httpError"
+                          , Control.map
+                                (\error ->
+                                    ( moduleName ++ ".httpError error"
+                                    , httpError_ error
+                                    )
+                                )
+                                httpError
+                          )
+                        ]
+
+                    Nothing ->
+                        []
+               )
+        )
+
+
 quickBrownFox : String
 quickBrownFox =
     "The quick brown fox jumps over the lazy dog."
+
+
+longPangrams : String
+longPangrams =
+    "Waltz, bad nymph, for quick jigs vex. Glib jocks quiz nymph to vex dwarf. Sphinx of black quartz, judge my vow. How vexingly quick daft zebras jump!"
 
 
 romeoAndJulietQuotation : String
@@ -86,15 +190,146 @@ romeoAndJulietQuotation =
     """
 
 
+markdown : String
+markdown =
+    "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+
+
 exampleHtml : List (Html msg)
 exampleHtml =
     [ Html.text "This is a "
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
-    , Html.a
-        [ Attributes.href "http://www.noredink.com"
-        , Attributes.target "_blank"
+    , ClickableText.link quickBrownFox
+        [ ClickableText.small
+        , ClickableText.icon UiIcon.starFilled
+        , ClickableText.href "http://www.noredink.com"
         ]
-        [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
+
+
+icon :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+icon moduleName f =
+    ControlExtra.optionalListItemDefaultChecked "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
+
+
+iconNotCheckedByDefault :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+iconNotCheckedByDefault moduleName f =
+    ControlExtra.optionalListItem "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
+
+
+uiIcon : Control ( String, Svg )
+uiIcon =
+    [ ( "arrowLeft", UiIcon.arrowLeft )
+    , ( "unarchive", UiIcon.unarchive )
+    , ( "share", UiIcon.share )
+    , ( "preview", UiIcon.preview )
+    , ( "skip", UiIcon.skip )
+    , ( "copyToClipboard", UiIcon.copyToClipboard )
+    , ( "gift", UiIcon.gift )
+    , ( "home", UiIcon.home )
+    , ( "library", UiIcon.library )
+    , ( "searchInCicle", UiIcon.searchInCicle )
+    ]
+        |> choice "UiIcon"
+
+
+choice : String -> List ( String, value ) -> Control ( String, value )
+choice moduleName options =
+    options
+        |> List.map
+            (\( name, value ) ->
+                ( name, Control.value ( moduleName ++ "." ++ name, value ) )
+            )
+        |> Control.choice
+
+
+disabledListItem : String -> (Bool -> b) -> Control (List ( String, b )) -> Control (List ( String, b ))
+disabledListItem moduleName disabled =
+    ControlExtra.optionalBoolListItem "disabled"
+        ( moduleName ++ ".disabled True"
+        , disabled True
+        )
+
+
+css :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css =
+    css_ "css"
+        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+        )
+
+
+mobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+mobileCss =
+    css_ "mobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+        )
+
+
+quizEngineMobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+quizEngineMobileCss =
+    css_ "quizEngineMobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]"
+        , [ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]
+        )
+
+
+notMobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+notMobileCss =
+    css_ "notMobileCss"
+        ( "[ Css.backgroundColor Colors.purple ]"
+        , [ Css.backgroundColor Colors.purple ]
+        )
+
+
+css_ :
+    String
+    -> ( String, List Css.Style )
+    ->
+        { moduleName : String
+        , use : List Css.Style -> b
+        }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css_ helperName ( styles, default ) { moduleName, use } =
+    ControlExtra.optionalListItem helperName
+        (Control.value
+            ( moduleName ++ "." ++ helperName ++ " " ++ styles
+            , use default
+            )
+        )
