@@ -425,25 +425,28 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
 premiumPennant : Maybe msg -> Html msg
 premiumPennant onClick =
-    let
-        attrs =
-            [ ClickableSvg.exactWidth 26
-            , ClickableSvg.exactHeight 24
-            , ClickableSvg.css
-                [ marginLeft (px 8)
-                , verticalAlign middle
+    case onClick of
+        Just msg ->
+            ClickableSvg.button "Premium"
+                Pennant.premiumFlag
+                [ ClickableSvg.onClick msg
+                , ClickableSvg.exactWidth 26
+                , ClickableSvg.exactHeight 24
+                , ClickableSvg.css
+                    [ marginLeft (px 8)
+                    , verticalAlign middle
+                    ]
                 ]
-            ]
-    in
-    ClickableSvg.button "Premium"
-        Pennant.premiumFlag
-    <|
-        case onClick of
-            Just msg ->
-                ClickableSvg.onClick msg :: attrs
 
-            Nothing ->
-                attrs
+        Nothing ->
+            Pennant.premiumFlag
+                |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
+                |> Nri.Ui.Svg.V1.withHeight (Css.px 24)
+                |> Nri.Ui.Svg.V1.withCss
+                    [ marginLeft (px 8)
+                    , verticalAlign middle
+                    ]
+                |> Nri.Ui.Svg.V1.toHtml
 
 
 radioInputIcon :
