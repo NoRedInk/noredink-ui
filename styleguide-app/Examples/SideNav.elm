@@ -6,7 +6,7 @@ module Examples.SideNav exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled.Key as Key
+import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
@@ -30,11 +30,42 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
     , keyboardSupport = []
-    , preview = []
+    , preview = [ viewPreview ]
     , view =
         \state ->
             []
     }
+
+
+viewPreview : Html msg
+viewPreview =
+    div
+        [ css
+            [ Css.height (Css.px 80)
+            , Css.backgroundColor Colors.white
+            , Css.padding (Css.px 8)
+            , Css.displayFlex
+            ]
+        ]
+        [ div
+            [ css
+                [ Css.flexGrow (Css.int 1)
+                , Css.backgroundColor Colors.gray96
+                , Css.borderRadius (Css.px 2)
+                ]
+            ]
+            [ div
+                [ css
+                    [ Css.height (Css.px 8)
+                    , Css.backgroundColor Colors.glacier
+                    , Css.borderRadius (Css.px 2)
+                    , Css.margin2 (Css.px 8) (Css.px 4)
+                    ]
+                ]
+                []
+            ]
+        , div [ css [ Css.flexGrow (Css.int 2) ] ] []
+        ]
 
 
 {-| -}
