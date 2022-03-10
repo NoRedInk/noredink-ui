@@ -20,6 +20,7 @@
         "Nri.Ui.Colors.V1",
         "Nri.Ui.Confetti.V2",
         "Nri.Ui.CssVendorPrefix.V1",
+        "Nri.Ui.Data.PremiumDisplay",
         "Nri.Ui.Data.PremiumLevel",
         "Nri.Ui.DisclosureIndicator.V2",
         "Nri.Ui.Divider.V2",
