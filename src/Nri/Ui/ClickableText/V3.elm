@@ -6,7 +6,8 @@ module Nri.Ui.ClickableText.V3 exposing
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
-    , custom, css, nriDescription, testId, id
+    , custom, nriDescription, testId, id
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
 {-|
@@ -63,19 +64,29 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs onClick
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
+
+## Customization
+
 @docs icon
-@docs custom, css, nriDescription, testId, id
+@docs custom, nriDescription, testId, id
+
+
+### CSS
+
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 -}
 
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
+import Css.Media
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -171,6 +182,39 @@ css styles =
                 | customStyles = List.append config.customStyles styles
             }
         )
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 

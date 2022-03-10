@@ -1,13 +1,14 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
+    , icon, custom, nriDescription, testId, id
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
     )
@@ -32,7 +33,6 @@ module Nri.Ui.Button.V10 exposing
 
 @docs button, link
 @docs Attribute
-@docs icon, custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -57,6 +57,16 @@ module Nri.Ui.Button.V10 exposing
 @docs enabled, unfulfilled, disabled, error, loading, success
 
 
+## Customization
+
+@docs icon, custom, nriDescription, testId, id
+
+
+### CSS
+
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+
+
 # Commonly-used buttons
 
 @docs delete
@@ -70,6 +80,7 @@ import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
+import Css.Media
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -80,6 +91,7 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
@@ -180,6 +192,39 @@ css styles =
                 | customStyles = List.append config.customStyles styles
             }
         )
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 

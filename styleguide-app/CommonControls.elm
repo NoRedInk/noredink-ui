@@ -1,17 +1,35 @@
-module CommonControls exposing (exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation)
+module CommonControls exposing
+    ( css, mobileCss, quizEngineMobileCss, notMobileCss
+    , choice
+    , icon, uiIcon
+    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation
+    )
 
+{-|
+
+@docs css, mobileCss, quizEngineMobileCss, notMobileCss
+@docs choice
+@docs icon, uiIcon
+
+-}
+
+import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
+import Nri.Ui.Svg.V1 exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 premiumLevel : Control ( String, PremiumLevel )
 premiumLevel =
-    Control.choice
-        [ ( "Free", Control.value ( "Free", Free ) )
-        , ( "PremiumWithWriting", Control.value ( "PremiumWithWriting", PremiumWithWriting ) )
+    choice "PremiumLevel"
+        [ ( "Free", Free )
+        , ( "PremiumWithWriting", PremiumWithWriting )
         ]
 
 
@@ -88,3 +106,114 @@ exampleHtml =
         [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
+
+
+icon :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+icon moduleName f =
+    ControlExtra.optionalListItemDefaultChecked "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
+
+
+uiIcon : Control ( String, Svg )
+uiIcon =
+    [ ( "arrowLeft", UiIcon.arrowLeft )
+    , ( "unarchive", UiIcon.unarchive )
+    , ( "share", UiIcon.share )
+    , ( "preview", UiIcon.preview )
+    , ( "skip", UiIcon.skip )
+    , ( "copyToClipboard", UiIcon.copyToClipboard )
+    , ( "gift", UiIcon.gift )
+    , ( "home", UiIcon.home )
+    , ( "library", UiIcon.library )
+    , ( "searchInCicle", UiIcon.searchInCicle )
+    ]
+        |> choice "UiIcon"
+
+
+choice : String -> List ( String, value ) -> Control ( String, value )
+choice moduleName options =
+    options
+        |> List.map
+            (\( name, value ) ->
+                ( name, Control.value ( moduleName ++ "." ++ name, value ) )
+            )
+        |> Control.choice
+
+
+disabledListItem : String -> (Bool -> b) -> Control (List ( String, b )) -> Control (List ( String, b ))
+disabledListItem moduleName disabled =
+    ControlExtra.optionalBoolListItem "disabled"
+        ( moduleName ++ ".disabled True"
+        , disabled True
+        )
+
+
+css :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css =
+    css_ "css"
+        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+        )
+
+
+mobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+mobileCss =
+    css_ "mobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+        )
+
+
+quizEngineMobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+quizEngineMobileCss =
+    css_ "quizEngineMobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]"
+        , [ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]
+        )
+
+
+notMobileCss :
+    { moduleName : String, use : List Css.Style -> b }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+notMobileCss =
+    css_ "notMobileCss"
+        ( "[ Css.backgroundColor Colors.purple ]"
+        , [ Css.backgroundColor Colors.purple ]
+        )
+
+
+css_ :
+    String
+    -> ( String, List Css.Style )
+    ->
+        { moduleName : String
+        , use : List Css.Style -> b
+        }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+css_ helperName ( styles, default ) { moduleName, use } =
+    ControlExtra.optionalListItem helperName
+        (Control.value
+            ( moduleName ++ "." ++ helperName ++ " " ++ styles
+            , use default
+            )
+        )
