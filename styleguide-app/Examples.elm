@@ -25,6 +25,7 @@ import Examples.Pennant as Pennant
 import Examples.RadioButton as RadioButton
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
+import Examples.Shadows as Shadows
 import Examples.SlideModal as SlideModal
 import Examples.SortableTable as SortableTable
 import Examples.Sprite as Sprite
@@ -498,6 +499,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Shadows.example
+        |> Example.wrapMsg ShadowsMsg
+            (\msg ->
+                case msg of
+                    ShadowsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState ShadowsState
+            (\msg ->
+                case msg of
+                    ShadowsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , SlideModal.example
         |> Example.wrapMsg SlideModalMsg
             (\msg ->
@@ -773,6 +793,7 @@ type State
     | RadioButtonState RadioButton.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
+    | ShadowsState Shadows.State
     | SlideModalState SlideModal.State
     | SortableTableState SortableTable.State
     | SpriteState Sprite.State
@@ -813,6 +834,7 @@ type Msg
     | RadioButtonMsg RadioButton.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
+    | ShadowsMsg Shadows.Msg
     | SlideModalMsg SlideModal.Msg
     | SortableTableMsg SortableTable.Msg
     | SpriteMsg Sprite.Msg
