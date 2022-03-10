@@ -68,13 +68,13 @@ optionalListItem_ default name accessor accumulator =
 
 
 {-| -}
-optionalBoolListItem : String -> (Bool -> a) -> Control (List a) -> Control (List a)
+optionalBoolListItem : String -> a -> Control (List a) -> Control (List a)
 optionalBoolListItem name f accumulator =
     Control.field name
         (Control.map
             (\value ->
                 if value then
-                    [ f value ]
+                    [ f ]
 
                 else
                     []

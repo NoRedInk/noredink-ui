@@ -150,12 +150,10 @@ choice moduleName options =
 
 
 disabledListItem : String -> (Bool -> b) -> Control (List ( String, b )) -> Control (List ( String, b ))
-disabledListItem moduleName f =
+disabledListItem moduleName disabled =
     ControlExtra.optionalBoolListItem "disabled"
-        (\bool ->
-            ( moduleName ++ ".disabled True"
-            , f bool
-            )
+        ( moduleName ++ ".disabled True"
+        , disabled True
         )
 
 
