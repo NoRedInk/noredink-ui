@@ -1,6 +1,6 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
-    , withColor, withLabel, withWidth, withHeight, withCss
+    , withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
     , fromHtml, toHtml
     , toRawSvg
     )
@@ -8,7 +8,7 @@ module Nri.Ui.Svg.V1 exposing
 {-|
 
 @docs Svg
-@docs withColor, withLabel, withWidth, withHeight, withCss
+@docs withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
 @docs fromHtml, toHtml
 @docs toRawSvg
 
@@ -19,6 +19,7 @@ import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Svg.Styled as Svg
 
 
@@ -32,6 +33,7 @@ type Svg
         , height : Maybe Css.Px
         , css : List Css.Style
         , label : Maybe String
+        , attributes : List (Html.Attribute Never)
         }
 
 
@@ -46,6 +48,7 @@ fromHtml icon =
         , width = Nothing
         , css = []
         , label = Nothing
+        , attributes = []
         }
 
 
@@ -87,6 +90,18 @@ withCss css (Svg record) =
     Svg { record | css = css }
 
 
+{-| -}
+withCustom : List (Html.Attribute Never) -> Svg -> Svg
+withCustom attributes (Svg record) =
+    Svg { record | attributes = attributes ++ record.attributes }
+
+
+{-| -}
+withNriDescription : String -> Svg -> Svg
+withNriDescription description =
+    withCustom [ AttributesExtra.nriDescription description ]
+
+
 {-| Render an svg.
 -}
 toHtml : Svg -> Html msg
@@ -112,8 +127,9 @@ toHtml (Svg record) =
                     |> Just
                 , Just Role.img
                 ]
+                ++ record.attributes
     in
-    Html.div attributes [ Html.map never record.icon ]
+    Html.map never (Html.div attributes [ record.icon ])
 
 
 {-| Extract an svg, dropping any attributes passed through.

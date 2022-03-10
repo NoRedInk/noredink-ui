@@ -168,9 +168,7 @@ initDebugControls =
                         ]
                     )
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                    (\_ ->
-                        ( "Button.hideIconForMobile", Button.hideIconForMobile )
-                    )
+                    ( "Button.hideIconForMobile", Button.hideIconForMobile )
                 |> CommonControls.css
                     { moduleName = "Button"
                     , use = Button.css

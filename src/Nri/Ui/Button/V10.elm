@@ -225,7 +225,7 @@ css styles =
 
 {-| Equivalent to:
 
-    ClickableText.css
+    Button.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
 
 -}
@@ -236,7 +236,7 @@ notMobileCss styles =
 
 {-| Equivalent to:
 
-    ClickableText.css
+    Button.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
 
 -}
@@ -247,7 +247,7 @@ mobileCss styles =
 
 {-| Equivalent to:
 
-    ClickableText.css
+    Button.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
 
 -}

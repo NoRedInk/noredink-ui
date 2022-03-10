@@ -1,15 +1,23 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss
     , choice
-    , icon, uiIcon
-    , disabledListItem, exampleHtml, httpError, premiumLevel, quickBrownFox, romeoAndJulietQuotation
+    , icon, iconNotCheckedByDefault, uiIcon
+    , content
+    , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+    , disabledListItem, premiumLevel
     )
 
 {-|
 
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss
 @docs choice
-@docs icon, uiIcon
+@docs icon, iconNotCheckedByDefault, uiIcon
+
+
+### Content
+
+@docs content
+@docs quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
 
 -}
 
@@ -19,6 +27,7 @@ import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -69,9 +78,86 @@ httpError =
         ]
 
 
+content :
+    { moduleName : String
+    , plaintext : String -> attribute
+    , markdown : String -> attribute
+    , html : List (Html msg) -> attribute
+    , httpError : Maybe (Http.Error -> attribute)
+    }
+    -> Control ( String, attribute )
+content ({ moduleName } as config) =
+    Control.choice
+        ([ ( "plain text (short)"
+           , Control.string quickBrownFox
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "plain text (long, no newlines)"
+           , Control.string longPangrams
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "plain text (long, with newlines)"
+           , Control.stringTextarea romeoAndJulietQuotation
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
+                        , config.plaintext str
+                        )
+                    )
+           )
+         , ( "markdown"
+           , Control.string markdown
+                |> Control.map
+                    (\str ->
+                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                        , config.markdown str
+                        )
+                    )
+           )
+         , ( "HTML"
+           , Control.value
+                ( moduleName ++ ".html [ ... ]"
+                , config.html exampleHtml
+                )
+           )
+         ]
+            ++ (case config.httpError of
+                    Just httpError_ ->
+                        [ ( "httpError"
+                          , Control.map
+                                (\error ->
+                                    ( moduleName ++ ".httpError error"
+                                    , httpError_ error
+                                    )
+                                )
+                                httpError
+                          )
+                        ]
+
+                    Nothing ->
+                        []
+               )
+        )
+
+
 quickBrownFox : String
 quickBrownFox =
     "The quick brown fox jumps over the lazy dog."
+
+
+longPangrams : String
+longPangrams =
+    "Waltz, bad nymph, for quick jigs vex. Glib jocks quiz nymph to vex dwarf. Sphinx of black quartz, judge my vow. How vexingly quick daft zebras jump!"
 
 
 romeoAndJulietQuotation : String
@@ -94,16 +180,21 @@ romeoAndJulietQuotation =
     """
 
 
+markdown : String
+markdown =
+    "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+
+
 exampleHtml : List (Html msg)
 exampleHtml =
     [ Html.text "This is a "
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
-    , Html.a
-        [ Attributes.href "http://www.noredink.com"
-        , Attributes.target "_blank"
+    , ClickableText.link quickBrownFox
+        [ ClickableText.small
+        , ClickableText.icon UiIcon.starFilled
+        , ClickableText.href "http://www.noredink.com"
         ]
-        [ Html.text quickBrownFox ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]
 
@@ -115,6 +206,21 @@ icon :
     -> Control (List ( String, value ))
 icon moduleName f =
     ControlExtra.optionalListItemDefaultChecked "icon"
+        (Control.map
+            (\( iconName, iconValue ) ->
+                ( moduleName ++ ".icon " ++ iconName, f iconValue )
+            )
+            uiIcon
+        )
+
+
+iconNotCheckedByDefault :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+iconNotCheckedByDefault moduleName f =
+    ControlExtra.optionalListItem "icon"
         (Control.map
             (\( iconName, iconValue ) ->
                 ( moduleName ++ ".icon " ++ iconName, f iconValue )

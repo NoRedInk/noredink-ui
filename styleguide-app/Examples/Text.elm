@@ -111,23 +111,14 @@ init =
 
 controlContent : Control (Text.Attribute msg)
 controlContent =
-    Control.choice
-        [ ( "HTML"
-          , Control.value (Text.html exampleHtml)
-          )
-        , ( "plain text (short)"
-          , Control.string quickBrownFox
-                |> Control.map Text.plaintext
-          )
-        , ( "plain text (long)"
-          , Control.stringTextarea romeoAndJulietQuotation
-                |> Control.map Text.plaintext
-          )
-        , ( "markdown"
-          , Control.string romeoAndJulietQuotation
-                |> Control.map Text.markdown
-          )
-        ]
+    CommonControls.content
+        { moduleName = "Text"
+        , plaintext = Text.plaintext
+        , markdown = Text.markdown
+        , html = Text.html
+        , httpError = Nothing
+        }
+        |> Control.map Tuple.second
 
 
 {-| -}
