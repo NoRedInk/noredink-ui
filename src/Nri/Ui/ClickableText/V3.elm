@@ -7,10 +7,15 @@ module Nri.Ui.ClickableText.V3 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
     , custom, nriDescription, testId, id
+    , hideIconForMobile, hideIconFor
+    , hideTextForMobile, hideTextFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
-{-|
+{-| Notes for V4:
+
+  - Remove the -v2- from dataDescriptor to avoid version specific
+  - Use dataDescriptor for clickable-text-label
 
 
 # Post-release patches
@@ -21,6 +26,9 @@ module Nri.Ui.ClickableText.V3 exposing
   - removes bottom border
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, for use in modal footers, same as applying large and Css.marginTop (Css.px 15)
+  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
+  - adds `hideIconForMobile` and `hideIconAt`
+  - adds `hideTextForMobile` and `hideTextAt`
 
 
 # Changes from V2
@@ -73,13 +81,17 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ### CSS
 
+@docs hideIconForMobile, hideIconFor
+@docs hideTextForMobile, hideTextFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 -}
 
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
-import Css.Media
+import Css.Global
+import Css.Media exposing (MediaQuery)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
@@ -171,6 +183,46 @@ testId id_ =
 id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
+
+
+{-| -}
+hideIconForMobile : Attribute msg
+hideIconForMobile =
+    hideIconFor MediaQuery.mobile
+
+
+{-| -}
+hideIconFor : MediaQuery -> Attribute msg
+hideIconFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ Css.Global.selector "[role=img]"
+                    [ Css.display Css.none
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+hideTextForMobile : Attribute msg
+hideTextForMobile =
+    hideTextFor MediaQuery.mobile
+
+
+{-| -}
+hideTextFor : MediaQuery -> Attribute msg
+hideTextFor mediaQuery =
+    css
+        [ Css.Media.withMedia [ mediaQuery ]
+            [ Css.Global.descendants
+                [ ExtraAttributes.nriDescriptionSelector "clickable-text-label"
+                    [ invisibleStyle
+                    ]
+                ]
+            ]
+        ]
 
 
 {-| -}
@@ -353,7 +405,7 @@ viewContent config =
                                     Css.marginRight (Css.px 4)
                             ]
                         |> Svg.toHtml
-                    , span [] [ text config.label ]
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
                     ]
                 ]
 
