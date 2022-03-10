@@ -239,7 +239,7 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
-        |> ControlExtra.optionalListItem "showPennant" showPennant
+        |> ControlExtra.optionalListItem "onPennantClick" onPennantClick
         |> ControlExtra.optionalListItem "premium"
             -- TODO: allow the teacher premium level to vary as well:
             (Control.map
@@ -329,11 +329,11 @@ disabledOrEnabled =
         ]
 
 
-showPennant : Control ( String, RadioButton.Attribute Selection Msg )
-showPennant =
+onPennantClick : Control ( String, RadioButton.Attribute Selection Msg )
+onPennantClick =
     Control.value
-        ( "RadioButton.showPennant OpenPremiumModal"
-        , RadioButton.showPennant (OpenModal "dogs")
+        ( "RadioButton.onPennantClick OpenPremiumModal"
+        , RadioButton.onPennantClick (OpenModal "dogs")
         )
 
 
