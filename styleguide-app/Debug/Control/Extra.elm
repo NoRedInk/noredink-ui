@@ -1,21 +1,16 @@
 module Debug.Control.Extra exposing
     ( float, int
     , list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
-    , css
     )
 
 {-|
 
 @docs float, int
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
-@docs css
 
 -}
 
-import Css
-import Css.Global
 import Debug.Control as Control exposing (Control)
-import Regex
 
 
 {-| -}
@@ -87,69 +82,3 @@ optionalBoolListItem name f accumulator =
             (Control.bool False)
         )
         (Control.map (++) accumulator)
-
-
-{-| -}
-css : String -> Control ( String, List Css.Style )
-css exampleCss =
-    Control.map
-        (\rawStr ->
-            case Regex.find selectorAndStyles rawStr of
-                [] ->
-                    toCssProps rawStr
-
-                matches ->
-                    toCss matches
-        )
-        (Control.stringTextarea exampleCss)
-
-
-selectorAndStyles : Regex.Regex
-selectorAndStyles =
-    Maybe.withDefault Regex.never
-        (Regex.fromString "([^{]+){([^}]*)}")
-
-
-toCss : List Regex.Match -> ( String, List Css.Style )
-toCss matches =
-    List.concatMap
-        (\match ->
-            case List.filterMap identity match.submatches of
-                selector :: styles :: [] ->
-                    let
-                        ( stylesStr, stylesVal ) =
-                            toCssProps styles
-                    in
-                    [ ( "Css.Global.selector \"" ++ String.trim selector ++ "\" " ++ stylesStr
-                      , Css.Global.selector selector stylesVal
-                      )
-                    ]
-
-                _ ->
-                    []
-        )
-        matches
-        |> List.unzip
-        |> Tuple.mapFirst (\props -> "\n\t\t[ Css.Global.descendants \n\t\t\t[ " ++ String.join "\n\t\t," props ++ " \n\t\t\t]\n\t\t]")
-        |> Tuple.mapSecond (\props -> [ Css.Global.descendants props ])
-
-
-toCssProps : String -> ( String, List Css.Style )
-toCssProps rawStr =
-    rawStr
-        |> String.split ";"
-        |> List.filterMap
-            (\segment ->
-                case String.split ":" segment of
-                    name :: value :: [] ->
-                        Just
-                            ( "Css.property \"" ++ String.trim name ++ "\" \"" ++ String.trim value ++ "\""
-                            , Css.property name value
-                            )
-
-                    _ ->
-                        -- Unable to parse css
-                        Nothing
-            )
-        |> List.unzip
-        |> Tuple.mapFirst (\props -> "[ " ++ String.join "," props ++ " ]")

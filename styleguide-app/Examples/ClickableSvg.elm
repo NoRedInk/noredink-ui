@@ -279,21 +279,17 @@ initSettings =
                 |> CommonControls.css
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.css
-                    , default = "border: 2px solid red;"
                     }
                 |> CommonControls.mobileCss
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.mobileCss
-                    , default = "padding: 10px;"
                     }
                 |> CommonControls.quizEngineMobileCss
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.quizEngineMobileCss
-                    , default = ""
                     }
                 |> CommonControls.notMobileCss
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.notMobileCss
-                    , default = ""
                     }
             )

@@ -19,6 +19,7 @@ import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -159,53 +160,62 @@ disabledListItem moduleName f =
 
 
 css :
-    { moduleName : String, use : List Css.Style -> b, default : String }
+    { moduleName : String, use : List Css.Style -> b }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
 css =
     css_ "css"
+        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+        )
 
 
 mobileCss :
-    { moduleName : String, use : List Css.Style -> b, default : String }
+    { moduleName : String, use : List Css.Style -> b }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
 mobileCss =
     css_ "mobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+        )
 
 
 quizEngineMobileCss :
-    { moduleName : String, use : List Css.Style -> b, default : String }
+    { moduleName : String, use : List Css.Style -> b }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
 quizEngineMobileCss =
     css_ "quizEngineMobileCss"
+        ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]"
+        , [ Css.border3 (Css.px 4) Css.solid Colors.aqua |> Css.important ]
+        )
 
 
 notMobileCss :
-    { moduleName : String, use : List Css.Style -> b, default : String }
+    { moduleName : String, use : List Css.Style -> b }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
 notMobileCss =
     css_ "notMobileCss"
+        ( "[ Css.backgroundColor Colors.purple ]"
+        , [ Css.backgroundColor Colors.purple ]
+        )
 
 
 css_ :
     String
+    -> ( String, List Css.Style )
     ->
         { moduleName : String
         , use : List Css.Style -> b
-        , default : String
         }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
-css_ helperName { moduleName, use, default } =
+css_ helperName ( styles, default ) { moduleName, use } =
     ControlExtra.optionalListItem helperName
-        (Control.map
-            (\( cssString, cssValue ) ->
-                ( moduleName ++ "." ++ helperName ++ " " ++ cssString
-                , use cssValue
-                )
+        (Control.value
+            ( moduleName ++ "." ++ helperName ++ " " ++ styles
+            , use default
             )
-            (ControlExtra.css default)
         )
