@@ -1,6 +1,6 @@
 module Nri.Ui.RadioButton.V4 exposing
     ( view
-    , premium, onPennantClick
+    , premium, onLockedPennantClick
     , disclosure
     , onSelect
     , Attribute
@@ -12,13 +12,14 @@ module Nri.Ui.RadioButton.V4 exposing
 {-| Changes from V3:
 
   - use PremiumDisplay instead of PremiumLevel
+  - rename showPennant to onLockedPennantClick since its display depends on premium now
 
 @docs view
 
 
 ### Content
 
-@docs premium, onPennantClick
+@docs premium, onLockedPennantClick
 @docs disclosure
 
 
@@ -115,8 +116,8 @@ premium premiumDisplay =
 When the pennant is clicked, the msg that's passed in will fire.
 
 -}
-onPennantClick : msg -> Attribute value msg
-onPennantClick premiumMsg =
+onLockedPennantClick : msg -> Attribute value msg
+onLockedPennantClick premiumMsg =
     Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
 
 
@@ -408,7 +409,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     ( PremiumDisplay.Free, _ ) ->
                         text ""
 
-                    ( _, premiumMsg ) ->
+                    ( PremiumDisplay.PremiumUnlocked, _ ) ->
+                        premiumPennant Nothing
+
+                    ( PremiumDisplay.PremiumLocked, premiumMsg ) ->
                         premiumPennant premiumMsg
                 ]
             ]
