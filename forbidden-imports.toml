@@ -79,13 +79,19 @@ usages = ['styleguide-app/Examples/RadioButton.elm']
 hint = 'upgrade to V11'
 
 [forbidden."Nri.Ui.PremiumCheckbox.V6"]
-hint = 'upgrade to V7'
+hint = 'upgrade to V8'
+
+[forbidden."Nri.Ui.PremiumCheckbox.V7"]
+hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.RadioButton.V2"]
-hint = 'upgrade to V3'
+hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.RadioButton.V3"]
+hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.SegmentedControl.V11"]
 hint = 'upgrade to V14'
@@ -101,6 +107,9 @@ hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.Select.V7"]
 hint = 'upgrade to V8'
+
+[forbidden."Nri.Ui.SideNav.V1"]
+hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'

@@ -4,7 +4,7 @@ module CommonControls exposing
     , icon, iconNotCheckedByDefault, uiIcon
     , content
     , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
-    , disabledListItem, premiumLevel
+    , disabledListItem, premiumDisplay, premiumLevel
     )
 
 {-|
@@ -29,6 +29,7 @@ import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -39,6 +40,15 @@ premiumLevel =
     choice "PremiumLevel"
         [ ( "Free", Free )
         , ( "PremiumWithWriting", PremiumWithWriting )
+        ]
+
+
+premiumDisplay : Control ( String, PremiumDisplay )
+premiumDisplay =
+    Control.choice
+        [ ( "Free", Control.value ( "Free", PremiumDisplay.Free ) )
+        , ( "Premium Locked", Control.value ( "PremiumLocked", PremiumDisplay.PremiumLocked ) )
+        , ( "Premium Unlocked", Control.value ( "PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
         ]
 
 

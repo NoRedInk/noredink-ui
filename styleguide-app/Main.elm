@@ -21,7 +21,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Page.V3 as Page
-import Nri.Ui.SideNav.V1 as SideNav
+import Nri.Ui.SideNav.V2 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes as Routes exposing (Route(..))
@@ -247,8 +247,7 @@ navigation currentRoute =
                 Category.all
     in
     SideNav.view
-        { userPremiumLevel = PremiumLevel.Free
-        , isCurrentRoute = (==) currentRoute
+        { isCurrentRoute = (==) currentRoute
         , routeToString = Routes.toString
         , onSkipNav = SkipToMainContent
         , css =
