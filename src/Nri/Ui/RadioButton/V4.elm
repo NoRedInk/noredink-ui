@@ -1,6 +1,6 @@
 module Nri.Ui.RadioButton.V4 exposing
     ( view
-    , premium, onLockedPennantClick
+    , premium, onLockedClick
     , disclosure
     , onSelect
     , Attribute
@@ -12,14 +12,14 @@ module Nri.Ui.RadioButton.V4 exposing
 {-| Changes from V3:
 
   - use PremiumDisplay instead of PremiumLevel
-  - rename showPennant to onLockedPennantClick since its display depends on premium now
+  - rename showPennant to onLockedClick since its display depends on premium now
 
 @docs view
 
 
 ### Content
 
-@docs premium, onLockedPennantClick
+@docs premium, onLockedClick
 @docs disclosure
 
 
@@ -116,9 +116,9 @@ premium premiumDisplay =
 When the pennant is clicked, the msg that's passed in will fire.
 
 -}
-onLockedPennantClick : msg -> Attribute value msg
-onLockedPennantClick premiumMsg =
-    Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
+onLockedClick : msg -> Attribute value msg
+onLockedClick onLockedMsg =
+    Attribute <| \config -> { config | onLockedMsg = Just onLockedMsg }
 
 
 {-| Content that shows when this RadioButton is selected
@@ -213,7 +213,7 @@ type alias Config value msg =
     , labelCss : List Css.Style
     , custom : List (Html.Attribute Never)
     , onSelect : Maybe (value -> msg)
-    , premiumMsg : Maybe msg
+    , onLockedMsg : Maybe msg
     , disclosedContent : List (Html msg)
     }
 
@@ -231,7 +231,7 @@ emptyConfig =
     , labelCss = []
     , custom = []
     , onSelect = Nothing
-    , premiumMsg = Nothing
+    , onLockedMsg = Nothing
     , disclosedContent = []
     }
 
@@ -405,15 +405,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             config.labelCss
                     ]
                     [ Html.text label ]
-                , case ( config.premiumDisplay, config.premiumMsg ) of
+                , case ( config.premiumDisplay, config.onLockedMsg ) of
                     ( PremiumDisplay.Free, _ ) ->
                         text ""
 
                     ( PremiumDisplay.PremiumUnlocked, _ ) ->
                         premiumPennant Nothing
 
-                    ( PremiumDisplay.PremiumLocked, premiumMsg ) ->
-                        premiumPennant premiumMsg
+                    ( PremiumDisplay.PremiumLocked, onLockedMsg ) ->
+                        premiumPennant onLockedMsg
                 ]
             ]
          , InputErrorAndGuidanceInternal.view idValue config
