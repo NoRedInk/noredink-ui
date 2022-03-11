@@ -4,6 +4,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
     , premium, showPennant
     , Attribute
     , disabled, enabled
+    , id
     )
 
 {-| Changes from V7:
@@ -24,6 +25,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 
 @docs Attribute
 @docs disabled, enabled
+@docs id
 
 -}
 
@@ -37,6 +39,16 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Util exposing (removePunctuation)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
+
+
+{-| Set a custom ID for this checkbox and label. If you don't set this,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one checkbox with the same label on
+the page. Use this to be more specific and avoid issues with duplicate IDs!
+-}
+id : String -> Attribute msg
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
 
 
 {-| This disables the input
