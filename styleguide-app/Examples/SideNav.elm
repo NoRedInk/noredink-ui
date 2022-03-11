@@ -8,6 +8,7 @@ module Examples.SideNav exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -86,7 +87,7 @@ view state =
                             , String.fromInt settings.currentRoute
                             , "\n\t, routeToString = String.fromInt"
                             , "\n\t, onSkipNav = SkipToContent"
-                            , "\n\t, css = []"
+                            , "\n\t, css = " ++ Tuple.first settings.css
                             , "\n\t}"
                             , "\n\t[ "
                             , String.join "\n\t" (List.map Tuple.first entries)
@@ -99,7 +100,7 @@ view state =
         { isCurrentRoute = (==) settings.currentRoute
         , routeToString = String.fromInt
         , onSkipNav = SkipToContent
-        , css = []
+        , css = Tuple.second settings.css
         }
         (List.map Tuple.second settings.entries)
     ]
@@ -113,6 +114,7 @@ type alias State =
 
 type alias Settings =
     { currentRoute : Int
+    , css : ( String, List Css.Style )
     , entries : List ( String, SideNav.Entry Int Msg )
     }
 
@@ -123,6 +125,25 @@ init =
     { settings =
         Control.record Settings
             |> Control.field "currentRoute" (ControlExtra.int 1)
+            |> Control.field "css"
+                (Control.maybe True
+                    (Control.choice
+                        [ ( "maxWidth"
+                          , Control.value
+                                ( "[ Css.maxWidth (Css.px 300) ]"
+                                , [ Css.maxWidth (Css.px 300) ]
+                                )
+                          )
+                        , ( "purple border"
+                          , Control.value
+                                ( "[ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
+                                , [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
+                                )
+                          )
+                        ]
+                    )
+                    |> Control.map (Maybe.withDefault ( "[]", [] ))
+                )
             |> Control.field "entries" (Control.map List.singleton controlEntryType)
     }
 
@@ -202,6 +223,7 @@ controlEntryAttributes =
                 )
                 (ControlExtra.int 1)
             )
+        |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
 
 
 {-| -}
