@@ -241,6 +241,7 @@ viewLockedEntry extraStyles entryConfig =
 sharedEntryStyles : List Style
 sharedEntryStyles =
     [ padding2 (px 13) (px 20)
+    , Css.property "word-break" "break-word"
     , displayFlex
     , borderRadius (px 8)
     , alignItems center
