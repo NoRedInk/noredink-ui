@@ -25,6 +25,8 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 
 @docs Attribute
 @docs disabled, enabled
+@docs id
+
 
 -}
 
