@@ -1,6 +1,6 @@
 module Nri.Ui.SideNav.V2 exposing
     ( view, Config
-    , entry, entryWithChildren, html, Entry
+    , entry, entryWithChildren, html, Entry, Attribute
     , icon, custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -11,9 +11,10 @@ module Nri.Ui.SideNav.V2 exposing
 {-| Changes from V1:
 
   - Use PremiumDisplay instead of PremiumLevel
+  - Expose Attribute
 
 @docs view, Config
-@docs entry, entryWithChildren, html, Entry
+@docs entry, entryWithChildren, html, Entry, Attribute
 @docs icon, custom, css, nriDescription, testId, id
 
 
@@ -286,6 +287,7 @@ build title =
     }
 
 
+{-| -}
 type Attribute route msg
     = Attribute (EntryConfig route msg -> EntryConfig route msg)
 

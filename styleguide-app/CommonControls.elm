@@ -46,9 +46,9 @@ premiumLevel =
 premiumDisplay : Control ( String, PremiumDisplay )
 premiumDisplay =
     Control.choice
-        [ ( "Free", Control.value ( "Free", PremiumDisplay.Free ) )
-        , ( "Premium Locked", Control.value ( "PremiumLocked", PremiumDisplay.PremiumLocked ) )
-        , ( "Premium Unlocked", Control.value ( "PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
+        [ ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
+        , ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
+        , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
         ]
 
 
