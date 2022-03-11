@@ -224,6 +224,7 @@ controlEntryAttributes =
                 (ControlExtra.int 1)
             )
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
+        |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
 
 
 {-| -}
