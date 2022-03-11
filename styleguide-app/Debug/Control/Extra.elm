@@ -1,14 +1,12 @@
 module Debug.Control.Extra exposing
     ( float, int
     , list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
-    , dynamicList
     )
 
 {-|
 
 @docs float, int
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
-@docs dynamicList
 
 -}
 
@@ -86,30 +84,5 @@ optionalBoolListItem name f accumulator =
                     []
             )
             (Control.bool False)
-        )
-        (Control.map (++) accumulator)
-
-
-{-| -}
-dynamicList : Control a -> Control (List a)
-dynamicList value =
-    list
-        |> listItem "Entry" value
-        |> addAnother value
-
-
-addAnother : Control a -> Control (List a) -> Control (List a)
-addAnother value accumulator =
-    Control.field "Add another?"
-        (Control.map
-            (\maybe ->
-                case maybe of
-                    Just l ->
-                        l
-
-                    Nothing ->
-                        []
-            )
-            (Control.maybe False (Control.lazy (\() -> dynamicList value)))
         )
         (Control.map (++) accumulator)

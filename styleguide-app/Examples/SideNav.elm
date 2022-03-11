@@ -70,21 +70,21 @@ viewPreview =
 view : State -> List (Html Msg)
 view state =
     let
-        entriesSettings =
+        settings =
             Control.currentValue state.settings
-                |> List.map Tuple.second
     in
     [ ControlView.view
         { update = SetControls
         , settings = state.settings
         , toExampleCode =
-            \entries ->
+            \{ entries } ->
                 [ { sectionName = "View"
                   , code =
                         String.join ""
                             [ "SideNav.view"
-                            , "\n\t{ isCurrentRoute = isCurrentRoute"
-                            , "\n\t, routeToString = routeToString"
+                            , "\n\t{ isCurrentRoute = (==) "
+                            , String.fromInt settings.currentRoute
+                            , "\n\t, routeToString = String.fromInt"
                             , "\n\t, onSkipNav = SkipToContent"
                             , "\n\t, css = []"
                             , "\n\t}"
@@ -96,96 +96,117 @@ view state =
                 ]
         }
     , SideNav.view
-        { isCurrentRoute =
-            -- TODO: show current route
-            \_ -> False
-        , routeToString = \_ -> ""
+        { isCurrentRoute = (==) settings.currentRoute
+        , routeToString = String.fromInt
         , onSkipNav = SkipToContent
         , css = []
         }
-        entriesSettings
+        (List.map Tuple.second settings.entries)
     ]
 
 
 {-| -}
 type alias State =
-    { settings : Settings
+    { settings : Control Settings
     }
 
 
 type alias Settings =
-    Control (List ( String, SideNav.Entry () Msg ))
+    { currentRoute : Int
+    , entries : List ( String, SideNav.Entry Int Msg )
+    }
 
 
 {-| -}
 init : State
 init =
-    { settings = ControlExtra.dynamicList controlEntry
+    { settings =
+        Control.record Settings
+            |> Control.field "currentRoute" (ControlExtra.int 1)
+            |> Control.field "entries" (Control.map List.singleton controlEntryType)
     }
 
 
-controlEntry : Control ( String, SideNav.Entry () Msg )
-controlEntry =
+controlEntryType : Control ( String, SideNav.Entry Int Msg )
+controlEntryType =
     Control.choice
-        [ ( "entry"
-          , Control.record
-                (\title attributes ->
-                    ( "SideNav.entry "
-                        ++ title
-                        ++ " [\n\t"
-                        ++ String.join "\n\t," (List.map Tuple.first attributes)
-                        ++ "\n\t]"
-                    , SideNav.entry title (List.map Tuple.second attributes)
-                    )
-                )
-                |> Control.field "title" (Control.string "Entry Category")
-                |> Control.field "attributes" controlEntryAttributes
-          )
-        , ( "entryWithChildren"
-          , Control.record
-                (\title attributes children ->
-                    ( "SideNav.entryWithChildren "
-                        ++ title
-                        ++ " [\n\t"
-                        ++ String.join "\n\t," (List.map Tuple.first attributes)
-                        ++ "\n\t]"
-                        ++ " [\n\t"
-                        ++ String.join "\n\t," (List.map Tuple.first children)
-                        ++ "\n\t]"
-                    , SideNav.entryWithChildren title
-                        (List.map Tuple.second attributes)
-                        (List.map Tuple.second children)
-                    )
-                )
-                |> Control.field "title" (Control.string "Entry Category")
-                |> Control.field "attributes" controlEntryAttributes
-                |> -- TODO: support sub-categories
-                   Control.field "children" (Control.value [])
-          )
-        , ( "html"
-          , Control.map
-                (\html ->
-                    ( "SideNav.html "
-                        ++ " [\n\t"
-                        ++ String.join "\n\t," (List.map Tuple.first html)
-                        ++ "\n\t]"
-                    , SideNav.html (List.map Tuple.second html)
-                    )
-                )
-                -- TODO: support HTML examples
-                (Control.value [])
-          )
+        [ ( "entry", controlEntry )
+        , ( "entryWithChildren", controlEntryWithChildren )
+        , ( "html", controlHtml )
         ]
 
 
-controlEntryAttributes : Control (List ( String, SideNav.Attribute () Msg ))
+controlEntry : Control ( String, SideNav.Entry Int Msg )
+controlEntry =
+    Control.record
+        (\title attributes ->
+            ( "SideNav.entry "
+                ++ title
+                ++ " [\n\t"
+                ++ String.join "\n\t," (List.map Tuple.first attributes)
+                ++ "\n\t]"
+            , SideNav.entry title (List.map Tuple.second attributes)
+            )
+        )
+        |> Control.field "title" (Control.string "Entry Category")
+        |> Control.field "attributes" controlEntryAttributes
+
+
+controlEntryWithChildren : Control ( String, SideNav.Entry Int Msg )
+controlEntryWithChildren =
+    Control.record
+        (\title attributes children ->
+            ( "SideNav.entryWithChildren "
+                ++ title
+                ++ " [\n\t"
+                ++ String.join "\n\t," (List.map Tuple.first attributes)
+                ++ "\n\t]"
+                ++ " [\n\t"
+                ++ String.join "\n\t," (List.map Tuple.first children)
+                ++ "\n\t]"
+            , SideNav.entryWithChildren title
+                (List.map Tuple.second attributes)
+                (List.map Tuple.second children)
+            )
+        )
+        |> Control.field "title" (Control.string "Entry Category")
+        |> Control.field "attributes" controlEntryAttributes
+        |> -- TODO: support sub-categories
+           Control.field "children" (Control.value [])
+
+
+controlHtml : Control ( String, SideNav.Entry Int Msg )
+controlHtml =
+    Control.map
+        (\html ->
+            ( "SideNav.html "
+                ++ " [\n\t"
+                ++ String.join "\n\t," (List.map Tuple.first html)
+                ++ "\n\t]"
+            , SideNav.html (List.map Tuple.second html)
+            )
+        )
+        -- TODO: support HTML examples
+        (Control.value [])
+
+
+controlEntryAttributes : Control (List ( String, SideNav.Attribute Int Msg ))
 controlEntryAttributes =
     ControlExtra.list
+        |> ControlExtra.listItem "href"
+            (Control.map
+                (\int ->
+                    ( "SideNav.href " ++ String.fromInt int
+                    , SideNav.href int
+                    )
+                )
+                (ControlExtra.int 1)
+            )
 
 
 {-| -}
 type Msg
-    = SetControls Settings
+    = SetControls (Control Settings)
     | SkipToContent
 
 
