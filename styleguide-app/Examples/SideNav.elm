@@ -83,7 +83,7 @@ view state =
                   , code =
                         String.join ""
                             [ "SideNav.view"
-                            , "\n\t{ isCurrentRoute = (==) " ++ settings.currentRoute
+                            , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"
                             , "\n\t, css = " ++ Tuple.first settings.css
@@ -160,11 +160,11 @@ controlEntry : String -> Control ( String, SideNav.Entry String Msg )
 controlEntry href =
     Control.record
         (\title attributes ->
-            ( "SideNav.entry "
+            ( "SideNav.entry \""
                 ++ title
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first attributes)
-                ++ "\n\t]"
+                ++ "\"\n\t\t[ "
+                ++ String.join "\n\t\t, " (List.map Tuple.first attributes)
+                ++ "\n\t\t]"
             , SideNav.entry title (List.map Tuple.second attributes)
             )
         )
@@ -218,7 +218,7 @@ controlEntryAttributes : String -> Control (List ( String, SideNav.Attribute Str
 controlEntryAttributes href =
     ControlExtra.list
         |> ControlExtra.listItem "href"
-            (Control.map (\v -> ( "SideNav.href " ++ v, SideNav.href v ))
+            (Control.map (\v -> ( "SideNav.href \"" ++ v ++ "\"", SideNav.href v ))
                 (Control.string href)
             )
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
