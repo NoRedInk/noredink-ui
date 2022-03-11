@@ -224,12 +224,22 @@ controlEntryAttributes href =
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
         |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
         |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
+        |> ControlExtra.optionalListItem "premiumDisplay"
+            (Control.map
+                (\( displayStr, display ) ->
+                    ( "SideNav.premiumDisplay " ++ displayStr
+                    , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
+                    )
+                )
+                CommonControls.premiumDisplay
+            )
 
 
 {-| -}
 type Msg
     = SetControls (Control Settings)
     | SkipToContent
+    | ConsoleLog String
 
 
 {-| -}
@@ -240,4 +250,11 @@ update msg state =
             ( { state | settings = settings }, Cmd.none )
 
         SkipToContent ->
+            ( state, Cmd.none )
+
+        ConsoleLog message ->
+            let
+                _ =
+                    Debug.log "SideNav" message
+            in
             ( state, Cmd.none )
