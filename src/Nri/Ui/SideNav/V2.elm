@@ -287,6 +287,7 @@ build title =
     }
 
 
+{-| -}
 type Attribute route msg
     = Attribute (EntryConfig route msg -> EntryConfig route msg)
 
