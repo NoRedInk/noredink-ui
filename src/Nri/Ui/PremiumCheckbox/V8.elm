@@ -1,7 +1,7 @@
 module Nri.Ui.PremiumCheckbox.V8 exposing
     ( view
     , selected, partiallySelected
-    , premium, showPennant
+    , premium, onLockedClick
     , Attribute
     , disabled, enabled
     , id
@@ -10,6 +10,8 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 {-| Changes from V7:
 
   - Use PremiumDisplay instead of PremiumLevel
+  - Rename showPennant to onLockedClick
+  - Fix clicking on locked checkbox to send a onLockedClick
 
 @docs view
 
@@ -18,7 +20,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 
 ### Content
 
-@docs premium, showPennant
+@docs premium, onLockedClick
 
 
 ### Attributes
@@ -77,9 +79,9 @@ premium premiumDisplay =
 When a locked premium checkbox is clicked, the msg that's passed in will fire.
 
 -}
-showPennant : msg -> Attribute msg
-showPennant premiumMsg =
-    Attribute <| \config -> { config | premiumMsg = Just premiumMsg }
+onLockedClick : msg -> Attribute msg
+onLockedClick onLockedMsg =
+    Attribute <| \config -> { config | onLockedMsg = Just onLockedMsg }
 
 
 setSelectionStatus : Checkbox.IsSelected -> Attribute msg
@@ -118,7 +120,7 @@ type alias Config msg =
     , isDisabled : Bool
     , containerCss : List Css.Style
     , selected : Checkbox.IsSelected
-    , premiumMsg : Maybe msg
+    , onLockedMsg : Maybe msg
     }
 
 
@@ -132,7 +134,7 @@ emptyConfig =
         , Css.alignItems Css.center
         ]
     , selected = Checkbox.NotSelected
-    , premiumMsg = Nothing
+    , onLockedMsg = Nothing
     }
 
 
@@ -165,6 +167,9 @@ view { label, onChange } attributes =
 
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
+
+        isLockedAndNoLockedMessage =
+            isLocked && config.onLockedMsg == Nothing
     in
     Html.div [ css config.containerCss ]
         [ case config.premiumDisplay of
@@ -181,14 +186,16 @@ view { label, onChange } attributes =
             { identifier = idValue
             , label = label
             , setterMsg =
-                case ( isLocked, config.premiumMsg ) of
-                    ( True, Just onLockedClick ) ->
-                        \_ -> onLockedClick
+                case ( isLocked, config.onLockedMsg ) of
+                    ( True, Just msg ) ->
+                        -- If it's locked and there is no onLockedMsg the checbox is disabled and
+                        -- we should not be receiving a click
+                        \_ -> msg
 
                     _ ->
                         onChange
             , selected = config.selected
-            , disabled = isLocked || config.isDisabled
+            , disabled = isLockedAndNoLockedMessage || config.isDisabled
             , theme =
                 if isLocked then
                     Checkbox.Locked

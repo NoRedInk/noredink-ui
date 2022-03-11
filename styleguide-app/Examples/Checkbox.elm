@@ -188,7 +188,7 @@ viewPremiumCheckboxes state =
             , onChange = ToggleCheck "premium-1"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-1" state.isChecked)
             ]
         , PremiumCheckbox.view
@@ -196,7 +196,7 @@ viewPremiumCheckboxes state =
             , onChange = ToggleCheck "premium-2"
             }
             [ PremiumCheckbox.premium PremiumDisplay.Free
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
             ]
         , PremiumCheckbox.view
@@ -204,7 +204,7 @@ viewPremiumCheckboxes state =
             , onChange = ToggleCheck "premium-3"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
             ]
         ]
