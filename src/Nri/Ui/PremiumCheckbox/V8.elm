@@ -1,10 +1,10 @@
 module Nri.Ui.PremiumCheckbox.V8 exposing
     ( view
-    , id
     , selected, partiallySelected
     , premium, showPennant
     , Attribute
     , disabled, enabled
+    , id
     )
 
 {-| Changes from V7:
@@ -48,6 +48,7 @@ the page. Use this to be more specific and avoid issues with duplicate IDs!
 id : String -> Attribute msg
 id id_ =
     Attribute (\config -> { config | id = Just id_ })
+
 
 {-| This disables the input
 -}
