@@ -43,10 +43,14 @@ list =
 
 {-| -}
 listItem : String -> Control a -> Control (List a) -> Control (List a)
-listItem name accessor accumulator =
-    Control.field name
-        (Control.map List.singleton accessor)
-        (Control.map (++) accumulator)
+listItem name accessor =
+    listItems name (Control.map List.singleton accessor)
+
+
+{-| -}
+listItems : String -> Control (List a) -> Control (List a) -> Control (List a)
+listItems name accessor accumulator =
+    Control.field name accessor (Control.map (++) accumulator)
 
 
 {-| -}
