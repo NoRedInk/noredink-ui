@@ -184,7 +184,7 @@ viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     Html.div []
         [ PremiumCheckbox.view
-            { label = "Identify Adjectives 1 (Premium)"
+            { label = "Identify Adjectives 1 (Premium, Unlocked)"
             , onChange = ToggleCheck "premium-1"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
@@ -200,12 +200,21 @@ viewPremiumCheckboxes state =
             , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
             ]
         , PremiumCheckbox.view
-            { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
+            { label = "Revising Wordy Phrases 3 (Premium, Locked)"
             , onChange = ToggleCheck "premium-3"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
             , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
+            ]
+        , PremiumCheckbox.view
+            { label = "Revising Wordy Phrases 4 (Premium, Disabled)"
+            , onChange = ToggleCheck "premium-4"
+            }
+            [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
+
+            -- disabled because there is no PremiumCheckbox.onLockedClick
+            , PremiumCheckbox.selected (Set.member "premium-4" state.isChecked)
             ]
         ]
 
