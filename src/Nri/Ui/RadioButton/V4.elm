@@ -13,6 +13,7 @@ module Nri.Ui.RadioButton.V4 exposing
 
   - use PremiumDisplay instead of PremiumLevel
   - rename showPennant to onLockedClick since its display depends on premium now
+  - make onLockedClick be triggers when clicking anywhere and not just pennant to match PremiumChecbox
 
 @docs view
 
@@ -276,6 +277,9 @@ view { label, name, value, valueToString, selectedValue } attributes =
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
 
+        isLockedAndNoLockedMessage =
+            isLocked && config.onLockedMsg == Nothing
+
         ( disclosureIds, disclosedElements ) =
             config.disclosedContent
                 |> List.indexedMap
@@ -316,12 +320,21 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ([ Attributes.id idValue
              , Widget.disabled (isLocked || config.isDisabled)
              , InputErrorAndGuidanceInternal.describedBy idValue config
-             , case ( config.onSelect, config.isDisabled ) of
+             , case ( config.onSelect, isLocked || config.isDisabled ) of
                 ( Just onSelect_, False ) ->
                     onClick (onSelect_ value)
 
                 _ ->
-                    Extra.none
+                    case config.onLockedMsg of
+                        Just msg ->
+                            if isLocked then
+                                onClick msg
+
+                            else
+                                Extra.none
+
+                        Nothing ->
+                            Extra.none
              , class "Nri-RadioButton-HiddenRadioInput"
              , Aria.describedBy disclosureIds
              , css
@@ -379,7 +392,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ]
             [ radioInputIcon
                 { isLocked = isLocked
-                , isDisabled = config.isDisabled
+                , isDisabled = isLockedAndNoLockedMessage || config.isDisabled
                 , isChecked = isChecked
                 }
             , span
