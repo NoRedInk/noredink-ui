@@ -120,9 +120,7 @@ type alias Settings =
 {-| -}
 init : State
 init =
-    { settings =
-        ControlExtra.list
-            |> ControlExtra.listItem "entry" controlEntry
+    { settings = ControlExtra.dynamicList controlEntry
     }
 
 
