@@ -83,9 +83,8 @@ view state =
                   , code =
                         String.join ""
                             [ "SideNav.view"
-                            , "\n\t{ isCurrentRoute = (==) "
-                            , String.fromInt settings.currentRoute
-                            , "\n\t, routeToString = String.fromInt"
+                            , "\n\t{ isCurrentRoute = (==) " ++ settings.currentRoute
+                            , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"
                             , "\n\t, css = " ++ Tuple.first settings.css
                             , "\n\t}"
@@ -98,7 +97,7 @@ view state =
         }
     , SideNav.view
         { isCurrentRoute = (==) settings.currentRoute
-        , routeToString = String.fromInt
+        , routeToString = identity
         , onSkipNav = SkipToContent
         , css = Tuple.second settings.css
         }
@@ -113,9 +112,9 @@ type alias State =
 
 
 type alias Settings =
-    { currentRoute : Int
+    { currentRoute : String
     , css : ( String, List Css.Style )
-    , entries : List ( String, SideNav.Entry Int Msg )
+    , entries : List ( String, SideNav.Entry String Msg )
     }
 
 
@@ -124,7 +123,7 @@ init : State
 init =
     { settings =
         Control.record Settings
-            |> Control.field "currentRoute" (ControlExtra.int 1)
+            |> Control.field "currentRoute" (Control.string "#some-route")
             |> Control.field "css"
                 (Control.maybe True
                     (Control.choice
@@ -144,21 +143,21 @@ init =
                     )
                     |> Control.map (Maybe.withDefault ( "[]", [] ))
                 )
-            |> Control.field "entries" (Control.map List.singleton controlEntryType)
+            |> Control.field "entries" (Control.map List.singleton (controlEntryType "#some-route"))
     }
 
 
-controlEntryType : Control ( String, SideNav.Entry Int Msg )
-controlEntryType =
+controlEntryType : String -> Control ( String, SideNav.Entry String Msg )
+controlEntryType href =
     Control.choice
-        [ ( "entry", controlEntry )
-        , ( "entryWithChildren", controlEntryWithChildren )
+        [ ( "entry", controlEntry href )
+        , ( "entryWithChildren", controlEntryWithChildren href )
         , ( "html", controlHtml )
         ]
 
 
-controlEntry : Control ( String, SideNav.Entry Int Msg )
-controlEntry =
+controlEntry : String -> Control ( String, SideNav.Entry String Msg )
+controlEntry href =
     Control.record
         (\title attributes ->
             ( "SideNav.entry "
@@ -170,11 +169,11 @@ controlEntry =
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" controlEntryAttributes
+        |> Control.field "attributes" (controlEntryAttributes href)
 
 
-controlEntryWithChildren : Control ( String, SideNav.Entry Int Msg )
-controlEntryWithChildren =
+controlEntryWithChildren : String -> Control ( String, SideNav.Entry String Msg )
+controlEntryWithChildren href =
     Control.record
         (\title attributes children ->
             ( "SideNav.entryWithChildren "
@@ -191,12 +190,16 @@ controlEntryWithChildren =
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" controlEntryAttributes
-        |> -- TODO: support sub-categories
-           Control.field "children" (Control.value [])
+        |> Control.field "attributes" (controlEntryAttributes href)
+        |> Control.field "children"
+            (Control.lazy
+                (\() ->
+                    Control.map List.singleton (controlEntryType (href ++ "-child"))
+                )
+            )
 
 
-controlHtml : Control ( String, SideNav.Entry Int Msg )
+controlHtml : Control ( String, SideNav.Entry String Msg )
 controlHtml =
     Control.map
         (\html ->
@@ -211,17 +214,12 @@ controlHtml =
         (Control.value [])
 
 
-controlEntryAttributes : Control (List ( String, SideNav.Attribute Int Msg ))
-controlEntryAttributes =
+controlEntryAttributes : String -> Control (List ( String, SideNav.Attribute String Msg ))
+controlEntryAttributes href =
     ControlExtra.list
         |> ControlExtra.listItem "href"
-            (Control.map
-                (\int ->
-                    ( "SideNav.href " ++ String.fromInt int
-                    , SideNav.href int
-                    )
-                )
-                (ControlExtra.int 1)
+            (Control.map (\v -> ( "SideNav.href " ++ v, SideNav.href v ))
+                (Control.string href)
             )
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
         |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
