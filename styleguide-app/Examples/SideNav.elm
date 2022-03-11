@@ -225,6 +225,7 @@ controlEntryAttributes =
             )
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
         |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
+        |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
 
 
 {-| -}
