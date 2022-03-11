@@ -27,7 +27,6 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 @docs disabled, enabled
 @docs id
 
-
 -}
 
 import Accessibility.Styled as Html exposing (Html)
