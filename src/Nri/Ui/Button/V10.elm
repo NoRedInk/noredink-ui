@@ -5,7 +5,7 @@ module Nri.Ui.Button.V10 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
-    , primary, secondary, danger, premium
+    , primary, secondary, ternary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, custom, nriDescription, testId, id
     , hideIconForMobile, hideIconFor
@@ -28,6 +28,7 @@ adding a span around the text could potentially lead to regressions.
   - adds `modal` helper, an alias for `large` size
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconFor`
+  - adds `ternary` style
 
 
 # Changes from V9:
@@ -56,7 +57,7 @@ adding a span around the text could potentially lead to regressions.
 
 ## Change the color scheme
 
-@docs primary, secondary, danger, premium
+@docs primary, secondary, ternary, danger, premium
 
 
 ## Change the state (buttons only)
@@ -414,6 +415,15 @@ secondary =
     set
         (\attributes ->
             { attributes | style = secondaryColors }
+        )
+
+
+{-| -}
+ternary : Attribute msg
+ternary =
+    set
+        (\attributes ->
+            { attributes | style = ternaryColors }
         )
 
 
@@ -812,6 +822,16 @@ secondaryColors =
     , text = Colors.azure
     , border = Just <| Colors.azure
     , shadow = Colors.azure
+    }
+
+
+ternaryColors : ColorPalette
+ternaryColors =
+    { background = Colors.white
+    , hover = Colors.frost
+    , text = Colors.navy
+    , border = Just <| Colors.gray75
+    , shadow = Colors.gray75
     }
 
 
