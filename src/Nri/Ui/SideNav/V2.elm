@@ -240,9 +240,7 @@ viewLockedEntry extraStyles entryConfig =
 
 sharedEntryStyles : List Style
 sharedEntryStyles =
-    [ paddingLeft (px 20)
-    , paddingRight (px 20)
-    , height (px 45)
+    [ padding2 (px 13) (px 20)
     , displayFlex
     , borderRadius (px 8)
     , alignItems center
