@@ -47,7 +47,6 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (class, classList, css, for)
 import Html.Styled.Events exposing (onClick)
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
