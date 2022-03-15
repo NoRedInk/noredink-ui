@@ -47,9 +47,8 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
-import String.Extra
 
 
 
@@ -485,19 +484,6 @@ viewEntry focusAndToggle { upId, downId, entry_ } =
 
 
 -- STYLES
-
-
-buttonLinkResets : List Style
-buttonLinkResets =
-    [ boxSizing borderBox
-    , border zero
-    , padding zero
-    , margin zero
-    , backgroundColor transparent
-    , cursor pointer
-    , display inlineBlock
-    , verticalAlign middle
-    ]
 
 
 {-| -}

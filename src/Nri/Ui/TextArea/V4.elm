@@ -24,7 +24,7 @@ custom element, or else autosizing will break! This means doing the following:
 -}
 
 import Accessibility.Styled.Style
-import Css exposing (plus, px)
+import Css exposing (px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -32,8 +32,6 @@ import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V3 as InputStyles
     exposing
         ( Theme(..)
-        , input
-        , label
         )
 import Nri.Ui.Util exposing (dashify, removePunctuation)
 

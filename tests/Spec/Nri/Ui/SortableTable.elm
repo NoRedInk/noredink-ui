@@ -1,6 +1,6 @@
 module Spec.Nri.Ui.SortableTable exposing (spec)
 
-import Expect exposing (Expectation)
+import Expect
 import Html.Styled
 import Nri.Ui.SortableTable.V2 as SortableTable
 import Test exposing (..)
@@ -11,7 +11,6 @@ import Test.Html.Selector as Selector
 type Column
     = FirstName
     | LastName
-    | Coins
 
 
 type alias Person =

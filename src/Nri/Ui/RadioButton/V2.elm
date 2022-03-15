@@ -10,15 +10,12 @@ module Nri.Ui.RadioButton.V2 exposing (view, premium)
 -}
 
 import Accessibility.Styled exposing (..)
-import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (..)
-import Html.Styled.Events exposing (onClick, stopPropagationOn)
-import Json.Decode
+import Html.Styled.Events exposing (onClick)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
@@ -26,7 +23,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Pennant.V2 as Pennant
-import Nri.Ui.Svg.V1 exposing (Svg, fromHtml)
+import Nri.Ui.Svg.V1 exposing (Svg)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
 import Svg.Styled as Svg
@@ -232,19 +229,6 @@ internalView config =
                 ]
             ]
         ]
-
-
-onEnterAndSpacePreventDefault : msg -> Attribute msg
-onEnterAndSpacePreventDefault msg =
-    Nri.Ui.Html.V3.onKeyUp
-        { stopPropagation = False, preventDefault = True }
-        (\code ->
-            if code == 13 || code == 32 then
-                Just msg
-
-            else
-                Nothing
-        )
 
 
 radioInputIcon :

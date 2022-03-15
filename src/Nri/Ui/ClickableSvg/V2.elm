@@ -491,15 +491,6 @@ renderButton ((ButtonOrLink config) as button_) =
         ]
 
 
-type Link
-    = Default
-    | WithTracking
-    | SinglePageApp
-    | WithMethod String
-    | External
-    | ExternalWithTracking
-
-
 renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let

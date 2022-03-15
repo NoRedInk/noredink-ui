@@ -11,7 +11,6 @@ import Accessibility.Styled.Style as Accessibility
 import Css
 import Html.Styled.Attributes as Attributes
 import InputErrorAndGuidanceInternal exposing (ErrorState)
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme)
 
 

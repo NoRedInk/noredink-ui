@@ -2,8 +2,6 @@ module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
 import Accessibility.Widget as Widget
-import Expect
-import Html
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Nri.Ui.Tooltip.V2 as Tooltip

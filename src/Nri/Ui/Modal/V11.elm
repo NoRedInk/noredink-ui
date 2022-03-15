@@ -162,7 +162,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
-import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
@@ -170,8 +169,7 @@ import Css.Media
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
-import Html.Styled.Events as Events exposing (onClick)
-import Json.Decode as Decode exposing (Decoder)
+import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
@@ -181,7 +179,6 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
-import TransparentColor as Transparent
 
 
 {-| -}
@@ -237,7 +234,6 @@ isOpen model =
 type Msg
     = CloseButtonClicked
     | EscOrOverlayClicked
-    | Focus String
     | Focused (Result Dom.Error ())
 
 
@@ -266,9 +262,6 @@ update { dismissOnEscAndOverlayClick } msg model =
 
             else
                 ( model, Cmd.none )
-
-        Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
             -- TODO: consider adding error handling when we didn't successfully

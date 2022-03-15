@@ -22,7 +22,6 @@ module Nri.Ui.Tabs.V7 exposing
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes

@@ -6,14 +6,9 @@ module Nri.Ui.FocusTrap.V1 exposing (FocusTrap, toAttribute)
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
-import Accessibility.Styled.Key as Key
-import Browser.Dom as Dom
-import Browser.Events
-import Html.Styled.Attributes as Attributes exposing (class, id)
-import Html.Styled.Events as Events exposing (onClick)
+import Accessibility.Styled as Html
+import Html.Styled.Events as Events
 import Json.Decode as Decode exposing (Decoder)
-import Task
 
 
 {-| Defines how focus will wrap in reponse to tab keypresses in a part of the UI.

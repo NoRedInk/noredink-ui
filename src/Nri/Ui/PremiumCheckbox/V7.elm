@@ -32,7 +32,7 @@ module Nri.Ui.PremiumCheckbox.V7 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Css
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
