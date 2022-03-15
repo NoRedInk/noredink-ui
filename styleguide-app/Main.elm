@@ -1,31 +1,24 @@
-module Main exposing (init, main)
+module Main exposing (main)
 
 import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
-import Category exposing (Category)
+import Category
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
-import Html.Attributes
-import Html.Styled.Attributes as Attributes exposing (..)
-import Html.Styled.Events as Events
-import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Colors.V1 as Colors
+import Html.Styled.Attributes exposing (..)
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
-import Nri.Ui.Data.PremiumLevel as PremiumLevel
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V2 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
-import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes as Routes exposing (Route(..))
-import Sort.Set as Set exposing (Set)
+import Routes exposing (Route)
+import Sort.Set as Set
 import Task
 import Url exposing (Url)
 

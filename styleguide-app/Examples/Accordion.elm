@@ -17,12 +17,11 @@ import Css exposing (..)
 import Css.Global
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text

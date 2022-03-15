@@ -22,7 +22,7 @@ content to be "checked"!
 
 import Accessibility.Styled as Html exposing (Html)
 import Css
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
 import Nri.Ui.Svg.V1 as Svg

@@ -48,6 +48,8 @@ main = do
             "tests/elm-verify-examples.json",
             "log/elm-verify-examples.txt",
             "log/elm-test.txt",
+            "log/elm-review.txt",
+            "log/elm-review-styleguide.txt",
             "log/axe-report.txt",
             "log/percy-tests.txt",
             "log/forbidden-imports-report.txt",
@@ -82,6 +84,16 @@ main = do
         -- reveals the dep, so in it goes!
         need (["package.json", "elm.json"] ++ elmFiles)
         cmd (WithStdout True) (FileStdout out) "elm-test"
+
+      "log/elm-review.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
+        need (["package.json", "elm.json"] ++ elmFiles)
+        cmd (WithStdout True) (FileStdout out) "elm-review"
+
+      "log/elm-review-styleguide.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["styleguide-app/**/*.elm"]
+        need (["package.json", "elm.json", "styleguide-app/elm.json"] ++ elmFiles)
+        cmd (Cwd "styleguide-app") (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]

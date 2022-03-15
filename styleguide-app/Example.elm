@@ -2,7 +2,7 @@ module Example exposing (Example, preview, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css exposing (..)
-import Css.Global exposing (a, descendants)
+import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -10,11 +10,10 @@ import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Colors.V1 as Colors exposing (..)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
 

@@ -10,7 +10,7 @@ module Nri.Ui.Palette.V1 exposing
 
 -}
 
-import Css exposing (..)
+import Css
 import Nri.Ui.Colors.V1 as Colors
 
 

@@ -55,7 +55,7 @@ Example usage:
 
 -}
 
-import Accessibility.Styled as Html exposing (Attribute, Html, text)
+import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget

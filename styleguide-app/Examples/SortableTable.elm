@@ -9,7 +9,6 @@ module Examples.SortableTable exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V2 as SortableTable
 
@@ -22,8 +21,7 @@ type Column
 
 {-| -}
 type Msg
-    = NoOp
-    | SetSortState (SortableTable.State Column)
+    = SetSortState (SortableTable.State Column)
 
 
 {-| -}
@@ -99,8 +97,5 @@ init =
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        NoOp ->
-            ( state, Cmd.none )
-
         SetSortState sortState ->
             ( { state | sortState = sortState }, Cmd.none )

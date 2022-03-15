@@ -40,7 +40,7 @@ module Nri.Ui.RadioButton.V4 exposing
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
-import Css as Css exposing (..)
+import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (class, classList, css, for)

@@ -7,14 +7,13 @@ module Examples.Text exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import CommonControls exposing (exampleHtml, quickBrownFox, romeoAndJulietQuotation)
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text

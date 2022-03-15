@@ -20,12 +20,10 @@ import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Animations
 import Css.Global
-import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed as Keyed
 import Nri.Ui
-import Nri.Ui.AssetPath exposing (Asset(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors

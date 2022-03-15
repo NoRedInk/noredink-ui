@@ -11,10 +11,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
-import Html.Styled.Events exposing (onClick)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Text.V6 as Text
 

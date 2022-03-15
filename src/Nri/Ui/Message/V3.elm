@@ -63,12 +63,10 @@ Changes from V2:
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style exposing (invisibleStyle)
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events exposing (onClick)
 import Http
 import Markdown
 import Nri.Ui

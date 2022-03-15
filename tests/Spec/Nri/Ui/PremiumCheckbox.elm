@@ -2,7 +2,7 @@ module Spec.Nri.Ui.PremiumCheckbox exposing (spec)
 
 import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Checkbox.V5 as Checkbox exposing (IsSelected(..))
+import Nri.Ui.Checkbox.V5 exposing (IsSelected(..))
 import Nri.Ui.PremiumCheckbox.V6 as PremiumCheckbox
 import Test exposing (..)
 import Test.Html.Event as Event

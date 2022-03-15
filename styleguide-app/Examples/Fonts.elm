@@ -11,7 +11,6 @@ import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 

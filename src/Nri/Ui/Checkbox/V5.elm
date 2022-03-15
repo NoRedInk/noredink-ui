@@ -28,19 +28,16 @@ module Nri.Ui.Checkbox.V5 exposing
 -}
 
 import Accessibility.Styled as Html
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
 import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
-import Html.Events
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.V3 as HtmlExtra exposing (defaultOptions)
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes

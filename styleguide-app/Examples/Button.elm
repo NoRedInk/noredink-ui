@@ -15,11 +15,9 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
@@ -88,7 +86,6 @@ type Msg
     = SetDebugControlsState (Control Model)
     | ShowItWorked String String
     | ToggleToggleButton Int
-    | NoOp
 
 
 {-| -}
@@ -101,11 +98,7 @@ update msg state =
             )
 
         ShowItWorked group message ->
-            let
-                _ =
-                    Debug.log group message
-            in
-            ( state, Cmd.none )
+            ( Debug.log group message |> always state, Cmd.none )
 
         ToggleToggleButton id ->
             ( { state
@@ -118,9 +111,6 @@ update msg state =
               }
             , Cmd.none
             )
-
-        NoOp ->
-            ( state, Cmd.none )
 
 
 

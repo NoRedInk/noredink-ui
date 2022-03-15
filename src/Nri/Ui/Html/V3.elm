@@ -10,9 +10,7 @@ module Nri.Ui.Html.V3 exposing
 
 -}
 
-import Char
-import Html.Styled as Html exposing (Attribute, Html, span, text)
-import Html.Styled.Attributes exposing (..)
+import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Events as Events exposing (..)
 import Json.Decode
 

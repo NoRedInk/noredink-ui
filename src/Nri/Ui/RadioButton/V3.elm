@@ -41,23 +41,20 @@ module Nri.Ui.RadioButton.V3 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
-import Css as Css exposing (..)
+import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (class, classList, css, for)
-import Html.Styled.Events exposing (onClick, stopPropagationOn)
+import Html.Styled.Events exposing (onClick)
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
-import Json.Decode
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumLevel as PremiumLevel exposing (PremiumLevel)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Pennant.V2 as Pennant
-import Nri.Ui.Svg.V1 exposing (Svg, fromHtml)
+import Nri.Ui.Svg.V1 exposing (Svg)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
 import Svg.Styled as Svg
@@ -259,13 +256,6 @@ applyConfig attributes beginningConfig =
         attributes
 
 
-maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
-maybeAttr attr maybeValue =
-    maybeValue
-        |> Maybe.map attr
-        |> Maybe.withDefault Extra.none
-
-
 {-| View a single radio button.
 -}
 view :
@@ -315,9 +305,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
-
-        errorMessage_ =
-            InputErrorAndGuidanceInternal.getErrorMessage config.error
     in
     Html.span
         [ Attributes.id (idValue ++ "-container")

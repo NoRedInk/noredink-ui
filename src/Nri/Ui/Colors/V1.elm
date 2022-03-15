@@ -57,7 +57,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 
 -}
 
-import Css exposing (hex, rgba)
+import Css exposing (hex)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 
 

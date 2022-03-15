@@ -7,15 +7,10 @@ module Examples.Pennant exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Css exposing (..)
+import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Pennant.V2 as Pennant
-import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}

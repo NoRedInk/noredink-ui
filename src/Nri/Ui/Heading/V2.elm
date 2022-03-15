@@ -25,7 +25,7 @@ Headings with customization options for accessibility.
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes

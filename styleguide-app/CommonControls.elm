@@ -3,8 +3,8 @@ module CommonControls exposing
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
     , content
-    , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
-    , disabledListItem, premiumDisplay, premiumLevel
+    , romeoAndJulietQuotation, httpError
+    , disabledListItem, premiumDisplay
     )
 
 {-|
@@ -17,7 +17,7 @@ module CommonControls exposing
 ### Content
 
 @docs content
-@docs quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+@docs romeoAndJulietQuotation, httpError
 
 -}
 
@@ -25,22 +25,12 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
-import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-premiumLevel : Control ( String, PremiumLevel )
-premiumLevel =
-    choice "PremiumLevel"
-        [ ( "Free", Free )
-        , ( "PremiumWithWriting", PremiumWithWriting )
-        ]
 
 
 premiumDisplay : Control ( String, PremiumDisplay )

@@ -1,6 +1,6 @@
 module Spec.Nri.Ui.Page exposing (all)
 
-import Expect exposing (Expectation)
+import Expect
 import Html.Styled as Html
 import Nri.Ui.Page.V3 as Page
 import Test exposing (..)

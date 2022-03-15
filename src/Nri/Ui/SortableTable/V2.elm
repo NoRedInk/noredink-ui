@@ -15,7 +15,6 @@ module Nri.Ui.SortableTable.V2 exposing
 -}
 
 import Css exposing (..)
-import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
@@ -24,7 +23,7 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Table.V5
 import SolidColor
-import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
 

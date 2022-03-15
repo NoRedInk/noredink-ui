@@ -11,9 +11,9 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Set exposing (Set)
 

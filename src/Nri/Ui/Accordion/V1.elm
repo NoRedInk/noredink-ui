@@ -13,7 +13,6 @@ module Nri.Ui.Accordion.V1 exposing
 -}
 
 import Accessibility.Styled exposing (Attribute, Html, button, div, text)
-import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes

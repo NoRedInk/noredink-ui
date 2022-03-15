@@ -14,11 +14,8 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SideNav.V2 as SideNav
 
 
@@ -253,8 +250,4 @@ update msg state =
             ( state, Cmd.none )
 
         ConsoleLog message ->
-            let
-                _ =
-                    Debug.log "SideNav" message
-            in
-            ( state, Cmd.none )
+            ( Debug.log "SideNav" message |> always state, Cmd.none )

@@ -36,9 +36,8 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
-import Css.Media as Media
 import Html.Styled
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -49,8 +48,6 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import String exposing (toLower)
-import String.Extra exposing (dasherize)
 
 
 {-| Use `entry` to create a sidebar entry.

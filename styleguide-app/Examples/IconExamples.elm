@@ -2,7 +2,7 @@ module Examples.IconExamples exposing (preview, view, viewWithCustomStyles)
 
 import Css
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css, style, title)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg

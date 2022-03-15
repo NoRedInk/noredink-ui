@@ -15,16 +15,11 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EventExtras
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -231,7 +226,6 @@ init =
 type Msg
     = ShowItWorked String
     | SetPreviewTooltip Bool
-    | SetShareTooltip Bool
     | SetControls (Control (Settings Msg))
 
 
@@ -240,17 +234,10 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ShowItWorked message ->
-            let
-                _ =
-                    Debug.log "ClickableSvg" message
-            in
-            ( state, Cmd.none )
+            ( Debug.log "ClickableSvg" message |> always state, Cmd.none )
 
         SetPreviewTooltip bool ->
             ( { state | tooltipPreview = bool }, Cmd.none )
-
-        SetShareTooltip bool ->
-            ( { state | tooltipShareTo = bool }, Cmd.none )
 
         SetControls settings ->
             ( { state | settings = settings }, Cmd.none )

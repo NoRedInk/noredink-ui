@@ -84,7 +84,6 @@ adding a span around the text could potentially lead to regressions.
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Style exposing (invisibleStyle)
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)

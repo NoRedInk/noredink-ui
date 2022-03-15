@@ -10,14 +10,14 @@ module Nri.Ui.Loading.V1 exposing
 
 -}
 
-import Css exposing (..)
+import Css
 import Css.Animations
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
 

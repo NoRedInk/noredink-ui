@@ -19,7 +19,7 @@ import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 exposing (targetBlank)
 
 
 {-| -}
