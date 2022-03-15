@@ -29,6 +29,7 @@ stdenv.mkDerivation {
     elmPackages.elm-test
     elmPackages.elm-verify-examples
     elmPackages.elm-review
+    elmPackages.elm-json
     (pkgs.callPackage sources.elm-forbid-import { })
 
     # preview dependencies

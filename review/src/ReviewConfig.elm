@@ -25,7 +25,9 @@ import Review.Rule exposing (Rule)
 config : List Rule
 config =
     [ NoUnused.CustomTypeConstructors.rule []
-    , NoUnused.CustomTypeConstructorArgs.rule
+
+    -- sometimes we just want to build a value without extracting it
+    -- , NoUnused.CustomTypeConstructorArgs.rule
     , NoUnused.Dependencies.rule
 
     -- We want to include all functions even if they're unused in this repository.
