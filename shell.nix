@@ -1,6 +1,9 @@
 let
   sources = import ./nix/sources.nix;
-  system = if builtins.currentSystem == "aarch64-darwin" then "x86_64-darwin" else builtins.currentSystem;
+  system = if builtins.currentSystem == "aarch64-darwin" then
+    "x86_64-darwin"
+  else
+    builtins.currentSystem;
   nixpkgs = import sources.nixpkgs { inherit system; };
   niv = nixpkgs.callPackage sources.niv { };
 in with nixpkgs;
@@ -25,6 +28,7 @@ stdenv.mkDerivation {
     elmPackages.elm-format
     elmPackages.elm-test
     elmPackages.elm-verify-examples
+    elmPackages.elm-review
     (pkgs.callPackage sources.elm-forbid-import { })
 
     # preview dependencies
