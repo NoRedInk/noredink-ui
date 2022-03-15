@@ -6,11 +6,9 @@ module Examples.Sprite exposing (example, State, Msg)
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Svg.Styled exposing (svg)

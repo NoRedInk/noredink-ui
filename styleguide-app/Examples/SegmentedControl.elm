@@ -16,9 +16,8 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled.Attributes as Attributes exposing (css)
-import Html.Styled.Events as Events
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)

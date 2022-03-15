@@ -15,10 +15,9 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html, fromUnstyled)
+import Html.Styled as Html exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import List.Zipper exposing (Zipper)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)

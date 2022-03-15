@@ -6,13 +6,12 @@ module Examples.SlideModal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, h3, p, text)
+import Accessibility.Styled as Html exposing (Html, div)
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Html.Styled exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SlideModal.V2 as SlideModal

@@ -13,7 +13,7 @@ module KeyboardSupport exposing
 -}
 
 import Css exposing (..)
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 
 

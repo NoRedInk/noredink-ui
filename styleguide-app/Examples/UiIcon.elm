@@ -9,7 +9,6 @@ module Examples.UiIcon exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

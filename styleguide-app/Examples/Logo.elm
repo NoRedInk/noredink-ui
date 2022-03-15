@@ -10,9 +10,8 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
 import Nri.Ui.Svg.V1 as Svg

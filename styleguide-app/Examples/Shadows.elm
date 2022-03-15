@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Text.V6 as Text
 import ViewHelpers

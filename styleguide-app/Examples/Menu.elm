@@ -13,12 +13,11 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Menu.V3 as Menu
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
@@ -299,7 +298,6 @@ type Msg
     | SetIconButtonWithMenuConfiguration (Control IconButtonWithMenuConfiguration)
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
-    | NoOp
 
 
 {-| -}
@@ -319,11 +317,7 @@ update msg state =
             )
 
         ConsoleLog message ->
-            let
-                _ =
-                    Debug.log "Menu Example" message
-            in
-            ( state, Cmd.none )
+            ( Debug.log "Menu Example" message |> always state, Cmd.none )
 
         SetViewConfiguration configuration ->
             ( { state | viewConfiguration = configuration }, Cmd.none )
@@ -347,17 +341,10 @@ update msg state =
         Focused _ ->
             ( state, Cmd.none )
 
-        NoOp ->
-            ( state, Cmd.none )
-
 
 
 -- INTERNAL
 
 
 type alias Id =
-    String
-
-
-type alias Value =
     String

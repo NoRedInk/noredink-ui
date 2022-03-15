@@ -8,12 +8,7 @@ module Examples.Confetti exposing (example, State, Msg)
 
 import Browser.Events
 import Category exposing (Category(..))
-import Css exposing (Color)
-import Dict exposing (Dict)
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Confetti.V2 as Confetti
 

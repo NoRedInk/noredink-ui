@@ -11,12 +11,9 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
-import Html.Styled exposing (Html, div, fromUnstyled, text)
+import Html.Styled exposing (Html, fromUnstyled, text)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Balloon.V1 as Balloon
-import Nri.Ui.Colors.V1 as Colors
 
 
 {-| -}

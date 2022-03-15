@@ -15,10 +15,8 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -111,11 +109,7 @@ update msg state =
             ( State controls, Cmd.none )
 
         ShowItWorked group message ->
-            let
-                _ =
-                    Debug.log group message
-            in
-            ( state, Cmd.none )
+            ( Debug.log group message |> always state, Cmd.none )
 
 
 

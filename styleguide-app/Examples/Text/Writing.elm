@@ -9,7 +9,6 @@ module Examples.Text.Writing exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled exposing (text)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
 

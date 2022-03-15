@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading

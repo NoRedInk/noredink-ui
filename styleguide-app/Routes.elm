@@ -1,6 +1,5 @@
 module Routes exposing (Route(..), fromLocation, toString)
 
-import Browser.Navigation as Navigation
 import Category
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
