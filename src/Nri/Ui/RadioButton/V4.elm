@@ -295,81 +295,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             InputErrorAndGuidanceInternal.getIsInError config.error
     in
     if isLocked then
-        button
-            [ Attributes.id (idValue ++ "-container")
-            , css
-                [ position relative
-                , marginLeft (px -4)
-                , Css.paddingLeft (Css.px 40)
-                , Css.paddingTop (px 6)
-                , Css.paddingBottom (px 4)
-                , display inlineBlock
-                , backgroundColor Css.transparent
-                , border Css.zero
-                , cursor pointer
-                , pseudoClass "focus-within"
-                    [ Css.Global.descendants
-                        [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                            [ borderColor (rgb 0 95 204)
-                            ]
-                        ]
-                    ]
-                , Css.batch config.containerCss
-                ]
-            , case config.onLockedMsg of
-                Just msg ->
-                    onClick msg
-
-                Nothing ->
-                    Extra.none
-            ]
-            [ Html.div
-                [ class "Nri-RadioButton-RadioButton"
-                , css
-                    [ outline Css.none
-                    , Fonts.baseFont
-                    , color Colors.navy
-                    , margin zero
-                    , padding zero
-                    , fontSize (px 15)
-                    , Css.property "font-weight" "600"
-                    , displayFlex
-                    , Css.property "transition" "all 0.4s ease"
-                    ]
-                ]
-                [ radioInputIcon
-                    { isLocked = True
-                    , isDisabled = False
-                    , isChecked = False
-                    }
-                , span
-                    [ css
-                        [ display inlineFlex
-                        , alignItems center
-                        , Css.height (px 20)
-                        ]
-                    ]
-                    [ Html.span
-                        [ css <|
-                            if config.hideLabel then
-                                [ Css.width (px 1)
-                                , overflow Css.hidden
-                                , margin (px -1)
-                                , padding (px 0)
-                                , border (px 0)
-                                , display inlineBlock
-                                , textIndent (px 1)
-                                ]
-
-                            else
-                                config.labelCss
-                        ]
-                        [ Html.text label ]
-                    , premiumPennant
-                    ]
-                ]
-            , InputErrorAndGuidanceInternal.view idValue config
-            ]
+        viewLockedButton { idValue = idValue, label = label } config
 
     else
         Html.span
@@ -502,6 +428,78 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         []
                    )
             )
+
+
+viewLockedButton : { idValue : String, label : String } -> Config value msg -> Html msg
+viewLockedButton { idValue, label } config =
+    button
+        [ Attributes.id (idValue ++ "-container")
+        , css
+            [ position relative
+            , marginLeft (px -4)
+            , Css.paddingLeft (Css.px 40)
+            , Css.paddingTop (px 6)
+            , Css.paddingBottom (px 4)
+            , display inlineBlock
+            , backgroundColor Css.transparent
+            , border Css.zero
+            , cursor pointer
+            , Css.batch config.containerCss
+            ]
+        , case config.onLockedMsg of
+            Just msg ->
+                onClick msg
+
+            Nothing ->
+                Extra.none
+        ]
+        [ Html.div
+            [ class "Nri-RadioButton-LockedPremiumButton"
+            , css
+                [ outline Css.none
+                , Fonts.baseFont
+                , color Colors.navy
+                , margin zero
+                , padding zero
+                , fontSize (px 15)
+                , Css.property "font-weight" "600"
+                , displayFlex
+                , Css.property "transition" "all 0.4s ease"
+                ]
+            ]
+            [ radioInputIcon
+                { isLocked = True
+                , isDisabled = False
+                , isChecked = False
+                }
+            , span
+                [ css
+                    [ display inlineFlex
+                    , alignItems center
+                    , Css.height (px 20)
+                    ]
+                ]
+                [ Html.span
+                    [ css <|
+                        if config.hideLabel then
+                            [ Css.width (px 1)
+                            , overflow Css.hidden
+                            , margin (px -1)
+                            , padding (px 0)
+                            , border (px 0)
+                            , display inlineBlock
+                            , textIndent (px 1)
+                            ]
+
+                        else
+                            config.labelCss
+                    ]
+                    [ Html.text label ]
+                , premiumPennant
+                ]
+            ]
+        , InputErrorAndGuidanceInternal.view idValue config
+        ]
 
 
 premiumPennant : Html msg
