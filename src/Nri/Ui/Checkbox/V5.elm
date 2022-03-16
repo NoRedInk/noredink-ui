@@ -201,6 +201,7 @@ viewCheckbox model =
 viewEnabledLabel :
     { a
         | identifier : String
+        , setterMsg : Bool -> msg
         , selected : IsSelected
         , label : String
     }
