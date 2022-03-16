@@ -48,7 +48,8 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Html.V3 exposing (viewIf, viewJust)
+import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -142,7 +143,21 @@ viewSidebarEntry config extraStyles entry_ =
                                ]
                         )
                         []
-                        [ text entryConfig.title ]
+                        [ viewIf
+                            (\_ ->
+                                Pennant.premiumFlag
+                                    |> Svg.withWidth (px 25)
+                                    |> Svg.withHeight (px 19)
+                                    |> Svg.withCss
+                                        [ marginRight (px 10)
+                                        , position relative
+                                        , top (px 3)
+                                        ]
+                                    |> Svg.toHtml
+                            )
+                            (entryConfig.premiumDisplay == PremiumDisplay.PremiumUnlocked)
+                        , text entryConfig.title
+                        ]
                         :: List.map (viewSidebarEntry config [ marginLeft (px 20) ]) children
                     )
 
@@ -201,7 +216,20 @@ viewSidebarLeaf config extraStyles entryConfig =
             ++ entryConfig.customStyles
         )
         (attributes ++ entryConfig.customAttributes)
-        [ viewJust
+        [ viewIf
+            (\_ ->
+                Pennant.premiumFlag
+                    |> Svg.withWidth (px 25)
+                    |> Svg.withHeight (px 19)
+                    |> Svg.withCss
+                        [ marginRight (px 5)
+                        , position relative
+                        , top (px 1)
+                        ]
+                    |> Svg.toHtml
+            )
+            (entryConfig.premiumDisplay == PremiumDisplay.PremiumUnlocked)
+        , viewJust
             (\icon_ ->
                 icon_
                     |> Svg.withWidth (px 20)
