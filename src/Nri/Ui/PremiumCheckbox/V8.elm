@@ -32,10 +32,14 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Css
-import Html.Styled.Attributes exposing (css)
+import Css exposing (..)
+import Html.Styled.Attributes as Attributes exposing (class, css)
+import Html.Styled.Events as Events
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Util exposing (removePunctuation)
@@ -165,44 +169,98 @@ view { label, onChange } attributes =
                 Nothing ->
                     "checkbox-" ++ dasherize (removePunctuation (toLower label))
 
+        isPremium =
+            config.premiumDisplay /= PremiumDisplay.Free
+
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
-
-        isLockedAndNoLockedMessage =
-            isLocked && config.onLockedMsg == Nothing
     in
-    Html.div [ css config.containerCss ]
-        [ case config.premiumDisplay of
-            PremiumDisplay.PremiumLocked ->
+    if isLocked then
+        viewLockedButton
+            { idValue = idValue
+            , label = label
+            , containerCss = config.containerCss
+            , onLockedMsg = config.onLockedMsg
+            }
+
+    else
+        Html.div [ css config.containerCss ]
+            [ if isPremium then
                 viewPremiumFlag
 
-            PremiumDisplay.PremiumUnlocked ->
-                viewPremiumFlag
-
-            PremiumDisplay.Free ->
+              else
                 -- left-align the checkbox with checkboxes that _do_ have the premium pennant
                 Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
-        , Checkbox.viewWithLabel
-            { identifier = idValue
-            , label = label
-            , setterMsg =
-                case ( isLocked, config.onLockedMsg ) of
-                    ( True, Just msg ) ->
-                        -- If it's locked and there is no onLockedMsg the checbox is disabled and
-                        -- we should not be receiving a click
-                        \_ -> msg
+            , Checkbox.viewWithLabel
+                { identifier = idValue
+                , label = label
+                , setterMsg = onChange
+                , selected = config.selected
+                , disabled = config.isDisabled
+                , theme =
+                    if isLocked then
+                        Checkbox.Locked
 
-                    _ ->
-                        onChange
-            , selected = config.selected
-            , disabled = isLockedAndNoLockedMessage || config.isDisabled
-            , theme =
-                if isLocked then
-                    Checkbox.Locked
+                    else
+                        Checkbox.Square
+                }
+            ]
 
-                else
-                    Checkbox.Square
-            }
+
+viewLockedButton : { a | idValue : String, label : String, containerCss : List Style, onLockedMsg : Maybe msg } -> Html msg
+viewLockedButton { idValue, label, containerCss, onLockedMsg } =
+    Html.button
+        [ css
+            [ height inherit
+            , width (Css.pct 100)
+            , position relative
+            , backgroundColor Css.transparent
+            , border Css.zero
+            , padding zero
+            , cursor pointer
+            , Css.batch containerCss
+            ]
+        , Attributes.id (idValue ++ "-container")
+        , case onLockedMsg of
+            Just msg ->
+                Events.onClick msg
+
+            Nothing ->
+                Extra.none
+        ]
+        [ viewPremiumFlag
+        , Html.span
+            [ css
+                [ outline Css.none
+                , Fonts.baseFont
+                , color Colors.navy
+                , margin zero
+                , marginLeft (px -4)
+                , padding zero
+                , fontSize (px 15)
+                , Css.property "font-weight" "600"
+                , display inlineBlock
+                , Css.property "transition" "all 0.4s ease"
+                , cursor pointer
+                ]
+            ]
+            [ Html.span
+                [ class "premium-checkbox-locked-V8__Label"
+                , css
+                    [ display inlineBlock
+                    , padding4 (px 13) zero (px 13) (px 40)
+                    , position relative
+                    , Fonts.baseFont
+                    , fontSize (px 15)
+                    , fontWeight (int 600)
+                    , color Colors.navy
+                    , outline none
+                    ]
+                ]
+                [ Checkbox.viewIcon [] (Checkbox.checkboxLockOnInside idValue)
+                , Html.span [] [ Html.text label ]
+                ]
+            ]
         ]
 
 

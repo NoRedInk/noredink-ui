@@ -2,8 +2,9 @@ module Nri.Ui.Checkbox.V5 exposing
     ( Model, Theme(..), IsSelected(..)
     , view, viewWithLabel
     , selectedFromBool
+    , checkboxLockOnInside
+    , viewIcon
     )
-
 {-|
 
 
@@ -200,7 +201,6 @@ viewCheckbox model =
 viewEnabledLabel :
     { a
         | identifier : String
-        , setterMsg : Bool -> msg
         , selected : IsSelected
         , label : String
     }
