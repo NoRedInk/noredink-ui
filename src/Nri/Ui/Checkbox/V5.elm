@@ -2,9 +2,9 @@ module Nri.Ui.Checkbox.V5 exposing
     ( Model, Theme(..), IsSelected(..)
     , view, viewWithLabel
     , selectedFromBool
-    , checkboxLockOnInside
-    , viewIcon
+    , viewIcon, checkboxLockOnInside
     )
+
 {-|
 
 
@@ -25,6 +25,8 @@ module Nri.Ui.Checkbox.V5 exposing
 @docs view, viewWithLabel
 
 @docs selectedFromBool
+
+@docs viewIcon, checkboxLockOnInside
 
 -}
 
@@ -289,6 +291,7 @@ textStyle =
         ]
 
 
+{-| -}
 viewIcon : List Style -> Svg -> Html.Html msg
 viewIcon styles icon =
     Html.div
@@ -556,6 +559,7 @@ checkboxBackground attrs =
         []
 
 
+{-| -}
 checkboxLockOnInside : String -> Svg
 checkboxLockOnInside idSuffix =
     let
