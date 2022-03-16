@@ -149,7 +149,7 @@ viewSidebarEntry config extraStyles entry_ =
                                     |> Svg.withWidth (px 25)
                                     |> Svg.withHeight (px 19)
                                     |> Svg.withCss
-                                        [ marginRight (px 10)
+                                        [ marginRight (px 5)
                                         , position relative
                                         , top (px 3)
                                         ]
