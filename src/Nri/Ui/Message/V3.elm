@@ -15,6 +15,7 @@ module Nri.Ui.Message.V3 exposing
 
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconFor`
+  - use `Shadows`
 
 Changes from V2:
 
@@ -75,6 +76,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -176,7 +178,7 @@ view attributes_ =
                              borderRadius (px 8)
                            , padding (px 20)
                            , backgroundColor_
-                           , property "box-shadow" "0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);"
+                           , Shadows.low
                            , Css.Media.withMedia
                                 [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
                                 [ padding (px 15)

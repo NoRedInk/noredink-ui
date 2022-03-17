@@ -11,6 +11,11 @@ module Nri.Ui.Container.V2 exposing
 # Changelog
 
 
+## Patch changes
+
+  - use `Shadows`
+
+
 ## Changes from V1
 
   - removes fullHeight
@@ -54,6 +59,7 @@ import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Shadows.V1 as Shadows
 
 
 {-| -}
@@ -152,7 +158,7 @@ defaultStyles : List Css.Style
 defaultStyles =
     [ borderRadius (px 8)
     , border3 (px 1) solid Colors.gray92
-    , property "box-shadow" "0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);"
+    , Shadows.low
     , backgroundColor Colors.white
     ]
 
@@ -236,7 +242,7 @@ pillowStyles : List Style
 pillowStyles =
     [ borderRadius (px 20)
     , border3 (px 1) solid Colors.gray92
-    , property "box-shadow" "0 0.5px 0.7px hsl(0deg 0% 0% / 0.075), 0 1.6px 2px -0.8px hsl(0deg 0% 0% / 0.075), 0 4.1px 5.2px -1.7px hsl(0deg 0% 0% / 0.075), 5px 10px 12.6px -2.5px hsl(0deg 0% 0% / 0.075);"
+    , Shadows.medium
     , backgroundColor Colors.white
     , withMedia [ mobile ]
         [ borderRadius (px 8)
