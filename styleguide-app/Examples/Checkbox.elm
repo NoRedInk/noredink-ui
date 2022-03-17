@@ -204,17 +204,8 @@ viewPremiumCheckboxes state =
             , onChange = ToggleCheck "premium-3"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
-            , PremiumCheckbox.onLockedClick NoOp
+            , PremiumCheckbox.onLockedClick (Debug.log "Locked" NoOp)
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
-            ]
-        , PremiumCheckbox.view
-            { label = "Revising Wordy Phrases 4 (Premium, Disabled)"
-            , onChange = ToggleCheck "premium-4"
-            }
-            [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
-
-            -- disabled because there is no PremiumCheckbox.onLockedClick
-            , PremiumCheckbox.selected (Set.member "premium-4" state.isChecked)
             ]
         ]
 
