@@ -185,7 +185,7 @@ initStaticExampleSettings =
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.listItem "direction" controlDirection
         |> ControlExtra.listItem "alignment" controlAlignment
-        |> ControlExtra.listItem "withoutTail" controlTail
+        |> ControlExtra.optionalBoolListItem "withoutTail" Tooltip.withoutTail
         |> ControlExtra.listItem "width" controlWidth
         |> ControlExtra.listItem "padding" controlPadding
 
@@ -200,21 +200,6 @@ controlContent =
         , httpError = Nothing
         }
         |> Control.map Tuple.second
-
-
-controlTail : Control (Tooltip.Attribute Never)
-controlTail =
-    Control.map
-        (\bool ->
-            if bool then
-                Tooltip.withoutTail
-
-            else
-                -- TODO: change `withoutTail` to take
-                -- a bool or expose a `withTail` from Tooltip.
-                Tooltip.css []
-        )
-        (Control.bool False)
 
 
 controlDirection : Control (Tooltip.Attribute Never)
