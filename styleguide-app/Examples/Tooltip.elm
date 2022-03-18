@@ -185,12 +185,13 @@ initStaticExampleSettings =
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalListItem "direction" controlDirection
         |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalBoolListItem "withoutTail" Tooltip.withoutTail
+        |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
+        |> Control.map (List.map Tuple.second)
 
 
-controlContent : Control (Tooltip.Attribute Never)
+controlContent : Control ( String, Tooltip.Attribute Never )
 controlContent =
     CommonControls.content
         { moduleName = "Tooltip"
@@ -199,48 +200,71 @@ controlContent =
         , html = Tooltip.html
         , httpError = Nothing
         }
-        |> Control.map Tuple.second
 
 
-controlDirection : Control (Tooltip.Attribute Never)
+controlDirection : Control ( String, Tooltip.Attribute Never )
 controlDirection =
-    Control.choice
-        [ ( "onTop", Control.value Tooltip.onTop )
-        , ( "onBottom", Control.value Tooltip.onBottom )
-        , ( "onLeft", Control.value Tooltip.onLeft )
-        , ( "onRight", Control.value Tooltip.onRight )
+    CommonControls.choice "Tooltip"
+        [ ( "onTop", Tooltip.onTop )
+        , ( "onBottom", Tooltip.onBottom )
+        , ( "onLeft", Tooltip.onLeft )
+        , ( "onRight", Tooltip.onRight )
         ]
 
 
-controlAlignment : Control (Tooltip.Attribute Never)
+controlAlignment : Control ( String, Tooltip.Attribute Never )
 controlAlignment =
     Control.choice
-        [ ( "alignMiddle (default)", Control.value Tooltip.alignMiddle )
-        , ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
-        , ( "alignEnd", Control.map (Css.px >> Tooltip.alignEnd) controlNumber )
+        [ ( "alignMiddle (default)", Control.value ( "Tooltip.alignMiddle", Tooltip.alignMiddle ) )
+        , ( "alignStart"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignStart (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignStart (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
+        , ( "alignEnd"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignEnd (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignEnd (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
         ]
 
 
-controlNumber : Control Float
-controlNumber =
-    Control.map (String.toFloat >> Maybe.withDefault 0) (Control.string "0")
-
-
-controlWidth : Control (Tooltip.Attribute Never)
+controlWidth : Control ( String, Tooltip.Attribute Never )
 controlWidth =
     Control.choice
-        [ ( "exactWidth 320 (default)", Control.value (Tooltip.exactWidth 320) )
-        , ( "exactWidth", Control.map (round >> Tooltip.exactWidth) controlNumber )
-        , ( "fitToContent", Control.value Tooltip.fitToContent )
+        [ ( "exactWidth (default is 320)"
+          , Control.map
+                (\int ->
+                    ( "Tooltip.exactWidth " ++ String.fromInt int, Tooltip.exactWidth int )
+                )
+                (ControlExtra.int 320)
+          )
+        , ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
         ]
 
 
-controlPadding : Control (Tooltip.Attribute Never)
+controlPadding : Control ( String, Tooltip.Attribute Never )
 controlPadding =
     Control.choice
-        [ ( "normalPadding (default)", Control.value Tooltip.normalPadding )
-        , ( "smallPadding", Control.value Tooltip.smallPadding )
-        , ( "customPadding", Control.map Tooltip.customPadding controlNumber )
+        [ ( "normalPadding (default)", Control.value ( "Tooltip.normalPadding", Tooltip.normalPadding ) )
+        , ( "smallPadding", Control.value ( "Tooltip.smallPadding", Tooltip.smallPadding ) )
+        , ( "customPadding"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.customPadding " ++ String.fromFloat float
+                    , Tooltip.customPadding float
+                    )
+                )
+                (ControlExtra.float 0)
+          )
         ]
 
 
