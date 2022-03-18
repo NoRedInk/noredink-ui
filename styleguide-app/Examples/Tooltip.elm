@@ -12,6 +12,7 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, href)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -83,7 +84,7 @@ type TooltipType
 
 type Msg
     = ToggleTooltip TooltipType Bool
-    | SetStaticExampleSettings (Control (List (Tooltip.Attribute Never)))
+    | SetControl (Control (List (Tooltip.Attribute Never)))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -96,7 +97,7 @@ update msg model =
             else
                 ( { model | openTooltip = Nothing }, Cmd.none )
 
-        SetStaticExampleSettings settings ->
+        SetControl settings ->
             ( { model | staticExampleSettings = settings }, Cmd.none )
 
 
@@ -291,8 +292,31 @@ viewCustomizableExample controlSettings =
             Tooltip.open True :: settings
     in
     Html.div []
-        [ Control.view SetStaticExampleSettings controlSettings
-            |> Html.fromUnstyled
+        [ ControlView.view
+            { update = SetControl
+            , settings = controlSettings
+            , toExampleCode =
+                \controls ->
+                    [ { sectionName = "Example"
+                      , code =
+                            String.join "\n"
+                                [ "Tooltip.view"
+                                , "    { trigger ="
+                                , "        \\popupTriggerAttributes ->"
+                                , "            ClickableSvg.button \"Up\""
+                                , "                UiIcon.arrowTop"
+                                , "                [ ClickableSvg.custom popupTriggerAttributes"
+                                , "                ]"
+                                , "    , id = \"an-id-for-the-tooltip\""
+                                , "    }"
+                                , "    [ "
+                                    ++ String.join "\n    , "
+                                        ("Tooltip.open True" :: List.map (\_ -> "TODO") controls)
+                                , "    ]"
+                                ]
+                      }
+                    ]
+            }
         , Html.div
             [ css
                 [ Css.displayFlex
@@ -304,11 +328,11 @@ viewCustomizableExample controlSettings =
             [ Tooltip.view
                 { trigger =
                     \eventHandlers ->
-                        ClickableSvg.button "Arrow Up"
+                        ClickableSvg.button "Up"
                             UiIcon.arrowTop
                             [ ClickableSvg.custom eventHandlers
                             ]
-                , id = "my-top-tooltip"
+                , id = "an-id-for-the-tooltip"
                 }
                 attributes
                 |> Html.map never
