@@ -183,11 +183,11 @@ initStaticExampleSettings : Control (List (Tooltip.Attribute Never))
 initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
-        |> ControlExtra.listItem "direction" controlDirection
-        |> ControlExtra.listItem "alignment" controlAlignment
+        |> ControlExtra.optionalListItem "direction" controlDirection
+        |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "withoutTail" Tooltip.withoutTail
-        |> ControlExtra.listItem "width" controlWidth
-        |> ControlExtra.listItem "padding" controlPadding
+        |> ControlExtra.optionalListItem "width" controlWidth
+        |> ControlExtra.optionalListItem "padding" controlPadding
 
 
 controlContent : Control (Tooltip.Attribute Never)
