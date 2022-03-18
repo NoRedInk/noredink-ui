@@ -66,7 +66,7 @@ example =
 
 type alias State =
     { openTooltip : Maybe TooltipType
-    , staticExampleSettings : Control (List (Tooltip.Attribute Never))
+    , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
     }
 
 
@@ -85,7 +85,7 @@ type TooltipType
 
 type Msg
     = ToggleTooltip TooltipType Bool
-    | SetControl (Control (List (Tooltip.Attribute Never)))
+    | SetControl (Control (List ( String, Tooltip.Attribute Never )))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -179,7 +179,7 @@ viewToggleTip openTooltip =
         ]
 
 
-initStaticExampleSettings : Control (List (Tooltip.Attribute Never))
+initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
 initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
@@ -188,7 +188,6 @@ initStaticExampleSettings =
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
-        |> Control.map (List.map Tuple.second)
 
 
 controlContent : Control ( String, Tooltip.Attribute Never )
@@ -268,15 +267,8 @@ controlPadding =
         ]
 
 
-viewCustomizableExample : Control (List (Tooltip.Attribute Never)) -> Html Msg
+viewCustomizableExample : Control (List ( String, Tooltip.Attribute Never )) -> Html Msg
 viewCustomizableExample controlSettings =
-    let
-        settings =
-            Control.currentValue controlSettings
-
-        attributes =
-            Tooltip.open True :: settings
-    in
     Html.div []
         [ ControlView.view
             { update = SetControl
@@ -297,7 +289,7 @@ viewCustomizableExample controlSettings =
                                 , "    }"
                                 , "    [ "
                                     ++ String.join "\n    , "
-                                        ("Tooltip.open True" :: List.map (\_ -> "TODO") controls)
+                                        ("Tooltip.open True" :: List.map Tuple.first controls)
                                 , "    ]"
                                 ]
                       }
@@ -320,7 +312,9 @@ viewCustomizableExample controlSettings =
                             ]
                 , id = "an-id-for-the-tooltip"
                 }
-                attributes
+                (Tooltip.open True
+                    :: List.map Tuple.second (Control.currentValue controlSettings)
+                )
                 |> Html.map never
             ]
         ]
