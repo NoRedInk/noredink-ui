@@ -113,7 +113,7 @@ controlContent =
     CommonControls.content
         { moduleName = "Text"
         , plaintext = Text.plaintext
-        , markdown = Text.markdown
+        , markdown = Just Text.markdown
         , html = Text.html
         , httpError = Nothing
         }

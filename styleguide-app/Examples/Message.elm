@@ -30,7 +30,7 @@ init =
                 (CommonControls.content
                     { moduleName = "Message"
                     , plaintext = Message.plaintext
-                    , markdown = Message.markdown
+                    , markdown = Just Message.markdown
                     , html = Message.html
                     , httpError = Just Message.httpError
                     }

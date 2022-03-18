@@ -9,6 +9,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -191,38 +192,14 @@ initStaticExampleSettings =
 
 controlContent : Control (Tooltip.Attribute Never)
 controlContent =
-    Control.choice
-        [ ( "plaintext"
-          , "Song lyrics are literature."
-                |> Control.string
-                |> Control.map Tooltip.plaintext
-          )
-        , ( "HTML (short)"
-          , [ Html.code [] [ Html.text "git status" ]
-            , Html.text " ⇄ "
-            , Html.em [] [ Html.text "tries again" ]
-            ]
-                |> Tooltip.html
-                |> Control.value
-          )
-        , ( "HTML"
-          , [ Html.text "Click "
-            , Html.a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                [ Html.text "here, yes, HERE, right here on this long tooltip. "
-                , Html.div
-                    [ css
-                        [ Css.display Css.inlineBlock
-                        , Css.width (Css.px 20)
-                        ]
-                    ]
-                    [ Svg.toHtml UiIcon.gear ]
-                ]
-            , Html.text " to check out NoRedInk."
-            ]
-                |> Tooltip.html
-                |> Control.value
-          )
-        ]
+    CommonControls.content
+        { moduleName = "Tooltip"
+        , plaintext = Tooltip.plaintext
+        , markdown = Nothing
+        , html = Tooltip.html
+        , httpError = Nothing
+        }
+        |> Control.map Tuple.second
 
 
 controlTail : Control (Tooltip.Attribute Never)
