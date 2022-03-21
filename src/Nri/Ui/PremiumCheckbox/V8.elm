@@ -265,24 +265,25 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
 
 viewPremiumFlag : { hidden : Bool } -> Html msg
 viewPremiumFlag { hidden } =
+    let
+        flagSvg =
+            premiumFlag
+                |> Svg.withWidth (Css.px iconWidth)
+                |> Svg.withHeight (Css.px 30)
+                |> Svg.withClass "premium-checkbox-flag-V8"
+    in
     if hidden then
-        premiumFlag
-            |> Svg.withWidth (Css.px iconWidth)
-            |> Svg.withHeight (Css.px 30)
+        flagSvg
             |> Svg.withCss
                 [ Css.marginRight (Css.px iconRightMargin)
                 , Css.visibility Css.hidden
                 ]
-            |> Svg.withClass "premium-checkbox-flag-V8"
             |> Svg.toHtml
 
     else
-        premiumFlag
-            |> Svg.withWidth (Css.px iconWidth)
-            |> Svg.withHeight (Css.px 30)
+        flagSvg
             |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
             |> Svg.withLabel "Premium"
-            |> Svg.withClass "premium-checkbox-flag-V8"
             |> Svg.toHtml
 
 
