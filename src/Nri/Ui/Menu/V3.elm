@@ -8,7 +8,11 @@ module Nri.Ui.Menu.V3 exposing
     , Entry, group, entry
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - Use `Shadows`
+
+Changes from V2:
 
   - Adpoted attribute pattern
   - Added option to customize the z-index
@@ -57,6 +61,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -757,7 +762,7 @@ styleContent contentVisible config =
         , zIndex (int <| config.zIndex + 1)
         , backgroundColor Colors.white
         , listStyle Css.none
-        , Css.property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
+        , Shadows.high
         , before
             [ property "content" "\"\""
             , position absolute

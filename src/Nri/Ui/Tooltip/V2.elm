@@ -27,6 +27,7 @@ Post-release patches:
   - add containerCss
   - adds `nriDescription` and `testId`
   - fix <https://github.com/NoRedInk/noredink-ui/issues/766>
+  - use `Shadows`
 
 Changes from V1:
 
@@ -96,6 +97,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String.Extra
 
@@ -769,7 +771,7 @@ pointerBox tail direction alignment =
         , Css.fontSize (Css.px 16)
         , Css.fontWeight (Css.int 600)
         , Css.color Colors.white
-        , Css.property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
+        , Shadows.high
         , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
         , Global.descendants [ Global.a [ Css.color Colors.white ] ]
         ]

@@ -14,8 +14,9 @@ module Nri.Ui.Modal.V11 exposing
 
 # Patch changes:
 
-    - adds `testId` helper
-    - adds data-nri-descriptions to the header, content, and footer
+  - adds `testId` helper
+  - adds data-nri-descriptions to the header, content, and footer
+  - use `Shadows`
 
 
 # Changes from V10:
@@ -176,6 +177,7 @@ import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
@@ -419,7 +421,7 @@ modalStyles =
 
     -- Border
     , borderRadius (px 20)
-    , property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
+    , Shadows.high
     , Css.Media.withMedia [ mobile ]
         [ borderRadius zero
         ]

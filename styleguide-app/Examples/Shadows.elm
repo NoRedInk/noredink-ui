@@ -79,15 +79,14 @@ viewShadow : ( String, Css.Style ) -> Html msg
 viewShadow ( usageGuidance, shadow ) =
     Html.div
         [ Attributes.css
-            [ Css.padding2 (Css.px 10) Css.zero
-            , Css.margin2 (Css.px 20) (Css.px 4)
-            , Css.borderRadius (Css.px 8)
-            , Css.height (Css.px 16)
-            , shadow
+            [ Css.margin2 (Css.px 20) (Css.px 4)
             ]
         ]
         [ Text.smallBodyGray
-            [ Text.css [ Css.textAlign Css.center ]
+            [ Text.css
+                [ Css.textAlign Css.center
+                , shadow
+                ]
             , Text.plaintext usageGuidance
             ]
         ]
