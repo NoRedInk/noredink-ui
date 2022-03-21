@@ -140,10 +140,10 @@ view state =
             \attrs ->
                 [ { sectionName = "Balloon"
                   , code =
-                        "Balloon.balloon [ "
-                            ++ String.join ", " (List.map Tuple.first attrs)
-                            ++ " ] "
-                            ++ "(text \""
+                        "Balloon.balloon\n    [ "
+                            ++ String.join "\n    , " (List.map Tuple.first attrs)
+                            ++ "\n    ] "
+                            ++ "\n    (text \""
                             ++ copy
                             ++ "\")"
                   }
