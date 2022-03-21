@@ -1,6 +1,6 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
-    , withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
+    , withColor, withLabel, withWidth, withHeight, withCss, withNriDescription, withClass
     , fromHtml, toHtml
     , toRawSvg
     )
@@ -8,7 +8,7 @@ module Nri.Ui.Svg.V1 exposing
 {-|
 
 @docs Svg
-@docs withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
+@docs withColor, withLabel, withWidth, withHeight, withCss, withNriDescription, withClass
 @docs fromHtml, toHtml
 @docs toRawSvg
 
@@ -100,6 +100,12 @@ withCustom attributes (Svg record) =
 withNriDescription : String -> Svg -> Svg
 withNriDescription description =
     withCustom [ AttributesExtra.nriDescription description ]
+
+
+{-| -}
+withClass : String -> Svg -> Svg
+withClass class =
+    withCustom [ Attributes.class class ]
 
 
 {-| Render an svg.

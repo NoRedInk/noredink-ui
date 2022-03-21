@@ -41,10 +41,11 @@ import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (removePunctuation)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
+import Svg.Attributes
 
 
 {-| Set a custom ID for this checkbox and label. If you don't set this,
@@ -186,11 +187,10 @@ view { label, onChange } attributes =
     else
         Html.div [ css config.containerCss ]
             [ if isPremium then
-                viewPremiumFlag
+                viewPremiumFlag { hidden = False }
 
               else
-                -- left-align the checkbox with checkboxes that _do_ have the premium pennant
-                Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
+                viewPremiumFlag { hidden = True }
             , Checkbox.viewWithLabel
                 { identifier = idValue
                 , label = label
@@ -228,7 +228,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             Nothing ->
                 Extra.none
         ]
-        [ viewPremiumFlag
+        [ viewPremiumFlag { hidden = False }
         , Html.span
             [ css
                 [ outline Css.none
@@ -264,14 +264,27 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
         ]
 
 
-viewPremiumFlag : Html msg
-viewPremiumFlag =
-    premiumFlag
-        |> Svg.withLabel "Premium"
-        |> Svg.withWidth (Css.px iconWidth)
-        |> Svg.withHeight (Css.px 30)
-        |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
-        |> Svg.toHtml
+viewPremiumFlag : { hidden : Bool } -> Html msg
+viewPremiumFlag { hidden } =
+    if hidden then
+        premiumFlag
+            |> Svg.withWidth (Css.px iconWidth)
+            |> Svg.withHeight (Css.px 30)
+            |> Svg.withCss
+                [ Css.marginRight (Css.px iconRightMargin)
+                , Css.visibility Css.hidden
+                ]
+            |> Svg.withClass "premium-checkbox-flag-V8"
+            |> Svg.toHtml
+
+    else
+        premiumFlag
+            |> Svg.withWidth (Css.px iconWidth)
+            |> Svg.withHeight (Css.px 30)
+            |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
+            |> Svg.withLabel "Premium"
+            |> Svg.withClass "premium-checkbox-flag-V8"
+            |> Svg.toHtml
 
 
 iconWidth : Float
