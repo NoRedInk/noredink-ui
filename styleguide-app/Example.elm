@@ -147,7 +147,7 @@ view previousRoute example =
                     (Maybe.withDefault Routes.All previousRoute
                         |> Routes.toString
                     )
-                , ClickableSvg.small
+                , ClickableSvg.exactSize 20
                 , ClickableSvg.css
                     [ Css.position Css.absolute
                     , Css.top (Css.px 15)
