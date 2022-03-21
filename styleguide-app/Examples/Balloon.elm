@@ -7,13 +7,11 @@ module Examples.Balloon exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (Html, fromUnstyled, text)
-import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Balloon.V1 as Balloon
 
 
