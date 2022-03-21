@@ -27,8 +27,9 @@ preview icons =
     ]
 
 
-view : String -> List ( String, Svg.Svg ) -> Html msg
-view headerText icons =
+{-| -}
+view : Bool -> String -> List ( String, Svg.Svg ) -> Html msg
+view showIconName headerText icons =
     let
         defaultStyles =
             [ Css.height (Css.px 25)
@@ -37,12 +38,14 @@ view headerText icons =
             , Css.color Colors.gray45
             ]
     in
-    viewWithCustomStyles headerText
+    viewWithCustomStyles showIconName
+        headerText
         (List.map (\( name, svg ) -> ( name, svg, defaultStyles )) icons)
 
 
-viewWithCustomStyles : String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
-viewWithCustomStyles headerText icons =
+{-| -}
+viewWithCustomStyles : Bool -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
+viewWithCustomStyles showIconName headerText icons =
     Html.section
         [ css
             [ Css.displayFlex
@@ -67,12 +70,12 @@ viewWithCustomStyles headerText icons =
                 , Css.property "gap" "10px"
                 ]
             ]
-            (List.map viewIcon icons)
+            (List.map (viewIcon showIconName) icons)
         ]
 
 
-viewIcon : ( String, Svg.Svg, List Css.Style ) -> Html msg
-viewIcon ( name, icon, style ) =
+viewIcon : Bool -> ( String, Svg.Svg, List Css.Style ) -> Html msg
+viewIcon showIconName ( name, icon, style ) =
     Html.div
         [ css
             [ Css.displayFlex
@@ -96,6 +99,11 @@ viewIcon ( name, icon, style ) =
             |> Svg.toHtml
         , Text.smallBody
             [ Text.plaintext name
-            , Text.css [ Css.display Css.none ]
+            , Text.css <|
+                if showIconName then
+                    []
+
+                else
+                    [ Css.display Css.none ]
             ]
         ]

@@ -19,7 +19,7 @@ import Nri.Ui.Svg.V1 as Svg
 
 {-| -}
 type alias State =
-    ()
+    { showIconName : Bool }
 
 
 {-| -}
@@ -34,7 +34,7 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = ()
+    , state = { showIconName = False }
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -46,8 +46,12 @@ example =
                 , Logo.googleG
                 ]
     , view =
-        \_ ->
-            [ IconExamples.viewWithCustomStyles "NRI"
+        \{ showIconName } ->
+            let
+                viewExampleSection =
+                    IconExamples.viewWithCustomStyles showIconName
+            in
+            [ viewExampleSection "NRI"
                 [ ( "noredink"
                   , Logo.noredink
                   , [ Css.height (Css.px 25)
@@ -56,11 +60,11 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Social Media"
+            , viewExampleSection "Social Media"
                 [ ( "facebook", Logo.facebook, defaults )
                 , ( "twitter", Logo.twitter, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "Clever"
+            , viewExampleSection "Clever"
                 [ ( "clever"
                   , Logo.clever
                   , [ Css.height (Css.px 25)
@@ -78,14 +82,14 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Google"
+            , viewExampleSection "Google"
                 [ ( "googleClassroom"
                   , Logo.googleClassroom
                   , defaults
                   )
                 , ( "googleG", Logo.googleG, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "LMS"
+            , viewExampleSection "LMS"
                 [ ( "canvas"
                   , Logo.canvas
                   , [ Css.height (Css.px 25)

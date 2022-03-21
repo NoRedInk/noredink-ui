@@ -14,7 +14,7 @@ import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 
 {-| -}
 type alias State =
-    ()
+    { showIconName : Bool }
 
 
 {-| -}
@@ -29,7 +29,7 @@ example =
     , version = 2
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = ()
+    , state = { showIconName = False }
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -48,43 +48,47 @@ example =
             , AssignmentIcon.writing
             ]
     , view =
-        \_ ->
-            [ IconExamples.view "Diagnostic"
+        \{ showIconName } ->
+            let
+                viewExampleSection =
+                    IconExamples.view showIconName
+            in
+            [ viewExampleSection "Diagnostic"
                 [ ( "diagnostic", AssignmentIcon.diagnostic )
                 , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled )
                 , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled )
                 ]
-            , IconExamples.view "Practice"
+            , viewExampleSection "Practice" <|
                 [ ( "practice", AssignmentIcon.practice )
                 , ( "practiceCircled", AssignmentIcon.practiceCircled )
                 ]
-            , IconExamples.view "Quiz"
+            , viewExampleSection "Quiz" <|
                 [ ( "quiz", AssignmentIcon.quiz )
                 , ( "quizCircled", AssignmentIcon.quizCircled )
                 , ( "passageQuizCircled", AssignmentIcon.passageQuizCircled )
                 ]
-            , IconExamples.view "Writing"
+            , viewExampleSection "Writing" <|
                 [ ( "quickWrite", AssignmentIcon.quickWrite )
                 , ( "guidedDraft", AssignmentIcon.guidedDraft )
                 , ( "peerReview", AssignmentIcon.peerReview )
                 , ( "selfReview", AssignmentIcon.selfReview )
                 ]
-            , IconExamples.view "Writing II"
+            , viewExampleSection "Writing II" <|
                 [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled )
                 , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled )
                 , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled )
                 , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled )
                 ]
-            , IconExamples.view "Stages"
+            , viewExampleSection "Stages" <|
                 [ ( "submitting", AssignmentIcon.submitting )
                 , ( "rating", AssignmentIcon.rating )
                 , ( "revising", AssignmentIcon.revising )
                 ]
-            , IconExamples.view "Start"
+            , viewExampleSection "Start" <|
                 [ ( "startPrimary", AssignmentIcon.startPrimary )
                 , ( "startSecondary", AssignmentIcon.startSecondary )
                 ]
-            , IconExamples.view "Activities"
+            , viewExampleSection "Activities" <|
                 [ ( "assessment", AssignmentIcon.assessment )
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )

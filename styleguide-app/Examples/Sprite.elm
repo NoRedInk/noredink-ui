@@ -36,7 +36,7 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)
-    , view = \_ -> [ IconExamples.view "Rich Text Formatting" sprites ]
+    , view = \_ -> [ IconExamples.view False "Rich Text Formatting" sprites ]
     }
 
 
