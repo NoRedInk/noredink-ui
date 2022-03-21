@@ -1,15 +1,29 @@
-module Examples.IconExamples exposing (preview, view, viewWithCustomStyles)
+module Examples.IconExamples exposing
+    ( preview
+    , viewSettings
+    , view, viewWithCustomStyles
+    )
+
+{-|
+
+@docs preview
+@docs viewSettings
+@docs view, viewWithCustomStyles
+
+-}
 
 import Css
 import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 
 
+{-| -}
 preview : List Svg.Svg -> List (Html msg)
 preview icons =
     [ Html.div
@@ -25,6 +39,19 @@ preview icons =
             icons
         )
     ]
+
+
+{-| -}
+viewSettings : (Bool -> msg) -> Bool -> Html msg
+viewSettings toggle showIconName =
+    Checkbox.viewWithLabel
+        { identifier = "show-icon-name-checkbox"
+        , label = "Show names"
+        , setterMsg = toggle
+        , selected = Checkbox.selectedFromBool showIconName
+        , disabled = False
+        , theme = Checkbox.Square
+        }
 
 
 {-| -}

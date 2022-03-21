@@ -13,16 +13,6 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-type alias State =
-    { showIconName : Bool }
-
-
-{-| -}
-type alias Msg =
-    ()
-
-
-{-| -}
 example : Example State Msg
 example =
     { name = "UiIcon"
@@ -30,7 +20,7 @@ example =
     , categories = List.singleton Icons
     , keyboardSupport = []
     , state = { showIconName = False }
-    , update = \_ state -> ( state, Cmd.none )
+    , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
@@ -53,7 +43,8 @@ example =
                 viewExampleSection =
                     IconExamples.view showIconName
             in
-            [ viewExampleSection "Interface"
+            [ IconExamples.viewSettings UpdateSettings showIconName
+            , viewExampleSection "Interface"
                 [ ( "seeMore", UiIcon.seeMore )
                 , ( "openClose", UiIcon.openClose )
                 , ( "download", UiIcon.download )
@@ -185,3 +176,22 @@ example =
                 ]
             ]
     }
+
+
+{-| -}
+type alias State =
+    { showIconName : Bool }
+
+
+{-| -}
+type Msg
+    = UpdateSettings Bool
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        UpdateSettings showIconName ->
+            ( { state | showIconName = showIconName }
+            , Cmd.none
+            )
