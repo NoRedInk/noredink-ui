@@ -9,15 +9,16 @@ module Examples.Tooltip exposing (example, State, Msg)
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes as Attributes exposing (css, href)
+import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -64,7 +65,7 @@ example =
 
 type alias State =
     { openTooltip : Maybe TooltipType
-    , staticExampleSettings : Control (List (Tooltip.Attribute Never))
+    , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
     }
 
 
@@ -83,7 +84,7 @@ type TooltipType
 
 type Msg
     = ToggleTooltip TooltipType Bool
-    | SetStaticExampleSettings (Control (List (Tooltip.Attribute Never)))
+    | SetControl (Control (List ( String, Tooltip.Attribute Never )))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -96,7 +97,7 @@ update msg model =
             else
                 ( { model | openTooltip = Nothing }, Cmd.none )
 
-        SetStaticExampleSettings settings ->
+        SetControl settings ->
             ( { model | staticExampleSettings = settings }, Cmd.none )
 
 
@@ -177,122 +178,122 @@ viewToggleTip openTooltip =
         ]
 
 
-initStaticExampleSettings : Control (List (Tooltip.Attribute Never))
+initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
 initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
-        |> ControlExtra.listItem "direction" controlDirection
-        |> ControlExtra.listItem "alignment" controlAlignment
-        |> ControlExtra.listItem "withoutTail" controlTail
-        |> ControlExtra.listItem "width" controlWidth
-        |> ControlExtra.listItem "padding" controlPadding
+        |> ControlExtra.optionalListItem "direction" controlDirection
+        |> ControlExtra.optionalListItem "alignment" controlAlignment
+        |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
+        |> ControlExtra.optionalListItem "width" controlWidth
+        |> ControlExtra.optionalListItem "padding" controlPadding
 
 
-controlContent : Control (Tooltip.Attribute Never)
+controlContent : Control ( String, Tooltip.Attribute Never )
 controlContent =
-    Control.choice
-        [ ( "plaintext"
-          , "Song lyrics are literature."
-                |> Control.string
-                |> Control.map Tooltip.plaintext
-          )
-        , ( "HTML (short)"
-          , [ Html.code [] [ Html.text "git status" ]
-            , Html.text " ⇄ "
-            , Html.em [] [ Html.text "tries again" ]
-            ]
-                |> Tooltip.html
-                |> Control.value
-          )
-        , ( "HTML"
-          , [ Html.text "Click "
-            , Html.a [ href "http://www.noredink.com", Attributes.target "_blank" ]
-                [ Html.text "here, yes, HERE, right here on this long tooltip. "
-                , Html.div
-                    [ css
-                        [ Css.display Css.inlineBlock
-                        , Css.width (Css.px 20)
-                        ]
-                    ]
-                    [ Svg.toHtml UiIcon.gear ]
-                ]
-            , Html.text " to check out NoRedInk."
-            ]
-                |> Tooltip.html
-                |> Control.value
-          )
-        ]
+    CommonControls.content
+        { moduleName = "Tooltip"
+        , plaintext = Tooltip.plaintext
+        , markdown = Nothing
+        , html = Tooltip.html
+        , httpError = Nothing
+        }
 
 
-controlTail : Control (Tooltip.Attribute Never)
-controlTail =
-    Control.map
-        (\bool ->
-            if bool then
-                Tooltip.withoutTail
-
-            else
-                -- TODO: change `withoutTail` to take
-                -- a bool or expose a `withTail` from Tooltip.
-                Tooltip.css []
-        )
-        (Control.bool False)
-
-
-controlDirection : Control (Tooltip.Attribute Never)
+controlDirection : Control ( String, Tooltip.Attribute Never )
 controlDirection =
-    Control.choice
-        [ ( "onTop", Control.value Tooltip.onTop )
-        , ( "onBottom", Control.value Tooltip.onBottom )
-        , ( "onLeft", Control.value Tooltip.onLeft )
-        , ( "onRight", Control.value Tooltip.onRight )
+    CommonControls.choice "Tooltip"
+        [ ( "onTop", Tooltip.onTop )
+        , ( "onBottom", Tooltip.onBottom )
+        , ( "onLeft", Tooltip.onLeft )
+        , ( "onRight", Tooltip.onRight )
         ]
 
 
-controlAlignment : Control (Tooltip.Attribute Never)
+controlAlignment : Control ( String, Tooltip.Attribute Never )
 controlAlignment =
     Control.choice
-        [ ( "alignMiddle (default)", Control.value Tooltip.alignMiddle )
-        , ( "alignStart", Control.map (Css.px >> Tooltip.alignStart) controlNumber )
-        , ( "alignEnd", Control.map (Css.px >> Tooltip.alignEnd) controlNumber )
+        [ ( "alignMiddle (default)", Control.value ( "Tooltip.alignMiddle", Tooltip.alignMiddle ) )
+        , ( "alignStart"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignStart (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignStart (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
+        , ( "alignEnd"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignEnd (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignEnd (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
         ]
 
 
-controlNumber : Control Float
-controlNumber =
-    Control.map (String.toFloat >> Maybe.withDefault 0) (Control.string "0")
-
-
-controlWidth : Control (Tooltip.Attribute Never)
+controlWidth : Control ( String, Tooltip.Attribute Never )
 controlWidth =
     Control.choice
-        [ ( "exactWidth 320 (default)", Control.value (Tooltip.exactWidth 320) )
-        , ( "exactWidth", Control.map (round >> Tooltip.exactWidth) controlNumber )
-        , ( "fitToContent", Control.value Tooltip.fitToContent )
+        [ ( "exactWidth (default is 320)"
+          , Control.map
+                (\int ->
+                    ( "Tooltip.exactWidth " ++ String.fromInt int, Tooltip.exactWidth int )
+                )
+                (ControlExtra.int 320)
+          )
+        , ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
         ]
 
 
-controlPadding : Control (Tooltip.Attribute Never)
+controlPadding : Control ( String, Tooltip.Attribute Never )
 controlPadding =
     Control.choice
-        [ ( "normalPadding (default)", Control.value Tooltip.normalPadding )
-        , ( "smallPadding", Control.value Tooltip.smallPadding )
-        , ( "customPadding", Control.map Tooltip.customPadding controlNumber )
+        [ ( "normalPadding (default)", Control.value ( "Tooltip.normalPadding", Tooltip.normalPadding ) )
+        , ( "smallPadding", Control.value ( "Tooltip.smallPadding", Tooltip.smallPadding ) )
+        , ( "customPadding"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.customPadding " ++ String.fromFloat float
+                    , Tooltip.customPadding float
+                    )
+                )
+                (ControlExtra.float 0)
+          )
         ]
 
 
-viewCustomizableExample : Control (List (Tooltip.Attribute Never)) -> Html Msg
+viewCustomizableExample : Control (List ( String, Tooltip.Attribute Never )) -> Html Msg
 viewCustomizableExample controlSettings =
-    let
-        settings =
-            Control.currentValue controlSettings
-
-        attributes =
-            Tooltip.open True :: settings
-    in
     Html.div []
-        [ Control.view SetStaticExampleSettings controlSettings
-            |> Html.fromUnstyled
+        [ ControlView.view
+            { update = SetControl
+            , settings = controlSettings
+            , toExampleCode =
+                \controls ->
+                    [ { sectionName = "Example"
+                      , code =
+                            String.join "\n"
+                                [ "Tooltip.view"
+                                , "    { trigger ="
+                                , "        \\popupTriggerAttributes ->"
+                                , "            ClickableSvg.button \"Up\""
+                                , "                UiIcon.arrowTop"
+                                , "                [ ClickableSvg.custom popupTriggerAttributes"
+                                , "                ]"
+                                , "    , id = \"an-id-for-the-tooltip\""
+                                , "    }"
+                                , "    [ "
+                                    ++ String.join "\n    , "
+                                        ("Tooltip.open True" :: List.map Tuple.first controls)
+                                , "    ]"
+                                ]
+                      }
+                    ]
+            }
         , Html.div
             [ css
                 [ Css.displayFlex
@@ -304,13 +305,15 @@ viewCustomizableExample controlSettings =
             [ Tooltip.view
                 { trigger =
                     \eventHandlers ->
-                        ClickableSvg.button "Arrow Up"
+                        ClickableSvg.button "Up"
                             UiIcon.arrowTop
                             [ ClickableSvg.custom eventHandlers
                             ]
-                , id = "my-top-tooltip"
+                , id = "an-id-for-the-tooltip"
                 }
-                attributes
+                (Tooltip.open True
+                    :: List.map Tuple.second (Control.currentValue controlSettings)
+                )
                 |> Html.map never
             ]
         ]

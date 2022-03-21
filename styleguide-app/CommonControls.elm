@@ -81,7 +81,7 @@ httpError =
 content :
     { moduleName : String
     , plaintext : String -> attribute
-    , markdown : String -> attribute
+    , markdown : Maybe (String -> attribute)
     , html : List (Html msg) -> attribute
     , httpError : Maybe (Http.Error -> attribute)
     }
@@ -115,23 +115,30 @@ content ({ moduleName } as config) =
                         )
                     )
            )
-         , ( "markdown"
-           , Control.string markdown
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
-                        , config.markdown str
-                        )
-                    )
-           )
-         , ( "HTML"
-           , Control.value
-                ( moduleName ++ ".html [ ... ]"
-                , config.html exampleHtml
-                )
-           )
          ]
-            ++ (case config.httpError of
+            ++ (case config.markdown of
+                    Just markdown_ ->
+                        [ ( "markdown"
+                          , Control.string markdown
+                                |> Control.map
+                                    (\str ->
+                                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                                        , markdown_ str
+                                        )
+                                    )
+                          )
+                        ]
+
+                    Nothing ->
+                        []
+               )
+            ++ ( "HTML"
+               , Control.value
+                    ( moduleName ++ ".html [ ... ]"
+                    , config.html exampleHtml
+                    )
+               )
+            :: (case config.httpError of
                     Just httpError_ ->
                         [ ( "httpError"
                           , Control.map
