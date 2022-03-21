@@ -36,6 +36,19 @@ describe('Visual tests', function () {
     console.log(`Snapshot complete for ${name}`)
   }
 
+  const iconProcessing = async(name, location) => {
+    await page.goto(location)
+    await page.waitFor(`#${name}`)
+    await percySnapshot(page, name)
+
+    // visible icon names snapshot
+    await page.click("label");
+    await page.waitForSelector(".checkbox-V5__Checked")
+    await percySnapshot(page, `${name} - display icon names`)
+
+    console.log(`Snapshots complete for ${name}`)
+  }
+
   const specialProcessing = {
     'Modal': async (name, location) => {
       await page.goto(location)
@@ -49,7 +62,11 @@ describe('Visual tests', function () {
       await page.waitFor('[role="dialog"]')
       await percySnapshot(page, 'Full Warning Modal')
       await page.click('[aria-label="Close modal"]')
-    }
+    },
+    'AssignmentIcon': iconProcessing,
+    'UiIcon': iconProcessing,
+    'Logo': iconProcessing,
+    'Pennant': iconProcessing
   }
 
   it('All', async function () {
