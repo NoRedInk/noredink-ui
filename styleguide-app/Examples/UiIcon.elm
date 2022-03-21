@@ -13,14 +13,24 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
+type alias State =
+    IconExamples.Settings
+
+
+{-| -}
+type alias Msg =
+    IconExamples.Msg
+
+
+{-| -}
 example : Example State Msg
 example =
     { name = "UiIcon"
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = { showIconName = False }
-    , update = update
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
@@ -38,12 +48,12 @@ example =
             , UiIcon.equals
             ]
     , view =
-        \{ showIconName } ->
+        \settings ->
             let
                 viewExampleSection =
-                    IconExamples.view showIconName
+                    IconExamples.view settings
             in
-            [ IconExamples.viewSettings UpdateSettings showIconName
+            [ IconExamples.viewSettings settings
             , viewExampleSection "Interface"
                 [ ( "seeMore", UiIcon.seeMore )
                 , ( "openClose", UiIcon.openClose )
@@ -176,22 +186,3 @@ example =
                 ]
             ]
     }
-
-
-{-| -}
-type alias State =
-    { showIconName : Bool }
-
-
-{-| -}
-type Msg
-    = UpdateSettings Bool
-
-
-update : Msg -> State -> ( State, Cmd Msg )
-update msg state =
-    case msg of
-        UpdateSettings showIconName ->
-            ( { state | showIconName = showIconName }
-            , Cmd.none
-            )

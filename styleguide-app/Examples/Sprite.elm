@@ -17,12 +17,12 @@ import Svg.Styled.Attributes as Attributes
 
 {-| -}
 type alias State =
-    ()
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -32,11 +32,15 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)
-    , view = \_ -> [ IconExamples.view False "Rich Text Formatting" sprites ]
+    , view =
+        \settings ->
+            [ IconExamples.viewSettings settings
+            , IconExamples.view settings "Rich Text Formatting" sprites
+            ]
     }
 
 

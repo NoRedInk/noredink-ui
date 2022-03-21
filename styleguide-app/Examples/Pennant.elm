@@ -15,12 +15,12 @@ import Nri.Ui.Pennant.V2 as Pennant
 
 {-| -}
 type alias State =
-    { showIconName : Bool }
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -30,8 +30,8 @@ example =
     , version = 2
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = { showIconName = False }
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
@@ -40,8 +40,9 @@ example =
             , Pennant.disabledPremiumFlag
             ]
     , view =
-        \{ showIconName } ->
-            [ IconExamples.viewWithCustomStyles showIconName
+        \settings ->
+            [ IconExamples.viewSettings settings
+            , IconExamples.viewWithCustomStyles settings
                 "Premium Pennants"
                 [ ( "premiumFlag"
                   , Pennant.premiumFlag

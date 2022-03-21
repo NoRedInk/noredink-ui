@@ -19,12 +19,12 @@ import Nri.Ui.Svg.V1 as Svg
 
 {-| -}
 type alias State =
-    { showIconName : Bool }
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -34,8 +34,8 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = { showIconName = False }
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         Html.div [ css [ Css.marginBottom (Css.px 8) ] ] [ Svg.toHtml Logo.noredink ]
@@ -46,12 +46,13 @@ example =
                 , Logo.googleG
                 ]
     , view =
-        \{ showIconName } ->
+        \settings ->
             let
                 viewExampleSection =
-                    IconExamples.viewWithCustomStyles showIconName
+                    IconExamples.viewWithCustomStyles settings
             in
-            [ viewExampleSection "NRI"
+            [ IconExamples.viewSettings settings
+            , viewExampleSection "NRI"
                 [ ( "noredink"
                   , Logo.noredink
                   , [ Css.height (Css.px 25)

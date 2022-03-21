@@ -1,13 +1,13 @@
 module Examples.IconExamples exposing
     ( preview
-    , viewSettings
+    , Settings, init, Msg, update, viewSettings
     , view, viewWithCustomStyles
     )
 
 {-|
 
 @docs preview
-@docs viewSettings
+@docs Settings, init, Msg, update, viewSettings
 @docs view, viewWithCustomStyles
 
 -}
@@ -42,12 +42,38 @@ preview icons =
 
 
 {-| -}
-viewSettings : (Bool -> msg) -> Bool -> Html msg
-viewSettings toggle showIconName =
+type alias Settings =
+    { showIconName : Bool }
+
+
+{-| -}
+init : Settings
+init =
+    { showIconName = False }
+
+
+{-| -}
+type Msg
+    = ShowNames Bool
+
+
+{-| -}
+update : Msg -> Settings -> ( Settings, Cmd msg )
+update msg settings =
+    case msg of
+        ShowNames showIconName ->
+            ( { settings | showIconName = showIconName }
+            , Cmd.none
+            )
+
+
+{-| -}
+viewSettings : Settings -> Html Msg
+viewSettings { showIconName } =
     Checkbox.viewWithLabel
         { identifier = "show-icon-name-checkbox"
         , label = "Show names"
-        , setterMsg = toggle
+        , setterMsg = ShowNames
         , selected = Checkbox.selectedFromBool showIconName
         , disabled = False
         , theme = Checkbox.Square
@@ -55,8 +81,8 @@ viewSettings toggle showIconName =
 
 
 {-| -}
-view : Bool -> String -> List ( String, Svg.Svg ) -> Html msg
-view showIconName headerText icons =
+view : Settings -> String -> List ( String, Svg.Svg ) -> Html msg
+view settings headerText icons =
     let
         defaultStyles =
             [ Css.height (Css.px 25)
@@ -65,14 +91,14 @@ view showIconName headerText icons =
             , Css.color Colors.gray45
             ]
     in
-    viewWithCustomStyles showIconName
+    viewWithCustomStyles settings
         headerText
         (List.map (\( name, svg ) -> ( name, svg, defaultStyles )) icons)
 
 
 {-| -}
-viewWithCustomStyles : Bool -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
-viewWithCustomStyles showIconName headerText icons =
+viewWithCustomStyles : Settings -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
+viewWithCustomStyles { showIconName } headerText icons =
     Html.section
         [ css
             [ Css.displayFlex

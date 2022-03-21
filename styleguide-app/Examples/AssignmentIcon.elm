@@ -14,12 +14,12 @@ import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 
 {-| -}
 type alias State =
-    { showIconName : Bool }
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -29,8 +29,8 @@ example =
     , version = 2
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = { showIconName = False }
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
@@ -48,12 +48,13 @@ example =
             , AssignmentIcon.writing
             ]
     , view =
-        \{ showIconName } ->
+        \settings ->
             let
                 viewExampleSection =
-                    IconExamples.view showIconName
+                    IconExamples.view settings
             in
-            [ viewExampleSection "Diagnostic"
+            [ IconExamples.viewSettings settings
+            , viewExampleSection "Diagnostic"
                 [ ( "diagnostic", AssignmentIcon.diagnostic )
                 , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled )
                 , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled )
