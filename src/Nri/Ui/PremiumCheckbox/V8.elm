@@ -45,7 +45,6 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (removePunctuation)
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
-import Svg.Attributes
 
 
 {-| Set a custom ID for this checkbox and label. If you don't set this,
