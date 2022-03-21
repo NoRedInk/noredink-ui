@@ -143,9 +143,9 @@ view state =
                         "Balloon.balloon [ "
                             ++ String.join ", " (List.map Tuple.first attrs)
                             ++ " ] "
-                            ++ "\""
+                            ++ "(text \""
                             ++ copy
-                            ++ "\""
+                            ++ "\")"
                   }
                 ]
         }
