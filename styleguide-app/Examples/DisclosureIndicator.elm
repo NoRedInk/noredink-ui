@@ -66,13 +66,13 @@ example =
                 }
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
                 [ DisclosureIndicator.large
-                    [ Css.marginRight (Css.px 10) ]
+                    (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
                 , Html.text "I'm a 17px caret icon."
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
                 [ DisclosureIndicator.medium
-                    [ Css.paddingRight (Css.px 8) ]
+                    (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
                 , Html.text "I'm a 15px caret icon."
                 ]
@@ -102,7 +102,17 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "css" (Control.value ( "[]", [] ))
+        |> Control.field "css"
+            (Control.choice
+                [ ( "[ Css.marginRight (Css.px 8) ]"
+                  , Control.value
+                        ( "[ Css.marginRight (Css.px 8) ]"
+                        , [ Css.marginRight (Css.px 8) ]
+                        )
+                  )
+                , ( "[]", Control.value ( "[]", [] ) )
+                ]
+            )
         |> Control.field "isOpen" (ControlExtra.bool False)
 
 
