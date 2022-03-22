@@ -9,6 +9,7 @@ module Examples.DisclosureIndicator exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
@@ -36,6 +37,10 @@ example =
         ]
     , view =
         \state ->
+            let
+                attributes =
+                    Control.currentValue state.settings
+            in
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , ControlView.view
                 { update = UpdateSettings
@@ -59,18 +64,16 @@ example =
                           }
                         ]
                 }
-            , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
-                [ Button.button "Toggle large indicator"
-                    [ Button.onClick ToggleLarge, Button.small, Button.secondary ]
-                , Button.button "Toggle medium indicator"
-                    [ Button.onClick ToggleMedium, Button.small, Button.secondary ]
-                ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
-                [ DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState
+                [ DisclosureIndicator.large
+                    [ Css.marginRight (Css.px 10) ]
+                    (Tuple.second attributes.isOpen)
                 , Html.text "I'm a 17px caret icon."
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
-                [ DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] state.mediumState
+                [ DisclosureIndicator.medium
+                    [ Css.paddingRight (Css.px 8) ]
+                    (Tuple.second attributes.isOpen)
                 , Html.text "I'm a 15px caret icon."
                 ]
             ]
@@ -80,8 +83,6 @@ example =
 {-| -}
 type alias State =
     { settings : Control Settings
-    , largeState : Bool
-    , mediumState : Bool
     }
 
 
@@ -89,8 +90,6 @@ type alias State =
 init : State
 init =
     { settings = initSettings
-    , largeState = False
-    , mediumState = False
     }
 
 
@@ -104,14 +103,12 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "css" (Control.value ( "[]", [] ))
-        |> Control.field "isOpen" (Control.value ( "False", False ))
+        |> Control.field "isOpen" (ControlExtra.bool False)
 
 
 {-| -}
 type Msg
     = UpdateSettings (Control Settings)
-    | ToggleLarge
-    | ToggleMedium
 
 
 {-| -}
@@ -120,9 +117,3 @@ update msg state =
     case msg of
         UpdateSettings settings ->
             ( { state | settings = settings }, Cmd.none )
-
-        ToggleLarge ->
-            ( { state | largeState = not state.largeState }, Cmd.none )
-
-        ToggleMedium ->
-            ( { state | mediumState = not state.mediumState }, Cmd.none )
