@@ -19,12 +19,12 @@ import Nri.Ui.Svg.V1 as Svg
 
 {-| -}
 type alias State =
-    ()
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -34,8 +34,8 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         Html.div [ css [ Css.marginBottom (Css.px 8) ] ] [ Svg.toHtml Logo.noredink ]
@@ -46,8 +46,13 @@ example =
                 , Logo.googleG
                 ]
     , view =
-        \_ ->
-            [ IconExamples.viewWithCustomStyles "NRI"
+        \settings ->
+            let
+                viewExampleSection =
+                    IconExamples.viewWithCustomStyles settings
+            in
+            [ IconExamples.viewSettings settings
+            , viewExampleSection "NRI"
                 [ ( "noredink"
                   , Logo.noredink
                   , [ Css.height (Css.px 25)
@@ -56,11 +61,11 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Social Media"
+            , viewExampleSection "Social Media"
                 [ ( "facebook", Logo.facebook, defaults )
                 , ( "twitter", Logo.twitter, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "Clever"
+            , viewExampleSection "Clever"
                 [ ( "clever"
                   , Logo.clever
                   , [ Css.height (Css.px 25)
@@ -78,14 +83,14 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Google"
+            , viewExampleSection "Google"
                 [ ( "googleClassroom"
                   , Logo.googleClassroom
                   , defaults
                   )
                 , ( "googleG", Logo.googleG, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "LMS"
+            , viewExampleSection "LMS"
                 [ ( "canvas"
                   , Logo.canvas
                   , [ Css.height (Css.px 25)
