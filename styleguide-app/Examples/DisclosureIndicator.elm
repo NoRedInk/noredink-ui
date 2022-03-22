@@ -68,13 +68,13 @@ example =
                 [ DisclosureIndicator.large
                     (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
-                , Html.text "I'm a 17px caret icon."
+                , Html.text "large is a 17px caret icon."
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
                 [ DisclosureIndicator.medium
                     (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
-                , Html.text "I'm a 15px caret icon."
+                , Html.text "medium is a 15px caret icon."
                 ]
             ]
     }
