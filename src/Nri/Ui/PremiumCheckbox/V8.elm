@@ -190,7 +190,7 @@ view { label, onChange } attributes =
 
               else
                 -- left-align the checkbox with checkboxes that _do_ have the premium pennant
-                Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)) ] ] []
+                Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)), Css.flexShrink Css.zero ] ] []
             , Checkbox.viewWithLabel
                 { identifier = idValue
                 , label = label
@@ -270,7 +270,7 @@ viewPremiumFlag =
         |> Svg.withLabel "Premium"
         |> Svg.withWidth (Css.px iconWidth)
         |> Svg.withHeight (Css.px 30)
-        |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin) ]
+        |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin), Css.flexShrink Css.zero ]
         |> Svg.toHtml
 
 
