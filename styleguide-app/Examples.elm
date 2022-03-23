@@ -27,7 +27,6 @@ import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
-import Examples.SlideModal as SlideModal
 import Examples.SortableTable as SortableTable
 import Examples.Sprite as Sprite
 import Examples.Svg as Svg
@@ -538,25 +537,6 @@ all =
                     _ ->
                         Nothing
             )
-    , SlideModal.example
-        |> Example.wrapMsg SlideModalMsg
-            (\msg ->
-                case msg of
-                    SlideModalMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState SlideModalState
-            (\msg ->
-                case msg of
-                    SlideModalState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , SortableTable.example
         |> Example.wrapMsg SortableTableMsg
             (\msg ->
@@ -815,7 +795,6 @@ type State
     | SelectState Select.State
     | ShadowsState Shadows.State
     | SideNavState SideNav.State
-    | SlideModalState SlideModal.State
     | SortableTableState SortableTable.State
     | SpriteState Sprite.State
     | SvgState Svg.State
@@ -857,7 +836,6 @@ type Msg
     | SelectMsg Select.Msg
     | ShadowsMsg Shadows.Msg
     | SideNavMsg SideNav.Msg
-    | SlideModalMsg SlideModal.Msg
     | SortableTableMsg SortableTable.Msg
     | SpriteMsg Sprite.Msg
     | SvgMsg Svg.Msg
