@@ -208,7 +208,7 @@ viewButtonExamples state =
                             ++ fName
                             ++ " \""
                             ++ label
-                            ++ "\"\n\t"
+                            ++ "\"\t"
                             ++ ControlView.codeFromList attributes
                 in
                 [ { sectionName = "Button"
