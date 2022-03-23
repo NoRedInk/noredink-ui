@@ -31,12 +31,11 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ ( "caption", Text.caption )
-        , ( "smallBody", Text.smallBody )
-        , ( "mediumBody", Text.mediumBody )
-        , ( "ugMediumBody", Text.ugMediumBody )
+        [ Text.caption [ Text.plaintext "caption" ]
+        , Text.smallBody [ Text.plaintext "smallBody" ]
+        , Text.mediumBody [ Text.plaintext "mediumBody" ]
+        , Text.ugMediumBody [ Text.plaintext "ugMediumBody" ]
         ]
-            |> List.map viewPreview
     , view =
         \state ->
             let
@@ -84,11 +83,6 @@ example =
                 attributes
             ]
     }
-
-
-viewPreview : ( String, List (Text.Attribute msg) -> Html msg ) -> Html msg
-viewPreview ( name, view ) =
-    view [ Text.plaintext name ]
 
 
 viewExamples : List ( String, List (Text.Attribute msg) -> Html msg ) -> List (Text.Attribute msg) -> Html msg
