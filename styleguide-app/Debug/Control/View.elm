@@ -41,45 +41,45 @@ view config =
 
 
 viewExampleCode :
-    { example | name : String, version : Int }
+    { component | name : String, version : Int }
     -> List { sectionName : String, code : String }
     -> Html msg
-viewExampleCode example values =
+viewExampleCode component values =
     viewSection "Generated Code" <|
         List.concatMap
-            (\{ sectionName, code } ->
+            (\example ->
                 [ details
                     []
                     [ summary []
                         [ Heading.h4
                             [ Heading.css [ Css.display Css.inline ]
                             ]
-                            [ text sectionName ]
+                            [ text example.sectionName ]
                         ]
-                    , ClickableText.link ("View " ++ sectionName ++ " example on Ellie")
-                        [ ClickableText.linkExternal (generateEllieLink example code)
+                    , ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
+                        [ ClickableText.linkExternal (generateEllieLink component example)
                         , ClickableText.small
                         ]
-                    , Html.Styled.code
+                    , code
                         [ css
                             [ display block
                             , whiteSpace preWrap
                             , Css.marginTop (px 8)
                             ]
                         ]
-                        [ text code ]
+                        [ text example.code ]
                     ]
                 ]
             )
             values
 
 
-generateEllieLink : { example | name : String, version : Int } -> String -> String
-generateEllieLink example code =
+generateEllieLink : { component | name : String, version : Int } -> { sectionName : String, code : String } -> String
+generateEllieLink component { sectionName, code } =
     Url.Builder.crossOrigin "https://ellie-app.com/a/example/v1"
         []
-        [ Url.Builder.string "title" example.name
-        , Url.Builder.string "elmcode" (generateElmExampleModule example code)
+        [ Url.Builder.string "title" (component.name ++ " | " ++ sectionName)
+        , Url.Builder.string "elmcode" (generateElmExampleModule component code)
         , Url.Builder.string "htmlcode" ellieHtmlSetup
         , -- At some point, a system of some kind will be required to keep these values
           -- in line with the allowed elm json values.
@@ -94,8 +94,8 @@ generateEllieLink example code =
         ]
 
 
-generateElmExampleModule : { example | name : String, version : Int } -> String -> String
-generateElmExampleModule exampleData code =
+generateElmExampleModule : { component | name : String, version : Int } -> String -> String
+generateElmExampleModule component code =
     [ "module Main exposing (main)"
     , ""
     , "import Css exposing (Style)"
@@ -103,7 +103,7 @@ generateElmExampleModule exampleData code =
     , "import Html.Styled exposing (..)"
     , "import Nri.Ui.Colors.V1 as Colors"
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
-    , "import " ++ Example.fullName exampleData ++ " as " ++ exampleData.name
+    , "import " ++ Example.fullName component ++ " as " ++ component.name
     , ""
     , "main : RootHtml.Html msg"
     , "main ="
