@@ -87,6 +87,7 @@ init =
     { control =
         ControlExtra.list
             |> CommonControls.css { moduleName = "Heading", use = Heading.css }
+            |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
     }
 
 
