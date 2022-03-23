@@ -22,7 +22,7 @@ import Nri.Ui.SideNav.V2 as SideNav
 {-| -}
 example : Example State Msg
 example =
-    { name = "SideNav"
+    { name = moduleName
     , version = 2
     , state = init
     , update = update
@@ -32,6 +32,11 @@ example =
     , preview = [ viewPreview ]
     , view = view
     }
+
+
+moduleName : String
+moduleName =
+    "SideNav"
 
 
 viewPreview : Html msg
@@ -72,14 +77,15 @@ view state =
             Control.currentValue state.settings
     in
     [ ControlView.view
-        { update = SetControls
+        { moduleName = moduleName
+        , update = SetControls
         , settings = state.settings
         , toExampleCode =
             \{ entries } ->
                 [ { sectionName = "View"
                   , code =
                         String.join ""
-                            [ "SideNav.view"
+                            [ moduleName ++ ".view"
                             , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"

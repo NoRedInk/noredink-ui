@@ -28,7 +28,7 @@ init =
             |> ControlExtra.optionalListItem "theme" controlTheme
             |> ControlExtra.listItem "content"
                 (CommonControls.content
-                    { moduleName = "Message"
+                    { moduleName = moduleName
                     , plaintext = Message.plaintext
                     , markdown = Just Message.markdown
                     , html = Message.html
@@ -42,22 +42,27 @@ init =
             |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                 ( "Message.hideIconForMobile", Message.hideIconForMobile )
             |> CommonControls.css
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.css
                 }
             |> CommonControls.mobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.mobileCss
                 }
             |> CommonControls.quizEngineMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.quizEngineMobileCss
                 }
             |> CommonControls.notMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.notMobileCss
                 }
     }
+
+
+moduleName : String
+moduleName =
+    "Message"
 
 
 controlTheme : Control ( String, Message.Attribute msg )
@@ -142,7 +147,8 @@ example =
                         text "Nice! The messages were dismissed. 👍"
             in
             [ ControlView.view
-                { update = UpdateControl
+                { moduleName = moduleName
+                , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->

@@ -26,7 +26,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 example : Example State Msg
 example =
-    { name = "Tooltip"
+    { name = moduleName
     , version = 2
     , categories = [ Messaging ]
     , keyboardSupport = []
@@ -61,6 +61,11 @@ example =
         ]
     , view = view
     }
+
+
+moduleName : String
+moduleName =
+    "Tooltip"
 
 
 type alias State =
@@ -270,7 +275,8 @@ viewCustomizableExample : Control (List ( String, Tooltip.Attribute Never )) -> 
 viewCustomizableExample controlSettings =
     Html.div []
         [ ControlView.view
-            { update = SetControl
+            { moduleName = moduleName
+            , update = SetControl
             , settings = controlSettings
             , toExampleCode =
                 \controls ->

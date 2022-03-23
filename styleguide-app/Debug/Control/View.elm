@@ -11,7 +11,8 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 
 {-| -}
 view :
-    { update : Control a -> msg
+    { moduleName : String
+    , update : Control a -> msg
     , settings : Control a
     , toExampleCode : a -> List { sectionName : String, code : String }
     }

@@ -24,7 +24,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| -}
 example : Example State Msg
 example =
-    { name = "ClickableText"
+    { name = moduleName
     , version = 3
     , state = init
     , update = update
@@ -52,6 +52,11 @@ example =
     }
 
 
+moduleName : String
+moduleName =
+    "ClickableText"
+
+
 {-| -}
 type State
     = State (Control (Settings Msg))
@@ -64,25 +69,25 @@ init =
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "attributes"
             (ControlExtra.list
-                |> CommonControls.icon "ClickableText" ClickableText.icon
+                |> CommonControls.icon moduleName ClickableText.icon
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
                     ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                 |> CommonControls.css
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.css
                     }
                 |> CommonControls.mobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.mobileCss
                     }
                 |> CommonControls.quizEngineMobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.quizEngineMobileCss
                     }
                 |> CommonControls.notMobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.notMobileCss
                     }
             )
@@ -126,7 +131,8 @@ viewExamples (State control) =
             List.map Tuple.second settings.attributes
     in
     [ ControlView.view
-        { update = SetState
+        { moduleName = moduleName
+        , update = SetState
         , settings = control
         , toExampleCode =
             \{ label, attributes } ->
@@ -156,7 +162,7 @@ viewExamples (State control) =
             , text " and clickable buttons: "
             , ClickableText.button settings.label
                 (ClickableText.small
-                    :: ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
+                    :: ClickableText.onClick (ShowItWorked moduleName "in-line button")
                     :: clickableAttributes
                 )
             , text " to show up in-line."
@@ -192,7 +198,7 @@ buttons settings =
             (\( size, sizeLabel ) ->
                 ClickableText.button settings.label
                     (size
-                        :: ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
+                        :: ClickableText.onClick (ShowItWorked moduleName sizeLabel)
                         :: List.map Tuple.second settings.attributes
                     )
                     |> exampleCell
