@@ -21,11 +21,16 @@ import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+version : Int
+version =
+    3
+
+
 {-| -}
 example : Example State Msg
 example =
     { name = moduleName
-    , version = 3
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -131,7 +136,8 @@ viewExamples (State control) =
             List.map Tuple.second settings.attributes
     in
     [ ControlView.view
-        { moduleName = moduleName
+        { name = moduleName
+        , version = version
         , update = SetState
         , settings = control
         , toExampleCode =

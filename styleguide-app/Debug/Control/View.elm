@@ -3,6 +3,7 @@ module Debug.Control.View exposing (codeFromList, view)
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
+import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Heading.V2 as Heading
@@ -11,7 +12,8 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 
 {-| -}
 view :
-    { moduleName : String
+    { version : Int
+    , name : String
     , update : Control a -> msg
     , settings : Control a
     , toExampleCode : a -> List { sectionName : String, code : String }
@@ -36,7 +38,9 @@ view config =
         ]
 
 
-viewExampleCode : List { sectionName : String, code : String } -> Html msg
+viewExampleCode :
+    List { sectionName : String, code : String }
+    -> Html msg
 viewExampleCode values =
     viewSection "Generated Code" <|
         List.concatMap

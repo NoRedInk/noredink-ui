@@ -22,11 +22,16 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
 
+version : Int
+version =
+    10
+
+
 {-| -}
 example : Example State Msg
 example =
     { name = moduleName
-    , version = 10
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -190,7 +195,8 @@ viewButtonExamples state =
             Control.currentValue state.debugControlsState
     in
     [ ControlView.view
-        { moduleName = moduleName
+        { name = moduleName
+        , version = version
         , update = SetDebugControlsState
         , settings = state.debugControlsState
         , toExampleCode =

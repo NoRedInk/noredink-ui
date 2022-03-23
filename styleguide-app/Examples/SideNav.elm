@@ -19,11 +19,16 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SideNav.V2 as SideNav
 
 
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
     { name = moduleName
-    , version = 2
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -77,7 +82,8 @@ view state =
             Control.currentValue state.settings
     in
     [ ControlView.view
-        { moduleName = moduleName
+        { name = moduleName
+        , version = version
         , update = SetControls
         , settings = state.settings
         , toExampleCode =

@@ -24,10 +24,15 @@ import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+version : Int
+version =
+    2
+
+
 example : Example State Msg
 example =
     { name = moduleName
-    , version = 2
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -275,7 +280,8 @@ viewCustomizableExample : Control (List ( String, Tooltip.Attribute Never )) -> 
 viewCustomizableExample controlSettings =
     Html.div []
         [ ControlView.view
-            { moduleName = moduleName
+            { name = moduleName
+            , version = version
             , update = SetControl
             , settings = controlSettings
             , toExampleCode =

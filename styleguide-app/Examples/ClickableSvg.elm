@@ -24,11 +24,16 @@ import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
     { name = moduleName
-    , version = 2
+    , version = version
     , categories = [ Buttons, Icons ]
     , keyboardSupport = []
     , state = init
@@ -54,7 +59,8 @@ example =
     , view =
         \state ->
             [ ControlView.view
-                { moduleName = moduleName
+                { name = moduleName
+                , version = version
                 , update = SetControls
                 , settings = state.settings
                 , toExampleCode =

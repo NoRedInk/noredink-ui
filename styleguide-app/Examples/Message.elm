@@ -14,6 +14,11 @@ import Nri.Ui.Message.V3 as Message
 import ViewHelpers exposing (viewExamples)
 
 
+version : Int
+version =
+    3
+
+
 type alias State =
     { show : Bool
     , control : Control (List ( String, Message.Attribute Msg ))
@@ -122,7 +127,7 @@ update msg state =
 example : Example State Msg
 example =
     { name = "Message"
-    , version = 3
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -147,7 +152,8 @@ example =
                         text "Nice! The messages were dismissed. 👍"
             in
             [ ControlView.view
-                { moduleName = moduleName
+                { name = moduleName
+                , version = version
                 , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
