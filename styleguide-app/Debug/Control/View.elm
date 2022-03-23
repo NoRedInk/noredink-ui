@@ -80,6 +80,7 @@ generateEllieLink example code =
         []
         [ Url.Builder.string "title" example.name
         , Url.Builder.string "elmcode" (generateElmExampleModule example code)
+        , Url.Builder.string "htmlcode" ellieHtmlSetup
         , -- TODO: a system will be required to keep these values in line with the elm json values
           Url.Builder.string "packages" "elm/core@1.0.5"
         , Url.Builder.string "packages" "elm/html@1.0.0"
@@ -99,12 +100,27 @@ generateElmExampleModule exampleData code =
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import " ++ Example.fullName exampleData ++ " as " ++ exampleData.name
     , ""
+    , "main : RootHtml.Html msg"
     , "main ="
     , "    " ++ code
     , "    |> toUnstyled"
     ]
         |> String.join "\n"
         |> String.replace "\t" "    "
+
+
+ellieHtmlSetup : String
+ellieHtmlSetup =
+    """
+    <html> <head></head>
+    <body>
+      <main></main>
+      <script>
+        var app = Elm.Main.init({ node: document.querySelector('main') })
+      </script>
+    </body>
+    </html>
+    """
 
 
 viewSection : String -> List (Html msg) -> Html msg
