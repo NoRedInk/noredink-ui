@@ -81,11 +81,15 @@ generateEllieLink example code =
         [ Url.Builder.string "title" example.name
         , Url.Builder.string "elmcode" (generateElmExampleModule example code)
         , Url.Builder.string "htmlcode" ellieHtmlSetup
-        , -- TODO: a system will be required to keep these values in line with the elm json values
+        , -- At some point, a system of some kind will be required to keep these values
+          -- in line with the allowed elm json values.
+          -- I think in most cases, the API to use a noredink-ui component should require _only_ the following
+          -- packages. Feel free to add packages if it seems necessary!
           Url.Builder.string "packages" "elm/core@1.0.5"
         , Url.Builder.string "packages" "elm/html@1.0.0"
         , Url.Builder.string "packages" "rtfeldman/elm-css@17.0.5"
         , Url.Builder.string "packages" "NoRedInk/noredink-ui@15.8.1"
+        , Url.Builder.string "packages" "pablohirafuji/elm-markdown@2.0.5"
         , Url.Builder.string "elmversion" "0.19.1"
         ]
 
