@@ -88,7 +88,27 @@ init =
         ControlExtra.list
             |> CommonControls.css { moduleName = "Heading", use = Heading.css }
             |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
+            |> ControlExtra.optionalListItem "style" controlStyle
     }
+
+
+controlStyle : Control ( String, Heading.Attribute msg )
+controlStyle =
+    [ ( "Top", Heading.Top )
+    , ( "Tagline", Heading.Tagline )
+    , ( "Subhead", Heading.Subhead )
+    , ( "Small", Heading.Small )
+    ]
+        |> List.map
+            (\( name, val ) ->
+                ( name
+                , Control.value
+                    ( "Heading.style Heading." ++ name
+                    , Heading.style val
+                    )
+                )
+            )
+        |> Control.choice
 
 
 type alias Settings =
