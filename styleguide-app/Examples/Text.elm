@@ -112,20 +112,14 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.listItem "content" controlContent
-            |> ControlExtra.listItem "noBreak"
-                (Control.map Text.noBreak (Control.bool False))
-            |> ControlExtra.optionalListItem "css"
-                (Control.value
-                    (Text.css
-                        [ Css.border3 (Css.px 1) Css.solid Colors.aqua
-                        , Css.color Colors.aquaDark
-                        ]
-                    )
-                )
+            |> ControlExtra.optionalBoolListItem "noBreak"
+                ( "Text.noBreak True", Text.noBreak True )
+            |> CommonControls.css { moduleName = "Text", use = Text.css }
+            |> Control.map (List.map Tuple.second)
     }
 
 
-controlContent : Control (Text.Attribute msg)
+controlContent : Control ( String, Text.Attribute msg )
 controlContent =
     CommonControls.content
         { moduleName = "Text"
@@ -134,7 +128,6 @@ controlContent =
         , html = Text.html
         , httpError = Nothing
         }
-        |> Control.map Tuple.second
 
 
 {-| -}
