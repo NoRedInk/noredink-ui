@@ -7,6 +7,7 @@ module Examples.Heading exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -36,23 +37,41 @@ example =
         ]
     , view =
         \state ->
+            let
+                attributes =
+                    List.map Tuple.second (Control.currentValue state.control)
+            in
             [ ControlView.view
                 { update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
-                        []
+                        let
+                            toExampleCode name =
+                                { sectionName = name
+                                , code =
+                                    "Heading."
+                                        ++ name
+                                        ++ "\n    ["
+                                        ++ String.join "\n    , " (List.map Tuple.first settings)
+                                        ++ "\n    ]"
+                                        ++ "\n    (TODO: Html content)"
+                                }
+                        in
+                        [ toExampleCode "h1"
+                        , toExampleCode "h2"
+                        , toExampleCode "h3"
+                        , toExampleCode "h4"
+                        , toExampleCode "h5"
+                        ]
                 }
             , viewExamples
-                [ ( "h1", Heading.h1 [] [ Html.text "This is the main page heading." ] )
-                , ( "h2", Heading.h2 [] [ Html.text "This is a tagline" ] )
-                , ( "h3", Heading.h3 [] [ Html.text "This is a subHeading" ] )
-                , ( "h4", Heading.h4 [] [ Html.text "This is a smallHeading" ] )
+                [ ( "h1", Heading.h1 attributes [ Html.text "This is the main page heading." ] )
+                , ( "h2", Heading.h2 attributes [ Html.text "This is a tagline" ] )
+                , ( "h3", Heading.h3 attributes [ Html.text "This is a subHeading" ] )
+                , ( "h4", Heading.h4 attributes [ Html.text "This is a smallHeading" ] )
+                , ( "h5", Heading.h5 attributes [ Html.text "This is also a smallHeading" ] )
                 ]
-            , Heading.h2 [ Heading.style Heading.Top ]
-                [ Html.text "Heading.h2 [ Heading.style Heading.Top ]" ]
-            , Heading.h2 [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]
-                [ Html.text "Heading.h2 [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]" ]
             ]
     }
 
@@ -67,6 +86,7 @@ init : State
 init =
     { control =
         ControlExtra.list
+            |> CommonControls.css { moduleName = "Heading", use = Heading.css }
     }
 
 
