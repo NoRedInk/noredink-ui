@@ -8,13 +8,11 @@ module Examples.Heading exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import CommonControls
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import ViewHelpers exposing (viewExamples)
 
