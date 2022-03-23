@@ -40,7 +40,7 @@ example =
         \state ->
             let
                 attributes =
-                    Control.currentValue state.control
+                    List.map Tuple.second (Control.currentValue state.control)
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , ControlView.view
@@ -55,7 +55,7 @@ example =
                                     "Text."
                                         ++ name
                                         ++ "\n    [ "
-                                        ++ "\n      TODO"
+                                        ++ String.join "\n    , " (List.map Tuple.first settings)
                                         ++ "\n    ]"
                                 }
                         in
@@ -102,7 +102,7 @@ viewExamples examples attributes =
 
 {-| -}
 type alias State =
-    { control : Control (List (Text.Attribute Msg))
+    { control : Control (List ( String, Text.Attribute Msg ))
     }
 
 
@@ -115,7 +115,6 @@ init =
             |> ControlExtra.optionalBoolListItem "noBreak"
                 ( "Text.noBreak True", Text.noBreak True )
             |> CommonControls.css { moduleName = "Text", use = Text.css }
-            |> Control.map (List.map Tuple.second)
     }
 
 
@@ -132,7 +131,7 @@ controlContent =
 
 {-| -}
 type Msg
-    = UpdateControl (Control (List (Text.Attribute Msg)))
+    = UpdateControl (Control (List ( String, Text.Attribute Msg )))
 
 
 {-| -}
