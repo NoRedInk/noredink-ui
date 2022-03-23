@@ -38,6 +38,14 @@ example =
     , view =
         \state ->
             let
+                examples =
+                    [ ( "h1", Heading.h1, "This is the main page heading." )
+                    , ( "h2", Heading.h2, "This is a tagline" )
+                    , ( "h3", Heading.h3, "This is a subHeading" )
+                    , ( "h4", Heading.h4, "This is a smallHeading" )
+                    , ( "h5", Heading.h5, "This is also a smallHeading" )
+                    ]
+
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
@@ -47,31 +55,25 @@ example =
                 , toExampleCode =
                     \settings ->
                         let
-                            toExampleCode name =
+                            toExampleCode ( name, _, content ) =
                                 { sectionName = name
                                 , code =
                                     "Heading."
                                         ++ name
-                                        ++ "\n    ["
+                                        ++ "\n    [ "
                                         ++ String.join "\n    , " (List.map Tuple.first settings)
                                         ++ "\n    ]"
-                                        ++ "\n    (TODO: Html content)"
+                                        ++ ("\n    [ Html.text \"" ++ content ++ "\" ]")
                                 }
                         in
-                        [ toExampleCode "h1"
-                        , toExampleCode "h2"
-                        , toExampleCode "h3"
-                        , toExampleCode "h4"
-                        , toExampleCode "h5"
-                        ]
+                        List.map toExampleCode examples
                 }
-            , viewExamples
-                [ ( "h1", Heading.h1 attributes [ Html.text "This is the main page heading." ] )
-                , ( "h2", Heading.h2 attributes [ Html.text "This is a tagline" ] )
-                , ( "h3", Heading.h3 attributes [ Html.text "This is a subHeading" ] )
-                , ( "h4", Heading.h4 attributes [ Html.text "This is a smallHeading" ] )
-                , ( "h5", Heading.h5 attributes [ Html.text "This is also a smallHeading" ] )
-                ]
+            , examples
+                |> List.map
+                    (\( name, view, content ) ->
+                        ( name, view attributes [ Html.text content ] )
+                    )
+                |> viewExamples
             ]
     }
 
