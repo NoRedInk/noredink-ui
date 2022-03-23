@@ -49,7 +49,24 @@ example =
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
-                        []
+                        let
+                            toExampleCode name =
+                                { sectionName = name
+                                , code =
+                                    "Text."
+                                        ++ name
+                                        ++ "\n    [ "
+                                        ++ "\n      TODO"
+                                        ++ "\n    ]"
+                                }
+                        in
+                        [ toExampleCode "mediumBody"
+                        , toExampleCode "smallBody"
+                        , toExampleCode "smallBodyGray"
+                        , toExampleCode "caption"
+                        , toExampleCode "ugMediumBody"
+                        , toExampleCode "ugSmallBody"
+                        ]
                 }
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
             , viewExamples
