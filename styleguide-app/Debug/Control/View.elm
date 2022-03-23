@@ -101,6 +101,7 @@ generateElmExampleModule exampleData code =
     , "import Css exposing (Style)"
     , "import Html as RootHtml"
     , "import Html.Styled exposing (..)"
+    , "import Nri.Ui.Colors.V1 as Colors"
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import " ++ Example.fullName exampleData ++ " as " ++ exampleData.name
     , ""
