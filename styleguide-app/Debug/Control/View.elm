@@ -6,14 +6,16 @@ import Debug.Control as Control exposing (Control)
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Url.Builder
 
 
 {-| -}
 view :
-    { version : Int
-    , name : String
+    { name : String
+    , version : Int
     , update : Control a -> msg
     , settings : Control a
     , toExampleCode : a -> List { sectionName : String, code : String }
@@ -34,32 +36,75 @@ view config =
         ]
         [ viewSection "Settings" <|
             [ fromUnstyled (Control.view config.update config.settings) ]
-        , viewExampleCode (config.toExampleCode value)
+        , viewExampleCode config (config.toExampleCode value)
         ]
 
 
 viewExampleCode :
-    List { sectionName : String, code : String }
+    { example | name : String, version : Int }
+    -> List { sectionName : String, code : String }
     -> Html msg
-viewExampleCode values =
+viewExampleCode example values =
     viewSection "Generated Code" <|
         List.concatMap
             (\{ sectionName, code } ->
-                [ details []
+                [ details
+                    []
                     [ summary []
                         [ Heading.h4
                             [ Heading.css [ Css.display Css.inline ]
                             ]
                             [ text sectionName ]
                         ]
+                    , ClickableText.link ("View " ++ sectionName ++ " example on Ellie")
+                        [ ClickableText.linkExternal (generateEllieLink example code)
+                        , ClickableText.small
+                        ]
                     , Html.Styled.code
-                        [ css [ whiteSpace preWrap ]
+                        [ css
+                            [ display block
+                            , whiteSpace preWrap
+                            , Css.marginTop (px 8)
+                            ]
                         ]
                         [ text code ]
                     ]
                 ]
             )
             values
+
+
+generateEllieLink : { example | name : String, version : Int } -> String -> String
+generateEllieLink example code =
+    Url.Builder.crossOrigin "https://ellie-app.com/a/example/v1"
+        []
+        [ Url.Builder.string "title" example.name
+        , Url.Builder.string "elmcode" (generateElmExampleModule example code)
+        , -- TODO: a system will be required to keep these values in line with the elm json values
+          Url.Builder.string "packages" "elm/core@1.0.5"
+        , Url.Builder.string "packages" "elm/html@1.0.0"
+        , Url.Builder.string "packages" "rtfeldman/elm-css@17.0.5"
+        , Url.Builder.string "packages" "NoRedInk/noredink-ui@15.8.1"
+        , Url.Builder.string "elmversion" "0.19.1"
+        ]
+
+
+generateElmExampleModule : { example | name : String, version : Int } -> String -> String
+generateElmExampleModule exampleData code =
+    [ "module Main exposing (main)"
+    , ""
+    , "import Css exposing (Style)"
+    , "import Html as RootHtml"
+    , "import Html.Styled exposing (..)"
+    , "import Nri.Ui.UiIcon.V1 as UiIcon"
+    , "import " ++ Example.fullName exampleData ++ " as " ++ exampleData.name
+    , ""
+    , "main ="
+    , "    " ++ code
+    , "    |> toUnstyled"
+    ]
+        |> String.join "\n"
+        |> String.replace "\t" "    "
 
 
 viewSection : String -> List (Html msg) -> Html msg
