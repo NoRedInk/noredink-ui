@@ -11,6 +11,7 @@ import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
@@ -43,8 +44,13 @@ example =
                     Control.currentValue state.control
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
-            , Control.view UpdateControl state.control
-                |> Html.fromUnstyled
+            , ControlView.view
+                { update = UpdateControl
+                , settings = state.control
+                , toExampleCode =
+                    \settings ->
+                        []
+                }
             , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
             , viewExamples
                 [ ( "mediumBody", Text.mediumBody )
