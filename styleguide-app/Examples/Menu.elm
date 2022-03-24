@@ -9,6 +9,7 @@ module Examples.Menu exposing (Msg, State, example)
 import Accessibility.Styled as Html exposing (..)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -67,9 +68,6 @@ example =
 view : State -> List (Html Msg)
 view state =
     let
-        viewConfiguration =
-            (Control.currentValue state.settings).viewConfiguration
-
         viewCustomConfiguration =
             (Control.currentValue state.settings).viewCustomConfiguration
 
@@ -149,14 +147,7 @@ view state =
                                 , ClickableText.custom attrs
                                 ]
                     ]
-                , button =
-                    Menu.button
-                        (defaultButtonAttributes
-                            ++ List.filterMap identity
-                                [ Maybe.map Menu.icon viewConfiguration.icon
-                                ]
-                        )
-                        "1st Period English with Mx. Trainer"
+                , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
                 }
           )
         , ( "Custom example"
@@ -238,7 +229,6 @@ type alias State =
 type alias Settings =
     { menuAttributes : List ( String, Menu.Attribute Msg )
     , buttonAttributes : List ( String, Menu.ButtonAttribute )
-    , viewConfiguration : ViewConfiguration
     , viewCustomConfiguration : IconButtonWithMenuConfiguration
     }
 
@@ -248,7 +238,6 @@ initSettings =
     Control.record Settings
         |> Control.field "Menu attributes" controlMenuAttributes
         |> Control.field "Button attributes" controlButtonAttributes
-        |> Control.field "view" initViewConfiguration
         |> Control.field "custom" initIconButtonWithMenuConfiguration
 
 
@@ -282,6 +271,7 @@ controlMenuWidth =
 controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
 controlButtonAttributes =
     ControlExtra.list
+        |> CommonControls.icon moduleName Menu.icon
         |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
         |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
         |> ControlExtra.optionalListItem "wrapping" controlWrapping
@@ -304,25 +294,6 @@ controlWrapping =
           , Control.value ( "Menu.wrapping Menu.TruncateTitle", Menu.wrapping Menu.TruncateTitle )
           )
         ]
-
-
-type alias ViewConfiguration =
-    { icon : Maybe Svg
-    }
-
-
-initViewConfiguration : Control ViewConfiguration
-initViewConfiguration =
-    Control.record ViewConfiguration
-        |> Control.field "icon"
-            (Control.maybe False
-                (Control.choice
-                    [ ( "gift", Control.value UiIcon.gift )
-                    , ( "hat", Control.value UiIcon.hat )
-                    , ( "star", Control.value UiIcon.star )
-                    ]
-                )
-            )
 
 
 type alias IconButtonWithMenuConfiguration =
