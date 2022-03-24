@@ -6,22 +6,17 @@ module Examples.Menu exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import CommonControls
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V3 as Menu
-import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
@@ -68,9 +63,6 @@ example =
 view : State -> List (Html Msg)
 view state =
     let
-        viewCustomConfiguration =
-            (Control.currentValue state.settings).viewCustomConfiguration
-
         menuAttributes =
             (Control.currentValue state.settings).menuAttributes
                 |> List.map Tuple.second
@@ -173,38 +165,11 @@ view state =
                 , button =
                     Menu.custom <|
                         \buttonAttributes ->
-                            Tooltip.view
-                                { trigger =
-                                    \attrs ->
-                                        ClickableSvg.button "Menu.viewCustom: Click me!"
-                                            viewCustomConfiguration.icon
-                                            [ ClickableSvg.custom (attrs ++ buttonAttributes)
-                                            , ClickableSvg.exactWidth 25
-                                            , ClickableSvg.exactHeight 25
-                                            , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-                                            ]
-                                , id = "viewCustom-example-tooltip"
-                                }
-                                [ Tooltip.plaintext "Menu.viewCustom: Click me!"
-                                , Tooltip.primaryLabel
-                                , Tooltip.onHover (ShowTooltip "viewCustom")
-                                , Tooltip.open (Set.member "viewCustom" state.openTooltips)
-                                , Tooltip.smallPadding
-                                , Tooltip.fitToContent
-                                ]
+                            button buttonAttributes [ text "Custom Menu trigger button" ]
                 }
           )
         ]
     ]
-
-
-viewControl : (Control a -> Msg) -> Control a -> Html Msg
-viewControl setControl control =
-    code
-        [ css [ Css.minWidth (Css.px 300), Css.marginRight (Css.px 20) ] ]
-        [ Control.view setControl control
-            |> fromUnstyled
-        ]
 
 
 {-| -}
@@ -229,7 +194,6 @@ type alias State =
 type alias Settings =
     { menuAttributes : List ( String, Menu.Attribute Msg )
     , buttonAttributes : List ( String, Menu.ButtonAttribute )
-    , viewCustomConfiguration : IconButtonWithMenuConfiguration
     }
 
 
@@ -238,7 +202,6 @@ initSettings =
     Control.record Settings
         |> Control.field "Menu attributes" controlMenuAttributes
         |> Control.field "Button attributes" controlButtonAttributes
-        |> Control.field "custom" initIconButtonWithMenuConfiguration
 
 
 controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
@@ -296,27 +259,9 @@ controlWrapping =
         ]
 
 
-type alias IconButtonWithMenuConfiguration =
-    { icon : Svg
-    }
-
-
-initIconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
-initIconButtonWithMenuConfiguration =
-    Control.record IconButtonWithMenuConfiguration
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "edit", Control.value UiIcon.edit )
-                , ( "share", Control.value UiIcon.share )
-                , ( "gear", Control.value UiIcon.gear )
-                ]
-            )
-
-
 {-| -}
 type Msg
-    = ShowTooltip String Bool
-    | ConsoleLog String
+    = ConsoleLog String
     | UpdateControls (Control Settings)
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
@@ -326,18 +271,6 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ShowTooltip key isOpen ->
-            ( { state
-                | openTooltips =
-                    if isOpen then
-                        Set.insert key state.openTooltips
-
-                    else
-                        Set.remove key state.openTooltips
-              }
-            , Cmd.none
-            )
-
         ConsoleLog message ->
             ( Debug.log "Menu Example" message |> always state, Cmd.none )
 
