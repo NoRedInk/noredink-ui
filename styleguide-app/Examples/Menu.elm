@@ -153,8 +153,7 @@ view state =
                     Menu.button
                         (defaultButtonAttributes
                             ++ List.filterMap identity
-                                [ Just <| Menu.wrapping viewConfiguration.wrapping
-                                , Maybe.map Menu.icon viewConfiguration.icon
+                                [ Maybe.map Menu.icon viewConfiguration.icon
                                 ]
                         )
                         "1st Period English with Mx. Trainer"
@@ -285,6 +284,7 @@ controlButtonAttributes =
     ControlExtra.list
         |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
         |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
+        |> ControlExtra.optionalListItem "wrapping" controlWrapping
 
 
 controlButtonWidth : Control ( String, Menu.ButtonAttribute )
@@ -294,21 +294,26 @@ controlButtonWidth =
         (ControlExtra.int 220)
 
 
+controlWrapping : Control ( String, Menu.ButtonAttribute )
+controlWrapping =
+    Control.choice
+        [ ( "WrapAndExpandTitle"
+          , Control.value ( "Menu.wrapping Menu.WrapAndExpandTitle", Menu.wrapping Menu.WrapAndExpandTitle )
+          )
+        , ( "TruncateTitle"
+          , Control.value ( "Menu.wrapping Menu.TruncateTitle", Menu.wrapping Menu.TruncateTitle )
+          )
+        ]
+
+
 type alias ViewConfiguration =
-    { wrapping : Menu.TitleWrapping
-    , icon : Maybe Svg
+    { icon : Maybe Svg
     }
 
 
 initViewConfiguration : Control ViewConfiguration
 initViewConfiguration =
     Control.record ViewConfiguration
-        |> Control.field "wrapping"
-            (Control.choice
-                [ ( "WrapAndExpandTitle", Control.value Menu.WrapAndExpandTitle )
-                , ( "TruncateTitle", Control.value Menu.TruncateTitle )
-                ]
-            )
         |> Control.field "icon"
             (Control.maybe False
                 (Control.choice
