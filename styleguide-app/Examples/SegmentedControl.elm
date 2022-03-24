@@ -11,6 +11,8 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -18,7 +20,9 @@ import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
@@ -35,7 +39,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = [ viewPreview ]
     , view =
         \state ->
             let
@@ -80,6 +84,45 @@ example =
           }
         ]
     }
+
+
+viewPreview : Html msg
+viewPreview =
+    Html.div
+        [ Role.img
+        , Widget.hidden True
+        , css
+            [ Css.displayFlex
+            , Css.justifyContent Css.stretch
+            , Css.color Colors.navy
+            , Fonts.baseFont
+            , Css.fontSize (Css.px 15)
+            , Css.fontWeight Css.bold
+            ]
+        ]
+        [ Html.div
+            [ css
+                [ Css.padding2 (Css.px 6) (Css.px 15)
+                , Css.border3 (Css.px 1) Css.solid Colors.azure
+                , Css.borderTopLeftRadius (Css.px 8)
+                , Css.borderBottomLeftRadius (Css.px 8)
+                , Css.backgroundColor Colors.glacier
+                , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (withAlpha 0.2 Colors.gray20)
+                ]
+            ]
+            [ Html.text "Abc" ]
+        , Html.div
+            [ css
+                [ Css.padding2 (Css.px 6) (Css.px 15)
+                , Css.border3 (Css.px 1) Css.solid Colors.azure
+                , Css.borderTopRightRadius (Css.px 8)
+                , Css.borderBottomRightRadius (Css.px 8)
+                , Css.backgroundColor Colors.white
+                , Css.boxShadow5 Css.inset Css.zero (Css.px -2) Css.zero Colors.azure
+                ]
+            ]
+            [ Html.text "Def" ]
+        ]
 
 
 type Page
