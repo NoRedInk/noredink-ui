@@ -17,6 +17,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
@@ -46,8 +47,15 @@ example =
                 options =
                     Control.currentValue state.optionsControl
             in
-            [ Control.view ChangeOptions state.optionsControl
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { update = ChangeOptions
+                , settings = state.optionsControl
+                , toExampleCode =
+                    \settings ->
+                        [ { sectionName = "view", code = "TODO" }
+                        , { sectionName = "viewRadioGroup", code = "TODO" }
+                        ]
+                }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "view" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
