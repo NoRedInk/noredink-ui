@@ -73,11 +73,11 @@ example =
                         , { sectionName = "viewRadioGroup"
                           , code =
                                 [ "viewRadioGroup"
-                                , "    { onSelect : a -> msg"
-                                , "    , options : List (Radio a msg)"
-                                , "    , selected : Maybe a"
-                                , "    , positioning : Positioning"
-                                , "    , legend : String"
+                                , "    { onSelect = SelectRadio"
+                                , "    , options = " ++ ControlView.codeFromList radioOptions
+                                , "    , selected = " ++ Debug.toString state.optionallySelected
+                                , "    , positioning = " ++ Tuple.first options.positioning
+                                , "    , legend = \"SegmentedControls 'viewSelectRadio' example\""
                                 , "    }"
                                 ]
                                     |> String.join "\n"
@@ -257,31 +257,24 @@ buildRadioOptions options currentlyHovered content =
                         icon
                         ("Source " ++ Debug.toString (value + 1))
             in
-            ( [ "{ icon = icon_"
-              , ", label = Html.text label"
-              , ", value = value"
-              , ", idString = String.fromInt value"
-              , ", tooltip = []"
+            ( [ "{ icon = " ++ Debug.toString (Maybe.map (\_ -> "UiIcon." ++ toLower label) icon_)
+              , ", label = Html.text " ++ label
+              , ", value = " ++ String.fromInt value
+              , ", idString = String.fromInt " ++ String.fromInt value
+              , ", tooltip = "
+                    ++ (if options.tooltips then
+                            ("\n\t\t[ Tooltip.plaintext " ++ String.fromInt value)
+                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ String.fromInt value ++ ")")
+                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ String.fromInt value ++ ")")
+                                ++ "\n\t\t]"
 
-              --, if options.tooltips then
-              --      [ Tooltip.plaintext text
-              --      , Tooltip.open (currentlyHovered == Just value)
-              --      , Tooltip.fitToContent
-              --      , Tooltip.onHover
-              --          (\hovered ->
-              --              HoverRadio
-              --                  (if hovered then
-              --                      Just value
-              --                   else
-              --                      Nothing
-              --                  )
-              --          )
-              --      ]
-              --  else []
+                        else
+                            "[]"
+                       )
               , ", attributes = []"
               , "}"
               ]
-                |> String.join "\n\t"
+                |> String.join "\n\t  "
             , { icon = icon_
               , label = Html.text label
               , value = value
