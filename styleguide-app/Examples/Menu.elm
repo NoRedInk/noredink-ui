@@ -100,7 +100,6 @@ view state =
                     ++ List.filterMap identity
                         [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                         , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                        , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
                         ]
                 )
                 { isOpen = isOpen "1stPeriodEnglish"
@@ -164,7 +163,6 @@ view state =
                     ++ List.filterMap identity
                         [ Just <| Menu.buttonId "icon-button-with-menu__button"
                         , Just <| Menu.menuId "icon-button-with-menu__menu"
-                        , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
                         ]
                 )
                 { entries =
@@ -255,6 +253,7 @@ controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+        |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
@@ -269,11 +268,17 @@ controlAlignment =
         ]
 
 
+controlMenuWidth : Control ( String, Menu.Attribute msg )
+controlMenuWidth =
+    Control.map
+        (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
+        (ControlExtra.int 220)
+
+
 type alias ViewConfiguration =
     { hasBorder : Bool
     , wrapping : Menu.TitleWrapping
     , buttonWidth : Maybe Int
-    , menuWidth : Maybe Int
     , icon : Maybe Svg
     }
 
@@ -290,8 +295,6 @@ initViewConfiguration =
             )
         |> Control.field "buttonWidth"
             (Control.maybe False (Control.choice [ ( "220", Control.value 220 ) ]))
-        |> Control.field "menuWidth"
-            (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
         |> Control.field "icon"
             (Control.maybe False
                 (Control.choice
@@ -304,16 +307,13 @@ initViewConfiguration =
 
 
 type alias IconButtonWithMenuConfiguration =
-    { menuWidth : Maybe Int
-    , icon : Svg
+    { icon : Svg
     }
 
 
 initIconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
 initIconButtonWithMenuConfiguration =
     Control.record IconButtonWithMenuConfiguration
-        |> Control.field "menuWidth"
-            (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
         |> Control.field "icon"
             (Control.choice
                 [ ( "edit", Control.value UiIcon.edit )
