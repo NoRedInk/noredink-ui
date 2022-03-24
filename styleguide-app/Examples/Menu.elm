@@ -155,7 +155,6 @@ view state =
                             ++ List.filterMap identity
                                 [ Just <| Menu.wrapping viewConfiguration.wrapping
                                 , Maybe.map Menu.icon viewConfiguration.icon
-                                , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
                                 ]
                         )
                         "1st Period English with Mx. Trainer"
@@ -285,11 +284,18 @@ controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
 controlButtonAttributes =
     ControlExtra.list
         |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
+        |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
+
+
+controlButtonWidth : Control ( String, Menu.ButtonAttribute )
+controlButtonWidth =
+    Control.map
+        (\val -> ( "Menu.buttonWidth " ++ String.fromInt val, Menu.buttonWidth val ))
+        (ControlExtra.int 220)
 
 
 type alias ViewConfiguration =
     { wrapping : Menu.TitleWrapping
-    , buttonWidth : Maybe Int
     , icon : Maybe Svg
     }
 
@@ -303,8 +309,6 @@ initViewConfiguration =
                 , ( "TruncateTitle", Control.value Menu.TruncateTitle )
                 ]
             )
-        |> Control.field "buttonWidth"
-            (Control.maybe False (Control.choice [ ( "220", Control.value 220 ) ]))
         |> Control.field "icon"
             (Control.maybe False
                 (Control.choice
