@@ -7,12 +7,11 @@ module Examples.Balloon exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (Html, fromUnstyled, text)
-import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Balloon.V1 as Balloon
 
 
@@ -130,20 +129,25 @@ view state =
     let
         copy =
             Control.currentValue state.copy
-
-        attributes =
-            Control.currentValue state.attributes
     in
     [ Control.view SetCopy state.copy |> fromUnstyled
-    , Control.view SetAttributes state.attributes |> fromUnstyled
-    , Html.Styled.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
-        [ text <|
-            "Balloon.balloon [ "
-                ++ String.join ", " (List.map Tuple.first attributes)
-                ++ " ] "
-                ++ "\""
-                ++ copy
-                ++ "\""
-        ]
-    , Balloon.balloon (List.map Tuple.second attributes) (text copy)
+    , ControlView.view
+        { update = SetAttributes
+        , settings = state.attributes
+        , toExampleCode =
+            \attrs ->
+                [ { sectionName = "Balloon"
+                  , code =
+                        "Balloon.balloon\n    [ "
+                            ++ String.join "\n    , " (List.map Tuple.first attrs)
+                            ++ "\n    ] "
+                            ++ "\n    (text \""
+                            ++ copy
+                            ++ "\")"
+                  }
+                ]
+        }
+    , Balloon.balloon
+        (List.map Tuple.second (Control.currentValue state.attributes))
+        (text copy)
     ]
