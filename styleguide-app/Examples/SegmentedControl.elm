@@ -49,6 +49,9 @@ example =
 
                 pageOptions =
                     List.take options.count (buildOptions options state.pageTooltip)
+
+                radioOptions =
+                    List.take options.count (buildRadioOptions options state.radioTooltip options.content)
             in
             [ ControlView.view
                 { update = ChangeOptions
@@ -67,7 +70,18 @@ example =
                                 ]
                                     |> String.join "\n"
                           }
-                        , { sectionName = "viewRadioGroup", code = "TODO" }
+                        , { sectionName = "viewRadioGroup"
+                          , code =
+                                [ "viewRadioGroup"
+                                , "    { onSelect : a -> msg"
+                                , "    , options : List (Radio a msg)"
+                                , "    , selected : Maybe a"
+                                , "    , positioning : Positioning"
+                                , "    , legend : String"
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                          }
                         ]
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
@@ -88,7 +102,7 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions options state.radioTooltip options.content)
+                , options = List.map Tuple.second radioOptions
                 , selected = state.optionallySelected
                 , positioning = Tuple.second options.positioning
                 }
@@ -232,10 +246,10 @@ buildOptions { content, longContent, tooltips } openTooltip =
     ]
 
 
-buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List (SegmentedControl.Radio Int Msg)
+buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List ( String, SegmentedControl.Radio Int Msg )
 buildRadioOptions options currentlyHovered content =
     let
-        buildOption : Int -> ( String, Svg ) -> SegmentedControl.Radio Int Msg
+        buildOption : Int -> ( String, Svg ) -> ( String, SegmentedControl.Radio Int Msg )
         buildOption value ( text, icon ) =
             let
                 ( icon_, label ) =
@@ -243,31 +257,57 @@ buildRadioOptions options currentlyHovered content =
                         icon
                         ("Source " ++ Debug.toString (value + 1))
             in
-            { icon = icon_
-            , label = Html.text label
-            , value = value
-            , idString = String.fromInt value
-            , tooltip =
-                if options.tooltips then
-                    [ Tooltip.plaintext text
-                    , Tooltip.open (currentlyHovered == Just value)
-                    , Tooltip.fitToContent
-                    , Tooltip.onHover
-                        (\hovered ->
-                            HoverRadio
-                                (if hovered then
-                                    Just value
+            ( [ "{ icon = icon_"
+              , ", label = Html.text label"
+              , ", value = value"
+              , ", idString = String.fromInt value"
+              , ", tooltip = []"
 
-                                 else
-                                    Nothing
-                                )
-                        )
-                    ]
+              --, if options.tooltips then
+              --      [ Tooltip.plaintext text
+              --      , Tooltip.open (currentlyHovered == Just value)
+              --      , Tooltip.fitToContent
+              --      , Tooltip.onHover
+              --          (\hovered ->
+              --              HoverRadio
+              --                  (if hovered then
+              --                      Just value
+              --                   else
+              --                      Nothing
+              --                  )
+              --          )
+              --      ]
+              --  else []
+              , ", attributes = []"
+              , "}"
+              ]
+                |> String.join "\n\t"
+            , { icon = icon_
+              , label = Html.text label
+              , value = value
+              , idString = String.fromInt value
+              , tooltip =
+                    if options.tooltips then
+                        [ Tooltip.plaintext text
+                        , Tooltip.open (currentlyHovered == Just value)
+                        , Tooltip.fitToContent
+                        , Tooltip.onHover
+                            (\hovered ->
+                                HoverRadio
+                                    (if hovered then
+                                        Just value
 
-                else
-                    []
-            , attributes = []
-            }
+                                     else
+                                        Nothing
+                                    )
+                            )
+                        ]
+
+                    else
+                        []
+              , attributes = []
+              }
+            )
     in
     List.indexedMap buildOption
         [ ( "Leaderboard", UiIcon.leaderboard )
