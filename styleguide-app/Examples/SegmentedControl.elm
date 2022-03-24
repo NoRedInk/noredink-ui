@@ -46,13 +46,27 @@ example =
             let
                 options =
                     Control.currentValue state.optionsControl
+
+                pageOptions =
+                    List.take options.count (buildOptions options state.pageTooltip)
             in
             [ ControlView.view
                 { update = ChangeOptions
                 , settings = state.optionsControl
                 , toExampleCode =
                     \settings ->
-                        [ { sectionName = "view", code = "TODO" }
+                        [ { sectionName = "view"
+                          , code =
+                                [ "view "
+                                , "    { focusAndSelect = FocusAndSelectPage"
+                                , "    , options = " ++ ControlView.codeFromList pageOptions
+                                , "    , selected = \"" ++ Debug.toString state.page ++ "\""
+                                , "    , positioning = " ++ Tuple.first options.positioning
+                                , "    , toUrl = Nothing"
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                          }
                         , { sectionName = "viewRadioGroup", code = "TODO" }
                         ]
                 }
@@ -63,9 +77,9 @@ example =
             , SegmentedControl.view
                 { focusAndSelect = FocusAndSelectPage
                 , selected = state.page
-                , positioning = options.positioning
+                , positioning = Tuple.second options.positioning
                 , toUrl = Nothing
-                , options = List.take options.count (buildOptions options state.pageTooltip)
+                , options = List.map Tuple.second pageOptions
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewRadioGroup" ] ]
@@ -76,7 +90,7 @@ example =
                 , onSelect = SelectRadio
                 , options = List.take options.count (buildRadioOptions options state.radioTooltip options.content)
                 , selected = state.optionallySelected
-                , positioning = options.positioning
+                , positioning = Tuple.second options.positioning
                 }
             ]
     , categories = [ Layout, Inputs ]
@@ -144,54 +158,77 @@ type Page
     | Activity
 
 
-buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
+buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List ( String, SegmentedControl.Option Page Msg )
 buildOptions { content, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
             let
-                ( icon, label ) =
-                    getIconAndLabel content icon_ (Html.text (Debug.toString value))
+                ( maybeIcon, label ) =
+                    getIconAndLabel content icon_ (Debug.toString value)
+
+                valueStr =
+                    "\"" ++ Debug.toString value ++ "\""
             in
-            { icon = icon
-            , label = label
-            , value = value
-            , idString = toLower (Debug.toString value)
-            , attributes = []
-            , tabTooltip =
-                if tooltips then
-                    [ Tooltip.plaintext (Debug.toString value)
-                    , Tooltip.onHover (PageTooltip value)
-                    , Tooltip.open (openTooltip == Just value)
-                    ]
+            ( [ "{ icon = " ++ Debug.toString (Maybe.map Tuple.first maybeIcon)
+              , ", label = text " ++ valueStr
+              , ", value = " ++ valueStr
+              , ", idString = toLower " ++ valueStr
+              , ", attributes = []"
+              , ", tabTooltip = "
+                    ++ (if tooltips then
+                            ("\n\t\t[ Tooltip.plaintext " ++ valueStr)
+                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ valueStr ++ ")")
+                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ valueStr ++ ")")
+                                ++ "\n\t\t]"
 
-                else
-                    []
-            , content =
-                if longContent then
-                    Html.div
-                        [ css
-                            [ Css.maxHeight (Css.px 100)
-                            , Css.overflowY Css.auto
+                        else
+                            "[]"
+                       )
+              , ", content = Html.text \"...\""
+              , "}"
+              ]
+                |> String.join "\n\t  "
+            , { icon = Maybe.map Tuple.second maybeIcon
+              , label = Html.text label
+              , value = value
+              , idString = toLower (Debug.toString value)
+              , attributes = []
+              , tabTooltip =
+                    if tooltips then
+                        [ Tooltip.plaintext (Debug.toString value)
+                        , Tooltip.onHover (PageTooltip value)
+                        , Tooltip.open (openTooltip == Just value)
+                        ]
+
+                    else
+                        []
+              , content =
+                    if longContent then
+                        Html.div
+                            [ css
+                                [ Css.maxHeight (Css.px 100)
+                                , Css.overflowY Css.auto
+                                ]
                             ]
-                        ]
-                        [ Html.p [] [ Html.text <| "Content for " ++ Debug.toString value ]
-                        , Html.ol [] <|
-                            List.map (\i -> Html.li [] [ Html.text (Debug.toString value) ])
-                                (List.range 1 20)
-                        ]
+                            [ Html.p [] [ Html.text <| "Content for " ++ Debug.toString value ]
+                            , Html.ol [] <|
+                                List.map (\i -> Html.li [] [ Html.text (Debug.toString value) ])
+                                    (List.range 1 20)
+                            ]
 
-                else
-                    Html.text <| "Content for " ++ Debug.toString value
-            }
+                    else
+                        Html.text <| "Content for " ++ Debug.toString value
+              }
+            )
     in
-    [ buildOption Flag UiIcon.flag
-    , buildOption Sprout UiIcon.sprout
-    , buildOption Star UiIcon.star
-    , buildOption Sapling UiIcon.sapling
-    , buildOption Attention <| Svg.withColor Colors.greenDark UiIcon.attention
-    , buildOption Tree UiIcon.tree
-    , buildOption Premium UiIcon.premiumLock
-    , buildOption Activity <| Svg.withColor Colors.purple UiIcon.activity
+    [ buildOption Flag ( "UiIcon.flag", UiIcon.flag )
+    , buildOption Sprout ( "UiIcon.sprout", UiIcon.sprout )
+    , buildOption Star ( "UiIcon.star", UiIcon.star )
+    , buildOption Sapling ( "UiIcon.sapling", UiIcon.sapling )
+    , buildOption Attention ( "UiIcon.attention", Svg.withColor Colors.greenDark UiIcon.attention )
+    , buildOption Tree ( "UiIcon.tree", UiIcon.tree )
+    , buildOption Premium ( "UiIcon.premiumLock", UiIcon.premiumLock )
+    , buildOption Activity ( "UiIcon.activity", Svg.withColor Colors.purple UiIcon.activity )
     ]
 
 
@@ -204,10 +241,10 @@ buildRadioOptions options currentlyHovered content =
                 ( icon_, label ) =
                     getIconAndLabel content
                         icon
-                        (Html.text ("Source " ++ Debug.toString (value + 1)))
+                        ("Source " ++ Debug.toString (value + 1))
             in
             { icon = icon_
-            , label = label
+            , label = Html.text label
             , value = value
             , idString = String.fromInt value
             , tooltip =
@@ -266,7 +303,7 @@ init =
 
 
 type alias Options =
-    { positioning : SegmentedControl.Positioning
+    { positioning : ( String, SegmentedControl.Positioning )
     , content : Content
     , count : Int
     , longContent : Bool
@@ -279,9 +316,24 @@ optionsControl =
     Control.record Options
         |> Control.field "positioning"
             (Control.choice
-                [ ( "Left (FitContent)", Control.value (SegmentedControl.Left SegmentedControl.FitContent) )
-                , ( "Left (FillContainer)", Control.value (SegmentedControl.Left SegmentedControl.FillContainer) )
-                , ( "Center", Control.value SegmentedControl.Center )
+                [ ( "Left (FitContent)"
+                  , Control.value
+                        ( "SegmentedControl.Left SegmentedControl.FitContent"
+                        , SegmentedControl.Left SegmentedControl.FitContent
+                        )
+                  )
+                , ( "Left (FillContainer)"
+                  , Control.value
+                        ( "SegmentedControl.Left SegmentedControl.FillContainer"
+                        , SegmentedControl.Left SegmentedControl.FillContainer
+                        )
+                  )
+                , ( "Center"
+                  , Control.value
+                        ( "SegmentedControl.Center"
+                        , SegmentedControl.Center
+                        )
+                  )
                 ]
             )
         |> Control.field "content" controlContent
@@ -308,14 +360,14 @@ controlContent =
         ]
 
 
-getIconAndLabel : Content -> svg -> Html msg -> ( Maybe svg, Html msg )
+getIconAndLabel : Content -> icon -> String -> ( Maybe icon, String )
 getIconAndLabel content icon_ value =
     case content of
         TextAndIcon ->
             ( Just icon_, value )
 
         Icon ->
-            ( Just icon_, Html.text "" )
+            ( Just icon_, "" )
 
         Text ->
             ( Nothing, value )
