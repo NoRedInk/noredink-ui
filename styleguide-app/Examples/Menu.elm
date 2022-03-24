@@ -11,6 +11,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
@@ -72,6 +73,10 @@ view state =
         viewCustomConfiguration =
             (Control.currentValue state.settings).viewCustomConfiguration
 
+        menuAttributes =
+            (Control.currentValue state.settings).menuAttributes
+                |> List.map Tuple.second
+
         isOpen name =
             case state.openMenu of
                 Just open ->
@@ -91,13 +96,13 @@ view state =
     , viewExamples
         [ ( "Default example"
           , Menu.view
-                (List.filterMap identity
-                    [ Just <| Menu.buttonId "1stPeriodEnglish__button"
-                    , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                    , Just <| Menu.alignment viewConfiguration.alignment
-                    , Just <| Menu.isDisabled viewConfiguration.isDisabled
-                    , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
-                    ]
+                (menuAttributes
+                    ++ List.filterMap identity
+                        [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                        , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                        , Just <| Menu.isDisabled viewConfiguration.isDisabled
+                        , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
+                        ]
                 )
                 { isOpen = isOpen "1stPeriodEnglish"
                 , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
@@ -156,13 +161,13 @@ view state =
           )
         , ( "Custom example"
           , Menu.view
-                (List.filterMap identity
-                    [ Just <| Menu.buttonId "icon-button-with-menu__button"
-                    , Just <| Menu.menuId "icon-button-with-menu__menu"
-                    , Just <| Menu.alignment viewCustomConfiguration.alignment
-                    , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
-                    , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
-                    ]
+                (menuAttributes
+                    ++ List.filterMap identity
+                        [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                        , Just <| Menu.menuId "icon-button-with-menu__menu"
+                        , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
+                        , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
+                        ]
                 )
                 { entries =
                     [ Menu.entry "see-more-button" <|
@@ -234,7 +239,8 @@ type alias State =
 
 
 type alias Settings =
-    { viewConfiguration : ViewConfiguration
+    { menuAttributes : List ( String, Menu.Attribute Msg )
+    , viewConfiguration : ViewConfiguration
     , viewCustomConfiguration : IconButtonWithMenuConfiguration
     }
 
@@ -242,14 +248,32 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
+        |> Control.field "menuAttributes" controlMenuAttributes
         |> Control.field "view" initViewConfiguration
         |> Control.field "custom" initIconButtonWithMenuConfiguration
+
+
+controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
+controlMenuAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "alignment" controlAlignment
+
+
+controlAlignment : Control ( String, Menu.Attribute msg )
+controlAlignment =
+    Control.choice
+        [ ( "Left"
+          , Control.value ( "Menu.alignment Menu.Left", Menu.alignment Menu.Left )
+          )
+        , ( "Right"
+          , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
+          )
+        ]
 
 
 type alias ViewConfiguration =
     { isDisabled : Bool
     , hasBorder : Bool
-    , alignment : Menu.Alignment
     , wrapping : Menu.TitleWrapping
     , buttonWidth : Maybe Int
     , menuWidth : Maybe Int
@@ -262,12 +286,6 @@ initViewConfiguration =
     Control.record ViewConfiguration
         |> Control.field "isDisabled" (Control.bool False)
         |> Control.field "hasBorder" (Control.bool True)
-        |> Control.field "alignment"
-            (Control.choice
-                [ ( "Right", Control.value Menu.Right )
-                , ( "Left", Control.value Menu.Left )
-                ]
-            )
         |> Control.field "wrapping"
             (Control.choice
                 [ ( "WrapAndExpandTitle", Control.value Menu.WrapAndExpandTitle )
@@ -291,7 +309,6 @@ initViewConfiguration =
 
 type alias IconButtonWithMenuConfiguration =
     { isDisabled : Bool
-    , alignment : Menu.Alignment
     , menuWidth : Maybe Int
     , icon : Svg
     }
@@ -301,12 +318,6 @@ initIconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
 initIconButtonWithMenuConfiguration =
     Control.record IconButtonWithMenuConfiguration
         |> Control.field "isDisabled" (Control.bool False)
-        |> Control.field "alignment"
-            (Control.choice
-                [ ( "Left", Control.value Menu.Left )
-                , ( "Right", Control.value Menu.Right )
-                ]
-            )
         |> Control.field "menuWidth"
             (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
         |> Control.field "icon"
