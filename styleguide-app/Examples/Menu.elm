@@ -23,6 +23,7 @@ import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
+import ViewHelpers exposing (viewExamples)
 
 
 moduleName : String
@@ -87,114 +88,120 @@ view state =
                 -- TODO: generate code
                 []
         }
-    , Menu.view
-        (List.filterMap identity
-            [ Just <| Menu.buttonId "1stPeriodEnglish__button"
-            , Just <| Menu.menuId "1stPeriodEnglish__menu"
-            , Just <| Menu.alignment viewConfiguration.alignment
-            , Just <| Menu.isDisabled viewConfiguration.isDisabled
-            , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
-            ]
-        )
-        { isOpen = isOpen "1stPeriodEnglish"
-        , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-        , entries =
-            [ Menu.entry "hello-button" <|
-                \attrs ->
-                    ClickableText.button "Hello"
-                        [ ClickableText.onClick (ConsoleLog "Hello")
-                        , ClickableText.small
-                        , ClickableText.custom attrs
-                        ]
-            , Menu.group "Menu group"
-                [ Menu.entry "gift-button" <|
-                    \attrs ->
-                        ClickableText.button "Gift"
-                            [ ClickableText.onClick (ConsoleLog "Gift")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            , ClickableText.icon UiIcon.gift
-                            ]
-                , Menu.entry "null-button" <|
-                    \attrs ->
-                        ClickableText.button "Nope!"
-                            [ ClickableText.onClick (ConsoleLog "Nope!")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            , ClickableText.icon UiIcon.null
-                            ]
-                , Menu.entry "no-icon-button" <|
-                    \attrs ->
-                        ClickableText.button "Skip"
-                            [ ClickableText.onClick (ConsoleLog "Skip")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            ]
-                ]
-            , Menu.entry "performance-button" <|
-                \attrs ->
-                    ClickableText.button "Performance"
-                        [ ClickableText.onClick (ConsoleLog "Performance")
-                        , ClickableText.small
-                        , ClickableText.custom attrs
-                        ]
-            ]
-        , button =
-            Menu.button
+    , viewExamples
+        [ ( "Default example"
+          , Menu.view
                 (List.filterMap identity
-                    [ Just <| Menu.hasBorder viewConfiguration.hasBorder
-                    , Just <| Menu.wrapping viewConfiguration.wrapping
-                    , Maybe.map Menu.icon viewConfiguration.icon
-                    , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
+                    [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                    , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                    , Just <| Menu.alignment viewConfiguration.alignment
+                    , Just <| Menu.isDisabled viewConfiguration.isDisabled
+                    , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
                     ]
                 )
-                "1st Period English with Mx. Trainer"
-        }
-    , Menu.view
-        (List.filterMap identity
-            [ Just <| Menu.buttonId "icon-button-with-menu__button"
-            , Just <| Menu.menuId "icon-button-with-menu__menu"
-            , Just <| Menu.alignment viewCustomConfiguration.alignment
-            , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
-            , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
-            ]
-        )
-        { entries =
-            [ Menu.entry "see-more-button" <|
-                \attrs ->
-                    ClickableText.button "See more"
-                        [ ClickableText.onClick (ConsoleLog "See more")
-                        , ClickableText.small
-                        , ClickableText.custom attrs
-                        , ClickableText.icon UiIcon.seeMore
-                        ]
-            ]
-        , isOpen = isOpen "icon-button-with-menu"
-        , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-        , button =
-            Menu.custom <|
-                \buttonAttributes ->
-                    Tooltip.view
-                        { trigger =
+                { isOpen = isOpen "1stPeriodEnglish"
+                , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
+                , entries =
+                    [ Menu.entry "hello-button" <|
+                        \attrs ->
+                            ClickableText.button "Hello"
+                                [ ClickableText.onClick (ConsoleLog "Hello")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.group "Menu group"
+                        [ Menu.entry "gift-button" <|
                             \attrs ->
-                                ClickableSvg.button "Menu.viewCustom: Click me!"
-                                    viewCustomConfiguration.icon
-                                    [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
-                                    , ClickableSvg.custom (attrs ++ buttonAttributes)
-                                    , ClickableSvg.exactWidth 25
-                                    , ClickableSvg.exactHeight 25
-                                    , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                                ClickableText.button "Gift"
+                                    [ ClickableText.onClick (ConsoleLog "Gift")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.gift
                                     ]
-                        , id = "viewCustom-example-tooltip"
-                        }
-                        [ Tooltip.plaintext "Menu.viewCustom: Click me!"
-                        , Tooltip.primaryLabel
-                        , Tooltip.onHover (ShowTooltip "viewCustom")
-                        , Tooltip.open (Set.member "viewCustom" state.openTooltips)
-                        , Tooltip.smallPadding
-                        , Tooltip.fitToContent
+                        , Menu.entry "null-button" <|
+                            \attrs ->
+                                ClickableText.button "Nope!"
+                                    [ ClickableText.onClick (ConsoleLog "Nope!")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.null
+                                    ]
+                        , Menu.entry "no-icon-button" <|
+                            \attrs ->
+                                ClickableText.button "Skip"
+                                    [ ClickableText.onClick (ConsoleLog "Skip")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    ]
                         ]
-        }
+                    , Menu.entry "performance-button" <|
+                        \attrs ->
+                            ClickableText.button "Performance"
+                                [ ClickableText.onClick (ConsoleLog "Performance")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
+                    ]
+                , button =
+                    Menu.button
+                        (List.filterMap identity
+                            [ Just <| Menu.hasBorder viewConfiguration.hasBorder
+                            , Just <| Menu.wrapping viewConfiguration.wrapping
+                            , Maybe.map Menu.icon viewConfiguration.icon
+                            , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
+                            ]
+                        )
+                        "1st Period English with Mx. Trainer"
+                }
+          )
+        , ( "Custom example"
+          , Menu.view
+                (List.filterMap identity
+                    [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                    , Just <| Menu.menuId "icon-button-with-menu__menu"
+                    , Just <| Menu.alignment viewCustomConfiguration.alignment
+                    , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
+                    , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
+                    ]
+                )
+                { entries =
+                    [ Menu.entry "see-more-button" <|
+                        \attrs ->
+                            ClickableText.button "See more"
+                                [ ClickableText.onClick (ConsoleLog "See more")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                , ClickableText.icon UiIcon.seeMore
+                                ]
+                    ]
+                , isOpen = isOpen "icon-button-with-menu"
+                , focusAndToggle = FocusAndToggle "icon-button-with-menu"
+                , button =
+                    Menu.custom <|
+                        \buttonAttributes ->
+                            Tooltip.view
+                                { trigger =
+                                    \attrs ->
+                                        ClickableSvg.button "Menu.viewCustom: Click me!"
+                                            viewCustomConfiguration.icon
+                                            [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
+                                            , ClickableSvg.custom (attrs ++ buttonAttributes)
+                                            , ClickableSvg.exactWidth 25
+                                            , ClickableSvg.exactHeight 25
+                                            , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
+                                            ]
+                                , id = "viewCustom-example-tooltip"
+                                }
+                                [ Tooltip.plaintext "Menu.viewCustom: Click me!"
+                                , Tooltip.primaryLabel
+                                , Tooltip.onHover (ShowTooltip "viewCustom")
+                                , Tooltip.open (Set.member "viewCustom" state.openTooltips)
+                                , Tooltip.smallPadding
+                                , Tooltip.fitToContent
+                                ]
+                }
+          )
+        ]
     ]
 
 
