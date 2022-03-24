@@ -77,6 +77,10 @@ view state =
             (Control.currentValue state.settings).menuAttributes
                 |> List.map Tuple.second
 
+        defaultButtonAttributes =
+            (Control.currentValue state.settings).buttonAttributes
+                |> List.map Tuple.second
+
         isOpen name =
             case state.openMenu of
                 Just open ->
@@ -147,12 +151,12 @@ view state =
                     ]
                 , button =
                     Menu.button
-                        (List.filterMap identity
-                            [ Just <| Menu.hasBorder viewConfiguration.hasBorder
-                            , Just <| Menu.wrapping viewConfiguration.wrapping
-                            , Maybe.map Menu.icon viewConfiguration.icon
-                            , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
-                            ]
+                        (defaultButtonAttributes
+                            ++ List.filterMap identity
+                                [ Just <| Menu.wrapping viewConfiguration.wrapping
+                                , Maybe.map Menu.icon viewConfiguration.icon
+                                , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
+                                ]
                         )
                         "1st Period English with Mx. Trainer"
                 }
@@ -235,6 +239,7 @@ type alias State =
 
 type alias Settings =
     { menuAttributes : List ( String, Menu.Attribute Msg )
+    , buttonAttributes : List ( String, Menu.ButtonAttribute )
     , viewConfiguration : ViewConfiguration
     , viewCustomConfiguration : IconButtonWithMenuConfiguration
     }
@@ -243,7 +248,8 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "menuAttributes" controlMenuAttributes
+        |> Control.field "Menu attributes" controlMenuAttributes
+        |> Control.field "Button attributes" controlButtonAttributes
         |> Control.field "view" initViewConfiguration
         |> Control.field "custom" initIconButtonWithMenuConfiguration
 
@@ -275,9 +281,14 @@ controlMenuWidth =
         (ControlExtra.int 220)
 
 
+controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
+controlButtonAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
+
+
 type alias ViewConfiguration =
-    { hasBorder : Bool
-    , wrapping : Menu.TitleWrapping
+    { wrapping : Menu.TitleWrapping
     , buttonWidth : Maybe Int
     , icon : Maybe Svg
     }
@@ -286,7 +297,6 @@ type alias ViewConfiguration =
 initViewConfiguration : Control ViewConfiguration
 initViewConfiguration =
     Control.record ViewConfiguration
-        |> Control.field "hasBorder" (Control.bool True)
         |> Control.field "wrapping"
             (Control.choice
                 [ ( "WrapAndExpandTitle", Control.value Menu.WrapAndExpandTitle )
