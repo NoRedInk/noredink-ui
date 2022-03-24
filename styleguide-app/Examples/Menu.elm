@@ -99,7 +99,11 @@ view state =
                   , code = toCode "TODO: button code"
                   }
                 , { sectionName = "Menu.custom"
-                  , code = toCode "TODO: button code"
+                  , code =
+                        "\n\t\tMenu.custom <|"
+                            ++ "\n\t\t\t\\buttonAttributes ->"
+                            ++ "\n\t\t\t\tbutton buttonAttributes [ text \"Custom Menu trigger button\" ]"
+                            |> toCode
                   }
                 ]
         }
