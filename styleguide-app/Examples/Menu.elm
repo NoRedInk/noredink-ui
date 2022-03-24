@@ -100,7 +100,6 @@ view state =
                     ++ List.filterMap identity
                         [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                         , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                        , Just <| Menu.isDisabled viewConfiguration.isDisabled
                         , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
                         ]
                 )
@@ -165,7 +164,6 @@ view state =
                     ++ List.filterMap identity
                         [ Just <| Menu.buttonId "icon-button-with-menu__button"
                         , Just <| Menu.menuId "icon-button-with-menu__menu"
-                        , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
                         , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
                         ]
                 )
@@ -189,8 +187,7 @@ view state =
                                     \attrs ->
                                         ClickableSvg.button "Menu.viewCustom: Click me!"
                                             viewCustomConfiguration.icon
-                                            [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
-                                            , ClickableSvg.custom (attrs ++ buttonAttributes)
+                                            [ ClickableSvg.custom (attrs ++ buttonAttributes)
                                             , ClickableSvg.exactWidth 25
                                             , ClickableSvg.exactHeight 25
                                             , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
@@ -257,6 +254,7 @@ controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
 controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
+        |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
@@ -272,8 +270,7 @@ controlAlignment =
 
 
 type alias ViewConfiguration =
-    { isDisabled : Bool
-    , hasBorder : Bool
+    { hasBorder : Bool
     , wrapping : Menu.TitleWrapping
     , buttonWidth : Maybe Int
     , menuWidth : Maybe Int
@@ -284,7 +281,6 @@ type alias ViewConfiguration =
 initViewConfiguration : Control ViewConfiguration
 initViewConfiguration =
     Control.record ViewConfiguration
-        |> Control.field "isDisabled" (Control.bool False)
         |> Control.field "hasBorder" (Control.bool True)
         |> Control.field "wrapping"
             (Control.choice
@@ -308,8 +304,7 @@ initViewConfiguration =
 
 
 type alias IconButtonWithMenuConfiguration =
-    { isDisabled : Bool
-    , menuWidth : Maybe Int
+    { menuWidth : Maybe Int
     , icon : Svg
     }
 
@@ -317,7 +312,6 @@ type alias IconButtonWithMenuConfiguration =
 initIconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
 initIconButtonWithMenuConfiguration =
     Control.record IconButtonWithMenuConfiguration
-        |> Control.field "isDisabled" (Control.bool False)
         |> Control.field "menuWidth"
             (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
         |> Control.field "icon"
