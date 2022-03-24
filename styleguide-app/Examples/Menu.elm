@@ -88,7 +88,7 @@ view state =
                 []
         }
     , viewExamples
-        [ ( "Default example"
+        [ ( "Menu.button"
           , Menu.view
                 (menuAttributes
                     ++ List.filterMap identity
@@ -142,7 +142,7 @@ view state =
                 , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
                 }
           )
-        , ( "Custom example"
+        , ( "Menu.custom"
           , Menu.view
                 (menuAttributes
                     ++ List.filterMap identity
