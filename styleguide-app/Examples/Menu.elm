@@ -96,7 +96,11 @@ view state =
                             ++ "\n\t}"
                 in
                 [ { sectionName = "Menu.button"
-                  , code = toCode "TODO: button code"
+                  , code =
+                        "\n\t\tMenu.button "
+                            ++ ControlView.codeFromListWithIndentLevel 3 settings.buttonAttributes
+                            ++ "\n\t\t\t\"1st Period English with Mx. Trainer\""
+                            |> toCode
                   }
                 , { sectionName = "Menu.custom"
                   , code =

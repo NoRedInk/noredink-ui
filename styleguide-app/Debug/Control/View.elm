@@ -1,4 +1,4 @@
-module Debug.Control.View exposing (codeFromList, view)
+module Debug.Control.View exposing (codeFromList, codeFromListWithIndentLevel, view)
 
 import Css exposing (..)
 import Css.Media exposing (withMedia)
@@ -66,7 +66,20 @@ viewSection name children =
 
 
 codeFromList : List ( String, a ) -> String
-codeFromList list =
-    "\n\t[ "
-        ++ String.join "\n\t, " (List.map Tuple.first list)
-        ++ "\n\t] "
+codeFromList =
+    codeFromListWithIndentLevel 1
+
+
+codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
+codeFromListWithIndentLevel indent list =
+    let
+        indents =
+            String.repeat indent "\t"
+    in
+    "\n"
+        ++ indents
+        ++ "[ "
+        ++ String.join ("\n" ++ indents ++ ", ") (List.map Tuple.first list)
+        ++ "\n"
+        ++ indents
+        ++ "] "
