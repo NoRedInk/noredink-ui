@@ -84,8 +84,24 @@ view state =
         , settings = state.settings
         , toExampleCode =
             \settings ->
-                -- TODO: generate code
-                []
+                let
+                    toCode buttonCode =
+                        moduleName
+                            ++ ".view"
+                            ++ ControlView.codeFromList settings.menuAttributes
+                            ++ ("\n\t{ button = " ++ buttonCode)
+                            ++ "\n\t, entries = []"
+                            ++ "\n\t, isOpen = True"
+                            ++ "\n\t, focusAndToggle = FocusAndToggle"
+                            ++ "\n\t}"
+                in
+                [ { sectionName = "Menu.button"
+                  , code = toCode "TODO: button code"
+                  }
+                , { sectionName = "Menu.custom"
+                  , code = toCode "TODO: button code"
+                  }
+                ]
         }
     , viewExamples
         [ ( "Menu.button"
