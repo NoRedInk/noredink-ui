@@ -1,5 +1,7 @@
 module Example exposing (Example, preview, view, wrapMsg, wrapState)
 
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Style as Style
 import Category exposing (Category)
 import Css exposing (..)
 import Css.Global exposing (descendants)
@@ -145,19 +147,47 @@ view previousRoute example =
 
 view_ : Maybe Route -> Example state msg -> List (Html msg)
 view_ previousRoute example =
+    let
+        navMenu items =
+            Html.nav [ Aria.labelledBy "current-page-name" ]
+                [ Html.ul
+                    [ Attributes.css
+                        [ margin zero
+                        , padding zero
+                        , displayFlex
+                        , alignItems center
+                        , justifyContent flexStart
+                        , flexWrap Css.wrap
+                        ]
+                    ]
+                    (List.map
+                        (\i ->
+                            Html.li
+                                [ Attributes.css
+                                    [ Css.listStyle Css.none ]
+                                ]
+                                [ i ]
+                        )
+                        items
+                    )
+                ]
+    in
     [ Html.header
         [ Attributes.css
-            [ displayFlex
-            , alignItems center
-            , justifyContent flexStart
-            , flexWrap Css.wrap
+            [ Css.paddingBottom (Css.px 10)
             , Css.marginBottom (Css.px 20)
+            , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
             ]
         ]
-        [ Heading.h1 [] [ Html.text (fullName example) ]
-        , docsLink example
-        , srcLink example
-        , closeExample previousRoute example
+        [ navMenu
+            [ Heading.h1 [ Heading.id "current-page-name" ]
+                [ Html.span Style.invisible [ Html.text "Current page:" ]
+                , Html.text (fullName example)
+                ]
+            , docsLink example
+            , srcLink example
+            , closeExample previousRoute example
+            ]
         ]
     , KeyboardSupport.view example.keyboardSupport
     , Html.main_ [] (example.view example.state)
