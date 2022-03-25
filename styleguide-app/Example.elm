@@ -177,7 +177,7 @@ view_ example =
                 , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
-            [ exampleLink example
+            [ Heading.h1 [] [ Html.text (fullName example) ]
             , docsLink example
             , srcLink example
             ]
@@ -189,16 +189,6 @@ view_ example =
 exampleHref : Example state msg -> String
 exampleHref example =
     Routes.toString (Routes.Doodad example.name)
-
-
-exampleLink : Example state msg -> Html msg
-exampleLink example =
-    Heading.h2 []
-        [ ClickableText.link (fullName example)
-            [ ClickableText.href (exampleHref example)
-            , ClickableText.large
-            ]
-        ]
 
 
 docsLink : Example state msg -> Html msg
