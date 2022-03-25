@@ -139,49 +139,45 @@ view previousRoute example =
             , Css.minHeight (Css.calc (Css.vh 100) Css.minus (Css.px 20))
             , Css.boxSizing Css.borderBox
             ]
-        , Container.html
-            [ Lazy.lazy view_ example
-            , ClickableSvg.link ("Close " ++ example.name ++ " example")
-                UiIcon.x
-                [ ClickableSvg.href
-                    (Maybe.withDefault Routes.All previousRoute
-                        |> Routes.toString
-                    )
-                , ClickableSvg.exactSize 20
-                , ClickableSvg.css
-                    [ Css.position Css.absolute
-                    , Css.top (Css.px 15)
-                    , Css.right (Css.px 15)
-                    ]
-                ]
-            ]
+        , Container.html (view_ previousRoute example)
         ]
 
 
-view_ : Example state msg -> Html msg
-view_ example =
-    Html.div
-        [ -- this class makes the axe accessibility checking output easier to parse
-          String.replace "." "-" example.name
-            |> (++) "module-example__"
-            |> Attributes.class
-        , Attributes.id (String.replace "." "-" example.name)
+view_ : Maybe Route -> Example state msg -> List (Html msg)
+view_ previousRoute example =
+    [ Html.header
+        [ Attributes.css
+            [ displayFlex
+            , alignItems center
+            , justifyContent flexStart
+            , flexWrap Css.wrap
+            , Css.marginBottom (Css.px 20)
+            ]
         ]
-        [ Html.header
-            [ Attributes.css
-                [ displayFlex
-                , alignItems center
-                , justifyContent flexStart
-                , flexWrap Css.wrap
-                , Css.marginBottom (Css.px 20)
-                ]
+        [ Heading.h1 [] [ Html.text (fullName example) ]
+        , docsLink example
+        , srcLink example
+        , closeExample previousRoute example
+        ]
+    , KeyboardSupport.view example.keyboardSupport
+    , Html.main_ [] (example.view example.state)
+    ]
+
+
+closeExample : Maybe Route -> Example state msg -> Html msg
+closeExample previousRoute example =
+    ClickableSvg.link ("Close " ++ example.name ++ " example")
+        UiIcon.x
+        [ ClickableSvg.href
+            (Maybe.withDefault Routes.All previousRoute
+                |> Routes.toString
+            )
+        , ClickableSvg.exactSize 20
+        , ClickableSvg.css
+            [ Css.position Css.absolute
+            , Css.top (Css.px 15)
+            , Css.right (Css.px 15)
             ]
-            [ Heading.h1 [] [ Html.text (fullName example) ]
-            , docsLink example
-            , srcLink example
-            ]
-        , KeyboardSupport.view example.keyboardSupport
-        , Html.div [] (example.view example.state)
         ]
 
 
