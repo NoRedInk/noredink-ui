@@ -19,11 +19,21 @@ import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V2 as Heading
 
 
+moduleName : String
+moduleName =
+    "Container"
+
+
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Container"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
@@ -47,7 +57,9 @@ example =
                     List.map Tuple.second (Control.currentValue state.control)
             in
             [ ControlView.view
-                { update = UpdateControl
+                { name = moduleName
+                , version = version
+                , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
@@ -124,7 +136,8 @@ viewExample { name, description } attributes =
 
 viewExampleCode : List String -> String
 viewExampleCode attributes =
-    "Container.view\n    [ "
+    moduleName
+        ++ ".view\n    [ "
         ++ String.join "\n    , " attributes
         ++ "\n    ]"
 
