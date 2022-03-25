@@ -9,6 +9,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Text.V6 as Text
 import Url.Builder
 
 
@@ -46,32 +47,35 @@ viewExampleCode :
     -> Html msg
 viewExampleCode component values =
     viewSection "Code Sample" <|
-        List.concatMap
-            (\example ->
-                [ details
-                    []
-                    [ summary []
-                        [ Heading.h4
-                            [ Heading.css [ Css.display Css.inline ]
+        Text.smallBodyGray
+            [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
+            ]
+            :: List.concatMap
+                (\example ->
+                    [ details
+                        []
+                        [ summary []
+                            [ Heading.h4
+                                [ Heading.css [ Css.display Css.inline ]
+                                ]
+                                [ text example.sectionName ]
                             ]
-                            [ text example.sectionName ]
-                        ]
-                    , ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
-                        [ ClickableText.linkExternal (generateEllieLink component example)
-                        , ClickableText.small
-                        ]
-                    , code
-                        [ css
-                            [ display block
-                            , whiteSpace preWrap
-                            , Css.marginTop (px 8)
+                        , ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
+                            [ ClickableText.linkExternal (generateEllieLink component example)
+                            , ClickableText.small
                             ]
+                        , code
+                            [ css
+                                [ display block
+                                , whiteSpace preWrap
+                                , Css.marginTop (px 8)
+                                ]
+                            ]
+                            [ text example.code ]
                         ]
-                        [ text example.code ]
                     ]
-                ]
-            )
-            values
+                )
+                values
 
 
 generateEllieLink : { component | name : String, version : Int } -> { sectionName : String, code : String } -> String
