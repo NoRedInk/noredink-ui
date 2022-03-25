@@ -173,8 +173,6 @@ view_ example =
                 , alignItems center
                 , justifyContent flexStart
                 , flexWrap Css.wrap
-                , Fonts.baseFont
-                , descendants [ Css.Global.a [ textDecoration none ] ]
                 ]
             ]
             [ Heading.h1 [] [ Html.text (fullName example) ]
