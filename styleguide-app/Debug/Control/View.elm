@@ -45,7 +45,7 @@ viewExampleCode :
     -> List { sectionName : String, code : String }
     -> Html msg
 viewExampleCode component values =
-    viewSection "Generated Code" <|
+    viewSection "Code Sample" <|
         List.concatMap
             (\example ->
                 [ details
