@@ -167,12 +167,13 @@ view_ example =
             |> Attributes.class
         , Attributes.id (String.replace "." "-" example.name)
         ]
-        [ Html.div
+        [ Html.header
             [ Attributes.css
                 [ displayFlex
                 , alignItems center
                 , justifyContent flexStart
                 , flexWrap Css.wrap
+                , Css.marginBottom (Css.px 20)
                 ]
             ]
             [ Heading.h1 [] [ Html.text (fullName example) ]
