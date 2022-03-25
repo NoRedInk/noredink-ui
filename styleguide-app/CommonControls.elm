@@ -3,7 +3,7 @@ module CommonControls exposing
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
     , content
-    , romeoAndJulietQuotation, httpError
+    , httpError
     , disabledListItem, premiumDisplay
     )
 
@@ -17,7 +17,7 @@ module CommonControls exposing
 ### Content
 
 @docs content
-@docs romeoAndJulietQuotation, httpError
+@docs httpError
 
 -}
 

@@ -1,12 +1,14 @@
 module Debug.Control.Extra exposing
     ( float, int
     , list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
+    , bool
     )
 
 {-|
 
 @docs float, int
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
+@docs bool
 
 -}
 
@@ -86,3 +88,19 @@ optionalBoolListItem name f accumulator =
             (Control.bool False)
         )
         (Control.map (++) accumulator)
+
+
+{-| -}
+bool : Bool -> Control ( String, Bool )
+bool default =
+    Control.map
+        (\val ->
+            ( if val then
+                "True"
+
+              else
+                "False"
+            , val
+            )
+        )
+        (Control.bool default)
