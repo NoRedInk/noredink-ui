@@ -4,7 +4,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Category exposing (Category)
 import Css exposing (..)
-import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -14,7 +13,6 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
