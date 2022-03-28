@@ -18,11 +18,21 @@ import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Text.V6 as Text
 
 
+moduleName : String
+moduleName =
+    "DisclosureIndicator"
+
+
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "DisclosureIndicator"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Icons ]
     , keyboardSupport = []
     , state = init
@@ -42,13 +52,16 @@ example =
             in
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , ControlView.view
-                { update = UpdateSettings
+                { name = moduleName
+                , version = version
+                , update = UpdateSettings
                 , settings = state.settings
                 , toExampleCode =
                     \settings ->
                         let
                             toCode viewName =
-                                "DisclosureIndicator."
+                                moduleName
+                                    ++ "."
                                     ++ viewName
                                     ++ " "
                                     ++ Tuple.first settings.css
