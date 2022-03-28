@@ -22,11 +22,16 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
 
+version : Int
+version =
+    10
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Button"
-    , version = 10
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -58,6 +63,11 @@ example =
     , categories = [ Buttons ]
     , keyboardSupport = []
     }
+
+
+moduleName : String
+moduleName =
+    "Button"
 
 
 {-| -}
@@ -137,9 +147,9 @@ initDebugControls =
         |> Control.field "label" (Control.string "Label")
         |> Control.field "attributes"
             (ControlExtra.list
-                |> CommonControls.icon "Button" Button.icon
+                |> CommonControls.icon moduleName Button.icon
                 |> ControlExtra.optionalListItem "width"
-                    (CommonControls.choice "Button"
+                    (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
                         , ( "exactWidth 70", Button.exactWidth 70 )
                         , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
@@ -148,7 +158,7 @@ initDebugControls =
                         ]
                     )
                 |> ControlExtra.optionalListItem "state (button only)"
-                    (CommonControls.choice "Button"
+                    (CommonControls.choice moduleName
                         [ ( "enabled", Button.enabled )
                         , ( "disabled", Button.disabled )
                         , ( "error", Button.error )
@@ -160,19 +170,19 @@ initDebugControls =
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "Button.hideIconForMobile", Button.hideIconForMobile )
                 |> CommonControls.css
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.css
                     }
                 |> CommonControls.mobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.mobileCss
                     }
                 |> CommonControls.quizEngineMobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.quizEngineMobileCss
                     }
                 |> CommonControls.notMobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.notMobileCss
                     }
             )
@@ -185,17 +195,20 @@ viewButtonExamples state =
             Control.currentValue state.debugControlsState
     in
     [ ControlView.view
-        { update = SetDebugControlsState
+        { name = moduleName
+        , version = version
+        , update = SetDebugControlsState
         , settings = state.debugControlsState
         , toExampleCode =
             \{ label, attributes } ->
                 let
                     toCode fName =
-                        "Button."
+                        moduleName
+                            ++ "."
                             ++ fName
                             ++ " \""
                             ++ label
-                            ++ "\"\n\t"
+                            ++ "\"\t"
                             ++ ControlView.codeFromList attributes
                 in
                 [ { sectionName = "Button"

@@ -19,11 +19,21 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text
 
 
+moduleName : String
+moduleName =
+    "Text"
+
+
+version : Int
+version =
+    6
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Text"
-    , version = 6
+    { name = moduleName
+    , version = version
     , categories = [ Text ]
     , keyboardSupport = []
     , state = init
@@ -43,7 +53,9 @@ example =
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , ControlView.view
-                { update = UpdateControl
+                { name = moduleName
+                , version = version
+                , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
@@ -51,7 +63,8 @@ example =
                             toExampleCode name =
                                 { sectionName = name
                                 , code =
-                                    "Text."
+                                    moduleName
+                                        ++ "."
                                         ++ name
                                         ++ "\n    [ "
                                         ++ String.join "\n    , " (List.map Tuple.first settings)

@@ -17,11 +17,21 @@ import Nri.Ui.Heading.V2 as Heading
 import ViewHelpers exposing (viewExamples)
 
 
+moduleName : String
+moduleName =
+    "Heading"
+
+
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Heading"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Text, Layout ]
     , keyboardSupport = []
     , state = init
@@ -48,7 +58,9 @@ example =
                     List.map Tuple.second (Control.currentValue state.control)
             in
             [ ControlView.view
-                { update = UpdateControl
+                { name = moduleName
+                , version = version
+                , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
@@ -56,7 +68,8 @@ example =
                             toExampleCode ( name, _, content ) =
                                 { sectionName = name
                                 , code =
-                                    "Heading."
+                                    moduleName
+                                        ++ "."
                                         ++ name
                                         ++ "\n    [ "
                                         ++ String.join "\n    , " (List.map Tuple.first settings)
@@ -86,7 +99,7 @@ init : State
 init =
     { control =
         ControlExtra.list
-            |> CommonControls.css { moduleName = "Heading", use = Heading.css }
+            |> CommonControls.css { moduleName = moduleName, use = Heading.css }
             |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
             |> ControlExtra.optionalListItem "style" controlStyle
     }
