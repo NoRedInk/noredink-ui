@@ -147,7 +147,7 @@ view_ : Maybe Route -> Example state msg -> List (Html msg)
 view_ previousRoute example =
     let
         navMenu items =
-            Html.nav [ Aria.labelledBy "current-page-name" ]
+            Html.nav [ Aria.label "Example" ]
                 [ Html.ul
                     [ Attributes.css
                         [ margin zero
@@ -178,9 +178,9 @@ view_ previousRoute example =
             ]
         ]
         [ navMenu
-            [ Heading.h1 [ Heading.id "current-page-name" ]
-                [ Html.span Style.invisible [ Html.text "Current page:" ]
-                , Html.text (fullName example)
+            [ Heading.h1
+                [ Heading.custom [ Aria.currentPage ] ]
+                [ Html.text (fullName example)
                 ]
             , docsLink example
             , srcLink example
