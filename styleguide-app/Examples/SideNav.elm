@@ -19,11 +19,16 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SideNav.V2 as SideNav
 
 
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "SideNav"
-    , version = 2
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -32,6 +37,11 @@ example =
     , preview = [ viewPreview ]
     , view = view
     }
+
+
+moduleName : String
+moduleName =
+    "SideNav"
 
 
 viewPreview : Html msg
@@ -72,14 +82,16 @@ view state =
             Control.currentValue state.settings
     in
     [ ControlView.view
-        { update = SetControls
+        { name = moduleName
+        , version = version
+        , update = SetControls
         , settings = state.settings
         , toExampleCode =
             \{ entries } ->
                 [ { sectionName = "View"
                   , code =
                         String.join ""
-                            [ "SideNav.view"
+                            [ moduleName ++ ".view"
                             , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"

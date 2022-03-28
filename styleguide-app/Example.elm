@@ -1,4 +1,4 @@
-module Example exposing (Example, preview, view, wrapMsg, wrapState)
+module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
@@ -31,7 +31,7 @@ type alias Example state msg =
     }
 
 
-fullName : Example state msg -> String
+fullName : { example | version : Int, name : String } -> String
 fullName example =
     "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
 
