@@ -1,7 +1,7 @@
 module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Style as Style
+import Accessibility.Styled.Widget as Widget
 import Category exposing (Category)
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
@@ -140,6 +140,7 @@ view previousRoute example =
             , Css.boxSizing Css.borderBox
             ]
         , Container.html (view_ previousRoute example)
+        , Container.custom [ Attributes.id (String.replace "." "-" example.name) ]
         ]
 
 
@@ -147,7 +148,7 @@ view_ : Maybe Route -> Example state msg -> List (Html msg)
 view_ previousRoute example =
     let
         navMenu items =
-            Html.nav [ Aria.label "Example" ]
+            Html.nav [ Widget.label "Example" ]
                 [ Html.ul
                     [ Attributes.css
                         [ margin zero
