@@ -80,7 +80,9 @@ view state =
                     False
     in
     [ ControlView.view
-        { update = UpdateControls
+        { name = moduleName
+        , version = version
+        , update = UpdateControls
         , settings = state.settings
         , toExampleCode =
             \settings ->

@@ -24,11 +24,16 @@ import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+version : Int
+version =
+    2
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "ClickableSvg"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Buttons, Icons ]
     , keyboardSupport = []
     , state = init
@@ -54,13 +59,16 @@ example =
     , view =
         \state ->
             [ ControlView.view
-                { update = SetControls
+                { name = moduleName
+                , version = version
+                , update = SetControls
                 , settings = state.settings
                 , toExampleCode =
                     \{ label, icon, attributes } ->
                         let
                             toCode fName =
-                                "ClickableSvg."
+                                moduleName
+                                    ++ "."
                                     ++ fName
                                     ++ " \""
                                     ++ label
@@ -117,6 +125,11 @@ Tooltip.view
                     ]
             ]
     }
+
+
+moduleName : String
+moduleName =
+    "ClickableSvg"
 
 
 viewExampleTable : Settings Msg -> Html Msg

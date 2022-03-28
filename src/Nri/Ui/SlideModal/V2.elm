@@ -4,7 +4,7 @@ module Nri.Ui.SlideModal.V2 exposing
     , view
     )
 
-{-|
+{-| DEPRECATED -- do not use! The next major version of noredink-ui will remove this component.
 
 @docs Config, Panel
 @docs State, closed, open

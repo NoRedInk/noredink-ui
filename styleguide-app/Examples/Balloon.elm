@@ -15,11 +15,21 @@ import Html.Styled exposing (Html, fromUnstyled, text)
 import Nri.Ui.Balloon.V1 as Balloon
 
 
+moduleName : String
+moduleName =
+    "Balloon"
+
+
+version : Int
+version =
+    1
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Balloon"
-    , version = 1
+    { name = moduleName
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -132,7 +142,9 @@ view state =
     in
     [ Control.view SetCopy state.copy |> fromUnstyled
     , ControlView.view
-        { update = SetAttributes
+        { name = moduleName
+        , version = version
+        , update = SetAttributes
         , settings = state.attributes
         , toExampleCode =
             \attrs ->
