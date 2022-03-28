@@ -11,6 +11,8 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
+import Http
+import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
@@ -41,6 +43,7 @@ type alias Model =
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
+    , ellieDependencies : Dict String String
     }
 
 
@@ -52,8 +55,12 @@ init () url key =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
       , navigationKey = key
+      , ellieDependencies = Dict.empty
       }
-    , Cmd.none
+    , Cmd.batch
+        [ loadPackage
+        , loadApplicationDependencies
+        ]
     )
 
 
@@ -63,6 +70,7 @@ type Msg
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
+    | LoadedPackages (Result Http.Error (Dict String String))
     | NoOp
 
 
@@ -113,6 +121,14 @@ update action model =
             ( model
             , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
             )
+
+        LoadedPackages (Ok newPackages) ->
+            ( { model | ellieDependencies = Dict.union model.ellieDependencies newPackages }
+            , Cmd.none
+            )
+
+        LoadedPackages (Err problem) ->
+            Debug.todo "problem loading packages"
 
         NoOp ->
             ( model, Cmd.none )
@@ -253,3 +269,28 @@ navigation currentRoute =
         (SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
         )
+
+
+loadPackage : Cmd Msg
+loadPackage =
+    Http.get
+        { url = "/package.json"
+        , expect =
+            Http.expectJson
+                LoadedPackages
+                (Decode.map2 Dict.singleton
+                    (Decode.field "name" Decode.string)
+                    (Decode.field "version" Decode.string)
+                )
+        }
+
+
+loadApplicationDependencies : Cmd Msg
+loadApplicationDependencies =
+    Http.get
+        { url = "/application.json"
+        , expect =
+            Http.expectJson
+                LoadedPackages
+                (Decode.at [ "dependencies", "direct" ] (Decode.dict Decode.string))
+        }
