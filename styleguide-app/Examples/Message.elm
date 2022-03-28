@@ -14,6 +14,11 @@ import Nri.Ui.Message.V3 as Message
 import ViewHelpers exposing (viewExamples)
 
 
+version : Int
+version =
+    3
+
+
 type alias State =
     { show : Bool
     , control : Control (List ( String, Message.Attribute Msg ))
@@ -28,7 +33,7 @@ init =
             |> ControlExtra.optionalListItem "theme" controlTheme
             |> ControlExtra.listItem "content"
                 (CommonControls.content
-                    { moduleName = "Message"
+                    { moduleName = moduleName
                     , plaintext = Message.plaintext
                     , markdown = Just Message.markdown
                     , html = Message.html
@@ -42,22 +47,27 @@ init =
             |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                 ( "Message.hideIconForMobile", Message.hideIconForMobile )
             |> CommonControls.css
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.css
                 }
             |> CommonControls.mobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.mobileCss
                 }
             |> CommonControls.quizEngineMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.quizEngineMobileCss
                 }
             |> CommonControls.notMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.notMobileCss
                 }
     }
+
+
+moduleName : String
+moduleName =
+    "Message"
 
 
 controlTheme : Control ( String, Message.Attribute msg )
@@ -117,7 +127,7 @@ update msg state =
 example : Example State Msg
 example =
     { name = "Message"
-    , version = 3
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -142,7 +152,9 @@ example =
                         text "Nice! The messages were dismissed. 👍"
             in
             [ ControlView.view
-                { update = UpdateControl
+                { name = moduleName
+                , version = version
+                , update = UpdateControl
                 , settings = state.control
                 , toExampleCode =
                     \settings ->
