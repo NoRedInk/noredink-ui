@@ -149,13 +149,19 @@ main = do
         need elmSources
         cmd_ (Cwd "styleguide-app") "elm" "make" "Main.elm" "--output" (".." </> out)
 
+      "public/package.json" %> \out -> do
+        copyFileChanged "elm.json" out
+
+      "public/application.json" %> \out -> do
+        copyFileChanged "styleguide-app/elm.json" out
+
       "public/**/*" %> \out ->
         copyFileChanged (replaceDirectory1 out "styleguide-app") out
 
       "log/public.txt" %> \out -> do
         styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
         need
-          ( ["public/index.html", "public/elm.js", "public/bundle.js"]
+          ( ["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"]
               ++ map (("public" </> "assets") </>) styleguideAssets
           )
         writeFileChanged out "built styleguide app successfully"
