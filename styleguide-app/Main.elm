@@ -43,7 +43,7 @@ type alias Model =
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
-    , ellieDependencies : Dict String String
+    , ellieDependencies : Result Http.Error (Dict String String)
     }
 
 
@@ -55,7 +55,7 @@ init () url key =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
       , navigationKey = key
-      , ellieDependencies = Dict.empty
+      , ellieDependencies = Ok Dict.empty
       }
     , Cmd.batch
         [ loadPackage
@@ -122,13 +122,16 @@ update action model =
             , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
             )
 
-        LoadedPackages (Ok newPackages) ->
-            ( { model | ellieDependencies = Dict.union model.ellieDependencies newPackages }
+        LoadedPackages newPackagesResult ->
+            ( { model
+                | ellieDependencies =
+                    Result.map2
+                        Dict.union
+                        model.ellieDependencies
+                        newPackagesResult
+              }
             , Cmd.none
             )
-
-        LoadedPackages (Err problem) ->
-            Debug.todo "problem loading packages"
 
         NoOp ->
             ( model, Cmd.none )
