@@ -32,11 +32,21 @@ import String exposing (toLower)
 import Task
 
 
+moduleName : String
+moduleName =
+    "SegmentedControl"
+
+
+version : Int
+version =
+    14
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "SegmentedControl"
-    , version = 14
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -54,13 +64,15 @@ example =
                     List.take options.count (buildRadioOptions options state.radioTooltip options.content)
             in
             [ ControlView.view
-                { update = ChangeOptions
+                { name = moduleName
+                , version = version
+                , update = ChangeOptions
                 , settings = state.optionsControl
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"
                           , code =
-                                [ "view "
+                                [ moduleName ++ ".view "
                                 , "    { focusAndSelect = FocusAndSelectPage"
                                 , "    , options = " ++ ControlView.codeFromList pageOptions
                                 , "    , selected = \"" ++ Debug.toString state.page ++ "\""
@@ -72,7 +84,7 @@ example =
                           }
                         , { sectionName = "viewRadioGroup"
                           , code =
-                                [ "viewRadioGroup"
+                                [ moduleName ++ ".viewRadioGroup"
                                 , "    { onSelect = SelectRadio"
                                 , "    , options = " ++ ControlView.codeFromList radioOptions
                                 , "    , selected = " ++ Debug.toString state.optionallySelected
@@ -186,7 +198,7 @@ buildOptions { content, longContent, tooltips } openTooltip =
             ( [ "{ icon = " ++ Debug.toString (Maybe.map Tuple.first maybeIcon)
               , ", label = text " ++ valueStr
               , ", value = " ++ valueStr
-              , ", idString = toLower " ++ valueStr
+              , ", idString = String.toLower " ++ valueStr
               , ", attributes = []"
               , ", tabTooltip = "
                     ++ (if tooltips then
@@ -198,7 +210,7 @@ buildOptions { content, longContent, tooltips } openTooltip =
                         else
                             "[]"
                        )
-              , ", content = Html.text \"...\""
+              , ", content = text \"...\""
               , "}"
               ]
                 |> String.join "\n\t  "
