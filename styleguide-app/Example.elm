@@ -1,8 +1,9 @@
 module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Widget as Widget
 import Category exposing (Category)
 import Css exposing (..)
-import Css.Global exposing (descendants)
 import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -13,7 +14,6 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
@@ -143,66 +143,80 @@ view previousRoute ellieLinkConfig example =
             , Css.minHeight (Css.calc (Css.vh 100) Css.minus (Css.px 20))
             , Css.boxSizing Css.borderBox
             ]
-        , Container.html
-            [ Lazy.lazy2 view_ ellieLinkConfig example
-            , ClickableSvg.link ("Close " ++ example.name ++ " example")
-                UiIcon.x
-                [ ClickableSvg.href
-                    (Maybe.withDefault Routes.All previousRoute
-                        |> Routes.toString
-                    )
-                , ClickableSvg.exactSize 20
-                , ClickableSvg.css
-                    [ Css.position Css.absolute
-                    , Css.top (Css.px 15)
-                    , Css.right (Css.px 15)
+        , Container.html (view_ previousRoute ellieLinkConfig example)
+        , Container.custom [ Attributes.id (String.replace "." "-" example.name) ]
+        ]
+
+
+view_ : Maybe Route -> EllieLink.Config -> Example state msg -> List (Html msg)
+view_ previousRoute ellieLinkConfig example =
+    let
+        navMenu items =
+            Html.nav [ Widget.label "Example" ]
+                [ Html.ul
+                    [ Attributes.css
+                        [ margin zero
+                        , padding zero
+                        , displayFlex
+                        , alignItems center
+                        , justifyContent flexStart
+                        , flexWrap Css.wrap
+                        ]
                     ]
+                    (List.map
+                        (\i ->
+                            Html.li
+                                [ Attributes.css
+                                    [ Css.listStyle Css.none ]
+                                ]
+                                [ i ]
+                        )
+                        items
+                    )
                 ]
+    in
+    [ Html.header
+        [ Attributes.css
+            [ Css.paddingBottom (Css.px 10)
+            , Css.marginBottom (Css.px 20)
+            , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
             ]
         ]
-
-
-view_ : EllieLink.Config -> Example state msg -> Html msg
-view_ ellieLinkConfig example =
-    Html.div
-        [ -- this class makes the axe accessibility checking output easier to parse
-          String.replace "." "-" example.name
-            |> (++) "module-example__"
-            |> Attributes.class
-        , Attributes.id (String.replace "." "-" example.name)
-        ]
-        [ Html.div
-            [ Attributes.css
-                [ displayFlex
-                , alignItems center
-                , justifyContent flexStart
-                , flexWrap Css.wrap
-                , Fonts.baseFont
-                , descendants [ Css.Global.a [ textDecoration none ] ]
+        [ navMenu
+            [ Heading.h1
+                [ Heading.custom [ Aria.currentPage ] ]
+                [ Html.text (fullName example)
                 ]
-            ]
-            [ exampleLink example
             , docsLink example
             , srcLink example
+            , closeExample previousRoute example
             ]
-        , KeyboardSupport.view example.keyboardSupport
-        , Html.div [] (example.view ellieLinkConfig example.state)
+        ]
+    , KeyboardSupport.view example.keyboardSupport
+    , Html.main_ [] (example.view ellieLinkConfig example.state)
+    ]
+
+
+closeExample : Maybe Route -> Example state msg -> Html msg
+closeExample previousRoute example =
+    ClickableSvg.link ("Close " ++ example.name ++ " example")
+        UiIcon.x
+        [ ClickableSvg.href
+            (Maybe.withDefault Routes.All previousRoute
+                |> Routes.toString
+            )
+        , ClickableSvg.exactSize 20
+        , ClickableSvg.css
+            [ Css.position Css.absolute
+            , Css.top (Css.px 15)
+            , Css.right (Css.px 15)
+            ]
         ]
 
 
 exampleHref : Example state msg -> String
 exampleHref example =
     Routes.toString (Routes.Doodad example.name)
-
-
-exampleLink : Example state msg -> Html msg
-exampleLink example =
-    Heading.h2 []
-        [ ClickableText.link (fullName example)
-            [ ClickableText.href (exampleHref example)
-            , ClickableText.large
-            ]
-        ]
 
 
 docsLink : Example state msg -> Html msg

@@ -187,7 +187,7 @@ view_ model =
         Routes.Doodad doodad ->
             case List.head (examples (\m -> m.name == doodad)) of
                 Just example ->
-                    Html.main_
+                    Html.div
                         [ css
                             [ maxWidth (Css.px 1400)
                             , margin auto
