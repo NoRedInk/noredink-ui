@@ -98,10 +98,24 @@ example =
                     , Css.margin (Css.px 4)
                     ]
                   )
+                , ( "canvasCircle"
+                  , Logo.canvasCircle
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 25)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
                 , ( "schoology"
                   , Logo.schoology
                   , [ Css.height (Css.px 25)
                     , Css.width (Css.px 100)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
+                , ( "schoologyCircle"
+                  , Logo.schoologyCircle
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 25)
                     , Css.margin (Css.px 4)
                     ]
                   )
