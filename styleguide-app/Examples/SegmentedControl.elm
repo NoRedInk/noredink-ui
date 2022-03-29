@@ -64,7 +64,8 @@ example =
                     List.take options.count (buildRadioOptions options state.radioTooltip options.content)
             in
             [ ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = ChangeOptions
                 , settings = state.optionsControl
