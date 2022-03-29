@@ -123,12 +123,35 @@ update action model =
             )
 
         LoadedPackages newPackagesResult ->
+            let
+                -- Ellie gets really slow to compile if we include all the packages, unfortunately!
+                -- feel free to adjust the settings here if you need more packages for a particular example.
+                removedPackages =
+                    [ "avh4/elm-debug-controls"
+                    , "BrianHicks/elm-particle"
+                    , "elm-community/random-extra"
+                    , "elm/browser"
+                    , "elm/http"
+                    , "elm/json"
+                    , "elm/parser"
+                    , "elm/random"
+                    , "elm/regex"
+                    , "elm/svg"
+                    , "elm/url"
+                    , "elm-community/string-extra"
+                    , "Gizra/elm-keyboard-event"
+                    , "pablohirafuji/elm-markdown"
+                    , "rtfeldman/elm-sorter-experiment"
+                    , "tesk9/accessible-html-with-css"
+                    , "tesk9/palette"
+                    , "wernerdegroot/listzipper"
+                    ]
+            in
             ( { model
                 | elliePackageDependencies =
-                    Result.map2
-                        Dict.union
-                        model.elliePackageDependencies
-                        newPackagesResult
+                    List.foldl (\name -> Result.map (Dict.remove name))
+                        (Result.map2 Dict.union model.elliePackageDependencies newPackagesResult)
+                        removedPackages
               }
             , Cmd.none
             )
