@@ -13,6 +13,7 @@ import CommonControls
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -60,8 +61,8 @@ example =
     }
 
 
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         menuAttributes =
             (Control.currentValue state.settings).menuAttributes
@@ -80,7 +81,8 @@ view state =
                     False
     in
     [ ControlView.view
-        { name = moduleName
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
         , version = version
         , update = UpdateControls
         , settings = state.settings

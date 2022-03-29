@@ -93,7 +93,7 @@ example =
     , subscriptions = subscriptions
     , preview = []
     , view =
-        \{ showLoadingFadeIn, showLoading, showSpinners } ->
+        \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then
                 Loading.page
 

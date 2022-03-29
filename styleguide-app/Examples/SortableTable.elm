@@ -41,7 +41,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = []
     , view =
-        \{ sortState } ->
+        \ellieLinkConfig { sortState } ->
             let
                 config =
                     { updateMsg = SetSortState

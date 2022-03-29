@@ -45,14 +45,15 @@ example =
         , DisclosureIndicator.large [] True
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     Control.currentValue state.settings
             in
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings

@@ -57,9 +57,10 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = SetControls
                 , settings = state.settings

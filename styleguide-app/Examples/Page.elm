@@ -84,7 +84,7 @@ example =
             ]
         ]
     , view =
-        \model ->
+        \ellieLinkConfig model ->
             let
                 recoveryText =
                     Control.currentValue model.recoveryText

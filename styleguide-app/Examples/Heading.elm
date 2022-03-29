@@ -44,7 +44,7 @@ example =
         , Heading.h4 [] [ Html.text "h4" ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 examples =
                     [ ( "h1", Heading.h1, "This is the main page heading." )
@@ -58,7 +58,8 @@ example =
                     List.map Tuple.second (Control.currentValue state.control)
             in
             [ ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control

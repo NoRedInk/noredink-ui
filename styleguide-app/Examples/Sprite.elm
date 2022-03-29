@@ -37,7 +37,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)
     , view =
-        \settings ->
+        \ellieLinkConfig settings ->
             [ IconExamples.viewSettings settings
             , IconExamples.view settings "Rich Text Formatting" sprites
             ]

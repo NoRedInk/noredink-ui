@@ -139,7 +139,7 @@ example =
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
@@ -152,7 +152,8 @@ example =
                         text "Nice! The messages were dismissed. 👍"
             in
             [ ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control

@@ -11,6 +11,8 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
+import Http
+import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
@@ -41,6 +43,7 @@ type alias Model =
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
+    , elliePackageDependencies : Result Http.Error (Dict String String)
     }
 
 
@@ -52,8 +55,12 @@ init () url key =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
       , navigationKey = key
+      , elliePackageDependencies = Ok Dict.empty
       }
-    , Cmd.none
+    , Cmd.batch
+        [ loadPackage
+        , loadApplicationDependencies
+        ]
     )
 
 
@@ -63,6 +70,7 @@ type Msg
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
+    | LoadedPackages (Result Http.Error (Dict String String))
     | NoOp
 
 
@@ -114,6 +122,40 @@ update action model =
             , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
             )
 
+        LoadedPackages newPackagesResult ->
+            let
+                -- Ellie gets really slow to compile if we include all the packages, unfortunately!
+                -- feel free to adjust the settings here if you need more packages for a particular example.
+                removedPackages =
+                    [ "avh4/elm-debug-controls"
+                    , "BrianHicks/elm-particle"
+                    , "elm-community/random-extra"
+                    , "elm/browser"
+                    , "elm/http"
+                    , "elm/json"
+                    , "elm/parser"
+                    , "elm/random"
+                    , "elm/regex"
+                    , "elm/svg"
+                    , "elm/url"
+                    , "elm-community/string-extra"
+                    , "Gizra/elm-keyboard-event"
+                    , "pablohirafuji/elm-markdown"
+                    , "rtfeldman/elm-sorter-experiment"
+                    , "tesk9/accessible-html-with-css"
+                    , "tesk9/palette"
+                    , "wernerdegroot/listzipper"
+                    ]
+            in
+            ( { model
+                | elliePackageDependencies =
+                    List.foldl (\name -> Result.map (Dict.remove name))
+                        (Result.map2 Dict.union model.elliePackageDependencies newPackagesResult)
+                        removedPackages
+              }
+            , Cmd.none
+            )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -151,7 +193,9 @@ view_ model =
                             , margin auto
                             ]
                         ]
-                        [ Example.view model.previousRoute example
+                        [ Example.view model.previousRoute
+                            { packageDependencies = model.elliePackageDependencies }
+                            example
                             |> Html.map (UpdateModuleStates example.name)
                         ]
 
@@ -253,3 +297,28 @@ navigation currentRoute =
         (SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
         )
+
+
+loadPackage : Cmd Msg
+loadPackage =
+    Http.get
+        { url = "/package.json"
+        , expect =
+            Http.expectJson
+                LoadedPackages
+                (Decode.map2 Dict.singleton
+                    (Decode.field "name" Decode.string)
+                    (Decode.field "version" Decode.string)
+                )
+        }
+
+
+loadApplicationDependencies : Cmd Msg
+loadApplicationDependencies =
+    Http.get
+        { url = "/application.json"
+        , expect =
+            Http.expectJson
+                LoadedPackages
+                (Decode.at [ "dependencies", "direct" ] (Decode.dict Decode.string))
+        }

@@ -4,6 +4,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Category exposing (Category)
 import Css exposing (..)
+import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -25,7 +26,7 @@ type alias Example state msg =
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
-    , view : state -> List (Html msg)
+    , view : EllieLink.Config -> state -> List (Html msg)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
@@ -56,7 +57,10 @@ wrapMsg wrapMsg_ unwrapMsg example =
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
     , preview = example.preview
-    , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
+    , view =
+        \ellieLinkConfig state ->
+            List.map (Html.map wrapMsg_)
+                (example.view ellieLinkConfig state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -86,9 +90,9 @@ wrapState wrapState_ unwrapState example =
             >> Maybe.withDefault Sub.none
     , preview = example.preview
     , view =
-        unwrapState
-            >> Maybe.map example.view
-            >> Maybe.withDefault []
+        \ellieLinkConfig state ->
+            Maybe.map (example.view ellieLinkConfig) (unwrapState state)
+                |> Maybe.withDefault []
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -129,8 +133,8 @@ preview_ navigate example =
         ]
 
 
-view : Maybe Route -> Example state msg -> Html msg
-view previousRoute example =
+view : Maybe Route -> EllieLink.Config -> Example state msg -> Html msg
+view previousRoute ellieLinkConfig example =
     Container.view
         [ Container.pillow
         , Container.css
@@ -139,13 +143,13 @@ view previousRoute example =
             , Css.minHeight (Css.calc (Css.vh 100) Css.minus (Css.px 20))
             , Css.boxSizing Css.borderBox
             ]
-        , Container.html (view_ previousRoute example)
+        , Container.html (view_ previousRoute ellieLinkConfig example)
         , Container.custom [ Attributes.id (String.replace "." "-" example.name) ]
         ]
 
 
-view_ : Maybe Route -> Example state msg -> List (Html msg)
-view_ previousRoute example =
+view_ : Maybe Route -> EllieLink.Config -> Example state msg -> List (Html msg)
+view_ previousRoute ellieLinkConfig example =
     let
         navMenu items =
             Html.nav [ Widget.label "Example" ]
@@ -189,7 +193,7 @@ view_ previousRoute example =
             ]
         ]
     , KeyboardSupport.view example.keyboardSupport
-    , Html.main_ [] (example.view example.state)
+    , Html.main_ [] (example.view ellieLinkConfig example.state)
     ]
 
 

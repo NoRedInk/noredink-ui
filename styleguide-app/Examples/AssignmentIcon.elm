@@ -48,7 +48,7 @@ example =
             , AssignmentIcon.writing
             ]
     , view =
-        \settings ->
+        \ellieLinkConfig settings ->
             let
                 viewExampleSection =
                     IconExamples.view settings

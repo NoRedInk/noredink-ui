@@ -17,6 +17,7 @@ import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import EllieLink
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -91,8 +92,8 @@ preview =
 
 
 {-| -}
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         selectionSettings =
             Control.currentValue state.selectionSettings

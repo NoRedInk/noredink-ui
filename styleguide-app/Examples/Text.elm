@@ -46,14 +46,15 @@ example =
         , Text.ugMediumBody [ Text.plaintext "ugMediumBody" ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control

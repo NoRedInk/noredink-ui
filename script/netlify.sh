@@ -21,3 +21,5 @@ npx browserify --entry styleguide-app/manifest.js --outfile public/bundle.js
 # copy static files
 cp -r styleguide-app/assets public/assets
 cp styleguide-app/index.html public/index.html
+cp styleguide-app/elm.json public/application.json
+cp elm.json public/package.json

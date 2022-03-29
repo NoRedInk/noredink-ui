@@ -173,7 +173,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 settings =
                     Control.currentValue state.settings

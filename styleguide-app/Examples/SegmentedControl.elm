@@ -37,7 +37,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 options =
                     Control.currentValue state.optionsControl

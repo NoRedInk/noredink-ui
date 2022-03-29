@@ -51,13 +51,14 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
             [ ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control

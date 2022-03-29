@@ -48,7 +48,7 @@ example =
             , UiIcon.equals
             ]
     , view =
-        \settings ->
+        \ellieLinkConfig settings ->
             let
                 viewExampleSection =
                     IconExamples.view settings

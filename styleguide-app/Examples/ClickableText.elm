@@ -13,6 +13,7 @@ import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -51,7 +52,7 @@ example =
             , ClickableText.custom [ Key.tabbable False ]
             ]
         ]
-    , view = \state -> [ viewExamples state ]
+    , view = \ellieLinkConfig state -> [ viewExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
     }
@@ -126,8 +127,8 @@ update msg state =
 -- INTERNAL
 
 
-viewExamples : State -> Html Msg
-viewExamples (State control) =
+viewExamples : EllieLink.Config -> State -> Html Msg
+viewExamples ellieLinkConfig (State control) =
     let
         settings =
             Control.currentValue control
@@ -136,7 +137,8 @@ viewExamples (State control) =
             List.map Tuple.second settings.attributes
     in
     [ ControlView.view
-        { name = moduleName
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
         , version = version
         , update = SetState
         , settings = control

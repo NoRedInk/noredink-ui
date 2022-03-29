@@ -33,7 +33,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = [ TextWriting.footnote [ text "This is a footnote. " ] ]
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             let
                 longerBody =
                     """Be on the lookout for a new and improved assignment

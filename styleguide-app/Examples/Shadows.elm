@@ -37,7 +37,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = List.map (\( _, style, _ ) -> viewPreviewShadow style) allShadows
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ List.map (\( name, style, usage ) -> ( name, viewShadow ( usage, style ) )) allShadows
                 |> ViewHelpers.viewExamples
             ]
