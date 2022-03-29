@@ -313,6 +313,8 @@ schoologyCircle : Nri.Ui.Svg.V1.Svg
 schoologyCircle =
     Svg.svg
         [ Attributes.viewBox "0 0 163 163"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
         ]
         [ Svg.g []
             [ Svg.path
