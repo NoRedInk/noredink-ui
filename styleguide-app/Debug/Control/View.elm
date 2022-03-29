@@ -3,10 +3,12 @@ module Debug.Control.View exposing (codeFromList, view)
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
+import Dict exposing (Dict)
 import EllieLink
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
@@ -61,6 +63,10 @@ viewExampleCode component values =
                                 [ text example.sectionName ]
                             ]
                         , EllieLink.view
+                            { packageDependencies =
+                                -- TODO: thread through the real package dependencies
+                                Err Http.Timeout
+                            }
                             { name = component.name
                             , version = component.version
                             , sectionName = example.sectionName

@@ -1,9 +1,16 @@
-module EllieLink exposing (view)
+module EllieLink exposing (Config, view)
 
+import Dict exposing (Dict)
 import Example
 import Html.Styled exposing (..)
+import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Url.Builder
+
+
+type alias Config =
+    { packageDependencies : Result Http.Error (Dict String String)
+    }
 
 
 type alias SectionExample =
@@ -14,36 +21,55 @@ type alias SectionExample =
     }
 
 
-view : SectionExample -> Html msg
-view example =
+view : Config -> SectionExample -> Html msg
+view config example =
     ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
-        [ ClickableText.linkExternal (generateEllieLink example)
+        [ ClickableText.linkExternal (generateEllieLink config example)
         , ClickableText.small
         ]
 
 
-generateEllieLink : SectionExample -> String
-generateEllieLink example =
+generateEllieLink : Config -> SectionExample -> String
+generateEllieLink config example =
+    let
+        packageDependencies =
+            config.packageDependencies
+                |> Result.map Dict.toList
+                |> Result.withDefault []
+                |> List.map toPackageDependencyQueryString
+
+        toPackageDependencyQueryString ( name, version ) =
+            Url.Builder.string "packages" (name ++ "@" ++ version)
+    in
     Url.Builder.crossOrigin "https://ellie-app.com/a/example/v1"
         []
-        [ Url.Builder.string "title" (example.name ++ " | " ++ example.sectionName)
-        , Url.Builder.string "elmcode" (generateElmExampleModule example)
-        , Url.Builder.string "htmlcode" ellieHtmlSetup
-        , -- At some point, a system of some kind will be required to keep these values
-          -- in line with the allowed elm json values.
-          -- I think in most cases, the API to use a noredink-ui example should require _only_ the following
-          -- packages. Feel free to add packages if it seems necessary!
-          Url.Builder.string "packages" "elm/core@1.0.5"
-        , Url.Builder.string "packages" "elm/html@1.0.0"
-        , Url.Builder.string "packages" "rtfeldman/elm-css@17.0.5"
-        , Url.Builder.string "packages" "NoRedInk/noredink-ui@15.8.1"
-        , Url.Builder.string "packages" "pablohirafuji/elm-markdown@2.0.5"
-        , Url.Builder.string "elmversion" "0.19.1"
-        ]
+        ([ Url.Builder.string "title" (example.name ++ " | " ++ example.sectionName)
+         , Url.Builder.string "elmcode" (generateElmExampleModule config example)
+         , Url.Builder.string "htmlcode" ellieHtmlSetup
+         , Url.Builder.string "elmversion" "0.19.1"
+         ]
+            ++ packageDependencies
+        )
 
 
-generateElmExampleModule : SectionExample -> String
-generateElmExampleModule example =
+generateElmExampleModule : Config -> SectionExample -> String
+generateElmExampleModule config example =
+    let
+        maybeErrorMessages =
+            case config.packageDependencies of
+                Err httpError ->
+                    [ "{- "
+                    , "Something went wrong fetching the package dependencies!"
+                    , "You will need to install the packages by hand for this code to compile."
+                    , ""
+                    , "Error:"
+                    , Debug.toString httpError
+                    , "-}"
+                    ]
+
+                Ok _ ->
+                    []
+    in
     [ "module Main exposing (main)"
     , ""
     , "import Css exposing (Style)"
@@ -53,11 +79,14 @@ generateElmExampleModule example =
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import " ++ Example.fullName example ++ " as " ++ example.name
     , ""
-    , "main : RootHtml.Html msg"
-    , "main ="
-    , "    " ++ example.code
-    , "    |> toUnstyled"
+    , ""
     ]
+        ++ maybeErrorMessages
+        ++ [ "main : RootHtml.Html msg"
+           , "main ="
+           , "    " ++ example.code
+           , "    |> toUnstyled"
+           ]
         |> String.join "\n"
         |> String.replace "\t" "    "
 
