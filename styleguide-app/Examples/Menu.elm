@@ -11,6 +11,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
@@ -51,8 +52,8 @@ example =
     }
 
 
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         viewConfiguration =
             Control.currentValue state.viewConfiguration

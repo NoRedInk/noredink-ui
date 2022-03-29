@@ -30,7 +30,7 @@ example =
                 ]
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small

@@ -10,6 +10,7 @@ import Category exposing (Category(..))
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (Html, fromUnstyled, text)
 import Nri.Ui.Balloon.V1 as Balloon
@@ -134,15 +135,16 @@ update msg state =
             )
 
 
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         copy =
             Control.currentValue state.copy
     in
     [ Control.view SetCopy state.copy |> fromUnstyled
     , ControlView.view
-        { name = moduleName
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
         , version = version
         , update = SetAttributes
         , settings = state.attributes

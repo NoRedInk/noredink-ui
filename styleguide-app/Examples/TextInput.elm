@@ -40,7 +40,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , viewExamples <|

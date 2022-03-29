@@ -46,7 +46,7 @@ example =
                 , Logo.googleG
                 ]
     , view =
-        \settings ->
+        \ellieLinkConfig settings ->
             let
                 viewExampleSection =
                     IconExamples.viewWithCustomStyles settings

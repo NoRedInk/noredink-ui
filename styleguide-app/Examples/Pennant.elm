@@ -40,7 +40,7 @@ example =
             , Pennant.disabledPremiumFlag
             ]
     , view =
-        \settings ->
+        \ellieLinkConfig settings ->
             [ IconExamples.viewSettings settings
             , IconExamples.viewWithCustomStyles settings
                 "Premium Pennants"

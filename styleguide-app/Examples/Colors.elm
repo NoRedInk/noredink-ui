@@ -49,7 +49,7 @@ example =
         ]
             |> List.map viewPreviewSwatch
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ [ ( "gray20", Colors.gray20, "Main text" )
               , ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )
               , ( "gray75", Colors.gray75, "Border of form elements and tabs" )

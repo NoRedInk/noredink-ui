@@ -1,7 +1,6 @@
-module EllieLink exposing (Config, view)
+module EllieLink exposing (Config, SectionExample, view)
 
 import Dict exposing (Dict)
-import Example
 import Html.Styled exposing (..)
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -15,7 +14,7 @@ type alias Config =
 
 type alias SectionExample =
     { name : String
-    , version : Int
+    , fullModuleName : String
     , sectionName : String
     , code : String
     }
@@ -77,7 +76,7 @@ generateElmExampleModule config example =
     , "import Html.Styled exposing (..)"
     , "import Nri.Ui.Colors.V1 as Colors"
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
-    , "import " ++ Example.fullName example ++ " as " ++ example.name
+    , "import " ++ example.fullModuleName ++ " as " ++ example.name
     , ""
     , ""
     ]

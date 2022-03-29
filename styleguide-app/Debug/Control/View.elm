@@ -17,7 +17,8 @@ import Nri.Ui.Text.V6 as Text
 
 {-| -}
 view :
-    { name : String
+    { ellieLinkConfig : EllieLink.Config
+    , name : String
     , version : Int
     , update : Control a -> msg
     , settings : Control a
@@ -28,6 +29,9 @@ view config =
     let
         value =
             Control.currentValue config.settings
+
+        ellieLink =
+            EllieLink.view config.ellieLinkConfig
     in
     div
         [ css
@@ -39,15 +43,16 @@ view config =
         ]
         [ viewSection "Settings" <|
             [ fromUnstyled (Control.view config.update config.settings) ]
-        , viewExampleCode config (config.toExampleCode value)
+        , viewExampleCode ellieLink config (config.toExampleCode value)
         ]
 
 
 viewExampleCode :
-    { component | name : String, version : Int }
+    (EllieLink.SectionExample -> Html msg)
+    -> { component | name : String, version : Int }
     -> List { sectionName : String, code : String }
     -> Html msg
-viewExampleCode component values =
+viewExampleCode ellieLink component values =
     viewSection "Code Sample" <|
         Text.smallBodyGray
             [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
@@ -62,13 +67,9 @@ viewExampleCode component values =
                                 ]
                                 [ text example.sectionName ]
                             ]
-                        , EllieLink.view
-                            { packageDependencies =
-                                -- TODO: thread through the real package dependencies
-                                Err Http.Timeout
-                            }
-                            { name = component.name
-                            , version = component.version
+                        , ellieLink
+                            { fullModuleName = Example.fullName component
+                            , name = component.name
                             , sectionName = example.sectionName
                             , code = example.code
                             }

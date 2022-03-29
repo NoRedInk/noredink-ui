@@ -14,6 +14,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -111,8 +112,8 @@ update msg model =
             ( { model | staticExampleSettings = settings }, Cmd.none )
 
 
-view : State -> List (Html Msg)
-view model =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig model =
     [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
     , Text.mediumBody
         [ Text.html
@@ -124,7 +125,7 @@ view model =
             , viewToggleTip model.openTooltip
             ]
         ]
-    , viewCustomizableExample model.staticExampleSettings
+    , viewCustomizableExample ellieLinkConfig model.staticExampleSettings
     ]
 
 
@@ -276,11 +277,12 @@ controlPadding =
         ]
 
 
-viewCustomizableExample : Control (List ( String, Tooltip.Attribute Never )) -> Html Msg
-viewCustomizableExample controlSettings =
+viewCustomizableExample : EllieLink.Config -> Control (List ( String, Tooltip.Attribute Never )) -> Html Msg
+viewCustomizableExample ellieLinkConfig controlSettings =
     Html.div []
         [ ControlView.view
-            { name = moduleName
+            { ellieLinkConfig = ellieLinkConfig
+            , name = moduleName
             , version = version
             , update = SetControl
             , settings = controlSettings

@@ -13,6 +13,7 @@ import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -59,7 +60,7 @@ example =
             , Button.icon UiIcon.link
             ]
         ]
-    , view = \state -> [ viewButtonExamples state ]
+    , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
     }
@@ -188,14 +189,15 @@ initDebugControls =
             )
 
 
-viewButtonExamples : State -> Html Msg
-viewButtonExamples state =
+viewButtonExamples : EllieLink.Config -> State -> Html Msg
+viewButtonExamples ellieLinkConfig state =
     let
         model =
             Control.currentValue state.debugControlsState
     in
     [ ControlView.view
-        { name = moduleName
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
         , version = version
         , update = SetDebugControlsState
         , settings = state.debugControlsState

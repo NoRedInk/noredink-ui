@@ -11,6 +11,7 @@ import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
@@ -45,14 +46,15 @@ example =
         , DisclosureIndicator.large [] True
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     Control.currentValue state.settings
             in
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
             , ControlView.view
-                { name = moduleName
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings

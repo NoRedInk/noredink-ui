@@ -60,7 +60,7 @@ example =
             ]
         ]
     , view =
-        \() ->
+        \ellieLinkConfig () ->
             let
                 columns =
                     [ Table.string

@@ -187,7 +187,7 @@ example =
             ]
         ]
     , view =
-        \model ->
+        \ellieLinkConfig model ->
             let
                 settings =
                     Control.currentValue model.settings

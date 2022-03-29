@@ -40,7 +40,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
             , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state

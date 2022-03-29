@@ -31,7 +31,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ viewSettings state
             , viewResults state
             ]

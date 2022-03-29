@@ -37,7 +37,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 label =
                     Control.currentValue state.label

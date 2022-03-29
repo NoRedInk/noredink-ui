@@ -42,7 +42,7 @@ example =
         , Heading.h4 [] [ Html.text "h4" ]
         ]
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ viewExamples
                 [ ( "h1", Heading.h1 [] [ Html.text "This is the main page heading." ] )
                 , ( "h2", Heading.h2 [] [ Html.text "This is a tagline" ] )

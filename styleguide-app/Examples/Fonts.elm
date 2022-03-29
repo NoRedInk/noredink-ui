@@ -42,7 +42,7 @@ example =
         ]
             |> List.map viewPreview
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ Heading.h3 [] [ Html.text "baseFont" ]
             , Html.p [ css [ Fonts.baseFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]

@@ -37,7 +37,7 @@ example =
         ]
             |> List.map viewPreview
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     Control.currentValue state.control

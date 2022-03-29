@@ -3,6 +3,7 @@ module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 import Category exposing (Category)
 import Css exposing (..)
 import Css.Global exposing (descendants)
+import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -25,7 +26,7 @@ type alias Example state msg =
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
-    , view : state -> List (Html msg)
+    , view : EllieLink.Config -> state -> List (Html msg)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
@@ -56,7 +57,10 @@ wrapMsg wrapMsg_ unwrapMsg example =
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
     , preview = example.preview
-    , view = \state -> List.map (Html.map wrapMsg_) (example.view state)
+    , view =
+        \ellieLinkConfig state ->
+            List.map (Html.map wrapMsg_)
+                (example.view ellieLinkConfig state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -86,9 +90,9 @@ wrapState wrapState_ unwrapState example =
             >> Maybe.withDefault Sub.none
     , preview = example.preview
     , view =
-        unwrapState
-            >> Maybe.map example.view
-            >> Maybe.withDefault []
+        \ellieLinkConfig state ->
+            Maybe.map (example.view ellieLinkConfig) (unwrapState state)
+                |> Maybe.withDefault []
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -129,8 +133,8 @@ preview_ navigate example =
         ]
 
 
-view : Maybe Route -> Example state msg -> Html msg
-view previousRoute example =
+view : Maybe Route -> EllieLink.Config -> Example state msg -> Html msg
+view previousRoute ellieLinkConfig example =
     Container.view
         [ Container.pillow
         , Container.css
@@ -140,7 +144,7 @@ view previousRoute example =
             , Css.boxSizing Css.borderBox
             ]
         , Container.html
-            [ Lazy.lazy view_ example
+            [ Lazy.lazy2 view_ ellieLinkConfig example
             , ClickableSvg.link ("Close " ++ example.name ++ " example")
                 UiIcon.x
                 [ ClickableSvg.href
@@ -158,8 +162,8 @@ view previousRoute example =
         ]
 
 
-view_ : Example state msg -> Html msg
-view_ example =
+view_ : EllieLink.Config -> Example state msg -> Html msg
+view_ ellieLinkConfig example =
     Html.div
         [ -- this class makes the axe accessibility checking output easier to parse
           String.replace "." "-" example.name
@@ -182,7 +186,7 @@ view_ example =
             , srcLink example
             ]
         , KeyboardSupport.view example.keyboardSupport
-        , Html.div [] (example.view example.state)
+        , Html.div [] (example.view ellieLinkConfig example.state)
         ]
 
 

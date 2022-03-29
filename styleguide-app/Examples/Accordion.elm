@@ -15,6 +15,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
+import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
@@ -78,8 +79,8 @@ defaultCaret =
 
 
 {-| -}
-view : State -> List (Html Msg)
-view model =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig model =
     [ Heading.h3 [] [ Html.text "Accordion.view" ]
     , Accordion.view
         { entries =

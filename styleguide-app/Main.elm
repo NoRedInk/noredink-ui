@@ -43,7 +43,7 @@ type alias Model =
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : Key
-    , ellieDependencies : Result Http.Error (Dict String String)
+    , elliePackageDependencies : Result Http.Error (Dict String String)
     }
 
 
@@ -55,7 +55,7 @@ init () url key =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
       , navigationKey = key
-      , ellieDependencies = Ok Dict.empty
+      , elliePackageDependencies = Ok Dict.empty
       }
     , Cmd.batch
         [ loadPackage
@@ -124,10 +124,10 @@ update action model =
 
         LoadedPackages newPackagesResult ->
             ( { model
-                | ellieDependencies =
+                | elliePackageDependencies =
                     Result.map2
                         Dict.union
-                        model.ellieDependencies
+                        model.elliePackageDependencies
                         newPackagesResult
               }
             , Cmd.none
@@ -170,7 +170,9 @@ view_ model =
                             , margin auto
                             ]
                         ]
-                        [ Example.view model.previousRoute example
+                        [ Example.view model.previousRoute
+                            { packageDependencies = model.elliePackageDependencies }
+                            example
                             |> Html.map (UpdateModuleStates example.name)
                         ]
 

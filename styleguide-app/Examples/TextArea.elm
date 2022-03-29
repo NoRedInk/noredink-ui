@@ -44,7 +44,7 @@ example =
     , keyboardSupport = []
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ Heading.h1 [] [ Html.text "Textarea controls" ]
             , Html.div []
                 [ Checkbox.viewWithLabel

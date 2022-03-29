@@ -44,7 +44,7 @@ example =
             True
         ]
     , view =
-        \interactiveIsOn ->
+        \ellieLinkConfig interactiveIsOn ->
             [ Heading.h3 [] [ Html.text "Interactive" ]
             , Switch.view
                 [ Switch.onSwitch Switch

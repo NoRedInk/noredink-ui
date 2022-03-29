@@ -13,6 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -75,14 +76,15 @@ viewPreview =
         ]
 
 
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         settings =
             Control.currentValue state.settings
     in
     [ ControlView.view
-        { name = moduleName
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
         , version = version
         , update = SetControls
         , settings = state.settings

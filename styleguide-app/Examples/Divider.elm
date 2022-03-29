@@ -32,5 +32,5 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview = [ Divider.view "Dividing Line" ]
-    , view = \state -> [ Divider.view "Dividing Line" ]
+    , view = \ellieLinkConfig state -> [ Divider.view "Dividing Line" ]
     }
