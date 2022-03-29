@@ -6,29 +6,38 @@ module Examples.Menu exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import Css
+import CommonControls
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V3 as Menu
-import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Task
+import ViewHelpers exposing (viewExamples)
+
+
+moduleName : String
+moduleName =
+    "Menu"
+
+
+version : Int
+version =
+    3
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Menu"
-    , version = 3
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -54,11 +63,13 @@ example =
 view : State -> List (Html Msg)
 view state =
     let
-        viewConfiguration =
-            Control.currentValue state.viewConfiguration
+        menuAttributes =
+            (Control.currentValue state.settings).menuAttributes
+                |> List.map Tuple.second
 
-        viewCustomConfiguration =
-            Control.currentValue state.viewCustomConfiguration
+        defaultButtonAttributes =
+            (Control.currentValue state.settings).buttonAttributes
+                |> List.map Tuple.second
 
         isOpen name =
             case state.openMenu of
@@ -68,133 +79,123 @@ view state =
                 Nothing ->
                     False
     in
-    [ div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.button" ]
-        , viewControl SetViewConfiguration state.viewConfiguration
-        , Menu.view
-            (List.filterMap identity
-                [ Just <| Menu.buttonId "1stPeriodEnglish__button"
-                , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                , Just <| Menu.alignment viewConfiguration.alignment
-                , Just <| Menu.isDisabled viewConfiguration.isDisabled
-                , Maybe.map Menu.menuWidth viewConfiguration.menuWidth
+    [ ControlView.view
+        { name = moduleName
+        , version = version
+        , update = UpdateControls
+        , settings = state.settings
+        , toExampleCode =
+            \settings ->
+                let
+                    toCode buttonCode =
+                        moduleName
+                            ++ ".view"
+                            ++ ControlView.codeFromList settings.menuAttributes
+                            ++ ("\n\t{ button = " ++ buttonCode)
+                            ++ "\n\t, entries = []"
+                            ++ "\n\t, isOpen = True"
+                            ++ "\n\t, focusAndToggle = FocusAndToggle"
+                            ++ "\n\t}"
+                in
+                [ { sectionName = "Menu.button"
+                  , code =
+                        "\n\t\tMenu.button "
+                            ++ ControlView.codeFromListWithIndentLevel 3 settings.buttonAttributes
+                            ++ "\n\t\t\t\"1st Period English with Mx. Trainer\""
+                            |> toCode
+                  }
+                , { sectionName = "Menu.custom"
+                  , code =
+                        "\n\t\tMenu.custom <|"
+                            ++ "\n\t\t\t\\buttonAttributes ->"
+                            ++ "\n\t\t\t\tbutton buttonAttributes [ text \"Custom Menu trigger button\" ]"
+                            |> toCode
+                  }
                 ]
-            )
-            { isOpen = isOpen "1stPeriodEnglish"
-            , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-            , entries =
-                [ Menu.entry "hello-button" <|
-                    \attrs ->
-                        ClickableText.button "Hello"
-                            [ ClickableText.onClick (ConsoleLog "Hello")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            ]
-                , Menu.group "Menu group"
-                    [ Menu.entry "gift-button" <|
+        }
+    , viewExamples
+        [ ( "Menu.button"
+          , Menu.view
+                (menuAttributes
+                    ++ List.filterMap identity
+                        [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                        , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                        ]
+                )
+                { isOpen = isOpen "1stPeriodEnglish"
+                , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
+                , entries =
+                    [ Menu.entry "hello-button" <|
                         \attrs ->
-                            ClickableText.button "Gift"
-                                [ ClickableText.onClick (ConsoleLog "Gift")
+                            ClickableText.button "Hello"
+                                [ ClickableText.onClick (ConsoleLog "Hello")
                                 , ClickableText.small
                                 , ClickableText.custom attrs
-                                , ClickableText.icon UiIcon.gift
                                 ]
-                    , Menu.entry "null-button" <|
+                    , Menu.group "Menu group"
+                        [ Menu.entry "gift-button" <|
+                            \attrs ->
+                                ClickableText.button "Gift"
+                                    [ ClickableText.onClick (ConsoleLog "Gift")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.gift
+                                    ]
+                        , Menu.entry "null-button" <|
+                            \attrs ->
+                                ClickableText.button "Nope!"
+                                    [ ClickableText.onClick (ConsoleLog "Nope!")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.null
+                                    ]
+                        , Menu.entry "no-icon-button" <|
+                            \attrs ->
+                                ClickableText.button "Skip"
+                                    [ ClickableText.onClick (ConsoleLog "Skip")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    ]
+                        ]
+                    , Menu.entry "performance-button" <|
                         \attrs ->
-                            ClickableText.button "Nope!"
-                                [ ClickableText.onClick (ConsoleLog "Nope!")
-                                , ClickableText.small
-                                , ClickableText.custom attrs
-                                , ClickableText.icon UiIcon.null
-                                ]
-                    , Menu.entry "no-icon-button" <|
-                        \attrs ->
-                            ClickableText.button "Skip"
-                                [ ClickableText.onClick (ConsoleLog "Skip")
+                            ClickableText.button "Performance"
+                                [ ClickableText.onClick (ConsoleLog "Performance")
                                 , ClickableText.small
                                 , ClickableText.custom attrs
                                 ]
                     ]
-                , Menu.entry "performance-button" <|
-                    \attrs ->
-                        ClickableText.button "Performance"
-                            [ ClickableText.onClick (ConsoleLog "Performance")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            ]
-                ]
-            , button =
-                Menu.button
-                    (List.filterMap identity
-                        [ Just <| Menu.hasBorder viewConfiguration.hasBorder
-                        , Just <| Menu.wrapping viewConfiguration.wrapping
-                        , Maybe.map Menu.icon viewConfiguration.icon
-                        , Maybe.map Menu.buttonWidth viewConfiguration.buttonWidth
+                , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
+                }
+          )
+        , ( "Menu.custom"
+          , Menu.view
+                (menuAttributes
+                    ++ List.filterMap identity
+                        [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                        , Just <| Menu.menuId "icon-button-with-menu__menu"
                         ]
-                    )
-                    "1st Period English with Mx. Trainer"
-            }
-        ]
-    , div
-        [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-        [ Html.h3 [ css [ Css.width (Css.pct 100) ] ] [ Html.text "Nri.Menu.custom" ]
-        , viewControl SetIconButtonWithMenuConfiguration state.viewCustomConfiguration
-        , Menu.view
-            (List.filterMap identity
-                [ Just <| Menu.buttonId "icon-button-with-menu__button"
-                , Just <| Menu.menuId "icon-button-with-menu__menu"
-                , Just <| Menu.alignment viewCustomConfiguration.alignment
-                , Just <| Menu.isDisabled viewCustomConfiguration.isDisabled
-                , Maybe.map Menu.menuWidth viewCustomConfiguration.menuWidth
-                ]
-            )
-            { entries =
-                [ Menu.entry "see-more-button" <|
-                    \attrs ->
-                        ClickableText.button "See more"
-                            [ ClickableText.onClick (ConsoleLog "See more")
-                            , ClickableText.small
-                            , ClickableText.custom attrs
-                            , ClickableText.icon UiIcon.seeMore
-                            ]
-                ]
-            , isOpen = isOpen "icon-button-with-menu"
-            , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-            , button =
-                Menu.custom <|
-                    \buttonAttributes ->
-                        Tooltip.view
-                            { trigger =
-                                \attrs ->
-                                    ClickableSvg.button "Menu.viewCustom: Click me!"
-                                        viewCustomConfiguration.icon
-                                        [ ClickableSvg.disabled viewCustomConfiguration.isDisabled
-                                        , ClickableSvg.custom (attrs ++ buttonAttributes)
-                                        , ClickableSvg.exactWidth 25
-                                        , ClickableSvg.exactHeight 25
-                                        , ClickableSvg.css [ Css.marginLeft (Css.px 10) ]
-                                        ]
-                            , id = "viewCustom-example-tooltip"
-                            }
-                            [ Tooltip.plaintext "Menu.viewCustom: Click me!"
-                            , Tooltip.primaryLabel
-                            , Tooltip.onHover (ShowTooltip "viewCustom")
-                            , Tooltip.open (Set.member "viewCustom" state.openTooltips)
-                            , Tooltip.smallPadding
-                            , Tooltip.fitToContent
-                            ]
-            }
+                )
+                { entries =
+                    [ Menu.entry "see-more-button" <|
+                        \attrs ->
+                            ClickableText.button "See more"
+                                [ ClickableText.onClick (ConsoleLog "See more")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                , ClickableText.icon UiIcon.seeMore
+                                ]
+                    ]
+                , isOpen = isOpen "icon-button-with-menu"
+                , focusAndToggle = FocusAndToggle "icon-button-with-menu"
+                , button =
+                    Menu.custom <|
+                        \buttonAttributes ->
+                            button buttonAttributes [ text "Custom Menu trigger button" ]
+                }
+          )
         ]
     ]
-
-
-viewControl : (Control a -> Msg) -> Control a -> Html Msg
-viewControl setControl control =
-    code
-        [ css [ Css.minWidth (Css.px 300), Css.marginRight (Css.px 20) ] ]
-        [ Control.view setControl control
-            |> fromUnstyled
-        ]
 
 
 {-| -}
@@ -203,8 +204,7 @@ init =
     { openMenu = Nothing
     , checkboxChecked = False
     , openTooltips = Set.empty
-    , viewConfiguration = initViewConfiguration
-    , viewCustomConfiguration = initIconButtonWithMenuConfiguration
+    , settings = initSettings
     }
 
 
@@ -213,89 +213,82 @@ type alias State =
     { openMenu : Maybe Id
     , checkboxChecked : Bool
     , openTooltips : Set String
-    , viewConfiguration : Control ViewConfiguration
-    , viewCustomConfiguration : Control IconButtonWithMenuConfiguration
+    , settings : Control Settings
     }
 
 
-type alias ViewConfiguration =
-    { isDisabled : Bool
-    , hasBorder : Bool
-    , alignment : Menu.Alignment
-    , wrapping : Menu.TitleWrapping
-    , buttonWidth : Maybe Int
-    , menuWidth : Maybe Int
-    , icon : Maybe Svg
+type alias Settings =
+    { menuAttributes : List ( String, Menu.Attribute Msg )
+    , buttonAttributes : List ( String, Menu.ButtonAttribute )
     }
 
 
-initViewConfiguration : Control ViewConfiguration
-initViewConfiguration =
-    Control.record ViewConfiguration
-        |> Control.field "isDisabled" (Control.bool False)
-        |> Control.field "hasBorder" (Control.bool True)
-        |> Control.field "alignment"
-            (Control.choice
-                [ ( "Right", Control.value Menu.Right )
-                , ( "Left", Control.value Menu.Left )
-                ]
-            )
-        |> Control.field "wrapping"
-            (Control.choice
-                [ ( "WrapAndExpandTitle", Control.value Menu.WrapAndExpandTitle )
-                , ( "TruncateTitle", Control.value Menu.TruncateTitle )
-                ]
-            )
-        |> Control.field "buttonWidth"
-            (Control.maybe False (Control.choice [ ( "220", Control.value 220 ) ]))
-        |> Control.field "menuWidth"
-            (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
-        |> Control.field "icon"
-            (Control.maybe False
-                (Control.choice
-                    [ ( "gift", Control.value UiIcon.gift )
-                    , ( "hat", Control.value UiIcon.hat )
-                    , ( "star", Control.value UiIcon.star )
-                    ]
-                )
-            )
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "Menu attributes" controlMenuAttributes
+        |> Control.field "Button attributes" controlButtonAttributes
 
 
-type alias IconButtonWithMenuConfiguration =
-    { isDisabled : Bool
-    , alignment : Menu.Alignment
-    , menuWidth : Maybe Int
-    , icon : Svg
-    }
+controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
+controlMenuAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "alignment" controlAlignment
+        |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+        |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
 
 
-initIconButtonWithMenuConfiguration : Control IconButtonWithMenuConfiguration
-initIconButtonWithMenuConfiguration =
-    Control.record IconButtonWithMenuConfiguration
-        |> Control.field "isDisabled" (Control.bool False)
-        |> Control.field "alignment"
-            (Control.choice
-                [ ( "Left", Control.value Menu.Left )
-                , ( "Right", Control.value Menu.Right )
-                ]
-            )
-        |> Control.field "menuWidth"
-            (Control.maybe False (Control.choice [ ( "180", Control.value 220 ) ]))
-        |> Control.field "icon"
-            (Control.choice
-                [ ( "edit", Control.value UiIcon.edit )
-                , ( "share", Control.value UiIcon.share )
-                , ( "gear", Control.value UiIcon.gear )
-                ]
-            )
+controlAlignment : Control ( String, Menu.Attribute msg )
+controlAlignment =
+    Control.choice
+        [ ( "Left"
+          , Control.value ( "Menu.alignment Menu.Left", Menu.alignment Menu.Left )
+          )
+        , ( "Right"
+          , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
+          )
+        ]
+
+
+controlMenuWidth : Control ( String, Menu.Attribute msg )
+controlMenuWidth =
+    Control.map
+        (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
+        (ControlExtra.int 220)
+
+
+controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
+controlButtonAttributes =
+    ControlExtra.list
+        |> CommonControls.icon moduleName Menu.icon
+        |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
+        |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
+        |> ControlExtra.optionalListItem "wrapping" controlWrapping
+
+
+controlButtonWidth : Control ( String, Menu.ButtonAttribute )
+controlButtonWidth =
+    Control.map
+        (\val -> ( "Menu.buttonWidth " ++ String.fromInt val, Menu.buttonWidth val ))
+        (ControlExtra.int 220)
+
+
+controlWrapping : Control ( String, Menu.ButtonAttribute )
+controlWrapping =
+    Control.choice
+        [ ( "WrapAndExpandTitle"
+          , Control.value ( "Menu.wrapping Menu.WrapAndExpandTitle", Menu.wrapping Menu.WrapAndExpandTitle )
+          )
+        , ( "TruncateTitle"
+          , Control.value ( "Menu.wrapping Menu.TruncateTitle", Menu.wrapping Menu.TruncateTitle )
+          )
+        ]
 
 
 {-| -}
 type Msg
-    = ShowTooltip String Bool
-    | ConsoleLog String
-    | SetViewConfiguration (Control ViewConfiguration)
-    | SetIconButtonWithMenuConfiguration (Control IconButtonWithMenuConfiguration)
+    = ConsoleLog String
+    | UpdateControls (Control Settings)
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
 
@@ -304,26 +297,11 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ShowTooltip key isOpen ->
-            ( { state
-                | openTooltips =
-                    if isOpen then
-                        Set.insert key state.openTooltips
-
-                    else
-                        Set.remove key state.openTooltips
-              }
-            , Cmd.none
-            )
-
         ConsoleLog message ->
             ( Debug.log "Menu Example" message |> always state, Cmd.none )
 
-        SetViewConfiguration configuration ->
-            ( { state | viewConfiguration = configuration }, Cmd.none )
-
-        SetIconButtonWithMenuConfiguration configuration ->
-            ( { state | viewCustomConfiguration = configuration }, Cmd.none )
+        UpdateControls configuration ->
+            ( { state | settings = configuration }, Cmd.none )
 
         FocusAndToggle id { isOpen, focus } ->
             ( { state
