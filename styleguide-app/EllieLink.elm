@@ -61,7 +61,7 @@ generateElmExampleModule config example =
                     , "Something went wrong fetching the package dependencies!"
                     , "You will need to install the packages by hand for this code to compile."
                     , ""
-                    , "Error:"
+                    , "Error: "
                     , Debug.toString httpError
                     , "-}"
                     ]
