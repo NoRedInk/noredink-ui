@@ -44,7 +44,8 @@ type Confetti
         }
 
 
-{-| -}
+{-| `center` An argument to Particle.withLocation that determines the horizontal center of viewport where you would like confetti to rain.
+-}
 init : Float -> Model
 init center =
     System (ParticleSystem.init (Random.initialSeed 0)) center
