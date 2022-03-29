@@ -78,6 +78,8 @@ example =
                 , ( "activity", UiIcon.activity )
                 , ( "copyToClipboard", UiIcon.copyToClipboard )
                 , ( "gift", UiIcon.gift )
+                , ( "openInNewTab", UiIcon.openInNewTab )
+                , ( "sync", UiIcon.sync )
                 ]
             , viewExampleSection "Guidance"
                 [ ( "footsteps", UiIcon.footsteps )
