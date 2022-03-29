@@ -50,7 +50,7 @@ import Accessibility.Styled.Style as Style
 import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
-import Css.Media exposing (MediaQuery)
+import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
