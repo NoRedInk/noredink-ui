@@ -11,14 +11,19 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V2 as Tooltip
@@ -27,23 +32,70 @@ import String exposing (toLower)
 import Task
 
 
+moduleName : String
+moduleName =
+    "SegmentedControl"
+
+
+version : Int
+version =
+    14
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "SegmentedControl"
-    , version = 14
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = [ viewPreview ]
     , view =
         \ellieLinkConfig state ->
             let
                 options =
                     Control.currentValue state.optionsControl
+
+                pageOptions =
+                    List.take options.count (buildOptions options state.pageTooltip)
+
+                radioOptions =
+                    List.take options.count (buildRadioOptions options state.radioTooltip options.content)
             in
-            [ Control.view ChangeOptions state.optionsControl
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { name = moduleName
+                , version = version
+                , update = ChangeOptions
+                , settings = state.optionsControl
+                , toExampleCode =
+                    \settings ->
+                        [ { sectionName = "view"
+                          , code =
+                                [ moduleName ++ ".view "
+                                , "    { focusAndSelect = FocusAndSelectPage"
+                                , "    , options = " ++ ControlView.codeFromList pageOptions
+                                , "    , selected = \"" ++ Debug.toString state.page ++ "\""
+                                , "    , positioning = " ++ Tuple.first options.positioning
+                                , "    , toUrl = Nothing"
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                          }
+                        , { sectionName = "viewRadioGroup"
+                          , code =
+                                [ moduleName ++ ".viewRadioGroup"
+                                , "    { onSelect = SelectRadio"
+                                , "    , options = " ++ ControlView.codeFromList radioOptions
+                                , "    , selected = " ++ Debug.toString state.optionallySelected
+                                , "    , positioning = " ++ Tuple.first options.positioning
+                                , "    , legend = \"SegmentedControls 'viewSelectRadio' example\""
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                          }
+                        ]
+                }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "view" ] ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
@@ -51,9 +103,9 @@ example =
             , SegmentedControl.view
                 { focusAndSelect = FocusAndSelectPage
                 , selected = state.page
-                , positioning = options.positioning
+                , positioning = Tuple.second options.positioning
                 , toUrl = Nothing
-                , options = List.take options.count (buildOptions options state.pageTooltip)
+                , options = List.map Tuple.second pageOptions
                 }
             , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
                 [ Html.code [] [ Html.text "viewRadioGroup" ] ]
@@ -62,9 +114,9 @@ example =
             , SegmentedControl.viewRadioGroup
                 { legend = "SegmentedControls 'viewSelectRadio' example"
                 , onSelect = SelectRadio
-                , options = List.take options.count (buildRadioOptions options state.radioTooltip options.content)
+                , options = List.map Tuple.second radioOptions
                 , selected = state.optionallySelected
-                , positioning = options.positioning
+                , positioning = Tuple.second options.positioning
                 }
             ]
     , categories = [ Layout, Inputs ]
@@ -82,6 +134,45 @@ example =
     }
 
 
+viewPreview : Html msg
+viewPreview =
+    Html.div
+        [ Role.img
+        , Widget.hidden True
+        , css
+            [ Css.displayFlex
+            , Css.justifyContent Css.stretch
+            , Css.color Colors.navy
+            , Fonts.baseFont
+            , Css.fontSize (Css.px 15)
+            , Css.fontWeight Css.bold
+            ]
+        ]
+        [ Html.div
+            [ css
+                [ Css.padding2 (Css.px 6) (Css.px 15)
+                , Css.border3 (Css.px 1) Css.solid Colors.azure
+                , Css.borderTopLeftRadius (Css.px 8)
+                , Css.borderBottomLeftRadius (Css.px 8)
+                , Css.backgroundColor Colors.glacier
+                , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (withAlpha 0.2 Colors.gray20)
+                ]
+            ]
+            [ Html.text "Abc" ]
+        , Html.div
+            [ css
+                [ Css.padding2 (Css.px 6) (Css.px 15)
+                , Css.border3 (Css.px 1) Css.solid Colors.azure
+                , Css.borderTopRightRadius (Css.px 8)
+                , Css.borderBottomRightRadius (Css.px 8)
+                , Css.backgroundColor Colors.white
+                , Css.boxShadow5 Css.inset Css.zero (Css.px -2) Css.zero Colors.azure
+                ]
+            ]
+            [ Html.text "Def" ]
+        ]
+
+
 type Page
     = Flag
     | Sprout
@@ -93,93 +184,135 @@ type Page
     | Activity
 
 
-buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List (SegmentedControl.Option Page Msg)
+buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List ( String, SegmentedControl.Option Page Msg )
 buildOptions { content, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
             let
-                ( icon, label ) =
-                    getIconAndLabel content icon_ (Html.text (Debug.toString value))
+                ( maybeIcon, label ) =
+                    getIconAndLabel content icon_ (Debug.toString value)
+
+                valueStr =
+                    "\"" ++ Debug.toString value ++ "\""
             in
-            { icon = icon
-            , label = label
-            , value = value
-            , idString = toLower (Debug.toString value)
-            , attributes = []
-            , tabTooltip =
-                if tooltips then
-                    [ Tooltip.plaintext (Debug.toString value)
-                    , Tooltip.onHover (PageTooltip value)
-                    , Tooltip.open (openTooltip == Just value)
-                    ]
+            ( [ "{ icon = " ++ Debug.toString (Maybe.map Tuple.first maybeIcon)
+              , ", label = text " ++ valueStr
+              , ", value = " ++ valueStr
+              , ", idString = String.toLower " ++ valueStr
+              , ", attributes = []"
+              , ", tabTooltip = "
+                    ++ (if tooltips then
+                            ("\n\t\t[ Tooltip.plaintext " ++ valueStr)
+                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ valueStr ++ ")")
+                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ valueStr ++ ")")
+                                ++ "\n\t\t]"
 
-                else
-                    []
-            , content =
-                if longContent then
-                    Html.div
-                        [ css
-                            [ Css.maxHeight (Css.px 100)
-                            , Css.overflowY Css.auto
+                        else
+                            "[]"
+                       )
+              , ", content = text \"...\""
+              , "}"
+              ]
+                |> String.join "\n\t  "
+            , { icon = Maybe.map Tuple.second maybeIcon
+              , label = Html.text label
+              , value = value
+              , idString = toLower (Debug.toString value)
+              , attributes = []
+              , tabTooltip =
+                    if tooltips then
+                        [ Tooltip.plaintext (Debug.toString value)
+                        , Tooltip.onHover (PageTooltip value)
+                        , Tooltip.open (openTooltip == Just value)
+                        ]
+
+                    else
+                        []
+              , content =
+                    if longContent then
+                        Html.div
+                            [ css
+                                [ Css.maxHeight (Css.px 100)
+                                , Css.overflowY Css.auto
+                                ]
                             ]
-                        ]
-                        [ Html.p [] [ Html.text <| "Content for " ++ Debug.toString value ]
-                        , Html.ol [] <|
-                            List.map (\i -> Html.li [] [ Html.text (Debug.toString value) ])
-                                (List.range 1 20)
-                        ]
+                            [ Html.p [] [ Html.text <| "Content for " ++ Debug.toString value ]
+                            , Html.ol [] <|
+                                List.map (\i -> Html.li [] [ Html.text (Debug.toString value) ])
+                                    (List.range 1 20)
+                            ]
 
-                else
-                    Html.text <| "Content for " ++ Debug.toString value
-            }
+                    else
+                        Html.text <| "Content for " ++ Debug.toString value
+              }
+            )
     in
-    [ buildOption Flag UiIcon.flag
-    , buildOption Sprout UiIcon.sprout
-    , buildOption Star UiIcon.star
-    , buildOption Sapling UiIcon.sapling
-    , buildOption Attention <| Svg.withColor Colors.greenDark UiIcon.attention
-    , buildOption Tree UiIcon.tree
-    , buildOption Premium UiIcon.premiumLock
-    , buildOption Activity <| Svg.withColor Colors.purple UiIcon.activity
+    [ buildOption Flag ( "UiIcon.flag", UiIcon.flag )
+    , buildOption Sprout ( "UiIcon.sprout", UiIcon.sprout )
+    , buildOption Star ( "UiIcon.star", UiIcon.star )
+    , buildOption Sapling ( "UiIcon.sapling", UiIcon.sapling )
+    , buildOption Attention ( "UiIcon.attention", Svg.withColor Colors.greenDark UiIcon.attention )
+    , buildOption Tree ( "UiIcon.tree", UiIcon.tree )
+    , buildOption Premium ( "UiIcon.premiumLock", UiIcon.premiumLock )
+    , buildOption Activity ( "UiIcon.activity", Svg.withColor Colors.purple UiIcon.activity )
     ]
 
 
-buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List (SegmentedControl.Radio Int Msg)
+buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List ( String, SegmentedControl.Radio Int Msg )
 buildRadioOptions options currentlyHovered content =
     let
-        buildOption : Int -> ( String, Svg ) -> SegmentedControl.Radio Int Msg
+        buildOption : Int -> ( String, Svg ) -> ( String, SegmentedControl.Radio Int Msg )
         buildOption value ( text, icon ) =
             let
                 ( icon_, label ) =
                     getIconAndLabel content
                         icon
-                        (Html.text ("Source " ++ Debug.toString (value + 1)))
+                        ("Source " ++ Debug.toString (value + 1))
             in
-            { icon = icon_
-            , label = label
-            , value = value
-            , idString = String.fromInt value
-            , tooltip =
-                if options.tooltips then
-                    [ Tooltip.plaintext text
-                    , Tooltip.open (currentlyHovered == Just value)
-                    , Tooltip.fitToContent
-                    , Tooltip.onHover
-                        (\hovered ->
-                            HoverRadio
-                                (if hovered then
-                                    Just value
+            ( [ "{ icon = " ++ Debug.toString (Maybe.map (\_ -> "UiIcon." ++ toLower label) icon_)
+              , ", label = Html.text " ++ label
+              , ", value = " ++ String.fromInt value
+              , ", idString = String.fromInt " ++ String.fromInt value
+              , ", tooltip = "
+                    ++ (if options.tooltips then
+                            ("\n\t\t[ Tooltip.plaintext " ++ String.fromInt value)
+                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ String.fromInt value ++ ")")
+                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ String.fromInt value ++ ")")
+                                ++ "\n\t\t]"
 
-                                 else
-                                    Nothing
-                                )
-                        )
-                    ]
+                        else
+                            "[]"
+                       )
+              , ", attributes = []"
+              , "}"
+              ]
+                |> String.join "\n\t  "
+            , { icon = icon_
+              , label = Html.text label
+              , value = value
+              , idString = String.fromInt value
+              , tooltip =
+                    if options.tooltips then
+                        [ Tooltip.plaintext text
+                        , Tooltip.open (currentlyHovered == Just value)
+                        , Tooltip.fitToContent
+                        , Tooltip.onHover
+                            (\hovered ->
+                                HoverRadio
+                                    (if hovered then
+                                        Just value
 
-                else
-                    []
-            , attributes = []
-            }
+                                     else
+                                        Nothing
+                                    )
+                            )
+                        ]
+
+                    else
+                        []
+              , attributes = []
+              }
+            )
     in
     List.indexedMap buildOption
         [ ( "Leaderboard", UiIcon.leaderboard )
@@ -215,7 +348,7 @@ init =
 
 
 type alias Options =
-    { positioning : SegmentedControl.Positioning
+    { positioning : ( String, SegmentedControl.Positioning )
     , content : Content
     , count : Int
     , longContent : Bool
@@ -228,9 +361,24 @@ optionsControl =
     Control.record Options
         |> Control.field "positioning"
             (Control.choice
-                [ ( "Left (FitContent)", Control.value (SegmentedControl.Left SegmentedControl.FitContent) )
-                , ( "Left (FillContainer)", Control.value (SegmentedControl.Left SegmentedControl.FillContainer) )
-                , ( "Center", Control.value SegmentedControl.Center )
+                [ ( "Left (FitContent)"
+                  , Control.value
+                        ( "SegmentedControl.Left SegmentedControl.FitContent"
+                        , SegmentedControl.Left SegmentedControl.FitContent
+                        )
+                  )
+                , ( "Left (FillContainer)"
+                  , Control.value
+                        ( "SegmentedControl.Left SegmentedControl.FillContainer"
+                        , SegmentedControl.Left SegmentedControl.FillContainer
+                        )
+                  )
+                , ( "Center"
+                  , Control.value
+                        ( "SegmentedControl.Center"
+                        , SegmentedControl.Center
+                        )
+                  )
                 ]
             )
         |> Control.field "content" controlContent
@@ -257,14 +405,14 @@ controlContent =
         ]
 
 
-getIconAndLabel : Content -> svg -> Html msg -> ( Maybe svg, Html msg )
+getIconAndLabel : Content -> icon -> String -> ( Maybe icon, String )
 getIconAndLabel content icon_ value =
     case content of
         TextAndIcon ->
             ( Just icon_, value )
 
         Icon ->
-            ( Just icon_, Html.text "" )
+            ( Just icon_, "" )
 
         Text ->
             ( Nothing, value )
