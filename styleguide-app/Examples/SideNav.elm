@@ -150,21 +150,27 @@ controlNavAttributes =
                 )
                 (Control.string "Entries")
             )
-        |> ControlExtra.optionalListItem "navCss"
+        |> ControlExtra.optionalListItem "navNotMobileCss"
             (Control.choice
                 [ ( "maxWidth"
                   , Control.value
-                        ( "SideNav.navCss [ Css.maxWidth (Css.px 300) ]"
-                        , SideNav.navCss [ Css.maxWidth (Css.px 300) ]
+                        ( "SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]"
+                        , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
                         )
                   )
                 , ( "purple border"
                   , Control.value
-                        ( "SideNav.navCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
-                        , SideNav.navCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
+                        ( "SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
+                        , SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
                         )
                   )
                 ]
+            )
+        |> ControlExtra.optionalListItem "navMobileCss"
+            (Control.value
+                ( "SideNav.navMobileCss [ Css.width (Css.pct 100) ]"
+                , SideNav.navMobileCss [ Css.width (Css.pct 100) ]
+                )
             )
 
 
