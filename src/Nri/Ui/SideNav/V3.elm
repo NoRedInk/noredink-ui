@@ -1,5 +1,6 @@
 module Nri.Ui.SideNav.V3 exposing
     ( view, Config, NavAttribute
+    , navLabel
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
     , icon, custom, css, nriDescription, testId, id
@@ -17,6 +18,7 @@ module Nri.Ui.SideNav.V3 exposing
   - change to `NavAttribute` list-based API
 
 @docs view, Config, NavAttribute
+@docs navLabel
 @docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
 
 
@@ -45,6 +47,7 @@ module Nri.Ui.SideNav.V3 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Style as Style
+import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
 import Css.Media exposing (MediaQuery)
@@ -106,13 +109,15 @@ type NavAttribute
 
 
 type alias NavAttributeConfig =
-    { css : List Style
+    { navLabel : Maybe String
+    , css : List Style
     }
 
 
 defaultNavAttributeConfig : NavAttributeConfig
 defaultNavAttributeConfig =
-    { css =
+    { navLabel = Nothing
+    , css =
         [ flexBasis (px 250)
         , flexShrink (num 0)
         , borderRadius (px 8)
@@ -121,6 +126,13 @@ defaultNavAttributeConfig =
         , marginRight (px 20)
         ]
     }
+
+
+{-| Give screenreader users context on what this particular sidenav is for.
+-}
+navLabel : String -> NavAttribute
+navLabel str =
+    NavAttribute (\config -> { config | navLabel = Just str })
 
 
 {-| These styles are included automatically in the nav container:
@@ -166,7 +178,10 @@ view config navAttributes entries =
     in
     styled nav
         appliedNavAttributes.css
-        []
+        ([ Maybe.map Widget.label appliedNavAttributes.navLabel
+         ]
+            |> List.filterMap identity
+        )
         (viewSkipLink config.onSkipNav
             :: List.map (viewSidebarEntry config []) entries
         )

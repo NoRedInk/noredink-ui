@@ -141,6 +141,15 @@ init =
 controlNavAttributes : Control (List ( String, SideNav.NavAttribute ))
 controlNavAttributes =
     ControlExtra.list
+        |> ControlExtra.optionalListItem "navLabel"
+            (Control.map
+                (\val ->
+                    ( "SideNav.navLabel \"" ++ val ++ "\""
+                    , SideNav.navLabel val
+                    )
+                )
+                (Control.string "Entries")
+            )
         |> ControlExtra.optionalListItem "navCss"
             (Control.choice
                 [ ( "maxWidth"
