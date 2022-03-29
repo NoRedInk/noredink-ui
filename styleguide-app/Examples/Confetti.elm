@@ -16,6 +16,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Confetti.V2 as Confetti
 import Nri.Ui.Html.V3 exposing (viewJust)
 
+
 moduleName : String
 moduleName =
     "Confetti"
@@ -37,29 +38,29 @@ example =
     , update = update
     , subscriptions =
         \state ->
-            case state.model of 
-                Just model -> 
+            case state.model of
+                Just model ->
                     Sub.batch
                         [ Browser.Events.onResize WindowResized
-                    , Confetti.subscriptions ConfettiMsg model
-                    ]
+                        , Confetti.subscriptions ConfettiMsg model
+                        ]
+
                 Nothing ->
-                    Sub.none 
+                    Sub.none
     , preview = []
     , view =
         \ellieLinkConfig state ->
-            [
-              viewJust Confetti.view state.model
-            , ControlView.view 
-               { ellieLinkConfig = ellieLinkConfig
+            [ viewJust Confetti.view state.model
+            , ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.settings
                 , toExampleCode =
-                    \settings -> [{sectionName="TODO", code = "TODO"}] 
-               },
-             Button.button "Launch confetti!"
+                    \settings -> [ { sectionName = "TODO", code = "TODO" } ]
+                }
+            , Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small
                 , Button.secondary
@@ -70,25 +71,25 @@ example =
 
 {-| -}
 type alias State =
-    { settings : Control Settings,
-      model : Maybe Confetti.Model }
+    { settings : Control Settings
+    , model : Maybe Confetti.Model
+    }
+
 
 init : State
-init = 
-    {
-        settings = initSettings,
-        model = Nothing
+init =
+    { settings = initSettings
+    , model = Nothing
     }
 
 
 type alias Settings =
-    { center : ( Float )
+    { center : Float
     }
 
 
-
 initSettings : Control Settings
-initSettings = 
+initSettings =
     Control.record Settings
         |> Control.field "center" (ControlExtra.float 700)
 
@@ -106,14 +107,15 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     ( case msg of
         LaunchConfetti ->
-           { state | model = Just (Confetti.burst (Confetti.init ((Control.currentValue state.settings).center))) }
+            { state | model = Just (Confetti.burst (Confetti.init (Control.currentValue state.settings).center)) }
 
         ConfettiMsg confettiMsg ->
             { state | model = Maybe.map (Confetti.update confettiMsg) state.model }
 
         WindowResized width _ ->
             { state | model = Maybe.map (Confetti.updatePageWidth width) state.model }
-        UpdateControl newControl -> 
-            { state | settings = newControl } 
+
+        UpdateControl newControl ->
+            { state | settings = newControl }
     , Cmd.none
     )
