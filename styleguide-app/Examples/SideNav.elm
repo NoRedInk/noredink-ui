@@ -12,7 +12,7 @@ import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
-import Debug.Control.View as ControlView
+import Debug.Control.View as ControlView exposing (codeFromList)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
@@ -89,7 +89,7 @@ view ellieLinkConfig state =
         , update = SetControls
         , settings = state.settings
         , toExampleCode =
-            \{ entries } ->
+            \{ navAttributes, entries } ->
                 [ { sectionName = "View"
                   , code =
                         String.join ""
@@ -97,11 +97,9 @@ view ellieLinkConfig state =
                             , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"
-                            , "\n\t, css = " ++ Tuple.first settings.css
                             , "\n\t}"
-                            , "\n\t[ "
-                            , String.join "\n\t" (List.map Tuple.first entries)
-                            , "\n\t]"
+                            , codeFromList navAttributes
+                            , codeFromList entries
                             ]
                   }
                 ]
@@ -110,8 +108,8 @@ view ellieLinkConfig state =
         { isCurrentRoute = (==) settings.currentRoute
         , routeToString = identity
         , onSkipNav = SkipToContent
-        , css = Tuple.second settings.css
         }
+        (List.map Tuple.second settings.navAttributes)
         (List.map Tuple.second settings.entries)
     ]
 
@@ -124,7 +122,7 @@ type alias State =
 
 type alias Settings =
     { currentRoute : String
-    , css : ( String, List Css.Style )
+    , navAttributes : List ( String, SideNav.NavAttribute )
     , entries : List ( String, SideNav.Entry String Msg )
     }
 
@@ -135,27 +133,30 @@ init =
     { settings =
         Control.record Settings
             |> Control.field "currentRoute" (Control.string "#some-route")
-            |> Control.field "css"
-                (Control.maybe True
-                    (Control.choice
-                        [ ( "maxWidth"
-                          , Control.value
-                                ( "[ Css.maxWidth (Css.px 300) ]"
-                                , [ Css.maxWidth (Css.px 300) ]
-                                )
-                          )
-                        , ( "purple border"
-                          , Control.value
-                                ( "[ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
-                                , [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
-                                )
-                          )
-                        ]
-                    )
-                    |> Control.map (Maybe.withDefault ( "[]", [] ))
-                )
+            |> Control.field "navAttributes" controlNavAttributes
             |> Control.field "entries" (Control.map List.singleton (controlEntryType "#some-route"))
     }
+
+
+controlNavAttributes : Control (List ( String, SideNav.NavAttribute ))
+controlNavAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem "navCss"
+            (Control.choice
+                [ ( "maxWidth"
+                  , Control.value
+                        ( "SideNav.navCss [ Css.maxWidth (Css.px 300) ]"
+                        , SideNav.navCss [ Css.maxWidth (Css.px 300) ]
+                        )
+                  )
+                , ( "purple border"
+                  , Control.value
+                        ( "SideNav.navCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
+                        , SideNav.navCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
+                        )
+                  )
+                ]
+            )
 
 
 controlEntryType : String -> Control ( String, SideNav.Entry String Msg )

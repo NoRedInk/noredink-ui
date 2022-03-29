@@ -1,5 +1,6 @@
 module Nri.Ui.SideNav.V3 exposing
-    ( view, Config
+    ( view, Config, NavAttribute
+    , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
     , icon, custom, css, nriDescription, testId, id
     , onClick
@@ -10,7 +11,17 @@ module Nri.Ui.SideNav.V3 exposing
 
 {-|
 
-@docs view, Config
+
+# Changes from V1
+
+  - change to `NavAttribute` list-based API
+
+@docs view, Config, NavAttribute
+@docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
+
+
+## Entries
+
 @docs entry, entryWithChildren, html, Entry, Attribute
 @docs icon, custom, css, nriDescription, testId, id
 
@@ -36,6 +47,7 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
+import Css.Media exposing (MediaQuery)
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -46,6 +58,7 @@ import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -84,22 +97,75 @@ type alias Config route msg =
     { isCurrentRoute : route -> Bool
     , routeToString : route -> String
     , onSkipNav : msg
-    , css : List Style
     }
 
 
 {-| -}
-view : Config route msg -> List (Entry route msg) -> Html msg
-view config entries =
-    styled nav
+type NavAttribute
+    = NavAttribute (NavAttributeConfig -> NavAttributeConfig)
+
+
+type alias NavAttributeConfig =
+    { css : List Style
+    }
+
+
+defaultNavAttributeConfig : NavAttributeConfig
+defaultNavAttributeConfig =
+    { css =
         [ flexBasis (px 250)
         , flexShrink (num 0)
         , borderRadius (px 8)
         , backgroundColor Colors.gray96
         , padding (px 20)
         , marginRight (px 20)
-        , batch config.css
         ]
+    }
+
+
+{-| These styles are included automatically in the nav container:
+
+    [ flexBasis (px 250)
+    , flexShrink (num 0)
+    , borderRadius (px 8)
+    , backgroundColor Colors.gray96
+    , padding (px 20)
+    , marginRight (px 20)
+    ]
+
+-}
+navCss : List Style -> NavAttribute
+navCss styles =
+    NavAttribute (\config -> { config | css = List.append config.css styles })
+
+
+{-| -}
+navNotMobileCss : List Style -> NavAttribute
+navNotMobileCss styles =
+    navCss [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| -}
+navMobileCss : List Style -> NavAttribute
+navMobileCss styles =
+    navCss [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| -}
+navQuizEngineMobileCss : List Style -> NavAttribute
+navQuizEngineMobileCss styles =
+    navCss [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+
+
+{-| -}
+view : Config route msg -> List NavAttribute -> List (Entry route msg) -> Html msg
+view config navAttributes entries =
+    let
+        appliedNavAttributes =
+            List.foldl (\(NavAttribute f) b -> f b) defaultNavAttributeConfig navAttributes
+    in
+    styled nav
+        appliedNavAttributes.css
         []
         (viewSkipLink config.onSkipNav
             :: List.map (viewSidebarEntry config []) entries
