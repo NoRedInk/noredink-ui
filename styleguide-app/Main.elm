@@ -197,10 +197,7 @@ view_ model =
             viewCategory model category
 
         Routes.All ->
-            withSideNav model.route
-                [ mainContentHeader "All"
-                , viewPreviews "all" (examples (\_ -> True))
-                ]
+            viewAll model
 
 
 viewExample : Model -> Example a msg -> Html msg
@@ -218,6 +215,14 @@ notFound =
         { link = ChangeRoute Routes.All
         , recoveryText = Page.ReturnTo "Component Library"
         }
+
+
+viewAll : Model -> Html Msg
+viewAll model =
+    withSideNav model.route
+        [ mainContentHeader "All"
+        , viewPreviews "all" (Dict.values model.moduleStates)
+        ]
 
 
 viewCategory : Model -> Category -> Html Msg
