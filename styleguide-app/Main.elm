@@ -4,7 +4,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
-import Category
+import Category exposing (Category)
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
@@ -194,16 +194,7 @@ view_ model =
                     notFound
 
         Routes.Category category ->
-            withSideNav model.route
-                [ mainContentHeader (Category.forDisplay category)
-                , examples
-                    (\doodad ->
-                        Set.memberOf
-                            (Set.fromList Category.sorter doodad.categories)
-                            category
-                    )
-                    |> viewPreviews (Category.forId category)
-                ]
+            viewCategory model category
 
         Routes.All ->
             withSideNav model.route
@@ -227,6 +218,22 @@ notFound =
         { link = ChangeRoute Routes.All
         , recoveryText = Page.ReturnTo "Component Library"
         }
+
+
+viewCategory : Model -> Category -> Html Msg
+viewCategory model category =
+    withSideNav model.route
+        [ mainContentHeader (Category.forDisplay category)
+        , model.moduleStates
+            |> Dict.values
+            |> List.filter
+                (\doodad ->
+                    Set.memberOf
+                        (Set.fromList Category.sorter doodad.categories)
+                        category
+                )
+            |> viewPreviews (Category.forId category)
+        ]
 
 
 withSideNav : Route -> List (Html Msg) -> Html Msg
