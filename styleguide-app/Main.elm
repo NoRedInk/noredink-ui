@@ -180,12 +180,14 @@ view model =
 view_ : Model -> Html Msg
 view_ model =
     let
-        examples filterBy =
-            List.filter (\m -> filterBy m) (Dict.values model.moduleStates)
+        findExampleByName name =
+            Dict.values model.moduleStates
+                |> List.filter (\m -> m.name == name)
+                |> List.head
     in
     case model.route of
         Routes.Doodad doodad ->
-            case List.head (examples (\m -> m.name == doodad)) of
+            case findExampleByName doodad of
                 Just example ->
                     viewExample model example
                         |> Html.map (UpdateModuleStates example.name)
