@@ -126,6 +126,7 @@ preview_ navigate example =
                             [ Css.displayFlex
                             , Css.flexDirection Css.column
                             ]
+                        , Widget.hidden True
                         ]
                         (List.map (Html.map never) example.preview)
                    ]
