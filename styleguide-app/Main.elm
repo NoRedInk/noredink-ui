@@ -191,10 +191,7 @@ view_ model =
                         |> Html.map (UpdateModuleStates example.name)
 
                 Nothing ->
-                    Page.notFound
-                        { link = ChangeRoute Routes.All
-                        , recoveryText = Page.ReturnTo "Component Library"
-                        }
+                    notFound
 
         Routes.Category category ->
             withSideNav model.route
@@ -222,6 +219,14 @@ viewExample model example =
             { packageDependencies = model.elliePackageDependencies }
             example
         ]
+
+
+notFound : Html Msg
+notFound =
+    Page.notFound
+        { link = ChangeRoute Routes.All
+        , recoveryText = Page.ReturnTo "Component Library"
+        }
 
 
 withSideNav : Route -> List (Html Msg) -> Html Msg
