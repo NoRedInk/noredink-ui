@@ -169,37 +169,43 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Style Guide"
-    , body =
-        [ view_ model |> Html.toUnstyled
-        , Sprite.attach |> Html.map never |> Html.toUnstyled
-        ]
-    }
-
-
-view_ : Model -> Html Msg
-view_ model =
     let
         findExampleByName name =
             Dict.values model.moduleStates
                 |> List.filter (\m -> m.name == name)
                 |> List.head
+
+        toBody view_ =
+            List.map Html.toUnstyled
+                [ view_
+                , Html.map never Sprite.attach
+                ]
     in
     case model.route of
         Routes.Doodad doodad ->
             case findExampleByName doodad of
                 Just example ->
-                    viewExample model example
-                        |> Html.map (UpdateModuleStates example.name)
+                    { title = "Style Guide"
+                    , body =
+                        viewExample model example
+                            |> Html.map (UpdateModuleStates example.name)
+                            |> toBody
+                    }
 
                 Nothing ->
-                    notFound
+                    { title = "Style Guide"
+                    , body = toBody notFound
+                    }
 
         Routes.Category category ->
-            viewCategory model category
+            { title = "Style Guide"
+            , body = toBody (viewCategory model category)
+            }
 
         Routes.All ->
-            viewAll model
+            { title = "Style Guide"
+            , body = toBody (viewAll model)
+            }
 
 
 viewExample : Model -> Example a msg -> Html msg
