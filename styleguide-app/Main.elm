@@ -187,17 +187,8 @@ view_ model =
         Routes.Doodad doodad ->
             case List.head (examples (\m -> m.name == doodad)) of
                 Just example ->
-                    Html.div
-                        [ css
-                            [ maxWidth (Css.px 1400)
-                            , margin auto
-                            ]
-                        ]
-                        [ Example.view model.previousRoute
-                            { packageDependencies = model.elliePackageDependencies }
-                            example
-                            |> Html.map (UpdateModuleStates example.name)
-                        ]
+                    viewExample model example
+                        |> Html.map (UpdateModuleStates example.name)
 
                 Nothing ->
                     Page.notFound
@@ -222,6 +213,15 @@ view_ model =
                 [ mainContentHeader "All"
                 , viewPreviews "all" (examples (\_ -> True))
                 ]
+
+
+viewExample : Model -> Example a msg -> Html msg
+viewExample model example =
+    Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
+        [ Example.view model.previousRoute
+            { packageDependencies = model.elliePackageDependencies }
+            example
+        ]
 
 
 withSideNav : Route -> List (Html Msg) -> Html Msg
