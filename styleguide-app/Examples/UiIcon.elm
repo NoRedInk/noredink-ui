@@ -60,7 +60,6 @@ example =
                 , ( "download", UiIcon.download )
                 , ( "sort", UiIcon.sort )
                 , ( "gear", UiIcon.gear )
-                , ( "sortArrow", UiIcon.sortArrow )
                 ]
             , viewExampleSection "Archive & Unarchive"
                 [ ( "archive", UiIcon.archive )
@@ -128,6 +127,8 @@ example =
                 , ( "arrowLeft", UiIcon.arrowLeft )
                 , ( "arrowPointingRight", UiIcon.arrowPointingRight )
                 , ( "arrowPointingRightThick", UiIcon.arrowPointingRightThick )
+                , ( "sortArrow", UiIcon.sortArrow )
+                , ( "sortArrowDown", UiIcon.sortArrowDown )
                 ]
             , viewExampleSection "Sticky things"
                 [ ( "checkmark", UiIcon.checkmark )
