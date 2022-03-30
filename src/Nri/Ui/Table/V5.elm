@@ -18,6 +18,7 @@ module Nri.Ui.Table.V5 exposing
 
 -}
 
+import Accessibility.Styled.Style as Style
 import Css exposing (..)
 import Css.Animations
 import Html.Styled as Html exposing (..)
@@ -141,7 +142,8 @@ stylesLoadingColumn rowIndex colIndex width =
 tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithoutHeader styles columns toRow data =
     table styles
-        [ tableBody toRow data
+        [ thead [] [ tr Style.invisible (List.map tableRowHeader columns) ]
+        , tableBody toRow data
         ]
 
 
