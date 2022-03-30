@@ -7,10 +7,18 @@ module Examples.SortableTable exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Css exposing (..)
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Colors.Extra
+import Nri.Ui.Colors.V1
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V2 as SortableTable
+import Nri.Ui.Table.V5 as Table
+import SolidColor
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttributes
 
 
 type Column
@@ -29,6 +37,44 @@ type alias State =
     { sortState : SortableTable.State Column }
 
 
+type Direction
+    = Up
+    | Down
+
+
+sortArrow : Direction -> Html msg
+sortArrow direction =
+    Html.div
+        [ css
+            [ width (px 8)
+            , height (px 6)
+            , position relative
+            , margin2 (px 1) zero
+            ]
+        ]
+        [ Svg.svg
+            [ SvgAttributes.viewBox "0 0 8 6"
+            , SvgAttributes.css
+                [ position absolute
+                , top zero
+                , left zero
+                , case direction of
+                    Up ->
+                        Css.batch []
+
+                    Down ->
+                        Css.batch [ transform <| rotate (deg 180) ]
+                ]
+            , Nri.Ui.Colors.V1.gray75
+                |> Nri.Ui.Colors.Extra.fromCssColor
+                |> SolidColor.toRGBString
+                |> SvgAttributes.fill
+            ]
+            [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
+            ]
+        ]
+
+
 {-| -}
 example : Example State Msg
 example =
@@ -39,7 +85,59 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        let
+            arrows =
+                Html.div
+                    [ css
+                        [ Css.displayFlex
+                        , Css.flexDirection Css.column
+                        , Css.alignItems Css.center
+                        , Css.justifyContent Css.center
+                        ]
+                    ]
+                    [ sortArrow Up
+                    , sortArrow Down
+                    ]
+        in
+        [ Table.view
+            [ Table.custom
+                { header =
+                    div
+                        [ css [ displayFlex, justifyContent spaceBetween ]
+                        ]
+                        [ text "X"
+                        , Html.div
+                            [ css [ padding (px 2) ] ]
+                            [ arrows ]
+                        ]
+                , view = .a >> Html.text
+                , width = px 50
+                , cellStyles = always []
+                }
+            , Table.custom
+                { header =
+                    div
+                        [ css [ displayFlex, justifyContent spaceBetween ]
+                        ]
+                        [ text "Y"
+                        , Html.div
+                            [ css [ padding (px 2) ] ]
+                            [ arrows ]
+                        ]
+                , view = .b >> Html.text
+                , width = px 50
+                , cellStyles = always []
+                }
+            ]
+            [ { a = "Row 1 X"
+              , b = "Row 1 Y"
+              }
+            , { a = "Row 2 X"
+              , b = "Row 2 Y"
+              }
+            ]
+        ]
     , view =
         \ellieLinkConfig { sortState } ->
             let
