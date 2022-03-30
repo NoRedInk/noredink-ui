@@ -185,7 +185,7 @@ view model =
         Routes.Doodad doodad ->
             case findExampleByName doodad of
                 Just example ->
-                    { title = "Style Guide"
+                    { title = example.name ++ " in the NoRedInk Style Guide"
                     , body =
                         viewExample model example
                             |> Html.map (UpdateModuleStates example.name)
@@ -193,17 +193,17 @@ view model =
                     }
 
                 Nothing ->
-                    { title = "Style Guide"
+                    { title = "Not found in the NoRedInk Style Guide"
                     , body = toBody notFound
                     }
 
         Routes.Category category ->
-            { title = "Style Guide"
+            { title = Category.forDisplay category ++ " Category in the NoRedInk Style Guide"
             , body = toBody (viewCategory model category)
             }
 
         Routes.All ->
-            { title = "Style Guide"
+            { title = "NoRedInk Style Guide"
             , body = toBody (viewAll model)
             }
 
