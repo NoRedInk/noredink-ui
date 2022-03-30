@@ -14,7 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V2 as SortableTable
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V5 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -33,26 +33,6 @@ type Msg
 {-| -}
 type alias State =
     { sortState : SortableTable.State Column }
-
-
-type Direction
-    = Up
-    | Down
-
-
-sortArrow : Direction -> Html msg
-sortArrow direction =
-    (case direction of
-        Up ->
-            UiIcon.sortArrow
-
-        Down ->
-            UiIcon.sortArrowDown
-    )
-        |> Svg.withColor Colors.gray75
-        |> Svg.withWidth (Css.px 12)
-        |> Svg.withHeight (Css.px 12)
-        |> Svg.toHtml
 
 
 {-| -}
@@ -83,10 +63,18 @@ example =
                             , Css.marginTop (Css.px -4)
                             ]
                         ]
-                        [ sortArrow Up
-                        , sortArrow Down
+                        [ renderPreviewArrow UiIcon.sortArrow
+                        , renderPreviewArrow UiIcon.sortArrowDown
                         ]
                     ]
+
+            renderPreviewArrow : Svg -> Html msg
+            renderPreviewArrow arrow =
+                arrow
+                    |> Svg.withColor Colors.gray75
+                    |> Svg.withWidth (Css.px 12)
+                    |> Svg.withHeight (Css.px 12)
+                    |> Svg.toHtml
         in
         [ Table.view
             [ Table.custom
