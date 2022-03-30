@@ -24,6 +24,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
     , microscope, scale
+    , openInNewTab, sync
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -53,6 +54,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
 @docs microscope, scale
+@docs openInNewTab, sync
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -1854,6 +1856,63 @@ tada =
                 , Svg.path [ Attributes.d "M8.35557904,4.67417401 C8.35557904,5.51719401 7.09104404,5.51719401 7.09104404,4.67417401 C7.09104404,3.83115401 8.35557904,3.83115401 8.35557904,4.67417401 Z" ] []
                 , Svg.path [ Attributes.d "M15.782786,12.195804 C15.782786,13.038827 14.518256,13.038827 14.518256,12.195804 C14.518256,11.35278 15.782786,11.35278 15.782786,12.195804 Z" ] []
                 ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+openInNewTab : Nri.Ui.Svg.V1.Svg
+openInNewTab =
+    Svg.svg
+        [ Attributes.viewBox "0 0 74 74"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
+        ]
+        [ Svg.g
+            [ Attributes.fill "currentcolor"
+            , Attributes.fillRule "nonzero"
+            ]
+            [ Svg.path
+                [ Attributes.d "M68.8007,0 L47.8007,0 L47.8007,9.1992 L57.6991,9.1992 L26.8011,40.1992 L33.3011,46.6992 L64.1991,15.8012 L64.1991,25.602 L73.3983,25.602 L73.3983,4.602 C73.3983,3.3793 72.91392,2.2114 72.0506,1.3481 C71.18732,0.48482 70.0194,0 68.8006,0 L68.8007,0 Z"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M55.3007,64.301 L9.1987,64.301 L9.1987,18.199 L40.8007,18.199 L40.8007,8.9021 L4.5977,8.9021 C2.0586,8.9021 0,10.9607 0,13.4998 L0,68.9018 C0,71.4409 2.0586,73.4995 4.5977,73.4995 L59.8987,73.4995 C62.4417,73.4995 64.5003,71.4409 64.5003,68.9018 L64.5003,32.6988 L55.3011,32.6988 L55.3007,64.301 Z"
+                ]
+                []
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+sync : Nri.Ui.Svg.V1.Svg
+sync =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 62 62"
+        , Attributes.version "1.1"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.path
+                [ Attributes.d "M6.088844,32.9998 C5.999,32.33964 5.999,31.6717 5.999,30.9998 C5.999,23.9568 8.9678,17.2458 14.1787,12.5078 C19.3857,7.7695 26.3507,5.4453 33.3627,6.1133 C40.3705,6.77736 46.7727,10.3672 50.9997,16 L38.9997,16 L38.9997,22 L57.9997,22 C59.6559,22 60.9997,20.6562 60.9997,19 L60.9997,-3.55271368e-15 L54.9997,-3.55271368e-15 L54.9997,11.43 C49.5739,4.7933 41.6367,0.7 33.0817,0.121 C24.527,-0.45322 16.1167,2.539 9.8477,8.3905 C3.5782,14.2382 0.0157,22.4255 3.55271368e-15,30.9995 C3.55271368e-15,31.67138 3.55271368e-15,32.3393 0.070312,32.9998 L6.088844,32.9998 Z"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M22.998844,39.9998 L3.998844,39.9998 C2.342644,39.9998 0.998844,41.3436 0.998844,42.9998 L0.998844,61.9998 L6.998844,61.9998 L6.998844,50.5698 C12.424644,57.2065 20.361844,61.2998 28.916844,61.8788 C37.471544,62.45302 45.881844,59.4608 52.150844,53.6093 C58.420344,47.7616 61.982844,39.5743 61.998544,31.0003 C61.998544,30.32842 61.998544,29.6605 61.928232,29.0003 L55.928232,29.0003 C55.979013,29.66046 56.018075,30.3284 56.018075,31.0003 C56.025888,38.0472 53.057175,44.7733 47.846175,49.5163 C42.631375,54.2624 35.658175,56.5827 28.643175,55.9147 C21.627575,55.24673 15.221175,51.6452 10.998175,46.0006 L22.998175,46.0006 L22.998844,39.9998 Z"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                []
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
