@@ -79,22 +79,22 @@ example =
         [ Table.view
             [ Table.custom
                 { header = header "X"
-                , view = .a >> Html.text
+                , view = .x >> Html.text
                 , width = px 50
                 , cellStyles = always []
                 }
             , Table.custom
                 { header = header "Y"
-                , view = .b >> Html.text
+                , view = .y >> Html.text
                 , width = px 50
                 , cellStyles = always []
                 }
             ]
-            [ { a = "Row 1 X"
-              , b = "Row 1 Y"
+            [ { x = "Row 1 X"
+              , y = "Row 1 Y"
               }
-            , { a = "Row 2 X"
-              , b = "Row 2 Y"
+            , { x = "Row 2 X"
+              , y = "Row 2 Y"
               }
             ]
         ]
