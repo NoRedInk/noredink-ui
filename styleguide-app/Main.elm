@@ -4,7 +4,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
-import Category
+import Category exposing (Category)
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
@@ -169,59 +169,84 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Style Guide"
-    , body =
-        [ view_ model |> Html.toUnstyled
-        , Sprite.attach |> Html.map never |> Html.toUnstyled
-        ]
-    }
-
-
-view_ : Model -> Html Msg
-view_ model =
     let
-        examples filterBy =
-            List.filter (\m -> filterBy m) (Dict.values model.moduleStates)
+        findExampleByName name =
+            Dict.values model.moduleStates
+                |> List.filter (\m -> m.name == name)
+                |> List.head
+
+        toBody view_ =
+            List.map Html.toUnstyled
+                [ view_
+                , Html.map never Sprite.attach
+                ]
     in
     case model.route of
         Routes.Doodad doodad ->
-            case List.head (examples (\m -> m.name == doodad)) of
+            case findExampleByName doodad of
                 Just example ->
-                    Html.div
-                        [ css
-                            [ maxWidth (Css.px 1400)
-                            , margin auto
-                            ]
-                        ]
-                        [ Example.view model.previousRoute
-                            { packageDependencies = model.elliePackageDependencies }
-                            example
+                    { title = example.name ++ " in the NoRedInk Style Guide"
+                    , body =
+                        viewExample model example
                             |> Html.map (UpdateModuleStates example.name)
-                        ]
+                            |> toBody
+                    }
 
                 Nothing ->
-                    Page.notFound
-                        { link = ChangeRoute Routes.All
-                        , recoveryText = Page.ReturnTo "Component Library"
-                        }
+                    { title = "Not found in the NoRedInk Style Guide"
+                    , body = toBody notFound
+                    }
 
         Routes.Category category ->
-            withSideNav model.route
-                [ mainContentHeader (Category.forDisplay category)
-                , examples
-                    (\doodad ->
-                        Set.memberOf
-                            (Set.fromList Category.sorter doodad.categories)
-                            category
-                    )
-                    |> viewPreviews (Category.forId category)
-                ]
+            { title = Category.forDisplay category ++ " Category in the NoRedInk Style Guide"
+            , body = toBody (viewCategory model category)
+            }
 
         Routes.All ->
-            withSideNav model.route
-                [ mainContentHeader "All"
-                , viewPreviews "all" (examples (\_ -> True))
-                ]
+            { title = "NoRedInk Style Guide"
+            , body = toBody (viewAll model)
+            }
+
+
+viewExample : Model -> Example a msg -> Html msg
+viewExample model example =
+    Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
+        [ Example.view model.previousRoute
+            { packageDependencies = model.elliePackageDependencies }
+            example
+        ]
+
+
+notFound : Html Msg
+notFound =
+    Page.notFound
+        { link = ChangeRoute Routes.All
+        , recoveryText = Page.ReturnTo "Component Library"
+        }
+
+
+viewAll : Model -> Html Msg
+viewAll model =
+    withSideNav model.route
+        [ mainContentHeader "All"
+        , viewPreviews "all" (Dict.values model.moduleStates)
+        ]
+
+
+viewCategory : Model -> Category -> Html Msg
+viewCategory model category =
+    withSideNav model.route
+        [ mainContentHeader (Category.forDisplay category)
+        , model.moduleStates
+            |> Dict.values
+            |> List.filter
+                (\doodad ->
+                    Set.memberOf
+                        (Set.fromList Category.sorter doodad.categories)
+                        category
+                )
+            |> viewPreviews (Category.forId category)
+        ]
 
 
 withSideNav : Route -> List (Html Msg) -> Html Msg
