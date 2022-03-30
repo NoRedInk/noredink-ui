@@ -5,7 +5,10 @@ module Nri.Ui.SortableTable.V2 exposing
     , invariantSort, simpleSort, combineSorters
     )
 
-{-|
+{-| TODO for next major version:
+
+  - make sure the "sort" feature is fully accessible
+  - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
 @docs Column, Config, Sorter, State
 @docs init, initDescending
