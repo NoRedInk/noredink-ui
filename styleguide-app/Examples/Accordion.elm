@@ -15,6 +15,8 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Css.Global
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
@@ -31,11 +33,21 @@ import Set exposing (Set)
 import Task
 
 
+moduleName : String
+moduleName =
+    "Accordion"
+
+
+version : Int
+version =
+    3
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Accordion"
-    , version = 3
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -81,7 +93,14 @@ defaultCaret =
 {-| -}
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
-    [ Heading.h3 [] [ Html.text "Accordion.view" ]
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = UpdateControls
+        , settings = model.settings
+        , toExampleCode = \settings -> []
+        }
     , Accordion.view
         { entries =
             [ AccordionEntry
@@ -91,7 +110,7 @@ view ellieLinkConfig model =
                 , headerContent = Html.text "Apples"
                 , headerId = "accordion-entry__1"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 1 model
+                , isExpanded = Set.member 1 model.expanded
                 , toggle = Just (Toggle 1)
                 }
                 [ AccordionEntry
@@ -110,7 +129,7 @@ view ellieLinkConfig model =
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 11 model
+                    , isExpanded = Set.member 11 model.expanded
                     , toggle = Just (Toggle 11)
                     }
                     []
@@ -130,7 +149,7 @@ view ellieLinkConfig model =
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 12 model
+                    , isExpanded = Set.member 12 model.expanded
                     , toggle = Just (Toggle 12)
                     }
                     []
@@ -150,7 +169,7 @@ view ellieLinkConfig model =
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 13 model
+                    , isExpanded = Set.member 13 model.expanded
                     , toggle = Just (Toggle 13)
                     }
                     []
@@ -162,7 +181,7 @@ view ellieLinkConfig model =
                 , headerContent = Html.text "Oranges"
                 , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 2 model
+                , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
                 }
                 []
@@ -173,7 +192,7 @@ view ellieLinkConfig model =
                 , headerContent = Html.text "Berries"
                 , headerId = "accordion-entry__4"
                 , headerLevel = Accordion.H5
-                , isExpanded = Set.member 4 model
+                , isExpanded = Set.member 4 model.expanded
                 , toggle = Just (Toggle 4)
                 }
                 []
@@ -205,7 +224,7 @@ view ellieLinkConfig model =
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 6 model
+                , isExpanded = Set.member 6 model.expanded
                 , toggle = Just (Toggle 6)
                 }
                 []
@@ -251,33 +270,52 @@ view ellieLinkConfig model =
     ]
 
 
-type Msg
-    = Toggle Int Bool
-    | Focus String
-    | Focused (Result Dom.Error ())
-
-
 {-| -}
 init : State
 init =
-    Set.empty
+    { settings = initSettings
+    , expanded = Set.empty
+    }
 
 
 {-| -}
 type alias State =
-    Set Int
+    { settings : Control Settings
+    , expanded : Set Int
+    }
+
+
+type alias Settings =
+    {}
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+
+
+type Msg
+    = UpdateControls (Control Settings)
+    | Toggle Int Bool
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
+        UpdateControls settings ->
+            ( { model | settings = settings }
+            , Cmd.none
+            )
+
         Toggle id expand ->
             ( if expand then
-                Set.insert id model
+                { model | expanded = Set.insert id model.expanded }
 
               else
-                Set.remove id model
+                { model | expanded = Set.remove id model.expanded }
             , Cmd.none
             )
 
