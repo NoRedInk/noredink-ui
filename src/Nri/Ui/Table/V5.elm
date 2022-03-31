@@ -21,7 +21,7 @@ module Nri.Ui.Table.V5 exposing
 import Css exposing (..)
 import Css.Animations
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
 
@@ -169,7 +169,8 @@ tableHeader columns =
 tableRowHeader : Column data msg -> Html msg
 tableRowHeader (Column header _ width _) =
     th
-        [ css (width :: headerStyles)
+        [ Attributes.scope "col"
+        , css (width :: headerStyles)
         ]
         [ header ]
 
