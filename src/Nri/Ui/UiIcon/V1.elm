@@ -1,5 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper, sortArrow
+    ( seeMore, openClose, download, sort, gear, flipper
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle, skip
     , share, preview, copyToClipboard, gift
@@ -12,7 +12,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen, highlighter
     , speechBalloon, mail
-    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
+    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
     , checkmark, checkmarkInCircle, x
     , attention, exclamation
     , flag, star, starFilled, starOutline
@@ -29,7 +29,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper, sortArrow
+@docs seeMore, openClose, download, sort, gear, flipper
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle, skip
 @docs share, preview, copyToClipboard, gift
@@ -42,7 +42,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen, highlighter
 @docs speechBalloon, mail
-@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick
+@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
 @docs checkmark, checkmarkInCircle, x
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
@@ -641,16 +641,30 @@ arrowPointingRight =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
+sortArrow_ : List (Svg.Attribute msg) -> Svg.Svg msg
+sortArrow_ transforms =
+    Svg.svg
+        ([ Attributes.width "100%"
+         , Attributes.height "100%"
+         , Attributes.fill "currentcolor"
+         , Attributes.viewBox "0 0 8 6"
+         ]
+            ++ transforms
+        )
+        [ Svg.polygon [ Attributes.points "0 6 4 0 8 6 0 6" ] [] ]
+
+
 {-| -}
 sortArrow : Nri.Ui.Svg.V1.Svg
 sortArrow =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 8 6"
-        ]
-        [ Svg.polygon [ Attributes.points "0 6 4 0 8 6 0 6" ] [] ]
+    sortArrow_ []
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+sortArrowDown : Nri.Ui.Svg.V1.Svg
+sortArrowDown =
+    sortArrow_ [ Attributes.transform "rotate(180)" ]
         |> Nri.Ui.Svg.V1.fromHtml
 
 

@@ -91,7 +91,14 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
-    , preview = []
+    , preview =
+        [ Loading.spinningDots
+            |> Svg.withCss
+                [ Css.property "animation-name" "none" |> Css.important
+                , Css.alignSelf Css.center
+                ]
+            |> Svg.toHtml
+        ]
     , view =
         \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then

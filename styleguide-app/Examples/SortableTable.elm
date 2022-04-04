@@ -7,10 +7,16 @@ module Examples.SortableTable exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Css exposing (..)
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V2 as SortableTable
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Table.V5 as Table
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type Column
@@ -39,7 +45,59 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        let
+            header name =
+                div
+                    [ css
+                        [ Css.displayFlex
+                        , Css.justifyContent Css.spaceBetween
+                        , Css.alignItems Css.center
+                        ]
+                    ]
+                    [ text name
+                    , div
+                        [ css
+                            [ Css.displayFlex
+                            , Css.flexDirection Css.column
+                            , Css.marginTop (Css.px -4)
+                            ]
+                        ]
+                        [ renderPreviewArrow UiIcon.sortArrow
+                        , renderPreviewArrow UiIcon.sortArrowDown
+                        ]
+                    ]
+
+            renderPreviewArrow : Svg -> Html msg
+            renderPreviewArrow arrow =
+                arrow
+                    |> Svg.withColor Colors.gray75
+                    |> Svg.withWidth (Css.px 12)
+                    |> Svg.withHeight (Css.px 12)
+                    |> Svg.toHtml
+        in
+        [ Table.view
+            [ Table.custom
+                { header = header "X"
+                , view = .x >> Html.text
+                , width = px 50
+                , cellStyles = always []
+                }
+            , Table.custom
+                { header = header "Y"
+                , view = .y >> Html.text
+                , width = px 50
+                , cellStyles = always []
+                }
+            ]
+            [ { x = "Row 1 X"
+              , y = "Row 1 Y"
+              }
+            , { x = "Row 2 X"
+              , y = "Row 2 Y"
+              }
+            ]
+        ]
     , view =
         \ellieLinkConfig { sortState } ->
             let
