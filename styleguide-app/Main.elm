@@ -15,9 +15,9 @@ import Http
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
+import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
-import Nri.Ui.SideNav.V2 as SideNav
+import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Routes exposing (Route)
 import Sort.Set as Set
@@ -312,13 +312,12 @@ navigation currentRoute =
         { isCurrentRoute = (==) currentRoute
         , routeToString = Routes.toString
         , onSkipNav = SkipToMainContent
-        , css =
-            [ withMedia [ notMobile ]
-                [ VendorPrefixed.value "position" "sticky"
-                , top (px 55)
-                ]
-            ]
         }
+        [ SideNav.navNotMobileCss
+            [ VendorPrefixed.value "position" "sticky"
+            , top (px 55)
+            ]
+        ]
         (SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
         )
