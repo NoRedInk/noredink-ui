@@ -13,7 +13,7 @@ module Nri.Ui.SideNav.V3 exposing
 {-|
 
 
-# Changes from V1
+# Changes from V2
 
   - change to `NavAttribute` list-based API
 
