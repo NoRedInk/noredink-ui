@@ -134,6 +134,7 @@ example =
                 [ ( "checkmark", UiIcon.checkmark )
                 , ( "checkmarkInCircle", UiIcon.checkmarkInCircle )
                 , ( "x", UiIcon.x )
+                , ( "xInCircle", UiIcon.xInCircle )
                 , ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )
                 ]

@@ -13,7 +13,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , edit, pen, highlighter
     , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-    , checkmark, checkmarkInCircle, x
+    , checkmark, checkmarkInCircle, x, xInCircle
     , attention, exclamation
     , flag, star, starFilled, starOutline
     , equals, plus, null
@@ -43,7 +43,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs edit, pen, highlighter
 @docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-@docs checkmark, checkmarkInCircle, x
+@docs checkmark, checkmarkInCircle, x, xInCircle
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
 @docs equals, plus, null
@@ -718,6 +718,32 @@ x =
         , Attributes.viewBox "0 0 25 25"
         ]
         [ Svg.path [ Attributes.d "M1.067 6.015c-1.423-1.422-1.423-3.526 0-4.948 1.422-1.423 3.526-1.423 4.948 0l6.371 6.37 6.371-6.37c1.422-1.423 3.783-1.423 5.176 0 1.423 1.422 1.423 3.782 0 5.176l-6.37 6.37 6.37 6.372c1.423 1.422 1.423 3.526 0 4.948-1.422 1.423-3.526 1.423-4.948 0l-6.371-6.37-6.371 6.37c-1.422 1.423-3.783 1.423-5.176 0-1.423-1.422-1.423-3.782 0-5.176l6.37-6.143-6.37-6.599z" ] [] ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+xInCircle : Nri.Ui.Svg.V1.Svg
+xInCircle =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 50 50"
+        ]
+        [ Svg.circle
+            [ Attributes.fill "currentcolor"
+            , Attributes.cx "25"
+            , Attributes.cy "25"
+            , Attributes.r "25"
+            ]
+            []
+        , Svg.g
+            [ Attributes.id "white-x"
+            , Attributes.transform "translate(15.000000, 15.000000)"
+            , Attributes.fill "#FFFFFF"
+            ]
+            [ Svg.path [ Attributes.d "M0.853242321,4.81228669 C-0.284414107,3.67463026 -0.284414107,1.99089875 0.853242321,0.853242321 C1.99089875,-0.284414107 3.67463026,-0.284414107 4.81228669,0.853242321 L9.90898749,5.94994312 L15.0056883,0.853242321 C16.1433447,-0.284414107 18.0318544,-0.284414107 19.1467577,0.853242321 C20.2844141,1.99089875 20.2844141,3.87940842 19.1467577,4.99431172 L14.0500569,10.0910125 L19.1467577,15.1877133 C20.2844141,16.3253697 20.2844141,18.0091013 19.1467577,19.1467577 C18.0091013,20.2844141 16.3253697,20.2844141 15.1877133,19.1467577 L10.0910125,14.0500569 L4.99431172,19.1467577 C3.85665529,20.2844141 1.96814562,20.2844141 0.853242321,19.1467577 C-0.284414107,18.0091013 -0.284414107,16.1205916 0.853242321,15.0056883 L5.94994312,10.0910125 L0.853242321,4.81228669 Z" ] []
+            ]
+        ]
         |> Nri.Ui.Svg.V1.fromHtml
 
 
