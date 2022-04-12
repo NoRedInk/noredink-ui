@@ -88,7 +88,7 @@ main = do
 
       "log/elm-test-styleguide.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["styleguide/tests/**/*.elm"]
-        need (["package.json", "elm.json", "styleguide/elm.json"] ++ elmFiles)
+        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
         cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-review.txt" %> \out -> do
@@ -98,7 +98,7 @@ main = do
 
       "log/elm-review-styleguide.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["styleguide/**/*.elm", "styleguide-app/**/*.elm"]
-        need (["package.json", "elm.json", "styleguide/elm.json"] ++ elmFiles)
+        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
         cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-verify-examples.txt" %> \out -> do
