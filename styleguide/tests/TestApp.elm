@@ -8,7 +8,7 @@ import SimulatedEffect.Navigation
 import Url
 
 
-app =
+app route =
     createApplication
         { init = init
         , view = view
@@ -16,6 +16,7 @@ app =
         , onUrlRequest = OnUrlRequest
         , onUrlChange = OnUrlChange
         }
+        |> ProgramTest.withBaseUrl ("https://styleguide.test/" ++ Routes.toString route)
         |> ProgramTest.withSimulatedEffects simulateEffect
         |> ProgramTest.start ()
 
