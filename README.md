@@ -5,7 +5,7 @@ UI widgets we use.
 ## Getting Started
 1. Setup your [development environment](#developing-with-nix)
 2. Run some [tests](#tests)
-3. Check out [some](https://noredink-ui.netlify.app/) [examples](#examples)
+3. Check out [some examples](https://noredink-ui.netlify.app/)
 
 ## Developing with Nix
 
