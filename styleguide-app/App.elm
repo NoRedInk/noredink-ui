@@ -1,4 +1,4 @@
-module App exposing (Model, Msg(..), init, subscriptions, update, view)
+module App exposing (Effect(..), Model, Msg(..), init, perform, subscriptions, update, view)
 
 import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
@@ -25,17 +25,17 @@ import Task
 import Url exposing (Url)
 
 
-type alias Model =
+type alias Model key =
     { -- Global UI
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
-    , navigationKey : Key
+    , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     }
 
 
-init : () -> Url -> Key -> ( Model, Cmd Msg )
+init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
     ( { route = Routes.fromLocation url
       , previousRoute = Nothing
@@ -49,6 +49,7 @@ init () url key =
         [ loadPackage
         , loadApplicationDependencies
         ]
+        |> Command
     )
 
 
@@ -59,10 +60,10 @@ type Msg
     | ChangeRoute Route
     | SkipToMainContent
     | LoadedPackages (Result Http.Error (Dict String String))
-    | NoOp
+    | Focused (Result Browser.Dom.Error ())
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model key -> ( Model key, Effect )
 update action model =
     case action of
         UpdateModuleStates key exampleMsg ->
@@ -78,36 +79,35 @@ update action model =
                                             model.moduleStates
                                 }
                             )
-                        |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key))
+                        |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
 
                 Nothing ->
-                    ( model, Cmd.none )
+                    ( model, None )
 
         OnUrlRequest request ->
             case request of
                 Internal loc ->
-                    ( model, Browser.Navigation.pushUrl model.navigationKey (Url.toString loc) )
+                    ( model, GoToUrl loc )
 
                 External loc ->
-                    ( model, Browser.Navigation.load loc )
+                    ( model, Load loc )
 
         OnUrlChange route ->
             ( { model
                 | route = Routes.fromLocation route
                 , previousRoute = Just model.route
               }
-            , Cmd.none
+            , None
             )
 
         ChangeRoute route ->
             ( model
-            , Browser.Navigation.pushUrl model.navigationKey
-                (Routes.toString route)
+            , GoToRoute route
             )
 
         SkipToMainContent ->
             ( model
-            , Task.attempt (\_ -> NoOp) (Browser.Dom.focus "maincontent")
+            , FocusOn "maincontent"
             )
 
         LoadedPackages newPackagesResult ->
@@ -141,21 +141,52 @@ update action model =
                         (Result.map2 Dict.union model.elliePackageDependencies newPackagesResult)
                         removedPackages
               }
-            , Cmd.none
+            , None
             )
 
-        NoOp ->
-            ( model, Cmd.none )
+        Focused _ ->
+            ( model, None )
 
 
-subscriptions : Model -> Sub Msg
+type Effect
+    = GoToRoute Route
+    | GoToUrl Url
+    | Load String
+    | FocusOn String
+    | None
+    | Command (Cmd Msg)
+
+
+perform : Key -> Effect -> Cmd Msg
+perform navigationKey effect =
+    case effect of
+        GoToRoute route ->
+            Browser.Navigation.pushUrl navigationKey (Routes.toString route)
+
+        GoToUrl url ->
+            Browser.Navigation.pushUrl navigationKey (Url.toString url)
+
+        Load loc ->
+            Browser.Navigation.load loc
+
+        FocusOn id ->
+            Task.attempt Focused (Browser.Dom.focus id)
+
+        None ->
+            Cmd.none
+
+        Command cmd ->
+            cmd
+
+
+subscriptions : Model key -> Sub Msg
 subscriptions model =
     Dict.values model.moduleStates
         |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
         |> Sub.batch
 
 
-view : Model -> Document Msg
+view : Model key -> Document Msg
 view model =
     let
         findExampleByName name =
@@ -196,7 +227,7 @@ view model =
             }
 
 
-viewExample : Model -> Example a msg -> Html msg
+viewExample : Model key -> Example a msg -> Html msg
 viewExample model example =
     Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
         [ Example.view model.previousRoute
@@ -213,7 +244,7 @@ notFound =
         }
 
 
-viewAll : Model -> Html Msg
+viewAll : Model key -> Html Msg
 viewAll model =
     withSideNav model.route
         [ mainContentHeader "All"
@@ -221,7 +252,7 @@ viewAll model =
         ]
 
 
-viewCategory : Model -> Category -> Html Msg
+viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
     withSideNav model.route
         [ mainContentHeader (Category.forDisplay category)
