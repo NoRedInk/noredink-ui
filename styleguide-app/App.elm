@@ -1,4 +1,4 @@
-module Main exposing (main)
+module App exposing (Model, Msg(..), init, subscriptions, update, view)
 
 import Accessibility.Styled as Html exposing (Html)
 import Browser exposing (Document, UrlRequest(..))
@@ -23,18 +23,6 @@ import Routes exposing (Route)
 import Sort.Set as Set
 import Task
 import Url exposing (Url)
-
-
-main : Program () Model Msg
-main =
-    Browser.application
-        { init = init
-        , update = update
-        , subscriptions = subscriptions
-        , view = view
-        , onUrlRequest = OnUrlRequest
-        , onUrlChange = OnUrlChange
-        }
 
 
 type alias Model =

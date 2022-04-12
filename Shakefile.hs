@@ -26,7 +26,7 @@ main = do
         shakeLintIgnore =
           [ "node_modules/**/*",
             "elm-stuff/**/*",
-            "styleguide-app/elm-stuff/**/*"
+            "styleguide/elm-stuff/**/*"
           ]
       }
     $ do
@@ -38,7 +38,7 @@ main = do
         removeFilesAfter "log" ["//*"]
         removeFilesAfter "node_modules" ["//*"]
         removeFilesAfter "public" ["//*"]
-        removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
+        removeFilesAfter "styleguide" ["elm.js", "bundle.js", "elm-stuff"]
 
       phony "public" $ need ["log/public.txt"]
 
@@ -87,9 +87,9 @@ main = do
         cmd (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-test-styleguide.txt" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["styleguide-app/tests/**/*.elm"]
-        need (["package.json", "elm.json", "styleguide-app/elm.json"] ++ elmFiles)
-        cmd (Cwd "styleguide-app") (WithStdout True) (FileStdout out) "elm-test"
+        elmFiles <- getDirectoryFiles "." ["styleguide/tests/**/*.elm"]
+        need (["package.json", "elm.json", "styleguide/elm.json"] ++ elmFiles)
+        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-review.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
@@ -97,9 +97,9 @@ main = do
         cmd (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-review-styleguide.txt" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["styleguide-app/**/*.elm"]
-        need (["package.json", "elm.json", "styleguide-app/elm.json"] ++ elmFiles)
-        cmd (Cwd "styleguide-app") (WithStdout True) (FileStdout out) "elm-review"
+        elmFiles <- getDirectoryFiles "." ["styleguide/**/*.elm", "styleguide-app/**/*.elm"]
+        need (["package.json", "elm.json", "styleguide/elm.json"] ++ elmFiles)
+        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
@@ -107,7 +107,7 @@ main = do
         cmd (WithStdout True) (FileStdout out) "elm-verify-examples"
 
       "log/format.txt" %> \out -> do
-        let placesToLook = ["src", "tests", "styleguide-app"]
+        let placesToLook = ["src", "tests", "styleguide", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
@@ -147,29 +147,25 @@ main = do
 
       "public/bundle.js" %> \out -> do
         libJsFiles <- getDirectoryFiles "." ["lib/**/*.js"]
-        need (["package.json", "lib/index.js", "styleguide-app/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
-        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
+        need (["package.json", "lib/index.js", "styleguide/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
+        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide/manifest.js" "--outfile" out
 
       "public/elm.js" %> \out -> do
         elmSources <- getDirectoryFiles "." ["styleguide-app/**/*.elm", "src/**/*.elm"]
         need elmSources
-        cmd_ (Cwd "styleguide-app") "elm" "make" "Main.elm" "--output" (".." </> out)
+        cmd_ (Cwd "styleguide") "elm" "make" "Main.elm" "--output" (".." </> out)
 
       "public/package.json" %> \out -> do
         copyFileChanged "elm.json" out
 
       "public/application.json" %> \out -> do
-        copyFileChanged "styleguide-app/elm.json" out
+        copyFileChanged "styleguide/elm.json" out
 
       "public/**/*" %> \out ->
-        copyFileChanged (replaceDirectory1 out "styleguide-app") out
+        copyFileChanged (replaceDirectory1 out "styleguide") out
 
       "log/public.txt" %> \out -> do
-        styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
-        need
-          ( ["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"]
-              ++ map (("public" </> "assets") </>) styleguideAssets
-          )
+        need (["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"])
         writeFileChanged out "built styleguide app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)

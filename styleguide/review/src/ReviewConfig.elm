@@ -21,7 +21,9 @@ import Review.Rule exposing (Rule)
 config : List Rule
 config =
     List.map
-        (Review.Rule.ignoreErrorsForDirectories [ "../src" ])
+        (Review.Rule.ignoreErrorsForDirectories [ "../src" ]
+            >> Review.Rule.ignoreErrorsForFiles [ "../styleguide-app/App.elm" ]
+        )
         [ NoUnused.CustomTypeConstructors.rule []
 
         -- sometimes we just want to build a value without extracting it
