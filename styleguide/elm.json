@@ -45,7 +45,8 @@
     "test-dependencies": {
         "direct": {
             "avh4/elm-program-test": "3.6.3",
-            "elm-explorations/test": "1.2.2"
+            "elm-explorations/test": "1.2.2",
+            "tesk9/accessible-html": "5.0.0"
         },
         "indirect": {
             "avh4/elm-fifo": "1.0.4",
