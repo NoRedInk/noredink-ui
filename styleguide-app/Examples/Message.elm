@@ -157,6 +157,7 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
+                , mainType = "RootHtml.Html msg"
                 , toExampleCode =
                     \settings ->
                         let

@@ -69,6 +69,7 @@ example =
                 , version = version
                 , update = ChangeOptions
                 , settings = state.optionsControl
+                , mainType = "RootHtml.Html msg"
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"

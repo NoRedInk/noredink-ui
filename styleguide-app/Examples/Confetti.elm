@@ -57,6 +57,7 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.settings
+                , mainType = "RootHtml.Html msg"
                 , toExampleCode =
                     \settings -> [ { sectionName = "TODO", code = "TODO" } ]
                 }

@@ -13,6 +13,7 @@ module Examples.Accordion exposing
 import Accessibility.Styled as Html exposing (Html)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (..)
 import Css.Global
 import Debug.Control as Control exposing (Control)
@@ -93,13 +94,58 @@ defaultCaret =
 {-| -}
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
+    let
+        settings_ =
+            Control.currentValue model.settings
+    in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
         , update = UpdateControls
         , settings = model.settings
-        , toExampleCode = \settings -> []
+        , mainType = "RootHtml.Html String"
+        , toExampleCode =
+            \settings ->
+                [ { sectionName = "Basic example"
+                  , code =
+                        String.join "\n"
+                            [ "Accordion.view"
+                            , "    { entries ="
+                            , "        [ Accordion.AccordionEntry"
+                            , "            { caret = " ++ Tuple.first settings.icon
+                            , "            , content = \\_ -> text \"TODO\""
+                            , "            , entryClass = \"customizable-example\""
+                            , "            , headerContent = text \"TODO\""
+                            , "            , headerId = \"customizable-example-header\""
+                            , "            , headerLevel = Accordion.H4"
+                            , "            , isExpanded = True"
+                            , "            , toggle = Nothing"
+                            , "            }"
+                            , "            []"
+                            , "        ]"
+                            , "    , -- When using Accordion, be sure to wire up Focus management correctly!"
+                            , "      focus = identity"
+                            , "    }"
+                            ]
+                  }
+                ]
+        }
+    , Accordion.view
+        { entries =
+            [ AccordionEntry
+                { caret = Tuple.second settings_.icon
+                , content = \_ -> Html.text "TODO"
+                , entryClass = "customizable-example"
+                , headerContent = Html.text "TODO"
+                , headerId = "customizable-example-header"
+                , headerLevel = Accordion.H4
+                , isExpanded = True
+                , toggle = Nothing
+                }
+                []
+            ]
+        , focus = Focus
         }
     , Accordion.view
         { entries =
@@ -286,12 +332,25 @@ type alias State =
 
 
 type alias Settings =
-    {}
+    { icon : ( String, Bool -> Html Msg )
+    }
 
 
 initSettings : Control Settings
 initSettings =
     Control.record Settings
+        |> Control.field "icon" controlIcon
+
+
+controlIcon : Control ( String, Bool -> Html Msg )
+controlIcon =
+    Control.map
+        (\( code, icon ) ->
+            ( "\\_ -> Svg.toHtml " ++ code
+            , \_ -> Svg.toHtml icon
+            )
+        )
+        CommonControls.uiIcon
 
 
 type Msg
