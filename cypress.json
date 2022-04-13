@@ -1,3 +1,4 @@
 {
-  "baseUrl": "https://noredink-ui.netlify.app"
+  "baseUrl": "https://noredink-ui.netlify.app",
+  "ignoreTestFiles": "**/cypress-examples/**"
 }
