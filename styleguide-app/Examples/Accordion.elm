@@ -111,23 +111,34 @@ view ellieLinkConfig model =
                 [ { sectionName = "Partial example"
                   , code =
                         String.join "\n"
-                            [ "Accordion.view"
-                            , "    { entries ="
-                            , "        [ Accordion.AccordionEntry"
-                            , "            { caret = " ++ Tuple.first settings.icon
-                            , "            , content = \\() -> " ++ Tuple.first settings.content
-                            , "            , entryClass = \"customizable-example\""
-                            , "            , headerContent = " ++ Tuple.first settings.headerContent
-                            , "            , headerId = \"customizable-example-header\""
-                            , "            , headerLevel = Accordion.H4"
-                            , "            , isExpanded = True"
-                            , "            , toggle = Nothing"
-                            , "            }"
-                            , "            []"
-                            , "        ]"
-                            , "    , -- When using Accordion, be sure to wire up Focus management correctly!"
-                            , "      focus = identity"
-                            , "    }"
+                            [ "  div [] ["
+                            , "    Accordion.view"
+                            , "      { entries ="
+                            , "          [ Accordion.AccordionEntry"
+                            , "              { caret = " ++ Tuple.first settings.icon
+                            , "              , content = \\() -> " ++ Tuple.first settings.content
+                            , "              , entryClass = \"customizable-example\""
+                            , "              , headerContent = " ++ Tuple.first settings.headerContent
+                            , "              , headerId = \"customizable-example-header\""
+                            , "              , headerLevel = Accordion.H4"
+                            , "              , isExpanded = True"
+                            , "              , toggle = Nothing"
+                            , "              }"
+                            , "              []"
+                            , "          ]"
+                            , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
+                            , "        focus = identity"
+                            , "      }"
+                            , "    , Accordion.styleAccordion"
+                            , "      { entryStyles = []"
+                            , "      , entryExpandedStyles = []"
+                            , "      , entryClosedStyles = []"
+                            , "      , headerStyles = []"
+                            , "      , headerExpandedStyles = []"
+                            , "      , headerClosedStyles = []"
+                            , "      , contentStyles = []"
+                            , "      }"
+                            , "  ]"
                             ]
                   }
                 ]
