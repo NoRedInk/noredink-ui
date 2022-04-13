@@ -247,5 +247,5 @@ documentation.json
 /log
 
 # cypress
-/cypress/screenshots
-/cypress/videos
+/cypress/screenshots/
+/cypress/videos/
