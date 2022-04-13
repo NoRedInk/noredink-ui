@@ -107,14 +107,14 @@ view ellieLinkConfig model =
         , mainType = "RootHtml.Html String"
         , toExampleCode =
             \settings ->
-                [ { sectionName = "Basic example"
+                [ { sectionName = "Partial example"
                   , code =
                         String.join "\n"
                             [ "Accordion.view"
                             , "    { entries ="
                             , "        [ Accordion.AccordionEntry"
                             , "            { caret = " ++ Tuple.first settings.icon
-                            , "            , content = \\()" ++ Tuple.first settings.content
+                            , "            , content = \\() -> " ++ Tuple.first settings.content
                             , "            , entryClass = \"customizable-example\""
                             , "            , headerContent = " ++ Tuple.first settings.headerContent
                             , "            , headerId = \"customizable-example-header\""
@@ -140,16 +140,11 @@ view ellieLinkConfig model =
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
                 , headerLevel = Accordion.H4
-                , isExpanded = True
-                , toggle = Nothing
+                , isExpanded = Set.member 4 model.expanded
+                , toggle = Just (Toggle 4)
                 }
                 []
-            ]
-        , focus = Focus
-        }
-    , Accordion.view
-        { entries =
-            [ AccordionEntry
+            , AccordionEntry
                 { caret = defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
                 , entryClass = "accordion-example"
@@ -229,17 +224,6 @@ view ellieLinkConfig model =
                 , headerLevel = Accordion.H4
                 , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
-                }
-                []
-            , AccordionEntry
-                { caret = defaultCaret
-                , content = \_ -> Html.text "There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy."
-                , entryClass = "accordion-example"
-                , headerContent = Html.text "Berries"
-                , headerId = "accordion-entry__4"
-                , headerLevel = Accordion.H5
-                , isExpanded = Set.member 4 model.expanded
-                , toggle = Just (Toggle 4)
                 }
                 []
             , AccordionEntry
@@ -349,13 +333,13 @@ initSettings =
 controlIcon : Control ( String, Bool -> Html Msg )
 controlIcon =
     Control.choice
-        [ ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
-        , ( "DisclosureIndicator"
+        [ ( "DisclosureIndicator"
           , Control.value
                 ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]"
                 , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
                 )
           )
+        , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
         , ( "UiIcon"
           , Control.map
                 (\( code, icon ) ->
@@ -371,15 +355,20 @@ controlIcon =
 controlHeaderContent : Control ( String, Html Msg )
 controlHeaderContent =
     Control.map
-        (\v -> ( "text " ++ v, Html.text v ))
-        (Control.string "Header content")
+        (\v -> ( quoteF "text" v, Html.text v ))
+        (Control.string "Berries")
 
 
 controlContent : Control ( String, Html Msg )
 controlContent =
     Control.map
-        (\v -> ( "text " ++ v, Html.text v ))
-        (Control.stringTextarea "Disclosable content")
+        (\v -> ( quoteF "text" v, Html.text v ))
+        (Control.stringTextarea "🍓 There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy.")
+
+
+quoteF : String -> String -> String
+quoteF f v =
+    f ++ " \"" ++ v ++ "\""
 
 
 type Msg
