@@ -2,7 +2,7 @@ module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
-    , content
+    , content, exampleHtml
     , httpError
     , disabledListItem, premiumDisplay
     )
@@ -16,7 +16,7 @@ module CommonControls exposing
 
 ### Content
 
-@docs content
+@docs content, exampleHtml
 @docs httpError
 
 -}

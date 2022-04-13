@@ -348,13 +348,24 @@ initSettings =
 
 controlIcon : Control ( String, Bool -> Html Msg )
 controlIcon =
-    Control.map
-        (\( code, icon ) ->
-            ( "\\_ -> Svg.toHtml " ++ code
-            , \_ -> Svg.toHtml icon
-            )
-        )
-        CommonControls.uiIcon
+    Control.choice
+        [ ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
+        , ( "DisclosureIndicator"
+          , Control.value
+                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]"
+                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                )
+          )
+        , ( "UiIcon"
+          , Control.map
+                (\( code, icon ) ->
+                    ( "\\_ -> Svg.toHtml " ++ code
+                    , \_ -> Svg.toHtml icon
+                    )
+                )
+                CommonControls.uiIcon
+          )
+        ]
 
 
 controlHeaderContent : Control ( String, Html Msg )
