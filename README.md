@@ -36,9 +36,16 @@ Here are some things you might need to do:
 
 ## Tests
 
-Run tests with
+Run tests with:
 - `shake test`
 - `elm-test`
+- `npx cypress run` (headless)
+- `npx cypress open` (interactive)
+
+Run cypress against local build:
+- `./script/develop.sh`
+- `npx cypress run -C cypress.dev.json`
+- `npx cypress open -C cypress.dev.json`
 
 ### CI (Travis)
 
