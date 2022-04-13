@@ -245,3 +245,7 @@ documentation.json
 
 /_build
 /log
+
+# cypress
+/cypress/screenshots
+/cypress/videos
