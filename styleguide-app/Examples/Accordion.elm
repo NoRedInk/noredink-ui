@@ -114,9 +114,9 @@ view ellieLinkConfig model =
                             , "    { entries ="
                             , "        [ Accordion.AccordionEntry"
                             , "            { caret = " ++ Tuple.first settings.icon
-                            , "            , content = \\_ -> text \"TODO\""
+                            , "            , content = \\()" ++ Tuple.first settings.content
                             , "            , entryClass = \"customizable-example\""
-                            , "            , headerContent = text \"TODO\""
+                            , "            , headerContent = " ++ Tuple.first settings.headerContent
                             , "            , headerId = \"customizable-example-header\""
                             , "            , headerLevel = Accordion.H4"
                             , "            , isExpanded = True"
@@ -135,9 +135,9 @@ view ellieLinkConfig model =
         { entries =
             [ AccordionEntry
                 { caret = Tuple.second settings_.icon
-                , content = \_ -> Html.text "TODO"
+                , content = \() -> Tuple.second settings_.content
                 , entryClass = "customizable-example"
-                , headerContent = Html.text "TODO"
+                , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
                 , headerLevel = Accordion.H4
                 , isExpanded = True
@@ -333,6 +333,8 @@ type alias State =
 
 type alias Settings =
     { icon : ( String, Bool -> Html Msg )
+    , headerContent : ( String, Html Msg )
+    , content : ( String, Html Msg )
     }
 
 
@@ -340,6 +342,8 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "icon" controlIcon
+        |> Control.field "headerContent" controlHeaderContent
+        |> Control.field "content" controlContent
 
 
 controlIcon : Control ( String, Bool -> Html Msg )
@@ -351,6 +355,20 @@ controlIcon =
             )
         )
         CommonControls.uiIcon
+
+
+controlHeaderContent : Control ( String, Html Msg )
+controlHeaderContent =
+    Control.map
+        (\v -> ( "text " ++ v, Html.text v ))
+        (Control.string "Header content")
+
+
+controlContent : Control ( String, Html Msg )
+controlContent =
+    Control.map
+        (\v -> ( "text " ++ v, Html.text v ))
+        (Control.stringTextarea "Disclosable content")
 
 
 type Msg
