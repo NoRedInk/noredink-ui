@@ -58,6 +58,7 @@ example =
                 , update = UpdateSettings
                 , settings = state.settings
                 , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \settings ->
                         let

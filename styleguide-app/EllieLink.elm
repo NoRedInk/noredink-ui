@@ -17,6 +17,7 @@ type alias SectionExample =
     , fullModuleName : String
     , sectionName : String
     , mainType : String
+    , extraImports : List String
     , code : String
     }
 
@@ -79,6 +80,7 @@ generateElmExampleModule config example =
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import Nri.Ui.Svg.V1 as Svg"
     , "import " ++ example.fullModuleName ++ " as " ++ example.name
+    , String.join "\n" example.extraImports
     , ""
     , ""
     ]

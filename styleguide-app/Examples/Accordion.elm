@@ -105,6 +105,7 @@ view ellieLinkConfig model =
         , update = UpdateControls
         , settings = model.settings
         , mainType = "RootHtml.Html String"
+        , extraImports = [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator" ]
         , toExampleCode =
             \settings ->
                 [ { sectionName = "Partial example"

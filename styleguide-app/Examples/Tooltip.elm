@@ -287,6 +287,7 @@ viewCustomizableExample ellieLinkConfig controlSettings =
             , update = SetControl
             , settings = controlSettings
             , mainType = "RootHtml.Html msg"
+            , extraImports = []
             , toExampleCode =
                 \controls ->
                     [ { sectionName = "Example"

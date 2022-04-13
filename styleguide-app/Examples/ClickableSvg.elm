@@ -65,6 +65,7 @@ example =
                 , update = SetControls
                 , settings = state.settings
                 , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \{ label, icon, attributes } ->
                         let

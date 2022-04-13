@@ -149,6 +149,7 @@ view ellieLinkConfig state =
         , update = SetAttributes
         , settings = state.attributes
         , mainType = "RootHtml.Html msg"
+        , extraImports = []
         , toExampleCode =
             \attrs ->
                 [ { sectionName = "Balloon"

@@ -70,6 +70,7 @@ example =
                 , update = ChangeOptions
                 , settings = state.optionsControl
                 , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"
