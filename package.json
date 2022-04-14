@@ -33,6 +33,7 @@
     "request": "^2.88.0"
   },
   "dependencies": {
+    "@axe-core/puppeteer": "^4.4.2",
     "axe-core": "3.5.6",
     "expect": "^27.4.6",
     "http-server": "^14.1.0",

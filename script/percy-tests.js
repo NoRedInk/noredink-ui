@@ -8,6 +8,9 @@ const platform = require('os').platform();
 const puppeteerArgs = /^win/.test(platform) ? [] : ['--single-process'];
 const PORT = process.env.PORT_NUMBER || 8000;
 
+const { AxePuppeteer } = require('@axe-core/puppeteer');
+const assert = require('assert');
+
 describe('Visual tests', function () {
   this.timeout(30000);
   let page;
@@ -74,7 +77,22 @@ describe('Visual tests', function () {
     await page.goto(`http://localhost:${PORT}`);
     await page.$('#maincontent');
     await percySnapshot(page, this.test.fullTitle());
+
+    const results = await new AxePuppeteer(page).analyze();
+
     page.close();
+
+    const violations = results["violations"];
+    if (violations) {
+      violations.map(function(violation) {
+        console.log("\n\n", violation["id"], ":", violation["description"])
+        console.log(violation["help"])
+        console.log(violation["helpUrl"])
+
+        console.table(violation["nodes"], ["html"])
+      });
+      assert.fail(`Expected no axe violations but got ${violations.length} violations`)
+    }
   });
 
   it('Doodads', async function () {
