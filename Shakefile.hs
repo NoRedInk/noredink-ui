@@ -116,7 +116,9 @@ main = do
         percyToken <- getEnv "PERCY_TOKEN"
         case percyToken of
           Nothing -> do
-            writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
+            writeFileChanged out "PERCY_TOKEN not set, so skipping visual diff testing."
+            need ["log/npm-install.txt", "log/public.txt"]
+            cmd (WithStdout True) (FileStdout out) "script/local-test-run.sh"
           Just _ -> do
             need ["log/npm-install.txt", "log/public.txt"]
             cmd (WithStdout True) (FileStdout out) "script/percy-tests.sh"
