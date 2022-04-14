@@ -85,6 +85,7 @@ describe('UI tests', function () {
     'DisclosureIndicator': ['heading-order'],
     'Fonts': ['heading-order'],
     'Heading': ['heading-order'],
+    'Loading': ['color-contrast'],
     'Menu': ['heading-order', 'region'],
     'Modal': ['region'],
     'Message': ['heading-order', 'region'],
