@@ -32,7 +32,7 @@ describe('UI tests', function () {
     server.close();
   });
 
-  const handleAxeResults = function(results) {
+  const handleAxeResults = function(name, results) {
     const violations = results["violations"];
     if (violations.length > 0) {
       violations.map(function(violation) {
@@ -42,7 +42,7 @@ describe('UI tests', function () {
 
         console.table(violation["nodes"], ["html"])
       });
-      assert.fail(`Expected no axe violations but got ${violations.length} violations`)
+      assert.fail(`Expected no axe violations in ${name} but got ${violations.length} violations`)
     }
   }
 
@@ -53,7 +53,7 @@ describe('UI tests', function () {
     console.log(`Snapshot complete for ${name}`)
 
     const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
-    handleAxeResults(results);
+    handleAxeResults(name, results);
   }
 
   const iconProcessing = async(name, location) => {
@@ -69,7 +69,7 @@ describe('UI tests', function () {
     console.log(`Snapshots complete for ${name}`)
 
     const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
-    handleAxeResults(results);
+    handleAxeResults(name, results);
   }
 
   const skippedRules = {
@@ -110,7 +110,7 @@ describe('UI tests', function () {
       await percySnapshot(page, 'Full Info Modal')
 
       const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
-      handleAxeResults(results);
+      handleAxeResults(name, results);
 
       await page.click('[aria-label="Close modal"]')
       await page.select('select', 'warning')
@@ -141,7 +141,7 @@ describe('UI tests', function () {
 
     page.close();
 
-    handleAxeResults(results);
+    handleAxeResults("index view", results);
   });
 
   it('Doodads', async function () {
@@ -161,5 +161,7 @@ describe('UI tests', function () {
         }
       )
     }, Promise.resolve())
+
+    page.close();
   })
 });
