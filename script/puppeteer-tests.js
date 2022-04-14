@@ -72,7 +72,6 @@ describe('UI tests', function () {
   const skippedRules = {
     'Accordion': ['heading-order'],
     'RadioButton': ['duplicate-id'],
-    'Select': ['label'],
     'Switch': ['aria-allowed-attr'],
   }
 

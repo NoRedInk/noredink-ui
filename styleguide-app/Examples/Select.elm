@@ -85,7 +85,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { label = Control.string "Tortilla Selector"
+    { label = Control.record identity |> Control.field "label" (Control.string "Tortilla Selector")
     , attributes = initControls
     }
 
