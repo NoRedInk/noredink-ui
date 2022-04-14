@@ -17,6 +17,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
 
@@ -263,7 +264,7 @@ viewDetails detailsForEngineers =
             ]
             []
             [ Html.styled Html.summary
-                [ color (hex "8F8F8F") ]
+                [ color Colors.gray45 ]
                 []
                 [ Html.text "Details for NoRedInk engineers" ]
             , Html.styled Html.code
