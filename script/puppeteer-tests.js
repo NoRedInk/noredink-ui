@@ -49,7 +49,6 @@ describe('UI tests', function () {
     await page.goto(location)
     await page.waitFor(`#${name.replace(".", "-")}`)
     await percySnapshot(page, name)
-    console.log(`Snapshot complete for ${name}`)
 
     const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
     handleAxeResults(name, results);
@@ -65,7 +64,6 @@ describe('UI tests', function () {
     await page.waitForSelector(".checkbox-V5__Checked")
     await percySnapshot(page, `${name} - display icon names`)
 
-    console.log(`Snapshots complete for ${name}`)
 
     const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
     handleAxeResults(name, results);
@@ -142,10 +140,12 @@ describe('UI tests', function () {
 
     await links.reduce((acc, [name, location]) => {
       return acc.then(() => {
-          let handler = specialProcessing[name] || defaultProcessing
-          return handler(name, location)
+        if (process.env.ONLYDOODAD == "default" || process.env.ONLYDOODAD == name) {
+          console.log(`Testing ${name}`)
+          let handler = specialProcessing[name] || defaultProcessing;
+          return handler(name, location);
         }
-      )
+      })
     }, Promise.resolve())
 
     page.close();
