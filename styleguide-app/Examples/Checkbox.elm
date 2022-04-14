@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Set exposing (Set)
 
@@ -46,7 +47,7 @@ example =
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
             , viewDisabledCheckbox "styleguide-checkbox-disabled" state
             , viewMultilineCheckboxes state
-            , h2 [] [ text "Premium Checkboxes" ]
+            , Heading.h2 [] [ text "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
@@ -140,7 +141,7 @@ viewMultilineCheckboxes : State -> Html Msg
 viewMultilineCheckboxes state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
-        [ Html.h2 [] [ Html.text "Multiline Text in Checkboxes" ]
+        [ Heading.h2 [] [ Html.text "Multiline Text in Checkboxes" ]
         , let
             id =
                 "styleguide-checkbox-multiline"
