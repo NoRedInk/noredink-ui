@@ -12,7 +12,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled exposing (Html, fromUnstyled, text)
+import Html.Styled exposing (Html, text)
 import Nri.Ui.Balloon.V1 as Balloon
 
 
@@ -50,16 +50,25 @@ example =
 
 {-| -}
 type alias State =
-    { copy : Control String
-    , attributes : Control (List ( String, Balloon.Attribute ))
-    }
+    Control Settings
 
 
 init : State
 init =
-    { copy = Control.string "Hello, world!"
-    , attributes = controlAttributes
+    controlSettings
+
+
+type alias Settings =
+    { copy : String
+    , attributes : List ( String, Balloon.Attribute )
     }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "copy" (Control.string "Hello, world!")
+        |> Control.field "attributes" controlAttributes
 
 
 controlAttributes : Control (List ( String, Balloon.Attribute ))
@@ -117,20 +126,14 @@ paddingOptions =
 
 {-| -}
 type Msg
-    = SetCopy (Control String)
-    | SetAttributes (Control (List ( String, Balloon.Attribute )))
+    = SetAttributes (Control Settings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetCopy copy ->
-            ( { state | copy = copy }
-            , Cmd.none
-            )
-
         SetAttributes attributes ->
-            ( { state | attributes = attributes }
+            ( attributes
             , Cmd.none
             )
 
@@ -138,22 +141,21 @@ update msg state =
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
-        copy =
-            Control.currentValue state.copy
+        currentValue =
+            Control.currentValue state
     in
-    [ Control.view SetCopy state.copy |> fromUnstyled
-    , ControlView.view
+    [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
         , update = SetAttributes
-        , settings = state.attributes
+        , settings = state
         , toExampleCode =
-            \attrs ->
+            \{ copy, attributes } ->
                 [ { sectionName = "Balloon"
                   , code =
                         "Balloon.balloon\n    [ "
-                            ++ String.join "\n    , " (List.map Tuple.first attrs)
+                            ++ String.join "\n    , " (List.map Tuple.first attributes)
                             ++ "\n    ] "
                             ++ "\n    (text \""
                             ++ copy
@@ -162,6 +164,6 @@ view ellieLinkConfig state =
                 ]
         }
     , Balloon.balloon
-        (List.map Tuple.second (Control.currentValue state.attributes))
-        (text copy)
+        (List.map Tuple.second currentValue.attributes)
+        (text currentValue.copy)
     ]

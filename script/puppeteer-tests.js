@@ -71,7 +71,7 @@ describe('UI tests', function () {
 
   const skippedRules = {
     'Accordion': ['heading-order', 'region'],
-    'Balloon': ['color-contrast', 'label'],
+    'Balloon': ['color-contrast'],
     'Checkbox': ['region'],
     'Loading': ['color-contrast'],
     'Menu': ['region'],
