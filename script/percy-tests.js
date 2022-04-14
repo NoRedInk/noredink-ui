@@ -11,7 +11,7 @@ const PORT = process.env.PORT_NUMBER || 8000;
 const { AxePuppeteer } = require('@axe-core/puppeteer');
 const assert = require('assert');
 
-describe('Visual tests', function () {
+describe('UI tests', function () {
   this.timeout(30000);
   let page;
   let server;
@@ -78,12 +78,18 @@ describe('Visual tests', function () {
     await page.$('#maincontent');
     await percySnapshot(page, this.test.fullTitle());
 
-    const results = await new AxePuppeteer(page).analyze();
+    const skippedRules = [
+      "aria-hidden-focus",
+      "color-contrast",
+      "duplicate-id-aria",
+      "duplicate-id",
+    ]
+    const results = await new AxePuppeteer(page).disableRules(skippedRules).analyze();
 
     page.close();
 
     const violations = results["violations"];
-    if (violations) {
+    if (violations.length > 0) {
       violations.map(function(violation) {
         console.log("\n\n", violation["id"], ":", violation["description"])
         console.log(violation["help"])
