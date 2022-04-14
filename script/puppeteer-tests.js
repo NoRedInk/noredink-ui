@@ -12,7 +12,6 @@ const { AxePuppeteer } = require('@axe-core/puppeteer');
 const assert = require('assert');
 
 describe('UI tests', function () {
-  this.timeout(30000);
   let page;
   let server;
   let browser;
