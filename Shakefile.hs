@@ -51,8 +51,7 @@ main = do
             "log/elm-test-styleguide.txt",
             "log/elm-review.txt",
             "log/elm-review-styleguide.txt",
-            "log/axe-report.txt",
-            "log/percy-tests.txt",
+            "log/puppeteer-tests.txt",
             "log/forbidden-imports-report.txt",
             "log/check-exposed.txt",
             "log/format.txt",
@@ -112,22 +111,16 @@ main = do
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
 
-      "log/percy-tests.txt" %> \out -> do
+      "log/puppeteer-tests.txt" %> \out -> do
         percyToken <- getEnv "PERCY_TOKEN"
         case percyToken of
           Nothing -> do
-            writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
+            writeFileChanged out "PERCY_TOKEN not set, so skipping visual diff testing."
+            need ["log/npm-install.txt", "log/public.txt"]
+            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-no-percy.sh"
           Just _ -> do
             need ["log/npm-install.txt", "log/public.txt"]
-            cmd (WithStdout True) (FileStdout out) "script/percy-tests.sh"
-
-      "log/axe-report.json" %> \out -> do
-        need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js", "log/public.txt"]
-        cmd (WithStdout True) (FileStdout out) "script/run-axe.sh"
-
-      "log/axe-report.txt" %> \out -> do
-        need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
-        cmd (WithStdout True) (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
+            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-percy.sh"
 
       "log/forbidden-imports-report.txt" %> \out -> do
         need ["forbidden-imports.toml"]
