@@ -86,6 +86,7 @@ describe('UI tests', function () {
     'Fonts': ['heading-order'],
     'Heading': ['heading-order'],
     'Menu': ['heading-order', 'region'],
+    'Modal': ['region'],
     'Message': ['heading-order', 'region'],
     'Page': ['color-contrast', 'heading-order', 'select-name'],
     'RadioButton': ['duplicate-id', 'region'],
@@ -107,6 +108,10 @@ describe('UI tests', function () {
       await page.click('#launch-modal')
       await page.waitFor('[role="dialog"]')
       await percySnapshot(page, 'Full Info Modal')
+
+      const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+      handleAxeResults(results);
+
       await page.click('[aria-label="Close modal"]')
       await page.select('select', 'warning')
       await page.click('#launch-modal')
