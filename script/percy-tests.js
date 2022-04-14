@@ -67,6 +67,9 @@ describe('UI tests', function () {
     await percySnapshot(page, `${name} - display icon names`)
 
     console.log(`Snapshots complete for ${name}`)
+
+    const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+    handleAxeResults(results);
   }
 
   const skippedRules = {
