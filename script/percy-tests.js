@@ -32,11 +32,28 @@ describe('UI tests', function () {
     server.close();
   });
 
+  const handleAxeResults = function(results) {
+    const violations = results["violations"];
+    if (violations.length > 0) {
+      violations.map(function(violation) {
+        console.log("\n\n", violation["id"], ":", violation["description"])
+        console.log(violation["help"])
+        console.log(violation["helpUrl"])
+
+        console.table(violation["nodes"], ["html"])
+      });
+      assert.fail(`Expected no axe violations but got ${violations.length} violations`)
+    }
+  }
+
   const defaultProcessing = async (name, location) => {
     await page.goto(location)
     await page.waitFor(`#${name.replace(".", "-")}`)
     await percySnapshot(page, name)
     console.log(`Snapshot complete for ${name}`)
+
+    const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+    handleAxeResults(results);
   }
 
   const iconProcessing = async(name, location) => {
@@ -50,6 +67,34 @@ describe('UI tests', function () {
     await percySnapshot(page, `${name} - display icon names`)
 
     console.log(`Snapshots complete for ${name}`)
+  }
+
+  const skippedRules = {
+    'Accordion': ['heading-order', 'region'],
+    'Balloon': ['color-contrast', 'heading-order', 'label'],
+    'Button': ['heading-order'],
+    'Checkbox': ['heading-order', 'region'],
+    'ClickableSvg': ['heading-order'],
+    'ClickableText': ['heading-order'],
+    'Colors': ['heading-order'],
+    'Confetti': ['heading-order'],
+    'Container': ['heading-order'],
+    'DisclosureIndicator': ['heading-order'],
+    'Fonts': ['heading-order'],
+    'Heading': ['heading-order'],
+    'Menu': ['heading-order', 'region'],
+    'Message': ['heading-order', 'region'],
+    'Page': ['color-contrast', 'heading-order', 'select-name'],
+    'RadioButton': ['duplicate-id', 'region'],
+    'SegmentedControl': ['heading-order', 'region'],
+    'Select': ['label'],
+    'SideNav': ['heading-order'],
+    'SortableTable': ['heading-order'],
+    'Switch': ['aria-allowed-attr', 'heading-order'],
+    'Table': ['heading-order'],
+    'Tabs': ['region'],
+    'Text': ['heading-order'],
+    'Tooltip': ['heading-order'],
   }
 
   const specialProcessing = {
@@ -78,27 +123,17 @@ describe('UI tests', function () {
     await page.$('#maincontent');
     await percySnapshot(page, this.test.fullTitle());
 
-    const skippedRules = [
-      "aria-hidden-focus",
-      "color-contrast",
-      "duplicate-id-aria",
-      "duplicate-id",
-    ]
-    const results = await new AxePuppeteer(page).disableRules(skippedRules).analyze();
+    const results = await new AxePuppeteer(page).
+      disableRules([
+        "aria-hidden-focus",
+        "color-contrast",
+        "duplicate-id-aria",
+        "duplicate-id",
+      ]).analyze();
 
     page.close();
 
-    const violations = results["violations"];
-    if (violations.length > 0) {
-      violations.map(function(violation) {
-        console.log("\n\n", violation["id"], ":", violation["description"])
-        console.log(violation["help"])
-        console.log(violation["helpUrl"])
-
-        console.table(violation["nodes"], ["html"])
-      });
-      assert.fail(`Expected no axe violations but got ${violations.length} violations`)
-    }
+    handleAxeResults(results);
   });
 
   it('Doodads', async function () {
