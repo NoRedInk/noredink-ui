@@ -61,6 +61,7 @@ viewExampleCode ellieLink component values =
                         [ summary []
                             [ Heading.h3
                                 [ Heading.css [ Css.display Css.inline ]
+                                , Heading.style Heading.Small
                                 ]
                                 [ text example.sectionName ]
                             ]
@@ -87,7 +88,7 @@ viewExampleCode ellieLink component values =
 viewSection : String -> List (Html msg) -> Html msg
 viewSection name children =
     section [ css [ flex (int 1) ] ]
-        (Heading.h2 [] [ text name ]
+        (Heading.h2 [ Heading.style Heading.Subhead ] [ text name ]
             :: children
         )
 
