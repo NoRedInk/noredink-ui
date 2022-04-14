@@ -46,7 +46,7 @@ example =
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
             , viewDisabledCheckbox "styleguide-checkbox-disabled" state
             , viewMultilineCheckboxes state
-            , h3 [] [ text "Premium Checkboxes" ]
+            , h2 [] [ text "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
@@ -140,7 +140,7 @@ viewMultilineCheckboxes : State -> Html Msg
 viewMultilineCheckboxes state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
-        [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
+        [ Html.h2 [] [ Html.text "Multiline Text in Checkboxes" ]
         , let
             id =
                 "styleguide-checkbox-multiline"

@@ -114,7 +114,7 @@ update msg model =
 
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
-    [ Heading.h3 [] [ Html.text "Using the Tooltip module" ]
+    [ Heading.h2 [] [ Html.text "Using the Tooltip module" ]
     , Text.mediumBody
         [ Text.html
             [ Html.text "Label the Tooltip as either being the "

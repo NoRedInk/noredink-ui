@@ -106,15 +106,15 @@ example =
                     , { firstName = "First5", lastName = "Last5", submitted = 8 }
                     ]
             in
-            [ Heading.h3 [] [ Html.text "With header" ]
+            [ Heading.h2 [] [ Html.text "With header" ]
             , Table.view columns data
-            , Heading.h3 [] [ Html.text "Without header" ]
+            , Heading.h2 [] [ Html.text "Without header" ]
             , Table.viewWithoutHeader columns data
-            , Heading.h3 [] [ Html.text "With additional cell styles" ]
+            , Heading.h2 [] [ Html.text "With additional cell styles" ]
             , Table.view columns data
-            , Heading.h3 [] [ Html.text "Loading" ]
+            , Heading.h2 [] [ Html.text "Loading" ]
             , Table.viewLoading columns
-            , Heading.h3 [] [ Html.text "Loading without header" ]
+            , Heading.h2 [] [ Html.text "Loading without header" ]
             , Table.viewLoadingWithoutHeader columns
             ]
     }

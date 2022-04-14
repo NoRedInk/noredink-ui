@@ -45,7 +45,7 @@ example =
         ]
     , view =
         \ellieLinkConfig interactiveIsOn ->
-            [ Heading.h3 [] [ Html.text "Interactive" ]
+            [ Heading.h2 [] [ Html.text "Interactive" ]
             , Switch.view
                 [ Switch.onSwitch Switch
                 , Switch.id "switch-interactive"
@@ -58,14 +58,14 @@ example =
                     )
                 ]
                 interactiveIsOn
-            , Heading.h3 [] [ Html.text "Disabled (On)" ]
+            , Heading.h2 [] [ Html.text "Disabled (On)" ]
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-on"
                 , Switch.label (Html.text "Permanently on")
                 ]
                 True
-            , Heading.h3 [] [ Html.text "Disabled (Off)" ]
+            , Heading.h2 [] [ Html.text "Disabled (Off)" ]
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-off"
