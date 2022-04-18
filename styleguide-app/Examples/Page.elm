@@ -54,7 +54,14 @@ example =
     , version = 3
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
+    , state =
+        { httpError =
+            Control.record identity
+                |> Control.field "httpError" CommonControls.httpError
+        , recoveryText =
+            Control.record identity
+                |> Control.field "recoveryText" initRecoveryText
+        }
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

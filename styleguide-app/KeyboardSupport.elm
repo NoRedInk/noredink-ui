@@ -39,6 +39,8 @@ view keyboardSupport =
                     ]
                     (List.map viewKeyboardActions keyboardSupport)
                 ]
+                |> List.singleton
+                |> aside []
 
 
 viewKeyboardActions : KeyboardSupport -> Html msg

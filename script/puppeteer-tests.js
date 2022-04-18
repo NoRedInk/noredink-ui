@@ -70,19 +70,9 @@ describe('UI tests', function () {
   }
 
   const skippedRules = {
-    'Accordion': ['heading-order', 'region'],
-    'Balloon': ['color-contrast', 'label'],
-    'Checkbox': ['region'],
-    'Loading': ['color-contrast'],
-    'Menu': ['region'],
-    'Modal': ['region'],
-    'Message': ['region'],
-    'Page': ['color-contrast', 'select-name'],
-    'RadioButton': ['duplicate-id', 'region'],
-    'SegmentedControl': ['region'],
-    'Select': ['label'],
+    'Accordion': ['heading-order'],
+    'RadioButton': ['duplicate-id'],
     'Switch': ['aria-allowed-attr'],
-    'Tabs': ['region'],
   }
 
   const specialProcessing = {
