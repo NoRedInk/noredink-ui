@@ -58,6 +58,8 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \settings ->
                         let

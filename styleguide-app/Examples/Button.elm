@@ -201,6 +201,8 @@ viewButtonExamples ellieLinkConfig state =
         , version = version
         , update = SetDebugControlsState
         , settings = state.debugControlsState
+        , mainType = "RootHtml.Html msg"
+        , extraImports = []
         , toExampleCode =
             \{ label, attributes } ->
                 let

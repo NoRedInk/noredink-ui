@@ -16,6 +16,8 @@ type alias SectionExample =
     { name : String
     , fullModuleName : String
     , sectionName : String
+    , mainType : String
+    , extraImports : List String
     , code : String
     }
 
@@ -76,12 +78,14 @@ generateElmExampleModule config example =
     , "import Html.Styled exposing (..)"
     , "import Nri.Ui.Colors.V1 as Colors"
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
+    , "import Nri.Ui.Svg.V1 as Svg"
     , "import " ++ example.fullModuleName ++ " as " ++ example.name
+    , String.join "\n" example.extraImports
     , ""
     , ""
     ]
         ++ maybeErrorMessages
-        ++ [ "main : RootHtml.Html msg"
+        ++ [ "main : " ++ example.mainType
            , "main ="
            , "    " ++ example.code
            , "    |> toUnstyled"

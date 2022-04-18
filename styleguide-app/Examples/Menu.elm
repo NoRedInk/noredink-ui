@@ -86,6 +86,8 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
+        , mainType = "RootHtml.Html msg"
+        , extraImports = []
         , toExampleCode =
             \settings ->
                 let
