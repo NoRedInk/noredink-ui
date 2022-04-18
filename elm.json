@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "15.9.0",
+    "version": "15.10.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",
@@ -54,6 +54,7 @@
         "Nri.Ui.Shadows.V1",
         "Nri.Ui.SideNav.V1",
         "Nri.Ui.SideNav.V2",
+        "Nri.Ui.SideNav.V3",
         "Nri.Ui.Slide.V1",
         "Nri.Ui.SlideModal.V2",
         "Nri.Ui.SortableTable.V2",

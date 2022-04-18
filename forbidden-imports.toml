@@ -1,7 +1,7 @@
 # WARNING: this file is managed with `elm-forbid-imports`. Manual edits will
 # be overwritten!
 
-roots = ['styleguide-app']
+roots = ['styleguide']
 [forbidden.Accessibility]
 hint = 'Use Accessibility.Styled'
 
@@ -109,7 +109,10 @@ hint = 'upgrade to V8'
 hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.SideNav.V1"]
-hint = 'upgrade to V2'
+hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.SideNav.V2"]
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'
@@ -144,4 +147,4 @@ hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Tooltip.V1"]
 hint = 'upgrade to V2'
-usages = ['styleguide-app/../src/Nri/Ui/Menu/V1.elm']
+usages = ['styleguide/../src/Nri/Ui/Menu/V1.elm']

@@ -8,8 +8,10 @@ const platform = require('os').platform();
 const puppeteerArgs = /^win/.test(platform) ? [] : ['--single-process'];
 const PORT = process.env.PORT_NUMBER || 8000;
 
-describe('Visual tests', function () {
-  this.timeout(30000);
+const { AxePuppeteer } = require('@axe-core/puppeteer');
+const assert = require('assert');
+
+describe('UI tests', function () {
   let page;
   let server;
   let browser;
@@ -29,11 +31,27 @@ describe('Visual tests', function () {
     server.close();
   });
 
+  const handleAxeResults = function(name, results) {
+    const violations = results["violations"];
+    if (violations.length > 0) {
+      violations.map(function(violation) {
+        console.log("\n\n", violation["id"], ":", violation["description"])
+        console.log(violation["help"])
+        console.log(violation["helpUrl"])
+
+        console.table(violation["nodes"], ["html"])
+      });
+      assert.fail(`Expected no axe violations in ${name} but got ${violations.length} violations`)
+    }
+  }
+
   const defaultProcessing = async (name, location) => {
     await page.goto(location)
     await page.waitFor(`#${name.replace(".", "-")}`)
     await percySnapshot(page, name)
-    console.log(`Snapshot complete for ${name}`)
+
+    const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+    handleAxeResults(name, results);
   }
 
   const iconProcessing = async(name, location) => {
@@ -46,7 +64,15 @@ describe('Visual tests', function () {
     await page.waitForSelector(".checkbox-V5__Checked")
     await percySnapshot(page, `${name} - display icon names`)
 
-    console.log(`Snapshots complete for ${name}`)
+
+    const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+    handleAxeResults(name, results);
+  }
+
+  const skippedRules = {
+    'Accordion': ['heading-order'],
+    'RadioButton': ['duplicate-id'],
+    'Switch': ['aria-allowed-attr'],
   }
 
   const specialProcessing = {
@@ -56,6 +82,10 @@ describe('Visual tests', function () {
       await page.click('#launch-modal')
       await page.waitFor('[role="dialog"]')
       await percySnapshot(page, 'Full Info Modal')
+
+      const results = await new AxePuppeteer(page).disableRules(skippedRules[name] || []).analyze();
+      handleAxeResults(name, results);
+
       await page.click('[aria-label="Close modal"]')
       await page.select('select', 'warning')
       await page.click('#launch-modal')
@@ -74,7 +104,18 @@ describe('Visual tests', function () {
     await page.goto(`http://localhost:${PORT}`);
     await page.$('#maincontent');
     await percySnapshot(page, this.test.fullTitle());
+
+    const results = await new AxePuppeteer(page).
+      disableRules([
+        "aria-hidden-focus",
+        "color-contrast",
+        "duplicate-id-aria",
+        "duplicate-id",
+      ]).analyze();
+
     page.close();
+
+    handleAxeResults("index view", results);
   });
 
   it('Doodads', async function () {
@@ -89,10 +130,14 @@ describe('Visual tests', function () {
 
     await links.reduce((acc, [name, location]) => {
       return acc.then(() => {
-          let handler = specialProcessing[name] || defaultProcessing
-          return handler(name, location)
+        if (process.env.ONLYDOODAD == "default" || process.env.ONLYDOODAD == name) {
+          console.log(`Testing ${name}`)
+          let handler = specialProcessing[name] || defaultProcessing;
+          return handler(name, location);
         }
-      )
+      })
     }, Promise.resolve())
+
+    page.close();
   })
 });

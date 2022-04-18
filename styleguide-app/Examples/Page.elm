@@ -54,7 +54,14 @@ example =
     , version = 3
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
+    , state =
+        { httpError =
+            Control.record identity
+                |> Control.field "httpError" CommonControls.httpError
+        , recoveryText =
+            Control.record identity
+                |> Control.field "recoveryText" initRecoveryText
+        }
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -117,7 +124,7 @@ viewExample viewName view recoveryText extras =
             , Css.marginBottom (Css.px 20)
             ]
         ]
-        [ Heading.h3 [] [ Html.text viewName ]
+        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text viewName ]
         , Html.div [] extras
         , Html.code []
             [ Html.text <|

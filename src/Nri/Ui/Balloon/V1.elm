@@ -326,8 +326,8 @@ balloonTheme theme =
 
         Green ->
             batch
-                [ backgroundColor Colors.greenDark
-                , border3 (px 1) solid Colors.greenDark
+                [ backgroundColor Colors.greenDarkest
+                , border3 (px 1) solid Colors.greenDarkest
                 , Fonts.baseFont
                 , fontSize (px 15)
                 , color Colors.white
@@ -439,8 +439,8 @@ arrowTheme theme =
 
         Green ->
             batch
-                [ backgroundColor Colors.greenDark
-                , border3 (px 1) solid Colors.greenDark
+                [ backgroundColor Colors.greenDarkest
+                , border3 (px 1) solid Colors.greenDarkest
                 , Fonts.baseFont
                 , fontSize (px 15)
                 , color Colors.white
