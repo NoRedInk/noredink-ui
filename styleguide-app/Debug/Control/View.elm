@@ -1,4 +1,4 @@
-module Debug.Control.View exposing (codeFromList, codeFromListWithIndentLevel, view)
+module Debug.Control.View exposing (codeFromList, codeFromListWithHardcoded, codeFromListWithIndentLevel, view)
 
 import Css exposing (..)
 import Css.Media exposing (withMedia)
@@ -95,6 +95,13 @@ viewSection name children =
         (Heading.h2 [ Heading.style Heading.Subhead ] [ text name ]
             :: children
         )
+
+
+codeFromListWithHardcoded : List String -> List ( String, a ) -> String
+codeFromListWithHardcoded hardcodes elements =
+    List.map (\v -> ( v, () )) hardcodes
+        ++ List.map (Tuple.mapSecond (always ())) elements
+        |> codeFromList
 
 
 codeFromList : List ( String, a ) -> String

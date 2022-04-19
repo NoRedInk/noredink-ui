@@ -8,6 +8,9 @@ module Examples.Switch exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
 import KeyboardSupport exposing (Key(..))
@@ -15,22 +18,22 @@ import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V2 as Switch
 
 
-{-| -}
-type alias State =
-    Bool
+moduleName : String
+moduleName =
+    "Switch"
 
 
-{-| -}
-type Msg
-    = Switch Bool
+version : Int
+version =
+    2
 
 
 example : Example State Msg
 example =
-    { name = "Switch"
-    , version = 2
-    , state = True
-    , update = \(Switch new) _ -> ( new, Cmd.none )
+    { name = moduleName
+    , version = version
+    , state = init
+    , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
         [ Switch.view { label = "Toggle Off", id = "preview-switch-a" }
@@ -43,31 +46,42 @@ example =
             ]
         ]
     , view =
-        \ellieLinkConfig interactiveIsOn ->
-            [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Interactive" ]
-            , Switch.view
-                { id = "switch-interactive"
-                , label = "Show pandas in results"
+        \ellieLinkConfig state ->
+            let
+                currentValue =
+                    Control.currentValue state.settings
+            in
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state.settings
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \{ label, attributes } ->
+                        [ { sectionName = "Example"
+                          , code =
+                                moduleName
+                                    ++ ".view"
+                                    ++ " \""
+                                    ++ label
+                                    ++ "\"\t"
+                                    ++ ControlView.codeFromListWithHardcoded
+                                        [ "Switch.selected "
+                                            ++ Debug.toString state.selected
+                                            ++ "\n-- ,  Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
+                                        ]
+                                        attributes
+                          }
+                        ]
                 }
-                [ Switch.onSwitch Switch
-                , Switch.selected interactiveIsOn
-                ]
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (On)" ]
-            , Switch.view
-                { id = "switch-disabled-on"
-                , label = "Permanently on"
-                }
-                [ Switch.disabled
-                , Switch.selected True
-                ]
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (Off)" ]
-            , Switch.view
-                { id = "switch-disabled-off"
-                , label = "Permanently off"
-                }
-                [ Switch.disabled
-                , Switch.selected False
-                ]
+            , Switch.view { label = currentValue.label, id = "view-switch-example" }
+                (Switch.selected state.selected
+                    :: Switch.onSwitch Switch
+                    :: List.map Tuple.second currentValue.attributes
+                )
             ]
     , categories = [ Category.Inputs ]
     , keyboardSupport =
@@ -76,3 +90,55 @@ example =
           }
         ]
     }
+
+
+{-| -}
+type alias State =
+    { selected : Bool
+    , settings : Control Settings
+    }
+
+
+init : State
+init =
+    { selected = True
+    , settings = controlSettings
+    }
+
+
+type alias Settings =
+    { label : String
+    , attributes : List ( String, Switch.Attribute Msg )
+    }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "label" (Control.string "Show pandas in results")
+        |> Control.field "attributes" initAttributes
+
+
+initAttributes : Control (List ( String, Switch.Attribute msg ))
+initAttributes =
+    ControlExtra.list
+
+
+{-| -}
+type Msg
+    = Switch Bool
+    | UpdateSettings (Control Settings)
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        Switch bool ->
+            ( { state | selected = bool }
+            , Cmd.none
+            )
+
+        UpdateSettings settings ->
+            ( { state | settings = settings }
+            , Cmd.none
+            )
