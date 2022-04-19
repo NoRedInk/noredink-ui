@@ -1,8 +1,8 @@
 module Nri.Ui.Switch.V2 exposing
-    ( view, label
+    ( view
     , Attribute
     , selected
-    , containerCss, labelCss, custom, nriDescription, id, testId
+    , containerCss, labelCss, custom, nriDescription, testId
     , onSwitch, disabled, enabled
     )
 
@@ -16,15 +16,16 @@ module Nri.Ui.Switch.V2 exposing
     - extends API to be more consistent with other form/control components
     - Use Colors values instead of hardcoded hex strings
     - Move the status (selected or not selected) to the list api
+    - REQUIRE label and id always
 
-@docs view, label
+@docs view
 
 
 ### Attributes
 
 @docs Attribute
 @docs selected
-@docs containerCss, labelCss, custom, nriDescription, id, testId
+@docs containerCss, labelCss, custom, nriDescription, testId
 @docs onSwitch, disabled, enabled
 
 -}
@@ -79,23 +80,6 @@ enabled =
     Attribute <| \config -> { config | isDisabled = False }
 
 
-{-| Set the HTML ID of the switch toggle. If you have only one on the page,
-you don't need to set this, but you should definitely set it if you have
-more than one.
--}
-id : String -> Attribute msg
-id id_ =
-    Attribute <| \config -> { config | id = id_ }
-
-
-{-| Add labeling text to the switch. This text should be descriptive and
-able to be displayed inline.
--}
-label : String -> Attribute msg
-label label_ =
-    Attribute <| \config -> { config | label = label_ }
-
-
 {-| Pass custom attributes through to be attached to the underlying input.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -139,8 +123,6 @@ labelCss styles =
 
 type alias Config msg =
     { onSwitch : Maybe (Bool -> msg)
-    , id : String
-    , label : String
     , containerCss : List Style
     , labelCss : List Style
     , isDisabled : Bool
@@ -152,8 +134,6 @@ type alias Config msg =
 defaultConfig : Config msg
 defaultConfig =
     { onSwitch = Nothing
-    , id = "nri-ui-switch-with-default-id"
-    , label = ""
     , containerCss = []
     , labelCss = []
     , isDisabled = False
@@ -165,14 +145,14 @@ defaultConfig =
 {-| Render a switch. The boolean here indicates whether the switch is on
 or not.
 -}
-view : List (Attribute msg) -> Html msg
-view attrs =
+view : { label : String, id : String } -> List (Attribute msg) -> Html msg
+view { label, id } attrs =
     let
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
     in
     Html.label
-        [ Attributes.id (config.id ++ "-container")
+        [ Attributes.id (id ++ "-container")
         , Attributes.css
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
@@ -194,10 +174,10 @@ view attrs =
                 )
             , Css.batch config.containerCss
             ]
-        , Attributes.for config.id
+        , Attributes.for id
         ]
         [ viewCheckbox
-            { id = config.id
+            { id = id
             , onCheck = config.onSwitch
             , isDisabled = config.isDisabled
             , selected = config.isSelected
@@ -205,7 +185,7 @@ view attrs =
             }
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
-                { id = config.id
+                { id = id
                 , isSelected = config.isSelected
                 , enabled = config.onSwitch /= Nothing
                 }
@@ -219,7 +199,7 @@ view attrs =
                 , Css.batch config.labelCss
                 ]
             ]
-            [ Html.text config.label ]
+            [ Html.text label ]
         ]
 
 

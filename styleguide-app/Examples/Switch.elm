@@ -32,14 +32,12 @@ example =
     , update = \(Switch new) _ -> ( new, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Switch.view
-            [ Switch.label "Toggle Off"
-            , Switch.selected False
+        [ Switch.view { label = "Toggle Off", id = "preview-switch-a" }
+            [ Switch.selected False
             , Switch.custom [ Key.tabbable False ]
             ]
-        , Switch.view
-            [ Switch.label "Toggle On"
-            , Switch.selected True
+        , Switch.view { label = "Toggle On", id = "preview-switch-b" }
+            [ Switch.selected True
             , Switch.custom [ Key.tabbable False ]
             ]
         ]
@@ -47,29 +45,26 @@ example =
         \ellieLinkConfig interactiveIsOn ->
             [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Interactive" ]
             , Switch.view
+                { id = "switch-interactive"
+                , label = "Show pandas in results"
+                }
                 [ Switch.onSwitch Switch
-                , Switch.id "switch-interactive"
-                , Switch.label
-                    (if interactiveIsOn then
-                        "On"
-
-                     else
-                        "Off"
-                    )
                 , Switch.selected interactiveIsOn
                 ]
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (On)" ]
             , Switch.view
+                { id = "switch-disabled-on"
+                , label = "Permanently on"
+                }
                 [ Switch.disabled
-                , Switch.id "switch-disabled-on"
-                , Switch.label "Permanently on"
                 , Switch.selected True
                 ]
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (Off)" ]
             , Switch.view
+                { id = "switch-disabled-off"
+                , label = "Permanently off"
+                }
                 [ Switch.disabled
-                , Switch.id "switch-disabled-off"
-                , Switch.label "Permanently off"
                 , Switch.selected False
                 ]
             ]
