@@ -1,6 +1,11 @@
-module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label, custom)
+module Nri.Ui.Switch.V2 exposing (view, Attribute, onSwitch, disabled, id, label, custom)
 
 {-|
+
+
+# Changes from V1:
+
+    - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
 
 @docs view, Attribute, onSwitch, disabled, id, label, custom
 
