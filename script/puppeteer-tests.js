@@ -71,7 +71,6 @@ describe('UI tests', function () {
 
   const skippedRules = {
     'RadioButton': ['duplicate-id'],
-    'Switch': ['aria-allowed-attr'],
   }
 
   const specialProcessing = {
