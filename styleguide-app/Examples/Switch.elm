@@ -13,9 +13,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V2 as Switch
 
 
