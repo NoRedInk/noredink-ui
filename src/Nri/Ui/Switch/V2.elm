@@ -17,6 +17,7 @@ module Nri.Ui.Switch.V2 exposing
     - Use Colors values instead of hardcoded hex strings
     - Move the status (selected or not selected) to the list api
     - REQUIRE label and id always
+    - Move custom attributes to the container
 
 @docs view
 
@@ -152,8 +153,8 @@ view { label, id } attrs =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
     in
     Html.label
-        [ Attributes.id (id ++ "-container")
-        , Attributes.css
+        ([ Attributes.id (id ++ "-container")
+         , Attributes.css
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
             , Css.position Css.relative
@@ -174,14 +175,15 @@ view { label, id } attrs =
                 )
             , Css.batch config.containerCss
             ]
-        , Attributes.for id
-        ]
+         , Attributes.for id
+         ]
+            ++ List.map (Attributes.map never) config.custom
+        )
         [ viewCheckbox
             { id = id
             , onCheck = config.onSwitch
             , isDisabled = config.isDisabled
             , selected = config.isSelected
-            , custom = config.custom
             }
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
@@ -208,29 +210,26 @@ viewCheckbox :
     , onCheck : Maybe (Bool -> msg)
     , selected : Bool
     , isDisabled : Bool
-    , custom : List (Html.Attribute Never)
     }
     -> Html msg
 viewCheckbox config =
     Html.checkbox config.id
         (Just config.selected)
-        ([ Attributes.id config.id
-         , Attributes.css
+        [ Attributes.id config.id
+        , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
             , Css.left (Css.px 10)
             , Css.zIndex (Css.int 0)
             , Css.opacity (Css.num 0)
             ]
-         , case ( config.onCheck, config.isDisabled ) of
+        , case ( config.onCheck, config.isDisabled ) of
             ( Just onCheck, False ) ->
                 Events.onCheck onCheck
 
             _ ->
                 Widget.disabled True
-         ]
-            ++ List.map (Attributes.map never) config.custom
-        )
+        ]
 
 
 viewSwitch :
