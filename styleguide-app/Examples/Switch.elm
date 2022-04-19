@@ -27,7 +27,7 @@ type Msg
 example : Example State Msg
 example =
     { name = "Switch"
-    , version = 1
+    , version = 2
     , state = True
     , update = \(Switch new) _ -> ( new, Cmd.none )
     , subscriptions = \_ -> Sub.none
