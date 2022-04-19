@@ -187,7 +187,8 @@ view attrs isOn =
         [ viewCheckbox
             { id = config.id
             , onCheck = config.onSwitch
-            , checked = isOn
+            , isDisabled = config.isDisabled
+            , selected = isOn
             , custom = config.custom
             }
         , Nri.Ui.Svg.V1.toHtml
@@ -213,13 +214,14 @@ view attrs isOn =
 viewCheckbox :
     { id : String
     , onCheck : Maybe (Bool -> msg)
-    , checked : Bool
+    , selected : Bool
+    , isDisabled : Bool
     , custom : List (Html.Attribute Never)
     }
     -> Html msg
 viewCheckbox config =
     Html.checkbox config.id
-        (Just config.checked)
+        (Just config.selected)
         ([ Attributes.id config.id
          , Attributes.css
             [ Css.position Css.absolute
@@ -228,11 +230,11 @@ viewCheckbox config =
             , Css.zIndex (Css.int 0)
             , Css.opacity (Css.num 0)
             ]
-         , case config.onCheck of
-            Just onCheck ->
+         , case ( config.onCheck, config.isDisabled ) of
+            ( Just onCheck, False ) ->
                 Events.onCheck onCheck
 
-            Nothing ->
+            _ ->
                 Widget.disabled True
          ]
             ++ List.map (Attributes.map never) config.custom
