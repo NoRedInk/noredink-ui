@@ -157,7 +157,10 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
-            |> CommonControls.css { moduleName = "Container", use = Container.css }
+            |> CommonControls.css { moduleName = moduleName, use = Container.css }
+            |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
+            |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
+            |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
             |> ControlExtra.listItem "content" controlContent
     }
 
