@@ -10,6 +10,7 @@ import Accessibility.Styled.Key as Key
 import Category
 import Example exposing (Example)
 import Html.Styled as Html
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Switch.V2 as Switch
 
@@ -69,5 +70,9 @@ example =
                 ]
             ]
     , categories = [ Category.Inputs ]
-    , keyboardSupport = [{- TODO -}]
+    , keyboardSupport =
+        [ { keys = [ Space ]
+          , result = "Toggle the Switch state"
+          }
+        ]
     }
