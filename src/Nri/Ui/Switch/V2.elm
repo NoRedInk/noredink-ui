@@ -1,4 +1,9 @@
-module Nri.Ui.Switch.V2 exposing (view, Attribute, onSwitch, disabled, id, label, custom)
+module Nri.Ui.Switch.V2 exposing
+    ( view, label
+    , Attribute
+    , containerCss, labelCss, custom, nriDescription, id, testId
+    , onSwitch, disabled, enabled
+    )
 
 {-|
 
@@ -6,21 +11,31 @@ module Nri.Ui.Switch.V2 exposing (view, Attribute, onSwitch, disabled, id, label
 # Changes from V1:
 
     - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
+    - labels should only support strings (this is the only way they're actually used in practice)
+    - extends API to be more consistent with other form/control components
 
-@docs view, Attribute, onSwitch, disabled, id, label, custom
+@docs view, label
+
+
+### Attributes
+
+@docs Attribute
+@docs containerCss, labelCss, custom, nriDescription, id, testId
+@docs onSwitch, disabled, enabled
 
 -}
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
-import Css
+import Css exposing (Style)
 import Css.Global as Global
 import Css.Media
 import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -28,18 +43,14 @@ import Svg.Styled.Attributes as SvgAttributes
 
 {-| -}
 type Attribute msg
-    = OnSwitch (Bool -> msg)
-    | Id String
-    | Label (Html msg)
-    | Disabled
-    | Custom (List (Html.Attribute Never))
+    = Attribute (Config msg -> Config msg)
 
 
 {-| Specify what happens when the switch is toggled.
 -}
 onSwitch : (Bool -> msg) -> Attribute msg
-onSwitch =
-    OnSwitch
+onSwitch onSwitch_ =
+    Attribute <| \config -> { config | onSwitch = Just onSwitch_ }
 
 
 {-| Explicitly specify that you want this switch to be disabled. If you don't
@@ -48,7 +59,13 @@ to resort to `filterMap` or similar to build a clean list of attributes.
 -}
 disabled : Attribute msg
 disabled =
-    Disabled
+    Attribute <| \config -> { config | isDisabled = True }
+
+
+{-| -}
+enabled : Attribute msg
+enabled =
+    Attribute <| \config -> { config | isDisabled = False }
 
 
 {-| Set the HTML ID of the switch toggle. If you have only one on the page,
@@ -56,31 +73,64 @@ you don't need to set this, but you should definitely set it if you have
 more than one.
 -}
 id : String -> Attribute msg
-id =
-    Id
+id id_ =
+    Attribute <| \config -> { config | id = id_ }
 
 
 {-| Add labeling text to the switch. This text should be descriptive and
-able to be displayed inline. It should _not_ be interactive (if it were
-ergonomic to make this argument `Html Never`, we would!)
+able to be displayed inline.
 -}
-label : Html msg -> Attribute msg
-label =
-    Label
+label : String -> Attribute msg
+label label_ =
+    Attribute <| \config -> { config | label = label_ }
 
 
 {-| Pass custom attributes through to be attached to the underlying input.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use `containerCss` or `labelCss`.
+
 -}
 custom : List (Html.Attribute Never) -> Attribute msg
-custom =
-    Custom
+custom custom_ =
+    Attribute <| \config -> { config | custom = config.custom ++ custom_ }
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ Extra.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ Extra.testId id_ ]
+
+
+{-| Adds CSS to the Switch container.
+-}
+containerCss : List Css.Style -> Attribute msg
+containerCss styles =
+    Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
+
+
+{-| Adds CSS to the `label` element.
+-}
+labelCss : List Css.Style -> Attribute msg
+labelCss styles =
+    Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
 
 
 type alias Config msg =
     { onSwitch : Maybe (Bool -> msg)
     , id : String
-    , label : Maybe (Html msg)
-    , attributes : List (Html.Attribute Never)
+    , label : String
+    , containerCss : List Style
+    , labelCss : List Style
+    , isDisabled : Bool
+    , custom : List (Html.Attribute Never)
     }
 
 
@@ -88,28 +138,12 @@ defaultConfig : Config msg
 defaultConfig =
     { onSwitch = Nothing
     , id = "nri-ui-switch-with-default-id"
-    , label = Nothing
-    , attributes = []
+    , label = ""
+    , containerCss = []
+    , labelCss = []
+    , isDisabled = False
+    , custom = []
     }
-
-
-customize : Attribute msg -> Config msg -> Config msg
-customize attr config =
-    case attr of
-        OnSwitch onSwitch_ ->
-            { config | onSwitch = Just onSwitch_ }
-
-        Disabled ->
-            { config | onSwitch = Nothing }
-
-        Id id_ ->
-            { config | id = id_ }
-
-        Label label_ ->
-            { config | label = Just label_ }
-
-        Custom custom_ ->
-            { config | attributes = custom_ }
 
 
 {-| Render a switch. The boolean here indicates whether the switch is on
@@ -119,7 +153,7 @@ view : List (Attribute msg) -> Bool -> Html msg
 view attrs isOn =
     let
         config =
-            List.foldl customize defaultConfig attrs
+            List.foldl (\(Attribute update) -> update) defaultConfig attrs
     in
     WildWildHtml.label
         [ Attributes.id (config.id ++ "-container")
@@ -151,7 +185,7 @@ view attrs isOn =
             { id = config.id
             , onCheck = config.onSwitch
             , checked = isOn
-            , attributes = config.attributes
+            , custom = config.custom
             }
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
@@ -160,20 +194,17 @@ view attrs isOn =
                 , enabled = config.onSwitch /= Nothing
                 }
             )
-        , case config.label of
-            Just label_ ->
-                Html.span
-                    [ Attributes.css
-                        [ Css.fontWeight (Css.int 600)
-                        , Css.color Colors.navy
-                        , Css.paddingLeft (Css.px 5)
-                        ]
-                    , Attributes.for config.id
-                    ]
-                    [ label_ ]
-
-            Nothing ->
-                Html.text ""
+        , -- TODO: This element should literally be a label.
+          -- The `for` attribute is meaningless for a `span`.
+          Html.span
+            [ Attributes.css
+                [ Css.fontWeight (Css.int 600)
+                , Css.color Colors.navy
+                , Css.paddingLeft (Css.px 5)
+                ]
+            , Attributes.for config.id
+            ]
+            [ Html.text config.label ]
         ]
 
 
@@ -181,7 +212,7 @@ viewCheckbox :
     { id : String
     , onCheck : Maybe (Bool -> msg)
     , checked : Bool
-    , attributes : List (Html.Attribute Never)
+    , custom : List (Html.Attribute Never)
     }
     -> Html msg
 viewCheckbox config =
@@ -202,7 +233,7 @@ viewCheckbox config =
             Nothing ->
                 Widget.disabled True
          ]
-            ++ List.map (Attributes.map never) config.attributes
+            ++ List.map (Attributes.map never) config.custom
         )
 
 

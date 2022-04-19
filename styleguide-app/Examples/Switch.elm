@@ -33,12 +33,12 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview =
         [ Switch.view
-            [ Switch.label (Html.text "Toggle On")
+            [ Switch.label "Toggle On"
             , Switch.custom [ Key.tabbable False ]
             ]
             False
         , Switch.view
-            [ Switch.label (Html.text "Toggle Off")
+            [ Switch.label "Toggle Off"
             , Switch.custom [ Key.tabbable False ]
             ]
             True
@@ -51,10 +51,10 @@ example =
                 , Switch.id "switch-interactive"
                 , Switch.label
                     (if interactiveIsOn then
-                        Html.text "On"
+                        "On"
 
                      else
-                        Html.text "Off"
+                        "Off"
                     )
                 ]
                 interactiveIsOn
@@ -62,14 +62,14 @@ example =
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-on"
-                , Switch.label (Html.text "Permanently on")
+                , Switch.label "Permanently on"
                 ]
                 True
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (Off)" ]
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-off"
-                , Switch.label (Html.text "Permanently off")
+                , Switch.label "Permanently off"
                 ]
                 False
             ]
