@@ -27,16 +27,15 @@ module Nri.Ui.Switch.V2 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Style)
 import Css.Global as Global
 import Css.Media
-import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
@@ -118,7 +117,10 @@ containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
-{-| Adds CSS to the `label` element.
+{-| Adds CSS to the element containing the label text.
+
+Note that these styles don't apply to the literal HTML label element, since it contains the icon SVG as well.
+
 -}
 labelCss : List Css.Style -> Attribute msg
 labelCss styles =
@@ -157,7 +159,7 @@ view attrs isOn =
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
     in
-    WildWildHtml.label
+    Html.label
         [ Attributes.id (config.id ++ "-container")
         , Attributes.css
             [ Css.display Css.inlineFlex
@@ -178,9 +180,9 @@ view attrs isOn =
                  else
                     Css.notAllowed
                 )
+            , Css.batch config.containerCss
             ]
-        , Aria.controls config.id
-        , Widget.checked (Just isOn)
+        , Attributes.for config.id
         ]
         [ viewCheckbox
             { id = config.id
@@ -195,15 +197,14 @@ view attrs isOn =
                 , enabled = config.onSwitch /= Nothing
                 }
             )
-        , -- TODO: This element should literally be a label.
-          -- The `for` attribute is meaningless for a `span`.
-          Html.span
+        , Html.span
             [ Attributes.css
                 [ Css.fontWeight (Css.int 600)
                 , Css.color Colors.navy
                 , Css.paddingLeft (Css.px 5)
+                , Fonts.baseFont
+                , Css.batch config.labelCss
                 ]
-            , Attributes.for config.id
             ]
             [ Html.text config.label ]
         ]
