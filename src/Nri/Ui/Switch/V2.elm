@@ -13,6 +13,7 @@ module Nri.Ui.Switch.V2 exposing
     - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
     - labels should only support strings (this is the only way they're actually used in practice)
     - extends API to be more consistent with other form/control components
+    - Use Colors.azure instead of a hardcoded hex
 
 @docs view, label
 
@@ -34,6 +35,7 @@ import Css.Media
 import Html.Styled as WildWildHtml
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -164,8 +166,7 @@ view attrs isOn =
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
                     [ Global.class "switch-slider"
-                        [ -- azure, but can't use the Color type here
-                          Css.property "stroke" "#146AFF"
+                        [ Css.property "stroke" (toCssString Colors.azure)
                         , Css.property "stroke-width" "3px"
                         ]
                     ]
