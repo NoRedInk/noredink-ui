@@ -13,7 +13,7 @@ module Nri.Ui.Switch.V2 exposing
     - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
     - labels should only support strings (this is the only way they're actually used in practice)
     - extends API to be more consistent with other form/control components
-    - Use Colors.azure instead of a hardcoded hex
+    - Use Colors values instead of hardcoded hex strings
 
 @docs view, label
 
@@ -29,7 +29,7 @@ module Nri.Ui.Switch.V2 exposing
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
-import Css exposing (Style)
+import Css exposing (Color, Style)
 import Css.Global as Global
 import Css.Media
 import Html.Styled as WildWildHtml
@@ -166,7 +166,7 @@ view attrs isOn =
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
                     [ Global.class "switch-slider"
-                        [ Css.property "stroke" (toCssString Colors.azure)
+                        [ stroke Colors.azure
                         , Css.property "stroke-width" "3px"
                         ]
                     ]
@@ -347,12 +347,10 @@ viewSwitch config =
                     , SvgAttributes.fill "#FFF"
                     , SvgAttributes.css
                         [ if config.isOn then
-                            -- azure, but can't use the Color type here
-                            Css.property "stroke" "#146AFF"
+                            stroke Colors.azure
 
                           else
-                            -- gray75, but can't use the Color type here
-                            Css.property "stroke" "#BFBFBF"
+                            stroke Colors.gray75
                         , transition "stroke 0.1s"
                         ]
                     , SvgAttributes.class "switch-slider"
@@ -365,11 +363,10 @@ viewSwitch config =
                     , SvgAttributes.d "M8 15.865L12.323 20 21.554 10"
                     , SvgAttributes.css
                         [ if config.isOn then
-                            -- azure, but can't use the Color type here
-                            Css.property "stroke" "#146AFF"
+                            stroke Colors.azure
 
                           else
-                            Css.property "stroke" "rgba(255,255,255,0)"
+                            stroke Colors.white
                         , transition "stroke 0.2s"
                         ]
                     ]
@@ -378,6 +375,11 @@ viewSwitch config =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+
+
+stroke : Color -> Style
+stroke color =
+    Css.property "stroke" (toCssString color)
 
 
 transition : String -> Css.Style
