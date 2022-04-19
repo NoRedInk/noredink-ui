@@ -3,7 +3,7 @@ module Nri.Ui.Switch.V2 exposing
     , Attribute
     , selected
     , containerCss, labelCss, custom, nriDescription, testId
-    , onSwitch, disabled, enabled
+    , onSwitch, disabled
     )
 
 {-|
@@ -18,6 +18,7 @@ module Nri.Ui.Switch.V2 exposing
     - Move the status (selected or not selected) to the list api
     - REQUIRE label and id always
     - Move custom attributes to the container
+    - change disabled to take a bool (which I think is the slighty more common pattern)
 
 @docs view
 
@@ -27,7 +28,7 @@ module Nri.Ui.Switch.V2 exposing
 @docs Attribute
 @docs selected
 @docs containerCss, labelCss, custom, nriDescription, testId
-@docs onSwitch, disabled, enabled
+@docs onSwitch, disabled
 
 -}
 
@@ -70,15 +71,9 @@ onSwitch onSwitch_ =
 specify `onSwitch`, this is the default, but it's provided so you don't have
 to resort to `filterMap` or similar to build a clean list of attributes.
 -}
-disabled : Attribute msg
-disabled =
-    Attribute <| \config -> { config | isDisabled = True }
-
-
-{-| -}
-enabled : Attribute msg
-enabled =
-    Attribute <| \config -> { config | isDisabled = False }
+disabled : Bool -> Attribute msg
+disabled isDisabled =
+    Attribute <| \config -> { config | isDisabled = isDisabled }
 
 
 {-| Pass custom attributes through to be attached to the underlying input.

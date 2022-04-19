@@ -8,6 +8,7 @@ module Examples.Switch exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category
+import CommonControls
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -122,6 +123,7 @@ controlSettings =
 initAttributes : Control (List ( String, Switch.Attribute msg ))
 initAttributes =
     ControlExtra.list
+        |> CommonControls.disabledListItem moduleName Switch.disabled
 
 
 {-| -}
