@@ -126,7 +126,9 @@ css css_ =
     Attribute <| \config -> { config | css = config.css ++ css_ }
 
 
-{-| Equivalent to:
+{-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
+
+Equivalent to:
 
     Container.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
@@ -137,7 +139,9 @@ notMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
 
 
-{-| Equivalent to:
+{-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
+
+Equivalent to:
 
     Container.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
@@ -148,7 +152,9 @@ mobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
 
 
-{-| Equivalent to:
+{-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
+
+Equivalent to:
 
     Container.css
         [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
