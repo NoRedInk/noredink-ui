@@ -146,6 +146,9 @@ view { label, id } attrs =
     let
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
+
+        notOperable =
+            config.onSwitch == Nothing || config.isDisabled
     in
     Html.label
         ([ Attributes.id (id ++ "-container")
@@ -162,11 +165,11 @@ view { label, id } attrs =
                     ]
                 ]
             , Css.cursor
-                (if config.onSwitch /= Nothing then
-                    Css.pointer
+                (if notOperable then
+                    Css.notAllowed
 
                  else
-                    Css.notAllowed
+                    Css.pointer
                 )
             , Css.batch config.containerCss
             ]
@@ -184,7 +187,7 @@ view { label, id } attrs =
             (viewSwitch
                 { id = id
                 , isSelected = config.isSelected
-                , enabled = config.onSwitch /= Nothing
+                , isDisabled = notOperable
                 }
             )
         , Html.span
@@ -230,7 +233,7 @@ viewCheckbox config =
 viewSwitch :
     { id : String
     , isSelected : Bool
-    , enabled : Bool
+    , isDisabled : Bool
     }
     -> Svg
 viewSwitch config =
@@ -247,11 +250,11 @@ viewSwitch config =
         , SvgAttributes.viewBox "0 0 43 32"
         , SvgAttributes.css
             [ Css.zIndex (Css.int 1)
-            , if config.enabled then
-                Css.opacity (Css.num 1)
+            , if config.isDisabled then
+                Css.opacity (Css.num 0.4)
 
               else
-                Css.opacity (Css.num 0.4)
+                Css.opacity (Css.num 1)
             ]
         ]
         [ Svg.defs []
