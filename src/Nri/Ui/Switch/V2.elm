@@ -1,6 +1,7 @@
 module Nri.Ui.Switch.V2 exposing
     ( view, label
     , Attribute
+    , selected
     , containerCss, labelCss, custom, nriDescription, id, testId
     , onSwitch, disabled, enabled
     )
@@ -14,6 +15,7 @@ module Nri.Ui.Switch.V2 exposing
     - labels should only support strings (this is the only way they're actually used in practice)
     - extends API to be more consistent with other form/control components
     - Use Colors values instead of hardcoded hex strings
+    - Move the status (selected or not selected) to the list api
 
 @docs view, label
 
@@ -21,6 +23,7 @@ module Nri.Ui.Switch.V2 exposing
 ### Attributes
 
 @docs Attribute
+@docs selected
 @docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs onSwitch, disabled, enabled
 
@@ -45,6 +48,13 @@ import Svg.Styled.Attributes as SvgAttributes
 {-| -}
 type Attribute msg
     = Attribute (Config msg -> Config msg)
+
+
+{-| What is the status of the Switch, selected or not?
+-}
+selected : Bool -> Attribute msg
+selected isSelected =
+    Attribute <| \config -> { config | isSelected = isSelected }
 
 
 {-| Specify what happens when the switch is toggled.
@@ -134,6 +144,7 @@ type alias Config msg =
     , containerCss : List Style
     , labelCss : List Style
     , isDisabled : Bool
+    , isSelected : Bool
     , custom : List (Html.Attribute Never)
     }
 
@@ -146,6 +157,7 @@ defaultConfig =
     , containerCss = []
     , labelCss = []
     , isDisabled = False
+    , isSelected = False
     , custom = []
     }
 
@@ -153,8 +165,8 @@ defaultConfig =
 {-| Render a switch. The boolean here indicates whether the switch is on
 or not.
 -}
-view : List (Attribute msg) -> Bool -> Html msg
-view attrs isOn =
+view : List (Attribute msg) -> Html msg
+view attrs =
     let
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
@@ -188,13 +200,13 @@ view attrs isOn =
             { id = config.id
             , onCheck = config.onSwitch
             , isDisabled = config.isDisabled
-            , selected = isOn
+            , selected = config.isSelected
             , custom = config.custom
             }
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
                 { id = config.id
-                , isOn = isOn
+                , isSelected = config.isSelected
                 , enabled = config.onSwitch /= Nothing
                 }
             )
@@ -243,7 +255,7 @@ viewCheckbox config =
 
 viewSwitch :
     { id : String
-    , isOn : Bool
+    , isSelected : Bool
     , enabled : Bool
     }
     -> Svg
@@ -317,7 +329,7 @@ viewSwitch config =
                 [ Svg.use
                     [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
                     , SvgAttributes.css
-                        [ if config.isOn then
+                        [ if config.isSelected then
                             Css.fill Colors.glacier
 
                           else
@@ -335,7 +347,7 @@ viewSwitch config =
                 ]
             , Svg.g
                 [ SvgAttributes.css
-                    [ if config.isOn then
+                    [ if config.isSelected then
                         Css.transform (Css.translateX (Css.px 11))
 
                       else
@@ -349,7 +361,7 @@ viewSwitch config =
                     , SvgAttributes.r "14.5"
                     , SvgAttributes.fill "#FFF"
                     , SvgAttributes.css
-                        [ if config.isOn then
+                        [ if config.isSelected then
                             stroke Colors.azure
 
                           else
@@ -365,7 +377,7 @@ viewSwitch config =
                     , SvgAttributes.strokeWidth "3"
                     , SvgAttributes.d "M8 15.865L12.323 20 21.554 10"
                     , SvgAttributes.css
-                        [ if config.isOn then
+                        [ if config.isSelected then
                             stroke Colors.azure
 
                           else

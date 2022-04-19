@@ -33,15 +33,15 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview =
         [ Switch.view
-            [ Switch.label "Toggle On"
-            , Switch.custom [ Key.tabbable False ]
-            ]
-            False
-        , Switch.view
             [ Switch.label "Toggle Off"
+            , Switch.selected False
             , Switch.custom [ Key.tabbable False ]
             ]
-            True
+        , Switch.view
+            [ Switch.label "Toggle On"
+            , Switch.selected True
+            , Switch.custom [ Key.tabbable False ]
+            ]
         ]
     , view =
         \ellieLinkConfig interactiveIsOn ->
@@ -56,22 +56,22 @@ example =
                      else
                         "Off"
                     )
+                , Switch.selected interactiveIsOn
                 ]
-                interactiveIsOn
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (On)" ]
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-on"
                 , Switch.label "Permanently on"
+                , Switch.selected True
                 ]
-                True
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Disabled (Off)" ]
             , Switch.view
                 [ Switch.disabled
                 , Switch.id "switch-disabled-off"
                 , Switch.label "Permanently off"
+                , Switch.selected False
                 ]
-                False
             ]
     , categories = [ Category.Inputs ]
     , keyboardSupport = [{- TODO -}]
