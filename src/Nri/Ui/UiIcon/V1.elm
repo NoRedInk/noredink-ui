@@ -1,7 +1,8 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper
     , archive, unarchive
-    , playInCircle, pauseInCircle, stopInCircle, skip
+    , playInCircle, pauseInCircle, stopInCircle
+    , play, skip
     , share, preview, copyToClipboard, gift
     , activity
     , footsteps, compass, speedometer, bulb, help, checklist
@@ -31,7 +32,8 @@ module Nri.Ui.UiIcon.V1 exposing
 
 @docs seeMore, openClose, download, sort, gear, flipper
 @docs archive, unarchive
-@docs playInCircle, pauseInCircle, stopInCircle, skip
+@docs playInCircle, pauseInCircle, stopInCircle
+@docs play, skip
 @docs share, preview, copyToClipboard, gift
 @docs activity
 @docs footsteps, compass, speedometer, bulb, help, checklist
@@ -1027,6 +1029,29 @@ playInCircle =
             , Attributes.fill "currentcolor"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+play : Nri.Ui.Svg.V1.Svg
+play =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 23 25"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fillRule "evenodd"
+            , Attributes.fill "currentcolor"
+            ]
+            [ Svg.path
+                [ Attributes.d "M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"
+                ]
+                []
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
