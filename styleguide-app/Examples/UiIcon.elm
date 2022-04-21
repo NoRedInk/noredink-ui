@@ -65,10 +65,13 @@ example =
                 [ ( "archive", UiIcon.archive )
                 , ( "unarchive", UiIcon.unarchive )
                 ]
-            , viewExampleSection "Media"
+            , viewExampleSection "Media in Circles"
                 [ ( "playInCircle", UiIcon.playInCircle )
                 , ( "pauseInCircle", UiIcon.pauseInCircle )
                 , ( "stopInCircle", UiIcon.stopInCircle )
+                ]
+            , viewExampleSection "Media"
+                [ ( "play", UiIcon.play )
                 , ( "skip", UiIcon.skip )
                 ]
             , viewExampleSection "Actions"
