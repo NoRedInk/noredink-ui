@@ -21,6 +21,7 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Table.V5 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -86,7 +87,7 @@ example =
 
 
 type alias State =
-    { openTooltip : Maybe TooltipType
+    { openTooltip : Maybe TooltipId
     , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
     }
 
@@ -98,14 +99,14 @@ init =
     }
 
 
-type TooltipType
+type TooltipId
     = PrimaryLabel
     | AuxillaryDescription
     | LearnMore
 
 
 type Msg
-    = ToggleTooltip TooltipType Bool
+    = ToggleTooltip TooltipId Bool
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
 
 
@@ -125,22 +126,38 @@ update msg model =
 
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
-    [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Using the Tooltip module" ]
-    , Text.mediumBody
-        [ Text.html
-            [ Html.text "Label the Tooltip as either being the "
-            , viewPrimaryLabelTooltip model.openTooltip
-            , Html.text " or the "
-            , viewAuxillaryDescriptionToolip model.openTooltip
-            , Html.text " for the trigger content."
-            , viewToggleTip model.openTooltip
-            ]
+    [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
+    , Table.view
+        [ Table.string
+            { header = "Attribute"
+            , value = .name
+            , width = Css.px 50
+            , cellStyles = always []
+            }
+        , Table.custom
+            { header = Html.text "view"
+            , view = .view
+            , width = Css.px 50
+            , cellStyles = always []
+            }
         ]
-    , viewCustomizableExample ellieLinkConfig model.staticExampleSettings
+        [ { name = "Tooltip.primaryLabel"
+          , view = viewPrimaryLabelTooltip model.openTooltip
+          , tooltipId = PrimaryLabel
+          }
+        , { name = "Tooltip.auxillaryDescription"
+          , view = viewAuxillaryDescriptionToolip model.openTooltip
+          , tooltipId = AuxillaryDescription
+          }
+        , { name = "Tooltip.toggleTip"
+          , view = viewToggleTip model.openTooltip
+          , tooltipId = LearnMore
+          }
+        ]
     ]
 
 
-viewPrimaryLabelTooltip : Maybe TooltipType -> Html Msg
+viewPrimaryLabelTooltip : Maybe TooltipId -> Html Msg
 viewPrimaryLabelTooltip openTooltip =
     Tooltip.view
         { id = "tooltip__primaryLabel"
@@ -162,7 +179,7 @@ viewPrimaryLabelTooltip openTooltip =
         ]
 
 
-viewAuxillaryDescriptionToolip : Maybe TooltipType -> Html Msg
+viewAuxillaryDescriptionToolip : Maybe TooltipId -> Html Msg
 viewAuxillaryDescriptionToolip openTooltip =
     Tooltip.view
         { id = "tooltip__auxillaryDescription"
@@ -184,7 +201,7 @@ viewAuxillaryDescriptionToolip openTooltip =
         ]
 
 
-viewToggleTip : Maybe TooltipType -> Html Msg
+viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
     Tooltip.toggleTip { label = "tooltip__learn-more" }
         [ Tooltip.plaintext "There's also a convenient `toggleTip` helper, for when you want to add some helpful extra info."
