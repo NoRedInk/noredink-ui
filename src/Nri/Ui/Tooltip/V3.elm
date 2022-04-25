@@ -1,4 +1,4 @@
-module Nri.Ui.Tooltip.V2 exposing
+module Nri.Ui.Tooltip.V3 exposing
     ( view, toggleTip
     , Attribute
     , plaintext, html
@@ -15,37 +15,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , primaryLabel, auxillaryDescription
     )
 
-{-| Known issues:
-
-  - tooltips with focusable content (e.g., a link) will not handle focus correctly for
-    keyboard-only users when using the onHover attribute
-
-Post-release patches:
-
-  - fix overlay for onClick toolTip having a border
-  - mark customTriggerAttributes as deprecated
-  - add containerCss
-  - adds `nriDescription` and `testId`
-  - fix <https://github.com/NoRedInk/noredink-ui/issues/766>
-  - use `Shadows`
-
-Changes from V1:
-
-  - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
-  - withTooltipStyleOverrides -> css
-  - {Width, withWidth} -> {exactWidth, fitToContent}
-  - {Padding, withPadding} -> {smallPadding, normalPadding}
-  - adds customPadding
-  - adds custom for custom attributes
-  - adds plaintext, html helpers for setting the content
-  - pass a list of attributes rather than requiring a pipeline to set up the tooltip
-  - move Trigger into the attributes
-  - change primaryLabel and auxillaryDescription to attributes, adding view
-  - move the onTrigger event to the attributes
-  - extraButtonAttrs becomes attribute `customTriggerAttributes`
-  - isOpen field becomes the `open` attribute
-  - fold toggleTip and view into each other, so there's less to maintain
-  - adds withoutTail
+{-| Changes from V2:
 
 These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
 

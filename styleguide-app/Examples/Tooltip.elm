@@ -21,13 +21,18 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 version : Int
 version =
-    2
+    3
+
+
+moduleName : String
+moduleName =
+    "Tooltip"
 
 
 example : Example State Msg
@@ -67,11 +72,6 @@ example =
         ]
     , view = view
     }
-
-
-moduleName : String
-moduleName =
-    "Tooltip"
 
 
 type alias State =

@@ -21,7 +21,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 
 
