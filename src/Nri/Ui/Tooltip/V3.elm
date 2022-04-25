@@ -19,6 +19,7 @@ module Nri.Ui.Tooltip.V3 exposing
 
   - Support `disclosure` pattern for rich-content tooltips
   - render tooltip content in the DOM when closed (now, they're hidden with display:none)
+  - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -533,7 +534,8 @@ viewTooltip_ { trigger, id } tooltip =
                       -- TODO: this blur event means that we cannot focus links
                       -- that are within the tooltip without a mouse
                       , Events.onBlur (msg False)
-                      , Events.onClick (msg True)
+                      , Events.onClick (msg (not tooltip.isOpen))
+                      , Key.onKeyDown [ Key.escape (msg False) ]
                       ]
                     )
 
