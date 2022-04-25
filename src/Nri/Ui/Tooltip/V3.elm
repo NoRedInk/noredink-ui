@@ -21,6 +21,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - render tooltip content in the DOM when closed (now, they're hidden with display:none)
   - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
   - remove onClick helper
+  - prefer the accessible name to using aria-labelledby and aria-label together
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -406,9 +407,10 @@ type Purpose
     | Disclosure
 
 
-{-| Used when the content of the tooltip is the "primary label" for its content, for example,
-when the trigger content is a ClickableSvg. The tooltip content will supercede the content of the trigger
-HTML for screen readers.
+{-| Used when the content of the tooltip is identical to the accessible name.
+
+For example, when using the Tooltip component with the ClickableSvg component, the Tooltip is providing
+extra information to sighted users that screenreader users already have.
 
 This is the default.
 
@@ -545,7 +547,8 @@ viewTooltip_ { trigger, id } tooltip =
             [ trigger
                 ((case tooltip.purpose of
                     PrimaryLabel ->
-                        [ Aria.labeledBy id ]
+                        [-- The content should already have an accessible name.
+                        ]
 
                     AuxillaryDescription ->
                         [ Aria.describedBy [ id ] ]
