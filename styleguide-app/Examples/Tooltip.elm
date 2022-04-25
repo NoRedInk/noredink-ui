@@ -176,11 +176,7 @@ viewAuxillaryDescriptionToolip openTooltip =
 viewToggleTip : Maybe TooltipType -> Html Msg
 viewToggleTip openTooltip =
     Tooltip.toggleTip { label = "tooltip__learn-more" }
-        [ Tooltip.html
-            [ Html.a
-                [ href "https://inclusive-components.design/tooltips-toggletips" ]
-                [ Html.text "Learn more" ]
-            ]
+        [ Tooltip.plaintext "There's also a convenient `toggleTip` helper, for when you want to add some helpful extra info."
         , Tooltip.primaryLabel
         , Tooltip.onHover (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)

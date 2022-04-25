@@ -12,12 +12,18 @@ module Nri.Ui.Tooltip.V3 exposing
     , css, containerCss
     , custom, customTriggerAttributes
     , nriDescription, testId
-    , primaryLabel, auxillaryDescription
+    , primaryLabel, auxillaryDescription, disclosure
     )
 
 {-| Changes from V2:
 
-These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
+  - Support `disclosure` pattern for rich-content tooltips
+  - render tooltip content in the DOM when closed (now, they're hidden with display:none)
+
+These tooltips aim to follow the accessibility recommendations from:
+
+  - <https://inclusive-components.design/tooltips-toggletips>
+  - <https://sarahmhigley.com/writing/tooltips-in-wcag-21/>
 
 Example usage:
 
@@ -47,7 +53,7 @@ Example usage:
 @docs css, containerCss
 @docs custom, customTriggerAttributes
 @docs nriDescription, testId
-@docs primaryLabel, auxillaryDescription
+@docs primaryLabel, auxillaryDescription, disclosure
 
 -}
 
@@ -55,6 +61,7 @@ import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import EventExtras
@@ -404,10 +411,11 @@ onClick msg =
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
+    | Disclosure
 
 
 {-| Used when the content of the tooltip is the "primary label" for its content, for example,
-when the trigger content is an icon. The tooltip content will supercede the content of the trigger
+when the trigger content is a ClickableSvg. The tooltip content will supercede the content of the trigger
 HTML for screen readers.
 
 This is the default.
@@ -419,10 +427,26 @@ primaryLabel =
 
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
+
+An auxillary description is used when the tooltip content provides supplementary information about its trigger content
+e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation.
+
 -}
 auxillaryDescription : Attribute msg
 auxillaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
+
+
+{-| Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
+
+If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
+
+For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
+
+-}
+disclosure : Attribute msg
+disclosure =
+    Attribute (\config -> { config | purpose = Disclosure })
 
 
 {-| -}
@@ -474,6 +498,7 @@ toggleTip { label } attributes_ =
             [ Attributes.class "Nri-Ui-Tooltip-V2-ToggleTip"
             , Attributes.id id
             ]
+            :: disclosure
             :: attributes_
         )
 
@@ -532,22 +557,19 @@ viewTooltip_ { trigger, id } tooltip =
                 ]
             ]
             [ trigger
-                ((if tooltip.isOpen then
-                    case tooltip.purpose of
-                        PrimaryLabel ->
-                            Aria.labeledBy id
+                ((case tooltip.purpose of
+                    PrimaryLabel ->
+                        [ Aria.labeledBy id ]
 
-                        AuxillaryDescription ->
-                            Aria.describedBy [ id ]
+                    AuxillaryDescription ->
+                        [ Aria.describedBy [ id ] ]
 
-                  else
-                    -- when our tooltips are closed, they're not rendered in the
-                    -- DOM. This means that the ID references above would be
-                    -- invalid and jumping to a reference would not work, so we
-                    -- skip labels and descriptions if the tooltip is closed.
-                    Attributes.property "data-closed-tooltip" Encode.null
+                    Disclosure ->
+                        [ Widget.expanded tooltip.isOpen
+                        , Aria.controls id
+                        ]
                  )
-                    :: buttonEvents
+                    ++ buttonEvents
                     ++ tooltip.triggerAttributes
                 )
             , hoverBridge tooltip
@@ -613,20 +635,16 @@ hoverBridge { isOpen, direction } =
 
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
-    if config.isOpen then
-        viewOpenTooltip tooltipId config
-
-    else
-        text ""
-
-
-viewOpenTooltip : String -> Tooltip msg -> Html msg
-viewOpenTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
             , positionTooltip config.direction config.alignment
             , Css.boxSizing Css.borderBox
+            , if config.isOpen then
+                Css.batch []
+
+              else
+                Css.display Css.none
             ]
         ]
         [ Html.div
