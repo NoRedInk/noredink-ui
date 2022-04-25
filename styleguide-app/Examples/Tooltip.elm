@@ -17,6 +17,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V2 as Heading
@@ -40,7 +41,17 @@ example =
     { name = moduleName
     , version = version
     , categories = [ Messaging ]
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Esc ]
+          , result = "Hitting escape closes all tooltips."
+          }
+        , { keys = [ Space ]
+          , result = "While focusing a tooltip trigger, opens/closes the tooltip. May trigger the underlying action too."
+          }
+        , { keys = [ Enter ]
+          , result = "While focusing a tooltip trigger, opens/closes the tooltip. May trigger the underlying action too."
+          }
+        ]
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
