@@ -7,7 +7,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , alignStart, alignMiddle, alignEnd
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onClick, onHover
+    , onHover
     , open
     , css, containerCss
     , custom, customTriggerAttributes
@@ -20,6 +20,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - Support `disclosure` pattern for rich-content tooltips
   - render tooltip content in the DOM when closed (now, they're hidden with display:none)
   - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
+  - remove onClick helper
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -37,7 +38,7 @@ Example usage:
             }
             [ Tooltip.plaintext "Gradebook"
             , Tooltip.primaryLabel
-            , Tooltip.onClick MyOnTriggerMsg
+            , Tooltip.onHover MyOnTriggerMsg
             , Tooltip.open True
             ]
 
@@ -65,11 +66,9 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
-import EventExtras
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Json.Encode as Encode
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -392,7 +391,6 @@ customPadding value =
 
 type Trigger msg
     = OnHover (Bool -> msg)
-    | OnClick (Bool -> msg)
 
 
 {-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
@@ -400,13 +398,6 @@ type Trigger msg
 onHover : (Bool -> msg) -> Attribute msg
 onHover msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
-
-
-{-| The tooltip opens when clicking the root element, and closes when anything but the tooltip is clicked again.
--}
-onClick : (Bool -> msg) -> Attribute msg
-onClick msg =
-    Attribute (\config -> { config | trigger = Just (OnClick msg) })
 
 
 type Purpose
@@ -518,13 +509,6 @@ viewTooltip_ { trigger, id } tooltip =
     let
         ( containerEvents, buttonEvents ) =
             case tooltip.trigger of
-                Just (OnClick msg) ->
-                    ( []
-                    , [ EventExtras.onClickStopPropagation
-                            (msg (not tooltip.isOpen))
-                      ]
-                    )
-
                 Just (OnHover msg) ->
                     ( [ Events.onMouseEnter (msg True)
                       , Events.onMouseLeave (msg False)
@@ -576,7 +560,6 @@ viewTooltip_ { trigger, id } tooltip =
                 )
             , hoverBridge tooltip
             ]
-        , viewOverlay tooltip
 
         -- Popout is rendered after the overlay, to allow client code to give it
         -- priority when clicking by setting its position
@@ -765,42 +748,6 @@ pointerBox tail direction alignment =
         , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
         , Global.descendants [ Global.a [ Css.color Colors.white ] ]
         ]
-
-
-viewOverlay : Tooltip msg -> Html msg
-viewOverlay { isOpen, trigger } =
-    case ( isOpen, trigger ) of
-        ( True, Just (OnClick msg) ) ->
-            -- if we display the click-to-close overlay on hover, you will have to
-            -- close the overlay by moving the mouse out of the window or clicking.
-            viewCloseTooltipOverlay (msg False)
-
-        _ ->
-            text ""
-
-
-viewCloseTooltipOverlay : msg -> Html msg
-viewCloseTooltipOverlay msg =
-    Html.button
-        [ Attributes.css
-            [ Css.width (Css.pct 100)
-            , -- ancestor uses transform property, which interacts with
-              -- position: fixed, forcing this hack.
-              -- https://www.w3.org/TR/css-transforms-1/#propdef-transform
-              Css.height (Css.calc (Css.px 1000) Css.plus (Css.calc (Css.pct 100) Css.plus (Css.px 1000)))
-            , Css.left Css.zero
-            , Css.top (Css.px -1000)
-            , Css.cursor Css.pointer
-            , Css.position Css.fixed
-            , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
-            , Css.backgroundColor Css.transparent
-            , Css.border Css.zero
-            , Css.outline Css.none
-            ]
-        , EventExtras.onClickStopPropagation msg
-        , Key.tabbable False
-        ]
-        []
 
 
 
