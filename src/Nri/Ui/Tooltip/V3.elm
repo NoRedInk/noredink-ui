@@ -62,6 +62,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 import String.Extra
 
 
@@ -389,7 +390,7 @@ onHover msg =
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
-    | Disclosure
+    | Disclosure { triggerId : String, lastId : Maybe String }
 
 
 {-| Used when the content of the tooltip is identical to the accessible name.
@@ -422,10 +423,17 @@ If clicking the "tooltip trigger" only ever shows you more info (and especially 
 
 For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
 
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+
+You may pass a lastId of Nothing if there is NO focusable content within the disclosure.
+
 -}
-disclosure : Attribute msg
-disclosure =
-    Attribute (\config -> { config | purpose = Disclosure })
+disclosure : { triggerId : String, lastId : Maybe String } -> Attribute msg
+disclosure exitFocusManager =
+    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
 
 
 {-| -}
@@ -452,11 +460,14 @@ view config attributes =
 
 {-| Supplementary information triggered by a "?" icon.
 -}
-toggleTip : { label : String } -> List (Attribute msg) -> Html msg
-toggleTip { label } attributes_ =
+toggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg) -> Html msg
+toggleTip { label, lastId } attributes_ =
     let
         id =
             String.Extra.dasherize label
+
+        triggerId =
+            "tooltip-trigger__" ++ id
     in
     view
         { trigger =
@@ -466,6 +477,7 @@ toggleTip { label } attributes_ =
                     [ ClickableSvg.exactWidth 20
                     , ClickableSvg.exactHeight 20
                     , ClickableSvg.custom events
+                    , ClickableSvg.id triggerId
                     , ClickableSvg.css
                         [ -- Take up enough room within the document flow
                           Css.margin (Css.px 5)
@@ -477,7 +489,7 @@ toggleTip { label } attributes_ =
             [ Attributes.class "Nri-Ui-Tooltip-V2-ToggleTip"
             , Attributes.id id
             ]
-            :: disclosure
+            :: disclosure { triggerId = triggerId, lastId = lastId }
             :: attributes_
         )
 
@@ -497,21 +509,31 @@ viewTooltip_ { trigger, id } tooltip =
         ( containerEvents, buttonEvents ) =
             case tooltip.trigger of
                 Just (OnHover msg) ->
-                    ( [ Events.onMouseEnter (msg True)
-                      , Events.onMouseLeave (msg False)
-                      ]
-                    , case tooltip.purpose of
-                        Disclosure ->
-                            [ Events.onClick (msg (not tooltip.isOpen))
-                            , Key.onKeyDown [ Key.escape (msg False) ]
-                            ]
+                    case tooltip.purpose of
+                        Disclosure { triggerId, lastId } ->
+                            ( [ Events.onMouseEnter (msg True)
+                              , Events.onMouseLeave (msg False)
+                              , WhenFocusLeaves.toAttribute
+                                    { firstId = triggerId
+                                    , lastId = Maybe.withDefault triggerId lastId
+                                    , tabBackAction = msg False
+                                    , tabForwardAction = msg False
+                                    }
+                              ]
+                            , [ Events.onClick (msg (not tooltip.isOpen))
+                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              ]
+                            )
 
                         _ ->
-                            [ Events.onFocus (msg True)
-                            , Events.onBlur (msg False)
-                            , Key.onKeyDown [ Key.escape (msg False) ]
-                            ]
-                    )
+                            ( [ Events.onMouseEnter (msg True)
+                              , Events.onMouseLeave (msg False)
+                              ]
+                            , [ Events.onFocus (msg True)
+                              , Events.onBlur (msg False)
+                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              ]
+                            )
 
                 Nothing ->
                     ( [], [] )
@@ -541,7 +563,7 @@ viewTooltip_ { trigger, id } tooltip =
                     AuxillaryDescription ->
                         [ Aria.describedBy [ id ] ]
 
-                    Disclosure ->
+                    Disclosure _ ->
                         [ Widget.expanded tooltip.isOpen
                         , Aria.controls id
                         ]

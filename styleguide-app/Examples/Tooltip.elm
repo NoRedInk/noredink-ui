@@ -16,7 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css, href)
+import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -216,6 +216,13 @@ viewAuxillaryDescriptionToolip openTooltip =
 
 viewDisclosureToolip : Maybe TooltipId -> Html Msg
 viewDisclosureToolip openTooltip =
+    let
+        triggerId =
+            "tooltip__disclosure-trigger"
+
+        lastId =
+            "tooltip__disclosure-what-is-mastery"
+    in
     Tooltip.view
         { id = "tooltip__disclosure"
         , trigger =
@@ -223,15 +230,18 @@ viewDisclosureToolip openTooltip =
                 ClickableSvg.button "Previously mastered"
                     (Svg.withColor Colors.green UiIcon.starFilled)
                     [ ClickableSvg.custom eventHandlers
+                    , ClickableSvg.id triggerId
                     ]
         }
         [ Tooltip.html
             [ Html.text "You mastered this skill in a previous year! Way to go! "
             , Html.a
-                [ href "https://noredink.zendesk.com/hc/en-us/articles/203022319-What-is-mastery-" ]
+                [ id lastId
+                , href "https://noredink.zendesk.com/hc/en-us/articles/203022319-What-is-mastery-"
+                ]
                 [ Html.text "Learn more about NoRedInk Mastery" ]
             ]
-        , Tooltip.disclosure
+        , Tooltip.disclosure { triggerId = triggerId, lastId = Just lastId }
         , Tooltip.onHover (ToggleTooltip Disclosure)
         , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
@@ -241,7 +251,7 @@ viewDisclosureToolip openTooltip =
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-    Tooltip.toggleTip { label = "What is mastery?" }
+    Tooltip.toggleTip { label = "What is mastery?", lastId = Nothing }
         [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
         , Tooltip.onHover (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
