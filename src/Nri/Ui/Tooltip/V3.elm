@@ -28,21 +28,6 @@ These tooltips aim to follow the accessibility recommendations from:
   - <https://inclusive-components.design/tooltips-toggletips>
   - <https://sarahmhigley.com/writing/tooltips-in-wcag-21/>
 
-Example usage:
-
-        Tooltip.view
-            { trigger =
-                \attrs ->
-                    ClickableText.button "Click me to open the tooltip"
-                        [ ClickableText.custom attrs ]
-            , id = "my-tooltip"
-            }
-            [ Tooltip.plaintext "Gradebook"
-            , Tooltip.primaryLabel
-            , Tooltip.onHover MyOnTriggerMsg
-            , Tooltip.open True
-            ]
-
 @docs view, toggleTip
 @docs Attribute
 @docs plaintext, html
@@ -515,14 +500,17 @@ viewTooltip_ { trigger, id } tooltip =
                     ( [ Events.onMouseEnter (msg True)
                       , Events.onMouseLeave (msg False)
                       ]
-                    , [ Events.onFocus (msg True)
+                    , case tooltip.purpose of
+                        Disclosure ->
+                            [ Events.onClick (msg (not tooltip.isOpen))
+                            , Key.onKeyDown [ Key.escape (msg False) ]
+                            ]
 
-                      -- TODO: this blur event means that we cannot focus links
-                      -- that are within the tooltip without a mouse
-                      , Events.onBlur (msg False)
-                      , Events.onClick (msg (not tooltip.isOpen))
-                      , Key.onKeyDown [ Key.escape (msg False) ]
-                      ]
+                        _ ->
+                            [ Events.onFocus (msg True)
+                            , Events.onBlur (msg False)
+                            , Key.onKeyDown [ Key.escape (msg False) ]
+                            ]
                     )
 
                 Nothing ->

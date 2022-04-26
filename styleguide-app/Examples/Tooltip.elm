@@ -111,6 +111,7 @@ type TooltipId
 type Msg
     = ToggleTooltip TooltipId Bool
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
+    | Log String
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -125,6 +126,13 @@ update msg model =
 
         SetControl settings ->
             ( { model | staticExampleSettings = settings }, Cmd.none )
+
+        Log message ->
+            let
+                _ =
+                    Debug.log "Tooltip Log:" message
+            in
+            ( model, Cmd.none )
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
@@ -173,6 +181,7 @@ viewPrimaryLabelTooltip openTooltip =
                 ClickableSvg.button "Download"
                     UiIcon.download
                     [ ClickableSvg.custom eventHandlers
+                    , ClickableSvg.onClick (Log "Fake content totally downloaded!")
                     ]
         }
         [ Tooltip.plaintext "Download"
@@ -193,6 +202,7 @@ viewAuxillaryDescriptionToolip openTooltip =
                 ClickableSvg.button "Period 1"
                     UiIcon.class
                     [ ClickableSvg.custom eventHandlers
+                    , ClickableSvg.onClick (Log "You totally started managing Periud 1.")
                     ]
         }
         [ Tooltip.plaintext "Manage class and students"
