@@ -13,7 +13,6 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
-import EventExtras
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -96,7 +95,7 @@ Tooltip.view
             ClickableSvg.button "Preview"
                 UiIcon.preview
                 [ ClickableSvg.custom attrs,
-                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
+                , ClickableSvg.onClickStopPropagation (ShowItWorked "You clicked the preview button!")
                 ]
     , id = "preview-tooltip"
     }
@@ -115,7 +114,7 @@ Tooltip.view
                             ClickableSvg.button "Preview"
                                 UiIcon.preview
                                 [ ClickableSvg.custom attrs
-                                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
+                                , ClickableSvg.onClickStopPropagation (ShowItWorked "You clicked the preview button!")
                                 ]
                     , id = "preview-tooltip"
                     }

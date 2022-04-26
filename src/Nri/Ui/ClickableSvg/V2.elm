@@ -1,7 +1,7 @@
 module Nri.Ui.ClickableSvg.V2 exposing
     ( button, link
     , Attribute
-    , onClick
+    , onClick, onClickStopPropagation
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
@@ -28,7 +28,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Behavior
 
-@docs onClick
+@docs onClick, onClickStopPropagation
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -114,6 +114,12 @@ setClickableAttributes apply =
 onClick : msg -> Attribute msg
 onClick msg =
     setClickableAttributes (ClickableAttributes.onClick msg)
+
+
+{-| -}
+onClickStopPropagation : msg -> Attribute msg
+onClickStopPropagation msg =
+    setClickableAttributes (ClickableAttributes.onClickStopPropagation msg)
 
 
 {-| -}
