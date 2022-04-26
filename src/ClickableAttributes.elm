@@ -8,7 +8,6 @@ module ClickableAttributes exposing
     , linkWithMethod
     , linkWithTracking
     , onClick
-    , onClickStopPropagation
     , toButtonAttributes
     , toLinkAttributes
     )
@@ -29,7 +28,6 @@ type alias ClickableAttributes route msg =
     , url : Maybe route
     , urlString : Maybe String
     , onClick : Maybe msg
-    , stopPropagation : Bool
     }
 
 
@@ -49,7 +47,6 @@ init =
     , url = Nothing
     , urlString = Nothing
     , onClick = Nothing
-    , stopPropagation = False
     }
 
 
@@ -57,12 +54,6 @@ init =
 onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
 onClick msg clickableAttributes =
     { clickableAttributes | onClick = Just msg }
-
-
-{-| -}
-onClickStopPropagation : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
-onClickStopPropagation msg clickableAttributes =
-    { clickableAttributes | onClick = Just msg, stopPropagation = True }
 
 
 {-| -}
@@ -114,11 +105,7 @@ toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
     case clickableAttributes.onClick of
         Just handler ->
-            if clickableAttributes.stopPropagation then
-                [ Events.onClick handler ]
-
-            else
-                [ EventExtras.onClickStopPropagation handler ]
+            [ Events.onClick handler ]
 
         Nothing ->
             []
