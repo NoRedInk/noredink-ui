@@ -20,7 +20,9 @@ import Html.Styled.Attributes exposing (css, href)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V5 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -103,6 +105,7 @@ type TooltipId
     = PrimaryLabel
     | AuxillaryDescription
     | LearnMore
+    | Disclosure
 
 
 type Msg
@@ -149,6 +152,10 @@ view ellieLinkConfig model =
           , view = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
           }
+        , { name = "Tooltip.disclosure"
+          , view = viewDisclosureToolip model.openTooltip
+          , tooltipId = Disclosure
+          }
         , { name = "Tooltip.toggleTip"
           , view = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
@@ -192,6 +199,31 @@ viewAuxillaryDescriptionToolip openTooltip =
         , Tooltip.auxillaryDescription
         , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
+        ]
+
+
+viewDisclosureToolip : Maybe TooltipId -> Html Msg
+viewDisclosureToolip openTooltip =
+    Tooltip.view
+        { id = "tooltip__disclosure"
+        , trigger =
+            \eventHandlers ->
+                ClickableSvg.button "Previously mastered"
+                    (Svg.withColor Colors.green UiIcon.starFilled)
+                    [ ClickableSvg.custom eventHandlers
+                    ]
+        }
+        [ Tooltip.html
+            [ Html.text "You mastered this skill in a previous year! Way to go! "
+            , Html.a
+                [ href "https://noredink.zendesk.com/hc/en-us/articles/203022319-What-is-mastery-" ]
+                [ Html.text "Learn more about NoRedInk Mastery" ]
+            ]
+        , Tooltip.disclosure
+        , Tooltip.onHover (ToggleTooltip Disclosure)
+        , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
         ]
