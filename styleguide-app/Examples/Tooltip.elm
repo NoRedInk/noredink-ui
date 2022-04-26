@@ -44,7 +44,7 @@ example =
     , categories = [ Messaging ]
     , keyboardSupport =
         [ { keys = [ Esc ]
-          , result = "Hitting escape closes all tooltips."
+          , result = "Hitting escape while focusing a tooltip trigger closes all tooltips. Note that hovered-but-not-focused tooltips can't be closed this way."
           }
         , { keys = [ Space ]
           , result = "While focusing a tooltip trigger, opens/closes the tooltip. May trigger the underlying action too."
