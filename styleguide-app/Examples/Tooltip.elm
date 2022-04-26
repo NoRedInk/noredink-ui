@@ -163,19 +163,17 @@ viewPrimaryLabelTooltip openTooltip =
         { id = "tooltip__primaryLabel"
         , trigger =
             \eventHandlers ->
-                ClickableText.button "primaryLabel"
-                    [ ClickableText.custom eventHandlers
+                ClickableSvg.button "Download"
+                    UiIcon.download
+                    [ ClickableSvg.custom eventHandlers
                     ]
         }
-        [ Tooltip.html
-            [ Html.text "A primary label is used when the tooltip content serves as the main label for its trigger content"
-            , Html.br []
-            , Html.text "e.g. when the trigger content is an icon with no text."
-            ]
-        , Tooltip.auxillaryDescription
+        [ Tooltip.plaintext "Download"
+        , Tooltip.primaryLabel
         , Tooltip.onHover (ToggleTooltip PrimaryLabel)
         , Tooltip.open (openTooltip == Just PrimaryLabel)
-        , Tooltip.onBottom
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
         ]
 
 
@@ -185,31 +183,26 @@ viewAuxillaryDescriptionToolip openTooltip =
         { id = "tooltip__auxillaryDescription"
         , trigger =
             \eventHandlers ->
-                ClickableText.button "auxillaryDescription"
-                    [ ClickableText.custom eventHandlers
+                ClickableSvg.button "Period 1"
+                    UiIcon.class
+                    [ ClickableSvg.custom eventHandlers
                     ]
         }
-        [ Tooltip.html
-            [ Html.text "An auxillary description is used when the tooltip content provides supplementary information about its trigger content"
-            , Html.br []
-            , Html.text "e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation."
-            ]
+        [ Tooltip.plaintext "Manage class and students"
         , Tooltip.auxillaryDescription
         , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
-        , Tooltip.onBottom
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
         ]
 
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-    Tooltip.toggleTip { label = "tooltip__learn-more" }
-        [ Tooltip.plaintext "There's also a convenient `toggleTip` helper, for when you want to add some helpful extra info."
-        , Tooltip.primaryLabel
+    Tooltip.toggleTip { label = "What is mastery?" }
+        [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
         , Tooltip.onHover (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
-        , Tooltip.smallPadding
-        , Tooltip.fitToContent
         ]
 
 
