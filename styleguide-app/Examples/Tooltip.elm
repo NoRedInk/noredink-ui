@@ -240,6 +240,7 @@ viewAuxillaryDescriptionToolip openTooltip =
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
+        , Tooltip.onLeftForMobile
         ]
 
 
@@ -274,7 +275,7 @@ viewDisclosureToolip openTooltip =
         , Tooltip.onHover (ToggleTooltip Disclosure)
         , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
-        , Tooltip.fitToContent
+        , Tooltip.alignEndForMobile (Css.px 148)
         ]
 
 
@@ -284,6 +285,7 @@ viewToggleTip openTooltip =
         [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
         , Tooltip.onHover (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
+        , Tooltip.alignEndForMobile (Css.px 144)
         ]
 
 
