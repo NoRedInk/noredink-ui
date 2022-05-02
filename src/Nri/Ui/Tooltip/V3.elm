@@ -1,5 +1,5 @@
 module Nri.Ui.Tooltip.V3 exposing
-    ( view, toggleTip
+    ( view, viewToggleTip
     , Attribute
     , plaintext, html
     , withoutTail
@@ -25,13 +25,14 @@ module Nri.Ui.Tooltip.V3 exposing
   - :skull: remove customTooltipAttributes
   - change `css` to extend the current list of styles, NOT override them entirely.
   - fix spelling of "auxillary" to "auxiliary"
+  - toggleTip -> viewToggleTip
 
 These tooltips aim to follow the accessibility recommendations from:
 
   - <https://inclusive-components.design/tooltips-toggletips>
   - <https://sarahmhigley.com/writing/tooltips-in-wcag-21/>
 
-@docs view, toggleTip
+@docs view, viewToggleTip
 @docs Attribute
 @docs plaintext, html
 @docs withoutTail
@@ -456,8 +457,8 @@ view config attributes =
 
 {-| Supplementary information triggered by a "?" icon.
 -}
-toggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg) -> Html msg
-toggleTip { label, lastId } attributes_ =
+viewToggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg) -> Html msg
+viewToggleTip { label, lastId } attributes_ =
     let
         id =
             String.Extra.dasherize label

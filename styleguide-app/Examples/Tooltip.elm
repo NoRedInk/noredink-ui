@@ -164,7 +164,7 @@ view ellieLinkConfig model =
           , view = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
-        , { name = "Tooltip.toggleTip"
+        , { name = "Tooltip.viewToggleTip"
           , view = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
@@ -251,7 +251,7 @@ viewDisclosureToolip openTooltip =
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-    Tooltip.toggleTip { label = "What is mastery?", lastId = Nothing }
+    Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
         [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
         , Tooltip.onHover (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
