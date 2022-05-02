@@ -430,7 +430,8 @@ disclosure exitFocusManager =
     Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
 
 
-{-| -}
+{-| Pass a bool indicating whether the tooltip should be open or closed.
+-}
 open : Bool -> Attribute msg
 open isOpen =
     Attribute (\config -> { config | isOpen = isOpen })
