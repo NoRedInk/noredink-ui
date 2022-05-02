@@ -794,6 +794,13 @@ viewTooltip tooltipId config =
               else
                 Css.display Css.none
             ]
+        , -- Used for tests, since the visibility is controlled via CSS, which elm-program-test cannot account for
+          Attributes.attribute "data-tooltip-visible" <|
+            if config.isOpen then
+                "true"
+
+            else
+                "false"
         , -- If the tooltip is the "primary label" for the content, then we can trust that the content
           -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
