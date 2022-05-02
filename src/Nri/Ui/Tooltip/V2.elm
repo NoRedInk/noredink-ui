@@ -12,7 +12,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , css, containerCss
     , custom, customTriggerAttributes
     , nriDescription, testId
-    , primaryLabel, auxillaryDescription
+    , primaryLabel, auxiliaryDescription
     )
 
 {-| Known issues:
@@ -40,7 +40,7 @@ Changes from V1:
   - adds plaintext, html helpers for setting the content
   - pass a list of attributes rather than requiring a pipeline to set up the tooltip
   - move Trigger into the attributes
-  - change primaryLabel and auxillaryDescription to attributes, adding view
+  - change primaryLabel and auxiliaryDescription to attributes, adding view
   - move the onTrigger event to the attributes
   - extraButtonAttrs becomes attribute `customTriggerAttributes`
   - isOpen field becomes the `open` attribute
@@ -77,7 +77,7 @@ Example usage:
 @docs css, containerCss
 @docs custom, customTriggerAttributes
 @docs nriDescription, testId
-@docs primaryLabel, auxillaryDescription
+@docs primaryLabel, auxiliaryDescription
 
 -}
 
@@ -450,8 +450,8 @@ primaryLabel =
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
 -}
-auxillaryDescription : Attribute msg
-auxillaryDescription =
+auxiliaryDescription : Attribute msg
+auxiliaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 

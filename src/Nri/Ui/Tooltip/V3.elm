@@ -12,7 +12,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , css, containerCss
     , custom
     , nriDescription, testId
-    , primaryLabel, auxillaryDescription, disclosure
+    , primaryLabel, auxiliaryDescription, disclosure
     )
 
 {-| Changes from V2:
@@ -24,6 +24,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - prefer the accessible name to using aria-labelledby and aria-label together
   - :skull: remove customTooltipAttributes
   - change `css` to extend the current list of styles, NOT override them entirely.
+  - fix spelling of "auxillary" to "auxiliary"
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -43,7 +44,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs css, containerCss
 @docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxillaryDescription, disclosure
+@docs primaryLabel, auxiliaryDescription, disclosure
 
 -}
 
@@ -406,8 +407,8 @@ An auxillary description is used when the tooltip content provides supplementary
 e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation.
 
 -}
-auxillaryDescription : Attribute msg
-auxillaryDescription =
+auxiliaryDescription : Attribute msg
+auxiliaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 

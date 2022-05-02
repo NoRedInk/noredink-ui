@@ -156,7 +156,7 @@ view ellieLinkConfig model =
           , view = viewPrimaryLabelTooltip model.openTooltip
           , tooltipId = PrimaryLabel
           }
-        , { name = "Tooltip.auxillaryDescription"
+        , { name = "Tooltip.auxiliaryDescription"
           , view = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
           }
@@ -196,7 +196,7 @@ viewPrimaryLabelTooltip openTooltip =
 viewAuxillaryDescriptionToolip : Maybe TooltipId -> Html Msg
 viewAuxillaryDescriptionToolip openTooltip =
     Tooltip.view
-        { id = "tooltip__auxillaryDescription"
+        { id = "tooltip__auxiliaryDescription"
         , trigger =
             \eventHandlers ->
                 ClickableSvg.button "Period 1"
@@ -206,7 +206,7 @@ viewAuxillaryDescriptionToolip openTooltip =
                     ]
         }
         [ Tooltip.plaintext "Manage class and students"
-        , Tooltip.auxillaryDescription
+        , Tooltip.auxiliaryDescription
         , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
         , Tooltip.smallPadding

@@ -309,6 +309,7 @@ buildRadioOptions options currentlyHovered content =
                                         Nothing
                                     )
                             )
+                        , Tooltip.auxiliaryDescription
                         ]
 
                     else
