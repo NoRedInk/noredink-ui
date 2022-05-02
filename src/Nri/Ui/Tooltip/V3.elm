@@ -553,10 +553,9 @@ primaryLabel =
     Attribute (\config -> { config | purpose = PrimaryLabel })
 
 
-{-| Used when the content of the tooltip provides an "auxillary description" for its content.
+{-| Used when the content of the tooltip provides an "auxiliary description" for its content.
 
-An auxillary description is used when the tooltip content provides supplementary information about its trigger content
-e.g. when the trigger content is a word in the middle of a body of text that requires additional explanation.
+An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
 
 -}
 auxiliaryDescription : Attribute msg
@@ -607,6 +606,9 @@ view config attributes =
 
 
 {-| Supplementary information triggered by a "?" icon.
+
+This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
+
 -}
 viewToggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg) -> Html msg
 viewToggleTip { label, lastId } attributes_ =

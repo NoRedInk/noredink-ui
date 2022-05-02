@@ -18,6 +18,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
+import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
@@ -135,29 +136,64 @@ view ellieLinkConfig model =
         [ Table.string
             { header = "Attribute"
             , value = .name
-            , width = Css.px 50
+            , width = Css.pct 15
+            , cellStyles = always []
+            }
+        , Table.custom
+            { header = Html.text "About"
+            , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
+            , width = Css.px 200
             , cellStyles = always []
             }
         , Table.custom
             { header = Html.text "view"
             , view = .view
             , width = Css.px 50
-            , cellStyles = always []
+            , cellStyles = always [ Css.textAlign Css.center ]
             }
         ]
         [ { name = "Tooltip.primaryLabel"
+          , description =
+                """
+Used when the content of the tooltip is identical to the accessible name.
+
+For example, when using the Tooltip component with the ClickableSvg component, the Tooltip is providing
+extra information to sighted users that screenreader users already have.
+
+This is the default.
+"""
           , view = viewPrimaryLabelTooltip model.openTooltip
           , tooltipId = PrimaryLabel
           }
         , { name = "Tooltip.auxiliaryDescription"
+          , description =
+                """
+Used when the content of the tooltip provides an "auxiliary description" for its content.
+
+An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
+"""
           , view = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
           }
         , { name = "Tooltip.disclosure"
+          , description =
+                """
+Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
+
+If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
+
+For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
+"""
           , view = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
+          , description =
+                """
+Supplementary information triggered by a "?" icon.
+
+This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
+"""
           , view = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
