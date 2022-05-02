@@ -10,7 +10,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , onHover
     , open
     , css, containerCss
-    , custom, customTriggerAttributes
+    , custom
     , nriDescription, testId
     , primaryLabel, auxillaryDescription, disclosure
     )
@@ -22,6 +22,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
   - remove onClick helper
   - prefer the accessible name to using aria-labelledby and aria-label together
+  - :skull: remove customTooltipAttributes
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -39,7 +40,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs onClick, onHover
 @docs open
 @docs css, containerCss
-@docs custom, customTriggerAttributes
+@docs custom
 @docs nriDescription, testId
 @docs primaryLabel, auxillaryDescription, disclosure
 
@@ -288,13 +289,6 @@ nriDescription description =
 testId : String -> Attribute msg
 testId id_ =
     custom [ ExtraAttributes.testId id_ ]
-
-
-{-| DEPRECATED -- a future release will remove this helper.
--}
-customTriggerAttributes : List (Html.Attribute msg) -> Attribute msg
-customTriggerAttributes attributes =
-    Attribute (\config -> { config | triggerAttributes = config.triggerAttributes ++ attributes })
 
 
 {-| -}
