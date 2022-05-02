@@ -784,7 +784,10 @@ viewTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , positionTooltip config.direction config.alignment
+            , Css.Media.withMedia [ MediaQuery.notMobile ]
+                (positionTooltip config.direction config.alignment)
+            , Css.Media.withMedia [ MediaQuery.mobile ]
+                (positionTooltip config.mobileDirection config.mobileAlignment)
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -806,10 +809,36 @@ viewTooltip tooltipId config =
                  , paddingToStyle config.padding
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
+                 , Css.backgroundColor Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.Media.withMedia [ MediaQuery.notMobile ]
+                    [ positioning config.direction config.alignment
+                    , case config.tail of
+                        WithTail ->
+                            tailForDirection config.direction
+
+                        WithoutTail ->
+                            Css.batch []
+                    ]
+                 , Css.Media.withMedia [ MediaQuery.mobile ]
+                    [ positioning config.mobileDirection config.mobileAlignment
+                    , case config.tail of
+                        WithTail ->
+                            tailForDirection config.mobileDirection
+
+                        WithoutTail ->
+                            Css.batch []
+                    ]
+                 , Fonts.baseFont
+                 , Css.fontSize (Css.px 16)
+                 , Css.fontWeight (Css.int 600)
+                 , Css.color Colors.white
+                 , Shadows.high
+                 , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
+                 , Global.descendants [ Global.a [ Css.color Colors.white ] ]
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.tail config.direction config.alignment
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -839,9 +868,9 @@ offCenterOffset =
     20
 
 
-{-| This returns an absolute positioning style attribute for the popout container for a given tail position.
+{-| This returns absolute positioning styles for the popout container for a given tail position.
 -}
-positionTooltip : Direction -> Alignment -> Style
+positionTooltip : Direction -> Alignment -> List Style
 positionTooltip direction alignment =
     let
         ltrPosition =
@@ -866,49 +895,26 @@ positionTooltip direction alignment =
                 End customOffset ->
                     Css.bottom customOffset
     in
-    Css.batch <|
-        case direction of
-            OnTop ->
-                [ ltrPosition
-                , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
+    case direction of
+        OnTop ->
+            [ ltrPosition
+            , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
 
-            OnBottom ->
-                [ ltrPosition
-                , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
+        OnBottom ->
+            [ ltrPosition
+            , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
 
-            OnLeft ->
-                [ topToBottomPosition
-                , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
+        OnLeft ->
+            [ topToBottomPosition
+            , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
 
-            OnRight ->
-                [ topToBottomPosition
-                , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
-
-
-pointerBox : Tail -> Direction -> Alignment -> Html.Attribute msg
-pointerBox tail direction alignment =
-    Attributes.css
-        [ Css.backgroundColor Colors.navy
-        , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , positioning direction alignment
-        , case tail of
-            WithTail ->
-                tailForDirection direction
-
-            WithoutTail ->
-                Css.batch []
-        , Fonts.baseFont
-        , Css.fontSize (Css.px 16)
-        , Css.fontWeight (Css.int 600)
-        , Css.color Colors.white
-        , Shadows.high
-        , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
-        , Global.descendants [ Global.a [ Css.color Colors.white ] ]
-        ]
+        OnRight ->
+            [ topToBottomPosition
+            , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
 
 
 
