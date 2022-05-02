@@ -19,12 +19,9 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V5 as Table
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -128,11 +125,7 @@ update msg model =
             ( { model | staticExampleSettings = settings }, Cmd.none )
 
         Log message ->
-            let
-                _ =
-                    Debug.log "Tooltip Log:" message
-            in
-            ( model, Cmd.none )
+            ( Debug.log "Tooltip Log:" |> always model, Cmd.none )
 
 
 view : EllieLink.Config -> State -> List (Html Msg)

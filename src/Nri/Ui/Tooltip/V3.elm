@@ -61,7 +61,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
-import Css.Media exposing (withMedia)
+import Css.Media
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
