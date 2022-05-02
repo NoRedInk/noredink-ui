@@ -25,7 +25,7 @@ spec =
                 in
                 program (Tooltip.viewToggleTip { label = label, lastId = Nothing })
                     [ Tooltip.plaintext tooltipContent
-                    , Tooltip.onHover identity
+                    , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -60,7 +60,7 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onHover identity
+                    , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]

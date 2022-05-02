@@ -215,7 +215,7 @@ viewPrimaryLabelTooltip openTooltip =
         }
         [ Tooltip.plaintext "Download"
         , Tooltip.primaryLabel
-        , Tooltip.onHover (ToggleTooltip PrimaryLabel)
+        , Tooltip.onToggle (ToggleTooltip PrimaryLabel)
         , Tooltip.open (openTooltip == Just PrimaryLabel)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
@@ -236,7 +236,7 @@ viewAuxillaryDescriptionToolip openTooltip =
         }
         [ Tooltip.plaintext "Manage class and students"
         , Tooltip.auxiliaryDescription
-        , Tooltip.onHover (ToggleTooltip AuxillaryDescription)
+        , Tooltip.onToggle (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
@@ -272,7 +272,7 @@ viewDisclosureToolip openTooltip =
                 [ Html.text "Learn more about NoRedInk Mastery" ]
             ]
         , Tooltip.disclosure { triggerId = triggerId, lastId = Just lastId }
-        , Tooltip.onHover (ToggleTooltip Disclosure)
+        , Tooltip.onToggle (ToggleTooltip Disclosure)
         , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
         , Tooltip.alignEndForMobile (Css.px 148)
@@ -283,7 +283,7 @@ viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
     Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
         [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
-        , Tooltip.onHover (ToggleTooltip LearnMore)
+        , Tooltip.onToggle (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
         , Tooltip.alignEndForMobile (Css.px 144)
         ]

@@ -9,7 +9,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onHover
+    , onToggle
     , open
     , css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
     , custom
@@ -29,6 +29,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - fix spelling of "auxillary" to "auxiliary"
   - toggleTip -> viewToggleTip
   - Adds notMobileCss, mobileCss, quizEngineMobileCss
+  - onHover -> onToggle
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -45,7 +46,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onHover
+@docs onToggle
 @docs open
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
 @docs custom
@@ -527,10 +528,17 @@ type Trigger msg
     = OnHover (Bool -> msg)
 
 
-{-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
+{-| The Tooltip event cycle depends on whether you're following the Disclosure pattern, but disguising the Disclosure as a tooltip visually or you're actually adding a hint or label for sighted users.
+
+If you're adding a tooltip to an element that _does_ something on its own, e.g., a "Print" ClickableSvg, then it doesn't make sense for the tooltip to change state on click/enter/space.
+
+However, if you're adding a tooltip to an element that is not interactive at all if you don't count the tooltip, then we can use the click/enter/space events to manage the tooltip state too. This style of "tooltip" is the only kind that will be accessible for touch users on mobile -- it's important to get the access pattern right!
+
+If the tooltip behavior you're seeing doesn't _feel_ quite right, consider whether you need to change tooltip "types" to `disclosure` or to `auxiliaryDescription`.
+
 -}
-onHover : (Bool -> msg) -> Attribute msg
-onHover msg =
+onToggle : (Bool -> msg) -> Attribute msg
+onToggle msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 

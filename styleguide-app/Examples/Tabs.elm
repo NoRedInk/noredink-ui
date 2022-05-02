@@ -221,7 +221,7 @@ allTabs openTooltipId labelledBy =
          , Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
-            , Tooltip.onHover (ToggleTooltip First)
+            , Tooltip.onToggle (ToggleTooltip First)
             , Tooltip.alignStart (Css.px 75)
             , Tooltip.primaryLabel
             , Tooltip.open (openTooltipId == Just First)
@@ -245,7 +245,7 @@ allTabs openTooltipId labelledBy =
         [ Tabs.tabHtml bulbIcon
         , Tabs.withTooltip
             [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onHover (ToggleTooltip Third)
+            , Tooltip.onToggle (ToggleTooltip Third)
             , Tooltip.primaryLabel
             , Tooltip.open (openTooltipId == Just Third)
             ]

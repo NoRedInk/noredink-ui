@@ -102,7 +102,7 @@ Tooltip.view
     }
     [ Tooltip.plaintext "Preview"
     , Tooltip.primaryLabel
-    , Tooltip.onHover SetPreviewTooltip
+    , Tooltip.onToggle SetPreviewTooltip
     , Tooltip.open state.tooltipPreview
     , Tooltip.smallPadding
     , Tooltip.fitToContent
@@ -121,7 +121,7 @@ Tooltip.view
                     }
                     [ Tooltip.plaintext "Preview"
                     , Tooltip.primaryLabel
-                    , Tooltip.onHover SetPreviewTooltip
+                    , Tooltip.onToggle SetPreviewTooltip
                     , Tooltip.open state.tooltipPreview
                     , Tooltip.smallPadding
                     , Tooltip.fitToContent

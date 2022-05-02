@@ -7,7 +7,7 @@ module Nri.Ui.Tooltip.V2 exposing
     , alignStart, alignMiddle, alignEnd
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onClick, onHover
+    , onClick, onToggle
     , open
     , css, containerCss
     , custom, customTriggerAttributes
@@ -18,7 +18,7 @@ module Nri.Ui.Tooltip.V2 exposing
 {-| Known issues:
 
   - tooltips with focusable content (e.g., a link) will not handle focus correctly for
-    keyboard-only users when using the onHover attribute
+    keyboard-only users when using the onToggle attribute
 
 Post-release patches:
 
@@ -72,7 +72,7 @@ Example usage:
 @docs alignStart, alignMiddle, alignEnd
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onClick, onHover
+@docs onClick, onToggle
 @docs open
 @docs css, containerCss
 @docs custom, customTriggerAttributes
@@ -419,8 +419,8 @@ type Trigger msg
 
 {-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
 -}
-onHover : (Bool -> msg) -> Attribute msg
-onHover msg =
+onToggle : (Bool -> msg) -> Attribute msg
+onToggle msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
