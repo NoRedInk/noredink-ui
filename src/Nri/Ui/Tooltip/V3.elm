@@ -721,9 +721,6 @@ viewTooltip_ { trigger, id } tooltip =
                 )
             , hoverBridge tooltip
             ]
-
-        -- Popout is rendered after the overlay, to allow client code to give it
-        -- priority when clicking by setting its position
         , viewTooltip id tooltip
         ]
 
@@ -795,6 +792,10 @@ viewTooltip tooltipId config =
               else
                 Css.display Css.none
             ]
+        , -- If the tooltip is the "primary label" for the content, then we can trust that the content
+          -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
+          -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
+          Widget.hidden (config.purpose == PrimaryLabel)
         ]
         [ Html.div
             ([ Attributes.css
