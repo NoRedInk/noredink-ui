@@ -263,7 +263,9 @@ initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalListItem "direction" controlDirection
+        |> ControlExtra.optionalListItem "direction -- mobile" controlDirectionForMobile
         |> ControlExtra.optionalListItem "alignment" controlAlignment
+        |> ControlExtra.optionalListItem "alignment -- mobile" controlAlignmentForMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
@@ -294,6 +296,16 @@ controlDirection =
         ]
 
 
+controlDirectionForMobile : Control ( String, Tooltip.Attribute Never )
+controlDirectionForMobile =
+    CommonControls.choice "Tooltip"
+        [ ( "onTopForMobile", Tooltip.onTopForMobile )
+        , ( "onBottomForMobile", Tooltip.onBottomForMobile )
+        , ( "onLeftForMobile", Tooltip.onLeftForMobile )
+        , ( "onRightForMobile", Tooltip.onRightForMobile )
+        ]
+
+
 controlAlignment : Control ( String, Tooltip.Attribute Never )
 controlAlignment =
     Control.choice
@@ -312,6 +324,31 @@ controlAlignment =
                 (\float ->
                     ( "Tooltip.alignEnd (Css.px " ++ String.fromFloat float ++ ")"
                     , Tooltip.alignEnd (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
+        ]
+
+
+controlAlignmentForMobile : Control ( String, Tooltip.Attribute Never )
+controlAlignmentForMobile =
+    Control.choice
+        [ ( "alignMiddleForMobile (default)", Control.value ( "Tooltip.alignMiddleForMobile", Tooltip.alignMiddleForMobile ) )
+        , ( "alignStartForMobile"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignStartForMobile (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignStartForMobile (Css.px float)
+                    )
+                )
+                (ControlExtra.float 0)
+          )
+        , ( "alignEndForMobile"
+          , Control.map
+                (\float ->
+                    ( "Tooltip.alignEndForMobile (Css.px " ++ String.fromFloat float ++ ")"
+                    , Tooltip.alignEndForMobile (Css.px float)
                     )
                 )
                 (ControlExtra.float 0)

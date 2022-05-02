@@ -4,7 +4,9 @@ module Nri.Ui.Tooltip.V3 exposing
     , plaintext, html
     , withoutTail
     , onTop, onBottom, onLeft, onRight
+    , onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
     , alignStart, alignMiddle, alignEnd
+    , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onHover
@@ -38,7 +40,9 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs plaintext, html
 @docs withoutTail
 @docs onTop, onBottom, onLeft, onRight
+@docs onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
 @docs alignStart, alignMiddle, alignEnd
+@docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onHover
@@ -81,6 +85,8 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , alignment : Alignment
+    , mobileDirection : Direction
+    , mobileAlignment : Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -102,6 +108,8 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , alignment = Middle
+            , mobileDirection = OnTop
+            , mobileAlignment = Middle
             , tail = WithTail
             , content = []
             , attributes = []
@@ -200,6 +208,51 @@ alignEnd position =
     withAligment (End position)
 
 
+withMobileAligment : Alignment -> Attribute msg
+withMobileAligment alignment =
+    Attribute (\config -> { config | mobileAlignment = alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a mobile width.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForMobile : Px -> Attribute msg
+alignStartForMobile position =
+    withMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width. This is the default behavior.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForMobile : Attribute msg
+alignMiddleForMobile =
+    withMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a mobile width.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForMobile : Px -> Attribute msg
+alignEndForMobile position =
+    withMobileAligment (End position)
+
+
 {-| Where should this tooltip be positioned relative to the trigger?
 -}
 type Direction
@@ -263,6 +316,62 @@ onBottom =
 onLeft : Attribute msg
 onLeft =
     withPosition OnLeft
+
+
+withPositionForMobile : Direction -> Attribute msg
+withPositionForMobile direction =
+    Attribute (\config -> { config | mobileDirection = direction })
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForMobile : Attribute msg
+onTopForMobile =
+    withPositionForMobile OnTop
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForMobile : Attribute msg
+onRightForMobile =
+    withPositionForMobile OnRight
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForMobile : Attribute msg
+onBottomForMobile =
+    withPositionForMobile OnBottom
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForMobile : Attribute msg
+onLeftForMobile =
+    withPositionForMobile OnLeft
 
 
 {-| Set some custom styles on the tooltip.
