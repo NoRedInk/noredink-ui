@@ -9,7 +9,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , smallPadding, normalPadding, customPadding
     , onHover
     , open
-    , css, containerCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
     , custom
     , nriDescription, testId
     , primaryLabel, auxiliaryDescription, disclosure
@@ -26,6 +26,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - change `css` to extend the current list of styles, NOT override them entirely.
   - fix spelling of "auxillary" to "auxiliary"
   - toggleTip -> viewToggleTip
+  - Adds notMobileCss, mobileCss, quizEngineMobileCss
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -42,7 +43,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs smallPadding, normalPadding, customPadding
 @docs onHover
 @docs open
-@docs css, containerCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
 @docs primaryLabel, auxiliaryDescription, disclosure
@@ -56,6 +57,7 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
+import Css.Media exposing (withMedia)
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -64,6 +66,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
@@ -267,6 +270,45 @@ onLeft =
 css : List Style -> Attribute msg
 css tooltipStyleOverrides =
     Attribute (\config -> { config | tooltipStyleOverrides = config.tooltipStyleOverrides ++ tooltipStyleOverrides })
+
+
+{-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| Use this helper to add custom attributes.

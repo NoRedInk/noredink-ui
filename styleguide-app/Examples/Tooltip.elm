@@ -267,6 +267,10 @@ initStaticExampleSettings =
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
+        |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
+        |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
+        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
+        |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
 
 
 controlContent : Control ( String, Tooltip.Attribute Never )
