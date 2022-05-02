@@ -37,7 +37,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs alignStart, alignMiddle, alignEnd
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onClick, onHover
+@docs onHover
 @docs open
 @docs css, containerCss
 @docs custom
