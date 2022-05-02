@@ -23,6 +23,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - remove onClick helper
   - prefer the accessible name to using aria-labelledby and aria-label together
   - :skull: remove customTooltipAttributes
+  - change `css` to extend the current list of styles, NOT override them entirely.
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -259,12 +260,11 @@ onLeft =
     withPosition OnLeft
 
 
-{-| Set some custom styles on the tooltip. These will be treated as overrides,
-so be careful!
+{-| Set some custom styles on the tooltip.
 -}
 css : List Style -> Attribute msg
 css tooltipStyleOverrides =
-    Attribute (\config -> { config | tooltipStyleOverrides = tooltipStyleOverrides })
+    Attribute (\config -> { config | tooltipStyleOverrides = config.tooltipStyleOverrides ++ tooltipStyleOverrides })
 
 
 {-| Use this helper to add custom attributes.
