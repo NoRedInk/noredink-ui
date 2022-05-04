@@ -22,7 +22,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
 import Task
@@ -221,7 +221,7 @@ allTabs openTooltipId labelledBy =
          , Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
-            , Tooltip.onHover (ToggleTooltip First)
+            , Tooltip.onToggle (ToggleTooltip First)
             , Tooltip.alignStart (Css.px 75)
             , Tooltip.primaryLabel
             , Tooltip.open (openTooltipId == Just First)
@@ -245,7 +245,7 @@ allTabs openTooltipId labelledBy =
         [ Tabs.tabHtml bulbIcon
         , Tabs.withTooltip
             [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onHover (ToggleTooltip Third)
+            , Tooltip.onToggle (ToggleTooltip Third)
             , Tooltip.primaryLabel
             , Tooltip.open (openTooltipId == Just Third)
             ]

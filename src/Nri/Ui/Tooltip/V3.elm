@@ -1,83 +1,57 @@
-module Nri.Ui.Tooltip.V2 exposing
-    ( view, toggleTip
+module Nri.Ui.Tooltip.V3 exposing
+    ( view, viewToggleTip
     , Attribute
     , plaintext, html
     , withoutTail
     , onTop, onBottom, onLeft, onRight
+    , onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
     , alignStart, alignMiddle, alignEnd
+    , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onClick, onToggle
+    , onToggle
     , open
-    , css, containerCss
-    , custom, customTriggerAttributes
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+    , custom
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription
+    , primaryLabel, auxiliaryDescription, disclosure
     )
 
-{-| Known issues:
+{-| Changes from V2:
 
-  - tooltips with focusable content (e.g., a link) will not handle focus correctly for
-    keyboard-only users when using the onToggle attribute
+  - Support `disclosure` pattern for rich-content tooltips
+  - render tooltip content in the DOM when closed (now, they're hidden with display:none)
+  - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
+  - remove onClick helper
+  - prefer the accessible name to using aria-labelledby and aria-label together
+  - :skull: remove customTooltipAttributes
+  - change `css` to extend the current list of styles, NOT override them entirely.
+  - fix spelling of "auxillary" to "auxiliary"
+  - toggleTip -> viewToggleTip
+  - Adds notMobileCss, mobileCss, quizEngineMobileCss
+  - onHover -> onToggle
 
-Post-release patches:
+These tooltips aim to follow the accessibility recommendations from:
 
-  - fix overlay for onClick toolTip having a border
-  - mark customTriggerAttributes as deprecated
-  - add containerCss
-  - adds `nriDescription` and `testId`
-  - fix <https://github.com/NoRedInk/noredink-ui/issues/766>
-  - use `Shadows`
+  - <https://inclusive-components.design/tooltips-toggletips>
+  - <https://sarahmhigley.com/writing/tooltips-in-wcag-21/>
 
-Changes from V1:
-
-  - {Position, withPosition} -> {onTop, onBottom, onLeft, onRight}
-  - withTooltipStyleOverrides -> css
-  - {Width, withWidth} -> {exactWidth, fitToContent}
-  - {Padding, withPadding} -> {smallPadding, normalPadding}
-  - adds customPadding
-  - adds custom for custom attributes
-  - adds plaintext, html helpers for setting the content
-  - pass a list of attributes rather than requiring a pipeline to set up the tooltip
-  - move Trigger into the attributes
-  - change primaryLabel and auxiliaryDescription to attributes, adding view
-  - move the onTrigger event to the attributes
-  - extraButtonAttrs becomes attribute `customTriggerAttributes`
-  - isOpen field becomes the `open` attribute
-  - fold toggleTip and view into each other, so there's less to maintain
-  - adds withoutTail
-
-These tooltips follow the accessibility recommendations from: <https://inclusive-components.design/tooltips-toggletips>
-
-Example usage:
-
-        Tooltip.view
-            { trigger =
-                \attrs ->
-                    ClickableText.button "Click me to open the tooltip"
-                        [ ClickableText.custom attrs ]
-            , id = "my-tooltip"
-            }
-            [ Tooltip.plaintext "Gradebook"
-            , Tooltip.primaryLabel
-            , Tooltip.onClick MyOnTriggerMsg
-            , Tooltip.open True
-            ]
-
-@docs view, toggleTip
+@docs view, viewToggleTip
 @docs Attribute
 @docs plaintext, html
 @docs withoutTail
 @docs onTop, onBottom, onLeft, onRight
+@docs onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
 @docs alignStart, alignMiddle, alignEnd
+@docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onClick, onToggle
+@docs onToggle
 @docs open
-@docs css, containerCss
-@docs custom, customTriggerAttributes
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+@docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription
+@docs primaryLabel, auxiliaryDescription, disclosure
 
 -}
 
@@ -85,20 +59,22 @@ import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
-import EventExtras
+import Css.Media
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Json.Encode as Encode
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 import String.Extra
 
 
@@ -110,6 +86,8 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , alignment : Alignment
+    , mobileDirection : Direction
+    , mobileAlignment : Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -131,6 +109,8 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , alignment = Middle
+            , mobileDirection = OnTop
+            , mobileAlignment = Middle
             , tail = WithTail
             , content = []
             , attributes = []
@@ -229,6 +209,51 @@ alignEnd position =
     withAligment (End position)
 
 
+withMobileAligment : Alignment -> Attribute msg
+withMobileAligment alignment =
+    Attribute (\config -> { config | mobileAlignment = alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a mobile width.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForMobile : Px -> Attribute msg
+alignStartForMobile position =
+    withMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width. This is the default behavior.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForMobile : Attribute msg
+alignMiddleForMobile =
+    withMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a mobile width.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForMobile : Px -> Attribute msg
+alignEndForMobile position =
+    withMobileAligment (End position)
+
+
 {-| Where should this tooltip be positioned relative to the trigger?
 -}
 type Direction
@@ -294,12 +319,106 @@ onLeft =
     withPosition OnLeft
 
 
-{-| Set some custom styles on the tooltip. These will be treated as overrides,
-so be careful!
+withPositionForMobile : Direction -> Attribute msg
+withPositionForMobile direction =
+    Attribute (\config -> { config | mobileDirection = direction })
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForMobile : Attribute msg
+onTopForMobile =
+    withPositionForMobile OnTop
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForMobile : Attribute msg
+onRightForMobile =
+    withPositionForMobile OnRight
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForMobile : Attribute msg
+onBottomForMobile =
+    withPositionForMobile OnBottom
+
+
+{-| Set the position of the tooltip when the mobile breakpoint applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForMobile : Attribute msg
+onLeftForMobile =
+    withPositionForMobile OnLeft
+
+
+{-| Set some custom styles on the tooltip.
 -}
 css : List Style -> Attribute msg
 css tooltipStyleOverrides =
-    Attribute (\config -> { config | tooltipStyleOverrides = tooltipStyleOverrides })
+    Attribute (\config -> { config | tooltipStyleOverrides = config.tooltipStyleOverrides ++ tooltipStyleOverrides })
+
+
+{-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| Use this helper to add custom attributes.
@@ -324,13 +443,6 @@ nriDescription description =
 testId : String -> Attribute msg
 testId id_ =
     custom [ ExtraAttributes.testId id_ ]
-
-
-{-| DEPRECATED -- a future release will remove this helper.
--}
-customTriggerAttributes : List (Html.Attribute msg) -> Attribute msg
-customTriggerAttributes attributes =
-    Attribute (\config -> { config | triggerAttributes = config.triggerAttributes ++ attributes })
 
 
 {-| -}
@@ -414,31 +526,32 @@ customPadding value =
 
 type Trigger msg
     = OnHover (Bool -> msg)
-    | OnClick (Bool -> msg)
 
 
-{-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
+{-| The Tooltip event cycle depends on whether you're following the Disclosure pattern, but disguising the Disclosure as a tooltip visually or you're actually adding a hint or label for sighted users.
+
+If you're adding a tooltip to an element that _does_ something on its own, e.g., a "Print" ClickableSvg, then it doesn't make sense for the tooltip to change state on click/enter/space.
+
+However, if you're adding a tooltip to an element that is not interactive at all if you don't count the tooltip, then we can use the click/enter/space events to manage the tooltip state too. This style of "tooltip" is the only kind that will be accessible for touch users on mobile -- it's important to get the access pattern right!
+
+If the tooltip behavior you're seeing doesn't _feel_ quite right, consider whether you need to change tooltip "types" to `disclosure` or to `auxiliaryDescription`.
+
 -}
 onToggle : (Bool -> msg) -> Attribute msg
 onToggle msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
-{-| The tooltip opens when clicking the root element, and closes when anything but the tooltip is clicked again.
--}
-onClick : (Bool -> msg) -> Attribute msg
-onClick msg =
-    Attribute (\config -> { config | trigger = Just (OnClick msg) })
-
-
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
+    | Disclosure { triggerId : String, lastId : Maybe String }
 
 
-{-| Used when the content of the tooltip is the "primary label" for its content, for example,
-when the trigger content is an icon. The tooltip content will supercede the content of the trigger
-HTML for screen readers.
+{-| Used when the content of the tooltip is identical to the accessible name.
+
+For example, when using the Tooltip component with the ClickableSvg component, the Tooltip is providing
+extra information to sighted users that screenreader users already have.
 
 This is the default.
 
@@ -448,14 +561,37 @@ primaryLabel =
     Attribute (\config -> { config | purpose = PrimaryLabel })
 
 
-{-| Used when the content of the tooltip provides an "auxillary description" for its content.
+{-| Used when the content of the tooltip provides an "auxiliary description" for its content.
+
+An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
+
 -}
 auxiliaryDescription : Attribute msg
 auxiliaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
-{-| -}
+{-| Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
+
+If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
+
+For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+
+You may pass a lastId of Nothing if there is NO focusable content within the disclosure.
+
+-}
+disclosure : { triggerId : String, lastId : Maybe String } -> Attribute msg
+disclosure exitFocusManager =
+    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
+
+
+{-| Pass a bool indicating whether the tooltip should be open or closed.
+-}
 open : Bool -> Attribute msg
 open isOpen =
     Attribute (\config -> { config | isOpen = isOpen })
@@ -478,12 +614,18 @@ view config attributes =
 
 
 {-| Supplementary information triggered by a "?" icon.
+
+This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
+
 -}
-toggleTip : { label : String } -> List (Attribute msg) -> Html msg
-toggleTip { label } attributes_ =
+viewToggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg) -> Html msg
+viewToggleTip { label, lastId } attributes_ =
     let
         id =
             String.Extra.dasherize label
+
+        triggerId =
+            "tooltip-trigger__" ++ id
     in
     view
         { trigger =
@@ -493,6 +635,7 @@ toggleTip { label } attributes_ =
                     [ ClickableSvg.exactWidth 20
                     , ClickableSvg.exactHeight 20
                     , ClickableSvg.custom events
+                    , ClickableSvg.id triggerId
                     , ClickableSvg.css
                         [ -- Take up enough room within the document flow
                           Css.margin (Css.px 5)
@@ -504,6 +647,7 @@ toggleTip { label } attributes_ =
             [ Attributes.class "Nri-Ui-Tooltip-V2-ToggleTip"
             , Attributes.id id
             ]
+            :: disclosure { triggerId = triggerId, lastId = lastId }
             :: attributes_
         )
 
@@ -522,25 +666,32 @@ viewTooltip_ { trigger, id } tooltip =
     let
         ( containerEvents, buttonEvents ) =
             case tooltip.trigger of
-                Just (OnClick msg) ->
-                    ( []
-                    , [ EventExtras.onClickStopPropagation
-                            (msg (not tooltip.isOpen))
-                      ]
-                    )
-
                 Just (OnHover msg) ->
-                    ( [ Events.onMouseEnter (msg True)
-                      , Events.onMouseLeave (msg False)
-                      ]
-                    , [ Events.onFocus (msg True)
+                    case tooltip.purpose of
+                        Disclosure { triggerId, lastId } ->
+                            ( [ Events.onMouseEnter (msg True)
+                              , Events.onMouseLeave (msg False)
+                              , WhenFocusLeaves.toAttribute
+                                    { firstId = triggerId
+                                    , lastId = Maybe.withDefault triggerId lastId
+                                    , tabBackAction = msg False
+                                    , tabForwardAction = msg False
+                                    }
+                              ]
+                            , [ Events.onClick (msg (not tooltip.isOpen))
+                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              ]
+                            )
 
-                      -- TODO: this blur event means that we cannot focus links
-                      -- that are within the tooltip without a mouse
-                      , Events.onBlur (msg False)
-                      , Events.onClick (msg True)
-                      ]
-                    )
+                        _ ->
+                            ( [ Events.onMouseEnter (msg True)
+                              , Events.onMouseLeave (msg False)
+                              ]
+                            , [ Events.onFocus (msg True)
+                              , Events.onBlur (msg False)
+                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              ]
+                            )
 
                 Nothing ->
                     ( [], [] )
@@ -562,30 +713,24 @@ viewTooltip_ { trigger, id } tooltip =
                 ]
             ]
             [ trigger
-                ((if tooltip.isOpen then
-                    case tooltip.purpose of
-                        PrimaryLabel ->
-                            Aria.labeledBy id
+                ((case tooltip.purpose of
+                    PrimaryLabel ->
+                        [-- The content should already have an accessible name.
+                        ]
 
-                        AuxillaryDescription ->
-                            Aria.describedBy [ id ]
+                    AuxillaryDescription ->
+                        [ Aria.describedBy [ id ] ]
 
-                  else
-                    -- when our tooltips are closed, they're not rendered in the
-                    -- DOM. This means that the ID references above would be
-                    -- invalid and jumping to a reference would not work, so we
-                    -- skip labels and descriptions if the tooltip is closed.
-                    Attributes.property "data-closed-tooltip" Encode.null
+                    Disclosure _ ->
+                        [ Widget.expanded tooltip.isOpen
+                        , Aria.controls id
+                        ]
                  )
-                    :: buttonEvents
+                    ++ buttonEvents
                     ++ tooltip.triggerAttributes
                 )
             , hoverBridge tooltip
             ]
-        , viewOverlay tooltip
-
-        -- Popout is rendered after the overlay, to allow client code to give it
-        -- priority when clicking by setting its position
         , viewTooltip id tooltip
         ]
 
@@ -643,21 +788,31 @@ hoverBridge { isOpen, direction } =
 
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
-    if config.isOpen then
-        viewOpenTooltip tooltipId config
-
-    else
-        text ""
-
-
-viewOpenTooltip : String -> Tooltip msg -> Html msg
-viewOpenTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , positionTooltip config.direction config.alignment
+            , Css.Media.withMedia [ MediaQuery.notMobile ]
+                (positionTooltip config.direction config.alignment)
+            , Css.Media.withMedia [ MediaQuery.mobile ]
+                (positionTooltip config.mobileDirection config.mobileAlignment)
             , Css.boxSizing Css.borderBox
+            , if config.isOpen then
+                Css.batch []
+
+              else
+                Css.display Css.none
             ]
+        , -- Used for tests, since the visibility is controlled via CSS, which elm-program-test cannot account for
+          Attributes.attribute "data-tooltip-visible" <|
+            if config.isOpen then
+                "true"
+
+            else
+                "false"
+        , -- If the tooltip is the "primary label" for the content, then we can trust that the content
+          -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
+          -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
+          Widget.hidden (config.purpose == PrimaryLabel)
         ]
         [ Html.div
             ([ Attributes.css
@@ -672,10 +827,36 @@ viewOpenTooltip tooltipId config =
                  , paddingToStyle config.padding
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
+                 , Css.backgroundColor Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.Media.withMedia [ MediaQuery.notMobile ]
+                    [ positioning config.direction config.alignment
+                    , case config.tail of
+                        WithTail ->
+                            tailForDirection config.direction
+
+                        WithoutTail ->
+                            Css.batch []
+                    ]
+                 , Css.Media.withMedia [ MediaQuery.mobile ]
+                    [ positioning config.mobileDirection config.mobileAlignment
+                    , case config.tail of
+                        WithTail ->
+                            tailForDirection config.mobileDirection
+
+                        WithoutTail ->
+                            Css.batch []
+                    ]
+                 , Fonts.baseFont
+                 , Css.fontSize (Css.px 16)
+                 , Css.fontWeight (Css.int 600)
+                 , Css.color Colors.white
+                 , Shadows.high
+                 , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
+                 , Global.descendants [ Global.a [ Css.color Colors.white ] ]
                  ]
                     ++ config.tooltipStyleOverrides
                 )
-             , pointerBox config.tail config.direction config.alignment
 
              -- We need to keep this animation in tests to make it pass: check out
              -- the NoAnimations middleware. So if you change the name here, please
@@ -705,9 +886,9 @@ offCenterOffset =
     20
 
 
-{-| This returns an absolute positioning style attribute for the popout container for a given tail position.
+{-| This returns absolute positioning styles for the popout container for a given tail position.
 -}
-positionTooltip : Direction -> Alignment -> Style
+positionTooltip : Direction -> Alignment -> List Style
 positionTooltip direction alignment =
     let
         ltrPosition =
@@ -732,85 +913,26 @@ positionTooltip direction alignment =
                 End customOffset ->
                     Css.bottom customOffset
     in
-    Css.batch <|
-        case direction of
-            OnTop ->
-                [ ltrPosition
-                , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
-
-            OnBottom ->
-                [ ltrPosition
-                , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
-
-            OnLeft ->
-                [ topToBottomPosition
-                , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
-
-            OnRight ->
-                [ topToBottomPosition
-                , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                ]
-
-
-pointerBox : Tail -> Direction -> Alignment -> Html.Attribute msg
-pointerBox tail direction alignment =
-    Attributes.css
-        [ Css.backgroundColor Colors.navy
-        , Css.border3 (Css.px 1) Css.solid Colors.navy
-        , positioning direction alignment
-        , case tail of
-            WithTail ->
-                tailForDirection direction
-
-            WithoutTail ->
-                Css.batch []
-        , Fonts.baseFont
-        , Css.fontSize (Css.px 16)
-        , Css.fontWeight (Css.int 600)
-        , Css.color Colors.white
-        , Shadows.high
-        , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
-        , Global.descendants [ Global.a [ Css.color Colors.white ] ]
-        ]
-
-
-viewOverlay : Tooltip msg -> Html msg
-viewOverlay { isOpen, trigger } =
-    case ( isOpen, trigger ) of
-        ( True, Just (OnClick msg) ) ->
-            -- if we display the click-to-close overlay on hover, you will have to
-            -- close the overlay by moving the mouse out of the window or clicking.
-            viewCloseTooltipOverlay (msg False)
-
-        _ ->
-            text ""
-
-
-viewCloseTooltipOverlay : msg -> Html msg
-viewCloseTooltipOverlay msg =
-    Html.button
-        [ Attributes.css
-            [ Css.width (Css.pct 100)
-            , -- ancestor uses transform property, which interacts with
-              -- position: fixed, forcing this hack.
-              -- https://www.w3.org/TR/css-transforms-1/#propdef-transform
-              Css.height (Css.calc (Css.px 1000) Css.plus (Css.calc (Css.pct 100) Css.plus (Css.px 1000)))
-            , Css.left Css.zero
-            , Css.top (Css.px -1000)
-            , Css.cursor Css.pointer
-            , Css.position Css.fixed
-            , Css.zIndex (Css.int 90) -- TODO: From Nri.ZIndex in monolith, bring ZIndex here?
-            , Css.backgroundColor Css.transparent
-            , Css.border Css.zero
-            , Css.outline Css.none
+    case direction of
+        OnTop ->
+            [ ltrPosition
+            , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
             ]
-        , EventExtras.onClickStopPropagation msg
-        , Key.tabbable False
-        ]
-        []
+
+        OnBottom ->
+            [ ltrPosition
+            , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
+
+        OnLeft ->
+            [ topToBottomPosition
+            , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
+
+        OnRight ->
+            [ topToBottomPosition
+            , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            ]
 
 
 

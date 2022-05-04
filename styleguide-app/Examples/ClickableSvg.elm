@@ -20,7 +20,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -96,13 +96,13 @@ Tooltip.view
             ClickableSvg.button "Preview"
                 UiIcon.preview
                 [ ClickableSvg.custom attrs,
-                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
+                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!") ]
                 ]
     , id = "preview-tooltip"
     }
     [ Tooltip.plaintext "Preview"
     , Tooltip.primaryLabel
-    , Tooltip.onHover SetPreviewTooltip
+    , Tooltip.onToggle SetPreviewTooltip
     , Tooltip.open state.tooltipPreview
     , Tooltip.smallPadding
     , Tooltip.fitToContent
@@ -121,7 +121,7 @@ Tooltip.view
                     }
                     [ Tooltip.plaintext "Preview"
                     , Tooltip.primaryLabel
-                    , Tooltip.onHover SetPreviewTooltip
+                    , Tooltip.onToggle SetPreviewTooltip
                     , Tooltip.open state.tooltipPreview
                     , Tooltip.smallPadding
                     , Tooltip.fitToContent

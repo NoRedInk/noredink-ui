@@ -21,6 +21,7 @@
         "Nri.Ui.DisclosureIndicator.V2",
         "Nri.Ui.Divider.V2",
         "Nri.Ui.Effects.V1",
+        "Nri.Ui.WhenFocusLeaves.V1",
         "Nri.Ui.FocusTrap.V1",
         "Nri.Ui.Fonts.V1",
         "Nri.Ui.Heading.V2",
@@ -68,6 +69,7 @@
         "Nri.Ui.TextInput.V7",
         "Nri.Ui.Tooltip.V1",
         "Nri.Ui.Tooltip.V2",
+        "Nri.Ui.Tooltip.V3",
         "Nri.Ui.UiIcon.V1"
     ]
 }

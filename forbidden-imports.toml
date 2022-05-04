@@ -149,5 +149,8 @@ hint = 'upgrade to V6'
 hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Tooltip.V1"]
-hint = 'upgrade to V2'
+hint = 'upgrade to V3'
 usages = ['styleguide/../src/Nri/Ui/Menu/V1.elm']
+
+[forbidden."Nri.Ui.Tooltip.V2"]
+hint = 'upgrade to V3'

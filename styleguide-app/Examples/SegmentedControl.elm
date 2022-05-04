@@ -26,7 +26,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
 import Task
@@ -206,7 +206,7 @@ buildOptions { content, longContent, tooltips } openTooltip =
               , ", tabTooltip = "
                     ++ (if tooltips then
                             ("\n\t\t[ Tooltip.plaintext " ++ valueStr)
-                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ valueStr ++ ")")
+                                ++ ("\n\t\t, Tooltip.onToggle (OpenTooltip " ++ valueStr ++ ")")
                                 ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ valueStr ++ ")")
                                 ++ "\n\t\t]"
 
@@ -225,7 +225,7 @@ buildOptions { content, longContent, tooltips } openTooltip =
               , tabTooltip =
                     if tooltips then
                         [ Tooltip.plaintext (Debug.toString value)
-                        , Tooltip.onHover (PageTooltip value)
+                        , Tooltip.onToggle (PageTooltip value)
                         , Tooltip.open (openTooltip == Just value)
                         ]
 
@@ -279,7 +279,7 @@ buildRadioOptions options currentlyHovered content =
               , ", tooltip = "
                     ++ (if options.tooltips then
                             ("\n\t\t[ Tooltip.plaintext " ++ String.fromInt value)
-                                ++ ("\n\t\t, Tooltip.onHover (OpenTooltip " ++ String.fromInt value ++ ")")
+                                ++ ("\n\t\t, Tooltip.onToggle (OpenTooltip " ++ String.fromInt value ++ ")")
                                 ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ String.fromInt value ++ ")")
                                 ++ "\n\t\t]"
 
@@ -299,7 +299,7 @@ buildRadioOptions options currentlyHovered content =
                         [ Tooltip.plaintext text
                         , Tooltip.open (currentlyHovered == Just value)
                         , Tooltip.fitToContent
-                        , Tooltip.onHover
+                        , Tooltip.onToggle
                             (\hovered ->
                                 HoverRadio
                                     (if hovered then
@@ -309,6 +309,7 @@ buildRadioOptions options currentlyHovered content =
                                         Nothing
                                     )
                             )
+                        , Tooltip.auxiliaryDescription
                         ]
 
                     else
