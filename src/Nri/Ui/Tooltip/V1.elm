@@ -5,7 +5,7 @@ module Nri.Ui.Tooltip.V1 exposing
     , Padding(..), withPadding
     , withTooltipStyleOverrides
     , Trigger(..)
-    , primaryLabel, auxiliaryDescription, toggleTip
+    , primaryLabel, auxillaryDescription, toggleTip
     )
 
 {-| A tooltip component!
@@ -51,7 +51,7 @@ Example usage:
 
 ## View Functions
 
-@docs primaryLabel, auxiliaryDescription, toggleTip
+@docs primaryLabel, auxillaryDescription, toggleTip
 
 -}
 
@@ -215,7 +215,7 @@ primaryLabel =
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
 -}
-auxiliaryDescription :
+auxillaryDescription :
     { trigger : Trigger
     , triggerHtml : Html msg
     , extraButtonAttrs : List (Attribute msg)
@@ -225,7 +225,7 @@ auxiliaryDescription :
     }
     -> Tooltip msg
     -> Html msg
-auxiliaryDescription =
+auxillaryDescription =
     viewTooltip_ AuxillaryDescription
 
 
