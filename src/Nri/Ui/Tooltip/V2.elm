@@ -7,18 +7,18 @@ module Nri.Ui.Tooltip.V2 exposing
     , alignStart, alignMiddle, alignEnd
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onClick, onToggle
+    , onClick, onHover
     , open
     , css, containerCss
     , custom, customTriggerAttributes
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription
+    , primaryLabel, auxillaryDescription
     )
 
 {-| Known issues:
 
   - tooltips with focusable content (e.g., a link) will not handle focus correctly for
-    keyboard-only users when using the onToggle attribute
+    keyboard-only users when using the onHover attribute
 
 Post-release patches:
 
@@ -40,7 +40,7 @@ Changes from V1:
   - adds plaintext, html helpers for setting the content
   - pass a list of attributes rather than requiring a pipeline to set up the tooltip
   - move Trigger into the attributes
-  - change primaryLabel and auxiliaryDescription to attributes, adding view
+  - change primaryLabel and auxillaryDescription to attributes, adding view
   - move the onTrigger event to the attributes
   - extraButtonAttrs becomes attribute `customTriggerAttributes`
   - isOpen field becomes the `open` attribute
@@ -72,12 +72,12 @@ Example usage:
 @docs alignStart, alignMiddle, alignEnd
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onClick, onToggle
+@docs onClick, onHover
 @docs open
 @docs css, containerCss
 @docs custom, customTriggerAttributes
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription
+@docs primaryLabel, auxillaryDescription
 
 -}
 
@@ -419,8 +419,8 @@ type Trigger msg
 
 {-| The tooltip opens when hovering over the trigger element, and closes when the hover stops.
 -}
-onToggle : (Bool -> msg) -> Attribute msg
-onToggle msg =
+onHover : (Bool -> msg) -> Attribute msg
+onHover msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
@@ -450,8 +450,8 @@ primaryLabel =
 
 {-| Used when the content of the tooltip provides an "auxillary description" for its content.
 -}
-auxiliaryDescription : Attribute msg
-auxiliaryDescription =
+auxillaryDescription : Attribute msg
+auxillaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
