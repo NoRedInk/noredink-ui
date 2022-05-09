@@ -19,6 +19,7 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
 import Sort.Set as Set
 import Task
@@ -337,7 +338,11 @@ navigation currentRoute =
             , top (px 55)
             ]
         ]
-        (SideNav.entry "All" [ SideNav.href Routes.All ]
+        (SideNav.entry "UI Style Guide"
+            [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
+            , SideNav.icon UiIcon.openInNewTab
+            ]
+            :: SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
         )
 
