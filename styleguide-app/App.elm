@@ -230,7 +230,12 @@ view model =
 
 viewExample : Model key -> Example a msg -> Html msg
 viewExample model example =
-    Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
+    Html.div
+        [ css
+            [ maxWidth (Css.px 1400)
+            , margin auto
+            ]
+        ]
         [ Example.view model.previousRoute
             { packageDependencies = model.elliePackageDependencies }
             example
