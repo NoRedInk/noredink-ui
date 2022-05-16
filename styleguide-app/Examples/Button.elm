@@ -158,11 +158,10 @@ initDebugControls =
                         , ( "fillContainerWidth", Button.fillContainerWidth )
                         ]
                     )
+                |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
-                        [ ( "enabled", Button.enabled )
-                        , ( "disabled", Button.disabled )
-                        , ( "error", Button.error )
+                        [ ( "error", Button.error )
                         , ( "unfulfilled", Button.unfulfilled )
                         , ( "loading", Button.loading )
                         , ( "success", Button.success )
