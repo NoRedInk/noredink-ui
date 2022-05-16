@@ -28,6 +28,8 @@ module ClickableAttributes exposing
 
 -}
 
+import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
@@ -127,7 +129,24 @@ toButtonAttributes clickableAttributes =
 
 {-| -}
 toLinkAttributes : { routeToString : route -> String, isDisabled : Bool } -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
-toLinkAttributes { routeToString } clickableAttributes =
+toLinkAttributes { routeToString, isDisabled } clickableAttributes =
+    let
+        ( linkTypeName, attributes ) =
+            toEnabledLinkAttributes routeToString clickableAttributes
+    in
+    ( linkTypeName
+    , if isDisabled then
+        [ Role.link
+        , Widget.disabled True
+        ]
+
+      else
+        attributes
+    )
+
+
+toEnabledLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toEnabledLinkAttributes routeToString clickableAttributes =
     let
         stringUrl =
             case ( clickableAttributes.urlString, clickableAttributes.url ) of
