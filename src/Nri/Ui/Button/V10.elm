@@ -788,6 +788,7 @@ buttonStyle =
         , Css.margin Css.zero
         , Css.hover [ Css.textDecoration Css.none ]
         , Css.disabled [ Css.cursor Css.notAllowed ]
+        , Css.Global.withAttribute "aria-disabled=true" [ Css.cursor Css.notAllowed ]
         , Css.display Css.inlineFlex
         , Css.alignItems Css.center
         , Css.justifyContent Css.center
