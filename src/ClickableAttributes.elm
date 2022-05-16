@@ -1,18 +1,32 @@
 module ClickableAttributes exposing
-    ( ClickableAttributes
-    , href
-    , init
-    , linkExternal
-    , linkExternalWithTracking
-    , linkSpa
-    , linkWithMethod
-    , linkWithTracking
+    ( ClickableAttributes, init
     , onClick
     , toButtonAttributes
+    , href, linkWithMethod, linkWithTracking
+    , linkSpa
+    , linkExternal, linkExternalWithTracking
     , toLinkAttributes
     )
 
-{-| -}
+{-|
+
+@docs ClickableAttributes, init
+
+
+# For buttons
+
+@docs onClick
+@docs toButtonAttributes
+
+
+# For links
+
+@docs href, linkWithMethod, linkWithTracking
+@docs linkSpa
+@docs linkExternal, linkExternalWithTracking
+@docs toLinkAttributes
+
+-}
 
 import EventExtras
 import Html.Styled exposing (Attribute)
