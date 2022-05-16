@@ -275,13 +275,7 @@ buttons model =
 
         exampleCell setStyle setSize =
             buttonOrLink model.label
-                ([ setSize
-                 , setStyle
-                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                 , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
-                 ]
-                    ++ List.map Tuple.second model.attributes
-                )
+                (setSize :: setStyle :: List.map Tuple.second model.attributes)
                 |> List.singleton
                 |> td
                     [ css
