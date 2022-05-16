@@ -499,7 +499,13 @@ unfulfilled =
     set (\attributes -> { attributes | state = Unfulfilled })
 
 
-{-| Shows inactive styling. If a button, this attribute will disable it.
+{-| Shows inactive styling.
+
+If a button, this attribute will disable it as you'd expect.
+
+If a link, this attribute will follow the pattern laid out in [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article,
+and essentially make the anchor a disabled placeholder.
+
 -}
 disabled : Attribute msg
 disabled =
