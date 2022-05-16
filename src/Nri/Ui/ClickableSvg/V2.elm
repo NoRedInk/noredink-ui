@@ -495,7 +495,11 @@ renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let
         ( linkFunctionName, extraAttrs ) =
-            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
+            ClickableAttributes.toLinkAttributes
+                { routeToString = identity
+                , isDisabled = config.disabled
+                }
+                config.clickableAttributes
 
         theme =
             if config.disabled then

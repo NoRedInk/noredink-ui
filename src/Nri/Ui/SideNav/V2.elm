@@ -181,7 +181,10 @@ viewSidebarLeaf :
 viewSidebarLeaf config extraStyles entryConfig =
     let
         ( linkFunctionName, attributes ) =
-            ClickableAttributes.toLinkAttributes config.routeToString
+            ClickableAttributes.toLinkAttributes
+                { routeToString = config.routeToString
+                , isDisabled = False
+                }
                 entryConfig.clickableAttributes
     in
     Nri.Ui.styled Html.Styled.a

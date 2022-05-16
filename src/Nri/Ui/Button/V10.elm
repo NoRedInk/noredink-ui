@@ -28,6 +28,7 @@ adding a span around the text could potentially lead to regressions.
   - adds `modal` helper, an alias for `large` size
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconFor`
+  - support 'disabled' links according to [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article
 
 
 # Changes from V9:
@@ -463,6 +464,28 @@ type ButtonState
     | Success
 
 
+isDisabled : ButtonState -> Bool
+isDisabled state =
+    case state of
+        Enabled ->
+            False
+
+        Disabled ->
+            True
+
+        Error ->
+            True
+
+        Unfulfilled ->
+            False
+
+        Loading ->
+            True
+
+        Success ->
+            True
+
+
 {-| -}
 enabled : Attribute msg
 enabled =
@@ -557,32 +580,12 @@ renderButton ((ButtonOrLink config) as button_) =
     let
         buttonStyle_ =
             getColorPalette button_
-
-        isDisabled =
-            case config.state of
-                Enabled ->
-                    False
-
-                Disabled ->
-                    True
-
-                Error ->
-                    True
-
-                Unfulfilled ->
-                    False
-
-                Loading ->
-                    True
-
-                Success ->
-                    True
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ config.customStyles ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
-            ++ Attributes.disabled isDisabled
+            ++ Attributes.disabled (isDisabled config.state)
             :: Attributes.type_ "button"
             :: config.customAttributes
         )
@@ -596,7 +599,11 @@ renderLink ((ButtonOrLink config) as link_) =
             getColorPalette link_
 
         ( linkFunctionName, attributes ) =
-            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
+            ClickableAttributes.toLinkAttributes
+                { routeToString = identity
+                , isDisabled = isDisabled config.state
+                }
+                config.clickableAttributes
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)

@@ -112,8 +112,8 @@ toButtonAttributes clickableAttributes =
 
 
 {-| -}
-toLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
-toLinkAttributes routeToString clickableAttributes =
+toLinkAttributes : { routeToString : route -> String, isDisabled : Bool } -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toLinkAttributes { routeToString } clickableAttributes =
     let
         stringUrl =
             case ( clickableAttributes.urlString, clickableAttributes.url ) of
