@@ -1,6 +1,6 @@
 module Spec.Nri.Ui.Tooltip exposing (spec)
 
-import Accessibility.Widget as Widget
+import Accessibility.Aria as Aria
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -136,7 +136,7 @@ clickButtonByLabel label =
     ProgramTest.simulateDomEvent
         (Query.find
             [ Selector.tag "button"
-            , Selector.attribute (Widget.label label)
+            , Selector.attribute (Aria.label label)
             ]
         )
         Event.click

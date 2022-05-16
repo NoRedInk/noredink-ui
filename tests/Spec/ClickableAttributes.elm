@@ -1,5 +1,6 @@
 module Spec.ClickableAttributes exposing (suite)
 
+import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import ClickableAttributes exposing (ClickableAttributes)
 import Expect
@@ -25,8 +26,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with an external href" <|
             \() ->
@@ -34,8 +36,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with an external href that also supports tracking" <|
             \() ->
@@ -43,8 +46,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a SPA link" <|
             \() ->
@@ -52,8 +56,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a link with a method" <|
             \() ->
@@ -61,8 +66,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a link with tracking" <|
             \() ->
@@ -70,8 +76,9 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
-                        , -- should not include redundant roles
+                        , -- should not include a redundant role
                           Query.hasNot [ Selector.attribute Role.link ]
+                        , Query.hasNot [ Selector.attribute (Aria.disabled True) ]
                         ]
         ]
 
@@ -87,6 +94,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with an external href" <|
             \() ->
@@ -96,6 +105,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with an external href that also supports tracking" <|
             \() ->
@@ -105,6 +116,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a SPA link" <|
             \() ->
@@ -114,6 +127,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a link with a method" <|
             \() ->
@@ -123,6 +138,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         , test "with a link with tracking" <|
             \() ->
@@ -132,6 +149,8 @@ disabledLinkAttributes =
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
                         , -- should explicitly be tagged as having the link role
                           Query.has [ Selector.attribute Role.link ]
+                        , -- should be marked as disabled for screenreader users
+                          Query.has [ Selector.attribute (Aria.disabled True) ]
                         ]
         ]
 
