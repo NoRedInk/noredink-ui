@@ -1,5 +1,6 @@
 module Spec.ClickableAttributes exposing (suite)
 
+import Accessibility.Role as Role
 import ClickableAttributes exposing (ClickableAttributes)
 import Expect
 import Html.Attributes exposing (href)
@@ -24,6 +25,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         , test "with an external href" <|
             \() ->
@@ -31,6 +34,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         , test "with an external href that also supports tracking" <|
             \() ->
@@ -38,6 +43,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         , test "with a SPA link" <|
             \() ->
@@ -45,6 +52,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         , test "with a link with a method" <|
             \() ->
@@ -52,6 +61,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         , test "with a link with tracking" <|
             \() ->
@@ -59,6 +70,8 @@ linkAttributes =
                     |> setupLinkTest
                     |> Expect.all
                         [ Query.has [ Selector.attribute (href "some-route") ]
+                        , -- should not include redundant roles
+                          Query.hasNot [ Selector.attribute Role.link ]
                         ]
         ]
 
@@ -72,6 +85,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         , test "with an external href" <|
             \() ->
@@ -79,6 +94,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         , test "with an external href that also supports tracking" <|
             \() ->
@@ -86,6 +103,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         , test "with a SPA link" <|
             \() ->
@@ -93,6 +112,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         , test "with a link with a method" <|
             \() ->
@@ -100,6 +121,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         , test "with a link with tracking" <|
             \() ->
@@ -107,6 +130,8 @@ disabledLinkAttributes =
                     |> setupDisabledLinkTest
                     |> Expect.all
                         [ Query.hasNot [ Selector.attribute (href "some-route") ]
+                        , -- should explicitly be tagged as having the link role
+                          Query.has [ Selector.attribute Role.link ]
                         ]
         ]
 
