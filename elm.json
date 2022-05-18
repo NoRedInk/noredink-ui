@@ -98,6 +98,6 @@
         "avh4/elm-program-test": "3.3.0 <= v < 4.0.0",
         "elm/html": "1.0.0 <= v < 2.0.0",
         "elm-explorations/test": "1.2.2 <= v < 2.0.0",
-        "tesk9/accessible-html": "4.1.0 <= v < 5.0.0"
+        "tesk9/accessible-html": "5.0.0 <= v < 6.0.0"
     }
 }

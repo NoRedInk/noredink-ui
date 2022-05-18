@@ -158,11 +158,10 @@ initDebugControls =
                         , ( "fillContainerWidth", Button.fillContainerWidth )
                         ]
                     )
+                |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
-                        [ ( "enabled", Button.enabled )
-                        , ( "disabled", Button.disabled )
-                        , ( "error", Button.error )
+                        [ ( "error", Button.error )
                         , ( "unfulfilled", Button.unfulfilled )
                         , ( "loading", Button.loading )
                         , ( "success", Button.success )
@@ -276,13 +275,7 @@ buttons model =
 
         exampleCell setStyle setSize =
             buttonOrLink model.label
-                ([ setSize
-                 , setStyle
-                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                 , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
-                 ]
-                    ++ List.map Tuple.second model.attributes
-                )
+                (setSize :: setStyle :: List.map Tuple.second model.attributes)
                 |> List.singleton
                 |> td
                     [ css

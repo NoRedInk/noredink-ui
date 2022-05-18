@@ -1,19 +1,35 @@
 module ClickableAttributes exposing
-    ( ClickableAttributes
-    , href
-    , init
-    , linkExternal
-    , linkExternalWithTracking
-    , linkSpa
-    , linkWithMethod
-    , linkWithTracking
+    ( ClickableAttributes, init
     , onClick
     , toButtonAttributes
+    , href, linkWithMethod, linkWithTracking
+    , linkSpa
+    , linkExternal, linkExternalWithTracking
     , toLinkAttributes
     )
 
-{-| -}
+{-|
 
+@docs ClickableAttributes, init
+
+
+# For buttons
+
+@docs onClick
+@docs toButtonAttributes
+
+
+# For links
+
+@docs href, linkWithMethod, linkWithTracking
+@docs linkSpa
+@docs linkExternal, linkExternalWithTracking
+@docs toLinkAttributes
+
+-}
+
+import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Widget as Widget
 import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
@@ -112,8 +128,25 @@ toButtonAttributes clickableAttributes =
 
 
 {-| -}
-toLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
-toLinkAttributes routeToString clickableAttributes =
+toLinkAttributes : { routeToString : route -> String, isDisabled : Bool } -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toLinkAttributes { routeToString, isDisabled } clickableAttributes =
+    let
+        ( linkTypeName, attributes ) =
+            toEnabledLinkAttributes routeToString clickableAttributes
+    in
+    ( linkTypeName
+    , if isDisabled then
+        [ Role.link
+        , Widget.disabled True
+        ]
+
+      else
+        attributes
+    )
+
+
+toEnabledLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toEnabledLinkAttributes routeToString clickableAttributes =
     let
         stringUrl =
             case ( clickableAttributes.urlString, clickableAttributes.url ) of
