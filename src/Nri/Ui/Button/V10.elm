@@ -506,6 +506,12 @@ If a button, this attribute will disable it as you'd expect.
 If a link, this attribute will follow the pattern laid out in [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article,
 and essentially make the anchor a disabled placeholder.
 
+_Caveat!_
+
+The styleguide example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
+
+In most cases, if you're not using Browser.application, disabled links should work just fine.
+
 -}
 disabled : Attribute msg
 disabled =
