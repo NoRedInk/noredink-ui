@@ -217,8 +217,7 @@ allTabs openTooltipId labelledBy =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.spaHref <| Routes.toString (Routes.Doodad exampleName)
-         , Tabs.tabString "1"
+        ([ Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
             , Tooltip.onToggle (ToggleTooltip First)
