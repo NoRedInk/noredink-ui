@@ -97,13 +97,23 @@ wrapState wrapState_ unwrapState example =
     }
 
 
-preview : (Example state msg -> msg2) -> (Example state msg -> String) -> Example state msg -> Html msg2
-preview navigate exampleHref =
-    Lazy.lazy (preview_ navigate exampleHref)
+preview :
+    { navigate : Example state msg -> msg2
+    , exampleHref : Example state msg -> String
+    }
+    -> Example state msg
+    -> Html msg2
+preview navConfig =
+    Lazy.lazy (preview_ navConfig)
 
 
-preview_ : (Example state msg -> msg2) -> (Example state msg -> String) -> Example state msg -> Html msg2
-preview_ navigate exampleHref example =
+preview_ :
+    { navigate : Example state msg -> msg2
+    , exampleHref : Example state msg -> String
+    }
+    -> Example state msg
+    -> Html msg2
+preview_ { navigate, exampleHref } example =
     Container.view
         [ Container.gray
         , Container.css

@@ -1,7 +1,7 @@
 module Category exposing
     ( Category(..)
     , fromString
-    , forDisplay, forId
+    , forDisplay, forId, forRoute
     , all
     , sorter
     )
@@ -10,7 +10,7 @@ module Category exposing
 
 @docs Category
 @docs fromString
-@docs forDisplay, forId
+@docs forDisplay, forId, forRoute
 @docs all
 @docs sorter
 
@@ -105,6 +105,12 @@ forDisplay category =
 
         Animations ->
             "Animations"
+
+
+{-| -}
+forRoute : Category -> String
+forRoute =
+    Debug.toString
 
 
 {-| -}

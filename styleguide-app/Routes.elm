@@ -5,7 +5,7 @@ import Category
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Util exposing (dashify)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
@@ -14,6 +14,7 @@ import Url exposing (Url)
 type Route state msg
     = Doodad (Example state msg)
     | Category Category.Category
+    | CategoryDoodad Category.Category (Example state msg)
     | All
     | NotFound String
 
@@ -21,33 +22,43 @@ type Route state msg
 toString : Route state msg -> String
 toString route_ =
     case route_ of
-        NotFound name ->
-            "#/doodad/" ++ name
-
         Doodad example ->
             "#/doodad/" ++ example.name
 
         Category c ->
-            "#/category/" ++ Debug.toString c
+            "#/category/" ++ Category.forRoute c
+
+        CategoryDoodad c example ->
+            "#/category_doodad/" ++ Category.forRoute c ++ "/" ++ example.name
 
         All ->
             "#/"
+
+        NotFound unmatchedRoute ->
+            unmatchedRoute
 
 
 route : Dict String (Example state msg) -> Parser (Route state msg)
 route examples =
     let
-        findExample : String -> Route state msg
-        findExample name =
+        findExample : (Example state msg -> Route state msg) -> String -> Route state msg
+        findExample toRoute name =
             Dict.get name examples
-                |> Maybe.map Doodad
+                |> Maybe.map toRoute
                 |> Maybe.withDefault (NotFound name)
     in
     Parser.oneOf
-        [ Parser.succeed Category
+        [ Parser.succeed (\cat -> findExample (CategoryDoodad cat))
+            |. Parser.token "/category_doodad/"
+            |= (Parser.getChompedString (Parser.chompWhile ((/=) '/'))
+                    |> Parser.andThen category
+               )
+            |. Parser.token "/"
+            |= restOfPath
+        , Parser.succeed Category
             |. Parser.token "/category/"
             |= (restOfPath |> Parser.andThen category)
-        , Parser.succeed findExample
+        , Parser.succeed (findExample Doodad)
             |. Parser.token "/doodad/"
             |= restOfPath
         , Parser.succeed All
@@ -99,7 +110,16 @@ breadCrumbs route_ =
             Just (categoryCrumb category_)
 
         Doodad example ->
-            Just (doodadCrumb example)
+            Just
+                (BreadCrumbs.after allBreadCrumb
+                    (doodadCrumb example)
+                )
+
+        CategoryDoodad category_ example ->
+            Just
+                (BreadCrumbs.after (categoryCrumb category_)
+                    (doodadCrumb example)
+                )
 
         NotFound _ ->
             Nothing
@@ -127,12 +147,11 @@ categoryCrumb category_ =
         }
 
 
-doodadCrumb : Example state msg -> BreadCrumbs (Route state msg)
+doodadCrumb : Example state msg -> BreadCrumb (Route state msg)
 doodadCrumb example =
-    BreadCrumbs.after allBreadCrumb
-        { icon = Nothing
-        , iconStyle = BreadCrumbs.Default
-        , id = "breadcrumbs__" ++ dashify example.name
-        , text = Example.fullName example
-        , route = Doodad example
-        }
+    { icon = Nothing
+    , iconStyle = BreadCrumbs.Default
+    , id = "breadcrumbs__" ++ dashify example.name
+    , text = Example.fullName example
+    , route = Doodad example
+    }

@@ -210,6 +210,11 @@ view model =
             , body = viewExample model example |> toBody
             }
 
+        Routes.CategoryDoodad _ example ->
+            { title = example.name ++ " in the NoRedInk Style Guide"
+            , body = viewExample model example |> toBody
+            }
+
         Routes.NotFound name ->
             { title = name ++ " was not found in the NoRedInk Style Guide"
             , body = toBody notFound
@@ -244,7 +249,11 @@ notFound =
 viewAll : Model key -> Html Msg
 viewAll model =
     withSideNav model.route <|
-        viewPreviews "all" (Dict.values model.moduleStates)
+        viewPreviews "all"
+            { navigate = Routes.Doodad >> ChangeRoute
+            , exampleHref = Routes.Doodad >> Routes.toString
+            }
+            (Dict.values model.moduleStates)
 
 
 viewCategory : Model key -> Category -> Html Msg
@@ -259,6 +268,9 @@ viewCategory model category =
                         category
                 )
             |> viewPreviews (Category.forId category)
+                { navigate = Routes.CategoryDoodad category >> ChangeRoute
+                , exampleHref = Routes.CategoryDoodad category >> Routes.toString
+                }
         )
 
 
@@ -291,16 +303,17 @@ withSideNav currentRoute content =
         ]
 
 
-viewPreviews : String -> List (Example Examples.State Examples.Msg) -> Html Msg
-viewPreviews containerId examples =
+viewPreviews :
+    String
+    ->
+        { navigate : Example Examples.State Examples.Msg -> Msg
+        , exampleHref : Example Examples.State Examples.Msg -> String
+        }
+    -> List (Example Examples.State Examples.Msg)
+    -> Html Msg
+viewPreviews containerId navConfig examples =
     examples
-        |> List.map
-            (\example ->
-                Example.preview
-                    (Routes.Doodad >> ChangeRoute)
-                    (Routes.Doodad >> Routes.toString)
-                    example
-            )
+        |> List.map (Example.preview navConfig)
         |> Html.div
             [ id containerId
             , css
