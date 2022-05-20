@@ -4,6 +4,7 @@ import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
+import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
@@ -95,6 +96,25 @@ all =
             (\msg ->
                 case msg of
                     BalloonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , BreadCrumbs.example
+        |> Example.wrapMsg BreadCrumbsMsg
+            (\msg ->
+                case msg of
+                    BreadCrumbsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState BreadCrumbsState
+            (\msg ->
+                case msg of
+                    BreadCrumbsState childState ->
                         Just childState
 
                     _ ->
@@ -772,6 +792,7 @@ type State
     = AccordionState Accordion.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
+    | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
@@ -813,6 +834,7 @@ type Msg
     = AccordionMsg Accordion.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
+    | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
