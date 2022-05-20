@@ -209,7 +209,6 @@ view model =
                     { title = example.name ++ " in the NoRedInk Style Guide"
                     , body =
                         viewExample model example
-                            |> Html.map (UpdateModuleStates example.name)
                             |> toBody
                     }
 
@@ -229,13 +228,13 @@ view model =
             }
 
 
-viewExample : Model key -> Example a msg -> Html msg
+viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
-    Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
-        [ Example.view model.previousRoute
-            { packageDependencies = model.elliePackageDependencies }
-            example
-        ]
+    Example.view model.previousRoute
+        { packageDependencies = model.elliePackageDependencies }
+        example
+        |> Html.map (UpdateModuleStates example.name)
+        |> withSideNav model.route
 
 
 notFound : Html Msg
