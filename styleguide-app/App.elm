@@ -1,6 +1,7 @@
 module App exposing (Effect(..), Model, Msg(..), init, perform, subscriptions, update, view)
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Key as Key
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -287,6 +288,8 @@ withSideNav currentRoute content =
                 , margin2 (px 40) zero
                 , Css.minHeight (Css.vh 100)
                 ]
+            , id "maincontent"
+            , Key.tabbable False
             ]
             content
         ]
@@ -295,9 +298,7 @@ withSideNav currentRoute content =
 mainContentHeader : String -> Html msg
 mainContentHeader heading =
     Heading.h1
-        [ Heading.customAttr (id "maincontent")
-        , Heading.customAttr (tabindex -1)
-        , Heading.css [ marginBottom (px 30) ]
+        [ Heading.css [ marginBottom (px 30) ]
         ]
         [ Html.text heading ]
 
