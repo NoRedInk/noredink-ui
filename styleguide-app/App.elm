@@ -248,17 +248,14 @@ notFound =
 
 viewAll : Model key -> Html Msg
 viewAll model =
-    withSideNav model.route
-        [ mainContentHeader "All"
-        , viewPreviews "all" (Dict.values model.moduleStates)
-        ]
+    withSideNav model.route <|
+        viewPreviews "all" (Dict.values model.moduleStates)
 
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
     withSideNav model.route
-        [ mainContentHeader (Category.forDisplay category)
-        , model.moduleStates
+        (model.moduleStates
             |> Dict.values
             |> List.filter
                 (\doodad ->
@@ -267,10 +264,10 @@ viewCategory model category =
                         category
                 )
             |> viewPreviews (Category.forId category)
-        ]
+        )
 
 
-withSideNav : Route -> List (Html Msg) -> Html Msg
+withSideNav : Route -> Html Msg -> Html Msg
 withSideNav currentRoute content =
     Html.div
         [ css
@@ -291,16 +288,12 @@ withSideNav currentRoute content =
             , id "maincontent"
             , Key.tabbable False
             ]
-            content
+            [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
+                [ Routes.viewBreadCrumbs currentRoute
+                ]
+            , content
+            ]
         ]
-
-
-mainContentHeader : String -> Html msg
-mainContentHeader heading =
-    Heading.h1
-        [ Heading.css [ marginBottom (px 30) ]
-        ]
-        [ Html.text heading ]
 
 
 viewPreviews : String -> List (Example state msg) -> Html Msg
