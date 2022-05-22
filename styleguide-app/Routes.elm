@@ -1,4 +1,4 @@
-module Routes exposing (Route(..), fromLocation, toString, viewBreadCrumbs)
+module Routes exposing (Route(..), fromLocation, toString, updateExample, viewBreadCrumbs)
 
 import Accessibility.Styled as Html exposing (Html)
 import Category
@@ -78,6 +78,19 @@ category string =
 
         Err e ->
             Parser.problem e
+
+
+updateExample : Example state msg -> Route state msg -> Maybe (Route state msg)
+updateExample example route_ =
+    case route_ of
+        Doodad _ ->
+            Just (Doodad example)
+
+        CategoryDoodad cat _ ->
+            Just (CategoryDoodad cat example)
+
+        _ ->
+            Nothing
 
 
 fromLocation : Dict String (Example state msg) -> Url -> Route state msg

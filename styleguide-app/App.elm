@@ -81,11 +81,15 @@ update action model =
                     example.update exampleMsg example.state
                         |> Tuple.mapFirst
                             (\newState ->
+                                let
+                                    newExample =
+                                        { example | state = newState }
+                                in
                                 { model
-                                    | moduleStates =
-                                        Dict.insert key
-                                            { example | state = newState }
-                                            model.moduleStates
+                                    | moduleStates = Dict.insert key newExample model.moduleStates
+                                    , route =
+                                        Maybe.withDefault model.route
+                                            (Routes.updateExample newExample model.route)
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)

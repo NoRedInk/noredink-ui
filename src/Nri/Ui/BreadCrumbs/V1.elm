@@ -3,8 +3,7 @@ module Nri.Ui.BreadCrumbs.V1 exposing
     , BreadCrumbs, init
     , BreadCrumb, after
     , headerId
-    , toPageTitle
-    , toPageTitleWithSecondaryBreadCrumbs
+    , toPageTitle, toPageTitleWithSecondaryBreadCrumbs
     )
 
 {-| Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
@@ -29,7 +28,7 @@ Narrow Viewport (with Circled IconStyle):
 @docs BreadCrumbs, init
 @docs BreadCrumb, after
 @docs headerId
-@docs toPageTitle
+@docs toPageTitle, toPageTitleWithSecondaryBreadCrumbs
 
 -}
 
@@ -49,6 +48,7 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
+{-| -}
 type alias BreadCrumb route =
     { icon : Maybe Svg.Svg
     , iconStyle : IconStyle
@@ -58,6 +58,7 @@ type alias BreadCrumb route =
     }
 
 
+{-| -}
 type BreadCrumbs route
     = BreadCrumbs (List (BreadCrumb route))
 
@@ -105,6 +106,7 @@ toPageTitle (BreadCrumbs breadcrumbs) =
     String.join " | " (List.map .text breadcrumbs ++ [ "NoRedInk" ])
 
 
+{-| -}
 toPageTitleWithSecondaryBreadCrumbs : BreadCrumbs a -> String
 toPageTitleWithSecondaryBreadCrumbs (BreadCrumbs breadcrumbs) =
     (List.take 1 breadcrumbs |> List.map .text)

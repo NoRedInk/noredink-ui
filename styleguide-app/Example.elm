@@ -1,6 +1,5 @@
 module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Widget as Widget
 import Category exposing (Category)
 import Css exposing (..)
@@ -10,12 +9,9 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias Example state msg =
@@ -176,7 +172,7 @@ view_ ellieLinkConfig example =
                     )
                 ]
     in
-    [ Html.header
+    [ Html.div
         [ Attributes.css
             [ Css.paddingBottom (Css.px 10)
             , Css.marginBottom (Css.px 20)
@@ -186,7 +182,7 @@ view_ ellieLinkConfig example =
         [ navMenu [ docsLink example, srcLink example ]
         ]
     , KeyboardSupport.view example.keyboardSupport
-    , Html.main_ [] (example.view ellieLinkConfig example.state)
+    , Html.div [] (example.view ellieLinkConfig example.state)
     ]
 
 
