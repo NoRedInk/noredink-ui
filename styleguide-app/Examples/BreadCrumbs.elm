@@ -8,6 +8,7 @@ module Examples.BreadCrumbs exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Example exposing (Example)
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -33,5 +34,6 @@ example =
     , preview = []
     , view =
         \ellieLinkConfig settings ->
-            []
+            [ Text.mediumBody [ Text.plaintext "🚧 Example coming soon! 🚧" ]
+            ]
     }
