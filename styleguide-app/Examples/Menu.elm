@@ -7,9 +7,11 @@ module Examples.Menu exposing (Msg, State, example)
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -17,9 +19,14 @@ import EllieLink
 import Example exposing (Example)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.Extra as ColorsExtra
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Menu.V3 as Menu
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttrs
 import Task
 import ViewHelpers exposing (viewExamples)
 
@@ -56,9 +63,52 @@ example =
           }
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
-    , preview = []
+    , preview = [ preview ]
     , view = view
     }
+
+
+preview : Html Never
+preview =
+    Svg.svg
+        [ SvgAttrs.viewBox "0 0 100 100"
+        , SvgAttrs.width "100%"
+        , SvgAttrs.height "100%"
+        , SvgAttrs.fill (ColorsExtra.toCssString Colors.white)
+        , Role.img
+        , SvgAttrs.filter "drop-shadow(0px 2px 2px rgb(0 0 0 / 0.4))"
+        ]
+        [ Svg.rect
+            [ SvgAttrs.x "5"
+            , SvgAttrs.y "10"
+            , SvgAttrs.width "95"
+            , SvgAttrs.height "60"
+            , SvgAttrs.rx "5"
+            ]
+            []
+        , Svg.polygon [ SvgAttrs.points "80,10 85,4 90,10" ] []
+        , Svg.text_
+            [ SvgAttrs.fill (ColorsExtra.toCssString Colors.azure)
+            , SvgAttrs.css [ Fonts.baseFont, Css.fontSize (Css.px 6) ]
+            , SvgAttrs.x "15"
+            , SvgAttrs.y "28"
+            ]
+            [ Svg.text "Menu item 1" ]
+        , Svg.text_
+            [ SvgAttrs.fill (ColorsExtra.toCssString Colors.azure)
+            , SvgAttrs.css [ Fonts.baseFont, Css.fontSize (Css.px 6) ]
+            , SvgAttrs.x "15"
+            , SvgAttrs.y "42"
+            ]
+            [ Svg.text "Menu item 2" ]
+        , Svg.text_
+            [ SvgAttrs.fill (ColorsExtra.toCssString Colors.azure)
+            , SvgAttrs.css [ Fonts.baseFont, Css.fontSize (Css.px 6) ]
+            , SvgAttrs.x "15"
+            , SvgAttrs.y "56"
+            ]
+            [ Svg.text "Menu item 3" ]
+        ]
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
