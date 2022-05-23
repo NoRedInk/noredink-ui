@@ -51,7 +51,7 @@ notFound defaultPage =
         { emoji = "🤔"
         , title = "We couldn’t find that!"
         , subtitle = "Feel free to browse around, or check out our help center."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = True
         }
@@ -65,7 +65,7 @@ broken defaultPage =
         { emoji = "😵"
         , title = "There was a problem!"
         , subtitle = "You can try again, or check out our help center."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = True
         }
@@ -79,7 +79,7 @@ blocked details defaultPage =
         { emoji = "😵"
         , title = "There was a problem!"
         , subtitle = "You can try again, or check out our help center."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Just details
         , showHelpButton = True
         }
@@ -93,7 +93,7 @@ noPermission defaultPage =
         { emoji = "🤐"
         , title = "You do not have access to this page!"
         , subtitle = "Talk to a site administrator if you believe you should have access to this page."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = True
         }
@@ -107,7 +107,7 @@ networkError defaultPage =
         { emoji = "🤝"
         , title = "Are you connected to the Internet?"
         , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = False
         }
@@ -121,7 +121,7 @@ timeOut defaultPage =
         { emoji = "⏱"
         , title = "There was a problem!"
         , subtitle = "This request took too long to complete."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = False
         }
@@ -135,7 +135,7 @@ loggedOut defaultPage =
         { emoji = "🙃"
         , title = "You were logged out."
         , subtitle = "Please log in again to continue working."
-        , defaultPage = Just defaultPage
+        , defaultPage = defaultPage
         , details = Nothing
         , showHelpButton = False
         }
@@ -175,7 +175,7 @@ type alias Config msg =
     { emoji : String
     , title : String
     , subtitle : String
-    , defaultPage : Maybe (DefaultPage msg)
+    , defaultPage : DefaultPage msg
     , details : Maybe String
     , showHelpButton : Bool
     }
@@ -187,8 +187,7 @@ view config =
         [ viewEmoji [ Html.text config.emoji ]
         , Heading.h1 [] [ Html.text config.title ]
         , Heading.h2 [] [ Html.text config.subtitle ]
-        , viewButton
-            [ viewExit config ]
+        , viewButton [ viewExit config ]
         , viewIf
             (\_ ->
                 viewButton
@@ -212,30 +211,21 @@ view config =
 
 viewExit : Config msg -> Html msg
 viewExit config =
-    case config.defaultPage of
-        Just defaultPage ->
-            Button.button
-                (case defaultPage.recoveryText of
-                    ReturnTo name ->
-                        "Return to " ++ name
+    Button.button
+        (case config.defaultPage.recoveryText of
+            ReturnTo name ->
+                "Return to " ++ name
 
-                    Reload ->
-                        "Try again"
+            Reload ->
+                "Try again"
 
-                    Custom text ->
-                        text
-                )
-                [ Button.onClick defaultPage.link
-                , Button.large
-                , Button.exactWidth 260
-                ]
-
-        Nothing ->
-            Button.link "Return to dashboard"
-                [ Button.href "/"
-                , Button.large
-                , Button.exactWidth 260
-                ]
+            Custom text ->
+                text
+        )
+        [ Button.onClick config.defaultPage.link
+        , Button.large
+        , Button.exactWidth 260
+        ]
 
 
 viewDetails : String -> Html msg
