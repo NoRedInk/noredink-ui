@@ -17,7 +17,7 @@ import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
-import Nri.Ui.Page.V3 as Page
+import Nri.Ui.Page.V4 as Page
 import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon

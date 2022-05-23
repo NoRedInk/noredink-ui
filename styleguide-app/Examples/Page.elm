@@ -17,7 +17,7 @@ import Http
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Page.V3 as Page exposing (RecoveryText(..))
+import Nri.Ui.Page.V4 as Page exposing (RecoveryText(..))
 
 
 {-| -}
@@ -51,7 +51,7 @@ update msg model =
 example : Example State Msg
 example =
     { name = "Page"
-    , version = 3
+    , version = 4
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state =
@@ -99,7 +99,7 @@ example =
             [ Html.fromUnstyled (Control.view SetRecoveryText model.recoveryText)
             , viewExample "Page.httpError error" (Page.httpError (Control.currentValue model.httpError)) recoveryText [ Html.fromUnstyled (Control.view SetHttpError model.httpError) ]
             , viewExample "Page.broken" Page.broken recoveryText []
-            , viewExample "Page.blockedV4" (Page.blockedV4 "Error message details") recoveryText []
+            , viewExample "Page.blocked" (Page.blocked "Error message details") recoveryText []
             , viewExample "Page.notFound" Page.notFound recoveryText []
             , viewExample "Page.noPermission" Page.noPermission recoveryText []
             , viewExample "Page.loggedOut" Page.loggedOut recoveryText []

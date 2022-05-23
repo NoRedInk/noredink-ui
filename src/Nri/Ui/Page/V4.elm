@@ -1,4 +1,4 @@
-module Nri.Ui.Page.V3 exposing
+module Nri.Ui.Page.V4 exposing
     ( httpError
     , DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)

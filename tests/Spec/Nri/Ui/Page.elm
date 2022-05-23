@@ -2,7 +2,7 @@ module Spec.Nri.Ui.Page exposing (all)
 
 import Expect
 import Html.Styled as Html
-import Nri.Ui.Page.V3 as Page
+import Nri.Ui.Page.V4 as Page
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
