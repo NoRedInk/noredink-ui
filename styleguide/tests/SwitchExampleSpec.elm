@@ -1,5 +1,6 @@
 module SwitchExampleSpec exposing (suite)
 
+import Examples.Switch exposing (Msg, State, example)
 import ProgramTest exposing (..)
 import Routes exposing (Route)
 import Test exposing (..)
@@ -7,9 +8,9 @@ import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
 
-route : Route
+route : Route State Msg
 route =
-    Routes.Doodad "Switch"
+    Routes.Doodad example
 
 
 suite : Test

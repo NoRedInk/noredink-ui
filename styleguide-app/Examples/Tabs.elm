@@ -24,7 +24,6 @@ import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes
 import Task
 
 
@@ -217,8 +216,7 @@ allTabs openTooltipId labelledBy =
                 |> Svg.toHtml
     in
     [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.spaHref <| Routes.toString (Routes.Doodad exampleName)
-         , Tabs.tabString "1"
+        ([ Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
             , Tooltip.onToggle (ToggleTooltip First)

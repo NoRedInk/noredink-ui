@@ -143,14 +143,14 @@ init =
 controlNavAttributes : Control (List ( String, SideNav.NavAttribute ))
 controlNavAttributes =
     ControlExtra.list
-        |> ControlExtra.optionalListItem "navLabel"
+        |> ControlExtra.optionalListItemDefaultChecked "navLabel"
             (Control.map
                 (\val ->
                     ( "SideNav.navLabel \"" ++ val ++ "\""
                     , SideNav.navLabel val
                     )
                 )
-                (Control.string "Entries")
+                (Control.string "Example")
             )
         |> ControlExtra.optionalListItem "navNotMobileCss"
             (Control.choice

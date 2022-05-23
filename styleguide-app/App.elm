@@ -1,6 +1,7 @@
 module App exposing (Effect(..), Model, Msg(..), init, perform, subscriptions, update, view)
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Key as Key
 import Browser exposing (Document, UrlRequest(..))
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -20,10 +21,14 @@ import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes exposing (Route)
+import Routes
 import Sort.Set as Set
 import Task
 import Url exposing (Url)
+
+
+type alias Route =
+    Routes.Route Examples.State Examples.Msg
 
 
 type alias Model key =
@@ -38,11 +43,14 @@ type alias Model key =
 
 init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
-    ( { route = Routes.fromLocation url
-      , previousRoute = Nothing
-      , moduleStates =
+    let
+        moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
+    in
+    ( { route = Routes.fromLocation moduleStates url
+      , previousRoute = Nothing
+      , moduleStates = moduleStates
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       }
@@ -73,11 +81,15 @@ update action model =
                     example.update exampleMsg example.state
                         |> Tuple.mapFirst
                             (\newState ->
+                                let
+                                    newExample =
+                                        { example | state = newState }
+                                in
                                 { model
-                                    | moduleStates =
-                                        Dict.insert key
-                                            { example | state = newState }
-                                            model.moduleStates
+                                    | moduleStates = Dict.insert key newExample model.moduleStates
+                                    , route =
+                                        Maybe.withDefault model.route
+                                            (Routes.updateExample newExample model.route)
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
@@ -95,7 +107,7 @@ update action model =
 
         OnUrlChange route ->
             ( { model
-                | route = Routes.fromLocation route
+                | route = Routes.fromLocation model.moduleStates route
                 , previousRoute = Just model.route
               }
             , None
@@ -190,11 +202,6 @@ subscriptions model =
 view : Model key -> Document Msg
 view model =
     let
-        findExampleByName name =
-            Dict.values model.moduleStates
-                |> List.filter (\m -> m.name == name)
-                |> List.head
-
         toBody view_ =
             List.map Html.toUnstyled
                 [ view_
@@ -202,20 +209,20 @@ view model =
                 ]
     in
     case model.route of
-        Routes.Doodad doodad ->
-            case findExampleByName doodad of
-                Just example ->
-                    { title = example.name ++ " in the NoRedInk Style Guide"
-                    , body =
-                        viewExample model example
-                            |> Html.map (UpdateModuleStates example.name)
-                            |> toBody
-                    }
+        Routes.Doodad example ->
+            { title = example.name ++ " in the NoRedInk Style Guide"
+            , body = viewExample model example |> toBody
+            }
 
-                Nothing ->
-                    { title = "Not found in the NoRedInk Style Guide"
-                    , body = toBody notFound
-                    }
+        Routes.CategoryDoodad _ example ->
+            { title = example.name ++ " in the NoRedInk Style Guide"
+            , body = viewExample model example |> toBody
+            }
+
+        Routes.NotFound name ->
+            { title = name ++ " was not found in the NoRedInk Style Guide"
+            , body = toBody notFound
+            }
 
         Routes.Category category ->
             { title = Category.forDisplay category ++ " Category in the NoRedInk Style Guide"
@@ -228,13 +235,11 @@ view model =
             }
 
 
-viewExample : Model key -> Example a msg -> Html msg
+viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
-    Html.div [ css [ maxWidth (Css.px 1400), margin auto ] ]
-        [ Example.view model.previousRoute
-            { packageDependencies = model.elliePackageDependencies }
-            example
-        ]
+    Example.view { packageDependencies = model.elliePackageDependencies } example
+        |> Html.map (UpdateModuleStates example.name)
+        |> withSideNav model.route
 
 
 notFound : Html Msg
@@ -247,17 +252,18 @@ notFound =
 
 viewAll : Model key -> Html Msg
 viewAll model =
-    withSideNav model.route
-        [ mainContentHeader "All"
-        , viewPreviews "all" (Dict.values model.moduleStates)
-        ]
+    withSideNav model.route <|
+        viewPreviews "all"
+            { navigate = Routes.Doodad >> ChangeRoute
+            , exampleHref = Routes.Doodad >> Routes.toString
+            }
+            (Dict.values model.moduleStates)
 
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
     withSideNav model.route
-        [ mainContentHeader (Category.forDisplay category)
-        , model.moduleStates
+        (model.moduleStates
             |> Dict.values
             |> List.filter
                 (\doodad ->
@@ -266,10 +272,13 @@ viewCategory model category =
                         category
                 )
             |> viewPreviews (Category.forId category)
-        ]
+                { navigate = Routes.CategoryDoodad category >> ChangeRoute
+                , exampleHref = Routes.CategoryDoodad category >> Routes.toString
+                }
+        )
 
 
-withSideNav : Route -> List (Html Msg) -> Html Msg
+withSideNav : Route -> Html Msg -> Html Msg
 withSideNav currentRoute content =
     Html.div
         [ css
@@ -287,25 +296,28 @@ withSideNav currentRoute content =
                 , margin2 (px 40) zero
                 , Css.minHeight (Css.vh 100)
                 ]
+            , id "maincontent"
+            , Key.tabbable False
             ]
-            content
+            [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
+                [ Routes.viewBreadCrumbs currentRoute
+                ]
+            , content
+            ]
         ]
 
 
-mainContentHeader : String -> Html msg
-mainContentHeader heading =
-    Heading.h1
-        [ Heading.customAttr (id "maincontent")
-        , Heading.customAttr (tabindex -1)
-        , Heading.css [ marginBottom (px 30) ]
-        ]
-        [ Html.text heading ]
-
-
-viewPreviews : String -> List (Example state msg) -> Html Msg
-viewPreviews containerId examples =
+viewPreviews :
+    String
+    ->
+        { navigate : Example Examples.State Examples.Msg -> Msg
+        , exampleHref : Example Examples.State Examples.Msg -> String
+        }
+    -> List (Example Examples.State Examples.Msg)
+    -> Html Msg
+viewPreviews containerId navConfig examples =
     examples
-        |> List.map (\example -> Example.preview ChangeRoute example)
+        |> List.map (Example.preview navConfig)
         |> Html.div
             [ id containerId
             , css
