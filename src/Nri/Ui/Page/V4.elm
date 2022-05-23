@@ -1,13 +1,13 @@
 module Nri.Ui.Page.V3 exposing
     ( httpError
-    , DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
+    , DefaultPage, broken, blockedV4, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
 @docs httpError
-@docs DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
+@docs DefaultPage, broken, blockedV4, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
 
 -}
@@ -67,23 +67,6 @@ broken defaultPage =
         , subtitle = "You can try again, or check out our help center."
         , defaultPage = Just defaultPage
         , details = Nothing
-        , showHelpButton = True
-        }
-
-
-{-| DEPRECATED: please use blockedV4.
-
-For HTTP errors and other broken states, where link goes to "/".
-
--}
-blocked : String -> Html msg
-blocked details =
-    view
-        { emoji = "😵"
-        , title = "There was a problem!"
-        , subtitle = "You can try again, or check out our help center."
-        , defaultPage = Nothing
-        , details = Just details
         , showHelpButton = True
         }
 
