@@ -1,13 +1,13 @@
 module Nri.Ui.Page.V3 exposing
     ( httpError
-    , DefaultPage, broken, blockedV4, notFound, noPermission, loggedOut, timeOut, networkError
+    , DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
     )
 
 {-| A styled NRI page!
 
 @docs httpError
-@docs DefaultPage, broken, blockedV4, notFound, noPermission, loggedOut, timeOut, networkError
+@docs DefaultPage, broken, blocked, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
 
 -}
@@ -73,8 +73,8 @@ broken defaultPage =
 
 {-| Error page with details for engineers.
 -}
-blockedV4 : String -> DefaultPage msg -> Html msg
-blockedV4 details defaultPage =
+blocked : String -> DefaultPage msg -> Html msg
+blocked details defaultPage =
     view
         { emoji = "😵"
         , title = "There was a problem!"
@@ -161,10 +161,10 @@ httpError error defaultPage =
             notFound defaultPage
 
         Http.BadStatus status ->
-            blockedV4 ("HTTP error status: " ++ String.fromInt status) defaultPage
+            blocked ("HTTP error status: " ++ String.fromInt status) defaultPage
 
         Http.BadBody body ->
-            blockedV4 body defaultPage
+            blocked body defaultPage
 
 
 
