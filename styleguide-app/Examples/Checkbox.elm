@@ -7,15 +7,19 @@ module Examples.Checkbox exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import CheckboxIcons
 import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
+import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)
 
 
@@ -39,7 +43,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = preview
     , view =
         \ellieLinkConfig state ->
             [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
@@ -57,6 +61,32 @@ example =
           }
         ]
     }
+
+
+preview : List (Html Never)
+preview =
+    let
+        renderPreview ( icon, label_ ) =
+            span
+                [ css
+                    [ Css.color Colors.navy
+                    , Css.fontSize (Css.px 15)
+                    , Fonts.baseFont
+                    , Css.fontWeight (Css.int 600)
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    ]
+                ]
+                [ Svg.toHtml (Svg.withCss [ Css.marginRight (Css.px 8) ] icon)
+                , text label_
+                ]
+    in
+    [ ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
+    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
+    , ( CheckboxIcons.checkedPartially "checkedPartially-preview-checkedPartially", "Part checked" )
+    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked" )
+    ]
+        |> List.map renderPreview
 
 
 {-| -}
