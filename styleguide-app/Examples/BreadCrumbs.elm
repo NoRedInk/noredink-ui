@@ -18,7 +18,7 @@ import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -63,9 +63,12 @@ example =
                 , settings = state
                 , mainType = "RootHtml.Html msg"
                 , extraImports = []
-                , toExampleCode = \settings -> [ { sectionName = "view", code = viewExampleCode settings } ]
+                , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
-            , viewExample (Control.currentValue state).breadCrumbs
+            , Control.currentValue state
+                |> .breadCrumbs
+                |> Tuple.second
+                |> viewExample
             ]
     }
 
@@ -106,7 +109,7 @@ viewExampleCode settings =
         , "{ aTagAttributes = \\route -> [ href route ]"
         , ", isCurrentRoute = \\route -> route == \"/current/route\""
         , "}"
-        , "-- TODO: Include settings"
+        , Tuple.first settings.breadCrumbs
         ]
 
 
@@ -132,7 +135,7 @@ update msg state =
 
 
 type alias Settings =
-    { breadCrumbs : BreadCrumbs String
+    { breadCrumbs : ( String, BreadCrumbs String )
     }
 
 
@@ -141,45 +144,74 @@ init =
     Control.map Settings controlBreadCrumbs
 
 
-controlBreadCrumbs : Control (BreadCrumbs String)
+controlBreadCrumbs : Control ( String, BreadCrumbs String )
 controlBreadCrumbs =
     Control.map (\f -> f Nothing) (controlBreadCrumbs_ 1)
 
 
-controlBreadCrumbs_ : Int -> Control (Maybe (BreadCrumbs String) -> BreadCrumbs String)
+controlBreadCrumbs_ : Int -> Control (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
 controlBreadCrumbs_ index =
-    Control.record
-        (\icon iconStyle text after maybeBase ->
-            let
-                breadCrumb =
-                    { icon = icon
-                    , iconStyle = iconStyle
-                    , text = text
-                    , id = "breadcrumb-id-" ++ String.fromInt index
-                    , route = "/breadcrumb=" ++ String.fromInt index
-                    }
-
-                newBase =
-                    case maybeBase of
-                        Just base ->
-                            BreadCrumbs.after base breadCrumb
-
-                        Nothing ->
-                            BreadCrumbs.init breadCrumb
-            in
-            Maybe.map (\f -> f (Just newBase)) after |> Maybe.withDefault newBase
-        )
-        |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
+    Control.record (composeBreadCrumbs index)
+        |> Control.field "icon" (Control.maybe False CommonControls.uiIcon)
         |> Control.field "iconStyle"
-            (Control.choice
-                [ ( "Default", Control.value BreadCrumbs.Default )
-                , ( "Circled", Control.value BreadCrumbs.Circled )
+            (CommonControls.choice moduleName
+                [ ( "Default", BreadCrumbs.Default )
+                , ( "Circled", BreadCrumbs.Circled )
                 ]
             )
-        |> Control.field "text" (Control.string ("Category " ++ String.fromInt index))
+        |> Control.field "text" (ControlExtra.string ("Category " ++ String.fromInt index))
         |> Control.field ("category " ++ String.fromInt (index + 1))
             (Control.maybe False
                 (Control.lazy
                     (\() -> controlBreadCrumbs_ (index + 1))
                 )
             )
+
+
+composeBreadCrumbs :
+    Int
+    -> Maybe ( String, Svg )
+    -> ( String, BreadCrumbs.IconStyle )
+    -> ( String, String )
+    -> Maybe (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
+    -> (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
+composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) after maybeBase =
+    let
+        breadCrumb =
+            { icon = Maybe.map Tuple.second icon
+            , iconStyle = iconStyle
+            , text = text
+            , id = "breadcrumb-id-" ++ String.fromInt index
+            , route = "/breadcrumb=" ++ String.fromInt index
+            }
+
+        breadCrumbStr =
+            String.join ("\n" ++ ControlView.withIndentLevel 2)
+                [ "{ icon = " ++ Maybe.withDefault "Nothing" (Maybe.map (\( iconStr, _ ) -> "Just " ++ iconStr) icon)
+                , ", iconStyle = " ++ iconStyleStr
+                , ", text = " ++ textStr
+                , ", id = " ++ "\"breadcrumb-id-" ++ String.fromInt index ++ "\""
+                , ", route = " ++ "\"/breadcrumb=" ++ String.fromInt index ++ "\""
+                , "}\n"
+                ]
+
+        newBase =
+            case maybeBase of
+                Just ( baseStr, base ) ->
+                    ( "(BreadCrumbs.after "
+                        ++ baseStr
+                        ++ ("\n" ++ ControlView.withIndentLevel 2)
+                        ++ breadCrumbStr
+                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                    , BreadCrumbs.after base breadCrumb
+                    )
+
+                Nothing ->
+                    ( "(BreadCrumbs.init "
+                        ++ ("\n" ++ ControlView.withIndentLevel 2)
+                        ++ breadCrumbStr
+                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                    , BreadCrumbs.init breadCrumb
+                    )
+    in
+    Maybe.map (\f -> f (Just newBase)) after |> Maybe.withDefault newBase
