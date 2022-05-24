@@ -137,12 +137,16 @@ controlBreadCrumbs =
 
 controlBreadCrumb : Control (BreadCrumb ())
 controlBreadCrumb =
-    Control.record BreadCrumb
+    Control.record (\icon iconStyle text -> {
+            icon = icon,
+            iconStyle = iconStyle,
+            text =text,
+            id = "unique-id",
+            route = ()
+        })
         |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
         |> Control.field "iconStyle" (Control.choice
             [ ("Default", Control.value BreadCrumbs.Default)
             , ("Circled", Control.value BreadCrumbs.Circled)
         ])
-        |> Control.field "id" (Control.value "unique-id")
         |> Control.field "text" (Control.string "Home")
-        |> Control.field "route" (Control.value ())
