@@ -103,6 +103,9 @@ example =
                         , cellStyles = always []
                         }
                     ]
+
+                { showHeader, isLoading } =
+                    Control.currentValue state
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -112,16 +115,32 @@ example =
                 , settings = state
                 , mainType = "RootHtml.Html msg"
                 , extraImports = []
-                , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = "TODO" } ]
+                , toExampleCode =
+                    \settings ->
+                        let
+                            toExampleCode viewName =
+                                { sectionName = moduleName ++ "." ++ viewName
+                                , code =
+                                    (moduleName ++ "." ++ viewName)
+                                        ++ "[ --TODO \n ]"
+                                        ++ "[ --TODO \n ]"
+                                }
+                        in
+                        List.map toExampleCode [ "view", "viewWithoutHeader", "viewLoading", "viewLoadingWithoutHeader" ]
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "With header" ]
-            , Table.view columns data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Without header" ]
-            , Table.viewWithoutHeader columns data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Loading" ]
-            , Table.viewLoading columns
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Loading without header" ]
-            , Table.viewLoadingWithoutHeader columns
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Example" ]
+            , case ( showHeader, isLoading ) of
+                ( True, False ) ->
+                    Table.view columns data
+
+                ( False, False ) ->
+                    Table.viewWithoutHeader columns data
+
+                ( True, True ) ->
+                    Table.viewLoading columns
+
+                ( False, True ) ->
+                    Table.viewLoadingWithoutHeader columns
             ]
     }
 
@@ -143,12 +162,16 @@ update msg state =
 
 
 type alias Settings =
-    {}
+    { showHeader : Bool
+    , isLoading : Bool
+    }
 
 
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+        |> Control.field "visible header" (Control.bool True)
+        |> Control.field "is loading" (Control.bool False)
 
 
 type alias Data =
