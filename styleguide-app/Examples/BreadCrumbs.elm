@@ -18,6 +18,7 @@ import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V5 as Table
 import Nri.Ui.Text.V6 as Text
@@ -71,6 +72,10 @@ example =
                 , extraImports = []
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
+            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
+                [ Heading.h2 [] [ text "Example" ]
+                , viewExample breadCrumbs
+                ]
             , Table.view
                 [ Table.string
                     { header = "Name"
@@ -104,7 +109,6 @@ example =
                   , result = BreadCrumbs.toPageTitleWithSecondaryBreadCrumbs
                   }
                 ]
-            , viewExample breadCrumbs
             ]
     }
 
