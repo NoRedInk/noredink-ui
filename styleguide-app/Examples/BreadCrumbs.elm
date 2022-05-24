@@ -8,6 +8,7 @@ module Examples.BreadCrumbs exposing (example, State, Msg)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -20,7 +21,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import CommonControls
 
 
 {-| -}
@@ -137,16 +137,20 @@ controlBreadCrumbs =
 
 controlBreadCrumb : Control (BreadCrumb ())
 controlBreadCrumb =
-    Control.record (\icon iconStyle text -> {
-            icon = icon,
-            iconStyle = iconStyle,
-            text =text,
-            id = "unique-id",
-            route = ()
-        })
+    Control.record
+        (\icon iconStyle text ->
+            { icon = icon
+            , iconStyle = iconStyle
+            , text = text
+            , id = "unique-id"
+            , route = ()
+            }
+        )
         |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
-        |> Control.field "iconStyle" (Control.choice
-            [ ("Default", Control.value BreadCrumbs.Default)
-            , ("Circled", Control.value BreadCrumbs.Circled)
-        ])
+        |> Control.field "iconStyle"
+            (Control.choice
+                [ ( "Default", Control.value BreadCrumbs.Default )
+                , ( "Circled", Control.value BreadCrumbs.Circled )
+                ]
+            )
         |> Control.field "text" (Control.string "Home")
