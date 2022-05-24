@@ -110,8 +110,6 @@ example =
             , Table.view columns data
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Without header" ]
             , Table.viewWithoutHeader columns data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With additional cell styles" ]
-            , Table.view columns data
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading" ]
             , Table.viewLoading columns
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading without header" ]
