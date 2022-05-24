@@ -21,6 +21,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import ViewHelpers exposing (viewExamples)
 
 
 {-| -}
@@ -55,6 +56,11 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
+            let
+                breadCrumbs : BreadCrumbs String
+                breadCrumbs =
+                    Tuple.second (Control.currentValue state).breadCrumbs
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -65,10 +71,12 @@ example =
                 , extraImports = []
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
-            , Control.currentValue state
-                |> .breadCrumbs
-                |> Tuple.second
-                |> viewExample
+            , viewExamples
+                [ ( "headerId", text <| BreadCrumbs.headerId breadCrumbs )
+                , ( "toPageTitle", text <| BreadCrumbs.toPageTitle breadCrumbs )
+                , ( "toPageTitleWithSecondaryBreadCrumbs", text <| BreadCrumbs.toPageTitleWithSecondaryBreadCrumbs breadCrumbs )
+                ]
+            , viewExample breadCrumbs
             ]
     }
 
