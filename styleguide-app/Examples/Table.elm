@@ -83,18 +83,10 @@ example =
                         , cellStyles = always []
                         }
                     , Table.string
-                        { header = "# Submitted"
+                        { header = "Submitted"
                         , value = .submitted >> String.fromInt
                         , width = px 125
-                        , cellStyles =
-                            \value ->
-                                if value.submitted < 5 then
-                                    [ backgroundColor Colors.redLight
-                                    , textAlign center
-                                    ]
-
-                                else
-                                    [ textAlign center ]
+                        , cellStyles = \value -> [ textAlign center ]
                         }
                     , Table.custom
                         { header = text "Actions"
