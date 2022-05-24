@@ -19,9 +19,9 @@ import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Table.V5 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import ViewHelpers exposing (viewExamples)
 
 
 {-| -}
@@ -71,10 +71,38 @@ example =
                 , extraImports = []
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
-            , viewExamples
-                [ ( "headerId", text <| BreadCrumbs.headerId breadCrumbs )
-                , ( "toPageTitle", text <| BreadCrumbs.toPageTitle breadCrumbs )
-                , ( "toPageTitleWithSecondaryBreadCrumbs", text <| BreadCrumbs.toPageTitleWithSecondaryBreadCrumbs breadCrumbs )
+            , Table.view
+                [ Table.string
+                    { header = "Name"
+                    , value = .name
+                    , width = Css.pct 15
+                    , cellStyles = always []
+                    }
+                , Table.string
+                    { header = "About"
+                    , value = .about
+                    , width = Css.px 200
+                    , cellStyles = always []
+                    }
+                , Table.string
+                    { header = "Result"
+                    , value = \{ result } -> result breadCrumbs
+                    , width = Css.px 50
+                    , cellStyles = always []
+                    }
+                ]
+                [ { name = "headerId"
+                  , about = "When changing routes in a SPA, moving focus to the heading of the new page orients screenreader users to the new location."
+                  , result = BreadCrumbs.headerId
+                  }
+                , { name = "toPageTitle"
+                  , about = "When changing routes in a SPA, the HTML title of the page should be updated to match the new route."
+                  , result = BreadCrumbs.toPageTitle
+                  }
+                , { name = "toPageTitleWithSecondaryBreadCrumbs"
+                  , about = "(Tessa doesn't know why this helper exists/why it includes less context than `toPageTitle` does)"
+                  , result = BreadCrumbs.toPageTitleWithSecondaryBreadCrumbs
+                  }
                 ]
             , viewExample breadCrumbs
             ]
