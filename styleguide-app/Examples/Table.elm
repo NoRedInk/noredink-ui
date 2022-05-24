@@ -6,16 +6,16 @@ module Examples.Table exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V5 as Table exposing (Column)
 
 
 {-| -}
@@ -97,20 +97,11 @@ example =
                                     [ textAlign center ]
                         }
                     , Table.custom
-                        { header =
-                            Html.text "Actions"
+                        { header = text "Actions"
                         , width = px 250
                         , view = \_ -> Button.button "Action" [ Button.small, Button.onClick (ConsoleLog "Clicked button!") ]
                         , cellStyles = always []
                         }
-                    ]
-
-                data =
-                    [ { firstName = "First1", lastName = "Last1", submitted = 10 }
-                    , { firstName = "First2", lastName = "Last2", submitted = 0 }
-                    , { firstName = "First3", lastName = "Last3", submitted = 3 }
-                    , { firstName = "First4", lastName = "Last4", submitted = 15 }
-                    , { firstName = "First5", lastName = "Last5", submitted = 8 }
                     ]
             in
             [ ControlView.view
@@ -123,13 +114,13 @@ example =
                 , extraImports = []
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = "TODO" } ]
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With header" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "With header" ]
             , Table.view columns data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Without header" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Without header" ]
             , Table.viewWithoutHeader columns data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Loading" ]
             , Table.viewLoading columns
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading without header" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Loading without header" ]
             , Table.viewLoadingWithoutHeader columns
             ]
     }
@@ -158,3 +149,20 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+
+
+type alias Data =
+    { firstName : String
+    , lastName : String
+    , submitted : Int
+    }
+
+
+data : List Data
+data =
+    [ { firstName = "First1", lastName = "Last1", submitted = 10 }
+    , { firstName = "First2", lastName = "Last2", submitted = 0 }
+    , { firstName = "First3", lastName = "Last3", submitted = 3 }
+    , { firstName = "First4", lastName = "Last4", submitted = 15 }
+    , { firstName = "First5", lastName = "Last5", submitted = 8 }
+    ]
