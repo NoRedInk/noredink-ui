@@ -63,17 +63,9 @@ example =
                 , settings = state
                 , mainType = "RootHtml.Html msg"
                 , extraImports = []
-                , toExampleCode =
-                    \a ->
-                        -- TODO: implement
-                        -- List { sectionName : String, code : String }
-                        []
+                , toExampleCode = \settings -> [ { sectionName = "view", code = viewExampleCode settings } ]
                 }
-            , BreadCrumbs.view
-                { aTagAttributes = \route -> [ href route ]
-                , isCurrentRoute = \route -> route == "/current/route"
-                }
-                (Control.currentValue state).breadCrumbs
+            , viewExample (Control.currentValue state).breadCrumbs
             ]
     }
 
@@ -105,6 +97,26 @@ previewArrowRight =
         |> Svg.withWidth (Css.px 8)
         |> Svg.withCss [ Css.flexShrink Css.zero ]
         |> Svg.toHtml
+
+
+viewExampleCode : Settings -> String
+viewExampleCode settings =
+    String.join ("\n" ++ ControlView.withIndentLevel 1)
+        [ "BreadCrumbs.view"
+        , "{ aTagAttributes = \\route -> [ href route ]"
+        , ", isCurrentRoute = \\route -> route == \"/current/route\""
+        , "}"
+        , "-- TODO: Include settings"
+        ]
+
+
+viewExample : BreadCrumbs String -> Html msg
+viewExample breadCrumbs =
+    BreadCrumbs.view
+        { aTagAttributes = \route -> [ href route ]
+        , isCurrentRoute = \route -> route == "/current/route"
+        }
+        breadCrumbs
 
 
 {-| -}
