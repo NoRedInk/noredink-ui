@@ -147,6 +147,7 @@ viewExampleCode settings =
         [ "BreadCrumbs.view"
         , "{ aTagAttributes = \\route -> [ href route ]"
         , ", isCurrentRoute = \\route -> route == \"/current/route\""
+        , ", label = \"breadcrumbs\""
         , "}"
         , Tuple.first settings.breadCrumbs
         ]
@@ -157,6 +158,7 @@ viewExample breadCrumbs =
     BreadCrumbs.view
         { aTagAttributes = \route -> [ href route ]
         , isCurrentRoute = \route -> route == "/current/route"
+        , label = "breadcrumbs example"
         }
         breadCrumbs
 

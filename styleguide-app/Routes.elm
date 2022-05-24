@@ -108,6 +108,7 @@ viewBreadCrumbs currentRoute =
             (BreadCrumbs.view
                 { aTagAttributes = \r -> [ Attributes.href ("/" ++ toString r) ]
                 , isCurrentRoute = (==) currentRoute
+                , label = "breadcrumbs"
                 }
             )
         |> Maybe.withDefault (Html.text "")
