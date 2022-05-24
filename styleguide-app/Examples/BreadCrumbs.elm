@@ -20,6 +20,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import CommonControls
 
 
 {-| -}
@@ -136,10 +137,12 @@ controlBreadCrumbs =
 
 controlBreadCrumb : Control (BreadCrumb ())
 controlBreadCrumb =
-    Control.value
-        { icon = Nothing
-        , iconStyle = BreadCrumbs.Default
-        , id = "unique-id"
-        , text = "Home"
-        , route = ()
-        }
+    Control.record BreadCrumb
+        |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
+        |> Control.field "iconStyle" (Control.choice
+            [ ("Default", Control.value BreadCrumbs.Default)
+            , ("Circled", Control.value BreadCrumbs.Circled)
+        ])
+        |> Control.field "id" (Control.value "unique-id")
+        |> Control.field "text" (Control.string "Home")
+        |> Control.field "route" (Control.value ())
