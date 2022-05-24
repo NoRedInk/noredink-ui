@@ -239,7 +239,7 @@ viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
     Example.view { packageDependencies = model.elliePackageDependencies } example
         |> Html.map (UpdateModuleStates example.name)
-        |> withSideNav model.route
+        |> withSideNav model
 
 
 notFound : Html Msg
@@ -252,7 +252,7 @@ notFound =
 
 viewAll : Model key -> Html Msg
 viewAll model =
-    withSideNav model.route <|
+    withSideNav model <|
         viewPreviews "all"
             { navigate = Routes.Doodad >> ChangeRoute
             , exampleHref = Routes.Doodad >> Routes.toString
@@ -262,7 +262,7 @@ viewAll model =
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
-    withSideNav model.route
+    withSideNav model
         (model.moduleStates
             |> Dict.values
             |> List.filter
@@ -278,8 +278,11 @@ viewCategory model category =
         )
 
 
-withSideNav : Route -> Html Msg -> Html Msg
-withSideNav currentRoute content =
+withSideNav :
+    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
+    -> Html Msg
+    -> Html Msg
+withSideNav model content =
     Html.div
         [ css
             [ displayFlex
@@ -289,7 +292,7 @@ withSideNav currentRoute content =
             , margin auto
             ]
         ]
-        [ navigation currentRoute
+        [ navigation model
         , Html.main_
             [ css
                 [ flexGrow (int 1)
@@ -300,7 +303,7 @@ withSideNav currentRoute content =
             , Key.tabbable False
             ]
             [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
-                [ Routes.viewBreadCrumbs currentRoute
+                [ Routes.viewBreadCrumbs model.route
                 ]
             , content
             ]
@@ -328,20 +331,36 @@ viewPreviews containerId navConfig examples =
             ]
 
 
-navigation : Route -> Html Msg
-navigation currentRoute =
+navigation :
+    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
+    -> Html Msg
+navigation { moduleStates, route } =
     let
+        examples =
+            Dict.values moduleStates
+
+        exampleEntriesForCategory category =
+            List.filter (\{ categories } -> List.any ((==) category) categories) examples
+                |> List.map
+                    (\example ->
+                        SideNav.entry example.name
+                            [ SideNav.href (Routes.CategoryDoodad category example)
+                            ]
+                    )
+
         categoryNavLinks : List (SideNav.Entry Route Msg)
         categoryNavLinks =
             List.map
                 (\category ->
-                    SideNav.entry (Category.forDisplay category)
-                        [ SideNav.href (Routes.Category category) ]
+                    SideNav.entryWithChildren (Category.forDisplay category)
+                        [ SideNav.href (Routes.Category category)
+                        ]
+                        (exampleEntriesForCategory category)
                 )
                 Category.all
     in
     SideNav.view
-        { isCurrentRoute = (==) currentRoute
+        { isCurrentRoute = (==) route
         , routeToString = Routes.toString
         , onSkipNav = SkipToMainContent
         }
