@@ -175,9 +175,9 @@ type alias Data =
 
 data : List Data
 data =
-    [ { firstName = "First1", lastName = "Last1", submitted = 10 }
-    , { firstName = "First2", lastName = "Last2", submitted = 0 }
-    , { firstName = "First3", lastName = "Last3", submitted = 3 }
-    , { firstName = "First4", lastName = "Last4", submitted = 15 }
-    , { firstName = "First5", lastName = "Last5", submitted = 8 }
+    [ { firstName = "Monique", lastName = "Garcia", submitted = 10 }
+    , { firstName = "Gabriel", lastName = "Smith", submitted = 0 }
+    , { firstName = "Mariah", lastName = "Lopez", submitted = 3 }
+    , { firstName = "Amber", lastName = "Brown", submitted = 15 }
+    , { firstName = "Carlos", lastName = "Martinez", submitted = 8 }
     ]
