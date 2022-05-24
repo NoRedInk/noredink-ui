@@ -57,6 +57,8 @@ To see them locally:
 script/develop.sh
 ```
 
+And go to http://localhost:8000/
+
 If you'd like to test your widget in the monolith before publishing, run `script/test-elm-package.py ../path_to_this_repo` from the monolith's directory.
 
 ## Deploying
