@@ -126,25 +126,36 @@ type alias Settings =
 
 init : Control Settings
 init =
-    Control.record Settings
-        |> Control.field "BreadCrumbs" controlBreadCrumbs
+    Control.map Settings controlBreadCrumbs
 
 
 controlBreadCrumbs : Control (BreadCrumbs String)
 controlBreadCrumbs =
-    Control.map BreadCrumbs.init (controlBreadCrumb 0)
+    Control.map (\f -> f Nothing) (controlBreadCrumbs_ 1)
 
 
-controlBreadCrumb : Int -> Control (BreadCrumb String)
-controlBreadCrumb index =
+controlBreadCrumbs_ : Int -> Control (Maybe (BreadCrumbs String) -> BreadCrumbs String)
+controlBreadCrumbs_ index =
     Control.record
-        (\icon iconStyle text ->
-            { icon = icon
-            , iconStyle = iconStyle
-            , text = text
-            , id = "breadcrumb-id-" ++ String.fromInt index
-            , route = "?breadcrumb=" ++ String.fromInt index
-            }
+        (\icon iconStyle text after maybeBase ->
+            let
+                breadCrumb =
+                    { icon = icon
+                    , iconStyle = iconStyle
+                    , text = text
+                    , id = "breadcrumb-id-" ++ String.fromInt index
+                    , route = "/breadcrumb=" ++ String.fromInt index
+                    }
+
+                newBase =
+                    case maybeBase of
+                        Just base ->
+                            BreadCrumbs.after base breadCrumb
+
+                        Nothing ->
+                            BreadCrumbs.init breadCrumb
+            in
+            Maybe.map (\f -> f (Just newBase)) after |> Maybe.withDefault newBase
         )
         |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
         |> Control.field "iconStyle"
@@ -153,4 +164,10 @@ controlBreadCrumb index =
                 , ( "Circled", Control.value BreadCrumbs.Circled )
                 ]
             )
-        |> Control.field "text" (Control.string "Home")
+        |> Control.field "text" (Control.string ("Category " ++ String.fromInt index))
+        |> Control.field ("category " ++ String.fromInt (index + 1))
+            (Control.maybe False
+                (Control.lazy
+                    (\() -> controlBreadCrumbs_ (index + 1))
+                )
+            )
