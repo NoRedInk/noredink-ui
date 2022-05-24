@@ -71,7 +71,7 @@ example =
                 }
             , BreadCrumbs.view
                 { aTagAttributes = \route -> [ href route ]
-                , isCurrentRoute = \_ -> False
+                , isCurrentRoute = \route -> route == "/current/route"
                 }
                 (Control.currentValue state).breadCrumbs
             ]
