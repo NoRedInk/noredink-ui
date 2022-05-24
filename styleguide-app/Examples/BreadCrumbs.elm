@@ -182,7 +182,7 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
             , iconStyle = iconStyle
             , text = text
             , id = "breadcrumb-id-" ++ String.fromInt index
-            , route = "/breadcrumb=" ++ String.fromInt index
+            , route = "/breadcrumb" ++ String.fromInt index
             }
 
         breadCrumbStr =
@@ -191,7 +191,7 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
                 , ", iconStyle = " ++ iconStyleStr
                 , ", text = " ++ textStr
                 , ", id = " ++ "\"breadcrumb-id-" ++ String.fromInt index ++ "\""
-                , ", route = " ++ "\"/breadcrumb=" ++ String.fromInt index ++ "\""
+                , ", route = " ++ "\"/breadcrumb" ++ String.fromInt index ++ "\""
                 , "}\n"
                 ]
 
