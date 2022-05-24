@@ -14,7 +14,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -70,7 +70,7 @@ example =
                         []
                 }
             , BreadCrumbs.view
-                { aTagAttributes = \_ -> []
+                { aTagAttributes = \route -> [ href route ]
                 , isCurrentRoute = \_ -> False
                 }
                 (Control.currentValue state).breadCrumbs
@@ -120,7 +120,7 @@ update msg state =
 
 
 type alias Settings =
-    { breadCrumbs : BreadCrumbs ()
+    { breadCrumbs : BreadCrumbs String
     }
 
 
@@ -130,20 +130,20 @@ init =
         |> Control.field "BreadCrumbs" controlBreadCrumbs
 
 
-controlBreadCrumbs : Control (BreadCrumbs ())
+controlBreadCrumbs : Control (BreadCrumbs String)
 controlBreadCrumbs =
-    Control.map BreadCrumbs.init controlBreadCrumb
+    Control.map BreadCrumbs.init (controlBreadCrumb 0)
 
 
-controlBreadCrumb : Control (BreadCrumb ())
-controlBreadCrumb =
+controlBreadCrumb : Int -> Control (BreadCrumb String)
+controlBreadCrumb index =
     Control.record
         (\icon iconStyle text ->
             { icon = icon
             , iconStyle = iconStyle
             , text = text
-            , id = "unique-id"
-            , route = ()
+            , id = "breadcrumb-id-" ++ String.fromInt index
+            , route = "?breadcrumb=" ++ String.fromInt index
             }
         )
         |> Control.field "icon" (Control.maybe False (Control.map Tuple.second CommonControls.uiIcon))
