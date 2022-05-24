@@ -8,6 +8,8 @@ module Examples.Table exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css exposing (..)
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
 import Nri.Ui.Button.V10 as Button
@@ -18,21 +20,26 @@ import Nri.Ui.Table.V5 as Table
 
 {-| -}
 type alias State =
-    ()
+    Control Settings
 
 
-{-| -}
-type alias Msg =
-    ()
+moduleName : String
+moduleName =
+    "Table"
+
+
+version : Int
+version =
+    5
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Table"
-    , version = 5
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    { name = moduleName
+    , version = version
+    , state = controlSettings
+    , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
     , keyboardSupport = []
@@ -60,7 +67,7 @@ example =
             ]
         ]
     , view =
-        \ellieLinkConfig () ->
+        \ellieLinkConfig state ->
             let
                 columns =
                     [ Table.string
@@ -93,7 +100,7 @@ example =
                         { header =
                             Html.text "Actions"
                         , width = px 250
-                        , view = \_ -> Button.button "Action" [ Button.small, Button.onClick () ]
+                        , view = \_ -> Button.button "Action" [ Button.small, Button.onClick (ConsoleLog "Clicked button!") ]
                         , cellStyles = always []
                         }
                     ]
@@ -106,7 +113,17 @@ example =
                     , { firstName = "First5", lastName = "Last5", submitted = 8 }
                     ]
             in
-            [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With header" ]
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = "TODO" } ]
+                }
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With header" ]
             , Table.view columns data
             , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Without header" ]
             , Table.viewWithoutHeader columns data
@@ -116,3 +133,28 @@ example =
             , Table.viewLoadingWithoutHeader columns
             ]
     }
+
+
+{-| -}
+type Msg
+    = UpdateControl (Control Settings)
+    | ConsoleLog String
+
+
+update : Msg -> State -> ( State, Cmd msg )
+update msg state =
+    case msg of
+        UpdateControl control ->
+            ( control, Cmd.none )
+
+        ConsoleLog message ->
+            ( Debug.log "Menu Example" message |> always state, Cmd.none )
+
+
+type alias Settings =
+    {}
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
