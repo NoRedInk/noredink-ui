@@ -20,6 +20,7 @@ import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V5 as Table
@@ -134,67 +135,95 @@ view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
     , Table.view
         [ Table.string
-            { header = "Attribute"
+            { header = "Type"
             , value = .name
             , width = Css.pct 15
-            , cellStyles = always []
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            }
+        , Table.custom
+            { header = Html.text "Usage"
+            , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
+            , width = Css.px 150
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
-            , cellStyles = always []
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
             }
         , Table.custom
-            { header = Html.text "view"
-            , view = .view
+            { header = Html.text "Example"
+            , view = .example
             , width = Css.px 50
             , cellStyles = always [ Css.textAlign Css.center ]
             }
         ]
         [ { name = "Tooltip.primaryLabel"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger does more than just reveal the tooltip content
+- the content of the tooltip is the same as the name of the tooltip trigger
+
+Think of this as the "What."
+"""
           , description =
                 """
-Used when the content of the tooltip is identical to the accessible name.
+This is the default tooltip type.
 
-For example, when using the Tooltip component with the ClickableSvg component, the Tooltip is providing
-extra information to sighted users that screenreader users already have.
-
-This is the default.
+When using the Tooltip component with the ClickableSvg component, the Tooltip acts as a visible text indicator
+of ***what*** the tooltip trigger does. The same text is provided to assitive technology via the ClickableSvg's `name`.
 """
-          , view = viewPrimaryLabelTooltip model.openTooltip
+          , example = viewPrimaryLabelTooltip model.openTooltip
           , tooltipId = PrimaryLabel
           }
         , { name = "Tooltip.auxiliaryDescription"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger does more than just reveal the tooltip content
+- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself.
+
+Think of this as the "How."
+"""
           , description =
                 """
-Used when the content of the tooltip provides an "auxiliary description" for its content.
+In contrast to Tooltip.primaryLabel, Tooltip.auxiliaryDescription provides information about ***how*** the user should expect the tooltip target to behave when activated.
 
-An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
+Examples:
+- We might show an icon to indicate that a link opens in a new tab. This icon would have a tooltip to explain ***how*** the link will open.
+- On a Quick Write teacher preview, we use Tooltip.auxiliaryDescription on the Save button to let teachers know that the Save button will not actually save in the preview.
 """
-          , view = viewAuxillaryDescriptionToolip model.openTooltip
+          , example = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
           }
         , { name = "Tooltip.disclosure"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger only opens the tooltip without doing anything else
+- the tooltip trigger ***isn't*** a "?" icon
+        """
           , description =
                 """
-Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
+Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
 
 If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
 
-For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
+This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
 """
-          , view = viewDisclosureToolip model.openTooltip
+          , example = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger only opens the tooltip without doing anything else
+- the tooltip trigger ***is*** a "?" icon
+        """
           , description =
                 """
-Supplementary information triggered by a "?" icon.
-
-This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
+This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about. Please see the documentation for `disclosure` to learn more.
 """
-          , view = viewToggleTip model.openTooltip
+          , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
         ]
@@ -228,13 +257,13 @@ viewAuxillaryDescriptionToolip openTooltip =
         { id = "tooltip__auxiliaryDescription"
         , trigger =
             \eventHandlers ->
-                ClickableSvg.button "Period 1"
-                    UiIcon.class
-                    [ ClickableSvg.custom eventHandlers
-                    , ClickableSvg.onClick (Log "You totally started managing Periud 1.")
+                ClickableText.link "Tooltips & Toggletips"
+                    [ ClickableText.custom eventHandlers
+                    , ClickableText.icon UiIcon.openInNewTab
+                    , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
         }
-        [ Tooltip.plaintext "Manage class and students"
+        [ Tooltip.plaintext "Opens in a new window"
         , Tooltip.auxiliaryDescription
         , Tooltip.onToggle (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
