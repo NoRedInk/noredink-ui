@@ -8,7 +8,7 @@ module Examples.Table exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
-import Css exposing (..)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
@@ -48,13 +48,13 @@ example =
             [ Table.string
                 { header = "A"
                 , value = .a
-                , width = px 50
+                , width = Css.px 50
                 , cellStyles = always []
                 }
             , Table.string
                 { header = "B"
                 , value = .b
-                , width = px 50
+                , width = Css.px 50
                 , cellStyles = always []
                 }
             ]
@@ -69,35 +69,11 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                columns =
-                    [ Table.string
-                        { header = "First Name"
-                        , value = .firstName
-                        , width = calc (pct 50) minus (px 250)
-                        , cellStyles = always []
-                        }
-                    , Table.string
-                        { header = "Last Name"
-                        , value = .lastName
-                        , width = calc (pct 50) minus (px 250)
-                        , cellStyles = always []
-                        }
-                    , Table.string
-                        { header = "Submitted"
-                        , value = .submitted >> String.fromInt
-                        , width = px 125
-                        , cellStyles = \value -> [ textAlign center ]
-                        }
-                    , Table.custom
-                        { header = text "Actions"
-                        , width = px 250
-                        , view = \_ -> Button.button "Action" [ Button.small, Button.onClick (ConsoleLog "Clicked button!") ]
-                        , cellStyles = always []
-                        }
-                    ]
-
                 { showHeader, isLoading } =
                     Control.currentValue state
+
+                ( columnsCode, columns ) =
+                    List.unzip columnsWithCode
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -106,7 +82,7 @@ example =
                 , update = UpdateControl
                 , settings = state
                 , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , extraImports = [ "import Nri.Ui.Button.V10 as Button" ]
                 , toExampleCode =
                     \settings ->
                         let
@@ -119,7 +95,7 @@ example =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
-                                        ++ "[ --TODO \n ]"
+                                        ++ ControlView.codeFromListSimple columnsCode
                                         ++ dataStr
                                 }
                         in
@@ -186,7 +162,7 @@ datumToString : Datum -> String
 datumToString { firstName, lastName, submitted } =
     ("{ firstName = " ++ str firstName)
         ++ (", lastName = " ++ str lastName)
-        ++ (", submitted =" ++ String.fromInt 10)
+        ++ (", submitted = " ++ String.fromInt 10)
         ++ "}"
 
 
@@ -202,4 +178,69 @@ data =
     , { firstName = "Mariah", lastName = "Lopez", submitted = 3 }
     , { firstName = "Amber", lastName = "Brown", submitted = 15 }
     , { firstName = "Carlos", lastName = "Martinez", submitted = 8 }
+    ]
+
+
+columnsWithCode : List ( String, Column Datum Msg )
+columnsWithCode =
+    [ ( [ "Table.string"
+        , "  { header = \"First Name\""
+        , "  , value = .firstName"
+        , "  , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)"
+        , "  , cellStyles = always []"
+        , "  }"
+        ]
+            |> String.join "\n\t  "
+      , Table.string
+            { header = "First Name"
+            , value = .firstName
+            , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+            , cellStyles = always []
+            }
+      )
+    , ( [ "Table.string"
+        , "  { header = \"Last Name\""
+        , "  , value = .lastName"
+        , "  , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)"
+        , "  , cellStyles = always []"
+        , "  }"
+        ]
+            |> String.join "\n\t  "
+      , Table.string
+            { header = "Last Name"
+            , value = .lastName
+            , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+            , cellStyles = always []
+            }
+      )
+    , ( [ "Table.string"
+        , "  { header = \"Submitted\""
+        , "  , value = .submitted >> String.fromInt"
+        , "  , width = Css.px 125"
+        , "  , cellStyles = always [ Css.textAlign Css.center ]"
+        , "  }"
+        ]
+            |> String.join "\n\t  "
+      , Table.string
+            { header = "Submitted"
+            , value = .submitted >> String.fromInt
+            , width = Css.px 125
+            , cellStyles = \value -> [ Css.textAlign Css.center ]
+            }
+      )
+    , ( [ "Table.custom"
+        , "  { header = text \"Actions\""
+        , "  , width = Css.px 250"
+        , "  , view = \\_ -> Button.button \"Action\" [ Button.small ]"
+        , "  , cellStyles = always []"
+        , "  }"
+        ]
+            |> String.join "\n\t  "
+      , Table.custom
+            { header = text "Actions"
+            , width = Css.px 250
+            , view = \_ -> Button.button "Action" [ Button.small, Button.onClick (ConsoleLog "Clicked button!") ]
+            , cellStyles = always []
+            }
+      )
     ]
