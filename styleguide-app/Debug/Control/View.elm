@@ -1,4 +1,18 @@
-module Debug.Control.View exposing (codeFromList, codeFromListWithHardcoded, codeFromListWithIndentLevel, view)
+module Debug.Control.View exposing
+    ( view
+    , codeFromListSimple
+    , codeFromList, codeFromListWithIndentLevel
+    , codeFromListWithHardcoded
+    )
+
+{-|
+
+@docs view
+@docs codeFromListSimple
+@docs codeFromList, codeFromListWithIndentLevel
+@docs codeFromListWithHardcoded
+
+-}
 
 import Css exposing (..)
 import Css.Media exposing (withMedia)
@@ -111,6 +125,16 @@ codeFromList =
 
 codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
 codeFromListWithIndentLevel indent list =
+    codeFromListSimpleWithIndentLevel indent (List.map Tuple.first list)
+
+
+codeFromListSimple : List String -> String
+codeFromListSimple =
+    codeFromListSimpleWithIndentLevel 1
+
+
+codeFromListSimpleWithIndentLevel : Int -> List String -> String
+codeFromListSimpleWithIndentLevel indent list =
     let
         indents =
             String.repeat indent "\t"
@@ -118,7 +142,7 @@ codeFromListWithIndentLevel indent list =
     "\n"
         ++ indents
         ++ "[ "
-        ++ String.join ("\n" ++ indents ++ ", ") (List.map Tuple.first list)
+        ++ String.join ("\n" ++ indents ++ ", ") list
         ++ "\n"
         ++ indents
         ++ "] "

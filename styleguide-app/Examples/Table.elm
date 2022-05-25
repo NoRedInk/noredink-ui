@@ -110,15 +110,24 @@ example =
                 , toExampleCode =
                     \settings ->
                         let
-                            toExampleCode viewName =
+                            codeWithData viewName =
+                                List.map datumToString data
+                                    |> ControlView.codeFromListSimple
+                                    |> toExampleCode viewName
+
+                            toExampleCode viewName dataStr =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
                                         ++ "[ --TODO \n ]"
-                                        ++ "[ --TODO \n ]"
+                                        ++ dataStr
                                 }
                         in
-                        List.map toExampleCode [ "view", "viewWithoutHeader", "viewLoading", "viewLoadingWithoutHeader" ]
+                        [ codeWithData "view"
+                        , codeWithData "viewWithoutHeader"
+                        , toExampleCode "viewLoading" ""
+                        , toExampleCode "viewLoadingWithoutHeader" ""
+                        ]
                 }
             , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Example" ]
             , case ( showHeader, isLoading ) of
@@ -166,14 +175,27 @@ controlSettings =
         |> Control.field "is loading" (Control.bool False)
 
 
-type alias Data =
+type alias Datum =
     { firstName : String
     , lastName : String
     , submitted : Int
     }
 
 
-data : List Data
+datumToString : Datum -> String
+datumToString { firstName, lastName, submitted } =
+    ("{ firstName = " ++ str firstName)
+        ++ (", lastName = " ++ str lastName)
+        ++ (", submitted =" ++ String.fromInt 10)
+        ++ "}"
+
+
+str : String -> String
+str s =
+    "\"" ++ s ++ "\""
+
+
+data : List Datum
 data =
     [ { firstName = "Monique", lastName = "Garcia", submitted = 10 }
     , { firstName = "Gabriel", lastName = "Smith", submitted = 0 }
