@@ -134,20 +134,26 @@ view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
     , Table.view
         [ Table.string
-            { header = "Attribute"
+            { header = "Type"
             , value = .name
             , width = Css.pct 15
-            , cellStyles = always []
+            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
+            }
+        , Table.custom
+            { header = Html.text "Usage"
+            , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
+            , width = Css.px 150
+            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
-            , cellStyles = always []
+            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
             }
         , Table.custom
-            { header = Html.text "view"
             , view = .view
+            { header = Html.text "Example"
             , width = Css.px 50
             , cellStyles = always [ Css.textAlign Css.center ]
             }
