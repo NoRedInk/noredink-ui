@@ -159,6 +159,13 @@ view ellieLinkConfig model =
             }
         ]
         [ { name = "Tooltip.primaryLabel"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger does more than just reveal the tooltip content
+- the content of the tooltip is the same as the name of the tooltip trigger
+
+Think of this as the \"What.\"
+"""
           , description =
                 """
 Used when the content of the tooltip is identical to the accessible name.
@@ -172,6 +179,13 @@ This is the default.
           , tooltipId = PrimaryLabel
           }
         , { name = "Tooltip.auxiliaryDescription"
+        , usage = """
+Use when all of the following are true:
+- the tooltip trigger does more than just reveal the tooltip content
+- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself.
+
+Think of this as the \"How.\"
+"""
           , description =
                 """
 Used when the content of the tooltip provides an "auxiliary description" for its content.
@@ -182,6 +196,11 @@ An auxiliary description is used when the tooltip content provides supplementary
           , tooltipId = AuxillaryDescription
           }
         , { name = "Tooltip.disclosure"
+        , usage = """
+Use when all of the following are true:
+- the tooltip trigger only opens the tooltip without doing anything else
+- the tooltip trigger ***isn't*** a \"?\" icon
+        """
           , description =
                 """
 Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
@@ -194,6 +213,11 @@ For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
+        , usage = """
+Use when all of the following are true:
+- the tooltip trigger only opens the tooltip without doing anything else
+- the tooltip trigger ***is*** a \"?\" icon
+        """
           , description =
                 """
 Supplementary information triggered by a "?" icon.
