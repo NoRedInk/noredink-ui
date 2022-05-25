@@ -138,19 +138,19 @@ view ellieLinkConfig model =
             { header = "Type"
             , value = .name
             , width = Css.pct 15
-            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
             }
         , Table.custom
             { header = Html.text "Usage"
             , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 150
-            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
-            , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
             }
         , Table.custom
             { header = Html.text "Example"
@@ -165,7 +165,7 @@ Use when all of the following are true:
 - the tooltip trigger does more than just reveal the tooltip content
 - the content of the tooltip is the same as the name of the tooltip trigger
 
-Think of this as the \"What.\"
+Think of this as the "What."
 """
           , description =
                 """
@@ -178,12 +178,12 @@ of ***what*** the tooltip trigger does. The same text is provided to assitive te
           , tooltipId = PrimaryLabel
           }
         , { name = "Tooltip.auxiliaryDescription"
-        , usage = """
+          , usage = """
 Use when all of the following are true:
 - the tooltip trigger does more than just reveal the tooltip content
 - the content of the tooltip provides additional information about the functionality of the tooltip trigger itself.
 
-Think of this as the \"How.\"
+Think of this as the "How."
 """
           , description =
                 """
@@ -197,10 +197,10 @@ Examples:
           , tooltipId = AuxillaryDescription
           }
         , { name = "Tooltip.disclosure"
-        , usage = """
+          , usage = """
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
-- the tooltip trigger ***isn't*** a \"?\" icon
+- the tooltip trigger ***isn't*** a "?" icon
         """
           , description =
                 """
@@ -214,10 +214,10 @@ This behavior is analogous to disclosure behavior, except that it's presented di
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
-        , usage = """
+          , usage = """
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
-- the tooltip trigger ***is*** a \"?\" icon
+- the tooltip trigger ***is*** a "?" icon
         """
           , description =
                 """
@@ -259,8 +259,8 @@ viewAuxillaryDescriptionToolip openTooltip =
             \eventHandlers ->
                 ClickableText.link "Tooltips & Toggletips"
                     [ ClickableText.custom eventHandlers
-                    ,ClickableText.icon UiIcon.openInNewTab
-                    ,ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
+                    , ClickableText.icon UiIcon.openInNewTab
+                    , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
         }
         [ Tooltip.plaintext "Opens in a new window"
