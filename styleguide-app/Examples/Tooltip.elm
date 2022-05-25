@@ -20,6 +20,7 @@ import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V5 as Table
@@ -258,13 +259,13 @@ viewAuxillaryDescriptionToolip openTooltip =
         { id = "tooltip__auxiliaryDescription"
         , trigger =
             \eventHandlers ->
-                ClickableSvg.button "Period 1"
-                    UiIcon.class
-                    [ ClickableSvg.custom eventHandlers
-                    , ClickableSvg.onClick (Log "You totally started managing Periud 1.")
+                ClickableText.link "Tooltips & Toggletips"
+                    [ ClickableText.custom eventHandlers
+                    ,ClickableText.icon UiIcon.openInNewTab
+                    ,ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
         }
-        [ Tooltip.plaintext "Manage class and students"
+        [ Tooltip.plaintext "Opens in a new window"
         , Tooltip.auxiliaryDescription
         , Tooltip.onToggle (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
