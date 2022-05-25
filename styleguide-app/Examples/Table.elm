@@ -13,7 +13,6 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Table.V5 as Table exposing (Column)
 
