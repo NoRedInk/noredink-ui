@@ -105,12 +105,14 @@ update action model =
                 External loc ->
                     ( model, Load loc )
 
-        OnUrlChange route ->
-            ( { model
-                | route = Routes.fromLocation model.moduleStates route
-                , previousRoute = Just model.route
-              }
-            , None
+        OnUrlChange location ->
+            let
+                route =
+                    Routes.fromLocation model.moduleStates location
+            in
+            ( { model | route = route, previousRoute = Just model.route }
+            , Maybe.map FocusOn (Routes.headerId route)
+                |> Maybe.withDefault None
             )
 
         ChangeRoute route ->

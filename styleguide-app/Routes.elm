@@ -1,4 +1,4 @@
-module Routes exposing (Route(..), fromLocation, toString, updateExample, viewBreadCrumbs)
+module Routes exposing (Route(..), fromLocation, headerId, toString, updateExample, viewBreadCrumbs)
 
 import Accessibility.Styled as Html exposing (Html)
 import Category
@@ -111,6 +111,11 @@ viewBreadCrumbs currentRoute =
                 }
             )
         |> Maybe.withDefault (Html.text "")
+
+
+headerId : Route state msg -> Maybe String
+headerId route_ =
+    Maybe.map BreadCrumbs.headerId (breadCrumbs route_)
 
 
 breadCrumbs : Route state msg -> Maybe (BreadCrumbs (Route state msg))
