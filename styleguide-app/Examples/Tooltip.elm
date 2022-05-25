@@ -152,8 +152,8 @@ view ellieLinkConfig model =
             , cellStyles = always [Css.padding2 Css.zero (Css.px 7)]
             }
         , Table.custom
-            , view = .view
             { header = Html.text "Example"
+            , view = .example
             , width = Css.px 50
             , cellStyles = always [ Css.textAlign Css.center ]
             }
@@ -168,7 +168,7 @@ extra information to sighted users that screenreader users already have.
 
 This is the default.
 """
-          , view = viewPrimaryLabelTooltip model.openTooltip
+          , example = viewPrimaryLabelTooltip model.openTooltip
           , tooltipId = PrimaryLabel
           }
         , { name = "Tooltip.auxiliaryDescription"
@@ -178,7 +178,7 @@ Used when the content of the tooltip provides an "auxiliary description" for its
 
 An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
 """
-          , view = viewAuxillaryDescriptionToolip model.openTooltip
+          , example = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
           }
         , { name = "Tooltip.disclosure"
@@ -190,7 +190,7 @@ If clicking the "tooltip trigger" only ever shows you more info (and especially 
 
 For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
 """
-          , view = viewDisclosureToolip model.openTooltip
+          , example = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
@@ -200,7 +200,7 @@ Supplementary information triggered by a "?" icon.
 
 This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
 """
-          , view = viewToggleTip model.openTooltip
+          , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
         ]
