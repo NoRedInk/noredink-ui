@@ -169,12 +169,10 @@ Think of this as the \"What.\"
 """
           , description =
                 """
-Used when the content of the tooltip is identical to the accessible name.
+This is the default tooltip type.
 
-For example, when using the Tooltip component with the ClickableSvg component, the Tooltip is providing
-extra information to sighted users that screenreader users already have.
-
-This is the default.
+When using the Tooltip component with the ClickableSvg component, the Tooltip acts as a visible text indicator
+of ***what*** the tooltip trigger does. The same text is provided to assitive technology via the ClickableSvg's `name`.
 """
           , example = viewPrimaryLabelTooltip model.openTooltip
           , tooltipId = PrimaryLabel
@@ -189,9 +187,11 @@ Think of this as the \"How.\"
 """
           , description =
                 """
-Used when the content of the tooltip provides an "auxiliary description" for its content.
+In contrast to Tooltip.primaryLabel, Tooltip.auxiliaryDescription provides information about ***how*** the user should expect the tooltip target to behave when activated.
 
-An auxiliary description is used when the tooltip content provides supplementary information about its trigger content.
+Examples:
+- We might show an icon to indicate that a link opens in a new tab. This icon would have a tooltip to explain ***how*** the link will open.
+- On a Quick Write teacher preview, we use Tooltip.auxiliaryDescription on the Save button to let teachers know that the Save button will not actually save in the preview.
 """
           , example = viewAuxillaryDescriptionToolip model.openTooltip
           , tooltipId = AuxillaryDescription
@@ -204,11 +204,11 @@ Use when all of the following are true:
         """
           , description =
                 """
-Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
+Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
 
 If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
 
-For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).
+This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
 """
           , example = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
@@ -221,9 +221,7 @@ Use when all of the following are true:
         """
           , description =
                 """
-Supplementary information triggered by a "?" icon.
-
-This is a helper for setting up a commonly-used `disclosure` tooltip. Please see the documentation for `disclosure` to learn more.
+This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about. Please see the documentation for `disclosure` to learn more.
 """
           , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
