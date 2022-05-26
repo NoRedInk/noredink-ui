@@ -107,6 +107,7 @@ main = do
 
       "log/format.txt" %> \out -> do
         need ["log/elm-format.txt", "log/prettier.txt"]
+        writeFileChanged out "formatting checks passed"
 
       "log/elm-format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide", "styleguide-app"]
