@@ -106,10 +106,22 @@ main = do
         cmd (WithStdout True) (FileStdout out) "elm-verify-examples"
 
       "log/format.txt" %> \out -> do
+        need ["log/elm-format.txt", "log/prettier.txt"]
+        writeFileChanged out "formatting checks passed"
+
+      "log/elm-format.txt" %> \out -> do
         let placesToLook = ["src", "tests", "styleguide", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
+
+      "log/prettier.txt" %> \out -> do
+        (Stdout trackedFilesOut) <- cmd "git" "ls-files"
+        let trackedFiles = lines trackedFilesOut
+        let jsFiles = filter (\name -> takeExtension name == ".js") trackedFiles
+        need ("log/npm-install.txt" : jsFiles)
+
+        cmd (WithStdout True) (FileStdout out) "./node_modules/.bin/prettier" "--check" jsFiles
 
       "log/puppeteer-tests.txt" %> \out -> do
         percyToken <- getEnv "PERCY_TOKEN"
