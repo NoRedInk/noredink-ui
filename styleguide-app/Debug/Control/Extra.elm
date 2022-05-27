@@ -3,6 +3,7 @@ module Debug.Control.Extra exposing
     , list, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultTrue
     , bool
+    , string
     )
 
 {-|
@@ -11,6 +12,7 @@ module Debug.Control.Extra exposing
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultTrue
 @docs bool
+@docs string
 
 -}
 
@@ -122,3 +124,9 @@ bool default =
             )
         )
         (Control.bool default)
+
+
+{-| -}
+string : String -> Control ( String, String )
+string default =
+    Control.map (\val -> ( "\"" ++ val ++ "\"", val )) (Control.string default)

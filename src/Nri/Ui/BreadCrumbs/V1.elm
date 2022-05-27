@@ -114,10 +114,15 @@ toPageTitleWithSecondaryBreadCrumbs (BreadCrumbs breadcrumbs) =
         |> String.join " | "
 
 
-{-| -}
+{-| Usually, the label value will be the string "breadcrumbs".
+
+It's configurable so that if more than one set of BreadCrumbs ever appear on the page, the aria-label for the nav can still be unique.
+
+-}
 view :
     { aTagAttributes : route -> List (Attribute msg)
     , isCurrentRoute : route -> Bool
+    , label : String
     }
     -> BreadCrumbs route
     -> Html msg
@@ -127,13 +132,14 @@ view config (BreadCrumbs breadCrumbs) =
         , displayFlex
         , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
         ]
-        [ Widget.label "breadcrumbs" ]
+        [ Widget.label config.label ]
         (viewBreadCrumbs config (List.reverse breadCrumbs))
 
 
 viewBreadCrumbs :
-    { aTagAttributes : route -> List (Attribute msg)
-    , isCurrentRoute : route -> Bool
+    { config
+        | aTagAttributes : route -> List (Attribute msg)
+        , isCurrentRoute : route -> Bool
     }
     -> List (BreadCrumb route)
     -> List (Html msg)

@@ -1,4 +1,4 @@
-module Debug.Control.View exposing (codeFromList, codeFromListWithHardcoded, codeFromListWithIndentLevel, view)
+module Debug.Control.View exposing (codeFromList, codeFromListWithHardcoded, codeFromListWithIndentLevel, view, withIndentLevel)
 
 import Css exposing (..)
 import Css.Media exposing (withMedia)
@@ -113,7 +113,7 @@ codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
 codeFromListWithIndentLevel indent list =
     let
         indents =
-            String.repeat indent "\t"
+            withIndentLevel indent
     in
     "\n"
         ++ indents
@@ -122,3 +122,8 @@ codeFromListWithIndentLevel indent list =
         ++ "\n"
         ++ indents
         ++ "] "
+
+
+withIndentLevel : Int -> String
+withIndentLevel indent =
+    String.repeat indent "    "
