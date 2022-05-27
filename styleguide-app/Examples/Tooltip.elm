@@ -457,7 +457,7 @@ viewCustomizableExample ellieLinkConfig controlSettings =
             , update = SetControl
             , settings = controlSettings
             , mainType = "RootHtml.Html msg"
-            , extraImports = []
+            , extraImports = [ "import Nri.Ui.ClickableSvg.V2 as ClickableSvg" ]
             , toExampleCode =
                 \controls ->
                     [ { sectionName = "Example"
