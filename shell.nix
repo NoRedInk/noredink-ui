@@ -5,7 +5,7 @@ let
   else
     builtins.currentSystem;
   nixpkgs = import sources.nixpkgs { inherit system; };
-  niv = nixpkgs.callPackage sources.niv { };
+  niv = import sources.niv { };
 in with nixpkgs;
 stdenv.mkDerivation {
   name = "noredink-ui";

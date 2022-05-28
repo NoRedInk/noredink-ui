@@ -1,6 +1,6 @@
 {
   "name": "@noredink/ui",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "UI widgets we use.",
   "main": "lib/index.js",
   "directories": {
@@ -29,6 +29,7 @@
     "@percy/cli": "^1.0.0-beta.73",
     "@percy/puppeteer": "^2.0.0",
     "browserify": "16.2.3",
+    "prettier": "^2.6.2",
     "puppeteer": "^3.3.0",
     "request": "^2.88.0"
   },

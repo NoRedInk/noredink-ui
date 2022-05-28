@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "15.12.1",
+    "version": "15.13.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",

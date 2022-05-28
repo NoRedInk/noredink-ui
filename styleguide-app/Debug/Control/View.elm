@@ -3,6 +3,7 @@ module Debug.Control.View exposing
     , codeFromListSimple
     , codeFromList, codeFromListWithIndentLevel
     , codeFromListWithHardcoded
+    , withIndentLevel
     )
 
 {-|
@@ -11,6 +12,7 @@ module Debug.Control.View exposing
 @docs codeFromListSimple
 @docs codeFromList, codeFromListWithIndentLevel
 @docs codeFromListWithHardcoded
+@docs withIndentLevel
 
 -}
 
@@ -137,7 +139,7 @@ codeFromListSimpleWithIndentLevel : Int -> List String -> String
 codeFromListSimpleWithIndentLevel indent list =
     let
         indents =
-            String.repeat indent "\t"
+            withIndentLevel indent
     in
     "\n"
         ++ indents
@@ -146,3 +148,8 @@ codeFromListSimpleWithIndentLevel indent list =
         ++ "\n"
         ++ indents
         ++ "] "
+
+
+withIndentLevel : Int -> String
+withIndentLevel indent =
+    String.repeat indent "    "
