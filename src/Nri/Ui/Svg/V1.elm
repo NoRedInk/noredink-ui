@@ -87,7 +87,7 @@ withHeight height (Svg record) =
 -}
 withCss : List Css.Style -> Svg -> Svg
 withCss css (Svg record) =
-    Svg { record | css = css }
+    Svg { record | css = record.css ++ css }
 
 
 {-| -}
