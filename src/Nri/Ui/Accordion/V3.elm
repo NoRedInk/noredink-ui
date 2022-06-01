@@ -62,7 +62,6 @@ module Nri.Ui.Accordion.V3 exposing
 import Accessibility.Styled exposing (Html, button, div, section)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
@@ -338,9 +337,9 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                     , ( accordionEntryHeaderExpandedClass, isExpanded )
                     , ( accordionEntryHeaderCollapsedClass, not isExpanded )
                     ]
-                , Widget.disabled (config.toggle == Nothing)
-                , Widget.expanded isExpanded
-                , Aria.controls panelId
+                , Aria.disabled (config.toggle == Nothing)
+                , Aria.expanded isExpanded
+                , Aria.controls [ panelId ]
                 , config.toggle
                     |> Maybe.map (\toggle -> onClick (toggle (not isExpanded)))
                     |> Maybe.withDefault AttributesExtra.none

@@ -8,7 +8,6 @@ module TabsInternal exposing (Config, Tab, views)
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css
 import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
@@ -100,7 +99,7 @@ viewTab_ config tab =
         (tagSpecificAttributes
             ++ tab.tabAttributes
             ++ [ Attributes.tabindex tabIndex
-               , Widget.selected isSelected
+               , Aria.selected isSelected
                , Role.tab
                , Attributes.id (tabToId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
@@ -176,13 +175,13 @@ viewTabPanel tab selected =
          , Attributes.id (tabToBodyId tab.idString)
          ]
             ++ (if selected then
-                    [ Widget.hidden False
+                    [ Aria.hidden False
                     , Attributes.tabindex 0
                     ]
 
                 else
                     [ Attributes.css [ Css.display Css.none ]
-                    , Widget.hidden True
+                    , Aria.hidden True
                     , Attributes.tabindex -1
                     ]
                )

@@ -84,8 +84,8 @@ adding a span around the text could potentially lead to regressions.
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
@@ -650,7 +650,7 @@ delete config =
         [ Events.onClick config.onClick
         , Attributes.type_ "button"
         , -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
-          Widget.label config.label
+          Aria.label config.label
         ]
         [ Svg.svg [ Svg.Attributes.viewBox "0 0 25 25" ]
             [ Svg.title [] [ Styled.toUnstyled (Styled.text "Delete") ]
@@ -706,7 +706,7 @@ toggleButton config =
              else
                 config.onSelect
             )
-        , Widget.pressed <| Just config.pressed
+        , Aria.pressed <| Just config.pressed
 
         -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
         , Role.button

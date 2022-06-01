@@ -27,7 +27,6 @@ module Nri.Ui.Menu.V1 exposing
 
 import Accessibility.Styled.Aria as Aria exposing (controls)
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
@@ -169,10 +168,10 @@ view config =
                     ]
                 , onClick <| config.onToggle (not config.isOpen)
                 , Attributes.disabled config.isDisabled
-                , Widget.disabled config.isDisabled
-                , Widget.hasMenuPopUp
-                , Widget.expanded config.isOpen
-                , controls menuId
+                , Aria.disabled config.isDisabled
+                , Aria.hasMenuPopUp
+                , Aria.expanded config.isOpen
+                , controls [ menuId ]
                 , Attributes.id buttonId
                 , config.buttonWidth
                     -- TODO: don't set this value as an inline style unnecessarily
@@ -276,7 +275,7 @@ viewDropdown config =
         , Role.menu
         , Aria.labelledBy config.buttonId
         , Attributes.id config.menuId
-        , Widget.hidden (not config.isOpen)
+        , Aria.hidden (not config.isOpen)
         , config.menuWidth
             -- TODO: don't set this style inline unnecessarily
             |> Maybe.map (\w -> Attributes.style "width" (String.fromInt w ++ "px"))
@@ -345,9 +344,9 @@ iconButton config =
                                 ]
                                 :: buttonLinkResets
                             )
-                         , Widget.disabled config.isDisabled
+                         , Aria.disabled config.isDisabled
                          , Attributes.disabled config.isDisabled
-                         , Widget.label config.label
+                         , Aria.label config.label
                          ]
                             ++ perhapsOnclick
                         )
@@ -470,9 +469,9 @@ iconLink config =
                                         []
                                    )
                             )
-                         , Widget.disabled config.isDisabled
+                         , Aria.disabled config.isDisabled
                          , Attributes.id (String.Extra.dasherize config.label)
-                         , Widget.label config.label
+                         , Aria.label config.label
                          ]
                             ++ perhapsHref
                         )

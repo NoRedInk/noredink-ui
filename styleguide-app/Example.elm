@@ -1,6 +1,6 @@
 module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
 
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css exposing (..)
 import EllieLink
@@ -131,7 +131,7 @@ preview_ { navigate, exampleHref } example =
                             [ Css.displayFlex
                             , Css.flexDirection Css.column
                             ]
-                        , Widget.hidden True
+                        , Aria.hidden True
                         ]
                         (List.map (Html.map never) example.preview)
                    ]
@@ -149,7 +149,7 @@ view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
     let
         navMenu items =
-            Html.nav [ Widget.label (fullName example) ]
+            Html.nav [ Aria.label (fullName example) ]
                 [ Html.ul
                     [ Attributes.css
                         [ margin zero

@@ -8,7 +8,6 @@ module Nri.Ui.Switch.V1 exposing (view, Attribute, onSwitch, disabled, id, label
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Global as Global
 import Css.Media
@@ -139,8 +138,8 @@ view attrs isOn =
                     Css.notAllowed
                 )
             ]
-        , Aria.controls config.id
-        , Widget.checked (Just isOn)
+        , Aria.controls [ config.id ]
+        , Aria.checked (Just isOn)
         ]
         [ viewCheckbox
             { id = config.id
@@ -195,7 +194,7 @@ viewCheckbox config =
                 Events.onCheck onCheck
 
             Nothing ->
-                Widget.disabled True
+                Aria.disabled True
          ]
             ++ List.map (Attributes.map never) config.attributes
         )

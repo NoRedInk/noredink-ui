@@ -59,7 +59,6 @@ import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
@@ -722,8 +721,8 @@ viewTooltip_ { trigger, id } tooltip =
                         [ Aria.describedBy [ id ] ]
 
                     Disclosure _ ->
-                        [ Widget.expanded tooltip.isOpen
-                        , Aria.controls id
+                        [ Aria.expanded tooltip.isOpen
+                        , Aria.controls [ id ]
                         ]
                  )
                     ++ buttonEvents
@@ -812,7 +811,7 @@ viewTooltip tooltipId config =
         , -- If the tooltip is the "primary label" for the content, then we can trust that the content
           -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
-          Widget.hidden (config.purpose == PrimaryLabel)
+          Aria.hidden (config.purpose == PrimaryLabel)
         ]
         [ Html.div
             ([ Attributes.css

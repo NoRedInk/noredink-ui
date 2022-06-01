@@ -63,7 +63,7 @@ In practice, we don't use these sizes. Remove them!
 
 -}
 
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Color, Style)
 import Css.Media
@@ -482,7 +482,7 @@ renderButton ((ButtonOrLink config) as button_) =
          , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
-         , Widget.label config.label
+         , Aria.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
@@ -511,8 +511,8 @@ renderLink ((ButtonOrLink config) as link_) =
     Html.a
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Widget.disabled config.disabled
-         , Widget.label config.label
+         , Aria.disabled config.disabled
+         , Aria.label config.label
          ]
             ++ (if not config.disabled then
                     extraAttrs
