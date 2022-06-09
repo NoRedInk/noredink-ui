@@ -3,6 +3,7 @@ module Nri.Ui.MediaQuery.V1 exposing
     , mobileBreakpoint
     , quizEngineMobile
     , quizEngineBreakpoint
+    , narrowMobile, narrowMobileBreakPoint
     )
 
 {-| Standard media queries for responsive pages.
@@ -73,3 +74,22 @@ quizEngineMobile =
 quizEngineBreakpoint : Css.Px
 quizEngineBreakpoint =
     px 750
+
+
+{-| Styles using the `narrowMobileBreakPoint` value as the maxWidth
+-}
+narrowMobile : MediaQuery
+narrowMobile =
+    only screen
+        [ --`minWidth (px 1)` is for a bug in IE which causes the media query to initially trigger regardless of window size
+          --See: <http://stackoverflow.com/questions/25673707/ie11-triggers-css-transition-on-page-load-when-non-applied-media-query-exists/25850649#25850649>
+          minWidth (px 1)
+        , maxWidth narrowMobileBreakPoint
+        ]
+
+
+{-| 500px
+-}
+narrowMobileBreakPoint : Css.Px
+narrowMobileBreakPoint =
+    px 500
