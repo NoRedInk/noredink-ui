@@ -3,7 +3,8 @@ module Nri.Ui.MediaQuery.V1 exposing
     , mobileBreakpoint
     , quizEngineMobile
     , quizEngineBreakpoint
-    , narrowMobile, narrowMobileBreakPoint
+    , narrowMobile
+    , narrowMobileBreakPoint
     )
 
 {-| Standard media queries for responsive pages.
