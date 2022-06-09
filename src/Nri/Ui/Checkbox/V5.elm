@@ -31,8 +31,8 @@ module Nri.Ui.Checkbox.V5 exposing
 -}
 
 import Accessibility.Styled as Html
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style
-import Accessibility.Styled.Widget as Widget
 import CheckboxIcons
 import Css exposing (..)
 import Css.Global
@@ -192,7 +192,7 @@ viewCheckbox model =
         (selectedToMaybe model.selected)
         [ Attributes.id model.identifier
         , if model.disabled then
-            Widget.disabled True
+            Aria.disabled True
 
           else
             Events.onCheck (\_ -> onCheck model)

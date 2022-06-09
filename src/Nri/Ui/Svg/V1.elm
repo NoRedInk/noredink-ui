@@ -14,8 +14,8 @@ module Nri.Ui.Svg.V1 exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (Color)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -87,7 +87,7 @@ withHeight height (Svg record) =
 -}
 withCss : List Css.Style -> Svg -> Svg
 withCss css (Svg record) =
-    Svg { record | css = css }
+    Svg { record | css = record.css ++ css }
 
 
 {-| -}
@@ -122,8 +122,8 @@ toHtml (Svg record) =
 
                   else
                     Just (Attributes.css (Css.display Css.inlineBlock :: css))
-                , Maybe.map Widget.label record.label
-                    |> Maybe.withDefault (Widget.hidden True)
+                , Maybe.map Aria.label record.label
+                    |> Maybe.withDefault (Aria.hidden True)
                     |> Just
                 , Just Role.img
                 ]

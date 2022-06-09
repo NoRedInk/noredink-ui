@@ -35,7 +35,6 @@ Narrow Viewport (with Circled IconStyle):
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Css.Media as Media
@@ -132,7 +131,7 @@ view config (BreadCrumbs breadCrumbs) =
         , displayFlex
         , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
         ]
-        [ Widget.label config.label ]
+        [ Aria.label config.label ]
         (viewBreadCrumbs config (List.reverse breadCrumbs))
 
 

@@ -11,8 +11,8 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
@@ -141,7 +141,7 @@ viewPreview : Html msg
 viewPreview =
     Html.div
         [ Role.img
-        , Widget.hidden True
+        , Aria.hidden True
         , css
             [ Css.displayFlex
             , Css.justifyContent Css.stretch

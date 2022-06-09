@@ -13,10 +13,9 @@ module Nri.Ui.SlideModal.V2 exposing
 -}
 
 import Accessibility.Styled as Html exposing (..)
-import Accessibility.Styled.Aria exposing (labelledBy)
+import Accessibility.Styled.Aria as Aria exposing (labelledBy)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
-import Accessibility.Styled.Widget as Widget
 import Css
 import Css.Animations
 import Css.Global
@@ -137,7 +136,7 @@ viewModal config (State { previousPanel }) summary =
             , Slide.withSlidingContents
             ]
         , Role.dialog
-        , Widget.modal True
+        , Aria.modal True
         , labelledBy (panelId summary.current)
         ]
         (case previousPanel of

@@ -162,7 +162,6 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
@@ -565,7 +564,7 @@ viewModal :
 viewModal config =
     section
         ([ Role.dialog
-         , Widget.modal True
+         , Aria.modal True
          , Aria.labeledBy modalTitleId
          ]
             ++ config.customAttributes
@@ -723,7 +722,7 @@ closeButtonId =
 viewCloseButton : msg -> Html msg
 viewCloseButton closeModal =
     button
-        (Widget.label "Close modal"
+        (Aria.label "Close modal"
             :: onClick closeModal
             :: Attrs.css
                 [ -- in the upper-right corner of the modal

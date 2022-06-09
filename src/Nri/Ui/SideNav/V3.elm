@@ -46,8 +46,8 @@ module Nri.Ui.SideNav.V3 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
-import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
 import Css.Media
@@ -178,7 +178,7 @@ view config navAttributes entries =
     in
     styled nav
         appliedNavAttributes.css
-        ([ Maybe.map Widget.label appliedNavAttributes.navLabel
+        ([ Maybe.map Aria.label appliedNavAttributes.navLabel
          ]
             |> List.filterMap identity
         )

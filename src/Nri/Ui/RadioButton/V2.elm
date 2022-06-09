@@ -10,7 +10,7 @@ module Nri.Ui.RadioButton.V2 exposing (view, premium)
 -}
 
 import Accessibility.Styled exposing (..)
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
@@ -156,7 +156,7 @@ internalView config =
             (config.valueToString config.value)
             isChecked
             [ id id_
-            , Widget.disabled (config.isLocked || config.isDisabled)
+            , Aria.disabled (config.isLocked || config.isDisabled)
             , if not config.isDisabled then
                 onClick (config.onSelect config.value)
 

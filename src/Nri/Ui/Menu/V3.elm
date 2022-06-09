@@ -49,7 +49,6 @@ A togglable menu view and related buttons.
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global exposing (descendants)
 import EventExtras exposing (onKeyDownPreventDefault)
@@ -446,9 +445,9 @@ viewCustom config =
         , div styleInnerContainer
             [ let
                 buttonAttributes =
-                    [ Widget.disabled config.isDisabled
-                    , Widget.hasMenuPopUp
-                    , Widget.expanded config.isOpen
+                    [ Aria.disabled config.isDisabled
+                    , Aria.hasMenuPopUp
+                    , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
                       case ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
@@ -470,7 +469,7 @@ viewCustom config =
 
                         _ ->
                             AttributesExtra.none
-                    , Aria.controls config.menuId
+                    , Aria.controls [ config.menuId ]
                     , Attributes.id config.buttonId
                     , if config.isDisabled then
                         AttributesExtra.none
@@ -501,7 +500,7 @@ viewCustom config =
                 , Role.menu
                 , Aria.labelledBy config.buttonId
                 , Attributes.id config.menuId
-                , Widget.hidden (not config.isOpen)
+                , Aria.hidden (not config.isOpen)
                 , css
                     [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
                         |> Maybe.withDefault (Css.batch [])

@@ -41,7 +41,6 @@ module Nri.Ui.RadioButton.V3 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
@@ -329,7 +328,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             stringValue
             isChecked
             ([ Attributes.id idValue
-             , Widget.disabled (isLocked || config.isDisabled)
+             , Aria.disabled (isLocked || config.isDisabled)
              , InputErrorAndGuidanceInternal.describedBy idValue config
              , case ( config.onSelect, config.isDisabled ) of
                 ( Just onSelect_, False ) ->

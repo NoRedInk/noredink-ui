@@ -33,7 +33,7 @@ module Nri.Ui.Switch.V2 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
 import Css exposing (Color, Style)
 import Css.Global as Global
 import Css.Media
@@ -226,7 +226,7 @@ viewCheckbox config =
                 Events.onCheck onCheck
 
             _ ->
-                Widget.disabled True
+                Aria.disabled True
         ]
 
 
