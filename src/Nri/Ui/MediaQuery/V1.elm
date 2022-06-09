@@ -25,6 +25,9 @@ module Nri.Ui.MediaQuery.V1 exposing
 @docs quizEngineMobile
 @docs quizEngineBreakpoint
 
+@docs narrowMobile
+@docs narrowMobileBreakPoint
+
 -}
 
 import Css exposing (px)
