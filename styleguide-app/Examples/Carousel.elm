@@ -46,7 +46,11 @@ init =
 
 
 type alias Settings =
-    { tabListPosition : Carousel.TabPosition }
+    { tabListPosition : Carousel.TabPosition
+    , tabListStyles : List Style
+    , tabStyles : Int -> Bool -> List Style
+    , containerStyles : List Style
+    }
 
 
 initSettings : Control Settings
@@ -58,6 +62,51 @@ initSettings =
                 , ( "After", Control.value After )
                 ]
             )
+        |> Control.field "tabListStyles" controlTabListStyles
+        |> Control.field "tabStyles" controlTabStyles
+        |> Control.field "containerStyles" controlContainerStyles
+
+
+controlTabListStyles : Control (List Style)
+controlTabListStyles =
+    [ Css.displayFlex
+    , Css.property "gap" "20px"
+    ]
+        |> Control.value
+        |> Control.maybe False
+        |> Control.map (Maybe.withDefault [])
+
+
+controlTabStyles : Control (Int -> Bool -> List Css.Style)
+controlTabStyles =
+    (\_ isSelected ->
+        let
+            ( backgroundColor, textColor ) =
+                if isSelected then
+                    ( Colors.azure, Colors.white )
+
+                else
+                    ( Colors.gray92, Colors.gray20 )
+        in
+        [ Css.padding2 (Css.px 10) (Css.px 20)
+        , Css.backgroundColor backgroundColor
+        , Css.borderRadius (Css.px 8)
+        , Css.border Css.zero
+        , Css.color textColor
+        , Css.cursor Css.pointer
+        ]
+    )
+        |> Control.value
+        |> Control.maybe False
+        |> Control.map (Maybe.withDefault (\_ _ -> []))
+
+
+controlContainerStyles : Control (List Style)
+controlContainerStyles =
+    [ Css.margin (Css.px 20) ]
+        |> Control.value
+        |> Control.maybe False
+        |> Control.map (Maybe.withDefault [])
 
 
 type Msg
@@ -141,45 +190,14 @@ example =
             , Carousel.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabListStyles = tabListStyles
-                , tabStyles = tabStyles
-                , containerStyles = containerStyles
+                , tabListStyles = settings.tabListStyles
+                , tabStyles = settings.tabStyles
+                , containerStyles = settings.containerStyles
                 , tabListPosition = settings.tabListPosition
                 , tabs = allTabs
                 }
             ]
     }
-
-
-containerStyles : List Style
-containerStyles =
-    [ Css.margin (Css.px 20) ]
-
-
-tabListStyles : List Style
-tabListStyles =
-    [ Css.displayFlex
-    , Css.property "gap" "20px"
-    ]
-
-
-tabStyles : Int -> Bool -> List Css.Style
-tabStyles _ isSelected =
-    let
-        ( backgroundColor, textColor ) =
-            if isSelected then
-                ( Colors.azure, Colors.white )
-
-            else
-                ( Colors.gray92, Colors.gray20 )
-    in
-    [ Css.padding2 (Css.px 10) (Css.px 20)
-    , Css.backgroundColor backgroundColor
-    , Css.borderRadius (Css.px 8)
-    , Css.border Css.zero
-    , Css.color textColor
-    , Css.cursor Css.pointer
-    ]
 
 
 slideStyles : List Style
