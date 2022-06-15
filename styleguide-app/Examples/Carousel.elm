@@ -13,7 +13,7 @@ module Examples.Carousel exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import Css
+import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (fromUnstyled)
@@ -128,10 +128,12 @@ example =
     }
 
 
+containerStyles : List Style
 containerStyles =
     [ Css.margin (Css.px 20) ]
 
 
+tabListStyles : List Style
 tabListStyles =
     [ Css.displayFlex
     , Css.property "gap" "20px"
@@ -156,6 +158,7 @@ tabStyles _ isSelected =
     ]
 
 
+slideStyles : List Style
 slideStyles =
     [ Css.marginTop (Css.px 20)
     , Css.padding2 (Css.px 10) (Css.px 30)
