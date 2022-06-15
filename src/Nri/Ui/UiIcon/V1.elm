@@ -5,7 +5,8 @@ module Nri.Ui.UiIcon.V1 exposing
     , play, skip
     , share, preview, copyToClipboard, gift
     , activity
-    , footsteps, compass, speedometer, bulb, help, checklist
+    , footsteps, compass, speedometer, help, checklist
+    , sparkleBulb, baldBulb, bulb
     , hat, keychain
     , sprout, sapling, tree
     , person, couple, class, leaderboard, performance
@@ -36,7 +37,8 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs play, skip
 @docs share, preview, copyToClipboard, gift
 @docs activity
-@docs footsteps, compass, speedometer, bulb, help, checklist
+@docs footsteps, compass, speedometer, help, checklist
+@docs sparkleBulb, baldBulb, bulb
 @docs hat, keychain
 @docs sprout, sapling, tree
 @docs person, couple, class, leaderboard, performance
@@ -1181,8 +1183,26 @@ plus =
 
 
 {-| -}
-bulb : Nri.Ui.Svg.V1.Svg
-bulb =
+sparkleBulb : Nri.Ui.Svg.V1.Svg
+sparkleBulb =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.fill "currentcolor"
+        , Attributes.viewBox "0 0 23 25"
+        ]
+        [ Svg.path
+            [ Attributes.d "M21.6 12.5H19c-.3 0-.6.3-.6.6s.3.6.6.6h2.6c.3 0 .6-.3.6-.6s-.3-.6-.6-.6zM18.1 9.3c.1 0 .2 0 .3-.1l2.3-1.4c.2-.1.3-.5.1-.8-.2-.3-.5-.4-.8-.2l-2.3 1.4c-.2.1-.3.4-.3.7.2.2.4.4.7.4zM17.1 2c-.3-.2-.6-.1-.8.2l-1.5 2.2c-.1.1-.1.3-.1.5s.1.3.2.4c.1.1.3.1.4.1.2 0 .3-.1.4-.3l1.5-2.2c.2-.3.2-.7-.1-.9zM6.7 5.4c.2 0 .4-.1.5-.3.1-.2.1-.4 0-.6L5.7 2.2c-.1-.1-.3-.2-.4-.3-.2 0-.3 0-.4.1-.2.1-.3.3-.3.4 0 .2 0 .3.1.4L6.2 5c.1.3.3.4.5.4zM4 8.2L1.7 6.8c-.2-.1-.6 0-.7.2-.2.3-.1.6.2.8l2.3 1.4c.1.1.3.1.4.1l.3-.3c.1-.1.1-.3.1-.5-.1-.1-.2-.3-.3-.3zM20.6 17.8l-2.2-1.4c-.3-.2-.6-.1-.8.2-.2.3-.1.6.2.8l2.3 1.4c.3.1.6 0 .7-.2.2-.3.1-.6-.2-.8zM3.5 16.4l-2.3 1.4c-.1 0-.2.2-.3.3 0 .2 0 .3.1.5.1.1.2.2.4.3.1 0 .3 0 .4-.1L4 17.4c.3-.2.3-.5.2-.8-.1-.2-.5-.3-.7-.2zM3.7 13.1c0-.3-.3-.6-.6-.6H.6c-.3 0-.6.3-.6.6s.3.6.6.6h2.6c.1 0 .3-.1.4-.2.1-.1.1-.3.1-.4zM10.7 3.9c.3 0 .6-.3.6-.6V.6c0-.3-.3-.6-.6-.6s-.6.3-.6.6v2.7c0 .2.1.3.2.4s.3.2.4.2zM13.4 20.2H8.9c-.3 0-.6.3-.6.6s.3.6.6.6h4.5c.3 0 .6-.3.6-.6s-.3-.6-.6-.6zM10 23.5v.3c0 .4.3.7.6.7h.9c.4 0 .6-.3.6-.7v-.3c.7 0 1.3-.7 1.3-1.4H8.8c.1.7.6 1.3 1.2 1.4zM11.2 6.7c-3.1 0-5.6 2.7-5.6 6 0 .8.1 1.5.4 2.3 0 .1.1.2.1.3.2.6.6 1.1 1 1.6l1.4 2.3h5.4l1.4-2.3c.4-.5.7-1 1-1.6 0-.1.1-.2.1-.3.3-.7.4-1.5.4-2.3 0-3.3-2.5-6-5.6-6zM10.9 9c-.6 0-1.2.2-1.7.5-1.1.7-1.6 1.9-1.7 3.5 0 .3-.3.6-.6.6-.1 0-.3-.1-.4-.2-.1-.1-.2-.3-.2-.4 0-2.7 1.3-4 2.3-4.6.7-.4 1.4-.6 2.2-.7.3 0 .6.3.6.6.1.4-.2.7-.5.7z"
+            , Attributes.transform "translate(.208 .052)"
+            ]
+            []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+baldBulb : Nri.Ui.Svg.V1.Svg
+baldBulb =
     Svg.svg
         [ Attributes.width "100%"
         , Attributes.height "100%"
@@ -1214,6 +1234,16 @@ bulb =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| `bulb` will be removed in a future version of noredink-ui.
+
+Use the more-specific `baldBulb` instead please.
+
+-}
+bulb : Nri.Ui.Svg.V1.Svg
+bulb =
+    baldBulb
 
 
 {-| -}
