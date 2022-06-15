@@ -15,6 +15,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (fromUnstyled)
 import Html.Styled.Attributes as Attributes
@@ -82,15 +83,20 @@ update msg model =
             ( { model | settings = settings }, Cmd.none )
 
 
-exampleName : String
-exampleName =
+moduleName : String
+moduleName =
     "Carousel"
+
+
+version : Int
+version =
+    1
 
 
 example : Example State Msg
 example =
-    { name = exampleName
-    , version = 1
+    { name = moduleName
+    , version = version
     , categories = [ Layout ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
@@ -114,7 +120,24 @@ example =
                 settings =
                     Control.currentValue model.settings
             in
-            [ Control.view SetSettings model.settings |> fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = SetSettings
+                , settings = model.settings
+                , mainType = "RootHtml.Html String"
+                , extraImports = []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Tab-list Before example"
+                          , code = "TODO"
+                          }
+                        , { sectionName = "Tab-list After example"
+                          , code = "TODO"
+                          }
+                        ]
+                }
             , Carousel.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
