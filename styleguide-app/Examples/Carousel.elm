@@ -13,6 +13,7 @@ module Examples.Carousel exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -46,10 +47,10 @@ init =
 
 
 type alias Settings =
-    { tabListPosition : Carousel.TabPosition
-    , tabListStyles : List Style
-    , tabStyles : Int -> Bool -> List Style
-    , containerStyles : List Style
+    { tabListPosition : ( String, Carousel.TabPosition )
+    , tabListStyles : ( String, List Style )
+    , tabStyles : ( String, Int -> Bool -> List Style )
+    , containerStyles : ( String, List Style )
     }
 
 
@@ -57,9 +58,9 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "tabListPosition"
-            (Control.choice
-                [ ( "Before", Control.value Before )
-                , ( "After", Control.value After )
+            (CommonControls.choice moduleName
+                [ ( "Before", Before )
+                , ( "After", After )
                 ]
             )
         |> Control.field "tabListStyles" controlTabListStyles
@@ -67,18 +68,22 @@ initSettings =
         |> Control.field "containerStyles" controlContainerStyles
 
 
-controlTabListStyles : Control (List Style)
+controlTabListStyles : Control ( String, List Style )
 controlTabListStyles =
-    [ Css.displayFlex
-    , Css.property "gap" "20px"
-    ]
+    ( "[ Css.displayFlex, Css.property \"gap\" \"20px\" ]"
+    , [ Css.displayFlex, Css.property "gap" "20px" ]
+    )
         |> Control.value
         |> Control.maybe False
-        |> Control.map (Maybe.withDefault [])
+        |> Control.map (Maybe.withDefault ( "[]", [] ))
 
 
-controlTabStyles : Control (Int -> Bool -> List Css.Style)
+controlTabStyles : Control ( String, Int -> Bool -> List Css.Style )
 controlTabStyles =
+    let
+        simplifiedCodeVersion =
+            "\\index isSelected -> [ -- styles that depend on selection status\n    ]"
+    in
     (\_ isSelected ->
         let
             ( backgroundColor, textColor ) =
@@ -99,14 +104,15 @@ controlTabStyles =
         |> Control.value
         |> Control.maybe False
         |> Control.map (Maybe.withDefault (\_ _ -> []))
+        |> Control.map (\v -> ( simplifiedCodeVersion, v ))
 
 
-controlContainerStyles : Control (List Style)
+controlContainerStyles : Control ( String, List Style )
 controlContainerStyles =
-    [ Css.margin (Css.px 20) ]
+    ( "[ Css.margin (Css.px 20) ]", [ Css.margin (Css.px 20) ] )
         |> Control.value
         |> Control.maybe False
-        |> Control.map (Maybe.withDefault [])
+        |> Control.map (Maybe.withDefault ( "[]", [] ))
 
 
 type Msg
@@ -179,21 +185,32 @@ example =
                 , extraImports = []
                 , toExampleCode =
                     \_ ->
-                        [ { sectionName = "Tab-list Before example"
-                          , code = "TODO"
-                          }
-                        , { sectionName = "Tab-list After example"
-                          , code = "TODO"
+                        let
+                            code =
+                                [ moduleName ++ ".view"
+                                , "    { focusAndSelect = FocusAndSelectPage -- You will need to have this Msg type"
+                                , "    , selected = 1"
+                                , "    , tabListStyles = " ++ Tuple.first settings.tabListStyles
+                                , "    , tabStyles = " ++ Tuple.first settings.tabStyles
+                                , "    , containerStyles = " ++ Tuple.first settings.containerStyles
+                                , "    , tabListPosition = " ++ Tuple.first settings.tabListPosition
+                                , "    , tabs = []" ++ "-- TODO: add tab examples"
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                        in
+                        [ { sectionName = "Example"
+                          , code = code
                           }
                         ]
                 }
             , Carousel.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabListStyles = settings.tabListStyles
-                , tabStyles = settings.tabStyles
-                , containerStyles = settings.containerStyles
-                , tabListPosition = settings.tabListPosition
+                , tabListStyles = Tuple.second settings.tabListStyles
+                , tabStyles = Tuple.second settings.tabStyles
+                , containerStyles = Tuple.second settings.containerStyles
+                , tabListPosition = Tuple.second settings.tabListPosition
                 , tabs = allTabs
                 }
             ]
