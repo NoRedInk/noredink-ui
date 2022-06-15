@@ -793,7 +793,7 @@ getIcon customIcon size theme =
         ( Nothing, Tip ) ->
             case size of
                 Tiny ->
-                    UiIcon.bulb
+                    UiIcon.baldBulb
                         |> NriSvg.withColor Colors.yellow
                         |> NriSvg.withWidth iconSize
                         |> NriSvg.withHeight iconSize
@@ -803,7 +803,7 @@ getIcon customIcon size theme =
                         |> NriSvg.toHtml
 
                 Large ->
-                    UiIcon.bulb
+                    UiIcon.sparkleBulb
                         |> NriSvg.withColor Colors.navy
                         |> NriSvg.withWidth iconSize
                         |> NriSvg.withHeight iconSize
@@ -832,7 +832,7 @@ getIcon customIcon size theme =
                             ]
                         , ExtraAttributes.nriDescription messageIconDescription
                         ]
-                        [ UiIcon.bulb
+                        [ UiIcon.sparkleBulb
                             |> NriSvg.withColor Colors.mustard
                             |> NriSvg.withWidth (Css.px 32)
                             |> NriSvg.withHeight (Css.px 32)
