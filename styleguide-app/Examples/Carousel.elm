@@ -171,13 +171,14 @@ tabStyles _ isSelected =
                 ( Colors.azure, Colors.white )
 
             else
-                ( Colors.gray92, Colors.gray45 )
+                ( Colors.gray92, Colors.gray20 )
     in
     [ Css.padding2 (Css.px 10) (Css.px 20)
     , Css.backgroundColor backgroundColor
     , Css.borderRadius (Css.px 8)
     , Css.border Css.zero
     , Css.color textColor
+    , Css.cursor Css.pointer
     ]
 
 
