@@ -200,14 +200,6 @@ example =
     }
 
 
-slideStyles : List Style
-slideStyles =
-    [ Css.marginTop (Css.px 20)
-    , Css.padding2 (Css.px 10) (Css.px 30)
-    , Css.borderRadius (Css.px 4)
-    ]
-
-
 allTabs : List (Tab Id Msg)
 allTabs =
     [ ( First, "first", "1" )
@@ -219,6 +211,6 @@ allTabs =
             (\( id, idString, buttonText ) ->
                 Carousel.buildTab { id = id, idString = idString ++ "-slide" }
                     [ Carousel.tabHtml (Html.text buttonText)
-                    , Carousel.slideHtml (Html.div [ Attributes.css slideStyles ] [ Html.text <| idString ++ " slide" ])
+                    , Carousel.slideHtml (Html.text <| idString ++ " slide")
                     ]
             )
