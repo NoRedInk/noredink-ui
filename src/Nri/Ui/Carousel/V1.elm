@@ -1,94 +1,44 @@
-module Nri.Ui.Carousel.V1 exposing (..)
+module Nri.Ui.Carousel.V1 exposing (Item, buildItem, view)
 
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
-import Nri.Ui
-import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
 
-type Tab id msg
-    = Tab (TabsInternal.Tab id msg)
-
-
-type Attribute id msg
-    = Attribute (TabsInternal.Tab id msg -> TabsInternal.Tab id msg)
-
-
-type TabPosition
-    = Before
-    | After
-
-
-{-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
--}
-withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
-withTooltip attributes =
-    Attribute (\tab -> { tab | tabTooltip = attributes })
-
-
-{-| Makes it so that the tab can't be clicked or focused via keyboard navigation
--}
-disabled : Bool -> Attribute id msg
-disabled isDisabled =
-    Attribute (\tab -> { tab | disabled = isDisabled })
+type Item id msg
+    = Item (TabsInternal.Tab id msg)
 
 
 {-| -}
-slideHtml : Html msg -> Attribute id msg
-slideHtml content =
-    Attribute (\tab -> { tab | panelView = content })
-
-
-labelledBy : String -> Attribute id msg
-labelledBy labelledById =
-    Attribute (\tab -> { tab | labelledBy = Just labelledById })
-
-
-tabHtml : Html Never -> Attribute id msg
-tabHtml content =
-    Attribute (\tab -> { tab | tabView = [ Html.map never content ] })
-
-
-{-| -}
-buildTab : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
-buildTab config attributes =
-    Tab (TabsInternal.fromList config (List.map (\(Attribute f) -> f) attributes))
+buildItem : { id : id, idString : String, slideHtml : Html msg, controlHtml : Html Never } -> Item id msg
+buildItem config =
+    Item
+        (TabsInternal.fromList { id = config.id, idString = config.idString }
+            [ \tab -> { tab | panelView = config.slideHtml }
+            , \tab -> { tab | tabView = [ Html.map never config.controlHtml ] }
+            ]
+        )
 
 
 view :
     { focusAndSelect : { select : id, focus : Maybe String } -> msg
     , selected : id
-    , tabs : List (Tab id msg)
-    , tabStyles : Int -> Bool -> List Style
-    , tabListStyles : List Style
-    , containerStyles : List Style
-    , tabListPosition : TabPosition
+    , items : List (Item id msg)
+    , controlStyles : Bool -> List Style
+    , controlListStyles : List Style
     }
-    -> Html msg
+    -> { controls : Html msg, slides : Html msg }
 view config =
     let
         { tabList, tabPanels } =
             TabsInternal.views
                 { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
-                , tabs = List.map (\(Tab t) -> t) config.tabs
-                , tabStyles = config.tabStyles
-                , tabListStyles = config.tabListStyles
+                , tabs = List.map (\(Item t) -> t) config.items
+                , tabStyles = always config.controlStyles
+                , tabListStyles = config.controlListStyles
                 }
     in
-    Nri.Ui.styled Html.div
-        "Nri-Ui-Carousel__container"
-        config.containerStyles
-        []
-        (case config.tabListPosition of
-            Before ->
-                [ tabList
-                , tabPanels
-                ]
-
-            After ->
-                [ tabPanels
-                , tabList
-                ]
-        )
+    { controls = tabList
+    , slides = tabPanels
+    }

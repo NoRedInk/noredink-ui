@@ -12,16 +12,14 @@ module Examples.Carousel exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (fromUnstyled)
-import Html.Styled.Attributes as Attributes
+import Html.Styled as Html
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Carousel.V1 as Carousel exposing (Tab, TabPosition(..))
+import Nri.Ui.Carousel.V1 as Carousel
 import Nri.Ui.Colors.V1 as Colors
 import Task
 
@@ -40,31 +38,22 @@ init =
 
 
 type alias Settings =
-    { tabs : Int
-    , tabListPosition : ( String, Carousel.TabPosition )
-    , tabListStyles : ( String, List Style )
-    , tabStyles : ( String, Int -> Bool -> List Style )
-    , containerStyles : ( String, List Style )
+    { items : Int
+    , controlListStyles : ( String, List Style )
+    , controlStyles : ( String, Bool -> List Style )
     }
 
 
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "tabs" (Debug.Control.Extra.int 4)
-        |> Control.field "tabListPosition"
-            (CommonControls.choice moduleName
-                [ ( "Before", Before )
-                , ( "After", After )
-                ]
-            )
-        |> Control.field "tabListStyles" controlTabListStyles
-        |> Control.field "tabStyles" controlTabStyles
-        |> Control.field "containerStyles" controlContainerStyles
+        |> Control.field "items" (Debug.Control.Extra.int 4)
+        |> Control.field "controlListStyles" controlControlListStyles
+        |> Control.field "controlStyles" controlControlStyles
 
 
-controlTabListStyles : Control ( String, List Style )
-controlTabListStyles =
+controlControlListStyles : Control ( String, List Style )
+controlControlListStyles =
     ( "[ Css.displayFlex, Css.property \"gap\" \"20px\" ]"
     , [ Css.displayFlex, Css.property "gap" "20px" ]
     )
@@ -73,13 +62,13 @@ controlTabListStyles =
         |> Control.map (Maybe.withDefault ( "[]", [] ))
 
 
-controlTabStyles : Control ( String, Int -> Bool -> List Css.Style )
-controlTabStyles =
+controlControlStyles : Control ( String, Bool -> List Css.Style )
+controlControlStyles =
     let
         simplifiedCodeVersion =
-            "\\index isSelected -> [ -- styles that depend on selection status\n    ]"
+            "\\isSelected -> [ -- styles that depend on selection status\n    ]"
     in
-    (\_ isSelected ->
+    (\isSelected ->
         let
             ( backgroundColor, textColor ) =
                 if isSelected then
@@ -98,20 +87,12 @@ controlTabStyles =
     )
         |> Control.value
         |> Control.maybe False
-        |> Control.map (Maybe.withDefault (\_ _ -> []))
+        |> Control.map (Maybe.withDefault (\_ -> []))
         |> Control.map (\v -> ( simplifiedCodeVersion, v ))
 
 
-controlContainerStyles : Control ( String, List Style )
-controlContainerStyles =
-    ( "[ Css.margin (Css.px 20) ]", [ Css.margin (Css.px 20) ] )
-        |> Control.value
-        |> Control.maybe False
-        |> Control.map (Maybe.withDefault ( "[]", [] ))
-
-
 type Msg
-    = FocusAndSelectTab { select : Int, focus : Maybe String }
+    = FocusAndSelectItem { select : Int, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -119,7 +100,7 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        FocusAndSelectTab { select, focus } ->
+        FocusAndSelectItem { select, focus } ->
             ( { model | selected = select }
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
@@ -170,9 +151,18 @@ example =
                 settings =
                     Control.currentValue model.settings
 
-                allTabs =
-                    List.repeat settings.tabs ()
-                        |> List.indexedMap toTab
+                allItems =
+                    List.repeat settings.items ()
+                        |> List.indexedMap toCarouselItem
+
+                { controls, slides } =
+                    Carousel.view
+                        { focusAndSelect = FocusAndSelectItem
+                        , selected = model.selected
+                        , controlListStyles = Tuple.second settings.controlListStyles
+                        , controlStyles = Tuple.second settings.controlStyles
+                        , items = List.map Tuple.second allItems
+                        }
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -189,11 +179,9 @@ example =
                                 [ moduleName ++ ".view"
                                 , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , tabListStyles = " ++ Tuple.first settings.tabListStyles
-                                , "    , tabStyles = " ++ Tuple.first settings.tabStyles
-                                , "    , containerStyles = " ++ Tuple.first settings.containerStyles
-                                , "    , tabListPosition = " ++ Tuple.first settings.tabListPosition
-                                , "    , tabs =" ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first allTabs)
+                                , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
+                                , "    , controlStyles = " ++ Tuple.first settings.controlStyles
+                                , "    , items =" ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first allItems)
                                 , "    }"
                                 ]
                                     |> String.join "\n"
@@ -203,33 +191,29 @@ example =
                           }
                         ]
                 }
-            , Carousel.view
-                { focusAndSelect = FocusAndSelectTab
-                , selected = model.selected
-                , tabListStyles = Tuple.second settings.tabListStyles
-                , tabStyles = Tuple.second settings.tabStyles
-                , containerStyles = Tuple.second settings.containerStyles
-                , tabListPosition = Tuple.second settings.tabListPosition
-                , tabs = List.map Tuple.second allTabs
-                }
+            , Html.div [] [ slides, controls ]
             ]
     }
 
 
-toTab : Int -> a -> ( String, Tab Int msg )
-toTab id _ =
+toCarouselItem : Int -> a -> ( String, Carousel.Item Int msg )
+toCarouselItem id _ =
     let
         idString =
             String.fromInt id
     in
-    ( [ "Carousel.buildTab { id = " ++ idString ++ ", idString = \"" ++ idString ++ "-slide\" }"
-      , "      [ Carousel.tabHtml (Html.text \"" ++ idString ++ "\")"
-      , "      , Carousel.slideHtml (Html.text \"" ++ idString ++ " slide\")"
-      , "      ]"
+    ( [ "Carousel.buildItem"
+      , "        { id = " ++ idString
+      , "        , idString = \"" ++ idString ++ "-slide\""
+      , "        , controlHtml (Html.text \"" ++ String.fromInt (id + 1) ++ "\")"
+      , "        , slideHtml (Html.text \"" ++ String.fromInt (id + 1) ++ " slide\")"
+      , "        }"
       ]
         |> String.join "\n    "
-    , Carousel.buildTab { id = id, idString = String.fromInt id ++ "-slide" }
-        [ Carousel.tabHtml (Html.text (String.fromInt (id + 1)))
-        , Carousel.slideHtml (Html.text (String.fromInt (id + 1) ++ " slide"))
-        ]
+    , Carousel.buildItem
+        { id = id
+        , idString = String.fromInt id ++ "-slide"
+        , controlHtml = Html.text (String.fromInt (id + 1))
+        , slideHtml = Html.text (String.fromInt (id + 1) ++ " slide")
+        }
     )
