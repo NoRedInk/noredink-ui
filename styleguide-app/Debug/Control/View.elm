@@ -1,6 +1,6 @@
 module Debug.Control.View exposing
     ( view
-    , codeFromListSimple
+    , codeFromListSimple, codeFromListSimpleWithIndentLevel
     , codeFromList, codeFromListWithIndentLevel
     , codeFromListWithHardcoded
     , withIndentLevel
@@ -9,9 +9,10 @@ module Debug.Control.View exposing
 {-|
 
 @docs view
-@docs codeFromListSimple
+@docs codeFromListSimple, codeFromListSimpleWithIndentLevel
 @docs codeFromList, codeFromListWithIndentLevel
 @docs codeFromListWithHardcoded
+
 @docs withIndentLevel
 
 -}

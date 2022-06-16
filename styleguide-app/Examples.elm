@@ -6,6 +6,7 @@ import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
+import Examples.Carousel as Carousel
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -134,6 +135,25 @@ all =
             (\msg ->
                 case msg of
                     ButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Carousel.example
+        |> Example.wrapMsg CarouselMsg
+            (\msg ->
+                case msg of
+                    CarouselMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CarouselState
+            (\msg ->
+                case msg of
+                    CarouselState childState ->
                         Just childState
 
                     _ ->
@@ -794,6 +814,7 @@ type State
     | BalloonState Balloon.State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
+    | CarouselState Carousel.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -836,6 +857,7 @@ type Msg
     | BalloonMsg Balloon.Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
+    | CarouselMsg Carousel.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
