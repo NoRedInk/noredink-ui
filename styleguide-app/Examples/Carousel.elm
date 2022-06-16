@@ -18,6 +18,7 @@ import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
+import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V1 as Carousel
 import Nri.Ui.Colors.V1 as Colors
@@ -62,29 +63,32 @@ controlControlListStyles =
         |> Control.map (Maybe.withDefault ( "[]", [] ))
 
 
+controlStyles : Bool -> List Css.Style
+controlStyles isSelected =
+    let
+        ( backgroundColor, textColor ) =
+            if isSelected then
+                ( Colors.azure, Colors.white )
+
+            else
+                ( Colors.gray92, Colors.gray20 )
+    in
+    [ Css.padding2 (Css.px 10) (Css.px 20)
+    , Css.backgroundColor backgroundColor
+    , Css.borderRadius (Css.px 8)
+    , Css.border Css.zero
+    , Css.color textColor
+    , Css.cursor Css.pointer
+    ]
+
+
 controlControlStyles : Control ( String, Bool -> List Css.Style )
 controlControlStyles =
     let
         simplifiedCodeVersion =
             "\\isSelected -> [ -- styles that depend on selection status\n    ]"
     in
-    (\isSelected ->
-        let
-            ( backgroundColor, textColor ) =
-                if isSelected then
-                    ( Colors.azure, Colors.white )
-
-                else
-                    ( Colors.gray92, Colors.gray20 )
-        in
-        [ Css.padding2 (Css.px 10) (Css.px 20)
-        , Css.backgroundColor backgroundColor
-        , Css.borderRadius (Css.px 8)
-        , Css.border Css.zero
-        , Css.color textColor
-        , Css.cursor Css.pointer
-        ]
-    )
+    controlStyles
         |> Control.value
         |> Control.maybe False
         |> Control.map (Maybe.withDefault (\_ -> []))
@@ -144,7 +148,17 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        []
+        [ -- faking a mini version of the Carousel component to give styleguide users a sense of what the
+          -- component might look like
+          Html.div []
+            [ Html.text "1 slide"
+            , Html.div [ Attributes.css [ Css.displayFlex, Css.property "gap" "5px" ] ]
+                [ Html.div [ Attributes.css (controlStyles True) ] [ Html.text "1" ]
+                , Html.div [ Attributes.css (controlStyles False) ] [ Html.text "2" ]
+                , Html.div [ Attributes.css (controlStyles False) ] [ Html.text "2" ]
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig model ->
             let
