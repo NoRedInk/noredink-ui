@@ -16,6 +16,7 @@ import Category exposing (Category(..))
 import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (fromUnstyled)
@@ -26,28 +27,22 @@ import Nri.Ui.Colors.V1 as Colors
 import Task
 
 
-type Id
-    = First
-    | Second
-    | Third
-    | Fourth
-
-
 type alias State =
-    { selected : Id
+    { selected : Int
     , settings : Control Settings
     }
 
 
 init : State
 init =
-    { selected = First
+    { selected = 0
     , settings = initSettings
     }
 
 
 type alias Settings =
-    { tabListPosition : ( String, Carousel.TabPosition )
+    { tabs : Int
+    , tabListPosition : ( String, Carousel.TabPosition )
     , tabListStyles : ( String, List Style )
     , tabStyles : ( String, Int -> Bool -> List Style )
     , containerStyles : ( String, List Style )
@@ -57,6 +52,7 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
+        |> Control.field "tabs" (Debug.Control.Extra.int 4)
         |> Control.field "tabListPosition"
             (CommonControls.choice moduleName
                 [ ( "Before", Before )
@@ -116,7 +112,7 @@ controlContainerStyles =
 
 
 type Msg
-    = FocusAndSelectTab { select : Id, focus : Maybe String }
+    = FocusAndSelectTab { select : Int, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -211,23 +207,17 @@ example =
                 , tabStyles = Tuple.second settings.tabStyles
                 , containerStyles = Tuple.second settings.containerStyles
                 , tabListPosition = Tuple.second settings.tabListPosition
-                , tabs = allTabs
+                , tabs =
+                    List.repeat settings.tabs ()
+                        |> List.indexedMap toTab
                 }
             ]
     }
 
 
-allTabs : List (Tab Id Msg)
-allTabs =
-    [ ( First, "first", "1" )
-    , ( Second, "second", "2" )
-    , ( Third, "third", "3" )
-    , ( Fourth, "fourth", "4" )
-    ]
-        |> List.map
-            (\( id, idString, buttonText ) ->
-                Carousel.buildTab { id = id, idString = idString ++ "-slide" }
-                    [ Carousel.tabHtml (Html.text buttonText)
-                    , Carousel.slideHtml (Html.text <| idString ++ " slide")
-                    ]
-            )
+toTab : Int -> a -> Tab Int msg
+toTab id _ =
+    Carousel.buildTab { id = id, idString = String.fromInt id ++ "-slide" }
+        [ Carousel.tabHtml (Html.text (String.fromInt (id + 1)))
+        , Carousel.slideHtml (Html.text (String.fromInt (id + 1) ++ " slide"))
+        ]
