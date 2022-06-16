@@ -85,9 +85,12 @@ example =
                 ]
             , viewExampleSection "Guidance"
                 [ ( "footsteps", UiIcon.footsteps )
-                , ( "bulb", UiIcon.bulb )
                 , ( "help", UiIcon.help )
                 , ( "checklist", UiIcon.checklist )
+                ]
+            , viewExampleSection "Bulbs"
+                [ ( "sparkleBulb", UiIcon.sparkleBulb )
+                , ( "baldBulb", UiIcon.baldBulb )
                 ]
             , viewExampleSection "Science & Measurement"
                 [ ( "compass", UiIcon.compass )
