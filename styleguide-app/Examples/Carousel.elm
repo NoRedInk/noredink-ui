@@ -170,6 +170,10 @@ example =
             let
                 settings =
                     Control.currentValue model.settings
+
+                allTabs =
+                    List.repeat settings.tabs ()
+                        |> List.indexedMap toTab
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -177,20 +181,20 @@ example =
                 , version = version
                 , update = SetSettings
                 , settings = model.settings
-                , mainType = "RootHtml.Html String"
+                , mainType = "RootHtml.Html { select : Int, focus : Maybe String }"
                 , extraImports = []
                 , toExampleCode =
                     \_ ->
                         let
                             code =
                                 [ moduleName ++ ".view"
-                                , "    { focusAndSelect = FocusAndSelectPage -- You will need to have this Msg type"
-                                , "    , selected = 1"
+                                , "    { focusAndSelect = identity"
+                                , "    , selected = " ++ String.fromInt model.selected
                                 , "    , tabListStyles = " ++ Tuple.first settings.tabListStyles
                                 , "    , tabStyles = " ++ Tuple.first settings.tabStyles
                                 , "    , containerStyles = " ++ Tuple.first settings.containerStyles
                                 , "    , tabListPosition = " ++ Tuple.first settings.tabListPosition
-                                , "    , tabs = []" ++ "-- TODO: add tab examples"
+                                , "    , tabs =" ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first allTabs)
                                 , "    }"
                                 ]
                                     |> String.join "\n"
@@ -207,17 +211,26 @@ example =
                 , tabStyles = Tuple.second settings.tabStyles
                 , containerStyles = Tuple.second settings.containerStyles
                 , tabListPosition = Tuple.second settings.tabListPosition
-                , tabs =
-                    List.repeat settings.tabs ()
-                        |> List.indexedMap toTab
+                , tabs = List.map Tuple.second allTabs
                 }
             ]
     }
 
 
-toTab : Int -> a -> Tab Int msg
+toTab : Int -> a -> ( String, Tab Int msg )
 toTab id _ =
-    Carousel.buildTab { id = id, idString = String.fromInt id ++ "-slide" }
+    let
+        idString =
+            String.fromInt id
+    in
+    ( [ "Carousel.buildTab { id = " ++ idString ++ ", idString = \"" ++ idString ++ "-slide\" }"
+      , "      [ Carousel.tabHtml (Html.text \"" ++ idString ++ "\")"
+      , "      , Carousel.slideHtml (Html.text \"" ++ idString ++ " slide\")"
+      , "      ]"
+      ]
+        |> String.join "\n    "
+    , Carousel.buildTab { id = id, idString = String.fromInt id ++ "-slide" }
         [ Carousel.tabHtml (Html.text (String.fromInt (id + 1)))
         , Carousel.slideHtml (Html.text (String.fromInt (id + 1) ++ " slide"))
         ]
+    )
