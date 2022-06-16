@@ -1,13 +1,12 @@
 module Examples.Carousel exposing
     ( example
-    , State
-    , Msg
+    , State, Msg
     )
 
 {-|
 
 @docs example
-@docs State, msg
+@docs State, Msg
 
 -}
 
