@@ -197,6 +197,7 @@ example =
                                 , "    , controlStyles = " ++ Tuple.first settings.controlStyles
                                 , "    , items =" ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first allItems)
                                 , "    }"
+                                , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
                                 ]
                                     |> String.join "\n"
                         in
@@ -219,8 +220,8 @@ toCarouselItem id _ =
     ( [ "Carousel.buildItem"
       , "        { id = " ++ idString
       , "        , idString = \"" ++ idString ++ "-slide\""
-      , "        , controlHtml (Html.text \"" ++ String.fromInt (id + 1) ++ "\")"
-      , "        , slideHtml (Html.text \"" ++ String.fromInt (id + 1) ++ " slide\")"
+      , "        , controlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
+      , "        , slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
       , "        }"
       ]
         |> String.join "\n    "
