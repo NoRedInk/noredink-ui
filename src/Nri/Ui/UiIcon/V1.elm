@@ -10,12 +10,12 @@ module Nri.Ui.UiIcon.V1 exposing
     , hat, keychain
     , sprout, sapling, tree
     , person, couple, class, leaderboard, performance
-    , calendar, clock
+    , emptyCalendar, calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen, highlighter
     , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-    , checkmark, checkmarkInCircle, x, xInCircle
+    , checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
     , attention, exclamation
     , flag, star, starFilled, starOutline
     , equals, plus, null
@@ -42,12 +42,12 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs hat, keychain
 @docs sprout, sapling, tree
 @docs person, couple, class, leaderboard, performance
-@docs calendar, clock
+@docs emptyCalendar, calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen, highlighter
 @docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-@docs checkmark, checkmarkInCircle, x, xInCircle
+@docs checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
 @docs equals, plus, null
@@ -311,6 +311,34 @@ sort =
             , Attributes.d "M0 5.048h21V2H0v3.048zm0 7.4h14.438V9.402H0v3.048zm0 7.402h7v-3.048H0v3.048z"
             ]
             []
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+emptyCalendar : Nri.Ui.Svg.V1.Svg
+emptyCalendar =
+    Svg.svg
+        [ Attributes.width "100%"
+        , Attributes.height "100%"
+        , Attributes.viewBox "0 0 23 25"
+        ]
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-1.000000, 0.000000)"
+                , Attributes.fill "currentcolor"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M24,6.06748352 L24,22.38807 C23.8127484,23.6415842 22.9490956,24.6604992 21.8248757,25 L3.21296367,25 C1.93924203,24.615352 1,23.3585754 1,21.876587 L1,6.57896739 C1,4.79325 2.36367767,3.33452174 4.0330319,3.33452174 L7.14841914,3.33452174 L7.14841914,0.86348913 C7.14841914,0.387695652 7.51085533,0 7.95564466,0 C8.40043508,0 8.76287128,0.387695652 8.76287128,0.86348913 L8.76287128,3.33452174 L16.2749681,3.33452174 L16.2749681,0.86348913 C16.2749681,0.387695652 16.6374043,0 17.0821914,0 C17.5269786,0 17.8894147,0.387695652 17.8894147,0.86348913 L17.8894147,3.33452174 L21.0048086,3.33452174 C22.5115487,3.33452174 23.7692689,4.52290311 24,6.06748352 Z M4.0330319,5.05952174 L7.14841914,5.05952174 L7.14841914,6.25 C7.14841914,6.72619565 7.51085533,7.11348913 7.95564466,7.11348913 C8.40043508,7.11348913 8.76287128,6.72619565 8.76287128,6.25 L8.76287128,5.05952174 L16.2475214,5.05952174 L16.2475214,6.25 C16.2475214,6.72619565 16.6095852,7.11348913 17.0547447,7.11348913 C17.4995319,7.11348913 17.8615957,6.72619565 17.8615957,6.25 L17.8615957,5.05952174 L20.9773509,5.05952174 C21.7567552,5.05952174 22.3959362,5.74483696 22.3959362,6.57738043 L22.3959362,9.46348913 L2.61445214,9.46348913 L2.61445214,6.57738043 C2.61445214,5.74483696 3.25325852,5.05952174 4.0330319,5.05952174 Z M21.0048086,23.3944446 L4.0330319,23.3944446 C3.25325852,23.3944446 2.61445214,22.7091272 2.61445214,21.876587 L2.61445214,11.2214239 L22.4233828,11.2214239 L22.4233828,21.876587 C22.4233828,22.7091272 21.7845852,23.3944446 21.0048086,23.3944446 Z"
+                    ]
+                    []
+                ]
+            ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
 
@@ -705,6 +733,46 @@ checkmarkInCircle =
             , Svg.path
                 [ Attributes.fill "#FFFFFF"
                 , Attributes.d "M20.812258,34.6599998 C20.2178448,34.6599998 19.6442477,34.4310236 19.2140498,34.0181724 L12.7148242,27.802276 C11.790824,26.9199078 11.7584435,25.4558474 12.6419681,24.5330036 C13.5220234,23.6101598 14.9872403,23.5766229 15.9112405,24.4601475 L20.7093343,29.0477682 L32.9896327,15.7451716 C33.8569671,14.8049812 35.3198711,14.7471589 36.2577487,15.6133368 C37.1967827,16.4806712 37.2557614,17.9435752 36.3895835,18.8814528 L22.5122334,33.9152487 C22.0901306,34.3720448 21.5049691,34.6391838 20.8839576,34.6588434 C20.8608287,34.6599998 20.8365434,34.6599998 20.812258,34.6599998"
+                ]
+                []
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checkmarkInCircleInverse : Nri.Ui.Svg.V1.Svg
+checkmarkInCircleInverse =
+    Svg.svg
+        [ Attributes.viewBox "0 0 75 75"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
+        ]
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M54.11,25.09l-22.4,22.4-9.93-9.92a1.78,1.78,0,0,0-2.52,2.52L30.44,51.28a1.78,1.78,0,0,0,2.52,0L56.63,27.61a1.78,1.78,0,0,0-2.52-2.52ZM37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
+                ]
+                []
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+emptyCircle : Nri.Ui.Svg.V1.Svg
+emptyCircle =
+    Svg.svg
+        [ Attributes.viewBox "0 0 75 75"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
+        ]
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
                 ]
                 []
             ]
