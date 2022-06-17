@@ -15,7 +15,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , edit, pen, highlighter
     , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-    , checkmark, checkmarkInCircle, x, xInCircle
+    , checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
     , attention, exclamation
     , flag, star, starFilled, starOutline
     , equals, plus, null
@@ -47,7 +47,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs edit, pen, highlighter
 @docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-@docs checkmark, checkmarkInCircle, x, xInCircle
+@docs checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
 @docs equals, plus, null
@@ -733,6 +733,46 @@ checkmarkInCircle =
             , Svg.path
                 [ Attributes.fill "#FFFFFF"
                 , Attributes.d "M20.812258,34.6599998 C20.2178448,34.6599998 19.6442477,34.4310236 19.2140498,34.0181724 L12.7148242,27.802276 C11.790824,26.9199078 11.7584435,25.4558474 12.6419681,24.5330036 C13.5220234,23.6101598 14.9872403,23.5766229 15.9112405,24.4601475 L20.7093343,29.0477682 L32.9896327,15.7451716 C33.8569671,14.8049812 35.3198711,14.7471589 36.2577487,15.6133368 C37.1967827,16.4806712 37.2557614,17.9435752 36.3895835,18.8814528 L22.5122334,33.9152487 C22.0901306,34.3720448 21.5049691,34.6391838 20.8839576,34.6588434 C20.8608287,34.6599998 20.8365434,34.6599998 20.812258,34.6599998"
+                ]
+                []
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checkmarkInCircleInverse : Nri.Ui.Svg.V1.Svg
+checkmarkInCircleInverse =
+    Svg.svg
+        [ Attributes.viewBox "0 0 75 75"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
+        ]
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M54.11,25.09l-22.4,22.4-9.93-9.92a1.78,1.78,0,0,0-2.52,2.52L30.44,51.28a1.78,1.78,0,0,0,2.52,0L56.63,27.61a1.78,1.78,0,0,0-2.52-2.52ZM37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
+                ]
+                []
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+emptyCircle : Nri.Ui.Svg.V1.Svg
+emptyCircle =
+    Svg.svg
+        [ Attributes.viewBox "0 0 75 75"
+        , Attributes.width "100%"
+        , Attributes.height "100%"
+        ]
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
                 ]
                 []
             ]

@@ -137,12 +137,18 @@ example =
                 , ( "sortArrow", UiIcon.sortArrow )
                 , ( "sortArrowDown", UiIcon.sortArrowDown )
                 ]
-            , viewExampleSection "Sticky things"
+            , viewExampleSection "Checks"
                 [ ( "checkmark", UiIcon.checkmark )
                 , ( "checkmarkInCircle", UiIcon.checkmarkInCircle )
-                , ( "x", UiIcon.x )
+                , ( "checkmarkInCircleInverse", UiIcon.checkmarkInCircleInverse )
+                , ( "emptyCircle", UiIcon.emptyCircle )
+                ]
+            , viewExampleSection "Xs"
+                [ ( "x", UiIcon.x )
                 , ( "xInCircle", UiIcon.xInCircle )
-                , ( "attention", UiIcon.attention )
+                ]
+            , viewExampleSection "Bangs"
+                [ ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )
                 ]
             , viewExampleSection "Math"
