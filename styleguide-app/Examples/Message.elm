@@ -91,12 +91,12 @@ controlCustomTheme =
         )
         |> Control.field "color"
             (CommonControls.choice "Colors"
-                [ ( "aquaDark", Colors.aquaDark )
+                [ ( "purpleDark", Colors.purpleDark )
                 ]
             )
         |> Control.field "backgroundColor"
             (CommonControls.choice "Colors"
-                [ ( "gray92", Colors.gray92 )
+                [ ( "gray96", Colors.gray96 )
                 ]
             )
 
