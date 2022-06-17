@@ -106,7 +106,8 @@ example =
                 , ( "leaderboard", UiIcon.leaderboard )
                 ]
             , viewExampleSection "Time"
-                [ ( "calendar", UiIcon.calendar )
+                [ ( "emptyCalendar", UiIcon.emptyCalendar )
+                , ( "calendar", UiIcon.calendar )
                 , ( "clock", UiIcon.clock )
                 ]
             , viewExampleSection "Texts"
