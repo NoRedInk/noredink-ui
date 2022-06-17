@@ -712,7 +712,7 @@ getColor size theme =
                     Colors.redDark
 
                 _ ->
-                    Colors.navy
+                    Colors.redDark
 
         Tip ->
             Colors.navy
@@ -731,7 +731,7 @@ getBackgroundColor size theme =
             Css.backgroundColor Colors.sunshine
 
         ( Banner, Tip ) ->
-            Css.backgroundColor Colors.frost
+            Css.backgroundColor Colors.sunshine
 
         ( _, Error ) ->
             Css.backgroundColor Colors.purpleLight
@@ -779,7 +779,7 @@ getIcon customIcon size theme =
                             Colors.red
 
                         _ ->
-                            Colors.ochre
+                            Colors.red
             in
             UiIcon.exclamation
                 |> NriSvg.withColor color
@@ -793,31 +793,55 @@ getIcon customIcon size theme =
         ( Nothing, Tip ) ->
             case size of
                 Tiny ->
-                    UiIcon.baldBulb
-                        |> NriSvg.withColor Colors.yellow
-                        |> NriSvg.withWidth iconSize
-                        |> NriSvg.withHeight iconSize
-                        |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
-                        |> NriSvg.withLabel "Tip"
-                        |> NriSvg.withNriDescription messageIconDescription
-                        |> NriSvg.toHtml
+                    div
+                        [ Attributes.css
+                            [ borderRadius (pct 50)
+                            , height (px 20)
+                            , width (px 20)
+                            , Css.marginRight (Css.px 5)
+                            , backgroundColor Colors.navy
+                            , displayFlex
+                            , Css.flexShrink Css.zero
+                            , alignItems center
+                            , justifyContent center
+                            ]
+                        , ExtraAttributes.nriDescription messageIconDescription
+                        ]
+                        [ UiIcon.baldBulb
+                            |> NriSvg.withColor Colors.mustard
+                            |> NriSvg.withWidth (Css.px 13)
+                            |> NriSvg.withHeight (Css.px 13)
+                            |> NriSvg.toHtml
+                        ]
 
                 Large ->
-                    UiIcon.sparkleBulb
-                        |> NriSvg.withColor Colors.navy
-                        |> NriSvg.withWidth iconSize
-                        |> NriSvg.withHeight iconSize
-                        |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
-                        |> NriSvg.withLabel "Tip"
-                        |> NriSvg.withNriDescription messageIconDescription
-                        |> NriSvg.toHtml
+                    div
+                        [ Attributes.css
+                            [ borderRadius (pct 50)
+                            , height (px 35)
+                            , width (px 35)
+                            , Css.marginRight (Css.px 10)
+                            , backgroundColor Colors.navy
+                            , displayFlex
+                            , Css.flexShrink Css.zero
+                            , alignItems center
+                            , justifyContent center
+                            ]
+                        , ExtraAttributes.nriDescription messageIconDescription
+                        ]
+                        [ UiIcon.sparkleBulb
+                            |> NriSvg.withColor Colors.mustard
+                            |> NriSvg.withWidth (Css.px 22)
+                            |> NriSvg.withHeight (Css.px 22)
+                            |> NriSvg.toHtml
+                        ]
 
                 Banner ->
                     div
                         [ Attributes.css
                             [ borderRadius (pct 50)
-                            , height (px 50)
-                            , width (px 50)
+                            , height (px 35)
+                            , width (px 35)
                             , Css.marginRight (Css.px 10)
                             , backgroundColor Colors.navy
                             , displayFlex
@@ -834,14 +858,8 @@ getIcon customIcon size theme =
                         ]
                         [ UiIcon.sparkleBulb
                             |> NriSvg.withColor Colors.mustard
-                            |> NriSvg.withWidth (Css.px 32)
-                            |> NriSvg.withHeight (Css.px 32)
-                            |> NriSvg.withCss
-                                [ Css.Media.withMedia
-                                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                                    [ height (px 20)
-                                    ]
-                                ]
+                            |> NriSvg.withWidth (Css.px 22)
+                            |> NriSvg.withHeight (Css.px 22)
                             |> NriSvg.toHtml
                         ]
 
