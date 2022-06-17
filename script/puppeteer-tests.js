@@ -78,11 +78,11 @@ describe("UI tests", function () {
       const option = await page.evaluate((el) => el.innerText, optionEl);
       select.select(option);
 
-      await percySnapshot(page, `name - ${option}`);
+      await percySnapshot(page, `${name} - ${option}`);
       axe = await new AxePuppeteer(page)
         .withRules(["color-contrast"])
         .analyze();
-      handleAxeResults(`name - ${option}`, axe);
+      handleAxeResults(`${name} - ${option}`, axe);
     }
   };
 
