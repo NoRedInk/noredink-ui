@@ -847,7 +847,7 @@ getIcon customIcon size theme =
 
         ( Nothing, Success ) ->
             UiIcon.checkmarkInCircle
-                |> NriSvg.withColor Colors.green
+                |> NriSvg.withColor Colors.greenDark
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
