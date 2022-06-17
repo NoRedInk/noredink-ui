@@ -58,6 +58,34 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
+  const messageProcessing = async (name, location) => {
+    await page.goto(location);
+    await page.waitFor(`#${name.replace(".", "-")}`);
+    await percySnapshot(page, name);
+
+    var axe = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, axe);
+
+    const [theme] = await page.$x("//label[contains(., 'theme')]");
+    await theme.click();
+
+    await page.waitForXPath("//label[contains(., 'theme')]//select", 200);
+    const [select] = await page.$x("//label[contains(., 'theme')]//select");
+    const options = await page.$x("//label[contains(., 'theme')]//option");
+    for (const optionEl of options) {
+      const option = await page.evaluate((el) => el.innerText, optionEl);
+      select.select(option);
+
+      await percySnapshot(page, `name - ${option}`);
+      axe = await new AxePuppeteer(page)
+        .withRules(["color-contrast"])
+        .analyze();
+      handleAxeResults(`name - ${option}`, axe);
+    }
+  };
+
   const iconProcessing = async (name, location) => {
     await page.goto(location);
     await page.waitFor(`#${name}`);
@@ -81,6 +109,7 @@ describe("UI tests", function () {
   };
 
   const specialProcessing = {
+    Message: messageProcessing,
     Modal: async (name, location) => {
       await page.goto(location);
       await page.waitFor(`#${name}`);
