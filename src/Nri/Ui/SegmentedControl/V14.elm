@@ -92,13 +92,8 @@ viewRadioGroup config =
                 inner extraAttrs =
                     Html.Styled.label
                         (css
-                            -- ensure that the focus state is visible, even
-                            -- though the radio button that technically has focus
-                            -- is not
-                            (Css.pseudoClass "focus-within"
-                                [ Css.property "outline-style" "auto" ]
-                                :: styles config.positioning numOptions index isSelected
-                            )
+                            (styles config.positioning numOptions index isSelected)
+                            :: Attributes.class "custom-focus-ring"
                             :: extraAttrs
                         )
                         [ radio name option.idString isSelected <|
@@ -272,6 +267,9 @@ styles positioning numEntries index isSelected =
 
             _ ->
                 []
+    , -- ensure that the focus state is visible & looks nice
+      Css.pseudoClass "focus-within"
+        [ Css.property "outline-style" "auto" ]
     ]
 
 
