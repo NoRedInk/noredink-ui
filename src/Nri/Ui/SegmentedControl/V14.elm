@@ -26,13 +26,15 @@ import Css exposing (..)
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Nri.Ui.Colors.Extra exposing (withAlpha)
+import Nri.Ui.Colors.Extra as ColorsExtra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 import TabsInternal.V2 as TabsInternal
+import TransparentColor
 
 
 {-| -}
@@ -269,7 +271,9 @@ styles positioning numEntries index isSelected =
                 []
     , -- ensure that the focus state is visible & looks nice
       Css.pseudoClass "focus-within"
-        [ Css.property "outline-style" "auto" ]
+        [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
+        , outline none
+        ]
     ]
 
 
@@ -310,10 +314,22 @@ sharedSegmentStyles numEntries index =
 focusedSegmentStyles : Style
 focusedSegmentStyles =
     [ backgroundColor Colors.glacier
-    , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
+    , Css.property "box-shadow" focusedSegmentBoxShadowValue
     , color Colors.navy
     ]
         |> Css.batch
+
+
+focusedSegmentBoxShadowValue : String
+focusedSegmentBoxShadowValue =
+    let
+        colorStr =
+            Colors.gray20
+                |> ColorsExtra.fromCssColor
+                |> TransparentColor.fromColor (TransparentColor.customOpacity 0.2)
+                |> TransparentColor.toRGBAString
+    in
+    "inset 0 3px 0 " ++ colorStr
 
 
 unFocusedSegmentStyles : Style

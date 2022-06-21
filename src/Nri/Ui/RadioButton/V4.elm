@@ -308,7 +308,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , pseudoClass "focus-within"
                     [ Css.Global.descendants
                         [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                            [ FocusRing.boxShadows
+                            [ FocusRing.boxShadows []
                             ]
                         ]
                     ]

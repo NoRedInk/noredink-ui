@@ -27,7 +27,7 @@ focusVisibleStyles =
 -}
 styles : List Css.Style
 styles =
-    [ boxShadows
+    [ boxShadows []
     , Css.outline Css.none
 
     -- TODO: it isn't safe to set the border radius on focus.
@@ -37,11 +37,12 @@ styles =
 
 
 {-| -}
-boxShadows : Css.Style
-boxShadows =
-    -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
-    Css.property "box-shadow" <|
-        "0 0 0px 3px "
-            ++ toCssString Colors.white
-            ++ ", 0 0 0 6px "
-            ++ toCssString Colors.red
+boxShadows : List String -> Css.Style
+boxShadows existingBoxShadows =
+    existingBoxShadows
+        ++ [ "0 0 0px 3px " ++ toCssString Colors.white
+           , "0 0 0 6px " ++ toCssString Colors.red
+           ]
+        |> String.join ","
+        |> -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
+           Css.property "box-shadow"
