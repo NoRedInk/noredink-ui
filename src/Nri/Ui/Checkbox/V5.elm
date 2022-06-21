@@ -174,8 +174,8 @@ checkboxContainer model =
                     [ position absolute
                     , top (calc (pct 50) minus (px 10))
                     , left (px 10)
-                    , outline none
-                    , boxShadow none
+                    , outline none |> Css.important
+                    , boxShadow none |> Css.important
                     ]
                 ]
             ]
@@ -303,7 +303,7 @@ viewIcon styles icon =
             [ position absolute
             , left zero
             , top (calc (pct 50) minus (px 18))
-            , border3 (px 2) solid transparent
+            , margin (px 2)
             , padding (px 2)
             , borderRadius (px 3)
             , height (Css.px 27)

@@ -1,14 +1,22 @@
-module Nri.Ui.FocusRing.V1 exposing (styles)
+module Nri.Ui.FocusRing.V1 exposing (styles, focusVisibleStyles)
 
 {-|
 
-@docs styles
+@docs styles, focusVisibleStyles
 
 -}
 
 import Css
+import Css.Global
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+
+
+{-| When :focus-visible, add the two-tone focus ring.
+-}
+focusVisibleStyles : Css.Global.Snippet
+focusVisibleStyles =
+    Css.Global.selector ":not(.custom-focus-ring):focus-visible" styles
 
 
 {-| A two-tone focus ring that will be visually apparent for any background/element combination.
