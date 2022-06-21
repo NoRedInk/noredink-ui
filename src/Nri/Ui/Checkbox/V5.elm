@@ -41,6 +41,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 exposing (Svg)
 
@@ -165,13 +166,17 @@ checkboxContainer model =
             , marginLeft (px -4)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
-                    [ Css.Global.class "checkbox-icon-container"
-                        [ borderColor (rgb 0 95 204)
-                        ]
+                    [ Css.Global.class "checkbox-icon-container" FocusRing.styles
                     ]
                 ]
             , Css.Global.descendants
-                [ Css.Global.input [ position absolute, top (calc (pct 50) minus (px 10)), left (px 10) ]
+                [ Css.Global.input
+                    [ position absolute
+                    , top (calc (pct 50) minus (px 10))
+                    , left (px 10)
+                    , outline none
+                    , boxShadow none
+                    ]
                 ]
             ]
         , Attributes.id (model.identifier ++ "-container")
