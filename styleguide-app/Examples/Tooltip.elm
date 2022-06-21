@@ -223,7 +223,7 @@ Use when all of the following are true:
         """
           , description =
                 """
-This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about. Please see the documentation for `disclosure` to learn more.
+This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about.
 """
           , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
