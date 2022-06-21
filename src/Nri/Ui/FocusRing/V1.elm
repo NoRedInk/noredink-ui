@@ -1,8 +1,12 @@
-module Nri.Ui.FocusRing.V1 exposing (styles, focusVisibleStyles)
+module Nri.Ui.FocusRing.V1 exposing
+    ( styles, focusVisibleStyles
+    , boxShadows
+    )
 
 {-|
 
 @docs styles, focusVisibleStyles
+@docs boxShadows
 
 -}
 
@@ -32,6 +36,7 @@ styles =
     ]
 
 
+{-| -}
 boxShadows : Css.Style
 boxShadows =
     -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265

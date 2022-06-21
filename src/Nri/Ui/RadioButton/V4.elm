@@ -48,6 +48,7 @@ import Html.Styled.Events exposing (onClick)
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 as Pennant
@@ -301,15 +302,13 @@ view { label, name, value, valueToString, selectedValue } attributes =
             [ Attributes.id (idValue ++ "-container")
             , css
                 [ position relative
-                , marginLeft (px -4)
-                , Css.paddingLeft (Css.px 40)
-                , Css.paddingTop (px 6)
-                , Css.paddingBottom (px 4)
+                , margin4 (px 2) (px 2) (px 2) (px -2)
+                , Css.padding4 (px 4) (px 2) (px 2) (Css.px 38)
                 , display inlineBlock
                 , pseudoClass "focus-within"
                     [ Css.Global.descendants
                         [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                            [ borderColor (rgb 0 95 204)
+                            [ FocusRing.boxShadows
                             ]
                         ]
                     ]
@@ -526,12 +525,6 @@ radioInputIcon config =
 
         iconHeight =
             26
-
-        borderWidth =
-            2
-
-        iconPadding =
-            2
     in
     div
         [ classList
@@ -547,11 +540,9 @@ radioInputIcon config =
                     []
             , position absolute
             , left zero
-            , top (calc (pct 50) Css.minus (Css.px ((iconHeight + borderWidth + iconPadding) / 2)))
+            , top (calc (pct 50) Css.minus (Css.px (iconHeight / 2)))
             , Css.property "transition" ".3s all"
-            , border3 (px borderWidth) solid transparent
             , borderRadius (px 50)
-            , padding (px iconPadding)
             , displayFlex
             , justifyContent center
             , alignItems center
