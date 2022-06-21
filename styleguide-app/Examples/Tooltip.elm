@@ -140,19 +140,19 @@ view ellieLinkConfig model =
             { header = "Type"
             , value = .name
             , width = Css.pct 15
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
             }
         , Table.custom
             { header = Html.text "Usage"
             , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 150
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
             }
         , Table.custom
             { header = Html.text "Example"
@@ -320,15 +320,15 @@ viewDisclosureToolip openTooltip =
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-   Html.span [ css [Css.displayFlex, Css.alignItems Css.center, Css.justifyContent Css.center] ] [
-    Html.text "Mastery"
-    ,Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
-        [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
-        , Tooltip.onToggle (ToggleTooltip LearnMore)
-        , Tooltip.open (openTooltip == Just LearnMore)
-        , Tooltip.alignEndForMobile (Css.px 144)
+    Html.span [ css [ Css.displayFlex, Css.alignItems Css.center, Css.justifyContent Css.center ] ]
+        [ Html.text "Mastery"
+        , Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
+            [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
+            , Tooltip.onToggle (ToggleTooltip LearnMore)
+            , Tooltip.open (openTooltip == Just LearnMore)
+            , Tooltip.alignEndForMobile (Css.px 144)
+            ]
         ]
-   ]
 
 
 initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
