@@ -212,8 +212,6 @@ This type can (but is not required to) contain interactive elements such as link
                 """
 Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
 
-If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
-
 This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
 """
           , example = viewDisclosureToolip model.openTooltip
