@@ -261,6 +261,7 @@ viewAuxillaryDescriptionToolip openTooltip =
             \eventHandlers ->
                 ClickableText.link "Tooltips & Toggletips"
                     [ ClickableText.custom eventHandlers
+                    , ClickableText.small
                     , ClickableText.icon UiIcon.openInNewTab
                     , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
