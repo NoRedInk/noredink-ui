@@ -335,17 +335,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , top (pct 50)
                     , left (px 4)
                     , opacity zero
-                    , pseudoClass "focus"
-                        [ Css.Global.adjacentSiblings
-                            [ Css.Global.everything
-                                [ Css.Global.descendants
-                                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                                        [ borderColor (rgb 0 95 204)
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
                     ]
                  ]
                     ++ List.map (Attributes.map never) config.custom
