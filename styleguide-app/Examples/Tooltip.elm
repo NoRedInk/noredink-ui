@@ -312,12 +312,15 @@ viewDisclosureToolip openTooltip =
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-    Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
+   Html.span [ css [Css.displayFlex, Css.alignItems Css.center, Css.justifyContent Css.center] ] [
+    Html.text "Mastery"
+    ,Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
         [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
         , Tooltip.onToggle (ToggleTooltip LearnMore)
         , Tooltip.open (openTooltip == Just LearnMore)
         , Tooltip.alignEndForMobile (Css.px 144)
         ]
+   ]
 
 
 initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
