@@ -7,6 +7,7 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category exposing (Category)
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
@@ -15,6 +16,7 @@ import Html.Styled.Attributes exposing (..)
 import Http
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
@@ -208,6 +210,9 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
+                , Css.Global.global
+                    [ Css.Global.selector ":focus-visible" FocusRing.styles
+                    ]
                 ]
     in
     case model.route of
