@@ -223,7 +223,7 @@ Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
 - the tooltip trigger ***is*** a "?" icon
 
-This type can (but is not required to) contain interactive elements such as links.
+This type may contain interactive elements such as links.
 
         """
           , description =
