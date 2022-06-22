@@ -118,7 +118,7 @@ build config attributes =
     Tab
         (TabsInternal.fromList config
             (List.map (\(Attribute f) -> f)
-                (tabAttributes [ Attributes.class "custom-focus-ring" ]
+                (tabAttributes [ Attributes.class FocusRing.customClass ]
                     :: attributes
                 )
             )

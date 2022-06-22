@@ -1,12 +1,14 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( styles, focusVisibleStyles
     , boxShadows, tabStyles
+    , customClass
     )
 
 {-|
 
 @docs styles, focusVisibleStyles
 @docs boxShadows, tabStyles
+@docs customClass
 
 -}
 
@@ -16,11 +18,19 @@ import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 
 
+{-| Add this class to remove global focus styles. Only do this
+if you'll be adding the two-tone focus ring styles another way.
+-}
+customClass : String
+customClass =
+    "custom-focus-ring"
+
+
 {-| When :focus-visible, add the two-tone focus ring.
 -}
 focusVisibleStyles : Css.Global.Snippet
 focusVisibleStyles =
-    Css.Global.selector ":not(.custom-focus-ring):focus-visible" styles
+    Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
 
 
 {-| A two-tone focus ring that will be visually apparent for any background/element combination.

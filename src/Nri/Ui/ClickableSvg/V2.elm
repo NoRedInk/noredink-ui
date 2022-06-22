@@ -479,7 +479,8 @@ renderButton ((ButtonOrLink config) as button_) =
                 applyTheme config.theme
     in
     Html.button
-        ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button custom-focus-ring"
+        ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
+         , Attributes.class FocusRing.customClass
          , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
@@ -510,7 +511,8 @@ renderLink ((ButtonOrLink config) as link_) =
                 applyTheme config.theme
     in
     Html.a
-        ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName ++ " custom-focus-ring")
+        ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
+         , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Aria.disabled config.disabled
          , Aria.label config.label

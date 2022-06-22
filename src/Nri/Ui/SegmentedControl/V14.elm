@@ -95,7 +95,7 @@ viewRadioGroup config =
                     Html.Styled.label
                         (css
                             (styles config.positioning numOptions index isSelected)
-                            :: Attributes.class "custom-focus-ring"
+                            :: Attributes.class FocusRing.customClass
                             :: extraAttrs
                         )
                         [ radio name option.idString isSelected <|
@@ -191,7 +191,7 @@ view config =
         toInternalTab option =
             { id = option.value
             , idString = option.idString
-            , tabAttributes = Attributes.class "custom-focus-ring" :: option.attributes
+            , tabAttributes = Attributes.class FocusRing.customClass :: option.attributes
             , tabTooltip =
                 case config.positioning of
                     Left FillContainer ->

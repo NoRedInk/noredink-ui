@@ -613,7 +613,7 @@ renderButton ((ButtonOrLink config) as button_) =
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
             :: Attributes.type_ "button"
-            :: Attributes.class "custom-focus-ring"
+            :: Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
         [ viewLabel config.size config.icon config.label ]
@@ -637,7 +637,7 @@ renderLink ((ButtonOrLink config) as link_) =
         [ buttonStyles config.size config.width colorPalette config.customStyles
         , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
         ]
-        (Attributes.class "custom-focus-ring"
+        (Attributes.class FocusRing.customClass
             :: attributes
             ++ config.customAttributes
         )
@@ -746,7 +746,7 @@ toggleButton config =
         -- equivalent to preventDefaultBehavior = false
         -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
         , Attributes.type_ "button"
-        , Attributes.class "custom-focus-ring"
+        , Attributes.class FocusRing.customClass
         ]
         [ viewLabel Medium Nothing config.label ]
 
