@@ -70,6 +70,7 @@ import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -478,7 +479,7 @@ renderButton ((ButtonOrLink config) as button_) =
                 applyTheme config.theme
     in
     Html.button
-        ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
+        ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button custom-focus-ring"
          , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
@@ -509,7 +510,7 @@ renderLink ((ButtonOrLink config) as link_) =
                 applyTheme config.theme
     in
     Html.a
-        ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
+        ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName ++ " custom-focus-ring")
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Aria.disabled config.disabled
          , Aria.label config.label
@@ -637,6 +638,13 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
     , Css.boxSizing Css.borderBox
     , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
     , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+
+    -- Focus
+    , if config.hasBorder then
+        Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+
+      else
+        Css.focus FocusRing.styles
     ]
 
 
