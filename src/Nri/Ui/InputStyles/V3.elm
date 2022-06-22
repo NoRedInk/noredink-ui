@@ -23,7 +23,9 @@ module Nri.Ui.InputStyles.V3 exposing
 
 import Css exposing (..)
 import Css.Global
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 
 
@@ -142,7 +144,9 @@ input theme isInError =
                 , focus
                     [ borderColor azure
                     , outline none
-                    , boxShadow6 inset zero (px 3) zero zero glacier
+                    , FocusRing.boxShadows
+                        [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier
+                        ]
                     ]
                 , if isInError then
                     batch
@@ -150,7 +154,9 @@ input theme isInError =
                         , boxShadow6 inset zero (px 3) zero zero purpleLight
                         , focus
                             [ borderColor purple
-                            , boxShadow6 inset zero (px 3) zero zero purpleLight
+                            , FocusRing.boxShadows
+                                [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString purpleLight
+                                ]
                             ]
                         ]
 

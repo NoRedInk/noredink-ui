@@ -669,7 +669,7 @@ view label attributes =
                    , maybeAttr (attribute "inputmode") config.inputMode
                    , maybeAttr (attribute "autocomplete") config.autocomplete
                    , maybeAttr onEnter_ eventsAndValues.onEnter
-                   , class "override-sass-styles"
+                   , class "override-sass-styles custom-focus-ring"
                    , Attributes.attribute "aria-invalid" <|
                         if isInError then
                             "true"

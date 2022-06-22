@@ -114,6 +114,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
                 { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
                 , autofocus = False
@@ -130,6 +131,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.contentCreation
                 { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
                 , autofocus = False
@@ -146,6 +148,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
                 { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
                 , autofocus = False

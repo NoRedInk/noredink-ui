@@ -133,7 +133,7 @@ view_ theme model =
                 , Attributes.autofocus model.autofocus
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
-                , Attributes.class "override-sass-styles"
+                , Attributes.class "override-sass-styles custom-focus-ring"
                 , Attributes.attribute "aria-invalid" <|
                     if model.isInError then
                         "true"
