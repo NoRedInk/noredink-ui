@@ -184,7 +184,7 @@ of ***what*** the tooltip trigger does. The same text is provided to assitive te
           , usage = """
 Use when all of the following are true:
 - the tooltip trigger does more than just reveal the tooltip content
-- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself.
+- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself
 - the content of the tooltip doesn't contain interactive elements such as links
 
 Think of this as the "How."
