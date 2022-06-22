@@ -1,13 +1,13 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( styles, focusVisibleStyles
-    , boxShadows, tabStyles
+    , boxShadows, outerBoxShadow
     , customClass
     )
 
 {-|
 
 @docs styles, focusVisibleStyles
-@docs boxShadows, tabStyles
+@docs boxShadows, outerBoxShadow
 @docs customClass
 
 -}
@@ -58,9 +58,9 @@ boxShadows existingBoxShadows =
            Css.property "box-shadow"
 
 
-{-| Tab box shadow styles
+{-| In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!
 -}
-tabStyles : Css.Style
-tabStyles =
+outerBoxShadow : Css.Style
+outerBoxShadow =
     -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
     Css.property "box-shadow" ("0 0 0 3px " ++ toCssString Colors.red)

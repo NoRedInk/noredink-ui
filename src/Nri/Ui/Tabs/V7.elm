@@ -287,7 +287,7 @@ tabStyles customSpacing index isSelected =
                 , borderLeftColor Colors.azure
                 ]
             , focus
-                [ FocusRing.tabStyles
+                [ FocusRing.outerBoxShadow
                 , outline none
                 ]
             ]

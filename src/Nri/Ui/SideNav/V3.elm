@@ -58,6 +58,7 @@ import Nri.Ui
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
@@ -192,10 +193,17 @@ viewSkipLink onSkip =
     ClickableText.button "Skip to main content"
         [ ClickableText.icon UiIcon.arrowPointingRight
         , ClickableText.small
+        , ClickableText.custom [ Attributes.class FocusRing.customClass ]
         , ClickableText.css
             [ Css.pseudoClass "not(:focus)"
                 [ Style.invisibleStyle
                 ]
+            , Css.focus
+                [ outline none
+                , FocusRing.outerBoxShadow
+                ]
+            , Css.padding (Css.px 2)
+            , Css.borderRadius (Css.px 4)
             ]
         , ClickableText.onClick onSkip
         ]
