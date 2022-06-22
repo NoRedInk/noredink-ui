@@ -191,7 +191,7 @@ view config =
         toInternalTab option =
             { id = option.value
             , idString = option.idString
-            , tabAttributes = option.attributes
+            , tabAttributes = Attributes.class "custom-focus-ring" :: option.attributes
             , tabTooltip =
                 case config.positioning of
                     Left FillContainer ->

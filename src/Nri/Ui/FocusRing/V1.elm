@@ -1,12 +1,12 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( styles, focusVisibleStyles
-    , boxShadows
+    , boxShadows, tabStyles
     )
 
 {-|
 
 @docs styles, focusVisibleStyles
-@docs boxShadows
+@docs boxShadows, tabStyles
 
 -}
 
@@ -40,9 +40,17 @@ styles =
 boxShadows : List String -> Css.Style
 boxShadows existingBoxShadows =
     existingBoxShadows
-        ++ [ "0 0 0px 3px " ++ toCssString Colors.white
+        ++ [ "0 0 0 3px " ++ toCssString Colors.white
            , "0 0 0 6px " ++ toCssString Colors.red
            ]
         |> String.join ","
         |> -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
            Css.property "box-shadow"
+
+
+{-| Tab box shadow styles
+-}
+tabStyles : Css.Style
+tabStyles =
+    -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
+    Css.property "box-shadow" ("0 0 0 3px " ++ toCssString Colors.red)

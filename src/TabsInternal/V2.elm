@@ -139,7 +139,6 @@ viewTab_ config index tab =
                        , Attributes.id (tabToId tab.idString)
                        , Events.on "keyup" <|
                             Json.Decode.andThen (keyEvents config tab) Events.keyCode
-                       , Attributes.class "custom-focus-ring"
                        ]
                     ++ (case tab.labelledBy of
                             Nothing ->
