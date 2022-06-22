@@ -106,6 +106,7 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
+import TransparentColor
 
 
 styledName : String -> String
@@ -606,7 +607,9 @@ renderButton ((ButtonOrLink config) as button_) =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ config.customStyles ]
+        [ buttonStyles config.size config.width buttonStyle_ config.customStyles
+        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
             :: Attributes.type_ "button"
@@ -631,7 +634,9 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config.size config.width colorPalette config.customStyles ]
+        [ buttonStyles config.size config.width colorPalette config.customStyles
+        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        ]
         (Attributes.class "custom-focus-ring"
             :: attributes
             ++ config.customAttributes
@@ -694,12 +699,23 @@ toggleButton :
     -> Html msg
 toggleButton config =
     let
+        toggledBoxShadow =
+            "inset 0 3px 0 "
+                ++ (Colors.gray20
+                        |> ColorsExtra.fromCssColor
+                        |> TransparentColor.fromColor (TransparentColor.customOpacity 0.2)
+                        |> TransparentColor.toRGBAString
+                   )
+
         toggledStyles =
             if config.pressed then
                 Css.batch
                     [ Css.color Colors.gray20
                     , Css.backgroundColor Colors.glacier
-                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                    , Css.focus
+                        [ Css.outline Css.none
+                        , FocusRing.boxShadows [ toggledBoxShadow ]
+                        ]
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
                     , Css.fontWeight Css.bold
                     ]
@@ -730,6 +746,7 @@ toggleButton config =
         -- equivalent to preventDefaultBehavior = false
         -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
         , Attributes.type_ "button"
+        , Attributes.class "custom-focus-ring"
         ]
         [ viewLabel Medium Nothing config.label ]
 
@@ -809,7 +826,6 @@ buttonStyle =
         , Css.margin Css.zero
         , Css.hover [ Css.textDecoration Css.none ]
         , Css.disabled [ Css.cursor Css.notAllowed ]
-        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
         , Css.Global.withAttribute "aria-disabled=true" [ Css.cursor Css.notAllowed ]
         , Css.display Css.inlineFlex
         , Css.alignItems Css.center
