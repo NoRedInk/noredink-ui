@@ -99,6 +99,7 @@ import Markdown.Inline
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -609,6 +610,7 @@ renderButton ((ButtonOrLink config) as button_) =
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
             :: Attributes.type_ "button"
+            :: Attributes.class "custom-focus-ring"
             :: config.customAttributes
         )
         [ viewLabel config.size config.icon config.label ]
@@ -630,7 +632,10 @@ renderLink ((ButtonOrLink config) as link_) =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         [ buttonStyles config.size config.width colorPalette config.customStyles ]
-        (attributes ++ config.customAttributes)
+        (Attributes.class "custom-focus-ring"
+            :: attributes
+            ++ config.customAttributes
+        )
         [ viewLabel config.size config.icon config.label ]
 
 
@@ -804,6 +809,7 @@ buttonStyle =
         , Css.margin Css.zero
         , Css.hover [ Css.textDecoration Css.none ]
         , Css.disabled [ Css.cursor Css.notAllowed ]
+        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
         , Css.Global.withAttribute "aria-disabled=true" [ Css.cursor Css.notAllowed ]
         , Css.display Css.inlineFlex
         , Css.alignItems Css.center
