@@ -87,6 +87,7 @@ example =
                 [ ( "footsteps", UiIcon.footsteps )
                 , ( "help", UiIcon.help )
                 , ( "checklist", UiIcon.checklist )
+                , ( "checklistComplete", UiIcon.checklistComplete )
                 ]
             , viewExampleSection "Bulbs"
                 [ ( "sparkleBulb", UiIcon.sparkleBulb )
