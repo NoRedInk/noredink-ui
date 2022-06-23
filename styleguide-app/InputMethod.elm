@@ -45,15 +45,21 @@ subscriptions : Sub InputMethod
 subscriptions =
     Sub.batch
         [ Browser.Events.onKeyDown
-            (Decode.field "key" Decode.string
+            (Decode.map2 (\k t -> ( k, t ))
+                (Decode.field "key" Decode.string)
+                (Decode.at [ "target", "tagName" ] Decode.string)
                 |> Decode.andThen
-                    (\key ->
+                    (\( key, tagName ) ->
                         case key of
                             "Tab" ->
                                 Decode.succeed Keyboard
 
                             " " ->
-                                Decode.succeed Keyboard
+                                if tagName == "TEXTAREA" || tagName == "INPUT" then
+                                    Decode.fail "Not a navigation key. Discarding event."
+
+                                else
+                                    Decode.succeed Keyboard
 
                             _ ->
                                 Decode.fail "Not a navigation key. Discarding event."
