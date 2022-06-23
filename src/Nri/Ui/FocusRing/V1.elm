@@ -27,10 +27,15 @@ customClass =
 
 
 {-| When :focus-visible, add the two-tone focus ring.
+
+Hides default focus ring from elements that are tagged as having a custom focus ring.
+
 -}
-focusVisibleStyles : Css.Global.Snippet
+focusVisibleStyles : List Css.Global.Snippet
 focusVisibleStyles =
-    Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    [ Css.Global.class customClass [ Css.outline Css.none ]
+    , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    ]
 
 
 {-| A two-tone focus ring that will be visually apparent for any background/element combination.

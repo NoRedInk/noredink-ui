@@ -210,7 +210,7 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
-                , Css.Global.global [ FocusRing.focusVisibleStyles ]
+                , Css.Global.global FocusRing.focusVisibleStyles
                 ]
     in
     case model.route of
