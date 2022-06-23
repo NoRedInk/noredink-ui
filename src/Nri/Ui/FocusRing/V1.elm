@@ -37,13 +37,10 @@ forMouseUsers : List Snippet
 forMouseUsers =
     [ Css.Global.everything [ Css.outline Css.none ]
     , Css.Global.selector ":focus-within .checkbox-icon-container"
-        [ Css.important (Css.borderColor Css.transparent)
+        [ Css.important (Css.boxShadow Css.none)
         ]
     , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
-        [ Css.important (Css.borderColor Css.transparent)
-        ]
-    , Css.Global.selector ":focus-within .cycling-radio-button"
-        [ Css.important (Css.borderColor Css.transparent)
+        [ Css.important (Css.boxShadow Css.none)
         ]
     ]
 
