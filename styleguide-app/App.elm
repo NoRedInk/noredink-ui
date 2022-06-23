@@ -220,11 +220,7 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
-                , Css.Global.global
-                    -- TODO: move focus visible styles to input method
-                    (FocusRing.focusVisibleStyles
-                        ++ InputMethod.styles model.inputMethod
-                    )
+                , Css.Global.global (InputMethod.styles model.inputMethod)
                 ]
     in
     case model.route of

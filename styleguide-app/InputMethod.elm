@@ -15,6 +15,7 @@ import Css.Global exposing (Snippet)
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes exposing (css)
 import Json.Decode as Decode
+import Nri.Ui.FocusRing.V1 as FocusRing
 
 
 {-| Represents the method of input the user is currently using to
@@ -69,17 +70,7 @@ styles : InputMethod -> List Snippet
 styles inputMethod =
     case inputMethod of
         Keyboard ->
-            []
+            FocusRing.forKeyboardUsers
 
         Mouse ->
-            [ Css.Global.everything [ outline none ]
-            , Css.Global.selector ":focus-within .checkbox-icon-container"
-                [ Css.important (borderColor transparent)
-                ]
-            , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
-                [ Css.important (borderColor transparent)
-                ]
-            , Css.Global.selector ":focus-within .cycling-radio-button"
-                [ Css.important (borderColor transparent)
-                ]
-            ]
+            FocusRing.forMouseUsers

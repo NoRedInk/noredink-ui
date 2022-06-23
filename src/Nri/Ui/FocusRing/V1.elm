@@ -1,21 +1,51 @@
 module Nri.Ui.FocusRing.V1 exposing
-    ( styles, focusVisibleStyles
+    ( forKeyboardUsers, forMouseUsers
+    , styles
     , boxShadows, outerBoxShadow, insetBoxShadow
     , customClass
     )
 
 {-|
 
-@docs styles, focusVisibleStyles
+@docs forKeyboardUsers, forMouseUsers
+@docs styles
 @docs boxShadows, outerBoxShadow, insetBoxShadow
 @docs customClass
 
 -}
 
 import Css
-import Css.Global
+import Css.Global exposing (Snippet)
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+
+
+{-| When :focus-visible, add the two-tone focus ring.
+
+Hides default focus ring from elements that are tagged as having a custom focus ring.
+
+-}
+forKeyboardUsers : List Css.Global.Snippet
+forKeyboardUsers =
+    [ Css.Global.class customClass [ Css.outline Css.none ]
+    , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    ]
+
+
+{-| -}
+forMouseUsers : List Snippet
+forMouseUsers =
+    [ Css.Global.everything [ Css.outline Css.none ]
+    , Css.Global.selector ":focus-within .checkbox-icon-container"
+        [ Css.important (Css.borderColor Css.transparent)
+        ]
+    , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
+        [ Css.important (Css.borderColor Css.transparent)
+        ]
+    , Css.Global.selector ":focus-within .cycling-radio-button"
+        [ Css.important (Css.borderColor Css.transparent)
+        ]
+    ]
 
 
 {-| Add this class to remove global focus styles. Only do this
@@ -24,18 +54,6 @@ if you'll be adding the two-tone focus ring styles another way.
 customClass : String
 customClass =
     "custom-focus-ring"
-
-
-{-| When :focus-visible, add the two-tone focus ring.
-
-Hides default focus ring from elements that are tagged as having a custom focus ring.
-
--}
-focusVisibleStyles : List Css.Global.Snippet
-focusVisibleStyles =
-    [ Css.Global.class customClass [ Css.outline Css.none ]
-    , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
-    ]
 
 
 {-| A two-tone focus ring that will be visually apparent for any background/element combination.
