@@ -1,13 +1,13 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( styles, focusVisibleStyles
-    , boxShadows, outerBoxShadow
+    , boxShadows, outerBoxShadow, insetBoxShadow
     , customClass
     )
 
 {-|
 
 @docs styles, focusVisibleStyles
-@docs boxShadows, outerBoxShadow
+@docs boxShadows, outerBoxShadow, insetBoxShadow
 @docs customClass
 
 -}
@@ -58,7 +58,21 @@ boxShadows existingBoxShadows =
            Css.property "box-shadow"
 
 
-{-| In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!
+{-| In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured.
+
+Be very sure this is what you need before using this!
+
+-}
+insetBoxShadow : Css.Style
+insetBoxShadow =
+    -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
+    Css.property "box-shadow" ("inset 0 0 0 3px " ++ toCssString Colors.red)
+
+
+{-| In special cases, we don't use a two-tone focus ring.
+
+Be very sure this is what you need before using this!
+
 -}
 outerBoxShadow : Css.Style
 outerBoxShadow =

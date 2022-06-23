@@ -289,7 +289,10 @@ viewSidebarLeaf config extraStyles entryConfig =
                )
             ++ entryConfig.customStyles
         )
-        (attributes ++ entryConfig.customAttributes)
+        (Attributes.class FocusRing.customClass
+            :: attributes
+            ++ entryConfig.customAttributes
+        )
         [ viewJust
             (\icon_ ->
                 icon_
@@ -313,7 +316,9 @@ viewLockedEntry extraStyles entryConfig =
         ]
         (case entryConfig.onLockedContent of
             Just event ->
-                Events.onClick event :: entryConfig.customAttributes
+                Events.onClick event
+                    :: Attributes.class FocusRing.customClass
+                    :: entryConfig.customAttributes
 
             Nothing ->
                 entryConfig.customAttributes
@@ -330,6 +335,7 @@ viewLockedEntry extraStyles entryConfig =
 sharedEntryStyles : List Style
 sharedEntryStyles =
     [ padding2 (px 13) (px 20)
+    , focus [ outline none, FocusRing.insetBoxShadow ]
     , Css.property "word-break" "normal"
     , Css.property "overflow-wrap" "anywhere"
     , displayFlex
