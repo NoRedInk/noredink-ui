@@ -39,19 +39,29 @@ focusVisibleStyles =
 
 
 {-| A two-tone focus ring that will be visually apparent for any background/element combination.
+
+NOTE: use `boxShadows` instead if your focusable element:
+
+  - already has a box shadow
+  - has an explicit border radius set
+
 -}
 styles : List Css.Style
 styles =
     [ boxShadows []
     , Css.outline Css.none
-
-    -- TODO: it isn't safe to set the border radius on focus.
-    -- learn/mastery has anchor tag cards with border radius 8px, for instance
     , Css.borderRadius (Css.px 4)
     ]
 
 
-{-| -}
+{-|
+
+    focus
+        [ FocusRing.boxShadows [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier ]
+        , outline none
+        ]
+
+-}
 boxShadows : List String -> Css.Style
 boxShadows existingBoxShadows =
     existingBoxShadows
