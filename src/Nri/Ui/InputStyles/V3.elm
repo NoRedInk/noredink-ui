@@ -1,6 +1,7 @@
 module Nri.Ui.InputStyles.V3 exposing
     ( label, Theme(..), input
     , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
+    , focusedInputBoxShadow, focusedErrorInputBoxShadow, errorClass, inputClass
     )
 
 {-| InputStyles used by the TextInput and TextArea widgets.
@@ -11,6 +12,7 @@ module Nri.Ui.InputStyles.V3 exposing
 ## Shared hardcoded values
 
 @docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
+@docs focusedInputBoxShadow, focusedErrorInputBoxShadow, errorClass, inputClass
 
 
 ## Changelog
@@ -25,7 +27,6 @@ import Css exposing (..)
 import Css.Global
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 exposing (..)
-import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 
 
@@ -118,10 +119,34 @@ defaultMarginTop =
     9
 
 
+{-| -}
+focusedInputBoxShadow : String
+focusedInputBoxShadow =
+    "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier
+
+
+{-| -}
+focusedErrorInputBoxShadow : String
+focusedErrorInputBoxShadow =
+    "inset 0 3px 0 0 " ++ ColorsExtra.toCssString purpleLight
+
+
+{-| -}
+inputClass : String
+inputClass =
+    "nri-input"
+
+
+{-| -}
+errorClass : String
+errorClass =
+    "nri-input-error"
+
+
 {-| In order to use these styles in an input module, you will need to add the class "override-sass-styles". This is because sass styles in the monolith have higher precendence than the class styles here.
 -}
-input : Theme -> Bool -> Style
-input theme isInError =
+input : Theme -> Style
+input theme =
     let
         sharedStyles =
             batch
@@ -144,24 +169,16 @@ input theme isInError =
                 , focus
                     [ borderColor azure
                     , outline none
-                    , FocusRing.boxShadows
-                        [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier
+                    , property "box-shadow" focusedInputBoxShadow
+                    ]
+                , Css.Global.withClass errorClass
+                    [ borderColor purple
+                    , boxShadow6 inset zero (px 3) zero zero purpleLight
+                    , focus
+                        [ borderColor purple
+                        , property "box-shadow" focusedErrorInputBoxShadow
                         ]
                     ]
-                , if isInError then
-                    batch
-                        [ borderColor purple
-                        , boxShadow6 inset zero (px 3) zero zero purpleLight
-                        , focus
-                            [ borderColor purple
-                            , FocusRing.boxShadows
-                                [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString purpleLight
-                                ]
-                            ]
-                        ]
-
-                  else
-                    batch []
                 ]
     in
     batch
@@ -197,15 +214,11 @@ input theme isInError =
                                     [ backgroundColor azure
                                     , color white
                                     , borderColor azure
-                                    , if isInError then
-                                        batch
-                                            [ backgroundColor purple
-                                            , color white
-                                            , borderColor purple
-                                            ]
-
-                                      else
-                                        batch []
+                                    , Css.Global.withClass errorClass
+                                        [ backgroundColor purple
+                                        , color white
+                                        , borderColor purple
+                                        ]
                                     ]
                                 ]
                             ]

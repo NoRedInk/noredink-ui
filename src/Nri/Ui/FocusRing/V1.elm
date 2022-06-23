@@ -18,6 +18,7 @@ import Css
 import Css.Global exposing (Snippet)
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.InputStyles.V3 as InputStyles exposing (focusedErrorInputBoxShadow, focusedInputBoxShadow)
 
 
 {-| When :focus-visible, add the two-tone focus ring.
@@ -29,6 +30,16 @@ forKeyboardUsers : List Css.Global.Snippet
 forKeyboardUsers =
     [ Css.Global.class customClass [ Css.outline Css.none ]
     , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    , Css.Global.class InputStyles.inputClass
+        [ Css.focus
+            [ boxShadows [ focusedInputBoxShadow ]
+                |> Css.important
+            , Css.Global.withClass "error"
+                [ boxShadows [ focusedErrorInputBoxShadow ]
+                    |> Css.important
+                ]
+            ]
+        ]
     ]
 
 
@@ -41,6 +52,9 @@ forMouseUsers =
         ]
     , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
         [ Css.important (Css.boxShadow Css.none)
+        ]
+    , Css.Global.selector ".nri-ui-input:focus"
+        [ applyBoxShadows [ InputStyles.focusedInputBoxShadow ]
         ]
     ]
 
@@ -83,9 +97,7 @@ boxShadows existingBoxShadows =
         ++ [ "0 0 0 3px " ++ toCssString Colors.white
            , "0 0 0 6px " ++ toCssString Colors.red
            ]
-        |> String.join ","
-        |> -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
-           Css.property "box-shadow"
+        |> applyBoxShadows
 
 
 {-| In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured.
@@ -95,8 +107,7 @@ Be very sure this is what you need before using this!
 -}
 insetBoxShadow : Css.Style
 insetBoxShadow =
-    -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
-    Css.property "box-shadow" ("inset 0 0 0 3px " ++ toCssString Colors.red)
+    applyBoxShadows [ "inset 0 0 0 3px " ++ toCssString Colors.red ]
 
 
 {-| In special cases, we don't use a two-tone focus ring.
@@ -106,5 +117,10 @@ Be very sure this is what you need before using this!
 -}
 outerBoxShadow : Css.Style
 outerBoxShadow =
+    applyBoxShadows [ "0 0 0 3px " ++ toCssString Colors.red ]
+
+
+applyBoxShadows : List String -> Css.Style
+applyBoxShadows =
     -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
-    Css.property "box-shadow" ("0 0 0 3px " ++ toCssString Colors.red)
+    String.join "," >> Css.property "box-shadow"

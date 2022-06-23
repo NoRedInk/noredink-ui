@@ -50,7 +50,7 @@ example =
         [ Html.div [ css [ Css.position Css.relative ] ]
             [ Html.textarea
                 [ css
-                    [ InputStyles.input Standard False
+                    [ InputStyles.input Standard
                     , Css.minHeight (Css.px 100)
                     , Css.maxWidth (Css.px 140)
                     , Css.backgroundColor Colors.white |> Css.important

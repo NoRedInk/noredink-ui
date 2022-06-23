@@ -117,7 +117,7 @@ view_ theme model =
             [ Css.display Css.block ]
             autoresizeAttrs
             [ Html.styled Html.textarea
-                [ InputStyles.input theme model.isInError
+                [ InputStyles.input theme
                 , Css.boxSizing Css.borderBox
                 , case model.height of
                     AutoResize minimumHeight ->
@@ -134,6 +134,10 @@ view_ theme model =
                 , Attributes.placeholder model.placeholder
                 , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
                 , Attributes.class "override-sass-styles custom-focus-ring"
+                , Attributes.classList
+                    [ ( InputStyles.inputClass, True )
+                    , ( InputStyles.errorClass, model.isInError )
+                    ]
                 , Attributes.attribute "aria-invalid" <|
                     if model.isInError then
                         "true"
