@@ -14,6 +14,7 @@ import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
 import Http
+import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -40,6 +41,7 @@ type alias Model key =
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
+    , inputMethod : InputMethod
     }
 
 
@@ -55,6 +57,7 @@ init () url key =
       , moduleStates = moduleStates
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
+      , inputMethod = InputMethod.init
       }
     , Cmd.batch
         [ loadPackage
@@ -72,6 +75,7 @@ type Msg
     | SkipToMainContent
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
+    | NewInputMethod InputMethod
 
 
 update : Msg -> Model key -> ( Model key, Effect )
@@ -164,6 +168,9 @@ update action model =
         Focused _ ->
             ( model, None )
 
+        NewInputMethod inputMethod ->
+            ( { model | inputMethod = inputMethod }, None )
+
 
 type Effect
     = GoToRoute Route
@@ -198,9 +205,12 @@ perform navigationKey effect =
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
-    Dict.values model.moduleStates
-        |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
-        |> Sub.batch
+    Sub.batch
+        [ Dict.values model.moduleStates
+            |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
+            |> Sub.batch
+        , Sub.map NewInputMethod InputMethod.subscriptions
+        ]
 
 
 view : Model key -> Document Msg
@@ -210,7 +220,11 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
-                , Css.Global.global FocusRing.focusVisibleStyles
+                , Css.Global.global
+                    -- TODO: move focus visible styles to input method
+                    (FocusRing.focusVisibleStyles
+                        ++ InputMethod.styles model.inputMethod
+                    )
                 ]
     in
     case model.route of
