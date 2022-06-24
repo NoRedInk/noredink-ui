@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
 @docs Alignment
 
 
@@ -104,6 +104,7 @@ type alias MenuConfig msg =
     , buttonId : String
     , menuId : String
     , zIndex : Int
+    , opensOnHover : Bool
     }
 
 
@@ -193,6 +194,11 @@ menuZIndex value =
     Attribute <| \config -> { config | zIndex = value }
 
 
+opensOnHover : Bool -> Attribute msg
+opensOnHover value =
+    Attribute <| \config -> { config | opensOnHover = value }
+
+
 {-| Menu/pulldown configuration:
 
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
@@ -217,6 +223,7 @@ view attributes config =
             , buttonId = ""
             , menuId = ""
             , zIndex = 1
+            , opensOnHover = False
             }
 
         menuConfig =
@@ -486,6 +493,16 @@ viewCustom config =
                                         }
                                 }
                             )
+                    , if not config.isDisabled && config.opensOnHover then
+                        Events.onMouseEnter
+                            (config.focusAndToggle
+                                { isOpen = True
+                                , focus = Nothing
+                                }
+                            )
+
+                      else
+                        AttributesExtra.none
                     ]
               in
               case config.button of
