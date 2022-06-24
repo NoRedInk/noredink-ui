@@ -849,6 +849,7 @@ styleContent contentVisible config =
 styleContainer : List (Html.Attribute msg)
 styleContainer =
     [ class "Container"
+    , AttributesExtra.nriDescription "Nri-Ui-Menu-V3"
     , css
         [ position relative
         , display inlineBlock
