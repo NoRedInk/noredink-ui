@@ -56,6 +56,9 @@ forMouseUsers =
     , Css.Global.selector ".nri-ui-input:focus"
         [ applyBoxShadows [ InputStyles.focusedInputBoxShadow ]
         ]
+    , Css.Global.selector ".switch-track"
+        [ Css.important (Css.boxShadow Css.none)
+        ]
     ]
 
 
