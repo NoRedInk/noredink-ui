@@ -339,7 +339,7 @@ button attributes title =
                     , height (pct 100)
                     , fontWeight (int 600)
                     , cursor pointer
-                    , focus
+                    , pseudoClass "focus-visible"
                         [ outline none
                         , FocusRing.boxShadows []
                         ]

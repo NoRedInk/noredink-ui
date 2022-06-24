@@ -642,11 +642,13 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
     , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
 
     -- Focus
-    , if config.hasBorder then
-        Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+    , Css.pseudoClass "focus-visible"
+        (if config.hasBorder then
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
 
-      else
-        Css.focus FocusRing.styles
+         else
+            FocusRing.styles
+        )
     ]
 
 

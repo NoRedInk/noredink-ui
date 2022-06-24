@@ -198,7 +198,7 @@ viewSkipLink onSkip =
             [ Css.pseudoClass "not(:focus)"
                 [ Style.invisibleStyle
                 ]
-            , Css.focus
+            , Css.pseudoClass "focus-visible"
                 [ outline none
                 , FocusRing.outerBoxShadow
                 ]
@@ -335,7 +335,7 @@ viewLockedEntry extraStyles entryConfig =
 sharedEntryStyles : List Style
 sharedEntryStyles =
     [ padding2 (px 13) (px 20)
-    , focus [ outline none, FocusRing.insetBoxShadow ]
+    , Css.pseudoClass "focus-visible" [ outline none, FocusRing.insetBoxShadow ]
     , Css.property "word-break" "normal"
     , Css.property "overflow-wrap" "anywhere"
     , displayFlex

@@ -31,7 +31,7 @@ forKeyboardUsers =
     [ Css.Global.class customClass [ Css.outline Css.none ]
     , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
     , Css.Global.class InputStyles.inputClass
-        [ Css.focus
+        [ Css.pseudoClass "focus-visible"
             [ boxShadows [ focusedInputBoxShadow ]
                 |> Css.important
             , Css.Global.withClass "error"

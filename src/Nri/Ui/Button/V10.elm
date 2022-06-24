@@ -608,7 +608,8 @@ renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ config.customStyles
-        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        , Css.pseudoClass "focus-visible"
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
         ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
@@ -635,7 +636,8 @@ renderLink ((ButtonOrLink config) as link_) =
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
         [ buttonStyles config.size config.width colorPalette config.customStyles
-        , Css.focus [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        , Css.pseudoClass "focus-visible"
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
         ]
         (Attributes.class FocusRing.customClass
             :: attributes
@@ -712,7 +714,7 @@ toggleButton config =
                 Css.batch
                     [ Css.color Colors.gray20
                     , Css.backgroundColor Colors.glacier
-                    , Css.focus
+                    , Css.pseudoClass "focus-visible"
                         [ Css.outline Css.none
                         , FocusRing.boxShadows [ toggledBoxShadow ]
                         ]
