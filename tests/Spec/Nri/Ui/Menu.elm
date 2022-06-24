@@ -26,7 +26,7 @@ spec =
         , test "Toggle when mouse clicks" <|
             \() ->
                 program []
-                    -- Menu opens con mouse click
+                    -- Menu opens on mouse click
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> clickMenuButton
