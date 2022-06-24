@@ -531,25 +531,34 @@ viewCustom config =
 
                 CustomButton customButton ->
                     customButton buttonAttributes
-            , div
-                [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
-                , styleContent contentVisible config
-                , Role.menu
-                , Aria.labelledBy config.buttonId
-                , Attributes.id config.menuId
-                , Aria.hidden (not config.isOpen)
-                , css
-                    [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
-                        |> Maybe.withDefault (Css.batch [])
+            , div [ styleOuterContent contentVisible config ]
+                [ div
+                    [ AttributesExtra.nriDescription "menu-hover-bridge"
+                    , css
+                        [ Css.height (px 10)
+                        ]
                     ]
+                    []
+                , div
+                    [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
+                    , styleContent contentVisible config
+                    , Role.menu
+                    , Aria.labelledBy config.buttonId
+                    , Attributes.id config.menuId
+                    , Aria.hidden (not config.isOpen)
+                    , css
+                        [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
+                            |> Maybe.withDefault (Css.batch [])
+                        ]
+                    ]
+                    (viewEntries config
+                        { focusAndToggle = config.focusAndToggle
+                        , previousId = Maybe.withDefault "" maybeLastFocusableElementId
+                        , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
+                        }
+                        config.entries
+                    )
                 ]
-                (viewEntries config
-                    { focusAndToggle = config.focusAndToggle
-                    , previousId = Maybe.withDefault "" maybeLastFocusableElementId
-                    , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
-                    }
-                    config.entries
-                )
             ]
         ]
 
@@ -778,30 +787,41 @@ styleIconContainer =
     ]
 
 
+styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
+styleOuterContent contentVisible config =
+    css
+        [ position absolute
+        , zIndex (int <| config.zIndex + 1)
+        , case config.alignment of
+            Left ->
+                left zero
+
+            Right ->
+                right zero
+        ]
+
+
 styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)
         , border3 (px 1) solid Colors.gray85
         , minWidth (px 202)
-        , position absolute
         , borderRadius (px 8)
-        , marginTop (px 10)
-        , zIndex (int <| config.zIndex + 1)
         , backgroundColor Colors.white
         , listStyle Css.none
         , Shadows.high
         , before
             [ property "content" "\"\""
             , position absolute
-            , top (px -12)
+            , top (px -2)
             , border3 (px 6) solid transparent
             , borderBottomColor Colors.gray85
             ]
         , after
             [ property "content" "\"\""
             , position absolute
-            , top (px -10)
+            , top (px 1)
             , zIndex (int 2)
             , border3 (px 5) solid transparent
             , borderBottomColor Colors.white
@@ -809,15 +829,13 @@ styleContent contentVisible config =
         , case config.alignment of
             Left ->
                 Css.batch
-                    [ left zero
-                    , before [ left (px 19) ]
+                    [ before [ left (px 19) ]
                     , after [ left (px 20) ]
                     ]
 
             Right ->
                 Css.batch
-                    [ right zero
-                    , before [ right (px 19) ]
+                    [ before [ right (px 19) ]
                     , after [ right (px 20) ]
                     ]
         , if contentVisible then
