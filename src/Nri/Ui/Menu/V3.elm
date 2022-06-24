@@ -194,6 +194,8 @@ menuZIndex value =
     Attribute <| \config -> { config | zIndex = value }
 
 
+{-| Whether the menu will be opened/closed by mouseEnter and mouseLeave interaction. Defaults to `False`.
+-}
 opensOnHover : Bool -> Attribute msg
 opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
