@@ -449,7 +449,27 @@ viewCustom config =
 
           else
             Html.text ""
-        , div styleInnerContainer
+        , div
+            [ class "InnerContainer"
+            , css
+                [ position relative
+                , if config.isOpen then
+                    zIndex (int <| config.zIndex + 1)
+
+                  else
+                    Css.batch []
+                ]
+            , if not config.isDisabled && config.opensOnHover && config.isOpen then
+                Events.onMouseLeave
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+
+              else
+                AttributesExtra.none
+            ]
             [ let
                 buttonAttributes =
                     [ Aria.disabled config.isDisabled
@@ -652,14 +672,6 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
 
 
 -- STYLES
-
-
-{-| -}
-styleInnerContainer : List (Html.Attribute msg)
-styleInnerContainer =
-    [ class "InnerContainer"
-    , css [ position relative ]
-    ]
 
 
 styleOverlay : MenuConfig msg -> List (Html.Attribute msg)
