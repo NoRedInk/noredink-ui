@@ -14,17 +14,22 @@ import Test.Html.Selector as Selector exposing (text)
 spec : Test
 spec =
     describe "Nri.Ui.Menu.V3"
-        [ test "Menu.view" <|
+        [ test "Opens when mouse enters" <|
             \() ->
-                let
-                    menuContent =
-                        "Hello"
-                in
                 program [ Menu.opensOnHover True ]
                     -- Menu opens on mouse enter
                     |> mouseEnter menuButtonSelector
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> mouseLeave menuInteractiveAreaSelector
+                    |> ensureViewHasNot (menuContentSelector menuContent)
+                    |> ProgramTest.done
+        , test "Toggle when mouse clicks" <|
+            \() ->
+                program []
+                    -- Menu opens con mouse click
+                    |> clickMenuButton
+                    |> ensureViewHas (menuContentSelector menuContent)
+                    |> clickMenuButton
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         ]
@@ -47,12 +52,12 @@ program attributes =
             \model ->
                 HtmlStyled.div []
                     [ Menu.view attributes
-                        { button = Menu.button [] "Menu"
+                        { button = Menu.button [] menuButton
                         , isOpen = model.isOpen
                         , entries =
                             [ Menu.entry "hello-button" <|
                                 \attrs ->
-                                    ClickableText.button "Hello" [ ClickableText.custom attrs ]
+                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
                             ]
                         , focusAndToggle = \{ isOpen } -> isOpen
                         }
@@ -60,6 +65,16 @@ program attributes =
                     |> HtmlStyled.toUnstyled
         }
         |> ProgramTest.start ()
+
+
+menuButton : String
+menuButton =
+    "Menu"
+
+
+menuContent : String
+menuContent =
+    "Hello"
 
 
 menuButtonSelector : List Selector.Selector
@@ -77,10 +92,10 @@ menuInteractiveAreaSelector =
 
 
 menuContentSelector : String -> List Selector.Selector
-menuContentSelector menuContent =
+menuContentSelector content =
     [ Selector.class "InnerContainer"
     , Selector.attribute (Attributes.attribute "aria-expanded" "true")
-    , Selector.containing [ text menuContent ]
+    , Selector.containing [ text content ]
     ]
 
 
@@ -97,3 +112,13 @@ mouseEnter selectors =
 mouseLeave : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 mouseLeave selectors =
     ProgramTest.simulateDomEvent (Query.find selectors) Event.mouseLeave
+
+
+clickMenuButton : ProgramTest model msg effect -> ProgramTest model msg effect
+clickMenuButton =
+    ProgramTest.simulateDomEvent
+        (Query.find
+            [ Selector.class "ToggleButton"
+            ]
+        )
+        Event.click
