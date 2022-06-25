@@ -12,6 +12,7 @@ module Examples.Tabs exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -119,7 +120,7 @@ example =
                         let
                             code =
                                 [ moduleName ++ ".view"
-                                , "    { title = " ++ " TODO"
+                                , "    { title = " ++ Code.maybeString settings.title
                                 , "    , alignment = " ++ " TODO"
                                 , "    , customSpacing = " ++ " TODO"
                                 , "    , focusAndSelect = " ++ " TODO"
