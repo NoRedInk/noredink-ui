@@ -106,6 +106,9 @@ example =
             let
                 settings =
                     Control.currentValue model.settings
+
+                tabs =
+                    allTabs model.openTooltip settings.withTooltips
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -114,7 +117,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraImports = []
+                , extraImports = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
                 , toExampleCode =
                     \_ ->
                         let
@@ -125,7 +128,7 @@ example =
                                 , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
                                 , "    , focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , tabs = " ++ "[]"
+                                , "    , tabs = " ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first tabs)
                                 , "    }"
                                 ]
                                     |> String.join "\n"
@@ -141,62 +144,68 @@ example =
                 , customSpacing = settings.customSpacing
                 , focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = allTabs model.openTooltip settings.labelledBy
+                , tabs = List.map Tuple.second tabs
                 }
             ]
     }
 
 
-allTabs : Maybe Int -> Maybe String -> List (Tab Int Msg)
-allTabs openTooltipId labelledBy =
-    let
-        bulbIcon =
-            UiIcon.bulb
-                |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 45)
-                |> Svg.withLabel "Bulb"
-                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                |> Svg.toHtml
-    in
-    [ Tabs.build { id = 0, idString = "tab-0" }
-        ([ Tabs.tabString "1"
-         , Tabs.withTooltip
-            [ Tooltip.plaintext "Link Example"
-            , Tooltip.onToggle (ToggleTooltip 0)
-            , Tooltip.alignStart (Css.px 75)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just 0)
-            ]
-         , Tabs.panelHtml (Html.text "First Panel")
-         ]
-            ++ (case labelledBy of
-                    Nothing ->
-                        []
+allTabs : Maybe Int -> Bool -> List ( String, Tab Int Msg )
+allTabs openTooltipId withTooltips =
+    List.repeat 4 ()
+        |> List.indexedMap (\i _ -> buildTooltip openTooltipId withTooltips i)
 
-                    Just labelledById ->
-                        [ Tabs.labelledBy labelledById ]
+
+buildTooltip : Maybe Int -> Bool -> Int -> ( String, Tab Int Msg )
+buildTooltip openTooltipId withTooltips id =
+    let
+        idString =
+            String.fromInt (id + 1)
+
+        tabIdString =
+            "tab-" ++ idString
+
+        tabName =
+            "Tab " ++ idString
+
+        panelName =
+            "Panel " ++ idString
+    in
+    ( String.join ""
+        [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
+        , "\n\t    [ Tabs.tabString " ++ Code.string tabName
+        , "\n\t    , Tabs.panelHtml (text " ++ Code.string panelName ++ ")"
+        , if withTooltips then
+            String.join "\n\t    "
+                [ "\n\t    , Tabs.withTooltip"
+                , "   [ Tooltip.plaintext " ++ Code.string tabName
+                , "    -- You will need to have a tooltip handler"
+                , "    -- , Tooltip.onToggle ToggleTooltip " ++ ""
+                , "   , Tooltip.open " ++ Code.bool (openTooltipId == Just id)
+                , "   ]"
+                ]
+
+          else
+            ""
+        , "\n\t    ]"
+        ]
+    , Tabs.build { id = id, idString = tabIdString }
+        ([ Tabs.tabString tabName
+         , Tabs.panelHtml (Html.text panelName)
+         ]
+            ++ (if withTooltips then
+                    [ Tabs.withTooltip
+                        [ Tooltip.plaintext tabName
+                        , Tooltip.onToggle (ToggleTooltip id)
+                        , Tooltip.open (openTooltipId == Just id)
+                        ]
+                    ]
+
+                else
+                    []
                )
         )
-    , Tabs.build { id = 1, idString = "tab-1" }
-        [ Tabs.tabString "Second Tab (disabled)"
-        , Tabs.disabled True
-        , Tabs.panelHtml (Html.text "Second Panel")
-        ]
-    , Tabs.build { id = 2, idString = "tab-2" }
-        [ Tabs.tabHtml bulbIcon
-        , Tabs.withTooltip
-            [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onToggle (ToggleTooltip 2)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just 2)
-            ]
-        , Tabs.panelHtml (Html.text "Third Panel")
-        ]
-    , Tabs.build { id = 3, idString = "tab-3" }
-        [ Tabs.tabString "Fourth Tab"
-        , Tabs.panelHtml (Html.text "Fourth Panel")
-        ]
-    ]
+    )
 
 
 type alias State =
@@ -218,7 +227,7 @@ type alias Settings =
     { title : Maybe String
     , alignment : Alignment
     , customSpacing : Maybe Float
-    , labelledBy : Maybe String
+    , withTooltips : Bool
     }
 
 
@@ -244,7 +253,7 @@ initSettings =
                     ]
                 )
             )
-        |> Control.field "labelledBy" (Control.maybe False (Control.string "someId"))
+        |> Control.field "withTooltips" (Control.bool True)
 
 
 type Msg

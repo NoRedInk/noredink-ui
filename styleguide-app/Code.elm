@@ -1,6 +1,7 @@
 module Code exposing
     ( string, maybeString
     , maybeFloat
+    , bool
     , maybe
     )
 
@@ -8,6 +9,7 @@ module Code exposing
 
 @docs string, maybeString
 @docs maybeFloat
+@docs bool
 @docs maybe
 
 -}
@@ -35,3 +37,9 @@ maybeString =
 maybeFloat : Maybe Float -> String
 maybeFloat =
     maybe << Maybe.map String.fromFloat
+
+
+{-| -}
+bool : Bool -> String
+bool =
+    Debug.toString
