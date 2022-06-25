@@ -121,7 +121,7 @@ example =
                             code =
                                 [ moduleName ++ ".view"
                                 , "    { title = " ++ Code.maybeString settings.title
-                                , "    , alignment = " ++ " TODO"
+                                , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
                                 , "    , customSpacing = " ++ " TODO"
                                 , "    , focusAndSelect = " ++ " TODO"
                                 , "    , selected = " ++ " TODO"
