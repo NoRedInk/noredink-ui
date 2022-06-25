@@ -14,6 +14,7 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (fromUnstyled)
 import Html.Styled.Attributes exposing (css)
@@ -25,6 +26,176 @@ import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
+
+
+moduleName : String
+moduleName =
+    "Tabs"
+
+
+version : Int
+version =
+    7
+
+
+example : Example State Msg
+example =
+    { name = moduleName
+    , version = version
+    , categories = [ Layout ]
+    , keyboardSupport =
+        [ { keys = [ KeyboardSupport.Tab ]
+          , result = "Move focus to the currently-selected Tab's tab panel"
+          }
+        , { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the tab to the left of the currently-selected Tab"
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the tab to the right of the currently-selected Tab"
+          }
+        ]
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , preview =
+        [ -- faking a mini version of the Tabs component to give styleguide users a sense of what the
+          -- component might look like
+          Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
+            [ Html.div
+                [ css
+                    [ Css.backgroundColor Colors.white
+                    , Css.padding (Css.px 4)
+                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
+                    , Css.border3 (Css.px 1) Css.solid Colors.navy
+                    , Css.borderBottomWidth Css.zero
+                    ]
+                ]
+                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
+            , Html.div
+                [ css [ Css.width (Css.px 4), Css.borderBottom3 (Css.px 1) Css.solid Colors.navy ]
+                ]
+                []
+            , Html.div
+                [ css
+                    [ Css.backgroundColor Colors.frost
+                    , Css.padding (Css.px 4)
+                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
+                    , Css.border3 (Css.px 1) Css.solid Colors.navy
+                    ]
+                ]
+                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
+            , Html.div
+                [ css
+                    [ Css.width (Css.px 30)
+                    , Css.borderBottom3 (Css.px 1) Css.solid Colors.navy
+                    ]
+                ]
+                []
+            , Html.div
+                [ css
+                    [ Css.paddingTop (Css.px 4)
+                    , Css.minWidth (Css.px 100)
+                    ]
+                ]
+                [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
+            ]
+        ]
+    , view =
+        \ellieLinkConfig model ->
+            let
+                settings =
+                    Control.currentValue model.settings
+            in
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = SetSettings
+                , settings = model.settings
+                , mainType = "RootHtml.Html { select : Int, focus : Maybe String }"
+                , extraImports = []
+                , toExampleCode =
+                    \_ ->
+                        let
+                            code =
+                                [ moduleName ++ ".view"
+                                , "    { title = " ++ " TODO"
+                                , "    , alignment = " ++ " TODO"
+                                , "    , customSpacing = " ++ " TODO"
+                                , "    , focusAndSelect = " ++ " TODO"
+                                , "    , selected = " ++ " TODO"
+                                , "    , tabs = " ++ " TODO"
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                        in
+                        [ { sectionName = "Example"
+                          , code = code
+                          }
+                        ]
+                }
+            , Tabs.view
+                { title = settings.title
+                , alignment = settings.alignment
+                , customSpacing = settings.customSpacing
+                , focusAndSelect = FocusAndSelectTab
+                , selected = model.selected
+                , tabs = allTabs model.openTooltip settings.labelledBy
+                }
+            ]
+    }
+
+
+allTabs : Maybe Id -> Maybe String -> List (Tab Id Msg)
+allTabs openTooltipId labelledBy =
+    let
+        bulbIcon =
+            UiIcon.bulb
+                |> Svg.withWidth (Css.px 40)
+                |> Svg.withHeight (Css.px 45)
+                |> Svg.withLabel "Bulb"
+                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
+                |> Svg.toHtml
+    in
+    [ Tabs.build { id = First, idString = "tab-0" }
+        ([ Tabs.tabString "1"
+         , Tabs.withTooltip
+            [ Tooltip.plaintext "Link Example"
+            , Tooltip.onToggle (ToggleTooltip First)
+            , Tooltip.alignStart (Css.px 75)
+            , Tooltip.primaryLabel
+            , Tooltip.open (openTooltipId == Just First)
+            ]
+         , Tabs.panelHtml (Html.text "First Panel")
+         ]
+            ++ (case labelledBy of
+                    Nothing ->
+                        []
+
+                    Just labelledById ->
+                        [ Tabs.labelledBy labelledById ]
+               )
+        )
+    , Tabs.build { id = Second, idString = "tab-1" }
+        [ Tabs.tabString "Second Tab (disabled)"
+        , Tabs.disabled True
+        , Tabs.panelHtml (Html.text "Second Panel")
+        ]
+    , Tabs.build { id = Third, idString = "tab-2" }
+        [ Tabs.tabHtml bulbIcon
+        , Tabs.withTooltip
+            [ Tooltip.plaintext "The Electrifying Third Tab"
+            , Tooltip.onToggle (ToggleTooltip Third)
+            , Tooltip.primaryLabel
+            , Tooltip.open (openTooltipId == Just Third)
+            ]
+        , Tabs.panelHtml (Html.text "Third Panel")
+        ]
+    , Tabs.build { id = Fourth, idString = "tab-3" }
+        [ Tabs.tabString "Fourth Tab"
+        , Tabs.panelHtml (Html.text "Fourth Panel")
+        ]
+    ]
 
 
 type alias State =
@@ -116,141 +287,3 @@ update msg model =
               }
             , Cmd.none
             )
-
-
-exampleName : String
-exampleName =
-    "Tabs"
-
-
-example : Example State Msg
-example =
-    { name = exampleName
-    , version = 7
-    , categories = [ Layout ]
-    , keyboardSupport =
-        [ { keys = [ KeyboardSupport.Tab ]
-          , result = "Move focus to the currently-selected Tab's tab panel"
-          }
-        , { keys = [ Arrow KeyboardSupport.Left ]
-          , result = "Select the tab to the left of the currently-selected Tab"
-          }
-        , { keys = [ Arrow KeyboardSupport.Right ]
-          , result = "Select the tab to the right of the currently-selected Tab"
-          }
-        ]
-    , state = init
-    , update = update
-    , subscriptions = \_ -> Sub.none
-    , preview =
-        [ -- faking a mini version of the Tabs component to give styleguide users a sense of what the
-          -- component might look like
-          Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
-            [ Html.div
-                [ css
-                    [ Css.backgroundColor Colors.white
-                    , Css.padding (Css.px 4)
-                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
-                    , Css.border3 (Css.px 1) Css.solid Colors.navy
-                    , Css.borderBottomWidth Css.zero
-                    ]
-                ]
-                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
-            , Html.div
-                [ css [ Css.width (Css.px 4), Css.borderBottom3 (Css.px 1) Css.solid Colors.navy ]
-                ]
-                []
-            , Html.div
-                [ css
-                    [ Css.backgroundColor Colors.frost
-                    , Css.padding (Css.px 4)
-                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
-                    , Css.border3 (Css.px 1) Css.solid Colors.navy
-                    ]
-                ]
-                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
-            , Html.div
-                [ css
-                    [ Css.width (Css.px 30)
-                    , Css.borderBottom3 (Css.px 1) Css.solid Colors.navy
-                    ]
-                ]
-                []
-            , Html.div
-                [ css
-                    [ Css.paddingTop (Css.px 4)
-                    , Css.minWidth (Css.px 100)
-                    ]
-                ]
-                [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
-            ]
-        ]
-    , view =
-        \ellieLinkConfig model ->
-            let
-                settings =
-                    Control.currentValue model.settings
-            in
-            [ Control.view SetSettings model.settings |> fromUnstyled
-            , Tabs.view
-                { title = settings.title
-                , alignment = settings.alignment
-                , customSpacing = settings.customSpacing
-                , focusAndSelect = FocusAndSelectTab
-                , selected = model.selected
-                , tabs = allTabs model.openTooltip settings.labelledBy
-                }
-            ]
-    }
-
-
-allTabs : Maybe Id -> Maybe String -> List (Tab Id Msg)
-allTabs openTooltipId labelledBy =
-    let
-        bulbIcon =
-            UiIcon.bulb
-                |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 45)
-                |> Svg.withLabel "Bulb"
-                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                |> Svg.toHtml
-    in
-    [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.tabString "1"
-         , Tabs.withTooltip
-            [ Tooltip.plaintext "Link Example"
-            , Tooltip.onToggle (ToggleTooltip First)
-            , Tooltip.alignStart (Css.px 75)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just First)
-            ]
-         , Tabs.panelHtml (Html.text "First Panel")
-         ]
-            ++ (case labelledBy of
-                    Nothing ->
-                        []
-
-                    Just labelledById ->
-                        [ Tabs.labelledBy labelledById ]
-               )
-        )
-    , Tabs.build { id = Second, idString = "tab-1" }
-        [ Tabs.tabString "Second Tab (disabled)"
-        , Tabs.disabled True
-        , Tabs.panelHtml (Html.text "Second Panel")
-        ]
-    , Tabs.build { id = Third, idString = "tab-2" }
-        [ Tabs.tabHtml bulbIcon
-        , Tabs.withTooltip
-            [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onToggle (ToggleTooltip Third)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just Third)
-            ]
-        , Tabs.panelHtml (Html.text "Third Panel")
-        ]
-    , Tabs.build { id = Fourth, idString = "tab-3" }
-        [ Tabs.tabString "Fourth Tab"
-        , Tabs.panelHtml (Html.text "Fourth Panel")
-        ]
-    ]
