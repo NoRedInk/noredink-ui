@@ -1,11 +1,13 @@
 module Code exposing
     ( string, maybeString
+    , maybeFloat
     , maybe
     )
 
 {-|
 
 @docs string, maybeString
+@docs maybeFloat
 @docs maybe
 
 -}
@@ -27,3 +29,9 @@ maybe =
 maybeString : Maybe String -> String
 maybeString =
     maybe << Maybe.map string
+
+
+{-| -}
+maybeFloat : Maybe Float -> String
+maybeFloat =
+    maybe << Maybe.map String.fromFloat

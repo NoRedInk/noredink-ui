@@ -122,7 +122,7 @@ example =
                                 [ moduleName ++ ".view"
                                 , "    { title = " ++ Code.maybeString settings.title
                                 , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
-                                , "    , customSpacing = " ++ " TODO"
+                                , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
                                 , "    , focusAndSelect = " ++ " TODO"
                                 , "    , selected = " ++ " TODO"
                                 , "    , tabs = " ++ " TODO"
