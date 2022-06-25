@@ -123,9 +123,9 @@ example =
                                 , "    { title = " ++ Code.maybeString settings.title
                                 , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
                                 , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
-                                , "    , focusAndSelect = " ++ " TODO"
-                                , "    , selected = " ++ " TODO"
-                                , "    , tabs = " ++ " TODO"
+                                , "    , focusAndSelect = identity"
+                                , "    , selected = " ++ String.fromInt model.selected
+                                , "    , tabs = " ++ "[]"
                                 , "    }"
                                 ]
                                     |> String.join "\n"
@@ -147,7 +147,7 @@ example =
     }
 
 
-allTabs : Maybe Id -> Maybe String -> List (Tab Id Msg)
+allTabs : Maybe Int -> Maybe String -> List (Tab Int Msg)
 allTabs openTooltipId labelledBy =
     let
         bulbIcon =
@@ -158,14 +158,14 @@ allTabs openTooltipId labelledBy =
                 |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
                 |> Svg.toHtml
     in
-    [ Tabs.build { id = First, idString = "tab-0" }
+    [ Tabs.build { id = 0, idString = "tab-0" }
         ([ Tabs.tabString "1"
          , Tabs.withTooltip
             [ Tooltip.plaintext "Link Example"
-            , Tooltip.onToggle (ToggleTooltip First)
+            , Tooltip.onToggle (ToggleTooltip 0)
             , Tooltip.alignStart (Css.px 75)
             , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just First)
+            , Tooltip.open (openTooltipId == Just 0)
             ]
          , Tabs.panelHtml (Html.text "First Panel")
          ]
@@ -177,22 +177,22 @@ allTabs openTooltipId labelledBy =
                         [ Tabs.labelledBy labelledById ]
                )
         )
-    , Tabs.build { id = Second, idString = "tab-1" }
+    , Tabs.build { id = 1, idString = "tab-1" }
         [ Tabs.tabString "Second Tab (disabled)"
         , Tabs.disabled True
         , Tabs.panelHtml (Html.text "Second Panel")
         ]
-    , Tabs.build { id = Third, idString = "tab-2" }
+    , Tabs.build { id = 2, idString = "tab-2" }
         [ Tabs.tabHtml bulbIcon
         , Tabs.withTooltip
             [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onToggle (ToggleTooltip Third)
+            , Tooltip.onToggle (ToggleTooltip 2)
             , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just Third)
+            , Tooltip.open (openTooltipId == Just 2)
             ]
         , Tabs.panelHtml (Html.text "Third Panel")
         ]
-    , Tabs.build { id = Fourth, idString = "tab-3" }
+    , Tabs.build { id = 3, idString = "tab-3" }
         [ Tabs.tabString "Fourth Tab"
         , Tabs.panelHtml (Html.text "Fourth Panel")
         ]
@@ -200,15 +200,15 @@ allTabs openTooltipId labelledBy =
 
 
 type alias State =
-    { selected : Id
+    { selected : Int
     , settings : Control Settings
-    , openTooltip : Maybe Id
+    , openTooltip : Maybe Int
     }
 
 
 init : State
 init =
-    { selected = First
+    { selected = 0
     , settings = initSettings
     , openTooltip = Nothing
     }
@@ -247,18 +247,11 @@ initSettings =
         |> Control.field "labelledBy" (Control.maybe False (Control.string "someId"))
 
 
-type Id
-    = First
-    | Second
-    | Third
-    | Fourth
-
-
 type Msg
-    = FocusAndSelectTab { select : Id, focus : Maybe String }
+    = FocusAndSelectTab { select : Int, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
-    | ToggleTooltip Id Bool
+    | ToggleTooltip Int Bool
 
 
 update : Msg -> State -> ( State, Cmd Msg )
