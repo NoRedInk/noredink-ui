@@ -1,3 +1,6 @@
+[build.environment]
+  NODE_ENV = "production"
+
 [build]
 command = "script/netlify.sh"
 publish = "public"
