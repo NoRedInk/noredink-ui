@@ -858,7 +858,10 @@ viewTooltip tooltipId config =
                         , Css.color Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
-                        , Css.pseudoClass "focus-visible" FocusRing.tightStyles
+                        , Css.pseudoClass "focus-visible"
+                            [ Css.outline Css.none
+                            , Css.property "box-shadow" "0 0 0 2px #FFF"
+                            ]
                         ]
                     ]
                  ]
