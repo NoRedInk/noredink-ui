@@ -47,9 +47,13 @@ describe("UI tests", function () {
     }
   };
 
-  const defaultProcessing = async (name, location) => {
+  const goTo = async (name, location) => {
     await page.goto(location);
     await page.waitForSelector(`#${name.replace(".", "-")}`);
+  };
+
+  const defaultProcessing = async (name, location) => {
+    await goTo(name, location);
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -59,8 +63,7 @@ describe("UI tests", function () {
   };
 
   const messageProcessing = async (name, location) => {
-    await page.goto(location);
-    await page.waitForSelector(`#${name.replace(".", "-")}`);
+    await goTo(name, location);
     await percySnapshot(page, name);
 
     var axe = await new AxePuppeteer(page)
@@ -111,8 +114,7 @@ describe("UI tests", function () {
   const specialProcessing = {
     Message: messageProcessing,
     Modal: async (name, location) => {
-      await page.goto(location);
-      await page.waitForSelector(`#${name}`);
+      await goTo(name, location);
       await page.click("#launch-modal");
       await page.waitForSelector('[role="dialog"]');
       await percySnapshot(page, "Full Info Modal");
