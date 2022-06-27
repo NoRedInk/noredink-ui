@@ -703,10 +703,8 @@ toggleButton config =
     let
         toggledBoxShadow =
             "inset 0 3px 0 "
-                ++ (Colors.gray20
-                        |> ColorsExtra.fromCssColor
-                        |> TransparentColor.fromColor (TransparentColor.customOpacity 0.2)
-                        |> TransparentColor.toRGBAString
+                ++ (ColorsExtra.withAlpha 0.2 Colors.gray20
+                        |> ColorsExtra.toCssString
                    )
 
         toggledStyles =

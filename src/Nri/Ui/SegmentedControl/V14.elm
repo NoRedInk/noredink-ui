@@ -34,7 +34,6 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 import TabsInternal.V2 as TabsInternal
-import TransparentColor
 
 
 {-| -}
@@ -324,10 +323,8 @@ focusedSegmentBoxShadowValue : String
 focusedSegmentBoxShadowValue =
     let
         colorStr =
-            Colors.gray20
-                |> ColorsExtra.fromCssColor
-                |> TransparentColor.fromColor (TransparentColor.customOpacity 0.2)
-                |> TransparentColor.toRGBAString
+            ColorsExtra.withAlpha 0.2 Colors.gray20
+                |> ColorsExtra.toCssString
     in
     "inset 0 3px 0 " ++ colorStr
 

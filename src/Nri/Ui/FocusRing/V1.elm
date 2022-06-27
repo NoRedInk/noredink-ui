@@ -16,7 +16,7 @@ module Nri.Ui.FocusRing.V1 exposing
 
 import Css
 import Css.Global exposing (Snippet)
-import Nri.Ui.Colors.Extra exposing (toCssString)
+import Nri.Ui.Colors.Extra exposing (toCssString, withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (focusedErrorInputBoxShadow, focusedInputBoxShadow)
 
@@ -97,8 +97,8 @@ styles =
 boxShadows : List String -> Css.Style
 boxShadows existingBoxShadows =
     existingBoxShadows
-        ++ [ "0 0 0 3px " ++ toCssString Colors.white
-           , "0 0 0 6px " ++ toCssString Colors.red
+        ++ [ "0 0 0 3px " ++ innerColor
+           , "0 0 0 6px " ++ outerColor
            ]
         |> applyBoxShadows
 
@@ -110,7 +110,7 @@ Be very sure this is what you need before using this!
 -}
 insetBoxShadow : Css.Style
 insetBoxShadow =
-    applyBoxShadows [ "inset 0 0 0 3px " ++ toCssString Colors.red ]
+    applyBoxShadows [ "inset 0 0 0 3px " ++ outerColor ]
 
 
 {-| In special cases, we don't use a two-tone focus ring.
@@ -120,10 +120,20 @@ Be very sure this is what you need before using this!
 -}
 outerBoxShadow : Css.Style
 outerBoxShadow =
-    applyBoxShadows [ "0 0 0 3px " ++ toCssString Colors.red ]
+    applyBoxShadows [ "0 0 0 3px " ++ outerColor ]
 
 
 applyBoxShadows : List String -> Css.Style
 applyBoxShadows =
     -- using `property` due to https://github.com/rtfeldman/elm-css/issues/265
     String.join "," >> Css.property "box-shadow"
+
+
+innerColor : String
+innerColor =
+    toCssString Colors.white
+
+
+outerColor : String
+outerColor =
+    toCssString (withAlpha 0.5 Colors.red)
