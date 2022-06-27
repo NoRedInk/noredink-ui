@@ -1,6 +1,6 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( forKeyboardUsers, forMouseUsers
-    , styles
+    , styles, tightStyles
     , boxShadows, outerBoxShadow, insetBoxShadow
     , customClass
     )
@@ -8,7 +8,7 @@ module Nri.Ui.FocusRing.V1 exposing
 {-|
 
 @docs forKeyboardUsers, forMouseUsers
-@docs styles
+@docs styles, tightStyles
 @docs boxShadows, outerBoxShadow, insetBoxShadow
 @docs customClass
 
@@ -30,14 +30,7 @@ forKeyboardUsers : List Css.Global.Snippet
 forKeyboardUsers =
     [ Css.Global.class customClass [ Css.outline Css.none ]
     , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
-    , Css.Global.selector "p a:focus-visible"
-        [ Css.important
-            (applyBoxShadows
-                [ "inset 0 0 0 2px " ++ innerColor
-                , "0 0 0 2px " ++ outerColor
-                ]
-            )
-        ]
+    , Css.Global.selector "p a:focus-visible" tightStyles
     , Css.Global.class InputStyles.inputClass
         [ Css.pseudoClass "focus-visible"
             [ boxShadows [ focusedInputBoxShadow ]
@@ -109,6 +102,20 @@ boxShadows existingBoxShadows =
            , "0 0 0 6px " ++ outerColor
            ]
         |> applyBoxShadows
+
+
+{-| Prefer `styles` over tightStyles, except in cases where line spacing/font size will otherwise cause obscured content.
+-}
+tightStyles : List Css.Style
+tightStyles =
+    [ Css.outline Css.none
+    , Css.important
+        (applyBoxShadows
+            [ "inset 0 0 0 2px " ++ innerColor
+            , "0 0 0 2px " ++ outerColor
+            ]
+        )
+    ]
 
 
 {-| In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured.

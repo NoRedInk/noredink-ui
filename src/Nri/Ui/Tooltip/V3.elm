@@ -68,6 +68,7 @@ import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -851,8 +852,15 @@ viewTooltip tooltipId config =
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
-                 , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
-                 , Global.descendants [ Global.a [ Css.color Colors.white ] ]
+                 , Global.descendants
+                    [ Global.a
+                        [ Css.textDecoration Css.underline
+                        , Css.color Colors.white
+                        , Css.visited [ Css.color Colors.white ]
+                        , Css.hover [ Css.color Colors.white ]
+                        , Css.pseudoClass "focus-visible" FocusRing.tightStyles
+                        ]
+                    ]
                  ]
                     ++ config.tooltipStyleOverrides
                 )
