@@ -17,15 +17,13 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (fromUnstyled)
+import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 

@@ -2,7 +2,6 @@ module Code exposing
     ( string, maybeString
     , maybeFloat
     , bool
-    , maybe
     )
 
 {-|
@@ -10,7 +9,6 @@ module Code exposing
 @docs string, maybeString
 @docs maybeFloat
 @docs bool
-@docs maybe
 
 -}
 
