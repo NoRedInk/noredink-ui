@@ -136,4 +136,4 @@ innerColor =
 
 outerColor : String
 outerColor =
-    toCssString (withAlpha 0.5 Colors.red)
+    toCssString Colors.red
