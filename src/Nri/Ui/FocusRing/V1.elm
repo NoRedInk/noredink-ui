@@ -30,6 +30,14 @@ forKeyboardUsers : List Css.Global.Snippet
 forKeyboardUsers =
     [ Css.Global.class customClass [ Css.outline Css.none ]
     , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    , Css.Global.selector "p a:focus-visible"
+        [ Css.important
+            (applyBoxShadows
+                [ "inset 0 0 0 2px " ++ innerColor
+                , "0 0 0 2px " ++ outerColor
+                ]
+            )
+        ]
     , Css.Global.class InputStyles.inputClass
         [ Css.pseudoClass "focus-visible"
             [ boxShadows [ focusedInputBoxShadow ]
