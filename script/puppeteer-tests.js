@@ -49,7 +49,7 @@ describe("UI tests", function () {
 
   const defaultProcessing = async (name, location) => {
     await page.goto(location);
-    await page.waitFor(`#${name.replace(".", "-")}`);
+    await page.waitForSelector(`#${name.replace(".", "-")}`);
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -60,7 +60,7 @@ describe("UI tests", function () {
 
   const messageProcessing = async (name, location) => {
     await page.goto(location);
-    await page.waitFor(`#${name.replace(".", "-")}`);
+    await page.waitForSelector(`#${name.replace(".", "-")}`);
     await percySnapshot(page, name);
 
     var axe = await new AxePuppeteer(page)
@@ -88,7 +88,7 @@ describe("UI tests", function () {
 
   const iconProcessing = async (name, location) => {
     await page.goto(location);
-    await page.waitFor(`#${name}`);
+    await page.waitForSelector(`#${name}`);
     await percySnapshot(page, name);
 
     // visible icon names snapshot
@@ -112,9 +112,9 @@ describe("UI tests", function () {
     Message: messageProcessing,
     Modal: async (name, location) => {
       await page.goto(location);
-      await page.waitFor(`#${name}`);
+      await page.waitForSelector(`#${name}`);
       await page.click("#launch-modal");
-      await page.waitFor('[role="dialog"]');
+      await page.waitForSelector('[role="dialog"]');
       await percySnapshot(page, "Full Info Modal");
 
       const results = await new AxePuppeteer(page)
@@ -125,7 +125,7 @@ describe("UI tests", function () {
       await page.click('[aria-label="Close modal"]');
       await page.select("select", "warning");
       await page.click("#launch-modal");
-      await page.waitFor('[role="dialog"]');
+      await page.waitForSelector('[role="dialog"]');
       await percySnapshot(page, "Full Warning Modal");
       await page.click('[aria-label="Close modal"]');
     },
