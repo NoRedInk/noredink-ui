@@ -93,6 +93,7 @@ example =
                 [ ( "assessment", AssignmentIcon.assessment )
                 , ( "standards", AssignmentIcon.standards )
                 , ( "writing", AssignmentIcon.writing )
+                , ( "modules", AssignmentIcon.modules )
                 ]
             ]
     }
