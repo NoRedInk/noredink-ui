@@ -91,7 +91,8 @@ checked idSuffix =
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
+        , SvgAttributes.viewBox "0 -1 27 29"
+        , SvgAttributes.fill "purple"
         ]
         [ Svg.defs []
             [ Svg.filter
@@ -131,19 +132,21 @@ checked idSuffix =
             , SvgAttributes.fill "none"
             , SvgAttributes.fillRule "evenodd"
             ]
-            [ Svg.g
-                []
-                [ checkboxBackground
-                    [ SvgAttributes.fill "#D4F0FF"
-                    , SvgAttributes.fillRule "evenodd"
-                    ]
-                , checkboxBackground
-                    [ SvgAttributes.fill "black"
-                    , SvgAttributes.fillOpacity "1"
-                    , SvgAttributes.filter filterUrl
-                    ]
+            [ -- Blue background
+              checkboxBackground
+                [ SvgAttributes.fill "#D4F0FF"
+                , SvgAttributes.fillRule "evenodd"
+                , SvgAttributes.stroke "green"
+                , SvgAttributes.strokeLinejoin "round"
                 ]
-            , Svg.g
+            , -- the filter (looks like a box shadow inset on the top)
+              checkboxBackground
+                [ SvgAttributes.fill "black"
+                , SvgAttributes.fillOpacity "1"
+                , SvgAttributes.filter filterUrl
+                ]
+            , -- Checkmark
+              Svg.g
                 [ SvgAttributes.transform "translate(3.600000, 3.600000)"
                 , SvgAttributes.fill "#146AFF"
                 ]
