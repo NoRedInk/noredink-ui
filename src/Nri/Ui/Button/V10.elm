@@ -106,7 +106,6 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Svg
 import Svg.Attributes
-import TransparentColor
 
 
 styledName : String -> String

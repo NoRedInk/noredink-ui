@@ -16,7 +16,7 @@ module Nri.Ui.FocusRing.V1 exposing
 
 import Css
 import Css.Global exposing (Snippet)
-import Nri.Ui.Colors.Extra exposing (toCssString, withAlpha)
+import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (focusedErrorInputBoxShadow, focusedInputBoxShadow)
 

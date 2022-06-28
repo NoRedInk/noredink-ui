@@ -10,10 +10,7 @@ appropriate. Inspired by a blog post from [David Gilbertson](https://medium.com/
 -}
 
 import Browser.Events
-import Css exposing (..)
 import Css.Global exposing (Snippet)
-import Html.Styled exposing (Attribute)
-import Html.Styled.Attributes exposing (css)
 import Json.Decode as Decode
 import Nri.Ui.FocusRing.V1 as FocusRing
 

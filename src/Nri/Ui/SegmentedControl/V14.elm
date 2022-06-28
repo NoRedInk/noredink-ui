@@ -26,7 +26,7 @@ import Css exposing (..)
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Nri.Ui.Colors.Extra as ColorsExtra exposing (withAlpha)
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
