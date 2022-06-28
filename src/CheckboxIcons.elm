@@ -5,6 +5,8 @@ module CheckboxIcons exposing
     , unchecked
     )
 
+import Nri.Ui.Colors.Extra exposing (toCssString)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -22,7 +24,7 @@ unchecked idSuffix =
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
+        , SvgAttributes.viewBox viewBox
         ]
         [ Svg.defs []
             [ Svg.filter
@@ -91,7 +93,7 @@ checked idSuffix =
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 -1 27 29"
+        , SvgAttributes.viewBox viewBox
         , SvgAttributes.fill "purple"
         ]
         [ Svg.defs []
@@ -136,8 +138,7 @@ checked idSuffix =
               checkboxBackground
                 [ SvgAttributes.fill "#D4F0FF"
                 , SvgAttributes.fillRule "evenodd"
-                , SvgAttributes.stroke "green"
-                , SvgAttributes.strokeLinejoin "round"
+                , SvgAttributes.stroke (toCssString Colors.azure)
                 ]
             , -- the filter (looks like a box shadow inset on the top)
               checkboxBackground
@@ -172,7 +173,7 @@ checkedPartially idSuffix =
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
+        , SvgAttributes.viewBox viewBox
         ]
         [ Svg.defs []
             [ Svg.filter
@@ -237,12 +238,20 @@ checkedPartially idSuffix =
         |> Nri.Ui.Svg.V1.fromHtml
 
 
+viewBox : String
+viewBox =
+    "0 -1 27 29"
+
+
 checkboxBackground attrs =
     Svg.rect
         ([ SvgAttributes.x "0"
          , SvgAttributes.y "0"
          , SvgAttributes.width "27"
          , SvgAttributes.height "27"
+         , SvgAttributes.strokeWidth "1px"
+         , SvgAttributes.strokeLinejoin "round"
+         , SvgAttributes.stroke "none"
          , SvgAttributes.rx "4"
          ]
             ++ attrs
@@ -263,7 +272,7 @@ lockOnInside idSuffix =
     Svg.svg
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
+        , SvgAttributes.viewBox viewBox
         ]
         [ Svg.defs []
             [ Svg.filter
