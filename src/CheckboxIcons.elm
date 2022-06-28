@@ -95,7 +95,6 @@ checked idSuffix =
         [ SvgAttributes.width "27px"
         , SvgAttributes.height "27px"
         , SvgAttributes.viewBox viewBox
-        , SvgAttributes.fill "purple"
         ]
         [ Svg.defs []
             [ Svg.filter
