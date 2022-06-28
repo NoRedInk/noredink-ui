@@ -608,7 +608,7 @@ unselectedSvg =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
-        |> withImageBorder Colors.gray85
+        |> withImageBorder Colors.gray75
 
 
 selectedSvg : Svg
@@ -701,7 +701,7 @@ lockedSvg =
             ]
         ]
         |> Nri.Ui.Svg.V1.fromHtml
-        |> withImageBorder Colors.gray85
+        |> withImageBorder Colors.gray75
 
 
 withImageBorder : Color -> Svg -> Svg
