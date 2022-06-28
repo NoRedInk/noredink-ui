@@ -49,7 +49,7 @@ describe("UI tests", function () {
 
   const goTo = async (name, location) => {
     await page.goto(location);
-    await page.waitForSelector(`#${name.replace(".", "-")}`);
+    await page.waitForSelector(`#${name.replace(".", "-")}`, {visible: true});
   };
 
   const defaultProcessing = async (name, location) => {
