@@ -221,6 +221,7 @@ checkedPartially idSuffix =
                     [ checkboxBackground
                         [ SvgAttributes.fill "#EBEBEB"
                         , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.stroke (toCssString Colors.azure)
                         ]
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
@@ -320,6 +321,7 @@ lockOnInside idSuffix =
                     [ checkboxBackground
                         [ SvgAttributes.fill "#EBEBEB"
                         , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.stroke (toCssString Colors.gray75)
                         ]
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
