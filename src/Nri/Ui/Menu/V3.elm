@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, containsForm
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, containsForm
 @docs Alignment
 
 
@@ -105,6 +105,7 @@ type alias MenuConfig msg =
     , menuId : String
     , zIndex : Int
     , opensOnHover : Bool
+    , containsForm : Bool
     }
 
 
@@ -201,6 +202,13 @@ opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
 
 
+{-| Whether the menu contains a form when opened. This affects how Tab key behaves Defaults to `False`.
+-}
+containsForm : Bool -> Attribute msg
+containsForm value =
+    Attribute <| \config -> { config | containsForm = value }
+
+
 {-| Menu/pulldown configuration:
 
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
@@ -226,6 +234,7 @@ view attributes config =
             , menuId = ""
             , zIndex = 1
             , opensOnHover = False
+            , containsForm = False
             }
 
         menuConfig =
@@ -415,25 +424,31 @@ viewCustom config =
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: Key.onKeyDown
-                [ Key.escape
+                (Key.escape
                     (config.focusAndToggle
                         { isOpen = False
                         , focus = Just config.buttonId
                         }
                     )
-                , Key.tab
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Nothing
-                        }
-                    )
-                , Key.tabBack
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Nothing
-                        }
-                    )
-                ]
+                    :: (if config.containsForm then
+                            []
+
+                        else
+                            [ Key.tab
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            , Key.tabBack
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            ]
+                       )
+                )
             :: styleContainer
         )
         [ if config.isOpen then
