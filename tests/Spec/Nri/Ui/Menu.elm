@@ -2,6 +2,7 @@ module Spec.Nri.Ui.Menu exposing (spec)
 
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
+import Json.Encode as Encode
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V3 as Menu
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
@@ -30,6 +31,15 @@ spec =
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> clickMenuButton
+                    |> ensureViewHasNot (menuContentSelector menuContent)
+                    |> ProgramTest.done
+        , test "Close on tab key" <|
+            \() ->
+                program []
+                    -- Menu opens on mouse click and closes on tab key
+                    |> clickMenuButton
+                    |> ensureViewHas (menuContentSelector menuContent)
+                    |> pressTabKey
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         ]
@@ -122,3 +132,20 @@ clickMenuButton =
             ]
         )
         Event.click
+
+
+pressTabKey : ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabKey =
+    ProgramTest.simulateDomEvent
+        (Query.find
+            [ Selector.class "Container"
+            ]
+        )
+        (Event.custom
+            "keydown"
+            (Encode.object
+                [ ( "keyCode", Encode.int 9 )
+                , ( "shiftKey", Encode.bool False )
+                ]
+            )
+        )
