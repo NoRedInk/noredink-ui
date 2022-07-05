@@ -323,6 +323,7 @@ controlMenuAttributes =
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
         |> ControlExtra.optionalBoolListItem "containsForm" ( "Menu.containsForm True", Menu.containsForm True )
 
+
 controlAlignment : Control ( String, Menu.Attribute msg )
 controlAlignment =
     Control.choice
