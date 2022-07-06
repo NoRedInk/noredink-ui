@@ -30,6 +30,7 @@ config =
         [ SortableTable.string
             { id = FirstName
             , header = "First name"
+            , ariaName = "first name"
             , value = .firstName
             , width = 125
             , cellStyles = \_ -> []
@@ -37,6 +38,7 @@ config =
         , SortableTable.string
             { id = LastName
             , header = "Last name"
+            , ariaName = "last name"
             , value = .lastName
             , width = 125
             , cellStyles = \_ -> []
