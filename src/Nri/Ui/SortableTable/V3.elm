@@ -28,6 +28,7 @@ import Html.Styled.Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
+import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Table.V5
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -243,15 +244,15 @@ identitySorter =
 buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
 buildTableColumn updateMsg state (Column column) =
     Nri.Ui.Table.V5.custom
-        { header = viewSortHeader column.header updateMsg state column.id
+        { header = viewSortHeader True column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
         }
 
 
-viewSortHeader : Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader header updateMsg state id =
+viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header updateMsg state id =
     let
         nextState =
             nextTableState state id
@@ -261,19 +262,28 @@ viewSortHeader header updateMsg state id =
             [ Css.displayFlex
             , Css.alignItems Css.center
             , Css.justifyContent Css.spaceBetween
-            , cursor pointer
             , CssVendorPrefix.property "user-select" "none"
             , if state.column == id then
                 fontWeight bold
 
               else
                 fontWeight normal
+            , if isSortable then
+                cursor pointer
+
+              else
+                Css.batch []
             ]
-        , Html.Styled.Events.onClick (updateMsg nextState)
+        , Extra.includeIf isSortable (Html.Styled.Events.onClick (updateMsg nextState))
         ]
-        [ Html.div [] [ header ]
-        , viewSortButton updateMsg state id
-        ]
+        (if isSortable then
+            [ Html.div [] [ header ]
+            , viewSortButton updateMsg state id
+            ]
+
+         else
+            [ header ]
+        )
 
 
 viewSortButton : (State id -> msg) -> State id -> id -> Html msg
