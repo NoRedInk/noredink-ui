@@ -109,6 +109,7 @@ example =
                         [ SortableTable.string
                             { id = FirstName
                             , header = "First name"
+                            , ariaName = "first name"
                             , value = .firstName
                             , width = 125
                             , cellStyles = \_ -> []
@@ -116,6 +117,7 @@ example =
                         , SortableTable.string
                             { id = LastName
                             , header = "Last name"
+                            , ariaName = "last name"
                             , value = .lastName
                             , width = 125
                             , cellStyles = \_ -> []
@@ -123,6 +125,7 @@ example =
                         , SortableTable.custom
                             { id = Coins
                             , header = Html.text "Coins"
+                            , ariaName = "coins"
                             , view = .coins >> String.fromInt >> Html.text
                             , sorter = Just (SortableTable.simpleSort .coins)
                             , width = 125
@@ -130,7 +133,8 @@ example =
                             }
                         , SortableTable.custom
                             { id = ViewButton
-                            , header = Html.text ""
+                            , header = Html.text "View"
+                            , ariaName = "view"
                             , view =
                                 \_ ->
                                     Button.link "View"
