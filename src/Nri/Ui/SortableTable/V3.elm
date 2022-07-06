@@ -50,7 +50,7 @@ type Column id entry msg
         { id : id
         , header : Html msg
         , view : entry -> Html msg
-        , sorter : Sorter entry
+        , sorter : Maybe (Sorter entry)
         , width : Int
         , cellStyles : entry -> List Style
         }
@@ -100,7 +100,7 @@ string { id, header, value, width, cellStyles } =
         { id = id
         , header = Html.text header
         , view = value >> Html.text
-        , sorter = simpleSort value
+        , sorter = Just (simpleSort value)
         , width = width
         , cellStyles = cellStyles
         }
@@ -121,7 +121,7 @@ custom config =
         { id = config.id
         , header = config.header
         , view = config.view
-        , sorter = config.sorter
+        , sorter = Just config.sorter
         , width = config.width
         , cellStyles = config.cellStyles
         }
@@ -215,7 +215,7 @@ findSorter : List (Column id entry msg) -> id -> Sorter entry
 findSorter columns columnId =
     columns
         |> listExtraFind (\(Column column) -> column.id == columnId)
-        |> Maybe.map (\(Column column) -> column.sorter)
+        |> Maybe.andThen (\(Column column) -> column.sorter)
         |> Maybe.withDefault identitySorter
 
 
