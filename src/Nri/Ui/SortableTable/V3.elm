@@ -28,6 +28,7 @@ import Html.Styled.Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Table.V5
 import Svg.Styled as Svg
@@ -257,33 +258,38 @@ viewSortHeader isSortable header updateMsg state id =
         nextState =
             nextTableState state id
     in
-    Html.div
-        [ css
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.spaceBetween
-            , CssVendorPrefix.property "user-select" "none"
-            , if state.column == id then
-                fontWeight bold
+    if isSortable then
+        Html.button
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.spaceBetween
+                , CssVendorPrefix.property "user-select" "none"
+                , if state.column == id then
+                    fontWeight bold
 
-              else
-                fontWeight normal
-            , if isSortable then
-                cursor pointer
+                  else
+                    fontWeight normal
+                , cursor pointer
 
-              else
-                Css.batch []
+                -- make this look less "buttony"
+                , Css.border Css.zero
+                , Css.backgroundColor Css.transparent
+                , Css.width (Css.pct 100)
+                , Css.height (Css.pct 100)
+                , Css.margin Css.zero
+                , Css.padding Css.zero
+                , Fonts.baseFont
+                , Css.fontSize (Css.em 1)
+                ]
+            , Html.Styled.Events.onClick (updateMsg nextState)
             ]
-        , Extra.includeIf isSortable (Html.Styled.Events.onClick (updateMsg nextState))
-        ]
-        (if isSortable then
             [ Html.div [] [ header ]
             , viewSortButton updateMsg state id
             ]
 
-         else
-            [ header ]
-        )
+    else
+        header
 
 
 viewSortButton : (State id -> msg) -> State id -> id -> Html msg
