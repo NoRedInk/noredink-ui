@@ -7,7 +7,6 @@ module Nri.Ui.SortableTable.V3 exposing
 
 {-| TODO for next major version:
 
-  - make sure the "sort" feature is fully accessible
   - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
 Changes from V2:
