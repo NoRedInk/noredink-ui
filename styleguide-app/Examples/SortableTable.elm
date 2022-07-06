@@ -13,7 +13,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.SortableTable.V2 as SortableTable
+import Nri.Ui.SortableTable.V3 as SortableTable
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V5 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
