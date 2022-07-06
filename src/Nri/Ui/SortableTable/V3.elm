@@ -29,7 +29,6 @@ import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Table.V5
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
