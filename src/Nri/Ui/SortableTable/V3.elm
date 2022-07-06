@@ -10,6 +10,10 @@ module Nri.Ui.SortableTable.V3 exposing
   - make sure the "sort" feature is fully accessible
   - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
+Changes from V2:
+
+  - made column non-sortable (e.g. buttons in a column should not be sorted)
+
 @docs Column, Config, Sorter, State
 @docs init, initDescending
 @docs custom, string, view, viewLoading
