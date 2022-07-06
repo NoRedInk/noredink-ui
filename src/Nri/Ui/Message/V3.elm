@@ -333,7 +333,7 @@ viewCodeDetails errorMessageForEngineers =
         , code
             [ Attributes.css
                 [ display block
-                , whiteSpace normal
+                , whiteSpace preWrap
                 , overflowWrap breakWord
                 , color Colors.gray45
                 , backgroundColor Colors.gray96
