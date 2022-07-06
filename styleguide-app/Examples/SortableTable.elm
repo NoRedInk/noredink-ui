@@ -11,6 +11,7 @@ import Css exposing (..)
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V3 as SortableTable
@@ -23,6 +24,7 @@ type Column
     = FirstName
     | LastName
     | Coins
+    | ViewButton
 
 
 {-| -}
@@ -122,8 +124,21 @@ example =
                             { id = Coins
                             , header = Html.text "Coins"
                             , view = .coins >> String.fromInt >> Html.text
-                            , sorter = SortableTable.simpleSort .coins
+                            , sorter = Just (SortableTable.simpleSort .coins)
                             , width = 125
+                            , cellStyles = \_ -> []
+                            }
+                        , SortableTable.custom
+                            { id = ViewButton
+                            , header = Html.text ""
+                            , view =
+                                \_ ->
+                                    Button.link "View"
+                                        [ Button.small
+                                        , Button.fillContainerWidth
+                                        ]
+                            , sorter = Nothing
+                            , width = 25
                             , cellStyles = \_ -> []
                             }
                         ]

@@ -111,7 +111,7 @@ custom :
     { id : id
     , header : Html msg
     , view : entry -> Html msg
-    , sorter : Sorter entry
+    , sorter : Maybe (Sorter entry)
     , width : Int
     , cellStyles : entry -> List Style
     }
@@ -121,7 +121,7 @@ custom config =
         { id = config.id
         , header = config.header
         , view = config.view
-        , sorter = Just config.sorter
+        , sorter = config.sorter
         , width = config.width
         , cellStyles = config.cellStyles
         }
@@ -244,7 +244,7 @@ identitySorter =
 buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
 buildTableColumn updateMsg state (Column column) =
     Nri.Ui.Table.V5.custom
-        { header = viewSortHeader True column.header updateMsg state column.id
+        { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
