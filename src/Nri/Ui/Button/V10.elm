@@ -700,17 +700,19 @@ toggleButton :
     -> Html msg
 toggleButton config =
     let
+        pressedShadowColor =
+            ColorsExtra.withAlpha 0.2 Colors.gray20
+
         toggledBoxShadow =
             "inset 0 3px 0 "
-                ++ (ColorsExtra.withAlpha 0.2 Colors.gray20
-                        |> ColorsExtra.toCssString
-                   )
+                ++ ColorsExtra.toCssString pressedShadowColor
 
         toggledStyles =
             if config.pressed then
                 Css.batch
                     [ Css.color Colors.gray20
                     , Css.backgroundColor Colors.glacier
+                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
                     , Css.pseudoClass "focus-visible"
                         [ Css.outline Css.none
                         , FocusRing.boxShadows [ toggledBoxShadow ]
