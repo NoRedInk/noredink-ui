@@ -11,7 +11,7 @@ appropriate. Inspired by a blog post from [David Gilbertson](https://medium.com/
 
 import Browser.Events
 import Css.Global exposing (Snippet)
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder)
 import Nri.Ui.FocusRing.V1 as FocusRing
 
 
@@ -48,15 +48,26 @@ subscriptions =
                 |> Decode.andThen
                     (\( key, tagName ) ->
                         case key of
+                            "ArrowUp" ->
+                                unlessInInput tagName
+
+                            "ArrowDown" ->
+                                unlessInInput tagName
+
+                            "ArrowRight" ->
+                                unlessInInput tagName
+
+                            "ArrowLeft" ->
+                                unlessInInput tagName
+
                             "Tab" ->
                                 Decode.succeed Keyboard
 
-                            " " ->
-                                if tagName == "TEXTAREA" || tagName == "INPUT" then
-                                    Decode.fail "Not a navigation key. Discarding event."
+                            "Escape" ->
+                                Decode.succeed Keyboard
 
-                                else
-                                    Decode.succeed Keyboard
+                            " " ->
+                                unlessInInput tagName
 
                             _ ->
                                 Decode.fail "Not a navigation key. Discarding event."
@@ -64,6 +75,15 @@ subscriptions =
             )
         , Browser.Events.onMouseDown (Decode.succeed Mouse)
         ]
+
+
+unlessInInput : String -> Decoder InputMethod
+unlessInInput tagName =
+    if tagName == "TEXTAREA" || tagName == "INPUT" then
+        Decode.fail "In an input. Discarding event."
+
+    else
+        Decode.succeed Keyboard
 
 
 {-| A collection of global styles that will hide or show the focus ring if keyboard
