@@ -29,11 +29,9 @@ import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Svg.V1 exposing (toHtml, withCss)
+import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V5
 import Nri.Ui.UiIcon.V1
-import Svg.Styled as Svg
-import Svg.Styled.Attributes as SvgAttributes
 
 
 type SortDirection
@@ -359,59 +357,28 @@ type Direction
 
 sortArrow : Direction -> Bool -> Html msg
 sortArrow direction active =
-    -- Html.div
-    --     [ css
-    --         [ width (px 8)
-    --         -- , height (px 6)
-    --         , position relative
-    --         , margin2 (px 1) zero
-    --         ]
-    --     ]
-    --     [ Nri.Ui.UiIcon.V1.sortArrowDown
-    --         |> Nri.Ui.Svg.V1.withHeight (px 6)
-    --         |> toHtml
-    --     ]
-    (case direction of
-        Up ->
-            Nri.Ui.UiIcon.V1.sortArrow
+    let
+        arrow =
+            case direction of
+                Up ->
+                    Nri.Ui.UiIcon.V1.sortArrow
 
-        Down ->
-            Nri.Ui.UiIcon.V1.sortArrowDown
-    )
-        |> Nri.Ui.Svg.V1.withHeight (px 6)
-        |> Nri.Ui.Svg.V1.withWidth (px 8)
-        |> Nri.Ui.Svg.V1.withColor
-            (if active then
+                Down ->
+                    Nri.Ui.UiIcon.V1.sortArrowDown
+
+        color =
+            if active then
                 Nri.Ui.Colors.V1.azure
 
-             else
+            else
                 Nri.Ui.Colors.V1.gray75
-            )
-        |> withCss
-            [ Css.displayFlex
+    in
+    arrow
+        |> Nri.Ui.Svg.V1.withHeight (px 6)
+        |> Nri.Ui.Svg.V1.withWidth (px 8)
+        |> Nri.Ui.Svg.V1.withColor color
+        |> Nri.Ui.Svg.V1.withCss
+            [ displayFlex
             , margin2 (px 1) zero
             ]
-        |> toHtml
-
-
-
--- [ Svg.svg
---     [ SvgAttributes.viewBox "0 0 8 6"
---     , SvgAttributes.css
---         [ position absolute
---         , top zero
---         , left zero
---         , case direction of
---             Up ->
---                 Css.batch []
---             Down ->
---                 Css.batch [ transform <| rotate (deg 180) ]
---         ]
---     , if active then
---         SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.azure)
---       else
---         SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.gray75)
---     ]
---     [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
---     ]
--- ]
+        |> Nri.Ui.Svg.V1.toHtml
