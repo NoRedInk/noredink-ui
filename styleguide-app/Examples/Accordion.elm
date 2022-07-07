@@ -13,17 +13,19 @@ module Examples.Accordion exposing
 import Accessibility.Styled as Html exposing (Html)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import CommonControls
 import Css exposing (..)
 import Css.Global
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -31,11 +33,21 @@ import Set exposing (Set)
 import Task
 
 
+moduleName : String
+moduleName =
+    "Accordion"
+
+
+version : Int
+version =
+    3
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Accordion"
-    , version = 3
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -79,19 +91,78 @@ defaultCaret =
 
 
 {-| -}
-view : State -> List (Html Msg)
-view model =
-    [ Heading.h3 [] [ Html.text "Accordion.view" ]
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig model =
+    let
+        settings_ =
+            Control.currentValue model.settings
+    in
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = UpdateControls
+        , settings = model.settings
+        , mainType = "RootHtml.Html String"
+        , extraImports = [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator" ]
+        , toExampleCode =
+            \settings ->
+                [ { sectionName = "Partial example"
+                  , code =
+                        String.join "\n"
+                            [ "  div [] ["
+                            , "    Accordion.view"
+                            , "      { entries ="
+                            , "          [ Accordion.AccordionEntry"
+                            , "              { caret = " ++ Tuple.first settings.icon
+                            , "              , content = \\() -> " ++ Tuple.first settings.content
+                            , "              , entryClass = \"customizable-example\""
+                            , "              , headerContent = " ++ Tuple.first settings.headerContent
+                            , "              , headerId = \"customizable-example-header\""
+                            , "              , headerLevel = Accordion.H4"
+                            , "              , isExpanded = True"
+                            , "              , toggle = Nothing"
+                            , "              }"
+                            , "              []"
+                            , "          ]"
+                            , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
+                            , "        focus = identity"
+                            , "      }"
+                            , "    , Accordion.styleAccordion"
+                            , "      { entryStyles = []"
+                            , "      , entryExpandedStyles = []"
+                            , "      , entryClosedStyles = []"
+                            , "      , headerStyles = []"
+                            , "      , headerExpandedStyles = []"
+                            , "      , headerClosedStyles = []"
+                            , "      , contentStyles = []"
+                            , "      }"
+                            , "  ]"
+                            ]
+                  }
+                ]
+        }
     , Accordion.view
         { entries =
             [ AccordionEntry
+                { caret = Tuple.second settings_.icon
+                , content = \() -> Tuple.second settings_.content
+                , entryClass = "customizable-example"
+                , headerContent = Tuple.second settings_.headerContent
+                , headerId = "customizable-example-header"
+                , headerLevel = Accordion.H4
+                , isExpanded = Set.member 4 model.expanded
+                , toggle = Just (Toggle 4)
+                }
+                []
+            , AccordionEntry
                 { caret = defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
                 , entryClass = "accordion-example"
-                , headerContent = Html.text "Apples"
+                , headerContent = Html.text "Apples (has children)"
                 , headerId = "accordion-entry__1"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 1 model
+                , isExpanded = Set.member 1 model.expanded
                 , toggle = Just (Toggle 1)
                 }
                 [ AccordionEntry
@@ -110,7 +181,7 @@ view model =
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 11 model
+                    , isExpanded = Set.member 11 model.expanded
                     , toggle = Just (Toggle 11)
                     }
                     []
@@ -130,7 +201,7 @@ view model =
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 12 model
+                    , isExpanded = Set.member 12 model.expanded
                     , toggle = Just (Toggle 12)
                     }
                     []
@@ -150,7 +221,7 @@ view model =
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
                     , headerLevel = Accordion.H5
-                    , isExpanded = Set.member 13 model
+                    , isExpanded = Set.member 13 model.expanded
                     , toggle = Just (Toggle 13)
                     }
                     []
@@ -162,19 +233,8 @@ view model =
                 , headerContent = Html.text "Oranges"
                 , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 2 model
+                , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
-                }
-                []
-            , AccordionEntry
-                { caret = defaultCaret
-                , content = \_ -> Html.text "There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy."
-                , entryClass = "accordion-example"
-                , headerContent = Html.text "Berries"
-                , headerId = "accordion-entry__4"
-                , headerLevel = Accordion.H5
-                , isExpanded = Set.member 4 model
-                , toggle = Just (Toggle 4)
                 }
                 []
             , AccordionEntry
@@ -205,7 +265,7 @@ view model =
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
                 , headerLevel = Accordion.H4
-                , isExpanded = Set.member 6 model
+                , isExpanded = Set.member 6 model.expanded
                 , toggle = Just (Toggle 6)
                 }
                 []
@@ -251,33 +311,99 @@ view model =
     ]
 
 
-type Msg
-    = Toggle Int Bool
-    | Focus String
-    | Focused (Result Dom.Error ())
-
-
 {-| -}
 init : State
 init =
-    Set.empty
+    { settings = initSettings
+    , expanded = Set.empty
+    }
 
 
 {-| -}
 type alias State =
-    Set Int
+    { settings : Control Settings
+    , expanded : Set Int
+    }
+
+
+type alias Settings =
+    { icon : ( String, Bool -> Html Msg )
+    , headerContent : ( String, Html Msg )
+    , content : ( String, Html Msg )
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "icon" controlIcon
+        |> Control.field "headerContent" controlHeaderContent
+        |> Control.field "content" controlContent
+
+
+controlIcon : Control ( String, Bool -> Html Msg )
+controlIcon =
+    Control.choice
+        [ ( "DisclosureIndicator"
+          , Control.value
+                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]"
+                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                )
+          )
+        , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
+        , ( "UiIcon"
+          , Control.map
+                (\( code, icon ) ->
+                    ( "\\_ -> Svg.toHtml " ++ code
+                    , \_ -> Svg.toHtml icon
+                    )
+                )
+                CommonControls.uiIcon
+          )
+        ]
+
+
+controlHeaderContent : Control ( String, Html Msg )
+controlHeaderContent =
+    Control.map
+        (\v -> ( quoteF "text" v, Html.text v ))
+        (Control.string "Berries")
+
+
+controlContent : Control ( String, Html Msg )
+controlContent =
+    Control.map
+        (\v -> ( quoteF "text" v, Html.text v ))
+        (Control.stringTextarea "🍓 There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy.")
+
+
+quoteF : String -> String -> String
+quoteF f v =
+    f ++ " \"" ++ v ++ "\""
+
+
+type Msg
+    = UpdateControls (Control Settings)
+    | Toggle Int Bool
+    | Focus String
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
+        UpdateControls settings ->
+            ( { model | settings = settings }
+            , Cmd.none
+            )
+
         Toggle id expand ->
             ( if expand then
-                Set.insert id model
+                { model | expanded = Set.insert id model.expanded }
 
               else
-                Set.remove id model
+                { model | expanded = Set.remove id model.expanded }
             , Cmd.none
             )
 

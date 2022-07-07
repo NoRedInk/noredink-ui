@@ -13,22 +13,26 @@ import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
+
+
+version : Int
+version =
+    10
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Button"
-    , version = 10
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -64,10 +68,15 @@ example =
             , Button.icon UiIcon.link
             ]
         ]
-    , view = \state -> [ viewButtonExamples state ]
+    , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
     }
+
+
+moduleName : String
+moduleName =
+    "Button"
 
 
 {-| -}
@@ -96,7 +105,6 @@ type Msg
     = SetDebugControlsState (Control Model)
     | ShowItWorked String String
     | ToggleToggleButton Int
-    | NoOp
 
 
 {-| -}
@@ -109,11 +117,7 @@ update msg state =
             )
 
         ShowItWorked group message ->
-            let
-                _ =
-                    Debug.log group message
-            in
-            ( state, Cmd.none )
+            ( Debug.log group message |> always state, Cmd.none )
 
         ToggleToggleButton id ->
             ( { state
@@ -126,9 +130,6 @@ update msg state =
               }
             , Cmd.none
             )
-
-        NoOp ->
-            ( state, Cmd.none )
 
 
 
@@ -155,9 +156,9 @@ initDebugControls =
         |> Control.field "label" (Control.string "Label")
         |> Control.field "attributes"
             (ControlExtra.list
-                |> CommonControls.icon "Button" Button.icon
+                |> CommonControls.icon moduleName Button.icon
                 |> ControlExtra.optionalListItem "width"
-                    (CommonControls.choice "Button"
+                    (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
                         , ( "exactWidth 70", Button.exactWidth 70 )
                         , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
@@ -165,11 +166,10 @@ initDebugControls =
                         , ( "fillContainerWidth", Button.fillContainerWidth )
                         ]
                     )
+                |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
-                    (CommonControls.choice "Button"
-                        [ ( "enabled", Button.enabled )
-                        , ( "disabled", Button.disabled )
-                        , ( "error", Button.error )
+                    (CommonControls.choice moduleName
+                        [ ( "error", Button.error )
                         , ( "unfulfilled", Button.unfulfilled )
                         , ( "loading", Button.loading )
                         , ( "success", Button.success )
@@ -178,42 +178,48 @@ initDebugControls =
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "Button.hideIconForMobile", Button.hideIconForMobile )
                 |> CommonControls.css
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.css
                     }
                 |> CommonControls.mobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.mobileCss
                     }
                 |> CommonControls.quizEngineMobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.quizEngineMobileCss
                     }
                 |> CommonControls.notMobileCss
-                    { moduleName = "Button"
+                    { moduleName = moduleName
                     , use = Button.notMobileCss
                     }
             )
 
 
-viewButtonExamples : State -> Html Msg
-viewButtonExamples state =
+viewButtonExamples : EllieLink.Config -> State -> Html Msg
+viewButtonExamples ellieLinkConfig state =
     let
         model =
             Control.currentValue state.debugControlsState
     in
     [ ControlView.view
-        { update = SetDebugControlsState
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetDebugControlsState
         , settings = state.debugControlsState
+        , mainType = "RootHtml.Html msg"
+        , extraImports = []
         , toExampleCode =
             \{ label, attributes } ->
                 let
                     toCode fName =
-                        "Button."
+                        moduleName
+                            ++ "."
                             ++ fName
                             ++ " \""
                             ++ label
-                            ++ "\"\n\t"
+                            ++ "\"\t"
                             ++ ControlView.codeFromList attributes
                 in
                 [ { sectionName = "Button"
@@ -278,13 +284,7 @@ buttons model =
 
         exampleCell setStyle setSize =
             buttonOrLink model.label
-                ([ setSize
-                 , setStyle
-                 , Button.custom [ Html.Styled.Attributes.class "styleguide-button" ]
-                 , Button.onClick (ShowItWorked "ButtonExample" "Button clicked!")
-                 ]
-                    ++ List.map Tuple.second model.attributes
-                )
+                (setSize :: setStyle :: List.map Tuple.second model.attributes)
                 |> List.singleton
                 |> td
                     [ css

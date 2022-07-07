@@ -4,7 +4,9 @@ import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
+import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
+import Examples.Carousel as Carousel
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -26,7 +28,7 @@ import Examples.RadioButton as RadioButton
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Shadows as Shadows
-import Examples.SlideModal as SlideModal
+import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
 import Examples.Sprite as Sprite
 import Examples.Svg as Svg
@@ -100,6 +102,25 @@ all =
                     _ ->
                         Nothing
             )
+    , BreadCrumbs.example
+        |> Example.wrapMsg BreadCrumbsMsg
+            (\msg ->
+                case msg of
+                    BreadCrumbsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState BreadCrumbsState
+            (\msg ->
+                case msg of
+                    BreadCrumbsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Button.example
         |> Example.wrapMsg ButtonMsg
             (\msg ->
@@ -114,6 +135,25 @@ all =
             (\msg ->
                 case msg of
                     ButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Carousel.example
+        |> Example.wrapMsg CarouselMsg
+            (\msg ->
+                case msg of
+                    CarouselMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CarouselState
+            (\msg ->
+                case msg of
+                    CarouselState childState ->
                         Just childState
 
                     _ ->
@@ -518,20 +558,20 @@ all =
                     _ ->
                         Nothing
             )
-    , SlideModal.example
-        |> Example.wrapMsg SlideModalMsg
+    , SideNav.example
+        |> Example.wrapMsg SideNavMsg
             (\msg ->
                 case msg of
-                    SlideModalMsg childMsg ->
+                    SideNavMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
             )
-        |> Example.wrapState SlideModalState
+        |> Example.wrapState SideNavState
             (\msg ->
                 case msg of
-                    SlideModalState childState ->
+                    SideNavState childState ->
                         Just childState
 
                     _ ->
@@ -772,7 +812,9 @@ type State
     = AccordionState Accordion.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
+    | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
+    | CarouselState Carousel.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -794,7 +836,7 @@ type State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
     | ShadowsState Shadows.State
-    | SlideModalState SlideModal.State
+    | SideNavState SideNav.State
     | SortableTableState SortableTable.State
     | SpriteState Sprite.State
     | SvgState Svg.State
@@ -813,7 +855,9 @@ type Msg
     = AccordionMsg Accordion.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
+    | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
+    | CarouselMsg Carousel.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
@@ -835,7 +879,7 @@ type Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
     | ShadowsMsg Shadows.Msg
-    | SlideModalMsg SlideModal.Msg
+    | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
     | SpriteMsg Sprite.Msg
     | SvgMsg Svg.Msg

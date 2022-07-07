@@ -1,6 +1,7 @@
 module Nri.Ui.Colors.Extra exposing
     ( toCssColor, fromCssColor
     , withAlpha
+    , toCssString
     )
 
 {-| Helpers for working with colors.
@@ -10,6 +11,7 @@ module Nri.Ui.Colors.Extra exposing
 
 @docs toCssColor, fromCssColor
 @docs withAlpha
+@docs toCssString
 
 -}
 
@@ -44,3 +46,9 @@ withAlpha 0.5 grassland -- "{ value = "rgba(86, 191, 116, 0.5)", color = Compati
 withAlpha : Float -> Css.Color -> Css.Color
 withAlpha alpha { red, green, blue } =
     Css.rgba red green blue alpha
+
+
+{-| -}
+toCssString : Css.Color -> String
+toCssString =
+    SolidColor.toRGBString << fromCssColor

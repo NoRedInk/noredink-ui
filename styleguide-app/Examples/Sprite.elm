@@ -6,11 +6,9 @@ module Examples.Sprite exposing (example, State, Msg)
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Svg.Styled exposing (svg)
@@ -19,12 +17,12 @@ import Svg.Styled.Attributes as Attributes
 
 {-| -}
 type alias State =
-    ()
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -34,11 +32,15 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)
-    , view = \_ -> [ IconExamples.view "Rich Text Formatting" sprites ]
+    , view =
+        \ellieLinkConfig settings ->
+            [ IconExamples.viewSettings settings
+            , IconExamples.view settings "Rich Text Formatting" sprites
+            ]
     }
 
 

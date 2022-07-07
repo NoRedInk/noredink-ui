@@ -9,13 +9,11 @@ module Examples.Page exposing (example, State, Msg)
 import Category exposing (Category(..))
 import CommonControls
 import Css
-import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Debug.Control as Control exposing (Control)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Http
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
@@ -40,11 +38,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
         ShowItWorked message ->
-            let
-                _ =
-                    Debug.log "Clicked: " message
-            in
-            ( model, Cmd.none )
+            ( Debug.log "Clicked: " message |> always model, Cmd.none )
 
         SetHttpError controls ->
             ( { model | httpError = controls }, Cmd.none )
@@ -60,7 +54,14 @@ example =
     , version = 3
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = { httpError = CommonControls.httpError, recoveryText = initRecoveryText }
+    , state =
+        { httpError =
+            Control.record identity
+                |> Control.field "httpError" CommonControls.httpError
+        , recoveryText =
+            Control.record identity
+                |> Control.field "recoveryText" initRecoveryText
+        }
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -90,7 +91,7 @@ example =
             ]
         ]
     , view =
-        \model ->
+        \ellieLinkConfig model ->
             let
                 recoveryText =
                     Control.currentValue model.recoveryText
@@ -123,7 +124,7 @@ viewExample viewName view recoveryText extras =
             , Css.marginBottom (Css.px 20)
             ]
         ]
-        [ Heading.h3 [] [ Html.text viewName ]
+        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text viewName ]
         , Html.div [] extras
         , Html.code []
             [ Html.text <|

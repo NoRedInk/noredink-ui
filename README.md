@@ -2,50 +2,50 @@
 
 UI widgets we use.
 
-## Versioning policy
+## Getting Started
+1. Setup your [development environment](#developing-with-nix)
+2. Run some [tests](#tests)
+3. Check out [some examples](https://noredink-ui.netlify.app/)
 
-We try to avoid breaking changes and the associated major version bumps in this package. The reason for that is to avoid the following scenario:
+## Developing with Nix
 
-```
-  |
-  x   4.6.0: Adding RadioButton widget
-  |
-  x   5.0.0: Breaking change in the TextArea widget
-  |
-  x   5.0.1: Styling fix in the Checkbox widget
-  |
-```
+You can develop this package without installing anything globally by using Nix.
+To get started, install nix from [nixos.org/nix](https://nixos.org/nix/).
 
-Suppose you just released version `5.0.1`, a small styling fix in the checkbox widget, for a story you're working on. If the project you're working in currently pulls in `noredink-ui` at version `4.x`, then getting to your styling fix means pulling in a new major version of `noredink-ui`. This breaks all `TextArea` widgets across the project, so those will need to be fixed before you can do anything else, potentially a big effort.
+After that's set up in your shell (just follow the instructions at the end of the installation script) you can run `nix-shell` to get a development environment with everything you need.
 
-To prevent these big Yaks from suddenly showing up in seemingly trivial tasks we prefer to avoid breaking changes in the package. Instead when we need to make a breaking change in a widget, we create a new module for it `Nri.Ui.MyWidget.VX`. Similarly, when we build custom elements in JavaScript we create a file `lib/MyWidget/VX.js` and define a custom element `nri-mywidget-vX`.
+If you find that inconvenient, try using [`direnv`](https://direnv.net/).
+Once that's set up, `echo use nix > .envrc` and then `direnv allow`.
+Anytime you enter the project your shell will automatically pick up the right dependencies.
 
-That said, we may prune unused modules occasionally.
+If you find that `direnv` loads too slow, [there are faster loading strategies than the default in their wiki](https://github.com/direnv/direnv/wiki/Nix).
 
-We should change this process if we feel it's not working for us!
+### Working with upstream dependencies
 
-## Moving Widgets to `noredink-ui`
+We use `niv` to manage Nix dependencies.
+It is automatically loaded in the Nix environment.
 
-If you are moving in a widget from the monolith:
-- Copy the contents of `Nri.SomeModule` and its tests to `Nri.Ui.SomeModule.V1` in `noredink-ui`
-- Publish!
-- If you feel confident upgrading pre-existing usages of the widget, switch over to it everywhere!
-- If the new version introduces big changes and you'd rather keep the old one around for now, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
+Here are some things you might need to do:
 
+| Task | Command |
+|------|---------|
+| Add a non-npm, non-Elm dependency packaged with Nix | Look if it's in nixpkgs, or `niv add github.com/user/repo` |
+| Update Nixpkgs | `niv update nixpkgs` |
+| See all our dependencies | Look in `shell.nix` |
+| See all our sources | `niv show` |
 
-## Phasing out old versions
+## Tests
 
-Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
+Run tests with
+- `shake test`
+- `elm-test`
 
-This means:
-  - We should avoid introducing new references to old versions of a widget
-  - When touching code that uses a widget, prefer upgrading to the latest version
-  - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
-    - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
-  - You can delete an old version of a widget when there are no usages left
-    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
-    - Note: this will be a major version bump, so you may want to batch deletions together
+You can run the Puppeteer tests for only one component by passing the name of the component to the test script, for example: `./script/puppeteer-tests-no-percy.sh Button`
 
+### CI (Travis)
+
+Travis will run `shake ci` to verify everything looks good.
+You can run this locally to catch errors before you push!
 
 ## Examples
 
@@ -57,20 +57,9 @@ To see them locally:
 script/develop.sh
 ```
 
+And go to http://localhost:8000/
+
 If you'd like to test your widget in the monolith before publishing, run `script/test-elm-package.py ../path_to_this_repo` from the monolith's directory.
-
-## Tests
-
-Run tests with
-
-```
-shake test
-```
-
-### CI (Travis)
-
-Travis will run `shake ci` to verify everything looks good.
-You can run this locally to catch errors before you push!
 
 ## Deploying
 
@@ -121,29 +110,46 @@ You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new i
 
 Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>.
 
-## Developing with Nix
+## Versioning policy
 
-You can develop this package without installing anything globally by using Nix.
-To get started, install nix from [nixos.org/nix](https://nixos.org/nix/).
+We try to avoid breaking changes and the associated major version bumps in this package. The reason for that is to avoid the following scenario:
 
-After that's set up in your shell (just follow the instructions at the end of the installation script) you can run `nix-shell` to get a development environment with everything you need.
+```
+  |
+  x   4.6.0: Adding RadioButton widget
+  |
+  x   5.0.0: Breaking change in the TextArea widget
+  |
+  x   5.0.1: Styling fix in the Checkbox widget
+  |
+```
 
-If you find that inconvenient, try using [`direnv`](https://direnv.net/).
-Once that's set up, `echo use nix > .envrc` and then `direnv allow`.
-Anytime you enter the project your shell will automatically pick up the right dependencies.
+Suppose you just released version `5.0.1`, a small styling fix in the checkbox widget, for a story you're working on. If the project you're working in currently pulls in `noredink-ui` at version `4.x`, then getting to your styling fix means pulling in a new major version of `noredink-ui`. This breaks all `TextArea` widgets across the project, so those will need to be fixed before you can do anything else, potentially a big effort.
 
-If you find that `direnv` loads too slow, [there are faster loading strategies than the default in their wiki](https://github.com/direnv/direnv/wiki/Nix).
+To prevent these big Yaks from suddenly showing up in seemingly trivial tasks we prefer to avoid breaking changes in the package. Instead when we need to make a breaking change in a widget, we create a new module for it `Nri.Ui.MyWidget.VX`. Similarly, when we build custom elements in JavaScript we create a file `lib/MyWidget/VX.js` and define a custom element `nri-mywidget-vX`.
 
-### Working with upstream dependencies
+That said, we may prune unused modules occasionally.
 
-We use `niv` to manage Nix dependencies.
-It is automatically loaded in the Nix environment.
+We should change this process if we feel it's not working for us!
 
-Here are some things you might need to do:
+## Moving Widgets to `noredink-ui`
 
-| Task | Command |
-|------|---------|
-| Add a non-npm, non-Elm dependency packaged with Nix | Look if it's in nixpkgs, or `niv add github.com/user/repo` |
-| Update Nixpkgs | `niv update nixpkgs` |
-| See all our dependencies | Look in `shell.nix` |
-| See all our sources | `niv show` |
+If you are moving in a widget from the monolith:
+- Copy the contents of `Nri.SomeModule` and its tests to `Nri.Ui.SomeModule.V1` in `noredink-ui`
+- Publish!
+- If you feel confident upgrading pre-existing usages of the widget, switch over to it everywhere!
+- If the new version introduces big changes and you'd rather keep the old one around for now, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
+
+
+## Phasing out old versions
+
+Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
+
+This means:
+  - We should avoid introducing new references to old versions of a widget
+  - When touching code that uses a widget, prefer upgrading to the latest version
+  - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
+    - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
+  - You can delete an old version of a widget when there are no usages left
+    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
+    - Note: this will be a major version bump, so you may want to batch deletions together

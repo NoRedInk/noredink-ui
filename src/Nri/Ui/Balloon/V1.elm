@@ -10,6 +10,14 @@ module Nri.Ui.Balloon.V1 exposing
 {-| You propably want to use `Nri.Tooltip` not this.
 This is used to display a ballon-like container.
 
+
+# Changelog
+
+
+## Patch changes
+
+  - use `Shadows`
+
 @docs balloon
 
 
@@ -31,6 +39,7 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html, div, styled)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Shadows.V1 as Shadows
 
 
 
@@ -275,7 +284,7 @@ viewBalloon theme_ width_ padding contents =
             , Just (textAlign left)
             , Just (position relative)
             , Just (Css.borderRadius (px 8))
-            , Just (property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)")
+            , Just Shadows.high
             , Just padding
             , Just (balloonTheme theme_)
             , width_
@@ -317,8 +326,8 @@ balloonTheme theme =
 
         Green ->
             batch
-                [ backgroundColor Colors.greenDark
-                , border3 (px 1) solid Colors.greenDark
+                [ backgroundColor Colors.greenDarkest
+                , border3 (px 1) solid Colors.greenDarkest
                 , Fonts.baseFont
                 , fontSize (px 15)
                 , color Colors.white
@@ -430,8 +439,8 @@ arrowTheme theme =
 
         Green ->
             batch
-                [ backgroundColor Colors.greenDark
-                , border3 (px 1) solid Colors.greenDark
+                [ backgroundColor Colors.greenDarkest
+                , border3 (px 1) solid Colors.greenDarkest
                 , Fonts.baseFont
                 , fontSize (px 15)
                 , color Colors.white

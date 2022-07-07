@@ -9,18 +9,17 @@ module Examples.UiIcon exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
 type alias State =
-    ()
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -30,8 +29,8 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
@@ -49,56 +48,70 @@ example =
             , UiIcon.equals
             ]
     , view =
-        \_ ->
-            [ IconExamples.view "Interface"
+        \ellieLinkConfig settings ->
+            let
+                viewExampleSection =
+                    IconExamples.view settings
+            in
+            [ IconExamples.viewSettings settings
+            , viewExampleSection "Interface"
                 [ ( "seeMore", UiIcon.seeMore )
                 , ( "openClose", UiIcon.openClose )
                 , ( "download", UiIcon.download )
                 , ( "sort", UiIcon.sort )
                 , ( "gear", UiIcon.gear )
-                , ( "sortArrow", UiIcon.sortArrow )
                 ]
-            , IconExamples.view "Archive & Unarchive"
+            , viewExampleSection "Archive & Unarchive"
                 [ ( "archive", UiIcon.archive )
                 , ( "unarchive", UiIcon.unarchive )
                 ]
-            , IconExamples.view "Media"
+            , viewExampleSection "Media in Circles"
                 [ ( "playInCircle", UiIcon.playInCircle )
                 , ( "pauseInCircle", UiIcon.pauseInCircle )
                 , ( "stopInCircle", UiIcon.stopInCircle )
+                ]
+            , viewExampleSection "Media"
+                [ ( "play", UiIcon.play )
                 , ( "skip", UiIcon.skip )
                 ]
-            , IconExamples.view "Actions"
+            , viewExampleSection "Actions"
                 [ ( "share", UiIcon.share )
                 , ( "preview", UiIcon.preview )
                 , ( "activity", UiIcon.activity )
                 , ( "copyToClipboard", UiIcon.copyToClipboard )
                 , ( "gift", UiIcon.gift )
+                , ( "openInNewTab", UiIcon.openInNewTab )
+                , ( "sync", UiIcon.sync )
                 ]
-            , IconExamples.view "Guidance"
+            , viewExampleSection "Guidance"
                 [ ( "footsteps", UiIcon.footsteps )
-                , ( "bulb", UiIcon.bulb )
                 , ( "help", UiIcon.help )
                 , ( "checklist", UiIcon.checklist )
+                , ( "checklistComplete", UiIcon.checklistComplete )
                 ]
-            , IconExamples.view "Science & Measurement"
+            , viewExampleSection "Bulbs"
+                [ ( "sparkleBulb", UiIcon.sparkleBulb )
+                , ( "baldBulb", UiIcon.baldBulb )
+                ]
+            , viewExampleSection "Science & Measurement"
                 [ ( "compass", UiIcon.compass )
                 , ( "speedometer", UiIcon.speedometer )
                 , ( "performance", UiIcon.performance )
                 , ( "microscope", UiIcon.microscope )
                 , ( "scale", UiIcon.scale )
                 ]
-            , IconExamples.view "Humans & Class"
+            , viewExampleSection "Humans & Class"
                 [ ( "person", UiIcon.person )
                 , ( "couple", UiIcon.couple )
                 , ( "class", UiIcon.class )
                 , ( "leaderboard", UiIcon.leaderboard )
                 ]
-            , IconExamples.view "Time"
-                [ ( "calendar", UiIcon.calendar )
+            , viewExampleSection "Time"
+                [ ( "emptyCalendar", UiIcon.emptyCalendar )
+                , ( "calendar", UiIcon.calendar )
                 , ( "clock", UiIcon.clock )
                 ]
-            , IconExamples.view "Texts"
+            , viewExampleSection "Texts"
                 [ ( "missingDocument", UiIcon.missingDocument )
                 , ( "document", UiIcon.document )
                 , ( "documents", UiIcon.documents )
@@ -106,60 +119,69 @@ example =
                 , ( "openBook", UiIcon.openBook )
                 , ( "openBooks", UiIcon.openBooks )
                 ]
-            , IconExamples.view "Communication"
+            , viewExampleSection "Communication"
                 [ ( "speechBalloon", UiIcon.speechBalloon )
                 , ( "mail", UiIcon.mail )
                 ]
-            , IconExamples.view "Writing Utensils"
+            , viewExampleSection "Writing Utensils"
                 [ ( "edit", UiIcon.edit )
                 , ( "pen", UiIcon.pen )
                 , ( "highlighter", UiIcon.highlighter )
                 ]
-            , IconExamples.view "Arrows"
+            , viewExampleSection "Arrows"
                 [ ( "arrowTop", UiIcon.arrowTop )
                 , ( "arrowRight", UiIcon.arrowRight )
                 , ( "arrowDown", UiIcon.arrowDown )
                 , ( "arrowLeft", UiIcon.arrowLeft )
                 , ( "arrowPointingRight", UiIcon.arrowPointingRight )
                 , ( "arrowPointingRightThick", UiIcon.arrowPointingRightThick )
+                , ( "sortArrow", UiIcon.sortArrow )
+                , ( "sortArrowDown", UiIcon.sortArrowDown )
                 ]
-            , IconExamples.view "Sticky things"
+            , viewExampleSection "Checks"
                 [ ( "checkmark", UiIcon.checkmark )
                 , ( "checkmarkInCircle", UiIcon.checkmarkInCircle )
-                , ( "x", UiIcon.x )
-                , ( "attention", UiIcon.attention )
+                , ( "checkmarkInCircleInverse", UiIcon.checkmarkInCircleInverse )
+                , ( "emptyCircle", UiIcon.emptyCircle )
+                ]
+            , viewExampleSection "Xs"
+                [ ( "x", UiIcon.x )
+                , ( "xInCircle", UiIcon.xInCircle )
+                ]
+            , viewExampleSection "Bangs"
+                [ ( "attention", UiIcon.attention )
                 , ( "exclamation", UiIcon.exclamation )
                 ]
-            , IconExamples.view "Math"
+            , viewExampleSection "Math"
                 [ ( "equals", UiIcon.equals )
                 , ( "plus", UiIcon.plus )
                 , ( "null", UiIcon.null )
                 ]
-            , IconExamples.view "Notifs"
+            , viewExampleSection "Notifs"
                 [ ( "flag", UiIcon.flag )
                 , ( "star", UiIcon.star )
                 , ( "starFilled", UiIcon.starFilled )
                 , ( "starOutline", UiIcon.starOutline )
                 ]
-            , IconExamples.view "Badges & Celebration"
+            , viewExampleSection "Badges & Celebration"
                 [ ( "badge", UiIcon.badge )
                 , ( "tada", UiIcon.tada )
                 ]
-            , IconExamples.view "Lock & Key"
+            , viewExampleSection "Lock & Key"
                 [ ( "key", UiIcon.key )
                 , ( "lock", UiIcon.lock )
                 , ( "premiumLock", UiIcon.premiumLock )
                 ]
-            , IconExamples.view "Tips & Tricks"
+            , viewExampleSection "Tips & Tricks"
                 [ ( "hat", UiIcon.hat )
                 , ( "keychain", UiIcon.keychain )
                 ]
-            , IconExamples.view "Growth"
+            , viewExampleSection "Growth"
                 [ ( "sprout", UiIcon.sprout )
                 , ( "sapling", UiIcon.sapling )
                 , ( "tree", UiIcon.tree )
                 ]
-            , IconExamples.view "Rich Text Formatting"
+            , viewExampleSection "Rich Text Formatting"
                 [ ( "bold", UiIcon.bold )
                 , ( "italic", UiIcon.italic )
                 , ( "underline", UiIcon.underline )
@@ -168,15 +190,15 @@ example =
                 , ( "undo", UiIcon.undo )
                 , ( "redo", UiIcon.redo )
                 ]
-            , IconExamples.view "Punctuation"
+            , viewExampleSection "Punctuation"
                 [ ( "openQuotationMark", UiIcon.openQuotationMark )
                 , ( "closeQuotationMark", UiIcon.closeQuotationMark )
                 ]
-            , IconExamples.view "Navigation"
+            , viewExampleSection "Navigation"
                 [ ( "home", UiIcon.home )
                 , ( "library", UiIcon.library )
                 ]
-            , IconExamples.view "Search"
+            , viewExampleSection "Search"
                 [ ( "search", UiIcon.search )
                 , ( "searchInCircle", UiIcon.searchInCicle )
                 ]

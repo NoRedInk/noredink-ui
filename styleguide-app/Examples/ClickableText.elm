@@ -13,21 +13,25 @@ import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+
+
+version : Int
+version =
+    3
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "ClickableText"
-    , version = 3
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -48,10 +52,15 @@ example =
             , ClickableText.custom [ Key.tabbable False ]
             ]
         ]
-    , view = \state -> [ viewExamples state ]
+    , view = \ellieLinkConfig state -> [ viewExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
     }
+
+
+moduleName : String
+moduleName =
+    "ClickableText"
 
 
 {-| -}
@@ -66,25 +75,25 @@ init =
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "attributes"
             (ControlExtra.list
-                |> CommonControls.icon "ClickableText" ClickableText.icon
+                |> CommonControls.icon moduleName ClickableText.icon
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
                     ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                 |> CommonControls.css
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.css
                     }
                 |> CommonControls.mobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.mobileCss
                     }
                 |> CommonControls.quizEngineMobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.quizEngineMobileCss
                     }
                 |> CommonControls.notMobileCss
-                    { moduleName = "ClickableText"
+                    { moduleName = moduleName
                     , use = ClickableText.notMobileCss
                     }
             )
@@ -111,19 +120,15 @@ update msg state =
             ( State controls, Cmd.none )
 
         ShowItWorked group message ->
-            let
-                _ =
-                    Debug.log group message
-            in
-            ( state, Cmd.none )
+            ( Debug.log group message |> always state, Cmd.none )
 
 
 
 -- INTERNAL
 
 
-viewExamples : State -> Html Msg
-viewExamples (State control) =
+viewExamples : EllieLink.Config -> State -> Html Msg
+viewExamples ellieLinkConfig (State control) =
     let
         settings =
             Control.currentValue control
@@ -132,8 +137,13 @@ viewExamples (State control) =
             List.map Tuple.second settings.attributes
     in
     [ ControlView.view
-        { update = SetState
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetState
         , settings = control
+        , mainType = "RootHtml.Html msg"
+        , extraImports = []
         , toExampleCode =
             \{ label, attributes } ->
                 let
@@ -162,7 +172,7 @@ viewExamples (State control) =
             , text " and clickable buttons: "
             , ClickableText.button settings.label
                 (ClickableText.small
-                    :: ClickableText.onClick (ShowItWorked "ClickableText" "in-line button")
+                    :: ClickableText.onClick (ShowItWorked moduleName "in-line button")
                     :: clickableAttributes
                 )
             , text " to show up in-line."
@@ -198,7 +208,7 @@ buttons settings =
             (\( size, sizeLabel ) ->
                 ClickableText.button settings.label
                     (size
-                        :: ClickableText.onClick (ShowItWorked "ClickableText" sizeLabel)
+                        :: ClickableText.onClick (ShowItWorked moduleName sizeLabel)
                         :: List.map Tuple.second settings.attributes
                     )
                     |> exampleCell

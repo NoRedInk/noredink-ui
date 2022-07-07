@@ -1,11 +1,5 @@
 Nri.Ui.Accordion.V1,upgrade to V3
 Nri.Ui.Menu.V1,upgrade to V3
-Nri.Ui.Menu.V2,upgrade to V3
-Nri.Ui.PremiumCheckbox.V6,upgrade to V8
-Nri.Ui.PremiumCheckbox.V7,upgrade to V8
-Nri.Ui.RadioButton.V2,upgrade to V4
-Nri.Ui.RadioButton.V3,upgrade to V4
-Nri.Ui.SideNav.V1,upgrade to V2
-Nri.Ui.Table.V4,upgrade to V5
+Nri.Ui.SortableTable.V2,upgrade to V3
 Nri.Ui.Tabs.V6,upgrade to V7
-Nri.Ui.Tooltip.V1,upgrade to V2
+Nri.Ui.Tooltip.V1,upgrade to V3

@@ -15,9 +15,10 @@ if test -d public; then rm -rf public; fi
 mkdir public
 
 # build the interactive parts
-(cd styleguide-app && npx elm make Main.elm --output ../public/elm.js)
-npx browserify --entry styleguide-app/manifest.js --outfile public/bundle.js
+(cd styleguide && npx elm make Main.elm --output ../public/elm.js)
+npx browserify --entry styleguide/manifest.js --outfile public/bundle.js
 
 # copy static files
-cp -r styleguide-app/assets public/assets
-cp styleguide-app/index.html public/index.html
+cp styleguide/index.html public/index.html
+cp styleguide/elm.json public/application.json
+cp elm.json public/package.json

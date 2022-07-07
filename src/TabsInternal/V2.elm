@@ -12,7 +12,6 @@ module TabsInternal.V2 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css
 import EventExtras
 import Html.Styled as Html exposing (Attribute, Html)
@@ -21,7 +20,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 
 
@@ -135,7 +134,7 @@ viewTab_ config index tab =
                          -- be able to focus on the current tab with the
                          -- keyboard.
                          Attributes.disabled (not isSelected && tab.disabled)
-                       , Widget.selected isSelected
+                       , Aria.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
                        , Events.on "keyup" <|
@@ -249,13 +248,13 @@ viewTabPanel tab selected =
          , Attributes.id (tabToBodyId tab.idString)
          ]
             ++ (if selected then
-                    [ Widget.hidden False
+                    [ Aria.hidden False
                     , Attributes.tabindex 0
                     ]
 
                 else
                     [ Attributes.css [ Css.display Css.none ]
-                    , Widget.hidden True
+                    , Aria.hidden True
                     , Attributes.tabindex -1
                     ]
                )

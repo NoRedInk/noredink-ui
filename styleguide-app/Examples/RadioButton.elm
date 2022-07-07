@@ -17,14 +17,14 @@ import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import EllieLink
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
@@ -92,8 +92,8 @@ preview =
 
 
 {-| -}
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
         selectionSettings =
             Control.currentValue state.selectionSettings
@@ -239,7 +239,7 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
-        |> ControlExtra.optionalListItem "onLockedPennantClick" onLockedPennantClick
+        |> ControlExtra.optionalListItem "onLockedClick" onLockedClick
         |> ControlExtra.optionalListItem "premium"
             -- TODO: allow the teacher premium level to vary as well:
             (Control.map
@@ -329,11 +329,11 @@ disabledOrEnabled =
         ]
 
 
-onLockedPennantClick : Control ( String, RadioButton.Attribute Selection Msg )
-onLockedPennantClick =
+onLockedClick : Control ( String, RadioButton.Attribute Selection Msg )
+onLockedClick =
     Control.value
-        ( "RadioButton.onLockedPennantClick OpenPremiumModal"
-        , RadioButton.onLockedPennantClick (OpenModal "dogs")
+        ( "RadioButton.onLockedClick OpenPremiumModal"
+        , RadioButton.onLockedClick (OpenModal "dogs")
         )
 
 

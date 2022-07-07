@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Text.V6 as Text
 import ViewHelpers
@@ -37,7 +37,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = List.map (\( _, style, _ ) -> viewPreviewShadow style) allShadows
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ List.map (\( name, style, usage ) -> ( name, viewShadow ( usage, style ) )) allShadows
                 |> ViewHelpers.viewExamples
             ]
@@ -79,15 +79,14 @@ viewShadow : ( String, Css.Style ) -> Html msg
 viewShadow ( usageGuidance, shadow ) =
     Html.div
         [ Attributes.css
-            [ Css.padding2 (Css.px 10) Css.zero
-            , Css.margin2 (Css.px 20) (Css.px 4)
-            , Css.borderRadius (Css.px 8)
-            , Css.height (Css.px 16)
-            , shadow
+            [ Css.margin2 (Css.px 20) (Css.px 4)
             ]
         ]
         [ Text.smallBodyGray
-            [ Text.css [ Css.textAlign Css.center ]
+            [ Text.css
+                [ Css.textAlign Css.center
+                , shadow
+                ]
             , Text.plaintext usageGuidance
             ]
         ]

@@ -1,23 +1,20 @@
 module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
-import Accessibility.Widget as Widget
-import Expect
-import Html
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
-import Nri.Ui.Tooltip.V2 as Tooltip
-import ProgramTest exposing (ProgramTest, clickButton, ensureViewHas, ensureViewHasNot)
+import Nri.Ui.Tooltip.V3 as Tooltip
+import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
-import Test.Html.Selector as Selector exposing (id, tag, text)
+import Test.Html.Selector as Selector exposing (id, text)
 
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tooltip.V2"
-        [ test "Tooltip.toggleTip with onHover trigger" <|
+    describe "Nri.Ui.Tooltip.V3"
+        [ test "Tooltip.viewToggleTip" <|
             \() ->
                 let
                     tooltipContent =
@@ -26,27 +23,24 @@ spec =
                     label =
                         "More info"
                 in
-                program (Tooltip.toggleTip { label = label })
+                program (Tooltip.viewToggleTip { label = label, lastId = Nothing })
                     [ Tooltip.plaintext tooltipContent
-                    , Tooltip.onHover identity
+                    , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
-                    |> ensureViewHas [ text tooltipContent ]
-                    -- Tooltip stays open on trigger-html click
+                    |> ensureViewHas (tooltipContentSelector tooltipContent)
+                    -- Tooltip closes on trigger-html click
                     |> clickButtonByLabel label
-                    |> ensureViewHas [ text tooltipContent ]
+                    |> ensureViewHasNot (tooltipContentSelector tooltipContent)
+                    -- Tooltip reopens on trigger-html click
+                    |> clickButtonByLabel label
+                    |> ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on mouse leave
                     |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
-                    |> ensureViewHasNot [ text tooltipContent ]
-                    -- Tooltip opens on focus
-                    |> focus [ tag "button", Selector.attribute (Widget.label label) ]
-                    |> ensureViewHas [ text tooltipContent ]
-                    -- Tooltip closes on blur
-                    |> blur [ tag "button", Selector.attribute (Widget.label label) ]
-                    |> ensureViewHasNot [ text tooltipContent ]
+                    |> ensureViewHasNot (tooltipContentSelector tooltipContent)
                     |> ProgramTest.done
-        , test "Tooltip.view with onClick trigger" <|
+        , test "Tooltip.view" <|
             \() ->
                 let
                     tooltipContent =
@@ -66,72 +60,26 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onClick identity
-                    ]
-                    -- Tooltip opens on click
-                    |> clickButton triggerContent
-                    |> ensureViewHas
-                        [ tag "button"
-                        , Selector.attribute (Aria.labeledBy tooltipId)
-                        ]
-                    |> ensureViewHas [ id tooltipId, text tooltipContent ]
-                    -- Tooltip closes on another click
-                    |> clickButton triggerContent
-                    |> ensureViewHasNot [ id tooltipId, text tooltipContent ]
-                    |> ProgramTest.done
-        , test "Tooltip.view with onHover trigger" <|
-            \() ->
-                let
-                    tooltipContent =
-                        "This will be the primary label"
-
-                    triggerContent =
-                        "label-less icon"
-
-                    tooltipId =
-                        "primary-label"
-                in
-                program
-                    (Tooltip.view
-                        { trigger = \events -> HtmlStyled.button events [ HtmlStyled.text triggerContent ]
-                        , id = tooltipId
-                        }
-                    )
-                    [ Tooltip.plaintext tooltipContent
-                    , Tooltip.primaryLabel
-                    , Tooltip.onHover identity
+                    , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
-                    |> ensureViewHas [ text tooltipContent ]
-                    -- Tooltip stays open on trigger-html click
-                    |> clickButton triggerContent
-                    |> ensureViewHas [ text tooltipContent ]
+                    |> ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on mouse leave
                     |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
-                    |> ensureViewHasNot [ text tooltipContent ]
+                    |> ensureViewHasNot (tooltipContentSelector tooltipContent)
                     -- Tooltip opens on focus
                     |> focus
                         [ Selector.tag "button"
                         , Selector.containing [ Selector.text triggerContent ]
                         ]
-                    |> ProgramTest.ensureViewHas
-                        [ tag "button"
-                        , Selector.attribute (Aria.labeledBy tooltipId)
-                        ]
-                    |> ProgramTest.ensureViewHas
-                        [ id tooltipId
-                        , Selector.text tooltipContent
-                        ]
+                    |> ProgramTest.ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on blur
                     |> blur
                         [ Selector.tag "button"
                         , Selector.containing [ Selector.text triggerContent ]
                         ]
-                    |> ProgramTest.ensureViewHasNot
-                        [ id tooltipId
-                        , Selector.text tooltipContent
-                        ]
+                    |> ProgramTest.ensureViewHasNot (id tooltipId :: tooltipContentSelector tooltipContent)
                     |> ProgramTest.done
         ]
 
@@ -149,6 +97,13 @@ program view attributes =
                     |> HtmlStyled.toUnstyled
         }
         |> ProgramTest.start ()
+
+
+tooltipContentSelector : String -> List Selector.Selector
+tooltipContentSelector tooltipContent =
+    [ Selector.attribute (Attributes.attribute "data-tooltip-visible" "true")
+    , Selector.containing [ text tooltipContent ]
+    ]
 
 
 nriDescription : String -> Selector.Selector
@@ -181,7 +136,7 @@ clickButtonByLabel label =
     ProgramTest.simulateDomEvent
         (Query.find
             [ Selector.tag "button"
-            , Selector.attribute (Widget.label label)
+            , Selector.attribute (Aria.label label)
             ]
         )
         Event.click

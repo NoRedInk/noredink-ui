@@ -7,46 +7,83 @@ module Examples.Text exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import CommonControls exposing (exampleHtml, quickBrownFox, romeoAndJulietQuotation)
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Colors.V1 as Colors
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Text.V6 as Text
+
+
+moduleName : String
+moduleName =
+    "Text"
+
+
+version : Int
+version =
+    6
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Text"
-    , version = 6
+    { name = moduleName
+    , version = version
     , categories = [ Text ]
     , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ ( "caption", Text.caption )
-        , ( "smallBody", Text.smallBody )
-        , ( "mediumBody", Text.mediumBody )
-        , ( "ugMediumBody", Text.ugMediumBody )
+        [ Text.caption [ Text.plaintext "caption" ]
+        , Text.smallBody [ Text.plaintext "smallBody" ]
+        , Text.mediumBody [ Text.plaintext "mediumBody" ]
+        , Text.ugMediumBody [ Text.plaintext "ugMediumBody" ]
         ]
-            |> List.map viewPreview
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
-                    Control.currentValue state.control
+                    List.map Tuple.second (Control.currentValue state.control)
             in
             [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
-            , Control.view UpdateControl state.control
-                |> Html.fromUnstyled
-            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles" ]
+            , ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.control
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \settings ->
+                        let
+                            toExampleCode name =
+                                { sectionName = name
+                                , code =
+                                    moduleName
+                                        ++ "."
+                                        ++ name
+                                        ++ "\n    [ "
+                                        ++ String.join "\n    , " (List.map Tuple.first settings)
+                                        ++ "\n    ]"
+                                }
+                        in
+                        [ toExampleCode "mediumBody"
+                        , toExampleCode "smallBody"
+                        , toExampleCode "smallBodyGray"
+                        , toExampleCode "caption"
+                        , toExampleCode "ugMediumBody"
+                        , toExampleCode "ugSmallBody"
+                        ]
+                }
+            , Heading.h2 [] [ Html.text "Examples" ]
+            , Heading.h3 [] [ Html.text "Paragraph styles" ]
             , viewExamples
                 [ ( "mediumBody", Text.mediumBody )
                 , ( "smallBody", Text.smallBody )
@@ -54,7 +91,7 @@ example =
                 , ( "caption", Text.caption )
                 ]
                 attributes
-            , Heading.h2 [ Heading.style Heading.Top ] [ Html.text "Paragraph styles for user-authored content" ]
+            , Heading.h3 [] [ Html.text "Paragraph styles for user-authored content" ]
             , viewExamples
                 [ ( "ugMediumBody", Text.ugMediumBody )
                 , ( "ugSmallBody", Text.ugSmallBody )
@@ -62,11 +99,6 @@ example =
                 attributes
             ]
     }
-
-
-viewPreview : ( String, List (Text.Attribute msg) -> Html msg ) -> Html msg
-viewPreview ( name, view ) =
-    view [ Text.plaintext name ]
 
 
 viewExamples : List ( String, List (Text.Attribute msg) -> Html msg ) -> List (Text.Attribute msg) -> Html msg
@@ -86,7 +118,7 @@ viewExamples examples attributes =
 
 {-| -}
 type alias State =
-    { control : Control (List (Text.Attribute Msg))
+    { control : Control (List ( String, Text.Attribute Msg ))
     }
 
 
@@ -96,34 +128,26 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.listItem "content" controlContent
-            |> ControlExtra.listItem "noBreak"
-                (Control.map Text.noBreak (Control.bool False))
-            |> ControlExtra.optionalListItem "css"
-                (Control.value
-                    (Text.css
-                        [ Css.border3 (Css.px 1) Css.solid Colors.aqua
-                        , Css.color Colors.aquaDark
-                        ]
-                    )
-                )
+            |> ControlExtra.optionalBoolListItem "noBreak"
+                ( "Text.noBreak True", Text.noBreak True )
+            |> CommonControls.css { moduleName = "Text", use = Text.css }
     }
 
 
-controlContent : Control (Text.Attribute msg)
+controlContent : Control ( String, Text.Attribute msg )
 controlContent =
     CommonControls.content
         { moduleName = "Text"
         , plaintext = Text.plaintext
-        , markdown = Text.markdown
+        , markdown = Just Text.markdown
         , html = Text.html
         , httpError = Nothing
         }
-        |> Control.map Tuple.second
 
 
 {-| -}
 type Msg
-    = UpdateControl (Control (List (Text.Attribute Msg)))
+    = UpdateControl (Control (List ( String, Text.Attribute Msg )))
 
 
 {-| -}

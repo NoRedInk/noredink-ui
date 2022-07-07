@@ -18,10 +18,11 @@ module Nri.Ui.Table.V5 exposing
 
 -}
 
+import Accessibility.Styled.Style as Style
 import Css exposing (..)
 import Css.Animations
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
 
@@ -141,7 +142,8 @@ stylesLoadingColumn rowIndex colIndex width =
 tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithoutHeader styles columns toRow data =
     table styles
-        [ tableBody toRow data
+        [ thead [] [ tr Style.invisible (List.map tableRowHeader columns) ]
+        , tableBody toRow data
         ]
 
 
@@ -169,7 +171,8 @@ tableHeader columns =
 tableRowHeader : Column data msg -> Html msg
 tableRowHeader (Column header _ width _) =
     th
-        [ css (width :: headerStyles)
+        [ Attributes.scope "col"
+        , css (width :: headerStyles)
         ]
         [ header ]
 

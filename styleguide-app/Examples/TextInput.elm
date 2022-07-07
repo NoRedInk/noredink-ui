@@ -9,16 +9,12 @@ module Examples.TextInput exposing (Msg, State, example)
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
-import Css exposing (..)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Dict exposing (Dict)
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Message.V3 as Message
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
 
@@ -44,7 +40,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ Control.view UpdateControl state.control
                 |> Html.fromUnstyled
             , viewExamples <|

@@ -11,7 +11,6 @@ import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 
@@ -43,14 +42,14 @@ example =
         ]
             |> List.map viewPreview
     , view =
-        \_ ->
-            [ Heading.h3 [] [ Html.text "baseFont" ]
+        \ellieLinkConfig _ ->
+            [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "baseFont" ]
             , Html.p [ css [ Fonts.baseFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-            , Heading.h3 [] [ Html.text "quizFont" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "quizFont" ]
             , Html.p [ css [ Fonts.quizFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-            , Heading.h3 [] [ Html.text "ugFont" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "ugFont" ]
             , Html.p [ css [ Fonts.ugFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
             ]

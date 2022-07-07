@@ -6,7 +6,7 @@ module Examples.Modal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, h3, h4, p, span, text)
+import Accessibility.Styled as Html exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
@@ -15,14 +15,12 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 as FocusTrap
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.Text.V6 as Text
@@ -175,7 +173,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 settings =
                     Control.currentValue state.settings

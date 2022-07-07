@@ -48,14 +48,13 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
-import Json.Decode exposing (Decoder)
+import Json.Decode
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles
 import Nri.Ui.Util
 import SolidColor

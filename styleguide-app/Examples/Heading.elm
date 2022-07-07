@@ -7,34 +7,35 @@ module Examples.Heading exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Css
+import CommonControls
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import ViewHelpers exposing (viewExamples)
 
 
-{-| -}
-type alias State =
-    ()
+moduleName : String
+moduleName =
+    "Heading"
 
 
-{-| -}
-type alias Msg =
-    ()
+version : Int
+version =
+    2
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Heading"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Text, Layout ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = init
+    , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
         [ Heading.h1 [] [ Html.text "h1" ]
@@ -43,16 +44,100 @@ example =
         , Heading.h4 [] [ Html.text "h4" ]
         ]
     , view =
-        \_ ->
-            [ viewExamples
-                [ ( "h1", Heading.h1 [] [ Html.text "This is the main page heading." ] )
-                , ( "h2", Heading.h2 [] [ Html.text "This is a tagline" ] )
-                , ( "h3", Heading.h3 [] [ Html.text "This is a subHeading" ] )
-                , ( "h4", Heading.h4 [] [ Html.text "This is a smallHeading" ] )
-                ]
-            , Heading.h2 [ Heading.style Heading.Top ]
-                [ Html.text "Heading.h2 [ Heading.style Heading.Top ]" ]
-            , Heading.h2 [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]
-                [ Html.text "Heading.h2 [ Heading.css [ Css.color Colors.highlightPurpleDark ] ]" ]
+        \ellieLinkConfig state ->
+            let
+                examples =
+                    [ ( "h1", Heading.h1, "This is the main page heading." )
+                    , ( "h2", Heading.h2, "This is a tagline" )
+                    , ( "h3", Heading.h3, "This is a subHeading" )
+                    , ( "h4", Heading.h4, "This is a smallHeading" )
+                    , ( "h5", Heading.h5, "This is also a smallHeading" )
+                    ]
+
+                attributes =
+                    List.map Tuple.second (Control.currentValue state.control)
+            in
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.control
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \settings ->
+                        let
+                            toExampleCode ( name, _, content ) =
+                                { sectionName = name
+                                , code =
+                                    moduleName
+                                        ++ "."
+                                        ++ name
+                                        ++ "\n    [ "
+                                        ++ String.join "\n    , " (List.map Tuple.first settings)
+                                        ++ "\n    ]"
+                                        ++ ("\n    [ Html.text \"" ++ content ++ "\" ]")
+                                }
+                        in
+                        List.map toExampleCode examples
+                }
+            , examples
+                |> List.map
+                    (\( name, view, content ) ->
+                        ( name, view attributes [ Html.text content ] )
+                    )
+                |> viewExamples
             ]
     }
+
+
+{-| -}
+type alias State =
+    { control : Control Settings
+    }
+
+
+init : State
+init =
+    { control =
+        ControlExtra.list
+            |> CommonControls.css { moduleName = moduleName, use = Heading.css }
+            |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
+            |> ControlExtra.optionalListItem "style" controlStyle
+    }
+
+
+controlStyle : Control ( String, Heading.Attribute msg )
+controlStyle =
+    [ ( "Top", Heading.Top )
+    , ( "Tagline", Heading.Tagline )
+    , ( "Subhead", Heading.Subhead )
+    , ( "Small", Heading.Small )
+    ]
+        |> List.map
+            (\( name, val ) ->
+                ( name
+                , Control.value
+                    ( "Heading.style Heading." ++ name
+                    , Heading.style val
+                    )
+                )
+            )
+        |> Control.choice
+
+
+type alias Settings =
+    List ( String, Heading.Attribute Msg )
+
+
+{-| -}
+type Msg
+    = UpdateControl (Control Settings)
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        UpdateControl settings ->
+            ( { state | control = settings }, Cmd.none )

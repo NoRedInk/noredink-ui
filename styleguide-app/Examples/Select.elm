@@ -14,9 +14,7 @@ import Debug.Control.Extra as ControlExtra
 import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V8 as Select exposing (Choice)
 
 
@@ -39,7 +37,7 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 label =
                     Control.currentValue state.label
@@ -87,7 +85,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { label = Control.string "Tortilla Selector"
+    { label = Control.record identity |> Control.field "label" (Control.string "Tortilla Selector")
     , attributes = initControls
     }
 
@@ -214,11 +212,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ConsoleLog message ->
-            let
-                _ =
-                    Debug.log "SelectExample" message
-            in
-            ( state, Cmd.none )
+            ( Debug.log "SelectExample" message |> always state, Cmd.none )
 
         UpdateLabel label ->
             ( { state | label = label }

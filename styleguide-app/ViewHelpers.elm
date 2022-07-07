@@ -2,7 +2,7 @@ module ViewHelpers exposing (viewExamples)
 
 import Css
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes exposing (css)
 
 
 viewExamples : List ( String, Html msg ) -> Html msg

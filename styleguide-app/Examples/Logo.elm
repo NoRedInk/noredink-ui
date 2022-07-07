@@ -10,9 +10,8 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
 import Nri.Ui.Svg.V1 as Svg
@@ -20,12 +19,12 @@ import Nri.Ui.Svg.V1 as Svg
 
 {-| -}
 type alias State =
-    ()
+    IconExamples.Settings
 
 
 {-| -}
 type alias Msg =
-    ()
+    IconExamples.Msg
 
 
 {-| -}
@@ -35,8 +34,8 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = IconExamples.init
+    , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
         Html.div [ css [ Css.marginBottom (Css.px 8) ] ] [ Svg.toHtml Logo.noredink ]
@@ -47,8 +46,13 @@ example =
                 , Logo.googleG
                 ]
     , view =
-        \_ ->
-            [ IconExamples.viewWithCustomStyles "NRI"
+        \ellieLinkConfig settings ->
+            let
+                viewExampleSection =
+                    IconExamples.viewWithCustomStyles settings
+            in
+            [ IconExamples.viewSettings settings
+            , viewExampleSection "NRI"
                 [ ( "noredink"
                   , Logo.noredink
                   , [ Css.height (Css.px 25)
@@ -57,11 +61,11 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Social Media"
+            , viewExampleSection "Social Media"
                 [ ( "facebook", Logo.facebook, defaults )
                 , ( "twitter", Logo.twitter, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "Clever"
+            , viewExampleSection "Clever"
                 [ ( "clever"
                   , Logo.clever
                   , [ Css.height (Css.px 25)
@@ -79,14 +83,14 @@ example =
                     ]
                   )
                 ]
-            , IconExamples.viewWithCustomStyles "Google"
+            , viewExampleSection "Google"
                 [ ( "googleClassroom"
                   , Logo.googleClassroom
                   , defaults
                   )
                 , ( "googleG", Logo.googleG, defaults )
                 ]
-            , IconExamples.viewWithCustomStyles "LMS"
+            , viewExampleSection "LMS"
                 [ ( "canvas"
                   , Logo.canvas
                   , [ Css.height (Css.px 25)
@@ -94,10 +98,24 @@ example =
                     , Css.margin (Css.px 4)
                     ]
                   )
+                , ( "canvasCircle"
+                  , Logo.canvasCircle
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 25)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
                 , ( "schoology"
                   , Logo.schoology
                   , [ Css.height (Css.px 25)
                     , Css.width (Css.px 100)
+                    , Css.margin (Css.px 4)
+                    ]
+                  )
+                , ( "schoologyCircle"
+                  , Logo.schoologyCircle
+                  , [ Css.height (Css.px 25)
+                    , Css.width (Css.px 25)
                     , Css.margin (Css.px 4)
                     ]
                   )

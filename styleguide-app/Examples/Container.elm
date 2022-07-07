@@ -7,29 +7,33 @@ module Examples.Container exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
-import CommonControls exposing (romeoAndJulietQuotation)
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import Html.Styled.Events exposing (onClick)
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
+
+
+moduleName : String
+moduleName =
+    "Container"
+
+
+version : Int
+version =
+    2
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Container"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
@@ -47,13 +51,45 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
-                    Control.currentValue state.control
+                    List.map Tuple.second (Control.currentValue state.control)
             in
-            [ Control.view UpdateControl state.control
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.control
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \settings ->
+                        let
+                            stringAttributes =
+                                List.map Tuple.first settings
+                        in
+                        [ { sectionName = "Default Container"
+                          , code = viewExampleCode stringAttributes
+                          }
+                        , { sectionName = "Gray Container"
+                          , code = viewExampleCode ("Container.gray" :: stringAttributes)
+                          }
+                        , { sectionName = "Pillow Container"
+                          , code = viewExampleCode ("Container.pillow" :: stringAttributes)
+                          }
+                        , { sectionName = "Buttony Container"
+                          , code = viewExampleCode ("Container.buttony" :: stringAttributes)
+                          }
+                        , { sectionName = "Disabled Container"
+                          , code = viewExampleCode ("Container.disabled" :: stringAttributes)
+                          }
+                        , { sectionName = "Invalid Container"
+                          , code = viewExampleCode ("Container.invalid" :: stringAttributes)
+                          }
+                        ]
+                }
             , viewExample
                 { name = "Default Container"
                 , description = "Your go-to container."
@@ -101,9 +137,17 @@ viewExample { name, description } attributes =
         ]
 
 
+viewExampleCode : List String -> String
+viewExampleCode attributes =
+    moduleName
+        ++ ".view\n    [ "
+        ++ String.join "\n    , " attributes
+        ++ "\n    ]"
+
+
 {-| -}
 type alias State =
-    { control : Control (List (Container.Attribute Msg))
+    { control : Control (List ( String, Container.Attribute Msg ))
     }
 
 
@@ -113,57 +157,39 @@ init =
     { control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
-            |> ControlExtra.optionalListItem "css" controlCss
+            |> CommonControls.css { moduleName = moduleName, use = Container.css }
+            |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
+            |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
+            |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
             |> ControlExtra.listItem "content" controlContent
     }
 
 
-controlPaddingPx : Control (Container.Attribute msg)
+controlPaddingPx : Control ( String, Container.Attribute msg )
 controlPaddingPx =
-    Control.map Container.paddingPx (ControlExtra.float 20)
-
-
-controlCss : Control (Container.Attribute msg)
-controlCss =
-    Control.map Container.css
-        (Control.value
-            [ Css.minHeight (Css.px 100)
-            , Css.hover [ Css.backgroundColor Colors.glacier ]
-            ]
+    Control.map
+        (\val ->
+            ( "Container.paddingPx " ++ String.fromFloat val
+            , Container.paddingPx val
+            )
         )
+        (ControlExtra.float 20)
 
 
-controlContent : Control (Container.Attribute msg)
+controlContent : Control ( String, Container.Attribute msg )
 controlContent =
-    Control.choice
-        [ ( "plain text (short)"
-          , Control.string "Content, content..."
-                |> Control.map Container.plaintext
-          )
-        , ( "plain text (long)"
-          , Control.stringTextarea romeoAndJulietQuotation
-                |> Control.map Container.plaintext
-          )
-        , ( "markdown"
-          , Control.string romeoAndJulietQuotation
-                |> Control.map Container.markdown
-          )
-        , ( "HTML (short)"
-          , Control.value
-                (Container.html
-                    [ UiIcon.footsteps
-                        |> Svg.withHeight (Css.px 200)
-                        |> Svg.withColor Colors.grassland
-                        |> Svg.toHtml
-                    ]
-                )
-          )
-        ]
+    CommonControls.content
+        { moduleName = "Container"
+        , plaintext = Container.plaintext
+        , markdown = Just Container.markdown
+        , html = Container.html
+        , httpError = Nothing
+        }
 
 
 {-| -}
 type Msg
-    = UpdateControl (Control (List (Container.Attribute Msg)))
+    = UpdateControl (Control (List ( String, Container.Attribute Msg )))
 
 
 {-| -}

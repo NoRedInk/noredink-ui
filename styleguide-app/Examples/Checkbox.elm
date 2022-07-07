@@ -7,14 +7,19 @@ module Examples.Checkbox exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import CheckboxIcons
 import Css
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
+import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)
 
 
@@ -38,15 +43,15 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = preview
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
             , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
             , viewDisabledCheckbox "styleguide-checkbox-disabled" state
             , viewMultilineCheckboxes state
-            , h3 [] [ text "Premium Checkboxes" ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
@@ -56,6 +61,32 @@ example =
           }
         ]
     }
+
+
+preview : List (Html Never)
+preview =
+    let
+        renderPreview ( icon, label_ ) =
+            span
+                [ css
+                    [ Css.color Colors.navy
+                    , Css.fontSize (Css.px 15)
+                    , Fonts.baseFont
+                    , Css.fontWeight (Css.int 600)
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    ]
+                ]
+                [ Svg.toHtml (Svg.withCss [ Css.marginRight (Css.px 8) ] icon)
+                , text label_
+                ]
+    in
+    [ ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
+    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
+    , ( CheckboxIcons.checkedPartially "checkedPartially-preview-checkedPartially", "Part checked" )
+    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked" )
+    ]
+        |> List.map renderPreview
 
 
 {-| -}
@@ -140,7 +171,7 @@ viewMultilineCheckboxes : State -> Html Msg
 viewMultilineCheckboxes state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
-        [ Html.h3 [] [ Html.text "Multiline Text in Checkboxes" ]
+        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Multiline Text in Checkboxes" ]
         , let
             id =
                 "styleguide-checkbox-multiline"
@@ -184,11 +215,11 @@ viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     Html.div []
         [ PremiumCheckbox.view
-            { label = "Identify Adjectives 1 (Premium)"
+            { label = "Identify Adjectives 1 (Premium, Unlocked)"
             , onChange = ToggleCheck "premium-1"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-1" state.isChecked)
             ]
         , PremiumCheckbox.view
@@ -196,15 +227,15 @@ viewPremiumCheckboxes state =
             , onChange = ToggleCheck "premium-2"
             }
             [ PremiumCheckbox.premium PremiumDisplay.Free
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick NoOp
             , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
             ]
         , PremiumCheckbox.view
-            { label = "Revising Wordy Phrases 3 (Premium, Disabled)"
+            { label = "Revising Wordy Phrases 3 (Premium, Locked)"
             , onChange = ToggleCheck "premium-3"
             }
             [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
-            , PremiumCheckbox.showPennant NoOp
+            , PremiumCheckbox.onLockedClick (Debug.log "Locked" NoOp)
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
             ]
         ]

@@ -14,8 +14,9 @@ module Nri.Ui.Modal.V11 exposing
 
 # Patch changes:
 
-    - adds `testId` helper
-    - adds data-nri-descriptions to the header, content, and footer
+  - adds `testId` helper
+  - adds data-nri-descriptions to the header, content, and footer
+  - use `Shadows`
 
 
 # Changes from V10:
@@ -161,8 +162,6 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
-import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
@@ -170,18 +169,17 @@ import Css.Media
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
-import Html.Styled.Events as Events exposing (onClick)
-import Json.Decode as Decode exposing (Decoder)
+import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.SpriteSheet
 import Nri.Ui.Svg.V1
 import Task
-import TransparentColor as Transparent
 
 
 {-| -}
@@ -237,7 +235,6 @@ isOpen model =
 type Msg
     = CloseButtonClicked
     | EscOrOverlayClicked
-    | Focus String
     | Focused (Result Dom.Error ())
 
 
@@ -266,9 +263,6 @@ update { dismissOnEscAndOverlayClick } msg model =
 
             else
                 ( model, Cmd.none )
-
-        Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
             -- TODO: consider adding error handling when we didn't successfully
@@ -426,7 +420,7 @@ modalStyles =
 
     -- Border
     , borderRadius (px 20)
-    , property "box-shadow" "0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075)"
+    , Shadows.high
     , Css.Media.withMedia [ mobile ]
         [ borderRadius zero
         ]
@@ -570,7 +564,7 @@ viewModal :
 viewModal config =
     section
         ([ Role.dialog
-         , Widget.modal True
+         , Aria.modal True
          , Aria.labeledBy modalTitleId
          ]
             ++ config.customAttributes
@@ -728,7 +722,7 @@ closeButtonId =
 viewCloseButton : msg -> Html msg
 viewCloseButton closeModal =
     button
-        (Widget.label "Close modal"
+        (Aria.label "Close modal"
             :: onClick closeModal
             :: Attrs.css
                 [ -- in the upper-right corner of the modal

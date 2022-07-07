@@ -7,30 +7,32 @@ module Examples.DisclosureIndicator exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
-import Css
+import Css exposing (Style)
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
-import Html.Styled.Events exposing (onClick)
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Text.V6 as Text
 
 
-{-| -}
-type alias State =
-    { largeState : Bool
-    , mediumState : Bool
-    }
+moduleName : String
+moduleName =
+    "DisclosureIndicator"
+
+
+version : Int
+version =
+    2
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "DisclosureIndicator"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Icons ]
     , keyboardSupport = []
     , state = init
@@ -43,46 +45,100 @@ example =
         , DisclosureIndicator.large [] True
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
+            let
+                attributes =
+                    Control.currentValue state.settings
+            in
             [ Text.smallBodyGray [ Text.plaintext "The disclosure indicator is only the caret. It is NOT a button -- you must create a button or clickabletext yourself!" ]
-            , Html.div [ css [ Css.displayFlex, Css.padding (Css.px 8) ] ]
-                [ Button.button "Toggle large indicator"
-                    [ Button.onClick ToggleLarge, Button.small, Button.secondary ]
-                , Button.button "Toggle medium indicator"
-                    [ Button.onClick ToggleMedium, Button.small, Button.secondary ]
+            , ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state.settings
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \settings ->
+                        let
+                            toCode viewName =
+                                moduleName
+                                    ++ "."
+                                    ++ viewName
+                                    ++ " "
+                                    ++ Tuple.first settings.css
+                                    ++ " "
+                                    ++ Tuple.first settings.isOpen
+                        in
+                        [ { sectionName = "Large"
+                          , code = toCode "large"
+                          }
+                        , { sectionName = "medium"
+                          , code = toCode "medium"
+                          }
+                        ]
+                }
+            , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
+                [ DisclosureIndicator.large
+                    (Tuple.second attributes.css)
+                    (Tuple.second attributes.isOpen)
+                , Html.text "large is a 17px caret icon."
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
-                [ DisclosureIndicator.large [ Css.marginRight (Css.px 10) ] state.largeState
-                , Html.text "I'm a 17px caret icon."
-                ]
-            , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
-                [ DisclosureIndicator.medium [ Css.paddingRight (Css.px 8) ] state.mediumState
-                , Html.text "I'm a 15px caret icon."
+                [ DisclosureIndicator.medium
+                    (Tuple.second attributes.css)
+                    (Tuple.second attributes.isOpen)
+                , Html.text "medium is a 15px caret icon."
                 ]
             ]
     }
 
 
 {-| -}
-init : State
-init =
-    { largeState = False
-    , mediumState = False
+type alias State =
+    { settings : Control Settings
     }
 
 
 {-| -}
+init : State
+init =
+    { settings = initSettings
+    }
+
+
+type alias Settings =
+    { css : ( String, List Style )
+    , isOpen : ( String, Bool )
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "css"
+            (Control.choice
+                [ ( "[ Css.marginRight (Css.px 8) ]"
+                  , Control.value
+                        ( "[ Css.marginRight (Css.px 8) ]"
+                        , [ Css.marginRight (Css.px 8) ]
+                        )
+                  )
+                , ( "[]", Control.value ( "[]", [] ) )
+                ]
+            )
+        |> Control.field "isOpen" (ControlExtra.bool False)
+
+
+{-| -}
 type Msg
-    = ToggleLarge
-    | ToggleMedium
+    = UpdateSettings (Control Settings)
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ToggleLarge ->
-            ( { state | largeState = not state.largeState }, Cmd.none )
-
-        ToggleMedium ->
-            ( { state | mediumState = not state.mediumState }, Cmd.none )
+        UpdateSettings settings ->
+            ( { state | settings = settings }, Cmd.none )

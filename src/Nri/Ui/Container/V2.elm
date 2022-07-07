@@ -1,6 +1,8 @@
 module Nri.Ui.Container.V2 exposing
     ( view, Attribute
-    , paddingPx, custom, css, testId, id
+    , custom, testId, id
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , paddingPx
     , plaintext, markdown, html
     , gray, default, disabled, invalid, pillow, buttony
     )
@@ -9,6 +11,12 @@ module Nri.Ui.Container.V2 exposing
 
 
 # Changelog
+
+
+## Patch changes
+
+  - use `Shadows`
+  - add notMobileCss, mobileCss, quizEngineMobileCss
 
 
 ## Changes from V1
@@ -31,7 +39,10 @@ module Nri.Ui.Container.V2 exposing
 ## View
 
 @docs view, Attribute
-@docs paddingPx, custom, css, testId, id
+@docs custom, testId, id
+
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs paddingPx
 
 
 ## Content
@@ -53,8 +64,8 @@ import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
-import Nri.Ui.Text.V6 as Text
+import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Shadows.V1 as Shadows
 
 
 {-| -}
@@ -115,6 +126,45 @@ css css_ =
     Attribute <| \config -> { config | css = config.css ++ css_ }
 
 
+{-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Container.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
+
+Equivalent to:
+
+    Container.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
+
+Equivalent to:
+
+    Container.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+
+
 {-| -}
 view : List (Attribute msg) -> Html msg
 view attributes =
@@ -153,7 +203,7 @@ defaultStyles : List Css.Style
 defaultStyles =
     [ borderRadius (px 8)
     , border3 (px 1) solid Colors.gray92
-    , property "box-shadow" "0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);"
+    , Shadows.low
     , backgroundColor Colors.white
     ]
 
@@ -237,9 +287,9 @@ pillowStyles : List Style
 pillowStyles =
     [ borderRadius (px 20)
     , border3 (px 1) solid Colors.gray92
-    , property "box-shadow" "0 0.5px 0.7px hsl(0deg 0% 0% / 0.075), 0 1.6px 2px -0.8px hsl(0deg 0% 0% / 0.075), 0 4.1px 5.2px -1.7px hsl(0deg 0% 0% / 0.075), 5px 10px 12.6px -2.5px hsl(0deg 0% 0% / 0.075);"
+    , Shadows.medium
     , backgroundColor Colors.white
-    , withMedia [ mobile ]
+    , withMedia [ MediaQuery.mobile ]
         [ borderRadius (px 8)
         , padding (px 20)
         ]
@@ -264,7 +314,7 @@ buttonyStyles =
     , border3 (px 1) solid Colors.gray85
     , borderBottom3 (px 4) solid Colors.gray85
     , backgroundColor Colors.white
-    , withMedia [ mobile ]
+    , withMedia [ MediaQuery.mobile ]
         [ borderRadius (px 8)
         ]
     ]

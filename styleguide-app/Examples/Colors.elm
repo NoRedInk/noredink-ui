@@ -11,11 +11,11 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Text.V6 as Text
 import SolidColor exposing (highContrast)
 
 
@@ -49,7 +49,7 @@ example =
         ]
             |> List.map viewPreviewSwatch
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             [ [ ( "gray20", Colors.gray20, "Main text" )
               , ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )
               , ( "gray75", Colors.gray75, "Border of form elements and tabs" )
@@ -91,8 +91,8 @@ example =
               , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
               ]
                 |> viewColors
-            , Heading.h3 [] [ Html.text "Background Highlight Colors" ]
-            , Html.p [] [ Html.text "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Background Highlight Colors" ]
+            , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
             , [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
               , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
               , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
@@ -109,8 +109,8 @@ example =
               , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
               ]
                 |> viewColors
-            , Heading.h3 [] [ Html.text "Text Highlight Colors" ]
-            , Html.p [] [ Html.text "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Text Highlight Colors" ]
+            , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , [ ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
               , ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )
               , ( "textHighlightMagenta", Colors.textHighlightMagenta, "Neutral text highlight #3" )
@@ -149,6 +149,8 @@ viewColors colors =
                 [ Css.maxWidth (Css.px 12000)
                 , Css.displayFlex
                 , Css.flexWrap Css.wrap
+                , Css.property "gap" "20px"
+                , Css.margin3 (Css.px 10) Css.zero (Css.px 30)
                 ]
             ]
 
@@ -162,9 +164,8 @@ viewColor ( name, color, description ) =
             , Css.maxWidth (Css.px 250)
             , Css.minHeight (Css.px 160)
             , Css.maxHeight (Css.px 160)
-            , Css.margin (Css.px 4)
-            , Css.padding (Css.px 8)
-            , Css.borderRadius (Css.px 4)
+            , Css.padding (Css.px 20)
+            , Css.borderRadius (Css.px 20)
 
             -- Interior spacing
             , Css.displayFlex
@@ -181,21 +182,26 @@ viewColor ( name, color, description ) =
             ]
         ]
         [ Html.div
-            [ css [ Css.fontSize (Css.px 20) ]
+            [ css
+                [ Css.fontSize (Css.px 20)
+                , Css.fontWeight (Css.int 700)
+                , Fonts.baseFont
+                ]
             ]
             [ Html.text name ]
         , Html.div
             [ css
-                [ Css.fontSize (Css.px 10)
-                , Css.flexGrow (Css.num 1)
+                [ Css.fontSize (Css.px 15)
                 , Css.textAlign Css.center
+                , Css.margin2 (Css.px 10) Css.zero
+                , Fonts.baseFont
                 ]
             ]
             [ Html.text description ]
         , Html.div
             [ css
                 [ Css.fontSize (Css.px 20)
-                , Css.flexGrow (Css.num 2)
+                , Fonts.baseFont
                 ]
             ]
             [ Html.text color.value ]

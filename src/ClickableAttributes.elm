@@ -1,25 +1,41 @@
 module ClickableAttributes exposing
-    ( ClickableAttributes
-    , href
-    , init
-    , linkExternal
-    , linkExternalWithTracking
-    , linkSpa
-    , linkWithMethod
-    , linkWithTracking
+    ( ClickableAttributes, init
     , onClick
     , toButtonAttributes
+    , href, linkWithMethod, linkWithTracking
+    , linkSpa
+    , linkExternal, linkExternalWithTracking
     , toLinkAttributes
     )
 
-{-| -}
+{-|
 
+@docs ClickableAttributes, init
+
+
+# For buttons
+
+@docs onClick
+@docs toButtonAttributes
+
+
+# For links
+
+@docs href, linkWithMethod, linkWithTracking
+@docs linkSpa
+@docs linkExternal, linkExternalWithTracking
+@docs toLinkAttributes
+
+-}
+
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.Html.Attributes.V2 as AttributeExtras exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 exposing (targetBlank)
 
 
 {-| -}
@@ -112,8 +128,25 @@ toButtonAttributes clickableAttributes =
 
 
 {-| -}
-toLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
-toLinkAttributes routeToString clickableAttributes =
+toLinkAttributes : { routeToString : route -> String, isDisabled : Bool } -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toLinkAttributes { routeToString, isDisabled } clickableAttributes =
+    let
+        ( linkTypeName, attributes ) =
+            toEnabledLinkAttributes routeToString clickableAttributes
+    in
+    ( linkTypeName
+    , if isDisabled then
+        [ Role.link
+        , Aria.disabled True
+        ]
+
+      else
+        attributes
+    )
+
+
+toEnabledLinkAttributes : (route -> String) -> ClickableAttributes route msg -> ( String, List (Attribute msg) )
+toEnabledLinkAttributes routeToString clickableAttributes =
     let
         stringUrl =
             case ( clickableAttributes.urlString, clickableAttributes.url ) of

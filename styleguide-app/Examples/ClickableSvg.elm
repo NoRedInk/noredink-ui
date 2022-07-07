@@ -15,25 +15,25 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EventExtras
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Svg.V1 exposing (Svg)
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+
+
+version : Int
+version =
+    2
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "ClickableSvg"
-    , version = 2
+    { name = moduleName
+    , version = version
     , categories = [ Buttons, Icons ]
     , keyboardSupport = []
     , state = init
@@ -57,15 +57,21 @@ example =
             ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ ControlView.view
-                { update = SetControls
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = SetControls
                 , settings = state.settings
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \{ label, icon, attributes } ->
                         let
                             toCode fName =
-                                "ClickableSvg."
+                                moduleName
+                                    ++ "."
                                     ++ fName
                                     ++ " \""
                                     ++ label
@@ -90,13 +96,13 @@ Tooltip.view
             ClickableSvg.button "Preview"
                 UiIcon.preview
                 [ ClickableSvg.custom attrs,
-                , ClickableSvg.custom [ EventExtras.onClickStopPropagation (ShowItWorked "You clicked the preview button!") ]
+                , ClickableSvg.onClick (ShowItWorked "You clicked the preview button!") ]
                 ]
     , id = "preview-tooltip"
     }
     [ Tooltip.plaintext "Preview"
     , Tooltip.primaryLabel
-    , Tooltip.onHover SetPreviewTooltip
+    , Tooltip.onToggle SetPreviewTooltip
     , Tooltip.open state.tooltipPreview
     , Tooltip.smallPadding
     , Tooltip.fitToContent
@@ -115,13 +121,18 @@ Tooltip.view
                     }
                     [ Tooltip.plaintext "Preview"
                     , Tooltip.primaryLabel
-                    , Tooltip.onHover SetPreviewTooltip
+                    , Tooltip.onToggle SetPreviewTooltip
                     , Tooltip.open state.tooltipPreview
                     , Tooltip.smallPadding
                     , Tooltip.fitToContent
                     ]
             ]
     }
+
+
+moduleName : String
+moduleName =
+    "ClickableSvg"
 
 
 viewExampleTable : Settings Msg -> Html Msg
@@ -231,7 +242,6 @@ init =
 type Msg
     = ShowItWorked String
     | SetPreviewTooltip Bool
-    | SetShareTooltip Bool
     | SetControls (Control (Settings Msg))
 
 
@@ -240,17 +250,10 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ShowItWorked message ->
-            let
-                _ =
-                    Debug.log "ClickableSvg" message
-            in
-            ( state, Cmd.none )
+            ( Debug.log "ClickableSvg" message |> always state, Cmd.none )
 
         SetPreviewTooltip bool ->
             ( { state | tooltipPreview = bool }, Cmd.none )
-
-        SetShareTooltip bool ->
-            ( { state | tooltipShareTo = bool }, Cmd.none )
 
         SetControls settings ->
             ( { state | settings = settings }, Cmd.none )

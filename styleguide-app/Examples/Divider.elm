@@ -7,11 +7,7 @@ module Examples.Divider exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
-import Css
 import Example exposing (Example)
-import Html.Styled as Html
-import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Divider.V2 as Divider
 
 
@@ -36,5 +32,5 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview = [ Divider.view "Dividing Line" ]
-    , view = \state -> [ Divider.view "Dividing Line" ]
+    , view = \ellieLinkConfig state -> [ Divider.view "Dividing Line" ]
     }

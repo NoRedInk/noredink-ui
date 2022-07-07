@@ -5,7 +5,10 @@ module Nri.Ui.SortableTable.V2 exposing
     , invariantSort, simpleSort, combineSorters
     )
 
-{-|
+{-| TODO for next major version:
+
+  - make sure the "sort" feature is fully accessible
+  - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
 @docs Column, Config, Sorter, State
 @docs init, initDescending
@@ -15,16 +18,14 @@ module Nri.Ui.SortableTable.V2 exposing
 -}
 
 import Css exposing (..)
-import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
-import Nri.Ui.Colors.Extra
+import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Table.V5
-import SolidColor
-import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
 
@@ -361,8 +362,3 @@ sortArrow direction active =
             [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
             ]
         ]
-
-
-toCssString : Css.Color -> String
-toCssString =
-    SolidColor.toRGBString << Nri.Ui.Colors.Extra.fromCssColor

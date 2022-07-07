@@ -9,15 +9,12 @@ module Examples.Loading exposing (example, State, Msg)
 import Browser.Events
 import Category exposing (Category(..))
 import Css
-import Css.Global exposing (Snippet, adjacentSiblings, children, class, descendants, each, everything, media, selector, withClass)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Events as Events
 import Json.Decode
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Loading.V1 as Loading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
@@ -94,9 +91,16 @@ example =
     , state = init
     , update = update
     , subscriptions = subscriptions
-    , preview = []
+    , preview =
+        [ Loading.spinningDots
+            |> Svg.withCss
+                [ Css.property "animation-name" "none" |> Css.important
+                , Css.alignSelf Css.center
+                ]
+            |> Svg.toHtml
+        ]
     , view =
-        \{ showLoadingFadeIn, showLoading, showSpinners } ->
+        \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then
                 Loading.page
 

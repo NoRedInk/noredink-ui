@@ -57,7 +57,7 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 
 -}
 
-import Css exposing (hex, rgba)
+import Css exposing (hex)
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 
 
@@ -156,7 +156,7 @@ gray20 =
 -}
 gray45 : Css.Color
 gray45 =
-    hex "#727272"
+    hex "#707070"
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>

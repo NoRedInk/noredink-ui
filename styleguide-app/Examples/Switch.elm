@@ -8,71 +8,137 @@ module Examples.Switch exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category
+import CommonControls
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
-import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Switch.V1 as Switch
+import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Switch.V2 as Switch
+
+
+moduleName : String
+moduleName =
+    "Switch"
+
+
+version : Int
+version =
+    2
+
+
+example : Example State Msg
+example =
+    { name = moduleName
+    , version = version
+    , state = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , preview =
+        [ Switch.view { label = "Toggle Off", id = "preview-switch-a" }
+            [ Switch.selected False
+            , Switch.custom [ Key.tabbable False ]
+            ]
+        , Switch.view { label = "Toggle On", id = "preview-switch-b" }
+            [ Switch.selected True
+            , Switch.custom [ Key.tabbable False ]
+            ]
+        ]
+    , view =
+        \ellieLinkConfig state ->
+            let
+                currentValue =
+                    Control.currentValue state.settings
+            in
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state.settings
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
+                , toExampleCode =
+                    \{ label, attributes } ->
+                        [ { sectionName = "Example"
+                          , code =
+                                moduleName
+                                    ++ ".view"
+                                    ++ " \""
+                                    ++ label
+                                    ++ "\"\t"
+                                    ++ ControlView.codeFromListWithHardcoded
+                                        [ "Switch.selected "
+                                            ++ Debug.toString state.selected
+                                            ++ "\n-- ,  Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
+                                        ]
+                                        attributes
+                          }
+                        ]
+                }
+            , Switch.view { label = currentValue.label, id = "view-switch-example" }
+                (Switch.selected state.selected
+                    :: Switch.onSwitch Switch
+                    :: List.map Tuple.second currentValue.attributes
+                )
+            ]
+    , categories = [ Category.Inputs ]
+    , keyboardSupport =
+        [ { keys = [ Space ]
+          , result = "Toggle the Switch state"
+          }
+        ]
+    }
 
 
 {-| -}
 type alias State =
-    Bool
+    { selected : Bool
+    , settings : Control Settings
+    }
+
+
+init : State
+init =
+    { selected = True
+    , settings = controlSettings
+    }
+
+
+type alias Settings =
+    { label : String
+    , attributes : List ( String, Switch.Attribute Msg )
+    }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "label" (Control.string "Show pandas in results")
+        |> Control.field "attributes" initAttributes
+
+
+initAttributes : Control (List ( String, Switch.Attribute msg ))
+initAttributes =
+    ControlExtra.list
+        |> CommonControls.disabledListItem moduleName Switch.disabled
 
 
 {-| -}
 type Msg
     = Switch Bool
+    | UpdateSettings (Control Settings)
 
 
-example : Example State Msg
-example =
-    { name = "Switch"
-    , version = 1
-    , state = True
-    , update = \(Switch new) _ -> ( new, Cmd.none )
-    , subscriptions = \_ -> Sub.none
-    , preview =
-        [ Switch.view
-            [ Switch.label (Html.text "Toggle On")
-            , Switch.custom [ Key.tabbable False ]
-            ]
-            False
-        , Switch.view
-            [ Switch.label (Html.text "Toggle Off")
-            , Switch.custom [ Key.tabbable False ]
-            ]
-            True
-        ]
-    , view =
-        \interactiveIsOn ->
-            [ Heading.h3 [] [ Html.text "Interactive" ]
-            , Switch.view
-                [ Switch.onSwitch Switch
-                , Switch.id "switch-interactive"
-                , Switch.label
-                    (if interactiveIsOn then
-                        Html.text "On"
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    case msg of
+        Switch bool ->
+            ( { state | selected = bool }
+            , Cmd.none
+            )
 
-                     else
-                        Html.text "Off"
-                    )
-                ]
-                interactiveIsOn
-            , Heading.h3 [] [ Html.text "Disabled (On)" ]
-            , Switch.view
-                [ Switch.disabled
-                , Switch.id "switch-disabled-on"
-                , Switch.label (Html.text "Permanently on")
-                ]
-                True
-            , Heading.h3 [] [ Html.text "Disabled (Off)" ]
-            , Switch.view
-                [ Switch.disabled
-                , Switch.id "switch-disabled-off"
-                , Switch.label (Html.text "Permanently off")
-                ]
-                False
-            ]
-    , categories = [ Category.Inputs ]
-    , keyboardSupport = [{- TODO -}]
-    }
+        UpdateSettings settings ->
+            ( { state | settings = settings }
+            , Cmd.none
+            )

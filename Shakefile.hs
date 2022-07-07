@@ -26,7 +26,7 @@ main = do
         shakeLintIgnore =
           [ "node_modules/**/*",
             "elm-stuff/**/*",
-            "styleguide-app/elm-stuff/**/*"
+            "styleguide/elm-stuff/**/*"
           ]
       }
     $ do
@@ -38,7 +38,7 @@ main = do
         removeFilesAfter "log" ["//*"]
         removeFilesAfter "node_modules" ["//*"]
         removeFilesAfter "public" ["//*"]
-        removeFilesAfter "styleguide-app" ["elm.js", "bundle.js", "elm-stuff"]
+        removeFilesAfter "styleguide" ["elm.js", "bundle.js", "elm-stuff"]
 
       phony "public" $ need ["log/public.txt"]
 
@@ -48,8 +48,10 @@ main = do
             "tests/elm-verify-examples.json",
             "log/elm-verify-examples.txt",
             "log/elm-test.txt",
-            "log/axe-report.txt",
-            "log/percy-tests.txt",
+            "log/elm-test-styleguide.txt",
+            "log/elm-review.txt",
+            "log/elm-review-styleguide.txt",
+            "log/puppeteer-tests.txt",
             "log/forbidden-imports-report.txt",
             "log/check-exposed.txt",
             "log/format.txt",
@@ -83,33 +85,54 @@ main = do
         need (["package.json", "elm.json"] ++ elmFiles)
         cmd (WithStdout True) (FileStdout out) "elm-test"
 
+      "log/elm-test-styleguide.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["styleguide/tests/**/*.elm"]
+        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
+        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-test"
+
+      "log/elm-review.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
+        need (["package.json", "elm.json"] ++ elmFiles)
+        cmd (WithStdout True) (FileStdout out) "elm-review"
+
+      "log/elm-review-styleguide.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["styleguide/**/*.elm", "styleguide-app/**/*.elm"]
+        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
+        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-review"
+
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
         need (["tests/elm-verify-examples.json"] ++ elmFiles)
         cmd (WithStdout True) (FileStdout out) "elm-verify-examples"
 
       "log/format.txt" %> \out -> do
-        let placesToLook = ["src", "tests", "styleguide-app"]
+        need ["log/elm-format.txt", "log/prettier.txt"]
+        writeFileChanged out "formatting checks passed"
+
+      "log/elm-format.txt" %> \out -> do
+        let placesToLook = ["src", "tests", "styleguide", "styleguide-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
 
-      "log/percy-tests.txt" %> \out -> do
+      "log/prettier.txt" %> \out -> do
+        (Stdout trackedFilesOut) <- cmd "git" "ls-files"
+        let trackedFiles = lines trackedFilesOut
+        let jsFiles = filter (\name -> takeExtension name == ".js") trackedFiles
+        need ("log/npm-install.txt" : jsFiles)
+
+        cmd (WithStdout True) (FileStdout out) "./node_modules/.bin/prettier" "--check" jsFiles
+
+      "log/puppeteer-tests.txt" %> \out -> do
         percyToken <- getEnv "PERCY_TOKEN"
         case percyToken of
           Nothing -> do
-            writeFileChanged out "Skipped running Percy tests, PERCY_TOKEN not set."
+            writeFileChanged out "PERCY_TOKEN not set, so skipping visual diff testing."
+            need ["log/npm-install.txt", "log/public.txt"]
+            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-no-percy.sh"
           Just _ -> do
             need ["log/npm-install.txt", "log/public.txt"]
-            cmd (WithStdout True) (FileStdout out) "script/percy-tests.sh"
-
-      "log/axe-report.json" %> \out -> do
-        need ["log/npm-install.txt", "script/run-axe.sh", "script/axe-puppeteer.js", "log/public.txt"]
-        cmd (WithStdout True) (FileStdout out) "script/run-axe.sh"
-
-      "log/axe-report.txt" %> \out -> do
-        need ["log/axe-report.json", "script/format-axe-report.sh", "script/axe-report.jq"]
-        cmd (WithStdout True) (FileStdout out) "script/format-axe-report.sh" "log/axe-report.json"
+            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-percy.sh"
 
       "log/forbidden-imports-report.txt" %> \out -> do
         need ["forbidden-imports.toml"]
@@ -129,23 +152,25 @@ main = do
 
       "public/bundle.js" %> \out -> do
         libJsFiles <- getDirectoryFiles "." ["lib/**/*.js"]
-        need (["package.json", "lib/index.js", "styleguide-app/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
-        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide-app/manifest.js" "--outfile" out
+        need (["package.json", "lib/index.js", "styleguide/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
+        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide/manifest.js" "--outfile" out
 
       "public/elm.js" %> \out -> do
         elmSources <- getDirectoryFiles "." ["styleguide-app/**/*.elm", "src/**/*.elm"]
         need elmSources
-        cmd_ (Cwd "styleguide-app") "elm" "make" "Main.elm" "--output" (".." </> out)
+        cmd_ (Cwd "styleguide") "elm" "make" "Main.elm" "--output" (".." </> out)
+
+      "public/package.json" %> \out -> do
+        copyFileChanged "elm.json" out
+
+      "public/application.json" %> \out -> do
+        copyFileChanged "styleguide/elm.json" out
 
       "public/**/*" %> \out ->
-        copyFileChanged (replaceDirectory1 out "styleguide-app") out
+        copyFileChanged (replaceDirectory1 out "styleguide") out
 
       "log/public.txt" %> \out -> do
-        styleguideAssets <- getDirectoryFiles ("styleguide-app" </> "assets") ["**/*"]
-        need
-          ( ["public/index.html", "public/elm.js", "public/bundle.js"]
-              ++ map (("public" </> "assets") </>) styleguideAssets
-          )
+        need (["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"])
         writeFileChanged out "built styleguide app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)

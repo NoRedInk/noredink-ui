@@ -9,7 +9,6 @@ module Examples.Text.Writing exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Html.Styled exposing (text)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Text.Writing.V1 as TextWriting
 
 
@@ -34,7 +33,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = [ TextWriting.footnote [ text "This is a footnote. " ] ]
     , view =
-        \_ ->
+        \ellieLinkConfig _ ->
             let
                 longerBody =
                     """Be on the lookout for a new and improved assignment

@@ -365,7 +365,11 @@ link label_ attributes =
                 |> List.foldl (\(Attribute attribute) l -> attribute l) defaults
 
         ( name, clickableAttributes ) =
-            ClickableAttributes.toLinkAttributes identity config.clickableAttributes
+            ClickableAttributes.toLinkAttributes
+                { routeToString = identity
+                , isDisabled = False
+                }
+                config.clickableAttributes
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)

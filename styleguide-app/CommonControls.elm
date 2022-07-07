@@ -3,8 +3,8 @@ module CommonControls exposing
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
     , content
-    , quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
-    , disabledListItem, premiumDisplay, premiumLevel
+    , httpError
+    , disabledListItem, premiumDisplay
     )
 
 {-|
@@ -17,7 +17,7 @@ module CommonControls exposing
 ### Content
 
 @docs content
-@docs quickBrownFox, longPangrams, romeoAndJulietQuotation, markdown, exampleHtml, httpError
+@docs httpError
 
 -}
 
@@ -25,30 +25,20 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
-import Nri.Ui.Data.PremiumLevel exposing (PremiumLevel(..))
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-premiumLevel : Control ( String, PremiumLevel )
-premiumLevel =
-    choice "PremiumLevel"
-        [ ( "Free", Free )
-        , ( "PremiumWithWriting", PremiumWithWriting )
-        ]
 
 
 premiumDisplay : Control ( String, PremiumDisplay )
 premiumDisplay =
     Control.choice
-        [ ( "Free", Control.value ( "Free", PremiumDisplay.Free ) )
-        , ( "Premium Locked", Control.value ( "PremiumLocked", PremiumDisplay.PremiumLocked ) )
-        , ( "Premium Unlocked", Control.value ( "PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
+        [ ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
+        , ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
+        , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
         ]
 
 
@@ -91,7 +81,7 @@ httpError =
 content :
     { moduleName : String
     , plaintext : String -> attribute
-    , markdown : String -> attribute
+    , markdown : Maybe (String -> attribute)
     , html : List (Html msg) -> attribute
     , httpError : Maybe (Http.Error -> attribute)
     }
@@ -125,23 +115,30 @@ content ({ moduleName } as config) =
                         )
                     )
            )
-         , ( "markdown"
-           , Control.string markdown
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
-                        , config.markdown str
-                        )
-                    )
-           )
-         , ( "HTML"
-           , Control.value
-                ( moduleName ++ ".html [ ... ]"
-                , config.html exampleHtml
-                )
-           )
          ]
-            ++ (case config.httpError of
+            ++ (case config.markdown of
+                    Just markdown_ ->
+                        [ ( "markdown"
+                          , Control.string markdown
+                                |> Control.map
+                                    (\str ->
+                                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                                        , markdown_ str
+                                        )
+                                    )
+                          )
+                        ]
+
+                    Nothing ->
+                        []
+               )
+            ++ ( "HTML"
+               , Control.value
+                    ( moduleName ++ ".html [ ... ]"
+                    , config.html exampleHtml
+                    )
+               )
+            :: (case config.httpError of
                     Just httpError_ ->
                         [ ( "httpError"
                           , Control.map

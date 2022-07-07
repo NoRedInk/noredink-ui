@@ -1,19 +1,22 @@
 module Examples.Message exposing (Msg, State, example)
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import CommonControls
-import Css exposing (..)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes as Attributes exposing (css, href)
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Message.V3 as Message
 import ViewHelpers exposing (viewExamples)
+
+
+version : Int
+version =
+    3
 
 
 type alias State =
@@ -30,9 +33,9 @@ init =
             |> ControlExtra.optionalListItem "theme" controlTheme
             |> ControlExtra.listItem "content"
                 (CommonControls.content
-                    { moduleName = "Message"
+                    { moduleName = moduleName
                     , plaintext = Message.plaintext
-                    , markdown = Message.markdown
+                    , markdown = Just Message.markdown
                     , html = Message.html
                     , httpError = Just Message.httpError
                     }
@@ -44,22 +47,27 @@ init =
             |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                 ( "Message.hideIconForMobile", Message.hideIconForMobile )
             |> CommonControls.css
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.css
                 }
             |> CommonControls.mobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.mobileCss
                 }
             |> CommonControls.quizEngineMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.quizEngineMobileCss
                 }
             |> CommonControls.notMobileCss
-                { moduleName = "Message"
+                { moduleName = moduleName
                 , use = Message.notMobileCss
                 }
     }
+
+
+moduleName : String
+moduleName =
+    "Message"
 
 
 controlTheme : Control ( String, Message.Attribute msg )
@@ -83,12 +91,12 @@ controlCustomTheme =
         )
         |> Control.field "color"
             (CommonControls.choice "Colors"
-                [ ( "aquaDark", Colors.aquaDark )
+                [ ( "purpleDark", Colors.purpleDark )
                 ]
             )
         |> Control.field "backgroundColor"
             (CommonControls.choice "Colors"
-                [ ( "gray92", Colors.gray92 )
+                [ ( "gray96", Colors.gray96 )
                 ]
             )
 
@@ -119,7 +127,7 @@ update msg state =
 example : Example State Msg
 example =
     { name = "Message"
-    , version = 3
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -131,7 +139,7 @@ example =
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
         ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             let
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
@@ -144,8 +152,13 @@ example =
                         text "Nice! The messages were dismissed. 👍"
             in
             [ ControlView.view
-                { update = UpdateControl
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
                 , settings = state.control
+                , mainType = "RootHtml.Html msg"
+                , extraImports = []
                 , toExampleCode =
                     \settings ->
                         let

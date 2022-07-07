@@ -4,7 +4,11 @@ module Nri.Ui.SegmentedControl.V14 exposing
     , Positioning(..), Width(..)
     )
 
-{-| Changes from V13:
+{-| Patch changes:
+
+  - use Tooltip.V3 instead of Tooltip.V2
+
+Changes from V13:
 
   - Adds tooltip support to `viewRadioGroup`
 
@@ -18,20 +22,15 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style as Style
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
-import EventExtras
 import Html.Styled
-import Html.Styled.Attributes as Attributes exposing (css, href)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Json.Encode as Encode
-import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
 import TabsInternal.V2 as TabsInternal
 

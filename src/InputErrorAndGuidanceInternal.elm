@@ -15,7 +15,7 @@ module InputErrorAndGuidanceInternal exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Css exposing (Style)
+import Css
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
 import Nri.Ui.Message.V3 as Message

@@ -7,23 +7,30 @@ module Examples.Balloon exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
+import EllieLink
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
-import Html.Styled exposing (Html, div, fromUnstyled, text)
-import Html.Styled.Attributes exposing (css)
-import KeyboardSupport exposing (Direction(..), Key(..))
+import Html.Styled exposing (Html, text)
 import Nri.Ui.Balloon.V1 as Balloon
-import Nri.Ui.Colors.V1 as Colors
+
+
+moduleName : String
+moduleName =
+    "Balloon"
+
+
+version : Int
+version =
+    1
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Balloon"
-    , version = 1
+    { name = moduleName
+    , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
     , state = init
@@ -43,16 +50,25 @@ example =
 
 {-| -}
 type alias State =
-    { copy : Control String
-    , attributes : Control (List ( String, Balloon.Attribute ))
-    }
+    Control Settings
 
 
 init : State
 init =
-    { copy = Control.string "Hello, world!"
-    , attributes = controlAttributes
+    controlSettings
+
+
+type alias Settings =
+    { copy : String
+    , attributes : List ( String, Balloon.Attribute )
     }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "copy" (Control.string "Hello, world!")
+        |> Control.field "attributes" controlAttributes
 
 
 controlAttributes : Control (List ( String, Balloon.Attribute ))
@@ -110,43 +126,46 @@ paddingOptions =
 
 {-| -}
 type Msg
-    = SetCopy (Control String)
-    | SetAttributes (Control (List ( String, Balloon.Attribute )))
+    = SetAttributes (Control Settings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetCopy copy ->
-            ( { state | copy = copy }
-            , Cmd.none
-            )
-
         SetAttributes attributes ->
-            ( { state | attributes = attributes }
+            ( attributes
             , Cmd.none
             )
 
 
-view : State -> List (Html Msg)
-view state =
+view : EllieLink.Config -> State -> List (Html Msg)
+view ellieLinkConfig state =
     let
-        copy =
-            Control.currentValue state.copy
-
-        attributes =
-            Control.currentValue state.attributes
+        currentValue =
+            Control.currentValue state
     in
-    [ Control.view SetCopy state.copy |> fromUnstyled
-    , Control.view SetAttributes state.attributes |> fromUnstyled
-    , Html.Styled.code [ css [ Css.display Css.block, Css.margin2 (Css.px 20) Css.zero ] ]
-        [ text <|
-            "Balloon.balloon [ "
-                ++ String.join ", " (List.map Tuple.first attributes)
-                ++ " ] "
-                ++ "\""
-                ++ copy
-                ++ "\""
-        ]
-    , Balloon.balloon (List.map Tuple.second attributes) (text copy)
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetAttributes
+        , settings = state
+        , mainType = "RootHtml.Html msg"
+        , extraImports = []
+        , toExampleCode =
+            \{ copy, attributes } ->
+                [ { sectionName = "Balloon"
+                  , code =
+                        "Balloon.balloon\n    [ "
+                            ++ String.join "\n    , " (List.map Tuple.first attributes)
+                            ++ "\n    ] "
+                            ++ "\n    (text \""
+                            ++ copy
+                            ++ "\")"
+                  }
+                ]
+        }
+    , Balloon.balloon
+        (List.map Tuple.second currentValue.attributes)
+        (text currentValue.copy)
     ]

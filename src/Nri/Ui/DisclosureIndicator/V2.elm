@@ -20,7 +20,7 @@ A caret that indicates that a section can expand and collapse. When `isOpen` is 
 -}
 
 import Css exposing (..)
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.SpriteSheet exposing (arrowLeft)

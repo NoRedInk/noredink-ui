@@ -1,12 +1,18 @@
 module Debug.Control.Extra exposing
     ( float, int
-    , list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
+    , list, listItem, optionalListItem, optionalListItemDefaultChecked
+    , optionalBoolListItem, optionalBoolListItemDefaultTrue
+    , bool
+    , string
     )
 
 {-|
 
 @docs float, int
-@docs list, listItem, optionalListItem, optionalListItemDefaultChecked, optionalBoolListItem
+@docs list, listItem, optionalListItem, optionalListItemDefaultChecked
+@docs optionalBoolListItem, optionalBoolListItemDefaultTrue
+@docs bool
+@docs string
 
 -}
 
@@ -41,10 +47,14 @@ list =
 
 {-| -}
 listItem : String -> Control a -> Control (List a) -> Control (List a)
-listItem name accessor accumulator =
-    Control.field name
-        (Control.map List.singleton accessor)
-        (Control.map (++) accumulator)
+listItem name accessor =
+    listItems name (Control.map List.singleton accessor)
+
+
+{-| -}
+listItems : String -> Control (List a) -> Control (List a) -> Control (List a)
+listItems name accessor accumulator =
+    Control.field name accessor (Control.map (++) accumulator)
 
 
 {-| -}
@@ -82,3 +92,41 @@ optionalBoolListItem name f accumulator =
             (Control.bool False)
         )
         (Control.map (++) accumulator)
+
+
+optionalBoolListItemDefaultTrue : String -> a -> Control (List a) -> Control (List a)
+optionalBoolListItemDefaultTrue name f accumulator =
+    Control.field name
+        (Control.map
+            (\value ->
+                if not value then
+                    [ f ]
+
+                else
+                    []
+            )
+            (Control.bool True)
+        )
+        (Control.map (++) accumulator)
+
+
+{-| -}
+bool : Bool -> Control ( String, Bool )
+bool default =
+    Control.map
+        (\val ->
+            ( if val then
+                "True"
+
+              else
+                "False"
+            , val
+            )
+        )
+        (Control.bool default)
+
+
+{-| -}
+string : String -> Control ( String, String )
+string default =
+    Control.map (\val -> ( "\"" ++ val ++ "\"", val )) (Control.string default)

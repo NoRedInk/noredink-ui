@@ -7,13 +7,15 @@ module Examples.TextArea exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Css
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html
-import KeyboardSupport exposing (Direction(..), Key(..))
-import Nri.Ui.AssetPath exposing (Asset(..))
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
 import Nri.Ui.TextArea.V4 as TextArea
 
 
@@ -44,9 +46,31 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , keyboardSupport = []
-    , preview = []
+    , preview =
+        [ Html.div [ css [ Css.position Css.relative ] ]
+            [ Html.textarea
+                [ css
+                    [ InputStyles.input Standard False
+                    , Css.minHeight (Css.px 100)
+                    , Css.maxWidth (Css.px 140)
+                    , Css.backgroundColor Colors.white |> Css.important
+                    , Css.cursor Css.pointer |> Css.important
+                    , Css.resize Css.none
+                    ]
+                , Attributes.class "override-sass-styles"
+                , Attributes.disabled True
+                , Attributes.id "preview-textarea"
+                ]
+                []
+            , Html.label
+                [ css [ InputStyles.label Standard False ]
+                , Attributes.for "preview-textarea"
+                ]
+                [ Html.text "Label" ]
+            ]
+        ]
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ Heading.h1 [] [ Html.text "Textarea controls" ]
             , Html.div []
                 [ Checkbox.viewWithLabel

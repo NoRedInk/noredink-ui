@@ -16,7 +16,7 @@ module Nri.Ui.Tabs.V6 exposing
 -}
 
 import Css exposing (..)
-import Html.Styled as Html exposing (Attribute, Html)
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)

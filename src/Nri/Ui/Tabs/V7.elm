@@ -7,7 +7,11 @@ module Nri.Ui.Tabs.V7 exposing
     , spaHref
     )
 
-{-| Changes from V6:
+{-| Patch changes:
+
+  - use Tooltip.V3 instead of Tooltip.V2
+
+Changes from V6:
 
   - Changes Tab construction to follow attributes-based approach
   - Adds tooltip support
@@ -22,7 +26,6 @@ module Nri.Ui.Tabs.V7 exposing
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -30,7 +33,7 @@ import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Tooltip.V2 as Tooltip
+import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
 

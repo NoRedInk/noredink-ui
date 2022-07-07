@@ -51,8 +51,6 @@ module Nri.Ui.TextInput.V7 exposing
 
 -}
 
-import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Style as Accessibility
 import Css exposing (center, num, position, px, relative, textAlign)
 import Css.Global
 import Html.Styled as Html exposing (..)
@@ -60,12 +58,11 @@ import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
-import Keyboard.Event exposing (KeyboardEvent)
+import Keyboard.Event
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -584,9 +581,6 @@ view label attributes =
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
-
-        errorMessage_ =
-            InputErrorAndGuidanceInternal.getErrorMessage config.error
 
         ( opacity, disabled_ ) =
             case ( config.disabled, config.loading ) of

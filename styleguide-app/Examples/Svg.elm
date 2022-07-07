@@ -9,14 +9,11 @@ module Examples.Svg exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import SolidColor exposing (SolidColor)
@@ -34,7 +31,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = []
     , view =
-        \state ->
+        \ellieLinkConfig state ->
             [ viewSettings state
             , viewResults state
             ]
