@@ -99,7 +99,11 @@ view ellieLinkConfig state =
             Control.currentValue state.selectionSettings
     in
     [ div
-        [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.spaceBetween
+            ]
+        ]
         [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
         , viewExamples selectionSettings state.selectedValue
         , viewExamplesCode selectionSettings state.selectedValue

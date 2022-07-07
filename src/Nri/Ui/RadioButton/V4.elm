@@ -302,14 +302,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
             [ Attributes.id (idValue ++ "-container")
             , css
                 [ position relative
-                , margin4 (px 2) (px 2) (px 2) (px -2)
-                , Css.padding4 (px 4) (px 2) (px 2) (Css.px 38)
+                , Css.marginLeft (Css.px -2)
+                , Css.paddingLeft (Css.px 38)
+                , Css.paddingTop (px 6)
+                , Css.paddingBottom (px 4)
                 , display inlineBlock
                 , pseudoClass "focus-within"
                     [ Css.Global.descendants
                         [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                            [ FocusRing.boxShadows []
-                            ]
+                            FocusRing.tightStyles
                         ]
                     ]
                 , Css.batch config.containerCss
@@ -423,8 +424,8 @@ viewLockedButton { idValue, label } config =
         [ Attributes.id (idValue ++ "-container")
         , css
             [ position relative
-            , marginLeft (px -4)
-            , Css.paddingLeft (Css.px 40)
+            , marginLeft (px -2)
+            , Css.paddingLeft (Css.px 38)
             , Css.paddingTop (px 6)
             , Css.paddingBottom (px 4)
             , display inlineBlock
@@ -525,6 +526,9 @@ radioInputIcon config =
 
         iconHeight =
             26
+
+        iconPadding =
+            2
     in
     div
         [ classList
@@ -540,9 +544,10 @@ radioInputIcon config =
                     []
             , position absolute
             , left zero
-            , top (calc (pct 50) Css.minus (Css.px (iconHeight / 2)))
+            , top (calc (pct 50) Css.minus (Css.px ((iconHeight - 2 + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
             , borderRadius (px 50)
+            , padding (px iconPadding)
             , displayFlex
             , justifyContent center
             , alignItems center
