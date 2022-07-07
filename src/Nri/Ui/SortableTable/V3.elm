@@ -52,7 +52,6 @@ type Column id entry msg
         { id : id
         , header : Html msg
         , view : entry -> Html msg
-        , ariaName : String
         , sorter : Maybe (Sorter entry)
         , width : Int
         , cellStyles : entry -> List Style
@@ -93,17 +92,15 @@ initDescending initialSort =
 string :
     { id : id
     , header : String
-    , ariaName : String
     , value : entry -> String
     , width : Int
     , cellStyles : entry -> List Style
     }
     -> Column id entry msg
-string { id, header, value, ariaName, width, cellStyles } =
+string { id, header, value, width, cellStyles } =
     Column
         { id = id
         , header = Html.text header
-        , ariaName = ariaName
         , view = value >> Html.text
         , sorter = Just (simpleSort value)
         , width = width
@@ -115,7 +112,6 @@ string { id, header, value, ariaName, width, cellStyles } =
 custom :
     { id : id
     , header : Html msg
-    , ariaName : String
     , view : entry -> Html msg
     , sorter : Maybe (Sorter entry)
     , width : Int
@@ -126,7 +122,6 @@ custom config =
     Column
         { id = config.id
         , header = config.header
-        , ariaName = config.ariaName
         , view = config.view
         , sorter = config.sorter
         , width = config.width
@@ -251,15 +246,15 @@ identitySorter =
 buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
 buildTableColumn updateMsg state (Column column) =
     Nri.Ui.Table.V5.custom
-        { header = viewSortHeader (column.sorter /= Nothing) column.ariaName column.header updateMsg state column.id
+        { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
         }
 
 
-viewSortHeader : Bool -> String -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader isSortable ariaName header updateMsg state id =
+viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header updateMsg state id =
     let
         nextState =
             nextTableState state id
@@ -291,7 +286,7 @@ viewSortHeader isSortable ariaName header updateMsg state id =
             , Html.Styled.Events.onClick (updateMsg nextState)
 
             -- screen readers should know what clicking this button will do
-            , Aria.label ("Sort by " ++ ariaName)
+            , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
             , viewSortButton updateMsg state id
@@ -300,7 +295,6 @@ viewSortHeader isSortable ariaName header updateMsg state id =
     else
         Html.div
             [ css [ fontWeight normal ]
-            , Aria.label ariaName
             ]
             [ header ]
 
