@@ -364,7 +364,7 @@ viewArrow { isOpen } =
                 [ Css.Global.svg [ display block ]
                 ]
             , property "transform-origin" "center"
-            , property "transition" "transform 0.1s"
+            , property "transition" "transform 0.4s"
             , if isOpen then
                 transform (rotate (deg 180))
 
