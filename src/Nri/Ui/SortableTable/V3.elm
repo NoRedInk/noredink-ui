@@ -7,11 +7,14 @@ module Nri.Ui.SortableTable.V3 exposing
 
 {-| TODO for next major version:
 
-  - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
+  - add the possibility to pass Aria.sortAscending and Aria.sortDescending attributes to the <th> tag
 
 Changes from V2:
 
   - made column non-sortable (e.g. buttons in a column should not be sorted)
+  - use a button instead of a clickable div in headers
+  - use Aria.roleDescription instead of Aria.label in sortable columns headers
+  - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
 @docs Column, Config, Sorter, State
 @docs init, initDescending
