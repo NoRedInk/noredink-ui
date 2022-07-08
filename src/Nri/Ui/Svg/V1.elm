@@ -2,7 +2,6 @@ module Nri.Ui.Svg.V1 exposing
     ( Svg
     , withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
     , fromHtml, toHtml
-    , toRawSvg
     )
 
 {-|
@@ -10,7 +9,6 @@ module Nri.Ui.Svg.V1 exposing
 @docs Svg
 @docs withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
 @docs fromHtml, toHtml
-@docs toRawSvg
 
 -}
 
@@ -130,10 +128,3 @@ toHtml (Svg record) =
                 ++ record.attributes
     in
     Html.map never (Html.div attributes [ record.icon ])
-
-
-{-| Extract an svg, dropping any attributes passed through.
--}
-toRawSvg : Svg -> Svg.Svg msg
-toRawSvg (Svg record) =
-    Html.map never record.icon
