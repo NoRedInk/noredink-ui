@@ -6,7 +6,7 @@ module Nri.Ui.SpriteSheet exposing
     , xSvg
     )
 
-{-|
+{-| TODO: is this file used???
 
 @docs arrowLeft
 @docs bulb
@@ -16,17 +16,16 @@ module Nri.Ui.SpriteSheet exposing
 
 -}
 
-import Html.Styled exposing (..)
+import Css
 import Nri.Ui.Svg.V1 as NriSvg
-import Svg exposing (..)
-import Svg.Attributes exposing (..)
+import Svg.Styled as Svg exposing (..)
+import Svg.Styled.Attributes as Attributes exposing (..)
 
 
 {-| -}
 exclamationMark : NriSvg.Svg
 exclamationMark =
-    Svg.svg
-        [ viewBox "0 0 4 12", width "100%", height "100%" ]
+    NriSvg.init "0 0 4 12"
         [ Svg.path
             [ d "M3.234 10.575a1.363 1.363 0 1 1-2.726 0 1.363 1.363 0 0 1 2.726 0zm.648-8.398a1.978 1.978 0 0 1-.007.047l-.834 5.294c-.079.53-.542.926-1.085.926h-.013a1.096 1.096 0 0 1-1.085-.926L.024 2.224A1.93 1.93 0 0 1 1.93 0h.04a1.94 1.94 0 0 1 1.912 1.663v.514z"
             , fill "currentcolor"
@@ -34,42 +33,25 @@ exclamationMark =
             ]
             []
         ]
-        |> fromUnstyled
-        |> NriSvg.fromHtml
 
 
 {-| -}
 checkmark : NriSvg.Svg
 checkmark =
-    Svg.svg
-        [ x "0px"
-        , y "0px"
-        , viewBox "0 0 21.7 17.1"
-        , Svg.Attributes.style "enable-background:new 0 0 21.7 17.1;"
-        , width "100%"
-        , height "100%"
-        ]
+    NriSvg.init "0 0 21.7 17.1"
         [ Svg.path
             [ fill "currentcolor"
             , d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4 L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1"
             ]
             []
         ]
-        |> fromUnstyled
-        |> NriSvg.fromHtml
+        |> NriSvg.withCss [ Css.property "enable-background" "new 0 0 21.7 17.1" ]
 
 
 {-| -}
 bulb : NriSvg.Svg
 bulb =
-    svg
-        [ x "0px"
-        , y "0px"
-        , viewBox "0 0 23 25"
-        , Svg.Attributes.style "enable-background:new 0 0 23 25;"
-        , width "100%"
-        , height "100%"
-        ]
+    NriSvg.init "0 0 23 25"
         [ Svg.style [] [ Svg.text ".blub-st0{fill:#FEC709;} " ]
         , g []
             [ g [ transform "translate(-261.000000, -371.000000)" ]
@@ -144,41 +126,26 @@ bulb =
                 ]
             ]
         ]
-        |> fromUnstyled
-        |> NriSvg.fromHtml
+        |> NriSvg.withCss [ Css.property "enable-background" "new 0 0 21.7 17.1" ]
 
 
 {-| -}
 arrowLeft : NriSvg.Svg
 arrowLeft =
-    svg
-        [ viewBox "0 0 25 25"
-        , width "100%"
-        , height "100%"
-        , fill "currentcolor"
-        ]
+    NriSvg.init "0 0 25 25"
         [ Svg.path
             [ fillRule "evenodd"
             , d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
             ]
             []
         ]
-        |> fromUnstyled
-        |> NriSvg.fromHtml
 
 
 xSvg : NriSvg.Svg
 xSvg =
-    svg
-        [ viewBox "0 0 25 25"
-        , width "100%"
-        , height "100%"
-        , fill "currentcolor"
-        ]
+    NriSvg.init "0 0 25 25"
         [ Svg.path
             [ d "M1.067 6.015c-1.423-1.422-1.423-3.526 0-4.948 1.422-1.423 3.526-1.423 4.948 0l6.371 6.37 6.371-6.37c1.422-1.423 3.783-1.423 5.176 0 1.423 1.422 1.423 3.782 0 5.176l-6.37 6.37 6.37 6.372c1.423 1.422 1.423 3.526 0 4.948-1.422 1.423-3.526 1.423-4.948 0l-6.371-6.37-6.371 6.37c-1.422 1.423-3.783 1.423-5.176 0-1.423-1.422-1.423-3.782 0-5.176l6.37-6.143-6.37-6.599z"
             ]
             []
         ]
-        |> fromUnstyled
-        |> NriSvg.fromHtml

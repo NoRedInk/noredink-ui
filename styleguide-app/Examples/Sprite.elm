@@ -58,9 +58,4 @@ sprites =
 
 viewSprite : SpriteId -> Svg
 viewSprite id =
-    svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
-        [ Sprite.use id ]
-        |> Svg.fromHtml
+    Svg.init "" [ Sprite.use id ]

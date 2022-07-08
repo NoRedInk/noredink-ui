@@ -22,6 +22,9 @@ module Nri.Ui.Logo.V1 exposing
 
 -}
 
+import Css
+import Nri.Ui.Colors.Extra exposing (toCssString)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
@@ -30,18 +33,13 @@ import Svg.Styled.Attributes as Attributes
 {-| -}
 noredink : Nri.Ui.Svg.V1.Svg
 noredink =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 109 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 109 24"
         [ Svg.g
             [ Attributes.fill "none"
             , Attributes.fillRule "evenodd"
             ]
             [ Svg.path
-                [ Attributes.fill "#F3336C"
+                [ Attributes.fill (toCssString Colors.red)
                 , Attributes.d "M4.29 6.03v2.048h.065c.943-1.723 2.568-2.503 4.453-2.503 2.795 0 4.453 1.527 4.453 4.972v12.97H8.776v-12.06c0-1.755-.586-2.437-1.918-2.437-1.528 0-2.373.943-2.373 2.892v11.604H0V6.03h4.29zM22.559 20.916c1.82 0 2.404-1.788 2.404-6.143 0-4.355-.584-6.143-2.404-6.143-2.21 0-2.405 2.568-2.405 6.143 0 3.575.195 6.143 2.405 6.143zm0-15.341c5.395-.098 6.89 3.12 6.89 9.198 0 5.98-1.755 9.198-6.89 9.198-5.396.098-6.89-3.12-6.89-9.198 0-5.98 1.754-9.198 6.89-9.198z"
                 ]
                 []
@@ -51,41 +49,29 @@ noredink =
                 ]
                 []
             , Svg.path
-                [ Attributes.fill "#F3336C"
+                [ Attributes.fill (toCssString Colors.red)
                 , Attributes.d "M69.336 6.03h4.486v17.486h-4.486V6.03zm0-5.981h4.486v3.835h-4.486V.05zM76.975 6.03h4.29v2.048h.065c.944-1.723 2.568-2.503 4.453-2.503 2.795 0 4.453 1.527 4.453 4.972v12.97H85.75v-12.06c0-1.755-.585-2.437-1.917-2.437-1.527 0-2.373.943-2.373 2.892v11.604h-4.485V6.03zM97.876.31v12.253h.065l4.518-6.533h4.94l-5.037 6.89 5.785 10.596h-4.94l-3.739-7.183-1.592 2.08v5.103H93.39V.31z"
                 ]
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 facebook : Nri.Ui.Svg.V1.Svg
 facebook =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 10 19"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 10 19"
         [ Svg.path
             [ Attributes.d "M10 3.1H8.2c-1.4 0-1.7.7-1.7 1.6v2.1h3.4l-.5 3.4H6.5v8.6H2.9v-8.6H0V6.9h2.9V4.4C2.9 1.6 4.7 0 7.3 0c1.3 0 2.4.1 2.7.1v3z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 clever : Nri.Ui.Svg.V1.Svg
 clever =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 87 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 87 20"
         [ Svg.g
             [ Attributes.fillRule "evenodd"
             ]
@@ -95,17 +81,12 @@ clever =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 cleverC : Nri.Ui.Svg.V1.Svg
 cleverC =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 39 44"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 39 44"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -119,17 +100,12 @@ cleverC =
                 [ Svg.path [ Attributes.d "M0,21.7580775 C0,9.74321254 8.96637318,0 21.8178825,0 C29.708078,0 34.4301716,2.63016953 38.3153078,6.45581374 L32.4575445,13.2103396 C29.2296376,10.2814579 25.9422388,8.48824593 21.7580775,8.48824593 C14.7045264,8.48824593 9.62360245,14.3460092 9.62360245,21.5188573 C9.62360245,28.8113154 14.5849163,34.7890019 21.7580775,34.7890019 C26.5399762,34.7890019 29.4688578,32.8761798 32.7565697,29.8874931 L38.614333,35.8050615 C34.3105615,40.407545 29.5286628,43.2769347 21.4590522,43.2769347 C9.1454752,43.2769347 0,33.7726293 0,21.7580775 Z" ] [] ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 cleverLibrary : Nri.Ui.Svg.V1.Svg
 cleverLibrary =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 580 198"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 580 198"
         [ Svg.g [ Attributes.stroke "none", Attributes.strokeWidth "1", Attributes.fill "none", Attributes.fillRule "evenodd" ]
             [ Svg.g [ Attributes.transform "translate(0.591000, 0.620000)" ]
                 [ Svg.rect [ Attributes.fill "#004E95", Attributes.x "0", Attributes.y "0", Attributes.width "579", Attributes.height "197", Attributes.rx "20" ] []
@@ -144,35 +120,23 @@ cleverLibrary =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 twitter : Nri.Ui.Svg.V1.Svg
 twitter =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 16"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 16"
         [ Svg.path
             [ Attributes.d "M17.9 4.5c0 5.3-4.1 11.4-11.6 11.4-2.3 0-4.5-.7-6.3-1.8h1c1.9 0 3.7-.6 5.1-1.7-1.8 0-3.3-1.2-3.8-2.8.3 0 .5.1.8.1.4 0 .7 0 1.1-.1C2.3 9.2.9 7.6.9 5.7c.5.2 1.1.4 1.8.4C1.6 5.4.9 4.1.9 2.7c0-.7.2-1.4.6-2 2 2.4 5 4 8.4 4.2-.2-.3-.2-.6-.2-.9 0-2.2 1.8-4 4.1-4 1.2 0 2.2.5 3 1.3.9-.2 1.8-.5 2.6-1-.3.9-.9 1.7-1.8 2.2.8-.1 1.6-.3 2.3-.6-.6.8-1.3 1.5-2 2.1v.5z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 googleClassroom : Nri.Ui.Svg.V1.Svg
 googleClassroom =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -196,14 +160,12 @@ googleClassroom =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 googleG : Nri.Ui.Svg.V1.Svg
 googleG =
-    Svg.svg
-        [ Attributes.viewBox "0 0 43 44" ]
+    Nri.Ui.Svg.V1.init "0 0 43 44"
         [ Svg.defs []
             [ Svg.style []
                 [ Svg.text ".googleG-icon-clip-path-class{clip-path:url(#googleG-icon-clip-path);}" ]
@@ -220,18 +182,12 @@ googleG =
         , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#34a853", Attributes.d "M-2,35,28,12l7.9,1L46-2V46H-2Z" ] [] ]
         , Svg.g [ Attributes.class "googleG-icon-clip-path-class" ] [ Svg.path [ Attributes.fill "#4285f4", Attributes.d "M46,46,15,22l-4-3L46,9Z" ] [] ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 canvas : Nri.Ui.Svg.V1.Svg
 canvas =
-    Svg.svg
-        [ Attributes.viewBox "200 250 400 115"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "#E72429"
-        ]
+    Nri.Ui.Svg.V1.init "200 250 400 115"
         [ Svg.g []
             [ Svg.g []
                 [ Svg.path [ Attributes.d "M220.1,306.8c0-7-5.2-12.7-12-13.5c-1.1,4.3-1.7,8.8-1.7,13.5c0,4.7,0.6,9.2,1.7,13.5 C214.9,319.5,220.1,313.7,220.1,306.8z" ] []
@@ -261,34 +217,25 @@ canvas =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withColor (Css.hex "#E72429")
 
 
 {-| -}
 canvasCircle : Nri.Ui.Svg.V1.Svg
 canvasCircle =
-    Svg.svg
-        [ Attributes.viewBox "0 0 200 200"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 200 200"
         [ Svg.path
             [ Attributes.fill "#D64027"
             , Attributes.d "M29.2 100c0-14.9-11.2-26.9-25.5-28.4C1.5 80.6 0 89.6 0 100s1.5 19.4 3.7 28.4C18 126.9 29.2 114.2 29.2 100L29.2 100zM46.4 90.3c5 0 9 4 9 9s-4 9-9 9 -9-4-9-9S41.5 90.3 46.4 90.3zM170.8 100c0 14.9 11.2 26.9 25.5 28.4 2.2-9 3.7-18.7 3.7-28.4s-1.5-19.4-3.7-28.4C182 73.1 170.8 85.1 170.8 100L170.8 100zM151.3 90.3c5 0 9 4 9 9s-4 9-9 9c-5 0-9-4-9-9S146.3 90.3 151.3 90.3zM99.6 170.9c-15 0-27 11.2-28.5 25.4 9 2.2 18.7 3.7 28.5 3.7s19.5-1.5 28.5-3.7C126.6 182.1 114.6 170.9 99.6 170.9L99.6 170.9zM98.9 142.5c5 0 9 4 9 9 0 4.9-4 9-9 9 -5 0-9-4-9-9C89.9 146.5 93.9 142.5 98.9 142.5zM99.6 29.1c15 0 27-11.2 28.5-25.4 -9-2.2-18.7-3.7-28.5-3.7S80.1 1.5 71.2 3.7C72.7 17.9 84.6 29.1 99.6 29.1L99.6 29.1zM98.9 38.1c5 0 9 4 9 9s-4 9-9 9c-5 0-9-4-9-9S93.9 38.1 98.9 38.1zM149.8 150c-10.5 10.4-11.2 26.9-2.2 38.1 16.5-9.7 30.7-23.9 40.4-40.3C176.8 138.8 160.3 139.6 149.8 150L149.8 150zM136.3 127.6c5 0 9 4 9 9 0 4.9-4 9-9 9 -5 0-9-4-9-9C127.3 131.6 131.4 127.6 136.3 127.6zM49.4 50c10.5-10.4 11.2-26.9 2.2-38.1C35.2 21.6 21 35.8 11.2 52.2 22.5 61.2 39 60.4 49.4 50L49.4 50zM61.4 53c5 0 9 4 9 9s-4 9-9 9 -9-4-9-9S56.5 53 61.4 53zM149.8 50c10.5 10.4 27 11.2 38.2 2.2 -9.7-16.4-24-30.6-40.4-40.3C138.6 23.1 139.3 39.6 149.8 50L149.8 50zM136.3 53c5 0 9 4 9 9s-4 9-9 9c-5 0-9-4-9-9S131.4 53 136.3 53zM49.4 150c-10.5-10.4-27-11.2-38.2-2.2 9.7 16.4 24 30.6 40.4 40.3C60.7 176.1 59.9 160.4 49.4 150L49.4 150zM61.4 127.6c5 0 9 4 9 9 0 4.9-4 9-9 9s-9-4-9-9C52.4 131.6 56.5 127.6 61.4 127.6z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 schoology : Nri.Ui.Svg.V1.Svg
 schoology =
-    Svg.svg
-        [ Attributes.viewBox "0 0 928 163"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 928 163"
         [ Svg.g [ Attributes.fillRule "nonzero" ]
             [ Svg.path
                 [ Attributes.d "M81.5 163C36.6 163 0 126.4 0 81.5S36.6 0 81.5 0 163 36.6 163 81.5c0 45-36.5 81.5-81.5 81.5zm0-149.4c-37.5 0-68 30.5-68 68s30.5 68 68 68 68-30.5 68-68c0-37.6-30.5-68-68-68z"
@@ -305,17 +252,12 @@ schoology =
             [ Svg.path [ Attributes.d "M814.9 98.5h-23v-9.2H830v43.2h-9.5v-10s1.5-1.8 0 .1c-6.9 8.1-16.8 11.7-28.9 11.7-29.7 0-40.3-22.1-40.3-42 0-23 12.2-43.7 39.1-43.7 13 0 32.1 4.6 37.4 27.1l-15.1 1.4c-.5-3.3-3.4-18.5-21.8-18.5-23.5 0-24.5 25.5-24.5 32.7 0 8.8 1.7 16.3 5.3 21.8 4.6 7.4 11.6 10.8 20.1 10.8 19.7 0 21.9-16.1 22.8-22.5l.3-2.9zM241.2 96.7c-13-3.1-29-6.7-29-23.5 0-14.8 12.5-24 31.2-24 15.4 0 31.9 7.4 34.6 26.4l-14.7 1.9c-.2-5-.5-8.9-5.8-13.1-5.3-4.1-11.5-4.8-15.6-4.8-10.7 0-16 6.3-16 11.8 0 7.7 8.7 10.1 19.4 12.7L253 86c9.6 2.2 26.9 6.4 26.9 23.3 0 13.2-11.7 25.5-33.9 25.5-9.1 0-18.5-1.9-25-6.5-2.6-1.9-10.5-8.4-12-22l15.4-2.4c-.2 3.6-.2 10.5 6 15.8 4.8 4.1 10.8 4.6 16.3 4.6 12 0 19-4.6 19-13.4 0-9.2-7-11-16.8-12.9l-7.7-1.3zM366.1 103.2c-.5 3.3-1.4 7.7-4.6 13.7-6.7 12.3-18.2 17.8-33.1 17.8-29.7 0-40.3-22.1-40.3-42 0-23 12.2-43.8 39.1-43.8 13 0 32.1 4.6 37.4 27.1l-15.1 1.4c-.5-3.3-3.4-18.5-21.8-18.5-23.5 0-24.5 25.6-24.5 32.8 0 8.7 1.7 16.3 5.3 21.8 4.6 7.4 11.7 10.8 20.1 10.8 19.7 0 21.9-16.1 22.8-22.5l14.7 1.4zM374.3 11.1h13.9v48.5C396.8 50.5 405 49 412.7 49c17.8 0 24.9 10 27.3 17.9 1.6 5.1 1.6 10.5 1.6 18.5v47h-13.9V89.7c0-10.6 0-16.8-3.3-21.8-3.4-5-8.9-6.9-14.2-6.9-8.8 0-18.2 4.8-20.9 17.3-1 4.5-1 8.8-1 14.7v39.3h-14V11.1zM494.7 134.7c-28 0-39.8-20.9-39.8-42.2 0-18 8.9-43.6 40.3-43.6 26.8 0 39.1 20.8 38.9 42.9-.1 24.6-14.7 42.9-39.4 42.9zm23.7-54.2c-3.1-15.9-13.5-20.6-22.8-20.6-18.4 0-25.7 14.2-25.7 32.8 0 17 7 31 24.7 31 22.8 0 24.5-23.7 24.7-31.9.1-5.1-.4-8.9-.9-11.3zM583.4 134.7c-28 0-39.8-20.9-39.8-42.2 0-18 8.9-43.6 40.3-43.6 26.8 0 39.1 20.8 39 42.9-.3 24.6-14.8 42.9-39.5 42.9zM607 80.5c-3.1-15.9-13.5-20.6-22.8-20.6-18.4 0-25.7 14.2-25.7 32.8 0 17 7 31 24.7 31 22.8 0 24.5-23.7 24.7-31.9.2-5.1-.3-8.9-.9-11.3zM636.7 11.2h13.2v121.1h-13.2zM703.4 134.7c-27.9 0-39.8-20.9-39.8-42.2 0-18 8.9-43.6 40.3-43.6 26.8 0 39.1 20.8 38.9 42.9-.1 24.6-14.7 42.9-39.4 42.9zm23.7-54.2c-3.1-15.9-13.6-20.6-22.8-20.6-18.4 0-25.7 14.2-25.7 32.8 0 17 7 31 24.7 31 22.8 0 24.5-23.7 24.7-31.9.1-5.1-.4-8.9-.9-11.3zM900.8 50.4h-13l-20.9 33-20.4-33h-15.1l28.9 44.4v37.5h13.1V94.8l29.5-44.4h-2.1zM927.2 58.3c0 5-4 8.9-9.1 8.9s-9.1-3.9-9.1-8.9 4.1-8.8 9.2-8.8c5-.1 9 3.8 9 8.8zm-15.9 0c0 3.9 3 7.1 6.9 7.1 3.8.1 6.7-3.1 6.7-7s-2.9-7.1-6.9-7.1c-3.8-.1-6.7 3.1-6.7 7zm5.4 4.6h-2V54c.8-.1 1.9-.3 3.4-.3 1.7 0 2.4.3 3 .7.5.4.9 1 .9 1.9 0 1.1-.8 1.8-1.8 2.1v.1c.9.3 1.3 1 1.6 2.2.3 1.3.5 1.8.6 2.2h-2.2c-.3-.3-.4-1.1-.7-2.2-.2-.9-.7-1.4-1.8-1.4h-1v3.6zm.1-5h1c1.1 0 2-.4 2-1.3 0-.8-.6-1.4-1.9-1.4-.5 0-.9.1-1.1.1v2.6z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 schoologyCircle : Nri.Ui.Svg.V1.Svg
 schoologyCircle =
-    Svg.svg
-        [ Attributes.viewBox "0 0 163 163"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 163 163"
         [ Svg.g []
             [ Svg.path
                 [ Attributes.d "M81.5 163C36.6 163 0 126.4 0 81.5S36.6 0 81.5 0 163 36.6 163 81.5c0 45-36.5 81.5-81.5 81.5zm0-149.4c-37.5 0-68 30.5-68 68s30.5 68 68 68 68-30.5 68-68c0-37.6-30.5-68-68-68z"
@@ -329,4 +271,3 @@ schoologyCircle =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
