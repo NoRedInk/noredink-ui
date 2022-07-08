@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, containsForm
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, containsForm
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
 @docs Alignment
 
 
@@ -105,7 +105,7 @@ type alias MenuConfig msg =
     , menuId : String
     , zIndex : Int
     , opensOnHover : Bool
-    , containsForm : Bool
+    , disclosure : Bool
     }
 
 
@@ -204,9 +204,9 @@ opensOnHover value =
 
 {-| Whether the menu contains a form when opened. This affects how Tab key behaves Defaults to `False`.
 -}
-containsForm : Bool -> Attribute msg
-containsForm value =
-    Attribute <| \config -> { config | containsForm = value }
+disclosure : Bool -> Attribute msg
+disclosure value =
+    Attribute <| \config -> { config | disclosure = value }
 
 
 {-| Menu/pulldown configuration:
@@ -234,7 +234,7 @@ view attributes config =
             , menuId = ""
             , zIndex = 1
             , opensOnHover = False
-            , containsForm = False
+            , disclosure = False
             }
 
         menuConfig =
@@ -430,7 +430,7 @@ viewCustom config =
                         , focus = Just config.buttonId
                         }
                     )
-                    :: (if config.containsForm then
+                    :: (if config.disclosure then
                             []
 
                         else

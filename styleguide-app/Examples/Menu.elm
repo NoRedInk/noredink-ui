@@ -321,7 +321,7 @@ controlMenuAttributes =
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
-        |> ControlExtra.optionalBoolListItem "containsForm" ( "Menu.containsForm True", Menu.containsForm True )
+        |> ControlExtra.optionalBoolListItem "disclosure" ( "Menu.disclosure True", Menu.disclosure True )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
