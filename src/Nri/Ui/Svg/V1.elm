@@ -1,41 +1,43 @@
 module Nri.Ui.Svg.V1 exposing
-    ( Svg
+    ( Svg, withViewBox
     , withColor, withLabel, withWidth, withHeight, withCss
-    , fromHtml, toHtml
+    , init, render
     )
 
 {-|
 
-@docs Svg
+@docs Svg, withViewBox
 @docs withColor, withLabel, withWidth, withHeight, withCss
-@docs fromHtml, toHtml
+@docs init, render
 
 -}
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
+import Nri.Ui.Colors.Extra exposing (toCssString)
+import Svg.Styled
+import Svg.Styled.Attributes exposing (..)
 
 
 {-| Opaque type describing a non-interactable Html element.
 -}
 type Svg
     = Svg
-        { icon : Html Never
+        { icon : List (Svg.Styled.Svg Never)
         , color : Maybe Color
         , width : Maybe Css.Px
         , height : Maybe Css.Px
         , css : List Css.Style
         , label : Maybe String
+        , viewBox : String
         }
 
 
 {-| Tag html as being an svg.
 -}
-fromHtml : Html Never -> Svg
-fromHtml icon =
+init : List (Svg.Styled.Svg Never) -> Svg
+init icon =
     Svg
         { icon = icon
         , color = Nothing
@@ -43,6 +45,7 @@ fromHtml icon =
         , width = Nothing
         , css = []
         , label = Nothing
+        , viewBox = "0 0 25 25"
         }
 
 
@@ -83,30 +86,43 @@ withCss css (Svg record) =
     Svg { record | css = record.css ++ css }
 
 
+{-| -}
+withViewBox : String -> Svg -> Svg
+withViewBox viewBox (Svg record) =
+    Svg { record | viewBox = viewBox }
+
+
 {-| Render an svg.
 -}
-toHtml : Svg -> Html msg
-toHtml (Svg record) =
+render : Svg -> Svg.Styled.Svg msg
+render (Svg record) =
     let
-        css =
-            List.filterMap identity
-                [ Maybe.map Css.color record.color
-                , Maybe.map Css.width record.width
-                , Maybe.map Css.height record.height
-                ]
-                ++ record.css
+        width =
+            Maybe.map Css.width record.width
+                |> Maybe.withDefault (Css.width (Css.pct 100))
 
-        attributes =
-            List.filterMap identity
-                [ if List.isEmpty css then
-                    Nothing
+        height =
+            Maybe.map Css.height record.height
+                |> Maybe.withDefault (Css.height (Css.pct 100))
 
-                  else
-                    Just (Attributes.css (Css.display Css.inlineBlock :: css))
-                , Maybe.map Aria.label record.label
-                    |> Maybe.withDefault (Aria.hidden True)
-                    |> Just
-                , Just Role.img
-                ]
+        color =
+            fill (Maybe.withDefault "currentcolor" (Maybe.map toCssString record.color))
     in
-    Html.map never (Html.div attributes [ record.icon ])
+    Svg.Styled.svg
+        ([ Just (viewBox record.viewBox)
+         , Just color
+         , -- TODO: what css is supported on this svg node?
+           Just (css (width :: height :: record.css))
+         , -- TODO: Use a title svg node instead
+           Maybe.map Aria.label record.label
+            |> Maybe.withDefault (Aria.hidden True)
+            |> Just
+         , -- TODO: double check property
+           Just Role.img
+
+         -- TODO: make sure svg is not focusable
+         ]
+            |> List.filterMap identity
+        )
+        record.icon
+        |> Svg.Styled.map never
