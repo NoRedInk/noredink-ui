@@ -500,7 +500,12 @@ viewCustom config =
             [ let
                 buttonAttributes =
                     [ Aria.disabled config.isDisabled
-                    , Aria.hasMenuPopUp
+                    , case config.purpose of
+                        NavMenu ->
+                            Aria.hasMenuPopUp
+
+                        Disclosure _ ->
+                            AttributesExtra.none
                     , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
