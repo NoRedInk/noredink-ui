@@ -445,19 +445,25 @@ viewCustom config =
                         , focus = Just config.buttonId
                         }
                     )
-                    :: [ Key.tab
-                            (config.focusAndToggle
-                                { isOpen = False
-                                , focus = Nothing
-                                }
-                            )
-                       , Key.tabBack
-                            (config.focusAndToggle
-                                { isOpen = False
-                                , focus = Nothing
-                                }
-                            )
-                       ]
+                    :: (case config.purpose of
+                            NavMenu ->
+                                [ Key.tab
+                                    (config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                    )
+                                , Key.tabBack
+                                    (config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                    )
+                                ]
+
+                            Disclosure _ ->
+                                []
+                       )
                 )
             :: styleContainer
         )
@@ -509,8 +515,9 @@ viewCustom config =
                     , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      case ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
-                        ( Just firstFocusableElementId, Just lastFocusableElementId ) ->
+                      -- as long as it's not a Disclosed
+                      case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
+                        ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
