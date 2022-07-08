@@ -120,7 +120,7 @@ type alias ButtonConfig =
 
 type Purpose
     = NavMenu
-    | Disclosure { lastId : Maybe String }
+    | Disclosure { lastId : String }
 
 
 
@@ -220,7 +220,7 @@ You will need to pass in the last focusable element in the disclosed content in 
 You may pass a lastId of Nothing if there is NO focusable content within the disclosure.
 
 -}
-disclosure : { lastId : Maybe String } -> Attribute msg
+disclosure : { lastId : String } -> Attribute msg
 disclosure exitFocusManager =
     Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
 
@@ -473,7 +473,7 @@ viewCustom config =
                     Disclosure { lastId } ->
                         WhenFocusLeaves.toAttribute
                             { firstId = config.buttonId
-                            , lastId = Maybe.withDefault config.buttonId lastId
+                            , lastId = lastId
                             , tabBackAction =
                                 config.focusAndToggle
                                     { isOpen = False
