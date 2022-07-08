@@ -52,12 +52,11 @@ withColor color (Svg record) =
     Svg { record | color = Just color }
 
 
-{-| Add a string aria-label property to the element.
+{-| Add a title to the svg. Note that when the label is _not_ present, the icon will be entirely hidden from screenreader users.
 
-See [Using the aria-label attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for
-guidelines of when and how to use this attribute.
+Read [Carie Fisher's "Accessible Svgs"](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/) article to learn more about accessible svgs.
 
-Note that when the label is _not_ present, `aria-hidden` will be added. See <https://css-tricks.com/accessible-svg-icons/> for a quick summary on why.
+Go through the [WCAG images tutorial](https://www.w3.org/WAI/tutorials/images/) to learn more about identifying when images are functional or decorative or something else.
 
 -}
 withLabel : String -> Svg -> Svg
