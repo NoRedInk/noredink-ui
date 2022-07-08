@@ -105,7 +105,7 @@ type alias MenuConfig msg =
     , menuId : String
     , zIndex : Int
     , opensOnHover : Bool
-    , disclosure : Bool
+    , purpose : Purpose
     }
 
 
@@ -115,6 +115,11 @@ type alias ButtonConfig =
     , hasBorder : Bool
     , buttonWidth : Maybe Int
     }
+
+
+type Purpose
+    = NavMenu
+    | Disclosure { lastId : Maybe String }
 
 
 
@@ -202,11 +207,21 @@ opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
 
 
-{-| Whether the menu contains a form when opened. This affects how Tab key behaves Defaults to `False`.
+{-| Makes the menu behave as a disclosure.
+
+For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+
+You may pass a lastId of Nothing if there is NO focusable content within the disclosure.
+
 -}
-disclosure : Bool -> Attribute msg
-disclosure value =
-    Attribute <| \config -> { config | disclosure = value }
+disclosure : { lastId : Maybe String } -> Attribute msg
+disclosure exitFocusManager =
+    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
 
 
 {-| Menu/pulldown configuration:
@@ -234,7 +249,7 @@ view attributes config =
             , menuId = ""
             , zIndex = 1
             , opensOnHover = False
-            , disclosure = False
+            , purpose = NavMenu
             }
 
         menuConfig =
@@ -430,24 +445,19 @@ viewCustom config =
                         , focus = Just config.buttonId
                         }
                     )
-                    :: (if config.disclosure then
-                            []
-
-                        else
-                            [ Key.tab
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            , Key.tabBack
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            ]
-                       )
+                    :: [ Key.tab
+                            (config.focusAndToggle
+                                { isOpen = False
+                                , focus = Nothing
+                                }
+                            )
+                       , Key.tabBack
+                            (config.focusAndToggle
+                                { isOpen = False
+                                , focus = Nothing
+                                }
+                            )
+                       ]
                 )
             :: styleContainer
         )

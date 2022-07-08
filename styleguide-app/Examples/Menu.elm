@@ -250,12 +250,12 @@ view ellieLinkConfig state =
                             button buttonAttributes [ text "Custom Menu trigger button" ]
                 }
           )
-        , ( "Menu.button (with controls)"
+        , ( "Menu.button (with Menu.disclosure)"
           , Menu.view
                 (menuAttributes
-                    ++ List.filterMap identity
-                        [ Just <| Menu.buttonId "with_controls__button"
-                        , Just <| Menu.menuId "with_controls__menu"
+                    ++  [ Menu.buttonId "with_controls__button"
+                        , Menu.menuId "with_controls__menu"
+                        , Menu.disclosure { lastId = Nothing }
                         ]
                 )
                 { isOpen = isOpen "with_controls"
@@ -321,7 +321,6 @@ controlMenuAttributes =
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
-        |> ControlExtra.optionalBoolListItem "disclosure" ( "Menu.disclosure True", Menu.disclosure True )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
