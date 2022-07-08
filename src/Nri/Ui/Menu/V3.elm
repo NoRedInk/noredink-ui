@@ -217,7 +217,6 @@ You will need to pass in the last focusable element in the disclosed content in 
   - any focusable elements in the disclosed content to be keyboard accessible
   - the disclosure to close appropriately when the user tabs past all of the disclosed content
 
-
 -}
 disclosure : { lastId : String } -> Attribute msg
 disclosure exitFocusManager =
@@ -601,7 +600,12 @@ viewCustom config =
                 , div
                     [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
                     , styleContent contentVisible config
-                    , Role.menu
+                    , case config.purpose of
+                        NavMenu ->
+                            Role.menu
+
+                        Disclosure _ ->
+                            AttributesExtra.none
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , Aria.hidden (not config.isOpen)
