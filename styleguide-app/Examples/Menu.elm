@@ -253,10 +253,10 @@ view ellieLinkConfig state =
         , ( "Menu.button (with Menu.disclosure)"
           , Menu.view
                 (menuAttributes
-                    ++  [ Menu.buttonId "with_controls__button"
-                        , Menu.menuId "with_controls__menu"
-                        , Menu.disclosure { lastId = "login__button" }
-                        ]
+                    ++ [ Menu.buttonId "with_controls__button"
+                       , Menu.menuId "with_controls__menu"
+                       , Menu.disclosure { lastId = "login__button" }
+                       ]
                 )
                 { isOpen = isOpen "with_controls"
                 , focusAndToggle = FocusAndToggle "with_controls"
