@@ -2401,7 +2401,7 @@ graduateCap =
             ]
             [ Svg.g
                 [ Attributes.transform "translate(0.984790, 0.051995)"
-                , Attributes.fill "#F3336C"
+                , Attributes.fill "currentcolor"
                 , Attributes.fillRule "nonzero"
                 ]
                 [ Svg.path
