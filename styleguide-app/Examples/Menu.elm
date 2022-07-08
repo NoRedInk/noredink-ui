@@ -255,7 +255,7 @@ view ellieLinkConfig state =
                 (menuAttributes
                     ++  [ Menu.buttonId "with_controls__button"
                         , Menu.menuId "with_controls__menu"
-                        , Menu.disclosure { lastId = Nothing }
+                        , Menu.disclosure { lastId = Just "login__button" }
                         ]
                 )
                 { isOpen = isOpen "with_controls"
@@ -270,6 +270,7 @@ view ellieLinkConfig state =
                                 , TextInput.view "Password" []
                                 , Button.button "Log in"
                                     [ Button.primary
+                                    , Button.id "login__button"
                                     , Button.fillContainerWidth
                                     , Button.css [ Css.marginTop (Css.px 15) ]
                                     ]
