@@ -105,6 +105,7 @@ example =
                 , ( "couple", UiIcon.couple )
                 , ( "class", UiIcon.class )
                 , ( "leaderboard", UiIcon.leaderboard )
+                , ( "graduateCap", UiIcon.graduateCap )
                 ]
             , viewExampleSection "Time"
                 [ ( "emptyCalendar", UiIcon.emptyCalendar )
@@ -201,6 +202,16 @@ example =
             , viewExampleSection "Search"
                 [ ( "search", UiIcon.search )
                 , ( "searchInCircle", UiIcon.searchInCicle )
+                ]
+            , viewExampleSection "School Category"
+                [ ( "school", UiIcon.school )
+                , ( "highSchool", UiIcon.highSchool )
+                , ( "company", UiIcon.company )
+                , ( "homeSchool", UiIcon.homeSchool )
+                ]
+            , viewExampleSection "Location"
+                [ ( "flagUs", UiIcon.flagUs )
+                , ( "globe", UiIcon.globe )
                 ]
             ]
     }
