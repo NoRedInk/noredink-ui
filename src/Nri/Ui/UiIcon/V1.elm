@@ -43,7 +43,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs sparkleBulb, baldBulb, bulb
 @docs hat, keychain
 @docs sprout, sapling, tree
-@docs person, couple, class, leaderboard, performance, graduateCap
+@docs person, couple, class, leaderboard, performance
 @docs emptyCalendar, calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen, highlighter
