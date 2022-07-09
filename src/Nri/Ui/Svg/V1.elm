@@ -16,7 +16,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import Html.Styled.Attributes
-import Nri.Ui.Colors.Extra exposing (toCssString)
 import Svg.Styled
 import Svg.Styled.Attributes exposing (..)
 
@@ -109,14 +108,14 @@ toHtml (Svg record) =
                 |> Maybe.withDefault (Css.height (Css.pct 100))
 
         color =
-            fill (Maybe.withDefault "currentcolor" (Maybe.map toCssString record.color))
+            Maybe.map Css.color record.color
+                |> Maybe.withDefault (Css.batch [])
     in
     Svg.Styled.svg
         (List.filterMap identity
             [ Just (viewBox record.viewBox)
-            , Just color
-            , -- TODO: what css is supported on this svg node?
-              Just (css (width :: height :: record.css))
+            , Just (fill "currentcolor")
+            , Just (css (width :: height :: color :: record.css))
             , -- TODO: Use a title svg node instead
               Maybe.map Aria.label record.label
                 |> Maybe.withDefault (Aria.hidden True)
