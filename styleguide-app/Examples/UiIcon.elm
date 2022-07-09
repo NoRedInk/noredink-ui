@@ -17,7 +17,6 @@ import Examples.IconExamples as IconExamples
         ( IconExampleGroup
         , viewByGroupWithSettings
         )
-import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

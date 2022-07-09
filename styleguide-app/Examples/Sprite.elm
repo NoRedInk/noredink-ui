@@ -11,8 +11,6 @@ import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Svg.Styled exposing (svg)
-import Svg.Styled.Attributes as Attributes
 
 
 {-| -}

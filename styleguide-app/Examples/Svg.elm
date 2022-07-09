@@ -6,24 +6,19 @@ module Examples.Svg exposing (Msg, State, example)
 
 -}
 
-import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
-import Examples.AssignmentIcon as AssignmentIcons
-import Examples.IconExamples as IconExamples exposing (IconExampleGroup)
 import Examples.UiIcon as UiIcons
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
-import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import SolidColor exposing (SolidColor)
-import Task
 
 
 {-| -}
@@ -53,15 +48,11 @@ viewSettings state =
             , Css.justifyContent Css.spaceBetween
             ]
         ]
-        [ Menu.view
-            [ Menu.buttonId "svg-example__icon-selector-button"
-            , Menu.menuId "svg-example__icon-selector-menu"
+        [ Select.view "Icon"
+            [ Select.groupedChoices Tuple.first (List.map svgGroupedChoices UiIcons.all)
+            , Select.value (Just state.icon)
             ]
-            { isOpen = state.iconSelectorExpanded
-            , focusAndToggle = FocusAndToggleIconSelector
-            , entries = List.map viewSvgGroup UiIcons.all
-            , button = Menu.button [] "Icon"
-            }
+            |> Html.map SetIcon
         , Html.label []
             [ Html.text "Color: "
             , Html.input
@@ -104,19 +95,12 @@ viewSettings state =
         ]
 
 
-viewSvgGroup : IconExampleGroup -> Menu.Entry Msg
-viewSvgGroup ( groupName, items ) =
+svgGroupedChoices ( groupName, items ) =
     let
         toEntry ( name, icon ) =
-            Menu.entry ("svg-selector__" ++ name) <|
-                \attrs ->
-                    ClickableText.button name
-                        [ ClickableText.small
-                        , ClickableText.icon icon
-                        , ClickableText.onClick (SetIcon ( name, icon ))
-                        ]
+            Select.Choice name ( name, icon )
     in
-    Menu.group groupName (List.map toEntry items)
+    Select.ChoicesGroup groupName (List.map toEntry items)
 
 
 viewResults : State -> Html.Html Msg
@@ -199,25 +183,17 @@ init =
 
 {-| -}
 type Msg
-    = FocusAndToggleIconSelector { isOpen : Bool, focus : Maybe String }
-    | SetIcon ( String, Svg )
+    = SetIcon ( String, Svg )
     | SetColor (Result String SolidColor)
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
     | SetLabel String
-    | Focused (Result Dom.Error ())
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        FocusAndToggleIconSelector { isOpen, focus } ->
-            ( { state | iconSelectorExpanded = isOpen }
-            , Maybe.map (\idString -> Task.attempt Focused (Dom.focus idString)) focus
-                |> Maybe.withDefault Cmd.none
-            )
-
         SetIcon svg ->
             ( { state | icon = svg }
             , Cmd.none
@@ -245,6 +221,3 @@ update msg state =
 
         SetLabel label ->
             ( { state | label = label }, Cmd.none )
-
-        Focused _ ->
-            ( state, Cmd.none )

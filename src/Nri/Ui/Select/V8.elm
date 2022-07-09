@@ -1,6 +1,7 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
     , Choice, choices
+    , ChoicesGroup, groupedChoices
     , value
     , Attribute, defaultDisplayText
     , hiddenLabel, visibleLabel
@@ -24,6 +25,7 @@ module Nri.Ui.Select.V8 exposing
 ### Input types
 
 @docs Choice, choices
+@docs ChoicesGroup, groupedChoices
 
 
 ### Input content
@@ -160,6 +162,26 @@ noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
+{-| Groupings of choices (will be added _after_ isolated choices.)
+-}
+type alias ChoicesGroup value =
+    { label : String
+    , choices : List (Choice value)
+    }
+
+
+{-| -}
+groupedChoices : (value -> String) -> List (ChoicesGroup value) -> Attribute value
+groupedChoices valueToString optgroups =
+    Attribute
+        (\config ->
+            { config
+                | valueToString = Just valueToString
+                , optgroups = optgroups
+            }
+        )
+
+
 {-| A single possible choice.
 -}
 type alias Choice value =
@@ -195,6 +217,7 @@ type alias Config value =
     { id : Maybe String
     , value : Maybe value
     , choices : List (Choice value)
+    , optgroups : List (ChoicesGroup value)
     , valueToString : Maybe (value -> String)
     , defaultDisplayText : Maybe String
     , error : ErrorState
@@ -211,6 +234,7 @@ defaultConfig =
     { id = Nothing
     , value = Nothing
     , choices = []
+    , optgroups = []
     , valueToString = Nothing
     , defaultDisplayText = Nothing
     , error = InputErrorAndGuidanceInternal.noError
@@ -255,6 +279,7 @@ view label attributes =
             config
         , viewSelect
             { choices = config.choices
+            , optgroups = config.optgroups
             , current = config.value
             , id = id_
             , custom = config.custom
@@ -268,6 +293,7 @@ view label attributes =
 
 viewSelect :
     { choices : List (Choice a)
+    , optgroups : List (ChoicesGroup a)
     , current : Maybe a
     , id : String
     , valueToString : Maybe (a -> String)
@@ -278,23 +304,25 @@ viewSelect :
     -> Html a
 viewSelect config =
     let
-        stringChoices =
+        toChoice valueToString choice =
+            { label = choice.label
+            , idAndValue = generateId (valueToString choice.value)
+            , value = choice.value
+            }
+
+        ( optionStringChoices, groupStringChoices ) =
             case config.valueToString of
                 Just valueToString ->
-                    List.map
-                        (\choice ->
-                            { label = choice.label
-                            , idAndValue = generateId (valueToString choice.value)
-                            , value = choice.value
-                            }
-                        )
-                        config.choices
+                    ( List.map (toChoice valueToString) config.choices
+                    , List.concatMap (.choices >> List.map (toChoice valueToString)) config.optgroups
+                    )
 
                 Nothing ->
-                    []
+                    ( [], [] )
 
         valueLookup =
-            stringChoices
+            optionStringChoices
+                ++ groupStringChoices
                 |> List.map (\x -> ( x.idAndValue, x.value ))
                 |> Dict.fromList
 
@@ -327,10 +355,23 @@ viewSelect config =
 
             else
                 config.current
+
+        viewGroupedChoices group =
+            Html.optgroup [ Attributes.attribute "label" group.label ]
+                (case config.valueToString of
+                    Just valueToString ->
+                        List.map
+                            (toChoice valueToString >> viewChoice currentVal)
+                            group.choices
+
+                    Nothing ->
+                        []
+                )
     in
-    stringChoices
-        |> List.map (viewChoice currentVal)
-        |> (++) defaultOption
+    (defaultOption
+        ++ List.map (viewChoice currentVal) optionStringChoices
+        ++ List.map viewGroupedChoices config.optgroups
+    )
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
             [ -- border
