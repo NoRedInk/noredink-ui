@@ -13,6 +13,7 @@ import Examples.UiIcon as UiIcons
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Select.V8 as Select
@@ -47,6 +48,8 @@ viewSettings state =
         [ Attributes.css
             [ Css.displayFlex
             , Css.justifyContent Css.spaceBetween
+            , Css.alignItems Css.center
+            , Css.flexWrap Css.wrap
             ]
         ]
         [ TextInput.view "Title"
@@ -58,6 +61,14 @@ viewSettings state =
             , Select.value (Just state.icon)
             ]
             |> Html.map SetIcon
+        , Checkbox.viewWithLabel
+            { identifier = "show-border"
+            , label = "Show border"
+            , setterMsg = SetBorder
+            , selected = Checkbox.selectedFromBool state.showBorder
+            , disabled = False
+            , theme = Checkbox.Square
+            }
         , Html.label []
             [ Html.text "Color: "
             , Html.input
@@ -123,6 +134,11 @@ viewResults state =
               , "       |> Svg.withColor color\n"
               , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")\n"
               , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")\n"
+              , if state.showBorder then
+                    "       |> Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]\n"
+
+                else
+                    ""
               , if String.isEmpty state.label then
                     ""
 
@@ -133,25 +149,25 @@ viewResults state =
                 |> String.join ""
                 |> Html.text
             ]
-        , Html.div
-            [ Attributes.css
-                [ Css.backgroundColor Colors.gray92
-                , Css.flexGrow (Css.int 2)
-                ]
-            ]
-            [ Tuple.second state.icon
-                |> Svg.withColor (toCssColor state.color)
-                |> Svg.withWidth (Css.px state.width)
-                |> Svg.withHeight (Css.px state.height)
-                |> (\svg ->
-                        if String.isEmpty state.label then
-                            svg
+        , Tuple.second state.icon
+            |> Svg.withColor (toCssColor state.color)
+            |> Svg.withWidth (Css.px state.width)
+            |> Svg.withHeight (Css.px state.height)
+            |> (\svg ->
+                    if state.showBorder then
+                        Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ] svg
 
-                        else
-                            Svg.withLabel state.label svg
-                   )
-                |> Svg.toHtml
-            ]
+                    else
+                        svg
+               )
+            |> (\svg ->
+                    if String.isEmpty state.label then
+                        svg
+
+                    else
+                        Svg.withLabel state.label svg
+               )
+            |> Svg.toHtml
         ]
 
 
@@ -163,6 +179,7 @@ type alias State =
     , width : Float
     , height : Float
     , label : String
+    , showBorder : Bool
     }
 
 
@@ -172,9 +189,10 @@ init =
     { iconSelectorExpanded = False
     , icon = ( "starFilled", UiIcon.starFilled )
     , color = fromCssColor Colors.greenDark
-    , width = 30
-    , height = 30
+    , width = 100
+    , height = 100
     , label = "Mastered"
+    , showBorder = False
     }
 
 
@@ -185,6 +203,7 @@ type Msg
     | SetWidth (Maybe Float)
     | SetHeight (Maybe Float)
     | SetLabel String
+    | SetBorder Bool
 
 
 {-| -}
@@ -218,3 +237,6 @@ update msg state =
 
         SetLabel label ->
             ( { state | label = label }, Cmd.none )
+
+        SetBorder showBorder ->
+            ( { state | showBorder = showBorder }, Cmd.none )
