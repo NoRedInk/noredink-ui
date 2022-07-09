@@ -1,6 +1,7 @@
 module Examples.IconExamples exposing
     ( preview
     , Settings, init, Msg, update, viewSettings
+    , viewByGroupWithSettings, IconExampleGroup
     , view, viewWithCustomStyles
     )
 
@@ -8,6 +9,7 @@ module Examples.IconExamples exposing
 
 @docs preview
 @docs Settings, init, Msg, update, viewSettings
+@docs viewByGroupWithSettings, IconExampleGroup
 @docs view, viewWithCustomStyles
 
 -}
@@ -78,6 +80,22 @@ viewSettings { showIconName } =
         , disabled = False
         , theme = Checkbox.Square
         }
+
+
+type alias IconExampleGroup =
+    ( String
+    , List ( String, Svg.Svg )
+    )
+
+
+{-| -}
+viewByGroupWithSettings : Settings -> List IconExampleGroup -> List (Html Msg)
+viewByGroupWithSettings settings groups =
+    let
+        viewExampleSection ( group, values ) =
+            view settings group values
+    in
+    viewSettings settings :: List.map viewExampleSection groups
 
 
 {-| -}
