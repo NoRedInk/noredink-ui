@@ -6,7 +6,7 @@ module Nri.Ui.Svg.V1 exposing
 
 {-|
 
-@docs Svg, withViewBox
+@docs Svg
 @docs withColor, withLabel, withWidth, withHeight, withCss, withCustom
 @docs init, toHtml
 
