@@ -16,6 +16,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import Html.Styled.Attributes
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Svg.Styled
 import Svg.Styled.Attributes exposing (..)
 
@@ -112,17 +113,14 @@ toHtml (Svg record) =
                 |> Maybe.withDefault (Css.batch [])
     in
     Svg.Styled.svg
-        (List.filterMap identity
-            [ Just (viewBox record.viewBox)
-            , Just (fill "currentcolor")
-            , Just (css (width :: height :: color :: record.css))
-            , -- TODO: Use a title svg node instead
-              Maybe.map Aria.label record.label
-                |> Maybe.withDefault (Aria.hidden True)
-                |> Just
-            , Just Role.img
-            , Just (Html.Styled.Attributes.attribute "focusable" "false")
-            ]
+        ([ viewBox record.viewBox
+         , fill "currentcolor"
+         , css (width :: height :: color :: record.css)
+         , Maybe.map (\_ -> AttributesExtra.none) record.label
+            |> Maybe.withDefault (Aria.hidden True)
+         , Role.img
+         , Html.Styled.Attributes.attribute "focusable" "false"
+         ]
             ++ record.attributes
         )
         (case record.label of
