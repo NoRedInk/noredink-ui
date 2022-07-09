@@ -38,7 +38,13 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = IconExamples.init { label = "NoRedInk", name = "noredink", icon = Logo.noredink }
+    , state =
+        IconExamples.init
+            { label = "NoRedInk"
+            , name = "noredink"
+            , icon = Logo.noredink
+            , renderSvgCode = \name -> "Logo." ++ name
+            }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =

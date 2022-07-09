@@ -38,6 +38,7 @@ example =
             { label = "Planning Diagnostics"
             , name = "planningDiagnosticCircled"
             , icon = AssignmentIcon.planningDiagnosticCircled
+            , renderSvgCode = \name -> "AssignmentIcon." ++ name
             }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none

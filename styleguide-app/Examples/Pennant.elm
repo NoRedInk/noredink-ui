@@ -34,7 +34,13 @@ example =
     , version = 2
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = IconExamples.init { label = "Premium", name = "premiumFlag", icon = Pennant.premiumFlag }
+    , state =
+        IconExamples.init
+            { label = "Premium"
+            , name = "premiumFlag"
+            , icon = Pennant.premiumFlag
+            , renderSvgCode = \name -> "Pennant." ++ name
+            }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =

@@ -34,7 +34,13 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = IconExamples.init { label = "Bold", name = "bold", icon = viewSprite Sprite.bold }
+    , state =
+        IconExamples.init
+            { label = "Bold"
+            , name = "bold"
+            , icon = viewSprite Sprite.bold
+            , renderSvgCode = \name -> "Svg.init \"\" [ Sprite.use  Sprite." ++ name ++ " ] "
+            }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)

@@ -58,12 +58,19 @@ type alias Settings =
     , icon : ( String, Svg )
     , label : String
     , showBorder : Bool
+    , renderSvgCode : String -> String
     }
 
 
 {-| -}
-init : { label : String, name : String, icon : Svg } -> Settings
-init { label, name, icon } =
+init :
+    { label : String
+    , name : String
+    , icon : Svg
+    , renderSvgCode : String -> String
+    }
+    -> Settings
+init { label, name, icon, renderSvgCode } =
     { showIconName = False
     , iconSelectorExpanded = False
     , color = fromCssColor Colors.greenDark
@@ -72,6 +79,7 @@ init { label, name, icon } =
     , icon = ( name, icon )
     , label = label
     , showBorder = True
+    , renderSvgCode = renderSvgCode
     }
 
 
@@ -362,7 +370,7 @@ viewResults state =
               , "\n\n\n"
               , "renderedSvg : Svg\n"
               , "renderedSvg =\n"
-              , "   UiIcon." ++ Tuple.first state.icon ++ "\n"
+              , "   " ++ state.renderSvgCode (Tuple.first state.icon) ++ "\n"
               , "       |> Svg.withColor color\n"
               , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")\n"
               , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")\n"

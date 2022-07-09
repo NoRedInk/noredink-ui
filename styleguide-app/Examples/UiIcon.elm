@@ -33,7 +33,13 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = IconExamples.init { label = "Mastered", name = "starFilled", icon = UiIcon.starFilled }
+    , state =
+        IconExamples.init
+            { label = "Mastered"
+            , name = "starFilled"
+            , icon = UiIcon.starFilled
+            , renderSvgCode = \name -> "UiIcon." ++ name
+            }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
