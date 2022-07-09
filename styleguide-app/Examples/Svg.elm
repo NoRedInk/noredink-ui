@@ -17,6 +17,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
 import SolidColor exposing (SolidColor)
 
@@ -48,7 +49,11 @@ viewSettings state =
             , Css.justifyContent Css.spaceBetween
             ]
         ]
-        [ Select.view "Icon"
+        [ TextInput.view "Title"
+            [ TextInput.value state.label
+            , TextInput.text SetLabel
+            ]
+        , Select.view "Icon"
             [ Select.groupedChoices Tuple.first (List.map svgGroupedChoices UiIcons.all)
             , Select.value (Just state.icon)
             ]
@@ -81,14 +86,6 @@ viewSettings state =
                 , Attributes.max "200"
                 , Attributes.value (String.fromFloat state.height)
                 , Events.onInput (SetHeight << String.toFloat)
-                ]
-                []
-            ]
-        , Html.label []
-            [ Html.text "Title: "
-            , Html.input
-                [ Attributes.value state.label
-                , Events.onInput SetLabel
                 ]
                 []
             ]
@@ -173,11 +170,11 @@ type alias State =
 init : State
 init =
     { iconSelectorExpanded = False
-    , icon = ( "newspaper", UiIcon.newspaper )
-    , color = fromCssColor Colors.azure
+    , icon = ( "starFilled", UiIcon.starFilled )
+    , color = fromCssColor Colors.greenDark
     , width = 30
     , height = 30
-    , label = "Newspaper"
+    , label = "Mastered"
     }
 
 
