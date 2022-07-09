@@ -15,6 +15,7 @@ module Nri.Ui.Svg.V1 exposing
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
+import Html.Styled.Attributes
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Svg.Styled
 import Svg.Styled.Attributes exposing (..)
@@ -120,12 +121,17 @@ toHtml (Svg record) =
               Maybe.map Aria.label record.label
                 |> Maybe.withDefault (Aria.hidden True)
                 |> Just
-            , -- TODO: double check property
-              Just Role.img
-
-            -- TODO: make sure svg is not focusable
+            , Just Role.img
+            , Just (Html.Styled.Attributes.attribute "focusable" "false")
             ]
             ++ record.attributes
         )
-        record.icon
+        (case record.label of
+            Just label ->
+                Svg.Styled.title [] [ Svg.Styled.text label ]
+                    :: record.icon
+
+            Nothing ->
+                record.icon
+        )
         |> Svg.Styled.map never

@@ -78,7 +78,7 @@ viewSettings state =
                 []
             ]
         , Html.label []
-            [ Html.text "Aria-label: "
+            [ Html.text "Title: "
             , Html.input
                 [ Attributes.value state.label
                 , Events.onInput SetLabel
