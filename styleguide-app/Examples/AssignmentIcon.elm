@@ -33,7 +33,12 @@ example =
     , version = 2
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = IconExamples.init
+    , state =
+        IconExamples.init
+            { label = "Planning Diagnostics"
+            , name = "planningDiagnosticCircled"
+            , icon = AssignmentIcon.planningDiagnosticCircled
+            }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =

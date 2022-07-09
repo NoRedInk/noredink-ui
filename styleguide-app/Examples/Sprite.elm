@@ -9,6 +9,10 @@ module Examples.Sprite exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+    exposing
+        ( IconExampleGroup
+        , viewByGroupWithSettings
+        )
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
@@ -30,16 +34,18 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = IconExamples.init
+    , state = IconExamples.init { label = "Bold", name = "bold", icon = viewSprite Sprite.bold }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview = IconExamples.preview (List.map Tuple.second sprites)
-    , view =
-        \ellieLinkConfig settings ->
-            [ IconExamples.viewSettings settings
-            , IconExamples.view settings "Rich Text Formatting" sprites
-            ]
+    , view = \_ settings -> viewByGroupWithSettings settings all
     }
+
+
+all : List IconExampleGroup
+all =
+    [ ( "Rich Text Formatting", sprites )
+    ]
 
 
 sprites : List ( String, Svg )

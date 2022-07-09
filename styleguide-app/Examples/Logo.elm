@@ -10,6 +10,10 @@ import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+    exposing
+        ( IconExampleGroupWithCustomStyles
+        , viewByGroupWithCustomStyles
+        )
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -34,7 +38,7 @@ example =
     , version = 1
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = IconExamples.init
+    , state = IconExamples.init { label = "NoRedInk", name = "noredink", icon = Logo.noredink }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -45,83 +49,86 @@ example =
                 , Logo.cleverC
                 , Logo.googleG
                 ]
-    , view =
-        \ellieLinkConfig settings ->
-            let
-                viewExampleSection =
-                    IconExamples.viewWithCustomStyles settings
-            in
-            [ IconExamples.viewSettings settings
-            , viewExampleSection "NRI"
-                [ ( "noredink"
-                  , Logo.noredink
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 100)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                ]
-            , viewExampleSection "Social Media"
-                [ ( "facebook", Logo.facebook, defaults )
-                , ( "twitter", Logo.twitter, defaults )
-                ]
-            , viewExampleSection "Clever"
-                [ ( "clever"
-                  , Logo.clever
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 100)
-                    , Css.margin (Css.px 4)
-                    , Css.color Colors.azure
-                    ]
-                  )
-                , ( "cleverC", Logo.cleverC, defaults )
-                , ( "cleverLibrary"
-                  , Logo.cleverLibrary
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 100)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                ]
-            , viewExampleSection "Google"
-                [ ( "googleClassroom"
-                  , Logo.googleClassroom
-                  , defaults
-                  )
-                , ( "googleG", Logo.googleG, defaults )
-                ]
-            , viewExampleSection "LMS"
-                [ ( "canvas"
-                  , Logo.canvas
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 100)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                , ( "canvasCircle"
-                  , Logo.canvasCircle
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 25)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                , ( "schoology"
-                  , Logo.schoology
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 100)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                , ( "schoologyCircle"
-                  , Logo.schoologyCircle
-                  , [ Css.height (Css.px 25)
-                    , Css.width (Css.px 25)
-                    , Css.margin (Css.px 4)
-                    ]
-                  )
-                ]
-            ]
+    , view = \ellieLinkConfig settings -> viewByGroupWithCustomStyles settings all
     }
+
+
+all : List IconExampleGroupWithCustomStyles
+all =
+    [ ( "NRI"
+      , [ ( "noredink"
+          , Logo.noredink
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
+    , ( "Social Media"
+      , [ ( "facebook", Logo.facebook, defaults )
+        , ( "twitter", Logo.twitter, defaults )
+        ]
+      )
+    , ( "Clever"
+      , [ ( "clever"
+          , Logo.clever
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            , Css.color Colors.azure
+            ]
+          )
+        , ( "cleverC", Logo.cleverC, defaults )
+        , ( "cleverLibrary"
+          , Logo.cleverLibrary
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
+    , ( "Google"
+      , [ ( "googleClassroom"
+          , Logo.googleClassroom
+          , defaults
+          )
+        , ( "googleG", Logo.googleG, defaults )
+        ]
+      )
+    , ( "LMS"
+      , [ ( "canvas"
+          , Logo.canvas
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "canvasCircle"
+          , Logo.canvasCircle
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "schoology"
+          , Logo.schoology
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "schoologyCircle"
+          , Logo.schoologyCircle
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
+    ]
 
 
 defaults : List Css.Style

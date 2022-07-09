@@ -1,12 +1,8 @@
-module Examples.UiIcon exposing
-    ( example, State, Msg
-    , all
-    )
+module Examples.UiIcon exposing (example, State, Msg)
 
 {-|
 
 @docs example, State, Msg
-@docs all
 
 -}
 
@@ -37,7 +33,7 @@ example =
     , version = 1
     , categories = List.singleton Icons
     , keyboardSupport = []
-    , state = IconExamples.init
+    , state = IconExamples.init { label = "Mastered", name = "starFilled", icon = UiIcon.starFilled }
     , update = IconExamples.update
     , subscriptions = \_ -> Sub.none
     , preview =

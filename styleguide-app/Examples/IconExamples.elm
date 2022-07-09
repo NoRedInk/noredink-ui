@@ -1,22 +1,21 @@
 module Examples.IconExamples exposing
     ( preview
-    , Settings, init, Msg, update, viewSettings
+    , Settings, init, Msg, update
     , viewByGroupWithSettings, IconExampleGroup
-    , view, viewWithCustomStyles
+    , viewByGroupWithCustomStyles, IconExampleGroupWithCustomStyles
     )
 
 {-|
 
 @docs preview
-@docs Settings, init, Msg, update, viewSettings
+@docs Settings, init, Msg, update
 @docs viewByGroupWithSettings, IconExampleGroup
-@docs view, viewWithCustomStyles
+@docs viewByGroupWithCustomStyles, IconExampleGroupWithCustomStyles
 
 -}
 
 import Css
 import Css.Global
-import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
@@ -28,7 +27,6 @@ import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V7 as TextInput
-import Nri.Ui.UiIcon.V1 as UiIcon
 import SolidColor exposing (SolidColor)
 
 
@@ -64,17 +62,16 @@ type alias Settings =
 
 
 {-| -}
-init : Settings
-init =
+init : { label : String, name : String, icon : Svg } -> Settings
+init { label, name, icon } =
     { showIconName = False
     , iconSelectorExpanded = False
     , color = fromCssColor Colors.greenDark
     , width = 100
     , height = 100
-    , -- TODO: use an appropriate example for each icon type
-      icon = ( "starFilled", UiIcon.starFilled )
-    , label = "Mastered"
-    , showBorder = False
+    , icon = ( name, icon )
+    , label = label
+    , showBorder = True
     }
 
 
@@ -143,6 +140,12 @@ viewSettings { showIconName } =
         }
 
 
+type alias IconExampleGroupWithCustomStyles =
+    ( String
+    , List ( String, Svg.Svg, List Css.Style )
+    )
+
+
 type alias IconExampleGroup =
     ( String
     , List ( String, Svg.Svg )
@@ -161,6 +164,28 @@ viewByGroupWithSettings settings groups =
         ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
                 [ Heading.h3 [] [ Html.text "Example Usage" ]
                 , viewSingularExampleSettings groups settings
+                , viewResults settings
+                ]
+           ]
+
+
+{-| -}
+viewByGroupWithCustomStyles : Settings -> List IconExampleGroupWithCustomStyles -> List (Html Msg)
+viewByGroupWithCustomStyles settings groups =
+    let
+        viewExampleSection ( group, values ) =
+            viewWithCustomStyles settings group values
+    in
+    viewSettings settings
+        :: List.map viewExampleSection groups
+        ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
+                [ Heading.h3 [] [ Html.text "Example Usage" ]
+                , viewSingularExampleSettings
+                    (List.map
+                        (Tuple.mapSecond (List.map (\( name, icon, _ ) -> ( name, icon ))))
+                        groups
+                    )
+                    settings
                 , viewResults settings
                 ]
            ]
