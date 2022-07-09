@@ -1,21 +1,23 @@
 module Examples.IconExamples exposing
-    ( preview
-    , Settings, init, Msg, update
-    , viewByGroupWithSettings, IconExampleGroup
-    , viewByGroupWithCustomStyles, IconExampleGroupWithCustomStyles
+    ( example
+    , Settings, Msg
+    , Group
+    , preview
     )
 
 {-|
 
+@docs example
+@docs Settings, Msg
+@docs Group
 @docs preview
-@docs Settings, init, Msg, update
-@docs viewByGroupWithSettings, IconExampleGroup
-@docs viewByGroupWithCustomStyles, IconExampleGroupWithCustomStyles
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Css.Global
+import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
@@ -28,6 +30,32 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V7 as TextInput
 import SolidColor exposing (SolidColor)
+
+
+type alias Config =
+    { moduleName : String
+    , version : Int
+    , label : String
+    , name : String
+    , icon : Svg
+    , renderSvgCode : String -> String
+    , preview : List (Html Never)
+    , all : List Group
+    }
+
+
+example : Config -> Example Settings Msg
+example config =
+    { name = config.moduleName
+    , version = config.version
+    , categories = [ Icons ]
+    , keyboardSupport = []
+    , state = init config
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , preview = config.preview
+    , view = \ellieLinkConfig settings -> view settings config.all
+    }
 
 
 {-| -}
@@ -63,13 +91,7 @@ type alias Settings =
 
 
 {-| -}
-init :
-    { label : String
-    , name : String
-    , icon : Svg
-    , renderSvgCode : String -> String
-    }
-    -> Settings
+init : Config -> Settings
 init { label, name, icon, renderSvgCode } =
     { showIconName = False
     , iconSelectorExpanded = False
@@ -148,24 +170,18 @@ viewSettings { showIconName } =
         }
 
 
-type alias IconExampleGroupWithCustomStyles =
+type alias Group =
     ( String
     , List ( String, Svg.Svg, List Css.Style )
     )
 
 
-type alias IconExampleGroup =
-    ( String
-    , List ( String, Svg.Svg )
-    )
-
-
 {-| -}
-viewByGroupWithSettings : Settings -> List IconExampleGroup -> List (Html Msg)
-viewByGroupWithSettings settings groups =
+view : Settings -> List Group -> List (Html Msg)
+view settings groups =
     let
         viewExampleSection ( group, values ) =
-            view settings group values
+            viewWithCustomStyles settings group values
     in
     viewSettings settings
         :: List.map viewExampleSection groups
@@ -175,44 +191,6 @@ viewByGroupWithSettings settings groups =
                 , viewResults settings
                 ]
            ]
-
-
-{-| -}
-viewByGroupWithCustomStyles : Settings -> List IconExampleGroupWithCustomStyles -> List (Html Msg)
-viewByGroupWithCustomStyles settings groups =
-    let
-        viewExampleSection ( group, values ) =
-            viewWithCustomStyles settings group values
-    in
-    viewSettings settings
-        :: List.map viewExampleSection groups
-        ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
-                [ Heading.h3 [] [ Html.text "Example Usage" ]
-                , viewSingularExampleSettings
-                    (List.map
-                        (Tuple.mapSecond (List.map (\( name, icon, _ ) -> ( name, icon ))))
-                        groups
-                    )
-                    settings
-                , viewResults settings
-                ]
-           ]
-
-
-{-| -}
-view : Settings -> String -> List ( String, Svg.Svg ) -> Html msg
-view settings headerText icons =
-    let
-        defaultStyles =
-            [ Css.height (Css.px 25)
-            , Css.width (Css.px 25)
-            , Css.margin (Css.px 4)
-            , Css.color Colors.gray45
-            ]
-    in
-    viewWithCustomStyles settings
-        headerText
-        (List.map (\( name, svg ) -> ( name, svg, defaultStyles )) icons)
 
 
 {-| -}
@@ -248,6 +226,18 @@ viewWithCustomStyles { showIconName } headerText icons =
 
 viewIcon : Bool -> ( String, Svg.Svg, List Css.Style ) -> Html msg
 viewIcon showIconName ( name, icon, style ) =
+    let
+        iconCss =
+            if List.isEmpty style then
+                [ Css.height (Css.px 25)
+                , Css.width (Css.px 25)
+                , Css.margin (Css.px 4)
+                , Css.color Colors.gray45
+                ]
+
+            else
+                style
+    in
     Html.div
         [ css
             [ Css.displayFlex
@@ -267,7 +257,7 @@ viewIcon showIconName ( name, icon, style ) =
             ]
         ]
         [ icon
-            |> Svg.withCss style
+            |> Svg.withCss iconCss
             |> Svg.toHtml
         , Text.smallBody
             [ Text.plaintext name
@@ -281,12 +271,12 @@ viewIcon showIconName ( name, icon, style ) =
         ]
 
 
-viewSingularExampleSettings : List IconExampleGroup -> Settings -> Html.Html Msg
+viewSingularExampleSettings : List Group -> Settings -> Html.Html Msg
 viewSingularExampleSettings groups state =
     let
         svgGroupedChoices ( groupName, items ) =
             let
-                toEntry ( name, icon ) =
+                toEntry ( name, icon, _ ) =
                     Select.Choice name ( name, icon )
             in
             Select.ChoicesGroup groupName (List.map toEntry items)

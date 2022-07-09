@@ -6,14 +6,9 @@ module Examples.Logo exposing (example, State, Msg)
 
 -}
 
-import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
-    exposing
-        ( IconExampleGroupWithCustomStyles
-        , viewByGroupWithCustomStyles
-        )
+import Examples.IconExamples as IconExamples exposing (Group)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -34,19 +29,12 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Logo"
+    { moduleName = "Logo"
     , version = 1
-    , categories = [ Icons ]
-    , keyboardSupport = []
-    , state =
-        IconExamples.init
-            { label = "NoRedInk"
-            , name = "noredink"
-            , icon = Logo.noredink
-            , renderSvgCode = \name -> "Logo." ++ name
-            }
-    , update = IconExamples.update
-    , subscriptions = \_ -> Sub.none
+    , label = "NoRedInk"
+    , name = "noredink"
+    , icon = Logo.noredink
+    , renderSvgCode = \name -> "Logo." ++ name
     , preview =
         Html.div [ css [ Css.marginBottom (Css.px 8) ] ] [ Svg.toHtml Logo.noredink ]
             :: IconExamples.preview
@@ -55,11 +43,12 @@ example =
                 , Logo.cleverC
                 , Logo.googleG
                 ]
-    , view = \ellieLinkConfig settings -> viewByGroupWithCustomStyles settings all
+    , all = all
     }
+        |> IconExamples.example
 
 
-all : List IconExampleGroupWithCustomStyles
+all : List Group
 all =
     [ ( "NRI"
       , [ ( "noredink"

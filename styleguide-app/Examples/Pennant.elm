@@ -6,14 +6,9 @@ module Examples.Pennant exposing (example, State, Msg)
 
 -}
 
-import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
-    exposing
-        ( IconExampleGroupWithCustomStyles
-        , viewByGroupWithCustomStyles
-        )
+import Examples.IconExamples as IconExamples exposing (Group)
 import Nri.Ui.Pennant.V2 as Pennant
 
 
@@ -30,30 +25,24 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Pennant"
+    { moduleName = "Pennant"
     , version = 2
-    , categories = [ Icons ]
-    , keyboardSupport = []
-    , state =
-        IconExamples.init
-            { label = "Premium"
-            , name = "premiumFlag"
-            , icon = Pennant.premiumFlag
-            , renderSvgCode = \name -> "Pennant." ++ name
-            }
-    , update = IconExamples.update
-    , subscriptions = \_ -> Sub.none
+    , label = "Premium"
+    , name = "premiumFlag"
+    , icon = Pennant.premiumFlag
+    , renderSvgCode = \name -> "Pennant." ++ name
     , preview =
         IconExamples.preview
             [ Pennant.premiumFlag
             , Pennant.expiredPremiumFlag
             , Pennant.disabledPremiumFlag
             ]
-    , view = \ellieLinkConfig settings -> viewByGroupWithCustomStyles settings all
+    , all = all
     }
+        |> IconExamples.example
 
 
-all : List IconExampleGroupWithCustomStyles
+all : List Group
 all =
     [ ( "Premium Pennants"
       , [ ( "premiumFlag"
