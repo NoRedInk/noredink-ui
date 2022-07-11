@@ -17,6 +17,8 @@ what to do in reponse to tab keypresses in a part of the UI.
 The ids referenced here are expected to correspond to elements in the container
 we are adding the attribute to.
 
+NOTE: When needing to listen to multiple keys toDecoder should be used instead of toAttribute.
+
 -}
 toAttribute :
     { firstId : String
@@ -29,6 +31,22 @@ toAttribute config =
     Key.onKeyDown [ toDecoder config ]
 
 
+{-| Use this decoder to add a focus watcher to an HTML element and define
+what to do in reponse to tab keypresses in a part of the UI.
+
+The ids referenced here are expected to correspond to elements in the container
+we are adding the attribute to.
+
+NOTE: When needing to listen to multiple keys toDecoder should be used instead of toAttribute.
+
+    import Accessibility.Styled.Key as Key
+
+    Key.onKeyDown
+        [ Key.escape CloseModal
+        , toDecoder config
+        ]
+
+-}
 toDecoder :
     { firstId : String
     , lastId : String
