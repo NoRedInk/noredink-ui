@@ -6,6 +6,8 @@ module Nri.Ui.Pennant.V2 exposing (premiumFlag, disabledPremiumFlag, expiredPrem
 
 -}
 
+import Nri.Ui.Colors.Extra exposing (toCssString)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
@@ -14,11 +16,7 @@ import Svg.Styled.Attributes as Attributes
 {-| -}
 premiumFlag : Svg
 premiumFlag =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 18"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 18"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -49,17 +47,12 @@ premiumFlag =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 disabledPremiumFlag : Nri.Ui.Svg.V1.Svg
 disabledPremiumFlag =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 18"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 18"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -90,17 +83,12 @@ disabledPremiumFlag =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 expiredPremiumFlag : Nri.Ui.Svg.V1.Svg
 expiredPremiumFlag =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 18"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 18"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -117,7 +105,7 @@ expiredPremiumFlag =
                         [ Attributes.transform "translate(0.000000, 446.000000)"
                         ]
                         [ Svg.polygon
-                            [ Attributes.fill "#F3336C"
+                            [ Attributes.fill (toCssString Colors.red)
                             , Attributes.points "12.7757004 0 1.73472348e-16 0 1.73472348e-16 14.2404227 0 16.2706817 0 18 7.34267839 18 25 18 19.566978 9 25 0"
                             ]
                             []
@@ -131,4 +119,3 @@ expiredPremiumFlag =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml

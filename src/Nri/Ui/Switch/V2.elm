@@ -244,19 +244,7 @@ viewSwitch config =
         shadowBoxId =
             config.id ++ "-shadow-box"
     in
-    Svg.svg
-        [ SvgAttributes.width "43"
-        , SvgAttributes.height "32"
-        , SvgAttributes.viewBox "0 0 43 32"
-        , SvgAttributes.css
-            [ Css.zIndex (Css.int 1)
-            , if config.isDisabled then
-                Css.opacity (Css.num 0.4)
-
-              else
-                Css.opacity (Css.num 1)
-            ]
-        ]
+    Nri.Ui.Svg.V1.init "0 0 43 32"
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.id shadowFilterId
@@ -366,7 +354,16 @@ viewSwitch config =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 43)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
+        |> Nri.Ui.Svg.V1.withCss
+            [ Css.zIndex (Css.int 1)
+            , if config.isDisabled then
+                Css.opacity (Css.num 0.4)
+
+              else
+                Css.opacity (Css.num 1)
+            ]
 
 
 stroke : Color -> Style
