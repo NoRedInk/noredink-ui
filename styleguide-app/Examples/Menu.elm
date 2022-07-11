@@ -18,11 +18,13 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
@@ -246,6 +248,35 @@ view ellieLinkConfig state =
                     Menu.custom <|
                         \buttonAttributes ->
                             button buttonAttributes [ text "Custom Menu trigger button" ]
+                }
+          )
+        , ( "Menu.button (with Menu.disclosure)"
+          , Menu.view
+                (menuAttributes
+                    ++ [ Menu.buttonId "with_controls__button"
+                       , Menu.menuId "with_controls__menu"
+                       , Menu.disclosure { lastId = "login__button" }
+                       ]
+                )
+                { isOpen = isOpen "with_controls"
+                , focusAndToggle = FocusAndToggle "with_controls"
+                , entries =
+                    [ Menu.entry "username-input" <|
+                        \attrs ->
+                            div []
+                                [ TextInput.view "Username"
+                                    [ TextInput.id "username-input"
+                                    ]
+                                , TextInput.view "Password" []
+                                , Button.button "Log in"
+                                    [ Button.primary
+                                    , Button.id "login__button"
+                                    , Button.fillContainerWidth
+                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                                    ]
+                                ]
+                    ]
+                , button = Menu.button defaultButtonAttributes "Log In"
                 }
           )
         ]
