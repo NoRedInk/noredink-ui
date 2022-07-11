@@ -460,30 +460,24 @@ viewCustom config =
                                     )
                                 ]
 
-                            Disclosure _ ->
-                                []
+                            Disclosure { lastId } ->
+                                [ WhenFocusLeaves.toDecoder
+                                    { firstId = config.buttonId
+                                    , lastId = lastId
+                                    , tabBackAction =
+                                        config.focusAndToggle
+                                            { isOpen = False
+                                            , focus = Nothing
+                                            }
+                                    , tabForwardAction =
+                                        config.focusAndToggle
+                                            { isOpen = False
+                                            , focus = Nothing
+                                            }
+                                    }
+                                ]
                        )
                 )
-            :: (case config.purpose of
-                    NavMenu ->
-                        AttributesExtra.none
-
-                    Disclosure { lastId } ->
-                        WhenFocusLeaves.toAttribute
-                            { firstId = config.buttonId
-                            , lastId = lastId
-                            , tabBackAction =
-                                config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                            , tabForwardAction =
-                                config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                            }
-               )
             :: styleContainer
         )
         [ if config.isOpen then
