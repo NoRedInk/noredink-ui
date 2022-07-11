@@ -1,13 +1,13 @@
-module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute)
+module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute, toDecoder)
 
 {-| Listen for when the focus leaves the area, and then do an action.
 
-@docs toAttribute
+@docs toAttribute, toDecoder
 
 -}
 
 import Accessibility.Styled as Html
-import Html.Styled.Events as Events
+import Accessibility.Styled.Key as Key
 import Json.Decode as Decode exposing (Decoder)
 
 
@@ -25,49 +25,38 @@ toAttribute :
     , tabForwardAction : msg
     }
     -> Html.Attribute msg
-toAttribute { firstId, lastId, tabBackAction, tabForwardAction } =
-    onTab <|
-        \elementId shiftKey ->
-            -- if the user tabs back while on the first id,
-            -- we execute the action
-            if elementId == firstId && shiftKey then
-                Decode.succeed
-                    { message = tabBackAction
-                    , preventDefault = False
-                    , stopPropagation = False
-                    }
-
-            else if elementId == lastId && not shiftKey then
-                -- if the user tabs forward while on the last id,
-                -- we want to wrap around to the first id.
-                Decode.succeed
-                    { message = tabForwardAction
-                    , preventDefault = False
-                    , stopPropagation = False
-                    }
-
-            else
-                Decode.fail "No need to intercept the key press"
+toAttribute config =
+    Key.onKeyDown [ toDecoder config ]
 
 
-onTab :
-    (String
-     -> Bool
-     -> Decoder { message : msg, preventDefault : Bool, stopPropagation : Bool }
-    )
-    -> Html.Attribute msg
-onTab do =
-    Events.custom "keydown"
-        (Decode.andThen
-            (\( id, keyCode, shiftKey ) ->
-                if keyCode == 9 then
-                    do id shiftKey
+toDecoder :
+    { firstId : String
+    , lastId : String
+    , tabBackAction : msg
+    , tabForwardAction : msg
+    }
+    -> Decoder msg
+toDecoder { firstId, lastId, tabBackAction, tabForwardAction } =
+    Decode.andThen
+        (\( elementId, keyCode, shiftKey ) ->
+            if keyCode == 9 then
+                -- if the user tabs back while on the first id,
+                -- we execute the action
+                if elementId == firstId && shiftKey then
+                    Decode.succeed tabBackAction
+
+                else if elementId == lastId && not shiftKey then
+                    -- if the user tabs forward while on the last id,
+                    -- we want to wrap around to the first id.
+                    Decode.succeed tabForwardAction
 
                 else
                     Decode.fail "No need to intercept the key press"
-            )
-            decodeKeydown
+
+            else
+                Decode.fail "No need to intercept the key press"
         )
+        decodeKeydown
 
 
 decodeKeydown : Decoder ( String, Int, Bool )
