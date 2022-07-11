@@ -39,9 +39,38 @@ spec =
                     -- Menu opens on mouse click and closes on tab key
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
-                    |> pressTabKey
+                    |> pressTabKey { targetId = Nothing }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
+        , test "Close on esc key" <|
+            \() ->
+                program []
+                    -- Menu opens on mouse click and closes on tab key
+                    |> clickMenuButton
+                    |> ensureViewHas (menuContentSelector menuContent)
+                    |> pressEscKey { targetId = Nothing }
+                    |> ensureViewHasNot (menuContentSelector menuContent)
+                    |> ProgramTest.done
+        , describe "disclosure" <|
+            [ test "Close on esc key" <|
+                \() ->
+                    program [ Menu.disclosure { lastId = "last-button" } ]
+                        -- Menu opens on mouse click and closes on esc key
+                        |> clickMenuButton
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> pressEscKey { targetId = Nothing }
+                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ProgramTest.done
+            , test "Closes after tab on lastId" <|
+                \() ->
+                    program [ Menu.disclosure { lastId = "last-button" } ]
+                        |> clickMenuButton
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
+                        |> pressTabKey { targetId = Just "last-button" }
+                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ProgramTest.done
+            ]
         ]
 
 
@@ -66,6 +95,9 @@ program attributes =
                         , isOpen = model.isOpen
                         , entries =
                             [ Menu.entry "hello-button" <|
+                                \attrs ->
+                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
+                            , Menu.entry "last-button" <|
                                 \attrs ->
                                     ClickableText.button menuContent [ ClickableText.custom attrs ]
                             ]
@@ -134,8 +166,8 @@ clickMenuButton =
         Event.click
 
 
-pressTabKey : ProgramTest model msg effect -> ProgramTest model msg effect
-pressTabKey =
+pressKey : { targetId : Maybe String, keyCode : Int, shiftKey : Bool } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressKey { targetId, keyCode, shiftKey } =
     ProgramTest.simulateDomEvent
         (Query.find
             [ Selector.class "Container"
@@ -144,8 +176,26 @@ pressTabKey =
         (Event.custom
             "keydown"
             (Encode.object
-                [ ( "keyCode", Encode.int 9 )
-                , ( "shiftKey", Encode.bool False )
+                [ ( "keyCode", Encode.int keyCode )
+                , ( "shiftKey", Encode.bool shiftKey )
+                , ( "target"
+                  , Encode.object
+                        (List.filterMap identity <|
+                            [ targetId
+                                |> Maybe.map (\id -> ( "id", Encode.string id ))
+                            ]
+                        )
+                  )
                 ]
             )
         )
+
+
+pressTabKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabKey { targetId } =
+    pressKey { targetId = targetId, keyCode = 9, shiftKey = False }
+
+
+pressEscKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressEscKey { targetId } =
+    pressKey { targetId = targetId, keyCode = 27, shiftKey = False }
