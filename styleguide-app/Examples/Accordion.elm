@@ -87,7 +87,7 @@ example =
 
 defaultCaret : Bool -> Html msg
 defaultCaret =
-    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
 
 
 {-| -}
@@ -104,7 +104,10 @@ view ellieLinkConfig model =
         , update = UpdateControls
         , settings = model.settings
         , mainType = "RootHtml.Html String"
-        , extraImports = [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator" ]
+        , extraImports =
+            [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
+            , "import Nri.Ui.Svg.V1 as Svg"
+            ]
         , toExampleCode =
             \settings ->
                 [ { sectionName = "Partial example"
@@ -346,8 +349,8 @@ controlIcon =
     Control.choice
         [ ( "DisclosureIndicator"
           , Control.value
-                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]"
-                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
+                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
                 )
           )
         , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
