@@ -31,7 +31,6 @@ import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
 import Examples.Sprite as Sprite
-import Examples.Svg as Svg
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
@@ -615,25 +614,6 @@ all =
                     _ ->
                         Nothing
             )
-    , Svg.example
-        |> Example.wrapMsg SvgMsg
-            (\msg ->
-                case msg of
-                    SvgMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState SvgState
-            (\msg ->
-                case msg of
-                    SvgState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , Switch.example
         |> Example.wrapMsg SwitchMsg
             (\msg ->
@@ -839,7 +819,6 @@ type State
     | SideNavState SideNav.State
     | SortableTableState SortableTable.State
     | SpriteState Sprite.State
-    | SvgState Svg.State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
@@ -882,7 +861,6 @@ type Msg
     | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
     | SpriteMsg Sprite.Msg
-    | SvgMsg Svg.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
