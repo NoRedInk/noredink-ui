@@ -1,61 +1,26 @@
 module Examples.IconExamples exposing
-    ( example
-    , Settings, Msg
-    , Group
-    , preview
+    ( preview
+    , Settings, init, Msg, update, viewSettings
+    , view, viewWithCustomStyles
     )
 
 {-|
 
-@docs example
-@docs Settings, Msg
-@docs Group
 @docs preview
+@docs Settings, init, Msg, update, viewSettings
+@docs view, viewWithCustomStyles
 
 -}
 
-import Category exposing (Category(..))
 import Css
 import Css.Global
-import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (css)
-import Html.Styled.Events as Events
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
-import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
-import Nri.Ui.Select.V8 as Select
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.TextInput.V7 as TextInput
-import SolidColor exposing (SolidColor)
-
-
-type alias Config =
-    { moduleName : String
-    , version : Int
-    , label : String
-    , name : String
-    , icon : Svg
-    , renderSvgCode : String -> String
-    , preview : List (Html Never)
-    , all : List Group
-    }
-
-
-example : Config -> Example Settings Msg
-example config =
-    { name = config.moduleName
-    , version = config.version
-    , categories = [ Icons ]
-    , keyboardSupport = []
-    , state = init config
-    , update = update
-    , subscriptions = \_ -> Sub.none
-    , preview = config.preview
-    , view = \ellieLinkConfig settings -> view settings config.all
-    }
 
 
 {-| -}
@@ -78,83 +43,28 @@ preview icons =
 
 {-| -}
 type alias Settings =
-    { showIconName : Bool
-    , iconSelectorExpanded : Bool
-    , color : SolidColor
-    , width : Float
-    , height : Float
-    , icon : ( String, Svg )
-    , label : String
-    , showBorder : Bool
-    , renderSvgCode : String -> String
-    }
+    { showIconName : Bool }
 
 
 {-| -}
-init : Config -> Settings
-init { label, name, icon, renderSvgCode } =
-    { showIconName = False
-    , iconSelectorExpanded = False
-    , color = fromCssColor Colors.greenDark
-    , width = 100
-    , height = 100
-    , icon = ( name, icon )
-    , label = label
-    , showBorder = True
-    , renderSvgCode = renderSvgCode
-    }
+init : Settings
+init =
+    { showIconName = False }
 
 
 {-| -}
 type Msg
     = ShowNames Bool
-    | SetIcon ( String, Svg )
-    | SetColor (Result String SolidColor)
-    | SetWidth (Maybe Float)
-    | SetHeight (Maybe Float)
-    | SetLabel String
-    | SetBorder Bool
 
 
 {-| -}
 update : Msg -> Settings -> ( Settings, Cmd msg )
-update msg state =
+update msg settings =
     case msg of
         ShowNames showIconName ->
-            ( { state | showIconName = showIconName }
+            ( { settings | showIconName = showIconName }
             , Cmd.none
             )
-
-        SetIcon svg ->
-            ( { state | icon = svg }
-            , Cmd.none
-            )
-
-        SetColor (Ok color) ->
-            ( { state | color = color }
-            , Cmd.none
-            )
-
-        SetColor (Err err) ->
-            ( state, Cmd.none )
-
-        SetWidth (Just width) ->
-            ( { state | width = width }, Cmd.none )
-
-        SetWidth Nothing ->
-            ( state, Cmd.none )
-
-        SetHeight (Just height) ->
-            ( { state | height = height }, Cmd.none )
-
-        SetHeight Nothing ->
-            ( state, Cmd.none )
-
-        SetLabel label ->
-            ( { state | label = label }, Cmd.none )
-
-        SetBorder showBorder ->
-            ( { state | showBorder = showBorder }, Cmd.none )
 
 
 {-| -}
@@ -170,27 +80,20 @@ viewSettings { showIconName } =
         }
 
 
-type alias Group =
-    ( String
-    , List ( String, Svg.Svg, List Css.Style )
-    )
-
-
 {-| -}
-view : Settings -> List Group -> List (Html Msg)
-view settings groups =
+view : Settings -> String -> List ( String, Svg.Svg ) -> Html msg
+view settings headerText icons =
     let
-        viewExampleSection ( group, values ) =
-            viewWithCustomStyles settings group values
+        defaultStyles =
+            [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            , Css.color Colors.gray45
+            ]
     in
-    viewSettings settings
-        :: List.map viewExampleSection groups
-        ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
-                [ Heading.h3 [] [ Html.text "Example Usage" ]
-                , viewSingularExampleSettings groups settings
-                , viewResults settings
-                ]
-           ]
+    viewWithCustomStyles settings
+        headerText
+        (List.map (\( name, svg ) -> ( name, svg, defaultStyles )) icons)
 
 
 {-| -}
@@ -226,18 +129,6 @@ viewWithCustomStyles { showIconName } headerText icons =
 
 viewIcon : Bool -> ( String, Svg.Svg, List Css.Style ) -> Html msg
 viewIcon showIconName ( name, icon, style ) =
-    let
-        iconCss =
-            if List.isEmpty style then
-                [ Css.height (Css.px 25)
-                , Css.width (Css.px 25)
-                , Css.margin (Css.px 4)
-                , Css.color Colors.gray45
-                ]
-
-            else
-                style
-    in
     Html.div
         [ css
             [ Css.displayFlex
@@ -257,7 +148,7 @@ viewIcon showIconName ( name, icon, style ) =
             ]
         ]
         [ icon
-            |> Svg.withCss iconCss
+            |> Svg.withCss style
             |> Svg.toHtml
         , Text.smallBody
             [ Text.plaintext name
@@ -268,134 +159,4 @@ viewIcon showIconName ( name, icon, style ) =
                 else
                     [ Css.display Css.none ]
             ]
-        ]
-
-
-viewSingularExampleSettings : List Group -> Settings -> Html.Html Msg
-viewSingularExampleSettings groups state =
-    let
-        svgGroupedChoices ( groupName, items ) =
-            let
-                toEntry ( name, icon, _ ) =
-                    Select.Choice name ( name, icon )
-            in
-            Select.ChoicesGroup groupName (List.map toEntry items)
-    in
-    Html.div
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.justifyContent Css.spaceBetween
-            , Css.alignItems Css.center
-            , Css.flexWrap Css.wrap
-            ]
-        ]
-        [ TextInput.view "Title"
-            [ TextInput.value state.label
-            , TextInput.text SetLabel
-            ]
-        , Select.view "Icon"
-            [ Select.groupedChoices Tuple.first
-                (List.map svgGroupedChoices groups)
-            , Select.value (Just state.icon)
-            ]
-            |> Html.map SetIcon
-        , Checkbox.viewWithLabel
-            { identifier = "show-border"
-            , label = "Show border"
-            , setterMsg = SetBorder
-            , selected = Checkbox.selectedFromBool state.showBorder
-            , disabled = False
-            , theme = Checkbox.Square
-            }
-        , Html.label []
-            [ Html.text "Color: "
-            , Html.input
-                [ Attributes.type_ "color"
-                , Attributes.value (SolidColor.toHex state.color)
-                , Events.onInput (SetColor << SolidColor.fromHex)
-                ]
-                []
-            ]
-        , Html.label []
-            [ Html.text "Width: "
-            , Html.input
-                [ Attributes.type_ "range"
-                , Attributes.min "0"
-                , Attributes.max "200"
-                , Attributes.value (String.fromFloat state.width)
-                , Events.onInput (SetWidth << String.toFloat)
-                ]
-                []
-            ]
-        , Html.label []
-            [ Html.text "Height: "
-            , Html.input
-                [ Attributes.type_ "range"
-                , Attributes.min "0"
-                , Attributes.max "200"
-                , Attributes.value (String.fromFloat state.height)
-                , Events.onInput (SetHeight << String.toFloat)
-                ]
-                []
-            ]
-        ]
-
-
-viewResults : Settings -> Html.Html Msg
-viewResults state =
-    let
-        ( red, green, blue ) =
-            SolidColor.toRGB state.color
-    in
-    Html.div [ Attributes.css [ Css.displayFlex ] ]
-        [ Html.pre
-            [ Attributes.css
-                [ Css.width (Css.px 400)
-                , Css.marginRight (Css.px 20)
-                ]
-            ]
-            [ [ "color : Css.Color\n"
-              , "color =\n"
-              , "    Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue
-              , "\n\n\n"
-              , "renderedSvg : Svg\n"
-              , "renderedSvg =\n"
-              , "   " ++ state.renderSvgCode (Tuple.first state.icon) ++ "\n"
-              , "       |> Svg.withColor color\n"
-              , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")\n"
-              , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")\n"
-              , if state.showBorder then
-                    "       |> Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]\n"
-
-                else
-                    ""
-              , if String.isEmpty state.label then
-                    ""
-
-                else
-                    "       |> Svg.withLabel \"" ++ state.label ++ "\"\n"
-              , "       |> Svg.toHtml\n"
-              ]
-                |> String.join ""
-                |> Html.text
-            ]
-        , Tuple.second state.icon
-            |> Svg.withColor (toCssColor state.color)
-            |> Svg.withWidth (Css.px state.width)
-            |> Svg.withHeight (Css.px state.height)
-            |> (\svg ->
-                    if state.showBorder then
-                        Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ] svg
-
-                    else
-                        svg
-               )
-            |> (\svg ->
-                    if String.isEmpty state.label then
-                        svg
-
-                    else
-                        Svg.withLabel state.label svg
-               )
-            |> Svg.toHtml
         ]

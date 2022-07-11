@@ -6,9 +6,10 @@ module Examples.Pennant exposing (example, State, Msg)
 
 -}
 
+import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import Examples.IconExamples as IconExamples
 import Nri.Ui.Pennant.V2 as Pennant
 
 
@@ -25,38 +26,36 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { moduleName = "Pennant"
+    { name = "Pennant"
     , version = 2
-    , label = "Premium"
-    , name = "premiumFlag"
-    , icon = Pennant.premiumFlag
-    , renderSvgCode = \name -> "Pennant." ++ name
+    , categories = [ Icons ]
+    , keyboardSupport = []
+    , state = IconExamples.init
+    , update = IconExamples.update
+    , subscriptions = \_ -> Sub.none
     , preview =
         IconExamples.preview
             [ Pennant.premiumFlag
             , Pennant.expiredPremiumFlag
             , Pennant.disabledPremiumFlag
             ]
-    , all = all
+    , view =
+        \ellieLinkConfig settings ->
+            [ IconExamples.viewSettings settings
+            , IconExamples.viewWithCustomStyles settings
+                "Premium Pennants"
+                [ ( "premiumFlag"
+                  , Pennant.premiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
+                , ( "expiredPremiumFlag"
+                  , Pennant.expiredPremiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
+                , ( "disabledPremiumFlag"
+                  , Pennant.disabledPremiumFlag
+                  , [ Css.width (Css.px 80) ]
+                  )
+                ]
+            ]
     }
-        |> IconExamples.example
-
-
-all : List Group
-all =
-    [ ( "Premium Pennants"
-      , [ ( "premiumFlag"
-          , Pennant.premiumFlag
-          , [ Css.width (Css.px 80) ]
-          )
-        , ( "expiredPremiumFlag"
-          , Pennant.expiredPremiumFlag
-          , [ Css.width (Css.px 80) ]
-          )
-        , ( "disabledPremiumFlag"
-          , Pennant.disabledPremiumFlag
-          , [ Css.width (Css.px 80) ]
-          )
-        ]
-      )
-    ]

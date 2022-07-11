@@ -21,7 +21,6 @@ import Html.Styled.Keyed
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}
@@ -233,7 +232,6 @@ viewCaret expanded caret =
                 [ marginRight (px 8)
                 ]
                 expanded
-                |> Svg.toHtml
 
         WhiteCaret ->
             DisclosureIndicator.large
@@ -242,7 +240,6 @@ viewCaret expanded caret =
                     [ Css.Global.everything [ color Colors.white ] ]
                 ]
                 expanded
-                |> Svg.toHtml
 
         NoneCaret ->
             text ""

@@ -1,53 +1,53 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
-    , withColor, withLabel, withWidth, withHeight, withCss, withCustom
-    , init, toHtml
+    , withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
+    , fromHtml, toHtml
+    , toRawSvg
     )
 
 {-|
 
 @docs Svg
-@docs withColor, withLabel, withWidth, withHeight, withCss, withCustom
-@docs init, toHtml
+@docs withColor, withLabel, withWidth, withHeight, withCss, withNriDescription
+@docs fromHtml, toHtml
+@docs toRawSvg
 
 -}
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
-import Html.Styled.Attributes
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Svg.Styled
-import Svg.Styled.Attributes exposing (..)
+import Svg.Styled as Svg
 
 
 {-| Opaque type describing a non-interactable Html element.
 -}
 type Svg
     = Svg
-        { icon : List (Svg.Styled.Svg Never)
+        { icon : Html Never
         , color : Maybe Color
         , width : Maybe Css.Px
         , height : Maybe Css.Px
         , css : List Css.Style
         , label : Maybe String
-        , viewBox : String
-        , attributes : List (Svg.Styled.Attribute Never)
+        , attributes : List (Html.Attribute Never)
         }
 
 
-{-| Pass through the viewbox as the first argument and the contents of the svg node as the second argument.
+{-| Tag html as being an svg.
 -}
-init : String -> List (Svg.Styled.Svg Never) -> Svg
-init viewBox icon =
+fromHtml : Html Never -> Svg
+fromHtml icon =
     Svg
         { icon = icon
         , color = Nothing
         , height = Nothing
         , width = Nothing
-        , css = [ Css.flexShrink Css.zero ]
+        , css = []
         , label = Nothing
-        , viewBox = viewBox
         , attributes = []
         }
 
@@ -58,11 +58,12 @@ withColor color (Svg record) =
     Svg { record | color = Just color }
 
 
-{-| Add a title to the svg. Note that when the label is _not_ present, the icon will be entirely hidden from screenreader users.
+{-| Add a string aria-label property to the element.
 
-Read [Carie Fisher's "Accessible Svgs"](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/) article to learn more about accessible svgs.
+See [Using the aria-label attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for
+guidelines of when and how to use this attribute.
 
-Go through the [WCAG images tutorial](https://www.w3.org/WAI/tutorials/images/) to learn more about identifying when images are functional or decorative or something else.
+Note that when the label is _not_ present, `aria-hidden` will be added. See <https://css-tricks.com/accessible-svg-icons/> for a quick summary on why.
 
 -}
 withLabel : String -> Svg -> Svg
@@ -90,45 +91,49 @@ withCss css (Svg record) =
 
 
 {-| -}
-withCustom : List (Svg.Styled.Attribute Never) -> Svg -> Svg
+withCustom : List (Html.Attribute Never) -> Svg -> Svg
 withCustom attributes (Svg record) =
-    Svg { record | attributes = record.attributes ++ attributes }
+    Svg { record | attributes = attributes ++ record.attributes }
 
 
-{-| render an svg.
+{-| -}
+withNriDescription : String -> Svg -> Svg
+withNriDescription description =
+    withCustom [ AttributesExtra.nriDescription description ]
+
+
+{-| Render an svg.
 -}
-toHtml : Svg -> Svg.Styled.Svg msg
+toHtml : Svg -> Html msg
 toHtml (Svg record) =
     let
-        width =
-            Maybe.map Css.width record.width
-                |> Maybe.withDefault (Css.width (Css.pct 100))
+        css =
+            List.filterMap identity
+                [ Maybe.map Css.color record.color
+                , Maybe.map Css.width record.width
+                , Maybe.map Css.height record.height
+                ]
+                ++ record.css
 
-        height =
-            Maybe.map Css.height record.height
-                |> Maybe.withDefault (Css.height (Css.pct 100))
+        attributes =
+            List.filterMap identity
+                [ if List.isEmpty css then
+                    Nothing
 
-        color =
-            Maybe.map Css.color record.color
-                |> Maybe.withDefault (Css.batch [])
+                  else
+                    Just (Attributes.css (Css.display Css.inlineBlock :: css))
+                , Maybe.map Aria.label record.label
+                    |> Maybe.withDefault (Aria.hidden True)
+                    |> Just
+                , Just Role.img
+                ]
+                ++ record.attributes
     in
-    Svg.Styled.svg
-        ([ viewBox record.viewBox
-         , fill "currentcolor"
-         , css (width :: height :: color :: record.css)
-         , Maybe.map (\_ -> AttributesExtra.none) record.label
-            |> Maybe.withDefault (Aria.hidden True)
-         , Role.img
-         , Html.Styled.Attributes.attribute "focusable" "false"
-         ]
-            ++ record.attributes
-        )
-        (case record.label of
-            Just label ->
-                Svg.Styled.title [] [ Svg.Styled.text label ]
-                    :: record.icon
+    Html.map never (Html.div attributes [ record.icon ])
 
-            Nothing ->
-                record.icon
-        )
-        |> Svg.Styled.map never
+
+{-| Extract an svg, dropping any attributes passed through.
+-}
+toRawSvg : Svg -> Svg.Svg msg
+toRawSvg (Svg record) =
+    Html.map never record.icon

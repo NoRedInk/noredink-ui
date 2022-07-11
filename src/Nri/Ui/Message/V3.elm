@@ -768,6 +768,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Error"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Alert ) ->
@@ -786,6 +787,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Alert"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Tip ) ->
@@ -868,6 +870,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.withLabel "Success"
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Just icon_, _ ) ->
@@ -875,6 +878,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
+                |> NriSvg.withNriDescription messageIconDescription
                 |> NriSvg.toHtml
 
         ( Nothing, Custom _ ) ->

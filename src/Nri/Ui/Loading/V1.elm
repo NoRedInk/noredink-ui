@@ -78,7 +78,11 @@ spinningPencil =
 {-| -}
 spinningDots : Nri.Ui.Svg.V1.Svg
 spinningDots =
-    Nri.Ui.Svg.V1.init "0 0 12.54 12.54"
+    Svg.svg
+        [ SvgAttributes.width "100%"
+        , SvgAttributes.height "100%"
+        , SvgAttributes.viewBox "0 0 12.54 12.54"
+        ]
         [ Svg.circle [ SvgAttributes.fill "#004e95", SvgAttributes.cx "6.13", SvgAttributes.cy "0.98", SvgAttributes.r "0.98" ] []
         , Svg.circle [ SvgAttributes.fill "#004cc9", SvgAttributes.cx "9.95", SvgAttributes.cy "2.47", SvgAttributes.r "0.98", SvgAttributes.transform "translate(1.12 7.67) rotate(-44.43)" ] []
         , Svg.circle [ SvgAttributes.fill "#146aff", SvgAttributes.cx "11.56", SvgAttributes.cy "6.24", SvgAttributes.r "0.98", SvgAttributes.transform "translate(5.09 17.67) rotate(-88.86)" ] []
@@ -88,6 +92,7 @@ spinningDots =
         , Svg.circle [ SvgAttributes.fill "#f5f5f5", SvgAttributes.cx "0.98", SvgAttributes.cy "6.1", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.16 6.71) rotate(-86.57)" ] []
         , Svg.circle [ SvgAttributes.fill "#fff", SvgAttributes.cx "2.69", SvgAttributes.cy "2.37", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-0.9 2.35) rotate(-41)" ] []
         ]
+        |> Nri.Ui.Svg.V1.fromHtml
         |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
         |> Nri.Ui.Svg.V1.withCss circlingCss
