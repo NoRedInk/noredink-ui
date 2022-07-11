@@ -15,7 +15,6 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 
 
@@ -40,10 +39,10 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ DisclosureIndicator.medium [] False |> Svg.toHtml
-        , DisclosureIndicator.medium [] True |> Svg.toHtml
-        , DisclosureIndicator.large [] False |> Svg.toHtml
-        , DisclosureIndicator.large [] True |> Svg.toHtml
+        [ DisclosureIndicator.medium [] False
+        , DisclosureIndicator.medium [] True
+        , DisclosureIndicator.large [] False
+        , DisclosureIndicator.large [] True
         ]
     , view =
         \ellieLinkConfig state ->
@@ -59,7 +58,7 @@ example =
                 , update = UpdateSettings
                 , settings = state.settings
                 , mainType = "RootHtml.Html msg"
-                , extraImports = [ "import Nri.Ui.Svg.V1 as Svg" ]
+                , extraImports = []
                 , toExampleCode =
                     \settings ->
                         let
@@ -71,7 +70,6 @@ example =
                                     ++ Tuple.first settings.css
                                     ++ " "
                                     ++ Tuple.first settings.isOpen
-                                    ++ " |> Svg.toHtml"
                         in
                         [ { sectionName = "Large"
                           , code = toCode "large"
@@ -85,14 +83,12 @@ example =
                 [ DisclosureIndicator.large
                     (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
-                    |> Svg.toHtml
                 , Html.text "large is a 17px caret icon."
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 8) ] ]
                 [ DisclosureIndicator.medium
                     (Tuple.second attributes.css)
                     (Tuple.second attributes.isOpen)
-                    |> Svg.toHtml
                 , Html.text "medium is a 15px caret icon."
                 ]
             ]

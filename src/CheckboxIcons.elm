@@ -5,7 +5,6 @@ module CheckboxIcons exposing
     , unchecked
     )
 
-import Css
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -22,7 +21,11 @@ unchecked idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Nri.Ui.Svg.V1.init viewBox
+    Svg.svg
+        [ SvgAttributes.width "27px"
+        , SvgAttributes.height "27px"
+        , SvgAttributes.viewBox viewBox
+        ]
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -76,8 +79,7 @@ unchecked idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+        |> Nri.Ui.Svg.V1.fromHtml
 
 
 checked : String -> Svg
@@ -89,7 +91,11 @@ checked idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Nri.Ui.Svg.V1.init viewBox
+    Svg.svg
+        [ SvgAttributes.width "27px"
+        , SvgAttributes.height "27px"
+        , SvgAttributes.viewBox viewBox
+        ]
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -152,8 +158,7 @@ checked idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+        |> Nri.Ui.Svg.V1.fromHtml
 
 
 checkedPartially : String -> Svg
@@ -165,7 +170,11 @@ checkedPartially idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Nri.Ui.Svg.V1.init viewBox
+    Svg.svg
+        [ SvgAttributes.width "27px"
+        , SvgAttributes.height "27px"
+        , SvgAttributes.viewBox viewBox
+        ]
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -227,8 +236,7 @@ checkedPartially idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+        |> Nri.Ui.Svg.V1.fromHtml
 
 
 viewBox : String
@@ -262,7 +270,11 @@ lockOnInside idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Nri.Ui.Svg.V1.init viewBox
+    Svg.svg
+        [ SvgAttributes.width "27px"
+        , SvgAttributes.height "27px"
+        , SvgAttributes.viewBox viewBox
+        ]
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -345,5 +357,4 @@ lockOnInside idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+        |> Nri.Ui.Svg.V1.fromHtml
