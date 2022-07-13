@@ -723,7 +723,11 @@ toggleButton config =
 
             else
                 Css.batch
-                    []
+                    [ Css.pseudoClass "focus-visible"
+                        [ Css.outline Css.none
+                        , FocusRing.boxShadows []
+                        ]
+                    ]
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
