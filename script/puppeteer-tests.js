@@ -106,7 +106,7 @@ describe("UI tests", function () {
     await page.waitForSelector('[role="dialog"]');
     await percySnapshot(page, "Full Warning Modal");
     await page.click('[aria-label="Close modal"]');
-  }
+  };
 
   const pageProcessing = async (name, location) => {
     await goTo(name, location);
@@ -126,9 +126,11 @@ describe("UI tests", function () {
       const option = await page.evaluate((el) => el.innerText, optionEl);
       select.select(option);
 
-      await percySnapshot(page, `${name} - ${option}`, {scope: "[data-page-container='']"});
+      await percySnapshot(page, `${name} - ${option}`, {
+        scope: "[data-page-container='']",
+      });
     }
-  }
+  };
 
   const iconProcessing = async (name, location) => {
     await page.goto(location);
