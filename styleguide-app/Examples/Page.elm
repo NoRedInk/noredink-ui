@@ -29,15 +29,15 @@ type alias State =
 
 {-| -}
 type Msg
-    = ShowItWorked String
+    = ShowItWorked
     | UpdateSettings (Control Settings)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        ShowItWorked message ->
-            ( Debug.log "Clicked: " message |> always model, Cmd.none )
+        ShowItWorked ->
+            ( Debug.log "Clicked!" |> always model, Cmd.none )
 
         UpdateSettings settings ->
             ( settings, Cmd.none )
@@ -101,38 +101,26 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = model
-                , mainType = "RootHtml.Html msg"
+                , mainType = "RootHtml.Html ()"
                 , extraImports = [ "import Http" ]
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \{ page, recoveryText } ->
+                        [ { sectionName = "Example"
+                          , code =
+                                Tuple.first page
+                                    ++ "\n\t{ link = ()\n\t, recoveryText = "
+                                    ++ Debug.toString recoveryText
+                                    ++ "\n\t}"
+                          }
+                        ]
                 }
-            , viewExample settings.page settings.recoveryText
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
+            , Tuple.second settings.page
+                { link = ShowItWorked
+                , recoveryText = settings.recoveryText
+                }
             ]
     }
-
-
-viewExample :
-    ( String, Page.DefaultPage Msg -> Html Msg )
-    -> RecoveryText
-    -> Html Msg
-viewExample ( viewName, view ) recoveryText =
-    Html.div
-        [ css
-            [ Css.marginTop (Css.px 20)
-            , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
-            , Css.paddingTop (Css.px 20)
-            , Css.marginBottom (Css.px 20)
-            ]
-        ]
-        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text viewName ]
-        , Html.code []
-            [ Html.text <|
-                viewName
-                    ++ " {  link = msg, recoveryText = "
-                    ++ Debug.toString recoveryText
-                    ++ " }"
-            ]
-        , view { link = ShowItWorked viewName, recoveryText = recoveryText }
-        ]
 
 
 type alias Settings =
@@ -157,7 +145,7 @@ controlPageType =
     [ ( "httpError"
       , Control.map
             (\err ->
-                ( moduleName ++ ".httpError httpError -- Use Http.error"
+                ( moduleName ++ ".httpError httpError"
                 , Page.httpError err
                 )
             )
