@@ -6,7 +6,7 @@ module Examples.Modal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (Html, div, text)
+import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
