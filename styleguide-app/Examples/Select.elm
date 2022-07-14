@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
@@ -18,11 +19,21 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Select.V8 as Select exposing (Choice)
 
 
+moduleName : String
+moduleName =
+    "Select"
+
+
+version : Int
+version =
+    8
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Select"
-    , version = 8
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -40,15 +51,21 @@ example =
         \ellieLinkConfig state ->
             let
                 label =
-                    Control.currentValue state.label
+                    (Control.currentValue state).label
 
                 ( attributesCode, attributes ) =
-                    List.unzip (Control.currentValue state.attributes)
+                    List.unzip (Control.currentValue state).attributes
             in
-            [ Control.view UpdateLabel state.label
-                |> Html.Styled.fromUnstyled
-            , Control.view UpdateAttributes state.attributes
-                |> Html.Styled.fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state
+                , mainType = "Html msg"
+                , extraImports = []
+                , toExampleCode = \_ -> []
+                }
             , Html.Styled.div
                 [ css [ Css.displayFlex, Css.alignItems Css.flexStart ]
                 ]
@@ -77,24 +94,24 @@ example =
 
 {-| -}
 type alias State =
-    { label : Control String
-    , attributes : Control Settings
-    }
+    Control Settings
 
 
 {-| -}
 init : State
 init =
-    { label = Control.record identity |> Control.field "label" (Control.string "Tortilla Selector")
-    , attributes = initControls
-    }
+    Control.record Settings
+        |> Control.field "label" (Control.string "Tortilla Selector")
+        |> Control.field "attributes" initControls
 
 
 type alias Settings =
-    List ( String, Select.Attribute String )
+    { label : String
+    , attributes : List ( String, Select.Attribute String )
+    }
 
 
-initControls : Control Settings
+initControls : Control (List ( String, Select.Attribute String ))
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices"
@@ -203,8 +220,7 @@ initChoices =
 {-| -}
 type Msg
     = ConsoleLog String
-    | UpdateLabel (Control String)
-    | UpdateAttributes (Control Settings)
+    | UpdateSettings (Control Settings)
 
 
 {-| -}
@@ -214,12 +230,5 @@ update msg state =
         ConsoleLog message ->
             ( Debug.log "SelectExample" message |> always state, Cmd.none )
 
-        UpdateLabel label ->
-            ( { state | label = label }
-            , Cmd.none
-            )
-
-        UpdateAttributes attributes ->
-            ( { state | attributes = attributes }
-            , Cmd.none
-            )
+        UpdateSettings settings ->
+            ( settings, Cmd.none )
