@@ -17,6 +17,7 @@ import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
@@ -25,17 +26,28 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Task
 
 
+moduleName : String
+moduleName =
+    "RadioButton"
+
+
+version : Int
+version =
+    4
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "RadioButton"
-    , version = 4
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = subscriptions
@@ -98,12 +110,19 @@ view ellieLinkConfig state =
         selectionSettings =
             Control.currentValue state.selectionSettings
     in
-    [ div
-        [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
-        [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
-        , viewExamples selectionSettings state.selectedValue
-        , viewExamplesCode selectionSettings state.selectedValue
-        ]
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetSelectionSettings
+        , settings = state.selectionSettings
+        , mainType = "Html msg"
+        , extraImports = []
+        , toExampleCode = \_ -> []
+        }
+    , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Examples" ]
+    , viewExamples selectionSettings state.selectedValue
+    , viewExamplesCode selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
