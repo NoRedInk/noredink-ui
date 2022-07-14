@@ -62,6 +62,24 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
+  const forAllOptions = async (labelName, callback) => {
+    await page.waitForXPath(
+      `//label[contains(., '${labelName}')]//select`,
+      200
+    );
+    const [select] = await page.$x(
+      `//label[contains(., '${labelName}')]//select`
+    );
+    const options = await page.$x(
+      `//label[contains(., '${labelName}')]//option`
+    );
+    for (const optionEl of options) {
+      const option = await page.evaluate((el) => el.innerText, optionEl);
+      select.select(option);
+      callback(option);
+    }
+  };
+
   const messageProcessing = async (name, location) => {
     await goTo(name, location);
     await percySnapshot(page, name);
@@ -74,38 +92,29 @@ describe("UI tests", function () {
     const [theme] = await page.$x("//label[contains(., 'theme')]");
     await theme.click();
 
-    await page.waitForXPath("//label[contains(., 'theme')]//select", 200);
-    const [select] = await page.$x("//label[contains(., 'theme')]//select");
-    const options = await page.$x("//label[contains(., 'theme')]//option");
-    for (const optionEl of options) {
-      const option = await page.evaluate((el) => el.innerText, optionEl);
-      select.select(option);
-
+    await forAllOptions("theme", async (option) => {
       await percySnapshot(page, `${name} - ${option}`);
       axe = await new AxePuppeteer(page)
         .withRules(["color-contrast"])
         .analyze();
       handleAxeResults(`${name} - ${option}`, axe);
-    }
+    });
   };
 
   const modalProcessing = async (name, location) => {
     await goTo(name, location);
-    await page.click("#launch-modal");
-    await page.waitForSelector('[role="dialog"]');
-    await percySnapshot(page, "Full Info Modal");
 
-    const results = await new AxePuppeteer(page)
-      .disableRules(skippedRules[name] || [])
-      .analyze();
-    handleAxeResults(name, results);
+    await forAllOptions("Theme", async (option) => {
+      await page.click("#launch-modal");
+      await page.waitForSelector('[role="dialog"]');
+      await percySnapshot(page, `${name} - ${option}`);
 
-    await page.click('[aria-label="Close modal"]');
-    await page.select("select", "warning");
-    await page.click("#launch-modal");
-    await page.waitForSelector('[role="dialog"]');
-    await percySnapshot(page, "Full Warning Modal");
-    await page.click('[aria-label="Close modal"]');
+      axe = await new AxePuppeteer(page).analyze();
+
+      await page.click('[aria-label="Close modal"]');
+
+      handleAxeResults(`${name} - ${option}`, axe);
+    });
   };
 
   const pageProcessing = async (name, location) => {
@@ -116,20 +125,11 @@ describe("UI tests", function () {
       .analyze();
     handleAxeResults(name, axe);
 
-    const [theme] = await page.$x("//label[contains(., 'page')]");
-    await theme.click();
-
-    await page.waitForXPath("//label[contains(., 'page')]//select", 200);
-    const [select] = await page.$x("//label[contains(., 'page')]//select");
-    const options = await page.$x("//label[contains(., 'page')]//option");
-    for (const optionEl of options) {
-      const option = await page.evaluate((el) => el.innerText, optionEl);
-      select.select(option);
-
+    await forAllOptions("page", async (option) => {
       await percySnapshot(page, `${name} - ${option}`, {
         scope: "[data-page-container='']",
       });
-    }
+    });
   };
 
   const iconProcessing = async (name, location) => {
