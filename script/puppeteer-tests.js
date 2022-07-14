@@ -126,7 +126,7 @@ describe("UI tests", function () {
       const option = await page.evaluate((el) => el.innerText, optionEl);
       select.select(option);
 
-      await percySnapshot(page, `${name} - ${option}`);
+      await percySnapshot(page, `${name} - ${option}`, {scope: "[data-page-container='']"});
     }
   }
 
