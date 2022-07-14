@@ -70,7 +70,7 @@ describe("UI tests", function () {
     const [select] = await page.$x(
       `//label[contains(., '${labelName}')]//select`
     );
-    const options = await page.$x(
+    const options = await select.$x(
       `//label[contains(., '${labelName}')]//option`
     );
     for (const optionEl of options) {

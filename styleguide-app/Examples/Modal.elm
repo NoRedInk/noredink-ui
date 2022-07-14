@@ -12,7 +12,6 @@ import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -44,17 +43,11 @@ init =
     }
 
 
-controlAttributes : Control (List Modal.Attribute)
-controlAttributes =
-    ControlExtra.list
-        |> ControlExtra.listItem "Theme" controlTheme
-        |> ControlExtra.listItem "Title visibility" controlTitleVisibility
-        |> ControlExtra.listItem "Custom css" controlCss
-
-
 type alias ViewSettings =
     { title : String
-    , attributes : List Modal.Attribute
+    , titleVisibility : Modal.Attribute
+    , theme : Modal.Attribute
+    , customCss : Modal.Attribute
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -67,7 +60,9 @@ initViewSettings : Control ViewSettings
 initViewSettings =
     Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
-        |> Control.field "Modal attributes" controlAttributes
+        |> Control.field "Title visibility" controlTitleVisibility
+        |> Control.field "Theme" controlTheme
+        |> Control.field "Custom css" controlCss
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
@@ -240,10 +235,17 @@ example =
                     }
                 }
                 (if settings.showX then
-                    Modal.closeButton :: settings.attributes
+                    [ Modal.closeButton
+                    , settings.titleVisibility
+                    , settings.theme
+                    , settings.customCss
+                    ]
 
                  else
-                    settings.attributes
+                    [ settings.titleVisibility
+                    , settings.theme
+                    , settings.customCss
+                    ]
                 )
                 state.state
             ]
