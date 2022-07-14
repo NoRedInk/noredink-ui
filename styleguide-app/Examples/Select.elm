@@ -16,6 +16,7 @@ import Example exposing (Example)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Select.V8 as Select exposing (Choice)
 
 
@@ -64,30 +65,22 @@ example =
                 , settings = state
                 , mainType = "Html msg"
                 , extraImports = []
-                , toExampleCode = \_ -> []
-                }
-            , Html.Styled.div
-                [ css [ Css.displayFlex, Css.alignItems Css.flexStart ]
-                ]
-                [ Html.Styled.code
-                    [ css
-                        [ Css.display Css.block
-                        , Css.margin2 (Css.px 20) Css.zero
-                        , Css.whiteSpace Css.preWrap
-                        , Css.flexBasis (Css.px 500)
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                "Select.view \""
+                                    ++ label
+                                    ++ "\""
+                                    ++ "\n    [ "
+                                    ++ String.join "\n    , " attributesCode
+                                    ++ "\n    ] "
+                          }
                         ]
-                    ]
-                    [ Html.Styled.text <|
-                        "Select.view \""
-                            ++ label
-                            ++ "\""
-                            ++ "\n    [ "
-                            ++ String.join "\n    , " attributesCode
-                            ++ "\n    ] "
-                    ]
-                , Select.view label attributes
-                    |> Html.Styled.map ConsoleLog
-                ]
+                }
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.Styled.text "Example" ]
+            , Select.view label attributes
+                |> Html.Styled.map ConsoleLog
             ]
     }
 
@@ -136,10 +129,10 @@ initControls =
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "flex-basis: 300px"
+                [ ( "max-width: 300px"
                   , Control.value
-                        ( "Select.containerCss [ Css.flexBasis (Css.px 300) ]"
-                        , Select.containerCss [ Css.flexBasis (Css.px 300) ]
+                        ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
+                        , Select.containerCss [ Css.maxWidth (Css.px 300) ]
                         )
                   )
                 , ( "background-color: lichen"
