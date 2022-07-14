@@ -118,11 +118,15 @@ view ellieLinkConfig state =
         , settings = state.selectionSettings
         , mainType = "Html msg"
         , extraImports = []
-        , toExampleCode = \_ -> []
+        , toExampleCode =
+            \_ ->
+                [ { sectionName = "Example"
+                  , code = viewExamplesCode selectionSettings state.selectedValue
+                  }
+                ]
         }
-    , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Examples" ]
+    , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
     , viewExamples selectionSettings state.selectedValue
-    , viewExamplesCode selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -145,7 +149,7 @@ view ellieLinkConfig state =
     ]
 
 
-viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
     let
         selectedValueString =
@@ -167,19 +171,7 @@ viewExamplesCode selectionSettings selectedValue =
                 ++ String.join "\n\t, " (List.map Tuple.first settings)
                 ++ "\n\t] "
     in
-    Html.code
-        [ css
-            [ Css.display Css.block
-            , Css.marginLeft (Css.px 20)
-            , Css.flexBasis (Css.px 300)
-            , Css.flexGrow Css.zero
-            ]
-        ]
-        [ Html.pre [ css [ Css.whiteSpace Css.preWrap ] ]
-            [ text
-                ("  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings)))
-            ]
-        ]
+    "  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings))
 
 
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
