@@ -89,6 +89,47 @@ describe("UI tests", function () {
     }
   };
 
+  const modalProcessing = async (name, location) => {
+    await goTo(name, location);
+    await page.click("#launch-modal");
+    await page.waitForSelector('[role="dialog"]');
+    await percySnapshot(page, "Full Info Modal");
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, results);
+
+    await page.click('[aria-label="Close modal"]');
+    await page.select("select", "warning");
+    await page.click("#launch-modal");
+    await page.waitForSelector('[role="dialog"]');
+    await percySnapshot(page, "Full Warning Modal");
+    await page.click('[aria-label="Close modal"]');
+  }
+
+  const pageProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    var axe = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, axe);
+
+    const [theme] = await page.$x("//label[contains(., 'page')]");
+    await theme.click();
+
+    await page.waitForXPath("//label[contains(., 'page')]//select", 200);
+    const [select] = await page.$x("//label[contains(., 'page')]//select");
+    const options = await page.$x("//label[contains(., 'page')]//option");
+    for (const optionEl of options) {
+      const option = await page.evaluate((el) => el.innerText, optionEl);
+      select.select(option);
+
+      await percySnapshot(page, `${name} - ${option}`);
+    }
+  }
+
   const iconProcessing = async (name, location) => {
     await page.goto(location);
     await page.waitForSelector(`#${name}`);
@@ -113,24 +154,8 @@ describe("UI tests", function () {
 
   const specialProcessing = {
     Message: messageProcessing,
-    Modal: async (name, location) => {
-      await goTo(name, location);
-      await page.click("#launch-modal");
-      await page.waitForSelector('[role="dialog"]');
-      await percySnapshot(page, "Full Info Modal");
-
-      const results = await new AxePuppeteer(page)
-        .disableRules(skippedRules[name] || [])
-        .analyze();
-      handleAxeResults(name, results);
-
-      await page.click('[aria-label="Close modal"]');
-      await page.select("select", "warning");
-      await page.click("#launch-modal");
-      await page.waitForSelector('[role="dialog"]');
-      await percySnapshot(page, "Full Warning Modal");
-      await page.click('[aria-label="Close modal"]');
-    },
+    Modal: modalProcessing,
+    Page: pageProcessing,
     AssignmentIcon: iconProcessing,
     UiIcon: iconProcessing,
     Logo: iconProcessing,
