@@ -260,7 +260,7 @@ viewIconForLink isFirst iconStyle svg =
 
 viewHeadingWithIcon : { config | isLast : Bool, isIconOnly : Bool } -> String -> Html msg
 viewHeadingWithIcon { isIconOnly, isLast } title =
-    div
+    span
         (if isIconOnly then
             Style.invisible
 
@@ -300,7 +300,7 @@ circleIconClass =
 
 withIconCircle : Svg.Svg -> Html msg
 withIconCircle icon =
-    styled div
+    styled span
         [ borderRadius (pct 50)
         , border3 (px 1) solid Colors.azure
         , color Colors.azure
