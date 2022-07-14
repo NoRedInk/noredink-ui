@@ -27,6 +27,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
@@ -50,6 +51,9 @@ view config =
 
         ellieLink =
             EllieLink.view config.ellieLinkConfig
+
+        exampleCodes =
+            config.toExampleCode value
     in
     div
         [ css
@@ -62,7 +66,9 @@ view config =
         [ viewSection "Settings"
             [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
             [ fromUnstyled (Control.view config.update config.settings) ]
-        , viewExampleCode ellieLink config (config.toExampleCode value)
+        , viewIf
+            (\_ -> viewExampleCode ellieLink config exampleCodes)
+            (not (List.isEmpty exampleCodes))
         ]
 
 

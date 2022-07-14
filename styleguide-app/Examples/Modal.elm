@@ -13,6 +13,7 @@ import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
@@ -31,7 +32,6 @@ import Task
 {-| -}
 type alias State =
     { state : Modal.Model
-    , attributes : Control (List Modal.Attribute)
     , settings : Control ViewSettings
     }
 
@@ -40,7 +40,6 @@ type alias State =
 init : State
 init =
     { state = Modal.init
-    , attributes = controlAttributes
     , settings = initViewSettings
     }
 
@@ -55,6 +54,7 @@ controlAttributes =
 
 type alias ViewSettings =
     { title : String
+    , attributes : List Modal.Attribute
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -67,6 +67,7 @@ initViewSettings : Control ViewSettings
 initViewSettings =
     Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
+        |> Control.field "Modal attributes" controlAttributes
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
@@ -107,11 +108,21 @@ controlCss =
             ]
 
 
+moduleName : String
+moduleName =
+    "Modal"
+
+
+version : Int
+version =
+    11
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "Modal"
-    , version = 11
+    { name = moduleName
+    , version = version
     , categories = [ Layout, Messaging ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
@@ -178,12 +189,16 @@ example =
                 settings =
                     Control.currentValue state.settings
             in
-            [ div [ css [ Css.displayFlex, Css.justifyContent Css.spaceAround ] ]
-                [ Control.view UpdateAttributes state.attributes
-                    |> Html.fromUnstyled
-                , Control.view UpdateSettings state.settings
-                    |> Html.fromUnstyled
-                ]
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state.settings
+                , mainType = "RootHtml.Html ModalMsg"
+                , extraImports = []
+                , toExampleCode = \_ -> []
+                }
             , launchModalButton settings
             , Modal.view
                 { title = settings.title
@@ -224,14 +239,11 @@ example =
                             Modal.closeButtonId
                     }
                 }
-                (List.concat
-                    [ if settings.showX then
-                        [ Modal.closeButton ]
+                (if settings.showX then
+                    Modal.closeButton :: settings.attributes
 
-                      else
-                        []
-                    , Control.currentValue state.attributes
-                    ]
+                 else
+                    settings.attributes
                 )
                 state.state
             ]
@@ -315,7 +327,6 @@ type Msg
     = OpenModal { startFocusOn : String, returnFocusTo : String }
     | ModalMsg Modal.Msg
     | CloseModal
-    | UpdateAttributes (Control (List Modal.Attribute))
     | UpdateSettings (Control ViewSettings)
     | Focus String
     | Focused (Result Dom.Error ())
@@ -358,9 +369,6 @@ update msg state =
             ( { state | state = newState }
             , Cmd.map ModalMsg cmd
             )
-
-        UpdateAttributes value ->
-            ( { state | attributes = value }, Cmd.none )
 
         UpdateSettings value ->
             ( { state | settings = value }, Cmd.none )
