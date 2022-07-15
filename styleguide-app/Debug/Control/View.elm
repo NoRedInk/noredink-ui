@@ -24,7 +24,7 @@ import EllieLink
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 

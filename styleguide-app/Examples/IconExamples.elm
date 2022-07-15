@@ -18,7 +18,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 

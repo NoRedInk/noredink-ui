@@ -27,7 +27,7 @@ module Nri.Ui.Text.V6 exposing
 
 ## Headings
 
-You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
+You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 
 
 ## Paragraph styles

@@ -17,7 +17,7 @@ import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)

@@ -18,7 +18,7 @@ import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
 
 

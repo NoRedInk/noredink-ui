@@ -13,7 +13,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import ViewHelpers exposing (viewExamples)
 
 
@@ -48,10 +48,10 @@ example =
             let
                 examples =
                     [ ( "h1", Heading.h1, "This is the main page heading." )
-                    , ( "h2", Heading.h2, "This is a tagline" )
-                    , ( "h3", Heading.h3, "This is a subHeading" )
+                    , ( "h2", Heading.h2, "This is a subheading" )
+                    , ( "h3", Heading.h3, "This is a smallHeading" )
                     , ( "h4", Heading.h4, "This is a smallHeading" )
-                    , ( "h5", Heading.h5, "This is also a smallHeading" )
+                    , ( "h5", Heading.h5, "This is a smallHeading" )
                     ]
 
                 attributes =

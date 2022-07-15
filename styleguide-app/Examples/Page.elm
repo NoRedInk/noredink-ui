@@ -16,7 +16,7 @@ import Html.Styled.Attributes exposing (css)
 import Http
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Page.V3 as Page exposing (RecoveryText(..))
 
 

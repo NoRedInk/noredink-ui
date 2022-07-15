@@ -15,7 +15,7 @@ import Html.Styled.Attributes exposing (..)
 import Http
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V3 as SideNav

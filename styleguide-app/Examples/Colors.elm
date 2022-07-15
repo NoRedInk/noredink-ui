@@ -14,7 +14,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
 import SolidColor exposing (highContrast)
 
