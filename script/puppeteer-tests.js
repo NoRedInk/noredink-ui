@@ -75,7 +75,7 @@ describe("UI tests", function () {
     );
     for (const optionEl of options) {
       const option = await page.evaluate((el) => el.innerText, optionEl);
-      select.select(option);
+      await page.select("select", option);
       callback(option);
     }
   };
