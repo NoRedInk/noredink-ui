@@ -269,7 +269,7 @@ viewDetails detailsForEngineers =
                 [ Html.text "Details for NoRedInk engineers" ]
             , Html.styled Html.code
                 [ display block
-                , whiteSpace normal
+                , whiteSpace preWrap
                 , overflowWrap breakWord
                 , textAlign left
                 , marginTop (px 10)
