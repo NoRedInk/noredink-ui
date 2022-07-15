@@ -49,6 +49,9 @@ usages = ['styleguide-app/Examples/Tooltip.elm']
 [forbidden."Nri.Ui.Container.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Heading.V2"]
+hint = 'upgrade to V3'
+
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'
 usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
