@@ -6,13 +6,10 @@ module Examples.Sprite exposing (example, State, Msg)
 
 -}
 
-import Category exposing (Category(..))
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
+import Examples.IconExamples as IconExamples exposing (Group)
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Svg.Styled exposing (svg)
-import Svg.Styled.Attributes as Attributes
 
 
 {-| -}
@@ -28,39 +25,36 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Sprite"
+    { moduleName = "Sprite"
     , version = 1
-    , categories = List.singleton Icons
-    , keyboardSupport = []
-    , state = IconExamples.init
-    , update = IconExamples.update
-    , subscriptions = \_ -> Sub.none
-    , preview = IconExamples.preview (List.map Tuple.second sprites)
-    , view =
-        \ellieLinkConfig settings ->
-            [ IconExamples.viewSettings settings
-            , IconExamples.view settings "Rich Text Formatting" sprites
-            ]
+    , label = "Bold"
+    , name = "bold"
+    , icon = viewSprite Sprite.bold
+    , renderSvgCode = \name -> "Svg.init \"\" [ Sprite.use  Sprite." ++ name ++ " ] "
+    , preview = IconExamples.preview (List.map (\( a, b, c ) -> b) sprites)
+    , all = all
     }
+        |> IconExamples.example
 
 
-sprites : List ( String, Svg )
+all : List Group
+all =
+    [ ( "Rich Text Formatting", sprites )
+    ]
+
+
+sprites : List ( String, Svg, List a )
 sprites =
-    [ ( "bold", viewSprite Sprite.bold )
-    , ( "italic", viewSprite Sprite.italic )
-    , ( "underline", viewSprite Sprite.underline )
-    , ( "list", viewSprite Sprite.list )
-    , ( "link", viewSprite Sprite.link )
-    , ( "undo", viewSprite Sprite.undo )
-    , ( "redo", viewSprite Sprite.redo )
+    [ ( "bold", viewSprite Sprite.bold, [] )
+    , ( "italic", viewSprite Sprite.italic, [] )
+    , ( "underline", viewSprite Sprite.underline, [] )
+    , ( "list", viewSprite Sprite.list, [] )
+    , ( "link", viewSprite Sprite.link, [] )
+    , ( "undo", viewSprite Sprite.undo, [] )
+    , ( "redo", viewSprite Sprite.redo, [] )
     ]
 
 
 viewSprite : SpriteId -> Svg
 viewSprite id =
-    svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
-        [ Sprite.use id ]
-        |> Svg.fromHtml
+    Svg.init "" [ Sprite.use id ]

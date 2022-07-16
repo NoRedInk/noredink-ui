@@ -20,21 +20,19 @@ A caret that indicates that a section can expand and collapse. When `isOpen` is 
 -}
 
 import Css exposing (..)
-import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SpriteSheet exposing (arrowLeft)
-import Nri.Ui.Svg.V1 as NriSvg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-medium : List Css.Style -> Bool -> Html msg
+medium : List Css.Style -> Bool -> Svg
 medium styles isOpen =
     view { isOpen = isOpen, size = px 15, styles = styles }
 
 
 {-| -}
-large : List Css.Style -> Bool -> Html msg
+large : List Css.Style -> Bool -> Svg
 large styles isOpen =
     view { isOpen = isOpen, size = px 17, styles = styles }
 
@@ -45,32 +43,19 @@ view :
     , size : Css.Px
     , styles : List Css.Style
     }
-    -> Html msg
+    -> Svg
 view { styles, size, isOpen } =
-    div
-        [ css
-            ([ Css.display Css.inlineBlock
-             , cursor pointer
-             , minWidth size
-             , minHeight size
-             , maxWidth size
-             , maxHeight size
+    UiIcon.arrowLeft
+        |> Svg.withColor Colors.azure
+        |> Svg.withWidth size
+        |> Svg.withHeight size
+        |> Svg.withCss
+            ([ property "transition" "transform 0.1s"
+             , if isOpen then
+                transform (rotate (deg -90))
+
+               else
+                transform (rotate (deg -180))
              ]
                 ++ styles
             )
-        ]
-        [ arrowLeft
-            |> NriSvg.withCss
-                [ Css.displayFlex
-                , Css.justifyContent Css.center
-                , Css.alignItems Css.center
-                , color Colors.azure
-                , property "transition" "transform 0.1s"
-                , if isOpen then
-                    transform (rotate (deg -90))
-
-                  else
-                    transform (rotate (deg -180))
-                ]
-            |> NriSvg.toHtml
-        ]

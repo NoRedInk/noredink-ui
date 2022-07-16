@@ -51,6 +51,14 @@ example =
             , Button.custom [ Key.tabbable False ]
             , Button.icon UiIcon.link
             ]
+        , Button.link "Tertiary"
+            [ Button.small
+            , Button.fillContainerWidth
+            , Button.tertiary
+            , Button.css [ Css.marginTop (Css.px 8) ]
+            , Button.custom [ Key.tabbable False ]
+            , Button.icon UiIcon.link
+            ]
         , Button.link "Premium"
             [ Button.small
             , Button.fillContainerWidth
@@ -248,6 +256,7 @@ buttons model =
         styles =
             [ ( Button.primary, "primary" )
             , ( Button.secondary, "secondary" )
+            , ( Button.tertiary, "tertiary" )
             , ( Button.danger, "danger" )
             , ( Button.premium, "premium" )
             ]
