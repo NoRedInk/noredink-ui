@@ -87,7 +87,6 @@ like `style` in this module to construct an Attribute.
 type Attribute msg
     = Css (List Css.Style)
     | Attributes_ (List (Html.Styled.Attribute msg))
-    | Skip
 
 
 {-| Set some custom CSS in this heading. For example, maybe you need to tweak
@@ -150,9 +149,6 @@ customize attr customizations =
 
         Attributes_ attributes ->
             { customizations | attributes = customizations.attributes ++ attributes }
-
-        Skip ->
-            customizations
 
 
 
