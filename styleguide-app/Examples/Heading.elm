@@ -109,20 +109,11 @@ init =
 
 controlStyle : Control ( String, Heading.Attribute msg )
 controlStyle =
-    [ ( "Top", Heading.Top )
-    , ( "Subhead", Heading.Subhead )
-    , ( "Small", Heading.Small )
-    ]
-        |> List.map
-            (\( name, val ) ->
-                ( name
-                , Control.value
-                    ( "Heading.style Heading." ++ name
-                    , Heading.style val
-                    )
-                )
-            )
-        |> Control.choice
+    CommonControls.choice moduleName
+        [ ( "top", Heading.top )
+        , ( "subhead", Heading.subhead )
+        , ( "small", Heading.small )
+        ]
 
 
 type alias Settings =
