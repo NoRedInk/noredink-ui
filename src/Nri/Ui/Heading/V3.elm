@@ -2,7 +2,6 @@ module Nri.Ui.Heading.V3 exposing
     ( h1, h2, h3, h4, h5
     , Attribute, style, Style(..)
     , custom, css, nriDescription, testId, id
-    , customAttr
     )
 
 {-|
@@ -19,7 +18,6 @@ Headings with customization options for accessibility.
 @docs Attribute, style, Style, error, errorIf
 
 @docs custom, css, nriDescription, testId, id
-@docs customAttr
 
 -}
 
@@ -167,13 +165,6 @@ testId id_ =
 id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
-
-
-{-| Please prefer `custom` for API consistency.
--}
-customAttr : Html.Styled.Attribute msg -> Attribute msg
-customAttr attr =
-    Attributes_ [ attr ]
 
 
 type alias Customizations msg =
