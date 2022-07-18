@@ -152,9 +152,9 @@ example =
                     , { firstName = "First5", lastName = "Last5", coins = 5 }
                     ]
             in
-            [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With sortable headers" ]
+            [ Heading.h2 [] [ Html.text "With sortable headers" ]
             , SortableTable.view config sortState data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading" ]
+            , Heading.h2 [] [ Html.text "Loading" ]
             , SortableTable.viewLoading config sortState
             ]
     }

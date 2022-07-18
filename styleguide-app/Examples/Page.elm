@@ -124,7 +124,7 @@ viewExample viewName view recoveryText extras =
             , Css.marginBottom (Css.px 20)
             ]
         ]
-        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text viewName ]
+        [ Heading.h2 [] [ Html.text viewName ]
         , Html.div [] extras
         , Html.code []
             [ Html.text <|
