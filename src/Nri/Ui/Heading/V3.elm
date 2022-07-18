@@ -117,7 +117,6 @@ type Attribute msg
 {-| -}
 type Style
     = Top
-    | Tagline
     | Subhead
     | Small
 
@@ -206,15 +205,6 @@ getStyles style_ =
                 , size = 30
                 , lineHeight = 38
                 , weight = 700
-                }
-
-        Tagline ->
-            headingStyles
-                { font = Fonts.baseFont
-                , color = gray45
-                , size = 20
-                , lineHeight = 30
-                , weight = 400
                 }
 
         Subhead ->

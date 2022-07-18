@@ -110,7 +110,6 @@ init =
 controlStyle : Control ( String, Heading.Attribute msg )
 controlStyle =
     [ ( "Top", Heading.Top )
-    , ( "Tagline", Heading.Tagline )
     , ( "Subhead", Heading.Subhead )
     , ( "Small", Heading.Small )
     ]
