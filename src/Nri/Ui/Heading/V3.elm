@@ -28,7 +28,7 @@ Headings with customization options for accessibility.
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
@@ -159,7 +159,7 @@ customize attr customizations =
 -- Style
 
 
-{-| `top` headings are navy and have:
+{-| `top` headings are Colors.navy and have:
 
     font-size: 30px
     line-height: 38px
@@ -171,15 +171,13 @@ By default.
 top : Attribute msg
 top =
     (css << headingStyles)
-        { font = Fonts.baseFont
-        , color = navy
+        { color = Colors.navy
         , size = 30
         , lineHeight = 38
-        , weight = 700
         }
 
 
-{-| `subhead` headings are navy and have:
+{-| `subhead` headings are Colors.navy and have:
 
     font-size: 20px
     line-height: 26px
@@ -191,15 +189,13 @@ By default.
 subhead : Attribute msg
 subhead =
     (css << headingStyles)
-        { font = Fonts.baseFont
-        , color = navy
+        { color = Colors.navy
         , size = 20
         , lineHeight = 26
-        , weight = 700
         }
 
 
-{-| `small` headings are gray20 and have:
+{-| `small` headings are Colors.gray20 and have:
 
     font-size: 16px
     line-height: 21px
@@ -215,29 +211,25 @@ small =
     css
         (letterSpacing (px -0.13)
             :: headingStyles
-                { font = Fonts.baseFont
-                , color = gray20
+                { color = Colors.gray20
                 , size = 16
                 , lineHeight = 21
-                , weight = 700
                 }
         )
 
 
 headingStyles :
     { color : Color
-    , font : Css.Style
     , lineHeight : Float
     , size : Float
-    , weight : Int
     }
     -> List Css.Style
 headingStyles config =
-    [ config.font
+    [ Fonts.baseFont
     , fontSize (px config.size)
     , color config.color
     , lineHeight (px config.lineHeight)
-    , fontWeight (int config.weight)
+    , fontWeight (int 700)
     , padding zero
     , textAlign left
     , margin zero
