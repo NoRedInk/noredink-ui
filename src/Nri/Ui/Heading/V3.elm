@@ -1,6 +1,6 @@
 module Nri.Ui.Heading.V3 exposing
     ( h1, h2, h3, h4, h5
-    , Attribute, style, Style(..), error, errorIf
+    , Attribute, style, Style(..)
     , custom, css, nriDescription, testId, id
     , customAttr
     )
@@ -105,7 +105,7 @@ view tag customizations attrs content =
 
 
 {-| Like an `Html.Attribute msg`, but specifically for headings. Use things
-like `style` and `errorIf` in this module to construct them.
+like `style` in this module to construct an Attribute.
 -}
 type Attribute msg
     = Style_ Style
@@ -136,29 +136,6 @@ margins. Now you can!
 css : List Css.Style -> Attribute msg
 css =
     Css
-
-
-{-| Use this when the header is on top of a section in an error state.
--}
-error : Attribute msg
-error =
-    css [ Css.color purple ]
-
-
-{-| Show an error if some condition is met.
-
-    Heading.h1
-        [ Heading.errorIf (model.errorMessage /= Nothing) ]
-        [ Html.text "Hello! ]
-
--}
-errorIf : Bool -> Attribute msg
-errorIf cond =
-    if cond then
-        error
-
-    else
-        Skip
 
 
 {-| Set some custom attributes.

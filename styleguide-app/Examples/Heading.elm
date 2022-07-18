@@ -103,7 +103,6 @@ init =
     { control =
         ControlExtra.list
             |> CommonControls.css { moduleName = moduleName, use = Heading.css }
-            |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
             |> ControlExtra.optionalListItem "style" controlStyle
     }
 
