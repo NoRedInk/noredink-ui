@@ -7,9 +7,11 @@ module Nri.Ui.Heading.V3 exposing
 {-|
 
 
-# Patch changes:
+# Changes from V2:
 
     - changes default h2 style to subhead
+    - remove `customAttr`
+    - remove `error` and `errorIf`
 
 Headings with customization options for accessibility.
 
