@@ -10,6 +10,11 @@ module Nri.Ui.Container.V2 exposing
 {-| Common NoRedInk Containers
 
 
+# TODO in next version:
+
+  - remove `invalid`
+
+
 # Changelog
 
 
@@ -249,7 +254,8 @@ disabledStyles =
     ]
 
 
-{-| -}
+{-| DEPRECATED -- this will be removed in the next version of this component.
+-}
 invalid : Attribute msg
 invalid =
     Attribute <|
