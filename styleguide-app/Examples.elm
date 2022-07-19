@@ -1,6 +1,6 @@
-module Examples exposing (Msg, State, all)
+module Examples exposing (Msg, Settings, State, all, allWithConfig)
 
-import Example exposing (Example)
+import Example exposing (ConfigurableExample, Example)
 import Examples.Accordion as Accordion
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
@@ -42,10 +42,39 @@ import Examples.Tooltip as Tooltip
 import Examples.UiIcon as UiIcon
 
 
+fromConfigurable : ConfigurableExample settings state msg -> Example state msg
+fromConfigurable configurableExample =
+    { name = configurableExample.name
+    , version = configurableExample.version
+    , state = configurableExample.state
+    , update = configurableExample.update
+    , subscriptions = configurableExample.subscriptions
+    , preview = configurableExample.preview
+    , view = configurableExample.view
+    , categories = configurableExample.categories
+    , keyboardSupport = configurableExample.keyboardSupport
+    }
+
+
 all : List (Example State Msg)
 all =
+    List.map fromConfigurable allWithConfig
+        ++ allWithoutConfig
+
+
+allWithConfig : List (ConfigurableExample Settings State Msg)
+allWithConfig =
     [ Accordion.example
-        |> Example.wrapMsg AccordionMsg
+        |> Example.wrapSettings AccordionSettings
+            (\s ->
+                case s of
+                    AccordionSettings child ->
+                        Just child
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapConfigurableMsg AccordionMsg
             (\msg ->
                 case msg of
                     AccordionMsg childMsg ->
@@ -54,7 +83,7 @@ all =
                     _ ->
                         Nothing
             )
-        |> Example.wrapState AccordionState
+        |> Example.wrapConfigurableState AccordionState
             (\msg ->
                 case msg of
                     AccordionState childState ->
@@ -63,7 +92,12 @@ all =
                     _ ->
                         Nothing
             )
-    , AssignmentIcon.example
+    ]
+
+
+allWithoutConfig : List (Example State Msg)
+allWithoutConfig =
+    [ AssignmentIcon.example
         |> Example.wrapMsg AssignmentIconMsg
             (\msg ->
                 case msg of
@@ -786,6 +820,11 @@ all =
                         Nothing
             )
     ]
+
+
+type Settings
+    = AccordionSettings Accordion.Settings
+    | None
 
 
 type State

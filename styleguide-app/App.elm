@@ -7,8 +7,12 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category exposing (Category)
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Dict exposing (Dict)
+import EllieLink
 import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
@@ -18,6 +22,7 @@ import KeyboardSupport
 import Nri.Ui.Accordion.V3 as Accordion
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
@@ -26,6 +31,7 @@ import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
+import Section exposing (Section)
 import Sort.Set as Set exposing (Set)
 import Task
 import Url exposing (Url)
@@ -40,9 +46,20 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
-    , expandedAccordions : Set Example.Section
+    , settings : Dict String (Control Examples.Settings)
+    , toCode : Dict String ToCode
+    , expandedAccordions : Set Section
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
+    }
+
+
+{-| TODO: extract to Code modul
+-}
+type alias ToCode =
+    { mainType : String
+    , extraImports : List String
+    , toExampleCode : Examples.Settings -> List { sectionName : String, code : String }
     }
 
 
@@ -50,13 +67,30 @@ init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
     let
         moduleStates =
-            Dict.fromList
-                (List.map (\example -> ( example.name, example )) Examples.all)
+            Dict.fromList (List.map (\example -> ( example.name, example )) Examples.all)
+
+        ( settings, toCode ) =
+            Examples.allWithConfig
+                |> List.map
+                    (\example ->
+                        ( ( example.name, example.settings )
+                        , ( example.name
+                          , { mainType = example.mainType
+                            , extraImports = example.extraImports
+                            , toExampleCode = example.toExampleCode
+                            }
+                          )
+                        )
+                    )
+                |> List.unzip
+                |> Tuple.mapBoth Dict.fromList Dict.fromList
     in
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
-      , expandedAccordions = Set.empty Example.sectionSorter
+      , settings = settings
+      , toCode = toCode
+      , expandedAccordions = Section.initiallyExpanded
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       }
@@ -69,13 +103,14 @@ init () url key =
 
 
 type Msg
-    = UpdateModuleStates String Examples.Msg
+    = UpdateAttributes String (Control Examples.Settings)
+    | UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
     | LoadedPackages (Result Http.Error (Dict String String))
-    | SetAccordion Example.Section Bool
+    | SetAccordion Section Bool
     | Focus String
     | Focused (Result Browser.Dom.Error ())
 
@@ -83,6 +118,11 @@ type Msg
 update : Msg -> Model key -> ( Model key, Effect )
 update action model =
     case action of
+        UpdateAttributes key settings ->
+            ( { model | settings = Dict.insert key settings model.settings }
+            , None
+            )
+
         UpdateModuleStates key exampleMsg ->
             case Dict.get key model.moduleStates of
                 Just example ->
@@ -273,37 +313,86 @@ viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
     Html.div [ id (String.replace "." "-" example.name) ]
         [ Example.viewExampleNav example
-        , Accordion.view
-            { entries =
-                [ case KeyboardSupport.view example.keyboardSupport of
-                    Just view_ ->
-                        Accordion.AccordionEntry
-                            { caret =
-                                DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
-                                    >> Svg.toHtml
-                            , content = \() -> view_
-                            , entryClass = "example-section"
-                            , headerContent = Html.text "Keyboard Support"
-                            , headerId = "keyboard-support"
-                            , headerLevel = Accordion.H2
-                            , isExpanded = Set.memberOf model.expandedAccordions Example.KeyboardSupportSection
-                            , toggle = Just (SetAccordion Example.KeyboardSupportSection)
-                            }
-                            []
-                            |> Just
-
-                    Nothing ->
-                        Nothing
-                ]
-                    |> List.filterMap identity
-            , focus = Focus
-            }
+        , Accordion.view { entries = List.filterMap identity (entries model example), focus = Focus }
         , Example.viewExample
             { packageDependencies = model.elliePackageDependencies }
             example
             |> Html.map (UpdateModuleStates example.name)
         ]
         |> withSideNav model
+
+
+entries model example =
+    let
+        accordionEntry_ =
+            accordionEntry model.expandedAccordions
+    in
+    (case Dict.get example.name model.settings of
+        Just settings_ ->
+            let
+                { mainType, extraImports, toExampleCode } =
+                    Dict.get example.name model.toCode
+                        |> Maybe.withDefault
+                            { mainType = ""
+                            , extraImports = []
+                            , toExampleCode = \_ -> []
+                            }
+
+                value =
+                    Control.currentValue settings_
+
+                ellieLink =
+                    EllieLink.view { packageDependencies = model.elliePackageDependencies }
+
+                exampleCodes =
+                    toExampleCode value
+            in
+            [ Html.div
+                [ css [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ] ]
+                [ Control.view (UpdateAttributes example.name) settings_
+                    |> Html.fromUnstyled
+                ]
+                |> accordionEntry_ Section.Settings
+                |> Just
+            , if not (List.isEmpty exampleCodes) then
+                ControlView.viewExampleCode ellieLink
+                    { name = example.name
+                    , version = example.version
+                    , mainType = mainType
+                    , extraImports = extraImports
+                    }
+                    exampleCodes
+                    |> Html.div []
+                    |> accordionEntry_ Section.ExampleCode
+                    |> Just
+
+              else
+                Nothing
+            ]
+
+        Nothing ->
+            []
+    )
+        ++ [ KeyboardSupport.view example.keyboardSupport
+                |> Maybe.map (accordionEntry_ Section.KeyboardSupport)
+           ]
+
+
+accordionEntry : Set Section -> Section -> Html Msg -> Accordion.AccordionEntry Msg
+accordionEntry expandedAccordions section view_ =
+    Accordion.AccordionEntry
+        { caret =
+            DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                >> Svg.toHtml
+        , content = \() -> view_
+        , entryClass = "example-section"
+        , headerContent = Html.text (Section.name section)
+        , headerId = Section.headerId section
+        , headerLevel = Accordion.H2
+        , isExpanded = Set.memberOf expandedAccordions section
+        , toggle = Just (SetAccordion section)
+        }
+        []
 
 
 notFound : Html Msg

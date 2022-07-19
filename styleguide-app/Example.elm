@@ -1,22 +1,23 @@
 module Example exposing
-    ( Example
+    ( Example, ConfigurableExample
     , fullName, preview, viewExampleNav, viewExample
-    , Section(..), sectionSorter
-    , wrapMsg, wrapState
+    , wrapSettings, wrapMsg, wrapState
+    , wrapConfigurableMsg, wrapConfigurableState
     )
 
 {-|
 
-@docs Example
+@docs Example, ConfigurableExample
 @docs fullName, preview, viewExampleNav, viewExample
-@docs Section, sectionSorter
-@docs wrapMsg, wrapState
+@docs wrapSettings, wrapMsg, wrapState
+@docs wrapConfigurableMsg, wrapConfigurableState
 
 -}
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css exposing (..)
+import Debug.Control as Control exposing (Control)
 import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -26,7 +27,6 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Sort exposing (Sorter)
 
 
 type alias Example state msg =
@@ -47,20 +47,120 @@ fullName example =
     "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
 
 
-type Section
-    = KeyboardSupportSection
+type alias ConfigurableExample settings state msg =
+    { name : String
+    , version : Int
+    , state : state
+    , update : msg -> state -> ( state, Cmd msg )
+    , subscriptions : state -> Sub msg
+    , preview : List (Html Never)
+    , view : EllieLink.Config -> state -> List (Html msg)
+    , categories : List Category
+    , keyboardSupport : List KeyboardSupport
+    , settings : Control settings
+    , -- For example code:
+      mainType : String
+    , extraImports : List String
+    , toExampleCode : settings -> List { sectionName : String, code : String }
+    }
 
 
-sectionName : Section -> String
-sectionName section =
-    case section of
-        KeyboardSupportSection ->
-            "Keyboard Support"
+wrapSettings :
+    (settings -> settings2)
+    -> (settings2 -> Maybe settings)
+    -> ConfigurableExample settings state msg
+    -> ConfigurableExample settings2 state msg
+wrapSettings wrapSettings_ unwrapSettings example =
+    { name = example.name
+    , version = example.version
+    , state = example.state
+    , update = example.update
+    , subscriptions = example.subscriptions
+    , preview = example.preview
+    , view = example.view
+    , categories = example.categories
+    , keyboardSupport = example.keyboardSupport
+    , settings = Control.map wrapSettings_ example.settings
+    , mainType = example.mainType
+    , extraImports = example.extraImports
+    , toExampleCode =
+        \settings ->
+            case unwrapSettings settings of
+                Just s ->
+                    example.toExampleCode s
+
+                Nothing ->
+                    []
+    }
 
 
-sectionSorter : Sorter Section
-sectionSorter =
-    Sort.by sectionName Sort.alphabetical
+wrapConfigurableMsg :
+    (msg -> msg2)
+    -> (msg2 -> Maybe msg)
+    -> ConfigurableExample settings state msg
+    -> ConfigurableExample settings state msg2
+wrapConfigurableMsg wrapMsg_ unwrapMsg example =
+    { name = example.name
+    , version = example.version
+    , state = example.state
+    , update =
+        \msg2 state ->
+            case unwrapMsg msg2 of
+                Just msg ->
+                    example.update msg state
+                        |> Tuple.mapSecond (Cmd.map wrapMsg_)
+
+                Nothing ->
+                    ( state, Cmd.none )
+    , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
+    , preview = example.preview
+    , view =
+        \ellieLinkConfig state ->
+            List.map (Html.map wrapMsg_)
+                (example.view ellieLinkConfig state)
+    , categories = example.categories
+    , keyboardSupport = example.keyboardSupport
+    , settings = example.settings
+    , mainType = example.mainType
+    , extraImports = example.extraImports
+    , toExampleCode = example.toExampleCode
+    }
+
+
+wrapConfigurableState :
+    (state -> state2)
+    -> (state2 -> Maybe state)
+    -> ConfigurableExample settings state msg
+    -> ConfigurableExample settings state2 msg
+wrapConfigurableState wrapState_ unwrapState example =
+    { name = example.name
+    , version = example.version
+    , state = wrapState_ example.state
+    , update =
+        \msg state2 ->
+            case unwrapState state2 of
+                Just state ->
+                    example.update msg state
+                        |> Tuple.mapFirst wrapState_
+
+                Nothing ->
+                    ( state2, Cmd.none )
+    , subscriptions =
+        unwrapState
+            >> Maybe.map example.subscriptions
+            >> Maybe.withDefault Sub.none
+    , preview = example.preview
+    , view =
+        \ellieLinkConfig state ->
+            Maybe.map (example.view ellieLinkConfig) (unwrapState state)
+                |> Maybe.withDefault []
+    , categories = example.categories
+    , keyboardSupport = example.keyboardSupport
+    , settings = example.settings
+    , mainType = example.mainType
+    , extraImports = example.extraImports
+    , toExampleCode = example.toExampleCode
+    }
 
 
 wrapMsg :

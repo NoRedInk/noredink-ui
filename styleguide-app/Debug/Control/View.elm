@@ -1,5 +1,5 @@
 module Debug.Control.View exposing
-    ( view
+    ( view, viewExampleCode
     , codeFromListSimple, codeFromListSimpleWithIndentLevel
     , codeFromList, codeFromListWithIndentLevel
     , codeFromListWithHardcoded
@@ -8,7 +8,7 @@ module Debug.Control.View exposing
 
 {-|
 
-@docs view
+@docs view, viewExampleCode
 @docs codeFromListSimple, codeFromListSimpleWithIndentLevel
 @docs codeFromList, codeFromListWithIndentLevel
 @docs codeFromListWithHardcoded
@@ -22,7 +22,6 @@ import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
-import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -67,7 +66,7 @@ view config =
             [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
             [ fromUnstyled (Control.view config.update config.settings) ]
         , viewIf
-            (\_ -> viewExampleCode ellieLink config exampleCodes)
+            (\_ -> viewSection "Code Sample" [] <| viewExampleCode ellieLink config exampleCodes)
             (not (List.isEmpty exampleCodes))
         ]
 
@@ -76,43 +75,42 @@ viewExampleCode :
     (EllieLink.SectionExample -> Html msg)
     -> { component | name : String, version : Int, mainType : String, extraImports : List String }
     -> List { sectionName : String, code : String }
-    -> Html msg
+    -> List (Html msg)
 viewExampleCode ellieLink component values =
-    viewSection "Code Sample" [] <|
-        Text.smallBodyGray
-            [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
-            ]
-            :: List.concatMap
-                (\example ->
-                    [ details
-                        []
-                        [ summary []
-                            [ Heading.h3
-                                [ Heading.css [ Css.display Css.inline ]
-                                , Heading.style Heading.Small
-                                ]
-                                [ text example.sectionName ]
+    Text.smallBodyGray
+        [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
+        ]
+        :: List.concatMap
+            (\example ->
+                [ details
+                    []
+                    [ summary []
+                        [ Heading.h3
+                            [ Heading.css [ Css.display Css.inline ]
+                            , Heading.style Heading.Small
                             ]
-                        , ellieLink
-                            { fullModuleName = Example.fullName component
-                            , name = component.name
-                            , sectionName = example.sectionName
-                            , mainType = component.mainType
-                            , extraImports = component.extraImports
-                            , code = example.code
-                            }
-                        , code
-                            [ css
-                                [ display block
-                                , whiteSpace preWrap
-                                , Css.marginTop (px 8)
-                                ]
-                            ]
-                            [ text example.code ]
+                            [ text example.sectionName ]
                         ]
+                    , ellieLink
+                        { fullModuleName = "Nri.Ui." ++ component.name ++ ".V" ++ String.fromInt component.version
+                        , name = component.name
+                        , sectionName = example.sectionName
+                        , mainType = component.mainType
+                        , extraImports = component.extraImports
+                        , code = example.code
+                        }
+                    , code
+                        [ css
+                            [ display block
+                            , whiteSpace preWrap
+                            , Css.marginTop (px 8)
+                            ]
+                        ]
+                        [ text example.code ]
                     ]
-                )
-                values
+                ]
+            )
+            values
 
 
 viewSection : String -> List Css.Style -> List (Html msg) -> Html msg
