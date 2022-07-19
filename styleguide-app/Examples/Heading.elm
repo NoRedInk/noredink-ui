@@ -12,7 +12,6 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
 import Nri.Ui.Heading.V3 as Heading
 import ViewHelpers exposing (viewExamples)
 
