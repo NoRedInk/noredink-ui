@@ -1,4 +1,18 @@
-module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
+module Example exposing
+    ( Example
+    , fullName, preview, viewExampleNav, viewExample
+    , Section(..), sectionSorter
+    , wrapMsg, wrapState
+    )
+
+{-|
+
+@docs Example
+@docs fullName, preview, viewExampleNav, viewExample
+@docs Section, sectionSorter
+@docs wrapMsg, wrapState
+
+-}
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
@@ -12,6 +26,7 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Sort exposing (Sorter)
 
 
 type alias Example state msg =
@@ -30,6 +45,22 @@ type alias Example state msg =
 fullName : { example | version : Int, name : String } -> String
 fullName example =
     "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
+
+
+type Section
+    = KeyboardSupportSection
+
+
+sectionName : Section -> String
+sectionName section =
+    case section of
+        KeyboardSupportSection ->
+            "Keyboard Support"
+
+
+sectionSorter : Sorter Section
+sectionSorter =
+    Sort.by sectionName Sort.alphabetical
 
 
 wrapMsg :
@@ -139,14 +170,8 @@ preview_ { navigate, exampleHref } example =
         ]
 
 
-view : EllieLink.Config -> Example state msg -> Html msg
-view ellieLinkConfig example =
-    Html.div [ Attributes.id (String.replace "." "-" example.name) ]
-        (view_ ellieLinkConfig example)
-
-
-view_ : EllieLink.Config -> Example state msg -> List (Html msg)
-view_ ellieLinkConfig example =
+viewExampleNav : Example state msg -> Html a
+viewExampleNav example =
     let
         navMenu items =
             Html.nav [ Aria.label (fullName example) ]
@@ -172,7 +197,7 @@ view_ ellieLinkConfig example =
                     )
                 ]
     in
-    [ Html.div
+    Html.div
         [ Attributes.css
             [ Css.paddingBottom (Css.px 10)
             , Css.marginBottom (Css.px 20)
@@ -181,12 +206,14 @@ view_ ellieLinkConfig example =
         ]
         [ navMenu [ docsLink example, srcLink example ]
         ]
-    , KeyboardSupport.view example.keyboardSupport
-    , Html.div [] (example.view ellieLinkConfig example.state)
-    ]
 
 
-docsLink : Example state msg -> Html msg
+viewExample : EllieLink.Config -> Example state msg -> Html msg
+viewExample ellieLinkConfig example =
+    Html.div [] (example.view ellieLinkConfig example.state)
+
+
+docsLink : Example state msg -> Html a
 docsLink example =
     let
         link =
@@ -198,7 +225,7 @@ docsLink example =
         ]
 
 
-srcLink : Example state msg -> Html msg
+srcLink : Example state msg -> Html a
 srcLink example =
     let
         link =

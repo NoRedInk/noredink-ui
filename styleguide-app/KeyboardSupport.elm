@@ -25,22 +25,18 @@ type alias KeyboardSupport =
 
 
 {-| -}
-view : List KeyboardSupport -> Html msg
+view : List KeyboardSupport -> Maybe (Html msg)
 view keyboardSupport =
     case keyboardSupport of
         [] ->
-            text ""
+            Nothing
 
         _ ->
-            details []
-                [ summary [] [ text "Keyboard Support" ]
-                , ul
-                    [ css [ listStyle none, margin2 (px 10) zero, padding zero ]
-                    ]
-                    (List.map viewKeyboardActions keyboardSupport)
+            ul
+                [ css [ listStyle none, margin2 (px 10) zero, padding zero ]
                 ]
-                |> List.singleton
-                |> aside []
+                (List.map viewKeyboardActions keyboardSupport)
+                |> Just
 
 
 viewKeyboardActions : KeyboardSupport -> Html msg

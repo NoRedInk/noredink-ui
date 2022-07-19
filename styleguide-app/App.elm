@@ -14,6 +14,8 @@ import Examples
 import Html.Styled.Attributes exposing (..)
 import Http
 import Json.Decode as Decode
+import KeyboardSupport
+import Nri.Ui.Accordion.V3 as Accordion
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
@@ -22,7 +24,7 @@ import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
-import Sort.Set as Set
+import Sort.Set as Set exposing (Set)
 import Task
 import Url exposing (Url)
 
@@ -36,6 +38,7 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , expandedAccordions : Set Example.Section
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     }
@@ -51,6 +54,7 @@ init () url key =
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
+      , expandedAccordions = Set.empty Example.sectionSorter
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       }
@@ -69,6 +73,8 @@ type Msg
     | ChangeRoute Route
     | SkipToMainContent
     | LoadedPackages (Result Http.Error (Dict String String))
+    | SetAccordion Example.Section Bool
+    | Focus String
     | Focused (Result Browser.Dom.Error ())
 
 
@@ -159,6 +165,21 @@ update action model =
             , None
             )
 
+        SetAccordion section isOpen ->
+            ( { model
+                | expandedAccordions =
+                    if isOpen then
+                        Set.insert section model.expandedAccordions
+
+                    else
+                        Set.remove section model.expandedAccordions
+              }
+            , None
+            )
+
+        Focus id ->
+            ( model, FocusOn id )
+
         Focused _ ->
             ( model, None )
 
@@ -239,8 +260,36 @@ view model =
 
 viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
-    Example.view { packageDependencies = model.elliePackageDependencies } example
-        |> Html.map (UpdateModuleStates example.name)
+    Html.div [ id (String.replace "." "-" example.name) ]
+        [ Example.viewExampleNav example
+        , Accordion.view
+            { entries =
+                [ case KeyboardSupport.view example.keyboardSupport of
+                    Just view_ ->
+                        Accordion.AccordionEntry
+                            { caret = \isOpen -> Html.text ""
+                            , content = \() -> view_
+                            , entryClass = "example-section"
+                            , headerContent = Html.text "Keyboard Support"
+                            , headerId = "keyboard-support"
+                            , headerLevel = Accordion.H2
+                            , isExpanded = Set.memberOf model.expandedAccordions Example.KeyboardSupportSection
+                            , toggle = Just (SetAccordion Example.KeyboardSupportSection)
+                            }
+                            []
+                            |> Just
+
+                    Nothing ->
+                        Nothing
+                ]
+                    |> List.filterMap identity
+            , focus = Focus
+            }
+        , Example.viewExample
+            { packageDependencies = model.elliePackageDependencies }
+            example
+            |> Html.map (UpdateModuleStates example.name)
+        ]
         |> withSideNav model
 
 
