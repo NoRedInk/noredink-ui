@@ -692,7 +692,7 @@ toggleButton config =
         toggledStyles =
             if config.pressed then
                 Css.batch
-                    [ Css.color Colors.gray20
+                    [ Css.color Colors.navy
                     , Css.backgroundColor Colors.glacier
                     , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
@@ -705,7 +705,11 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium WidthUnbounded secondaryColors []
+        [ buttonStyles Medium
+            WidthUnbounded
+            secondaryColors
+            [ Css.hover [ Css.color Colors.navy ]
+            ]
         , toggledStyles
         , Css.verticalAlign Css.middle
         ]
