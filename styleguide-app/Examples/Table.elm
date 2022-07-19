@@ -104,7 +104,7 @@ example =
                         , toExampleCode "viewLoadingWithoutHeader" ""
                         ]
                 }
-            , Heading.h2 [] [ text "Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
                     Table.view columns data

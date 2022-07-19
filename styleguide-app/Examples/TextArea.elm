@@ -71,7 +71,7 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ Heading.h1 [] [ Html.text "Textarea controls" ]
+            [ Heading.h1 [ Heading.plaintext "Textarea controls" ]
             , Html.div []
                 [ Checkbox.viewWithLabel
                     { identifier = "show-textarea-label"

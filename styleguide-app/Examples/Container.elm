@@ -131,7 +131,7 @@ viewExample { name, description } attributes =
             [ Css.marginTop (Css.px 20)
             ]
         ]
-        [ Heading.h3 [] [ Html.text name ]
+        [ Heading.h3 [ Heading.plaintext name ]
         , Html.text description
         , Container.view attributes
         ]

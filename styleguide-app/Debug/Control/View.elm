@@ -78,8 +78,10 @@ viewExampleCode ellieLink component values =
                     [ details
                         []
                         [ summary []
-                            [ Heading.h3 [ Heading.css [ Css.display Css.inline ] ]
-                                [ text example.sectionName ]
+                            [ Heading.h3
+                                [ Heading.css [ Css.display Css.inline ]
+                                , Heading.plaintext example.sectionName
+                                ]
                             ]
                         , ellieLink
                             { fullModuleName = Example.fullName component
@@ -106,7 +108,7 @@ viewExampleCode ellieLink component values =
 viewSection : String -> List (Html msg) -> Html msg
 viewSection name children =
     section [ css [ flex (int 1) ] ]
-        (Heading.h2 [] [ text name ]
+        (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
 

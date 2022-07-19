@@ -306,7 +306,7 @@ buttons model =
 toggleButtons : Set Int -> Html Msg
 toggleButtons pressedToggleButtons =
     div []
-        [ Heading.h3 [] [ text "Button toggle" ]
+        [ Heading.h3 [ Heading.plaintext "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
                 { onDeselect = ToggleToggleButton 0

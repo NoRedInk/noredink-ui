@@ -194,8 +194,8 @@ example =
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
                     , Css.paddingTop (Css.px 20)
                     ]
+                , Heading.plaintext "Message.somethingWentWrong"
                 ]
-                [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
     }

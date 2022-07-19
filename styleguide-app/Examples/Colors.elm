@@ -91,7 +91,7 @@ example =
               , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
               ]
                 |> viewColors
-            , Heading.h2 [] [ Html.text "Background Highlight Colors" ]
+            , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
             , [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
               , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
@@ -109,7 +109,7 @@ example =
               , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
               ]
                 |> viewColors
-            , Heading.h2 [] [ Html.text "Text Highlight Colors" ]
+            , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , [ ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
               , ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )

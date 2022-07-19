@@ -202,8 +202,8 @@ view : Config msg -> Html msg
 view config =
     viewContainer
         [ viewEmoji [ Html.text config.emoji ]
-        , Heading.h1 [] [ Html.text config.title ]
-        , Heading.h2 [] [ Html.text config.subtitle ]
+        , Heading.h1 [ Heading.plaintext config.title ]
+        , Heading.h2 [ Heading.plaintext config.subtitle ]
         , viewButton
             [ viewExit config ]
         , viewIf

@@ -43,13 +43,13 @@ example =
             |> List.map viewPreview
     , view =
         \ellieLinkConfig _ ->
-            [ Heading.h2 [] [ Html.text "baseFont" ]
+            [ Heading.h2 [ Heading.plaintext "baseFont" ]
             , Html.p [ css [ Fonts.baseFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-            , Heading.h2 [] [ Html.text "quizFont" ]
+            , Heading.h2 [ Heading.plaintext "quizFont" ]
             , Html.p [ css [ Fonts.quizFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
-            , Heading.h2 [] [ Html.text "ugFont" ]
+            , Heading.h2 [ Heading.plaintext "ugFont" ]
             , Html.p [ css [ Fonts.ugFont ] ]
                 [ Html.text "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" ]
             ]

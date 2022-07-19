@@ -72,7 +72,7 @@ example =
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [] [ text "Example" ]
+                [ Heading.h2 [ Heading.plaintext "Example" ]
                 , viewExample breadCrumbs
                 ]
             , Table.view
