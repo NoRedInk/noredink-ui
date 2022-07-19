@@ -42,10 +42,6 @@ example =
     , preview =
         [ Container.view []
         , Container.view
-            [ Container.invalid
-            , Container.css [ Css.marginTop (Css.px 8) ]
-            ]
-        , Container.view
             [ Container.disabled
             , Container.css [ Css.marginTop (Css.px 8) ]
             ]
@@ -85,9 +81,6 @@ example =
                         , { sectionName = "Disabled Container"
                           , code = viewExampleCode ("Container.disabled" :: stringAttributes)
                           }
-                        , { sectionName = "Invalid Container"
-                          , code = viewExampleCode ("Container.invalid" :: stringAttributes)
-                          }
                         ]
                 }
             , viewExample
@@ -115,11 +108,6 @@ example =
                 , description = "Used to indicate content is locked/inaccessible"
                 }
                 (Container.disabled :: attributes)
-            , viewExample
-                { name = "Invalid Container"
-                , description = "Used to indicate content is invalid"
-                }
-                (Container.invalid :: attributes)
             ]
     }
 
