@@ -17,11 +17,13 @@ import Json.Decode as Decode
 import KeyboardSupport
 import Nri.Ui.Accordion.V3 as Accordion
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
+import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V3 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
 import Sort.Set as Set exposing (Set)
@@ -229,6 +231,15 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
+                , Accordion.styleAccordion
+                    { entryStyles = []
+                    , entryExpandedStyles = []
+                    , entryClosedStyles = []
+                    , headerStyles = []
+                    , headerExpandedStyles = []
+                    , headerClosedStyles = []
+                    , contentStyles = []
+                    }
                 ]
     in
     case model.route of
@@ -267,7 +278,9 @@ viewExample model example =
                 [ case KeyboardSupport.view example.keyboardSupport of
                     Just view_ ->
                         Accordion.AccordionEntry
-                            { caret = \isOpen -> Html.text ""
+                            { caret =
+                                DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                                    >> Svg.toHtml
                             , content = \() -> view_
                             , entryClass = "example-section"
                             , headerContent = Html.text "Keyboard Support"
