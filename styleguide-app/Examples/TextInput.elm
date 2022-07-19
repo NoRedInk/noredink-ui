@@ -12,18 +12,29 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
+
+
+moduleName : String
+moduleName =
+    "TextInput"
+
+
+version =
+    7
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "TextInput"
-    , version = 7
+    { name = moduleName
+    , version = version
     , categories = [ Inputs ]
     , keyboardSupport = []
     , state = init
@@ -41,8 +52,17 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ Control.view UpdateControl state.control
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.control
+                , mainType = "Html msg"
+                , extraImports = []
+                , toExampleCode = \_ -> []
+                }
+            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
             , viewExamples <|
                 ( "readOnlyText"
                 , TextInput.view "Shareable Assignment Link"
