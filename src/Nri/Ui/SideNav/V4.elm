@@ -57,6 +57,7 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
@@ -127,6 +128,7 @@ defaultNavAttributeConfig =
         , backgroundColor Colors.gray96
         , padding (px 20)
         , marginRight (px 20)
+        , position absolute
         ]
     , collapsible = Nothing
     }
@@ -186,15 +188,53 @@ view config navAttributes entries =
         appliedNavAttributes =
             List.foldl (\(NavAttribute f) b -> f b) defaultNavAttributeConfig navAttributes
     in
-    styled nav
-        appliedNavAttributes.css
+    div [ Attributes.css appliedNavAttributes.css ]
+        [ viewSkipLink config.onSkipNav
+        , viewJust viewOpenCloseButton appliedNavAttributes.collapsible
+        , viewNav config appliedNavAttributes entries
+        ]
+
+
+sidenavId : String
+sidenavId =
+    "sidenav"
+
+
+viewOpenCloseButton : { isOpen : Bool, toggle : Bool -> msg } -> Html msg
+viewOpenCloseButton { isOpen, toggle } =
+    ClickableSvg.button
+        (if isOpen then
+            "Close sidebar"
+
+         else
+            "Open sidebar"
+        )
+        UiIcon.openClose
+        [ ClickableSvg.custom
+            [ Aria.controls [ sidenavId ]
+            , Aria.expanded isOpen
+            ]
+        , ClickableSvg.onClick (toggle (not isOpen))
+        , ClickableSvg.exactWidth 25
+        , ClickableSvg.css
+            [ Css.position Css.absolute
+            , Css.top (Css.px 5)
+            , Css.right (Css.px 10)
+            , Css.color Colors.gray45
+            , Css.hover [ Css.color Colors.gray20 ]
+            ]
+        ]
+
+
+viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Html msg
+viewNav config appliedNavAttributes entries =
+    nav
         ([ Maybe.map Aria.label appliedNavAttributes.navLabel
+         , Just (Attributes.id sidenavId)
          ]
             |> List.filterMap identity
         )
-        (viewSkipLink config.onSkipNav
-            :: List.map (viewSidebarEntry config []) entries
-        )
+        (List.map (viewSidebarEntry config []) entries)
 
 
 viewSkipLink : msg -> Html msg
