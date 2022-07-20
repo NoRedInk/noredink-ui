@@ -121,15 +121,7 @@ type alias NavAttributeConfig msg =
 defaultNavAttributeConfig : NavAttributeConfig msg
 defaultNavAttributeConfig =
     { navLabel = Nothing
-    , css =
-        [ flexBasis (px 250)
-        , flexShrink (num 0)
-        , borderRadius (px 8)
-        , backgroundColor Colors.gray96
-        , padding (px 20)
-        , marginRight (px 20)
-        , position absolute
-        ]
+    , css = []
     , collapsible = Nothing
     }
 
@@ -187,11 +179,30 @@ view config navAttributes entries =
     let
         appliedNavAttributes =
             List.foldl (\(NavAttribute f) b -> f b) defaultNavAttributeConfig navAttributes
+
+        showNav =
+            Maybe.map .isOpen appliedNavAttributes.collapsible
+                |> Maybe.withDefault True
+
+        defaultCss =
+            [ if showNav then
+                flexBasis (px 250)
+
+              else
+                Css.flexBasis (Css.px 5)
+            , MediaQuery.anyMotion [ property "transition" "flex-basis 0.2s" ]
+            , flexShrink (num 0)
+            , borderRadius (px 8)
+            , backgroundColor Colors.gray96
+            , padding (px 20)
+            , marginRight (px 20)
+            , position absolute
+            ]
     in
-    div [ Attributes.css appliedNavAttributes.css ]
+    div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
         , viewJust viewOpenCloseButton appliedNavAttributes.collapsible
-        , viewNav config appliedNavAttributes entries
+        , viewNav config appliedNavAttributes entries showNav
         ]
 
 
@@ -226,11 +237,16 @@ viewOpenCloseButton { isOpen, toggle } =
         ]
 
 
-viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Html msg
-viewNav config appliedNavAttributes entries =
+viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
+viewNav config appliedNavAttributes entries showNav =
     nav
         ([ Maybe.map Aria.label appliedNavAttributes.navLabel
          , Just (Attributes.id sidenavId)
+         , if showNav then
+            Nothing
+
+           else
+            Just (Attributes.css [ Css.display Css.none ])
          ]
             |> List.filterMap identity
         )

@@ -17,10 +17,10 @@ Changes from V1:
 -}
 
 import Css exposing (Color)
-import Css.Media exposing (withMediaQuery)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Particle exposing (Particle)
 import Particle.System as ParticleSystem
 import Random exposing (Generator)
@@ -68,8 +68,7 @@ view (System system _) =
                     , Css.width (Css.pct 100)
                     , Css.height (Css.vh 100)
                     , Css.pointerEvents Css.none
-                    , withMediaQuery [ "(prefers-reduced-motion)" ]
-                        [ Css.display Css.none ]
+                    , MediaQuery.prefersReducedMotion [ Css.display Css.none ]
                     ]
                 ]
             )

@@ -36,13 +36,13 @@ import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Css exposing (Color, Style)
 import Css.Global as Global
-import Css.Media
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -373,6 +373,4 @@ stroke color =
 
 transition : String -> Css.Style
 transition transitionRules =
-    Css.Media.withMediaQuery
-        [ "(prefers-reduced-motion: no-preference)" ]
-        [ Css.property "transition" transitionRules ]
+    MediaQuery.anyMotion [ Css.property "transition" transitionRules ]
