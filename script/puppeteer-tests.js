@@ -49,7 +49,10 @@ describe("UI tests", function () {
 
   const goTo = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
-    await page.waitForSelector(`#${name.replace(".", "-")}`, { visible: true });
+    await page.waitForXPath(
+      `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
+      200
+    );
   };
 
   const defaultProcessing = async (name, location) => {
