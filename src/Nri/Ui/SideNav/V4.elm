@@ -213,28 +213,38 @@ sidenavId =
 
 viewOpenCloseButton : { isOpen : Bool, toggle : Bool -> msg } -> Html msg
 viewOpenCloseButton { isOpen, toggle } =
-    ClickableSvg.button
-        (if isOpen then
-            "Close sidebar"
+    let
+        ( action, icon_, attributes ) =
+            if isOpen then
+                ( "Close sidebar"
+                , UiIcon.openClose
+                , [ ClickableSvg.css
+                        [ Css.position Css.absolute
+                        , Css.top Css.zero
+                        , Css.right Css.zero
+                        , Css.padding (Css.px 5)
+                        ]
+                  ]
+                )
 
-         else
-            "Open sidebar"
-        )
-        UiIcon.openClose
-        [ ClickableSvg.custom
+            else
+                ( "Open sidebar"
+                , UiIcon.openClose
+                    |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
+                , [ ClickableSvg.withBorder ]
+                )
+    in
+    ClickableSvg.button action
+        icon_
+        ([ ClickableSvg.custom
             [ Aria.controls [ sidenavId ]
             , Aria.expanded isOpen
             ]
-        , ClickableSvg.onClick (toggle (not isOpen))
-        , ClickableSvg.exactWidth 25
-        , ClickableSvg.css
-            [ Css.position Css.absolute
-            , Css.top (Css.px 5)
-            , Css.right (Css.px 10)
-            , Css.color Colors.gray45
-            , Css.hover [ Css.color Colors.gray20 ]
-            ]
-        ]
+         , ClickableSvg.onClick (toggle (not isOpen))
+         , ClickableSvg.tertiary
+         ]
+            ++ attributes
+        )
 
 
 viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
