@@ -1,4 +1,4 @@
-module Nri.Ui.SideNav.V3 exposing
+module Nri.Ui.SideNav.V4 exposing
     ( view, Config, NavAttribute
     , navLabel
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
@@ -13,9 +13,9 @@ module Nri.Ui.SideNav.V3 exposing
 {-|
 
 
-# Changes from V2
+# Changes from V3
 
-  - change to `NavAttribute` list-based API
+  - make the nav configurably collapsible
 
 @docs view, Config, NavAttribute
 @docs navLabel
@@ -104,17 +104,18 @@ type alias Config route msg =
 
 
 {-| -}
-type NavAttribute
-    = NavAttribute (NavAttributeConfig -> NavAttributeConfig)
+type NavAttribute msg
+    = NavAttribute (NavAttributeConfig msg -> NavAttributeConfig msg)
 
 
-type alias NavAttributeConfig =
+type alias NavAttributeConfig msg =
     { navLabel : Maybe String
     , css : List Style
+    , collapsible : Maybe { isOpen : Bool, toggle : Bool -> msg }
     }
 
 
-defaultNavAttributeConfig : NavAttributeConfig
+defaultNavAttributeConfig : NavAttributeConfig msg
 defaultNavAttributeConfig =
     { navLabel = Nothing
     , css =
@@ -125,12 +126,13 @@ defaultNavAttributeConfig =
         , padding (px 20)
         , marginRight (px 20)
         ]
+    , collapsible = Nothing
     }
 
 
 {-| Give screenreader users context on what this particular sidenav is for.
 -}
-navLabel : String -> NavAttribute
+navLabel : String -> NavAttribute msg
 navLabel str =
     NavAttribute (\config -> { config | navLabel = Just str })
 
@@ -146,31 +148,37 @@ navLabel str =
     ]
 
 -}
-navCss : List Style -> NavAttribute
+navCss : List Style -> NavAttribute msg
 navCss styles =
     NavAttribute (\config -> { config | css = List.append config.css styles })
 
 
 {-| -}
-navNotMobileCss : List Style -> NavAttribute
+navNotMobileCss : List Style -> NavAttribute msg
 navNotMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
 
 
 {-| -}
-navMobileCss : List Style -> NavAttribute
+navMobileCss : List Style -> NavAttribute msg
 navMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
 
 
 {-| -}
-navQuizEngineMobileCss : List Style -> NavAttribute
+navQuizEngineMobileCss : List Style -> NavAttribute msg
 navQuizEngineMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| -}
-view : Config route msg -> List NavAttribute -> List (Entry route msg) -> Html msg
+collapsible : { isOpen : Bool, toggle : Bool -> msg } -> NavAttribute msg
+collapsible collapsible_ =
+    NavAttribute (\config -> { config | collapsible = Just collapsible_ })
+
+
+{-| -}
+view : Config route msg -> List (NavAttribute msg) -> List (Entry route msg) -> Html msg
 view config navAttributes entries =
     let
         appliedNavAttributes =

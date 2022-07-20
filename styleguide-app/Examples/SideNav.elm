@@ -17,12 +17,12 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SideNav.V3 as SideNav
+import Nri.Ui.SideNav.V4 as SideNav
 
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -124,7 +124,7 @@ type alias State =
 
 type alias Settings =
     { currentRoute : String
-    , navAttributes : List ( String, SideNav.NavAttribute )
+    , navAttributes : List ( String, SideNav.NavAttribute Msg )
     , entries : List ( String, SideNav.Entry String Msg )
     }
 
@@ -140,7 +140,7 @@ init =
     }
 
 
-controlNavAttributes : Control (List ( String, SideNav.NavAttribute ))
+controlNavAttributes : Control (List ( String, SideNav.NavAttribute Msg ))
 controlNavAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItemDefaultChecked "navLabel"
