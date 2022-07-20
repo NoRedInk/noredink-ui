@@ -1,5 +1,6 @@
 module Nri.Ui.SideNav.V4 exposing
     ( view, Config, NavAttribute
+    , collapsible
     , navLabel
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
@@ -18,6 +19,7 @@ module Nri.Ui.SideNav.V4 exposing
   - make the nav configurably collapsible
 
 @docs view, Config, NavAttribute
+@docs collapsible
 @docs navLabel
 @docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
 

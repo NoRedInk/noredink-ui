@@ -36,6 +36,7 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , isSideNavOpen : Bool
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     }
@@ -51,6 +52,7 @@ init () url key =
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
+      , isSideNavOpen = True
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       }
@@ -68,6 +70,7 @@ type Msg
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
+    | ToggleSideNav Bool
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
 
@@ -124,6 +127,9 @@ update action model =
             ( model
             , FocusOn "maincontent"
             )
+
+        ToggleSideNav isOpen ->
+            ( { model | isSideNavOpen = isOpen }, None )
 
         LoadedPackages newPackagesResult ->
             let
@@ -281,7 +287,11 @@ viewCategory model category =
 
 
 withSideNav :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
+    { model
+        | route : Route
+        , moduleStates : Dict String (Example Examples.State Examples.Msg)
+        , isSideNavOpen : Bool
+    }
     -> Html Msg
     -> Html Msg
 withSideNav model content =
@@ -334,9 +344,13 @@ viewPreviews containerId navConfig examples =
 
 
 navigation :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
+    { model
+        | route : Route
+        , moduleStates : Dict String (Example Examples.State Examples.Msg)
+        , isSideNavOpen : Bool
+    }
     -> Html Msg
-navigation { moduleStates, route } =
+navigation { moduleStates, route, isSideNavOpen } =
     let
         examples =
             Dict.values moduleStates
@@ -370,6 +384,7 @@ navigation { moduleStates, route } =
             [ VendorPrefixed.value "position" "sticky"
             , top (px 55)
             ]
+        , SideNav.collapsible { isOpen = isSideNavOpen, toggle = ToggleSideNav }
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
