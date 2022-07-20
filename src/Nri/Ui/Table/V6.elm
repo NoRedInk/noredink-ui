@@ -33,6 +33,9 @@ type Column data msg
     = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection)
 
 
+{-| Which direction is a table column sorted? Only set these on columns that
+actually have an explicit sort!
+-}
 type SortDirection
     = Ascending
     | Descending

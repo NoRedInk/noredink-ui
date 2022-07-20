@@ -20,7 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -81,18 +81,21 @@ example =
                     , value = .name
                     , width = Css.pct 15
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "About"
                     , value = .about
                     , width = Css.px 200
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "Result"
                     , value = \{ result } -> result breadCrumbs
                     , width = Css.px 50
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 ]
                 [ { name = "headerId"

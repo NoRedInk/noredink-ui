@@ -16,7 +16,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.SortableTable.V3 as SortableTable
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -84,12 +84,14 @@ example =
                 , view = .x >> Html.text
                 , width = px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             , Table.custom
                 { header = header "Y"
                 , view = .y >> Html.text
                 , width = px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             ]
             [ { x = "Row 1 X"
