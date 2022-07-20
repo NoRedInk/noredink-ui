@@ -187,6 +187,7 @@ viewExampleTable { label, icon, attributes } =
                 [ ( "primary", ClickableSvg.primary )
                 , ( "secondary", ClickableSvg.secondary )
                 , ( "danger", ClickableSvg.danger )
+                , ( "tertiary", ClickableSvg.tertiary )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
         , Html.tfoot []

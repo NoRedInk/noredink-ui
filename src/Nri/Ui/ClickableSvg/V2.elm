@@ -6,7 +6,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , exactSize, exactWidth, exactHeight
     , disabled
     , withBorder
-    , primary, secondary, danger, dangerSecondary
+    , primary, secondary, tertiary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , small, medium, large
@@ -45,7 +45,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, danger, dangerSecondary
+@docs primary, secondary, tertiary, danger, dangerSecondary
 
 @docs custom, nriDescription, testId, id
 
@@ -247,6 +247,7 @@ withBorder =
 type Theme
     = Primary
     | Secondary
+    | Tertiary
     | Danger
     | DangerSecondary
 
@@ -257,7 +258,9 @@ type alias AppliedTheme =
     , background : Color
     , backgroundHovered : Color
     , includeBorder : Bool
+    , borderColor : Color
     , borderBottom : Color
+    , borderHover : Color
     }
 
 
@@ -268,7 +271,9 @@ disabledTheme =
     , background = Colors.white
     , backgroundHovered = Colors.white
     , includeBorder = True
+    , borderColor = Colors.gray75
     , borderBottom = Colors.gray75
+    , borderHover = Colors.gray75
     }
 
 
@@ -281,7 +286,9 @@ applyTheme theme =
             , background = Colors.azure
             , backgroundHovered = Colors.azureDark
             , includeBorder = False
+            , borderColor = Colors.white
             , borderBottom = Colors.azureDark
+            , borderHover = Colors.azureDark
             }
 
         Secondary ->
@@ -290,7 +297,20 @@ applyTheme theme =
             , background = Colors.white
             , backgroundHovered = Colors.glacier
             , includeBorder = True
+            , borderColor = Colors.azure
             , borderBottom = Colors.azure
+            , borderHover = Colors.azure
+            }
+
+        Tertiary ->
+            { main_ = Colors.gray45
+            , mainHovered = Colors.azure
+            , background = Colors.gray96
+            , backgroundHovered = Colors.glacier
+            , includeBorder = True
+            , borderColor = Colors.gray92
+            , borderBottom = Colors.gray92
+            , borderHover = Colors.azure
             }
 
         Danger ->
@@ -299,7 +319,9 @@ applyTheme theme =
             , background = Colors.red
             , backgroundHovered = Colors.redDark
             , includeBorder = False
+            , borderColor = Colors.white
             , borderBottom = Colors.redDark
+            , borderHover = Colors.redDark
             }
 
         DangerSecondary ->
@@ -308,7 +330,9 @@ applyTheme theme =
             , background = Colors.white
             , backgroundHovered = Colors.redLight
             , includeBorder = True
+            , borderColor = Colors.red
             , borderBottom = Colors.red
+            , borderHover = Colors.red
             }
 
 
@@ -325,6 +349,13 @@ on a white/glacier icon with a blue border.
 secondary : Attribute msg
 secondary =
     set (\attributes -> { attributes | theme = Secondary })
+
+
+{-| Used to de-emphasize elements when not hovered.
+-}
+tertiary : Attribute msg
+tertiary =
+    set (\attributes -> { attributes | theme = Tertiary })
 
 
 {-| White/transparent icon on a red background.
@@ -569,7 +600,7 @@ renderIcon config includeBorder =
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
-buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, borderBottom, includeBorder } =
+buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, borderColor, borderBottom, borderHover, includeBorder } =
     let
         cursor =
             if config.disabled then
@@ -600,7 +631,7 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
     , Css.batch <|
         if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
-            , Css.borderColor main_
+            , Css.borderColor borderColor
             , Css.borderBottomColor borderBottom
             , Css.borderStyle Css.solid
             , if includeBorder then
@@ -615,7 +646,7 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             , Css.borderBottomWidth (Css.px bordersAndPadding.bottomBorder)
             , Css.backgroundColor background
             , Css.hover
-                [ Css.borderColor borderBottom
+                [ Css.borderColor borderHover
                 , Css.backgroundColor backgroundHovered
                 ]
             , Css.padding4
