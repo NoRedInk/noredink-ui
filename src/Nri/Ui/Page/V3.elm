@@ -20,6 +20,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
+import Nri.Ui.Text.V6 as Text
 
 
 {-| The default page information is for the button
@@ -203,7 +204,14 @@ view config =
     viewContainer
         [ viewEmoji [ Html.text config.emoji ]
         , Heading.h1 [ Heading.plaintext config.title ]
-        , Heading.h2 [ Heading.plaintext config.subtitle ]
+        , Text.mediumBody
+            [ Text.plaintext config.subtitle
+            , Text.css
+                [ Css.fontSize (Css.px 20)
+                , Css.color Colors.gray45
+                , Css.marginBottom Css.zero
+                ]
+            ]
         , viewButton
             [ viewExit config ]
         , viewIf
