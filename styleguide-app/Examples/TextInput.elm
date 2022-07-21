@@ -6,7 +6,7 @@ module Examples.TextInput exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
@@ -16,7 +16,7 @@ import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
 
@@ -62,7 +62,7 @@ example =
                 , extraImports = []
                 , toExampleCode = \_ -> []
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , viewExamples <|
                 ( "readOnlyText"
                 , TextInput.view "Shareable Assignment Link"

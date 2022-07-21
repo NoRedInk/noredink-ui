@@ -18,7 +18,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
@@ -306,7 +306,7 @@ buttons model =
 toggleButtons : Set Int -> Html Msg
 toggleButtons pressedToggleButtons =
     div []
-        [ Heading.h3 [] [ text "Button toggle" ]
+        [ Heading.h3 [ Heading.plaintext "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
                 { onDeselect = ToggleToggleButton 0

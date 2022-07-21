@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Page.V3 as Page exposing (DefaultPage, RecoveryText(..))
 
 
@@ -113,7 +113,7 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , Tuple.second settings.page
                 { link = ShowItWorked
                 , recoveryText = settings.recoveryText

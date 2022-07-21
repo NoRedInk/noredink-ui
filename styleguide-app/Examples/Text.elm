@@ -15,7 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
 
 
@@ -82,8 +82,8 @@ example =
                         , toExampleCode "ugSmallBody"
                         ]
                 }
-            , Heading.h2 [] [ Html.text "Examples" ]
-            , Heading.h3 [] [ Html.text "Paragraph styles" ]
+            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Heading.h3 [ Heading.plaintext "Paragraph styles" ]
             , viewExamples
                 [ ( "mediumBody", Text.mediumBody )
                 , ( "smallBody", Text.smallBody )
@@ -91,7 +91,7 @@ example =
                 , ( "caption", Text.caption )
                 ]
                 attributes
-            , Heading.h3 [] [ Html.text "Paragraph styles for user-authored content" ]
+            , Heading.h3 [ Heading.plaintext "Paragraph styles for user-authored content" ]
             , viewExamples
                 [ ( "ugMediumBody", Text.ugMediumBody )
                 , ( "ugSmallBody", Text.ugSmallBody )

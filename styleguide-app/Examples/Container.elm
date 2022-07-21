@@ -16,7 +16,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 
 
 moduleName : String
@@ -119,7 +119,7 @@ viewExample { name, description } attributes =
             [ Css.marginTop (Css.px 20)
             ]
         ]
-        [ Heading.h3 [] [ Html.text name ]
+        [ Heading.h3 [ Heading.plaintext name ]
         , Html.text description
         , Container.view attributes
         ]

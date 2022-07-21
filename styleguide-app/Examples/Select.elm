@@ -15,7 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V8 as Select exposing (Choice)
 
 
@@ -77,7 +77,7 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.Styled.text "Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , Select.view label attributes
                 |> Html.Styled.map ConsoleLog
             ]

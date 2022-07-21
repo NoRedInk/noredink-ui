@@ -13,7 +13,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Table.V6 as Table exposing (Column)
 
 
@@ -106,7 +106,7 @@ example =
                         , toExampleCode "viewLoadingWithoutHeader" ""
                         ]
                 }
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
                     Table.view columns data

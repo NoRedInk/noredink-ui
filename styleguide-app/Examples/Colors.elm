@@ -14,7 +14,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
 import SolidColor exposing (highContrast)
 
@@ -91,7 +91,7 @@ example =
               , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
               ]
                 |> viewColors
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Background Highlight Colors" ]
+            , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
             , [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
               , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
@@ -109,7 +109,7 @@ example =
               , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
               ]
                 |> viewColors
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Text Highlight Colors" ]
+            , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , [ ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
               , ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )

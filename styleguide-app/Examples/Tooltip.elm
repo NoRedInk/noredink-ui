@@ -22,7 +22,7 @@ import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -134,7 +134,7 @@ update msg model =
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
-    , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "What type of tooltip should I use?" ]
+    , Heading.h2 [ Heading.plaintext "What type of tooltip should I use?" ]
     , Table.view
         [ Table.string
             { header = "Type"
