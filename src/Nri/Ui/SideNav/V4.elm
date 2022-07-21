@@ -66,6 +66,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -234,12 +235,7 @@ viewOpenCloseButton navLabel_ { isOpen, toggle } =
             if isOpen then
                 ( "Close " ++ name
                 , UiIcon.openClose
-                , [ ClickableSvg.css
-                        [ Css.position Css.absolute
-                        , Css.top Css.zero
-                        , Css.right Css.zero
-                        , Css.padding (Css.px 5)
-                        ]
+                , [ ClickableSvg.css [ Css.padding (Css.px 5) ]
                   ]
                 )
 
@@ -249,18 +245,46 @@ viewOpenCloseButton navLabel_ { isOpen, toggle } =
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
                 , [ ClickableSvg.withBorder ]
                 )
+
+        trigger tooltipAttributes =
+            ClickableSvg.button action
+                icon_
+                ([ ClickableSvg.custom
+                    [ Aria.controls [ sidenavId ]
+                    , Aria.expanded isOpen
+                    ]
+                 , ClickableSvg.custom tooltipAttributes
+                 , ClickableSvg.onClick (toggle (not isOpen))
+                 , ClickableSvg.tertiary
+                 ]
+                    ++ attributes
+                )
     in
-    ClickableSvg.button action
-        icon_
-        ([ ClickableSvg.custom
-            [ Aria.controls [ sidenavId ]
-            , Aria.expanded isOpen
-            ]
-         , ClickableSvg.onClick (toggle (not isOpen))
-         , ClickableSvg.tertiary
-         ]
-            ++ attributes
-        )
+    Tooltip.view
+        { trigger = trigger
+        , id = "open-close-sidebar-tooltip"
+        }
+        [ Tooltip.open True
+        , Tooltip.plaintext action
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
+        , if isOpen then
+            Tooltip.onLeft
+
+          else
+            Tooltip.onRight
+        , Tooltip.onRightForMobile
+        , Tooltip.containerCss
+            (if isOpen then
+                [ Css.position Css.absolute
+                , Css.top Css.zero
+                , Css.right Css.zero
+                ]
+
+             else
+                []
+            )
+        ]
 
 
 viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
