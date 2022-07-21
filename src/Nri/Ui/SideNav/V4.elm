@@ -127,6 +127,9 @@ defaultNavAttributeConfig =
 
 
 {-| Give screenreader users context on what this particular sidenav is for.
+
+If the nav is collapsible, this value will also be used for the sidenav tooltips.
+
 -}
 navLabel : String -> NavAttribute msg
 navLabel str =
@@ -211,7 +214,7 @@ view config navAttributes entries =
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
-        , viewJust viewOpenCloseButton appliedNavAttributes.collapsible
+        , viewJust (viewOpenCloseButton appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
         , viewNav config appliedNavAttributes entries showNav
         ]
 
@@ -221,12 +224,15 @@ sidenavId =
     "sidenav"
 
 
-viewOpenCloseButton : { isOpen : Bool, toggle : Bool -> msg } -> Html msg
-viewOpenCloseButton { isOpen, toggle } =
+viewOpenCloseButton : Maybe String -> { isOpen : Bool, toggle : Bool -> msg } -> Html msg
+viewOpenCloseButton navLabel_ { isOpen, toggle } =
     let
+        name =
+            Maybe.withDefault "sidebar" navLabel_
+
         ( action, icon_, attributes ) =
             if isOpen then
-                ( "Close sidebar"
+                ( "Close " ++ name
                 , UiIcon.openClose
                 , [ ClickableSvg.css
                         [ Css.position Css.absolute
@@ -238,7 +244,7 @@ viewOpenCloseButton { isOpen, toggle } =
                 )
 
             else
-                ( "Open sidebar"
+                ( "Open " ++ name
                 , UiIcon.openClose
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
                 , [ ClickableSvg.withBorder ]

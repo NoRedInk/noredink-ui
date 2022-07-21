@@ -385,6 +385,7 @@ navigation { moduleStates, route, isSideNavOpen } =
             , top (px 55)
             ]
         , SideNav.collapsible { isOpen = isSideNavOpen, toggle = ToggleSideNav }
+        , SideNav.navLabel "categories"
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
