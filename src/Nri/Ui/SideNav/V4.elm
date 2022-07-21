@@ -186,17 +186,27 @@ view config navAttributes entries =
 
         defaultCss =
             [ if showNav then
-                flexBasis (px 250)
+                case appliedNavAttributes.collapsible of
+                    Just _ ->
+                        Css.batch
+                            [ Css.flexBasis (Css.px 245)
+                            , Css.padding4 (Css.px 25) (Css.px 25) (Css.px 20) (Css.px 20)
+                            ]
+
+                    Nothing ->
+                        Css.batch
+                            [ Css.flexBasis (Css.px 250)
+                            , Css.padding (Css.px 20)
+                            ]
 
               else
                 Css.flexBasis (Css.px 5)
             , MediaQuery.anyMotion [ property "transition" "flex-basis 0.2s" ]
             , flexShrink (num 0)
-            , borderRadius (px 8)
-            , backgroundColor Colors.gray96
-            , padding (px 20)
             , marginRight (px 20)
             , position absolute
+            , borderRadius (px 8)
+            , backgroundColor Colors.gray96
             ]
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
