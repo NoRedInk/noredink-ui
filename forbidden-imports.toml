@@ -114,6 +114,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.SideNav.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.SideNav.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'
 
