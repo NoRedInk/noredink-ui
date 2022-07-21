@@ -115,7 +115,7 @@ type NavAttribute msg
 type alias NavAttributeConfig msg =
     { navLabel : Maybe String
     , css : List Style
-    , collapsible : Maybe { isOpen : Bool, toggle : Bool -> msg }
+    , collapsible : Maybe (CollapsibleConfig msg)
     }
 
 
@@ -172,7 +172,16 @@ navQuizEngineMobileCss styles =
 
 
 {-| -}
-collapsible : { isOpen : Bool, toggle : Bool -> msg } -> NavAttribute msg
+type alias CollapsibleConfig msg =
+    { isOpen : Bool
+    , toggle : Bool -> msg
+    , isTooltipOpen : Bool
+    , toggleTooltip : Bool -> msg
+    }
+
+
+{-| -}
+collapsible : CollapsibleConfig msg -> NavAttribute msg
 collapsible collapsible_ =
     NavAttribute (\config -> { config | collapsible = Just collapsible_ })
 
@@ -225,8 +234,8 @@ sidenavId =
     "sidenav"
 
 
-viewOpenCloseButton : Maybe String -> { isOpen : Bool, toggle : Bool -> msg } -> Html msg
-viewOpenCloseButton navLabel_ { isOpen, toggle } =
+viewOpenCloseButton : Maybe String -> CollapsibleConfig msg -> Html msg
+viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
     let
         name =
             Maybe.withDefault "sidebar" navLabel_
@@ -264,7 +273,8 @@ viewOpenCloseButton navLabel_ { isOpen, toggle } =
         { trigger = trigger
         , id = "open-close-sidebar-tooltip"
         }
-        [ Tooltip.open True
+        [ Tooltip.open isTooltipOpen
+        , Tooltip.onToggle toggleTooltip
         , Tooltip.plaintext action
         , Tooltip.smallPadding
         , Tooltip.fitToContent

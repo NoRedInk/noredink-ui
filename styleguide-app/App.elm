@@ -37,6 +37,7 @@ type alias Model key =
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
     , isSideNavOpen : Bool
+    , openTooltip : Maybe TooltipId
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     }
@@ -53,6 +54,7 @@ init () url key =
       , previousRoute = Nothing
       , moduleStates = moduleStates
       , isSideNavOpen = True
+      , openTooltip = Nothing
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       }
@@ -64,6 +66,10 @@ init () url key =
     )
 
 
+type TooltipId
+    = SideNavOpenCloseTooltip
+
+
 type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
@@ -71,6 +77,7 @@ type Msg
     | ChangeRoute Route
     | SkipToMainContent
     | ToggleSideNav Bool
+    | ToggleTooltip TooltipId Bool
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
 
@@ -130,6 +137,12 @@ update action model =
 
         ToggleSideNav isOpen ->
             ( { model | isSideNavOpen = isOpen }, None )
+
+        ToggleTooltip tooltipId True ->
+            ( { model | openTooltip = Just tooltipId }, None )
+
+        ToggleTooltip _ False ->
+            ( { model | openTooltip = Nothing }, None )
 
         LoadedPackages newPackagesResult ->
             let
@@ -286,14 +299,7 @@ viewCategory model category =
         )
 
 
-withSideNav :
-    { model
-        | route : Route
-        , moduleStates : Dict String (Example Examples.State Examples.Msg)
-        , isSideNavOpen : Bool
-    }
-    -> Html Msg
-    -> Html Msg
+withSideNav : Model key -> Html Msg -> Html Msg
 withSideNav model content =
     Html.div
         [ css
@@ -343,14 +349,8 @@ viewPreviews containerId navConfig examples =
             ]
 
 
-navigation :
-    { model
-        | route : Route
-        , moduleStates : Dict String (Example Examples.State Examples.Msg)
-        , isSideNavOpen : Bool
-    }
-    -> Html Msg
-navigation { moduleStates, route, isSideNavOpen } =
+navigation : Model key -> Html Msg
+navigation { moduleStates, route, isSideNavOpen, openTooltip } =
     let
         examples =
             Dict.values moduleStates
@@ -384,7 +384,12 @@ navigation { moduleStates, route, isSideNavOpen } =
             [ VendorPrefixed.value "position" "sticky"
             , top (px 55)
             ]
-        , SideNav.collapsible { isOpen = isSideNavOpen, toggle = ToggleSideNav }
+        , SideNav.collapsible
+            { isOpen = isSideNavOpen
+            , toggle = ToggleSideNav
+            , isTooltipOpen = openTooltip == Just SideNavOpenCloseTooltip
+            , toggleTooltip = ToggleTooltip SideNavOpenCloseTooltip
+            }
         , SideNav.navLabel "categories"
         ]
         (SideNav.entry "Usage Guidelines"
