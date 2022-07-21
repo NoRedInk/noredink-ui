@@ -1,5 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle
     , play, skip
@@ -33,7 +33,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper
+@docs seeMore, openClose, download, sort, gear, flipper, hamburger
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle
 @docs play, skip
@@ -905,6 +905,37 @@ pauseInCircle =
             , Attributes.width "2"
             , Attributes.height "6"
             , Attributes.rx "0.5"
+            ]
+            []
+        ]
+
+
+{-| -}
+hamburger : Nri.Ui.Svg.V1.Svg
+hamburger =
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "0"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "10"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "20"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
             ]
             []
         ]

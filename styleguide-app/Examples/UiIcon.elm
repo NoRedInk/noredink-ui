@@ -58,6 +58,7 @@ all =
         , ( "download", UiIcon.download, [] )
         , ( "sort", UiIcon.sort, [] )
         , ( "gear", UiIcon.gear, [] )
+        , ( "hamburger", UiIcon.hamburger, [] )
         ]
       )
     , ( "Archive & Unarchive"
