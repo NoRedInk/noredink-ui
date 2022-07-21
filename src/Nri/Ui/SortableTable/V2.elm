@@ -24,7 +24,7 @@ import Html.Styled.Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
-import Nri.Ui.Table.V5
+import Nri.Ui.Table.V6
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
@@ -187,7 +187,7 @@ viewLoading config state =
         tableColumns =
             List.map (buildTableColumn config.updateMsg state) config.columns
     in
-    Nri.Ui.Table.V5.viewLoading
+    Nri.Ui.Table.V6.viewLoading
         tableColumns
 
 
@@ -201,7 +201,7 @@ view config state entries =
         sorter =
             findSorter config.columns state.column
     in
-    Nri.Ui.Table.V5.view
+    Nri.Ui.Table.V6.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
 
@@ -236,13 +236,14 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
+buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V6.Column entry msg
 buildTableColumn updateMsg state (Column column) =
-    Nri.Ui.Table.V5.custom
+    Nri.Ui.Table.V6.custom
         { header = viewSortHeader column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
+        , sort = Nothing -- use SortableTable.V3 for better accessibility!
         }
 
 
