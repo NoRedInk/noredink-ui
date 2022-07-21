@@ -245,6 +245,7 @@ viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
                 ( "Close " ++ name
                 , UiIcon.openClose
                 , [ ClickableSvg.css [ Css.padding (Css.px 5) ]
+                  , ClickableSvg.iconForMobile UiIcon.x
                   ]
                 )
 
@@ -252,7 +253,9 @@ viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
                 ( "Open " ++ name
                 , UiIcon.openClose
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
-                , [ ClickableSvg.withBorder ]
+                , [ ClickableSvg.withBorder
+                  , ClickableSvg.iconForMobile UiIcon.hamburger
+                  ]
                 )
 
         trigger tooltipAttributes =
