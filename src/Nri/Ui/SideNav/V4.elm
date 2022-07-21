@@ -289,9 +289,11 @@ viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
         , Tooltip.onRightForMobile
         , Tooltip.containerCss
             (if isOpen then
-                [ Css.position Css.absolute
-                , Css.top Css.zero
-                , Css.right Css.zero
+                [ Css.Media.withMedia [ MediaQuery.notMobile ]
+                    [ Css.position Css.absolute
+                    , Css.top Css.zero
+                    , Css.right Css.zero
+                    ]
                 ]
 
              else
