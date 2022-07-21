@@ -214,7 +214,6 @@ view config navAttributes entries =
 
               else
                 Css.flexBasis (Css.px 5)
-            , MediaQuery.anyMotion [ property "transition" "flex-basis 0.2s" ]
             , flexShrink (num 0)
             , marginRight (px 20)
             , position relative
