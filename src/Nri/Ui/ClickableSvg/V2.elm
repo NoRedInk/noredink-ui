@@ -9,6 +9,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , primary, secondary, tertiary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , iconForMobile
     , small, medium, large
     )
 
@@ -18,6 +19,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 # Patch changes:
 
     - adds `nriDescription`, `testId`, and `id` helpers
+    - adds `iconForMobile`
 
 
 # Create a button or link
@@ -53,6 +55,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs iconForMobile
 
 
 ### DEPRECATED
@@ -451,6 +454,12 @@ quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
+{-| -}
+iconForMobile : Svg -> Attribute msg
+iconForMobile icon =
+    set (\config -> { config | iconForMobile = Just icon })
+
+
 
 -- INTERNALS
 
@@ -468,6 +477,7 @@ build label icon =
         { clickableAttributes = ClickableAttributes.init
         , label = label
         , icon = icon
+        , iconForMobile = Nothing
         , disabled = False
         , size = Small
         , width = Nothing
@@ -487,6 +497,7 @@ type alias ButtonOrLinkAttributes msg =
     { clickableAttributes : ClickableAttributes String msg
     , label : String
     , icon : Svg
+    , iconForMobile : Maybe Svg
     , disabled : Bool
     , size : Size
     , width : Maybe Float
@@ -518,8 +529,7 @@ renderButton ((ButtonOrLink config) as button_) =
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
-        [ renderIcon config theme.includeBorder
-        ]
+        (renderIcons config theme.includeBorder)
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -553,12 +563,11 @@ renderLink ((ButtonOrLink config) as link_) =
                )
             ++ config.customAttributes
         )
-        [ renderIcon config theme.includeBorder
-        ]
+        (renderIcons config theme.includeBorder)
 
 
-renderIcon : ButtonOrLinkAttributes msg -> Bool -> Html msg
-renderIcon config includeBorder =
+renderIcons : ButtonOrLinkAttributes msg -> Bool -> List (Html msg)
+renderIcons config includeBorder =
     let
         size =
             getSize config.size
@@ -587,16 +596,39 @@ renderIcon config includeBorder =
 
             else
                 Maybe.withDefault size config.height
-    in
-    config.icon
-        |> Svg.withCss
+
+        iconStyles =
             [ Css.displayFlex
             , Css.maxWidth (Css.px iconWidth)
             , Css.maxHeight (Css.px iconHeight)
             , Css.height (Css.pct 100)
             , Css.margin Css.auto
             ]
-        |> Svg.toHtml
+
+        hideFor breakpoint =
+            Svg.withCss
+                [ Css.Media.withMedia [ breakpoint ]
+                    [ Css.display Css.none
+                    ]
+                ]
+    in
+    case config.iconForMobile of
+        Just iconForMobile_ ->
+            [ config.icon
+                |> Svg.withCss iconStyles
+                |> hideFor MediaQuery.mobile
+                |> Svg.toHtml
+            , iconForMobile_
+                |> Svg.withCss iconStyles
+                |> hideFor MediaQuery.notMobile
+                |> Svg.toHtml
+            ]
+
+        Nothing ->
+            [ config.icon
+                |> Svg.withCss iconStyles
+                |> Svg.toHtml
+            ]
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
