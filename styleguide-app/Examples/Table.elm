@@ -14,7 +14,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Table.V5 as Table exposing (Column)
+import Nri.Ui.Table.V6 as Table exposing (Column)
 
 
 {-| -}
@@ -49,12 +49,14 @@ example =
                 , value = .a
                 , width = Css.px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             , Table.string
                 { header = "B"
                 , value = .b
                 , width = Css.px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             ]
             [ { a = "Row 1 A"
@@ -187,6 +189,7 @@ columnsWithCode =
         , "  , value = .firstName"
         , "  , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)"
         , "  , cellStyles = always []"
+        , "  , sort = Nothing"
         , "  }"
         ]
             |> String.join "\n\t  "
@@ -195,6 +198,7 @@ columnsWithCode =
             , value = .firstName
             , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
             , cellStyles = always []
+            , sort = Nothing
             }
       )
     , ( [ "Table.string"
@@ -202,6 +206,7 @@ columnsWithCode =
         , "  , value = .lastName"
         , "  , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)"
         , "  , cellStyles = always []"
+        , "  , sort = Nothing"
         , "  }"
         ]
             |> String.join "\n\t  "
@@ -210,6 +215,7 @@ columnsWithCode =
             , value = .lastName
             , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
             , cellStyles = always []
+            , sort = Nothing
             }
       )
     , ( [ "Table.string"
@@ -217,6 +223,7 @@ columnsWithCode =
         , "  , value = .submitted >> String.fromInt"
         , "  , width = Css.px 125"
         , "  , cellStyles = always [ Css.textAlign Css.center ]"
+        , "  , sort = Nothing"
         , "  }"
         ]
             |> String.join "\n\t  "
@@ -225,6 +232,7 @@ columnsWithCode =
             , value = .submitted >> String.fromInt
             , width = Css.px 125
             , cellStyles = \value -> [ Css.textAlign Css.center ]
+            , sort = Nothing
             }
       )
     , ( [ "Table.custom"
@@ -232,6 +240,7 @@ columnsWithCode =
         , "  , width = Css.px 250"
         , "  , view = \\_ -> Button.button \"Action\" [ Button.small ]"
         , "  , cellStyles = always []"
+        , "  , sort = Nothing"
         , "  }"
         ]
             |> String.join "\n\t  "
@@ -240,6 +249,7 @@ columnsWithCode =
             , width = Css.px 250
             , view = \_ -> Button.button "Action" [ Button.small, Button.onClick (ConsoleLog "Clicked button!") ]
             , cellStyles = always []
+            , sort = Nothing
             }
       )
     ]

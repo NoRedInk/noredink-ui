@@ -24,7 +24,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -141,24 +141,28 @@ view ellieLinkConfig model =
             , value = .name
             , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "Usage"
             , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 150
             , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
             , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "Example"
             , view = .example
             , width = Css.px 50
             , cellStyles = always [ Css.textAlign Css.center ]
+            , sort = Nothing
             }
         ]
         [ { name = "Tooltip.primaryLabel"
