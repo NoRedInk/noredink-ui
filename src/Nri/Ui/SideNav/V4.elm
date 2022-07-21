@@ -204,7 +204,7 @@ view config navAttributes entries =
             , MediaQuery.anyMotion [ property "transition" "flex-basis 0.2s" ]
             , flexShrink (num 0)
             , marginRight (px 20)
-            , position absolute
+            , position relative
             , borderRadius (px 8)
             , backgroundColor Colors.gray96
             ]
