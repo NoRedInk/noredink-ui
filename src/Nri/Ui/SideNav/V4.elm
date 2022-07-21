@@ -1,7 +1,7 @@
 module Nri.Ui.SideNav.V4 exposing
     ( view, Config, NavAttribute
     , collapsible
-    , navLabel
+    , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
     , icon, custom, css, nriDescription, testId, id
@@ -20,7 +20,7 @@ module Nri.Ui.SideNav.V4 exposing
 
 @docs view, Config, NavAttribute
 @docs collapsible
-@docs navLabel
+@docs navLabel, navId
 @docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
 
 
@@ -114,6 +114,7 @@ type NavAttribute msg
 
 type alias NavAttributeConfig msg =
     { navLabel : Maybe String
+    , navId : Maybe String
     , css : List Style
     , collapsible : Maybe (CollapsibleConfig msg)
     }
@@ -122,6 +123,7 @@ type alias NavAttributeConfig msg =
 defaultNavAttributeConfig : NavAttributeConfig msg
 defaultNavAttributeConfig =
     { navLabel = Nothing
+    , navId = Nothing
     , css = []
     , collapsible = Nothing
     }
@@ -135,6 +137,12 @@ If the nav is collapsible, this value will also be used for the sidenav tooltips
 navLabel : String -> NavAttribute msg
 navLabel str =
     NavAttribute (\config -> { config | navLabel = Just str })
+
+
+{-| -}
+navId : String -> NavAttribute msg
+navId str =
+    NavAttribute (\config -> { config | navId = Just str })
 
 
 {-| These styles are included automatically in the nav container:
@@ -197,6 +205,9 @@ view config navAttributes entries =
             Maybe.map .isOpen appliedNavAttributes.collapsible
                 |> Maybe.withDefault True
 
+        sidenavId =
+            Maybe.withDefault defaultSideNavId appliedNavAttributes.navId
+
         defaultCss =
             [ if showNav then
                 case appliedNavAttributes.collapsible of
@@ -223,18 +234,18 @@ view config navAttributes entries =
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
-        , viewJust (viewOpenCloseButton appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
-        , viewNav config appliedNavAttributes entries showNav
+        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
+        , viewNav sidenavId config appliedNavAttributes entries showNav
         ]
 
 
-sidenavId : String
-sidenavId =
+defaultSideNavId : String
+defaultSideNavId =
     "sidenav"
 
 
-viewOpenCloseButton : Maybe String -> CollapsibleConfig msg -> Html msg
-viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
+viewOpenCloseButton : String -> Maybe String -> CollapsibleConfig msg -> Html msg
+viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
     let
         name =
             Maybe.withDefault "sidebar" navLabel_
@@ -301,8 +312,8 @@ viewOpenCloseButton navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
         ]
 
 
-viewNav : Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
-viewNav config appliedNavAttributes entries showNav =
+viewNav : String -> Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
+viewNav sidenavId config appliedNavAttributes entries showNav =
     nav
         ([ Maybe.map Aria.label appliedNavAttributes.navLabel
          , Just (Attributes.id sidenavId)

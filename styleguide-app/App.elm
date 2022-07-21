@@ -391,6 +391,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
             , toggleTooltip = ToggleTooltip SideNavOpenCloseTooltip
             }
         , SideNav.navLabel "categories"
+        , SideNav.navId "sidenav__categories"
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
