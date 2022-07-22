@@ -90,6 +90,7 @@ all =
     , ( "Guidance"
       , [ ( "footsteps", UiIcon.footsteps, [] )
         , ( "help", UiIcon.help, [] )
+        , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
         , ( "checklistComplete", UiIcon.checklistComplete, [] )
         ]
