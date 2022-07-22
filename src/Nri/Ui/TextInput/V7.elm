@@ -28,7 +28,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
 @docs readOnlyText
 
 
