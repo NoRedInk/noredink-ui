@@ -229,7 +229,7 @@ customizableExamples state =
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
             }
-         , toExample
+        , toExample
             { name = "sex"
             , toString = identity
             , inputType = TextInput.sex

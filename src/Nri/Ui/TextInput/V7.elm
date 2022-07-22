@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -9,7 +9,6 @@ module Nri.Ui.TextInput.V7 exposing
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage, guidance
     , writing
-    , addressLevel2, addressLine1, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
     )
 
 {-|
