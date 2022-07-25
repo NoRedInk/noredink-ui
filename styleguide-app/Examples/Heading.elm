@@ -12,8 +12,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import ViewHelpers exposing (viewExamples)
 
 
@@ -24,7 +23,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
@@ -38,20 +37,20 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Heading.h1 [] [ Html.text "h1" ]
-        , Heading.h2 [] [ Html.text "h2" ]
-        , Heading.h3 [] [ Html.text "h3" ]
-        , Heading.h4 [] [ Html.text "h4" ]
+        [ Heading.h1 [ Heading.plaintext "h1" ]
+        , Heading.h2 [ Heading.plaintext "h2" ]
+        , Heading.h3 [ Heading.plaintext "h3" ]
+        , Heading.h4 [ Heading.plaintext "h4" ]
         ]
     , view =
         \ellieLinkConfig state ->
             let
                 examples =
-                    [ ( "h1", Heading.h1, "This is the main page heading." )
-                    , ( "h2", Heading.h2, "This is a tagline" )
-                    , ( "h3", Heading.h3, "This is a subHeading" )
-                    , ( "h4", Heading.h4, "This is a smallHeading" )
-                    , ( "h5", Heading.h5, "This is also a smallHeading" )
+                    [ ( "h1", Heading.h1 )
+                    , ( "h2", Heading.h2 )
+                    , ( "h3", Heading.h3 )
+                    , ( "h4", Heading.h4 )
+                    , ( "h5", Heading.h5 )
                     ]
 
                 attributes =
@@ -68,7 +67,7 @@ example =
                 , toExampleCode =
                     \settings ->
                         let
-                            toExampleCode ( name, _, content ) =
+                            toExampleCode ( name, _ ) =
                                 { sectionName = name
                                 , code =
                                     moduleName
@@ -77,16 +76,12 @@ example =
                                         ++ "\n    [ "
                                         ++ String.join "\n    , " (List.map Tuple.first settings)
                                         ++ "\n    ]"
-                                        ++ ("\n    [ Html.text \"" ++ content ++ "\" ]")
                                 }
                         in
                         List.map toExampleCode examples
                 }
             , examples
-                |> List.map
-                    (\( name, view, content ) ->
-                        ( name, view attributes [ Html.text content ] )
-                    )
+                |> List.map (\( name, view ) -> ( name, view attributes ))
                 |> viewExamples
             ]
     }
@@ -102,29 +97,30 @@ init : State
 init =
     { control =
         ControlExtra.list
+            |> ControlExtra.listItem "content" controlContent
             |> CommonControls.css { moduleName = moduleName, use = Heading.css }
-            |> ControlExtra.optionalBoolListItem "error" ( "Heading.error", Heading.error )
             |> ControlExtra.optionalListItem "style" controlStyle
     }
 
 
+controlContent : Control ( String, Heading.Attribute msg )
+controlContent =
+    CommonControls.content
+        { moduleName = moduleName
+        , plaintext = Heading.plaintext
+        , markdown = Just Heading.markdown
+        , html = Heading.html
+        , httpError = Nothing
+        }
+
+
 controlStyle : Control ( String, Heading.Attribute msg )
 controlStyle =
-    [ ( "Top", Heading.Top )
-    , ( "Tagline", Heading.Tagline )
-    , ( "Subhead", Heading.Subhead )
-    , ( "Small", Heading.Small )
-    ]
-        |> List.map
-            (\( name, val ) ->
-                ( name
-                , Control.value
-                    ( "Heading.style Heading." ++ name
-                    , Heading.style val
-                    )
-                )
-            )
-        |> Control.choice
+    CommonControls.choice moduleName
+        [ ( "top", Heading.top )
+        , ( "subhead", Heading.subhead )
+        , ( "small", Heading.small )
+        ]
 
 
 type alias Settings =

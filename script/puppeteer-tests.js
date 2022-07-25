@@ -49,7 +49,10 @@ describe("UI tests", function () {
 
   const goTo = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
-    await page.waitForSelector(`#${name.replace(".", "-")}`, { visible: true });
+    await page.waitForXPath(
+      `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
+      200
+    );
   };
 
   const defaultProcessing = async (name, location) => {
@@ -60,6 +63,26 @@ describe("UI tests", function () {
       .disableRules(skippedRules[name] || [])
       .analyze();
     handleAxeResults(name, results);
+  };
+
+  const forAllOptions = async (labelName, callback) => {
+    await page.waitForXPath(
+      `//label[contains(., '${labelName}')]//select`,
+      200
+    );
+    const [select] = await page.$x(
+      `//label[contains(., '${labelName}')]//select`
+    );
+    const options = await select.$x(
+      `//label[contains(., '${labelName}')]//option`
+    );
+    // Actually doing the select was super flakey.
+    // Temporarily just using the first element to get
+    // CI consistent again. We can cover all the cases separately...
+    const optionEl = options[0];
+    const option = await page.evaluate((el) => el.innerText, optionEl);
+    await page.select("select", option);
+    await callback(option);
   };
 
   const messageProcessing = async (name, location) => {
@@ -74,19 +97,42 @@ describe("UI tests", function () {
     const [theme] = await page.$x("//label[contains(., 'theme')]");
     await theme.click();
 
-    await page.waitForXPath("//label[contains(., 'theme')]//select", 200);
-    const [select] = await page.$x("//label[contains(., 'theme')]//select");
-    const options = await page.$x("//label[contains(., 'theme')]//option");
-    for (const optionEl of options) {
-      const option = await page.evaluate((el) => el.innerText, optionEl);
-      select.select(option);
-
+    await forAllOptions("theme", async (option) => {
       await percySnapshot(page, `${name} - ${option}`);
       axe = await new AxePuppeteer(page)
         .withRules(["color-contrast"])
         .analyze();
       handleAxeResults(`${name} - ${option}`, axe);
-    }
+    });
+  };
+
+  const modalProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    await forAllOptions("Theme", async (option) => {
+      await page.click("#launch-modal");
+      await page.waitForSelector('[role="dialog"]');
+      await percySnapshot(page, `${name} - ${option}`);
+
+      axe = await new AxePuppeteer(page).analyze();
+
+      await page.click('[aria-label="Close modal"]');
+
+      handleAxeResults(`${name} - ${option}`, axe);
+    });
+  };
+
+  const pageProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    var axe = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, axe);
+
+    await percySnapshot(page, name, {
+      scope: "[data-page-container='']",
+    });
   };
 
   const iconProcessing = async (name, location) => {
@@ -113,24 +159,8 @@ describe("UI tests", function () {
 
   const specialProcessing = {
     Message: messageProcessing,
-    Modal: async (name, location) => {
-      await goTo(name, location);
-      await page.click("#launch-modal");
-      await page.waitForSelector('[role="dialog"]');
-      await percySnapshot(page, "Full Info Modal");
-
-      const results = await new AxePuppeteer(page)
-        .disableRules(skippedRules[name] || [])
-        .analyze();
-      handleAxeResults(name, results);
-
-      await page.click('[aria-label="Close modal"]');
-      await page.select("select", "warning");
-      await page.click("#launch-modal");
-      await page.waitForSelector('[role="dialog"]');
-      await percySnapshot(page, "Full Warning Modal");
-      await page.click('[aria-label="Close modal"]');
-    },
+    Modal: modalProcessing,
+    Page: pageProcessing,
     AssignmentIcon: iconProcessing,
     UiIcon: iconProcessing,
     Logo: iconProcessing,

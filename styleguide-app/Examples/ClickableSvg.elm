@@ -187,6 +187,7 @@ viewExampleTable { label, icon, attributes } =
                 [ ( "primary", ClickableSvg.primary )
                 , ( "secondary", ClickableSvg.secondary )
                 , ( "danger", ClickableSvg.danger )
+                , ( "tertiary", ClickableSvg.tertiary )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
         , Html.tfoot []
@@ -295,4 +296,13 @@ initSettings =
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.notMobileCss
                     }
+                |> ControlExtra.optionalListItem "iconForMobile"
+                    (Control.map
+                        (\( name, icon ) ->
+                            ( "ClickableSvg.iconForMobile " ++ name
+                            , ClickableSvg.iconForMobile icon
+                            )
+                        )
+                        CommonControls.uiIcon
+                    )
             )

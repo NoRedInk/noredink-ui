@@ -13,10 +13,10 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SortableTable.V3 as SortableTable
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -84,12 +84,14 @@ example =
                 , view = .x >> Html.text
                 , width = px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             , Table.custom
                 { header = header "Y"
                 , view = .y >> Html.text
                 , width = px 50
                 , cellStyles = always []
+                , sort = Nothing
                 }
             ]
             [ { x = "Row 1 X"
@@ -152,9 +154,9 @@ example =
                     , { firstName = "First5", lastName = "Last5", coins = 5 }
                     ]
             in
-            [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "With sortable headers" ]
+            [ Heading.h2 [ Heading.plaintext "With sortable headers" ]
             , SortableTable.view config sortState data
-            , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Loading" ]
+            , Heading.h2 [ Heading.plaintext "Loading" ]
             , SortableTable.viewLoading config sortState
             ]
     }

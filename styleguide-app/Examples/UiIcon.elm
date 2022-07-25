@@ -58,6 +58,7 @@ all =
         , ( "download", UiIcon.download, [] )
         , ( "sort", UiIcon.sort, [] )
         , ( "gear", UiIcon.gear, [] )
+        , ( "hamburger", UiIcon.hamburger, [] )
         ]
       )
     , ( "Archive & Unarchive"
@@ -89,6 +90,7 @@ all =
     , ( "Guidance"
       , [ ( "footsteps", UiIcon.footsteps, [] )
         , ( "help", UiIcon.help, [] )
+        , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
         , ( "checklistComplete", UiIcon.checklistComplete, [] )
         ]
@@ -184,6 +186,7 @@ all =
     , ( "Badges & Celebration"
       , [ ( "badge", UiIcon.badge, [] )
         , ( "tada", UiIcon.tada, [] )
+        , ( "count", UiIcon.count, [] )
         ]
       )
     , ( "Lock & Key"

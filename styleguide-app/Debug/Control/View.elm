@@ -18,13 +18,16 @@ module Debug.Control.View exposing
 -}
 
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
@@ -48,6 +51,9 @@ view config =
 
         ellieLink =
             EllieLink.view config.ellieLinkConfig
+
+        exampleCodes =
+            config.toExampleCode value
     in
     div
         [ css
@@ -57,9 +63,12 @@ view config =
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             ]
         ]
-        [ viewSection "Settings" <|
+        [ viewSection "Settings"
+            [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
             [ fromUnstyled (Control.view config.update config.settings) ]
-        , viewExampleCode ellieLink config (config.toExampleCode value)
+        , viewIf
+            (\_ -> viewExampleCode ellieLink config exampleCodes)
+            (not (List.isEmpty exampleCodes))
         ]
 
 
@@ -69,7 +78,7 @@ viewExampleCode :
     -> List { sectionName : String, code : String }
     -> Html msg
 viewExampleCode ellieLink component values =
-    viewSection "Code Sample" <|
+    viewSection "Code Sample" [] <|
         Text.smallBodyGray
             [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
             ]
@@ -80,9 +89,8 @@ viewExampleCode ellieLink component values =
                         [ summary []
                             [ Heading.h3
                                 [ Heading.css [ Css.display Css.inline ]
-                                , Heading.style Heading.Small
+                                , Heading.plaintext example.sectionName
                                 ]
-                                [ text example.sectionName ]
                             ]
                         , ellieLink
                             { fullModuleName = Example.fullName component
@@ -106,10 +114,11 @@ viewExampleCode ellieLink component values =
                 values
 
 
-viewSection : String -> List (Html msg) -> Html msg
-viewSection name children =
-    section [ css [ flex (int 1) ] ]
-        (Heading.h2 [ Heading.style Heading.Subhead ] [ text name ]
+viewSection : String -> List Css.Style -> List (Html msg) -> Html msg
+viewSection name styles children =
+    section
+        [ css (flex (int 1) :: styles) ]
+        (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
 

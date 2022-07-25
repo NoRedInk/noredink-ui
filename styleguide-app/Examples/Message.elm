@@ -9,7 +9,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V3 as Message
 import ViewHelpers exposing (viewExamples)
 
@@ -194,8 +194,8 @@ example =
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
                     , Css.paddingTop (Css.px 20)
                     ]
+                , Heading.plaintext "Message.somethingWentWrong"
                 ]
-                [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
     }

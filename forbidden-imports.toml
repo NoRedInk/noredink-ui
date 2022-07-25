@@ -49,6 +49,9 @@ usages = ['styleguide-app/Examples/Tooltip.elm']
 [forbidden."Nri.Ui.Container.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Heading.V2"]
+hint = 'upgrade to V3'
+
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'
 usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
@@ -114,6 +117,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.SideNav.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.SideNav.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'
 
@@ -122,6 +128,9 @@ hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'
+
+[forbidden."Nri.Ui.Table.V5"]
+hint = 'upgrade to V6'
 
 [forbidden."Nri.Ui.Tabs.V6"]
 hint = 'upgrade to V7'

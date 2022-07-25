@@ -18,10 +18,9 @@ import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
-import Nri.Ui.SideNav.V3 as SideNav
+import Nri.Ui.SideNav.V4 as SideNav
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
@@ -39,6 +38,8 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , isSideNavOpen : Bool
+    , openTooltip : Maybe TooltipId
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     , inputMethod : InputMethod
@@ -55,6 +56,8 @@ init () url key =
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
+      , isSideNavOpen = True
+      , openTooltip = Nothing
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       , inputMethod = InputMethod.init
@@ -67,12 +70,18 @@ init () url key =
     )
 
 
+type TooltipId
+    = SideNavOpenCloseTooltip
+
+
 type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
+    | ToggleSideNav Bool
+    | ToggleTooltip TooltipId Bool
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
     | NewInputMethod InputMethod
@@ -130,6 +139,15 @@ update action model =
             ( model
             , FocusOn "maincontent"
             )
+
+        ToggleSideNav isOpen ->
+            ( { model | isSideNavOpen = isOpen }, None )
+
+        ToggleTooltip tooltipId True ->
+            ( { model | openTooltip = Just tooltipId }, None )
+
+        ToggleTooltip _ False ->
+            ( { model | openTooltip = Nothing }, None )
 
         LoadedPackages newPackagesResult ->
             let
@@ -293,10 +311,7 @@ viewCategory model category =
         )
 
 
-withSideNav :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
-    -> Html Msg
-    -> Html Msg
+withSideNav : Model key -> Html Msg -> Html Msg
 withSideNav model content =
     Html.div
         [ css
@@ -346,10 +361,8 @@ viewPreviews containerId navConfig examples =
             ]
 
 
-navigation :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
-    -> Html Msg
-navigation { moduleStates, route } =
+navigation : Model key -> Html Msg
+navigation { moduleStates, route, isSideNavOpen, openTooltip } =
     let
         examples =
             Dict.values moduleStates
@@ -383,6 +396,14 @@ navigation { moduleStates, route } =
             [ VendorPrefixed.value "position" "sticky"
             , top (px 55)
             ]
+        , SideNav.collapsible
+            { isOpen = isSideNavOpen
+            , toggle = ToggleSideNav
+            , isTooltipOpen = openTooltip == Just SideNavOpenCloseTooltip
+            , toggleTooltip = ToggleTooltip SideNavOpenCloseTooltip
+            }
+        , SideNav.navLabel "categories"
+        , SideNav.navId "sidenav__categories"
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"

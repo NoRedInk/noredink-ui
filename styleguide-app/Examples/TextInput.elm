@@ -6,24 +6,35 @@ module Examples.TextInput exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled as Html exposing (..)
+import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
+
+
+moduleName : String
+moduleName =
+    "TextInput"
+
+
+version =
+    7
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "TextInput"
-    , version = 7
+    { name = moduleName
+    , version = version
     , categories = [ Inputs ]
     , keyboardSupport = []
     , state = init
@@ -41,8 +52,17 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ Control.view UpdateControl state.control
-                |> Html.fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.control
+                , mainType = "Html msg"
+                , extraImports = []
+                , toExampleCode = \_ -> []
+                }
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , viewExamples <|
                 ( "readOnlyText"
                 , TextInput.view "Shareable Assignment Link"
@@ -141,6 +161,78 @@ customizableExamples state =
             { name = "search"
             , toString = identity
             , inputType = TextInput.search
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "givenName"
+            , toString = identity
+            , inputType = TextInput.givenName
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "familyName"
+            , toString = identity
+            , inputType = TextInput.familyName
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "organization"
+            , toString = identity
+            , inputType = TextInput.organization
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "organizationTitle"
+            , toString = identity
+            , inputType = TextInput.organizationTitle
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "addressLine1"
+            , toString = identity
+            , inputType = TextInput.addressLine1
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "addressLevel2"
+            , toString = identity
+            , inputType = TextInput.addressLevel2
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "postalCode"
+            , toString = identity
+            , inputType = TextInput.postalCode
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "tel"
+            , toString = identity
+            , inputType = TextInput.tel
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "sex"
+            , toString = identity
+            , inputType = TextInput.sex
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
