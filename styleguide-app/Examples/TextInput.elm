@@ -165,6 +165,78 @@ customizableExamples state =
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
             }
+        , toExample
+            { name = "givenName"
+            , toString = identity
+            , inputType = TextInput.givenName
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "familyName"
+            , toString = identity
+            , inputType = TextInput.familyName
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "organization"
+            , toString = identity
+            , inputType = TextInput.organization
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "organizationTitle"
+            , toString = identity
+            , inputType = TextInput.organizationTitle
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "addressLine1"
+            , toString = identity
+            , inputType = TextInput.addressLine1
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "addressLevel2"
+            , toString = identity
+            , inputType = TextInput.addressLevel2
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "postalCode"
+            , toString = identity
+            , inputType = TextInput.postalCode
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "tel"
+            , toString = identity
+            , inputType = TextInput.tel
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "sex"
+            , toString = identity
+            , inputType = TextInput.sex
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
         ]
 
 
