@@ -186,6 +186,7 @@ all =
     , ( "Badges & Celebration"
       , [ ( "badge", UiIcon.badge, [] )
         , ( "tada", UiIcon.tada, [] )
+        , ( "count", UiIcon.count, [] )
         ]
       )
     , ( "Lock & Key"
