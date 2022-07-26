@@ -13,7 +13,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Fonts.V1 as Fonts
@@ -39,7 +39,7 @@ type alias State =
 example : Example State Msg
 example =
     { name = "Checkbox"
-    , version = 5
+    , version = 6
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -53,6 +53,8 @@ example =
             , viewMultilineCheckboxes state
             , Heading.h2 [ Heading.style Heading.Subhead ] [ text "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
+            , viewCustomStyledCheckbox state
+            , viewCustomStyledPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -128,6 +130,9 @@ viewInteractableCheckbox id state =
         , selected = isSelected id state
         , disabled = False
         , theme = Checkbox.Square
+        , containerCss = []
+        , enabledLabelCss = []
+        , disabledLabelCss = []
         }
 
 
@@ -140,6 +145,9 @@ viewIndeterminateCheckbox id state =
         , selected = Checkbox.PartiallySelected
         , disabled = True
         , theme = Checkbox.Square
+        , containerCss = []
+        , enabledLabelCss = []
+        , disabledLabelCss = []
         }
 
 
@@ -152,6 +160,9 @@ viewLockedOnInsideCheckbox id state =
         , selected = Checkbox.NotSelected
         , disabled = True
         , theme = Checkbox.Locked
+        , containerCss = []
+        , enabledLabelCss = []
+        , disabledLabelCss = []
         }
 
 
@@ -164,6 +175,9 @@ viewDisabledCheckbox id state =
         , selected = isSelected id state
         , disabled = True
         , theme = Checkbox.Square
+        , containerCss = []
+        , enabledLabelCss = []
+        , disabledLabelCss = []
         }
 
 
@@ -183,6 +197,9 @@ viewMultilineCheckboxes state =
             , selected = isSelected id state
             , disabled = False
             , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
             }
         , Checkbox.viewWithLabel
             { identifier = "fake-partially-selected"
@@ -191,6 +208,9 @@ viewMultilineCheckboxes state =
             , selected = Checkbox.PartiallySelected
             , disabled = True
             , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
             }
         , Checkbox.viewWithLabel
             { identifier = "fake-not-selected-locked"
@@ -199,6 +219,9 @@ viewMultilineCheckboxes state =
             , selected = Checkbox.NotSelected
             , disabled = True
             , theme = Checkbox.Locked
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
             }
         , Checkbox.viewWithLabel
             { identifier = "fake-not-selected-square"
@@ -207,6 +230,9 @@ viewMultilineCheckboxes state =
             , selected = Checkbox.NotSelected
             , disabled = True
             , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
             }
         ]
 
@@ -237,6 +263,47 @@ viewPremiumCheckboxes state =
             [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
             , PremiumCheckbox.onLockedClick (Debug.log "Locked" NoOp)
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
+            ]
+        ]
+
+
+viewCustomStyledCheckbox : State -> Html Msg
+viewCustomStyledCheckbox state =
+    Html.section
+        [ css [ Css.width (Css.px 500) ] ]
+        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Custom-styled Checkboxes" ]
+        , let
+            id =
+                "styleguide-checkbox-custom-style"
+          in
+          Checkbox.viewWithLabel
+            { identifier = id
+            , label = "This is a custom-styled Checkbox"
+            , setterMsg = ToggleCheck id
+            , selected = isSelected id state
+            , disabled = False
+            , theme = Checkbox.Square
+            , containerCss = [ Css.backgroundColor Colors.navy ]
+            , enabledLabelCss = [ Css.color Colors.white ]
+            , disabledLabelCss = []
+            }
+        ]
+
+
+viewCustomStyledPremiumCheckboxes : State -> Html Msg
+viewCustomStyledPremiumCheckboxes state =
+    Html.section
+        [ css [ Css.width (Css.px 500) ] ]
+        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Custom-styled Premium Checkboxes" ]
+        , PremiumCheckbox.view
+            { label = "This is a custom-styled Premium Checkbox"
+            , onChange = ToggleCheck "premium-custom"
+            }
+            [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
+            , PremiumCheckbox.onLockedClick NoOp
+            , PremiumCheckbox.selected (Set.member "premium-custom" state.isChecked)
+            , PremiumCheckbox.setCheckboxContainerCss [ Css.backgroundColor Colors.navy ]
+            , PremiumCheckbox.setCheckboxEnabledLabelCss [ Css.color Colors.white ]
             ]
         ]
 

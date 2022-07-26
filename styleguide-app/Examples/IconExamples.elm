@@ -21,7 +21,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
@@ -167,6 +167,9 @@ viewSettings { showIconName } =
         , selected = Checkbox.selectedFromBool showIconName
         , disabled = False
         , theme = Checkbox.Square
+        , containerCss = []
+        , enabledLabelCss = []
+        , disabledLabelCss = []
         }
 
 
@@ -306,6 +309,9 @@ viewSingularExampleSettings groups state =
             , selected = Checkbox.selectedFromBool state.showBorder
             , disabled = False
             , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
             }
         , Html.label []
             [ Html.text "Color: "

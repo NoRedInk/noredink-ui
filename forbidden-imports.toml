@@ -42,6 +42,9 @@ hint = 'upgrade to V3'
 hint = 'upgrade to V10'
 usages = ['styleguide-app/../src/Nri/Ui/SlideModal/V2.elm']
 
+[forbidden."Nri.Ui.Checkbox.V5"]
+hint = 'upgrade to V6'
+
 [forbidden."Nri.Ui.ClickableSvg.V1"]
 hint = 'upgrade to V2'
 usages = ['styleguide-app/Examples/Tooltip.elm']

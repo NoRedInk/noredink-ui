@@ -12,7 +12,7 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V2 as Heading
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
@@ -80,6 +80,9 @@ example =
                     , selected = state.showLabel
                     , disabled = False
                     , theme = Checkbox.Square
+                    , containerCss = []
+                    , enabledLabelCss = []
+                    , disabledLabelCss = []
                     }
                 , Checkbox.viewWithLabel
                     { identifier = "textarea-autoresize"
@@ -88,6 +91,9 @@ example =
                     , selected = state.autoResize
                     , disabled = False
                     , theme = Checkbox.Square
+                    , containerCss = []
+                    , enabledLabelCss = []
+                    , disabledLabelCss = []
                     }
                 , Checkbox.viewWithLabel
                     { identifier = "textarea-isInError"
@@ -96,6 +102,9 @@ example =
                     , selected = state.isInError
                     , disabled = False
                     , theme = Checkbox.Square
+                    , containerCss = []
+                    , enabledLabelCss = []
+                    , disabledLabelCss = []
                     }
                 ]
             , TextArea.view
