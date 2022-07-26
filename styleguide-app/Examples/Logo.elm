@@ -58,6 +58,13 @@ all =
             , Css.margin (Css.px 4)
             ]
           )
+        , ( "noredinkMonochrome"
+          , Logo.noredinkMonochrome
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
         ]
       )
     , ( "Social Media"
