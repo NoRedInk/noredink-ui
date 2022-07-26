@@ -271,7 +271,7 @@ viewCustomStyledCheckbox : State -> Html Msg
 viewCustomStyledCheckbox state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
-        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Custom-styled Checkboxes" ]
+        [ Heading.h2 [ Heading.plaintext "Custom-styled Checkboxes" ]
         , let
             id =
                 "styleguide-checkbox-custom-style"
@@ -294,7 +294,7 @@ viewCustomStyledPremiumCheckboxes : State -> Html Msg
 viewCustomStyledPremiumCheckboxes state =
     Html.section
         [ css [ Css.width (Css.px 500) ] ]
-        [ Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Custom-styled Premium Checkboxes" ]
+        [ Heading.h2 [ Heading.plaintext "Custom-styled Premium Checkboxes" ]
         , PremiumCheckbox.view
             { label = "This is a custom-styled Premium Checkbox"
             , onChange = ToggleCheck "premium-custom"
