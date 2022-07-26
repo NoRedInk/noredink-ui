@@ -24,7 +24,7 @@ import Html.Styled.Events as Events
 import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
@@ -189,7 +189,7 @@ view settings groups =
     viewSettings settings
         :: List.map viewExampleSection groups
         ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
-                [ Heading.h3 [] [ Html.text "Example Usage" ]
+                [ Heading.h3 [ Heading.plaintext "Example Usage" ]
                 , viewSingularExampleSettings groups settings
                 , viewResults settings
                 ]
@@ -214,8 +214,8 @@ viewWithCustomStyles { showIconName } headerText icons =
                 , Css.lineHeight (Css.num 1.2)
                 , Css.fontWeight (Css.int 700)
                 ]
+            , Heading.plaintext headerText
             ]
-            [ Html.text headerText ]
         , Html.div
             [ css
                 [ Css.displayFlex

@@ -1,5 +1,6 @@
 module Nri.Ui.MediaQuery.V1 exposing
-    ( mobile, notMobile
+    ( anyMotion, prefersReducedMotion
+    , mobile, notMobile
     , mobileBreakpoint
     , quizEngineMobile
     , quizEngineBreakpoint
@@ -20,6 +21,8 @@ module Nri.Ui.MediaQuery.V1 exposing
             [ Css.padding (Css.px 2)
             ]
 
+@docs anyMotion, prefersReducedMotion
+
 @docs mobile, notMobile
 @docs mobileBreakpoint
 
@@ -31,8 +34,20 @@ module Nri.Ui.MediaQuery.V1 exposing
 
 -}
 
-import Css exposing (px)
-import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen)
+import Css exposing (Style, px)
+import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMediaQuery)
+
+
+{-| -}
+anyMotion : List Style -> Style
+anyMotion =
+    withMediaQuery [ "(prefers-reduced-motion: no-preference)" ]
+
+
+{-| -}
+prefersReducedMotion : List Style -> Style
+prefersReducedMotion =
+    withMediaQuery [ "(prefers-reduced-motion)" ]
 
 
 {-| Styles using the `mobileBreakpoint` value as the maxWidth.

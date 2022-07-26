@@ -18,9 +18,9 @@ import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -72,7 +72,7 @@ example =
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [] [ text "Example" ]
+                [ Heading.h2 [ Heading.plaintext "Example" ]
                 , viewExample breadCrumbs
                 ]
             , Table.view
@@ -81,18 +81,21 @@ example =
                     , value = .name
                     , width = Css.pct 15
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "About"
                     , value = .about
                     , width = Css.px 200
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "Result"
                     , value = \{ result } -> result breadCrumbs
                     , width = Css.px 50
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 ]
                 [ { name = "headerId"

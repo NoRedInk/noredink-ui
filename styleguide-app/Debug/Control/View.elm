@@ -26,7 +26,7 @@ import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
@@ -89,9 +89,8 @@ viewExampleCode ellieLink component values =
                         [ summary []
                             [ Heading.h3
                                 [ Heading.css [ Css.display Css.inline ]
-                                , Heading.style Heading.Small
+                                , Heading.plaintext example.sectionName
                                 ]
-                                [ text example.sectionName ]
                             ]
                         , ellieLink
                             { fullModuleName = Example.fullName component
@@ -117,8 +116,9 @@ viewExampleCode ellieLink component values =
 
 viewSection : String -> List Css.Style -> List (Html msg) -> Html msg
 viewSection name styles children =
-    section [ css (flex (int 1) :: styles) ]
-        (Heading.h2 [ Heading.style Heading.Subhead ] [ text name ]
+    section
+        [ css (flex (int 1) :: styles) ]
+        (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
 

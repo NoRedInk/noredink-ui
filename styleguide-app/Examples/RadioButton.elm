@@ -20,13 +20,13 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
@@ -125,7 +125,7 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , Heading.h2 [ Heading.style Heading.Subhead ] [ Html.text "Example" ]
+    , Heading.h2 [ Heading.plaintext "Example" ]
     , viewExamples selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"

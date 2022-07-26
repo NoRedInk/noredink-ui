@@ -32,13 +32,8 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V5
+import Nri.Ui.Table.V6 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
-
-
-type SortDirection
-    = Ascending
-    | Descending
 
 
 {-| -}
@@ -194,7 +189,7 @@ viewLoading config state =
         tableColumns =
             List.map (buildTableColumn config.updateMsg state) config.columns
     in
-    Nri.Ui.Table.V5.viewLoading
+    Table.viewLoading
         tableColumns
 
 
@@ -208,7 +203,7 @@ view config state entries =
         sorter =
             findSorter config.columns state.column
     in
-    Nri.Ui.Table.V5.view
+    Table.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
 
@@ -243,13 +238,19 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
+buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Table.Column entry msg
 buildTableColumn updateMsg state (Column column) =
-    Nri.Ui.Table.V5.custom
+    Table.custom
         { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
+        , sort =
+            if state.column == column.id then
+                Just state.sortDirection
+
+            else
+                Nothing
         }
 
 
