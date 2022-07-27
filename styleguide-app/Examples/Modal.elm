@@ -49,7 +49,7 @@ type alias ViewSettings =
     { title : String
     , titleVisibility : Maybe ( String, Modal.Attribute )
     , theme : Maybe ( String, Modal.Attribute )
-    , customCss : Modal.Attribute
+    , customCss : Maybe ( String, Modal.Attribute )
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -64,7 +64,7 @@ initViewSettings =
         |> Control.field "Modal title" (Control.string "Modal Title")
         |> Control.field "Title visibility" (Control.maybe False controlTitleVisibility)
         |> Control.field "Theme" (Control.maybe False controlTheme)
-        |> Control.field "Custom css" controlCss
+        |> Control.field "Custom css" (Control.maybe False controlCss)
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
@@ -95,14 +95,12 @@ controlTheme =
         ]
 
 
-controlCss : Control Modal.Attribute
+controlCss : Control ( String, Modal.Attribute )
 controlCss =
-    Control.map Modal.css <|
-        Control.choice
-            [ ( "[]", Control.value [] )
-            , ( "[ Css.borderRadius Css.zero ]", Control.value [ Css.borderRadius Css.zero ] )
-            , ( "[ Css.width (Css.px 900) ]", Control.value [ Css.width (Css.px 900) ] )
-            ]
+    CommonControls.choice moduleName
+        [ ( "css [ Css.borderRadius Css.zero ]", Modal.css [ Css.borderRadius Css.zero ] )
+        , ( "css [ Css.width (Css.px 900) ]", Modal.css [ Css.width (Css.px 900) ] )
+        ]
 
 
 moduleName : String
@@ -236,9 +234,7 @@ example =
                                         Nothing
                                   , Maybe.map Tuple.first settings.titleVisibility
                                   , Maybe.map Tuple.first settings.theme
-
-                                  -- TODO: add in other attributes!!!
-                                  --, Just settings.customCss
+                                  , Maybe.map Tuple.first settings.customCss
                                   ]
                                     |> List.filterMap identity
                                     |> ControlView.codeFromListSimple
@@ -296,7 +292,7 @@ example =
                     Nothing
                  , Maybe.map Tuple.second settings.titleVisibility
                  , Maybe.map Tuple.second settings.theme
-                 , Just settings.customCss
+                 , Maybe.map Tuple.second settings.customCss
                  ]
                     |> List.filterMap identity
                 )
