@@ -28,8 +28,8 @@ type alias FocusTrap msg =
 toAttribute : FocusTrap msg -> Html.Attribute msg
 toAttribute { firstId, lastId, focus } =
     WhenFocusLeaves.toAttribute
-        { firstId = firstId
-        , lastId = lastId
+        { firstId = Debug.log "firstId" firstId
+        , lastId = Debug.log "lastId " lastId
         , -- if the user tabs back while on the first id,
           -- we want to wrap around to the last id.
           tabBackAction = focus lastId
