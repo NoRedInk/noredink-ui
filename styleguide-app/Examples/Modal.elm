@@ -48,7 +48,7 @@ init =
 type alias ViewSettings =
     { title : String
     , titleVisibility : Maybe ( String, Modal.Attribute )
-    , theme : Modal.Attribute
+    , theme : Maybe ( String, Modal.Attribute )
     , customCss : Modal.Attribute
     , showX : Bool
     , showContinue : Bool
@@ -63,7 +63,7 @@ initViewSettings =
     Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
         |> Control.field "Title visibility" (Control.maybe False controlTitleVisibility)
-        |> Control.field "Theme" controlTheme
+        |> Control.field "Theme" (Control.maybe False controlTheme)
         |> Control.field "Custom css" controlCss
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
@@ -87,11 +87,11 @@ controlTitleVisibility =
         ]
 
 
-controlTheme : Control Modal.Attribute
+controlTheme : Control ( String, Modal.Attribute )
 controlTheme =
-    Control.choice
-        [ ( "info", Control.value Modal.info )
-        , ( "warning", Control.value Modal.warning )
+    CommonControls.choice moduleName
+        [ ( "warning", Modal.warning )
+        , ( "info", Modal.info )
         ]
 
 
@@ -235,9 +235,9 @@ example =
                                     else
                                         Nothing
                                   , Maybe.map Tuple.first settings.titleVisibility
+                                  , Maybe.map Tuple.first settings.theme
 
                                   -- TODO: add in other attributes!!!
-                                  --, Just settings.theme
                                   --, Just settings.customCss
                                   ]
                                     |> List.filterMap identity
@@ -295,7 +295,7 @@ example =
                    else
                     Nothing
                  , Maybe.map Tuple.second settings.titleVisibility
-                 , Just settings.theme
+                 , Maybe.map Tuple.second settings.theme
                  , Just settings.customCss
                  ]
                     |> List.filterMap identity
