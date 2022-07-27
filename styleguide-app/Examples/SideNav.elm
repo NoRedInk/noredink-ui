@@ -89,7 +89,7 @@ view ellieLinkConfig state =
         , update = SetControls
         , settings = state.settings
         , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , extraCode = []
         , toExampleCode =
             \{ navAttributes, entries } ->
                 [ { sectionName = "View"

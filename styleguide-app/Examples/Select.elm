@@ -63,7 +63,7 @@ example =
                 , update = UpdateSettings
                 , settings = state
                 , mainType = "Html msg"
-                , extraImports = []
+                , extraCode = []
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"

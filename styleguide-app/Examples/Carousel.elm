@@ -185,7 +185,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraImports = []
+                , extraCode = []
                 , toExampleCode =
                     \_ ->
                         let

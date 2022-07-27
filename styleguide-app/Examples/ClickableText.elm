@@ -143,7 +143,7 @@ viewExamples ellieLinkConfig (State control) =
         , update = SetState
         , settings = control
         , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , extraCode = []
         , toExampleCode =
             \{ label, attributes } ->
                 let

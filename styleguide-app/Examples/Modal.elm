@@ -10,6 +10,7 @@ import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -190,9 +191,63 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = "RootHtml.Html ModalMsg"
-                , extraImports = []
-                , toExampleCode = \_ -> []
+                , mainType = "RootHtml.Html Msg"
+                , extraCode = [ "type Msg = ModalMsg Modal.Msg | Focus String" ]
+                , toExampleCode =
+                    \_ ->
+                        let
+                            code =
+                                [ "Modal.view"
+                                , "\n\t{ title = " ++ Code.string settings.title
+                                , "\n\t, wrapMsg = ModalMsg"
+                                , "\n\t, content = [] -- The body of the modal goes in here"
+                                , "\n\t-- Use elements with Button.modal and ClickableText.modal for standardized footer elements"
+                                , "\n\t-- Remember to add an id to the first and final focusable element!"
+                                , "\n\t, footer = [] "
+                                , "\n\t, focusTrap ="
+                                , "\n\t\t{ focus = Focus"
+                                , "\n\t\t, firstId = "
+                                    ++ (if settings.showX then
+                                            Code.string Modal.closeButtonId
+
+                                        else if settings.showContinue then
+                                            Code.string continueButtonId
+
+                                        else
+                                            Code.string closeClickableTextId
+                                       )
+                                , "\n\t\t, lastId ="
+                                    ++ (if settings.showSecondary then
+                                            Code.string closeClickableTextId
+
+                                        else if settings.showContinue then
+                                            Code.string continueButtonId
+
+                                        else
+                                            Code.string Modal.closeButtonId
+                                       )
+                                , "\n\t\t}"
+                                , "\n\t}"
+                                , if settings.showX then
+                                    -- TODO: add in other attributes!!!
+                                    -- settings.titleVisibility
+                                    --, settings.theme
+                                    --, settings.customCss
+                                    "\n\t[Modal.closeButton]"
+
+                                  else
+                                    -- TODO: add in other attributes!!!
+                                    --[ settings.titleVisibility
+                                    --, settings.theme
+                                    --, settings.customCss
+                                    --]
+                                    "\n\t[]"
+                                , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
+                                , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
+                                ]
+                                    |> String.join ""
+                        in
+                        [ { sectionName = "Example", code = code } ]
                 }
             , launchModalButton settings
             , Modal.view
