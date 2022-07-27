@@ -7,7 +7,6 @@ module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute, toDecoder)
 -}
 
 import Accessibility.Styled as Html
-import Accessibility.Styled.Key as Key
 import Html.Styled.Events exposing (preventDefaultOn)
 import Json.Decode as Decode exposing (Decoder)
 
