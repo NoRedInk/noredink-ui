@@ -11,6 +11,7 @@ import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -46,7 +47,7 @@ init =
 
 type alias ViewSettings =
     { title : String
-    , titleVisibility : Modal.Attribute
+    , titleVisibility : Maybe ( String, Modal.Attribute )
     , theme : Modal.Attribute
     , customCss : Modal.Attribute
     , showX : Bool
@@ -61,7 +62,7 @@ initViewSettings : Control ViewSettings
 initViewSettings =
     Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
-        |> Control.field "Title visibility" controlTitleVisibility
+        |> Control.field "Title visibility" (Control.maybe False controlTitleVisibility)
         |> Control.field "Theme" controlTheme
         |> Control.field "Custom css" controlCss
         |> Control.field "X button" (Control.bool True)
@@ -78,11 +79,11 @@ initViewSettings =
             )
 
 
-controlTitleVisibility : Control Modal.Attribute
+controlTitleVisibility : Control ( String, Modal.Attribute )
 controlTitleVisibility =
-    Control.choice
-        [ ( "showTitle", Control.value Modal.showTitle )
-        , ( "hideTitle", Control.value Modal.hideTitle )
+    CommonControls.choice moduleName
+        [ ( "hideTitle", Modal.hideTitle )
+        , ( "showTitle", Modal.showTitle )
         ]
 
 
@@ -228,20 +229,19 @@ example =
                                        )
                                 , "\n\t\t}"
                                 , "\n\t}"
-                                , if settings.showX then
-                                    -- TODO: add in other attributes!!!
-                                    -- settings.titleVisibility
-                                    --, settings.theme
-                                    --, settings.customCss
-                                    "\n\t[Modal.closeButton]"
+                                , [ if settings.showX then
+                                        Just "Modal.closeButton"
 
-                                  else
-                                    -- TODO: add in other attributes!!!
-                                    --[ settings.titleVisibility
-                                    --, settings.theme
-                                    --, settings.customCss
-                                    --]
-                                    "\n\t[]"
+                                    else
+                                        Nothing
+                                  , Maybe.map Tuple.first settings.titleVisibility
+
+                                  -- TODO: add in other attributes!!!
+                                  --, Just settings.theme
+                                  --, Just settings.customCss
+                                  ]
+                                    |> List.filterMap identity
+                                    |> ControlView.codeFromListSimple
                                 , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
                                 , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
                                 ]
@@ -289,18 +289,16 @@ example =
                             Modal.closeButtonId
                     }
                 }
-                (if settings.showX then
-                    [ Modal.closeButton
-                    , settings.titleVisibility
-                    , settings.theme
-                    , settings.customCss
-                    ]
+                ([ if settings.showX then
+                    Just Modal.closeButton
 
-                 else
-                    [ settings.titleVisibility
-                    , settings.theme
-                    , settings.customCss
-                    ]
+                   else
+                    Nothing
+                 , Maybe.map Tuple.second settings.titleVisibility
+                 , Just settings.theme
+                 , Just settings.customCss
+                 ]
+                    |> List.filterMap identity
                 )
                 state.state
             ]
