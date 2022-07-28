@@ -101,7 +101,7 @@ example =
                 , update = UpdateSettings
                 , settings = model
                 , mainType = "RootHtml.Html ()"
-                , extraImports = [ "import Http" ]
+                , extraCode = [ "import Http" ]
                 , toExampleCode =
                     \{ page, recoveryText } ->
                         [ { sectionName = "Example"

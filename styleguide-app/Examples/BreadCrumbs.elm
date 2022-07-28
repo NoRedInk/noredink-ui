@@ -68,7 +68,7 @@ example =
                 , update = UpdateControl
                 , settings = state
                 , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , extraCode = []
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]

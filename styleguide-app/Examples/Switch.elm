@@ -57,7 +57,7 @@ example =
                 , update = UpdateSettings
                 , settings = state.settings
                 , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , extraCode = []
                 , toExampleCode =
                     \{ label, attributes } ->
                         [ { sectionName = "Example"

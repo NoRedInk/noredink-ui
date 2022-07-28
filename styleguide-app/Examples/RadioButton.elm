@@ -117,7 +117,7 @@ view ellieLinkConfig state =
         , update = SetSelectionSettings
         , settings = state.selectionSettings
         , mainType = "Html msg"
-        , extraImports = []
+        , extraCode = []
         , toExampleCode =
             \_ ->
                 [ { sectionName = "Example"

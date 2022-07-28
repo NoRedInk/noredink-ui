@@ -10,6 +10,8 @@ import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
+import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -45,9 +47,9 @@ init =
 
 type alias ViewSettings =
     { title : String
-    , titleVisibility : Modal.Attribute
-    , theme : Modal.Attribute
-    , customCss : Modal.Attribute
+    , titleVisibility : Maybe ( String, Modal.Attribute )
+    , theme : Maybe ( String, Modal.Attribute )
+    , customCss : Maybe ( String, Modal.Attribute )
     , showX : Bool
     , showContinue : Bool
     , showSecondary : Bool
@@ -60,9 +62,9 @@ initViewSettings : Control ViewSettings
 initViewSettings =
     Control.record ViewSettings
         |> Control.field "Modal title" (Control.string "Modal Title")
-        |> Control.field "Title visibility" controlTitleVisibility
-        |> Control.field "Theme" controlTheme
-        |> Control.field "Custom css" controlCss
+        |> Control.field "Title visibility" (Control.maybe False controlTitleVisibility)
+        |> Control.field "Theme" (Control.maybe False controlTheme)
+        |> Control.field "Custom css" (Control.maybe False controlCss)
         |> Control.field "X button" (Control.bool True)
         |> Control.field "Continue button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
@@ -77,30 +79,28 @@ initViewSettings =
             )
 
 
-controlTitleVisibility : Control Modal.Attribute
+controlTitleVisibility : Control ( String, Modal.Attribute )
 controlTitleVisibility =
-    Control.choice
-        [ ( "showTitle", Control.value Modal.showTitle )
-        , ( "hideTitle", Control.value Modal.hideTitle )
+    CommonControls.choice moduleName
+        [ ( "hideTitle", Modal.hideTitle )
+        , ( "showTitle", Modal.showTitle )
         ]
 
 
-controlTheme : Control Modal.Attribute
+controlTheme : Control ( String, Modal.Attribute )
 controlTheme =
-    Control.choice
-        [ ( "info", Control.value Modal.info )
-        , ( "warning", Control.value Modal.warning )
+    CommonControls.choice moduleName
+        [ ( "warning", Modal.warning )
+        , ( "info", Modal.info )
         ]
 
 
-controlCss : Control Modal.Attribute
+controlCss : Control ( String, Modal.Attribute )
 controlCss =
-    Control.map Modal.css <|
-        Control.choice
-            [ ( "[]", Control.value [] )
-            , ( "[ Css.borderRadius Css.zero ]", Control.value [ Css.borderRadius Css.zero ] )
-            , ( "[ Css.width (Css.px 900) ]", Control.value [ Css.width (Css.px 900) ] )
-            ]
+    CommonControls.choice moduleName
+        [ ( "css [ Css.borderRadius Css.zero ]", Modal.css [ Css.borderRadius Css.zero ] )
+        , ( "css [ Css.width (Css.px 900) ]", Modal.css [ Css.width (Css.px 900) ] )
+        ]
 
 
 moduleName : String
@@ -190,9 +190,60 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = "RootHtml.Html ModalMsg"
-                , extraImports = []
-                , toExampleCode = \_ -> []
+                , mainType = "RootHtml.Html Msg"
+                , extraCode = [ "type Msg = ModalMsg Modal.Msg | Focus String" ]
+                , toExampleCode =
+                    \_ ->
+                        let
+                            code =
+                                [ "Modal.view"
+                                , "\n\t{ title = " ++ Code.string settings.title
+                                , "\n\t, wrapMsg = ModalMsg"
+                                , "\n\t, content = [] -- The body of the modal goes in here"
+                                , "\n\t-- Use elements with Button.modal and ClickableText.modal for standardized footer elements"
+                                , "\n\t-- Remember to add an id to the first and final focusable element!"
+                                , "\n\t, footer = [] "
+                                , "\n\t, focusTrap ="
+                                , "\n\t\t{ focus = Focus"
+                                , "\n\t\t, firstId = "
+                                    ++ (if settings.showX then
+                                            Code.string Modal.closeButtonId
+
+                                        else if settings.showContinue then
+                                            Code.string continueButtonId
+
+                                        else
+                                            Code.string closeClickableTextId
+                                       )
+                                , "\n\t\t, lastId ="
+                                    ++ (if settings.showSecondary then
+                                            Code.string closeClickableTextId
+
+                                        else if settings.showContinue then
+                                            Code.string continueButtonId
+
+                                        else
+                                            Code.string Modal.closeButtonId
+                                       )
+                                , "\n\t\t}"
+                                , "\n\t}"
+                                , [ if settings.showX then
+                                        Just "Modal.closeButton"
+
+                                    else
+                                        Nothing
+                                  , Maybe.map Tuple.first settings.titleVisibility
+                                  , Maybe.map Tuple.first settings.theme
+                                  , Maybe.map Tuple.first settings.customCss
+                                  ]
+                                    |> List.filterMap identity
+                                    |> ControlView.codeFromListSimple
+                                , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
+                                , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
+                                ]
+                                    |> String.join ""
+                        in
+                        [ { sectionName = "Example", code = code } ]
                 }
             , launchModalButton settings
             , Modal.view
@@ -234,18 +285,16 @@ example =
                             Modal.closeButtonId
                     }
                 }
-                (if settings.showX then
-                    [ Modal.closeButton
-                    , settings.titleVisibility
-                    , settings.theme
-                    , settings.customCss
-                    ]
+                ([ if settings.showX then
+                    Just Modal.closeButton
 
-                 else
-                    [ settings.titleVisibility
-                    , settings.theme
-                    , settings.customCss
-                    ]
+                   else
+                    Nothing
+                 , Maybe.map Tuple.second settings.titleVisibility
+                 , Maybe.map Tuple.second settings.theme
+                 , Maybe.map Tuple.second settings.customCss
+                 ]
+                    |> List.filterMap identity
                 )
                 state.state
             ]

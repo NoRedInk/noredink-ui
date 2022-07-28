@@ -59,7 +59,7 @@ example =
                 , update = UpdateSettings
                 , settings = state.settings
                 , mainType = "RootHtml.Html msg"
-                , extraImports = [ "import Nri.Ui.Svg.V1 as Svg" ]
+                , extraCode = [ "import Nri.Ui.Svg.V1 as Svg" ]
                 , toExampleCode =
                     \settings ->
                         let
