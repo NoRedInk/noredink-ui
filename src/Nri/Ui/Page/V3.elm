@@ -49,7 +49,7 @@ type RecoveryText
 notFound : DefaultPage msg -> Html msg
 notFound defaultPage =
     view
-        { emoji = "🤔"
+        { emoji = "\u{1F914}"
         , title = "We couldn’t find that!"
         , subtitle = "Feel free to browse around, or check out our help center."
         , defaultPage = Just defaultPage
@@ -108,7 +108,7 @@ blockedV4 details defaultPage =
 noPermission : DefaultPage msg -> Html msg
 noPermission defaultPage =
     view
-        { emoji = "🤐"
+        { emoji = "\u{1F910}"
         , title = "You do not have access to this page!"
         , subtitle = "Talk to a site administrator if you believe you should have access to this page."
         , defaultPage = Just defaultPage
@@ -122,7 +122,7 @@ noPermission defaultPage =
 networkError : DefaultPage msg -> Html msg
 networkError defaultPage =
     view
-        { emoji = "🤝"
+        { emoji = "\u{1F91D}"
         , title = "Are you connected to the Internet?"
         , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
         , defaultPage = Just defaultPage
@@ -150,7 +150,7 @@ timeOut defaultPage =
 loggedOut : DefaultPage msg -> Html msg
 loggedOut defaultPage =
     view
-        { emoji = "🙃"
+        { emoji = "\u{1F643}"
         , title = "You were logged out."
         , subtitle = "Please log in again to continue working."
         , defaultPage = Just defaultPage
@@ -203,13 +203,17 @@ view : Config msg -> Html msg
 view config =
     viewContainer
         [ viewEmoji [ Html.text config.emoji ]
-        , Heading.h1 [ Heading.plaintext config.title ]
+        , Heading.h1
+            [ Heading.plaintext config.title
+            , Heading.css [ Css.textAlign Css.center ]
+            ]
         , Text.mediumBody
             [ Text.plaintext config.subtitle
             , Text.css
                 [ Css.fontSize (Css.px 20)
                 , Css.color Colors.gray45
                 , Css.marginBottom Css.zero
+                , Css.textAlign Css.center
                 ]
             ]
         , viewButton
