@@ -49,7 +49,7 @@ type RecoveryText
 notFound : DefaultPage msg -> Html msg
 notFound defaultPage =
     view
-        { emoji = "\u{1F914}"
+        { emoji = "🤔"
         , title = "We couldn’t find that!"
         , subtitle = "Feel free to browse around, or check out our help center."
         , defaultPage = Just defaultPage
@@ -108,7 +108,7 @@ blockedV4 details defaultPage =
 noPermission : DefaultPage msg -> Html msg
 noPermission defaultPage =
     view
-        { emoji = "\u{1F910}"
+        { emoji = "🤐"
         , title = "You do not have access to this page!"
         , subtitle = "Talk to a site administrator if you believe you should have access to this page."
         , defaultPage = Just defaultPage
@@ -122,7 +122,7 @@ noPermission defaultPage =
 networkError : DefaultPage msg -> Html msg
 networkError defaultPage =
     view
-        { emoji = "\u{1F91D}"
+        { emoji = "🤝"
         , title = "Are you connected to the Internet?"
         , subtitle = "Something went wrong, and we think the problem is probably with your internet connection."
         , defaultPage = Just defaultPage
@@ -150,7 +150,7 @@ timeOut defaultPage =
 loggedOut : DefaultPage msg -> Html msg
 loggedOut defaultPage =
     view
-        { emoji = "\u{1F643}"
+        { emoji = "🙃"
         , title = "You were logged out."
         , subtitle = "Please log in again to continue working."
         , defaultPage = Just defaultPage
