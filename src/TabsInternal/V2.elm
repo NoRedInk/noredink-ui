@@ -136,6 +136,7 @@ viewTab_ config index tab =
                          Attributes.disabled (not isSelected && tab.disabled)
                        , Aria.selected isSelected
                        , Role.tab
+                       , Attributes.type_ "button"
                        , Attributes.id (tabToId tab.idString)
                        , Events.on "keyup" <|
                             Json.Decode.andThen (keyEvents config tab) Events.keyCode
