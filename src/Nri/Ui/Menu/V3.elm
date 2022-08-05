@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+    , alignment, alignmentWithOffset, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+@docs alignment, alignmentWithOffset, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
 @docs Alignment
 
 
@@ -100,6 +100,7 @@ type alias MenuConfig msg =
 
     -- These are set using Attribute
     , alignment : Alignment
+    , alignmentOffset : Float
     , isDisabled : Bool
     , menuWidth : Maybe Int
     , buttonId : String
@@ -164,6 +165,13 @@ buttonWidth value =
 alignment : Alignment -> Attribute msg
 alignment value =
     Attribute <| \config -> { config | alignment = value }
+
+
+{-| Where the mneu popover should appear relative to the button with an offset
+-}
+alignmentWithOffset : Alignment -> Float -> Attribute msg
+alignmentWithOffset value offset =
+    Attribute <| \config -> { config | alignment = value, alignmentOffset = offset }
 
 
 {-| Whether the menu can be openned
@@ -242,6 +250,7 @@ view attributes config =
             , isOpen = config.isOpen
             , focusAndToggle = config.focusAndToggle
             , alignment = Right
+            , alignmentOffset = 0
             , isDisabled = False
             , menuWidth = Nothing
             , buttonId = ""
@@ -850,10 +859,10 @@ styleOuterContent contentVisible config =
         , zIndex (int <| config.zIndex + 1)
         , case config.alignment of
             Left ->
-                left zero
+                left (px config.alignmentOffset)
 
             Right ->
-                right zero
+                right (px config.alignmentOffset)
         ]
 
 
