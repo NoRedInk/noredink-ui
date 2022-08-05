@@ -329,7 +329,11 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     Nothing ->
                         Extra.none
                  , class "Nri-RadioButton-HiddenRadioInput"
-                 , Aria.describedBy disclosureIds
+                 , if List.length disclosureIds > 0 then
+                    Aria.describedBy disclosureIds
+
+                   else
+                    classList []
                  , css
                     [ position absolute
                     , top (pct 50)
