@@ -35,6 +35,7 @@ module Nri.Ui.Switch.V2 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
 import Html.Styled.Attributes as Attributes
@@ -215,7 +216,7 @@ viewCheckbox config =
     Html.checkbox config.id
         (Just config.selected)
         [ Attributes.id config.id
-        , Attributes.attribute "role" "switch"
+        , Role.switch
         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
