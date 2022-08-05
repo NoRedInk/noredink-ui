@@ -19,6 +19,7 @@ module Nri.Ui.Switch.V2 exposing
     - REQUIRE label and id always
     - Move custom attributes to the container
     - change disabled to take a bool (which I think is the slighty more common pattern)
+    - Adds `role="switch"`
 
 @docs view
 
@@ -34,6 +35,7 @@ module Nri.Ui.Switch.V2 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
 import Html.Styled.Attributes as Attributes
@@ -214,6 +216,7 @@ viewCheckbox config =
     Html.checkbox config.id
         (Just config.selected)
         [ Attributes.id config.id
+        , Role.switch
         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
