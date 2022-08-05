@@ -319,6 +319,7 @@ controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
 controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
+        |> ControlExtra.optionalListItem "alignmentWithOffset" controlAlignmentWithOffset
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
@@ -332,6 +333,30 @@ controlAlignment =
           )
         , ( "Right"
           , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
+          )
+        ]
+
+
+controlAlignmentWithOffset : Control ( String, Menu.Attribute msg )
+controlAlignmentWithOffset =
+    Control.choice
+        [ ( "Left"
+          , ControlExtra.int 0
+                |> Control.map
+                    (\offset ->
+                        ( "Menu.alignment Menu.Left " ++ String.fromInt offset
+                        , Menu.alignmentWithOffset Menu.Left (toFloat offset)
+                        )
+                    )
+          )
+        , ( "Right"
+          , ControlExtra.int 0
+                |> Control.map
+                    (\offset ->
+                        ( "Menu.alignment Menu.Right " ++ String.fromInt offset
+                        , Menu.alignmentWithOffset Menu.Right (toFloat offset)
+                        )
+                    )
           )
         ]
 
