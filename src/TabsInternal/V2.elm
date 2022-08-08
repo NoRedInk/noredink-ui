@@ -119,7 +119,8 @@ viewTab_ config index tab =
                 Nothing ->
                     -- This is for a non-SPA view
                     ( Html.button
-                    , [ Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
+                    , [ Attributes.type_ "button"
+                      , Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
                     )
 
