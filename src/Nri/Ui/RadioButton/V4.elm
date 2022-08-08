@@ -333,7 +333,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     Aria.describedBy disclosureIds
 
                    else
-                    classList []
+                    Extra.none
                  , css
                     [ position absolute
                     , top (pct 50)
