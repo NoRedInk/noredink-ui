@@ -179,6 +179,10 @@ initControls =
              <|
                 Control.string "The right item must be selected."
             )
+        |> ControlExtra.optionalListItem "disabled"
+            (Control.value ( "Select.disabled", Select.disabled ))
+        |> ControlExtra.optionalListItem "loading"
+            (Control.value ( "Select.loading", Select.loading ))
 
 
 initChoices : Control ( String, List (Choice String) )
