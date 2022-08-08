@@ -119,7 +119,8 @@ viewTab_ config index tab =
                 Nothing ->
                     -- This is for a non-SPA view
                     ( Html.button
-                    , [ Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
+                    , [ Attributes.type_ "button"
+                      , Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
                     )
 
@@ -136,7 +137,6 @@ viewTab_ config index tab =
                          Attributes.disabled (not isSelected && tab.disabled)
                        , Aria.selected isSelected
                        , Role.tab
-                       , Attributes.type_ "button"
                        , Attributes.id (tabToId tab.idString)
                        , Events.on "keyup" <|
                             Json.Decode.andThen (keyEvents config tab) Events.keyCode
