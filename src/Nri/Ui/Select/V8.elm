@@ -429,7 +429,13 @@ viewSelect config =
             , Css.whiteSpace Css.noWrap
 
             -- Interaction
-            , Css.cursor Css.pointer
+            , Css.cursor
+                (if config.disabled then
+                    Css.default
+
+                 else
+                    Css.pointer
+                )
 
             -- Size and spacing
             , Css.height (Css.px 45)
