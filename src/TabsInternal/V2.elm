@@ -247,16 +247,13 @@ viewTabPanel tab selected =
         ([ Role.tabPanel
          , Aria.labelledBy (tabToId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
+         , Attributes.tabindex 0
          ]
             ++ (if selected then
-                    [ Aria.hidden False
-                    , Attributes.tabindex 0
-                    ]
+                    []
 
                 else
                     [ Attributes.css [ Css.display Css.none ]
-                    , Aria.hidden True
-                    , Attributes.tabindex -1
                     ]
                )
         )
