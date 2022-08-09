@@ -22,7 +22,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
@@ -130,6 +130,13 @@ view ellieLinkConfig model =
                             , "          ]"
                             , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
                             , "        focus = identity"
+                            , "      , panelAsRegion = "
+                                ++ (if settings.panelAsRegion then
+                                        "True"
+
+                                    else
+                                        "False"
+                                   )
                             , "      }"
                             , "    , Accordion.styleAccordion"
                             , "      { entryStyles = []"
@@ -274,6 +281,7 @@ view ellieLinkConfig model =
                 []
             ]
         , focus = Focus
+        , panelAsRegion = settings_.panelAsRegion
         }
     , Accordion.styleAccordion
         { entryStyles =
@@ -333,6 +341,7 @@ type alias Settings =
     { icon : ( String, Bool -> Html Msg )
     , headerContent : ( String, Html Msg )
     , content : ( String, Html Msg )
+    , panelAsRegion : Bool
     }
 
 
@@ -342,6 +351,7 @@ initSettings =
         |> Control.field "icon" controlIcon
         |> Control.field "headerContent" controlHeaderContent
         |> Control.field "content" controlContent
+        |> Control.field "panelAsRegion" (Control.bool False)
 
 
 controlIcon : Control ( String, Bool -> Html Msg )

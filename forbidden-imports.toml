@@ -36,7 +36,10 @@ hint = 'Use Html.Styled'
 usages = ['styleguide-app/../src/Nri/Ui/Button/V8.elm']
 
 [forbidden."Nri.Ui.Accordion.V1"]
-hint = 'upgrade to V3'
+hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.Accordion.V3"]
+hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.Button.V8"]
 hint = 'upgrade to V10'
