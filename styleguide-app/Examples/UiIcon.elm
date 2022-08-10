@@ -59,6 +59,7 @@ all =
         , ( "sort", UiIcon.sort, [] )
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
+        , ( "kebab", UiIcon.kebab, [] )
         ]
       )
     , ( "Archive & Unarchive"
