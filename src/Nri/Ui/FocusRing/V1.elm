@@ -3,6 +3,7 @@ module Nri.Ui.FocusRing.V1 exposing
     , styles, tightStyles
     , boxShadows, outerBoxShadow, insetBoxShadow
     , customClass
+    , outerColor, innerColor
     )
 
 {-|
@@ -11,10 +12,11 @@ module Nri.Ui.FocusRing.V1 exposing
 @docs styles, tightStyles
 @docs boxShadows, outerBoxShadow, insetBoxShadow
 @docs customClass
+@docs outerColor, innerColor
 
 -}
 
-import Css
+import Css exposing (Color)
 import Css.Global exposing (Snippet)
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
@@ -98,8 +100,8 @@ styles =
 boxShadows : List String -> Css.Style
 boxShadows existingBoxShadows =
     existingBoxShadows
-        ++ [ "0 0 0 3px " ++ innerColor
-           , "0 0 0 6px " ++ outerColor
+        ++ [ "0 0 0 3px " ++ innerColorString
+           , "0 0 0 6px " ++ outerColorString
            ]
         |> applyBoxShadows
 
@@ -110,8 +112,8 @@ tightStyles : List Css.Style
 tightStyles =
     [ Css.outline Css.none
     , applyBoxShadows
-        [ "inset 0 0 0 2px " ++ innerColor
-        , "0 0 0 2px " ++ outerColor
+        [ "inset 0 0 0 2px " ++ innerColorString
+        , "0 0 0 2px " ++ outerColorString
         ]
     ]
 
@@ -123,7 +125,7 @@ Be very sure this is what you need before using this!
 -}
 insetBoxShadow : Css.Style
 insetBoxShadow =
-    applyBoxShadows [ "inset 0 0 0 3px " ++ outerColor ]
+    applyBoxShadows [ "inset 0 0 0 3px " ++ outerColorString ]
 
 
 {-| In special cases, we don't use a two-tone focus ring.
@@ -133,7 +135,7 @@ Be very sure this is what you need before using this!
 -}
 outerBoxShadow : Css.Style
 outerBoxShadow =
-    applyBoxShadows [ "0 0 0 3px " ++ outerColor ]
+    applyBoxShadows [ "0 0 0 3px " ++ outerColorString ]
 
 
 applyBoxShadows : List String -> Css.Style
@@ -142,11 +144,23 @@ applyBoxShadows =
     String.join "," >> Css.property "box-shadow"
 
 
-innerColor : String
+innerColorString : String
+innerColorString =
+    toCssString innerColor
+
+
+outerColorString : String
+outerColorString =
+    toCssString outerColor
+
+
+{-| -}
+innerColor : Color
 innerColor =
-    toCssString Colors.white
+    Colors.white
 
 
-outerColor : String
+{-| -}
+outerColor : Color
 outerColor =
-    toCssString Colors.red
+    Colors.red
