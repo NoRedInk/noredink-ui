@@ -317,6 +317,7 @@ viewIcon styles icon =
         [ Html.div
             [ css
                 [ display inlineBlock
+                , backgroundColor Colors.white
                 , height (Css.px 27)
                 , borderRadius (px 4)
                 ]
