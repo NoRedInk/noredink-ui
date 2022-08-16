@@ -58,6 +58,7 @@ import Nri.Ui
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
@@ -192,10 +193,17 @@ viewSkipLink onSkip =
     ClickableText.button "Skip to main content"
         [ ClickableText.icon UiIcon.arrowPointingRight
         , ClickableText.small
+        , ClickableText.custom [ Attributes.class FocusRing.customClass ]
         , ClickableText.css
             [ Css.pseudoClass "not(:focus)"
                 [ Style.invisibleStyle
                 ]
+            , Css.pseudoClass "focus-visible"
+                [ outline none
+                , FocusRing.outerBoxShadow
+                ]
+            , Css.padding (Css.px 2)
+            , Css.borderRadius (Css.px 4)
             ]
         , ClickableText.onClick onSkip
         ]
@@ -281,7 +289,10 @@ viewSidebarLeaf config extraStyles entryConfig =
                )
             ++ entryConfig.customStyles
         )
-        (attributes ++ entryConfig.customAttributes)
+        (Attributes.class FocusRing.customClass
+            :: attributes
+            ++ entryConfig.customAttributes
+        )
         [ viewJust
             (\icon_ ->
                 icon_
@@ -305,7 +316,9 @@ viewLockedEntry extraStyles entryConfig =
         ]
         (case entryConfig.onLockedContent of
             Just event ->
-                Events.onClick event :: entryConfig.customAttributes
+                Events.onClick event
+                    :: Attributes.class FocusRing.customClass
+                    :: entryConfig.customAttributes
 
             Nothing ->
                 entryConfig.customAttributes
@@ -322,6 +335,7 @@ viewLockedEntry extraStyles entryConfig =
 sharedEntryStyles : List Style
 sharedEntryStyles =
     [ padding2 (px 13) (px 20)
+    , Css.pseudoClass "focus-visible" [ outline none, FocusRing.insetBoxShadow ]
     , Css.property "word-break" "normal"
     , Css.property "overflow-wrap" "anywhere"
     , displayFlex

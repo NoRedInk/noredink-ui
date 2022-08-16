@@ -17,6 +17,7 @@ module Nri.Ui.Colors.Extra exposing
 
 import Css
 import SolidColor exposing (SolidColor)
+import TransparentColor
 
 
 {-| -}
@@ -50,5 +51,11 @@ withAlpha alpha { red, green, blue } =
 
 {-| -}
 toCssString : Css.Color -> String
-toCssString =
-    SolidColor.toRGBString << fromCssColor
+toCssString color =
+    TransparentColor.fromRGBA
+        { red = toFloat color.red
+        , green = toFloat color.green
+        , blue = toFloat color.blue
+        , alpha = TransparentColor.customOpacity color.alpha
+        }
+        |> TransparentColor.toRGBAString

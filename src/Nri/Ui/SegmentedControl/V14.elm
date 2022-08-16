@@ -26,8 +26,9 @@ import Css exposing (..)
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Nri.Ui.Colors.Extra exposing (withAlpha)
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -92,13 +93,8 @@ viewRadioGroup config =
                 inner extraAttrs =
                     Html.Styled.label
                         (css
-                            -- ensure that the focus state is visible, even
-                            -- though the radio button that technically has focus
-                            -- is not
-                            (Css.pseudoClass "focus-within"
-                                [ Css.property "outline-style" "auto" ]
-                                :: styles config.positioning numOptions index isSelected
-                            )
+                            (styles config.positioning numOptions index isSelected)
+                            :: Attributes.class FocusRing.customClass
                             :: extraAttrs
                         )
                         [ radio name option.idString isSelected <|
@@ -194,7 +190,7 @@ view config =
         toInternalTab option =
             { id = option.value
             , idString = option.idString
-            , tabAttributes = option.attributes
+            , tabAttributes = Attributes.class FocusRing.customClass :: option.attributes
             , tabTooltip =
                 case config.positioning of
                     Left FillContainer ->
@@ -272,6 +268,11 @@ styles positioning numEntries index isSelected =
 
             _ ->
                 []
+    , -- ensure that the focus state is visible & looks nice
+      Css.pseudoClass "focus-within"
+        [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
+        , outline none
+        ]
     ]
 
 
@@ -312,10 +313,20 @@ sharedSegmentStyles numEntries index =
 focusedSegmentStyles : Style
 focusedSegmentStyles =
     [ backgroundColor Colors.glacier
-    , boxShadow5 inset zero (px 3) zero (withAlpha 0.2 Colors.gray20)
+    , Css.property "box-shadow" focusedSegmentBoxShadowValue
     , color Colors.navy
     ]
         |> Css.batch
+
+
+focusedSegmentBoxShadowValue : String
+focusedSegmentBoxShadowValue =
+    let
+        colorStr =
+            ColorsExtra.withAlpha 0.2 Colors.gray20
+                |> ColorsExtra.toCssString
+    in
+    "inset 0 3px 0 " ++ colorStr
 
 
 unFocusedSegmentStyles : Style

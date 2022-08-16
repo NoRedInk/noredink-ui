@@ -50,7 +50,7 @@ example =
         [ Html.div [ css [ Css.position Css.relative ] ]
             [ Html.textarea
                 [ css
-                    [ InputStyles.input Standard False
+                    [ InputStyles.input Standard
                     , Css.minHeight (Css.px 100)
                     , Css.maxWidth (Css.px 140)
                     , Css.backgroundColor Colors.white |> Css.important
@@ -123,6 +123,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
                 { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
                 , autofocus = False
@@ -139,6 +140,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.contentCreation
                 { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
                 , autofocus = False
@@ -155,6 +157,7 @@ example =
                 , placeholder = "Placeholder"
                 , showLabel = state.showLabel == Checkbox.Selected
                 }
+            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
                 { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
                 , autofocus = False

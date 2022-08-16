@@ -99,6 +99,7 @@ import Markdown.Inline
 import Nri.Ui
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -605,10 +606,14 @@ renderButton ((ButtonOrLink config) as button_) =
     in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ config.customStyles ]
+        [ buttonStyles config.size config.width buttonStyle_ config.customStyles
+        , Css.pseudoClass "focus-visible"
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
             :: Attributes.type_ "button"
+            :: Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
         [ viewLabel config.size config.icon config.label ]
@@ -629,8 +634,14 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config.size config.width colorPalette config.customStyles ]
-        (attributes ++ config.customAttributes)
+        [ buttonStyles config.size config.width colorPalette config.customStyles
+        , Css.pseudoClass "focus-visible"
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
+        ]
+        (Attributes.class FocusRing.customClass
+            :: attributes
+            ++ config.customAttributes
+        )
         [ viewLabel config.size config.icon config.label ]
 
 
@@ -689,19 +700,34 @@ toggleButton :
     -> Html msg
 toggleButton config =
     let
+        pressedShadowColor =
+            ColorsExtra.withAlpha 0.2 Colors.gray20
+
+        toggledBoxShadow =
+            "inset 0 3px 0 "
+                ++ ColorsExtra.toCssString pressedShadowColor
+
         toggledStyles =
             if config.pressed then
                 Css.batch
                     [ Css.color Colors.navy
                     , Css.backgroundColor Colors.glacier
-                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
+                    , Css.pseudoClass "focus-visible"
+                        [ Css.outline Css.none
+                        , FocusRing.boxShadows [ toggledBoxShadow ]
+                        ]
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
                     , Css.fontWeight Css.bold
                     ]
 
             else
                 Css.batch
-                    []
+                    [ Css.pseudoClass "focus-visible"
+                        [ Css.outline Css.none
+                        , FocusRing.boxShadows []
+                        ]
+                    ]
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
@@ -729,6 +755,7 @@ toggleButton config =
         -- equivalent to preventDefaultBehavior = false
         -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
         , Attributes.type_ "button"
+        , Attributes.class FocusRing.customClass
         ]
         [ viewLabel Medium Nothing config.label ]
 

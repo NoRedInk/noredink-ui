@@ -417,7 +417,10 @@ viewSelect config =
                 )
             , Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
-            , Css.focus [ Css.borderColor Colors.azure ]
+            , Css.focus
+                [ Css.borderColor Colors.azure
+                , Css.borderRadius (Css.px 8) |> Css.important
+                ]
 
             -- Font and color
             , Css.color Colors.gray20

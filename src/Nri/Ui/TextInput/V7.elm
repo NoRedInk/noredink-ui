@@ -808,7 +808,7 @@ view label attributes =
                 ++ [ Attributes.id idValue
                    , InputErrorAndGuidanceInternal.describedBy idValue config
                    , Attributes.css
-                        [ InputStyles.input config.inputStyle isInError
+                        [ InputStyles.input config.inputStyle
                         , if config.inputStyle == InputStyles.Writing then
                             Css.Global.withClass "override-sass-styles"
                                 [ textAlign center
@@ -840,7 +840,11 @@ view label attributes =
                    , maybeAttr (attribute "inputmode") config.inputMode
                    , maybeAttr (attribute "autocomplete") config.autocomplete
                    , maybeAttr onEnter_ eventsAndValues.onEnter
-                   , class "override-sass-styles"
+                   , class "nri-ui-textinput override-sass-styles custom-focus-ring"
+                   , classList
+                        [ ( InputStyles.inputClass, True )
+                        , ( InputStyles.errorClass, isInError )
+                        ]
                    , Attributes.attribute "aria-invalid" <|
                         if isInError then
                             "true"
