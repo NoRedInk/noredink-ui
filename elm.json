@@ -6,7 +6,6 @@
     "version": "17.5.0",
     "exposed-modules": [
         "Nri.Ui",
-        "Nri.Ui.Accordion.V1",
         "Nri.Ui.Accordion.V3",
         "Nri.Ui.AssetPath",
         "Nri.Ui.AssignmentIcon.V2",
