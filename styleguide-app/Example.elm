@@ -12,7 +12,6 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.FocusRing.V1 as FocusRing
 
 
 type alias Example state msg =
@@ -119,7 +118,6 @@ preview_ { navigate, exampleHref } example =
                 [ Css.backgroundColor Colors.glacier
                 , Css.cursor Css.pointer
                 ]
-            , Css.pseudoClass "focus-within" [ FocusRing.boxShadows [] ]
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
@@ -127,7 +125,6 @@ preview_ { navigate, exampleHref } example =
                 [ ClickableText.href (exampleHref example)
                 , ClickableText.css [ Css.marginBottom (Css.px 10) ]
                 , ClickableText.nriDescription "doodad-link"
-                , ClickableText.custom [ Attributes.class FocusRing.customClass ]
                 ]
                 :: [ Html.div
                         [ Attributes.css
