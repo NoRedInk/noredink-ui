@@ -203,13 +203,17 @@ view : Config msg -> Html msg
 view config =
     viewContainer
         [ viewEmoji [ Html.text config.emoji ]
-        , Heading.h1 [ Heading.plaintext config.title ]
+        , Heading.h1
+            [ Heading.plaintext config.title
+            , Heading.css [ Css.textAlign Css.center ]
+            ]
         , Text.mediumBody
             [ Text.plaintext config.subtitle
             , Text.css
                 [ Css.fontSize (Css.px 20)
                 , Css.color Colors.gray45
                 , Css.marginBottom Css.zero
+                , Css.textAlign Css.center
                 ]
             ]
         , viewButton

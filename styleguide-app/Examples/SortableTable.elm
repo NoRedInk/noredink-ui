@@ -41,7 +41,7 @@ type alias State =
 example : Example State Msg
 example =
     { name = "SortableTable"
-    , version = 2
+    , version = 3
     , categories = [ Layout ]
     , keyboardSupport = []
     , state = init

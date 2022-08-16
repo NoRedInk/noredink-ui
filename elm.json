@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "17.2.0",
+    "version": "17.5.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V1",
@@ -15,6 +15,7 @@
         "Nri.Ui.Button.V10",
         "Nri.Ui.Carousel.V1",
         "Nri.Ui.Checkbox.V5",
+        "Nri.Ui.Checkbox.V6",
         "Nri.Ui.ClickableSvg.V2",
         "Nri.Ui.ClickableText.V3",
         "Nri.Ui.Container.V2",
@@ -85,7 +86,7 @@
         "elm-community/string-extra": "4.0.1 <= v < 5.0.0",
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
         "rtfeldman/elm-css": "17.0.1 <= v < 18.0.0",
-        "tesk9/accessible-html-with-css": "3.0.0 <= v < 4.0.0",
+        "tesk9/accessible-html-with-css": "3.1.0 <= v < 4.0.0",
         "tesk9/palette": "3.0.1 <= v < 4.0.0"
     },
     "test-dependencies": {

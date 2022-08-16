@@ -109,17 +109,15 @@ describe("UI tests", function () {
   const modalProcessing = async (name, location) => {
     await goTo(name, location);
 
-    await forAllOptions("Theme", async (option) => {
-      await page.click("#launch-modal");
-      await page.waitForSelector('[role="dialog"]');
-      await percySnapshot(page, `${name} - ${option}`);
+    await page.click("#launch-modal");
+    await page.waitForSelector('[role="dialog"]');
+    await percySnapshot(page, `${name} - info`);
 
-      axe = await new AxePuppeteer(page).analyze();
+    axe = await new AxePuppeteer(page).analyze();
 
-      await page.click('[aria-label="Close modal"]');
+    await page.click('[aria-label="Close modal"]');
 
-      handleAxeResults(`${name} - ${option}`, axe);
-    });
+    handleAxeResults(`${name} - info`, axe);
   };
 
   const pageProcessing = async (name, location) => {

@@ -192,7 +192,6 @@ type alias Customizations msg =
 {-| `top` headings are Colors.navy and have:
 
     font-size: 30px
-    line-height: 38px
     font-weight: 700
 
 By default.
@@ -203,14 +202,12 @@ top =
     (css << headingStyles)
         { color = Colors.navy
         , size = 30
-        , lineHeight = 38
         }
 
 
 {-| `subhead` headings are Colors.navy and have:
 
     font-size: 20px
-    line-height: 26px
     font-weight: 700
 
 By default.
@@ -221,14 +218,12 @@ subhead =
     (css << headingStyles)
         { color = Colors.navy
         , size = 20
-        , lineHeight = 26
         }
 
 
 {-| `small` headings are Colors.gray20 and have:
 
     font-size: 16px
-    line-height: 21px
     font-weight: 700
 
 By default.
@@ -243,14 +238,12 @@ small =
             :: headingStyles
                 { color = Colors.gray20
                 , size = 16
-                , lineHeight = 21
                 }
         )
 
 
 headingStyles :
     { color : Color
-    , lineHeight : Float
     , size : Float
     }
     -> List Css.Style
@@ -258,7 +251,7 @@ headingStyles config =
     [ Fonts.baseFont
     , fontSize (px config.size)
     , color config.color
-    , lineHeight (px config.lineHeight)
+    , lineHeight (num 1.2)
     , fontWeight (int 700)
     , padding zero
     , textAlign left

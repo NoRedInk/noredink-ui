@@ -611,7 +611,6 @@ viewCustom config =
                             AttributesExtra.none
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
-                    , Aria.hidden (not config.isOpen)
                     , css
                         [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
                             |> Maybe.withDefault (Css.batch [])

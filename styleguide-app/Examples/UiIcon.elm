@@ -59,6 +59,7 @@ all =
         , ( "sort", UiIcon.sort, [] )
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
+        , ( "kebab", UiIcon.kebab, [] )
         ]
       )
     , ( "Archive & Unarchive"
@@ -114,6 +115,8 @@ all =
         , ( "class", UiIcon.class, [] )
         , ( "leaderboard", UiIcon.leaderboard, [] )
         , ( "graduateCap", UiIcon.graduateCap, [] )
+        , ( "apple", UiIcon.apple, [] )
+        , ( "briefcase", UiIcon.briefcase, [] )
         ]
       )
     , ( "Time"

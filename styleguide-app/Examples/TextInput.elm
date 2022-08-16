@@ -59,7 +59,7 @@ example =
                 , update = UpdateControl
                 , settings = state.control
                 , mainType = "Html msg"
-                , extraImports = []
+                , extraCode = []
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]

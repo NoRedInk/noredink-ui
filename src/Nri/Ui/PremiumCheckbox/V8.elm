@@ -5,6 +5,9 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
     , Attribute
     , disabled, enabled
     , id
+    , setCheckboxContainerCss
+    , setCheckboxEnabledLabelCss
+    , setCheckboxDisabledLabelCss
     )
 
 {-| Changes from V7:
@@ -12,6 +15,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
   - Use PremiumDisplay instead of PremiumLevel
   - Rename showPennant to onLockedClick
   - Fix clicking on locked checkbox to send a onLockedClick
+  - Exposes checkbox custom styling
 
 @docs view
 
@@ -29,13 +33,20 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 @docs disabled, enabled
 @docs id
 
+
+### Custom CSS
+
+@docs setCheckboxContainerCss
+@docs setCheckboxEnabledLabelCss
+@docs setCheckboxDisabledLabelCss
+
 -}
 
 import Accessibility.Styled as Html exposing (Html)
 import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import Html.Styled.Events as Events
-import Nri.Ui.Checkbox.V5 as Checkbox
+import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -93,6 +104,27 @@ setSelectionStatus status =
     Attribute (\config -> { config | selected = status })
 
 
+{-| Set custom CSS for the checkbox container
+-}
+setCheckboxContainerCss : List Css.Style -> Attribute msg
+setCheckboxContainerCss checkboxContainerCss =
+    Attribute <| \config -> { config | checkboxContainerCss = checkboxContainerCss }
+
+
+{-| Set custom CSS for the enabled checkbox label
+-}
+setCheckboxEnabledLabelCss : List Css.Style -> Attribute msg
+setCheckboxEnabledLabelCss checkboxEnabledLabelCss =
+    Attribute <| \config -> { config | checkboxEnabledLabelCss = checkboxEnabledLabelCss }
+
+
+{-| Set custom CSS for the disabled checkbox label
+-}
+setCheckboxDisabledLabelCss : List Css.Style -> Attribute msg
+setCheckboxDisabledLabelCss checkboxDisabledLabelCss =
+    Attribute <| \config -> { config | checkboxDisabledLabelCss = checkboxDisabledLabelCss }
+
+
 {-| -}
 selected : Bool -> Attribute msg
 selected isSelected =
@@ -125,6 +157,9 @@ type alias Config msg =
     , containerCss : List Css.Style
     , selected : Checkbox.IsSelected
     , onLockedMsg : Maybe msg
+    , checkboxContainerCss : List Css.Style
+    , checkboxEnabledLabelCss : List Css.Style
+    , checkboxDisabledLabelCss : List Css.Style
     }
 
 
@@ -139,6 +174,9 @@ emptyConfig =
         ]
     , selected = Checkbox.NotSelected
     , onLockedMsg = Nothing
+    , checkboxContainerCss = []
+    , checkboxEnabledLabelCss = []
+    , checkboxDisabledLabelCss = []
     }
 
 
@@ -203,6 +241,9 @@ view { label, onChange } attributes =
 
                     else
                         Checkbox.Square
+                , containerCss = config.checkboxContainerCss
+                , enabledLabelCss = config.checkboxEnabledLabelCss
+                , disabledLabelCss = config.checkboxDisabledLabelCss
                 }
             ]
 

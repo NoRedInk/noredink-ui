@@ -519,7 +519,7 @@ view config attrsList model =
                 |> Root.div
                     (List.concat
                         [ [ FocusTrap.toAttribute config.focusTrap ]
-                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ] ]
                         ]
                     )
 
@@ -733,7 +733,6 @@ viewCloseButton closeModal =
             , Css.right Css.zero
 
             -- make appear above lesson content
-            , Css.zIndex (Css.int 10)
             , Css.backgroundColor (rgba 255 255 255 0.5)
             , Css.borderRadius (pct 50)
 

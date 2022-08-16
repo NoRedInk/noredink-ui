@@ -119,7 +119,8 @@ viewTab_ config index tab =
                 Nothing ->
                     -- This is for a non-SPA view
                     ( Html.button
-                    , [ Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
+                    , [ Attributes.type_ "button"
+                      , Events.onClick (config.focusAndSelect { select = tab.id, focus = Nothing })
                       ]
                     )
 
@@ -246,16 +247,15 @@ viewTabPanel tab selected =
         ([ Role.tabPanel
          , Aria.labelledBy (tabToId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
+         , Attributes.tabindex 0
          ]
             ++ (if selected then
-                    [ Aria.hidden False
-                    , Attributes.tabindex 0
+                    [ -- Used as selector for test queries
+                      Attributes.attribute "data-selected" "true"
                     ]
 
                 else
                     [ Attributes.css [ Css.display Css.none ]
-                    , Aria.hidden True
-                    , Attributes.tabindex -1
                     ]
                )
         )

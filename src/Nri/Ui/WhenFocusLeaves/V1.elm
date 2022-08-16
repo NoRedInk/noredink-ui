@@ -7,7 +7,7 @@ module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute, toDecoder)
 -}
 
 import Accessibility.Styled as Html
-import Accessibility.Styled.Key as Key
+import Html.Styled.Events exposing (preventDefaultOn)
 import Json.Decode as Decode exposing (Decoder)
 
 
@@ -28,7 +28,8 @@ toAttribute :
     }
     -> Html.Attribute msg
 toAttribute config =
-    Key.onKeyDown [ toDecoder config ]
+    preventDefaultOn "keydown"
+        (Decode.map (\msg -> ( msg, True )) (toDecoder config))
 
 
 {-| Use this decoder to add a focus watcher to an HTML element and define
