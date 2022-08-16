@@ -7,15 +7,17 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category exposing (Category)
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
 import Http
+import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
-import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V4 as SideNav
@@ -40,6 +42,7 @@ type alias Model key =
     , openTooltip : Maybe TooltipId
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
+    , inputMethod : InputMethod
     }
 
 
@@ -57,6 +60,7 @@ init () url key =
       , openTooltip = Nothing
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
+      , inputMethod = InputMethod.init
       }
     , Cmd.batch
         [ loadPackage
@@ -80,6 +84,7 @@ type Msg
     | ToggleTooltip TooltipId Bool
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
+    | NewInputMethod InputMethod
 
 
 update : Msg -> Model key -> ( Model key, Effect )
@@ -181,6 +186,9 @@ update action model =
         Focused _ ->
             ( model, None )
 
+        NewInputMethod inputMethod ->
+            ( { model | inputMethod = inputMethod }, None )
+
 
 type Effect
     = GoToRoute Route
@@ -215,9 +223,12 @@ perform navigationKey effect =
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
-    Dict.values model.moduleStates
-        |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
-        |> Sub.batch
+    Sub.batch
+        [ Dict.values model.moduleStates
+            |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
+            |> Sub.batch
+        , Sub.map NewInputMethod InputMethod.subscriptions
+        ]
 
 
 view : Model key -> Document Msg
@@ -227,6 +238,7 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
+                , Css.Global.global (InputMethod.styles model.inputMethod)
                 ]
     in
     case model.route of

@@ -57,6 +57,7 @@ import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
@@ -323,7 +324,11 @@ button attributes title =
     StandardButton
         (\menuConfig buttonAttributes ->
             Html.button
-                ([ classList [ ( "ToggleButton", True ), ( "WithBorder", buttonConfig.hasBorder ) ]
+                ([ classList
+                    [ ( "ToggleButton", True )
+                    , ( "WithBorder", buttonConfig.hasBorder )
+                    , ( FocusRing.customClass, True )
+                    ]
                  , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
@@ -334,6 +339,10 @@ button attributes title =
                     , height (pct 100)
                     , fontWeight (int 600)
                     , cursor pointer
+                    , pseudoClass "focus-visible"
+                        [ outline none
+                        , FocusRing.boxShadows []
+                        ]
                     , if menuConfig.isDisabled then
                         Css.batch
                             [ opacity (num 0.4)

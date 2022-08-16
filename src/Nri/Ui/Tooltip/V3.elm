@@ -851,8 +851,18 @@ viewTooltip tooltipId config =
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
-                 , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
-                 , Global.descendants [ Global.a [ Css.color Colors.white ] ]
+                 , Global.descendants
+                    [ Global.a
+                        [ Css.textDecoration Css.underline
+                        , Css.color Colors.white
+                        , Css.visited [ Css.color Colors.white ]
+                        , Css.hover [ Css.color Colors.white ]
+                        , Css.pseudoClass "focus-visible"
+                            [ Css.outline Css.none
+                            , Css.property "box-shadow" "0 0 0 2px #FFF"
+                            ]
+                        ]
+                    ]
                  ]
                     ++ config.tooltipStyleOverrides
                 )

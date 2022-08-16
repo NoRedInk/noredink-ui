@@ -42,6 +42,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -160,9 +161,9 @@ view { label, id } attrs =
             , Css.position Css.relative
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
-                    [ Global.class "switch-slider"
-                        [ stroke Colors.azure
-                        , Css.property "stroke-width" "3px"
+                    [ Global.class "switch-track"
+                        [ FocusRing.boxShadows []
+                        , Css.borderRadius (Css.px 16)
                         ]
                     ]
                 ]
@@ -367,6 +368,7 @@ viewSwitch config =
               else
                 Css.opacity (Css.num 1)
             ]
+        |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
 
 stroke : Color -> Style
