@@ -2,6 +2,7 @@ module Code exposing
     ( string, maybeString
     , maybeFloat
     , bool
+    , list, listMultiline
     )
 
 {-|
@@ -9,6 +10,7 @@ module Code exposing
 @docs string, maybeString
 @docs maybeFloat
 @docs bool
+@docs list, listMultiline
 
 -}
 
@@ -41,3 +43,38 @@ maybeFloat =
 bool : Bool -> String
 bool =
     Debug.toString
+
+
+{-| -}
+list : List String -> String
+list list_ =
+    let
+        monolineList =
+            listSingleline list_
+    in
+    if String.length monolineList > 80 then
+        listMultiline list_ 1
+
+    else
+        monolineList
+
+
+{-| -}
+listSingleline : List String -> String
+listSingleline list_ =
+    "[ " ++ String.join ", " list_ ++ " ]"
+
+
+{-| -}
+listMultiline : List String -> Int -> String
+listMultiline list_ indent =
+    let
+        indents =
+            newlineWithIndent indent
+    in
+    indents ++ "[ " ++ String.join (indents ++ ", ") list_ ++ indents ++ "] "
+
+
+newlineWithIndent : Int -> String
+newlineWithIndent indent =
+    String.repeat indent "\n    "
