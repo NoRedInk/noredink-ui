@@ -1,12 +1,12 @@
 module Debug.Control.View exposing
-    ( view
+    ( view, viewWithCodeGen
     , codeFromList, codeFromListWithIndentLevel
     , withIndentLevel
     )
 
 {-|
 
-@docs view
+@docs view, viewWithCodeGen
 @docs codeFromList, codeFromListWithIndentLevel
 @docs withIndentLevel
 
@@ -18,6 +18,8 @@ import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
+import Elm exposing (Expression)
+import Elm.ToString
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -26,6 +28,88 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
+
+
+{-| -}
+viewWithCodeGen :
+    { ellieLinkConfig : EllieLink.Config
+    , name : String
+    , version : Int
+    , update : Control a -> msg
+    , settings : Control a
+    , mainType : String
+    , extraCode : List String
+    , exampleCode : List { sectionName : String, code : Expression }
+    }
+    -> Html msg
+viewWithCodeGen config =
+    div
+        [ css
+            [ displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.property "gap" "10px"
+            , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
+            ]
+        ]
+        [ viewSection "Settings"
+            [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
+            [ fromUnstyled (Control.view config.update config.settings) ]
+        , viewIf
+            (\_ ->
+                viewExampleCodeWithCodeGen
+                    (EllieLink.view config.ellieLinkConfig)
+                    config
+                    config.exampleCode
+            )
+            (not (List.isEmpty config.exampleCode))
+        ]
+
+
+viewExampleCodeWithCodeGen :
+    (EllieLink.SectionExample -> Html msg)
+    -> { component | name : String, version : Int, mainType : String, extraCode : List String }
+    -> List { sectionName : String, code : Expression }
+    -> Html msg
+viewExampleCodeWithCodeGen ellieLink component values =
+    viewSection "Code Sample" [] <|
+        Text.smallBodyGray
+            [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
+            ]
+            :: List.concatMap
+                (\example ->
+                    let
+                        codeString : String
+                        codeString =
+                            (Elm.ToString.expression example.code).body
+                    in
+                    [ details
+                        []
+                        [ summary []
+                            [ Heading.h3
+                                [ Heading.css [ Css.display Css.inline ]
+                                , Heading.plaintext example.sectionName
+                                ]
+                            ]
+                        , ellieLink
+                            { fullModuleName = Example.fullName component
+                            , name = component.name
+                            , sectionName = example.sectionName
+                            , mainType = component.mainType
+                            , extraCode = component.extraCode
+                            , code = codeString
+                            }
+                        , code
+                            [ css
+                                [ display block
+                                , whiteSpace preWrap
+                                , Css.marginTop (px 8)
+                                ]
+                            ]
+                            [ text codeString ]
+                        ]
+                    ]
+                )
+                values
 
 
 {-| -}
