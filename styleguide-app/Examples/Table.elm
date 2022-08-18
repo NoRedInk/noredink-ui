@@ -8,6 +8,7 @@ module Examples.Table exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -89,14 +90,14 @@ example =
                         let
                             codeWithData viewName =
                                 List.map datumToString data
-                                    |> ControlView.codeFromListSimple
+                                    |> Code.list
                                     |> toExampleCode viewName
 
                             toExampleCode viewName dataStr =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
-                                        ++ ControlView.codeFromListSimple columnsCode
+                                        ++ Code.list columnsCode
                                         ++ dataStr
                                 }
                         in

@@ -237,7 +237,7 @@ example =
                                   , Maybe.map Tuple.first settings.customCss
                                   ]
                                     |> List.filterMap identity
-                                    |> ControlView.codeFromListSimple
+                                    |> Code.list
                                 , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
                                 , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
                                 ]

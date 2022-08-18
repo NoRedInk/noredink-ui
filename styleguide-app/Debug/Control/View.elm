@@ -1,6 +1,5 @@
 module Debug.Control.View exposing
     ( view
-    , codeFromListSimple, codeFromListSimpleWithIndentLevel
     , codeFromList, codeFromListWithIndentLevel
     , codeFromListWithHardcoded
     , withIndentLevel
@@ -9,7 +8,6 @@ module Debug.Control.View exposing
 {-|
 
 @docs view
-@docs codeFromListSimple, codeFromListSimpleWithIndentLevel
 @docs codeFromList, codeFromListWithIndentLevel
 @docs codeFromListWithHardcoded
 
@@ -17,6 +15,7 @@ module Debug.Control.View exposing
 
 -}
 
+import Code
 import Css exposing (..)
 import Css.Global
 import Css.Media exposing (withMedia)
@@ -131,33 +130,13 @@ codeFromListWithHardcoded hardcodes elements =
 
 
 codeFromList : List ( String, a ) -> String
-codeFromList =
-    codeFromListWithIndentLevel 1
+codeFromList list =
+    Code.list (List.map Tuple.first list)
 
 
 codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
 codeFromListWithIndentLevel indent list =
-    codeFromListSimpleWithIndentLevel indent (List.map Tuple.first list)
-
-
-codeFromListSimple : List String -> String
-codeFromListSimple =
-    codeFromListSimpleWithIndentLevel 1
-
-
-codeFromListSimpleWithIndentLevel : Int -> List String -> String
-codeFromListSimpleWithIndentLevel indent list =
-    let
-        indents =
-            withIndentLevel indent
-    in
-    "\n"
-        ++ indents
-        ++ "[ "
-        ++ String.join ("\n" ++ indents ++ ", ") list
-        ++ "\n"
-        ++ indents
-        ++ "] "
+    Code.listMultiline (List.map Tuple.first list) indent
 
 
 withIndentLevel : Int -> String
