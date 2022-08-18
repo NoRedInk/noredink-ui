@@ -13,12 +13,14 @@ module Examples.Accordion exposing
 import Accessibility.Styled as Html exposing (Html)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
-import CommonControls
+import Code exposing (f, fExposed, hardcode, val)
+import CommonControls2 as CommonControls
 import Css exposing (..)
 import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import EllieLink
+import Elm exposing (Expression)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
@@ -90,14 +92,19 @@ defaultCaret =
     DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
 
 
+accordionF : String -> List Expression -> Expression
+accordionF =
+    f moduleName
+
+
 {-| -}
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
     let
-        settings_ =
+        settings =
             Control.currentValue model.settings
     in
-    [ ControlView.view
+    [ ControlView.viewWithCodeGen
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
@@ -108,50 +115,63 @@ view ellieLinkConfig model =
             [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
             , "import Nri.Ui.Svg.V1 as Svg"
             ]
-        , toExampleCode =
-            \settings ->
-                [ { sectionName = "Partial example"
-                  , code =
-                        String.join "\n"
-                            [ "  div [] ["
-                            , "    Accordion.view"
-                            , "      { entries ="
-                            , "          [ Accordion.AccordionEntry"
-                            , "              { caret = " ++ Tuple.first settings.icon
-                            , "              , content = \\() -> " ++ Tuple.first settings.content
-                            , "              , entryClass = \"customizable-example\""
-                            , "              , headerContent = " ++ Tuple.first settings.headerContent
-                            , "              , headerId = \"customizable-example-header\""
-                            , "              , headerLevel = Accordion.H4"
-                            , "              , isExpanded = True"
-                            , "              , toggle = Nothing"
-                            , "              }"
-                            , "              []"
-                            , "          ]"
-                            , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
-                            , "        focus = identity"
-                            , "      }"
-                            , "    , Accordion.styleAccordion"
-                            , "      { entryStyles = []"
-                            , "      , entryExpandedStyles = []"
-                            , "      , entryClosedStyles = []"
-                            , "      , headerStyles = []"
-                            , "      , headerExpandedStyles = []"
-                            , "      , headerClosedStyles = []"
-                            , "      , contentStyles = []"
-                            , "      }"
-                            , "  ]"
+        , exampleCode =
+            [ { sectionName = "Partial example"
+              , code =
+                    Elm.apply
+                        (Elm.value
+                            { importFrom = []
+                            , name = "div"
+                            , annotation = Nothing
+                            }
+                        )
+                        [ Elm.list []
+                        , Elm.list
+                            [ accordionF "view"
+                                [ Elm.record
+                                    [ ( "entries"
+                                      , Elm.list
+                                            [ accordionF "AccordionEntry"
+                                                [ Elm.record
+                                                    [ ( "caret", Tuple.first settings.icon )
+                                                    , ( "content", Code.always (Tuple.first settings.content) )
+                                                    , ( "entryClass", Elm.string "customizable-example" )
+                                                    , ( "headerContent", Tuple.first settings.headerContent )
+                                                    , ( "headerId", Elm.string "customizable-example-header" )
+                                                    , ( "headerLevel", hardcode "Accordion.H4" )
+                                                    , ( "isExpanded", Elm.bool True )
+                                                    , ( "toggle", Elm.nothing )
+                                                    ]
+                                                , Elm.list []
+                                                ]
+                                            ]
+                                      )
+                                    , ( "focus", hardcode "identity  -- When using Accordion, be sure to wire up Focus management correctly!" )
+                                    ]
+                                ]
+                            , accordionF "styleAccordion"
+                                [ Elm.record
+                                    [ ( "entryStyles", Elm.list [] )
+                                    , ( "entryExpandedStyles", Elm.list [] )
+                                    , ( "entryClosedStyles", Elm.list [] )
+                                    , ( "headerStyles", Elm.list [] )
+                                    , ( "headerExpandedStyles", Elm.list [] )
+                                    , ( "headerClosedStyles", Elm.list [] )
+                                    , ( "contentStyles", Elm.list [] )
+                                    ]
+                                ]
                             ]
-                  }
-                ]
+                        ]
+              }
+            ]
         }
     , Accordion.view
         { entries =
             [ AccordionEntry
-                { caret = Tuple.second settings_.icon
-                , content = \() -> Tuple.second settings_.content
+                { caret = Tuple.second settings.icon
+                , content = \() -> Tuple.second settings.content
                 , entryClass = "customizable-example"
-                , headerContent = Tuple.second settings_.headerContent
+                , headerContent = Tuple.second settings.headerContent
                 , headerId = "customizable-example-header"
                 , headerLevel = Accordion.H4
                 , isExpanded = Set.member 4 model.expanded
@@ -330,9 +350,9 @@ type alias State =
 
 
 type alias Settings =
-    { icon : ( String, Bool -> Html Msg )
-    , headerContent : ( String, Html Msg )
-    , content : ( String, Html Msg )
+    { icon : ( Expression, Bool -> Html Msg )
+    , headerContent : ( Expression, Html Msg )
+    , content : ( Expression, Html Msg )
     }
 
 
@@ -344,45 +364,36 @@ initSettings =
         |> Control.field "content" controlContent
 
 
-controlIcon : Control ( String, Bool -> Html Msg )
+controlIcon : Control ( Expression, Bool -> Html Msg )
 controlIcon =
     Control.choice
         [ ( "DisclosureIndicator"
           , Control.value
-                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
+                ( hardcode "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
                 , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
                 )
           )
-        , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
+        , ( "none", Control.value ( hardcode "\\_ -> text \"\"", \_ -> Html.text "" ) )
         , ( "UiIcon"
           , Control.map
-                (\( code, icon ) ->
-                    ( "\\_ -> Svg.toHtml " ++ code
-                    , \_ -> Svg.toHtml icon
-                    )
-                )
+                (\( code, icon ) -> ( Code.always code, \_ -> Svg.toHtml icon ))
                 CommonControls.uiIcon
           )
         ]
 
 
-controlHeaderContent : Control ( String, Html Msg )
+controlHeaderContent : Control ( Expression, Html Msg )
 controlHeaderContent =
     Control.map
-        (\v -> ( quoteF "text" v, Html.text v ))
+        (\v -> ( fExposed "text" [ Elm.string v ], Html.text v ))
         (Control.string "Berries")
 
 
-controlContent : Control ( String, Html Msg )
+controlContent : Control ( Expression, Html Msg )
 controlContent =
     Control.map
-        (\v -> ( quoteF "text" v, Html.text v ))
+        (\v -> ( fExposed "text" [ Elm.string v ], Html.text v ))
         (Control.stringTextarea "🍓 There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy.")
-
-
-quoteF : String -> String -> String
-quoteF f v =
-    f ++ " \"" ++ v ++ "\""
 
 
 type Msg

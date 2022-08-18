@@ -1,5 +1,6 @@
 module Code exposing
-    ( string, maybeString
+    ( f, fExposed, val, hardcode, always
+    , string, maybeString
     , maybeFloat
     , bool
     , commentInline
@@ -8,6 +9,7 @@ module Code exposing
 
 {-|
 
+@docs f, fExposed, val, hardcode, always
 @docs string, maybeString
 @docs maybeFloat
 @docs bool
@@ -15,6 +17,43 @@ module Code exposing
 @docs list, listMultiline
 
 -}
+
+import Elm exposing (Expression)
+
+
+f : String -> String -> List Expression -> Expression
+f moduleName name =
+    Elm.apply
+        (Elm.value
+            { importFrom = [ moduleName ]
+            , name = name
+            , annotation = Nothing
+            }
+        )
+
+
+fExposed : String -> List Expression -> Expression
+fExposed name =
+    Elm.apply (hardcode name)
+
+
+val : String -> String -> Expression
+val moduleName name =
+    Elm.value
+        { importFrom = [ moduleName ]
+        , name = name
+        , annotation = Nothing
+        }
+
+
+hardcode : String -> Expression
+hardcode value =
+    Elm.value { importFrom = [], name = value, annotation = Nothing }
+
+
+always : Expression -> Expression
+always expression =
+    Elm.fn ( "_", Nothing ) (\_ -> expression)
 
 
 {-| -}
