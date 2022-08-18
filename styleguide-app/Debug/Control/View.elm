@@ -1,7 +1,6 @@
 module Debug.Control.View exposing
     ( view
     , codeFromList, codeFromListWithIndentLevel
-    , codeFromListWithHardcoded
     , withIndentLevel
     )
 
@@ -9,8 +8,6 @@ module Debug.Control.View exposing
 
 @docs view
 @docs codeFromList, codeFromListWithIndentLevel
-@docs codeFromListWithHardcoded
-
 @docs withIndentLevel
 
 -}
@@ -120,13 +117,6 @@ viewSection name styles children =
         (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-codeFromListWithHardcoded : List String -> List ( String, a ) -> String
-codeFromListWithHardcoded hardcodes elements =
-    List.map (\v -> ( v, () )) hardcodes
-        ++ List.map (Tuple.mapSecond (always ())) elements
-        |> codeFromList
 
 
 codeFromList : List ( String, a ) -> String

@@ -2,6 +2,7 @@ module Code exposing
     ( string, maybeString
     , maybeFloat
     , bool
+    , commentInline
     , list, listMultiline
     )
 
@@ -10,6 +11,7 @@ module Code exposing
 @docs string, maybeString
 @docs maybeFloat
 @docs bool
+@docs commentInline
 @docs list, listMultiline
 
 -}
@@ -43,6 +45,12 @@ maybeFloat =
 bool : Bool -> String
 bool =
     Debug.toString
+
+
+{-| -}
+commentInline : String -> String
+commentInline comment =
+    "-- " ++ comment
 
 
 {-| -}
