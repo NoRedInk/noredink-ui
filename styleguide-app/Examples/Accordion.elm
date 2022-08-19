@@ -21,9 +21,13 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import EllieLink
 import Elm exposing (Expression)
+import Elm.Op
 import Example exposing (Example)
 import Gen.Accessibility.Styled
+import Gen.Css
 import Gen.Nri.Ui.Accordion.V3 as AccordionCode
+import Gen.Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicatorCode
+import Gen.Nri.Ui.Svg.V1 as SvgCode
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
@@ -359,11 +363,21 @@ controlIcon =
     Control.choice
         [ ( "DisclosureIndicator"
           , Control.value
-                ( hardcode "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
+                ( Elm.fn ( "isOpen", Nothing )
+                    (\isOpen ->
+                        isOpen
+                            |> DisclosureIndicatorCode.call_.large (Elm.list [ Gen.Css.marginRight (Gen.Css.px 8) ])
+                            |> SvgCode.toHtml
+                    )
                 , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
                 )
           )
-        , ( "none", Control.value ( hardcode "\\_ -> text \"\"", \_ -> Html.text "" ) )
+        , ( "none"
+          , Control.value
+                ( Code.always (Gen.Accessibility.Styled.text "")
+                , \_ -> Html.text ""
+                )
+          )
         , ( "UiIcon"
           , Control.map
                 (\( code, icon ) -> ( Code.always code, \_ -> Svg.toHtml icon ))
@@ -375,14 +389,14 @@ controlIcon =
 controlHeaderContent : Control ( Expression, Html Msg )
 controlHeaderContent =
     Control.map
-        (\v -> ( fExposed "text" [ Elm.string v ], Html.text v ))
+        (\v -> ( Gen.Accessibility.Styled.text v, Html.text v ))
         (Control.string "Berries")
 
 
 controlContent : Control ( Expression, Html Msg )
 controlContent =
     Control.map
-        (\v -> ( fExposed "text" [ Elm.string v ], Html.text v ))
+        (\v -> ( Gen.Accessibility.Styled.text v, Html.text v ))
         (Control.stringTextarea "🍓 There are many types of berries and all of them are delicious (or poisonous (or both)). Blackberries and mulberries are especially drool-worthy.")
 
 
