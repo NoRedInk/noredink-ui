@@ -1,0 +1,13 @@
+{
+    "elm-codegen-version": "0.1.3",
+    "codegen-helpers": {
+        "packages": {
+            "elm/core": "1.0.5",
+            "tesk9/accessible-html-with-css": "3.1.0",
+            "rtfeldman/elm-css": "17.1.1"
+        },
+        "local": [
+            "codegen/helpers/"
+        ]
+    }
+}
