@@ -23,6 +23,7 @@ import EllieLink
 import Elm exposing (Expression)
 import Example exposing (Example)
 import Gen.Accessibility.Styled
+import Gen.Nri.Ui.Accordion.V3 as AccordionCode
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
@@ -122,30 +123,26 @@ view ellieLinkConfig model =
               , code =
                     Gen.Accessibility.Styled.div
                         []
-                        [ accordionF "view"
-                            [ Elm.record
-                                [ ( "entries"
-                                  , Elm.list
-                                        [ accordionF "AccordionEntry"
-                                            [ Elm.record
-                                                [ ( "caret", Tuple.first settings.icon )
-                                                , ( "content", Code.always (Tuple.first settings.content) )
-                                                , ( "entryClass", Elm.string "customizable-example" )
-                                                , ( "headerContent", Tuple.first settings.headerContent )
-                                                , ( "headerId", Elm.string "customizable-example-header" )
-                                                , ( "headerLevel", hardcode "Accordion.H4" )
-                                                , ( "isExpanded", Elm.bool True )
-                                                , ( "toggle", Elm.nothing )
-                                                ]
-                                            , Elm.list []
-                                            ]
+                        [ AccordionCode.view
+                            { entries =
+                                [ accordionF "AccordionEntry"
+                                    [ Elm.record
+                                        [ ( "caret", Tuple.first settings.icon )
+                                        , ( "content", Code.always (Tuple.first settings.content) )
+                                        , ( "entryClass", Elm.string "customizable-example" )
+                                        , ( "headerContent", Tuple.first settings.headerContent )
+                                        , ( "headerId", Elm.string "customizable-example-header" )
+                                        , ( "headerLevel", hardcode "Accordion.H4" )
+                                        , ( "isExpanded", Elm.bool True )
+                                        , ( "toggle", Elm.nothing )
                                         ]
-                                  )
-                                , ( "focus", hardcode "identity  -- When using Accordion, be sure to wire up Focus management correctly!" )
+                                    , Elm.list []
+                                    ]
                                 ]
-                            ]
-                        , accordionF "styleAccordion"
-                            [ Elm.record
+                            , focus = \_ -> hardcode "identity  -- When using Accordion, be sure to wire up Focus management correctly!"
+                            }
+                        , AccordionCode.styleAccordion <|
+                            Elm.record
                                 [ ( "entryStyles", Elm.list [] )
                                 , ( "entryExpandedStyles", Elm.list [] )
                                 , ( "entryClosedStyles", Elm.list [] )
@@ -154,7 +151,6 @@ view ellieLinkConfig model =
                                 , ( "headerClosedStyles", Elm.list [] )
                                 , ( "contentStyles", Elm.list [] )
                                 ]
-                            ]
                         ]
               }
             ]
