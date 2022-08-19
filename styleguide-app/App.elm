@@ -169,7 +169,6 @@ update action model =
                     , "Gizra/elm-keyboard-event"
                     , "pablohirafuji/elm-markdown"
                     , "rtfeldman/elm-sorter-experiment"
-                    , "tesk9/accessible-html-with-css"
                     , "tesk9/palette"
                     , "wernerdegroot/listzipper"
                     ]

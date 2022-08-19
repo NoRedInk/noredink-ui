@@ -22,6 +22,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Elm exposing (Expression)
 import Example exposing (Example)
+import Gen.Accessibility.Styled
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
@@ -114,51 +115,44 @@ view ellieLinkConfig model =
         , extraCode =
             [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
             , "import Nri.Ui.Svg.V1 as Svg"
+            , "import Accessibility.Styled"
             ]
         , exampleCode =
             [ { sectionName = "Partial example"
               , code =
-                    Elm.apply
-                        (Elm.value
-                            { importFrom = []
-                            , name = "div"
-                            , annotation = Nothing
-                            }
-                        )
-                        [ Elm.list []
-                        , Elm.list
-                            [ accordionF "view"
-                                [ Elm.record
-                                    [ ( "entries"
-                                      , Elm.list
-                                            [ accordionF "AccordionEntry"
-                                                [ Elm.record
-                                                    [ ( "caret", Tuple.first settings.icon )
-                                                    , ( "content", Code.always (Tuple.first settings.content) )
-                                                    , ( "entryClass", Elm.string "customizable-example" )
-                                                    , ( "headerContent", Tuple.first settings.headerContent )
-                                                    , ( "headerId", Elm.string "customizable-example-header" )
-                                                    , ( "headerLevel", hardcode "Accordion.H4" )
-                                                    , ( "isExpanded", Elm.bool True )
-                                                    , ( "toggle", Elm.nothing )
-                                                    ]
-                                                , Elm.list []
+                    Gen.Accessibility.Styled.div
+                        []
+                        [ accordionF "view"
+                            [ Elm.record
+                                [ ( "entries"
+                                  , Elm.list
+                                        [ accordionF "AccordionEntry"
+                                            [ Elm.record
+                                                [ ( "caret", Tuple.first settings.icon )
+                                                , ( "content", Code.always (Tuple.first settings.content) )
+                                                , ( "entryClass", Elm.string "customizable-example" )
+                                                , ( "headerContent", Tuple.first settings.headerContent )
+                                                , ( "headerId", Elm.string "customizable-example-header" )
+                                                , ( "headerLevel", hardcode "Accordion.H4" )
+                                                , ( "isExpanded", Elm.bool True )
+                                                , ( "toggle", Elm.nothing )
                                                 ]
+                                            , Elm.list []
                                             ]
-                                      )
-                                    , ( "focus", hardcode "identity  -- When using Accordion, be sure to wire up Focus management correctly!" )
-                                    ]
+                                        ]
+                                  )
+                                , ( "focus", hardcode "identity  -- When using Accordion, be sure to wire up Focus management correctly!" )
                                 ]
-                            , accordionF "styleAccordion"
-                                [ Elm.record
-                                    [ ( "entryStyles", Elm.list [] )
-                                    , ( "entryExpandedStyles", Elm.list [] )
-                                    , ( "entryClosedStyles", Elm.list [] )
-                                    , ( "headerStyles", Elm.list [] )
-                                    , ( "headerExpandedStyles", Elm.list [] )
-                                    , ( "headerClosedStyles", Elm.list [] )
-                                    , ( "contentStyles", Elm.list [] )
-                                    ]
+                            ]
+                        , accordionF "styleAccordion"
+                            [ Elm.record
+                                [ ( "entryStyles", Elm.list [] )
+                                , ( "entryExpandedStyles", Elm.list [] )
+                                , ( "entryClosedStyles", Elm.list [] )
+                                , ( "headerStyles", Elm.list [] )
+                                , ( "headerExpandedStyles", Elm.list [] )
+                                , ( "headerClosedStyles", Elm.list [] )
+                                , ( "contentStyles", Elm.list [] )
                                 ]
                             ]
                         ]
