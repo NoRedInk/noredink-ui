@@ -16,7 +16,7 @@ type alias SectionExample =
     { name : String
     , fullModuleName : String
     , sectionName : String
-    , mainType : String
+    , mainType : Maybe String
     , extraCode : List String
     , code : String
     }
@@ -85,7 +85,8 @@ generateElmExampleModule config example =
     , ""
     ]
         ++ maybeErrorMessages
-        ++ [ "main : " ++ example.mainType
+        ++ [ Maybe.map (\type_ -> "main : " ++ type_) example.mainType
+                |> Maybe.withDefault ""
            , "main ="
            , "    " ++ example.code
            , "    |> toUnstyled"

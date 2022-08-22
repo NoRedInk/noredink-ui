@@ -70,7 +70,7 @@ example =
                 , version = version
                 , update = ChangeOptions
                 , settings = state.optionsControl
-                , mainType = "RootHtml.Html msg"
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
                 , toExampleCode =
                     \settings ->

@@ -62,7 +62,7 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
-                , mainType = "RootHtml.Html msg"
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
                 , toExampleCode =
                     \settings ->

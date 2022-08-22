@@ -57,7 +57,7 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = "RootHtml.Html msg"
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
                 , toExampleCode =
                     \{ label, attributes } ->

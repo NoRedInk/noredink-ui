@@ -209,7 +209,7 @@ viewButtonExamples ellieLinkConfig state =
         , version = version
         , update = SetDebugControlsState
         , settings = state.debugControlsState
-        , mainType = "RootHtml.Html msg"
+        , mainType = Just "RootHtml.Html msg"
         , extraCode = []
         , toExampleCode =
             \{ label, attributes } ->

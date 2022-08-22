@@ -83,7 +83,7 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state
-                , mainType = "RootHtml.Html msg"
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Nri.Ui.Button.V10 as Button" ]
                 , toExampleCode =
                     \settings ->
