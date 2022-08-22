@@ -4,6 +4,7 @@ module Code exposing
     , bool
     , commentInline
     , list, listMultiline
+    , record
     )
 
 {-|
@@ -13,6 +14,7 @@ module Code exposing
 @docs bool
 @docs commentInline
 @docs list, listMultiline
+@docs record
 
 -}
 
@@ -81,6 +83,44 @@ listMultiline list_ indent =
             newlineWithIndent indent
     in
     indents ++ "[ " ++ String.join (indents ++ ", ") list_ ++ indents ++ "] "
+
+
+{-| -}
+record : List ( String, String ) -> String
+record items =
+    let
+        monolineRecord =
+            recordSingleline items
+    in
+    if String.length monolineRecord > 80 then
+        recordMultiline items 1
+
+    else
+        monolineRecord
+
+
+{-| -}
+recordSingleline : List ( String, String ) -> String
+recordSingleline items =
+    "{ "
+        ++ String.join ", "
+            (List.map (\( key, value ) -> key ++ " = " ++ value) items)
+        ++ "} "
+
+
+{-| -}
+recordMultiline : List ( String, String ) -> Int -> String
+recordMultiline items indent =
+    let
+        indents =
+            newlineWithIndent indent
+    in
+    indents
+        ++ "{ "
+        ++ String.join (indents ++ ", ")
+            (List.map (\( key, value ) -> key ++ " = " ++ value) items)
+        ++ indents
+        ++ "} "
 
 
 newlineWithIndent : Int -> String
