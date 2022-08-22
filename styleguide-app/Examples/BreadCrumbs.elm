@@ -245,7 +245,6 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
                 Just ( baseStr, base ) ->
                     ( "(BreadCrumbs.after "
                         ++ baseStr
-                        ++ ControlView.withIndentLevel 2
                         ++ breadCrumbStr
                         ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.after base breadCrumb
@@ -253,7 +252,6 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
 
                 Nothing ->
                     ( "(BreadCrumbs.init "
-                        ++ ControlView.withIndentLevel 2
                         ++ breadCrumbStr
                         ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.init breadCrumb

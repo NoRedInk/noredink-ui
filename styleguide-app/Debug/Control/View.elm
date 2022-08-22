@@ -1,16 +1,11 @@
-module Debug.Control.View exposing
-    ( view
-    , withIndentLevel
-    )
+module Debug.Control.View exposing (view)
 
 {-|
 
 @docs view
-@docs withIndentLevel
 
 -}
 
-import Code
 import Css exposing (..)
 import Css.Global
 import Css.Media exposing (withMedia)
@@ -115,8 +110,3 @@ viewSection name styles children =
         (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-withIndentLevel : Int -> String
-withIndentLevel indent =
-    String.repeat indent "    "
