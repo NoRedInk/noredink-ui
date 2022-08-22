@@ -1,13 +1,11 @@
 module Debug.Control.View exposing
     ( view
-    , codeFromListWithIndentLevel
     , withIndentLevel
     )
 
 {-|
 
 @docs view
-@docs codeFromListWithIndentLevel
 @docs withIndentLevel
 
 -}
@@ -117,11 +115,6 @@ viewSection name styles children =
         (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
-codeFromListWithIndentLevel indent list =
-    Code.listMultiline (List.map Tuple.first list) indent
 
 
 withIndentLevel : Int -> String

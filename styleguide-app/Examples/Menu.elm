@@ -139,7 +139,7 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
-        , mainType = "RootHtml.Html msg"
+        , mainType = "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
         , extraCode = []
         , toExampleCode =
             \settings ->
@@ -147,28 +147,35 @@ view ellieLinkConfig state =
                     toCode : String -> String
                     toCode buttonCode =
                         moduleName
-                            ++ ".view"
+                            ++ ".view "
                             ++ Code.list (List.map Tuple.first settings.menuAttributes)
                             ++ Code.recordMultiline
                                 [ ( "button", buttonCode )
                                 , ( "entries", "[]" )
                                 , ( "isOpen", "True" )
-                                , ( "focusAndToggle", "FocusAndToggle" )
+                                , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
                                 ]
                                 1
                 in
                 [ { sectionName = "Menu.button"
                   , code =
-                        "\n\t\tMenu.button "
-                            ++ ControlView.codeFromListWithIndentLevel 3 settings.buttonAttributes
-                            ++ "\n\t\t\t\"1st Period English with Mx. Trainer\""
+                        Code.newlineWithIndent 2
+                            ++ "Menu.button "
+                            ++ Code.listMultiline
+                                (List.map Tuple.first settings.buttonAttributes)
+                                3
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.string "1st Period English with Mx. Trainer"
                             |> toCode
                   }
                 , { sectionName = "Menu.custom"
                   , code =
-                        "\n\t\tMenu.custom <|"
-                            ++ "\n\t\t\t\\buttonAttributes ->"
-                            ++ "\n\t\t\t\tbutton buttonAttributes [ text \"Custom Menu trigger button\" ]"
+                        Code.newlineWithIndent 2
+                            ++ "Menu.custom <|"
+                            ++ Code.newlineWithIndent 3
+                            ++ "\\buttonAttributes ->"
+                            ++ Code.newlineWithIndent 4
+                            ++ "button buttonAttributes [ text \"Custom Menu trigger button\" ]"
                             |> toCode
                   }
                 ]
