@@ -35,7 +35,6 @@ import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
 import Examples.Text as Text
-import Examples.Text.Writing as Writing
 import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
 import Examples.Tooltip as Tooltip
@@ -690,25 +689,6 @@ all =
                     _ ->
                         Nothing
             )
-    , Writing.example
-        |> Example.wrapMsg WritingMsg
-            (\msg ->
-                case msg of
-                    WritingMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState WritingState
-            (\msg ->
-                case msg of
-                    WritingState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , TextArea.example
         |> Example.wrapMsg TextAreaMsg
             (\msg ->
@@ -827,7 +807,6 @@ type State
     | TextInputState TextInput.State
     | TooltipState Tooltip.State
     | UiIconState UiIcon.State
-    | WritingState Writing.State
 
 
 type Msg
@@ -869,4 +848,3 @@ type Msg
     | TextInputMsg TextInput.Msg
     | TooltipMsg Tooltip.Msg
     | UiIconMsg UiIcon.Msg
-    | WritingMsg Writing.Msg
