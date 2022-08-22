@@ -126,7 +126,7 @@ example =
                                 , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
                                 , "    , focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , tabs = " ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first tabs)
+                                , "    , tabs = " ++ Code.listMultiline (List.map Tuple.first tabs) 2
                                 , "    }"
                                 ]
                                     |> String.join "\n"

@@ -8,6 +8,7 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -77,7 +78,7 @@ example =
                                     ++ label
                                     ++ "\"\n\t"
                                     ++ Tuple.first icon
-                                    ++ ControlView.codeFromList attributes
+                                    ++ Code.list (List.map Tuple.first attributes)
                         in
                         [ { sectionName = "Button"
                           , code = toCode "button"

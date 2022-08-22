@@ -8,11 +8,12 @@ module Examples.SideNav exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
-import Debug.Control.View as ControlView exposing (codeFromList)
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
@@ -100,8 +101,8 @@ view ellieLinkConfig state =
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"
                             , "\n\t}"
-                            , codeFromList navAttributes
-                            , codeFromList entries
+                            , Code.list (List.map Tuple.first navAttributes)
+                            , Code.list (List.map Tuple.first entries)
                             ]
                   }
                 ]

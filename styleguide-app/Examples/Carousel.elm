@@ -12,6 +12,7 @@ module Examples.Carousel exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
@@ -195,7 +196,7 @@ example =
                                 , "    , selected = " ++ String.fromInt model.selected
                                 , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
                                 , "    , controlStyles = " ++ Tuple.first settings.controlStyles
-                                , "    , items =" ++ ControlView.codeFromListSimpleWithIndentLevel 2 (List.map Tuple.first allItems)
+                                , "    , items =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
                                 , "    }"
                                 , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
                                 ]

@@ -8,6 +8,7 @@ module Examples.BreadCrumbs exposing (example, State, Msg)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -68,7 +69,7 @@ example =
                 , update = UpdateControl
                 , settings = state
                 , mainType = "RootHtml.Html msg"
-                , extraCode = []
+                , extraCode = [ "import Html.Styled.Attributes exposing (href)" ]
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
@@ -146,14 +147,14 @@ previewArrowRight =
 
 viewExampleCode : Settings -> String
 viewExampleCode settings =
-    String.join ("\n" ++ ControlView.withIndentLevel 1)
-        [ "BreadCrumbs.view"
-        , "{ aTagAttributes = \\route -> [ href route ]"
-        , ", isCurrentRoute = \\route -> route == \"/current/route\""
-        , ", label = \"breadcrumbs\""
-        , "}"
-        , Tuple.first settings.breadCrumbs
-        ]
+    "BreadCrumbs.view"
+        ++ Code.record
+            [ ( "aTagAttributes", "\\route -> [ href route ]" )
+            , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+            , ( "label", Code.string "breadcrumbs" )
+            ]
+        ++ Code.newlineWithIndent 1
+        ++ Tuple.first settings.breadCrumbs
 
 
 viewExample : BreadCrumbs String -> Html msg
@@ -230,31 +231,29 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
             }
 
         breadCrumbStr =
-            String.join ("\n" ++ ControlView.withIndentLevel 2)
-                [ "{ icon = " ++ Maybe.withDefault "Nothing" (Maybe.map (\( iconStr, _ ) -> "Just " ++ iconStr) icon)
-                , ", iconStyle = " ++ iconStyleStr
-                , ", text = " ++ textStr
-                , ", id = " ++ "\"breadcrumb-id-" ++ String.fromInt index ++ "\""
-                , ", route = " ++ "\"/breadcrumb" ++ String.fromInt index ++ "\""
-                , "}\n"
+            Code.recordMultiline
+                [ ( "icon", Code.maybeString (Maybe.map Tuple.first icon) )
+                , ( "iconStyle", iconStyleStr )
+                , ( "text", textStr )
+                , ( "id", Code.string ("breadcrumb-id-" ++ String.fromInt index) )
+                , ( "route", Code.string ("/breadcrumb" ++ String.fromInt index) )
                 ]
+                2
 
         newBase =
             case maybeBase of
                 Just ( baseStr, base ) ->
                     ( "(BreadCrumbs.after "
                         ++ baseStr
-                        ++ ("\n" ++ ControlView.withIndentLevel 2)
                         ++ breadCrumbStr
-                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                        ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.after base breadCrumb
                     )
 
                 Nothing ->
                     ( "(BreadCrumbs.init "
-                        ++ ("\n" ++ ControlView.withIndentLevel 2)
                         ++ breadCrumbStr
-                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                        ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.init breadCrumb
                     )
     in

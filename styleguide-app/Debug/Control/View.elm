@@ -1,19 +1,8 @@
-module Debug.Control.View exposing
-    ( view
-    , codeFromListSimple, codeFromListSimpleWithIndentLevel
-    , codeFromList, codeFromListWithIndentLevel
-    , codeFromListWithHardcoded
-    , withIndentLevel
-    )
+module Debug.Control.View exposing (view)
 
 {-|
 
 @docs view
-@docs codeFromListSimple, codeFromListSimpleWithIndentLevel
-@docs codeFromList, codeFromListWithIndentLevel
-@docs codeFromListWithHardcoded
-
-@docs withIndentLevel
 
 -}
 
@@ -121,45 +110,3 @@ viewSection name styles children =
         (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-codeFromListWithHardcoded : List String -> List ( String, a ) -> String
-codeFromListWithHardcoded hardcodes elements =
-    List.map (\v -> ( v, () )) hardcodes
-        ++ List.map (Tuple.mapSecond (always ())) elements
-        |> codeFromList
-
-
-codeFromList : List ( String, a ) -> String
-codeFromList =
-    codeFromListWithIndentLevel 1
-
-
-codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
-codeFromListWithIndentLevel indent list =
-    codeFromListSimpleWithIndentLevel indent (List.map Tuple.first list)
-
-
-codeFromListSimple : List String -> String
-codeFromListSimple =
-    codeFromListSimpleWithIndentLevel 1
-
-
-codeFromListSimpleWithIndentLevel : Int -> List String -> String
-codeFromListSimpleWithIndentLevel indent list =
-    let
-        indents =
-            withIndentLevel indent
-    in
-    "\n"
-        ++ indents
-        ++ "[ "
-        ++ String.join ("\n" ++ indents ++ ", ") list
-        ++ "\n"
-        ++ indents
-        ++ "] "
-
-
-withIndentLevel : Int -> String
-withIndentLevel indent =
-    String.repeat indent "    "
