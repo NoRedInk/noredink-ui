@@ -8,6 +8,7 @@ module Examples.Button exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -220,7 +221,7 @@ viewButtonExamples ellieLinkConfig state =
                             ++ " \""
                             ++ label
                             ++ "\"\t"
-                            ++ ControlView.codeFromList attributes
+                            ++ Code.list (List.map Tuple.first attributes)
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"

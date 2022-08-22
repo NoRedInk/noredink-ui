@@ -1,13 +1,13 @@
 module Debug.Control.View exposing
     ( view
-    , codeFromList, codeFromListWithIndentLevel
+    , codeFromListWithIndentLevel
     , withIndentLevel
     )
 
 {-|
 
 @docs view
-@docs codeFromList, codeFromListWithIndentLevel
+@docs codeFromListWithIndentLevel
 @docs withIndentLevel
 
 -}
@@ -117,11 +117,6 @@ viewSection name styles children =
         (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-codeFromList : List ( String, a ) -> String
-codeFromList list =
-    Code.list (List.map Tuple.first list)
 
 
 codeFromListWithIndentLevel : Int -> List ( String, a ) -> String

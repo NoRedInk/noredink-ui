@@ -10,6 +10,7 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -143,15 +144,18 @@ view ellieLinkConfig state =
         , toExampleCode =
             \settings ->
                 let
+                    toCode : String -> String
                     toCode buttonCode =
                         moduleName
                             ++ ".view"
-                            ++ ControlView.codeFromList settings.menuAttributes
-                            ++ ("\n\t{ button = " ++ buttonCode)
-                            ++ "\n\t, entries = []"
-                            ++ "\n\t, isOpen = True"
-                            ++ "\n\t, focusAndToggle = FocusAndToggle"
-                            ++ "\n\t}"
+                            ++ Code.list (List.map Tuple.first settings.menuAttributes)
+                            ++ Code.recordMultiline
+                                [ ( "button", buttonCode )
+                                , ( "entries", "[]" )
+                                , ( "isOpen", "True" )
+                                , ( "focusAndToggle", "FocusAndToggle" )
+                                ]
+                                1
                 in
                 [ { sectionName = "Menu.button"
                   , code =
