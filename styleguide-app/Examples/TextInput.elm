@@ -193,8 +193,8 @@ customizableExamples state =
         \\onInput ->
             TextInput.newPassword
                 { onInput = onInput
-                , showPassword = False -- pass in whether the PW should be shown as plaintext
-                , setShowPassword = \\_ -> "TODO: wire in a set-show-password Msg"
+                , showPassword = model.showPassword -- pass in whether the PW should be shown as plaintext. You'll need to wire this in.
+                , setShowPassword = SetShowPassword -- You'll need to wire this in before the code will compile
                 }
                 """
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
