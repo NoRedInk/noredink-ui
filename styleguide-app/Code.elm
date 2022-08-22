@@ -4,7 +4,8 @@ module Code exposing
     , bool
     , commentInline
     , list, listMultiline
-    , record
+    , record, recordMultiline
+    , newlineWithIndent
     )
 
 {-|
@@ -14,7 +15,8 @@ module Code exposing
 @docs bool
 @docs commentInline
 @docs list, listMultiline
-@docs record
+@docs record, recordMultiline
+@docs newlineWithIndent
 
 -}
 
@@ -82,7 +84,7 @@ listMultiline list_ indent =
         indents =
             newlineWithIndent indent
     in
-    indents ++ "[ " ++ String.join (indents ++ ", ") list_ ++ indents ++ "] "
+    indents ++ "[ " ++ String.join (indents ++ ", ") list_ ++ indents ++ "]"
 
 
 {-| -}
@@ -120,9 +122,9 @@ recordMultiline items indent =
         ++ String.join (indents ++ ", ")
             (List.map (\( key, value ) -> key ++ " = " ++ value) items)
         ++ indents
-        ++ "} "
+        ++ "}"
 
 
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
-    String.repeat indent "\n    "
+    "\n" ++ String.repeat indent "    "
