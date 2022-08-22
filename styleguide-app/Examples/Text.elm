@@ -78,6 +78,7 @@ example =
                         , toExampleCode "smallBody"
                         , toExampleCode "smallBodyGray"
                         , toExampleCode "caption"
+                        , toExampleCode "footnote"
                         , toExampleCode "ugMediumBody"
                         , toExampleCode "ugSmallBody"
                         ]
@@ -89,6 +90,7 @@ example =
                 , ( "smallBody", Text.smallBody )
                 , ( "smallBodyGray", Text.smallBodyGray )
                 , ( "caption", Text.caption )
+                , ( "footnote", Text.footnote )
                 ]
                 attributes
             , Heading.h3 [ Heading.plaintext "Paragraph styles for user-authored content" ]
