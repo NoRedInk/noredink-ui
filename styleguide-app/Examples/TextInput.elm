@@ -118,11 +118,10 @@ customizableExamples state =
                         Nothing
                     ]
                         |> List.filterMap identity
-                        -- TODO: incorporate exampleConfig.attributes
-                        |> Code.list
+                        |> (\attributes -> Code.list (attributes ++ List.map Tuple.first exampleConfig.attributes))
                    )
             , TextInput.view exampleConfig.label
-                (exampleConfig.attributes
+                (List.map Tuple.second exampleConfig.attributes
                     ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
                        , inputType (toString >> SetInput index)
                             |> TextInput.map toString identity
@@ -335,7 +334,7 @@ init =
 
 type alias ExampleConfig =
     { label : String
-    , attributes : List (TextInput.Attribute String Msg)
+    , attributes : List ( String, TextInput.Attribute String Msg )
     , onFocus : Bool
     , onBlur : Bool
     , onEnter : Bool
@@ -352,31 +351,52 @@ initControl =
         |> Control.field "onEnter" (Control.bool False)
 
 
-controlAttributes : Control (List (TextInput.Attribute value msg))
+controlAttributes : Control (List ( String, TextInput.Attribute value msg ))
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "placeholder"
-            (Control.map TextInput.placeholder <|
-                Control.string "Learning with commas"
+            (Control.string "Learning with commas"
+                |> Control.map
+                    (\str ->
+                        ( "TextInput.placeholder " ++ Code.string str
+                        , TextInput.placeholder str
+                        )
+                    )
             )
-        |> ControlExtra.optionalListItem "hiddenLabel"
-            (Control.value TextInput.hiddenLabel)
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map TextInput.errorIf <| Control.bool True)
+        |> ControlExtra.optionalBoolListItem "hiddenLabel"
+            ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
+        |> ControlExtra.optionalBoolListItem "errorIf"
+            ( "TextInput.errorIf True", TextInput.errorIf True )
         |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map (Just >> TextInput.errorMessage) <| Control.string "The statement must be true.")
+            (Control.map
+                (\str ->
+                    ( "TextInput.errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                    , TextInput.errorMessage (Just str)
+                    )
+                )
+                (Control.string "The statement must be true.")
+            )
         |> ControlExtra.optionalListItem "guidance"
-            (Control.map TextInput.guidance <| Control.string "The statement must be true.")
-        |> ControlExtra.optionalListItem "disabled"
-            (Control.value TextInput.disabled)
-        |> ControlExtra.optionalListItem "loading"
-            (Control.value TextInput.loading)
-        |> ControlExtra.optionalListItem "writing"
-            (Control.value TextInput.writing)
-        |> ControlExtra.listItem "noMargin"
-            (Control.map TextInput.noMargin (Control.bool False))
-        |> ControlExtra.optionalListItem "css"
-            (Control.value (TextInput.css [ Css.backgroundColor Colors.azure ]))
+            (Control.string "The statement must be true."
+                |> Control.map
+                    (\str ->
+                        ( "TextInput.guidance " ++ Code.string str
+                        , TextInput.guidance str
+                        )
+                    )
+            )
+        |> ControlExtra.optionalBoolListItem "disabled"
+            ( "TextInput.disabled", TextInput.disabled )
+        |> ControlExtra.optionalBoolListItem "loading"
+            ( "TextInput.loading", TextInput.loading )
+        |> ControlExtra.optionalBoolListItem "writing"
+            ( "TextInput.writing", TextInput.writing )
+        |> ControlExtra.optionalBoolListItem "noMargin"
+            ( "TextInput.noMargin True", TextInput.noMargin True )
+        |> ControlExtra.optionalBoolListItem "css"
+            ( "TextInput.css [ Css.backgroundColor Colors.azure ]"
+            , TextInput.css [ Css.backgroundColor Colors.azure ]
+            )
 
 
 {-| -}
