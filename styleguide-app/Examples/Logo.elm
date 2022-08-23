@@ -104,6 +104,14 @@ all =
           , Logo.googleClassroom
           , defaults
           )
+        , ( "googleClassroomFull"
+          , Logo.googleClassroomFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            , Css.color Colors.azure
+            ]
+          )
         , ( "googleG", Logo.googleG, defaults )
         ]
       )
