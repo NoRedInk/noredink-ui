@@ -92,7 +92,15 @@ all =
         ]
       )
     , ( "Google"
-      , [ ( "googleClassroom"
+      , [ ( "google"
+          , Logo.google
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            , Css.color Colors.azure
+            ]
+          )
+        , ( "googleClassroom"
           , Logo.googleClassroom
           , defaults
           )
