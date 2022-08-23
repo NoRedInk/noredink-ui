@@ -1989,6 +1989,7 @@ briefcase =
         ]
 
 
+{-| -}
 brain : Nri.Ui.Svg.V1.Svg
 brain =
     Nri.Ui.Svg.V1.init "0 0 90 82"
@@ -2015,6 +2016,7 @@ brain =
         ]
 
 
+{-| -}
 projectorScreen : Nri.Ui.Svg.V1.Svg
 projectorScreen =
     Nri.Ui.Svg.V1.init "0 0 81 66"
@@ -2036,6 +2038,7 @@ projectorScreen =
         ]
 
 
+{-| -}
 stretch : Nri.Ui.Svg.V1.Svg
 stretch =
     Nri.Ui.Svg.V1.init "0 0 42 94"
