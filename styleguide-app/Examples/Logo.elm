@@ -81,7 +81,7 @@ all =
             ]
           )
         , ( "cleverC", Logo.cleverC, defaults )
-        ,( "clever"
+        , ( "clever"
           , Logo.clever
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
