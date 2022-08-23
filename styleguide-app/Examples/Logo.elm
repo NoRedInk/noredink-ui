@@ -73,7 +73,15 @@ all =
         ]
       )
     , ( "Clever"
-      , [ ( "clever"
+      , [ ( "cleverFull"
+          , Logo.cleverFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "cleverC", Logo.cleverC, defaults )
+        ,( "clever"
           , Logo.clever
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
@@ -81,7 +89,6 @@ all =
             , Css.color Colors.azure
             ]
           )
-        , ( "cleverC", Logo.cleverC, defaults )
         , ( "cleverLibrary"
           , Logo.cleverLibrary
           , [ Css.height (Css.px 25)
