@@ -28,7 +28,7 @@ view :
     , version : Int
     , update : Control a -> msg
     , settings : Control a
-    , mainType : String
+    , mainType : Maybe String
     , extraCode : List String
     , toExampleCode : a -> List { sectionName : String, code : String }
     }
@@ -63,7 +63,7 @@ view config =
 
 viewExampleCode :
     (EllieLink.SectionExample -> Html msg)
-    -> { component | name : String, version : Int, mainType : String, extraCode : List String }
+    -> { component | name : String, version : Int, mainType : Maybe String, extraCode : List String }
     -> List { sectionName : String, code : String }
     -> Html msg
 viewExampleCode ellieLink component values =

@@ -103,7 +103,7 @@ view ellieLinkConfig model =
         , version = version
         , update = UpdateControls
         , settings = model.settings
-        , mainType = "RootHtml.Html String"
+        , mainType = Just "RootHtml.Html String"
         , extraCode =
             [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
             , "import Nri.Ui.Svg.V1 as Svg"

@@ -9,6 +9,7 @@ module Examples.TextInput exposing (Msg, State, example)
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -52,43 +53,79 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
+            let
+                examples =
+                    ( "readOnlyText"
+                    , """TextInput.view "Shareable Assignment Link"
+        [ TextInput.readOnlyText
+        , TextInput.value "noredink.com/s/blueprint-code"
+        ]
+                         """
+                    , TextInput.view "Shareable Assignment Link"
+                        [ TextInput.readOnlyText
+                        , TextInput.value "noredink.com/s/blueprint-code"
+                        ]
+                    )
+                        :: customizableExamples state
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
-                , mainType = "Html msg"
+                , mainType = Nothing
                 , extraCode = []
-                , toExampleCode = \_ -> []
+                , toExampleCode = \_ -> List.map (\( name, toExampleCode, _ ) -> { sectionName = name, code = toExampleCode }) examples
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , viewExamples <|
-                ( "readOnlyText"
-                , TextInput.view "Shareable Assignment Link"
-                    [ TextInput.readOnlyText
-                    , TextInput.value "noredink.com/s/blueprint-code"
-                    ]
-                )
-                    :: customizableExamples state
+            , viewExamples (List.map (\( name, _, ex ) -> ( name, ex )) examples)
             ]
     }
 
 
-customizableExamples : State -> List ( String, Html Msg )
+customizableExamples : State -> List ( String, String, Html Msg )
 customizableExamples state =
     let
         exampleConfig =
             Control.currentValue state.control
 
-        toExample { name, toString, inputType, onFocus, onBlur, onEnter } index =
+        toExample { name, toString, inputType, inputTypeCode, inputTypeValueCode, onFocus, onBlur, onEnter } index =
+            let
+                maybeValue =
+                    Dict.get index state.inputValues
+            in
             ( name
+            , "TextInput.view "
+                ++ Code.string exampleConfig.label
+                ++ ([ Just <| "TextInput.id " ++ Code.string ("text-input__" ++ name ++ "-example")
+                    , Just <| inputTypeCode ++ " identity -- use a Msg instead of identity"
+                    , Just <| "TextInput.value " ++ inputTypeValueCode maybeValue
+                    , if exampleConfig.onFocus then
+                        Just "TextInput.onFocus identity -- use a Msg instead of identity"
+
+                      else
+                        Nothing
+                    , if exampleConfig.onBlur then
+                        Just "TextInput.onBlur identity -- use a Msg instead of identity"
+
+                      else
+                        Nothing
+                    , if exampleConfig.onEnter then
+                        Just "TextInput.onEnter identity -- use a Msg instead of identity"
+
+                      else
+                        Nothing
+                    ]
+                        |> List.filterMap identity
+                        |> (\attributes -> Code.list (attributes ++ List.map Tuple.first exampleConfig.attributes))
+                   )
             , TextInput.view exampleConfig.label
-                (exampleConfig.attributes
+                (List.map Tuple.second exampleConfig.attributes
                     ++ [ TextInput.id ("text-input__" ++ name ++ "-example")
                        , inputType (toString >> SetInput index)
                             |> TextInput.map toString identity
-                       , TextInput.value (Maybe.withDefault "" (Dict.get index state.inputValues))
+                       , TextInput.value (Maybe.withDefault "" maybeValue)
                        ]
                     ++ List.filterMap identity
                         [ if exampleConfig.onFocus then
@@ -115,6 +152,8 @@ customizableExamples state =
             { name = "text"
             , toString = identity
             , inputType = TextInput.text
+            , inputTypeCode = "TextInput.text"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -123,6 +162,8 @@ customizableExamples state =
             { name = "number"
             , toString = Maybe.map String.fromInt >> Maybe.withDefault ""
             , inputType = TextInput.number
+            , inputTypeCode = "TextInput.number"
+            , inputTypeValueCode = Code.maybe >> Code.withParens
             , onFocus = "1234"
             , onBlur = "10000000"
             , onEnter = "20000000"
@@ -131,6 +172,8 @@ customizableExamples state =
             { name = "float"
             , toString = Maybe.map String.fromFloat >> Maybe.withDefault ""
             , inputType = TextInput.float
+            , inputTypeCode = "TextInput.float"
+            , inputTypeValueCode = Code.maybe >> Code.withParens
             , onFocus = "123"
             , onBlur = "1.00000001"
             , onEnter = "100000001.1"
@@ -145,6 +188,16 @@ customizableExamples state =
                         , showPassword = state.showPassword
                         , setShowPassword = SetShowPassword
                         }
+            , inputTypeCode =
+                """TextInput.newPassword <|
+        \\onInput ->
+            TextInput.newPassword
+                { onInput = onInput
+                , showPassword = model.showPassword -- pass in whether the PW should be shown as plaintext. You'll need to wire this in.
+                , setShowPassword = SetShowPassword -- You'll need to wire this in before the code will compile
+                }
+                """
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -153,6 +206,8 @@ customizableExamples state =
             { name = "email"
             , toString = identity
             , inputType = TextInput.email
+            , inputTypeCode = "TextInput.email"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -161,6 +216,8 @@ customizableExamples state =
             { name = "search"
             , toString = identity
             , inputType = TextInput.search
+            , inputTypeCode = "TextInput.search"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -169,6 +226,8 @@ customizableExamples state =
             { name = "givenName"
             , toString = identity
             , inputType = TextInput.givenName
+            , inputTypeCode = "TextInput.givenName"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -177,6 +236,8 @@ customizableExamples state =
             { name = "familyName"
             , toString = identity
             , inputType = TextInput.familyName
+            , inputTypeCode = "TextInput.familyName"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -185,6 +246,8 @@ customizableExamples state =
             { name = "organization"
             , toString = identity
             , inputType = TextInput.organization
+            , inputTypeCode = "TextInput.organization"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -193,6 +256,8 @@ customizableExamples state =
             { name = "organizationTitle"
             , toString = identity
             , inputType = TextInput.organizationTitle
+            , inputTypeCode = "TextInput.organizationTitle"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -201,6 +266,8 @@ customizableExamples state =
             { name = "addressLine1"
             , toString = identity
             , inputType = TextInput.addressLine1
+            , inputTypeCode = "TextInput.addressLine1"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -209,6 +276,8 @@ customizableExamples state =
             { name = "addressLevel2"
             , toString = identity
             , inputType = TextInput.addressLevel2
+            , inputTypeCode = "TextInput.addressLevel2"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -217,6 +286,8 @@ customizableExamples state =
             { name = "postalCode"
             , toString = identity
             , inputType = TextInput.postalCode
+            , inputTypeCode = "TextInput.postalCode"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -225,6 +296,8 @@ customizableExamples state =
             { name = "tel"
             , toString = identity
             , inputType = TextInput.tel
+            , inputTypeCode = "TextInput.tel"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -233,6 +306,8 @@ customizableExamples state =
             { name = "sex"
             , toString = identity
             , inputType = TextInput.sex
+            , inputTypeCode = "TextInput.sex"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
@@ -259,7 +334,7 @@ init =
 
 type alias ExampleConfig =
     { label : String
-    , attributes : List (TextInput.Attribute String Msg)
+    , attributes : List ( String, TextInput.Attribute String Msg )
     , onFocus : Bool
     , onBlur : Bool
     , onEnter : Bool
@@ -276,31 +351,52 @@ initControl =
         |> Control.field "onEnter" (Control.bool False)
 
 
-controlAttributes : Control (List (TextInput.Attribute value msg))
+controlAttributes : Control (List ( String, TextInput.Attribute value msg ))
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "placeholder"
-            (Control.map TextInput.placeholder <|
-                Control.string "Learning with commas"
+            (Control.string "Learning with commas"
+                |> Control.map
+                    (\str ->
+                        ( "TextInput.placeholder " ++ Code.string str
+                        , TextInput.placeholder str
+                        )
+                    )
             )
-        |> ControlExtra.optionalListItem "hiddenLabel"
-            (Control.value TextInput.hiddenLabel)
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map TextInput.errorIf <| Control.bool True)
+        |> ControlExtra.optionalBoolListItem "hiddenLabel"
+            ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
+        |> ControlExtra.optionalBoolListItem "errorIf"
+            ( "TextInput.errorIf True", TextInput.errorIf True )
         |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map (Just >> TextInput.errorMessage) <| Control.string "The statement must be true.")
+            (Control.map
+                (\str ->
+                    ( "TextInput.errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                    , TextInput.errorMessage (Just str)
+                    )
+                )
+                (Control.string "The statement must be true.")
+            )
         |> ControlExtra.optionalListItem "guidance"
-            (Control.map TextInput.guidance <| Control.string "The statement must be true.")
-        |> ControlExtra.optionalListItem "disabled"
-            (Control.value TextInput.disabled)
-        |> ControlExtra.optionalListItem "loading"
-            (Control.value TextInput.loading)
-        |> ControlExtra.optionalListItem "writing"
-            (Control.value TextInput.writing)
-        |> ControlExtra.listItem "noMargin"
-            (Control.map TextInput.noMargin (Control.bool False))
-        |> ControlExtra.optionalListItem "css"
-            (Control.value (TextInput.css [ Css.backgroundColor Colors.azure ]))
+            (Control.string "The statement must be true."
+                |> Control.map
+                    (\str ->
+                        ( "TextInput.guidance " ++ Code.string str
+                        , TextInput.guidance str
+                        )
+                    )
+            )
+        |> ControlExtra.optionalBoolListItem "disabled"
+            ( "TextInput.disabled", TextInput.disabled )
+        |> ControlExtra.optionalBoolListItem "loading"
+            ( "TextInput.loading", TextInput.loading )
+        |> ControlExtra.optionalBoolListItem "writing"
+            ( "TextInput.writing", TextInput.writing )
+        |> ControlExtra.optionalBoolListItem "noMargin"
+            ( "TextInput.noMargin True", TextInput.noMargin True )
+        |> ControlExtra.optionalBoolListItem "css"
+            ( "TextInput.css [ Css.backgroundColor Colors.azure ]"
+            , TextInput.css [ Css.backgroundColor Colors.azure ]
+            )
 
 
 {-| -}

@@ -190,7 +190,7 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = "RootHtml.Html Msg"
+                , mainType = Just "RootHtml.Html Msg"
                 , extraCode = [ "type Msg = ModalMsg Modal.Msg | Focus String" ]
                 , toExampleCode =
                     \_ ->

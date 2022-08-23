@@ -68,7 +68,7 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state
-                , mainType = "RootHtml.Html msg"
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Html.Styled.Attributes exposing (href)" ]
                 , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
                 }

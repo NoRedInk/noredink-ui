@@ -1,22 +1,26 @@
 module Code exposing
     ( string, maybeString
+    , maybe
     , maybeFloat
     , bool
     , commentInline
     , list, listMultiline
     , record, recordMultiline
     , newlineWithIndent
+    , withParens
     )
 
 {-|
 
 @docs string, maybeString
+@docs maybe
 @docs maybeFloat
 @docs bool
 @docs commentInline
 @docs list, listMultiline
 @docs record, recordMultiline
 @docs newlineWithIndent
+@docs withParens
 
 -}
 
@@ -128,3 +132,9 @@ recordMultiline items indent =
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
     "\n" ++ String.repeat indent "    "
+
+
+{-| -}
+withParens : String -> String
+withParens val =
+    "(" ++ val ++ ")"

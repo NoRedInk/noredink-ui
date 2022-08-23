@@ -139,7 +139,7 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
-        , mainType = "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
+        , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
         , extraCode = []
         , toExampleCode =
             \settings ->

@@ -150,7 +150,7 @@ view ellieLinkConfig state =
         , version = version
         , update = SetAttributes
         , settings = state
-        , mainType = "RootHtml.Html msg"
+        , mainType = Just "RootHtml.Html msg"
         , extraCode = []
         , toExampleCode =
             \{ copy, attributes } ->
