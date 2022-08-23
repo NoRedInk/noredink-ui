@@ -107,6 +107,7 @@ all =
         , ( "performance", UiIcon.performance, [] )
         , ( "microscope", UiIcon.microscope, [] )
         , ( "scale", UiIcon.scale, [] )
+        , ( "brain", UiIcon.brain, [] )
         ]
       )
     , ( "Humans & Class"
@@ -114,6 +115,7 @@ all =
         , ( "couple", UiIcon.couple, [] )
         , ( "class", UiIcon.class, [] )
         , ( "leaderboard", UiIcon.leaderboard, [] )
+        , ( "stretch", UiIcon.stretch, [] )
         , ( "graduateCap", UiIcon.graduateCap, [] )
         , ( "apple", UiIcon.apple, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
@@ -136,6 +138,7 @@ all =
       )
     , ( "Communication"
       , [ ( "speechBalloon", UiIcon.speechBalloon, [] )
+        , ( "projectorScreen", UiIcon.projectorScreen, [] )
         , ( "mail", UiIcon.mail, [] )
         ]
       )
