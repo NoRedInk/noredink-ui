@@ -1,20 +1,19 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink, noredinkMonochrome
-    , clever, cleverC, cleverLibrary
-    , googleClassroom, googleG
+    , clever, cleverFull, cleverC, cleverLibrary
+    , google, googleClassroom, googleClassroomFull, googleG
     , canvas
     , canvasCircle
     , schoology
     , schoologyCircle
     , facebook, twitter
-    , cleverFull, google, googleClassroomFull
     )
 
 {-|
 
 @docs noredink, noredinkMonochrome
-@docs clever, cleverC, cleverLibrary
-@docs googleClassroom, googleG
+@docs clever, cleverFull, cleverC, cleverLibrary
+@docs google, googleClassroom, googleClassroomFull, googleG
 @docs canvas
 @docs canvasCircle
 @docs schoology
