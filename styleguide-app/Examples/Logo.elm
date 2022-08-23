@@ -72,21 +72,37 @@ all =
         , ( "twitter", Logo.twitter, defaults )
         ]
       )
-    , ( "Clever"
-      , [ ( "cleverFull"
-          , Logo.cleverFull
+    , ( "Google"
+      , [ ( "google"
+          , Logo.google
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
             ]
           )
-        , ( "cleverC", Logo.cleverC, defaults )
-        , ( "clever"
-          , Logo.clever
+        , ( "googleG", Logo.googleG, defaults )
+        ]
+      )
+    , ( "Google Classroom"
+      , [ ( "googleClassroomFull"
+          , Logo.googleClassroomFull
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
-            , Css.color Colors.azure
+            ]
+          )
+        , ( "googleClassroom"
+          , Logo.googleClassroom
+          , defaults
+          )
+        ]
+      )
+    , ( "Clever library"
+      , [ ( "cleverFull"
+          , Logo.cleverFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
             ]
           )
         , ( "cleverLibrary"
@@ -98,29 +114,19 @@ all =
           )
         ]
       )
-    , ( "Google"
-      , [ ( "google"
-          , Logo.google
+    , ( "Clever sync"
+      , [ ( "clever"
+          , Logo.clever
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
+            , Css.color Colors.azure
             ]
           )
-        , ( "googleClassroom"
-          , Logo.googleClassroom
-          , defaults
-          )
-        , ( "googleClassroomFull"
-          , Logo.googleClassroomFull
-          , [ Css.height (Css.px 25)
-            , Css.width (Css.px 100)
-            , Css.margin (Css.px 4)
-            ]
-          )
-        , ( "googleG", Logo.googleG, defaults )
+        , ( "cleverC", Logo.cleverC, defaults )
         ]
       )
-    , ( "LMS"
+    , ( "Canvas"
       , [ ( "canvas"
           , Logo.canvas
           , [ Css.height (Css.px 25)
@@ -135,7 +141,10 @@ all =
             , Css.margin (Css.px 4)
             ]
           )
-        , ( "schoology"
+        ]
+      )
+    , ( "Schoology"
+      , [ ( "schoology"
           , Logo.schoology
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
