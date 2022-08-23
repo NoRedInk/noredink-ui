@@ -189,7 +189,7 @@ customizableExamples state =
                         , setShowPassword = SetShowPassword
                         }
             , inputTypeCode =
-                """TextInput.newPassword
+                """TextInput.newPassword <|
         \\onInput ->
             TextInput.newPassword
                 { onInput = onInput
