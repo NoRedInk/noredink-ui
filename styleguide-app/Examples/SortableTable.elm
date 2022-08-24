@@ -9,6 +9,7 @@ module Examples.SortableTable exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
@@ -130,7 +131,7 @@ example =
 
                                 else
                                     Nothing
-                            , width = 125
+                            , width = settings.customizableColumnWidth
                             , cellStyles = \_ -> []
                             }
                         ]
@@ -189,6 +190,7 @@ init =
 type alias Settings =
     { customizableColumnName : String
     , customizableColumnSorter : Bool
+    , customizableColumnWidth : Int
     , loading : Bool
     }
 
@@ -198,6 +200,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "Customizable column name" (Control.string "Grade")
         |> Control.field "Customizable column sorter" (Control.bool True)
+        |> Control.field "Customizable column width" (ControlExtra.int 10)
         |> Control.field "Is loading" (Control.bool False)
 
 
