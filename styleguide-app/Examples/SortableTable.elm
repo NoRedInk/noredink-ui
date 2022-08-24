@@ -8,6 +8,8 @@ module Examples.SortableTable exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css exposing (..)
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -20,28 +22,21 @@ import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-type Column
-    = FirstName
-    | LastName
-    | Coins
-    | ViewButton
+moduleName : String
+moduleName =
+    "SortableTable"
 
 
-{-| -}
-type Msg
-    = SetSortState (SortableTable.State Column)
-
-
-{-| -}
-type alias State =
-    { sortState : SortableTable.State Column }
+version : Int
+version =
+    3
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "SortableTable"
-    , version = 3
+    { name = moduleName
+    , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
     , state = init
@@ -103,8 +98,11 @@ example =
             ]
         ]
     , view =
-        \ellieLinkConfig { sortState } ->
+        \ellieLinkConfig ({ sortState } as model) ->
             let
+                settings =
+                    Control.currentValue model.settings
+
                 config =
                     { updateMsg = SetSortState
                     , columns =
@@ -123,38 +121,47 @@ example =
                             , cellStyles = \_ -> []
                             }
                         , SortableTable.custom
-                            { id = Coins
-                            , header = Html.text "Coins"
-                            , view = .coins >> String.fromInt >> Html.text
-                            , sorter = Just (SortableTable.simpleSort .coins)
+                            { id = CustomExample
+                            , header = Html.text settings.customizableColumnName
+                            , view = .grade >> String.fromInt >> Html.text
+                            , sorter =
+                                if settings.customizableColumnSorter then
+                                    Just (SortableTable.simpleSort .grade)
+
+                                else
+                                    Nothing
                             , width = 125
-                            , cellStyles = \_ -> []
-                            }
-                        , SortableTable.custom
-                            { id = ViewButton
-                            , header = Html.text "View"
-                            , view =
-                                \_ ->
-                                    Button.link "View"
-                                        [ Button.small
-                                        , Button.fillContainerWidth
-                                        ]
-                            , sorter = Nothing
-                            , width = 25
                             , cellStyles = \_ -> []
                             }
                         ]
                     }
 
                 data =
-                    [ { firstName = "First1", lastName = "Last1", coins = 1 }
-                    , { firstName = "First2", lastName = "Last2", coins = 2 }
-                    , { firstName = "First3", lastName = "Last3", coins = 3 }
-                    , { firstName = "First4", lastName = "Last4", coins = 4 }
-                    , { firstName = "First5", lastName = "Last5", coins = 5 }
+                    [ { firstName = "First1", lastName = "Last1", grade = 100 }
+                    , { firstName = "First2", lastName = "Last2", grade = 89 }
+                    , { firstName = "First3", lastName = "Last3", grade = 64 }
+                    , { firstName = "First4", lastName = "Last4", grade = 89 }
+                    , { firstName = "First5", lastName = "Last5", grade = 97 }
                     ]
             in
-            [ Heading.h2 [ Heading.plaintext "With sortable headers" ]
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControls
+                , settings = model.settings
+                , mainType = Nothing
+                , extraCode = []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "view"
+                          , code =
+                                """TODO
+                        """
+                          }
+                        ]
+                }
+            , Heading.h2 [ Heading.plaintext "With sortable headers" ]
             , SortableTable.view config sortState data
             , Heading.h2 [ Heading.plaintext "Loading" ]
             , SortableTable.viewLoading config sortState
@@ -163,9 +170,43 @@ example =
 
 
 {-| -}
+type alias State =
+    { sortState : SortableTable.State Column
+    , settings : Control Settings
+    }
+
+
+{-| -}
 init : State
 init =
-    { sortState = SortableTable.init FirstName }
+    { sortState = SortableTable.init FirstName
+    , settings = controlSettings
+    }
+
+
+type alias Settings =
+    { customizableColumnName : String
+    , customizableColumnSorter : Bool
+    }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "Customizable column name" (Control.string "Grade")
+        |> Control.field "Customizable column sorter" (Control.bool True)
+
+
+type Column
+    = FirstName
+    | LastName
+    | CustomExample
+
+
+{-| -}
+type Msg
+    = SetSortState (SortableTable.State Column)
+    | UpdateControls (Control Settings)
 
 
 {-| -}
@@ -174,3 +215,6 @@ update msg state =
     case msg of
         SetSortState sortState ->
             ( { state | sortState = sortState }, Cmd.none )
+
+        UpdateControls controls ->
+            ( { state | settings = controls }, Cmd.none )
