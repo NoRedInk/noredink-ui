@@ -62,14 +62,8 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , viewExample state settings
-            , viewInteractableCheckbox "styleguide-checkbox-interactable" state
-            , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
-            , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
-            , viewDisabledCheckbox "styleguide-checkbox-disabled" state
-            , viewMultilineCheckboxes state
             , Heading.h2 [ Heading.plaintext "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
-            , viewCustomStyledCheckbox state
             , viewCustomStyledPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
@@ -215,122 +209,6 @@ update msg state =
 -- INTERNAL
 
 
-viewInteractableCheckbox : Id -> State -> Html Msg
-viewInteractableCheckbox id state =
-    Checkbox.viewWithLabel
-        { identifier = id
-        , label = "This is an interactable checkbox!"
-        , setterMsg = ToggleCheck id
-        , selected = isSelected id state
-        , disabled = False
-        , theme = Checkbox.Square
-        , containerCss = []
-        , enabledLabelCss = []
-        , disabledLabelCss = []
-        }
-
-
-viewIndeterminateCheckbox : Id -> State -> Html Msg
-viewIndeterminateCheckbox id state =
-    Checkbox.viewWithLabel
-        { identifier = id
-        , label = "This Checkbox is set in an indeterminate state"
-        , setterMsg = ToggleCheck id
-        , selected = Checkbox.PartiallySelected
-        , disabled = True
-        , theme = Checkbox.Square
-        , containerCss = []
-        , enabledLabelCss = []
-        , disabledLabelCss = []
-        }
-
-
-viewLockedOnInsideCheckbox : Id -> State -> Html Msg
-viewLockedOnInsideCheckbox id state =
-    Checkbox.viewWithLabel
-        { identifier = id
-        , label = "I'm a locked Checkbox"
-        , setterMsg = ToggleCheck id
-        , selected = Checkbox.NotSelected
-        , disabled = True
-        , theme = Checkbox.Locked
-        , containerCss = []
-        , enabledLabelCss = []
-        , disabledLabelCss = []
-        }
-
-
-viewDisabledCheckbox : Id -> State -> Html Msg
-viewDisabledCheckbox id state =
-    Checkbox.viewWithLabel
-        { identifier = id
-        , label = "Disabled theme"
-        , setterMsg = ToggleCheck id
-        , selected = isSelected id state
-        , disabled = True
-        , theme = Checkbox.Square
-        , containerCss = []
-        , enabledLabelCss = []
-        , disabledLabelCss = []
-        }
-
-
-viewMultilineCheckboxes : State -> Html Msg
-viewMultilineCheckboxes state =
-    Html.section
-        [ css [ Css.width (Css.px 500) ] ]
-        [ Heading.h2 [ Heading.plaintext "Multiline Text in Checkboxes" ]
-        , let
-            id =
-                "styleguide-checkbox-multiline"
-          in
-          Checkbox.viewWithLabel
-            { identifier = id
-            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck id
-            , selected = isSelected id state
-            , disabled = False
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "fake-partially-selected"
-            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
-            , selected = Checkbox.PartiallySelected
-            , disabled = True
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "fake-not-selected-locked"
-            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
-            , selected = Checkbox.NotSelected
-            , disabled = True
-            , theme = Checkbox.Locked
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
-            }
-        , Checkbox.viewWithLabel
-            { identifier = "fake-not-selected-square"
-            , label = "Ut nobis et vel. Nulla rerum sit eos accusamus placeat. Iure sunt earum voluptatibus autem ratione soluta sint.\n\nIste perferendis eum corporis ullam magnam incidunt eos."
-            , setterMsg = ToggleCheck "fake"
-            , selected = Checkbox.NotSelected
-            , disabled = True
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
-            }
-        ]
-
-
 viewPremiumCheckboxes : State -> Html Msg
 viewPremiumCheckboxes state =
     Html.div []
@@ -358,29 +236,6 @@ viewPremiumCheckboxes state =
             , PremiumCheckbox.onLockedClick (Debug.log "Locked" NoOp)
             , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
             ]
-        ]
-
-
-viewCustomStyledCheckbox : State -> Html Msg
-viewCustomStyledCheckbox state =
-    Html.section
-        [ css [ Css.width (Css.px 500) ] ]
-        [ Heading.h2 [ Heading.plaintext "Custom-styled Checkboxes" ]
-        , let
-            id =
-                "styleguide-checkbox-custom-style"
-          in
-          Checkbox.viewWithLabel
-            { identifier = id
-            , label = "This is a custom-styled Checkbox"
-            , setterMsg = ToggleCheck id
-            , selected = isSelected id state
-            , disabled = False
-            , theme = Checkbox.Square
-            , containerCss = [ Css.backgroundColor Colors.navy ]
-            , enabledLabelCss = [ Css.color Colors.white ]
-            , disabledLabelCss = []
-            }
         ]
 
 
