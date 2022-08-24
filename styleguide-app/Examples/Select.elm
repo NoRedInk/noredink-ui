@@ -62,7 +62,7 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state
-                , mainType = Just "Html msg"
+                , mainType = Just "RootHtml.Html String"
                 , extraCode = []
                 , toExampleCode =
                     \_ ->
