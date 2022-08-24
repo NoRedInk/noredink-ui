@@ -7,6 +7,7 @@ module Examples.SortableTable exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -17,7 +18,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V3 as SortableTable
+import Nri.Ui.SortableTable.V3 as SortableTable exposing (Column)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -106,44 +107,18 @@ example =
 
                 config =
                     { updateMsg = SetSortState
-                    , columns =
-                        [ SortableTable.string
-                            { id = FirstName
-                            , header = "First name"
-                            , value = .firstName
-                            , width = 125
-                            , cellStyles = \_ -> []
-                            }
-                        , SortableTable.string
-                            { id = LastName
-                            , header = "Last name"
-                            , value = .lastName
-                            , width = 125
-                            , cellStyles = \_ -> []
-                            }
-                        , SortableTable.custom
-                            { id = CustomExample
-                            , header = Html.text settings.customizableColumnName
-                            , view = .grade >> String.fromInt >> Html.text
-                            , sorter =
-                                if settings.customizableColumnSorter then
-                                    Just (SortableTable.simpleSort .grade)
-
-                                else
-                                    Nothing
-                            , width = settings.customizableColumnWidth
-                            , cellStyles = \_ -> Tuple.second settings.customizableColumnCellStyles
-                            }
-                        ]
+                    , columns = columns
                     }
 
-                data =
-                    [ { firstName = "First1", lastName = "Last1", grade = 100 }
-                    , { firstName = "First2", lastName = "Last2", grade = 89 }
-                    , { firstName = "First3", lastName = "Last3", grade = 64 }
-                    , { firstName = "First4", lastName = "Last4", grade = 89 }
-                    , { firstName = "First5", lastName = "Last5", grade = 97 }
-                    ]
+                ( columnsCode, columns ) =
+                    List.unzip (columnsWithCode settings)
+
+                toExampleCode viewName dataStr =
+                    { sectionName = moduleName ++ "." ++ viewName
+                    , code =
+                        (moduleName ++ "." ++ viewName)
+                            ++ dataStr
+                    }
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -157,8 +132,14 @@ example =
                     \_ ->
                         [ { sectionName = "view"
                           , code =
-                                """TODO
-                        """
+                                [ "SortableTable.view"
+                                , Code.recordMultiline
+                                    [ ( "updateMsg", "SetSortState" )
+                                    , ( "columns", Code.listMultiline columnsCode 2 )
+                                    ]
+                                    1
+                                ]
+                                    |> String.join ""
                           }
                         ]
                 }
@@ -172,9 +153,95 @@ example =
     }
 
 
+columnsWithCode : Settings -> List ( String, Column ColumnId Datum Msg )
+columnsWithCode settings =
+    [ ( "SortableTable.string"
+            ++ Code.recordMultiline
+                [ ( "id", "FirstName" )
+                , ( "header", Code.string "First name" )
+                , ( "value", ".firstName" )
+                , ( "width", "125" )
+                , ( "cellStyles", Code.always "[]" )
+                ]
+                3
+      , SortableTable.string
+            { id = FirstName
+            , header = "First name"
+            , value = .firstName
+            , width = 125
+            , cellStyles = \_ -> []
+            }
+      )
+    , ( "SortableTable.string"
+            ++ Code.recordMultiline
+                [ ( "id", "LastName" )
+                , ( "header", Code.string "Last name" )
+                , ( "value", ".lastName" )
+                , ( "width", "125" )
+                , ( "cellStyles", Code.always "[]" )
+                ]
+                3
+      , SortableTable.string
+            { id = LastName
+            , header = "Last name"
+            , value = .lastName
+            , width = 125
+            , cellStyles = \_ -> []
+            }
+      )
+    , ( "SortableTable.custom"
+            ++ Code.recordMultiline
+                [ ( "id", "CustomExample" )
+                , ( "header", "Html.text" ++ Code.string settings.customizableColumnName )
+                , ( "view", ".grade >> String.fromInt >> Html.text" )
+                , ( "sorter"
+                  , if settings.customizableColumnSorter then
+                        "Just (SortableTable.simpleSort .grade)"
+
+                    else
+                        "Nothing"
+                  )
+                , ( "width", String.fromInt settings.customizableColumnWidth )
+                , ( "cellStyles", Code.always (Tuple.first settings.customizableColumnCellStyles) )
+                ]
+                3
+      , SortableTable.custom
+            { id = CustomExample
+            , header = Html.text settings.customizableColumnName
+            , view = .grade >> String.fromInt >> Html.text
+            , sorter =
+                if settings.customizableColumnSorter then
+                    Just (SortableTable.simpleSort .grade)
+
+                else
+                    Nothing
+            , width = settings.customizableColumnWidth
+            , cellStyles = \_ -> Tuple.second settings.customizableColumnCellStyles
+            }
+      )
+    ]
+
+
+type alias Datum =
+    { firstName : String
+    , lastName : String
+    , grade : Int
+    }
+
+
+data : List Datum
+data =
+    [ { firstName = "First1", lastName = "Last1", grade = 100 }
+    , { firstName = "First2", lastName = "Last2", grade = 89 }
+    , { firstName = "First3", lastName = "Last3", grade = 64 }
+    , { firstName = "First4", lastName = "Last4", grade = 89 }
+    , { firstName = "First5", lastName = "Last5", grade = 97 }
+    ]
+
+
 {-| -}
 type alias State =
-    { sortState : SortableTable.State Column
+    { sortState : SortableTable.State ColumnId
     , settings : Control Settings
     }
 
@@ -216,7 +283,7 @@ controlSettings =
         |> Control.field "Is loading" (Control.bool False)
 
 
-type Column
+type ColumnId
     = FirstName
     | LastName
     | CustomExample
@@ -224,7 +291,7 @@ type Column
 
 {-| -}
 type Msg
-    = SetSortState (SortableTable.State Column)
+    = SetSortState (SortableTable.State ColumnId)
     | UpdateControls (Control Settings)
 
 

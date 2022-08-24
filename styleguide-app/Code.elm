@@ -8,6 +8,7 @@ module Code exposing
     , record, recordMultiline
     , newlineWithIndent
     , withParens
+    , always
     )
 
 {-|
@@ -21,6 +22,7 @@ module Code exposing
 @docs record, recordMultiline
 @docs newlineWithIndent
 @docs withParens
+@docs always
 
 -}
 
@@ -138,3 +140,9 @@ newlineWithIndent indent =
 withParens : String -> String
 withParens val =
     "(" ++ val ++ ")"
+
+
+{-| -}
+always : String -> String
+always val =
+    "\\_ -> " ++ val
