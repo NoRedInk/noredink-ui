@@ -9,6 +9,8 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Css
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -23,16 +25,14 @@ import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)
 
 
-{-| -}
-type Msg
-    = ToggleCheck Id Bool
-    | NoOp
+moduleName : String
+moduleName =
+    "Checkbox"
 
 
-{-| -}
-type alias State =
-    { isChecked : Set String
-    }
+version : Int
+version =
+    6
 
 
 {-| -}
@@ -46,7 +46,17 @@ example =
     , preview = preview
     , view =
         \ellieLinkConfig state ->
-            [ viewInteractableCheckbox "styleguide-checkbox-interactable" state
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControls
+                , settings = state.settings
+                , mainType = Nothing
+                , extraCode = []
+                , toExampleCode = \_ -> [ { sectionName = "TODO", code = "TODO" } ]
+                }
+            , viewInteractableCheckbox "styleguide-checkbox-interactable" state
             , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
             , viewDisabledCheckbox "styleguide-checkbox-disabled" state
@@ -92,10 +102,34 @@ preview =
 
 
 {-| -}
+type alias State =
+    { isChecked : Set String
+    , settings : Control Settings
+    }
+
+
+{-| -}
 init : State
 init =
     { isChecked = Set.empty
+    , settings = controlSettings
     }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+
+
+type alias Settings =
+    {}
+
+
+{-| -}
+type Msg
+    = ToggleCheck Id Bool
+    | UpdateControls (Control Settings)
+    | NoOp
 
 
 {-| -}
@@ -112,6 +146,9 @@ update msg state =
                         Set.remove id state.isChecked
             in
             ( { state | isChecked = isChecked }, Cmd.none )
+
+        UpdateControls settings ->
+            ( { state | settings = settings }, Cmd.none )
 
         NoOp ->
             ( state, Cmd.none )
