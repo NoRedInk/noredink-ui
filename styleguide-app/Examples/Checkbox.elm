@@ -8,7 +8,7 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import CheckboxIcons
-import Css
+import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
@@ -46,6 +46,10 @@ example =
     , preview = preview
     , view =
         \ellieLinkConfig state ->
+            let
+                settings =
+                    Control.currentValue state.settings
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -56,6 +60,8 @@ example =
                 , extraCode = []
                 , toExampleCode = \_ -> [ { sectionName = "TODO", code = "TODO" } ]
                 }
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , viewExample state settings
             , viewInteractableCheckbox "styleguide-checkbox-interactable" state
             , viewIndeterminateCheckbox "styleguide-checkbox-indeterminate" state
             , viewLockedOnInsideCheckbox "styleguide-locked-on-inside-checkbox" state
@@ -119,10 +125,61 @@ init =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+        |> Control.field "label" (Control.string "Enable Text to Speech")
+        |> Control.field "disabled" (Control.bool False)
+        |> Control.field "theme"
+            (Control.choice
+                [ ( "Square", Control.value Checkbox.Square )
+                , ( "Locked", Control.value Checkbox.Locked )
+                ]
+            )
+        |> Control.field "containerCss"
+            (Control.choice
+                [ ( "[]", Control.value [] )
+                , ( "Red dashed border", Control.value [ Css.border3 (Css.px 4) Css.dashed Colors.red ] )
+                ]
+            )
+        |> Control.field "enabledLabelCss"
+            (Control.choice
+                [ ( "[]", Control.value [] )
+                , ( "Orange dotted border", Control.value [ Css.border3 (Css.px 4) Css.dotted Colors.orange ] )
+                ]
+            )
+        |> Control.field "disabledLabelCss"
+            (Control.choice
+                [ ( "[]", Control.value [] )
+                , ( "strikethrough", Control.value [ Css.textDecoration Css.lineThrough ] )
+                ]
+            )
 
 
 type alias Settings =
-    {}
+    { label : String
+    , disabled : Bool
+    , theme : Checkbox.Theme
+    , containerCss : List Style
+    , enabledLabelCss : List Style
+    , disabledLabelCss : List Style
+    }
+
+
+viewExample : State -> Settings -> Html Msg
+viewExample state settings =
+    let
+        id =
+            "unique-example-id"
+    in
+    Checkbox.viewWithLabel
+        { identifier = id
+        , label = settings.label
+        , setterMsg = ToggleCheck id
+        , selected = isSelected id state
+        , disabled = settings.disabled
+        , theme = settings.theme
+        , containerCss = settings.containerCss
+        , enabledLabelCss = settings.enabledLabelCss
+        , disabledLabelCss = settings.disabledLabelCss
+        }
 
 
 {-| -}
