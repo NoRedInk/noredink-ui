@@ -132,7 +132,7 @@ example =
                                 else
                                     Nothing
                             , width = settings.customizableColumnWidth
-                            , cellStyles = \_ -> []
+                            , cellStyles = \_ -> Tuple.second settings.customizableColumnCellStyles
                             }
                         ]
                     }
@@ -191,6 +191,7 @@ type alias Settings =
     { customizableColumnName : String
     , customizableColumnSorter : Bool
     , customizableColumnWidth : Int
+    , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     }
 
@@ -201,6 +202,17 @@ controlSettings =
         |> Control.field "Customizable column name" (Control.string "Grade")
         |> Control.field "Customizable column sorter" (Control.bool True)
         |> Control.field "Customizable column width" (ControlExtra.int 10)
+        |> Control.field "Customizable column cell styles"
+            (Control.choice
+                [ ( "[]", Control.value ( "[]", [] ) )
+                , ( "red dashed border"
+                  , Control.value
+                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                        )
+                  )
+                ]
+            )
         |> Control.field "Is loading" (Control.bool False)
 
 
