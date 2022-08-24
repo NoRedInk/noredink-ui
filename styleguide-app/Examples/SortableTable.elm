@@ -116,11 +116,22 @@ example =
                 ( columnsCode, columns ) =
                     List.unzip (columnsWithCode settings)
 
-                toExampleCode viewName dataStr =
-                    { sectionName = moduleName ++ "." ++ viewName
+                toExampleCode viewName finalArgs =
+                    { sectionName = viewName
                     , code =
-                        (moduleName ++ "." ++ viewName)
-                            ++ dataStr
+                        [ moduleName ++ "." ++ viewName
+                        , Code.recordMultiline
+                            [ ( "updateMsg", "SetSortState" )
+                            , ( "columns", Code.listMultiline columnsCode 2 )
+                            ]
+                            1
+                        , Code.newlineWithIndent 1
+                        , Code.commentInline "The SortableTable's state should be stored on the model, rather than initialized in the view"
+                        , Code.newlineWithIndent 1
+                        , Code.withParens ("SortableTable.init " ++ Debug.toString model.sortState.column)
+                        , finalArgs
+                        ]
+                            |> String.join ""
                     }
             in
             [ ControlView.view
@@ -134,25 +145,7 @@ example =
                     [ "type ColumnId = FirstName | LastName | CustomExample "
                     , "type Msg = SetSortState (SortableTable.State ColumnId)"
                     ]
-                , toExampleCode =
-                    \_ ->
-                        [ { sectionName = "view"
-                          , code =
-                                [ "SortableTable.view"
-                                , Code.recordMultiline
-                                    [ ( "updateMsg", "SetSortState" )
-                                    , ( "columns", Code.listMultiline columnsCode 2 )
-                                    ]
-                                    1
-                                , Code.newlineWithIndent 1
-                                , Code.commentInline "The SortableTable's state should be stored on the model, rather than initialized in the view"
-                                , Code.newlineWithIndent 1
-                                , Code.withParens ("SortableTable.init " ++ Debug.toString model.sortState.column)
-                                , Code.list dataCode
-                                ]
-                                    |> String.join ""
-                          }
-                        ]
+                , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , if settings.loading then
