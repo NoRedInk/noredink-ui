@@ -110,6 +110,9 @@ example =
                     , columns = columns
                     }
 
+                ( dataCode, data ) =
+                    List.unzip dataWithCode
+
                 ( columnsCode, columns ) =
                     List.unzip (columnsWithCode settings)
 
@@ -126,8 +129,11 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = model.settings
-                , mainType = Nothing
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode =
+                    [ "type ColumnId = FirstName | LastName | CustomExample "
+                    , "type Msg = SetSortState (SortableTable.State ColumnId)"
+                    ]
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "view"
@@ -138,6 +144,11 @@ example =
                                     , ( "columns", Code.listMultiline columnsCode 2 )
                                     ]
                                     1
+                                , Code.newlineWithIndent 1
+                                , Code.commentInline "The SortableTable's state should be stored on the model, rather than initialized in the view"
+                                , Code.newlineWithIndent 1
+                                , Code.withParens ("SortableTable.init " ++ Debug.toString model.sortState.column)
+                                , Code.list dataCode
                                 ]
                                     |> String.join ""
                           }
@@ -192,8 +203,8 @@ columnsWithCode settings =
     , ( "SortableTable.custom"
             ++ Code.recordMultiline
                 [ ( "id", "CustomExample" )
-                , ( "header", "Html.text" ++ Code.string settings.customizableColumnName )
-                , ( "view", ".grade >> String.fromInt >> Html.text" )
+                , ( "header", "text" ++ Code.string settings.customizableColumnName )
+                , ( "view", ".grade >> String.fromInt >> text" )
                 , ( "sorter"
                   , if settings.customizableColumnSorter then
                         "Just (SortableTable.simpleSort .grade)"
@@ -229,13 +240,23 @@ type alias Datum =
     }
 
 
-data : List Datum
-data =
-    [ { firstName = "First1", lastName = "Last1", grade = 100 }
-    , { firstName = "First2", lastName = "Last2", grade = 89 }
-    , { firstName = "First3", lastName = "Last3", grade = 64 }
-    , { firstName = "First4", lastName = "Last4", grade = 89 }
-    , { firstName = "First5", lastName = "Last5", grade = 97 }
+dataWithCode : List ( String, Datum )
+dataWithCode =
+    [ ( Code.record [ ( "firstName", Code.string "First1" ), ( "lastName", Code.string "Last1" ), ( "grade", "100" ) ]
+      , { firstName = "First1", lastName = "Last1", grade = 100 }
+      )
+    , ( Code.record [ ( "firstName", Code.string "First2" ), ( "lastName", Code.string "Last2" ), ( "grade", "89" ) ]
+      , { firstName = "First2", lastName = "Last2", grade = 89 }
+      )
+    , ( Code.record [ ( "firstName", Code.string "First3" ), ( "lastName", Code.string "Last3" ), ( "grade", "64" ) ]
+      , { firstName = "First3", lastName = "Last3", grade = 64 }
+      )
+    , ( Code.record [ ( "firstName", Code.string "First4" ), ( "lastName", Code.string "Last4" ), ( "grade", "89" ) ]
+      , { firstName = "First4", lastName = "Last4", grade = 89 }
+      )
+    , ( Code.record [ ( "firstName", Code.string "First5" ), ( "lastName", Code.string "Last5" ), ( "grade", "97" ) ]
+      , { firstName = "First5", lastName = "Last5", grade = 97 }
+      )
     ]
 
 
