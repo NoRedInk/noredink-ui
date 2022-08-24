@@ -161,10 +161,12 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "With sortable headers" ]
-            , SortableTable.view config sortState data
-            , Heading.h2 [ Heading.plaintext "Loading" ]
-            , SortableTable.viewLoading config sortState
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , if settings.loading then
+                SortableTable.viewLoading config sortState
+
+              else
+                SortableTable.view config sortState data
             ]
     }
 
@@ -187,6 +189,7 @@ init =
 type alias Settings =
     { customizableColumnName : String
     , customizableColumnSorter : Bool
+    , loading : Bool
     }
 
 
@@ -195,6 +198,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "Customizable column name" (Control.string "Grade")
         |> Control.field "Customizable column sorter" (Control.bool True)
+        |> Control.field "Is loading" (Control.bool False)
 
 
 type Column
