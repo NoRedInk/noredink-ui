@@ -9,8 +9,10 @@ module Examples.PremiumCheckbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
@@ -126,6 +128,7 @@ init =
 
 type alias Settings =
     { label : String
+    , attributes : List ( String, PremiumCheckbox.Attribute Msg )
     }
 
 
@@ -133,6 +136,33 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Identify Adjectives 1")
+        |> Control.field "attributes" controlAttributes
+
+
+controlAttributes : Control (List ( String, PremiumCheckbox.Attribute msg ))
+controlAttributes =
+    ControlExtra.list
+        |> CommonControls.css_ "setCheckboxContainerCss"
+            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+            )
+            { moduleName = moduleName
+            , use = PremiumCheckbox.setCheckboxContainerCss
+            }
+        |> CommonControls.css_ "setCheckboxEnabledLabelCss"
+            ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+            , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+            )
+            { moduleName = moduleName
+            , use = PremiumCheckbox.setCheckboxEnabledLabelCss
+            }
+        |> CommonControls.css_ "setCheckboxDisabledLabelCss"
+            ( "[ Css.textDecoration Css.lineThrough ]"
+            , [ Css.textDecoration Css.lineThrough ]
+            )
+            { moduleName = moduleName
+            , use = PremiumCheckbox.setCheckboxDisabledLabelCss
+            }
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -147,18 +177,23 @@ viewExampleWithCode state settings =
             , ( "onChange", "identity" )
             ]
       , Code.list
-            [ "PremiumCheckbox.selected " ++ Code.bool (Set.member id state.isChecked)
-            ]
+            (("PremiumCheckbox.selected " ++ Code.bool (Set.member id state.isChecked))
+                :: List.map Tuple.first settings.attributes
+            )
       ]
         |> String.join ""
     , PremiumCheckbox.view
         { label = settings.label
         , onChange = ToggleCheck id
         }
-        [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-        , PremiumCheckbox.onLockedClick NoOp
-        , PremiumCheckbox.selected (Set.member id state.isChecked)
-        ]
+        ([ [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
+           , PremiumCheckbox.onLockedClick NoOp
+           , PremiumCheckbox.selected (Set.member id state.isChecked)
+           ]
+         , List.map Tuple.second settings.attributes
+         ]
+            |> List.concat
+        )
     )
 
 
