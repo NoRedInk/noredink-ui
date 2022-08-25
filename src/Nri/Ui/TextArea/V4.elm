@@ -1,6 +1,17 @@
-module Nri.Ui.TextArea.V4 exposing (view, writing, contentCreation, Height(..), HeightBehavior(..), Model, generateId)
+module Nri.Ui.TextArea.V4 exposing
+    ( view, writing, Height(..), HeightBehavior(..), Model, generateId
+    , contentCreation
+    )
 
 {-|
+
+
+## The next version of TextArea should:
+
+  - switch to a list-based API
+  - _remove_ `contentCreation`
+  - add support for `guidance`
+  - add support for `errorMessage`
 
 
 ## Upgrading to V4
@@ -19,7 +30,11 @@ custom element, or else autosizing will break! This means doing the following:
 1.  Creating a new module in `lib/TextArea`
 2.  Requiring that module in `lib/index.js`
 
-@docs view, writing, contentCreation, Height, HeightBehavior, Model, generateId
+@docs view, writing, Height, HeightBehavior, Model, generateId
+
+DEPRECATED:
+
+@docs contentCreation
 
 -}
 
@@ -77,7 +92,7 @@ writing model =
     view_ Writing model
 
 
-{-| Used for Content Creation
+{-| DEPRECATED: use `view` instead.
 -}
 contentCreation : Model msg -> Html msg
 contentCreation model =
