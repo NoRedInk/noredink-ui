@@ -7,6 +7,7 @@ module Examples.TextArea exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -67,6 +68,25 @@ example =
             let
                 settings =
                     Control.currentValue state.settings
+
+                toExampleCode name =
+                    [ moduleName ++ "." ++ name
+                    , Code.record
+                        [ ( "value", Code.string state.value )
+                        , ( "autofocus", Code.bool False )
+                        , ( "onInput", "identity" )
+                        , ( "onBlur"
+                          , Code.maybe Nothing
+                            -- TODO: support multiline if
+                          )
+                        , ( "isInError", Code.bool settings.isInError )
+                        , ( "label", Code.string settings.label )
+                        , ( "height", Tuple.first settings.height )
+                        , ( "placeholder", Code.string settings.placeholder )
+                        , ( "showLabel", Code.bool settings.showLabel )
+                        ]
+                    ]
+                        |> String.join ""
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -74,9 +94,17 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.settings
-                , mainType = Nothing
+                , mainType = Just "RootHtml.Html String"
                 , extraCode = []
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "view"
+                          , code = toExampleCode "view"
+                          }
+                        , { sectionName = "writing"
+                          , code = toExampleCode "writing"
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , settings.theme
@@ -91,7 +119,7 @@ example =
                         Nothing
                 , isInError = settings.isInError
                 , label = settings.label
-                , height = settings.height
+                , height = Tuple.second settings.height
                 , placeholder = settings.placeholder
                 , showLabel = settings.showLabel
                 }
@@ -121,7 +149,7 @@ type alias Settings =
     , placeholder : String
     , isInError : Bool
     , onBlur : Bool
-    , height : TextArea.HeightBehavior
+    , height : ( String, TextArea.HeightBehavior )
     }
 
 
@@ -141,9 +169,21 @@ initControls =
         |> Control.field "onBlur" (Control.bool False)
         |> Control.field "height"
             (Control.choice
-                [ ( "fixed", Control.value TextArea.Fixed )
-                , ( "autoresize default", Control.value (TextArea.AutoResize TextArea.DefaultHeight) )
-                , ( "autoresize singleline", Control.value (TextArea.AutoResize TextArea.SingleLine) )
+                [ ( "fixed"
+                  , Control.value ( "TextArea.Fixed", TextArea.Fixed )
+                  )
+                , ( "autoresize default"
+                  , Control.value
+                        ( Code.withParens "TextArea.AutoResize TextArea.DefaultHeight"
+                        , TextArea.AutoResize TextArea.DefaultHeight
+                        )
+                  )
+                , ( "autoresize singleline"
+                  , Control.value
+                        ( Code.withParens "TextArea.AutoResize TextArea.SingleLine"
+                        , TextArea.AutoResize TextArea.SingleLine
+                        )
+                  )
                 ]
             )
 
