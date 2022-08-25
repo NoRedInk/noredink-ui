@@ -90,11 +90,11 @@ example =
 
                     else
                         Nothing
-                , isInError = False
-                , label = "TextArea.view"
+                , isInError = settings.isInError
+                , label = settings.label
                 , height = settings.height
-                , placeholder = "Placeholder"
-                , showLabel = True
+                , placeholder = settings.placeholder
+                , showLabel = settings.showLabel
                 }
             , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.contentCreation
@@ -130,6 +130,7 @@ init =
 type alias Settings =
     { label : String
     , showLabel : Bool
+    , placeholder : String
     , isInError : Bool
     , onBlur : Bool
     , height : TextArea.HeightBehavior
@@ -141,6 +142,7 @@ initControls =
     Control.record Settings
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
+        |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
         |> Control.field "isInError" (Control.bool False)
         |> Control.field "onBlur" (Control.bool False)
         |> Control.field "height"
