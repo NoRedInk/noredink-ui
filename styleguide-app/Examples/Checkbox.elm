@@ -20,7 +20,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Set exposing (Set)
 
 
 moduleName : String
@@ -98,7 +97,7 @@ preview =
 
 {-| -}
 type alias State =
-    { isChecked : Set String
+    { isChecked : Checkbox.IsSelected
     , settings : Control Settings
     }
 
@@ -106,7 +105,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { isChecked = Set.empty
+    { isChecked = Checkbox.PartiallySelected
     , settings = controlSettings
     }
 
@@ -162,7 +161,7 @@ viewExample state settings =
         { identifier = id
         , label = settings.label
         , setterMsg = ToggleCheck id
-        , selected = isSelected id state
+        , selected = state.isChecked
         , disabled = settings.disabled
         , theme = settings.theme
         , containerCss = settings.containerCss
@@ -185,10 +184,10 @@ update msg state =
             let
                 isChecked =
                     if checked then
-                        Set.insert id state.isChecked
+                        Checkbox.Selected
 
                     else
-                        Set.remove id state.isChecked
+                        Checkbox.NotSelected
             in
             ( { state | isChecked = isChecked }, Cmd.none )
 
@@ -198,12 +197,3 @@ update msg state =
 
 type alias Id =
     String
-
-
-isSelected : Id -> State -> Checkbox.IsSelected
-isSelected id state =
-    if Set.member id state.isChecked then
-        Checkbox.Selected
-
-    else
-        Checkbox.NotSelected
