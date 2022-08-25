@@ -122,7 +122,7 @@ cleverBlue =
             [ Svg.style
                 [ Attributes.type_ "text/css"
                 ]
-                [ Svg.text ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#436CF2;}" ]
+                [ Svg.text ".clever-blue--st0{fill-rule:evenodd;clip-rule:evenodd;fill:#436CF2;}" ]
             , Svg.title []
                 [ Svg.text "wordmark/blue" ]
             , Svg.desc []
@@ -130,32 +130,32 @@ cleverBlue =
             , Svg.g []
                 [ Svg.g []
                     [ Svg.path
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.d "M0.2,145.2c0-78,57.9-141.3,140.9-141.3c50.9,0,81.4,17.1,106.5,41.9l-37.8,43.9\n\t\t\tc-20.8-19-42.1-30.7-69.1-30.7c-45.5,0-78.4,38-78.4,84.6c0,47.4,32,86.2,78.4,86.2c30.9,0,49.8-12.4,71-31.8l37.8,38.4\n\t\t\tc-27.8,29.9-58.7,48.5-110.8,48.5C59.2,284.9,0.2,223.2,0.2,145.2z"
                         ]
                         []
                     , Svg.polygon
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.points "254.9,0.9 313.6,0.9 313.6,284.3 254.9,284.3 \t\t"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.d "M422.4,115.7c-24.3,0-40.1,17.5-44.8,44.3h88.4C462.6,133.5,447.1,115.7,422.4,115.7\n\t\t\t M522.4,196.8h-144c5.8,26.8,24.3,40.8,50.6,40.8c19.7,0,34-6.2,50.2-21.4l33.6,29.9c-19.3,24.1-47.1,38.8-84.5,38.8\n\t\t\tc-62.1,0-108.1-43.9-108.1-107.5v-0.8c0-59.4,42.1-108.3,102.3-108.3c69.1,0,100.7,54,100.7,113v0.8\n\t\t\tC523.2,187.9,522.8,191.4,522.4,196.8"
                         ]
                         []
                     , Svg.polyline
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.points "634.8,283.8 581.5,283.8 500.1,74.2 562.2,74.2 608.5,213.6 655.2,74.2 716.2,74.2\n\t\t\t634.8,283.8 \t\t"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.d "M792.2,115.7c-24.3,0-40.1,17.5-44.8,44.3h88.4C832.4,133.5,816.9,115.7,792.2,115.7\n\t\t\t M892.2,196.8h-144c5.8,26.8,24.3,40.8,50.6,40.8c19.7,0,34-6.2,50.2-21.4l33.6,29.9c-19.3,24.1-47.1,38.8-84.5,38.8\n\t\t\tc-62.1,0-108.1-43.9-108.1-107.5v-0.8c0-59.4,42.1-108.3,102.3-108.3c69.1,0,100.7,54,100.7,113v0.8\n\t\t\tC893,187.9,892.6,191.4,892.2,196.8"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st0"
+                        [ Attributes.class "clever-blue--st0"
                         , Attributes.d "M1019.6,134.1c-39,0-62.9,23.7-62.9,73.4v76.9H898V76.2h58.7v41.9c12-28.7,31.3-47.4,66-45.8\n\t\t\tv61.7H1019.6"
                         ]
                         []
@@ -198,7 +198,7 @@ cleverWhite =
             [ Svg.style
                 [ Attributes.type_ "text/css"
                 ]
-                [ Svg.text ".st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}" ]
+                [ Svg.text ".clever-white--st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}" ]
             , Svg.title []
                 [ Svg.text "wordmark/blue" ]
             , Svg.desc []
@@ -206,32 +206,32 @@ cleverWhite =
             , Svg.g []
                 [ Svg.g []
                     [ Svg.path
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.d "M0.2,145.2c0-78,57.9-141.3,140.9-141.3c50.9,0,81.4,17.1,106.5,41.9l-37.8,43.9\n\t\t\tc-20.8-19-42.1-30.7-69.1-30.7c-45.5,0-78.4,38-78.4,84.6c0,47.4,32,86.2,78.4,86.2c30.9,0,49.8-12.4,71-31.8l37.8,38.4\n\t\t\tc-27.8,29.9-58.7,48.5-110.8,48.5C59.2,284.9,0.2,223.2,0.2,145.2z"
                         ]
                         []
                     , Svg.polygon
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.points "254.9,0.9 313.6,0.9 313.6,284.3 254.9,284.3 \t\t"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.d "M422.4,115.7c-24.3,0-40.1,17.5-44.8,44.3h88.4C462.6,133.5,447.1,115.7,422.4,115.7\n\t\t\t M522.4,196.8h-144c5.8,26.8,24.3,40.8,50.6,40.8c19.7,0,34-6.2,50.2-21.4l33.6,29.9c-19.3,24.1-47.1,38.8-84.5,38.8\n\t\t\tc-62.1,0-108.1-43.9-108.1-107.5v-0.8c0-59.4,42.1-108.3,102.3-108.3c69.1,0,100.7,54,100.7,113v0.8\n\t\t\tC523.2,187.9,522.8,191.4,522.4,196.8"
                         ]
                         []
                     , Svg.polyline
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.points "634.8,283.8 581.5,283.8 500.1,74.2 562.2,74.2 608.5,213.6 655.2,74.2 716.2,74.2\n\t\t\t634.8,283.8 \t\t"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.d "M792.2,115.7c-24.3,0-40.1,17.5-44.8,44.3h88.4C832.4,133.5,816.9,115.7,792.2,115.7\n\t\t\t M892.2,196.8h-144c5.8,26.8,24.3,40.8,50.6,40.8c19.7,0,34-6.2,50.2-21.4l33.6,29.9c-19.3,24.1-47.1,38.8-84.5,38.8\n\t\t\tc-62.1,0-108.1-43.9-108.1-107.5v-0.8c0-59.4,42.1-108.3,102.3-108.3c69.1,0,100.7,54,100.7,113v0.8\n\t\t\tC893,187.9,892.6,191.4,892.2,196.8"
                         ]
                         []
                     , Svg.path
-                        [ Attributes.class "st1"
+                        [ Attributes.class "clever-white--st1"
                         , Attributes.d "M1019.6,134.1c-39,0-62.9,23.7-62.9,73.4v76.9H898V76.2h58.7v41.9c12-28.7,31.3-47.4,66-45.8\n\t\t\tv61.7H1019.6"
                         ]
                         []
