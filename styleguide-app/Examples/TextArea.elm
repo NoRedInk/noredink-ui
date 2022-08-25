@@ -87,7 +87,7 @@ example =
                 , onInput = InputGiven 5
                 , onBlur = Nothing
                 , isInError = False
-                , label = "TextArea.view"
+                , label = settings.label
                 , height = TextArea.Fixed
                 , placeholder = "Placeholder"
                 , showLabel = settings.showLabel
@@ -208,13 +208,15 @@ init =
 
 
 type alias Settings =
-    { showLabel : Bool
+    { label : String
+    , showLabel : Bool
     }
 
 
 initControls : Control Settings
 initControls =
     Control.record Settings
+        |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
 
 
