@@ -82,6 +82,7 @@ all =
       , [ ( "share", UiIcon.share, [] )
         , ( "preview", UiIcon.preview, [] )
         , ( "activity", UiIcon.activity, [] )
+        , ( "print", UiIcon.print, [] )
         , ( "copyToClipboard", UiIcon.copyToClipboard, [] )
         , ( "gift", UiIcon.gift, [] )
         , ( "openInNewTab", UiIcon.openInNewTab, [] )

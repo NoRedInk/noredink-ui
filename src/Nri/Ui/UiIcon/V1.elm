@@ -3,7 +3,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle
     , play, skip
-    , share, preview, copyToClipboard, gift
+    , share, preview, copyToClipboard, gift, print
     , activity
     , footsteps, compass, speedometer, help, checklist, checklistComplete
     , sparkleBulb, baldBulb, bulb
@@ -40,7 +40,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle
 @docs play, skip
-@docs share, preview, copyToClipboard, gift
+@docs share, preview, copyToClipboard, gift, print
 @docs activity
 @docs footsteps, compass, speedometer, help, checklist, checklistComplete
 @docs sparkleBulb, baldBulb, bulb
@@ -158,6 +158,19 @@ preview : Nri.Ui.Svg.V1.Svg
 preview =
     Nri.Ui.Svg.V1.init "0 5 25 15"
         [ Svg.path [ Attributes.d "M12.5,5 C18.0555556,5 25,12.5 25,12.5 C25,12.5 18.0555556,20 12.5,20 C6.94444444,20 0,12.5 0,12.5 C3.2637037,9.26571429 7.62444444,5.19964286 12.5,5 Z M12.5,8.48214286 C10.1981481,8.48214286 8.33333333,10.28 8.33333333,12.5 C8.33333333,14.7196429 10.1981481,16.5178571 12.5,16.5178571 C14.8018519,16.5178571 16.6666667,14.7196429 16.6666667,12.5 C16.6666667,10.28 14.8018519,8.48214286 12.5,8.48214286 Z M12.5,14.5089286 C11.35,14.5089286 10.4166667,13.6085714 10.4166667,12.5 C10.4166667,11.3910714 11.35,10.4910714 12.5,10.4910714 C13.65,10.4910714 14.5833333,11.3910714 14.5833333,12.5 C14.5833333,13.6085714 13.65,14.5089286 12.5,14.5089286 Z" ] [] ]
+
+
+{-| -}
+print : Nri.Ui.Svg.V1.Svg
+print =
+    Nri.Ui.Svg.V1.init "0 0 21 21"
+        [ Svg.g []
+            [ Svg.path [ Attributes.d "M17.9577 1.55105C17.9577 0.727943 17.2894 0.0595703 16.4663 0.0595703H4.53445C3.71134 0.0595703 3.04297 0.727943 3.04297 1.55105V3.04253H17.9577V1.55105Z" ] []
+            , Svg.path [ Attributes.d "M19.4498 4.53418H1.55202C0.72892 4.53418 0.0605469 5.20255 0.0605469 6.02566V14.9745C0.0605469 15.7976 0.72892 16.466 1.55202 16.466H3.0435V19.449C3.0435 20.2721 3.71187 20.9404 4.53498 20.9404H16.4668C17.2899 20.9404 17.9583 20.2721 17.9583 19.449V16.466H19.4498C20.2729 16.466 20.9412 15.7976 20.9412 14.9745V6.02566C20.9412 5.20255 20.2729 4.53418 19.4498 4.53418ZM16.4668 19.449H4.53498V11.9916H16.4668V19.449ZM17.9583 9.00861H14.9753V7.51713H17.9583V9.00861Z" ] []
+            , Svg.path [ Attributes.d "M6.02734 16.4658H10.5018V17.9573H6.02734V16.4658Z" ] []
+            , Svg.path [ Attributes.d "M6.02734 13.4824H14.9762V14.9739H6.02734V13.4824Z" ] []
+            ]
+        ]
 
 
 {-| -}
