@@ -142,6 +142,11 @@ controlSettings =
 controlAttributes : Control (List ( String, PremiumCheckbox.Attribute msg ))
 controlAttributes =
     ControlExtra.list
+        |> ControlExtra.optionalListItem "premiumDisplay"
+            (Control.map
+                (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
+                CommonControls.premiumDisplay
+            )
         |> ControlExtra.optionalBoolListItem "PremiumCheckbox.disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
         |> CommonControls.css_ "setCheckboxContainerCss"
             ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
@@ -172,7 +177,7 @@ viewExampleWithCode state settings =
         id =
             "unique-premium-example-id"
     in
-    ( [ "Checkbox.viewWithLabel"
+    ( [ "PremiumCheckbox.view "
       , Code.record
             [ ( "label", Code.string settings.label )
             , ( "onChange", "identity" )
@@ -187,8 +192,7 @@ viewExampleWithCode state settings =
         { label = settings.label
         , onChange = ToggleCheck id
         }
-        ([ [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-           , PremiumCheckbox.onLockedClick NoOp
+        ([ [ PremiumCheckbox.onLockedClick NoOp
            , PremiumCheckbox.selected (Set.member id state.isChecked)
            ]
          , List.map Tuple.second settings.attributes
