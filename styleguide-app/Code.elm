@@ -8,6 +8,7 @@ module Code exposing
     , record, recordMultiline
     , newlineWithIndent
     , withParens
+    , conditional
     )
 
 {-|
@@ -21,6 +22,7 @@ module Code exposing
 @docs record, recordMultiline
 @docs newlineWithIndent
 @docs withParens
+@docs conditional
 
 -}
 
@@ -138,3 +140,29 @@ newlineWithIndent indent =
 withParens : String -> String
 withParens val =
     "(" ++ val ++ ")"
+
+
+{-| pass in a list of tuples of (condition, result) and an else option.
+-}
+conditional : List ( String, String ) -> String -> Int -> String
+conditional options else_ indent =
+    let
+        conditionalBranch type_ ( condition, result ) =
+            [ type_ ++ " " ++ condition ++ " then"
+            , newlineWithIndent indent
+            , result
+            ]
+    in
+    case options of
+        [] ->
+            else_
+
+        if_ :: elseIfs ->
+            (conditionalBranch "if" if_
+                ++ List.concatMap (conditionalBranch "else if") elseIfs
+                ++ [ "else"
+                   , newlineWithIndent indent
+                   , else_
+                   ]
+            )
+                |> String.join ""
