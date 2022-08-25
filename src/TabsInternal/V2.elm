@@ -181,18 +181,14 @@ viewTab_ config index tab =
 keyEvents : Config id msg -> Tab id msg -> List (Json.Decode.Decoder msg)
 keyEvents { focusAndSelect, tabs } thisTab =
     let
-        findAdjacentTab tab acc =
-            case acc of
-                ( _, Just _ ) ->
-                    acc
+        findAdjacentTab tab ( isAdjacentTab, acc ) =
+            if isAdjacentTab then
+                ( False
+                , Just { select = tab.id, focus = Just (tabToId tab.idString) }
+                )
 
-                ( True, Nothing ) ->
-                    ( True
-                    , Just { select = tab.id, focus = Just (tabToId tab.idString) }
-                    )
-
-                ( False, Nothing ) ->
-                    ( tab.id == thisTab.id, Nothing )
+            else
+                ( tab.id == thisTab.id, acc )
 
         nonDisabledTabs =
             List.filter (not << .disabled) tabs
