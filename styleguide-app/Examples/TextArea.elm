@@ -14,7 +14,6 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Checkbox.V6 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
@@ -82,60 +81,13 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view
-                { value = Maybe.withDefault "" <| Dict.get 5 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 5
-                , onBlur = Nothing
-                , isInError = settings.isInError
-                , label = settings.label
-                , height = TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = settings.showLabel
-                }
-            , Heading.h2 [ Heading.plaintext "Textarea controls" ]
-            , Html.div []
-                [ Checkbox.viewWithLabel
-                    { identifier = "textarea-autoresize"
-                    , label = "Autoresize"
-                    , setterMsg = ToggleAutoResize
-                    , selected = state.autoResize
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    , containerCss = []
-                    , enabledLabelCss = []
-                    , disabledLabelCss = []
-                    }
-                ]
-            , TextArea.view
                 { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
                 , autofocus = False
                 , onInput = InputGiven 1
                 , onBlur = Nothing
                 , isInError = False
                 , label = "TextArea.view"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.SingleLine
-
-                    else
-                        TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = True
-                }
-            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
-            , TextArea.writing
-                { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 2
-                , onBlur = Nothing
-                , isInError = False
-                , label = "TextArea.writing"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
-
-                    else
-                        TextArea.Fixed
+                , height = settings.height
                 , placeholder = "Placeholder"
                 , showLabel = True
                 }
@@ -147,12 +99,7 @@ example =
                 , onBlur = Nothing
                 , isInError = False
                 , label = "TextArea.contentCreation"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
-
-                    else
-                        TextArea.Fixed
+                , height = TextArea.Fixed
                 , placeholder = "Placeholder"
                 , showLabel = True
                 }
@@ -164,12 +111,7 @@ example =
                 , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
                 , isInError = False
                 , label = "TextArea.writing onBlur demonstration"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
-
-                    else
-                        TextArea.Fixed
+                , height = TextArea.Fixed
                 , placeholder = "Placeholder"
                 , showLabel = True
                 }
@@ -180,7 +122,6 @@ example =
 {-| -}
 type alias State =
     { textValues : Dict Int String
-    , autoResize : Checkbox.IsSelected
     , settings : Control Settings
     }
 
@@ -189,7 +130,6 @@ type alias State =
 init : State
 init =
     { textValues = Dict.empty
-    , autoResize = Checkbox.NotSelected
     , settings = initControls
     }
 
@@ -198,6 +138,7 @@ type alias Settings =
     { label : String
     , showLabel : Bool
     , isInError : Bool
+    , height : TextArea.HeightBehavior
     }
 
 
@@ -207,34 +148,27 @@ initControls =
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
         |> Control.field "isInError" (Control.bool False)
+        |> Control.field "height"
+            (Control.choice
+                [ ( "fixed", Control.value TextArea.Fixed )
+                , ( "autoresize default", Control.value (TextArea.AutoResize TextArea.DefaultHeight) )
+                , ( "autoresize singleline", Control.value (TextArea.AutoResize TextArea.SingleLine) )
+                ]
+            )
 
 
 {-| -}
 type Msg
     = InputGiven Id String
-    | ToggleAutoResize Bool
     | UpdateControl (Control Settings)
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    let
-        toggle bool =
-            if bool then
-                Checkbox.Selected
-
-            else
-                Checkbox.NotSelected
-    in
     case msg of
         InputGiven id newValue ->
             ( { state | textValues = Dict.insert id newValue state.textValues }
-            , Cmd.none
-            )
-
-        ToggleAutoResize bool ->
-            ( { state | autoResize = toggle bool }
             , Cmd.none
             )
 
