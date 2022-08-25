@@ -115,8 +115,8 @@ all =
         ]
       )
     , ( "Clever sync"
-      , [ ( "clever"
-          , Logo.clever
+      , [ ( "cleverSecureSync"
+          , Logo.cleverSecureSync
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)

@@ -1,6 +1,6 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink, noredinkMonochrome
-    , clever, cleverBlue, cleverC, cleverWhite
+    , cleverSecureSync, cleverBlue, cleverC, cleverWhite
     , google, googleClassroom, googleClassroomFull, googleG
     , canvas
     , canvasCircle
@@ -12,7 +12,7 @@ module Nri.Ui.Logo.V1 exposing
 {-|
 
 @docs noredink, noredinkMonochrome
-@docs clever, cleverBlue, cleverC, cleverWhite
+@docs cleverSecureSync, cleverBlue, cleverC, cleverWhite
 @docs google, googleClassroom, googleClassroomFull, googleG
 @docs canvas
 @docs canvasCircle
@@ -94,8 +94,8 @@ facebook =
 
 
 {-| -}
-clever : Nri.Ui.Svg.V1.Svg
-clever =
+cleverSecureSync : Nri.Ui.Svg.V1.Svg
+cleverSecureSync =
     Nri.Ui.Svg.V1.init "0 0 87 20"
         [ Svg.g
             [ Attributes.fillRule "evenodd"
