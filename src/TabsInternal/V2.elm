@@ -181,30 +181,36 @@ viewTab_ config index tab =
 keyEvents : Config id msg -> Tab id msg -> List (Json.Decode.Decoder msg)
 keyEvents { focusAndSelect, tabs } thisTab =
     let
+        onFocus : Tab id msg -> msg
+        onFocus tab =
+            focusAndSelect { select = tab.id, focus = Just (tabToId tab.idString) }
+
+        findAdjacentTab : Tab id msg -> ( Bool, Maybe msg ) -> ( Bool, Maybe msg )
         findAdjacentTab tab ( isAdjacentTab, acc ) =
             if isAdjacentTab then
-                ( False
-                , Just { select = tab.id, focus = Just (tabToId tab.idString) }
-                )
+                ( False, Just (onFocus tab) )
 
             else
                 ( tab.id == thisTab.id, acc )
 
-        nonDisabledTabs =
+        activeTabs : List (Tab id msg)
+        activeTabs =
             List.filter (not << .disabled) tabs
 
-        nextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) nonDisabledTabs
+        goToNextTab : Maybe msg
+        goToNextTab =
+            List.foldl findAdjacentTab ( False, Nothing ) activeTabs
                 |> Tuple.second
 
-        previousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) nonDisabledTabs
+        goToPreviousTab : Maybe msg
+        goToPreviousTab =
+            List.foldr findAdjacentTab ( False, Nothing ) activeTabs
                 |> Tuple.second
     in
-    [ Maybe.map (Key.right << focusAndSelect) nextTab
-    , Maybe.map (Key.left << focusAndSelect) previousTab
-    ]
-        |> List.filterMap identity
+    List.filterMap identity
+        [ Maybe.map Key.right goToNextTab
+        , Maybe.map Key.left goToPreviousTab
+        ]
 
 
 viewTabPanels : Config id msg -> Html msg
