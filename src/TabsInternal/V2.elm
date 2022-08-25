@@ -188,22 +188,21 @@ keyEvents { focusAndSelect, tabs } thisTab =
 
                 ( True, Nothing ) ->
                     ( True
-                    , if tab.disabled then
-                        Nothing
-
-                      else
-                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
+                    , Just { select = tab.id, focus = Just (tabToId tab.idString) }
                     )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
 
+        nonDisabledTabs =
+            List.filter (not << .disabled) tabs
+
         nextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) tabs
+            List.foldl findAdjacentTab ( False, Nothing ) nonDisabledTabs
                 |> Tuple.second
 
         previousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) tabs
+            List.foldr findAdjacentTab ( False, Nothing ) nonDisabledTabs
                 |> Tuple.second
     in
     [ Maybe.map (Key.right << focusAndSelect) nextTab
