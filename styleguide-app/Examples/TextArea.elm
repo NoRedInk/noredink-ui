@@ -86,7 +86,7 @@ example =
                 , autofocus = False
                 , onInput = InputGiven 5
                 , onBlur = Nothing
-                , isInError = False
+                , isInError = settings.isInError
                 , label = settings.label
                 , height = TextArea.Fixed
                 , placeholder = "Placeholder"
@@ -105,24 +105,13 @@ example =
                     , enabledLabelCss = []
                     , disabledLabelCss = []
                     }
-                , Checkbox.viewWithLabel
-                    { identifier = "textarea-isInError"
-                    , label = "Show Error State"
-                    , setterMsg = ToggleErrorState
-                    , selected = state.isInError
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    , containerCss = []
-                    , enabledLabelCss = []
-                    , disabledLabelCss = []
-                    }
                 ]
             , TextArea.view
                 { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
                 , autofocus = False
                 , onInput = InputGiven 1
                 , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
+                , isInError = False
                 , label = "TextArea.view"
                 , height =
                     if state.autoResize == Checkbox.Selected then
@@ -139,7 +128,7 @@ example =
                 , autofocus = False
                 , onInput = InputGiven 2
                 , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
+                , isInError = False
                 , label = "TextArea.writing"
                 , height =
                     if state.autoResize == Checkbox.Selected then
@@ -156,7 +145,7 @@ example =
                 , autofocus = False
                 , onInput = InputGiven 3
                 , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
+                , isInError = False
                 , label = "TextArea.contentCreation"
                 , height =
                     if state.autoResize == Checkbox.Selected then
@@ -173,7 +162,7 @@ example =
                 , autofocus = False
                 , onInput = InputGiven 4
                 , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
-                , isInError = state.isInError == Checkbox.Selected
+                , isInError = False
                 , label = "TextArea.writing onBlur demonstration"
                 , height =
                     if state.autoResize == Checkbox.Selected then
@@ -191,7 +180,6 @@ example =
 {-| -}
 type alias State =
     { textValues : Dict Int String
-    , isInError : Checkbox.IsSelected
     , autoResize : Checkbox.IsSelected
     , settings : Control Settings
     }
@@ -201,7 +189,6 @@ type alias State =
 init : State
 init =
     { textValues = Dict.empty
-    , isInError = Checkbox.NotSelected
     , autoResize = Checkbox.NotSelected
     , settings = initControls
     }
@@ -210,6 +197,7 @@ init =
 type alias Settings =
     { label : String
     , showLabel : Bool
+    , isInError : Bool
     }
 
 
@@ -218,13 +206,13 @@ initControls =
     Control.record Settings
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
+        |> Control.field "isInError" (Control.bool False)
 
 
 {-| -}
 type Msg
     = InputGiven Id String
     | ToggleAutoResize Bool
-    | ToggleErrorState Bool
     | UpdateControl (Control Settings)
 
 
@@ -242,11 +230,6 @@ update msg state =
     case msg of
         InputGiven id newValue ->
             ( { state | textValues = Dict.insert id newValue state.textValues }
-            , Cmd.none
-            )
-
-        ToggleErrorState bool ->
-            ( { state | isInError = toggle bool }
             , Cmd.none
             )
 
