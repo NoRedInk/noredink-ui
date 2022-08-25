@@ -142,6 +142,7 @@ controlSettings =
 controlAttributes : Control (List ( String, PremiumCheckbox.Attribute msg ))
 controlAttributes =
     ControlExtra.list
+        |> ControlExtra.optionalBoolListItem "PremiumCheckbox.disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
         |> CommonControls.css_ "setCheckboxContainerCss"
             ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
             , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
