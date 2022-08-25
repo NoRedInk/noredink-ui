@@ -98,10 +98,9 @@ preview =
                 , text label_
                 ]
     in
-    [ ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
-    , ( CheckboxIcons.checkedPartially "checkedPartially-preview-checkedPartially", "Part checked" )
+    [ ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
+    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
     , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked" )
-    , ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
     ]
         |> List.map renderPreview
 
