@@ -66,6 +66,10 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
+            let
+                settings =
+                    Control.currentValue state.settings
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -86,22 +90,11 @@ example =
                 , label = "TextArea.view"
                 , height = TextArea.Fixed
                 , placeholder = "Placeholder"
-                , showLabel = True
+                , showLabel = settings.showLabel
                 }
             , Heading.h2 [ Heading.plaintext "Textarea controls" ]
             , Html.div []
                 [ Checkbox.viewWithLabel
-                    { identifier = "show-textarea-label"
-                    , label = "Show Label"
-                    , setterMsg = ToggleLabel
-                    , selected = state.showLabel
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    , containerCss = []
-                    , enabledLabelCss = []
-                    , disabledLabelCss = []
-                    }
-                , Checkbox.viewWithLabel
                     { identifier = "textarea-autoresize"
                     , label = "Autoresize"
                     , setterMsg = ToggleAutoResize
@@ -138,7 +131,7 @@ example =
                     else
                         TextArea.Fixed
                 , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                , showLabel = True
                 }
             , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
@@ -155,7 +148,7 @@ example =
                     else
                         TextArea.Fixed
                 , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                , showLabel = True
                 }
             , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.contentCreation
@@ -172,7 +165,7 @@ example =
                     else
                         TextArea.Fixed
                 , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                , showLabel = True
                 }
             , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
             , TextArea.writing
@@ -189,7 +182,7 @@ example =
                     else
                         TextArea.Fixed
                 , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                , showLabel = True
                 }
             ]
     }
@@ -198,7 +191,6 @@ example =
 {-| -}
 type alias State =
     { textValues : Dict Int String
-    , showLabel : Checkbox.IsSelected
     , isInError : Checkbox.IsSelected
     , autoResize : Checkbox.IsSelected
     , settings : Control Settings
@@ -209,7 +201,6 @@ type alias State =
 init : State
 init =
     { textValues = Dict.empty
-    , showLabel = Checkbox.Selected
     , isInError = Checkbox.NotSelected
     , autoResize = Checkbox.NotSelected
     , settings = initControls
@@ -217,18 +208,19 @@ init =
 
 
 type alias Settings =
-    {}
+    { showLabel : Bool
+    }
 
 
 initControls : Control Settings
 initControls =
     Control.record Settings
+        |> Control.field "showLabel" (Control.bool True)
 
 
 {-| -}
 type Msg
     = InputGiven Id String
-    | ToggleLabel Bool
     | ToggleAutoResize Bool
     | ToggleErrorState Bool
     | UpdateControl (Control Settings)
@@ -248,11 +240,6 @@ update msg state =
     case msg of
         InputGiven id newValue ->
             ( { state | textValues = Dict.insert id newValue state.textValues }
-            , Cmd.none
-            )
-
-        ToggleLabel bool ->
-            ( { state | showLabel = toggle bool }
             , Cmd.none
             )
 
