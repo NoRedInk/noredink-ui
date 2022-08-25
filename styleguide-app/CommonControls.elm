@@ -1,5 +1,5 @@
 module CommonControls exposing
-    ( css, mobileCss, quizEngineMobileCss, notMobileCss
+    ( css, mobileCss, quizEngineMobileCss, notMobileCss, css_
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
     , content
@@ -9,7 +9,7 @@ module CommonControls exposing
 
 {-|
 
-@docs css, mobileCss, quizEngineMobileCss, notMobileCss
+@docs css, mobileCss, quizEngineMobileCss, notMobileCss, css_
 @docs choice
 @docs icon, iconNotCheckedByDefault, uiIcon
 

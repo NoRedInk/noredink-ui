@@ -24,6 +24,7 @@ import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pennant as Pennant
+import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.RadioButton as RadioButton
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
@@ -480,6 +481,25 @@ all =
                     _ ->
                         Nothing
             )
+    , PremiumCheckbox.example
+        |> Example.wrapMsg PremiumCheckboxMsg
+            (\msg ->
+                case msg of
+                    PremiumCheckboxMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState PremiumCheckboxState
+            (\msg ->
+                case msg of
+                    PremiumCheckboxState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , RadioButton.example
         |> Example.wrapMsg RadioButtonMsg
             (\msg ->
@@ -792,6 +812,7 @@ type State
     | ModalState Modal.State
     | PageState Page.State
     | PennantState Pennant.State
+    | PremiumCheckboxState PremiumCheckbox.State
     | RadioButtonState RadioButton.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
@@ -833,6 +854,7 @@ type Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
     | PennantMsg Pennant.Msg
+    | PremiumCheckboxMsg PremiumCheckbox.Msg
     | RadioButtonMsg RadioButton.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
