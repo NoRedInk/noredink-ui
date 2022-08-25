@@ -8,6 +8,8 @@ module Examples.TextArea exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Css
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html
@@ -19,28 +21,21 @@ import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
 import Nri.Ui.TextArea.V4 as TextArea
 
 
-{-| -}
-type Msg
-    = InputGiven Id String
-    | ToggleLabel Bool
-    | ToggleAutoResize Bool
-    | ToggleErrorState Bool
+moduleName : String
+moduleName =
+    "TextArea"
 
 
-{-| -}
-type alias State =
-    { textValues : Dict Int String
-    , showLabel : Checkbox.IsSelected
-    , isInError : Checkbox.IsSelected
-    , autoResize : Checkbox.IsSelected
-    }
+version : Int
+version =
+    4
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "TextArea"
-    , version = 4
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -71,7 +66,29 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ Heading.h1 [ Heading.plaintext "Textarea controls" ]
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.settings
+                , mainType = Nothing
+                , extraCode = []
+                , toExampleCode = \_ -> []
+                }
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , TextArea.view
+                { value = Maybe.withDefault "" <| Dict.get 5 state.textValues
+                , autofocus = False
+                , onInput = InputGiven 5
+                , onBlur = Nothing
+                , isInError = False
+                , label = "TextArea.view"
+                , height = TextArea.Fixed
+                , placeholder = "Placeholder"
+                , showLabel = True
+                }
+            , Heading.h2 [ Heading.plaintext "Textarea controls" ]
             , Html.div []
                 [ Checkbox.viewWithLabel
                     { identifier = "show-textarea-label"
@@ -179,13 +196,42 @@ example =
 
 
 {-| -}
+type alias State =
+    { textValues : Dict Int String
+    , showLabel : Checkbox.IsSelected
+    , isInError : Checkbox.IsSelected
+    , autoResize : Checkbox.IsSelected
+    , settings : Control Settings
+    }
+
+
+{-| -}
 init : State
 init =
     { textValues = Dict.empty
     , showLabel = Checkbox.Selected
     , isInError = Checkbox.NotSelected
     , autoResize = Checkbox.NotSelected
+    , settings = initControls
     }
+
+
+type alias Settings =
+    {}
+
+
+initControls : Control Settings
+initControls =
+    Control.record Settings
+
+
+{-| -}
+type Msg
+    = InputGiven Id String
+    | ToggleLabel Bool
+    | ToggleAutoResize Bool
+    | ToggleErrorState Bool
+    | UpdateControl (Control Settings)
 
 
 {-| -}
@@ -219,6 +265,9 @@ update msg state =
             ( { state | autoResize = toggle bool }
             , Cmd.none
             )
+
+        UpdateControl settings ->
+            ( { state | settings = settings }, Cmd.none )
 
 
 
