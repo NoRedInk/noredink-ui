@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
-import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -81,12 +80,12 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , settings.theme
-                { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
+                { value = state.value
                 , autofocus = False
-                , onInput = InputGiven 1
+                , onInput = UpdateValue
                 , onBlur =
                     if settings.onBlur then
-                        Just (InputGiven 1 "Neener neener Blur happened")
+                        Just (UpdateValue "Neener neener Blur happened")
 
                     else
                         Nothing
@@ -102,7 +101,7 @@ example =
 
 {-| -}
 type alias State =
-    { textValues : Dict Int String
+    { value : String
     , settings : Control Settings
     }
 
@@ -110,7 +109,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { textValues = Dict.empty
+    { value = ""
     , settings = initControls
     }
 
@@ -151,7 +150,7 @@ initControls =
 
 {-| -}
 type Msg
-    = InputGiven Id String
+    = UpdateValue String
     | UpdateControl (Control Settings)
 
 
@@ -159,18 +158,10 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        InputGiven id newValue ->
-            ( { state | textValues = Dict.insert id newValue state.textValues }
+        UpdateValue newValue ->
+            ( { state | value = newValue }
             , Cmd.none
             )
 
         UpdateControl settings ->
             ( { state | settings = settings }, Cmd.none )
-
-
-
--- INTERNAL
-
-
-type alias Id =
-    Int
