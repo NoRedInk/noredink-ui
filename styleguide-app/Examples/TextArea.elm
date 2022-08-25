@@ -12,7 +12,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -80,7 +80,7 @@ example =
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , TextArea.view
+            , settings.theme
                 { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
                 , autofocus = False
                 , onInput = InputGiven 1
@@ -95,18 +95,6 @@ example =
                 , height = settings.height
                 , placeholder = settings.placeholder
                 , showLabel = settings.showLabel
-                }
-            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
-            , TextArea.contentCreation
-                { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 3
-                , onBlur = Nothing
-                , isInError = False
-                , label = "TextArea.contentCreation"
-                , height = TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = True
                 }
             ]
     }
@@ -128,7 +116,8 @@ init =
 
 
 type alias Settings =
-    { label : String
+    { theme : TextArea.Model Msg -> Html Msg
+    , label : String
     , showLabel : Bool
     , placeholder : String
     , isInError : Bool
@@ -140,6 +129,12 @@ type alias Settings =
 initControls : Control Settings
 initControls =
     Control.record Settings
+        |> Control.field "theme"
+            (Control.choice
+                [ ( "view", Control.value TextArea.view )
+                , ( "writing", Control.value TextArea.writing )
+                ]
+            )
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
         |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
