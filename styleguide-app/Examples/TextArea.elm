@@ -76,8 +76,12 @@ example =
                         , ( "autofocus", Code.bool False )
                         , ( "onInput", "identity" )
                         , ( "onBlur"
-                          , Code.maybe Nothing
-                            -- TODO: support multiline if
+                          , Code.maybe <|
+                                if settings.onBlur then
+                                    Just (Code.string "Neener neener Blur happened")
+
+                                else
+                                    Nothing
                           )
                         , ( "isInError", Code.bool settings.isInError )
                         , ( "label", Code.string settings.label )
