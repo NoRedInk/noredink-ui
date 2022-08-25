@@ -8,6 +8,7 @@ module Examples.Checkbox exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import CheckboxIcons
+import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -46,6 +47,9 @@ example =
             let
                 settings =
                     Control.currentValue state.settings
+
+                ( exampleCode, exampleView ) =
+                    viewExampleWithCode state settings
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -53,12 +57,12 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = state.settings
-                , mainType = Nothing
+                , mainType = Just "RootHtml.Html Bool"
                 , extraCode = []
-                , toExampleCode = \_ -> [ { sectionName = "TODO", code = "TODO" } ]
+                , toExampleCode = \_ -> [ { sectionName = "viewWithLabel", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , viewExample state settings
+            , exampleView
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -123,20 +127,35 @@ controlSettings =
             )
         |> Control.field "containerCss"
             (Control.choice
-                [ ( "[]", Control.value [] )
-                , ( "Red dashed border", Control.value [ Css.border3 (Css.px 4) Css.dashed Colors.red ] )
+                [ ( "[]", Control.value ( "[]", [] ) )
+                , ( "Red dashed border"
+                  , Control.value
+                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                        )
+                  )
                 ]
             )
         |> Control.field "enabledLabelCss"
             (Control.choice
-                [ ( "[]", Control.value [] )
-                , ( "Orange dotted border", Control.value [ Css.border3 (Css.px 4) Css.dotted Colors.orange ] )
+                [ ( "[]", Control.value ( "[]", [] ) )
+                , ( "Orange dotted border"
+                  , Control.value
+                        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                        )
+                  )
                 ]
             )
         |> Control.field "disabledLabelCss"
             (Control.choice
-                [ ( "[]", Control.value [] )
-                , ( "strikethrough", Control.value [ Css.textDecoration Css.lineThrough ] )
+                [ ( "[]", Control.value ( "[]", [] ) )
+                , ( "strikethrough"
+                  , Control.value
+                        ( "[ Css.textDecoration Css.lineThrough ]"
+                        , [ Css.textDecoration Css.lineThrough ]
+                        )
+                  )
                 ]
             )
 
@@ -145,29 +164,44 @@ type alias Settings =
     { label : String
     , disabled : Bool
     , theme : Checkbox.Theme
-    , containerCss : List Style
-    , enabledLabelCss : List Style
-    , disabledLabelCss : List Style
+    , containerCss : ( String, List Style )
+    , enabledLabelCss : ( String, List Style )
+    , disabledLabelCss : ( String, List Style )
     }
 
 
-viewExample : State -> Settings -> Html Msg
-viewExample state settings =
+viewExampleWithCode : State -> Settings -> ( String, Html Msg )
+viewExampleWithCode state settings =
     let
         id =
             "unique-example-id"
     in
-    Checkbox.viewWithLabel
+    ( [ "Checkbox.viewWithLabel"
+      , Code.record
+            [ ( "identifier", Code.string id )
+            , ( "label", Code.string settings.label )
+            , ( "setterMsg", "identity" )
+            , ( "selected", "Checkbox." ++ Debug.toString state.isChecked )
+            , ( "disabled", Code.bool settings.disabled )
+            , ( "theme", "Checkbox." ++ Debug.toString settings.theme )
+            , ( "containerCss", Tuple.first settings.containerCss )
+            , ( "enabledLabelCss", Tuple.first settings.enabledLabelCss )
+            , ( "disabledLabelCss", Tuple.first settings.disabledLabelCss )
+            ]
+      ]
+        |> String.join ""
+    , Checkbox.viewWithLabel
         { identifier = id
         , label = settings.label
         , setterMsg = ToggleCheck id
         , selected = state.isChecked
         , disabled = settings.disabled
         , theme = settings.theme
-        , containerCss = settings.containerCss
-        , enabledLabelCss = settings.enabledLabelCss
-        , disabledLabelCss = settings.disabledLabelCss
+        , containerCss = Tuple.second settings.containerCss
+        , enabledLabelCss = Tuple.second settings.enabledLabelCss
+        , disabledLabelCss = Tuple.second settings.disabledLabelCss
         }
+    )
 
 
 {-| -}
