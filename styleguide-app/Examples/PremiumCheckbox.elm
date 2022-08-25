@@ -62,15 +62,16 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = state.settings
-                , mainType = Nothing
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode =
+                    [ "import Nri.Ui.Data.PremiumDisplay as PremiumDisplay"
+                    , "\n\n"
+                    , "type Msg = ToggleCheck Bool | ClickedPremiumLock"
+                    ]
                 , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , exampleView
-            , Heading.h2 [ Heading.plaintext "Premium Checkboxes" ]
-            , viewPremiumCheckboxes state
-            , viewCustomStyledPremiumCheckboxes state
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -139,13 +140,19 @@ controlSettings =
         |> Control.field "attributes" controlAttributes
 
 
-controlAttributes : Control (List ( String, PremiumCheckbox.Attribute msg ))
+controlAttributes : Control (List ( String, PremiumCheckbox.Attribute Msg ))
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "premiumDisplay"
             (Control.map
                 (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
                 CommonControls.premiumDisplay
+            )
+        |> ControlExtra.optionalListItem "onLockedClick"
+            (Control.value
+                ( "PremiumCheckbox.onLockedClick ClickedPremiumLock"
+                , PremiumCheckbox.onLockedClick ClickedPremiumLock
+                )
             )
         |> ControlExtra.optionalBoolListItem "PremiumCheckbox.disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
         |> CommonControls.css_ "setCheckboxContainerCss"
@@ -180,19 +187,20 @@ viewExampleWithCode state settings =
     ( [ "PremiumCheckbox.view "
       , Code.record
             [ ( "label", Code.string settings.label )
-            , ( "onChange", "identity" )
+            , ( "onChange", "ToggleCheck" )
             ]
-      , Code.list
+      , Code.listMultiline
             (("PremiumCheckbox.selected " ++ Code.bool (Set.member id state.isChecked))
                 :: List.map Tuple.first settings.attributes
             )
+            1
       ]
         |> String.join ""
     , PremiumCheckbox.view
         { label = settings.label
         , onChange = ToggleCheck id
         }
-        ([ [ PremiumCheckbox.onLockedClick NoOp
+        ([ [ PremiumCheckbox.onLockedClick ClickedPremiumLock
            , PremiumCheckbox.selected (Set.member id state.isChecked)
            ]
          , List.map Tuple.second settings.attributes
@@ -206,7 +214,7 @@ viewExampleWithCode state settings =
 type Msg
     = ToggleCheck Id Bool
     | UpdateControls (Control Settings)
-    | NoOp
+    | ClickedPremiumLock
 
 
 {-| -}
@@ -227,60 +235,8 @@ update msg state =
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
 
-        NoOp ->
-            ( state, Cmd.none )
-
-
-
--- INTERNAL
-
-
-viewPremiumCheckboxes : State -> Html Msg
-viewPremiumCheckboxes state =
-    Html.div []
-        [ PremiumCheckbox.view
-            { label = "Identify Adjectives 1 (Premium, Unlocked)"
-            , onChange = ToggleCheck "premium-1"
-            }
-            [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-            , PremiumCheckbox.onLockedClick NoOp
-            , PremiumCheckbox.selected (Set.member "premium-1" state.isChecked)
-            ]
-        , PremiumCheckbox.view
-            { label = "Identify Adjectives 2 (Free)"
-            , onChange = ToggleCheck "premium-2"
-            }
-            [ PremiumCheckbox.premium PremiumDisplay.Free
-            , PremiumCheckbox.onLockedClick NoOp
-            , PremiumCheckbox.selected (Set.member "premium-2" state.isChecked)
-            ]
-        , PremiumCheckbox.view
-            { label = "Revising Wordy Phrases 3 (Premium, Locked)"
-            , onChange = ToggleCheck "premium-3"
-            }
-            [ PremiumCheckbox.premium PremiumDisplay.PremiumLocked
-            , PremiumCheckbox.onLockedClick (Debug.log "Locked" NoOp)
-            , PremiumCheckbox.selected (Set.member "premium-3" state.isChecked)
-            ]
-        ]
-
-
-viewCustomStyledPremiumCheckboxes : State -> Html Msg
-viewCustomStyledPremiumCheckboxes state =
-    Html.section
-        [ css [ Css.width (Css.px 500) ] ]
-        [ Heading.h2 [ Heading.plaintext "Custom-styled Premium Checkboxes" ]
-        , PremiumCheckbox.view
-            { label = "This is a custom-styled Premium Checkbox"
-            , onChange = ToggleCheck "premium-custom"
-            }
-            [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
-            , PremiumCheckbox.onLockedClick NoOp
-            , PremiumCheckbox.selected (Set.member "premium-custom" state.isChecked)
-            , PremiumCheckbox.setCheckboxContainerCss [ Css.backgroundColor Colors.navy ]
-            , PremiumCheckbox.setCheckboxEnabledLabelCss [ Css.color Colors.white ]
-            ]
-        ]
+        ClickedPremiumLock ->
+            ( Debug.log moduleName "clicked a premium lock" |> always state, Cmd.none )
 
 
 type alias Id =
