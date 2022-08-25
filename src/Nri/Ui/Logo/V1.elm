@@ -1,6 +1,6 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink, noredinkMonochrome
-    , clever, cleverFull, cleverC, cleverLibrary
+    , clever, cleverBlue, cleverC, cleverWhite
     , google, googleClassroom, googleClassroomFull, googleG
     , canvas
     , canvasCircle
@@ -12,7 +12,7 @@ module Nri.Ui.Logo.V1 exposing
 {-|
 
 @docs noredink, noredinkMonochrome
-@docs clever, cleverFull, cleverC, cleverLibrary
+@docs clever, cleverBlue, cleverC, cleverWhite
 @docs google, googleClassroom, googleClassroomFull, googleG
 @docs canvas
 @docs canvasCircle
@@ -109,8 +109,8 @@ clever =
 
 
 {-| -}
-cleverFull : Nri.Ui.Svg.V1.Svg
-cleverFull =
+cleverBlue : Nri.Ui.Svg.V1.Svg
+cleverBlue =
     Nri.Ui.Svg.V1.init "0 0 1023 285"
         [ Svg.g
             [ Attributes.version "1.1"
@@ -185,8 +185,8 @@ cleverC =
 
 
 {-| -}
-cleverLibrary : Nri.Ui.Svg.V1.Svg
-cleverLibrary =
+cleverWhite : Nri.Ui.Svg.V1.Svg
+cleverWhite =
     Nri.Ui.Svg.V1.init "0 0 1023 285"
         [ Svg.g
             [ Attributes.version "1.1"

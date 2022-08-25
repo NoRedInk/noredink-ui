@@ -98,15 +98,15 @@ all =
         ]
       )
     , ( "Clever library"
-      , [ ( "cleverFull"
-          , Logo.cleverFull
+      , [ ( "cleverBlue"
+          , Logo.cleverBlue
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
             ]
           )
-        , ( "cleverLibrary"
-          , Logo.cleverLibrary
+        , ( "cleverWhite"
+          , Logo.cleverWhite
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
