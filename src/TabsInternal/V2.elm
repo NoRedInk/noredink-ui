@@ -11,6 +11,7 @@ module TabsInternal.V2 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css
 import EventExtras
@@ -138,8 +139,7 @@ viewTab_ config index tab =
                        , Aria.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
-                       , Events.on "keyup" <|
-                            Json.Decode.andThen (keyEvents config tab) Events.keyCode
+                       , Key.onKeyUpPreventDefault (keyEvents config tab)
                        ]
                     ++ (case tab.labelledBy of
                             Nothing ->
@@ -178,8 +178,8 @@ viewTab_ config index tab =
                 )
 
 
-keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg
-keyEvents { focusAndSelect, tabs } thisTab keyCode =
+keyEvents : Config id msg -> Tab id msg -> List (Json.Decode.Decoder msg)
+keyEvents { focusAndSelect, tabs } thisTab =
     let
         findAdjacentTab tab acc =
             case acc of
@@ -206,27 +206,10 @@ keyEvents { focusAndSelect, tabs } thisTab keyCode =
             List.foldr findAdjacentTab ( False, Nothing ) tabs
                 |> Tuple.second
     in
-    case keyCode of
-        39 ->
-            -- Right
-            case nextTab of
-                Just next ->
-                    Json.Decode.succeed (focusAndSelect next)
-
-                Nothing ->
-                    Json.Decode.fail "No next tab"
-
-        37 ->
-            -- Left
-            case previousTab of
-                Just previous ->
-                    Json.Decode.succeed (focusAndSelect previous)
-
-                Nothing ->
-                    Json.Decode.fail "No previous tab"
-
-        _ ->
-            Json.Decode.fail "Upsupported key event"
+    [ Maybe.map (Key.right << focusAndSelect) nextTab
+    , Maybe.map (Key.left << focusAndSelect) previousTab
+    ]
+        |> List.filterMap identity
 
 
 viewTabPanels : Config id msg -> Html msg
