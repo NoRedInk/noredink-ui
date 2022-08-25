@@ -84,7 +84,12 @@ example =
                 { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
                 , autofocus = False
                 , onInput = InputGiven 1
-                , onBlur = Nothing
+                , onBlur =
+                    if settings.onBlur then
+                        Just (InputGiven 1 "Neener neener Blur happened")
+
+                    else
+                        Nothing
                 , isInError = False
                 , label = "TextArea.view"
                 , height = settings.height
@@ -99,18 +104,6 @@ example =
                 , onBlur = Nothing
                 , isInError = False
                 , label = "TextArea.contentCreation"
-                , height = TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = True
-                }
-            , Html.br [ css [ Css.marginBottom (Css.px 10) ] ] []
-            , TextArea.writing
-                { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 4
-                , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
-                , isInError = False
-                , label = "TextArea.writing onBlur demonstration"
                 , height = TextArea.Fixed
                 , placeholder = "Placeholder"
                 , showLabel = True
@@ -138,6 +131,7 @@ type alias Settings =
     { label : String
     , showLabel : Bool
     , isInError : Bool
+    , onBlur : Bool
     , height : TextArea.HeightBehavior
     }
 
@@ -148,6 +142,7 @@ initControls =
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "showLabel" (Control.bool True)
         |> Control.field "isInError" (Control.bool False)
+        |> Control.field "onBlur" (Control.bool False)
         |> Control.field "height"
             (Control.choice
                 [ ( "fixed", Control.value TextArea.Fixed )
