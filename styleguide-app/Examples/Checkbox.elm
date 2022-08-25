@@ -114,10 +114,20 @@ init =
     }
 
 
+type alias Settings =
+    { label : String
+    , disabled : Bool
+    , theme : Checkbox.Theme
+    , containerCss : ( String, List Style )
+    , enabledLabelCss : ( String, List Style )
+    , disabledLabelCss : ( String, List Style )
+    }
+
+
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "label" (Control.string "Enable Text to Speech")
+        |> Control.field "label" (Control.string "Enable Text-to-Speech")
         |> Control.field "disabled" (Control.bool False)
         |> Control.field "theme"
             (Control.choice
@@ -158,16 +168,6 @@ controlSettings =
                   )
                 ]
             )
-
-
-type alias Settings =
-    { label : String
-    , disabled : Bool
-    , theme : Checkbox.Theme
-    , containerCss : ( String, List Style )
-    , enabledLabelCss : ( String, List Style )
-    , disabledLabelCss : ( String, List Style )
-    }
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )

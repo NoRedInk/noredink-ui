@@ -8,6 +8,7 @@ module Examples.PremiumCheckbox exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import CheckboxIcons
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -49,6 +50,9 @@ example =
             let
                 settings =
                     Control.currentValue state.settings
+
+                ( exampleCode, exampleView ) =
+                    viewExampleWithCode state settings
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -58,10 +62,10 @@ example =
                 , settings = state.settings
                 , mainType = Nothing
                 , extraCode = []
-                , toExampleCode = \_ -> [ { sectionName = "TODO", code = "TODO" } ]
+                , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , viewExample state settings
+            , exampleView
             , Heading.h2 [ Heading.plaintext "Premium Checkboxes" ]
             , viewPremiumCheckboxes state
             , viewCustomStyledPremiumCheckboxes state
@@ -120,18 +124,42 @@ init =
     }
 
 
+type alias Settings =
+    { label : String
+    }
+
+
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+        |> Control.field "label" (Control.string "Identify Adjectives 1")
 
 
-type alias Settings =
-    {}
-
-
-viewExample : State -> Settings -> Html Msg
-viewExample state settings =
-    text "TODO"
+viewExampleWithCode : State -> Settings -> ( String, Html Msg )
+viewExampleWithCode state settings =
+    let
+        id =
+            "unique-premium-example-id"
+    in
+    ( [ "Checkbox.viewWithLabel"
+      , Code.record
+            [ ( "label", Code.string settings.label )
+            , ( "onChange", "identity" )
+            ]
+      , Code.list
+            [ "PremiumCheckbox.selected " ++ Code.bool (Set.member id state.isChecked)
+            ]
+      ]
+        |> String.join ""
+    , PremiumCheckbox.view
+        { label = settings.label
+        , onChange = ToggleCheck id
+        }
+        [ PremiumCheckbox.premium PremiumDisplay.PremiumUnlocked
+        , PremiumCheckbox.onLockedClick NoOp
+        , PremiumCheckbox.selected (Set.member id state.isChecked)
+        ]
+    )
 
 
 {-| -}
