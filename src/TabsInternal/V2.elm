@@ -199,12 +199,22 @@ keyEvents { focusAndSelect, tabs } thisTab =
 
         goToNextTab : Maybe msg
         goToNextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) activeTabs
+            List.foldl findAdjacentTab
+                ( False
+                , -- if there is no adjacent tab, default to the first tab
+                  Maybe.map onFocus (List.head activeTabs)
+                )
+                activeTabs
                 |> Tuple.second
 
         goToPreviousTab : Maybe msg
         goToPreviousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) activeTabs
+            List.foldr findAdjacentTab
+                ( False
+                , -- if there is no adjacent tab, default to the last tab
+                  Maybe.map onFocus (List.head (List.reverse activeTabs))
+                )
+                activeTabs
                 |> Tuple.second
     in
     List.filterMap identity
