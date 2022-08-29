@@ -1,6 +1,6 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink, noredinkMonochrome
-    , cleverSecureSync, cleverBlue, cleverC, cleverWhite
+    , cleverSecureSync, clever, cleverBlue, cleverC, cleverWhite
     , google, googleClassroom, googleClassroomFull, googleG
     , canvas
     , canvasCircle
@@ -12,7 +12,7 @@ module Nri.Ui.Logo.V1 exposing
 {-|
 
 @docs noredink, noredinkMonochrome
-@docs cleverSecureSync, cleverBlue, cleverC, cleverWhite
+@docs cleverSecureSync, clever, cleverBlue, cleverC, cleverWhite
 @docs google, googleClassroom, googleClassroomFull, googleG
 @docs canvas
 @docs canvasCircle
@@ -108,9 +108,10 @@ cleverSecureSync =
         ]
 
 
-{-| -}
-clever_ : Nri.Ui.Svg.V1.Svg
-clever_ =
+{-| DEPRECATED: Use cleverBlue or cleverWhite instead.
+-}
+clever : Nri.Ui.Svg.V1.Svg
+clever =
     Nri.Ui.Svg.V1.init "0 0 1023 285"
         [ Svg.g [ Attributes.fill "currentcolor" ]
             [ Svg.path [ Attributes.d "M0.2,145.2c0-78,57.9-141.3,140.9-141.3c50.9,0,81.4,17.1,106.5,41.9l-37.8,43.9\n\t\t\tc-20.8-19-42.1-30.7-69.1-30.7c-45.5,0-78.4,38-78.4,84.6c0,47.4,32,86.2,78.4,86.2c30.9,0,49.8-12.4,71-31.8l37.8,38.4\n\t\t\tc-27.8,29.9-58.7,48.5-110.8,48.5C59.2,284.9,0.2,223.2,0.2,145.2z" ] []
@@ -126,13 +127,13 @@ clever_ =
 {-| -}
 cleverBlue : Nri.Ui.Svg.V1.Svg
 cleverBlue =
-    Nri.Ui.Svg.V1.withColor (Css.hex "436CF2") clever_
+    Nri.Ui.Svg.V1.withColor (Css.hex "436CF2") clever
 
 
 {-| -}
 cleverWhite : Nri.Ui.Svg.V1.Svg
 cleverWhite =
-    Nri.Ui.Svg.V1.withColor (Css.hex "FFFFFF") clever_
+    Nri.Ui.Svg.V1.withColor (Css.hex "FFFFFF") clever
 
 
 {-| -}
