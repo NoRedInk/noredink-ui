@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -27,7 +27,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
 @docs readOnlyText
 
 
@@ -379,6 +379,25 @@ addressLevel2 onInput_ =
                 | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Just "address-level2"
+            }
+        )
+
+
+{-| An input that allows country-name entry
+-}
+countryName : (String -> msg) -> Attribute String msg
+countryName onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "country-name"
             }
         )
 
