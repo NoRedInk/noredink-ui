@@ -68,6 +68,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events exposing (onClick)
 import Html.Styled.Keyed
 import Json.Decode as Decode
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 
@@ -101,6 +102,7 @@ styleAccordion styleOptions =
              , Css.backgroundColor Css.unset
              , borderWidth Css.zero
              , margin zero
+             , Css.pseudoClass "focus-visible" [ FocusRing.insetBoxShadows [] ]
 
              -- fonts & text
              , textAlign left
@@ -336,6 +338,7 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                     , ( entryClass, True )
                     , ( accordionEntryHeaderExpandedClass, isExpanded )
                     , ( accordionEntryHeaderCollapsedClass, not isExpanded )
+                    , ( FocusRing.customClass, True )
                     ]
                 , Aria.disabled (config.toggle == Nothing)
                 , Aria.expanded isExpanded

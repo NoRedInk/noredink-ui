@@ -1,7 +1,7 @@
 module Nri.Ui.FocusRing.V1 exposing
     ( forKeyboardUsers, forMouseUsers
     , styles, tightStyles
-    , boxShadows, outerBoxShadow, insetBoxShadow
+    , boxShadows, insetBoxShadows, outerBoxShadow, insetBoxShadow
     , customClass
     , outerColor, innerColor
     )
@@ -10,7 +10,7 @@ module Nri.Ui.FocusRing.V1 exposing
 
 @docs forKeyboardUsers, forMouseUsers
 @docs styles, tightStyles
-@docs boxShadows, outerBoxShadow, insetBoxShadow
+@docs boxShadows, insetBoxShadows, outerBoxShadow, insetBoxShadow
 @docs customClass
 @docs outerColor, innerColor
 
@@ -102,6 +102,23 @@ boxShadows existingBoxShadows =
     existingBoxShadows
         ++ [ "0 0 0 3px " ++ innerColorString
            , "0 0 0 6px " ++ outerColorString
+           ]
+        |> applyBoxShadows
+
+
+{-| Please be sure that the padding on the element you add this style too is sufficient (at least 6px on all sides) that the inset box shadow won't cover any content.
+
+    focus
+        [ FocusRing.insetBoxShadows [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier ]
+        , outline none
+        ]
+
+-}
+insetBoxShadows : List String -> Css.Style
+insetBoxShadows existingBoxShadows =
+    existingBoxShadows
+        ++ [ "inset 0 0 0 3px " ++ outerColorString
+           , "inset 0 0 0 6px " ++ innerColorString
            ]
         |> applyBoxShadows
 

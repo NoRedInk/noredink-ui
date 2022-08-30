@@ -26,6 +26,7 @@ import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -306,6 +307,11 @@ view ellieLinkConfig model =
                 [ Css.backgroundColor Colors.gray96
                 , Css.borderRadius (Css.px 8)
                 , Css.boxShadow5 Css.zero Css.zero (px 10) zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                , Css.pseudoClass "focus-visible"
+                    [ FocusRing.insetBoxShadows
+                        [ "0 0 10px 0 " ++ ColorsExtra.toCssString (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                        ]
+                    ]
                 ]
             ]
         , headerClosedStyles = []
