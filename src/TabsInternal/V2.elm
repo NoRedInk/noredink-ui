@@ -11,6 +11,7 @@ module TabsInternal.V2 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css
 import EventExtras
@@ -138,8 +139,7 @@ viewTab_ config index tab =
                        , Aria.selected isSelected
                        , Role.tab
                        , Attributes.id (tabToId tab.idString)
-                       , Events.on "keyup" <|
-                            Json.Decode.andThen (keyEvents config tab) Events.keyCode
+                       , Key.onKeyUpPreventDefault (keyEvents config tab)
                        ]
                     ++ (case tab.labelledBy of
                             Nothing ->
@@ -178,55 +178,49 @@ viewTab_ config index tab =
                 )
 
 
-keyEvents : Config id msg -> Tab id msg -> Int -> Json.Decode.Decoder msg
-keyEvents { focusAndSelect, tabs } thisTab keyCode =
+keyEvents : Config id msg -> Tab id msg -> List (Json.Decode.Decoder msg)
+keyEvents { focusAndSelect, tabs } thisTab =
     let
-        findAdjacentTab tab acc =
-            case acc of
-                ( _, Just _ ) ->
-                    acc
+        onFocus : Tab id msg -> msg
+        onFocus tab =
+            focusAndSelect { select = tab.id, focus = Just (tabToId tab.idString) }
 
-                ( True, Nothing ) ->
-                    ( True
-                    , if tab.disabled then
-                        Nothing
+        findAdjacentTab : Tab id msg -> ( Bool, Maybe msg ) -> ( Bool, Maybe msg )
+        findAdjacentTab tab ( isAdjacentTab, acc ) =
+            if isAdjacentTab then
+                ( False, Just (onFocus tab) )
 
-                      else
-                        Just { select = tab.id, focus = Just (tabToId tab.idString) }
-                    )
+            else
+                ( tab.id == thisTab.id, acc )
 
-                ( False, Nothing ) ->
-                    ( tab.id == thisTab.id, Nothing )
+        activeTabs : List (Tab id msg)
+        activeTabs =
+            List.filter (not << .disabled) tabs
 
-        nextTab =
-            List.foldl findAdjacentTab ( False, Nothing ) tabs
+        goToNextTab : Maybe msg
+        goToNextTab =
+            List.foldl findAdjacentTab
+                ( False
+                , -- if there is no adjacent tab, default to the first tab
+                  Maybe.map onFocus (List.head activeTabs)
+                )
+                activeTabs
                 |> Tuple.second
 
-        previousTab =
-            List.foldr findAdjacentTab ( False, Nothing ) tabs
+        goToPreviousTab : Maybe msg
+        goToPreviousTab =
+            List.foldr findAdjacentTab
+                ( False
+                , -- if there is no adjacent tab, default to the last tab
+                  Maybe.map onFocus (List.head (List.reverse activeTabs))
+                )
+                activeTabs
                 |> Tuple.second
     in
-    case keyCode of
-        39 ->
-            -- Right
-            case nextTab of
-                Just next ->
-                    Json.Decode.succeed (focusAndSelect next)
-
-                Nothing ->
-                    Json.Decode.fail "No next tab"
-
-        37 ->
-            -- Left
-            case previousTab of
-                Just previous ->
-                    Json.Decode.succeed (focusAndSelect previous)
-
-                Nothing ->
-                    Json.Decode.fail "No previous tab"
-
-        _ ->
-            Json.Decode.fail "Upsupported key event"
+    List.filterMap identity
+        [ Maybe.map Key.right goToNextTab
+        , Maybe.map Key.left goToPreviousTab
+        ]
 
 
 viewTabPanels : Config id msg -> Html msg

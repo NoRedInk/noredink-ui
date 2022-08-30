@@ -446,7 +446,7 @@ viewCustom config =
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDown
+            :: Key.onKeyDownPreventDefault
                 (Key.escape
                     (config.focusAndToggle
                         { isOpen = False
@@ -540,7 +540,7 @@ viewCustom config =
                       -- as long as it's not a Disclosed
                       case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
                         ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
-                            onKeyDownPreventDefault
+                            Key.onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
                                         { isOpen = True
