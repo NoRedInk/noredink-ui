@@ -283,6 +283,16 @@ customizableExamples state =
             , onEnter = "Entered!!!"
             }
         , toExample
+            { name = "countryName"
+            , toString = identity
+            , inputType = TextInput.countryName
+            , inputTypeCode = "TextInput.countryName"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
             { name = "postalCode"
             , toString = identity
             , inputType = TextInput.postalCode
