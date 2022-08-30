@@ -286,7 +286,7 @@ tabStyles customSpacing index isSelected =
                 , borderRightColor Colors.azure
                 , borderLeftColor Colors.azure
                 ]
-            , focus
+            , pseudoClass "focus-visible"
                 [ FocusRing.outerBoxShadow
                 , outline none
                 ]
