@@ -7,6 +7,7 @@ module Nri.Ui.FocusTrap.V1 exposing (FocusTrap, toAttribute)
 -}
 
 import Accessibility.Styled as Html
+import Accessibility.Styled.Key as Key
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
@@ -27,13 +28,15 @@ type alias FocusTrap msg =
 -}
 toAttribute : FocusTrap msg -> Html.Attribute msg
 toAttribute { firstId, lastId, focus } =
-    WhenFocusLeaves.toAttribute
-        { firstId = firstId
-        , lastId = lastId
-        , -- if the user tabs back while on the first id,
-          -- we want to wrap around to the last id.
-          tabBackAction = focus lastId
-        , -- if the user tabs forward while on the last id,
-          -- we want to wrap around to the first id.
-          tabForwardAction = focus firstId
-        }
+    Key.onKeyDownPreventDefault
+        [ WhenFocusLeaves.toDecoder
+            { firstId = firstId
+            , lastId = lastId
+            , -- if the user tabs back while on the first id,
+              -- we want to wrap around to the last id.
+              tabBackAction = focus lastId
+            , -- if the user tabs forward while on the last id,
+              -- we want to wrap around to the first id.
+              tabForwardAction = focus firstId
+            }
+        ]

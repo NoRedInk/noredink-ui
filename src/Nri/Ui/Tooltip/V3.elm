@@ -670,12 +670,14 @@ viewTooltip_ { trigger, id } tooltip =
                         Disclosure { triggerId, lastId } ->
                             ( [ Events.onMouseEnter (msg True)
                               , Events.onMouseLeave (msg False)
-                              , WhenFocusLeaves.toAttribute
-                                    { firstId = triggerId
-                                    , lastId = Maybe.withDefault triggerId lastId
-                                    , tabBackAction = msg False
-                                    , tabForwardAction = msg False
-                                    }
+                              , Key.onKeyDown
+                                    [ WhenFocusLeaves.toDecoder
+                                        { firstId = triggerId
+                                        , lastId = Maybe.withDefault triggerId lastId
+                                        , tabBackAction = msg False
+                                        , tabForwardAction = msg False
+                                        }
+                                    ]
                               ]
                             , [ Events.onClick (msg (not tooltip.isOpen))
                               , Key.onKeyDown [ Key.escape (msg False) ]

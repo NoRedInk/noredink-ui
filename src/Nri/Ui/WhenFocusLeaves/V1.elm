@@ -1,6 +1,8 @@
 module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute, toDecoder)
 
-{-| Listen for when the focus leaves the area, and then do an action.
+{-| TODO in next major version: remove `toAttribute`.
+
+Listen for when the focus leaves the area, and then do an action.
 
 @docs toAttribute, toDecoder
 
@@ -11,13 +13,13 @@ import Html.Styled.Events exposing (preventDefaultOn)
 import Json.Decode as Decode exposing (Decoder)
 
 
-{-| Attach this attribute to add a focus watcher to an HTML element and define
+{-| DEPRECATED: Use `toDecoder` instead
+
+Attach this attribute to add a focus watcher to an HTML element and define
 what to do in reponse to tab keypresses in a part of the UI.
 
 The ids referenced here are expected to correspond to elements in the container
 we are adding the attribute to.
-
-NOTE: When needing to listen to multiple keys toDecoder should be used instead of toAttribute.
 
 -}
 toAttribute :
