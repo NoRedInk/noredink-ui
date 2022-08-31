@@ -270,7 +270,7 @@ styles positioning numEntries index isSelected =
                 []
     , -- ensure that the focus state is visible & looks nice
       Css.pseudoClass "focus-within"
-        [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
+        [ FocusRing.insetBoxShadows [ focusedSegmentBoxShadowValue ]
         , outline none
         ]
     ]
