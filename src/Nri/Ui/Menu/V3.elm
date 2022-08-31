@@ -446,7 +446,7 @@ viewCustom config =
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDownPreventDefault
+            :: Key.onKeyDown
                 (Key.escape
                     (config.focusAndToggle
                         { isOpen = False
