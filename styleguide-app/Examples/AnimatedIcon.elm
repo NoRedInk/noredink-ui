@@ -14,6 +14,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 
@@ -76,7 +77,10 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , AnimatedIcon.mobileOpenClose (Tuple.second attributes.isOpen)
-                |> Svg.withCss [ Css.maxWidth (Css.px 45) ]
+                |> Svg.withCss
+                    [ Css.maxWidth (Css.px 45)
+                    , Css.border3 (Css.px 2) Css.solid Colors.red
+                    ]
                 |> Svg.toHtml
             ]
     }
