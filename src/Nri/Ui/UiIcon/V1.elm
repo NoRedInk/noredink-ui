@@ -1,5 +1,6 @@
 module Nri.Ui.UiIcon.V1 exposing
     ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
+    , xToHamburger
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle
     , play, skip
@@ -37,6 +38,7 @@ module Nri.Ui.UiIcon.V1 exposing
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
 @docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
+@docs xToHamburger
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle
 @docs play, skip
@@ -83,7 +85,10 @@ module Nri.Ui.UiIcon.V1 exposing
 
 -}
 
+import Css
+import Css.Animations
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
@@ -975,6 +980,61 @@ hamburger =
             , Attributes.width "25"
             , Attributes.height "5"
             , Attributes.rx "2.5"
+            ]
+            []
+        ]
+
+
+{-| -}
+xToHamburger : Nri.Ui.Svg.V1.Svg
+xToHamburger =
+    let
+        transformIn start =
+            Attributes.css
+                [ Css.animationDuration (Css.ms 5000)
+                , Css.property "animation-timing-function" "linear"
+                , Css.animationName
+                    (Css.Animations.keyframes
+                        [ ( 0, [ start ] )
+                        , ( 100, [] )
+                        ]
+                    )
+                ]
+    in
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "0"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            , transformIn <|
+                Css.Animations.transform
+                    [ Css.translate3d (Css.px 5) (Css.px 3) Css.zero
+                    , Css.rotate (Css.deg 45)
+                    ]
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "10"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            , transformIn <| Css.Animations.opacity (Css.num 0)
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "20"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            , transformIn <|
+                Css.Animations.transform
+                    [ Css.translate3d (Css.px -13) (Css.px 5.4) Css.zero
+                    , Css.rotate (Css.deg -45)
+                    ]
             ]
             []
         ]
