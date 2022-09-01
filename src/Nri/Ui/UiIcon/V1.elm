@@ -997,32 +997,10 @@ animatedXHamburger lineAnimations =
                 , Css.animationName (Css.Animations.keyframes [ ( 0, start ), ( 100, end ) ])
                 ]
 
-        topLine animation =
+        line ( x_, y ) animation =
             Svg.rect
-                [ Attributes.x "0"
-                , Attributes.y "0"
-                , Attributes.width "25"
-                , Attributes.height "5"
-                , Attributes.rx "2.5"
-                , animate animation
-                ]
-                []
-
-        middleLine animation =
-            Svg.rect
-                [ Attributes.x "0"
-                , Attributes.y "10"
-                , Attributes.width "25"
-                , Attributes.height "5"
-                , Attributes.rx "2.5"
-                , animate animation
-                ]
-                []
-
-        bottomLine animation =
-            Svg.rect
-                [ Attributes.x "0"
-                , Attributes.y "20"
+                [ Attributes.x (String.fromFloat x_)
+                , Attributes.y (String.fromFloat y)
                 , Attributes.width "25"
                 , Attributes.height "5"
                 , Attributes.rx "2.5"
@@ -1032,7 +1010,7 @@ animatedXHamburger lineAnimations =
     in
     Nri.Ui.Svg.V1.init "-7 -7 39 39"
         (List.map2 identity
-            [ topLine, middleLine, bottomLine ]
+            [ line ( 0, 0 ), line ( 0, 10 ), line ( 0, 20 ) ]
             lineAnimations
         )
 
