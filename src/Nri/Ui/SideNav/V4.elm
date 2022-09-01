@@ -255,8 +255,7 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
             if isOpen then
                 ( "Close " ++ name
                 , UiIcon.openClose
-                , [ ClickableSvg.css [ Css.padding (Css.px 5) ]
-                  , ClickableSvg.iconForMobile UiIcon.x
+                , [ ClickableSvg.iconForMobile UiIcon.hamburgerToX
                   ]
                 )
 
@@ -265,7 +264,7 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
                 , UiIcon.openClose
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
                 , [ ClickableSvg.withBorder
-                  , ClickableSvg.iconForMobile UiIcon.hamburger
+                  , ClickableSvg.iconForMobile UiIcon.xToHamburger
                   ]
                 )
 
