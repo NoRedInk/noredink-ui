@@ -1,5 +1,11 @@
 module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose)
 
+{-|
+
+@docs mobileOpenClose
+
+-}
+
 import Css
 import Css.Animations
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -8,6 +14,11 @@ import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
 
+{-| An icon that animates between a "hamburger" and an "x".
+
+Pass a bool representing whether the menu/navbar/whatever is open.
+
+-}
 mobileOpenClose : Bool -> Nri.Ui.Svg.V1.Svg
 mobileOpenClose isOpen =
     let
