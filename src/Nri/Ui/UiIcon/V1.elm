@@ -991,10 +991,17 @@ animatedXHamburger lineAnimations =
         animate : ( List Css.Animations.Property, List Css.Animations.Property ) -> Svg.Attribute Never
         animate ( start, end ) =
             Attributes.css
-                [ Css.animationDuration (Css.ms 5000)
+                [ Css.animationDuration (Css.ms 300)
                 , Css.property "animation-timing-function" "linear"
                 , Css.property "animation-fill-mode" "forwards"
-                , Css.animationName (Css.Animations.keyframes [ ( 0, start ), ( 100, end ) ])
+                , Css.animationName
+                    (Css.Animations.keyframes
+                        [ ( 0, start )
+                        , ( 20, [ Css.Animations.custom "width" "25px" ] )
+                        , ( 80, [ Css.Animations.custom "width" "25px" ] )
+                        , ( 100, end )
+                        ]
+                    )
                 ]
 
         line ( x_, y ) animation =
@@ -1008,7 +1015,7 @@ animatedXHamburger lineAnimations =
                 ]
                 []
     in
-    Nri.Ui.Svg.V1.init "-7 -7 39 39"
+    Nri.Ui.Svg.V1.init "0 0 25 27"
         (List.map2 identity
             [ line ( 0, 0 ), line ( 0, 10 ), line ( 0, 20 ) ]
             lineAnimations
