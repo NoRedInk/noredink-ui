@@ -1,6 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( xToHamburger, hamburgerToX
-    , seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle
     , play, skip
@@ -37,7 +36,6 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs xToHamburger, hamburgerToX
 @docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle
@@ -982,88 +980,6 @@ hamburger =
             , Attributes.rx "2.5"
             ]
             []
-        ]
-
-
-animatedXHamburger : List ( List Css.Animations.Property, List Css.Animations.Property ) -> Nri.Ui.Svg.V1.Svg
-animatedXHamburger lineAnimations =
-    let
-        animate : ( List Css.Animations.Property, List Css.Animations.Property ) -> Svg.Attribute Never
-        animate ( start, end ) =
-            Attributes.css
-                [ Css.animationDuration (Css.ms 300)
-                , Css.property "animation-timing-function" "linear"
-                , Css.property "animation-fill-mode" "forwards"
-                , Css.animationName
-                    (Css.Animations.keyframes
-                        [ ( 0, start )
-                        , ( 20, [ Css.Animations.custom "width" "25px" ] )
-                        , ( 80, [ Css.Animations.custom "width" "25px" ] )
-                        , ( 100, end )
-                        ]
-                    )
-                ]
-
-        line ( x_, y ) animation =
-            Svg.rect
-                [ Attributes.x (String.fromFloat x_)
-                , Attributes.y (String.fromFloat y)
-                , Attributes.width "25"
-                , Attributes.height "5"
-                , Attributes.rx "2.5"
-                , animate animation
-                ]
-                []
-    in
-    Nri.Ui.Svg.V1.init "0 0 25 27"
-        (List.map2 identity
-            [ line ( 0, 0 ), line ( 0, 10 ), line ( 0, 20 ) ]
-            lineAnimations
-        )
-
-
-topLineAsX : List Css.Animations.Property
-topLineAsX =
-    [ Css.Animations.transform
-        [ Css.translate3d (Css.px 3) (Css.px -1) Css.zero
-        , Css.rotate (Css.deg 45)
-        ]
-    , Css.Animations.custom "width" "32px"
-    ]
-
-
-middleLineAsX : List Css.Animations.Property
-middleLineAsX =
-    [ Css.Animations.opacity (Css.num 0) ]
-
-
-bottomLineAsX : List Css.Animations.Property
-bottomLineAsX =
-    [ Css.Animations.transform
-        [ Css.translate3d (Css.px -15) (Css.px 7.5) Css.zero
-        , Css.rotate (Css.deg -45)
-        ]
-    , Css.Animations.custom "width" "32px"
-    ]
-
-
-{-| -}
-xToHamburger : Nri.Ui.Svg.V1.Svg
-xToHamburger =
-    animatedXHamburger
-        [ ( topLineAsX, [] )
-        , ( middleLineAsX, [] )
-        , ( bottomLineAsX, [] )
-        ]
-
-
-{-| -}
-hamburgerToX : Nri.Ui.Svg.V1.Svg
-hamburgerToX =
-    animatedXHamburger
-        [ ( [], topLineAsX )
-        , ( [], middleLineAsX )
-        , ( [], bottomLineAsX )
         ]
 
 

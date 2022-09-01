@@ -52,12 +52,7 @@ example =
 
 all : List Group
 all =
-    [ ( "Interface with transitions"
-      , [ ( "xToHamburger", UiIcon.xToHamburger, [] )
-        , ( "hamburgerToX", UiIcon.hamburgerToX, [] )
-        ]
-      )
-    , ( "Interface"
+    [ ( "Interface"
       , [ ( "seeMore", UiIcon.seeMore, [] )
         , ( "openClose", UiIcon.openClose, [] )
         , ( "download", UiIcon.download, [] )

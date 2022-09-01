@@ -57,6 +57,7 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
+import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -251,36 +252,30 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
         name =
             Maybe.withDefault "sidebar" navLabel_
 
-        ( action, icon_, attributes ) =
+        ( action, icon_ ) =
             if isOpen then
                 ( "Close " ++ name
                 , UiIcon.openClose
-                , [ ClickableSvg.iconForMobile UiIcon.hamburgerToX
-                  ]
                 )
 
             else
                 ( "Open " ++ name
                 , UiIcon.openClose
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
-                , [ ClickableSvg.withBorder
-                  , ClickableSvg.iconForMobile UiIcon.xToHamburger
-                  ]
                 )
 
         trigger tooltipAttributes =
             ClickableSvg.button action
                 icon_
-                ([ ClickableSvg.custom
+                [ ClickableSvg.custom
                     [ Aria.controls [ sidenavId ]
                     , Aria.expanded isOpen
                     ]
-                 , ClickableSvg.custom tooltipAttributes
-                 , ClickableSvg.onClick (toggle (not isOpen))
-                 , ClickableSvg.tertiary
-                 ]
-                    ++ attributes
-                )
+                , ClickableSvg.custom tooltipAttributes
+                , ClickableSvg.onClick (toggle (not isOpen))
+                , ClickableSvg.tertiary
+                , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
+                ]
     in
     Tooltip.view
         { trigger = trigger

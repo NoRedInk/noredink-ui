@@ -2,6 +2,7 @@ module Examples exposing (Msg, State, all)
 
 import Example exposing (Example)
 import Examples.Accordion as Accordion
+import Examples.AnimatedIcon as AnimatedIcon
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
 import Examples.BreadCrumbs as BreadCrumbs
@@ -58,6 +59,25 @@ all =
             (\msg ->
                 case msg of
                     AccordionState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , AnimatedIcon.example
+        |> Example.wrapMsg AnimatedIconMsg
+            (\msg ->
+                case msg of
+                    AnimatedIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState AnimatedIconState
+            (\msg ->
+                case msg of
+                    AnimatedIconState childState ->
                         Just childState
 
                     _ ->
@@ -790,6 +810,7 @@ all =
 
 type State
     = AccordionState Accordion.State
+    | AnimatedIconState AnimatedIcon.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
     | BreadCrumbsState BreadCrumbs.State
@@ -832,6 +853,7 @@ type State
 
 type Msg
     = AccordionMsg Accordion.Msg
+    | AnimatedIconMsg AnimatedIcon.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
