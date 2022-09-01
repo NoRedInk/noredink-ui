@@ -1030,41 +1030,45 @@ animatedXHamburger lineAnimations =
                 ]
                 []
     in
-    Nri.Ui.Svg.V1.init "0 0 25 25"
+    Nri.Ui.Svg.V1.init "-7 -7 39 39"
         (List.map2 identity
             [ topLine, middleLine, bottomLine ]
             lineAnimations
         )
 
 
-topLineAsX : Css.Animations.Property
+topLineAsX : List Css.Animations.Property
 topLineAsX =
-    Css.Animations.transform
-        [ Css.translate3d (Css.px 5) (Css.px 2) Css.zero
+    [ Css.Animations.transform
+        [ Css.translate3d (Css.px 3) (Css.px -1) Css.zero
         , Css.rotate (Css.deg 45)
         ]
+    , Css.Animations.custom "width" "32px"
+    ]
 
 
-middleLineAsX : Css.Animations.Property
+middleLineAsX : List Css.Animations.Property
 middleLineAsX =
-    Css.Animations.opacity (Css.num 0)
+    [ Css.Animations.opacity (Css.num 0) ]
 
 
-bottomLineAsX : Css.Animations.Property
+bottomLineAsX : List Css.Animations.Property
 bottomLineAsX =
-    Css.Animations.transform
-        [ Css.translate3d (Css.px -13) (Css.px 5.4) Css.zero
+    [ Css.Animations.transform
+        [ Css.translate3d (Css.px -15) (Css.px 7.5) Css.zero
         , Css.rotate (Css.deg -45)
         ]
+    , Css.Animations.custom "width" "32px"
+    ]
 
 
 {-| -}
 xToHamburger : Nri.Ui.Svg.V1.Svg
 xToHamburger =
     animatedXHamburger
-        [ ( [ topLineAsX ], [] )
-        , ( [ middleLineAsX ], [] )
-        , ( [ bottomLineAsX ], [] )
+        [ ( topLineAsX, [] )
+        , ( middleLineAsX, [] )
+        , ( bottomLineAsX, [] )
         ]
 
 
@@ -1072,9 +1076,9 @@ xToHamburger =
 hamburgerToX : Nri.Ui.Svg.V1.Svg
 hamburgerToX =
     animatedXHamburger
-        [ ( [], [ topLineAsX ] )
-        , ( [], [ middleLineAsX ] )
-        , ( [], [ bottomLineAsX ] )
+        [ ( [], topLineAsX )
+        , ( [], middleLineAsX )
+        , ( [], bottomLineAsX )
         ]
 
 
