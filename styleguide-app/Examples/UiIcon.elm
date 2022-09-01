@@ -54,6 +54,7 @@ all : List Group
 all =
     [ ( "Interface with transitions"
       , [ ( "xToHamburger", UiIcon.xToHamburger, [] )
+        , ( "hamburgerToX", UiIcon.hamburgerToX, [] )
         ]
       )
     , ( "Interface"
