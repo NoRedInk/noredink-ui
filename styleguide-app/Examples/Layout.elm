@@ -71,7 +71,8 @@ view ellieLinkConfig state =
                 [ Css.border3 (Css.px 2) Css.solid Colors.greenDarkest
                 , Css.backgroundColor Colors.greenLightest
                 , Css.height (Css.px 20)
-                , Tuple.second settings.containerStyle
+                , Maybe.map Tuple.second settings.containerStyle
+                    |> Maybe.withDefault (Css.batch [])
                 ]
             ]
             []
@@ -95,7 +96,7 @@ init =
 
 
 type alias Settings =
-    { containerStyle : ( String, Style )
+    { containerStyle : Maybe ( String, Style )
     }
 
 
@@ -103,40 +104,42 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "Container style"
-            ([ ( "centeredContentWithSidePadding", Layout.centeredContentWithSidePadding )
-                |> asChoice
-             , ( "centeredContent", Layout.centeredContent )
-                |> asChoice
-             , ( "centeredQuizEngineContentWithSidePadding", Layout.centeredQuizEngineContentWithSidePadding )
-                |> asChoice
-             , ( "quizEngineCenteredContent", Layout.quizEngineCenteredContent )
-                |> asChoice
-             , ( "centeredContentWithSidePaddingAndCustomWidth"
-               , Control.map
-                    (\value ->
-                        ( Code.fromModule moduleName "centeredContentWithSidePaddingAndCustomWidth"
-                            ++ " (Css.px "
-                            ++ String.fromFloat value
-                            ++ ")"
-                        , Layout.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
+            (Control.maybe True
+                ([ ( "centeredContentWithSidePadding", Layout.centeredContentWithSidePadding )
+                    |> asChoice
+                 , ( "centeredContent", Layout.centeredContent )
+                    |> asChoice
+                 , ( "centeredQuizEngineContentWithSidePadding", Layout.centeredQuizEngineContentWithSidePadding )
+                    |> asChoice
+                 , ( "quizEngineCenteredContent", Layout.quizEngineCenteredContent )
+                    |> asChoice
+                 , ( "centeredContentWithSidePaddingAndCustomWidth"
+                   , Control.map
+                        (\value ->
+                            ( Code.fromModule moduleName "centeredContentWithSidePaddingAndCustomWidth"
+                                ++ " (Css.px "
+                                ++ String.fromFloat value
+                                ++ ")"
+                            , Layout.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
+                            )
                         )
-                    )
-                    (ControlExtra.float 400)
-               )
-             , ( "centeredContentWithCustomWidth"
-               , Control.map
-                    (\value ->
-                        ( Code.fromModule moduleName "centeredContentWithCustomWidth"
-                            ++ " (Css.px "
-                            ++ String.fromFloat value
-                            ++ ")"
-                        , Layout.centeredContentWithCustomWidth (Css.px value)
+                        (ControlExtra.float 400)
+                   )
+                 , ( "centeredContentWithCustomWidth"
+                   , Control.map
+                        (\value ->
+                            ( Code.fromModule moduleName "centeredContentWithCustomWidth"
+                                ++ " (Css.px "
+                                ++ String.fromFloat value
+                                ++ ")"
+                            , Layout.centeredContentWithCustomWidth (Css.px value)
+                            )
                         )
-                    )
-                    (ControlExtra.float 400)
-               )
-             ]
-                |> Control.choice
+                        (ControlExtra.float 400)
+                   )
+                 ]
+                    |> Control.choice
+                )
             )
 
 
