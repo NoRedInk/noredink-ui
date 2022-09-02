@@ -319,7 +319,7 @@ withSideNav model content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , Layout.contentWithCustomWidth (Css.px 1400)
+            , Layout.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
             , Layout.pageBottomWhitespace
             ]
         ]

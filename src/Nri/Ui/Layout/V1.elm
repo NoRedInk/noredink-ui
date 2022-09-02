@@ -1,26 +1,29 @@
 module Nri.Ui.Layout.V1 exposing
-    ( content, centeredContent
-    , quizEngineContent, quizEngineCenteredContent
+    ( centeredContentWithSidePadding, centeredContent
+    , centeredQuizEngineContentWithSidePadding, quizEngineCenteredContent
+    , centeredContentWithSidePaddingAndCustomWidth, centeredContentWithCustomWidth
     , pageTopWhitespace, pageTopWhitespacePx
     , pageSideWhitespace, pageSideWhitespacePx
     , pageBottomWhitespace, pageBottomWhitespacePx
     , verticalSpacerPx, horizontalSpacerPx
-    , contentWithCustomWidth, centeredContentWithCustomWidth
     )
 
 {-|
 
-@docs content, centeredContent
-@docs quizEngineContent, quizEngineCenteredContent
+
+## Center a container on the page:
+
+@docs centeredContentWithSidePadding, centeredContent
+@docs centeredQuizEngineContentWithSidePadding, quizEngineCenteredContent
+@docs centeredContentWithSidePaddingAndCustomWidth, centeredContentWithCustomWidth
+
+
+## Whitespace constants and helpers:
+
 @docs pageTopWhitespace, pageTopWhitespacePx
 @docs pageSideWhitespace, pageSideWhitespacePx
 @docs pageBottomWhitespace, pageBottomWhitespacePx
 @docs verticalSpacerPx, horizontalSpacerPx
-
-
-### Advanced/internal:
-
-@docs contentWithCustomWidth, centeredContentWithCustomWidth
 
 -}
 
@@ -31,8 +34,8 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 {-| Advanced use only: center content up to a custom page width, with side padding when narrower.
 -}
-contentWithCustomWidth : Css.Px -> Style
-contentWithCustomWidth breakpoint =
+centeredContentWithSidePaddingAndCustomWidth : Css.Px -> Style
+centeredContentWithSidePaddingAndCustomWidth breakpoint =
     Css.batch
         [ centeredContentWithCustomWidth breakpoint
         , Media.withMedia [ Media.only Media.screen [ Media.maxWidth breakpoint ] ]
@@ -61,9 +64,9 @@ centeredContentWithCustomWidth maxWidth =
 If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
 
 -}
-content : Style
-content =
-    contentWithCustomWidth MediaQuery.mobileBreakpoint
+centeredContentWithSidePadding : Style
+centeredContentWithSidePadding =
+    centeredContentWithSidePaddingAndCustomWidth MediaQuery.mobileBreakpoint
 
 
 {-| Center content with a max width of the mobile breakpoint.
@@ -83,9 +86,9 @@ This is identical to `content`, except that it uses the quizEngineMobile breakpo
 If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
 
 -}
-quizEngineContent : Style
-quizEngineContent =
-    contentWithCustomWidth MediaQuery.quizEngineBreakpoint
+centeredQuizEngineContentWithSidePadding : Style
+centeredQuizEngineContentWithSidePadding =
+    centeredContentWithSidePaddingAndCustomWidth MediaQuery.quizEngineBreakpoint
 
 
 {-| Use this style on Quiz Engine pages.
