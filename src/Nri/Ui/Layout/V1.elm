@@ -1,12 +1,12 @@
 module Nri.Ui.Layout.V1 exposing
     ( centeredContent, content, narrowContent
-    , sidePaddingPx, bottomMargin
+    , pageSidePaddingPx, pageBottomMargin
     )
 
 {-|
 
 @docs centeredContent, content, narrowContent
-@docs sidePaddingPx, bottomMargin
+@docs pageSidePaddingPx, pageBottomMargin
 
 -}
 
@@ -29,7 +29,7 @@ content =
     Css.batch
         [ centeredContent
         , Media.withMedia [ MediaQuery.mobile ]
-            [ Css.padding2 Css.zero sidePaddingPx
+            [ Css.padding2 Css.zero pageSidePaddingPx
             ]
         ]
 
@@ -61,7 +61,7 @@ narrowContent =
     Css.batch
         [ narrowCenteredContent
         , Media.withMedia [ MediaQuery.quizEngineMobile ]
-            [ Css.padding2 Css.zero sidePaddingPx
+            [ Css.padding2 Css.zero pageSidePaddingPx
             ]
         ]
 
@@ -90,9 +90,16 @@ narrowCenteredContent =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-sidePaddingPx : Css.Px
-sidePaddingPx =
+pageSidePaddingPx : Css.Px
+pageSidePaddingPx =
     Css.px 15
+
+
+{-| Convenience for adding the appriopriate amount of whitespace at the end of the page with margin.
+-}
+pageBottomMargin : Style
+pageBottomMargin =
+    Css.marginBottom pageBottomMarginPx
 
 
 {-| Every page should have 50px of whitespace at the end, so that footers don't end up spanning the middle of the page, and for consistency's sake.
@@ -100,6 +107,6 @@ sidePaddingPx =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-bottomMargin : Style
-bottomMargin =
-    Css.marginBottom (Css.px 50)
+pageBottomMarginPx : Css.Px
+pageBottomMarginPx =
+    Css.px 50
