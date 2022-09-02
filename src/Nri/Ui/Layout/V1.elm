@@ -15,12 +15,13 @@ import Css.Media as Media
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
-{-| This is meant to be reusable for any area that should fill the width of the screen
-and apply the normal max-width to its content.
-You can provide additional CSS styles (typically background or border, or flexbox styles).
+{-| This is meant to be reusable for any area that:
 
-This is a responsive container, and will automatically add left and right padding when the
-screen gets too small.
+  - should be centered
+  - on wide viewports, should fill the width of the screen up to a max width of the mobile breakpoint
+  - on narrow viewports, should have standard side padding
+
+If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
 
 -}
 content : Style
@@ -34,6 +35,9 @@ content =
 
 
 {-| Center content with a max width of the mobile breakpoint.
+
+This style does not add side padding on mobile, which means that this can be used for containers that should snap flush to the edges of the mobile viewport.
+
 -}
 centeredContent : Style
 centeredContent =
@@ -45,7 +49,12 @@ centeredContent =
         ]
 
 
-{-| A narrower version of `content`
+{-| Use this style on Quiz Engine pages.
+
+This is identical to `content`, except that it uses the quizEngineMobile breakpoint instead of the mobile breakpoint.
+
+If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
+
 -}
 narrowContent : Style
 narrowContent =
@@ -57,7 +66,14 @@ narrowContent =
         ]
 
 
-{-| Center content with a max width of the narrow breakpoint.
+{-| Use this style on Quiz Engine pages.
+
+This is identical to `centeredContent`, except that it uses the quizEngineMobile breakpoint instead of the mobile breakpoint.
+
+Center content with a max width of the narrow breakpoint.
+
+This style does not add side padding on mobile, which means that this can be used for containers that should snap flush to the edges of the mobile viewport.
+
 -}
 narrowCenteredContent : Style
 narrowCenteredContent =
@@ -69,12 +85,20 @@ narrowCenteredContent =
         ]
 
 
+{-| Unless content is flush with the edges of the viewport, there should be 15px of left/right spacing between the content and the viewport edge.
+
+See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
+
+-}
 sidePaddingPx : Css.Px
 sidePaddingPx =
     Css.px 15
 
 
-{-| See <https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BnyI9dz1Cs5CnP2IOc276_fQAg-PvOLxeX3oyujYEzdJx5pu>
+{-| Every page should have 50px of whitespace at the end, so that footers don't end up spanning the middle of the page, and for consistency's sake.
+
+See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
+
 -}
 bottomMargin : Style
 bottomMargin =
