@@ -38,7 +38,18 @@ centeredContentWithSidePaddingAndCustomWidth : Css.Px -> Style
 centeredContentWithSidePaddingAndCustomWidth breakpoint =
     Css.batch
         [ centeredContentWithCustomWidth breakpoint
-        , Media.withMedia [ Media.only Media.screen [ Media.maxWidth breakpoint ] ]
+        , -- this media query is narrower to prevent the page from "snapping" into the
+          -- narrow viewport when resizing. Visual shifts should be as minimal as possible
+          -- when resizing.
+          Media.withMediaQuery
+            [ "screen and (max-width: "
+                ++ .value
+                    (Css.calc breakpoint
+                        Css.minus
+                        (Css.calc pageSideWhitespacePx Css.plus pageSideWhitespacePx)
+                    )
+                ++ ")"
+            ]
             [ pageSideWhitespace ]
         ]
 
