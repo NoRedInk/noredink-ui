@@ -6,7 +6,6 @@ module Examples.Layout exposing (example, State, Msg)
 
 -}
 
-import Browser.Events
 import Category exposing (Category(..))
 import Code
 import Css exposing (Style)
@@ -15,12 +14,11 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Layout.V1 as Layout
-import Nri.Ui.Text.V6 as Text
 
 
 moduleName : String
