@@ -10,12 +10,13 @@ import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
 import CommonControls
-import Css exposing (middle, verticalAlign)
+import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -231,11 +232,18 @@ controlSettings =
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
     Control.record (\a b c d e -> Tool.buildMarker { highlightColor = a, hoverColor = b, hoverHighlightColor = c, kind = d, rounded = e })
-        |> Control.field "highlightColor" (Control.value Colors.highlightPurple)
-        |> Control.field "hoverColor" (Control.value Colors.highlightMagenta)
-        |> Control.field "hoverHighlightColor" (Control.value Colors.highlightPurpleDark)
+        |> Control.field "highlightColor" backgroundHighlightColors
+        |> Control.field "hoverColor" backgroundHighlightColors
+        |> Control.field "hoverHighlightColor" backgroundHighlightColors
         |> Control.field "kind" (Control.value ())
         |> Control.field "rounded" (Control.bool True)
+
+
+backgroundHighlightColors : Control Color
+backgroundHighlightColors =
+    Examples.Colors.backgroundHighlightColors
+        |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
+        |> Control.choice
 
 
 {-| -}
