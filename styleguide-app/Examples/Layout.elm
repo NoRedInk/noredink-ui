@@ -67,8 +67,11 @@ view ellieLinkConfig state =
     , Heading.h2 [ Heading.plaintext "Example" ]
     , fakePage
         [ container
-            (Maybe.map Tuple.second settings.containerStyle
-                |> Maybe.withDefault (Css.batch [])
+            (List.filterMap identity
+                [ Maybe.map Tuple.second settings.topContainerStyle
+                , Maybe.map Tuple.second settings.horizontalContainerStyle
+                , Maybe.map Tuple.second settings.bottomContainerStyle
+                ]
             )
             (List.repeat settings.childCount child)
         ]
@@ -79,23 +82,23 @@ fakePage : List (Html msg) -> Html msg
 fakePage =
     div
         [ css
-            [ Css.border3 (Css.px 4) Css.dashed Colors.ochreDark
-            , Css.backgroundColor Colors.sunshine
+            [ Css.border3 (Css.px 4) Css.dotted Colors.gray20
+            , Css.backgroundColor Colors.gray96
             ]
         ]
 
 
-container : Css.Style -> List (Html msg) -> Html msg
-container style =
+container : List Css.Style -> List (Html msg) -> Html msg
+container styles =
     div
         [ css
-            [ Css.border3 (Css.px 2) Css.solid Colors.greenDarkest
+            [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest
             , Css.backgroundColor Colors.greenLightest
             , Css.displayFlex
             , Css.flexWrap Css.wrap
             , Css.justifyContent Css.spaceBetween
             , Css.alignItems Css.center
-            , style
+            , Css.batch styles
             ]
         ]
 
@@ -104,8 +107,8 @@ child : Html msg
 child =
     div
         [ css
-            [ Css.border3 (Css.px 1) Css.dotted Colors.gray20
-            , Css.backgroundColor Colors.white
+            [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark
+            , Css.backgroundColor Colors.sunshine
             , Css.flexBasis (Css.px 150)
             , Css.height (Css.px 150)
             ]
@@ -124,7 +127,9 @@ init =
 
 
 type alias Settings =
-    { containerStyle : Maybe ( String, Style )
+    { topContainerStyle : Maybe ( String, Style )
+    , horizontalContainerStyle : Maybe ( String, Style )
+    , bottomContainerStyle : Maybe ( String, Style )
     , childCount : Int
     }
 
@@ -132,7 +137,15 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "Container style"
+        |> Control.field "pageTopWhitespace"
+            (Control.maybe True
+                (Control.value
+                    ( Code.fromModule moduleName "pageTopWhitespace"
+                    , Layout.pageTopWhitespace
+                    )
+                )
+            )
+        |> Control.field "Horizontal container styling"
             (Control.maybe True
                 ([ ( "centeredContentWithSidePadding", Layout.centeredContentWithSidePadding )
                     |> asChoice
@@ -168,6 +181,14 @@ controlSettings =
                    )
                  ]
                     |> Control.choice
+                )
+            )
+        |> Control.field "pageBottomWhitespace"
+            (Control.maybe True
+                (Control.value
+                    ( Code.fromModule moduleName "pageBottomWhitespace"
+                    , Layout.pageBottomWhitespace
+                    )
                 )
             )
         |> Control.field "Child count" (ControlExtra.int 3)
