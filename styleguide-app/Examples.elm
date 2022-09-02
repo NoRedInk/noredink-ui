@@ -17,6 +17,7 @@ import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
+import Examples.Layout as Layout
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
@@ -343,6 +344,25 @@ all =
             (\msg ->
                 case msg of
                     HeadingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Layout.example
+        |> Example.wrapMsg LayoutMsg
+            (\msg ->
+                case msg of
+                    LayoutMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState LayoutState
+            (\msg ->
+                case msg of
+                    LayoutState childState ->
                         Just childState
 
                     _ ->
@@ -805,6 +825,7 @@ type State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeadingState Heading.State
+    | LayoutState Layout.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MenuState Menu.State
@@ -847,6 +868,7 @@ type Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
+    | LayoutMsg Layout.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
