@@ -53,6 +53,32 @@ view ellieLinkConfig state =
     let
         settings =
             Control.currentValue state.settings
+
+        ( exampleCode, exampleView ) =
+            container
+                (List.filterMap identity
+                    [ settings.topContainerStyle
+                    , settings.horizontalContainerStyle
+                    , settings.bottomContainerStyle
+                    , if settings.childVerticalSpace then
+                        Just
+                            ( "Css.property \"row-gap\" (.value Layout.verticalSpacerPx)"
+                            , Css.property "row-gap" (.value Layout.verticalSpacerPx)
+                            )
+
+                      else
+                        Nothing
+                    , if settings.childHorizontalSpace then
+                        Just
+                            ( "Css.property \"column-gap\" (.value Layout.horizontalSpacerPx"
+                            , Css.property "column-gap" (.value Layout.horizontalSpacerPx)
+                            )
+
+                      else
+                        Nothing
+                    ]
+                )
+                (List.repeat settings.childCount child)
     in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
@@ -62,29 +88,15 @@ view ellieLinkConfig state =
         , settings = state.settings
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
-        , toExampleCode = \_ -> []
+        , toExampleCode =
+            \_ ->
+                [ { sectionName = "Example"
+                  , code = exampleCode
+                  }
+                ]
         }
     , Heading.h2 [ Heading.plaintext "Example" ]
-    , fakePage
-        [ container
-            (List.filterMap identity
-                [ Maybe.map Tuple.second settings.topContainerStyle
-                , Maybe.map Tuple.second settings.horizontalContainerStyle
-                , Maybe.map Tuple.second settings.bottomContainerStyle
-                , if settings.childVerticalSpace then
-                    Just (Css.property "row-gap" (.value Layout.verticalSpacerPx))
-
-                  else
-                    Nothing
-                , if settings.childHorizontalSpace then
-                    Just (Css.property "column-gap" (.value Layout.horizontalSpacerPx))
-
-                  else
-                    Nothing
-                ]
-            )
-            (List.repeat settings.childCount child)
-        ]
+    , fakePage [ exampleView ]
     ]
 
 
@@ -98,22 +110,46 @@ fakePage =
         ]
 
 
-container : List Css.Style -> List (Html msg) -> Html msg
-container styles =
-    div
+container : List ( String, Css.Style ) -> List ( String, Html msg ) -> ( String, Html msg )
+container styles children =
+    ( [ "div"
+      , "[ css"
+      , "    [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest"
+      , "    , Css.backgroundColor Colors.greenLightest"
+      , "    , Css.property " ++ Code.string "display" ++ " " ++ Code.string "grid"
+      , "    , Css.property " ++ Code.string "grid-template-columns" ++ " " ++ Code.string "1fr 1fr 1fr 1fr 1fr"
+      , "    , Css.batch " ++ Code.listMultiline (List.map Tuple.first styles) 3
+      , "    ]"
+      , "]"
+      , Code.list (List.map Tuple.first children)
+      ]
+        |> String.join (Code.newlineWithIndent 1)
+    , div
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest
             , Css.backgroundColor Colors.greenLightest
             , Css.property "display" "grid"
             , Css.property "grid-template-columns" "1fr 1fr 1fr 1fr 1fr"
-            , Css.batch styles
+            , Css.batch (List.map Tuple.second styles)
             ]
         ]
+        (List.map Tuple.second children)
+    )
 
 
-child : Html msg
+child : ( String, Html msg )
 child =
-    div
+    ( [ "div"
+      , "[ css"
+      , "    [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark"
+      , "    , Css.backgroundColor Colors.sunshine"
+      , "    , Css.height (Css.px 150)"
+      , "    ]"
+      , "]"
+      , "[]"
+      ]
+        |> String.join (Code.newlineWithIndent 2)
+    , div
         [ css
             [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark
             , Css.backgroundColor Colors.sunshine
@@ -121,6 +157,7 @@ child =
             ]
         ]
         []
+    )
 
 
 {-| -}
