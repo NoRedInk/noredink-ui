@@ -26,6 +26,7 @@ import Examples.Page as Page
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.RadioButton as RadioButton
+import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Shadows as Shadows
@@ -519,6 +520,25 @@ all =
                     _ ->
                         Nothing
             )
+    , RingGauge.example
+        |> Example.wrapMsg RingGaugeMsg
+            (\msg ->
+                case msg of
+                    RingGaugeMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState RingGaugeState
+            (\msg ->
+                case msg of
+                    RingGaugeState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , SegmentedControl.example
         |> Example.wrapMsg SegmentedControlMsg
             (\msg ->
@@ -814,6 +834,7 @@ type State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
     | RadioButtonState RadioButton.State
+    | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
     | ShadowsState Shadows.State
@@ -856,6 +877,7 @@ type Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
     | RadioButtonMsg RadioButton.Msg
+    | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
     | ShadowsMsg Shadows.Msg
