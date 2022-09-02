@@ -1,12 +1,14 @@
 module Nri.Ui.Layout.V1 exposing
     ( centeredContent, content, narrowContent
-    , pageSidePaddingPx, pageBottomMargin
+    , pageSidePadding, pageSidePaddingPx
+    , pageBottomMargin, pageBottomMarginPx
     )
 
 {-|
 
 @docs centeredContent, content, narrowContent
-@docs pageSidePaddingPx, pageBottomMargin
+@docs pageSidePadding, pageSidePaddingPx
+@docs pageBottomMargin, pageBottomMarginPx
 
 -}
 
@@ -28,9 +30,7 @@ content : Style
 content =
     Css.batch
         [ centeredContent
-        , Media.withMedia [ MediaQuery.mobile ]
-            [ Css.padding2 Css.zero pageSidePaddingPx
-            ]
+        , Media.withMedia [ MediaQuery.mobile ] [ pageSidePadding ]
         ]
 
 
@@ -60,9 +60,7 @@ narrowContent : Style
 narrowContent =
     Css.batch
         [ narrowCenteredContent
-        , Media.withMedia [ MediaQuery.quizEngineMobile ]
-            [ Css.padding2 Css.zero pageSidePaddingPx
-            ]
+        , Media.withMedia [ MediaQuery.quizEngineMobile ] [ pageSidePadding ]
         ]
 
 
@@ -83,6 +81,13 @@ narrowCenteredContent =
         , Css.marginLeft Css.auto
         , Css.marginRight Css.auto
         ]
+
+
+{-| Convenience for adding the appriopriate amount of whitespace on the sides of a full-width container on the page or on the page with side padding.
+-}
+pageSidePadding : Style
+pageSidePadding =
+    Css.batch [ Css.paddingLeft pageSidePaddingPx, Css.paddingRight pageSidePaddingPx ]
 
 
 {-| Unless content is flush with the edges of the viewport, there should be 15px of left/right spacing between the content and the viewport edge.
