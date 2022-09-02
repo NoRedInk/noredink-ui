@@ -7,6 +7,7 @@ module Examples.RingGauge exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -17,15 +18,10 @@ import Examples.IconExamples as IconExamples
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.RingGauge.V1 as RingGauge exposing (Settings)
+import Nri.Ui.RingGauge.V1 as RingGauge
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
 import SolidColor.Accessibility
-
-
-{-| -}
-type alias State =
-    Control Settings
 
 
 moduleName : String
@@ -74,10 +70,34 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Nri.Ui.Colors.V1 as Colors" ]
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                "RingGauge.view"
+                                    ++ Code.record
+                                        [ ( "backgroundColor", Tuple.first settings.backgroundColor )
+                                        , ( "emptyColor", Tuple.first settings.emptyColor )
+                                        , ( "filledColor", Tuple.first settings.filledColor )
+                                        , ( "percentage", String.fromFloat settings.percentage )
+                                        ]
+                                    ++ ([ Code.newlineWithIndent 1
+                                        , "|> Svg.withWidth (Css.px 200)"
+                                        , "|> Svg.withHeight (Css.px 200)"
+                                        , "|> Svg.toHtml"
+                                        ]
+                                            |> String.join (Code.newlineWithIndent 1)
+                                       )
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , RingGauge.view settings
+            , RingGauge.view
+                { backgroundColor = Tuple.second settings.backgroundColor
+                , emptyColor = Tuple.second settings.emptyColor
+                , filledColor = Tuple.second settings.filledColor
+                , percentage = settings.percentage
+                }
                 |> Svg.withWidth (Css.px 200)
                 |> Svg.withHeight (Css.px 200)
                 |> Svg.toHtml
@@ -119,8 +139,8 @@ example =
     }
 
 
-contrast : Css.Color -> Css.Color -> Float
-contrast a b =
+contrast : ( a, Css.Color ) -> ( a, Css.Color ) -> Float
+contrast ( _, a ) ( _, b ) =
     SolidColor.Accessibility.contrast (fromCssColor a) (fromCssColor b)
 
 
@@ -136,10 +156,23 @@ update msg state =
             ( control, Cmd.none )
 
 
+{-| -}
+type alias State =
+    Control Settings
+
+
+type alias Settings =
+    { backgroundColor : ( String, Css.Color )
+    , emptyColor : ( String, Css.Color )
+    , filledColor : ( String, Css.Color )
+    , percentage : Float
+    }
+
+
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "backgroundColor" (Control.map Tuple.second CommonControls.color)
-        |> Control.field "emptyColor" (Control.map Tuple.second CommonControls.color)
-        |> Control.field "filledColor" (Control.map Tuple.second CommonControls.color)
+        |> Control.field "backgroundColor" CommonControls.color
+        |> Control.field "emptyColor" CommonControls.color
+        |> Control.field "filledColor" CommonControls.color
         |> Control.field "percentage" (ControlExtra.float 15)
