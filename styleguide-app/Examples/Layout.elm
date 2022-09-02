@@ -66,23 +66,51 @@ view ellieLinkConfig state =
         }
     , Heading.h2 [ Heading.plaintext "Example" ]
     , fakePage
-        [ div
-            [ css
-                [ Css.border3 (Css.px 2) Css.solid Colors.greenDarkest
-                , Css.backgroundColor Colors.greenLightest
-                , Css.height (Css.px 20)
-                , Maybe.map Tuple.second settings.containerStyle
-                    |> Maybe.withDefault (Css.batch [])
-                ]
-            ]
-            []
+        [ container
+            (Maybe.map Tuple.second settings.containerStyle
+                |> Maybe.withDefault (Css.batch [])
+            )
+            (List.repeat settings.childCount child)
         ]
     ]
 
 
 fakePage : List (Html msg) -> Html msg
 fakePage =
-    div [ css [ Css.border3 (Css.px 2) Css.dashed Colors.ochreDark ] ]
+    div
+        [ css
+            [ Css.border3 (Css.px 4) Css.dashed Colors.ochreDark
+            , Css.backgroundColor Colors.sunshine
+            ]
+        ]
+
+
+container : Css.Style -> List (Html msg) -> Html msg
+container style =
+    div
+        [ css
+            [ Css.border3 (Css.px 2) Css.solid Colors.greenDarkest
+            , Css.backgroundColor Colors.greenLightest
+            , Css.displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.justifyContent Css.spaceBetween
+            , Css.alignItems Css.center
+            , style
+            ]
+        ]
+
+
+child : Html msg
+child =
+    div
+        [ css
+            [ Css.border3 (Css.px 1) Css.dotted Colors.gray20
+            , Css.backgroundColor Colors.white
+            , Css.flexBasis (Css.px 150)
+            , Css.height (Css.px 150)
+            ]
+        ]
+        []
 
 
 {-| -}
@@ -97,6 +125,7 @@ init =
 
 type alias Settings =
     { containerStyle : Maybe ( String, Style )
+    , childCount : Int
     }
 
 
@@ -141,6 +170,7 @@ controlSettings =
                     |> Control.choice
                 )
             )
+        |> Control.field "Child count" (ControlExtra.int 3)
 
 
 asChoice : ( String, Style ) -> ( String, Control ( String, Style ) )
