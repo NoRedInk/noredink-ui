@@ -14,10 +14,13 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge exposing (Settings)
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Table.V6 as Table
+import SolidColor.Accessibility
 
 
 {-| -}
@@ -78,8 +81,47 @@ example =
                 |> Svg.withWidth (Css.px 200)
                 |> Svg.withHeight (Css.px 200)
                 |> Svg.toHtml
+            , Table.view
+                [ Table.string
+                    { header = "Color contrast against"
+                    , value = .name
+                    , width = Css.px 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "backgroundColor"
+                    , value = .value >> contrast settings.backgroundColor >> String.fromFloat
+                    , width = Css.px 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "emptyColor"
+                    , value = .value >> contrast settings.emptyColor >> String.fromFloat
+                    , width = Css.px 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "filledColor"
+                    , value = .value >> contrast settings.filledColor >> String.fromFloat
+                    , width = Css.px 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "backgroundColor", value = settings.backgroundColor }
+                , { name = "emptyColor", value = settings.emptyColor }
+                , { name = "filledColor", value = settings.filledColor }
+                ]
             ]
     }
+
+
+contrast : Css.Color -> Css.Color -> Float
+contrast a b =
+    SolidColor.Accessibility.contrast (fromCssColor a) (fromCssColor b)
 
 
 {-| -}
