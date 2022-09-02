@@ -1,5 +1,6 @@
 module Nri.Ui.Layout.V1 exposing
     ( centeredContent, content, narrowContent
+    , pageTopMargin, pageTopMarginPx
     , pageSidePadding, pageSidePaddingPx
     , pageBottomMargin, pageBottomMarginPx
     , verticalSpacePx, horizontalSpacePx
@@ -8,6 +9,7 @@ module Nri.Ui.Layout.V1 exposing
 {-|
 
 @docs centeredContent, content, narrowContent
+@docs pageTopMargin, pageTopMarginPx
 @docs pageSidePadding, pageSidePaddingPx
 @docs pageBottomMargin, pageBottomMarginPx
 @docs verticalSpacePx, horizontalSpacePx
@@ -117,6 +119,23 @@ See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/
 pageBottomMarginPx : Css.Px
 pageBottomMarginPx =
     Css.px 50
+
+
+{-| Convenience for adding the appriopriate amount of whitespace at the end of the page with margin.
+-}
+pageTopMargin : Style
+pageTopMargin =
+    Css.marginTop pageTopMarginPx
+
+
+{-| Every page should have 30px of whitespace separating the header nav and the page content, as well as before any secondary headers.
+
+See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
+
+-}
+pageTopMarginPx : Css.Px
+pageTopMarginPx =
+    Css.px 30
 
 
 {-| Most elements should have 20px of whitespace separating them vertically.
