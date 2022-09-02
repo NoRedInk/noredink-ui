@@ -13,7 +13,8 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Nri.Ui.Button.V10 as Button
+import Examples.IconExamples as IconExamples
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge
 
@@ -44,7 +45,17 @@ example =
     , categories = [ Progress, Icons ]
     , keyboardSupport = []
     , preview =
-        []
+        [ 25, 50, 75, 99 ]
+            |> List.map
+                (\percentage ->
+                    RingGauge.view
+                        { backgroundColor = Colors.gray96
+                        , emptyColor = Colors.gray96
+                        , filledColor = Colors.gray45
+                        , percentage = percentage
+                        }
+                )
+            |> IconExamples.preview
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view
