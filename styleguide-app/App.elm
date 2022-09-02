@@ -240,6 +240,7 @@ view model =
                 [ view_
                 , Html.map never Sprite.attach
                 , Css.Global.global (InputMethod.styles model.inputMethod)
+                , Css.Global.global [ Css.Global.everything [ Css.boxSizing Css.borderBox ] ]
                 ]
     in
     case model.route of
