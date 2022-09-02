@@ -6,17 +6,18 @@ module Examples.RingGauge exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
-import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.RingGauge.V1 as RingGauge
+import Nri.Ui.RingGauge.V1 as RingGauge exposing (Settings)
+import Nri.Ui.Svg.V1 as Svg
 
 
 {-| -}
@@ -58,6 +59,10 @@ example =
             |> IconExamples.preview
     , view =
         \ellieLinkConfig state ->
+            let
+                settings =
+                    Control.currentValue state
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -65,10 +70,14 @@ example =
                 , update = UpdateControl
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , extraCode = [ "import Nri.Ui.Colors.V1 as Colors" ]
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
+            , RingGauge.view settings
+                |> Svg.withWidth (Css.px 200)
+                |> Svg.withHeight (Css.px 200)
+                |> Svg.toHtml
             ]
     }
 
@@ -85,10 +94,10 @@ update msg state =
             ( control, Cmd.none )
 
 
-type alias Settings =
-    {}
-
-
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+        |> Control.field "backgroundColor" (Control.map Tuple.second CommonControls.color)
+        |> Control.field "emptyColor" (Control.map Tuple.second CommonControls.color)
+        |> Control.field "filledColor" (Control.map Tuple.second CommonControls.color)
+        |> Control.field "percentage" (ControlExtra.float 15)

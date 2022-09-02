@@ -1,4 +1,4 @@
-module Nri.Ui.RingGauge.V1 exposing (view)
+module Nri.Ui.RingGauge.V1 exposing (view, Settings)
 
 {-| A ring gauge made with svg that shows completion by stroking the circumference
 with a specific color.
@@ -6,7 +6,7 @@ with a specific color.
 Uses the strategy discussed here:
 <https://medium.com/@heyoka/scratch-made-svg-donut-pie-charts-in-html5-2c587e935d72>
 
-@docs view
+@docs view, Settings
 
 -}
 
@@ -17,15 +17,25 @@ import Svg.Styled exposing (circle)
 import Svg.Styled.Attributes exposing (..)
 
 
-{-| Shows a configurable SVG ring guage
+{-|
+
+  - background color : the center of the ring's color
+  - empty color: representation of the not-yet-done/unfilled part of the ring
+  - filled color: representation of the done part of the ring
+  - percentage: 0-100 value representing completion
+
 -}
-view :
+type alias Settings =
     { backgroundColor : Color
     , emptyColor : Color
     , filledColor : Color
     , percentage : Float
     }
-    -> Svg
+
+
+{-| Shows a configurable SVG ring guage
+-}
+view : Settings -> Svg
 view config =
     let
         -- Svgs are scalable. For convenience, we'll use 100 for circumference.
