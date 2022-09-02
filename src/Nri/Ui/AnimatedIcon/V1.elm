@@ -43,13 +43,13 @@ mobileOpenClose isOpen =
                 []
     in
     Nri.Ui.Svg.V1.init "-2 0 26 23"
-        [ line 0
+        [ line 3
             [ Css.rotate (Css.deg 45)
             , Css.scaleX 1.3
             , Css.translateY (Css.pct 40)
             ]
-        , line 10 [ Css.translateY (Css.px 10), Css.scaleX 0 ]
-        , line 20
+        , line 10 [ Css.translateY (Css.px 7), Css.scaleX 0 ]
+        , line 17
             [ Css.rotate (Css.deg -45)
             , Css.scaleX 1.3
             , Css.translateY (Css.pct 40)
