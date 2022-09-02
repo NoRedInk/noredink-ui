@@ -18,6 +18,7 @@ import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Layout.V1 as Layout
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V4 as SideNav
@@ -318,23 +319,17 @@ withSideNav model content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , maxWidth (Css.px 1400)
-            , margin auto
+            , Layout.contentWithCustomWidth (Css.px 1400)
+            , Layout.pageBottomWhitespace
             ]
         ]
         [ navigation model
         , Html.main_
-            [ css
-                [ flexGrow (int 1)
-                , margin2 (px 40) zero
-                , Css.minHeight (Css.vh 100)
-                ]
+            [ css [ flexGrow (int 1) ]
             , id "maincontent"
             , Key.tabbable False
             ]
-            [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
-                [ Routes.viewBreadCrumbs model.route
-                ]
+            [ Routes.viewBreadCrumbs model.route
             , content
             ]
         ]
@@ -357,6 +352,7 @@ viewPreviews containerId navConfig examples =
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
                 , Css.property "gap" "10px"
+                , Layout.pageTopWhitespace
                 ]
             ]
 
@@ -394,7 +390,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         }
         [ SideNav.navNotMobileCss
             [ VendorPrefixed.value "position" "sticky"
-            , top (px 55)
+            , top (px 8)
             ]
         , SideNav.collapsible
             { isOpen = isSideNavOpen

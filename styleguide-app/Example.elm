@@ -12,6 +12,7 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Layout.V1 as Layout
 
 
 type alias Example state msg =
@@ -174,8 +175,7 @@ view_ ellieLinkConfig example =
     in
     [ Html.div
         [ Attributes.css
-            [ Css.paddingBottom (Css.px 10)
-            , Css.marginBottom (Css.px 20)
+            [ Css.padding2 Layout.verticalSpacerPx Css.zero
             , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
             ]
         ]
