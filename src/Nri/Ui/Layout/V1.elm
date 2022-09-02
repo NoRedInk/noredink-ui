@@ -5,6 +5,7 @@ module Nri.Ui.Layout.V1 exposing
     , pageSideWhitespace, pageSideWhitespacePx
     , pageBottomWhitespace, pageBottomWhitespacePx
     , verticalSpacerPx, horizontalSpacerPx
+    , contentWithCustomWidth, centeredContentWithCustomWidth
     )
 
 {-|
@@ -16,11 +17,39 @@ module Nri.Ui.Layout.V1 exposing
 @docs pageBottomWhitespace, pageBottomWhitespacePx
 @docs verticalSpacerPx, horizontalSpacerPx
 
+
+### Advanced/internal:
+
+@docs contentWithCustomWidth, centeredContentWithCustomWidth
+
 -}
 
 import Css exposing (Style)
 import Css.Media as Media
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+
+
+{-| Advanced use only: center content up to a custom page width, with side padding when narrower.
+-}
+contentWithCustomWidth : Css.Px -> Style
+contentWithCustomWidth breakpoint =
+    Css.batch
+        [ centeredContentWithCustomWidth breakpoint
+        , Media.withMedia [ Media.only Media.screen [ Media.maxWidth breakpoint ] ]
+            [ pageSideWhitespace ]
+        ]
+
+
+{-| Advanced use only: center content up to a custom page width.
+-}
+centeredContentWithCustomWidth : Css.Px -> Style
+centeredContentWithCustomWidth maxWidth =
+    Css.batch
+        [ Css.maxWidth maxWidth
+        , Css.width (Css.pct 100)
+        , Css.marginLeft Css.auto
+        , Css.marginRight Css.auto
+        ]
 
 
 {-| This is meant to be reusable for any area that:
@@ -34,10 +63,7 @@ If you have a container that should snap flush to the edges on mobile, this isn'
 -}
 content : Style
 content =
-    Css.batch
-        [ centeredContent
-        , Media.withMedia [ MediaQuery.mobile ] [ pageSideWhitespace ]
-        ]
+    contentWithCustomWidth MediaQuery.mobileBreakpoint
 
 
 {-| Center content with a max width of the mobile breakpoint.
@@ -47,12 +73,7 @@ This style does not add side padding on mobile, which means that this can be use
 -}
 centeredContent : Style
 centeredContent =
-    Css.batch
-        [ Css.maxWidth MediaQuery.mobileBreakpoint
-        , Css.width (Css.pct 100)
-        , Css.marginLeft Css.auto
-        , Css.marginRight Css.auto
-        ]
+    centeredContentWithCustomWidth MediaQuery.mobileBreakpoint
 
 
 {-| Use this style on Quiz Engine pages.
@@ -64,10 +85,7 @@ If you have a container that should snap flush to the edges on mobile, this isn'
 -}
 quizEngineContent : Style
 quizEngineContent =
-    Css.batch
-        [ quizEngineCenteredContent
-        , Media.withMedia [ MediaQuery.quizEngineMobile ] [ pageSideWhitespace ]
-        ]
+    contentWithCustomWidth MediaQuery.quizEngineBreakpoint
 
 
 {-| Use this style on Quiz Engine pages.
@@ -79,12 +97,7 @@ This style does not add side padding on mobile, which means that this can be use
 -}
 quizEngineCenteredContent : Style
 quizEngineCenteredContent =
-    Css.batch
-        [ Css.maxWidth MediaQuery.quizEngineBreakpoint
-        , Css.width (Css.pct 100)
-        , Css.marginLeft Css.auto
-        , Css.marginRight Css.auto
-        ]
+    centeredContentWithCustomWidth MediaQuery.quizEngineBreakpoint
 
 
 {-| Convenience for adding the appriopriate amount of whitespace on the sides of a full-width container on the page or on the page with side padding.
