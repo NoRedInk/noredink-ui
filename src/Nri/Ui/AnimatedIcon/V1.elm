@@ -26,12 +26,13 @@ mobileOpenClose isOpen =
             Svg.rect
                 [ Attributes.x "0"
                 , Attributes.y "0"
-                , Attributes.width "25"
-                , Attributes.height "5"
-                , Attributes.rx "2.5"
+                , Attributes.width "22"
+                , Attributes.height "3"
+                , Attributes.rx "1.5"
+                , Attributes.ry "1.5"
                 , Attributes.css
                     [ Css.property "transition" "transform 300ms"
-                    , Css.property "transform-origin" "12.5px 12.5px"
+                    , Css.property "transform-origin" "11px 11px"
                     , if isOpen then
                         Css.transforms asX
 
@@ -41,7 +42,7 @@ mobileOpenClose isOpen =
                 ]
                 []
     in
-    Nri.Ui.Svg.V1.init "-2 0 29 25"
+    Nri.Ui.Svg.V1.init "-2 0 26 23"
         [ line 0
             [ Css.rotate (Css.deg 45)
             , Css.scaleX 1.3

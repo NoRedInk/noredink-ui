@@ -78,8 +78,9 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , AnimatedIcon.mobileOpenClose (Tuple.second attributes.isOpen)
                 |> Svg.withCss
-                    [ Css.maxWidth (Css.px 45)
+                    [ Css.maxWidth (Css.px 30)
                     , Css.border3 (Css.px 2) Css.solid Colors.red
+                    , Css.boxSizing Css.borderBox
                     ]
                 |> Svg.toHtml
             ]
