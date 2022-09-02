@@ -83,10 +83,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 -}
 
-import Css
-import Css.Animations
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes

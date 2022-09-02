@@ -7,8 +7,6 @@ module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose)
 -}
 
 import Css
-import Css.Animations
-import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
