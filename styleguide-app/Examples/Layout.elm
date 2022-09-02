@@ -71,6 +71,16 @@ view ellieLinkConfig state =
                 [ Maybe.map Tuple.second settings.topContainerStyle
                 , Maybe.map Tuple.second settings.horizontalContainerStyle
                 , Maybe.map Tuple.second settings.bottomContainerStyle
+                , if settings.childVerticalSpace then
+                    Just (Css.property "row-gap" (.value Layout.verticalSpacerPx))
+
+                  else
+                    Nothing
+                , if settings.childHorizontalSpace then
+                    Just (Css.property "column-gap" (.value Layout.horizontalSpacerPx))
+
+                  else
+                    Nothing
                 ]
             )
             (List.repeat settings.childCount child)
@@ -94,10 +104,8 @@ container styles =
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest
             , Css.backgroundColor Colors.greenLightest
-            , Css.displayFlex
-            , Css.flexWrap Css.wrap
-            , Css.justifyContent Css.spaceBetween
-            , Css.alignItems Css.center
+            , Css.property "display" "grid"
+            , Css.property "grid-template-columns" "1fr 1fr 1fr 1fr 1fr"
             , Css.batch styles
             ]
         ]
@@ -109,7 +117,6 @@ child =
         [ css
             [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark
             , Css.backgroundColor Colors.sunshine
-            , Css.flexBasis (Css.px 150)
             , Css.height (Css.px 150)
             ]
         ]
@@ -131,6 +138,8 @@ type alias Settings =
     , horizontalContainerStyle : Maybe ( String, Style )
     , bottomContainerStyle : Maybe ( String, Style )
     , childCount : Int
+    , childVerticalSpace : Bool
+    , childHorizontalSpace : Bool
     }
 
 
@@ -191,7 +200,9 @@ controlSettings =
                     )
                 )
             )
-        |> Control.field "Child count" (ControlExtra.int 3)
+        |> Control.field "Child count" (ControlExtra.int 10)
+        |> Control.field "Separate children vertically" (Control.bool True)
+        |> Control.field "Separate children horizontally" (Control.bool True)
 
 
 asChoice : ( String, Style ) -> ( String, Control ( String, Style ) )
