@@ -1,18 +1,20 @@
 module Nri.Ui.Layout.V1 exposing
-    ( centeredContent, content, narrowContent
-    , pageTopMargin, pageTopMarginPx
-    , pageSidePadding, pageSidePaddingPx
-    , pageBottomMargin, pageBottomMarginPx
-    , verticalSpacePx, horizontalSpacePx
+    ( content, centeredContent
+    , quizEngineContent, quizEngineCenteredContent
+    , pageTopWhitespace, pageTopWhitespacePx
+    , pageSideWhitespace, pageSideWhitespacePx
+    , pageBottomWhitespace, pageBottomWhitespacePx
+    , verticalSpacerPx, horizontalSpacerPx
     )
 
 {-|
 
-@docs centeredContent, content, narrowContent
-@docs pageTopMargin, pageTopMarginPx
-@docs pageSidePadding, pageSidePaddingPx
-@docs pageBottomMargin, pageBottomMarginPx
-@docs verticalSpacePx, horizontalSpacePx
+@docs content, centeredContent
+@docs quizEngineContent, quizEngineCenteredContent
+@docs pageTopWhitespace, pageTopWhitespacePx
+@docs pageSideWhitespace, pageSideWhitespacePx
+@docs pageBottomWhitespace, pageBottomWhitespacePx
+@docs verticalSpacerPx, horizontalSpacerPx
 
 -}
 
@@ -34,7 +36,7 @@ content : Style
 content =
     Css.batch
         [ centeredContent
-        , Media.withMedia [ MediaQuery.mobile ] [ pageSidePadding ]
+        , Media.withMedia [ MediaQuery.mobile ] [ pageSideWhitespace ]
         ]
 
 
@@ -60,11 +62,11 @@ This is identical to `content`, except that it uses the quizEngineMobile breakpo
 If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
 
 -}
-narrowContent : Style
-narrowContent =
+quizEngineContent : Style
+quizEngineContent =
     Css.batch
-        [ narrowCenteredContent
-        , Media.withMedia [ MediaQuery.quizEngineMobile ] [ pageSidePadding ]
+        [ quizEngineCenteredContent
+        , Media.withMedia [ MediaQuery.quizEngineMobile ] [ pageSideWhitespace ]
         ]
 
 
@@ -72,13 +74,11 @@ narrowContent =
 
 This is identical to `centeredContent`, except that it uses the quizEngineMobile breakpoint instead of the mobile breakpoint.
 
-Center content with a max width of the narrow breakpoint.
-
 This style does not add side padding on mobile, which means that this can be used for containers that should snap flush to the edges of the mobile viewport.
 
 -}
-narrowCenteredContent : Style
-narrowCenteredContent =
+quizEngineCenteredContent : Style
+quizEngineCenteredContent =
     Css.batch
         [ Css.maxWidth MediaQuery.quizEngineBreakpoint
         , Css.width (Css.pct 100)
@@ -89,9 +89,12 @@ narrowCenteredContent =
 
 {-| Convenience for adding the appriopriate amount of whitespace on the sides of a full-width container on the page or on the page with side padding.
 -}
-pageSidePadding : Style
-pageSidePadding =
-    Css.batch [ Css.paddingLeft pageSidePaddingPx, Css.paddingRight pageSidePaddingPx ]
+pageSideWhitespace : Style
+pageSideWhitespace =
+    Css.batch
+        [ Css.paddingLeft pageSideWhitespacePx
+        , Css.paddingRight pageSideWhitespacePx
+        ]
 
 
 {-| Unless content is flush with the edges of the viewport, there should be 15px of left/right spacing between the content and the viewport edge.
@@ -99,16 +102,16 @@ pageSidePadding =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-pageSidePaddingPx : Css.Px
-pageSidePaddingPx =
+pageSideWhitespacePx : Css.Px
+pageSideWhitespacePx =
     Css.px 15
 
 
 {-| Convenience for adding the appriopriate amount of whitespace at the end of the page with margin.
 -}
-pageBottomMargin : Style
-pageBottomMargin =
-    Css.marginBottom pageBottomMarginPx
+pageBottomWhitespace : Style
+pageBottomWhitespace =
+    Css.marginBottom pageBottomWhitespacePx
 
 
 {-| Every page should have 50px of whitespace at the end, so that footers don't end up spanning the middle of the page, and for consistency's sake.
@@ -116,16 +119,16 @@ pageBottomMargin =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-pageBottomMarginPx : Css.Px
-pageBottomMarginPx =
+pageBottomWhitespacePx : Css.Px
+pageBottomWhitespacePx =
     Css.px 50
 
 
 {-| Convenience for adding the appriopriate amount of whitespace at the end of the page with margin.
 -}
-pageTopMargin : Style
-pageTopMargin =
-    Css.marginTop pageTopMarginPx
+pageTopWhitespace : Style
+pageTopWhitespace =
+    Css.marginTop pageTopWhitespacePx
 
 
 {-| Every page should have 30px of whitespace separating the header nav and the page content, as well as before any secondary headers.
@@ -133,8 +136,8 @@ pageTopMargin =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-pageTopMarginPx : Css.Px
-pageTopMarginPx =
+pageTopWhitespacePx : Css.Px
+pageTopWhitespacePx =
     Css.px 30
 
 
@@ -143,8 +146,8 @@ pageTopMarginPx =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-verticalSpacePx : Css.Px
-verticalSpacePx =
+verticalSpacerPx : Css.Px
+verticalSpacerPx =
     Css.px 20
 
 
@@ -153,6 +156,6 @@ verticalSpacePx =
 See [the UI Style Guide and Caveats' Spacing section](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BobQllelpdS56NBITiRcrO6gAg-PvOLxeX3oyujYEzdJx5pu#:uid=905917270049954035442315&h2=:under-construction:-Spacing) for more details.
 
 -}
-horizontalSpacePx : Css.Px
-horizontalSpacePx =
+horizontalSpacerPx : Css.Px
+horizontalSpacerPx =
     Css.px 10
