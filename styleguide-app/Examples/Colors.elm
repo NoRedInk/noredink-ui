@@ -65,16 +65,6 @@ example =
     }
 
 
-all : List ( String, Css.Color )
-all =
-    [ uncategorizedColors
-    , backgroundHighlightColors
-    , textHighlightColors
-    ]
-        |> List.concat
-        |> List.map (\( name, val, _ ) -> ( name, val ))
-
-
 uncategorizedColors : List ( String, Css.Color, String )
 uncategorizedColors =
     [ ( "gray20", Colors.gray20, "Main text" )

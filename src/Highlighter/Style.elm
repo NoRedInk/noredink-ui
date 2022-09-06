@@ -9,7 +9,7 @@ module Highlighter.Style exposing
 
 import Css
 import Highlighter.Grouping as Grouping
-import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable, UIState(..))
+import Nri.Ui.Highlightable.V1 exposing (Highlightable, UIState(..))
 import Nri.Ui.HighlighterTool.V1 as Tool
 
 

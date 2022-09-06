@@ -22,7 +22,7 @@ refactor to make it an actual type.
 
 # Types
 
-@docs Highlightable, Type, UIState, Model, Attribute
+@docs Highlightable, Type, UIState, Attribute
 
 
 # Initializers
@@ -32,12 +32,12 @@ refactor to make it an actual type.
 
 # Transformations
 
-@docs concat, splitHighlightableOnWords, splitWords, map
+@docs splitHighlightableOnWords, splitWords
 
 
 # UIState related
 
-@docs blur, clearHint, hint, hover, isHovered
+@docs blur, clearHint, hint, hover
 
 
 # Marker related
@@ -87,6 +87,7 @@ type alias Highlightable marker =
     }
 
 
+{-| -}
 type Type
     = Interactive
     | Static

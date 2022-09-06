@@ -28,7 +28,7 @@ Currently, highlighter is used in the following places:
 
 # Types
 
-@docs Model, Msg, PointerMsg, ActionInfo, OnClickAction
+@docs Model, Msg, PointerMsg, OnClickAction
 
 
 # Init/View/Update
@@ -99,6 +99,7 @@ type alias Model marker =
     }
 
 
+{-| -}
 type HasChanged
     = Changed
     | NotChanged
@@ -215,6 +216,7 @@ type alias ListenTo =
     Maybe String
 
 
+{-| -}
 emptyIntent : Intent
 emptyIntent =
     Intent
@@ -416,6 +418,7 @@ performAction action model =
             { model | mouseDownIndex = Nothing }
 
 
+{-| -}
 removeHighlights : List (Highlightable marker) -> List (Highlightable marker)
 removeHighlights =
     Internal.removeHighlights
