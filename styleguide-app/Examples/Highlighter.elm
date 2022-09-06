@@ -81,33 +81,16 @@ example =
                         Highlighter.static
                             { id = "example-0"
                             , highlightables =
-                                List.indexedMap (\i toH -> toH i)
-                                    [ \i -> Highlightable.init Highlightable.Static Nothing i ( [], "Sphinx" )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], "of" )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i ->
-                                        Highlightable.init Highlightable.Static
-                                            ({ highlightColor = Colors.highlightYellow
-                                             , hoverColor = Colors.highlightMagenta
-                                             , hoverHighlightColor = Colors.highlightPurpleDark
-                                             , kind = ()
-                                             , rounded = True
-                                             }
-                                                |> Tool.buildMarker
-                                                |> Just
-                                            )
-                                            i
-                                            ( [], "black" )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], "quartz," )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], "judge" )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], "my" )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], " " )
-                                    , \i -> Highlightable.init Highlightable.Static Nothing i ( [], "vow" )
-                                    ]
+                                [ ( "Sphinx", Nothing )
+                                , ( "of", Nothing )
+                                , ( "black", Just exampleMarker )
+                                , ( "quartz,", Nothing )
+                                , ( "judge", Nothing )
+                                , ( "my", Nothing )
+                                , ( "vow.", Nothing )
+                                ]
+                                    |> List.intersperse ( " ", Nothing )
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
                 ]
@@ -115,6 +98,17 @@ example =
     , categories = [ Text, Interactions ]
     , keyboardSupport = []
     }
+
+
+exampleMarker : Tool.MarkerModel ()
+exampleMarker =
+    Tool.buildMarker
+        { highlightColor = Colors.highlightYellow
+        , hoverColor = Colors.highlightMagenta
+        , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , rounded = True
+        }
 
 
 {-| -}
