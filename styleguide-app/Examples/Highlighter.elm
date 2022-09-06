@@ -131,9 +131,10 @@ example =
                         Highlighter.static
                             { id = "example-3"
                             , highlightables =
-                                [ ( "School uniforms are essential.", Just claimMarker )
-                                , ( "In a recent poll 78% of correspondents responded 'yes' when asked whether they'd like to see more school uniforms.", Just evidenceMarker )
-                                , ( "This shouldn't come as a surprise, as most people stand to benefit directly from school uniforms.", Just reasoningMarker )
+                                [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarker )
+                                , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarker )
+                                , ( "Sphinx of black quartz, judge my vow.", Just reasoningMarker )
+                                , ( "How vexingly quick daft zebras jump!", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
