@@ -126,6 +126,19 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
+                , { description = "Multiple kinds of highlights without overlaps"
+                  , example =
+                        Highlighter.static
+                            { id = "example-3"
+                            , highlightables =
+                                [ ( "School uniforms are essential.", Just claimMarker )
+                                , ( "In a recent poll 78% of correspondents responded 'yes' when asked whether they'd like to see more school uniforms.", Just evidenceMarker )
+                                , ( "This shouldn't come as a surprise, as most people stand to benefit directly from school uniforms.", Just reasoningMarker )
+                                ]
+                                    |> List.intersperse ( " ", Nothing )
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                            }
+                  }
                 ]
             ]
     , categories = [ Text, Interactions ]
@@ -137,6 +150,39 @@ exampleMarker : Tool.MarkerModel ()
 exampleMarker =
     Tool.buildMarker
         { highlightColor = Colors.highlightYellow
+        , hoverColor = Colors.highlightMagenta
+        , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , rounded = True
+        }
+
+
+claimMarker : Tool.MarkerModel ()
+claimMarker =
+    Tool.buildMarker
+        { highlightColor = Colors.highlightYellow
+        , hoverColor = Colors.highlightMagenta
+        , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , rounded = True
+        }
+
+
+evidenceMarker : Tool.MarkerModel ()
+evidenceMarker =
+    Tool.buildMarker
+        { highlightColor = Colors.highlightCyan
+        , hoverColor = Colors.highlightMagenta
+        , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , rounded = True
+        }
+
+
+reasoningMarker : Tool.MarkerModel ()
+reasoningMarker =
+    Tool.buildMarker
+        { highlightColor = Colors.highlightPurple
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
