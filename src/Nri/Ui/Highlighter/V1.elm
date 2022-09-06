@@ -428,6 +428,7 @@ removeHighlights =
 -- VIEWS
 
 
+{-| -}
 view : Model marker -> Html (Msg marker)
 view =
     Html.Styled.Lazy.lazy <|
@@ -475,16 +476,11 @@ viewWithAttachedPunctuation model first second =
 
 
 {-| -}
-static :
-    -- `groupStart` is currently only used by Multi Highlighter Grammar
-    -- Questions to display correctness indicators in the answer key.
-    (Int -> Html msg)
-    -> { config | id : String, highlightables : List (Highlightable marker) }
-    -> Html msg
-static groupStart { id, highlightables } =
+static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+static { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.map (viewStaticHighlightable groupStart)
+        |> List.map viewStaticHighlightable
         |> container id
 
 
@@ -630,11 +626,8 @@ on name msg =
         checkIfCancelable
 
 
-viewStaticHighlightable :
-    (Int -> Html msg)
-    -> ( Grouping.Position, Highlightable marker )
-    -> Html msg
-viewStaticHighlightable groupStart ( groupPos, highlightable ) =
+viewStaticHighlightable : ( Grouping.Position, Highlightable marker ) -> Html msg
+viewStaticHighlightable ( groupPos, highlightable ) =
     span
         ([ highlighterClass
          , identifierClass highlightable.marked
@@ -642,23 +635,7 @@ viewStaticHighlightable groupStart ( groupPos, highlightable ) =
          ]
             ++ customToHtmlAttributes highlightable.customAttributes
         )
-        (case highlightable.type_ of
-            Highlightable.Interactive ->
-                [ case groupPos of
-                    Grouping.Start ->
-                        groupStart highlightable.groupIndex
-
-                    Grouping.Standalone ->
-                        groupStart highlightable.groupIndex
-
-                    _ ->
-                        Html.text ""
-                , Html.text highlightable.text
-                ]
-
-            Highlightable.Static ->
-                [ Html.text highlightable.text ]
-        )
+        [ Html.text highlightable.text ]
 
 
 highlighterClass : Attribute msg
