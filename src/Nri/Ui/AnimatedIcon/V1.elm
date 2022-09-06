@@ -31,6 +31,7 @@ mobileOpenClose isOpen =
                 , Attributes.css
                     [ Css.property "transition" "transform 300ms"
                     , Css.property "transform-origin" "11px 11px"
+                    , Css.property "transform-box" "view-box"
                     , if isOpen then
                         Css.transforms asX
 
@@ -42,14 +43,16 @@ mobileOpenClose isOpen =
     in
     Nri.Ui.Svg.V1.init "-2 0 26 23"
         [ line 3
-            [ Css.rotate (Css.deg 45)
+            [ Css.translateX (Css.px -6)
+            , Css.translateY (Css.px 7)
+            , Css.rotate (Css.deg 45)
             , Css.scaleX 1.3
-            , Css.translateY (Css.pct 40)
             ]
-        , line 10 [ Css.translateY (Css.px 7), Css.scaleX 0 ]
+        , line 10 [ Css.translateY (Css.px 9), Css.scaleX 0 ]
         , line 17
-            [ Css.rotate (Css.deg -45)
+            [ Css.translateX (Css.px 7)
+            , Css.translateY (Css.px 7)
+            , Css.rotate (Css.deg -45)
             , Css.scaleX 1.3
-            , Css.translateY (Css.pct 40)
             ]
         ]
