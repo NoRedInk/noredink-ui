@@ -28,6 +28,7 @@ type Category
     | Messaging
     | Atoms
     | Text
+    | Interactions
     | Animations
 
 
@@ -39,6 +40,7 @@ all =
     , Buttons
     , Icons
     , Inputs
+    , Interactions
     , Layout
     , Text
     , Messaging
@@ -61,6 +63,9 @@ fromString string =
 
         "Icons" ->
             Ok Icons
+
+        "Interactions" ->
+            Ok Interactions
 
         "Messaging" ->
             Ok Messaging
@@ -93,6 +98,9 @@ forDisplay category =
 
         Icons ->
             "Icons"
+
+        Interactions ->
+            "Interactions"
 
         Messaging ->
             "Alerts and Messages"
@@ -134,6 +142,9 @@ forId category =
 
         Icons ->
             "icons"
+
+        Interactions ->
+            "interactions"
 
         Messaging ->
             "alerts-and-messages"
