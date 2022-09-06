@@ -31,7 +31,9 @@
         "Nri.Ui.FocusTrap.V1",
         "Nri.Ui.Fonts.V1",
         "Nri.Ui.Heading.V3",
+        "Nri.Ui.Highlightable.V1",
         "Nri.Ui.Highlighter.V1",
+        "Nri.Ui.HighlighterTool.V1",
         "Nri.Ui.Html.Attributes.V2",
         "Nri.Ui.Html.V3",
         "Nri.Ui.InputStyles.V3",
@@ -81,6 +83,7 @@
         "elm-community/string-extra": "4.0.1 <= v < 5.0.0",
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
         "rtfeldman/elm-css": "17.0.1 <= v < 18.0.0",
+        "rtfeldman/elm-sorter-experiment": "2.1.1 <= v < 3.0.0",
         "tesk9/accessible-html-with-css": "3.2.0 <= v < 4.0.0",
         "tesk9/palette": "3.0.1 <= v < 4.0.0"
     },
