@@ -200,12 +200,42 @@ type alias State =
 {-| -}
 init : State
 init =
-    { settings = Control.record Settings
+    { settings = controlSettings
     }
 
 
 type alias Settings =
-    {}
+    { tool : Tool.Tool ()
+    }
+
+
+controlSettings : Control Settings
+controlSettings =
+    Control.record Settings
+        |> Control.field "tool"
+            (Control.choice
+                [ ( "Marker", Control.map Tool.Marker controlMarker )
+                , ( "Eraser"
+                  , Tool.Eraser
+                        { hoverClass = [ Css.opacity (Css.num 0.4) ]
+                        , hintClass = [ Css.opacity (Css.num 0.4) ]
+                        , startGroupClass = [ Css.opacity (Css.num 0.4) ]
+                        , endGroupClass = [ Css.opacity (Css.num 0.4) ]
+                        }
+                        |> Control.value
+                  )
+                ]
+            )
+
+
+controlMarker : Control (Tool.MarkerModel ())
+controlMarker =
+    Control.record (\a b c d e -> Tool.buildMarker { highlightColor = a, hoverColor = b, hoverHighlightColor = c, kind = d, rounded = e })
+        |> Control.field "highlightColor" (Control.value Colors.highlightPurple)
+        |> Control.field "hoverColor" (Control.value Colors.highlightMagenta)
+        |> Control.field "hoverHighlightColor" (Control.value Colors.highlightPurpleDark)
+        |> Control.field "kind" (Control.value ())
+        |> Control.field "rounded" (Control.bool True)
 
 
 {-| -}
