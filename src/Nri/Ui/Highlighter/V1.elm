@@ -114,19 +114,15 @@ type Initialized
     | NotInitialized
 
 
-{-| Config is used by init to setup an initial Model
+{-| Setup initial model
 -}
-type alias Config marker =
+init :
     { id : String
     , highlightables : List (Highlightable marker)
     , marker : Tool.Tool marker
     , onClickAction : OnClickAction
     }
-
-
-{-| Setup initial model
--}
-init : Config marker -> Model marker
+    -> Model marker
 init config =
     { id = config.id
     , highlightables = config.highlightables
