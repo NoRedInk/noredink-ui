@@ -222,14 +222,13 @@ initHighlighter settings highlightables =
         { id = "example-romeo-and-juliet"
         , highlightables = highlightables
         , marker = settings.tool
-        , onClickAction =
-            -- TODO: add configurability for SaveOnClick
-            Highlighter.ToggleOnClick
+        , onClickAction = settings.onClickAction
         }
 
 
 type alias Settings =
     { tool : Tool.Tool ()
+    , onClickAction : Highlighter.OnClickAction
     }
 
 
@@ -248,6 +247,12 @@ controlSettings =
                         }
                         |> Control.value
                   )
+                ]
+            )
+        |> Control.field "onClickAction"
+            (Control.choice
+                [ ( "ToggleOnClick", Control.value Highlighter.ToggleOnClick )
+                , ( "SaveOnClick", Control.value Highlighter.SaveOnClick )
                 ]
             )
 
