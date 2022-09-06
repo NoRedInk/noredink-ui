@@ -21,6 +21,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
+import Round
 import SolidColor.Accessibility
 
 
@@ -111,21 +112,21 @@ example =
                     }
                 , Table.string
                     { header = "backgroundColor"
-                    , value = .value >> contrast settings.backgroundColor >> String.fromFloat
+                    , value = .value >> contrast settings.backgroundColor >> Round.floor 2
                     , width = Css.px 50
                     , cellStyles = always []
                     , sort = Nothing
                     }
                 , Table.string
                     { header = "emptyColor"
-                    , value = .value >> contrast settings.emptyColor >> String.fromFloat
+                    , value = .value >> contrast settings.emptyColor >> Round.floor 2
                     , width = Css.px 50
                     , cellStyles = always []
                     , sort = Nothing
                     }
                 , Table.string
                     { header = "filledColor"
-                    , value = .value >> contrast settings.filledColor >> String.fromFloat
+                    , value = .value >> contrast settings.filledColor >> Round.floor 2
                     , width = Css.px 50
                     , cellStyles = always []
                     , sort = Nothing
