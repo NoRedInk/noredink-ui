@@ -104,6 +104,7 @@ type HasChanged
     | NotChanged
 
 
+{-| -}
 type OnClickAction
     = ToggleOnClick
     | SaveOnClick
@@ -226,7 +227,7 @@ emptyIntent =
 
   - This ensures that we initialize the highlighter in JS exactly once.
   - Sets the `hasChanged` flag if the model has changed. This is used by the user of `Highlighter` to
-    determine wheter they want to execute follow up actions.
+    determine whether they want to execute follow up actions.
 
 -}
 withIntent : Model m -> ( Model m, Intent )

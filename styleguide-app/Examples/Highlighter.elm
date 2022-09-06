@@ -61,6 +61,9 @@ example =
                 , extraCode = []
                 , toExampleCode = \_ -> []
                 }
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Highlighter.view state.highlighter
+                |> map HighlighterMsg
             , Table.view
                 [ Table.string
                     { header = "Description"
@@ -195,14 +198,32 @@ reasoningMarker =
 {-| -}
 type alias State =
     { settings : Control Settings
+    , highlighter : Highlighter.Model ()
     }
 
 
 {-| -}
 init : State
 init =
-    { settings = controlSettings
+    let
+        settings =
+            controlSettings
+    in
+    { settings = settings
+    , highlighter = initHighlighter (Control.currentValue settings)
     }
+
+
+initHighlighter : Settings -> Highlighter.Model ()
+initHighlighter settings =
+    Highlighter.init
+        { id = "example-romeo-and-juliet"
+        , highlightables = Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+        , marker = settings.tool
+        , onClickAction =
+            -- TODO: add configurability for SaveOnClick
+            Highlighter.ToggleOnClick
+        }
 
 
 type alias Settings =
@@ -249,13 +270,26 @@ backgroundHighlightColors =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
+    | HighlighterMsg (Highlighter.Msg ())
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        UpdateControls newDebugControlsState ->
-            ( { state | settings = newDebugControlsState }
+        UpdateControls settings ->
+            ( { state
+                | settings = settings
+                , highlighter = initHighlighter (Control.currentValue settings)
+              }
+            , Cmd.none
+            )
+
+        HighlighterMsg highlighterMsg ->
+            let
+                ( newHighlighter, _ ) =
+                    Highlighter.update highlighterMsg state.highlighter
+            in
+            ( { state | highlighter = newHighlighter }
             , Cmd.none
             )
