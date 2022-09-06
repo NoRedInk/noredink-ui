@@ -93,6 +93,39 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
+                , { description = "Non-interactive sentence with multiple words highlighted separately"
+                  , example =
+                        Highlighter.static
+                            { id = "example-1"
+                            , highlightables =
+                                [ ( "Sphinx", Nothing )
+                                , ( "of", Nothing )
+                                , ( "black", Just exampleMarker )
+                                , ( "quartz,", Just exampleMarker )
+                                , ( "judge", Nothing )
+                                , ( "my", Nothing )
+                                , ( "vow.", Nothing )
+                                ]
+                                    |> List.intersperse ( " ", Nothing )
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                            }
+                  }
+                , { description = "Non-interactive sentence with multiple words highlighted & joined"
+                  , example =
+                        Highlighter.static
+                            { id = "example-2"
+                            , highlightables =
+                                [ ( "Sphinx", Nothing )
+                                , ( "of", Nothing )
+                                , ( "black quartz,", Just exampleMarker )
+                                , ( "judge", Nothing )
+                                , ( "my", Nothing )
+                                , ( "vow.", Nothing )
+                                ]
+                                    |> List.intersperse ( " ", Nothing )
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                            }
+                  }
                 ]
             ]
     , categories = [ Text, Interactions ]
