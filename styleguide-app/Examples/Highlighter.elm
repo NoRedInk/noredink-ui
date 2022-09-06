@@ -21,7 +21,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V1 as Highlightable
+import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
@@ -210,15 +210,17 @@ init =
             controlSettings
     in
     { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings)
+    , highlighter =
+        initHighlighter (Control.currentValue settings)
+            (Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation)
     }
 
 
-initHighlighter : Settings -> Highlighter.Model ()
-initHighlighter settings =
+initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
+initHighlighter settings highlightables =
     Highlighter.init
         { id = "example-romeo-and-juliet"
-        , highlightables = Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+        , highlightables = highlightables
         , marker = settings.tool
         , onClickAction =
             -- TODO: add configurability for SaveOnClick
@@ -280,7 +282,7 @@ update msg state =
         UpdateControls settings ->
             ( { state
                 | settings = settings
-                , highlighter = initHighlighter (Control.currentValue settings)
+                , highlighter = initHighlighter (Control.currentValue settings) state.highlighter.highlightables
               }
             , Cmd.none
             )
