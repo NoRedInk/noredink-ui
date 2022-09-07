@@ -43,6 +43,7 @@ type alias MarkerModel kind =
     , highlightClass : List Css.Style
     , hoverHighlightClass : List Css.Style
     , kind : kind
+    , name : Maybe String
     }
 
 
@@ -52,10 +53,11 @@ buildMarker :
     , hoverColor : Css.Color
     , hoverHighlightColor : Css.Color
     , kind : kind
+    , name : Maybe String
     , rounded : Bool
     }
     -> MarkerModel kind
-buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded } =
+buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded, name } =
     { hoverClass = hoverStyles hoverColor
     , hintClass = hoverStyles hoverColor
     , startGroupClass = startGroupStyles rounded
@@ -63,6 +65,7 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded } =
     , highlightClass = highlightStyles highlightColor
     , hoverHighlightClass = highlightStyles hoverHighlightColor
     , kind = kind
+    , name = name
     }
 
 

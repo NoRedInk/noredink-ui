@@ -151,6 +151,7 @@ exampleMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Nothing
         , rounded = True
         }
 
@@ -162,6 +163,7 @@ claimMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Claim"
         , rounded = True
         }
 
@@ -173,6 +175,7 @@ evidenceMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Evidence"
         , rounded = True
         }
 
@@ -184,6 +187,7 @@ reasoningMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Reasoning"
         , rounded = True
         }
 
@@ -252,11 +256,22 @@ controlSettings =
 
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
-    Control.record (\a b c d e -> Tool.buildMarker { highlightColor = a, hoverColor = b, hoverHighlightColor = c, kind = d, rounded = e })
+    Control.record
+        (\a b c d e f ->
+            Tool.buildMarker
+                { highlightColor = a
+                , hoverColor = b
+                , hoverHighlightColor = c
+                , kind = d
+                , name = e
+                , rounded = f
+                }
+        )
         |> Control.field "highlightColor" backgroundHighlightColors
         |> Control.field "hoverColor" backgroundHighlightColors
         |> Control.field "hoverHighlightColor" backgroundHighlightColors
         |> Control.field "kind" (Control.value ())
+        |> Control.field "name" (Control.maybe True (Control.string "Claim"))
         |> Control.field "rounded" (Control.bool True)
 
 

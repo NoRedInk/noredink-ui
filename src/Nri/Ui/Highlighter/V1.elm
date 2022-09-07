@@ -57,7 +57,9 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Css
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
@@ -71,6 +73,7 @@ import List.Extra
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
@@ -524,7 +527,7 @@ viewHighlightable model ( groupPos, highlightable ) =
     in
     case highlightable.type_ of
         Highlightable.Interactive ->
-            Html.button
+            Html.span
                 ([ on "mouseover" (Pointer <| Over highlightable.groupIndex)
                  , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
                  , on "mouseup" (Pointer <| Up Nothing)
@@ -539,7 +542,7 @@ viewHighlightable model ( groupPos, highlightable ) =
                     ]
                  , highlighterClass
                  ]
-                    ++ markerStyle model.marker highlightable True groupPos
+                    ++ markerAttributes model.marker highlightable True groupPos
                     ++ customToHtmlAttributes highlightable.customAttributes
                     ++ whitespaceClass highlightable.text
                     ++ commonAttributes highlightable
@@ -556,7 +559,7 @@ viewHighlightable model ( groupPos, highlightable ) =
                  , attribute "data-static" ""
                  , highlighterClass
                  ]
-                    ++ markerStyle model.marker highlightable False groupPos
+                    ++ markerAttributes model.marker highlightable False groupPos
                     ++ customToHtmlAttributes highlightable.customAttributes
                     ++ whitespaceClass highlightable.text
                     ++ commonAttributes highlightable
@@ -564,27 +567,23 @@ viewHighlightable model ( groupPos, highlightable ) =
                 [ Html.text highlightable.text ]
 
 
-markerStyle : Tool.Tool kind -> Highlightable kind -> Bool -> Grouping.Position -> List (Attribute msg)
-markerStyle tool { uiState, marked } interactive groupPos =
+markerAttributes : Tool.Tool kind -> Highlightable kind -> Bool -> Grouping.Position -> List (Attribute msg)
+markerAttributes tool { uiState, marked } interactive groupPos =
     case tool of
         Tool.Marker marker ->
-            css
-                [ Style.dynamicHighlighted marker groupPos interactive uiState marked
-                ]
+            css [ Style.dynamicHighlighted marker groupPos interactive uiState marked ]
                 :: (case marked of
                         Nothing ->
                             []
 
-                        Just _ ->
-                            -- This is not great and only used in some
-                            -- feature specs.
-                            [ class "highlighter-highlighted-text" ]
+                        Just markedWith ->
+                            markAttributes markedWith
                    )
 
         Tool.Eraser eraser_ ->
-            [ css
-                (case marked of
-                    Just markedWith ->
+            case marked of
+                Just markedWith ->
+                    css
                         [ Css.batch markedWith.highlightClass
                         , Style.groupPosition groupPos markedWith
                         , Css.batch
@@ -599,11 +598,10 @@ markerStyle tool { uiState, marked } interactive groupPos =
                                     []
                             )
                         ]
+                        :: markAttributes markedWith
 
-                    Nothing ->
-                        [ Css.backgroundColor Css.transparent ]
-                )
-            ]
+                Nothing ->
+                    [ css [ Css.backgroundColor Css.transparent ] ]
 
 
 {-| Helper for `on` to preventDefault.
@@ -634,8 +632,18 @@ viewStaticHighlightable ( groupPos, highlightable ) =
          , css [ Style.staticHighlighted groupPos highlightable ]
          ]
             ++ customToHtmlAttributes highlightable.customAttributes
+            ++ Maybe.withDefault [] (Maybe.map markAttributes highlightable.marked)
         )
         [ Html.text highlightable.text ]
+
+
+markAttributes : Tool.MarkerModel marker -> List (Attribute msg)
+markAttributes markedWith =
+    [ Role.mark
+    , markedWith.name
+        |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+        |> Maybe.withDefault AttributesExtra.none
+    ]
 
 
 highlighterClass : Attribute msg
