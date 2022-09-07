@@ -1,8 +1,8 @@
-module Highlighter.Grouping exposing (Position(..), buildGroups, inSameRange)
+module Highlighter.Grouping exposing (buildGroups, inSameRange)
 
 {-|
 
-@docs Position, buildGroups, inSameRange
+@docs buildGroups, inSameRange
 
 Grouping is a helper to group highlightables with the same uiState/marked.
 Start and end of a group is marked with a special tag and groups containing only one highlightable are tagged as standalone.
@@ -14,21 +14,12 @@ import Nri.Ui.Highlightable.V1 exposing (Highlightable, UIState(..))
 import Set exposing (Set)
 
 
-{-| Position tags highlightable with the position of it in a group.
+{-| Groups highlightables with the same state together.
 -}
-type Position
-    = Start
-    | End
-    | Standalone
-    | Middle
-
-
-{-| Groups highlightables with the same state together and taggs them with their position.
--}
-buildGroups : List (Highlightable marker) -> List ( Position, Highlightable marker )
+buildGroups : List (Highlightable marker) -> List (List (Highlightable marker))
 buildGroups =
     List.Extra.groupWhile groupHighlightables
-        >> List.concatMap markGroup
+        >> List.map (\( elem, list ) -> elem :: list)
 
 
 groupHighlightables : Highlightable marker -> Highlightable marker -> Bool
@@ -40,28 +31,6 @@ groupHighlightables x y =
         || (x.marked == y.marked && x.marked /= Nothing)
         || (x.marked /= Nothing && y.uiState == Hinted)
         || (y.marked /= Nothing && x.uiState == Hinted)
-
-
-markGroup : ( Highlightable marker, List (Highlightable marker) ) -> List ( Position, Highlightable marker )
-markGroup highlightables =
-    let
-        buildPositions remaining acc =
-            case remaining of
-                [] ->
-                    List.reverse acc
-
-                [ last ] ->
-                    buildPositions [] (( End, last ) :: acc)
-
-                elem :: rest ->
-                    buildPositions rest (( Middle, elem ) :: acc)
-    in
-    case highlightables of
-        ( elem, [] ) ->
-            [ ( Standalone, elem ) ]
-
-        ( first, rest ) ->
-            buildPositions rest [ ( Start, first ) ]
 
 
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index

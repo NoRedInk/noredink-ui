@@ -8,7 +8,6 @@ module Highlighter.Style exposing
 -}
 
 import Css
-import Highlighter.Grouping as Grouping
 import Nri.Ui.Highlightable.V1 exposing (Highlightable, UIState(..))
 import Nri.Ui.HighlighterTool.V1 as Tool
 
@@ -42,8 +41,8 @@ highlightedStyle marker interactive uiState marked =
             Css.backgroundColor Css.transparent
 
 
-dynamicHighlighted : Tool.MarkerModel marker -> Grouping.Position -> Bool -> UIState -> Maybe (Tool.MarkerModel marker) -> Css.Style
-dynamicHighlighted marker groupPos interactive uiState marked =
+dynamicHighlighted : Tool.MarkerModel marker -> Bool -> UIState -> Maybe (Tool.MarkerModel marker) -> Css.Style
+dynamicHighlighted marker interactive uiState marked =
     let
         groupStyle =
             case ( uiState, interactive, marked ) of
@@ -51,17 +50,17 @@ dynamicHighlighted marker groupPos interactive uiState marked =
                     Css.batch []
 
                 ( Hovered, False, Just markedWith ) ->
-                    groupPosition groupPos markedWith
+                    groupPosition markedWith
 
                 ( Hovered, True, _ ) ->
                     -- Hovered interactive always uses the cursor's marker
-                    groupPosition groupPos marker
+                    groupPosition marker
 
                 ( Hinted, _, _ ) ->
-                    groupPosition groupPos marker
+                    groupPosition marker
 
                 ( None, _, Just markedWith ) ->
-                    groupPosition groupPos markedWith
+                    groupPosition markedWith
 
                 ( None, _, Nothing ) ->
                     Css.batch []
@@ -71,13 +70,13 @@ dynamicHighlighted marker groupPos interactive uiState marked =
 
 {-| Style for static views.
 -}
-staticHighlighted : Grouping.Position -> Highlightable marker -> Css.Style
-staticHighlighted groupPos { customAttributes, marked } =
+staticHighlighted : Highlightable marker -> Css.Style
+staticHighlighted { customAttributes, marked } =
     case marked of
         Just markedWith ->
             Css.batch
                 [ Css.batch markedWith.highlightClass
-                , groupPosition groupPos markedWith
+                , groupPosition markedWith
                 ]
 
         Nothing ->
@@ -87,20 +86,15 @@ staticHighlighted groupPos { customAttributes, marked } =
 
 {-| Adds a class to the different parts of a section
 -}
-groupPosition :
-    Grouping.Position
-    -> { a | startGroupClass : List Css.Style, endGroupClass : List Css.Style }
-    -> Css.Style
-groupPosition groupPos marker =
-    case groupPos of
-        Grouping.Start ->
-            Css.batch marker.startGroupClass
-
-        Grouping.End ->
-            Css.batch marker.endGroupClass
-
-        Grouping.Standalone ->
-            Css.batch (marker.startGroupClass ++ marker.endGroupClass)
-
-        Grouping.Middle ->
-            Css.batch []
+groupPosition : { a | startGroupClass : List Css.Style, endGroupClass : List Css.Style } -> Css.Style
+groupPosition marker =
+    -- TODO: reimplement, using mark & first and last child CSS selectors
+    --case groupPos of
+    --    Grouping.Start ->
+    --        Css.batch marker.startGroupClass
+    --    Grouping.End ->
+    --        Css.batch marker.endGroupClass
+    --    Grouping.Standalone ->
+    --        Css.batch (marker.startGroupClass ++ marker.endGroupClass)
+    --    Grouping.Middle ->
+    Css.batch []

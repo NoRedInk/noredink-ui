@@ -432,39 +432,59 @@ removeHighlights =
 
 
 {-| -}
-view : Model marker -> Html (Msg marker)
-view =
-    Html.Styled.Lazy.lazy <|
-        \model ->
-            model.highlightables
-                |> Grouping.buildGroups
-                |> List.map (viewHighlightable model)
-                |> container model.id
+view : { config | id : String, highlightables : List (Highlightable marker), marker : Tool.Tool marker } -> Html (Msg marker)
+view config =
+    view_ (viewHighlightable config.marker) config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-static { id, highlightables } =
+static config =
+    view_ viewStaticHighlightable config
+
+
+view_ :
+    (Highlightable marker -> Html msg)
+    -> { config | id : String, highlightables : List (Highlightable marker) }
+    -> Html msg
+view_ viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.map viewStaticHighlightable
-        |> container id
+        |> List.concatMap (groupContainer viewSegment)
+        |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
-container : String -> List (Html msg) -> Html msg
-container id_ content =
-    p
-        [ Html.Styled.Attributes.id id_
-        , class "highlighter-container"
-        ]
-        content
+{-| When elements are marked, wrap them in a single `mark` html node.
+-}
+groupContainer : (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
+groupContainer viewSegment highlightables =
+    case highlightables of
+        [] ->
+            []
+
+        first :: _ ->
+            case first.marked of
+                Just markedWith ->
+                    [ Html.mark
+                        [ markedWith.name
+                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+                            |> Maybe.withDefault AttributesExtra.none
+                        , -- Temporarily adding tabindex 0 so that the mark element can be focused,
+                          --so we will be able to tell how it will read
+                          tabindex 0
+                        ]
+                        (List.map viewSegment highlightables)
+                    ]
+
+                Nothing ->
+                    List.map viewSegment highlightables
 
 
-viewHighlightable : Model marker -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
-viewHighlightable model ( groupPos, highlightable ) =
+viewHighlightable : Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
+viewHighlightable marker highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
-            viewMaybeMarker True
+            viewHighlightableSegment True
                 [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
                 , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
                 , on "mouseup" (Pointer <| Up Nothing)
@@ -473,11 +493,11 @@ viewHighlightable model ( groupPos, highlightable ) =
                 , attribute "data-interactive" ""
                 , Key.onKeyDownPreventDefault [ Key.space (Keyboard highlightable.groupIndex) ]
                 ]
-                (Just model.marker)
-                ( groupPos, highlightable )
+                (Just marker)
+                highlightable
 
         Highlightable.Static ->
-            viewMaybeMarker False
+            viewHighlightableSegment False
                 -- Static highlightables need listeners as well.
                 -- because otherwise we miss mouseup events
                 [ on "mouseup" (Pointer <| Up Nothing)
@@ -485,17 +505,17 @@ viewHighlightable model ( groupPos, highlightable ) =
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-static" ""
                 ]
-                (Just model.marker)
-                ( groupPos, highlightable )
+                (Just marker)
+                highlightable
 
 
-viewStaticHighlightable : ( Grouping.Position, Highlightable marker ) -> Html msg
+viewStaticHighlightable : Highlightable marker -> Html msg
 viewStaticHighlightable =
-    viewMaybeMarker False [] Nothing
+    viewHighlightableSegment False [] Nothing
 
 
-viewMaybeMarker : Bool -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> ( Grouping.Position, Highlightable marker ) -> Html msg
-viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable ) =
+viewHighlightableSegment : Bool -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -517,59 +537,41 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
 
             else
                 []
-
-        ( spanOrMark, selected ) =
-            case highlightable.marked of
-                Just markedWith ->
-                    ( Html.mark, True )
-
-                Nothing ->
-                    ( span, False )
     in
-    spanOrMark
+    span
         (eventListeners
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , Maybe.andThen .name highlightable.marked
-                    |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                    |> Maybe.withDefault AttributesExtra.none
-               , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
+               , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
-               , -- Temporarily adding tabindex 0 so that the mark element can be focused,
-                 --so we will be able to tell how it will read
-                 if highlightable.text /= " " then
-                    tabindex 0
-
-                 else
-                    AttributesExtra.none
                ]
         )
         [ Html.text highlightable.text ]
 
 
-highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> Grouping.Position -> List Css.Style
-highlightableStyle tool ({ uiState, marked } as highlightable) interactive groupPos =
+highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
+highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
     case tool of
         Nothing ->
-            [ Style.staticHighlighted groupPos highlightable ]
+            [ Style.staticHighlighted highlightable ]
 
         Just (Tool.Marker marker) ->
-            [ Css.property "user-select" "none", Style.dynamicHighlighted marker groupPos interactive uiState marked ]
+            [ Css.property "user-select" "none", Style.dynamicHighlighted marker interactive uiState marked ]
 
         Just (Tool.Eraser eraser_) ->
             case marked of
                 Just markedWith ->
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass
-                    , Style.groupPosition groupPos markedWith
+                    , Style.groupPosition markedWith
                     , Css.batch
                         (case uiState of
                             Highlightable.Hinted ->
-                                [ Css.batch eraser_.hintClass, Style.groupPosition groupPos eraser_ ]
+                                [ Css.batch eraser_.hintClass, Style.groupPosition eraser_ ]
 
                             Highlightable.Hovered ->
-                                [ Css.batch eraser_.hoverClass, Style.groupPosition groupPos eraser_ ]
+                                [ Css.batch eraser_.hoverClass, Style.groupPosition eraser_ ]
 
                             _ ->
                                 []
