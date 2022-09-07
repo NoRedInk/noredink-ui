@@ -65,7 +65,7 @@ import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, div, p, span)
-import Html.Styled.Attributes exposing (attribute, class, css, style)
+import Html.Styled.Attributes exposing (attribute, class, css, style, tabindex)
 import Html.Styled.Events
 import Html.Styled.Lazy
 import Json.Decode
@@ -540,6 +540,9 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
                         |> Maybe.withDefault AttributesExtra.none
                    , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
                    , class "highlighter-highlightable"
+                   , -- Temporarily adding tabindex 0 so that the mark element can be focused,
+                     --so we will be able to tell how it will read
+                     tabindex 0
                    ]
             )
             [ Html.text highlightable.text ]
