@@ -538,7 +538,11 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
                , class "highlighter-highlightable"
                , -- Temporarily adding tabindex 0 so that the mark element can be focused,
                  --so we will be able to tell how it will read
-                 tabindex 0
+                 if highlightable.text /= " " then
+                    tabindex 0
+
+                 else
+                    AttributesExtra.none
                ]
         )
         [ Html.text highlightable.text ]
