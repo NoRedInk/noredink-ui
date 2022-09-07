@@ -453,14 +453,11 @@ static { id, highlightables } =
 
 container : String -> List (Html msg) -> Html msg
 container id_ content =
-    Html.div
+    p
         [ Html.Styled.Attributes.id id_
         , class "highlighter-container"
-        , Role.grid
-        , Aria.label "highlightable paragraph"
-        , Aria.multiSelectable True
         ]
-        [ div [ Role.row ] content ]
+        content
 
 
 viewHighlightable : Model marker -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
@@ -529,24 +526,22 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
                 Nothing ->
                     ( span, False )
     in
-    span [ Role.gridCell, Aria.selected selected ]
-        [ spanOrMark
-            (eventListeners
-                ++ customToHtmlAttributes highlightable.customAttributes
-                ++ whitespaceClass highlightable.text
-                ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-                   , Maybe.andThen .name highlightable.marked
-                        |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                        |> Maybe.withDefault AttributesExtra.none
-                   , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
-                   , class "highlighter-highlightable"
-                   , -- Temporarily adding tabindex 0 so that the mark element can be focused,
-                     --so we will be able to tell how it will read
-                     tabindex 0
-                   ]
-            )
-            [ Html.text highlightable.text ]
-        ]
+    spanOrMark
+        (eventListeners
+            ++ customToHtmlAttributes highlightable.customAttributes
+            ++ whitespaceClass highlightable.text
+            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+               , Maybe.andThen .name highlightable.marked
+                    |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+                    |> Maybe.withDefault AttributesExtra.none
+               , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
+               , class "highlighter-highlightable"
+               , -- Temporarily adding tabindex 0 so that the mark element can be focused,
+                 --so we will be able to tell how it will read
+                 tabindex 0
+               ]
+        )
+        [ Html.text highlightable.text ]
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> Grouping.Position -> List Css.Style
