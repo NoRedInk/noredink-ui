@@ -102,5 +102,5 @@ groupPosition groupPos marker =
         Grouping.Standalone ->
             Css.batch (marker.startGroupClass ++ marker.endGroupClass)
 
-        _ ->
+        Grouping.Middle ->
             Css.batch []
