@@ -150,6 +150,8 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
+    // We're extracting a copy of Highlighter to noredink-ui. A11y fixes are forthcoming.
+    Highlighter: ["button-name"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],

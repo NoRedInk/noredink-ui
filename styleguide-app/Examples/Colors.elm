@@ -1,12 +1,12 @@
 module Examples.Colors exposing
     ( example, State, Msg
-    , all
+    , all, backgroundHighlightColors
     )
 
 {-|
 
 @docs example, State, Msg
-@docs all
+@docs all, backgroundHighlightColors
 
 -}
 

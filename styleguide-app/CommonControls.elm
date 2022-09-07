@@ -5,6 +5,7 @@ module CommonControls exposing
     , color
     , content
     , httpError
+    , romeoAndJulietQuotation
     , disabledListItem, premiumDisplay
     )
 
@@ -20,6 +21,7 @@ module CommonControls exposing
 
 @docs content
 @docs httpError
+@docs romeoAndJulietQuotation
 
 -}
 
