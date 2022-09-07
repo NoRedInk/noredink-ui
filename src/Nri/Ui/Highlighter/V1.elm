@@ -59,11 +59,12 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Css
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
-import Html.Styled as Html exposing (Attribute, Html, p, span)
+import Html.Styled as Html exposing (Attribute, Html, div, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css, style)
 import Html.Styled.Events
 import Html.Styled.Lazy
@@ -487,12 +488,15 @@ static { id, highlightables } =
 
 
 container : String -> List (Html msg) -> Html msg
-container id_ =
-    p
+container id_ content =
+    Html.div
         [ Html.Styled.Attributes.id id_
         , class "highlighter-container"
-        , css [ Css.margin Css.zero ]
+        , Role.grid
+        , Aria.label "highlightable paragraph"
+        , Aria.multiSelectable True
         ]
+        [ div [ Role.row ] content ]
 
 
 viewHighlightable : Model marker -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
@@ -561,19 +565,21 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
                 Nothing ->
                     span
     in
-    spanOrMark
-        (eventListeners
-            ++ customToHtmlAttributes highlightable.customAttributes
-            ++ whitespaceClass highlightable.text
-            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , Maybe.andThen .name highlightable.marked
-                    |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                    |> Maybe.withDefault AttributesExtra.none
-               , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
-               , class "highlighter-highlightable"
-               ]
-        )
-        [ Html.text highlightable.text ]
+    span [ Role.gridCell ]
+        [ spanOrMark
+            (eventListeners
+                ++ customToHtmlAttributes highlightable.customAttributes
+                ++ whitespaceClass highlightable.text
+                ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+                   , Maybe.andThen .name highlightable.marked
+                        |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+                        |> Maybe.withDefault AttributesExtra.none
+                   , css (highlightableStyle maybeTool highlightable isInteractive groupPos)
+                   , class "highlighter-highlightable"
+                   ]
+            )
+            [ Html.text highlightable.text ]
+        ]
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> Grouping.Position -> List Css.Style
