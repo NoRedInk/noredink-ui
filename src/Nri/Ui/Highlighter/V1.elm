@@ -557,15 +557,15 @@ viewMaybeMarker isInteractive eventListeners maybeTool ( groupPos, highlightable
             else
                 []
 
-        spanOrMark =
+        ( spanOrMark, selected ) =
             case highlightable.marked of
                 Just markedWith ->
-                    Html.mark
+                    ( Html.mark, True )
 
                 Nothing ->
-                    span
+                    ( span, False )
     in
-    span [ Role.gridCell ]
+    span [ Role.gridCell, Aria.selected selected ]
         [ spanOrMark
             (eventListeners
                 ++ customToHtmlAttributes highlightable.customAttributes
