@@ -61,6 +61,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css
+import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
@@ -472,6 +473,12 @@ groupContainer viewSegment highlightables =
                         , -- Temporarily adding tabindex 0 so that the mark element can be focused,
                           --so we will be able to tell how it will read
                           tabindex 0
+                        , css
+                            [ Css.Global.children
+                                [ Css.Global.selector ":first-child" markedWith.startGroupClass
+                                , Css.Global.selector ":last-child" markedWith.endGroupClass
+                                ]
+                            ]
                         ]
                         (List.map viewSegment highlightables)
                     ]
@@ -564,14 +571,13 @@ highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
                 Just markedWith ->
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass
-                    , Style.groupPosition markedWith
                     , Css.batch
                         (case uiState of
                             Highlightable.Hinted ->
-                                [ Css.batch eraser_.hintClass, Style.groupPosition eraser_ ]
+                                eraser_.hintClass
 
                             Highlightable.Hovered ->
-                                [ Css.batch eraser_.hoverClass, Style.groupPosition eraser_ ]
+                                eraser_.hoverClass
 
                             _ ->
                                 []
