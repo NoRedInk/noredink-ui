@@ -438,44 +438,8 @@ view =
         \model ->
             model.highlightables
                 |> Grouping.buildGroups
-                |> viewGroups model []
+                |> List.map (viewHighlightable model)
                 |> container model.id
-
-
-viewGroups :
-    Model marker
-    -> List (Html (Msg marker))
-    -> List ( Grouping.Position, Highlightable marker )
-    -> List (Html (Msg marker))
-viewGroups model acc groups =
-    case groups of
-        (( _, firstH ) as first) :: (( _, secondH ) as second) :: tail ->
-            case ( firstH.type_, secondH.type_ ) of
-                ( Highlightable.Interactive, Highlightable.Static ) ->
-                    viewGroups
-                        model
-                        (if String.length secondH.text == 1 && secondH.text /= " " then
-                            viewWithAttachedPunctuation model first second :: acc
-
-                         else
-                            viewHighlightable model second :: viewHighlightable model first :: acc
-                        )
-                        tail
-
-                _ ->
-                    viewGroups model (viewHighlightable model first :: acc) (second :: tail)
-
-        head :: tail ->
-            viewGroups model (viewHighlightable model head :: acc) tail
-
-        [] ->
-            List.reverse acc
-
-
-viewWithAttachedPunctuation : Model marker -> ( Grouping.Position, Highlightable marker ) -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
-viewWithAttachedPunctuation model first second =
-    span [ class "highlighter-attached-punctuation-container" ]
-        [ viewHighlightable model first, viewHighlightable model second ]
 
 
 {-| -}
