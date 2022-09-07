@@ -30,6 +30,7 @@ type Category
     | Text
     | Interactions
     | Animations
+    | Progress
 
 
 {-| -}
@@ -44,6 +45,7 @@ all =
     , Layout
     , Text
     , Messaging
+    , Progress
     ]
 
 
@@ -79,6 +81,9 @@ fromString string =
         "Animations" ->
             Ok Animations
 
+        "Progress" ->
+            Ok Progress
+
         _ ->
             Err "Invalid String"
 
@@ -113,6 +118,9 @@ forDisplay category =
 
         Animations ->
             "Animations"
+
+        Progress ->
+            "Progress indicators"
 
 
 {-| -}
@@ -157,3 +165,6 @@ forId category =
 
         Animations ->
             "animations"
+
+        Progress ->
+            "progress"

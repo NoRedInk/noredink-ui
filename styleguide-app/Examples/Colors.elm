@@ -1,12 +1,12 @@
 module Examples.Colors exposing
     ( example, State, Msg
-    , backgroundHighlightColors
+    , all, backgroundHighlightColors
     )
 
 {-|
 
 @docs example, State, Msg
-@docs backgroundHighlightColors
+@docs all, backgroundHighlightColors
 
 -}
 
@@ -63,6 +63,16 @@ example =
             , viewColors textHighlightColors
             ]
     }
+
+
+all : List ( String, Css.Color )
+all =
+    [ uncategorizedColors
+    , backgroundHighlightColors
+    , textHighlightColors
+    ]
+        |> List.concat
+        |> List.map (\( name, val, _ ) -> ( name, val ))
 
 
 uncategorizedColors : List ( String, Css.Color, String )
