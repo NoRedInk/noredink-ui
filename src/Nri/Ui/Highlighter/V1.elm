@@ -59,19 +59,16 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
-import Accessibility.Styled.Role as Role
 import Css
 import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
-import Html.Styled as Html exposing (Attribute, Html, div, p, span)
-import Html.Styled.Attributes exposing (attribute, class, css, style, tabindex)
+import Html.Styled as Html exposing (Attribute, Html, p, span)
+import Html.Styled.Attributes exposing (attribute, class, css, tabindex)
 import Html.Styled.Events
-import Html.Styled.Lazy
 import Json.Decode
 import List.Extra
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
