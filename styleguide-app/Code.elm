@@ -7,7 +7,6 @@ module Code exposing
     , list, listMultiline
     , tuple
     , record, recordMultiline
-    , pipelineMultiline
     , newlineWithIndent
     , withParens
     , anonymousFunction, always
@@ -25,7 +24,6 @@ module Code exposing
 @docs list, listMultiline
 @docs tuple
 @docs record, recordMultiline
-@docs pipelineMultiline
 @docs newlineWithIndent
 @docs withParens
 @docs anonymousFunction, always
@@ -113,12 +111,6 @@ list =
 
 
 {-| -}
-listSingleline : List String -> String
-listSingleline =
-    structureSingleline "[" "]"
-
-
-{-| -}
 listMultiline : List String -> Int -> String
 listMultiline =
     structureMultiline "[" "]"
@@ -133,12 +125,6 @@ recordValues =
 record : List ( String, String ) -> String
 record =
     structure "{" "}" << recordValues
-
-
-{-| -}
-recordSingleline : List ( String, String ) -> String
-recordSingleline =
-    structureSingleline "{" "}" << recordValues
 
 
 {-| -}
