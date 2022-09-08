@@ -151,7 +151,6 @@ exampleMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
-        , rounded = True
         }
 
 
@@ -162,7 +161,6 @@ claimMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
-        , rounded = True
         }
 
 
@@ -173,7 +171,6 @@ evidenceMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
-        , rounded = True
         }
 
 
@@ -184,7 +181,6 @@ reasoningMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
-        , rounded = True
         }
 
 
@@ -215,13 +211,11 @@ initHighlighter settings highlightables =
         { id = "example-romeo-and-juliet"
         , highlightables = highlightables
         , marker = settings.tool
-        , onClickAction = settings.onClickAction
         }
 
 
 type alias Settings =
     { tool : Tool.Tool ()
-    , onClickAction : Highlighter.OnClickAction
     }
 
 
@@ -242,22 +236,23 @@ controlSettings =
                   )
                 ]
             )
-        |> Control.field "onClickAction"
-            (Control.choice
-                [ ( "ToggleOnClick", Control.value Highlighter.ToggleOnClick )
-                , ( "SaveOnClick", Control.value Highlighter.SaveOnClick )
-                ]
-            )
 
 
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
-    Control.record (\a b c d e -> Tool.buildMarker { highlightColor = a, hoverColor = b, hoverHighlightColor = c, kind = d, rounded = e })
+    Control.record
+        (\a b c d ->
+            Tool.buildMarker
+                { highlightColor = a
+                , hoverColor = b
+                , hoverHighlightColor = c
+                , kind = d
+                }
+        )
         |> Control.field "highlightColor" backgroundHighlightColors
         |> Control.field "hoverColor" backgroundHighlightColors
         |> Control.field "hoverHighlightColor" backgroundHighlightColors
         |> Control.field "kind" (Control.value ())
-        |> Control.field "rounded" (Control.bool True)
 
 
 backgroundHighlightColors : Control Color
