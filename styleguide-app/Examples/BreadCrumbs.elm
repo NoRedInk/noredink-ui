@@ -70,7 +70,13 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Html.Styled.Attributes exposing (href)" ]
-                , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \settings ->
+                        [ { sectionName = moduleName ++ ".view"
+                          , code = viewExampleCode settings
+                          }
+                        ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
                 [ Heading.h2 [ Heading.plaintext "Example" ]

@@ -100,6 +100,7 @@ example =
                 , settings = state.settings
                 , mainType = Just "RootHtml.Html String"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "view"

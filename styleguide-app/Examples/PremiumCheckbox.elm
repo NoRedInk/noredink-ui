@@ -67,6 +67,7 @@ example =
                     , "\n\n"
                     , "type Msg = ToggleCheck Bool | ClickedPremiumLock"
                     ]
+                , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]

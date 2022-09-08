@@ -58,18 +58,34 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.settings
-                , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , mainType = Just "Program () Confetti.Model Msg"
+                , extraCode =
+                    [ "import Browser"
+                    , "import Browser.Events"
+                    , "\ntype Msg = ConfettiMsg Confetti.Msg | WindowResized Int Int"
+                    ]
+                , renderExample = identity
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "Code"
                           , code =
-                                Code.pipelineMultiline
-                                    [ moduleName ++ ".init 400"
-                                    , moduleName ++ ".burst"
-                                    , moduleName ++ ".view"
-                                    ]
-                                    1
+                                Code.browserElement
+                                    { init = Code.always (Code.tuple "Confetti.burst (Confetti.init 400)" "Cmd.none")
+                                    , update =
+                                        Code.newlineWithIndent 3
+                                            ++ Code.anonymousFunction
+                                                "msg model"
+                                                (Code.caseExpression "msg"
+                                                    [ ( "ConfettiMsg confettiMsg", Code.tuple "Confetti.update confettiMsg model" "Cmd.none" )
+                                                    , ( "WindowResized width _", Code.tuple "Confetti.updatePageWidth width model" "Cmd.none" )
+                                                    ]
+                                                    4
+                                                )
+                                    , view = moduleName ++ ".view >> toUnstyled"
+                                    , subscriptions =
+                                        Code.anonymousFunction "model" <|
+                                            "Sub.batch [ Browser.Events.onResize WindowResized, Confetti.subscriptions ConfettiMsg model ]"
+                                    }
                           }
                         ]
                 }

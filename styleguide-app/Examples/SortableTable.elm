@@ -144,6 +144,7 @@ example =
                     [ "type ColumnId = FirstName | LastName | CustomExample "
                     , "type Msg = SetSortState (SortableTable.State ColumnId)"
                     ]
+                , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]

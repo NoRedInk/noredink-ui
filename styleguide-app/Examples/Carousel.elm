@@ -187,6 +187,7 @@ example =
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         let

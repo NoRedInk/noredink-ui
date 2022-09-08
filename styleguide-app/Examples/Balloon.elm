@@ -7,6 +7,7 @@ module Examples.Balloon exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import Code
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -152,6 +153,7 @@ view ellieLinkConfig state =
         , settings = state
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ copy, attributes } ->
                 [ { sectionName = "Balloon"

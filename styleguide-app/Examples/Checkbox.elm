@@ -59,6 +59,7 @@ example =
                 , settings = state.settings
                 , mainType = Just "RootHtml.Html Bool"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "viewWithLabel", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]

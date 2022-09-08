@@ -7,6 +7,7 @@ module Examples.DisclosureIndicator exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -60,6 +61,7 @@ example =
                 , settings = state.settings
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Nri.Ui.Svg.V1 as Svg" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let

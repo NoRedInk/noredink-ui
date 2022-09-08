@@ -71,6 +71,7 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Nri.Ui.Colors.V1 as Colors" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"

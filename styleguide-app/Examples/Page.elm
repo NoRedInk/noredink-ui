@@ -102,6 +102,7 @@ example =
                 , settings = model
                 , mainType = Just "RootHtml.Html ()"
                 , extraCode = [ "import Http" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \{ page, recoveryText } ->
                         [ { sectionName = "Example"

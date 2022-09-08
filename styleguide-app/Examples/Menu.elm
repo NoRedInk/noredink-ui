@@ -141,6 +141,7 @@ view ellieLinkConfig state =
         , settings = state.settings
         , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
                 let

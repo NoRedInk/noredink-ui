@@ -9,6 +9,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -473,6 +474,7 @@ viewCustomizableExample ellieLinkConfig controlSettings =
             , settings = controlSettings
             , mainType = Just "RootHtml.Html msg"
             , extraCode = [ "import Nri.Ui.ClickableSvg.V2 as ClickableSvg" ]
+            , renderExample = Code.unstyledView
             , toExampleCode =
                 \controls ->
                     [ { sectionName = "Example"

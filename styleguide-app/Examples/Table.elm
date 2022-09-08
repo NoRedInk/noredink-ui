@@ -85,6 +85,7 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Nri.Ui.Button.V10 as Button" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let

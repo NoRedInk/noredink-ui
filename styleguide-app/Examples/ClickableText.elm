@@ -145,6 +145,7 @@ viewExamples ellieLinkConfig (State control) =
         , settings = control
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let

@@ -91,6 +91,7 @@ view ellieLinkConfig state =
         , settings = state.settings
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ navAttributes, entries } ->
                 [ { sectionName = "View"

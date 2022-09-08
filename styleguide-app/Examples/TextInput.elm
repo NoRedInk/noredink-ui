@@ -76,7 +76,17 @@ example =
                 , settings = state.control
                 , mainType = Nothing
                 , extraCode = []
-                , toExampleCode = \_ -> List.map (\( name, toExampleCode, _ ) -> { sectionName = name, code = toExampleCode }) examples
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \_ ->
+                        List.map
+                            (\( name, toExampleCode, _ ) ->
+                                { sectionName = name
+                                , code =
+                                    toExampleCode
+                                }
+                            )
+                            examples
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , viewExamples (List.map (\( name, _, ex ) -> ( name, ex )) examples)

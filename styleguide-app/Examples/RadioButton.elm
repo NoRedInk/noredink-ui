@@ -13,6 +13,7 @@ module Examples.RadioButton exposing
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
@@ -118,6 +119,7 @@ view ellieLinkConfig state =
         , settings = state.selectionSettings
         , mainType = Just "Html msg"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
                 [ { sectionName = "Example"

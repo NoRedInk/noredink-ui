@@ -7,6 +7,7 @@ module Examples.Highlighter exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
@@ -52,6 +53,7 @@ example =
                 , settings = state.settings
                 , mainType = Nothing
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
