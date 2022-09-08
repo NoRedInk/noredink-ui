@@ -1,5 +1,5 @@
 module Nri.Ui.Highlighter.V1 exposing
-    ( Model, Msg(..), PointerMsg(..), OnClickAction(..)
+    ( Model, Msg(..), PointerMsg(..)
     , init, update, view, static
     , Intent, emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
@@ -28,7 +28,7 @@ Currently, highlighter is used in the following places:
 
 # Types
 
-@docs Model, Msg, PointerMsg, OnClickAction
+@docs Model, Msg, PointerMsg
 
 
 # Init/View/Update
@@ -90,7 +90,6 @@ type alias Model marker =
       id : String
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
-    , onClickAction : OnClickAction -- What happens when a user clicks on a highlight
 
     -- Internal state to track user's interactions
     , mouseDownIndex : Maybe Int
@@ -106,12 +105,6 @@ type HasChanged
     | NotChanged
 
 
-{-| -}
-type OnClickAction
-    = ToggleOnClick
-    | SaveOnClick
-
-
 type Initialized
     = Initialized
     | NotInitialized
@@ -123,14 +116,12 @@ init :
     { id : String
     , highlightables : List (Highlightable marker)
     , marker : Tool.Tool marker
-    , onClickAction : OnClickAction
     }
     -> Model marker
 init config =
     { id = config.id
     , highlightables = config.highlightables
     , marker = config.marker
-    , onClickAction = config.onClickAction
     , mouseDownIndex = Nothing
     , mouseOverIndex = Nothing
     , isInitialized = NotInitialized
@@ -336,19 +327,11 @@ pointerEventToActions msg model =
 
         Up _ ->
             let
-                onClick index marker =
-                    case model.onClickAction of
-                        ToggleOnClick ->
-                            [ Toggle index marker ]
-
-                        SaveOnClick ->
-                            [ Save marker ]
-
                 save marker =
                     case ( model.mouseOverIndex, model.mouseDownIndex ) of
                         ( Just overIndex, Just downIndex ) ->
                             if overIndex == downIndex then
-                                onClick downIndex marker
+                                [ Toggle downIndex marker ]
 
                             else
                                 [ Save marker ]

@@ -54,14 +54,13 @@ buildMarker :
     , hoverHighlightColor : Css.Color
     , kind : kind
     , name : Maybe String
-    , rounded : Bool
     }
     -> MarkerModel kind
-buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded, name } =
+buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     { hoverClass = hoverStyles hoverColor
     , hintClass = hoverStyles hoverColor
-    , startGroupClass = startGroupStyles rounded
-    , endGroupClass = endGroupStyles rounded
+    , startGroupClass = startGroupStyles
+    , endGroupClass = endGroupStyles
     , highlightClass = highlightStyles highlightColor
     , hoverHighlightClass = highlightStyles hoverHighlightColor
     , kind = kind
@@ -69,30 +68,20 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded, na
     }
 
 
-startGroupStyles : Bool -> List Css.Style
-startGroupStyles rounded =
+startGroupStyles : List Css.Style
+startGroupStyles =
     Css.paddingLeft (Css.px 4)
-        :: (if rounded then
-                [ Css.borderTopLeftRadius (Css.px 4)
-                , Css.borderBottomLeftRadius (Css.px 4)
-                ]
-
-            else
-                []
-           )
+        :: [ Css.borderTopLeftRadius (Css.px 4)
+           , Css.borderBottomLeftRadius (Css.px 4)
+           ]
 
 
-endGroupStyles : Bool -> List Css.Style
-endGroupStyles rounded =
+endGroupStyles : List Css.Style
+endGroupStyles =
     Css.paddingRight (Css.px 4)
-        :: (if rounded then
-                [ Css.borderTopRightRadius (Css.px 4)
-                , Css.borderBottomRightRadius (Css.px 4)
-                ]
-
-            else
-                []
-           )
+        :: [ Css.borderTopRightRadius (Css.px 4)
+           , Css.borderBottomRightRadius (Css.px 4)
+           ]
 
 
 highlightStyles : Css.Color -> List Css.Style

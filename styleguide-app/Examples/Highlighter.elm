@@ -152,7 +152,6 @@ exampleMarker =
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
         , name = Nothing
-        , rounded = True
         }
 
 
@@ -164,7 +163,6 @@ claimMarker =
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
         , name = Just "Claim"
-        , rounded = True
         }
 
 
@@ -176,7 +174,6 @@ evidenceMarker =
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
         , name = Just "Evidence"
-        , rounded = True
         }
 
 
@@ -188,7 +185,6 @@ reasoningMarker =
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
         , name = Just "Reasoning"
-        , rounded = True
         }
 
 
@@ -219,13 +215,11 @@ initHighlighter settings highlightables =
         { id = "example-romeo-and-juliet"
         , highlightables = highlightables
         , marker = settings.tool
-        , onClickAction = settings.onClickAction
         }
 
 
 type alias Settings =
     { tool : Tool.Tool ()
-    , onClickAction : Highlighter.OnClickAction
     }
 
 
@@ -246,25 +240,18 @@ controlSettings =
                   )
                 ]
             )
-        |> Control.field "onClickAction"
-            (Control.choice
-                [ ( "ToggleOnClick", Control.value Highlighter.ToggleOnClick )
-                , ( "SaveOnClick", Control.value Highlighter.SaveOnClick )
-                ]
-            )
 
 
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
     Control.record
-        (\a b c d e f ->
+        (\a b c d e ->
             Tool.buildMarker
                 { highlightColor = a
                 , hoverColor = b
                 , hoverHighlightColor = c
                 , kind = d
                 , name = e
-                , rounded = f
                 }
         )
         |> Control.field "highlightColor" backgroundHighlightColors
@@ -272,7 +259,6 @@ controlMarker =
         |> Control.field "hoverHighlightColor" backgroundHighlightColors
         |> Control.field "kind" (Control.value ())
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
-        |> Control.field "rounded" (Control.bool True)
 
 
 backgroundHighlightColors : Control Color
