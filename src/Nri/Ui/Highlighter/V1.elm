@@ -72,6 +72,7 @@ import List.Extra
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
@@ -455,7 +456,19 @@ groupContainer viewSegment highlightables =
                           tabindex 0
                         , css
                             [ Css.Global.children
-                                [ Css.Global.selector ":first-child" markedWith.startGroupClass
+                                [ Css.Global.selector ":first-child"
+                                    (MediaQuery.highContrastMode
+                                        [ Maybe.map
+                                            (\name ->
+                                                Css.before
+                                                    [ Css.property "content" ("\"[" ++ name ++ "] \"")
+                                                    ]
+                                            )
+                                            markedWith.name
+                                            |> Maybe.withDefault (Css.batch [])
+                                        ]
+                                        :: markedWith.startGroupClass
+                                    )
                                 , Css.Global.selector ":last-child" markedWith.endGroupClass
                                 ]
                             ]

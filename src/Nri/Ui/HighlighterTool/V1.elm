@@ -12,6 +12,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
 import Css
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
 {-| Tool that can be used on a highlighter
@@ -90,6 +91,7 @@ highlightStyles color =
         sharedStyles
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
+        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
         ]
 
 
@@ -105,6 +107,10 @@ hoverStyles color =
     List.append
         sharedStyles
         [ Css.important (Css.backgroundColor color)
+        , MediaQuery.highContrastMode
+            [ Css.property "background-color" "Highlight" |> Css.important
+            , Css.property "color" "HighlightText"
+            ]
 
         -- The Highlighter applies both these styles and the startGroup and
         -- endGroup styles. Here we disable the left and the right padding
