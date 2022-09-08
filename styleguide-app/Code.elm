@@ -6,6 +6,7 @@ module Code exposing
     , commentInline
     , list, listMultiline
     , record, recordMultiline
+    , pipelineMultiline
     , newlineWithIndent
     , withParens
     , always
@@ -20,6 +21,7 @@ module Code exposing
 @docs commentInline
 @docs list, listMultiline
 @docs record, recordMultiline
+@docs pipelineMultiline
 @docs newlineWithIndent
 @docs withParens
 @docs always
@@ -129,6 +131,16 @@ recordMultiline items indent =
             (List.map (\( key, value ) -> key ++ " = " ++ value) items)
         ++ indents
         ++ "}"
+
+
+{-| -}
+pipelineMultiline : List String -> Int -> String
+pipelineMultiline pipedWith indent =
+    let
+        indents =
+            newlineWithIndent (indent + 1)
+    in
+    newlineWithIndent indent ++ String.join (indents ++ "|> ") pipedWith
 
 
 newlineWithIndent : Int -> String

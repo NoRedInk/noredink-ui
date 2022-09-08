@@ -8,6 +8,7 @@ module Examples.Confetti exposing (example, State, Msg)
 
 import Browser.Events
 import Category exposing (Category(..))
+import Code
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -60,7 +61,17 @@ example =
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
                 , toExampleCode =
-                    \settings -> [ { sectionName = "TODO", code = "TODO" } ]
+                    \settings ->
+                        [ { sectionName = "Code"
+                          , code =
+                                Code.pipelineMultiline
+                                    [ moduleName ++ ".init 400"
+                                    , moduleName ++ ".burst"
+                                    , moduleName ++ ".view"
+                                    ]
+                                    1
+                          }
+                        ]
                 }
             , Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
