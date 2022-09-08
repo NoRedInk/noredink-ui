@@ -70,7 +70,12 @@ example =
                         [ { sectionName = "Code"
                           , code =
                                 Code.browserElement
-                                    { init = Code.always (Code.tuple "Confetti.burst (Confetti.init 400)" "Cmd.none")
+                                    { init =
+                                        Code.always
+                                            (Code.tuple
+                                                ("Confetti.burst (Confetti.init " ++ String.fromFloat settings.center ++ ")")
+                                                "Cmd.none"
+                                            )
                                     , update =
                                         Code.newlineWithIndent 3
                                             ++ Code.anonymousFunction
