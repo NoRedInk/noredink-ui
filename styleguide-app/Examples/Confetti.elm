@@ -88,8 +88,16 @@ example =
                                                 )
                                     , view = moduleName ++ ".view >> toUnstyled"
                                     , subscriptions =
-                                        Code.anonymousFunction "model" <|
-                                            "Sub.batch [ Browser.Events.onResize WindowResized, Confetti.subscriptions ConfettiMsg model ]"
+                                        Code.newlineWithIndent 3
+                                            ++ Code.anonymousFunction "model"
+                                                (Code.newlineWithIndent 4
+                                                    ++ "Sub.batch "
+                                                    ++ Code.listMultiline
+                                                        [ "Browser.Events.onResize WindowResized"
+                                                        , "Confetti.subscriptions ConfettiMsg model"
+                                                        ]
+                                                        5
+                                                )
                                     }
                           }
                         ]
