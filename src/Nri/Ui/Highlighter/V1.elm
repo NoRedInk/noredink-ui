@@ -549,6 +549,10 @@ viewHighlightable marker highlightable =
                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-static" ""
+                , Key.onKeyDownPreventDefault
+                    [ Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    ]
                 ]
                 (Just marker)
                 highlightable
