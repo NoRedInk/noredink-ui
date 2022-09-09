@@ -294,12 +294,18 @@ keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
 keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
-            -- TODO: find the id of the element to the left, if there is one, and Focus it
-            []
+            if index /= 0 then
+                [ Focus (highlightableId (index - 1)) ]
+
+            else
+                []
 
         MoveRight index ->
-            -- TODO: find the id of the element to the right, if there is one, and Focus it
-            []
+            if index /= (List.length model.highlightables - 1) then
+                [ Focus (highlightableId (index + 1)) ]
+
+            else
+                []
 
         Space index ->
             case model.marker of
@@ -582,11 +588,18 @@ viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+               , Html.Styled.Attributes.id (highlightableId highlightable.groupIndex)
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
+               , Key.tabbable (highlightable.groupIndex == 0)
                ]
         )
         [ Html.text highlightable.text ]
+
+
+highlightableId : Int -> String
+highlightableId groupIndex =
+    "highlightable-" ++ String.fromInt groupIndex
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
