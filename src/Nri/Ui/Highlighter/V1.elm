@@ -178,7 +178,7 @@ text highlightables =
 {-| -}
 type Msg marker
     = Pointer PointerMsg
-    | Keyboard Int
+    | Keyboard KeyboardMsg
     | NoOp
 
 
@@ -194,6 +194,12 @@ type PointerMsg
       -- will not have this info!
     | Move (Maybe String) Int
     | Up (Maybe String)
+
+
+type KeyboardMsg
+    = MoveLeft Int
+    | MoveRight Int
+    | Space Int
 
 
 {-| Possible intents or "external effects" that the Highlighter can request (see `perform`).
@@ -272,21 +278,34 @@ update msg model =
                 pointerEventToActions pointerMsg model
                     |> performActions model
 
-            Keyboard index ->
-                performActions model <|
-                    case model.marker of
-                        Tool.Marker marker ->
-                            [ Toggle index marker ]
-
-                        Tool.Eraser _ ->
-                            [ MouseOver index
-                            , Hint index index
-                            , MouseUp
-                            , Remove
-                            ]
+            Keyboard keyboardMsg ->
+                keyboardEventToActions keyboardMsg model
+                    |> performActions model
 
             NoOp ->
                 model
+
+
+keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
+keyboardEventToActions msg model =
+    case msg of
+        MoveLeft index ->
+            []
+
+        MoveRight index ->
+            []
+
+        Space index ->
+            case model.marker of
+                Tool.Marker marker ->
+                    [ Toggle index marker ]
+
+                Tool.Eraser _ ->
+                    [ MouseOver index
+                    , Hint index index
+                    , MouseUp
+                    , Remove
+                    ]
 
 
 {-| Pointer events to actions.
@@ -491,7 +510,11 @@ viewHighlightable marker highlightable =
                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-interactive" ""
-                , Key.onKeyDownPreventDefault [ Key.space (Keyboard highlightable.groupIndex) ]
+                , Key.onKeyDownPreventDefault
+                    [ Key.space (Keyboard <| Space highlightable.groupIndex)
+                    , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    ]
                 ]
                 (Just marker)
                 highlightable
