@@ -151,6 +151,7 @@ exampleMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Nothing
         }
 
 
@@ -161,6 +162,7 @@ claimMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Claim"
         }
 
 
@@ -171,6 +173,7 @@ evidenceMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Evidence"
         }
 
 
@@ -181,6 +184,7 @@ reasoningMarker =
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
         , kind = ()
+        , name = Just "Reasoning"
         }
 
 
@@ -241,18 +245,20 @@ controlSettings =
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
     Control.record
-        (\a b c d ->
+        (\a b c d e ->
             Tool.buildMarker
                 { highlightColor = a
                 , hoverColor = b
                 , hoverHighlightColor = c
                 , kind = d
+                , name = e
                 }
         )
         |> Control.field "highlightColor" backgroundHighlightColors
         |> Control.field "hoverColor" backgroundHighlightColors
         |> Control.field "hoverHighlightColor" backgroundHighlightColors
         |> Control.field "kind" (Control.value ())
+        |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 
 backgroundHighlightColors : Control Color

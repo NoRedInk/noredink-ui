@@ -57,20 +57,21 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Css
+import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
-import Html.Styled.Attributes exposing (attribute, class, css, style)
+import Html.Styled.Attributes exposing (attribute, class, css, tabindex)
 import Html.Styled.Events
-import Html.Styled.Lazy
 import Json.Decode
 import List.Extra
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
@@ -412,78 +413,97 @@ removeHighlights =
 
 
 {-| -}
-view : Model marker -> Html (Msg marker)
-view =
-    Html.Styled.Lazy.lazy <|
-        \model ->
-            model.highlightables
-                |> Grouping.buildGroups
-                |> viewGroups model []
-                |> container model.id
-
-
-viewGroups :
-    Model marker
-    -> List (Html (Msg marker))
-    -> List ( Grouping.Position, Highlightable marker )
-    -> List (Html (Msg marker))
-viewGroups model acc groups =
-    case groups of
-        (( _, firstH ) as first) :: (( _, secondH ) as second) :: tail ->
-            case ( firstH.type_, secondH.type_ ) of
-                ( Highlightable.Interactive, Highlightable.Static ) ->
-                    viewGroups
-                        model
-                        (if String.length secondH.text == 1 && secondH.text /= " " then
-                            viewWithAttachedPunctuation model first second :: acc
-
-                         else
-                            viewHighlightable model second :: viewHighlightable model first :: acc
-                        )
-                        tail
-
-                _ ->
-                    viewGroups model (viewHighlightable model first :: acc) (second :: tail)
-
-        head :: tail ->
-            viewGroups model (viewHighlightable model head :: acc) tail
-
-        [] ->
-            List.reverse acc
-
-
-viewWithAttachedPunctuation : Model marker -> ( Grouping.Position, Highlightable marker ) -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
-viewWithAttachedPunctuation model first second =
-    span [ class "highlighter-attached-punctuation-container" ]
-        [ viewHighlightable model first, viewHighlightable model second ]
+view : { config | id : String, highlightables : List (Highlightable marker), marker : Tool.Tool marker } -> Html (Msg marker)
+view config =
+    view_ (viewHighlightable config.marker) config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-static { id, highlightables } =
+static config =
+    view_ viewStaticHighlightable config
+
+
+view_ :
+    (Highlightable marker -> Html msg)
+    -> { config | id : String, highlightables : List (Highlightable marker) }
+    -> Html msg
+view_ viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.map viewStaticHighlightable
-        |> container id
+        |> List.concatMap (groupContainer viewSegment)
+        |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
-container : String -> List (Html msg) -> Html msg
-container id_ =
-    p
-        [ Html.Styled.Attributes.id id_
-        , class "highlighter-container"
-        , css [ Css.margin Css.zero ]
-        ]
+{-| When elements are marked, wrap them in a single `mark` html node.
+-}
+groupContainer : (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
+groupContainer viewSegment highlightables =
+    case highlightables of
+        [] ->
+            []
+
+        first :: _ ->
+            case first.marked of
+                Just markedWith ->
+                    [ Html.mark
+                        [ markedWith.name
+                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+                            |> Maybe.withDefault AttributesExtra.none
+                        , -- Temporarily adding tabindex 0 so that the mark element can be focused,
+                          --so we will be able to tell how it will read
+                          tabindex 0
+                        , css
+                            [ Css.Global.children
+                                [ Css.Global.selector ":first-child" markedWith.startGroupClass
+                                , Css.Global.selector ":last-child" markedWith.endGroupClass
+                                ]
+                            ]
+                        ]
+                        (List.map viewSegment highlightables)
+                    ]
+
+                Nothing ->
+                    List.map viewSegment highlightables
 
 
-viewHighlightable : Model marker -> ( Grouping.Position, Highlightable marker ) -> Html (Msg marker)
-viewHighlightable model ( groupPos, highlightable ) =
+viewHighlightable : Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
+viewHighlightable marker highlightable =
+    case highlightable.type_ of
+        Highlightable.Interactive ->
+            viewHighlightableSegment True
+                [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
+                , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                , on "mouseup" (Pointer <| Up Nothing)
+                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                , attribute "data-interactive" ""
+                , Key.onKeyDownPreventDefault [ Key.space (Keyboard highlightable.groupIndex) ]
+                ]
+                (Just marker)
+                highlightable
+
+        Highlightable.Static ->
+            viewHighlightableSegment False
+                -- Static highlightables need listeners as well.
+                -- because otherwise we miss mouseup events
+                [ on "mouseup" (Pointer <| Up Nothing)
+                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                , attribute "data-static" ""
+                ]
+                (Just marker)
+                highlightable
+
+
+viewStaticHighlightable : Highlightable marker -> Html msg
+viewStaticHighlightable =
+    viewHighlightableSegment False [] Nothing
+
+
+viewHighlightableSegment : Bool -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
     let
-        commonAttributes highlightableModel =
-            [ attribute "data-highlighter-item-index" <| String.fromInt highlightableModel.groupIndex
-            , style "user-select" "none"
-            ]
-
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
             -- student-provided paragraph indents in essay writing
@@ -505,88 +525,47 @@ viewHighlightable model ( groupPos, highlightable ) =
             else
                 []
     in
-    case highlightable.type_ of
-        Highlightable.Interactive ->
-            Html.button
-                ([ on "mouseover" (Pointer <| Over highlightable.groupIndex)
-                 , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
-                 , on "mouseup" (Pointer <| Up Nothing)
-                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                 , attribute "data-interactive" ""
-                 , Key.onKeyDownPreventDefault [ Key.space (Keyboard highlightable.groupIndex) ]
-                 , css
-                    [ Css.borderWidth Css.zero
-                    , Css.padding Css.zero
-                    , Fonts.quizFont
-                    ]
-                 , highlighterClass
-                 ]
-                    ++ markerStyle model.marker highlightable True groupPos
-                    ++ customToHtmlAttributes highlightable.customAttributes
-                    ++ whitespaceClass highlightable.text
-                    ++ commonAttributes highlightable
-                )
-                [ Html.text highlightable.text ]
-
-        Highlightable.Static ->
-            span
-                -- Static highlightables need listeners as well.
-                -- because otherwise we miss mouseup events
-                ([ on "mouseup" (Pointer <| Up Nothing)
-                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                 , attribute "data-static" ""
-                 , highlighterClass
-                 ]
-                    ++ markerStyle model.marker highlightable False groupPos
-                    ++ customToHtmlAttributes highlightable.customAttributes
-                    ++ whitespaceClass highlightable.text
-                    ++ commonAttributes highlightable
-                )
-                [ Html.text highlightable.text ]
+    span
+        (eventListeners
+            ++ customToHtmlAttributes highlightable.customAttributes
+            ++ whitespaceClass highlightable.text
+            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+               , css (highlightableStyle maybeTool highlightable isInteractive)
+               , class "highlighter-highlightable"
+               ]
+        )
+        [ Html.text highlightable.text ]
 
 
-markerStyle : Tool.Tool kind -> Highlightable kind -> Bool -> Grouping.Position -> List (Attribute msg)
-markerStyle tool { uiState, marked } interactive groupPos =
+highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
+highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
     case tool of
-        Tool.Marker marker ->
-            css
-                [ Style.dynamicHighlighted marker groupPos interactive uiState marked
-                ]
-                :: (case marked of
-                        Nothing ->
-                            []
+        Nothing ->
+            [ Style.staticHighlighted highlightable ]
 
-                        Just _ ->
-                            -- This is not great and only used in some
-                            -- feature specs.
-                            [ class "highlighter-highlighted-text" ]
-                   )
+        Just (Tool.Marker marker) ->
+            [ Css.property "user-select" "none", Style.dynamicHighlighted marker interactive uiState marked ]
 
-        Tool.Eraser eraser_ ->
-            [ css
-                (case marked of
-                    Just markedWith ->
-                        [ Css.batch markedWith.highlightClass
-                        , Style.groupPosition groupPos markedWith
-                        , Css.batch
-                            (case uiState of
-                                Highlightable.Hinted ->
-                                    [ Css.batch eraser_.hintClass, Style.groupPosition groupPos eraser_ ]
+        Just (Tool.Eraser eraser_) ->
+            case marked of
+                Just markedWith ->
+                    [ Css.property "user-select" "none"
+                    , Css.batch markedWith.highlightClass
+                    , Css.batch
+                        (case uiState of
+                            Highlightable.Hinted ->
+                                eraser_.hintClass
 
-                                Highlightable.Hovered ->
-                                    [ Css.batch eraser_.hoverClass, Style.groupPosition groupPos eraser_ ]
+                            Highlightable.Hovered ->
+                                eraser_.hoverClass
 
-                                _ ->
-                                    []
-                            )
-                        ]
+                            _ ->
+                                []
+                        )
+                    ]
 
-                    Nothing ->
-                        [ Css.backgroundColor Css.transparent ]
-                )
-            ]
+                Nothing ->
+                    [ Css.property "user-select" "none", Css.backgroundColor Css.transparent ]
 
 
 {-| Helper for `on` to preventDefault.
@@ -607,34 +586,6 @@ on name msg =
     in
     Html.Styled.Events.preventDefaultOn name
         checkIfCancelable
-
-
-viewStaticHighlightable : ( Grouping.Position, Highlightable marker ) -> Html msg
-viewStaticHighlightable ( groupPos, highlightable ) =
-    span
-        ([ highlighterClass
-         , identifierClass highlightable.marked
-         , css [ Style.staticHighlighted groupPos highlightable ]
-         ]
-            ++ customToHtmlAttributes highlightable.customAttributes
-        )
-        [ Html.text highlightable.text ]
-
-
-highlighterClass : Attribute msg
-highlighterClass =
-    class "highlighter-highlightable"
-
-
-identifierClass : Maybe a -> Attribute msg
-identifierClass maybeMarker =
-    case maybeMarker of
-        Just _ ->
-            -- Honestly just for monolith/spec/features/learn/peer_review_spec.rb
-            class "highlighter-highlighted"
-
-        Nothing ->
-            class "highlighter-plain"
 
 
 customToHtmlAttributes : List Highlightable.Attribute -> List (Attribute msg)
