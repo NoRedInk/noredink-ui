@@ -59,6 +59,7 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Browser.Dom as Dom
 import Css
 import Css.Global
 import Highlighter.Grouping as Grouping
@@ -76,6 +77,7 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
+import Task
 
 
 
@@ -179,7 +181,7 @@ text highlightables =
 type Msg marker
     = Pointer PointerMsg
     | Keyboard KeyboardMsg
-    | NoOp
+    | Focused (Result Dom.Error ())
 
 
 {-| Messages used by highlighter when interacting with a mouse or finger.
@@ -231,9 +233,10 @@ emptyIntent =
     determine whether they want to execute follow up actions.
 
 -}
-withIntent : Model m -> ( Model m, Intent )
-withIntent new =
+withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent )
+withIntent ( new, cmd ) =
     ( { new | isInitialized = Initialized, hasChanged = NotChanged }
+    , cmd
     , Intent
         { listenTo =
             case new.isInitialized of
@@ -257,7 +260,8 @@ hasChanged (Intent { changed }) =
 {-| Actions are used as an intermediate algebra from pointer events to actual changes to the model.
 -}
 type Action marker
-    = Blur Int
+    = Focus String
+    | Blur Int
     | Hint Int Int
     | Hover Int
     | MouseDown Int
@@ -270,7 +274,7 @@ type Action marker
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Msg marker -> Model marker -> ( Model marker, Intent )
+update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
 update msg model =
     withIntent <|
         case msg of
@@ -282,17 +286,19 @@ update msg model =
                 keyboardEventToActions keyboardMsg model
                     |> performActions model
 
-            NoOp ->
-                model
+            Focused _ ->
+                ( model, Cmd.none )
 
 
 keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
 keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
+            -- TODO: find the id of the element to the left, if there is one, and Focus it
             []
 
         MoveRight index ->
+            -- TODO: find the id of the element to the right, if there is one, and Focus it
             []
 
         Space index ->
@@ -375,51 +381,61 @@ pointerEventToActions msg model =
 
 {-| We fold over actions using (Model marker) as the accumulator.
 -}
-performActions : Model marker -> List (Action marker) -> Model marker
+performActions : Model marker -> List (Action marker) -> ( Model marker, Cmd (Msg m) )
 performActions model actions =
-    List.foldl performAction model actions
+    List.foldl performAction ( model, [] ) actions
+        |> Tuple.mapSecond Cmd.batch
 
 
 {-| Performs actual changes to the model, or emit a command.
 -}
-performAction : Action marker -> Model marker -> Model marker
-performAction action model =
+performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
+performAction action ( model, cmds ) =
     case action of
+        Focus id ->
+            ( model, Task.attempt Focused (Dom.focus id) :: cmds )
+
         Blur index ->
-            { model | highlightables = Internal.blurAt index model.highlightables }
+            ( { model | highlightables = Internal.blurAt index model.highlightables }, cmds )
 
         Hover index ->
-            { model | highlightables = Internal.hoverAt index model.highlightables }
+            ( { model | highlightables = Internal.hoverAt index model.highlightables }, cmds )
 
         Hint start end ->
-            { model | highlightables = Internal.hintBetween start end model.highlightables }
+            ( { model | highlightables = Internal.hintBetween start end model.highlightables }, cmds )
 
         Save marker ->
-            { model
+            ( { model
                 | highlightables = Internal.saveHinted marker model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         Toggle index marker ->
-            { model
+            ( { model
                 | highlightables = Internal.toggleHinted index marker model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         Remove ->
-            { model
+            ( { model
                 | highlightables = Internal.removeHinted model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         MouseDown index ->
-            { model | mouseDownIndex = Just index }
+            ( { model | mouseDownIndex = Just index }, cmds )
 
         MouseOver index ->
-            { model | mouseOverIndex = Just index }
+            ( { model | mouseOverIndex = Just index }, cmds )
 
         MouseUp ->
-            { model | mouseDownIndex = Nothing }
+            ( { model | mouseDownIndex = Nothing }, cmds )
 
 
 {-| -}
