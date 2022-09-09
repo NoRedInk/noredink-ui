@@ -89,7 +89,7 @@ import Task
 type alias Model marker =
     { -- Used to identify a highlighter. This is necessary when there are
       -- multiple highlighters on the same page because we add listeners
-      -- in javascript (see ./highlighter.js).
+      -- in javascript (see ./highlighter.js) and because we move focus by id for keyboard users.
       id : String
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
@@ -295,14 +295,14 @@ keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
             if index /= 0 then
-                [ Focus (highlightableId (index - 1)) ]
+                [ Focus (highlightableId model.id (index - 1)) ]
 
             else
                 []
 
         MoveRight index ->
             if index /= (List.length model.highlightables - 1) then
-                [ Focus (highlightableId (index + 1)) ]
+                [ Focus (highlightableId model.id (index + 1)) ]
 
             else
                 []
@@ -457,13 +457,13 @@ removeHighlights =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ (viewHighlightable config.marker) config
+    view_ (viewHighlightable config.id config.marker) config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_ viewStaticHighlightable config
+    view_ (viewStaticHighlightable config.id) config
 
 
 view_ :
@@ -521,11 +521,12 @@ groupContainer viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
-viewHighlightable : Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
-viewHighlightable marker highlightable =
+viewHighlightable : String -> Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
+viewHighlightable highlighterId marker highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment True
+                highlighterId
                 [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
                 , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
                 , on "mouseup" (Pointer <| Up Nothing)
@@ -543,6 +544,7 @@ viewHighlightable marker highlightable =
 
         Highlightable.Static ->
             viewHighlightableSegment False
+                highlighterId
                 -- Static highlightables need listeners as well.
                 -- because otherwise we miss mouseup events
                 [ on "mouseup" (Pointer <| Up Nothing)
@@ -558,13 +560,13 @@ viewHighlightable marker highlightable =
                 highlightable
 
 
-viewStaticHighlightable : Highlightable marker -> Html msg
-viewStaticHighlightable =
-    viewHighlightableSegment False [] Nothing
+viewStaticHighlightable : String -> Highlightable marker -> Html msg
+viewStaticHighlightable highlighterId =
+    viewHighlightableSegment False highlighterId [] Nothing
 
 
-viewHighlightableSegment : Bool -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
-viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
+viewHighlightableSegment : Bool -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment isInteractive highlighterId eventListeners maybeTool highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -592,7 +594,7 @@ viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , Html.Styled.Attributes.id (highlightableId highlightable.groupIndex)
+               , Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
                , Key.tabbable (highlightable.groupIndex == 0)
@@ -601,9 +603,9 @@ viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
         [ Html.text highlightable.text ]
 
 
-highlightableId : Int -> String
-highlightableId groupIndex =
-    "highlightable-" ++ String.fromInt groupIndex
+highlightableId : String -> Int -> String
+highlightableId highlighterId groupIndex =
+    "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt groupIndex
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
