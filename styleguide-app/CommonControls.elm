@@ -2,8 +2,10 @@ module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss, css_
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
+    , color
     , content
     , httpError
+    , romeoAndJulietQuotation
     , disabledListItem, premiumDisplay
     )
 
@@ -12,18 +14,21 @@ module CommonControls exposing
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss, css_
 @docs choice
 @docs icon, iconNotCheckedByDefault, uiIcon
+@docs color
 
 
 ### Content
 
 @docs content
 @docs httpError
+@docs romeoAndJulietQuotation
 
 -}
 
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Examples.Colors
 import Html.Styled as Html exposing (Html)
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -31,6 +36,11 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
+
+
+color : Control ( String, Css.Color )
+color =
+    choice "Colors" Examples.Colors.all
 
 
 premiumDisplay : Control ( String, PremiumDisplay )

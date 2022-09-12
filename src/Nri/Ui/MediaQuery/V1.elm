@@ -1,5 +1,6 @@
 module Nri.Ui.MediaQuery.V1 exposing
     ( anyMotion, prefersReducedMotion
+    , highContrastMode
     , mobile, notMobile
     , mobileBreakpoint
     , quizEngineMobile
@@ -22,6 +23,7 @@ module Nri.Ui.MediaQuery.V1 exposing
             ]
 
 @docs anyMotion, prefersReducedMotion
+@docs highContrastMode
 
 @docs mobile, notMobile
 @docs mobileBreakpoint
@@ -48,6 +50,12 @@ anyMotion =
 prefersReducedMotion : List Style -> Style
 prefersReducedMotion =
     withMediaQuery [ "(prefers-reduced-motion)" ]
+
+
+{-| -}
+highContrastMode : List Style -> Style
+highContrastMode =
+    withMediaQuery [ "(forced-colors: active)" ]
 
 
 {-| Styles using the `mobileBreakpoint` value as the maxWidth.

@@ -34,7 +34,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Icons ]
+    , categories = [ Animations, Icons ]
     , keyboardSupport = []
     , state = init
     , update = update

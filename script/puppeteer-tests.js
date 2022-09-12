@@ -150,6 +150,8 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
+    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove this skipped rule
+    Highlighter: ["aria-roledescription"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],

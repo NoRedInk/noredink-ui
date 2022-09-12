@@ -878,7 +878,21 @@ viewTooltip tooltipId config =
                 ++ config.attributes
                 ++ [ Attributes.id tooltipId ]
             )
-            config.content
+            (config.content
+                ++ [ Html.div
+                        [ Attributes.css
+                            [ Css.position Css.absolute
+                            , Css.Media.withMedia [ MediaQuery.notMobile ]
+                                [ Css.batch (hoverAreaForDirection config.direction)
+                                ]
+                            , Css.Media.withMedia [ MediaQuery.mobile ]
+                                [ Css.batch (hoverAreaForDirection config.mobileDirection)
+                                ]
+                            ]
+                        ]
+                        []
+                   ]
+            )
         ]
 
 
@@ -1027,6 +1041,58 @@ tailForDirection direction =
 
         OnLeft ->
             rightTail
+
+
+hoverAreaForDirection : Direction -> List Style
+hoverAreaForDirection direction =
+    case direction of
+        OnTop ->
+            bottomHoverArea
+
+        OnBottom ->
+            topHoverArea
+
+        OnLeft ->
+            rightHoverArea
+
+        OnRight ->
+            leftHoverArea
+
+
+topHoverArea : List Style
+topHoverArea =
+    [ Css.bottom (Css.pct 100)
+    , Css.left Css.zero
+    , Css.right Css.zero
+    , Css.height (Css.px (tailSize * 2))
+    ]
+
+
+bottomHoverArea : List Style
+bottomHoverArea =
+    [ Css.top (Css.pct 100)
+    , Css.left Css.zero
+    , Css.right Css.zero
+    , Css.height (Css.px (tailSize * 2))
+    ]
+
+
+leftHoverArea : List Style
+leftHoverArea =
+    [ Css.right (Css.pct 100)
+    , Css.top Css.zero
+    , Css.bottom Css.zero
+    , Css.width (Css.px (tailSize * 2))
+    ]
+
+
+rightHoverArea : List Style
+rightHoverArea =
+    [ Css.left (Css.pct 100)
+    , Css.top Css.zero
+    , Css.bottom Css.zero
+    , Css.width (Css.px (tailSize * 2))
+    ]
 
 
 bottomTail : Style

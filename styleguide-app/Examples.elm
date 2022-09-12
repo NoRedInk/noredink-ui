@@ -2,6 +2,7 @@ module Examples exposing (Msg, State, all)
 
 import Example exposing (Example)
 import Examples.Accordion as Accordion
+import Examples.AnimatedIcon as AnimatedIcon
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
 import Examples.BreadCrumbs as BreadCrumbs
@@ -17,6 +18,7 @@ import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
+import Examples.Highlighter as Highlighter
 import Examples.Layout as Layout
 import Examples.Loading as Loading
 import Examples.Logo as Logo
@@ -27,6 +29,7 @@ import Examples.Page as Page
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.RadioButton as RadioButton
+import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Shadows as Shadows
@@ -59,6 +62,25 @@ all =
             (\msg ->
                 case msg of
                     AccordionState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , AnimatedIcon.example
+        |> Example.wrapMsg AnimatedIconMsg
+            (\msg ->
+                case msg of
+                    AnimatedIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState AnimatedIconState
+            (\msg ->
+                case msg of
+                    AnimatedIconState childState ->
                         Just childState
 
                     _ ->
@@ -349,6 +371,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Highlighter.example
+        |> Example.wrapMsg HighlighterMsg
+            (\msg ->
+                case msg of
+                    HighlighterMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState HighlighterState
+            (\msg ->
+                case msg of
+                    HighlighterState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Layout.example
         |> Example.wrapMsg LayoutMsg
             (\msg ->
@@ -534,6 +575,25 @@ all =
             (\msg ->
                 case msg of
                     RadioButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , RingGauge.example
+        |> Example.wrapMsg RingGaugeMsg
+            (\msg ->
+                case msg of
+                    RingGaugeMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState RingGaugeState
+            (\msg ->
+                case msg of
+                    RingGaugeState childState ->
                         Just childState
 
                     _ ->
@@ -810,6 +870,7 @@ all =
 
 type State
     = AccordionState Accordion.State
+    | AnimatedIconState AnimatedIcon.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
     | BreadCrumbsState BreadCrumbs.State
@@ -825,6 +886,7 @@ type State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeadingState Heading.State
+    | HighlighterState Highlighter.State
     | LayoutState Layout.State
     | LoadingState Loading.State
     | LogoState Logo.State
@@ -835,6 +897,7 @@ type State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
     | RadioButtonState RadioButton.State
+    | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
     | ShadowsState Shadows.State
@@ -853,6 +916,7 @@ type State
 
 type Msg
     = AccordionMsg Accordion.Msg
+    | AnimatedIconMsg AnimatedIcon.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
@@ -868,6 +932,7 @@ type Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
+    | HighlighterMsg Highlighter.Msg
     | LayoutMsg Layout.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
@@ -878,6 +943,7 @@ type Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
     | RadioButtonMsg RadioButton.Msg
+    | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
     | ShadowsMsg Shadows.Msg
