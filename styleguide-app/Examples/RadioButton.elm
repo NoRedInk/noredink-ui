@@ -292,16 +292,6 @@ controlAttributes =
                 ]
             )
         |> ControlExtra.optionalListItem "disclosure" controlDisclosure
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map
-                (\inError ->
-                    ( "RadioButton.errorIf " ++ Debug.toString inError
-                    , RadioButton.errorIf inError
-                    )
-                )
-             <|
-                Control.bool True
-            )
         |> ControlExtra.optionalListItem "errorMessage"
             (Control.map
                 (\message ->

@@ -375,8 +375,6 @@ controlAttributes =
             )
         |> ControlExtra.optionalBoolListItem "hiddenLabel"
             ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
-        |> ControlExtra.optionalBoolListItem "errorIf"
-            ( "TextInput.errorIf True", TextInput.errorIf True )
         |> ControlExtra.optionalListItem "errorMessage"
             (Control.map
                 (\str ->
