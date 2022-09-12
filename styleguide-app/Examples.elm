@@ -34,6 +34,7 @@ import Examples.Select as Select
 import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
+import Examples.Spacing as Spacing
 import Examples.Sprite as Sprite
 import Examples.Switch as Switch
 import Examples.Table as Table
@@ -674,6 +675,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Spacing.example
+        |> Example.wrapMsg SpacingMsg
+            (\msg ->
+                case msg of
+                    SpacingMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState SpacingState
+            (\msg ->
+                case msg of
+                    SpacingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Sprite.example
         |> Example.wrapMsg SpriteMsg
             (\msg ->
@@ -882,6 +902,7 @@ type State
     | ShadowsState Shadows.State
     | SideNavState SideNav.State
     | SortableTableState SortableTable.State
+    | SpacingState Spacing.State
     | SpriteState Sprite.State
     | SwitchState Switch.State
     | TableState Table.State
@@ -927,6 +948,7 @@ type Msg
     | ShadowsMsg Shadows.Msg
     | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
+    | SpacingMsg Spacing.Msg
     | SpriteMsg Sprite.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg

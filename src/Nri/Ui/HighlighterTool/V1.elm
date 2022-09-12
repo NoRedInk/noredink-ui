@@ -12,6 +12,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
 import Css
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
 {-| Tool that can be used on a highlighter
@@ -43,6 +44,7 @@ type alias MarkerModel kind =
     , highlightClass : List Css.Style
     , hoverHighlightClass : List Css.Style
     , kind : kind
+    , name : Maybe String
     }
 
 
@@ -52,44 +54,35 @@ buildMarker :
     , hoverColor : Css.Color
     , hoverHighlightColor : Css.Color
     , kind : kind
-    , rounded : Bool
+    , name : Maybe String
     }
     -> MarkerModel kind
-buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, rounded } =
+buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     { hoverClass = hoverStyles hoverColor
     , hintClass = hoverStyles hoverColor
-    , startGroupClass = startGroupStyles rounded
-    , endGroupClass = endGroupStyles rounded
+    , startGroupClass = startGroupStyles
+    , endGroupClass = endGroupStyles
     , highlightClass = highlightStyles highlightColor
     , hoverHighlightClass = highlightStyles hoverHighlightColor
     , kind = kind
+    , name = name
     }
 
 
-startGroupStyles : Bool -> List Css.Style
-startGroupStyles rounded =
+startGroupStyles : List Css.Style
+startGroupStyles =
     Css.paddingLeft (Css.px 4)
-        :: (if rounded then
-                [ Css.borderTopLeftRadius (Css.px 4)
-                , Css.borderBottomLeftRadius (Css.px 4)
-                ]
-
-            else
-                []
-           )
+        :: [ Css.borderTopLeftRadius (Css.px 4)
+           , Css.borderBottomLeftRadius (Css.px 4)
+           ]
 
 
-endGroupStyles : Bool -> List Css.Style
-endGroupStyles rounded =
+endGroupStyles : List Css.Style
+endGroupStyles =
     Css.paddingRight (Css.px 4)
-        :: (if rounded then
-                [ Css.borderTopRightRadius (Css.px 4)
-                , Css.borderBottomRightRadius (Css.px 4)
-                ]
-
-            else
-                []
-           )
+        :: [ Css.borderTopRightRadius (Css.px 4)
+           , Css.borderBottomRightRadius (Css.px 4)
+           ]
 
 
 highlightStyles : Css.Color -> List Css.Style
@@ -98,6 +91,7 @@ highlightStyles color =
         sharedStyles
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
+        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
         ]
 
 
@@ -113,6 +107,10 @@ hoverStyles color =
     List.append
         sharedStyles
         [ Css.important (Css.backgroundColor color)
+        , MediaQuery.highContrastMode
+            [ Css.property "background-color" "Highlight" |> Css.important
+            , Css.property "color" "HighlightText"
+            ]
 
         -- The Highlighter applies both these styles and the startGroup and
         -- endGroup styles. Here we disable the left and the right padding

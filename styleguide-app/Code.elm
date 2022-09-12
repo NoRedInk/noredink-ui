@@ -12,6 +12,7 @@ module Code exposing
     , anonymousFunction, always
     , caseExpression
     , browserElement, unstyledView
+    , fromModule
     )
 
 {-|
@@ -29,6 +30,8 @@ module Code exposing
 @docs anonymousFunction, always
 @docs caseExpression
 @docs browserElement, unstyledView
+@docs always
+@docs fromModule
 
 -}
 
@@ -202,3 +205,9 @@ browserElement { init, view, update, subscriptions } =
 unstyledView : String -> String
 unstyledView view =
     pipelineMultiline [ view, "toUnstyled" ] 1
+
+
+{-| -}
+fromModule : String -> String -> String
+fromModule moduleName name =
+    moduleName ++ "." ++ name
