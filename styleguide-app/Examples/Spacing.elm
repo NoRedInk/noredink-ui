@@ -1,4 +1,4 @@
-module Examples.Layout exposing (example, State, Msg)
+module Examples.Spacing exposing (example, State, Msg)
 
 {-|
 
@@ -18,12 +18,12 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Layout.V1 as Layout
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
 moduleName =
-    "Layout"
+    "Spacing"
 
 
 version : Int
@@ -60,16 +60,16 @@ view ellieLinkConfig state =
                     , settings.bottomContainerStyle
                     , if settings.childVerticalSpace then
                         Just
-                            ( "Css.property \"row-gap\" (.value Layout.verticalSpacerPx)"
-                            , Css.property "row-gap" (.value Layout.verticalSpacerPx)
+                            ( "Css.property \"row-gap\" (.value Spacing.verticalSpacerPx)"
+                            , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
                             )
 
                       else
                         Nothing
                     , if settings.childHorizontalSpace then
                         Just
-                            ( "Css.property \"column-gap\" (.value Layout.horizontalSpacerPx"
-                            , Css.property "column-gap" (.value Layout.horizontalSpacerPx)
+                            ( "Css.property \"column-gap\" (.value Spacing.horizontalSpacerPx"
+                            , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
                             )
 
                       else
@@ -185,19 +185,19 @@ controlSettings =
             (Control.maybe True
                 (Control.value
                     ( Code.fromModule moduleName "pageTopWhitespace"
-                    , Layout.pageTopWhitespace
+                    , Spacing.pageTopWhitespace
                     )
                 )
             )
         |> Control.field "Horizontal container styling"
             (Control.maybe True
-                ([ ( "centeredContentWithSidePadding", Layout.centeredContentWithSidePadding )
+                ([ ( "centeredContentWithSidePadding", Spacing.centeredContentWithSidePadding )
                     |> asChoice
-                 , ( "centeredContent", Layout.centeredContent )
+                 , ( "centeredContent", Spacing.centeredContent )
                     |> asChoice
-                 , ( "centeredQuizEngineContentWithSidePadding", Layout.centeredQuizEngineContentWithSidePadding )
+                 , ( "centeredQuizEngineContentWithSidePadding", Spacing.centeredQuizEngineContentWithSidePadding )
                     |> asChoice
-                 , ( "quizEngineCenteredContent", Layout.quizEngineCenteredContent )
+                 , ( "quizEngineCenteredContent", Spacing.quizEngineCenteredContent )
                     |> asChoice
                  , ( "centeredContentWithSidePaddingAndCustomWidth"
                    , Control.map
@@ -206,7 +206,7 @@ controlSettings =
                                 ++ " (Css.px "
                                 ++ String.fromFloat value
                                 ++ ")"
-                            , Layout.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
+                            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
                             )
                         )
                         (ControlExtra.float 400)
@@ -218,7 +218,7 @@ controlSettings =
                                 ++ " (Css.px "
                                 ++ String.fromFloat value
                                 ++ ")"
-                            , Layout.centeredContentWithCustomWidth (Css.px value)
+                            , Spacing.centeredContentWithCustomWidth (Css.px value)
                             )
                         )
                         (ControlExtra.float 400)
@@ -231,7 +231,7 @@ controlSettings =
             (Control.maybe True
                 (Control.value
                     ( Code.fromModule moduleName "pageBottomWhitespace"
-                    , Layout.pageBottomWhitespace
+                    , Spacing.pageBottomWhitespace
                     )
                 )
             )

@@ -19,7 +19,6 @@ import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
 import Examples.Highlighter as Highlighter
-import Examples.Layout as Layout
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
@@ -35,6 +34,7 @@ import Examples.Select as Select
 import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
+import Examples.Spacing as Spacing
 import Examples.Sprite as Sprite
 import Examples.Switch as Switch
 import Examples.Table as Table
@@ -390,25 +390,6 @@ all =
                     _ ->
                         Nothing
             )
-    , Layout.example
-        |> Example.wrapMsg LayoutMsg
-            (\msg ->
-                case msg of
-                    LayoutMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState LayoutState
-            (\msg ->
-                case msg of
-                    LayoutState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , Loading.example
         |> Example.wrapMsg LoadingMsg
             (\msg ->
@@ -694,6 +675,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Spacing.example
+        |> Example.wrapMsg SpacingMsg
+            (\msg ->
+                case msg of
+                    SpacingMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState SpacingState
+            (\msg ->
+                case msg of
+                    SpacingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Sprite.example
         |> Example.wrapMsg SpriteMsg
             (\msg ->
@@ -887,7 +887,6 @@ type State
     | FontsState Fonts.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
-    | LayoutState Layout.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MenuState Menu.State
@@ -903,6 +902,7 @@ type State
     | ShadowsState Shadows.State
     | SideNavState SideNav.State
     | SortableTableState SortableTable.State
+    | SpacingState Spacing.State
     | SpriteState Sprite.State
     | SwitchState Switch.State
     | TableState Table.State
@@ -933,7 +933,6 @@ type Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
-    | LayoutMsg Layout.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
@@ -949,6 +948,7 @@ type Msg
     | ShadowsMsg Shadows.Msg
     | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
+    | SpacingMsg Spacing.Msg
     | SpriteMsg Sprite.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg

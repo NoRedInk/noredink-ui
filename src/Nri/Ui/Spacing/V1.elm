@@ -1,4 +1,4 @@
-module Nri.Ui.Layout.V1 exposing
+module Nri.Ui.Spacing.V1 exposing
     ( centeredContentWithSidePadding, centeredContent
     , centeredQuizEngineContentWithSidePadding, quizEngineCenteredContent
     , centeredContentWithSidePaddingAndCustomWidth, centeredContentWithCustomWidth

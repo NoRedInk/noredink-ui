@@ -17,8 +17,8 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.Layout.V1 as Layout
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
@@ -51,7 +51,7 @@ view config =
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
-            , Layout.pageTopWhitespace
+            , Spacing.pageTopWhitespace
             ]
         ]
         [ viewSection "Settings"

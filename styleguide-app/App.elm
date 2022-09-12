@@ -18,10 +18,10 @@ import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Layout.V1 as Layout
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
@@ -320,8 +320,8 @@ withSideNav model content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , Layout.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
-            , Layout.pageBottomWhitespace
+            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
+            , Spacing.pageBottomWhitespace
             ]
         ]
         [ navigation model
@@ -353,7 +353,7 @@ viewPreviews containerId navConfig examples =
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
                 , Css.property "gap" "10px"
-                , Layout.pageTopWhitespace
+                , Spacing.pageTopWhitespace
                 ]
             ]
 
