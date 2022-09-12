@@ -13,6 +13,7 @@ module Examples.Accordion exposing
 import Accessibility.Styled as Html exposing (Html)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (..)
 import Css.Global
@@ -109,6 +110,7 @@ view ellieLinkConfig model =
             [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
             , "import Nri.Ui.Svg.V1 as Svg"
             ]
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
                 [ { sectionName = "Partial example"

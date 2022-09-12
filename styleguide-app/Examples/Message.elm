@@ -2,6 +2,7 @@ module Examples.Message exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -159,6 +160,7 @@ example =
                 , settings = state.control
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let

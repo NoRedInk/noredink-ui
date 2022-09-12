@@ -7,6 +7,7 @@ module Examples.Heading exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -64,6 +65,7 @@ example =
                 , settings = state.control
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let

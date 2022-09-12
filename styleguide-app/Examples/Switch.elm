@@ -59,6 +59,7 @@ example =
                 , settings = state.settings
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \{ label, attributes } ->
                         [ { sectionName = "Example"

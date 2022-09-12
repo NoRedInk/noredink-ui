@@ -8,6 +8,7 @@ module Examples.Select exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -64,6 +65,7 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html String"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"

@@ -191,7 +191,8 @@ example =
                 , update = UpdateSettings
                 , settings = state.settings
                 , mainType = Just "RootHtml.Html Msg"
-                , extraCode = [ "type Msg = ModalMsg Modal.Msg | Focus String" ]
+                , extraCode = [ "\n\ntype Msg = ModalMsg Modal.Msg | Focus String" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         let

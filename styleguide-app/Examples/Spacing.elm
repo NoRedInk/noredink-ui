@@ -84,6 +84,7 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControl
         , settings = state.settings
+        , renderExample = Code.unstyledView
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
         , toExampleCode =

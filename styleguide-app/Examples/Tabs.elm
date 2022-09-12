@@ -116,6 +116,7 @@ example =
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
                 , extraCode = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         let

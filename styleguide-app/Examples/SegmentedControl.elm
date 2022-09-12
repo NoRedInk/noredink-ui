@@ -72,6 +72,7 @@ example =
                 , settings = state.optionsControl
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"

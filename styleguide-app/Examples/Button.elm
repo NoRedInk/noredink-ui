@@ -211,6 +211,7 @@ viewButtonExamples ellieLinkConfig state =
         , settings = state.debugControlsState
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let
@@ -218,9 +219,9 @@ viewButtonExamples ellieLinkConfig state =
                         moduleName
                             ++ "."
                             ++ fName
-                            ++ " \""
-                            ++ label
-                            ++ "\"\t"
+                            ++ " "
+                            ++ Code.string label
+                            ++ " "
                             ++ Code.list (List.map Tuple.first attributes)
                 in
                 [ { sectionName = "Button"
