@@ -352,7 +352,8 @@ viewPreviews containerId navConfig examples =
             , css
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
-                , Css.property "gap" "10px"
+                , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
+                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
                 , Spacing.pageTopWhitespace
                 ]
             ]
