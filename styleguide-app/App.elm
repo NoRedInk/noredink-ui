@@ -21,6 +21,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
@@ -56,7 +57,7 @@ init () url key =
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
-      , isSideNavOpen = True
+      , isSideNavOpen = False
       , openTooltip = Nothing
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
@@ -239,6 +240,7 @@ view model =
                 [ view_
                 , Html.map never Sprite.attach
                 , Css.Global.global (InputMethod.styles model.inputMethod)
+                , Css.Global.global [ Css.Global.everything [ Css.boxSizing Css.borderBox ] ]
                 ]
     in
     case model.route of
@@ -318,23 +320,17 @@ withSideNav model content =
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , maxWidth (Css.px 1400)
-            , margin auto
+            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
+            , Spacing.pageBottomWhitespace
             ]
         ]
         [ navigation model
         , Html.main_
-            [ css
-                [ flexGrow (int 1)
-                , margin2 (px 40) zero
-                , Css.minHeight (Css.vh 100)
-                ]
+            [ css [ flexGrow (int 1) ]
             , id "maincontent"
             , Key.tabbable False
             ]
-            [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
-                [ Routes.viewBreadCrumbs model.route
-                ]
+            [ Routes.viewBreadCrumbs model.route
             , content
             ]
         ]
@@ -356,7 +352,9 @@ viewPreviews containerId navConfig examples =
             , css
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
-                , Css.property "gap" "10px"
+                , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
+                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
+                , Spacing.pageTopWhitespace
                 ]
             ]
 
@@ -394,7 +392,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         }
         [ SideNav.navNotMobileCss
             [ VendorPrefixed.value "position" "sticky"
-            , top (px 55)
+            , top (px 8)
             ]
         , SideNav.collapsible
             { isOpen = isSideNavOpen

@@ -51,8 +51,7 @@ example =
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
-            [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
-            , ControlView.view
+            [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
@@ -84,6 +83,7 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , Heading.h3 [ Heading.plaintext "Paragraph styles" ]
             , viewExamples
                 [ ( "mediumBody", Text.mediumBody )

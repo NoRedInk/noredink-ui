@@ -9,6 +9,7 @@ module Code exposing
     , newlineWithIndent
     , withParens
     , always
+    , fromModule
     )
 
 {-|
@@ -23,6 +24,7 @@ module Code exposing
 @docs newlineWithIndent
 @docs withParens
 @docs always
+@docs fromModule
 
 -}
 
@@ -146,3 +148,9 @@ withParens val =
 always : String -> String
 always val =
     "\\_ -> " ++ val
+
+
+{-| -}
+fromModule : String -> String -> String
+fromModule moduleName name =
+    moduleName ++ "." ++ name
