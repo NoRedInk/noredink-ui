@@ -120,10 +120,6 @@ example =
                   , about = "When changing routes in a SPA, the HTML title of the page should be updated to match the new route."
                   , result = BreadCrumbs.toPageTitle
                   }
-                , { name = "toPageTitleWithSecondaryBreadCrumbs"
-                  , about = "(Tessa doesn't know why this helper exists/why it includes less context than `toPageTitle` does)"
-                  , result = BreadCrumbs.toPageTitleWithSecondaryBreadCrumbs
-                  }
                 ]
             ]
     }

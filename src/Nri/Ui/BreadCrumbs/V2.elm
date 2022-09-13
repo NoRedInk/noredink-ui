@@ -2,8 +2,7 @@ module Nri.Ui.BreadCrumbs.V2 exposing
     ( BreadCrumbs, init, after
     , BreadCrumbAttribute, icon, iconCircledStyle
     , view
-    , headerId
-    , toPageTitle, toPageTitleWithSecondaryBreadCrumbs
+    , headerId, toPageTitle
     )
 
 {-|
@@ -43,14 +42,9 @@ Narrow Viewport (with Circled IconStyle):
 @docs view
 
 
-## Managing focus
+## Managing focus and page title
 
-@docs headerId
-
-
-## Managing page title
-
-@docs toPageTitle, toPageTitleWithSecondaryBreadCrumbs
+@docs headerId, toPageTitle
 
 -}
 
@@ -130,7 +124,7 @@ type alias BreadCrumbAttributes route =
 
 {-| -}
 type BreadCrumbs route
-    = BreadCrumbs (List (BreadCrumb route))
+    = BreadCrumbs (List (BreadCrumb route)) (List (BreadCrumb route))
 
 
 {-| -}
@@ -139,7 +133,7 @@ init :
     -> List (BreadCrumbAttribute route)
     -> BreadCrumbs route
 init required optional =
-    BreadCrumbs [ create required optional ]
+    BreadCrumbs [ create required optional ] []
 
 
 {-| -}
@@ -148,14 +142,20 @@ after :
     -> { id : String, text : String, route : route }
     -> List (BreadCrumbAttribute route)
     -> BreadCrumbs route
-after (BreadCrumbs previous) required optional =
-    BreadCrumbs (create required optional :: previous)
+after (BreadCrumbs previous previousSecondary) required optional =
+    case previousSecondary of
+        [] ->
+            BreadCrumbs (create required optional :: previous) previousSecondary
+
+        _ ->
+            BreadCrumbs previous (create required optional :: previousSecondary)
 
 
-{-| -}
+{-| TODO: this function should take secondary breadcrumbs into consideration as well.
+-}
 headerId : BreadCrumbs route -> String
-headerId (BreadCrumbs list) =
-    case list of
+headerId (BreadCrumbs primary secondary) =
+    case primary of
         (BreadCrumb { id }) :: _ ->
             id
 
@@ -172,21 +172,17 @@ type IconStyle
     | Default
 
 
-{-| Generate an HTML page title using the breadcrumbs,
-in the form "Sub-Category | Category | NoRedInk" for breadCrumbs like:
+{-| TODO: implement <https://noredink.slack.com/archives/C71TD8MUY/p1662584306753169?thread_ts=1659978195.802739&cid=C71TD8MUY>
 
-    Category > Sub - Category
+Generate an HTML page title using the breadcrumbs, in the form "SubCategory | Category | NoRedInk" for breadCrumbs like:
+
+    Category > SubCategory
 
 -}
 toPageTitle : BreadCrumbs a -> String
-toPageTitle (BreadCrumbs breadcrumbs) =
-    String.join " | " (List.map pageTitle breadcrumbs ++ [ "NoRedInk" ])
-
-
-{-| -}
-toPageTitleWithSecondaryBreadCrumbs : BreadCrumbs a -> String
-toPageTitleWithSecondaryBreadCrumbs (BreadCrumbs breadcrumbs) =
-    (List.take 1 breadcrumbs |> List.map pageTitle)
+toPageTitle (BreadCrumbs primary secondary) =
+    List.map pageTitle secondary
+        ++ List.map pageTitle primary
         ++ [ "NoRedInk" ]
         |> String.join " | "
 
@@ -208,7 +204,7 @@ view :
     }
     -> BreadCrumbs route
     -> Html msg
-view config (BreadCrumbs breadCrumbs) =
+view config (BreadCrumbs breadCrumbs _) =
     styled nav
         [ alignItems center
         , displayFlex
