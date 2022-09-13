@@ -215,29 +215,62 @@ init =
             controlSettings
     in
     { settings = settings
-    , highlighter =
-        initHighlighter (Control.currentValue settings)
-            (Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation)
+    , highlighter = initHighlighter (Control.currentValue settings) []
     }
 
 
 initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
-initHighlighter settings highlightables =
+initHighlighter settings previousHighlightables =
+    let
+        highlightables =
+            if settings.splitOnSentences then
+                let
+                    segments =
+                        String.split "." CommonControls.romeoAndJulietQuotation
+
+                    segmentCount =
+                        List.length segments
+                in
+                List.indexedMap
+                    (\index sentence ->
+                        Highlightable.init Highlightable.Interactive
+                            Nothing
+                            index
+                            ( []
+                            , if (index + 1) == segmentCount then
+                                sentence
+
+                              else
+                                sentence ++ "."
+                            )
+                    )
+                    segments
+
+            else
+                Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+    in
     Highlighter.init
         { id = "example-romeo-and-juliet"
-        , highlightables = highlightables
+        , highlightables =
+            if List.map .text previousHighlightables == List.map .text highlightables then
+                previousHighlightables
+
+            else
+                highlightables
         , marker = settings.tool
         }
 
 
 type alias Settings =
-    { tool : Tool.Tool ()
+    { splitOnSentences : Bool
+    , tool : Tool.Tool ()
     }
 
 
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
+        |> Control.field "splitOnSentences" (Control.bool False)
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )
