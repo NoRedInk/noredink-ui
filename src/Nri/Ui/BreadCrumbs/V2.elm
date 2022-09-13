@@ -154,19 +154,17 @@ after (BreadCrumbs crumbs) required optional =
             BreadCrumbs { crumbs | secondary = create required optional :: crumbs.secondary }
 
 
-{-| TODO: this function should take secondary breadcrumbs into consideration as well.
--}
-headerId : BreadCrumbs route -> String
+{-| -}
+headerId : BreadCrumbs route -> Maybe String
 headerId (BreadCrumbs { primary, secondary }) =
-    case primary of
-        (BreadCrumb { id }) :: _ ->
-            id
-
-        _ ->
-            -- It should be impossible to construct a BreadCrumbs without
-            -- any elements.
-            --
-            ""
+    let
+        extract (BreadCrumb crumb) =
+            crumb
+    in
+    List.map extract secondary
+        ++ List.map extract primary
+        |> List.head
+        |> Maybe.map .id
 
 
 {-| -}

@@ -116,7 +116,7 @@ viewBreadCrumbs currentRoute =
 
 headerId : Route state msg -> Maybe String
 headerId route_ =
-    Maybe.map BreadCrumbs.headerId (breadCrumbs route_)
+    Maybe.andThen BreadCrumbs.headerId (breadCrumbs route_)
 
 
 breadCrumbs : Route state msg -> Maybe (BreadCrumbs (Route state msg))
