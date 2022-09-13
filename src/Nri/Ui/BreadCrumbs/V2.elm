@@ -1,7 +1,7 @@
 module Nri.Ui.BreadCrumbs.V2 exposing
     ( BreadCrumbs, init, after
     , BreadCrumbAttribute, icon, iconCircledStyle
-    , view
+    , view, viewSecondary
     , headerId, toPageTitle
     )
 
@@ -39,7 +39,7 @@ Narrow Viewport (with Circled IconStyle):
 
 ## Viewing breadcrumbs
 
-@docs view
+@docs view, viewSecondary
 
 
 ## Managing focus and page title
@@ -213,6 +213,28 @@ view config (BreadCrumbs { primary }) =
         ]
         [ Aria.label config.label ]
         (viewBreadCrumbs config (List.reverse primary))
+
+
+{-| Usually, the label value will be the string "secondary breadcrumbs".
+
+It's configurable so that if more than one set of BreadCrumbs ever appear on the page, the aria-label for the nav can still be unique.
+
+-}
+viewSecondary :
+    { aTagAttributes : route -> List (Attribute msg)
+    , isCurrentRoute : route -> Bool
+    , label : String
+    }
+    -> BreadCrumbs route
+    -> Html msg
+viewSecondary config (BreadCrumbs { secondary }) =
+    styled nav
+        [ alignItems center
+        , displayFlex
+        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
+        ]
+        [ Aria.label config.label ]
+        (viewBreadCrumbs config (List.reverse secondary))
 
 
 viewBreadCrumbs :
