@@ -124,7 +124,10 @@ type alias BreadCrumbAttributes route =
 
 {-| -}
 type BreadCrumbs route
-    = BreadCrumbs (List (BreadCrumb route)) (List (BreadCrumb route))
+    = BreadCrumbs
+        { primary : List (BreadCrumb route)
+        , secondary : List (BreadCrumb route)
+        }
 
 
 {-| -}
@@ -133,7 +136,7 @@ init :
     -> List (BreadCrumbAttribute route)
     -> BreadCrumbs route
 init required optional =
-    BreadCrumbs [ create required optional ] []
+    BreadCrumbs { primary = [ create required optional ], secondary = [] }
 
 
 {-| -}
@@ -142,19 +145,19 @@ after :
     -> { id : String, text : String, route : route }
     -> List (BreadCrumbAttribute route)
     -> BreadCrumbs route
-after (BreadCrumbs previous previousSecondary) required optional =
-    case previousSecondary of
+after (BreadCrumbs crumbs) required optional =
+    case crumbs.secondary of
         [] ->
-            BreadCrumbs (create required optional :: previous) previousSecondary
+            BreadCrumbs { crumbs | primary = create required optional :: crumbs.primary }
 
         _ ->
-            BreadCrumbs previous (create required optional :: previousSecondary)
+            BreadCrumbs { crumbs | secondary = create required optional :: crumbs.secondary }
 
 
 {-| TODO: this function should take secondary breadcrumbs into consideration as well.
 -}
 headerId : BreadCrumbs route -> String
-headerId (BreadCrumbs primary secondary) =
+headerId (BreadCrumbs { primary, secondary }) =
     case primary of
         (BreadCrumb { id }) :: _ ->
             id
@@ -180,7 +183,7 @@ Generate an HTML page title using the breadcrumbs, in the form "SubCategory | Ca
 
 -}
 toPageTitle : BreadCrumbs a -> String
-toPageTitle (BreadCrumbs primary secondary) =
+toPageTitle (BreadCrumbs { primary, secondary }) =
     List.map pageTitle secondary
         ++ List.map pageTitle primary
         ++ [ "NoRedInk" ]
@@ -204,14 +207,14 @@ view :
     }
     -> BreadCrumbs route
     -> Html msg
-view config (BreadCrumbs breadCrumbs _) =
+view config (BreadCrumbs { primary }) =
     styled nav
         [ alignItems center
         , displayFlex
         , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
         ]
         [ Aria.label config.label ]
-        (viewBreadCrumbs config (List.reverse breadCrumbs))
+        (viewBreadCrumbs config (List.reverse primary))
 
 
 viewBreadCrumbs :
