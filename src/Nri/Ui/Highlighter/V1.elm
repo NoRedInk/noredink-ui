@@ -455,7 +455,8 @@ groupContainer viewSegment highlightables =
                           --so we will be able to tell how it will read
                           tabindex 0
                         , css
-                            [ Css.Global.children
+                            [ Css.backgroundColor Css.transparent
+                            , Css.Global.children
                                 [ Css.Global.selector ":first-child"
                                     (MediaQuery.highContrastMode
                                         [ Maybe.map
