@@ -66,7 +66,7 @@ import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
-import Html.Styled.Attributes exposing (attribute, class, css, tabindex)
+import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events
 import Json.Decode
 import List.Extra
@@ -99,6 +99,8 @@ type alias Model marker =
     , mouseOverIndex : Maybe Int
     , isInitialized : Initialized
     , hasChanged : HasChanged
+    , selectionStartIndex : Maybe Int
+    , selectionEndIndex : Maybe Int
     }
 
 
@@ -129,6 +131,8 @@ init config =
     , mouseOverIndex = Nothing
     , isInitialized = NotInitialized
     , hasChanged = NotChanged
+    , selectionStartIndex = Nothing
+    , selectionEndIndex = Nothing
     }
 
 
@@ -201,6 +205,9 @@ type PointerMsg
 type KeyboardMsg
     = MoveLeft Int
     | MoveRight Int
+    | SelectionExpandLeft Int
+    | SelectionExpandRight Int
+    | SelectionApplyTool
     | Space Int
 
 
@@ -270,6 +277,9 @@ type Action marker
     | Remove
     | Save (Tool.MarkerModel marker)
     | Toggle Int (Tool.MarkerModel marker)
+    | StartSelection Int
+    | ExpandSelection Int
+    | ResetSelection
 
 
 {-| Update for highlighter returning additional info about whether there was a change
@@ -294,18 +304,58 @@ keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
 keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
-            if index /= 0 then
+            if index > 0 then
                 [ Focus (highlightableId model.id (index - 1)) ]
 
             else
                 []
 
         MoveRight index ->
-            if index /= (List.length model.highlightables - 1) then
+            if index < (List.length model.highlightables - 1) then
                 [ Focus (highlightableId model.id (index + 1)) ]
 
             else
                 []
+
+        SelectionExpandLeft index ->
+            if index > 0 then
+                Focus (highlightableId model.id (index - 1))
+                    :: (case model.selectionStartIndex of
+                            Just startIndex ->
+                                [ ExpandSelection (index - 1)
+                                , Hint startIndex (index - 1)
+                                ]
+
+                            Nothing ->
+                                [ StartSelection index, ExpandSelection (index - 1), Hint index (index - 1) ]
+                       )
+
+            else
+                []
+
+        SelectionExpandRight index ->
+            if index < (List.length model.highlightables - 1) then
+                Focus (highlightableId model.id (index + 1))
+                    :: (case model.selectionStartIndex of
+                            Just startIndex ->
+                                [ ExpandSelection (index + 1)
+                                , Hint startIndex (index + 1)
+                                ]
+
+                            Nothing ->
+                                [ StartSelection index, ExpandSelection (index + 1), Hint index (index + 1) ]
+                       )
+
+            else
+                []
+
+        SelectionApplyTool ->
+            case model.marker of
+                Tool.Marker marker ->
+                    [ Save marker, ResetSelection ]
+
+                Tool.Eraser _ ->
+                    [ Remove, ResetSelection ]
 
         Space index ->
             case model.marker of
@@ -443,6 +493,15 @@ performAction action ( model, cmds ) =
         MouseUp ->
             ( { model | mouseDownIndex = Nothing }, cmds )
 
+        StartSelection index ->
+            ( { model | selectionStartIndex = Just index }, cmds )
+
+        ExpandSelection index ->
+            ( { model | selectionEndIndex = Just index }, cmds )
+
+        ResetSelection ->
+            ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+
 
 {-| -}
 removeHighlights : List (Highlightable marker) -> List (Highlightable marker)
@@ -492,9 +551,10 @@ groupContainer viewSegment highlightables =
                         [ markedWith.name
                             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
                             |> Maybe.withDefault AttributesExtra.none
-                        , -- Temporarily adding tabindex 0 so that the mark element can be focused,
-                          --so we will be able to tell how it will read
-                          tabindex 0
+
+                        -- Temporarily adding tabindex 0 so that the mark element can be focused,
+                        --so we will be able to tell how it will read
+                        --   tabindex 0
                         , css
                             [ Css.Global.children
                                 [ Css.Global.selector ":first-child"
@@ -537,6 +597,12 @@ viewHighlightable highlighterId marker highlightable =
                     [ Key.space (Keyboard <| Space highlightable.groupIndex)
                     , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
                     , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                    ]
+                , Key.onKeyUpPreventDefault
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool)
                     ]
                 ]
                 (Just marker)
@@ -554,6 +620,12 @@ viewHighlightable highlighterId marker highlightable =
                 , Key.onKeyDownPreventDefault
                     [ Key.right (Keyboard <| MoveRight highlightable.groupIndex)
                     , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                    ]
+                , Key.onKeyUpPreventDefault
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool)
                     ]
                 ]
                 (Just marker)
