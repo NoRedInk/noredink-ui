@@ -275,13 +275,7 @@ controlSettings =
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )
                 , ( "Eraser"
-                  , Tool.Eraser
-                        { hoverClass = [ Css.opacity (Css.num 0.4) ]
-                        , hintClass = [ Css.opacity (Css.num 0.4) ]
-                        , startGroupClass = [ Css.opacity (Css.num 0.4) ]
-                        , endGroupClass = [ Css.opacity (Css.num 0.4) ]
-                        }
-                        |> Control.value
+                  , Control.map Tool.Eraser controlEraser
                   )
                 ]
             )
@@ -290,20 +284,28 @@ controlSettings =
 controlMarker : Control (Tool.MarkerModel ())
 controlMarker =
     Control.record
-        (\a b c d e ->
+        (\a b c d ->
             Tool.buildMarker
                 { highlightColor = a
                 , hoverColor = b
                 , hoverHighlightColor = c
-                , kind = d
-                , name = e
+                , kind = ()
+                , name = d
                 }
         )
         |> Control.field "highlightColor" (backgroundHighlightColors 0)
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
         |> Control.field "hoverHighlightColor" (backgroundHighlightColors 4)
-        |> Control.field "kind" (Control.value ())
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
+
+
+controlEraser : Control Tool.EraserModel
+controlEraser =
+    Control.record Tool.EraserModel
+        |> Control.field "hoverClass" (Control.value [ Css.border3 (Css.px 4) Css.dashed Colors.red ])
+        |> Control.field "hintClass" (Control.value [ Css.border3 (Css.px 4) Css.dotted Colors.orange ])
+        |> Control.field "startGroupClass" (Control.value [ Css.opacity (Css.num 0.4) ])
+        |> Control.field "endGroupClass" (Control.value [ Css.opacity (Css.num 0.4) ])
 
 
 backgroundHighlightColors : Int -> Control Color
