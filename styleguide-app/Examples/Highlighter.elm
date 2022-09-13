@@ -15,6 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
@@ -256,16 +257,20 @@ controlMarker =
                 , name = e
                 }
         )
-        |> Control.field "highlightColor" backgroundHighlightColors
-        |> Control.field "hoverColor" backgroundHighlightColors
-        |> Control.field "hoverHighlightColor" backgroundHighlightColors
+        |> Control.field "highlightColor" (backgroundHighlightColors 0)
+        |> Control.field "hoverColor" (backgroundHighlightColors 2)
+        |> Control.field "hoverHighlightColor" (backgroundHighlightColors 4)
         |> Control.field "kind" (Control.value ())
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 
-backgroundHighlightColors : Control Color
-backgroundHighlightColors =
-    Examples.Colors.backgroundHighlightColors
+backgroundHighlightColors : Int -> Control Color
+backgroundHighlightColors rotateWith =
+    let
+        ( before, after ) =
+            List.Extra.splitAt rotateWith Examples.Colors.backgroundHighlightColors
+    in
+    (after ++ before)
         |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
         |> Control.choice
 
