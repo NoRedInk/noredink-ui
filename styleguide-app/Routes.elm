@@ -5,7 +5,7 @@ import Category
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Util exposing (dashify)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
@@ -129,16 +129,10 @@ breadCrumbs route_ =
             Just (categoryCrumb category_)
 
         Doodad example ->
-            Just
-                (BreadCrumbs.after allBreadCrumb
-                    (doodadCrumb example)
-                )
+            Just (doodadCrumb allBreadCrumb example)
 
         CategoryDoodad category_ example ->
-            Just
-                (BreadCrumbs.after (categoryCrumb category_)
-                    (doodadCrumb example)
-                )
+            Just (doodadCrumb (categoryCrumb category_) example)
 
         NotFound _ ->
             Nothing
@@ -146,29 +140,27 @@ breadCrumbs route_ =
 
 allBreadCrumb : BreadCrumbs (Route state msg)
 allBreadCrumb =
-    BreadCrumbs.init <|
-        BreadCrumbs.create
-            { id = "breadcrumbs__all"
-            , text = "All"
-            , route = All
-            }
-            []
+    BreadCrumbs.init
+        { id = "breadcrumbs__all"
+        , text = "All"
+        , route = All
+        }
+        []
 
 
 categoryCrumb : Category.Category -> BreadCrumbs (Route state msg)
 categoryCrumb category_ =
-    BreadCrumbs.after allBreadCrumb <|
-        BreadCrumbs.create
-            { id = "breadcrumbs__" ++ Category.forId category_
-            , text = Category.forDisplay category_
-            , route = Category category_
-            }
-            []
+    BreadCrumbs.after allBreadCrumb
+        { id = "breadcrumbs__" ++ Category.forId category_
+        , text = Category.forDisplay category_
+        , route = Category category_
+        }
+        []
 
 
-doodadCrumb : Example state msg -> BreadCrumb (Route state msg)
-doodadCrumb example =
-    BreadCrumbs.create
+doodadCrumb : BreadCrumbs (Route state msg) -> Example state msg -> BreadCrumbs (Route state msg)
+doodadCrumb previous example =
+    BreadCrumbs.after previous
         { id = "breadcrumbs__" ++ dashify example.name
         , text = Example.fullName example
         , route = Doodad example

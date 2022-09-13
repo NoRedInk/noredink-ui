@@ -1,7 +1,6 @@
 module Nri.Ui.BreadCrumbs.V2 exposing
-    ( BreadCrumb, create
+    ( BreadCrumbs, init, after
     , BreadCrumbAttribute, icon, iconCircledStyle
-    , BreadCrumbs, init, after
     , view
     , headerId
     , toPageTitle, toPageTitleWithSecondaryBreadCrumbs
@@ -33,15 +32,10 @@ Narrow Viewport (with Circled IconStyle):
     🏠 > 🟠 > 🟣 Sub-Category 2
 
 
-## Creating individual breadcrumbs
-
-@docs BreadCrumb, create
-@docs BreadCrumbAttribute, icon, iconCircledStyle
-
-
-## Stringing breadcrumbs together
+## Creating breadcrumbs
 
 @docs BreadCrumbs, init, after
+@docs BreadCrumbAttribute, icon, iconCircledStyle
 
 
 ## Viewing breadcrumbs
@@ -81,7 +75,10 @@ type BreadCrumb route
 
 
 {-| -}
-create : { id : String, text : String, route : route } -> List (BreadCrumbAttribute route) -> BreadCrumb route
+create :
+    { id : String, text : String, route : route }
+    -> List (BreadCrumbAttribute route)
+    -> BreadCrumb route
 create { id, text, route } optionalAttributes =
     BreadCrumb
         (List.foldl (\(BreadCrumbAttribute attribute) b -> attribute b)
@@ -137,15 +134,22 @@ type BreadCrumbs route
 
 
 {-| -}
-init : BreadCrumb route -> BreadCrumbs route
-init breadCrumb =
-    BreadCrumbs [ breadCrumb ]
+init :
+    { id : String, text : String, route : route }
+    -> List (BreadCrumbAttribute route)
+    -> BreadCrumbs route
+init required optional =
+    BreadCrumbs [ create required optional ]
 
 
 {-| -}
-after : BreadCrumbs route -> BreadCrumb route -> BreadCrumbs route
-after (BreadCrumbs previous) new =
-    BreadCrumbs (new :: previous)
+after :
+    BreadCrumbs route
+    -> { id : String, text : String, route : route }
+    -> List (BreadCrumbAttribute route)
+    -> BreadCrumbs route
+after (BreadCrumbs previous) required optional =
+    BreadCrumbs (create required optional :: previous)
 
 
 {-| -}

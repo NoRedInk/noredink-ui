@@ -16,7 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
-import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -202,45 +202,15 @@ controlBreadCrumbs =
 
 controlBreadCrumbs_ : Int -> Control (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
 controlBreadCrumbs_ index =
-    Control.record
-        (\icon iconStyle ( textStr, text ) ->
-            composeBreadCrumbs
-                ( Code.recordMultiline
-                    [ ( "text", textStr )
-                    , ( "id", Code.string ("breadcrumb-id-" ++ String.fromInt index) )
-                    , ( "route", Code.string ("/breadcrumb" ++ String.fromInt index) )
-                    ]
-                    2
-                    ++ Code.listMultiline
-                        ([ Maybe.map (Tuple.first >> (++) "BreadCrumbs.icon ") icon
-                         , if iconStyle then
-                            Just "BreadCrumbs.iconCircledStyle True"
-
-                           else
-                            Nothing
-                         ]
-                            |> List.filterMap identity
-                        )
-                        2
-                , BreadCrumbs.create
-                    { text = text
-                    , id = "breadcrumb-id-" ++ String.fromInt index
-                    , route = "/breadcrumb" ++ String.fromInt index
-                    }
-                    ([ Maybe.map (Tuple.second >> BreadCrumbs.icon) icon
-                     , if iconStyle then
-                        Just (BreadCrumbs.iconCircledStyle True)
-
-                       else
-                        Nothing
-                     ]
-                        |> List.filterMap identity
-                    )
+    Control.record (composeBreadCrumbs index)
+        |> Control.field "text" (Control.string ("Category " ++ String.fromInt index))
+        |> Control.field "optional attributes"
+            (Control.maybe False
+                (ControlExtra.list
+                    |> CommonControls.iconNotCheckedByDefault moduleName BreadCrumbs.icon
+                    |> ControlExtra.optionalBoolListItem "iconCircledStyle" ( "BreadCrumbs.iconCircledStyle True", BreadCrumbs.iconCircledStyle True )
                 )
-        )
-        |> Control.field "icon" (Control.maybe False CommonControls.uiIcon)
-        |> Control.field "iconCircledStyle" (Control.bool False)
-        |> Control.field "text" (ControlExtra.string ("Category " ++ String.fromInt index))
+            )
         |> Control.field ("category " ++ String.fromInt (index + 1))
             (Control.maybe False
                 (Control.lazy
@@ -250,26 +220,46 @@ controlBreadCrumbs_ index =
 
 
 composeBreadCrumbs :
-    ( String, BreadCrumb String )
+    Int
+    -> String
+    -> Maybe (List ( String, BreadCrumbs.BreadCrumbAttribute String ))
     -> Maybe (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
     -> (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
-composeBreadCrumbs ( breadCrumbStr, breadCrumb ) after maybeBase =
+composeBreadCrumbs index text attributes after maybeBase =
     let
+        ( configStr, config ) =
+            ( Code.recordMultiline
+                [ ( "text", Code.string text )
+                , ( "id", Code.string ("breadcrumb-id-" ++ String.fromInt index) )
+                , ( "route", Code.string ("/breadcrumb" ++ String.fromInt index) )
+                ]
+                2
+            , { text = text
+              , id = "breadcrumb-id-" ++ String.fromInt index
+              , route = "/breadcrumb" ++ String.fromInt index
+              }
+            )
+
+        ( optionalAttributesStr, optionalAttributes ) =
+            List.unzip (Maybe.withDefault [] attributes)
+
         newBase =
             case maybeBase of
                 Just ( baseStr, base ) ->
                     ( "(BreadCrumbs.after "
                         ++ baseStr
-                        ++ breadCrumbStr
+                        ++ configStr
+                        ++ Code.listMultiline optionalAttributesStr 2
                         ++ (Code.newlineWithIndent 1 ++ ")")
-                    , BreadCrumbs.after base breadCrumb
+                    , BreadCrumbs.after base config optionalAttributes
                     )
 
                 Nothing ->
                     ( "(BreadCrumbs.init "
-                        ++ breadCrumbStr
+                        ++ configStr
+                        ++ Code.listMultiline optionalAttributesStr 2
                         ++ (Code.newlineWithIndent 1 ++ ")")
-                    , BreadCrumbs.init breadCrumb
+                    , BreadCrumbs.init config optionalAttributes
                     )
     in
     Maybe.map (\f -> f (Just newBase)) after |> Maybe.withDefault newBase
