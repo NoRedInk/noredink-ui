@@ -1,12 +1,20 @@
 module Nri.Ui.BreadCrumbs.V2 exposing
-    ( view, IconStyle(..)
-    , BreadCrumbs, init
-    , BreadCrumb, after
+    ( BreadCrumb, create
+    , BreadCrumbAttribute, icon, iconCircledStyle
+    , BreadCrumbs, init, after
+    , view
     , headerId
     , toPageTitle, toPageTitleWithSecondaryBreadCrumbs
     )
 
-{-| Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
+{-|
+
+
+# Changes from V1:
+
+  - switch to list-based attributes pattern
+
+Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
 
 Wide Viewport (with Circled IconStyle):
 
@@ -24,10 +32,30 @@ Narrow Viewport (with Circled IconStyle):
 
     🏠 > 🟠 > 🟣 Sub-Category 2
 
-@docs view, IconStyle
-@docs BreadCrumbs, init
-@docs BreadCrumb, after
+
+## Creating individual breadcrumbs
+
+@docs BreadCrumb, create
+@docs BreadCrumbAttribute, icon, iconCircledStyle
+
+
+## Stringing breadcrumbs together
+
+@docs BreadCrumbs, init, after
+
+
+## Viewing breadcrumbs
+
+@docs view
+
+
+## Managing focus
+
 @docs headerId
+
+
+## Managing page title
+
 @docs toPageTitle, toPageTitleWithSecondaryBreadCrumbs
 
 -}
@@ -43,12 +71,58 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
-type alias BreadCrumb route =
+type BreadCrumb route
+    = BreadCrumb (BreadCrumbAttributes route)
+
+
+{-| -}
+create : { id : String, text : String, route : route } -> List (BreadCrumbAttribute route) -> BreadCrumb route
+create { id, text, route } optionalAttributes =
+    BreadCrumb
+        (List.foldl (\(BreadCrumbAttribute attribute) b -> attribute b)
+            { icon = Nothing
+            , iconStyle = Default
+            , id = id
+            , text = text
+            , route = route
+            }
+            optionalAttributes
+        )
+
+
+{-| -}
+icon : Svg -> BreadCrumbAttribute route
+icon icon_ =
+    BreadCrumbAttribute (\attributes -> { attributes | icon = Just icon_ })
+
+
+{-| -}
+iconCircledStyle : Bool -> BreadCrumbAttribute route
+iconCircledStyle circled =
+    BreadCrumbAttribute
+        (\attributes ->
+            { attributes
+                | iconStyle =
+                    if circled then
+                        Circled
+
+                    else
+                        Default
+            }
+        )
+
+
+{-| -}
+type BreadCrumbAttribute route
+    = BreadCrumbAttribute (BreadCrumbAttributes route -> BreadCrumbAttributes route)
+
+
+type alias BreadCrumbAttributes route =
     { icon : Maybe Svg.Svg
     , iconStyle : IconStyle
     , id : String
@@ -78,7 +152,7 @@ after (BreadCrumbs previous) new =
 headerId : BreadCrumbs route -> String
 headerId (BreadCrumbs list) =
     case list of
-        { id } :: _ ->
+        (BreadCrumb { id }) :: _ ->
             id
 
         _ ->
@@ -102,15 +176,20 @@ in the form "Sub-Category | Category | NoRedInk" for breadCrumbs like:
 -}
 toPageTitle : BreadCrumbs a -> String
 toPageTitle (BreadCrumbs breadcrumbs) =
-    String.join " | " (List.map .text breadcrumbs ++ [ "NoRedInk" ])
+    String.join " | " (List.map pageTitle breadcrumbs ++ [ "NoRedInk" ])
 
 
 {-| -}
 toPageTitleWithSecondaryBreadCrumbs : BreadCrumbs a -> String
 toPageTitleWithSecondaryBreadCrumbs (BreadCrumbs breadcrumbs) =
-    (List.take 1 breadcrumbs |> List.map .text)
+    (List.take 1 breadcrumbs |> List.map pageTitle)
         ++ [ "NoRedInk" ]
         |> String.join " | "
+
+
+pageTitle : BreadCrumb a -> String
+pageTitle (BreadCrumb { text }) =
+    text
 
 
 {-| Usually, the label value will be the string "breadcrumbs".
@@ -174,7 +253,7 @@ viewBreadCrumb :
     -> { isFirst : Bool, isLast : Bool, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
-viewBreadCrumb config iconConfig crumb =
+viewBreadCrumb config iconConfig (BreadCrumb crumb) =
     let
         isLink =
             not (config.isCurrentRoute crumb.route)
@@ -199,8 +278,8 @@ viewBreadCrumb config iconConfig crumb =
 
         withIconIfPresent viewIcon =
             case crumb.icon of
-                Just icon ->
-                    [ viewIcon iconConfig.isFirst crumb.iconStyle icon
+                Just icon_ ->
+                    [ viewIcon iconConfig.isFirst crumb.iconStyle icon_
                     , viewHeadingWithIcon iconConfig crumb.text
                     ]
 
@@ -299,7 +378,7 @@ circleIconClass =
 
 
 withIconCircle : Svg.Svg -> Html msg
-withIconCircle icon =
+withIconCircle icon_ =
     styled span
         [ borderRadius (pct 50)
         , border3 (px 1) solid Colors.azure
@@ -315,7 +394,7 @@ withIconCircle icon =
         , justifyContent center
         ]
         [ Attributes.class circleIconClass ]
-        [ icon
+        [ icon_
             |> Svg.withWidth circledInnerIconSize
             |> Svg.withHeight circledInnerIconSize
             |> Svg.toHtml
@@ -323,7 +402,7 @@ withIconCircle icon =
 
 
 withoutIconCircle : Bool -> Svg.Svg -> Html msg
-withoutIconCircle isFirst icon =
+withoutIconCircle isFirst icon_ =
     let
         size =
             if isFirst then
@@ -332,7 +411,7 @@ withoutIconCircle isFirst icon =
             else
                 iconSize
     in
-    icon
+    icon_
         |> Svg.withWidth size
         |> Svg.withHeight size
         |> Svg.withCss [ Css.flexShrink Css.zero ]

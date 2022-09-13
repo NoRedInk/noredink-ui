@@ -146,31 +146,31 @@ breadCrumbs route_ =
 
 allBreadCrumb : BreadCrumbs (Route state msg)
 allBreadCrumb =
-    BreadCrumbs.init
-        { icon = Nothing
-        , iconStyle = BreadCrumbs.Default
-        , id = "breadcrumbs__all"
-        , text = "All"
-        , route = All
-        }
+    BreadCrumbs.init <|
+        BreadCrumbs.create
+            { id = "breadcrumbs__all"
+            , text = "All"
+            , route = All
+            }
+            []
 
 
 categoryCrumb : Category.Category -> BreadCrumbs (Route state msg)
 categoryCrumb category_ =
-    BreadCrumbs.after allBreadCrumb
-        { icon = Nothing
-        , iconStyle = BreadCrumbs.Default
-        , id = "breadcrumbs__" ++ Category.forId category_
-        , text = Category.forDisplay category_
-        , route = Category category_
-        }
+    BreadCrumbs.after allBreadCrumb <|
+        BreadCrumbs.create
+            { id = "breadcrumbs__" ++ Category.forId category_
+            , text = Category.forDisplay category_
+            , route = Category category_
+            }
+            []
 
 
 doodadCrumb : Example state msg -> BreadCrumb (Route state msg)
 doodadCrumb example =
-    { icon = Nothing
-    , iconStyle = BreadCrumbs.Default
-    , id = "breadcrumbs__" ++ dashify example.name
-    , text = Example.fullName example
-    , route = Doodad example
-    }
+    BreadCrumbs.create
+        { id = "breadcrumbs__" ++ dashify example.name
+        , text = Example.fullName example
+        , route = Doodad example
+        }
+        []
