@@ -16,7 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
-import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -37,7 +37,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}

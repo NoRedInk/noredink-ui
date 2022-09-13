@@ -5,7 +5,7 @@ import Category
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumb, BreadCrumbs)
 import Nri.Ui.Util exposing (dashify)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
