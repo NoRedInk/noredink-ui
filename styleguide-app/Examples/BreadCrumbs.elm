@@ -60,7 +60,9 @@ example =
             let
                 breadCrumbs : BreadCrumbs String
                 breadCrumbs =
-                    Tuple.second (Control.currentValue state).breadCrumbs
+                    case (Control.currentValue state).breadCrumbs of
+                        ( _, _, val ) ->
+                            val
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -70,7 +72,12 @@ example =
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode = [ "import Html.Styled.Attributes exposing (href)" ]
-                , renderExample = Code.unstyledView
+                , renderExample =
+                    \body ->
+                        Code.newlineWithIndent 1
+                            ++ "toUnstyled view"
+                            ++ Code.newlines
+                            ++ body
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = moduleName ++ ".view"
@@ -153,14 +160,23 @@ previewArrowRight =
 
 viewExampleCode : Settings -> String
 viewExampleCode settings =
-    "BreadCrumbs.view"
-        ++ Code.record
-            [ ( "aTagAttributes", "\\route -> [ href route ]" )
-            , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
-            , ( "label", Code.string "breadcrumbs" )
-            ]
-        ++ Code.newlineWithIndent 1
-        ++ Tuple.first settings.breadCrumbs
+    let
+        ( currentCrumb, crumbDefinitions, _ ) =
+            settings.breadCrumbs
+    in
+    crumbDefinitions
+        ++ Code.newlines
+        ++ (Code.var "view" 1 <|
+                "BreadCrumbs.view"
+                    ++ Code.recordMultiline
+                        [ ( "aTagAttributes", "\\route -> [ href route ]" )
+                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+                        , ( "label", Code.string "breadcrumbs" )
+                        ]
+                        2
+                    ++ Code.newlineWithIndent 2
+                    ++ currentCrumb
+           )
 
 
 viewExample : BreadCrumbs String -> Html msg
@@ -186,7 +202,7 @@ update msg state =
 
 
 type alias Settings =
-    { breadCrumbs : ( String, BreadCrumbs String )
+    { breadCrumbs : ConfigurableBreadCrumbs
     }
 
 
@@ -195,12 +211,16 @@ init =
     Control.map Settings controlBreadCrumbs
 
 
-controlBreadCrumbs : Control ( String, BreadCrumbs String )
+type alias ConfigurableBreadCrumbs =
+    ( String, String, BreadCrumbs String )
+
+
+controlBreadCrumbs : Control ConfigurableBreadCrumbs
 controlBreadCrumbs =
     Control.map (\f -> f Nothing) (controlBreadCrumbs_ 1)
 
 
-controlBreadCrumbs_ : Int -> Control (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
+controlBreadCrumbs_ : Int -> Control (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
 controlBreadCrumbs_ index =
     Control.record (composeBreadCrumbs index)
         |> Control.field "text" (Control.string ("Category " ++ String.fromInt index))
@@ -223,8 +243,8 @@ composeBreadCrumbs :
     Int
     -> String
     -> Maybe (List ( String, BreadCrumbs.BreadCrumbAttribute String ))
-    -> Maybe (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
-    -> (Maybe ( String, BreadCrumbs String ) -> ( String, BreadCrumbs String ))
+    -> Maybe (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
+    -> (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
 composeBreadCrumbs index text attributes after maybeBase =
     let
         ( configStr, config ) =
@@ -243,22 +263,30 @@ composeBreadCrumbs index text attributes after maybeBase =
         ( optionalAttributesStr, optionalAttributes ) =
             List.unzip (Maybe.withDefault [] attributes)
 
+        varName =
+            "breadcrumb" ++ String.fromInt index
+
         newBase =
             case maybeBase of
-                Just ( baseStr, base ) ->
-                    ( "(BreadCrumbs.after "
-                        ++ baseStr
-                        ++ configStr
-                        ++ Code.listMultiline optionalAttributesStr 2
-                        ++ (Code.newlineWithIndent 1 ++ ")")
+                Just ( baseVar, baseStr, base ) ->
+                    ( varName
+                    , baseStr
+                        ++ Code.newlines
+                        ++ (Code.var varName 1 <|
+                                "BreadCrumbs.after "
+                                    ++ baseVar
+                                    ++ configStr
+                                    ++ Code.listMultiline optionalAttributesStr 2
+                           )
                     , BreadCrumbs.after base config optionalAttributes
                     )
 
                 Nothing ->
-                    ( "(BreadCrumbs.init "
-                        ++ configStr
-                        ++ Code.listMultiline optionalAttributesStr 2
-                        ++ (Code.newlineWithIndent 1 ++ ")")
+                    ( varName
+                    , Code.var varName 1 <|
+                        "BreadCrumbs.init "
+                            ++ configStr
+                            ++ Code.listMultiline optionalAttributesStr 2
                     , BreadCrumbs.init config optionalAttributes
                     )
     in
