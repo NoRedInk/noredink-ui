@@ -404,9 +404,9 @@ performAction action model =
 
 
 {-| -}
-removeHighlights : List (Highlightable marker) -> List (Highlightable marker)
-removeHighlights =
-    Internal.removeHighlights
+removeHighlights : Model marker -> Model marker
+removeHighlights model =
+    { model | highlightables = Internal.removeHighlights model.highlightables }
 
 
 

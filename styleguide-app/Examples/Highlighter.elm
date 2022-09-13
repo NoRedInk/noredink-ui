@@ -16,11 +16,13 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 
 
@@ -58,8 +60,15 @@ example =
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
+            , Button.button "Clear all highlights"
+                [ Button.onClick ClearHighlights
+                , Button.secondary
+                , Button.small
+                , Button.css [ Css.marginTop (Css.px 10) ]
+                ]
             , Highlighter.view state.highlighter
                 |> map HighlighterMsg
+            , Heading.h2 [ Heading.plaintext "Non-interactive Examples" ]
             , Table.view
                 [ Table.string
                     { header = "Description"
@@ -275,6 +284,7 @@ backgroundHighlightColors rotateWith =
 type Msg
     = UpdateControls (Control Settings)
     | HighlighterMsg (Highlighter.Msg ())
+    | ClearHighlights
 
 
 {-| -}
@@ -295,5 +305,10 @@ update msg state =
                     Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
+            , Cmd.none
+            )
+
+        ClearHighlights ->
+            ( { state | highlighter = Highlighter.removeHighlights state.highlighter }
             , Cmd.none
             )
