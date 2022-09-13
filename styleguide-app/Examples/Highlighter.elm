@@ -11,11 +11,11 @@ import Code
 import CommonControls
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
-import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
@@ -266,13 +266,9 @@ controlMarker =
 
 backgroundHighlightColors : Int -> Control Color
 backgroundHighlightColors rotateWith =
-    let
-        ( before, after ) =
-            List.Extra.splitAt rotateWith Examples.Colors.backgroundHighlightColors
-    in
-    (after ++ before)
+    Examples.Colors.backgroundHighlightColors
         |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
-        |> Control.choice
+        |> ControlExtra.rotatedChoice rotateWith
 
 
 {-| -}

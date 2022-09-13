@@ -4,6 +4,7 @@ module Debug.Control.Extra exposing
     , optionalBoolListItem, optionalBoolListItemDefaultTrue
     , bool
     , string
+    , rotatedChoice
     )
 
 {-|
@@ -13,11 +14,13 @@ module Debug.Control.Extra exposing
 @docs optionalBoolListItem, optionalBoolListItemDefaultTrue
 @docs bool
 @docs string
+@docs rotatedChoice
 
 -}
 
 import Code
 import Debug.Control as Control exposing (Control)
+import List.Extra
 
 
 {-| -}
@@ -121,3 +124,13 @@ bool default =
 string : String -> Control ( String, String )
 string default =
     Control.map (\val -> ( Code.string val, val )) (Control.string default)
+
+
+{-| -}
+rotatedChoice : Int -> List ( String, Control a ) -> Control a
+rotatedChoice rotateWith options =
+    let
+        ( before, after ) =
+            List.Extra.splitAt rotateWith options
+    in
+    Control.choice (after ++ before)
