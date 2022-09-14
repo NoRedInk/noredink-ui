@@ -1,6 +1,6 @@
 module Nri.Ui.BreadCrumbs.V2 exposing
     ( BreadCrumbs, init, initSecondary, after
-    , BreadCrumbAttribute, icon, iconCircledStyle
+    , BreadCrumbAttribute, icon, iconSize
     , view, viewSecondary
     , headerId, toPageTitle
     )
@@ -14,7 +14,7 @@ module Nri.Ui.BreadCrumbs.V2 exposing
 
 Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
 
-Wide Viewport (with Circled IconStyle):
+Wide Viewport:
 
     Home
 
@@ -22,7 +22,7 @@ Wide Viewport (with Circled IconStyle):
 
     🏠 > 🟠 Category 1 > 🟣 Sub-Category 2
 
-Narrow Viewport (with Circled IconStyle):
+Narrow Viewport:
 
     Home
 
@@ -34,7 +34,7 @@ Narrow Viewport (with Circled IconStyle):
 ## Creating breadcrumbs
 
 @docs BreadCrumbs, init, initSecondary, after
-@docs BreadCrumbAttribute, icon, iconCircledStyle
+@docs BreadCrumbAttribute, icon, iconSize
 
 
 ## Viewing breadcrumbs
@@ -77,7 +77,7 @@ create { id, text, route } optionalAttributes =
     BreadCrumb
         (List.foldl (\(BreadCrumbAttribute attribute) b -> attribute b)
             { icon = Nothing
-            , iconStyle = Default
+            , iconSize = Css.px 31
             , id = id
             , text = text
             , route = route
@@ -93,19 +93,9 @@ icon icon_ =
 
 
 {-| -}
-iconCircledStyle : Bool -> BreadCrumbAttribute route
-iconCircledStyle circled =
-    BreadCrumbAttribute
-        (\attributes ->
-            { attributes
-                | iconStyle =
-                    if circled then
-                        Circled
-
-                    else
-                        Default
-            }
-        )
+iconSize : Css.Px -> BreadCrumbAttribute route
+iconSize custom =
+    BreadCrumbAttribute (\attributes -> { attributes | iconSize = custom })
 
 
 {-| -}
@@ -115,7 +105,7 @@ type BreadCrumbAttribute route
 
 type alias BreadCrumbAttributes route =
     { icon : Maybe Svg.Svg
-    , iconStyle : IconStyle
+    , iconSize : Css.Px
     , id : String
     , text : String
     , route : route
@@ -175,12 +165,6 @@ headerId (BreadCrumbs { primary, secondary }) =
         ++ List.map extract primary
         |> List.head
         |> Maybe.map .id
-
-
-{-| -}
-type IconStyle
-    = Circled
-    | Default
 
 
 {-| TODO: implement <https://noredink.slack.com/archives/C71TD8MUY/p1662584306753169?thread_ts=1659978195.802739&cid=C71TD8MUY>
@@ -267,8 +251,7 @@ viewBreadCrumbs headingLevel config breadCrumbs =
         (\i ->
             viewBreadCrumb headingLevel
                 config
-                { isFirst = i == 0
-                , isLast = (i + 1) == breadCrumbCount
+                { isLast = (i + 1) == breadCrumbCount
                 , isIconOnly =
                     -- the first breadcrumb should collapse when there
                     -- are 3 breadcrumbs or more in the group
@@ -289,7 +272,7 @@ viewBreadCrumb :
             | aTagAttributes : route -> List (Attribute msg)
             , isCurrentRoute : route -> Bool
         }
-    -> { isFirst : Bool, isLast : Bool, isIconOnly : Bool }
+    -> { isLast : Bool, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
 viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
@@ -315,10 +298,10 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
             else
                 []
 
-        withIconIfPresent viewIcon =
+        withIconIfPresent =
             case crumb.icon of
                 Just icon_ ->
-                    [ viewIcon iconConfig.isFirst crumb.iconStyle icon_
+                    [ viewIcon icon_ crumb.iconSize
                     , viewHeadingWithIcon iconConfig crumb.text
                     ]
 
@@ -327,9 +310,7 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
     in
     case ( iconConfig.isLast, isLink ) of
         ( True, False ) ->
-            heading headingLevel
-                crumb.id
-                (withIconIfPresent viewIconForHeading)
+            heading headingLevel crumb.id withIconIfPresent
 
         ( True, True ) ->
             heading headingLevel
@@ -337,14 +318,14 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
                 [ Html.Styled.styled Html.Styled.a
                     []
                     (css commonCss :: linkAttrs)
-                    (withIconIfPresent viewIconForLink)
+                    withIconIfPresent
                 ]
 
         ( False, _ ) ->
             Html.Styled.styled Html.Styled.a
                 [ fontWeight normal ]
                 (css commonCss :: Attributes.id crumb.id :: linkAttrs)
-                (withIconIfPresent viewIconForLink)
+                withIconIfPresent
 
 
 heading :
@@ -359,26 +340,6 @@ heading heading_ id =
         , Attributes.tabindex -1
         , css (fontWeight bold :: commonCss)
         ]
-
-
-viewIconForHeading : Bool -> IconStyle -> Svg.Svg -> Html msg
-viewIconForHeading isFirst iconStyle svg =
-    case iconStyle of
-        Circled ->
-            text ""
-
-        Default ->
-            withoutIconCircle isFirst svg
-
-
-viewIconForLink : Bool -> IconStyle -> Svg.Svg -> Html msg
-viewIconForLink isFirst iconStyle svg =
-    case iconStyle of
-        Circled ->
-            withIconCircle svg
-
-        Default ->
-            withoutIconCircle isFirst svg
 
 
 viewHeadingWithIcon : { config | isLast : Bool, isIconOnly : Bool } -> String -> Html msg
@@ -421,40 +382,8 @@ circleIconClass =
     "Nri-BreadCrumb-base-circled-icon"
 
 
-withIconCircle : Svg.Svg -> Html msg
-withIconCircle icon_ =
-    styled span
-        [ borderRadius (pct 50)
-        , border3 (px 1) solid Colors.azure
-        , color Colors.azure
-        , borderBottomWidth (px 2)
-        , backgroundColor Colors.white
-        , height largeIconSize
-        , width largeIconSize
-        , fontSize (px 16)
-        , property "transition" "background-color 0.2s, color 0.2s"
-        , displayFlex
-        , alignItems center
-        , justifyContent center
-        ]
-        [ Attributes.class circleIconClass ]
-        [ icon_
-            |> Svg.withWidth circledInnerIconSize
-            |> Svg.withHeight circledInnerIconSize
-            |> Svg.toHtml
-        ]
-
-
-withoutIconCircle : Bool -> Svg.Svg -> Html msg
-withoutIconCircle isFirst icon_ =
-    let
-        size =
-            if isFirst then
-                largeIconSize
-
-            else
-                iconSize
-    in
+viewIcon : Svg.Svg -> Css.Px -> Html msg
+viewIcon icon_ size =
     icon_
         |> Svg.withWidth size
         |> Svg.withHeight size
@@ -465,21 +394,6 @@ withoutIconCircle isFirst icon_ =
 horizontalSpacing : Css.Px
 horizontalSpacing =
     Css.px 10
-
-
-circledInnerIconSize : Css.Px
-circledInnerIconSize =
-    Css.px 25
-
-
-largeIconSize : Css.Px
-largeIconSize =
-    Css.px 40
-
-
-iconSize : Css.Px
-iconSize =
-    Css.px 31
 
 
 arrowRight : Svg.Svg

@@ -2,6 +2,7 @@ module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss, css_
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
+    , customIcon, customIconNotCheckedByDefault
     , color
     , content
     , httpError
@@ -14,6 +15,7 @@ module CommonControls exposing
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss, css_
 @docs choice
 @docs icon, iconNotCheckedByDefault, uiIcon
+@docs customIcon, customIconNotCheckedByDefault
 @docs color
 
 
@@ -221,13 +223,23 @@ icon :
     -> (Svg -> value)
     -> Control (List ( String, value ))
     -> Control (List ( String, value ))
-icon moduleName f =
+icon =
+    customIcon uiIcon
+
+
+customIcon :
+    Control ( String, Svg )
+    -> String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+customIcon iconList moduleName f =
     ControlExtra.optionalListItemDefaultChecked "icon"
         (Control.map
             (\( iconName, iconValue ) ->
                 ( moduleName ++ ".icon " ++ iconName, f iconValue )
             )
-            uiIcon
+            iconList
         )
 
 
@@ -236,13 +248,23 @@ iconNotCheckedByDefault :
     -> (Svg -> value)
     -> Control (List ( String, value ))
     -> Control (List ( String, value ))
-iconNotCheckedByDefault moduleName f =
+iconNotCheckedByDefault =
+    customIconNotCheckedByDefault uiIcon
+
+
+customIconNotCheckedByDefault :
+    Control ( String, Svg )
+    -> String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+customIconNotCheckedByDefault iconList moduleName f =
     ControlExtra.optionalListItem "icon"
         (Control.map
             (\( iconName, iconValue ) ->
                 ( moduleName ++ ".icon " ++ iconName, f iconValue )
             )
-            uiIcon
+            iconList
         )
 
 

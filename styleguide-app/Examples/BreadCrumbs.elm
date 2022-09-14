@@ -325,8 +325,23 @@ controlBreadCrumbs_ name index =
         |> Control.field "optional attributes"
             (Control.maybe False
                 (ControlExtra.list
-                    |> CommonControls.iconNotCheckedByDefault moduleName BreadCrumbs.icon
-                    |> ControlExtra.optionalBoolListItem "iconCircledStyle" ( "BreadCrumbs.iconCircledStyle True", BreadCrumbs.iconCircledStyle True )
+                    |> CommonControls.customIcon
+                        (CommonControls.choice "UiIcon"
+                            [ ( "homeInCircle", UiIcon.homeInCircle )
+                            , ( "home", UiIcon.home )
+                            ]
+                        )
+                        moduleName
+                        BreadCrumbs.icon
+                    |> ControlExtra.optionalListItem "iconSize"
+                        (Control.map
+                            (\v ->
+                                ( "BreadCrumbs.iconSize (Css.px " ++ String.fromFloat v ++ ")"
+                                , BreadCrumbs.iconSize (Css.px v)
+                                )
+                            )
+                            (ControlExtra.float 40)
+                        )
                 )
             )
         |> Control.field (String.toLower name ++ " " ++ String.fromInt (index + 1))
