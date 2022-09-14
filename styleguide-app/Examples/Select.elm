@@ -153,15 +153,6 @@ initControls =
                 )
                 (Control.bool True)
             )
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map
-                (\bool ->
-                    ( "Select.errorIf " ++ Debug.toString bool
-                    , Select.errorIf bool
-                    )
-                )
-                (Control.bool True)
-            )
         |> ControlExtra.optionalListItem "errorMessage"
             (Control.map
                 (\str ->
