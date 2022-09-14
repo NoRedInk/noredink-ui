@@ -213,13 +213,13 @@ type alias ConfigurableBreadCrumbs =
 
 controlBreadCrumbs : Control ConfigurableBreadCrumbs
 controlBreadCrumbs =
-    Control.map (\f -> f Nothing) (controlBreadCrumbs_ 1)
+    Control.map (\f -> f Nothing) (controlBreadCrumbs_ "Category" 1)
 
 
-controlBreadCrumbs_ : Int -> Control (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
-controlBreadCrumbs_ index =
-    Control.record (composeBreadCrumbs index)
-        |> Control.field "text" (Control.string ("Category " ++ String.fromInt index))
+controlBreadCrumbs_ : String -> Int -> Control (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
+controlBreadCrumbs_ name index =
+    Control.record (composeBreadCrumbs name index)
+        |> Control.field "text" (Control.string (name ++ " " ++ String.fromInt index))
         |> Control.field "optional attributes"
             (Control.maybe False
                 (ControlExtra.list
@@ -227,40 +227,41 @@ controlBreadCrumbs_ index =
                     |> ControlExtra.optionalBoolListItem "iconCircledStyle" ( "BreadCrumbs.iconCircledStyle True", BreadCrumbs.iconCircledStyle True )
                 )
             )
-        |> Control.field ("category " ++ String.fromInt (index + 1))
+        |> Control.field (String.toLower name ++ " " ++ String.fromInt (index + 1))
             (Control.maybe False
                 (Control.lazy
-                    (\() -> controlBreadCrumbs_ (index + 1))
+                    (\() -> controlBreadCrumbs_ name (index + 1))
                 )
             )
 
 
 composeBreadCrumbs :
-    Int
+    String
+    -> Int
     -> String
     -> Maybe (List ( String, BreadCrumbs.BreadCrumbAttribute String ))
     -> Maybe (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
     -> (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
-composeBreadCrumbs index text attributes after maybeBase =
+composeBreadCrumbs name index text attributes after maybeBase =
     let
+        id =
+            String.toLower name ++ "-breadcrumb-id-" ++ String.fromInt index
+
+        route =
+            "/breadcrumb-" ++ String.toLower name ++ "-" ++ String.fromInt index
+
         ( configStr, config ) =
             ( Code.recordMultiline
-                [ ( "text", Code.string text )
-                , ( "id", Code.string ("breadcrumb-id-" ++ String.fromInt index) )
-                , ( "route", Code.string ("/breadcrumb" ++ String.fromInt index) )
-                ]
+                [ ( "text", Code.string text ), ( "id", Code.string id ), ( "route", Code.string route ) ]
                 2
-            , { text = text
-              , id = "breadcrumb-id-" ++ String.fromInt index
-              , route = "/breadcrumb" ++ String.fromInt index
-              }
+            , { text = text, id = id, route = route }
             )
 
         ( optionalAttributesStr, optionalAttributes ) =
             List.unzip (Maybe.withDefault [] attributes)
 
         varName =
-            "breadcrumb" ++ String.fromInt index
+            "breadcrumb" ++ name ++ String.fromInt index
 
         newBase =
             case maybeBase of
