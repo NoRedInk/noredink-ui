@@ -1370,7 +1370,10 @@ homeInCircle =
             []
         , Svg.circle
             [ Attributes.stroke "none"
-            , Attributes.fill "white"
+            , Attributes.css
+                [ Css.fill Colors.white
+                , Css.hover [ Css.fill Colors.frost ]
+                ]
             , Attributes.strokeWidth "1.3"
             , Attributes.cx "10"
             , Attributes.cy "9.7"
@@ -1382,6 +1385,7 @@ homeInCircle =
             , Attributes.css
                 [ Css.property "transform-origin" "10px 9px"
                 , Css.property "transform-box" "view-box"
+                , Css.pointerEvents Css.none
                 ]
             , Attributes.transform "scale(0.6)"
             ]
