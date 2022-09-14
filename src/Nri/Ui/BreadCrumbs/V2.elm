@@ -206,13 +206,7 @@ view :
     -> BreadCrumbs route
     -> Html msg
 view config (BreadCrumbs { primary }) =
-    styled nav
-        [ alignItems center
-        , displayFlex
-        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
-        ]
-        [ Aria.label config.label ]
-        (viewBreadCrumbs config (List.reverse primary))
+    navContainer config.label (viewBreadCrumbs config (List.reverse primary))
 
 
 {-| Usually, the label value will be the string "secondary breadcrumbs".
@@ -228,13 +222,18 @@ viewSecondary :
     -> BreadCrumbs route
     -> Html msg
 viewSecondary config (BreadCrumbs { secondary }) =
+    navContainer config.label (viewBreadCrumbs config (List.reverse secondary))
+
+
+navContainer : String -> List (Html msg) -> Html msg
+navContainer label =
     styled nav
         [ alignItems center
         , displayFlex
+        , flexWrap wrap
         , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
         ]
-        [ Aria.label config.label ]
-        (viewBreadCrumbs config (List.reverse secondary))
+        [ Aria.label label ]
 
 
 viewBreadCrumbs :
