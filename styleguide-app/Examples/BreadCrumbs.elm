@@ -141,11 +141,20 @@ example =
                                 Maybe.map (Tuple.first >> viewExampleCode) breadCrumbs
                                     |> Maybe.withDefault ""
                           }
+                        , { sectionName = moduleName ++ ".viewSecondary"
+                          , code =
+                                Maybe.map (Tuple.first >> viewSecondaryExampleCode) breadCrumbs
+                                    |> Maybe.withDefault ""
+                          }
                         ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [ Heading.plaintext "Example" ]
+                [ Heading.h2 [ Heading.plaintext "view Example" ]
                 , viewJust (Tuple.second >> viewExample) breadCrumbs
+                ]
+            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
+                [ Heading.h2 [ Heading.plaintext "viewSecondary Example" ]
+                , viewJust (Tuple.second >> viewSecondaryExample) breadCrumbs
                 ]
             , Table.view
                 [ Table.string
@@ -235,6 +244,33 @@ viewExample breadCrumbs =
         { aTagAttributes = \route -> [ href route ]
         , isCurrentRoute = \route -> route == "/current/route"
         , label = "breadcrumbs example"
+        }
+        breadCrumbs
+
+
+viewSecondaryExampleCode : ( String, String ) -> String
+viewSecondaryExampleCode ( crumbDefinitions, currentCrumb ) =
+    crumbDefinitions
+        ++ Code.newlines
+        ++ (Code.var "viewSecondary" 1 <|
+                "BreadCrumbs.view"
+                    ++ Code.recordMultiline
+                        [ ( "aTagAttributes", "\\route -> [ href route ]" )
+                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+                        , ( "label", Code.string "breadcrumbs" )
+                        ]
+                        2
+                    ++ Code.newlineWithIndent 2
+                    ++ currentCrumb
+           )
+
+
+viewSecondaryExample : BreadCrumbs String -> Html msg
+viewSecondaryExample breadCrumbs =
+    BreadCrumbs.viewSecondary
+        { aTagAttributes = \route -> [ href route ]
+        , isCurrentRoute = \route -> route == "/current/route"
+        , label = "secondary breadcrumbs example"
         }
         breadCrumbs
 

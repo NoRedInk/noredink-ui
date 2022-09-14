@@ -233,7 +233,6 @@ viewSecondary :
     -> BreadCrumbs route
     -> Html msg
 viewSecondary config (BreadCrumbs { secondary }) =
-    -- TODO: what heading level should the secondary breadcrumbs actually have?
     viewBreadCrumbs Html.Styled.h2 config (List.reverse secondary)
         |> navContainer config.label
 
