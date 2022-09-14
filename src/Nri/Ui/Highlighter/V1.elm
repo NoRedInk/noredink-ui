@@ -207,7 +207,7 @@ type KeyboardMsg
     | MoveRight Int
     | SelectionExpandLeft Int
     | SelectionExpandRight Int
-    | SelectionApplyTool
+    | SelectionApplyTool Int
     | Space Int
 
 
@@ -349,13 +349,13 @@ keyboardEventToActions msg model =
             else
                 []
 
-        SelectionApplyTool ->
+        SelectionApplyTool index ->
             case model.marker of
                 Tool.Marker marker ->
-                    [ Save marker, ResetSelection ]
+                    [ Save marker, ResetSelection, Focus (highlightableId model.id index) ]
 
                 Tool.Eraser _ ->
-                    [ Remove, ResetSelection ]
+                    [ Remove, ResetSelection, Focus (highlightableId model.id index) ]
 
         Space index ->
             case model.marker of
@@ -601,8 +601,8 @@ viewHighlightable highlighterId marker highlightable =
                     , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
                     ]
                 , Key.onKeyUpPreventDefault
-                    [ Key.shiftRight (Keyboard <| SelectionApplyTool)
-                    , Key.shiftLeft (Keyboard <| SelectionApplyTool)
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
                     ]
                 ]
                 (Just marker)
@@ -624,8 +624,8 @@ viewHighlightable highlighterId marker highlightable =
                     , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
                     ]
                 , Key.onKeyUpPreventDefault
-                    [ Key.shiftRight (Keyboard <| SelectionApplyTool)
-                    , Key.shiftLeft (Keyboard <| SelectionApplyTool)
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
                     ]
                 ]
                 (Just marker)
