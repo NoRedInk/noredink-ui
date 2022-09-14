@@ -22,7 +22,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , key, lock, premiumLock
     , badge, tada, count
     , bold, italic, underline, list, link, undo, redo
-    , home, library
+    , home, homeInCircle, library
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
     , microscope, scale
@@ -59,7 +59,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs key, lock, premiumLock
 @docs badge, tada, count
 @docs bold, italic, underline, list, link, undo, redo
-@docs home, library
+@docs home, homeInCircle, library
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
 @docs microscope, scale
@@ -83,6 +83,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 -}
 
+import Css
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
@@ -1349,6 +1350,41 @@ home =
     Nri.Ui.Svg.V1.init "0 0 20 18"
         [ Svg.g
             [ Attributes.fillRule "evenodd" ]
+            [ Svg.path [ Attributes.d "M10.5916711,0.1316206 L10.67853,0.20566 L19.77453,9.411066 C20.1884706,9.82499711 19.9187834,10.5322989 19.3794595,10.6096104 L19.28157,10.616526 L17.30891,10.616526 L17.30891,17.082125 C17.30891,17.4337583 17.0325426,17.7394285 16.6910117,17.7879316 L16.59641,17.794625 L11.93943,17.794625 L11.93943,11.767226 L7.994034,11.767226 L7.994034,17.739825 C7.9524255,17.780925 7.8805005,17.7912 7.82406703,17.7937688 L7.774494,17.794625 L3.007294,17.794625 C2.65566067,17.794625 2.34999053,17.5181635 2.3014874,17.1766169 L2.294794,17.082013 L2.294794,10.616414 L0.7059516,10.616526 C0.0854307467,10.616526 -0.193638248,9.88344717 0.146485604,9.47884123 L0.2129916,9.411066 L9.69259,0.20566 C9.938686,-0.041138 10.3183024,-0.0658178 10.5916711,0.1316206 Z" ] []
+            ]
+        ]
+
+
+{-| -}
+homeInCircle : Nri.Ui.Svg.V1.Svg
+homeInCircle =
+    Nri.Ui.Svg.V1.init "0 0 20 20"
+        [ Svg.circle
+            [ Attributes.stroke "currentcolor"
+            , Attributes.fill "none"
+            , Attributes.strokeWidth "1.3"
+            , Attributes.cx "10"
+            , Attributes.cy "10"
+            , Attributes.r "9"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.stroke "none"
+            , Attributes.fill "white"
+            , Attributes.strokeWidth "1.3"
+            , Attributes.cx "10"
+            , Attributes.cy "9.7"
+            , Attributes.r "9"
+            ]
+            []
+        , Svg.g
+            [ Attributes.fillRule "evenodd"
+            , Attributes.css
+                [ Css.property "transform-origin" "10px 9px"
+                , Css.property "transform-box" "view-box"
+                ]
+            , Attributes.transform "scale(0.6)"
+            ]
             [ Svg.path [ Attributes.d "M10.5916711,0.1316206 L10.67853,0.20566 L19.77453,9.411066 C20.1884706,9.82499711 19.9187834,10.5322989 19.3794595,10.6096104 L19.28157,10.616526 L17.30891,10.616526 L17.30891,17.082125 C17.30891,17.4337583 17.0325426,17.7394285 16.6910117,17.7879316 L16.59641,17.794625 L11.93943,17.794625 L11.93943,11.767226 L7.994034,11.767226 L7.994034,17.739825 C7.9524255,17.780925 7.8805005,17.7912 7.82406703,17.7937688 L7.774494,17.794625 L3.007294,17.794625 C2.65566067,17.794625 2.34999053,17.5181635 2.3014874,17.1766169 L2.294794,17.082013 L2.294794,10.616414 L0.7059516,10.616526 C0.0854307467,10.616526 -0.193638248,9.88344717 0.146485604,9.47884123 L0.2129916,9.411066 L9.69259,0.20566 C9.938686,-0.041138 10.3183024,-0.0658178 10.5916711,0.1316206 Z" ] []
             ]
         ]
