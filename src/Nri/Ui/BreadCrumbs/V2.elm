@@ -206,7 +206,8 @@ view :
     -> BreadCrumbs route
     -> Html msg
 view config (BreadCrumbs { primary }) =
-    navContainer config.label (viewBreadCrumbs config (List.reverse primary))
+    viewBreadCrumbs Html.Styled.h1 config (List.reverse primary)
+        |> navContainer config.label
 
 
 {-| Usually, the label value will be the string "secondary breadcrumbs".
@@ -222,7 +223,9 @@ viewSecondary :
     -> BreadCrumbs route
     -> Html msg
 viewSecondary config (BreadCrumbs { secondary }) =
-    navContainer config.label (viewBreadCrumbs config (List.reverse secondary))
+    -- TODO: what heading level should the secondary breadcrumbs actually have?
+    viewBreadCrumbs Html.Styled.h2 config (List.reverse secondary)
+        |> navContainer config.label
 
 
 navContainer : String -> List (Html msg) -> Html msg
@@ -237,13 +240,15 @@ navContainer label =
 
 
 viewBreadCrumbs :
-    { config
-        | aTagAttributes : route -> List (Attribute msg)
-        , isCurrentRoute : route -> Bool
-    }
+    (List (Attribute msg) -> List (Html msg) -> Html msg)
+    ->
+        { config
+            | aTagAttributes : route -> List (Attribute msg)
+            , isCurrentRoute : route -> Bool
+        }
     -> List (BreadCrumb route)
     -> List (Html msg)
-viewBreadCrumbs config breadCrumbs =
+viewBreadCrumbs headingLevel config breadCrumbs =
     let
         breadCrumbCount : Int
         breadCrumbCount =
@@ -251,12 +256,13 @@ viewBreadCrumbs config breadCrumbs =
     in
     List.indexedMap
         (\i ->
-            viewBreadCrumb config
+            viewBreadCrumb headingLevel
+                config
                 { isFirst = i == 0
                 , isLast = (i + 1) == breadCrumbCount
                 , isIconOnly =
                     -- the first breadcrumb should collapse when there
-                    -- are 3 breadcrumbs or more
+                    -- are 3 breadcrumbs or more in the group
                     --
                     -- Hypothetically, if there were 4 breadcrumbs, then the
                     -- first 2 breadcrumbs should collapse
@@ -268,14 +274,16 @@ viewBreadCrumbs config breadCrumbs =
 
 
 viewBreadCrumb :
-    { config
-        | aTagAttributes : route -> List (Attribute msg)
-        , isCurrentRoute : route -> Bool
-    }
+    (List (Attribute msg) -> List (Html msg) -> Html msg)
+    ->
+        { config
+            | aTagAttributes : route -> List (Attribute msg)
+            , isCurrentRoute : route -> Bool
+        }
     -> { isFirst : Bool, isLast : Bool, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
-viewBreadCrumb config iconConfig (BreadCrumb crumb) =
+viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
     let
         isLink =
             not (config.isCurrentRoute crumb.route)
@@ -310,11 +318,13 @@ viewBreadCrumb config iconConfig (BreadCrumb crumb) =
     in
     case ( iconConfig.isLast, isLink ) of
         ( True, False ) ->
-            pageHeader crumb.id
+            heading headingLevel
+                crumb.id
                 (withIconIfPresent viewIconForHeading)
 
         ( True, True ) ->
-            pageHeader crumb.id
+            heading headingLevel
+                crumb.id
                 [ Html.Styled.styled Html.Styled.a
                     []
                     (css commonCss :: linkAttrs)
@@ -328,14 +338,17 @@ viewBreadCrumb config iconConfig (BreadCrumb crumb) =
                 (withIconIfPresent viewIconForLink)
 
 
-pageHeader : String -> List (Html msg) -> Html msg
-pageHeader id =
-    styled h1
-        [ fontWeight bold ]
+heading :
+    (List (Attribute msg) -> List (Html msg) -> Html msg)
+    -> String
+    -> List (Html msg)
+    -> Html msg
+heading heading_ id =
+    heading_
         [ Aria.currentPage
         , Attributes.id id
         , Attributes.tabindex -1
-        , css commonCss
+        , css (fontWeight bold :: commonCss)
         ]
 
 
