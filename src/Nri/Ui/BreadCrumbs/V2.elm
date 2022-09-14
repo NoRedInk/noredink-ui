@@ -1,5 +1,5 @@
 module Nri.Ui.BreadCrumbs.V2 exposing
-    ( BreadCrumbs, init, after
+    ( BreadCrumbs, init, initSecondary, after
     , BreadCrumbAttribute, icon, iconCircledStyle
     , view, viewSecondary
     , headerId, toPageTitle
@@ -33,7 +33,7 @@ Narrow Viewport (with Circled IconStyle):
 
 ## Creating breadcrumbs
 
-@docs BreadCrumbs, init, after
+@docs BreadCrumbs, init, initSecondary, after
 @docs BreadCrumbAttribute, icon, iconCircledStyle
 
 
@@ -152,6 +152,16 @@ after (BreadCrumbs crumbs) required optional =
 
         _ ->
             BreadCrumbs { crumbs | secondary = create required optional :: crumbs.secondary }
+
+
+{-| -}
+initSecondary :
+    BreadCrumbs route
+    -> { id : String, text : String, route : route }
+    -> List (BreadCrumbAttribute route)
+    -> BreadCrumbs route
+initSecondary (BreadCrumbs crumbs) required optional =
+    BreadCrumbs { crumbs | secondary = [ create required optional ] }
 
 
 {-| -}
