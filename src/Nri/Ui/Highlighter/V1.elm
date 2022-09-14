@@ -101,6 +101,7 @@ type alias Model marker =
     , hasChanged : HasChanged
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
+    , focusIndex : Int
     }
 
 
@@ -133,6 +134,7 @@ init config =
     , hasChanged = NotChanged
     , selectionStartIndex = Nothing
     , selectionEndIndex = Nothing
+    , focusIndex = 0
     }
 
 
@@ -267,7 +269,7 @@ hasChanged (Intent { changed }) =
 {-| Actions are used as an intermediate algebra from pointer events to actual changes to the model.
 -}
 type Action marker
-    = Focus String
+    = Focus Int
     | Blur Int
     | Hint Int Int
     | Hover Int
@@ -305,21 +307,21 @@ keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
             if index > 0 then
-                [ Focus (highlightableId model.id (index - 1)) ]
+                [ Focus (index - 1) ]
 
             else
                 []
 
         MoveRight index ->
             if index < (List.length model.highlightables - 1) then
-                [ Focus (highlightableId model.id (index + 1)) ]
+                [ Focus (index + 1) ]
 
             else
                 []
 
         SelectionExpandLeft index ->
             if index > 0 then
-                Focus (highlightableId model.id (index - 1))
+                Focus (index - 1)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
                                 [ ExpandSelection (index - 1)
@@ -335,7 +337,7 @@ keyboardEventToActions msg model =
 
         SelectionExpandRight index ->
             if index < (List.length model.highlightables - 1) then
-                Focus (highlightableId model.id (index + 1))
+                Focus (index + 1)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
                                 [ ExpandSelection (index + 1)
@@ -352,10 +354,10 @@ keyboardEventToActions msg model =
         SelectionApplyTool index ->
             case model.marker of
                 Tool.Marker marker ->
-                    [ Save marker, ResetSelection, Focus (highlightableId model.id index) ]
+                    [ Save marker, ResetSelection, Focus index ]
 
                 Tool.Eraser _ ->
-                    [ Remove, ResetSelection, Focus (highlightableId model.id index) ]
+                    [ Remove, ResetSelection, Focus index ]
 
         Space index ->
             case model.marker of
@@ -448,8 +450,8 @@ performActions model actions =
 performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
 performAction action ( model, cmds ) =
     case action of
-        Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) :: cmds )
+        Focus index ->
+            ( { model | focusIndex = index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
 
         Blur index ->
             ( { model | highlightables = Internal.blurAt index model.highlightables }, cmds )
@@ -514,9 +516,9 @@ removeHighlights =
 
 
 {-| -}
-view : { config | id : String, highlightables : List (Highlightable marker), marker : Tool.Tool marker } -> Html (Msg marker)
+view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ (viewHighlightable config.id config.marker) config
+    view_ (viewHighlightable config.id config.marker config.focusIndex) config
 
 
 {-| -}
@@ -581,11 +583,12 @@ groupContainer viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
-viewHighlightable : String -> Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
-viewHighlightable highlighterId marker highlightable =
+viewHighlightable : String -> Tool.Tool marker -> Int -> Highlightable marker -> Html (Msg marker)
+viewHighlightable highlighterId marker focusIndex highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment True
+                focusIndex
                 highlighterId
                 [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
                 , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
@@ -610,6 +613,7 @@ viewHighlightable highlighterId marker highlightable =
 
         Highlightable.Static ->
             viewHighlightableSegment False
+                focusIndex
                 highlighterId
                 -- Static highlightables need listeners as well.
                 -- because otherwise we miss mouseup events
@@ -634,11 +638,11 @@ viewHighlightable highlighterId marker highlightable =
 
 viewStaticHighlightable : String -> Highlightable marker -> Html msg
 viewStaticHighlightable highlighterId =
-    viewHighlightableSegment False highlighterId [] Nothing
+    viewHighlightableSegment False -1 highlighterId [] Nothing
 
 
-viewHighlightableSegment : Bool -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
-viewHighlightableSegment isInteractive highlighterId eventListeners maybeTool highlightable =
+viewHighlightableSegment : Bool -> Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners maybeTool highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -669,7 +673,7 @@ viewHighlightableSegment isInteractive highlighterId eventListeners maybeTool hi
                , Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
-               , Key.tabbable (highlightable.groupIndex == 0)
+               , Key.tabbable (highlightable.groupIndex == focusIndex)
                ]
         )
         [ Html.text highlightable.text ]
