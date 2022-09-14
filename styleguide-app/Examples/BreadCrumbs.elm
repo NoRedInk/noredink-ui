@@ -16,10 +16,11 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
-import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -58,11 +59,66 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                breadCrumbs : BreadCrumbs String
+                createBreadCrumbs ( initializeStr, initialize ) =
+                    List.foldl
+                        (\crumb acc ->
+                            let
+                                ( defs, addStr, add ) =
+                                    case acc of
+                                        Nothing ->
+                                            ( "", initializeStr, initialize )
+
+                                        Just ( ( definitions, preExisitingVarName ), preExisting ) ->
+                                            ( definitions
+                                            , "BreadCrumbs.after " ++ preExisitingVarName
+                                            , BreadCrumbs.after preExisting
+                                            )
+                            in
+                            ( ( defs
+                                    ++ Code.newlines
+                                    ++ (addStr
+                                            :: Code.recordMultiline
+                                                [ ( "id", Code.string crumb.id )
+                                                , ( "text", Code.string crumb.text )
+                                                , ( "route", Code.string crumb.route )
+                                                ]
+                                                2
+                                            :: List.map Tuple.first crumb.attributes
+                                            |> String.join ""
+                                            |> Code.var crumb.varName 1
+                                       )
+                              , crumb.varName
+                              )
+                            , add { id = crumb.id, text = crumb.text, route = crumb.route }
+                                (List.map Tuple.second crumb.attributes)
+                            )
+                                |> Just
+                        )
+                        Nothing
+
+                primaryBreadCrumbs : Maybe ( ( String, String ), BreadCrumbs String )
+                primaryBreadCrumbs =
+                    createBreadCrumbs ( "BreadCrumbs.init", BreadCrumbs.init )
+                        (Control.currentValue state).breadCrumbs
+
+                breadCrumbs : Maybe ( ( String, String ), BreadCrumbs String )
                 breadCrumbs =
-                    case (Control.currentValue state).breadCrumbs of
-                        ( _, _, val ) ->
-                            val
+                    case ( primaryBreadCrumbs, (Control.currentValue state).secondaryBreadCrumbs ) of
+                        ( Just ( ( definitions, lastVar ), primary ), Just secondary ) ->
+                            createBreadCrumbs
+                                ( "BreadCrumbs.initSecondary " ++ lastVar
+                                , BreadCrumbs.initSecondary primary
+                                )
+                                secondary
+                                |> Maybe.map
+                                    (Tuple.mapFirst
+                                        (\( newDefs, newLastVar ) ->
+                                            ( definitions ++ newDefs, newLastVar )
+                                        )
+                                    )
+
+                        _ ->
+                            primaryBreadCrumbs
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -81,13 +137,15 @@ example =
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = moduleName ++ ".view"
-                          , code = viewExampleCode settings
+                          , code =
+                                Maybe.map (Tuple.first >> viewExampleCode) breadCrumbs
+                                    |> Maybe.withDefault ""
                           }
                         ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
                 [ Heading.h2 [ Heading.plaintext "Example" ]
-                , viewExample breadCrumbs
+                , viewJust (Tuple.second >> viewExample) breadCrumbs
                 ]
             , Table.view
                 [ Table.string
@@ -106,7 +164,7 @@ example =
                     }
                 , Table.string
                     { header = "Result"
-                    , value = \{ result } -> result breadCrumbs
+                    , value = \{ result } -> Maybe.withDefault "" (Maybe.map (Tuple.second >> result) breadCrumbs)
                     , width = Css.px 50
                     , cellStyles = always []
                     , sort = Nothing
@@ -154,12 +212,8 @@ previewArrowRight =
         |> Svg.toHtml
 
 
-viewExampleCode : Settings -> String
-viewExampleCode settings =
-    let
-        ( currentCrumb, crumbDefinitions, _ ) =
-            settings.breadCrumbs
-    in
+viewExampleCode : ( String, String ) -> String
+viewExampleCode ( crumbDefinitions, currentCrumb ) =
     crumbDefinitions
         ++ Code.newlines
         ++ (Code.var "view" 1 <|
@@ -198,27 +252,39 @@ update msg state =
 
 
 type alias Settings =
-    { breadCrumbs : ConfigurableBreadCrumbs
+    { breadCrumbs : List BreadCrumbSetting
+    , secondaryBreadCrumbs : Maybe (List BreadCrumbSetting)
+    }
+
+
+type alias BreadCrumbSetting =
+    { varName : String
+    , id : String
+    , text : String
+    , route : String
+    , attributes : List ( String, BreadCrumbAttribute String )
     }
 
 
 init : Control Settings
 init =
-    Control.map Settings controlBreadCrumbs
+    Control.record Settings
+        |> Control.field "primary" (controlBreadCrumbs_ "Category" 1)
+        |> Control.field "secondary" (Control.maybe False (controlBreadCrumbs_ "SubCategory" 1))
 
 
-type alias ConfigurableBreadCrumbs =
-    ( String, String, BreadCrumbs String )
-
-
-controlBreadCrumbs : Control ConfigurableBreadCrumbs
-controlBreadCrumbs =
-    Control.map (\f -> f Nothing) (controlBreadCrumbs_ "Category" 1)
-
-
-controlBreadCrumbs_ : String -> Int -> Control (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
+controlBreadCrumbs_ : String -> Int -> Control (List BreadCrumbSetting)
 controlBreadCrumbs_ name index =
-    Control.record (composeBreadCrumbs name index)
+    Control.record
+        (\text attributes maybeNextBreadCrumbs ->
+            { varName = String.toLower name ++ String.fromInt index
+            , id = String.toLower name ++ "-breadcrumb-id-" ++ String.fromInt index
+            , text = text
+            , route = "/breadcrumb-" ++ String.toLower name ++ "-" ++ String.fromInt index
+            , attributes = Maybe.withDefault [] attributes
+            }
+                :: Maybe.withDefault [] maybeNextBreadCrumbs
+        )
         |> Control.field "text" (Control.string (name ++ " " ++ String.fromInt index))
         |> Control.field "optional attributes"
             (Control.maybe False
@@ -233,58 +299,3 @@ controlBreadCrumbs_ name index =
                     (\() -> controlBreadCrumbs_ name (index + 1))
                 )
             )
-
-
-composeBreadCrumbs :
-    String
-    -> Int
-    -> String
-    -> Maybe (List ( String, BreadCrumbs.BreadCrumbAttribute String ))
-    -> Maybe (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
-    -> (Maybe ConfigurableBreadCrumbs -> ConfigurableBreadCrumbs)
-composeBreadCrumbs name index text attributes after maybeBase =
-    let
-        id =
-            String.toLower name ++ "-breadcrumb-id-" ++ String.fromInt index
-
-        route =
-            "/breadcrumb-" ++ String.toLower name ++ "-" ++ String.fromInt index
-
-        ( configStr, config ) =
-            ( Code.recordMultiline
-                [ ( "text", Code.string text ), ( "id", Code.string id ), ( "route", Code.string route ) ]
-                2
-            , { text = text, id = id, route = route }
-            )
-
-        ( optionalAttributesStr, optionalAttributes ) =
-            List.unzip (Maybe.withDefault [] attributes)
-
-        varName =
-            "breadcrumb" ++ name ++ String.fromInt index
-
-        newBase =
-            case maybeBase of
-                Just ( baseVar, baseStr, base ) ->
-                    ( varName
-                    , baseStr
-                        ++ Code.newlines
-                        ++ (Code.var varName 1 <|
-                                "BreadCrumbs.after "
-                                    ++ baseVar
-                                    ++ configStr
-                                    ++ Code.listMultiline optionalAttributesStr 2
-                           )
-                    , BreadCrumbs.after base config optionalAttributes
-                    )
-
-                Nothing ->
-                    ( varName
-                    , Code.var varName 1 <|
-                        "BreadCrumbs.init "
-                            ++ configStr
-                            ++ Code.listMultiline optionalAttributesStr 2
-                    , BreadCrumbs.init config optionalAttributes
-                    )
-    in
-    Maybe.map (\f -> f (Just newBase)) after |> Maybe.withDefault newBase
