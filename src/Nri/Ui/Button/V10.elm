@@ -924,11 +924,11 @@ getColorPalette (ButtonOrLink config) =
             }
 
         Success ->
-            { background = Colors.greenDark
-            , hover = Colors.greenDark
+            { background = Colors.greenDarkest
+            , hover = Colors.greenDarkest
             , text = Colors.white
             , border = Nothing
-            , shadow = Colors.greenDark
+            , shadow = Colors.greenDarkest
             }
 
 
