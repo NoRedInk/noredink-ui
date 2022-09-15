@@ -3,9 +3,9 @@ module Nri.Ui.MediaQuery.V1 exposing
     , highContrastMode
     , mobile, notMobile
     , mobileBreakpoint
-    , quizEngineMobile
+    , quizEngineMobile, notQuizEngineMobile
     , quizEngineBreakpoint
-    , narrowMobile
+    , narrowMobile, notNarrowMobile
     , narrowMobileBreakPoint
     )
 
@@ -25,13 +25,22 @@ module Nri.Ui.MediaQuery.V1 exposing
 @docs anyMotion, prefersReducedMotion
 @docs highContrastMode
 
+
+### 1000px breakpoint
+
 @docs mobile, notMobile
 @docs mobileBreakpoint
 
-@docs quizEngineMobile
+
+### 750px breakpoint
+
+@docs quizEngineMobile, notQuizEngineMobile
 @docs quizEngineBreakpoint
 
-@docs narrowMobile
+
+### 500px breakpoint
+
+@docs narrowMobile, notNarrowMobile
 @docs narrowMobileBreakPoint
 
 -}
@@ -96,6 +105,13 @@ quizEngineMobile =
         ]
 
 
+{-| Styles using the `quizEngineBreakpoint` value as the minWidth.
+-}
+notQuizEngineMobile : MediaQuery
+notQuizEngineMobile =
+    only screen [ minWidth quizEngineBreakpoint ]
+
+
 {-| 750px
 -}
 quizEngineBreakpoint : Css.Px
@@ -113,6 +129,13 @@ narrowMobile =
           minWidth (px 1)
         , maxWidth narrowMobileBreakPoint
         ]
+
+
+{-| Styles using the `quizEngineBreakpoint` value as the minWidth.
+-}
+notNarrowMobile : MediaQuery
+notNarrowMobile =
+    only screen [ minWidth narrowMobileBreakPoint ]
 
 
 {-| 500px
