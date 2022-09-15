@@ -149,7 +149,7 @@ navId str =
 
 {-| These styles are included automatically in the nav container:
 
-    [ flexBasis (px 250)
+    [ flexBasis (px 300)
     , flexShrink (num 0)
     , borderRadius (px 8)
     , backgroundColor Colors.gray96
@@ -215,13 +215,13 @@ view config navAttributes entries =
                 case appliedNavAttributes.collapsible of
                     Just _ ->
                         Css.batch
-                            [ Css.flexBasis (Css.px 245)
+                            [ Css.flexBasis (Css.px 295)
                             , Css.padding4 (Css.px 25) (Css.px 25) (Css.px 20) (Css.px 20)
                             ]
 
                     Nothing ->
                         Css.batch
-                            [ Css.flexBasis (Css.px 250)
+                            [ Css.flexBasis (Css.px 300)
                             , Css.padding (Css.px 20)
                             ]
 
@@ -232,6 +232,13 @@ view config navAttributes entries =
             , position relative
             , borderRadius (px 8)
             , backgroundColor Colors.gray96
+            , alignSelf flexStart
+            , Css.Media.withMedia [ MediaQuery.mobile ]
+                [ Css.property "flex-basis" "unset"
+                , marginRight Css.zero
+                , marginBottom (Css.px 20)
+                , width (pct 100)
+                ]
             ]
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
@@ -273,7 +280,8 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
                     ]
                 , ClickableSvg.custom tooltipAttributes
                 , ClickableSvg.onClick (toggle (not isOpen))
-                , ClickableSvg.tertiary
+                , ClickableSvg.secondary
+                , ClickableSvg.withBorder
                 , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
                 ]
     in
@@ -296,8 +304,8 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
             (if isOpen then
                 [ Css.Media.withMedia [ MediaQuery.notMobile ]
                     [ Css.position Css.absolute
-                    , Css.top Css.zero
-                    , Css.right Css.zero
+                    , Css.top (Css.px 10)
+                    , Css.right (Css.px 10)
                     ]
                 ]
 
