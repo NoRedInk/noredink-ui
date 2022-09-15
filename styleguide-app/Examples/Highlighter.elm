@@ -58,7 +58,7 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> []
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2 [ Heading.plaintext "Interactive example" ]
             , Button.button "Clear all highlights"
                 [ Button.onClick ClearHighlights
                 , Button.secondary
@@ -67,7 +67,7 @@ example =
                 ]
             , Highlighter.view state.highlighter
                 |> map HighlighterMsg
-            , Heading.h2 [ Heading.plaintext "Non-interactive Examples" ]
+            , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
             , Table.view
                 [ Table.string
                     { header = "Description"
