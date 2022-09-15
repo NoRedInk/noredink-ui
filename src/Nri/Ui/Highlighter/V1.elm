@@ -553,10 +553,6 @@ groupContainer viewSegment highlightables =
                         [ markedWith.name
                             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
                             |> Maybe.withDefault AttributesExtra.none
-
-                        -- Temporarily adding tabindex 0 so that the mark element can be focused,
-                        --so we will be able to tell how it will read
-                        --   tabindex 0
                         , css
                             [ Css.Global.children
                                 [ Css.Global.selector ":first-child"
