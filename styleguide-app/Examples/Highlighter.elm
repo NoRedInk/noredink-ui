@@ -341,11 +341,11 @@ update msg state =
 
         HighlighterMsg highlighterMsg ->
             let
-                ( newHighlighter, _ ) =
+                ( newHighlighter, effect, _ ) =
                     Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
-            , Cmd.none
+            , Cmd.map HighlighterMsg effect
             )
 
         ClearHighlights ->

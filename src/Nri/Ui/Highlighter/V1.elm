@@ -59,13 +59,14 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Browser.Dom as Dom
 import Css
 import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
-import Html.Styled.Attributes exposing (attribute, class, css, tabindex)
+import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events
 import Json.Decode
 import List.Extra
@@ -76,6 +77,7 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
+import Task
 
 
 
@@ -87,7 +89,7 @@ import String.Extra
 type alias Model marker =
     { -- Used to identify a highlighter. This is necessary when there are
       -- multiple highlighters on the same page because we add listeners
-      -- in javascript (see ./highlighter.js).
+      -- in javascript (see ./highlighter.js) and because we move focus by id for keyboard users.
       id : String
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
@@ -97,6 +99,9 @@ type alias Model marker =
     , mouseOverIndex : Maybe Int
     , isInitialized : Initialized
     , hasChanged : HasChanged
+    , selectionStartIndex : Maybe Int
+    , selectionEndIndex : Maybe Int
+    , focusIndex : Int
     }
 
 
@@ -127,6 +132,9 @@ init config =
     , mouseOverIndex = Nothing
     , isInitialized = NotInitialized
     , hasChanged = NotChanged
+    , selectionStartIndex = Nothing
+    , selectionEndIndex = Nothing
+    , focusIndex = 0
     }
 
 
@@ -178,8 +186,8 @@ text highlightables =
 {-| -}
 type Msg marker
     = Pointer PointerMsg
-    | Keyboard Int
-    | NoOp
+    | Keyboard KeyboardMsg
+    | Focused (Result Dom.Error ())
 
 
 {-| Messages used by highlighter when interacting with a mouse or finger.
@@ -194,6 +202,15 @@ type PointerMsg
       -- will not have this info!
     | Move (Maybe String) Int
     | Up (Maybe String)
+
+
+type KeyboardMsg
+    = MoveLeft Int
+    | MoveRight Int
+    | SelectionExpandLeft Int
+    | SelectionExpandRight Int
+    | SelectionApplyTool Int
+    | Space Int
 
 
 {-| Possible intents or "external effects" that the Highlighter can request (see `perform`).
@@ -225,9 +242,10 @@ emptyIntent =
     determine whether they want to execute follow up actions.
 
 -}
-withIntent : Model m -> ( Model m, Intent )
-withIntent new =
+withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent )
+withIntent ( new, cmd ) =
     ( { new | isInitialized = Initialized, hasChanged = NotChanged }
+    , cmd
     , Intent
         { listenTo =
             case new.isInitialized of
@@ -251,7 +269,8 @@ hasChanged (Intent { changed }) =
 {-| Actions are used as an intermediate algebra from pointer events to actual changes to the model.
 -}
 type Action marker
-    = Blur Int
+    = Focus Int
+    | Blur Int
     | Hint Int Int
     | Hover Int
     | MouseDown Int
@@ -260,11 +279,14 @@ type Action marker
     | Remove
     | Save (Tool.MarkerModel marker)
     | Toggle Int (Tool.MarkerModel marker)
+    | StartSelection Int
+    | ExpandSelection Int
+    | ResetSelection
 
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Msg marker -> Model marker -> ( Model marker, Intent )
+update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
 update msg model =
     withIntent <|
         case msg of
@@ -272,21 +294,82 @@ update msg model =
                 pointerEventToActions pointerMsg model
                     |> performActions model
 
-            Keyboard index ->
-                performActions model <|
-                    case model.marker of
-                        Tool.Marker marker ->
-                            [ Toggle index marker ]
+            Keyboard keyboardMsg ->
+                keyboardEventToActions keyboardMsg model
+                    |> performActions model
 
-                        Tool.Eraser _ ->
-                            [ MouseOver index
-                            , Hint index index
-                            , MouseUp
-                            , Remove
-                            ]
+            Focused _ ->
+                ( model, Cmd.none )
 
-            NoOp ->
-                model
+
+keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
+keyboardEventToActions msg model =
+    case msg of
+        MoveLeft index ->
+            if index > 0 then
+                [ Focus (index - 1) ]
+
+            else
+                []
+
+        MoveRight index ->
+            if index < (List.length model.highlightables - 1) then
+                [ Focus (index + 1) ]
+
+            else
+                []
+
+        SelectionExpandLeft index ->
+            if index > 0 then
+                Focus (index - 1)
+                    :: (case model.selectionStartIndex of
+                            Just startIndex ->
+                                [ ExpandSelection (index - 1)
+                                , Hint startIndex (index - 1)
+                                ]
+
+                            Nothing ->
+                                [ StartSelection index, ExpandSelection (index - 1), Hint index (index - 1) ]
+                       )
+
+            else
+                []
+
+        SelectionExpandRight index ->
+            if index < (List.length model.highlightables - 1) then
+                Focus (index + 1)
+                    :: (case model.selectionStartIndex of
+                            Just startIndex ->
+                                [ ExpandSelection (index + 1)
+                                , Hint startIndex (index + 1)
+                                ]
+
+                            Nothing ->
+                                [ StartSelection index, ExpandSelection (index + 1), Hint index (index + 1) ]
+                       )
+
+            else
+                []
+
+        SelectionApplyTool index ->
+            case model.marker of
+                Tool.Marker marker ->
+                    [ Save marker, ResetSelection, Focus index ]
+
+                Tool.Eraser _ ->
+                    [ Remove, ResetSelection, Focus index ]
+
+        Space index ->
+            case model.marker of
+                Tool.Marker marker ->
+                    [ Toggle index marker ]
+
+                Tool.Eraser _ ->
+                    [ MouseOver index
+                    , Hint index index
+                    , MouseUp
+                    , Remove
+                    ]
 
 
 {-| Pointer events to actions.
@@ -356,51 +439,70 @@ pointerEventToActions msg model =
 
 {-| We fold over actions using (Model marker) as the accumulator.
 -}
-performActions : Model marker -> List (Action marker) -> Model marker
+performActions : Model marker -> List (Action marker) -> ( Model marker, Cmd (Msg m) )
 performActions model actions =
-    List.foldl performAction model actions
+    List.foldl performAction ( model, [] ) actions
+        |> Tuple.mapSecond Cmd.batch
 
 
 {-| Performs actual changes to the model, or emit a command.
 -}
-performAction : Action marker -> Model marker -> Model marker
-performAction action model =
+performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
+performAction action ( model, cmds ) =
     case action of
+        Focus index ->
+            ( { model | focusIndex = index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
+
         Blur index ->
-            { model | highlightables = Internal.blurAt index model.highlightables }
+            ( { model | highlightables = Internal.blurAt index model.highlightables }, cmds )
 
         Hover index ->
-            { model | highlightables = Internal.hoverAt index model.highlightables }
+            ( { model | highlightables = Internal.hoverAt index model.highlightables }, cmds )
 
         Hint start end ->
-            { model | highlightables = Internal.hintBetween start end model.highlightables }
+            ( { model | highlightables = Internal.hintBetween start end model.highlightables }, cmds )
 
         Save marker ->
-            { model
+            ( { model
                 | highlightables = Internal.saveHinted marker model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         Toggle index marker ->
-            { model
+            ( { model
                 | highlightables = Internal.toggleHinted index marker model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         Remove ->
-            { model
+            ( { model
                 | highlightables = Internal.removeHinted model.highlightables
                 , hasChanged = Changed
-            }
+              }
+            , cmds
+            )
 
         MouseDown index ->
-            { model | mouseDownIndex = Just index }
+            ( { model | mouseDownIndex = Just index }, cmds )
 
         MouseOver index ->
-            { model | mouseOverIndex = Just index }
+            ( { model | mouseOverIndex = Just index }, cmds )
 
         MouseUp ->
-            { model | mouseDownIndex = Nothing }
+            ( { model | mouseDownIndex = Nothing }, cmds )
+
+        StartSelection index ->
+            ( { model | selectionStartIndex = Just index }, cmds )
+
+        ExpandSelection index ->
+            ( { model | selectionEndIndex = Just index }, cmds )
+
+        ResetSelection ->
+            ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
 
 
 {-| -}
@@ -414,15 +516,15 @@ removeHighlights model =
 
 
 {-| -}
-view : { config | id : String, highlightables : List (Highlightable marker), marker : Tool.Tool marker } -> Html (Msg marker)
+view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ (viewHighlightable config.marker) config
+    view_ (viewHighlightable config.id config.marker config.focusIndex) config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_ viewStaticHighlightable config
+    view_ (viewStaticHighlightable config.id) config
 
 
 view_ :
@@ -451,9 +553,6 @@ groupContainer viewSegment highlightables =
                         [ markedWith.name
                             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
                             |> Maybe.withDefault AttributesExtra.none
-                        , -- Temporarily adding tabindex 0 so that the mark element can be focused,
-                          --so we will be able to tell how it will read
-                          tabindex 0
                         , css
                             [ Css.backgroundColor Css.transparent
                             , Css.Global.children
@@ -481,42 +580,66 @@ groupContainer viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
-viewHighlightable : Tool.Tool marker -> Highlightable marker -> Html (Msg marker)
-viewHighlightable marker highlightable =
+viewHighlightable : String -> Tool.Tool marker -> Int -> Highlightable marker -> Html (Msg marker)
+viewHighlightable highlighterId marker focusIndex highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment True
+                focusIndex
+                highlighterId
                 [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
                 , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
                 , on "mouseup" (Pointer <| Up Nothing)
                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-interactive" ""
-                , Key.onKeyDownPreventDefault [ Key.space (Keyboard highlightable.groupIndex) ]
+                , Key.onKeyDownPreventDefault
+                    [ Key.space (Keyboard <| Space highlightable.groupIndex)
+                    , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                    ]
+                , Key.onKeyUpPreventDefault
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    ]
                 ]
                 (Just marker)
                 highlightable
 
         Highlightable.Static ->
             viewHighlightableSegment False
+                focusIndex
+                highlighterId
                 -- Static highlightables need listeners as well.
                 -- because otherwise we miss mouseup events
                 [ on "mouseup" (Pointer <| Up Nothing)
                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-static" ""
+                , Key.onKeyDownPreventDefault
+                    [ Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                    ]
+                , Key.onKeyUpPreventDefault
+                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    ]
                 ]
                 (Just marker)
                 highlightable
 
 
-viewStaticHighlightable : Highlightable marker -> Html msg
-viewStaticHighlightable =
-    viewHighlightableSegment False [] Nothing
+viewStaticHighlightable : String -> Highlightable marker -> Html msg
+viewStaticHighlightable highlighterId =
+    viewHighlightableSegment False -1 highlighterId [] Nothing
 
 
-viewHighlightableSegment : Bool -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
-viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
+viewHighlightableSegment : Bool -> Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners maybeTool highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -544,11 +667,18 @@ viewHighlightableSegment isInteractive eventListeners maybeTool highlightable =
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+               , Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
+               , Key.tabbable (highlightable.groupIndex == focusIndex)
                ]
         )
         [ Html.text highlightable.text ]
+
+
+highlightableId : String -> Int -> String
+highlightableId highlighterId groupIndex =
+    "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt groupIndex
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
