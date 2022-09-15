@@ -74,15 +74,16 @@ example =
                 [ Table.string
                     { header = "Description"
                     , value = .description
-                    , width = Css.pct 20
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
+                    , width = Css.pct 30
+                    -- , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
                     , sort = Nothing
                     }
                 , Table.custom
                     { header = text "Example"
                     , view = .example
                     , width = Css.px 150
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
                 ]
