@@ -86,7 +86,7 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { description = "Non-interactive sentence with one word highlighted"
+                [ { description = "One word highlighted"
                   , example =
                         Highlighter.static
                             { id = "example-0"
@@ -103,7 +103,7 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { description = "Non-interactive sentence with multiple words highlighted separately"
+                , { description = "Multiple words highlighted separately"
                   , example =
                         Highlighter.static
                             { id = "example-1"
@@ -120,7 +120,7 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { description = "Non-interactive sentence with multiple words highlighted & joined"
+                , { description = "Multiple words highlighted & joined"
                   , example =
                         Highlighter.static
                             { id = "example-2"
