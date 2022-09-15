@@ -75,7 +75,6 @@ example =
                     { header = "Description"
                     , value = .description
                     , width = Css.pct 30
-                    -- , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
                     , sort = Nothing
                     }
