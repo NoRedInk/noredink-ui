@@ -58,7 +58,8 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> []
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2 [ Heading.plaintext "Interactive example" ]
+            , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
             , Button.button "Clear all highlights"
                 [ Button.onClick ClearHighlights
                 , Button.secondary
@@ -67,24 +68,25 @@ example =
                 ]
             , Highlighter.view state.highlighter
                 |> map HighlighterMsg
-            , Heading.h2 [ Heading.plaintext "Non-interactive Examples" ]
+            , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
+            , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
             , Table.view
                 [ Table.string
                     { header = "Description"
                     , value = .description
-                    , width = Css.pct 20
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
+                    , width = Css.pct 30
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
                     , sort = Nothing
                     }
                 , Table.custom
                     { header = text "Example"
                     , view = .example
                     , width = Css.px 150
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
                 ]
-                [ { description = "Non-interactive sentence with one word highlighted"
+                [ { description = "One word highlighted"
                   , example =
                         Highlighter.static
                             { id = "example-0"
@@ -101,7 +103,7 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { description = "Non-interactive sentence with multiple words highlighted separately"
+                , { description = "Multiple words highlighted separately"
                   , example =
                         Highlighter.static
                             { id = "example-1"
@@ -118,7 +120,7 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { description = "Non-interactive sentence with multiple words highlighted & joined"
+                , { description = "Multiple words highlighted & joined"
                   , example =
                         Highlighter.static
                             { id = "example-2"
