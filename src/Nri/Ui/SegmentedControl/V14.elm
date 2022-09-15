@@ -272,6 +272,7 @@ styles positioning numEntries index isSelected =
       Css.pseudoClass "focus-within"
         [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
         , outline none
+        , zIndex (int 1)
         ]
     ]
 
