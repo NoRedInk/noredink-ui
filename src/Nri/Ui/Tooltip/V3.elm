@@ -15,7 +15,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , smallPadding, normalPadding, customPadding
     , onToggle
     , open
-    , css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
     , primaryLabel, auxiliaryDescription, disclosure
@@ -28,6 +28,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
   - adds alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
   - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
+  - adds narrowMobileCss
 
 Changes from V2:
 
@@ -67,7 +68,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs smallPadding, normalPadding, customPadding
 @docs onToggle
 @docs open
-@docs css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
 @docs primaryLabel, auxiliaryDescription, disclosure
@@ -647,6 +648,19 @@ Equivalent to:
 quizEngineMobileCss : List Style -> Attribute msg
 quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's narrow mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.narrowMobile ] styles ]
+
+-}
+narrowMobileCss : List Style -> Attribute msg
+narrowMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.narrowMobile ] styles ]
 
 
 {-| Use this helper to add custom attributes.

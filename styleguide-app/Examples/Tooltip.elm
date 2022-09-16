@@ -352,6 +352,7 @@ initStaticExampleSettings =
         |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
         |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
         |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
+        |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
         |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
 
 
