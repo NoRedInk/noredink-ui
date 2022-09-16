@@ -115,8 +115,8 @@ example =
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
                 Html.div []
-                    [ Svg.toHtml Loading.spinningPencil
-                    , Svg.toHtml Loading.spinningDots
+                    [ Html.div [] [ Svg.toHtml Loading.spinningPencil ]
+                    , Html.div [] [ Svg.toHtml Loading.spinningDots ]
                     ]
 
               else
