@@ -167,17 +167,25 @@ headerId (BreadCrumbs { primary, secondary }) =
         |> Maybe.map .id
 
 
-{-| TODO: implement <https://noredink.slack.com/archives/C71TD8MUY/p1662584306753169?thread_ts=1659978195.802739&cid=C71TD8MUY>
-
-Generate an HTML page title using the breadcrumbs, in the form "SubCategory | Category | NoRedInk" for breadCrumbs like:
+{-| Generate an HTML page title using the breadcrumbs, in the form "SubCategory | Category | NoRedInk" for breadCrumbs like:
 
     Category > SubCategory
 
 -}
 toPageTitle : BreadCrumbs a -> String
 toPageTitle (BreadCrumbs { primary, secondary }) =
+    let
+        primaryPageComponents =
+            if List.isEmpty secondary then
+                List.map pageTitle primary
+
+            else
+                List.head primary
+                    |> Maybe.map (pageTitle >> List.singleton)
+                    |> Maybe.withDefault []
+    in
     List.map pageTitle secondary
-        ++ List.map pageTitle primary
+        ++ primaryPageComponents
         ++ [ "NoRedInk" ]
         |> String.join " | "
 
