@@ -286,16 +286,16 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
                 content
 
             else
-                [ Html.Styled.styled Html.Styled.a
-                    []
-                    (css commonCss :: config.aTagAttributes crumb.route)
+                [ Html.Styled.a
+                    (css commonCss
+                        :: config.aTagAttributes crumb.route
+                    )
                     content
                 ]
 
     else
-        Html.Styled.styled Html.Styled.a
-            [ fontWeight normal ]
-            (css commonCss
+        Html.Styled.a
+            (css (fontWeight normal :: commonCss)
                 :: Attributes.id crumb.id
                 :: config.aTagAttributes crumb.route
             )
