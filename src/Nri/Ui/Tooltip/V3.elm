@@ -1022,16 +1022,32 @@ viewTooltip tooltipId config =
         mobileDirection =
             Maybe.withDefault config.direction config.mobileDirection
 
+        quizEngineMobileDirection =
+            Maybe.withDefault mobileDirection config.quizEngineMobileDirection
+
         mobileAlignment =
             Maybe.withDefault config.alignment config.mobileAlignment
+
+        quizEngineMobileAlignment =
+            Maybe.withDefault mobileAlignment config.quizEngineMobileAlignment
+
+        applyTail direction =
+            case config.tail of
+                WithTail ->
+                    tailForDirection direction
+
+                WithoutTail ->
+                    Css.batch []
     in
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
             , Css.Media.withMedia [ MediaQuery.notMobile ]
                 (positionTooltip config.direction config.alignment)
-            , Css.Media.withMedia [ MediaQuery.mobile ]
+            , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
                 (positionTooltip mobileDirection mobileAlignment)
+            , Css.Media.withMedia [ MediaQuery.quizEngineMobile ]
+                (positionTooltip quizEngineMobileDirection quizEngineMobileAlignment)
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -1068,21 +1084,15 @@ viewTooltip tooltipId config =
                  , Css.border3 (Css.px 1) Css.solid Colors.navy
                  , Css.Media.withMedia [ MediaQuery.notMobile ]
                     [ positioning config.direction config.alignment
-                    , case config.tail of
-                        WithTail ->
-                            tailForDirection config.direction
-
-                        WithoutTail ->
-                            Css.batch []
+                    , applyTail config.direction
                     ]
-                 , Css.Media.withMedia [ MediaQuery.mobile ]
+                 , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
                     [ positioning mobileDirection mobileAlignment
-                    , case config.tail of
-                        WithTail ->
-                            tailForDirection mobileDirection
-
-                        WithoutTail ->
-                            Css.batch []
+                    , applyTail mobileDirection
+                    ]
+                 , Css.Media.withMedia [ MediaQuery.quizEngineMobile ]
+                    [ positioning quizEngineMobileDirection quizEngineMobileAlignment
+                    , applyTail quizEngineMobileDirection
                     ]
                  , Fonts.baseFont
                  , Css.fontSize (Css.px 16)
@@ -1119,11 +1129,11 @@ viewTooltip tooltipId config =
                         [ Attributes.css
                             [ Css.position Css.absolute
                             , Css.Media.withMedia [ MediaQuery.notMobile ]
-                                [ Css.batch (hoverAreaForDirection config.direction)
-                                ]
-                            , Css.Media.withMedia [ MediaQuery.mobile ]
-                                [ Css.batch (hoverAreaForDirection mobileDirection)
-                                ]
+                                (hoverAreaForDirection config.direction)
+                            , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
+                                (hoverAreaForDirection mobileDirection)
+                            , Css.Media.withMedia [ MediaQuery.quizEngineMobile ]
+                                (hoverAreaForDirection quizEngineMobileDirection)
                             ]
                         ]
                         []
