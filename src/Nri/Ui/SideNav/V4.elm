@@ -1,6 +1,7 @@
-module Nri.Ui.SideNav.V3 exposing
+module Nri.Ui.SideNav.V4 exposing
     ( view, Config, NavAttribute
-    , navLabel
+    , collapsible
+    , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
     , icon, custom, css, nriDescription, testId, id
@@ -13,12 +14,13 @@ module Nri.Ui.SideNav.V3 exposing
 {-|
 
 
-# Changes from V2
+# Changes from V3
 
-  - change to `NavAttribute` list-based API
+  - make the nav configurably collapsible
 
 @docs view, Config, NavAttribute
-@docs navLabel
+@docs collapsible
+@docs navLabel, navId
 @docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
 
 
@@ -46,8 +48,8 @@ module Nri.Ui.SideNav.V3 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
-import Accessibility.Styled.Widget as Widget
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
 import Css.Media
@@ -55,14 +57,18 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
+import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -104,40 +110,46 @@ type alias Config route msg =
 
 
 {-| -}
-type NavAttribute
-    = NavAttribute (NavAttributeConfig -> NavAttributeConfig)
+type NavAttribute msg
+    = NavAttribute (NavAttributeConfig msg -> NavAttributeConfig msg)
 
 
-type alias NavAttributeConfig =
+type alias NavAttributeConfig msg =
     { navLabel : Maybe String
+    , navId : Maybe String
     , css : List Style
+    , collapsible : Maybe (CollapsibleConfig msg)
     }
 
 
-defaultNavAttributeConfig : NavAttributeConfig
+defaultNavAttributeConfig : NavAttributeConfig msg
 defaultNavAttributeConfig =
     { navLabel = Nothing
-    , css =
-        [ flexBasis (px 250)
-        , flexShrink (num 0)
-        , borderRadius (px 8)
-        , backgroundColor Colors.gray96
-        , padding (px 20)
-        , marginRight (px 20)
-        ]
+    , navId = Nothing
+    , css = []
+    , collapsible = Nothing
     }
 
 
 {-| Give screenreader users context on what this particular sidenav is for.
+
+If the nav is collapsible, this value will also be used for the sidenav tooltips.
+
 -}
-navLabel : String -> NavAttribute
+navLabel : String -> NavAttribute msg
 navLabel str =
     NavAttribute (\config -> { config | navLabel = Just str })
 
 
+{-| -}
+navId : String -> NavAttribute msg
+navId str =
+    NavAttribute (\config -> { config | navId = Just str })
+
+
 {-| These styles are included automatically in the nav container:
 
-    [ flexBasis (px 250)
+    [ flexBasis (px 300)
     , flexShrink (num 0)
     , borderRadius (px 8)
     , backgroundColor Colors.gray96
@@ -146,45 +158,177 @@ navLabel str =
     ]
 
 -}
-navCss : List Style -> NavAttribute
+navCss : List Style -> NavAttribute msg
 navCss styles =
     NavAttribute (\config -> { config | css = List.append config.css styles })
 
 
 {-| -}
-navNotMobileCss : List Style -> NavAttribute
+navNotMobileCss : List Style -> NavAttribute msg
 navNotMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
 
 
 {-| -}
-navMobileCss : List Style -> NavAttribute
+navMobileCss : List Style -> NavAttribute msg
 navMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
 
 
 {-| -}
-navQuizEngineMobileCss : List Style -> NavAttribute
+navQuizEngineMobileCss : List Style -> NavAttribute msg
 navQuizEngineMobileCss styles =
     navCss [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| -}
-view : Config route msg -> List NavAttribute -> List (Entry route msg) -> Html msg
+type alias CollapsibleConfig msg =
+    { isOpen : Bool
+    , toggle : Bool -> msg
+    , isTooltipOpen : Bool
+    , toggleTooltip : Bool -> msg
+    }
+
+
+{-| -}
+collapsible : CollapsibleConfig msg -> NavAttribute msg
+collapsible collapsible_ =
+    NavAttribute (\config -> { config | collapsible = Just collapsible_ })
+
+
+{-| -}
+view : Config route msg -> List (NavAttribute msg) -> List (Entry route msg) -> Html msg
 view config navAttributes entries =
     let
         appliedNavAttributes =
             List.foldl (\(NavAttribute f) b -> f b) defaultNavAttributeConfig navAttributes
+
+        showNav =
+            Maybe.map .isOpen appliedNavAttributes.collapsible
+                |> Maybe.withDefault True
+
+        sidenavId =
+            Maybe.withDefault defaultSideNavId appliedNavAttributes.navId
+
+        defaultCss =
+            [ if showNav then
+                case appliedNavAttributes.collapsible of
+                    Just _ ->
+                        Css.batch
+                            [ Css.flexBasis (Css.px 295)
+                            , Css.padding4 (Css.px 25) (Css.px 25) (Css.px 20) (Css.px 20)
+                            ]
+
+                    Nothing ->
+                        Css.batch
+                            [ Css.flexBasis (Css.px 300)
+                            , Css.padding (Css.px 20)
+                            ]
+
+              else
+                Css.flexBasis (Css.px 5)
+            , flexShrink (num 0)
+            , marginRight (px 20)
+            , position relative
+            , borderRadius (px 8)
+            , backgroundColor Colors.gray96
+            , alignSelf flexStart
+            , Css.Media.withMedia [ MediaQuery.mobile ]
+                [ Css.property "flex-basis" "unset"
+                , marginRight Css.zero
+                , marginBottom (Css.px 20)
+                , width (pct 100)
+                ]
+            ]
     in
-    styled nav
-        appliedNavAttributes.css
-        ([ Maybe.map Widget.label appliedNavAttributes.navLabel
+    div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
+        [ viewSkipLink config.onSkipNav
+        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
+        , viewNav sidenavId config appliedNavAttributes entries showNav
+        ]
+
+
+defaultSideNavId : String
+defaultSideNavId =
+    "sidenav"
+
+
+viewOpenCloseButton : String -> Maybe String -> CollapsibleConfig msg -> Html msg
+viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
+    let
+        name =
+            Maybe.withDefault "sidebar" navLabel_
+
+        ( action, icon_ ) =
+            if isOpen then
+                ( "Close " ++ name
+                , UiIcon.openClose
+                )
+
+            else
+                ( "Open " ++ name
+                , UiIcon.openClose
+                    |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
+                )
+
+        trigger tooltipAttributes =
+            ClickableSvg.button action
+                icon_
+                [ ClickableSvg.custom
+                    [ Aria.controls [ sidenavId ]
+                    , Aria.expanded isOpen
+                    ]
+                , ClickableSvg.custom tooltipAttributes
+                , ClickableSvg.onClick (toggle (not isOpen))
+                , ClickableSvg.secondary
+                , ClickableSvg.withBorder
+                , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
+                ]
+    in
+    Tooltip.view
+        { trigger = trigger
+        , id = "open-close-sidebar-tooltip"
+        }
+        [ Tooltip.open isTooltipOpen
+        , Tooltip.onToggle toggleTooltip
+        , Tooltip.plaintext action
+        , Tooltip.smallPadding
+        , Tooltip.fitToContent
+        , if isOpen then
+            Tooltip.onLeft
+
+          else
+            Tooltip.onRight
+        , Tooltip.onRightForMobile
+        , Tooltip.containerCss
+            (if isOpen then
+                [ Css.Media.withMedia [ MediaQuery.notMobile ]
+                    [ Css.position Css.absolute
+                    , Css.top (Css.px 10)
+                    , Css.right (Css.px 10)
+                    ]
+                ]
+
+             else
+                []
+            )
+        ]
+
+
+viewNav : String -> Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
+viewNav sidenavId config appliedNavAttributes entries showNav =
+    nav
+        ([ Maybe.map Aria.label appliedNavAttributes.navLabel
+         , Just (Attributes.id sidenavId)
+         , if showNav then
+            Nothing
+
+           else
+            Just (Attributes.css [ Css.display Css.none ])
          ]
             |> List.filterMap identity
         )
-        (viewSkipLink config.onSkipNav
-            :: List.map (viewSidebarEntry config []) entries
-        )
+        (List.map (viewSidebarEntry config []) entries)
 
 
 viewSkipLink : msg -> Html msg
@@ -192,10 +336,17 @@ viewSkipLink onSkip =
     ClickableText.button "Skip to main content"
         [ ClickableText.icon UiIcon.arrowPointingRight
         , ClickableText.small
+        , ClickableText.custom [ Attributes.class FocusRing.customClass ]
         , ClickableText.css
             [ Css.pseudoClass "not(:focus)"
                 [ Style.invisibleStyle
                 ]
+            , Css.pseudoClass "focus-visible"
+                [ outline none
+                , FocusRing.outerBoxShadow
+                ]
+            , Css.padding (Css.px 2)
+            , Css.borderRadius (Css.px 4)
             ]
         , ClickableText.onClick onSkip
         ]
@@ -281,7 +432,10 @@ viewSidebarLeaf config extraStyles entryConfig =
                )
             ++ entryConfig.customStyles
         )
-        (attributes ++ entryConfig.customAttributes)
+        (Attributes.class FocusRing.customClass
+            :: attributes
+            ++ entryConfig.customAttributes
+        )
         [ viewJust
             (\icon_ ->
                 icon_
@@ -305,7 +459,9 @@ viewLockedEntry extraStyles entryConfig =
         ]
         (case entryConfig.onLockedContent of
             Just event ->
-                Events.onClick event :: entryConfig.customAttributes
+                Events.onClick event
+                    :: Attributes.class FocusRing.customClass
+                    :: entryConfig.customAttributes
 
             Nothing ->
                 entryConfig.customAttributes
@@ -322,6 +478,7 @@ viewLockedEntry extraStyles entryConfig =
 sharedEntryStyles : List Style
 sharedEntryStyles =
     [ padding2 (px 13) (px 20)
+    , Css.pseudoClass "focus-visible" [ outline none, FocusRing.insetBoxShadow ]
     , Css.property "word-break" "normal"
     , Css.property "overflow-wrap" "anywhere"
     , displayFlex

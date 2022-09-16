@@ -7,6 +7,7 @@ module Examples.Container exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -16,7 +17,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 
 
 moduleName : String
@@ -42,10 +43,6 @@ example =
     , preview =
         [ Container.view []
         , Container.view
-            [ Container.invalid
-            , Container.css [ Css.marginTop (Css.px 8) ]
-            ]
-        , Container.view
             [ Container.disabled
             , Container.css [ Css.marginTop (Css.px 8) ]
             ]
@@ -62,8 +59,9 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let
@@ -84,9 +82,6 @@ example =
                           }
                         , { sectionName = "Disabled Container"
                           , code = viewExampleCode ("Container.disabled" :: stringAttributes)
-                          }
-                        , { sectionName = "Invalid Container"
-                          , code = viewExampleCode ("Container.invalid" :: stringAttributes)
                           }
                         ]
                 }
@@ -115,11 +110,6 @@ example =
                 , description = "Used to indicate content is locked/inaccessible"
                 }
                 (Container.disabled :: attributes)
-            , viewExample
-                { name = "Invalid Container"
-                , description = "Used to indicate content is invalid"
-                }
-                (Container.invalid :: attributes)
             ]
     }
 
@@ -131,7 +121,7 @@ viewExample { name, description } attributes =
             [ Css.marginTop (Css.px 20)
             ]
         ]
-        [ Heading.h3 [] [ Html.text name ]
+        [ Heading.h3 [ Heading.plaintext name ]
         , Html.text description
         , Container.view attributes
         ]

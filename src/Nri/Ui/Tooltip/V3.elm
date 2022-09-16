@@ -59,7 +59,6 @@ import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
@@ -671,12 +670,14 @@ viewTooltip_ { trigger, id } tooltip =
                         Disclosure { triggerId, lastId } ->
                             ( [ Events.onMouseEnter (msg True)
                               , Events.onMouseLeave (msg False)
-                              , WhenFocusLeaves.toAttribute
-                                    { firstId = triggerId
-                                    , lastId = Maybe.withDefault triggerId lastId
-                                    , tabBackAction = msg False
-                                    , tabForwardAction = msg False
-                                    }
+                              , Key.onKeyDown
+                                    [ WhenFocusLeaves.toDecoder
+                                        { firstId = triggerId
+                                        , lastId = Maybe.withDefault triggerId lastId
+                                        , tabBackAction = msg False
+                                        , tabForwardAction = msg False
+                                        }
+                                    ]
                               ]
                             , [ Events.onClick (msg (not tooltip.isOpen))
                               , Key.onKeyDown [ Key.escape (msg False) ]
@@ -722,8 +723,8 @@ viewTooltip_ { trigger, id } tooltip =
                         [ Aria.describedBy [ id ] ]
 
                     Disclosure _ ->
-                        [ Widget.expanded tooltip.isOpen
-                        , Aria.controls id
+                        [ Aria.expanded tooltip.isOpen
+                        , Aria.controls [ id ]
                         ]
                  )
                     ++ buttonEvents
@@ -812,7 +813,7 @@ viewTooltip tooltipId config =
         , -- If the tooltip is the "primary label" for the content, then we can trust that the content
           -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
-          Widget.hidden (config.purpose == PrimaryLabel)
+          Aria.hidden (config.purpose == PrimaryLabel)
         ]
         [ Html.div
             ([ Attributes.css
@@ -852,8 +853,18 @@ viewTooltip tooltipId config =
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
-                 , Global.descendants [ Global.a [ Css.textDecoration Css.underline ] ]
-                 , Global.descendants [ Global.a [ Css.color Colors.white ] ]
+                 , Global.descendants
+                    [ Global.a
+                        [ Css.textDecoration Css.underline
+                        , Css.color Colors.white
+                        , Css.visited [ Css.color Colors.white ]
+                        , Css.hover [ Css.color Colors.white ]
+                        , Css.pseudoClass "focus-visible"
+                            [ Css.outline Css.none
+                            , Css.property "box-shadow" "0 0 0 2px #FFF"
+                            ]
+                        ]
+                    ]
                  ]
                     ++ config.tooltipStyleOverrides
                 )
@@ -867,7 +878,21 @@ viewTooltip tooltipId config =
                 ++ config.attributes
                 ++ [ Attributes.id tooltipId ]
             )
-            config.content
+            (config.content
+                ++ [ Html.div
+                        [ Attributes.css
+                            [ Css.position Css.absolute
+                            , Css.Media.withMedia [ MediaQuery.notMobile ]
+                                [ Css.batch (hoverAreaForDirection config.direction)
+                                ]
+                            , Css.Media.withMedia [ MediaQuery.mobile ]
+                                [ Css.batch (hoverAreaForDirection config.mobileDirection)
+                                ]
+                            ]
+                        ]
+                        []
+                   ]
+            )
         ]
 
 
@@ -1016,6 +1041,58 @@ tailForDirection direction =
 
         OnLeft ->
             rightTail
+
+
+hoverAreaForDirection : Direction -> List Style
+hoverAreaForDirection direction =
+    case direction of
+        OnTop ->
+            bottomHoverArea
+
+        OnBottom ->
+            topHoverArea
+
+        OnLeft ->
+            rightHoverArea
+
+        OnRight ->
+            leftHoverArea
+
+
+topHoverArea : List Style
+topHoverArea =
+    [ Css.bottom (Css.pct 100)
+    , Css.left Css.zero
+    , Css.right Css.zero
+    , Css.height (Css.px (tailSize * 2))
+    ]
+
+
+bottomHoverArea : List Style
+bottomHoverArea =
+    [ Css.top (Css.pct 100)
+    , Css.left Css.zero
+    , Css.right Css.zero
+    , Css.height (Css.px (tailSize * 2))
+    ]
+
+
+leftHoverArea : List Style
+leftHoverArea =
+    [ Css.right (Css.pct 100)
+    , Css.top Css.zero
+    , Css.bottom Css.zero
+    , Css.width (Css.px (tailSize * 2))
+    ]
+
+
+rightHoverArea : List Style
+rightHoverArea =
+    [ Css.left (Css.pct 100)
+    , Css.top Css.zero
+    , Css.bottom Css.zero
+    , Css.width (Css.px (tailSize * 2))
+    ]
 
 
 bottomTail : Style

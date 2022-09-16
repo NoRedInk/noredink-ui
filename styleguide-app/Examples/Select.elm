@@ -8,21 +8,33 @@ module Examples.Select exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled
-import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V8 as Select exposing (Choice)
+
+
+moduleName : String
+moduleName =
+    "Select"
+
+
+version : Int
+version =
+    8
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "Select"
-    , version = 8
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -40,61 +52,60 @@ example =
         \ellieLinkConfig state ->
             let
                 label =
-                    Control.currentValue state.label
+                    (Control.currentValue state).label
 
                 ( attributesCode, attributes ) =
-                    List.unzip (Control.currentValue state.attributes)
+                    List.unzip (Control.currentValue state).attributes
             in
-            [ Control.view UpdateLabel state.label
-                |> Html.Styled.fromUnstyled
-            , Control.view UpdateAttributes state.attributes
-                |> Html.Styled.fromUnstyled
-            , Html.Styled.div
-                [ css [ Css.displayFlex, Css.alignItems Css.flexStart ]
-                ]
-                [ Html.Styled.code
-                    [ css
-                        [ Css.display Css.block
-                        , Css.margin2 (Css.px 20) Css.zero
-                        , Css.whiteSpace Css.preWrap
-                        , Css.flexBasis (Css.px 500)
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateSettings
+                , settings = state
+                , mainType = Just "RootHtml.Html String"
+                , extraCode = []
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                "Select.view \""
+                                    ++ label
+                                    ++ "\""
+                                    ++ "\n    [ "
+                                    ++ String.join "\n    , " attributesCode
+                                    ++ "\n    ] "
+                          }
                         ]
-                    ]
-                    [ Html.Styled.text <|
-                        "Select.view \""
-                            ++ label
-                            ++ "\""
-                            ++ "\n    [ "
-                            ++ String.join "\n    , " attributesCode
-                            ++ "\n    ] "
-                    ]
-                , Select.view label attributes
-                    |> Html.Styled.map ConsoleLog
-                ]
+                }
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Select.view label attributes
+                |> Html.Styled.map ConsoleLog
             ]
     }
 
 
 {-| -}
 type alias State =
-    { label : Control String
-    , attributes : Control Settings
-    }
+    Control Settings
 
 
 {-| -}
 init : State
 init =
-    { label = Control.record identity |> Control.field "label" (Control.string "Tortilla Selector")
-    , attributes = initControls
-    }
+    Control.record Settings
+        |> Control.field "label" (Control.string "Tortilla Selector")
+        |> Control.field "attributes" initControls
 
 
 type alias Settings =
-    List ( String, Select.Attribute String )
+    { label : String
+    , attributes : List ( String, Select.Attribute String )
+    }
 
 
-initControls : Control Settings
+initControls : Control (List ( String, Select.Attribute String ))
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices"
@@ -119,10 +130,10 @@ initControls =
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "flex-basis: 300px"
+                [ ( "max-width: 300px"
                   , Control.value
-                        ( "Select.containerCss [ Css.flexBasis (Css.px 300) ]"
-                        , Select.containerCss [ Css.flexBasis (Css.px 300) ]
+                        ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
+                        , Select.containerCss [ Css.maxWidth (Css.px 300) ]
                         )
                   )
                 , ( "background-color: lichen"
@@ -138,15 +149,6 @@ initControls =
                 (\bool ->
                     ( "Select.noMargin " ++ Debug.toString bool
                     , Select.noMargin bool
-                    )
-                )
-                (Control.bool True)
-            )
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map
-                (\bool ->
-                    ( "Select.errorIf " ++ Debug.toString bool
-                    , Select.errorIf bool
                     )
                 )
                 (Control.bool True)
@@ -170,6 +172,10 @@ initControls =
              <|
                 Control.string "The right item must be selected."
             )
+        |> ControlExtra.optionalListItem "disabled"
+            (Control.value ( "Select.disabled", Select.disabled ))
+        |> ControlExtra.optionalListItem "loading"
+            (Control.value ( "Select.loading", Select.loading ))
 
 
 initChoices : Control ( String, List (Choice String) )
@@ -203,8 +209,7 @@ initChoices =
 {-| -}
 type Msg
     = ConsoleLog String
-    | UpdateLabel (Control String)
-    | UpdateAttributes (Control Settings)
+    | UpdateSettings (Control Settings)
 
 
 {-| -}
@@ -214,12 +219,5 @@ update msg state =
         ConsoleLog message ->
             ( Debug.log "SelectExample" message |> always state, Cmd.none )
 
-        UpdateLabel label ->
-            ( { state | label = label }
-            , Cmd.none
-            )
-
-        UpdateAttributes attributes ->
-            ( { state | attributes = attributes }
-            , Cmd.none
-            )
+        UpdateSettings settings ->
+            ( settings, Cmd.none )

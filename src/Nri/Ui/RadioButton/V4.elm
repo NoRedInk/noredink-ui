@@ -40,7 +40,6 @@ module Nri.Ui.RadioButton.V4 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
@@ -49,6 +48,7 @@ import Html.Styled.Events exposing (onClick)
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 as Pennant
@@ -302,16 +302,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
             [ Attributes.id (idValue ++ "-container")
             , css
                 [ position relative
-                , marginLeft (px -4)
-                , Css.paddingLeft (Css.px 40)
+                , Css.marginLeft (Css.px -2)
+                , Css.paddingLeft (Css.px 38)
                 , Css.paddingTop (px 6)
                 , Css.paddingBottom (px 4)
                 , display inlineBlock
                 , pseudoClass "focus-within"
                     [ Css.Global.descendants
                         [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                            [ borderColor (rgb 0 95 204)
-                            ]
+                            FocusRing.tightStyles
                         ]
                     ]
                 , Css.batch config.containerCss
@@ -321,7 +320,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 stringValue
                 isChecked
                 ([ Attributes.id idValue
-                 , Widget.disabled config.isDisabled
+                 , Aria.disabled config.isDisabled
                  , InputErrorAndGuidanceInternal.describedBy idValue config
                  , case config.onSelect of
                     Just onSelect_ ->
@@ -330,23 +329,16 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     Nothing ->
                         Extra.none
                  , class "Nri-RadioButton-HiddenRadioInput"
-                 , Aria.describedBy disclosureIds
+                 , if List.length disclosureIds > 0 then
+                    Aria.describedBy disclosureIds
+
+                   else
+                    Extra.none
                  , css
                     [ position absolute
                     , top (pct 50)
                     , left (px 4)
                     , opacity zero
-                    , pseudoClass "focus"
-                        [ Css.Global.adjacentSiblings
-                            [ Css.Global.everything
-                                [ Css.Global.descendants
-                                    [ Css.Global.class "Nri-RadioButton-RadioButtonIcon"
-                                        [ borderColor (rgb 0 95 204)
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
                     ]
                  ]
                     ++ List.map (Attributes.map never) config.custom
@@ -436,8 +428,8 @@ viewLockedButton { idValue, label } config =
         [ Attributes.id (idValue ++ "-container")
         , css
             [ position relative
-            , marginLeft (px -4)
-            , Css.paddingLeft (Css.px 40)
+            , marginLeft (px -2)
+            , Css.paddingLeft (Css.px 38)
             , Css.paddingTop (px 6)
             , Css.paddingBottom (px 4)
             , display inlineBlock
@@ -539,9 +531,6 @@ radioInputIcon config =
         iconHeight =
             26
 
-        borderWidth =
-            2
-
         iconPadding =
             2
     in
@@ -559,9 +548,8 @@ radioInputIcon config =
                     []
             , position absolute
             , left zero
-            , top (calc (pct 50) Css.minus (Css.px ((iconHeight + borderWidth + iconPadding) / 2)))
+            , top (calc (pct 50) Css.minus (Css.px ((iconHeight - 2 + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
-            , border3 (px borderWidth) solid transparent
             , borderRadius (px 50)
             , padding (px iconPadding)
             , displayFlex
@@ -578,7 +566,7 @@ radioInputIcon config =
 
 unselectedSvg : Svg
 unselectedSvg =
-    Svg.svg [ SvgAttributes.viewBox "0 0 27 27" ]
+    Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.defs []
             [ Svg.rect [ SvgAttributes.id "unselected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
             , Svg.filter [ SvgAttributes.id "unselected-filter-2", SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
@@ -608,13 +596,12 @@ unselectedSvg =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
-        |> withImageBorder Colors.gray85
+        |> withImageBorder Colors.gray75
 
 
 selectedSvg : Svg
 selectedSvg =
-    Svg.svg [ SvgAttributes.viewBox "0 0 27 27" ]
+    Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.defs []
             [ Svg.rect [ SvgAttributes.id "selected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
             , Svg.filter
@@ -653,13 +640,12 @@ selectedSvg =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
         |> withImageBorder Colors.azure
 
 
 lockedSvg : Svg
 lockedSvg =
-    Svg.svg [ SvgAttributes.viewBox "0 0 30 30" ]
+    Nri.Ui.Svg.V1.init "0 0 30 30"
         [ Svg.defs []
             [ Svg.rect [ SvgAttributes.id "locked-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "30", SvgAttributes.height "30", SvgAttributes.rx "15" ] []
             , Svg.filter [ SvgAttributes.id "locked-filter-2", SvgAttributes.x "-3.3%", SvgAttributes.y "-3.3%", SvgAttributes.width "106.7%", SvgAttributes.height "106.7%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
@@ -701,8 +687,7 @@ lockedSvg =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
-        |> withImageBorder Colors.gray85
+        |> withImageBorder Colors.gray75
 
 
 withImageBorder : Color -> Svg -> Svg

@@ -1,4 +1,4 @@
-module Nri.Ui.SortableTable.V2 exposing
+module Nri.Ui.SortableTable.V3 exposing
     ( Column, Config, Sorter, State
     , init, initDescending
     , custom, string, view, viewLoading
@@ -7,7 +7,13 @@ module Nri.Ui.SortableTable.V2 exposing
 
 {-| TODO for next major version:
 
-  - make sure the "sort" feature is fully accessible
+  - add the possibility to pass Aria.sortAscending and Aria.sortDescending attributes to the <th> tag
+
+Changes from V2:
+
+  - made column non-sortable (e.g. buttons in a column should not be sorted)
+  - use a button instead of a clickable div in headers
+  - use Aria.roleDescription instead of Aria.label in sortable columns headers
   - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
 
 @docs Column, Config, Sorter, State
@@ -17,21 +23,17 @@ module Nri.Ui.SortableTable.V2 exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
-import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
-import Nri.Ui.Table.V5
-import Svg.Styled as Svg
-import Svg.Styled.Attributes as SvgAttributes
-
-
-type SortDirection
-    = Ascending
-    | Descending
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Svg.V1
+import Nri.Ui.Table.V6 as Table exposing (SortDirection(..))
+import Nri.Ui.UiIcon.V1
 
 
 {-| -}
@@ -45,7 +47,7 @@ type Column id entry msg
         { id : id
         , header : Html msg
         , view : entry -> Html msg
-        , sorter : Sorter entry
+        , sorter : Maybe (Sorter entry)
         , width : Int
         , cellStyles : entry -> List Style
         }
@@ -95,7 +97,7 @@ string { id, header, value, width, cellStyles } =
         { id = id
         , header = Html.text header
         , view = value >> Html.text
-        , sorter = simpleSort value
+        , sorter = Just (simpleSort value)
         , width = width
         , cellStyles = cellStyles
         }
@@ -106,7 +108,7 @@ custom :
     { id : id
     , header : Html msg
     , view : entry -> Html msg
-    , sorter : Sorter entry
+    , sorter : Maybe (Sorter entry)
     , width : Int
     , cellStyles : entry -> List Style
     }
@@ -187,7 +189,7 @@ viewLoading config state =
         tableColumns =
             List.map (buildTableColumn config.updateMsg state) config.columns
     in
-    Nri.Ui.Table.V5.viewLoading
+    Table.viewLoading
         tableColumns
 
 
@@ -201,7 +203,7 @@ view config state entries =
         sorter =
             findSorter config.columns state.column
     in
-    Nri.Ui.Table.V5.view
+    Table.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
 
@@ -210,7 +212,7 @@ findSorter : List (Column id entry msg) -> id -> Sorter entry
 findSorter columns columnId =
     columns
         |> listExtraFind (\(Column column) -> column.id == columnId)
-        |> Maybe.map (\(Column column) -> column.sorter)
+        |> Maybe.andThen (\(Column column) -> column.sorter)
         |> Maybe.withDefault identitySorter
 
 
@@ -236,40 +238,66 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Nri.Ui.Table.V5.Column entry msg
+buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Table.Column entry msg
 buildTableColumn updateMsg state (Column column) =
-    Nri.Ui.Table.V5.custom
-        { header = viewSortHeader column.header updateMsg state column.id
+    Table.custom
+        { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
+        , sort =
+            if state.column == column.id then
+                Just state.sortDirection
+
+            else
+                Nothing
         }
 
 
-viewSortHeader : Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader header updateMsg state id =
+viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header updateMsg state id =
     let
         nextState =
             nextTableState state id
     in
-    Html.div
-        [ css
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.justifyContent Css.spaceBetween
-            , cursor pointer
-            , CssVendorPrefix.property "user-select" "none"
-            , if state.column == id then
-                fontWeight bold
+    if isSortable then
+        Html.button
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.spaceBetween
+                , CssVendorPrefix.property "user-select" "none"
+                , if state.column == id then
+                    fontWeight bold
 
-              else
-                fontWeight normal
+                  else
+                    fontWeight normal
+                , cursor pointer
+
+                -- make this look less "buttony"
+                , Css.border Css.zero
+                , Css.backgroundColor Css.transparent
+                , Css.width (Css.pct 100)
+                , Css.height (Css.pct 100)
+                , Css.margin Css.zero
+                , Css.padding Css.zero
+                , Fonts.baseFont
+                , Css.fontSize (Css.em 1)
+                ]
+            , Html.Styled.Events.onClick (updateMsg nextState)
+
+            -- screen readers should know what clicking this button will do
+            , Aria.roleDescription "sort button"
             ]
-        , Html.Styled.Events.onClick (updateMsg nextState)
-        ]
-        [ Html.div [] [ header ]
-        , viewSortButton updateMsg state id
-        ]
+            [ Html.div [] [ header ]
+            , viewSortButton updateMsg state id
+            ]
+
+    else
+        Html.div
+            [ css [ fontWeight normal ]
+            ]
+            [ header ]
 
 
 viewSortButton : (State id -> msg) -> State id -> id -> Html msg
@@ -332,33 +360,28 @@ type Direction
 
 sortArrow : Direction -> Bool -> Html msg
 sortArrow direction active =
-    Html.div
-        [ css
-            [ width (px 8)
-            , height (px 6)
-            , position relative
+    let
+        arrow =
+            case direction of
+                Up ->
+                    Nri.Ui.UiIcon.V1.sortArrow
+
+                Down ->
+                    Nri.Ui.UiIcon.V1.sortArrowDown
+
+        color =
+            if active then
+                Nri.Ui.Colors.V1.azure
+
+            else
+                Nri.Ui.Colors.V1.gray75
+    in
+    arrow
+        |> Nri.Ui.Svg.V1.withHeight (px 6)
+        |> Nri.Ui.Svg.V1.withWidth (px 8)
+        |> Nri.Ui.Svg.V1.withColor color
+        |> Nri.Ui.Svg.V1.withCss
+            [ displayFlex
             , margin2 (px 1) zero
             ]
-        ]
-        [ Svg.svg
-            [ SvgAttributes.viewBox "0 0 8 6"
-            , SvgAttributes.css
-                [ position absolute
-                , top zero
-                , left zero
-                , case direction of
-                    Up ->
-                        Css.batch []
-
-                    Down ->
-                        Css.batch [ transform <| rotate (deg 180) ]
-                ]
-            , if active then
-                SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.azure)
-
-              else
-                SvgAttributes.fill (toCssString Nri.Ui.Colors.V1.gray75)
-            ]
-            [ Svg.polygon [ SvgAttributes.points "0 6 4 0 8 6 0 6" ] []
-            ]
-        ]
+        |> Nri.Ui.Svg.V1.toHtml

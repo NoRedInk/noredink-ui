@@ -1,62 +1,74 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle
     , play, skip
-    , share, preview, copyToClipboard, gift
+    , share, preview, copyToClipboard, gift, print
     , activity
-    , footsteps, compass, speedometer, bulb, help, checklist
+    , footsteps, compass, speedometer, help, checklist, checklistComplete
+    , sparkleBulb, baldBulb, bulb
     , hat, keychain
     , sprout, sapling, tree
     , person, couple, class, leaderboard, performance
-    , calendar, clock
+    , emptyCalendar, calendar, clock
     , missingDocument, document, documents, newspaper, openBook, openBooks
     , edit, pen, highlighter
     , speechBalloon, mail
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-    , checkmark, checkmarkInCircle, x, xInCircle
+    , checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
     , attention, exclamation
     , flag, star, starFilled, starOutline
     , equals, plus, null
     , key, lock, premiumLock
-    , badge, tada
+    , badge, tada, count
     , bold, italic, underline, list, link, undo, redo
     , home, library
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
     , microscope, scale
     , openInNewTab, sync
+    , apple, briefcase
+    , school, highSchool, company, homeSchool, graduateCap
+    , flagUs, globe
+    , info
+    , brain, projectorScreen, stretch
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper
+@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle
 @docs play, skip
-@docs share, preview, copyToClipboard, gift
+@docs share, preview, copyToClipboard, gift, print
 @docs activity
-@docs footsteps, compass, speedometer, bulb, help, checklist
+@docs footsteps, compass, speedometer, help, checklist, checklistComplete
+@docs sparkleBulb, baldBulb, bulb
 @docs hat, keychain
 @docs sprout, sapling, tree
 @docs person, couple, class, leaderboard, performance
-@docs calendar, clock
+@docs emptyCalendar, calendar, clock
 @docs missingDocument, document, documents, newspaper, openBook, openBooks
 @docs edit, pen, highlighter
 @docs speechBalloon, mail
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
-@docs checkmark, checkmarkInCircle, x, xInCircle
+@docs checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline
 @docs equals, plus, null
 @docs key, lock, premiumLock
-@docs badge, tada
+@docs badge, tada, count
 @docs bold, italic, underline, list, link, undo, redo
 @docs home, library
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
 @docs microscope, scale
 @docs openInNewTab, sync
+@docs apple, briefcase
+@docs school, highSchool, company, homeSchool, graduateCap
+@docs flagUs, globe
+@docs info
+@docs brain, projectorScreen, stretch
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -71,6 +83,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 -}
 
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
@@ -79,11 +92,7 @@ import Svg.Styled.Attributes as Attributes
 {-| -}
 unarchive : Nri.Ui.Svg.V1.Svg
 unarchive =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.fill "currentcolor"
             , Attributes.fillRule "evenodd"
@@ -91,18 +100,12 @@ unarchive =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 archive : Nri.Ui.Svg.V1.Svg
 archive =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 24"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -111,18 +114,12 @@ archive =
             [ Svg.path [ Attributes.d "M0.857503203,22.0742086 C0.883930262,22.308469 0.962196617,22.5345115 1.08620552,22.734862 C1.21427892,22.9403547 1.3779284,23.1201493 1.57004241,23.2660525 C1.77231506,23.4201727 1.99795989,23.5403935 2.23886351,23.6205389 C2.48992578,23.7058187 2.75421199,23.75 3.01949741,23.75 L21.9732885,23.75 C22.2385739,23.75 22.5018297,23.7058187 22.7539224,23.6205389 C22.9958382,23.5403961 23.2235257,23.4201832 23.4278176,23.2660525 C23.6189116,23.1211804 23.7835785,22.943419 23.9116545,22.7399911 C24.0356608,22.5396354 24.1139272,22.3146187 24.1403568,22.0793377 L24.989088,14.3835859 C25.0185648,14.1236379 24.9880706,13.860602 24.9006578,13.6150365 C24.8142599,13.3766649 24.6780549,13.1598619 24.5001666,12.9810799 C24.3131397,12.7940809 24.0915568,12.6471625 23.8465939,12.5495518 C23.5792788,12.4426956 23.2936449,12.3882403 23.0059813,12.3892519 L1.99912121,12.3892519 C1.71145762,12.3882377 1.42686452,12.442693 1.15952343,12.5495518 C0.914557913,12.6471599 0.691949748,12.7940888 0.505950711,12.9810799 C0.328072868,13.1598593 0.190860848,13.3766518 0.105459499,13.6150365 C0.0149944385,13.8605993 -0.017531974,14.1236326 0.00889768776,14.3835859 L0.857503203,22.0742086 Z M7.18480117,16.8740919 C7.23460822,16.7600445 7.30779264,16.6583252 7.3982551,16.5740791 C7.49481691,16.4846908 7.60662711,16.4158504 7.72960817,16.3685864 C7.86174607,16.3182397 8.00100856,16.2925548 8.1432921,16.2925548 C8.28559645,16.2935806 8.42791122,16.3192681 8.56207616,16.3685864 C8.68811731,16.4158504 8.80500683,16.4857166 8.90766279,16.5740791 C9.00727428,16.6573047 9.08960773,16.7590213 9.14957863,16.8740919 C9.20751728,16.9871136 9.24004369,17.1124635 9.24309337,17.2398624 L9.28476881,18.6156444 L15.7117277,18.6156444 L15.7534031,17.2398624 L15.7544206,17.2398624 C15.7574703,17.1124556 15.7879644,16.9871057 15.8448856,16.8740919 C15.9048565,16.759016 15.9861726,16.6572968 16.0847692,16.5740791 C16.186413,16.4857166 16.3043225,16.4158504 16.4303559,16.3685864 C16.564526,16.3192681 16.7068304,16.2935806 16.8491399,16.2925548 C16.9904269,16.2925548 17.1306885,16.3182397 17.2628238,16.3685864 C17.3847979,16.4158504 17.4976229,16.4846908 17.5931621,16.5740791 C17.6856594,16.6573047 17.7588438,16.7600497 17.8096657,16.8740919 C17.8584553,16.9891679 17.8808179,17.1145178 17.8747185,17.2398624 L17.7629083,19.5228899 C17.7557916,19.645157 17.7222503,19.7653726 17.6643117,19.8722209 C17.6043408,19.9821598 17.525057,20.0777136 17.4295126,20.1568201 C17.3299011,20.2390172 17.2160587,20.3027206 17.0940742,20.3458734 C16.964986,20.3931374 16.827774,20.4167681 16.6905385,20.4167681 L8.30678806,20.4167681 C8.16956823,20.4167681 8.0323432,20.3931348 7.90325238,20.3458734 C7.77721123,20.3068291 7.65930428,20.2451826 7.55462128,20.1650398 C7.45907429,20.0859255 7.37979051,19.9893432 7.32083704,19.8804406 C7.26188356,19.772556 7.22833972,19.6533715 7.22122555,19.5311096 L7.10941535,17.2480821 C7.10535085,17.118621 7.13076309,16.9912169 7.18463203,16.8740788 L7.18480117,16.8740919 Z M18.6340984,2.18645837 L16.4517843,2.18645837 L16.5168371,1.22371345 C16.5422493,0.839451916 16.4853281,0.453112443 16.3501405,0.0924710683 C16.3501405,0.0606206824 16.3237135,0.0318503859 16.3115148,2.98427949e-13 L19.8051117,0.00102581968 C20.3926167,0.00102581968 20.8937317,0.428450686 20.9923257,1.01308899 L22.6084721,10.561366 L20.1750801,10.561366 L18.8170894,2.3571758 C18.8018436,2.26367629 18.7215424,2.19483589 18.6270128,2.19483589 L18.6340984,2.18645837 Z M8.93316089,0.0822128715 L8.93417832,0.0822128715 C8.79797332,0.444905886 8.7410521,0.833296998 8.76748176,1.22063599 L8.83253458,2.18338091 L6.64920565,2.18338091 C6.55467609,2.18338091 6.47437488,2.25324712 6.4591291,2.34674664 L5.10113837,10.561195 L2.66774638,10.561195 L4.28389274,1.01607176 C4.3824894,0.430407634 4.88563137,0.00195694831 5.47313644,0.00298092987 L8.96569251,0.00298092987 C8.95247898,0.0399701432 8.93621577,0.0605207308 8.92605192,0.0923711167 L8.93316089,0.0822128715 Z M8.79492364,6.48753616 L8.79594107,6.48753616 C8.75935015,6.40431062 8.73800242,6.31492227 8.73088824,6.22450547 C8.72580632,6.12997751 8.73800242,6.03545217 8.76747916,5.94503537 C8.79898814,5.84948158 8.84879519,5.76009323 8.91283059,5.68200468 C8.95958795,5.62446672 9.01447432,5.5730942 9.07444522,5.52994138 C9.1374658,5.48473167 9.2055683,5.44774429 9.2777353,5.41897399 C9.35091973,5.38917788 9.42816866,5.3655472 9.50643761,5.35116205 C9.58673622,5.33574846 9.66906968,5.32752875 9.75140313,5.32752875 L10.9111649,5.32752875 L10.779027,1.23214095 C10.7749599,1.10267988 10.7973225,0.974247252 10.8461121,0.856085977 C10.8949017,0.738955782 10.9650364,0.633125385 11.0544841,0.545788675 C11.1469814,0.455371877 11.2557419,0.383448766 11.3746741,0.335158962 C11.5007126,0.282757988 11.6359002,0.256044592 11.7731096,0.256044592 L13.5030984,0.256044592 C13.6393034,0.256044592 13.7744988,0.282757988 13.901534,0.335158962 C14.0204583,0.383448766 14.1292189,0.455371877 14.221724,0.545788675 C14.3111716,0.633122754 14.3813064,0.738953151 14.430096,0.856085977 C14.4788856,0.974244622 14.5012482,1.10267725 14.4971811,1.23214095 L14.3640257,5.32963299 L15.5766624,5.32963299 C15.6722094,5.32963299 15.766739,5.34093542 15.8582111,5.36354028 C15.9486761,5.38511668 16.0360889,5.41902397 16.1184224,5.46423105 C16.1946565,5.5053296 16.2647912,5.55773057 16.3267944,5.61937708 C16.3857478,5.67896931 16.4365697,5.74883815 16.4751955,5.82384135 C16.5077219,5.88754475 16.5310993,5.95432824 16.5453302,6.02419708 C16.5514296,6.05913019 16.5565115,6.0940633 16.5585437,6.12899903 C16.560576,6.16393214 16.560576,6.19989369 16.5585437,6.2348268 C16.5544766,6.28106233 16.546345,6.32627205 16.5351664,6.37147913 C16.5229677,6.41668885 16.5067045,6.46086748 16.4873942,6.50299447 C16.4690961,6.54614729 16.4457187,6.58724583 16.4203091,6.62629011 C16.3928646,6.66738865 16.3623704,6.70643293 16.3288292,6.74239448 L13.4126412,9.96662465 C13.3669012,10.0179972 13.3150619,10.0632069 13.2591581,10.1012227 C13.2012195,10.1412928 13.1392163,10.1741716 13.0741635,10.2008877 C13.0070784,10.2286295 12.9369437,10.2502059 12.8657915,10.2645911 C12.7184052,10.2933614 12.56595,10.2933614 12.4185403,10.2645911 C12.3463733,10.2502059 12.2752212,10.2286295 12.2071187,10.2008877 C12.1420658,10.1741743 12.0790453,10.1412954 12.0200918,10.1012227 C11.9631706,10.0632069 11.9103138,10.0179972 11.8635591,9.96662465 L8.95231505,6.75054844 C8.88421255,6.6755426 8.82830875,6.5902628 8.78765074,6.49779173 L8.79492364,6.48753616 Z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 share : Nri.Ui.Svg.V1.Svg
 share =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 30 30"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 30 30"
         [ Svg.path
             [ Attributes.d "M18.5,0.1H1.8C0.3,0.1,0,0.5,0,1.9v26.2C0,29.7,0.4,30,1.8,30h26.3c1.5,0,1.8-0.3,1.8-1.8V12.3l-3.1,2.6v12H3.1V3.2h12.4L18.5,0.1z M23,9.9v4.2l7-7l-7-7v3.5C6.8,4.2,6.8,19.7,6.8,19.7S11.6,10.6,23,9.9z"
             ]
@@ -143,49 +140,43 @@ share =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 seeMore : Nri.Ui.Svg.V1.Svg
 seeMore =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 30 30"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 30 30"
         [ Svg.ellipse [ Attributes.cx "8.1", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
         , Svg.ellipse [ Attributes.cx "15", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
         , Svg.ellipse [ Attributes.cx "21.5", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
         , Svg.path [ Attributes.d "M28.3,0H1.9C1.1,0,0.7,0.1,0.4,0.4C0.1,0.7,0,1.1,0,1.9v26.2C0,29.7,0.4,30,1.8,30H27h1.1h0.1c0.1,0,0.2,0,0.3,0c0,0,0.1,0,0.1,0c0.1,0,0.3,0,0.4-0.1c0,0,0,0,0,0c0.8-0.2,1-0.6,1-1.7V1.9C30.1,0.4,29.7,0,28.3,0z M26.8,27H3.1v-0.1V3.2V3.1h0.1H27v23.8V27H26.8z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 preview : Nri.Ui.Svg.V1.Svg
 preview =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 5 25 15"
-        , Attributes.fillRule "evenodd"
-        ]
+    Nri.Ui.Svg.V1.init "0 5 25 15"
         [ Svg.path [ Attributes.d "M12.5,5 C18.0555556,5 25,12.5 25,12.5 C25,12.5 18.0555556,20 12.5,20 C6.94444444,20 0,12.5 0,12.5 C3.2637037,9.26571429 7.62444444,5.19964286 12.5,5 Z M12.5,8.48214286 C10.1981481,8.48214286 8.33333333,10.28 8.33333333,12.5 C8.33333333,14.7196429 10.1981481,16.5178571 12.5,16.5178571 C14.8018519,16.5178571 16.6666667,14.7196429 16.6666667,12.5 C16.6666667,10.28 14.8018519,8.48214286 12.5,8.48214286 Z M12.5,14.5089286 C11.35,14.5089286 10.4166667,13.6085714 10.4166667,12.5 C10.4166667,11.3910714 11.35,10.4910714 12.5,10.4910714 C13.65,10.4910714 14.5833333,11.3910714 14.5833333,12.5 C14.5833333,13.6085714 13.65,14.5089286 12.5,14.5089286 Z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+print : Nri.Ui.Svg.V1.Svg
+print =
+    Nri.Ui.Svg.V1.init "0 0 21 21"
+        [ Svg.g []
+            [ Svg.path [ Attributes.d "M17.9577 1.55105C17.9577 0.727943 17.2894 0.0595703 16.4663 0.0595703H4.53445C3.71134 0.0595703 3.04297 0.727943 3.04297 1.55105V3.04253H17.9577V1.55105Z" ] []
+            , Svg.path [ Attributes.d "M19.4498 4.53418H1.55202C0.72892 4.53418 0.0605469 5.20255 0.0605469 6.02566V14.9745C0.0605469 15.7976 0.72892 16.466 1.55202 16.466H3.0435V19.449C3.0435 20.2721 3.71187 20.9404 4.53498 20.9404H16.4668C17.2899 20.9404 17.9583 20.2721 17.9583 19.449V16.466H19.4498C20.2729 16.466 20.9412 15.7976 20.9412 14.9745V6.02566C20.9412 5.20255 20.2729 4.53418 19.4498 4.53418ZM16.4668 19.449H4.53498V11.9916H16.4668V19.449ZM17.9583 9.00861H14.9753V7.51713H17.9583V9.00861Z" ] []
+            , Svg.path [ Attributes.d "M6.02734 16.4658H10.5018V17.9573H6.02734V16.4658Z" ] []
+            , Svg.path [ Attributes.d "M6.02734 13.4824H14.9762V14.9739H6.02734V13.4824Z" ] []
+            ]
+        ]
 
 
 {-| -}
 copyToClipboard : Nri.Ui.Svg.V1.Svg
 copyToClipboard =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.g
             [ Attributes.transform "translate(-188.000000, -218.000000)"
             ]
@@ -205,18 +196,23 @@ copyToClipboard =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+info : Nri.Ui.Svg.V1.Svg
+info =
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.path [ Attributes.d "M12.5,25 C5.59644063,25 0,19.4035594 0,12.5 C0,5.59644063 5.59644063,0 12.5,0 C19.4035594,0 25,5.59644063 25,12.5 C25,19.4035594 19.4035594,25 12.5,25 Z M12.5,23 C18.2989899,23 23,18.2989899 23,12.5 C23,6.70101013 18.2989899,2 12.5,2 C6.70101013,2 2,6.70101013 2,12.5 C2,18.2989899 6.70101013,23 12.5,23 Z" ] []
+        , Svg.g
+            [ Attributes.transform "translate(1, 0)" ]
+            [ Svg.path [ Attributes.d "M13.9802 17.28H9.24023V16.7325C9.37023 16.7225 9.49773 16.71 9.62273 16.695C9.74773 16.68 9.85523 16.655 9.94523 16.62C10.1052 16.56 10.2177 16.475 10.2827 16.365C10.3477 16.25 10.3802 16.1 10.3802 15.915V11.55C10.3802 11.375 10.3402 11.2225 10.2602 11.0925C10.1802 10.9575 10.0802 10.85 9.96023 10.77C9.87023 10.71 9.73273 10.6525 9.54773 10.5975C9.36773 10.5425 9.20273 10.5075 9.05273 10.4925V9.94504L12.7277 9.75004L12.8402 9.86254V15.8175C12.8402 15.9925 12.8777 16.1425 12.9527 16.2675C13.0277 16.3875 13.1352 16.4775 13.2752 16.5375C13.3752 16.5825 13.4852 16.6225 13.6052 16.6575C13.7252 16.6925 13.8502 16.7175 13.9802 16.7325V17.28ZM12.8852 7.05004C12.8852 7.43004 12.7377 7.75504 12.4427 8.02504C12.1527 8.29004 11.8077 8.42254 11.4077 8.42254C11.0027 8.42254 10.6527 8.29004 10.3577 8.02504C10.0677 7.75504 9.92273 7.43004 9.92273 7.05004C9.92273 6.67004 10.0677 6.34504 10.3577 6.07504C10.6527 5.80504 11.0027 5.67004 11.4077 5.67004C11.8127 5.67004 12.1602 5.80504 12.4502 6.07504C12.7402 6.34504 12.8852 6.67004 12.8852 7.05004Z" ] [] ]
+        ]
 
 
 {-| -}
 performance : Nri.Ui.Svg.V1.Svg
 performance =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.d "M2.575,22.5 L2.55333333,2.47096774 L2.55333333,5.68434189e-14 L1.53166667,5.68434189e-14 C0.275833333,5.68434189e-14 0,0.345967742 0,1.48225806 L0.0216666667,23.4887097 C0.0216666667,24.7185484 0.3275,24.9709677 1.55333333,24.9709677 L23.4891667,24.9709677 C24.7191667,24.9709677 25.0216667,24.7483871 25.0216667,23.4887097 L25.0216667,22.5 L22.4675,22.5 L2.575,22.5 Z" ]
             []
@@ -227,116 +223,105 @@ performance =
         , Svg.rect [ Attributes.x "14.7262015", Attributes.y "8.69585911", Attributes.width "3.55583333", Attributes.height "12.6616687", Attributes.rx "1" ] []
         , Svg.rect [ Attributes.x "19.9773023", Attributes.y "3.19919812", Attributes.width "3.55583333", Attributes.height "18.1583297", Attributes.rx "1" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 openClose : Nri.Ui.Svg.V1.Svg
 openClose =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 14 12"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 14 12"
         [ Svg.path [ Attributes.d "M8.3,10.6c0,0.2-0.1,0.9,0.3,0.9h2.9c1.4,0,2.6-1.2,2.6-2.6V2.6C14,1.2,12.8,0,11.4,0 H8.6C8.4,0,8.3,0.1,8.3,0.3c0,0.3-0.1,0.9,0.3,0.9h2.9c0.8,0,1.4,0.6,1.4,1.4v6.3c0,0.8-0.6,1.4-1.4,1.4H8.9 C8.6,10.3,8.3,10.2,8.3,10.6z M0,5.7C0,5.9,0.1,6,0.2,6.1L5,11c0.1,0.1,0.2,0.2,0.4,0.2c0.3,0,0.6-0.3,0.6-0.6V8h4 c0.3,0,0.6-0.3,0.6-0.6V4c0-0.3-0.3-0.6-0.6-0.6H6V0.9c0-0.3-0.3-0.6-0.6-0.6C5.3,0.3,5.1,0.3,5,0.5L0.2,5.3C0.1,5.4,0,5.6,0,5.7z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 download : Nri.Ui.Svg.V1.Svg
 download =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 21"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M17.719 12.467H21v5.25a1.968 1.968 0 0 1-1.969 1.97H1.97A1.968 1.968 0 0 1 0 17.716v-5.25h3.281v3.938H17.72v-3.938zM5.647 9.17h.001a1.024 1.024 0 0 1-.082-.332.967.967 0 0 1 .046-.352A1.037 1.037 0 0 1 6 7.962c.08-.057.166-.104.257-.14a1.642 1.642 0 0 1 .597-.115h1.462l-.167-5.163a1.148 1.148 0 0 1 .347-.865 1.307 1.307 0 0 1 .906-.365h2.18c.172 0 .343.034.503.1.15.06.287.151.404.265a1.148 1.148 0 0 1 .347.865l-.168 5.165h1.529c.12 0 .24.015.354.043.114.027.225.07.328.127a1.058 1.058 0 0 1 .45.453.985.985 0 0 1 .076.69 1.065 1.065 0 0 1-.06.166 1.01 1.01 0 0 1-.2.302l-3.676 4.064a1.05 1.05 0 0 1-.194.17 1.432 1.432 0 0 1-1.326.126 1.29 1.29 0 0 1-.236-.126 1.073 1.073 0 0 1-.197-.17L5.845 9.5a1.183 1.183 0 0 1-.207-.318l.009-.013z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 edit : Nri.Ui.Svg.V1.Svg
 edit =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 30 30"
+    Nri.Ui.Svg.V1.init "0 0 95 95"
+        [ Svg.path
+            [ Attributes.d "M93.7748134,12.5537834 C92.2748134,10.3545834 90.4740134,8.2529834 88.4740134,6.2529834 C86.6732134,4.5537834 84.0756134,2.5537834 82.2748134,1.3545834 C79.2748134,-0.747016601 75.1732134,-0.344616601 72.6732134,2.1553634 L8.9742134,65.7533634 C8.7749934,65.9525834 8.5757734,66.2533634 8.4742134,66.5541434 L0.1734134,90.1561434 C-0.2250266,91.4569434 0.0718534003,92.8553434 0.9741934,93.7577434 C1.6734134,94.4569634 2.4741934,94.7577434 3.3725934,94.7577434 C3.7710334,94.7577434 4.1733734,94.6561834 4.5717934,94.5585234 L28.0717934,86.2577234 C28.3725734,86.1561634 28.6733534,85.9569434 28.8725734,85.7577234 L92.6735734,21.9567234 C95.2751734,19.4567234 95.6735734,15.4567234 93.7751734,12.5544234 L93.7748134,12.5537834 Z"
+            , Attributes.fill "#none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M12.3728134,68.6557834 C17.7712134,72.3549834 22.3728134,76.9565834 26.0718134,82.3547834 L12.3728134,87.1555834 C11.8728134,86.1555834 11.2712134,85.1555834 10.3728134,84.2571834 C9.4743734,83.3587434 8.4744134,82.7571834 7.4744134,82.2571834 L12.3728134,68.6557834 Z"
+            , Attributes.fill "#FFFFFF"
+            ]
+            []
         ]
-        [ Svg.path [ Attributes.d "M27.3,7.9l-5.2-5.2l2.3-2.3c0.5-0.5,1.2-0.5,1.7,0L29.7,4c0.5,0.5,0.5,1.2,0,1.7L27.3,7.9z M25.9,9.4L8.6,26.6l-5.2-5.2L20.6,4.1L25.9,9.4z M0,30l1.9-7L7,28.1L0,30z" ] []
-        , Svg.path [ Attributes.fill "none", Attributes.d "M-753.8-401V715h1024V-401H-753.8z" ] []
-        , Svg.path [ Attributes.fill "none", Attributes.d "M-775.9-385.9v1116h1024v-1116L-775.9-385.9L-775.9-385.9z" ] []
-        ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 gear : Nri.Ui.Svg.V1.Svg
 gear =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M3.282 14.744A9.583 9.583 0 0 0 4.52 17.62l-1.557 1.565c-.7.699-.693 1.115-.077 1.73l1.519 1.52c.62.623 1.045.61 1.73-.077l1.635-1.641c.77.443 1.603.782 2.487 1v2c0 .993.3 1.282 1.167 1.282h2.154c.878 0 1.167-.309 1.167-1.282v-2a9.582 9.582 0 0 0 2.487-1l1.672 1.68c.693.686 1.109.699 1.73.083l1.526-1.526c.607-.608.62-1.025-.084-1.73l-1.602-1.602a9.417 9.417 0 0 0 1.243-2.878h2.116c.88-.001 1.168-.31 1.168-1.283v-1.924c0-.95-.25-1.282-1.167-1.282h-2.115a9.582 9.582 0 0 0-1-2.487l1.526-1.519c.673-.673.731-1.09.083-1.731l-1.525-1.526c-.61-.61-1.046-.602-1.731.083L17.62 4.52a9.583 9.583 0 0 0-2.877-1.237v-2c0-.95-.25-1.282-1.167-1.282h-2.154c-.866 0-1.167.314-1.167 1.282v2A9.583 9.583 0 0 0 7.38 4.52l-1.45-1.443c-.685-.685-1.121-.692-1.73-.083L2.672 4.52c-.648.64-.59 1.058.083 1.731l1.52 1.52a9.765 9.765 0 0 0-.994 2.486H1.167C.3 10.256 0 10.57 0 11.538v1.924c0 .993.3 1.282 1.167 1.282h2.115zm5.55-2.244a3.666 3.666 0 0 1 7.334 0 3.667 3.667 0 1 1-7.334 0z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 sort : Nri.Ui.Svg.V1.Svg
 sort =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 21"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M0 5.048h21V2H0v3.048zm0 7.4h14.438V9.402H0v3.048zm0 7.402h7v-3.048H0v3.048z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+emptyCalendar : Nri.Ui.Svg.V1.Svg
+emptyCalendar =
+    Nri.Ui.Svg.V1.init "0 0 23 25"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-1.000000, 0.000000)"
+                , Attributes.fill "currentcolor"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M24,6.06748352 L24,22.38807 C23.8127484,23.6415842 22.9490956,24.6604992 21.8248757,25 L3.21296367,25 C1.93924203,24.615352 1,23.3585754 1,21.876587 L1,6.57896739 C1,4.79325 2.36367767,3.33452174 4.0330319,3.33452174 L7.14841914,3.33452174 L7.14841914,0.86348913 C7.14841914,0.387695652 7.51085533,0 7.95564466,0 C8.40043508,0 8.76287128,0.387695652 8.76287128,0.86348913 L8.76287128,3.33452174 L16.2749681,3.33452174 L16.2749681,0.86348913 C16.2749681,0.387695652 16.6374043,0 17.0821914,0 C17.5269786,0 17.8894147,0.387695652 17.8894147,0.86348913 L17.8894147,3.33452174 L21.0048086,3.33452174 C22.5115487,3.33452174 23.7692689,4.52290311 24,6.06748352 Z M4.0330319,5.05952174 L7.14841914,5.05952174 L7.14841914,6.25 C7.14841914,6.72619565 7.51085533,7.11348913 7.95564466,7.11348913 C8.40043508,7.11348913 8.76287128,6.72619565 8.76287128,6.25 L8.76287128,5.05952174 L16.2475214,5.05952174 L16.2475214,6.25 C16.2475214,6.72619565 16.6095852,7.11348913 17.0547447,7.11348913 C17.4995319,7.11348913 17.8615957,6.72619565 17.8615957,6.25 L17.8615957,5.05952174 L20.9773509,5.05952174 C21.7567552,5.05952174 22.3959362,5.74483696 22.3959362,6.57738043 L22.3959362,9.46348913 L2.61445214,9.46348913 L2.61445214,6.57738043 C2.61445214,5.74483696 3.25325852,5.05952174 4.0330319,5.05952174 Z M21.0048086,23.3944446 L4.0330319,23.3944446 C3.25325852,23.3944446 2.61445214,22.7091272 2.61445214,21.876587 L2.61445214,11.2214239 L22.4233828,11.2214239 L22.4233828,21.876587 C22.4233828,22.7091272 21.7845852,23.3944446 21.0048086,23.3944446 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
 
 
 {-| -}
 calendar : Nri.Ui.Svg.V1.Svg
 calendar =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 21"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M19.483 5.097v13.709c-.151 1.053-.848 1.909-1.756 2.194H2.7C1.67 20.677.913 19.621.913 18.376V5.526c0-1.5 1.101-2.725 2.449-2.725h2.515V.725c0-.4.293-.725.652-.725.36 0 .652.326.652.725v2.076h6.065V.725c0-.4.293-.725.652-.725.359 0 .651.326.651.725v2.076h2.516c1.216 0 2.232.998 2.418 2.296zM3.362 4.25h2.515v1c0 .4.293.725.652.725.36 0 .652-.325.652-.725v-1h6.043v1c0 .4.292.725.652.725.359 0 .651-.325.651-.725v-1h2.516c.629 0 1.145.576 1.145 1.275v2.424H2.217V5.525c0-.7.515-1.275 1.145-1.275zm13.703 15.401H3.362c-.63 0-1.145-.575-1.145-1.275v-8.95H18.21v8.95c0 .7-.516 1.275-1.145 1.275z" ] []
         , Svg.path [ Attributes.fillRule "nonzero", Attributes.d "M3.652 10.957h1.826v1.826H3.652z" ] []
         , Svg.path [ Attributes.fillRule "nonzero", Attributes.d "M3.652 13.696h1.826v1.826H3.652zM6.391 10.957h1.826v1.826H6.391zM6.391 13.696h1.826v1.826H6.391zM9.13 10.957h1.826v1.826H9.13zM9.13 13.696h1.826v1.826H9.13zM11.87 10.957h1.826v1.826H11.87zM11.87 13.696h1.826v1.826H11.87zM14.609 10.957h1.826v1.826h-1.826zM14.609 13.696h1.826v1.826h-1.826zM3.652 16.435h1.826v1.826H3.652zM6.391 16.435h1.826v1.826H6.391zM9.13 16.435h1.826v1.826H9.13zM11.87 16.435h1.826v1.826H11.87zM14.609 16.435h1.826v1.826h-1.826z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 missingDocument : Nri.Ui.Svg.V1.Svg
 missingDocument =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 74 100"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 74 100"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -368,32 +353,21 @@ missingDocument =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 document : Nri.Ui.Svg.V1.Svg
 document =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 21"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.path [ Attributes.d "M13.41.219H4.742a2.703 2.703 0 0 0-2.699 2.699V18.08c0 1.487 1.211 2.699 2.7 2.699h11.051c1.488 0 2.7-1.212 2.7-2.7V5.899L13.41.218zm.356 2.327l2.644 2.956h-2.644V2.546zm2.026 16.949H4.742A1.414 1.414 0 0 1 3.33 18.08V2.918c0-.779.634-1.414 1.412-1.414h7.739v5.282h4.725V18.08c0 .78-.634 1.414-1.414 1.414z" ] []
         , Svg.path [ Attributes.d "M6.355 10.072V8.785h7.824v1.287H6.355zm0 2.964V11.75h7.824v1.286H6.355zm0 2.965v-1.287h7.824v1.287H6.355z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 documents : Nri.Ui.Svg.V1.Svg
 documents =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 24 30"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 24 30"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -411,17 +385,12 @@ documents =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 leaderboard : Nri.Ui.Svg.V1.Svg
 leaderboard =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 20 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 15"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -445,45 +414,27 @@ leaderboard =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 class : Nri.Ui.Svg.V1.Svg
 class =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 21"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.path [ Attributes.d "M2.66 20.576v-7.1l.002-.063V10.878l-.847 1.65c-.25.487-.834.689-1.304.447-.47-.24-.648-.833-.398-1.32l1.66-3.236c.03-.056.062-.109.099-.156.149-.432.56-.744 1.044-.744h2.95l-1.487 2.896c-.485.949-.16 2.151.823 2.657a1.92 1.92 0 0 0 1.85-.053l.037-.024v7.581H5.153v-6.095H4.65v6.095H2.66zm5.32 0v-7.743l.001-.072V9.968l-.933 1.817c-.276.54-.92.76-1.439.495-.518-.266-.713-.92-.438-1.457l1.83-3.566c.032-.062.068-.119.109-.172.164-.477.618-.82 1.15-.82h4.385c.534 0 .987.343 1.15.82.04.053.077.11.11.172l1.829 3.566c.277.538.08 1.191-.438 1.457-.519.265-1.162.044-1.438-.495l-.933-1.816v2.751c0 .037-.001.071-.005.106v7.75h-2.207v-6.638h-.527v6.638H7.98zm5.831 0V12.99l.043.03a1.92 1.92 0 0 0 1.85.052c.984-.506 1.308-1.708.822-2.657L15.04 7.52h2.949c.484 0 .895.312 1.044.744.036.049.07.1.099.156l1.66 3.235c.25.488.072 1.08-.398 1.321-.47.242-1.054.04-1.305-.448l-.846-1.649v2.497c0 .032-.001.064-.004.097V20.577h-1.99V14.48h-.502v6.095H13.81zM10.491 1a2.182 2.182 0 0 0 .001 4.363A2.182 2.182 0 0 0 10.494 1h-.004zM2.961 4.722a1.978 1.978 0 1 1 3.957 0 1.978 1.978 0 0 1-3.957 0zm11.096 0a1.978 1.978 0 1 1 3.957 0 1.978 1.978 0 0 1-3.957 0z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 person : Nri.Ui.Svg.V1.Svg
 person =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 18 18"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 18 18"
         [ Svg.path [ Attributes.d "M8.6,9.4c2.6,0,4.7-2.1,4.7-4.7c0-2.6-2.1-4.7-4.7-4.7C6,0,3.9,2.1,3.9,4.7C3.9,7.3,6,9.4,8.6,9.4L8.6,9.4z M0,17.6C0,17.8,0.2,18,0.4,18h16.4c0.2,0,0.4-0.2,0.4-0.4v-0.8c0-3.2-2.1-5.9-6.3-5.9H6.3C2.1,11,0,13.7,0,16.8V17.6z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 couple : Nri.Ui.Svg.V1.Svg
 couple =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 100 100"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 100 100"
         [ Svg.g []
             [ Svg.path [ Attributes.d "m43 30.398c0 8.5625-6.9414 15.5-15.5 15.5s-15.5-6.9375-15.5-15.5c0-8.5586 6.9414-15.5 15.5-15.5s15.5 6.9414 15.5 15.5" ] []
             , Svg.path [ Attributes.d "m85.699 40.301c0 7.9531-6.4453 14.398-14.398 14.398s-14.402-6.4453-14.402-14.398 6.4492-14.402 14.402-14.402 14.398 6.4492 14.398 14.402" ] []
@@ -491,78 +442,48 @@ couple =
             , Svg.path [ Attributes.d "m40.102 67.301v-5.5c0-6.6016 3.3984-12.602 9-16.102 0.30078-0.19922 0.5-0.30078 0.80078-0.39844-0.90234-1.3008-1.9023-2.5-3.2031-3.5-0.69922-0.60156-1.8984-0.39844-2.3008 0.5-3.1992 6-9.6016 10.102-16.898 10.102-7.3008 0-13.602-4.1016-16.898-10.102-0.5-0.80078-1.6016-1.1016-2.3008-0.5-3.1992 2.5977-5.3008 6.5977-5.3008 11.199v4c0 8.8008 7.1992 16 16 16h18.602c0.5 0 1 0 1.5-0.10156 0.89844-0.10156 1.5-0.89844 1.3008-1.8008-0.20312-1.2969-0.30078-2.4961-0.30078-3.7969z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 clock : Nri.Ui.Svg.V1.Svg
 clock =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 15 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 15 15"
         [ Svg.path [ Attributes.d "M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z" ] []
         , Svg.path [ Attributes.d "M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z" ] []
         , Svg.path [ Attributes.d "M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 flipper : Nri.Ui.Svg.V1.Svg
 flipper =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21 18"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 18"
         [ Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M6 12.59h8.59V4H6v8.59zm.955-.954h6.681V4.955H6.955v6.681zM6.682 16.204a.477.477 0 1 1 0 .955H5.25a3.345 3.345 0 0 1-3.341-3.34v-2.19L.815 12.724a.477.477 0 1 1-.675-.675l1.909-1.91a.477.477 0 0 1 .675 0l1.909 1.91a.477.477 0 1 1-.675.675l-1.094-1.095v2.19a2.388 2.388 0 0 0 2.386 2.385h1.432zM20.86 4.435a.477.477 0 0 0-.675 0L19.091 5.53V3.34A3.345 3.345 0 0 0 15.75 0h-1.432a.477.477 0 1 0 0 .955h1.432a2.388 2.388 0 0 1 2.386 2.386V5.53l-1.094-1.095a.477.477 0 1 0-.675.675l1.91 1.91a.475.475 0 0 0 .674 0l1.91-1.91a.477.477 0 0 0 0-.675" ] []
         , Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M10 12h.716V4H10z" ] []
         , Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M6.92 8.716h7.16V8H6.92z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 newspaper : Nri.Ui.Svg.V1.Svg
 newspaper =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path [ Attributes.d "M20.9,0.5v21.6c0,1.3,1.1,2.4,2.4,2.4H2.4c-1.3,0-2.4-1.1-2.4-2.4V0.5H20.9z M17.6,3.9h-6.8v4.8h6.8V3.9z M8.1,3.9H3.4C3,3.9,2.7,4.2,2.7,4.6C2.7,5,3,5.3,3.4,5.3h4.7c0.4,0,0.7-0.3,0.7-0.7C8.8,4.2,8.5,3.9,8.1,3.9L8.1,3.9z M25,8.7v13.4 c0,1-0.7,1.7-1.7,1.7c-0.9,0-1.7-0.8-1.7-1.7V8.7H25z M8.1,7.4H3.4C3,7.4,2.7,7.7,2.7,8c0,0.4,0.3,0.7,0.7,0.7h4.7 c0.4,0,0.7-0.3,0.7-0.7C8.8,7.7,8.5,7.4,8.1,7.4L8.1,7.4z M17.6,11.5H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7h14.2 c0.4,0,0.7-0.3,0.7-0.7C18.2,11.8,17.9,11.5,17.6,11.5L17.6,11.5z M17.6,15.2H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7 h14.2c0.4,0,0.7-0.3,0.7-0.7C18.2,15.5,17.9,15.2,17.6,15.2L17.6,15.2z M17.6,19H3.4c-0.4,0-0.7,0.3-0.7,0.7c0,0.4,0.3,0.7,0.7,0.7 h14.2c0.4,0,0.7-0.3,0.7-0.7C18.2,19.3,17.9,19,17.6,19L17.6,19z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 pen : Nri.Ui.Svg.V1.Svg
 pen =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 63 63"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 63 63"
         [ Svg.path [ Attributes.d "M39.8,0L31,13.8l17.6,17.6l13.8-8.8L39.8,0z M27.9,16.4l-17.1,7L0,59.6l17.5-17.5 c-0.7-1.8-0.3-3.9,1.1-5.3c2-2,5.1-2,7.1,0s2,5.1,0,7.1c-1.4,1.4-3.6,1.8-5.3,1.1L2.8,62.4l36.3-10.8l7-17.1L27.9,16.4z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowTop : Nri.Ui.Svg.V1.Svg
 arrowTop =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "-25 05 25 15"
-        ]
+    Nri.Ui.Svg.V1.init "-25 05 25 15"
         [ Svg.path
             [ Attributes.transform "rotate(90)"
             , Attributes.fillRule "evenodd"
@@ -570,18 +491,12 @@ arrowTop =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowRight : Nri.Ui.Svg.V1.Svg
 arrowRight =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 5 25 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 5 25 15"
         [ Svg.path
             [ Attributes.transform "rotate(180) translate(-25, -25)"
             , Attributes.fillRule "evenodd"
@@ -589,18 +504,12 @@ arrowRight =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowDown : Nri.Ui.Svg.V1.Svg
 arrowDown =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 15"
         [ Svg.path
             [ Attributes.transform "rotate(270) translate(-20)"
             , Attributes.fillRule "evenodd"
@@ -608,91 +517,62 @@ arrowDown =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowLeft : Nri.Ui.Svg.V1.Svg
 arrowLeft =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 5 25 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 5 25 15"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowPointingRight : Nri.Ui.Svg.V1.Svg
 arrowPointingRight =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 20"
         [ Svg.path [ Attributes.d "M24.48 11.136l-8.093 8.092a1.784 1.784 0 0 1-2.522 0 1.781 1.781 0 0 1 0-2.52l5.05-5.05H1.782a1.782 1.782 0 1 1 0-3.565h17.133l-5.05-5.05A1.781 1.781 0 0 1 15.126 0c.457 0 .913.174 1.26.522l8.094 8.092a1.784 1.784 0 0 1 0 2.522z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
-
-
-sortArrow_ : List (Svg.Attribute msg) -> Svg.Svg msg
-sortArrow_ transforms =
-    Svg.svg
-        ([ Attributes.width "100%"
-         , Attributes.height "100%"
-         , Attributes.fill "currentcolor"
-         , Attributes.viewBox "0 0 8 6"
-         ]
-            ++ transforms
-        )
-        [ Svg.polygon [ Attributes.points "0 6 4 0 8 6 0 6" ] [] ]
 
 
 {-| -}
 sortArrow : Nri.Ui.Svg.V1.Svg
 sortArrow =
-    sortArrow_ []
-        |> Nri.Ui.Svg.V1.fromHtml
+    Nri.Ui.Svg.V1.init "0 0 92 71"
+        [ Svg.path
+            [ Attributes.d "M50.1602515,2.24037721 L90.817666,63.226499 C92.3494283,65.5241425 91.728559,68.6284892 89.4309155,70.1602515 C88.6095779,70.7078099 87.6445395,71 86.6574145,71 L5.34258546,71 C2.58116171,71 0.342585459,68.7614237 0.342585459,66 C0.342585459,65.0128751 0.634775596,64.0478366 1.18233399,63.226499 L41.8397485,2.24037721 C43.3715108,-0.0572662357 46.4758575,-0.678135579 48.773501,0.853626717 C49.3227624,1.21980101 49.7940772,1.69111577 50.1602515,2.24037721 Z"
+            ]
+            []
+        ]
 
 
 {-| -}
 sortArrowDown : Nri.Ui.Svg.V1.Svg
 sortArrowDown =
-    sortArrow_ [ Attributes.transform "rotate(180)" ]
-        |> Nri.Ui.Svg.V1.fromHtml
+    Nri.Ui.Svg.V1.init "0 0 92 71"
+        [ Svg.path
+            [ Attributes.d "M41.83975,68.759623 L1.182335,7.7735 C-0.3494263,5.47586 0.2714386,2.37151 2.569084,0.83975 C3.390419,0.29219 4.355461,0 5.342583,0 L86.65741,0 C89.41884,0 91.65741,2.23858 91.65741,5 C91.65741,5.98712 91.36522,6.95216 90.81767,7.7735 L50.16025,68.759623 C48.62849,71.0572662 45.52414,71.6781356 43.2265,70.1463732 C42.67724,69.780199 42.20592,69.308884 41.83975,68.759623 Z"
+            ]
+            []
+        ]
 
 
 {-| -}
 checkmark : Nri.Ui.Svg.V1.Svg
 checkmark =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 21.7 17.1"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21.7 17.1"
         [ Svg.path [ Attributes.d "M7.6,17.1c-0.5,0-1-0.2-1.4-0.6l-5.6-5.4c-0.8-0.8-0.8-2-0.1-2.8c0.8-0.8,2-0.8,2.8-0.1l4.1,4L18.2,0.7c0.8-0.8,2-0.9,2.8-0.1s0.9,2,0.1,2.8l-12,13C8.7,16.9,8.2,17.1,7.6,17.1C7.7,17.1,7.6,17.1,7.6,17.1" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 checkmarkInCircle : Nri.Ui.Svg.V1.Svg
 checkmarkInCircle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 50 50"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 50 50"
         [ Svg.g []
             [ Svg.circle
                 [ Attributes.cx "25"
@@ -707,30 +587,49 @@ checkmarkInCircle =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checkmarkInCircleInverse : Nri.Ui.Svg.V1.Svg
+checkmarkInCircleInverse =
+    Nri.Ui.Svg.V1.init "0 0 75 75"
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M54.11,25.09l-22.4,22.4-9.93-9.92a1.78,1.78,0,0,0-2.52,2.52L30.44,51.28a1.78,1.78,0,0,0,2.52,0L56.63,27.61a1.78,1.78,0,0,0-2.52-2.52ZM37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
+                ]
+                []
+            ]
+        ]
+
+
+{-| -}
+emptyCircle : Nri.Ui.Svg.V1.Svg
+emptyCircle =
+    Nri.Ui.Svg.V1.init "0 0 75 75"
+        [ Svg.g []
+            [ Svg.path
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "evenodd"
+                , Attributes.d "M37.5,71.43C19.11,71.43,3.57,55.89,3.57,37.5S19.11,3.57,37.5,3.57,71.43,19.11,71.43,37.5,55.89,71.43,37.5,71.43ZM37.5,0C17.17,0,0,17.17,0,37.5S17.17,75,37.5,75,75,57.83,75,37.5,57.83,0,37.5,0Z"
+                ]
+                []
+            ]
+        ]
 
 
 {-| -}
 x : Nri.Ui.Svg.V1.Svg
 x =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path [ Attributes.d "M1.067 6.015c-1.423-1.422-1.423-3.526 0-4.948 1.422-1.423 3.526-1.423 4.948 0l6.371 6.37 6.371-6.37c1.422-1.423 3.783-1.423 5.176 0 1.423 1.422 1.423 3.782 0 5.176l-6.37 6.37 6.37 6.372c1.423 1.422 1.423 3.526 0 4.948-1.422 1.423-3.526 1.423-4.948 0l-6.371-6.37-6.371 6.37c-1.422 1.423-3.783 1.423-5.176 0-1.423-1.422-1.423-3.782 0-5.176l6.37-6.143-6.37-6.599z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 xInCircle : Nri.Ui.Svg.V1.Svg
 xInCircle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 50 50"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 50 50"
         [ Svg.circle
             [ Attributes.fill "currentcolor"
             , Attributes.cx "25"
@@ -739,38 +638,25 @@ xInCircle =
             ]
             []
         , Svg.g
-            [ Attributes.id "white-x"
-            , Attributes.transform "translate(15.000000, 15.000000)"
+            [ Attributes.transform "translate(15.000000, 15.000000)"
             , Attributes.fill "#FFFFFF"
             ]
             [ Svg.path [ Attributes.d "M0.853242321,4.81228669 C-0.284414107,3.67463026 -0.284414107,1.99089875 0.853242321,0.853242321 C1.99089875,-0.284414107 3.67463026,-0.284414107 4.81228669,0.853242321 L9.90898749,5.94994312 L15.0056883,0.853242321 C16.1433447,-0.284414107 18.0318544,-0.284414107 19.1467577,0.853242321 C20.2844141,1.99089875 20.2844141,3.87940842 19.1467577,4.99431172 L14.0500569,10.0910125 L19.1467577,15.1877133 C20.2844141,16.3253697 20.2844141,18.0091013 19.1467577,19.1467577 C18.0091013,20.2844141 16.3253697,20.2844141 15.1877133,19.1467577 L10.0910125,14.0500569 L4.99431172,19.1467577 C3.85665529,20.2844141 1.96814562,20.2844141 0.853242321,19.1467577 C-0.284414107,18.0091013 -0.284414107,16.1205916 0.853242321,15.0056883 L5.94994312,10.0910125 L0.853242321,4.81228669 Z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 exclamation : Nri.Ui.Svg.V1.Svg
 exclamation =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 15 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 15 15"
         [ Svg.path [ Attributes.fillRule "evenodd", Attributes.d "M15,7.5 C15,3.35786438 11.6421356,0 7.5,0 C3.35786438,0 0,3.35786438 0,7.5 C0,11.6421357 3.35786438,15 7.5,15 C11.6421356,15 15,11.6421357 15,7.5 Z M7.488,3.00005693 C6.6910533,2.99332411 6.03236555,3.58464547 6,4.33587376 C6,4.65284725 6.66,8.34332427 6.66,8.34332427 C6.73077084,8.72726384 7.08695202,9.00567371 7.5,8.9999122 L7.536,8.9999122 C7.94904798,9.00567371 8.30522916,8.72726384 8.376,8.34332427 C8.44677084,7.9593847 9,4.65850749 9,4.33587376 C8.96812494,3.59558162 8.32732494,3.00848187 7.542,3.00005693 L7.488,3.00005693 Z M7.5,12 C8.05228477,12 8.5,11.5522847 8.5,11 C8.5,10.4477153 8.05228477,10 7.5,10 C6.94771523,10 6.5,10.4477153 6.5,11 C6.5,11.5522847 6.94771523,12 7.5,12 L7.5,12 Z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 attention : Nri.Ui.Svg.V1.Svg
 attention =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 5.05 15.43"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 5.05 15.43"
         [ Svg.ellipse
             [ Attributes.cx "2.52"
             , Attributes.cy "13.71"
@@ -783,35 +669,25 @@ attention =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 flag : Nri.Ui.Svg.V1.Svg
 flag =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "#F3336C"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M21.36 1.25C20.064.414 17.107-.368 13.036.324 9.688.894 6.155.308 5 .081a.965.965 0 0 0-1.36.895v23.051c0 .538.427.973.967.973.542 0 .98-.437.98-.973V12.933c1.242.414 3.589.931 6.564.35 4.043-.794 7.36.229 7.36.229 1.02-1.017 1.808-3.482 1.435-6.203-.407-2.958.414-6.06.414-6.06z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withColor Colors.red
 
 
 {-| -}
 star : Nri.Ui.Svg.V1.Svg
 star =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 24"
         [ Svg.defs []
             [ Svg.path
                 [ Attributes.id "stara"
@@ -873,34 +749,24 @@ star =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 starFilled : Nri.Ui.Svg.V1.Svg
 starFilled =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 24"
         [ Svg.path
             [ Attributes.d "M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z"
             , Attributes.fill "currentcolor"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 starOutline : Nri.Ui.Svg.V1.Svg
 starOutline =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "-1 -0.5 27 25"
-        ]
+    Nri.Ui.Svg.V1.init "-1 -0.5 27 25"
         [ Svg.path
             [ Attributes.fill "none"
             , Attributes.stroke "currentcolor"
@@ -909,18 +775,12 @@ starOutline =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 compass : Nri.Ui.Svg.V1.Svg
 compass =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.g [ Attributes.stroke "none", Attributes.strokeWidth "1", Attributes.fillRule "evenodd", Attributes.transform "translate(-356.000000, -518.000000)" ]
             [ Svg.g [ Attributes.transform "translate(356.000000, 518.000000)" ]
                 [ Svg.path [ Attributes.d "M13.3903844,0.104572526 C6.06095558,0.104572526 0.106272892,6.05925521 0.106272892,13.388684 C0.106272892,20.7181128 6.06095558,26.6727955 13.3903844,26.6727955 C20.7198132,26.6727955 26.6744959,20.7181128 26.6744959,13.388684 C26.6744959,6.05925521 20.7198132,0.104572526 13.3903844,0.104572526 Z M13.3903844,1.43298368 C20.0009834,1.43298368 25.3460847,6.77808505 25.3460847,13.388684 C25.3460847,19.999283 20.0009834,25.3443844 13.3903844,25.3443844 C6.77978542,25.3443844 1.43468404,19.999283 1.43468404,13.388684 C1.43468404,6.77808505 6.77978542,1.43298368 13.3903844,1.43298368 Z" ] []
@@ -933,95 +793,67 @@ compass =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 activity : Nri.Ui.Svg.V1.Svg
 activity =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M20 10v.357h-3.642L15 5.607c-.071-.142-.179-.25-.357-.25-.142 0-.286.108-.357.25l-2.143 6.5-1.786-5.108c-.07-.106-.215-.213-.357-.213a.342.342 0 0 0-.32.25l-1.5 4.5L6.786 8.43c-.07-.107-.178-.215-.286-.215a.374.374 0 0 0-.32.179L4.642 10.75l-.785-1.287c-.072-.107-.143-.142-.25-.178a.407.407 0 0 0-.286.107l-.964.964H0V10C0 4.464 4.464 0 10 0s10 4.464 10 10m-4.286.822L14.606 6.93l-2.142 6.392a.342.342 0 0 1-.321.25.342.342 0 0 1-.32-.25l-1.787-5.108-1.465 4.357a.344.344 0 0 1-.32.25.392.392 0 0 1-.357-.215l-1.5-3.322-1.429 2.286a.382.382 0 0 1-.322.216c-.108 0-.25-.071-.286-.179l-.822-1.392-.75.75c-.106.07-.177.106-.285.106H.071A9.961 9.961 0 0 0 10 20a9.961 9.961 0 0 0 9.929-8.929H16.07c-.142 0-.286-.107-.357-.25"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 footsteps : Nri.Ui.Svg.V1.Svg
 footsteps =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 15 20"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 15 20"
         [ Svg.path
             [ Attributes.fillRule "nonzero"
             , Attributes.d "M1.77335904,11.7922305 L5.90660307,11.0289328 C5.68935769,12.5383477 7.40861515,15.2884313 5.45646759,16.0478489 C2.76105632,17.0954131 1.9234042,14.6781572 1.77335904,11.7922305 Z M0.176718476,7.06612115 C0.458843391,8.43725287 1.41615152,9.74198306 1.69435526,11.1030145 L6.15429763,10.2795555 C7.60395395,3.97240957 6.1871195,0.900338486 4.18808583,0.126920592 C2.03987926,-0.705098659 -0.729754357,2.66141923 0.176718476,7.06612115 Z M13.2274465,15.4953161 L9.09420249,14.7320184 C9.31066764,16.2422134 7.59141017,18.992317 9.54433797,19.7509345 C12.2397492,20.7984988 13.0774014,18.3812428 13.2274465,15.4953161 Z M13.3056301,14.8061401 C13.5838338,13.4443886 14.5411619,12.1404785 14.8232668,10.7692468 C15.7297797,6.36454491 12.9602061,2.99806702 10.8110592,3.83008627 C8.81279779,4.60354417 7.39603137,7.67557525 8.84562767,13.9827211 L13.3056301,14.8061401 Z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 speedometer : Nri.Ui.Svg.V1.Svg
 speedometer =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.g [ Attributes.fillRule "evenodd" ]
             [ Svg.path [ Attributes.d "M10.968 9.383a9.071 9.071 0 0 0-4.242 1.047l-1.7-1.7a12.494 12.494 0 0 1 6.852-2.45v3.148c-.3-.03-.603-.045-.91-.045zM20.94 9.524l-3.05 3.048a9.07 9.07 0 0 1 2.144 5.042H25a12.527 12.527 0 0 0-4.06-8.09zM0 17.614h1.902a9.101 9.101 0 0 1 3.738-6.51l-1.58-1.58A12.53 12.53 0 0 0 0 17.614z" ] []
             , Svg.path [ Attributes.d "M19.951 8.752l-8.388 9.433a1.539 1.539 0 0 1-.18.19 1.492 1.492 0 0 1-2.11-2.104 1.54 1.54 0 0 1 .192-.183l6.122-5.446a9.03 9.03 0 0 0-2.465-1.002V6.28c2.015.098 3.903.671 5.558 1.609l2.596-2.309a.56.56 0 0 1 .791.791L19.971 8.73h.002l-.022.023z" ] []
             , Svg.path [ Attributes.d "M10.932 16.718a.763.763 0 0 0-1.077 1.077.763.763 0 0 0 1.077-1.077z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 skip : Nri.Ui.Svg.V1.Svg
 skip =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path [ Attributes.d "M24.8 23.437c0 .416-.16.811-.447 1.104-.286.293-.676.46-1.08.46h-.882c-.845 0-1.53-.7-1.53-1.564v-8.874L4.406 24.58l-.23.14h-.105a2.158 2.158 0 0 1-.917.203c-1.134.035-2.088-.859-2.154-2.016V2.063C1.04.89 2.003-.034 3.154.001c.341.006.676.09.977.252h.106l.138.079L20.86 10.407V1.566C20.86.7 21.545 0 22.39 0h.882c.404 0 .794.167 1.08.46.287.293.447.689.447 1.105l.001 21.87z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 playInCircle : Nri.Ui.Svg.V1.Svg
 playInCircle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 20 20"
-        , Attributes.fill "none"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M0,9.94708982 C0,15.4705895 4.4775,19.9470903 10,19.9470903 C15.5235,19.9470903 20,15.4705895 20,9.94708982 C20,4.4245901 15.5225,-0.0529096768 10,-0.0529096768 C4.4775,-0.0529096768 0,4.4245901 0,9.94708982 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
             [ Attributes.stroke "currentcolor"
             , Attributes.strokeWidth "2"
             , Attributes.d "M1,9.94708982 C1,14.9179442 5.02942411,18.9470903 10,18.9470903 C14.971215,18.9470903 19,14.918305 19,9.94708982 C19,4.97687486 14.9702153,0.947090323 10,0.947090323 C5.02978474,0.947090323 1,4.97687486 1,9.94708982 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
@@ -1030,17 +862,12 @@ playInCircle =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 play : Nri.Ui.Svg.V1.Svg
 play =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 23 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 23 25"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1053,27 +880,23 @@ play =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 stopInCircle : Nri.Ui.Svg.V1.Svg
 stopInCircle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 20 20"
-        , Attributes.fill "none"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M0,9.9999995 C0,15.5234992 4.4775,20 10,20 C15.5235,20 20,15.5234992 20,9.9999995 C20,4.47749978 15.5225,0 10,0 C4.4775,0 0,4.47749978 0,9.9999995 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
             [ Attributes.stroke "currentcolor"
             , Attributes.strokeWidth "2"
             , Attributes.d "M1,9.9999995 C1,14.9708539 5.02942411,19 10,19 C14.971215,19 19,14.9712147 19,9.9999995 C19,5.02978454 14.9702153,1 10,1 C5.02978474,1 1,5.02978454 1,9.9999995 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.rect
@@ -1086,27 +909,23 @@ stopInCircle =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 pauseInCircle : Nri.Ui.Svg.V1.Svg
 pauseInCircle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 20 20"
-        , Attributes.fill "none"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 20"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
             , Attributes.d "M0,9.9999995 C0,15.5234992 4.4775,20 10,20 C15.5235,20 20,15.5234992 20,9.9999995 C20,4.47749978 15.5225,0 10,0 C4.4775,0 0,4.47749978 0,9.9999995 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
             [ Attributes.stroke "currentcolor"
             , Attributes.strokeWidth "2"
             , Attributes.d "M1,9.9999995 C1,14.9708539 5.02942411,19 10,19 C14.971215,19 19,14.9712147 19,9.9999995 C19,5.02978454 14.9702153,1 10,1 C5.02978474,1 1,5.02978454 1,9.9999995 Z"
+            , Attributes.fill "none"
             ]
             []
         , Svg.rect
@@ -1128,17 +947,71 @@ pauseInCircle =
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+hamburger : Nri.Ui.Svg.V1.Svg
+hamburger =
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "0"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "10"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "0"
+            , Attributes.y "20"
+            , Attributes.width "25"
+            , Attributes.height "5"
+            , Attributes.rx "2.5"
+            ]
+            []
+        ]
+
+
+{-| -}
+kebab : Nri.Ui.Svg.V1.Svg
+kebab =
+    Nri.Ui.Svg.V1.init "0 0 100 100"
+        [ Svg.circle
+            [ Attributes.cx "50"
+            , Attributes.cy "13.7"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "50"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "50"
+            , Attributes.cy "86.3"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        ]
 
 
 {-| -}
 equals : Nri.Ui.Svg.V1.Svg
 equals =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 15"
         [ Svg.g
             [ Attributes.transform "translate(-191.000000, -1433.000000)"
             , Attributes.fill "currentcolor"
@@ -1163,31 +1036,32 @@ equals =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 plus : Nri.Ui.Svg.V1.Svg
 plus =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path [ Attributes.d "M9.84 2.87c0-1.528 1.132-2.659 2.66-2.659 1.528 0 2.66 1.131 2.66 2.66v6.847h6.847c1.528 0 2.797 1.269 2.782 2.782 0 1.528-1.269 2.797-2.782 2.782h-6.848v6.847c0 1.529-1.13 2.66-2.659 2.66-1.528 0-2.66-1.131-2.66-2.66v-6.847H2.994c-1.528 0-2.797-1.269-2.782-2.782 0-1.528 1.269-2.797 2.782-2.782l6.725.123.123-6.97z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
-bulb : Nri.Ui.Svg.V1.Svg
-bulb =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 17 25"
+sparkleBulb : Nri.Ui.Svg.V1.Svg
+sparkleBulb =
+    Nri.Ui.Svg.V1.init "0 0 23 25"
+        [ Svg.path
+            [ Attributes.d "M21.6 12.5H19c-.3 0-.6.3-.6.6s.3.6.6.6h2.6c.3 0 .6-.3.6-.6s-.3-.6-.6-.6zM18.1 9.3c.1 0 .2 0 .3-.1l2.3-1.4c.2-.1.3-.5.1-.8-.2-.3-.5-.4-.8-.2l-2.3 1.4c-.2.1-.3.4-.3.7.2.2.4.4.7.4zM17.1 2c-.3-.2-.6-.1-.8.2l-1.5 2.2c-.1.1-.1.3-.1.5s.1.3.2.4c.1.1.3.1.4.1.2 0 .3-.1.4-.3l1.5-2.2c.2-.3.2-.7-.1-.9zM6.7 5.4c.2 0 .4-.1.5-.3.1-.2.1-.4 0-.6L5.7 2.2c-.1-.1-.3-.2-.4-.3-.2 0-.3 0-.4.1-.2.1-.3.3-.3.4 0 .2 0 .3.1.4L6.2 5c.1.3.3.4.5.4zM4 8.2L1.7 6.8c-.2-.1-.6 0-.7.2-.2.3-.1.6.2.8l2.3 1.4c.1.1.3.1.4.1l.3-.3c.1-.1.1-.3.1-.5-.1-.1-.2-.3-.3-.3zM20.6 17.8l-2.2-1.4c-.3-.2-.6-.1-.8.2-.2.3-.1.6.2.8l2.3 1.4c.3.1.6 0 .7-.2.2-.3.1-.6-.2-.8zM3.5 16.4l-2.3 1.4c-.1 0-.2.2-.3.3 0 .2 0 .3.1.5.1.1.2.2.4.3.1 0 .3 0 .4-.1L4 17.4c.3-.2.3-.5.2-.8-.1-.2-.5-.3-.7-.2zM3.7 13.1c0-.3-.3-.6-.6-.6H.6c-.3 0-.6.3-.6.6s.3.6.6.6h2.6c.1 0 .3-.1.4-.2.1-.1.1-.3.1-.4zM10.7 3.9c.3 0 .6-.3.6-.6V.6c0-.3-.3-.6-.6-.6s-.6.3-.6.6v2.7c0 .2.1.3.2.4s.3.2.4.2zM13.4 20.2H8.9c-.3 0-.6.3-.6.6s.3.6.6.6h4.5c.3 0 .6-.3.6-.6s-.3-.6-.6-.6zM10 23.5v.3c0 .4.3.7.6.7h.9c.4 0 .6-.3.6-.7v-.3c.7 0 1.3-.7 1.3-1.4H8.8c.1.7.6 1.3 1.2 1.4zM11.2 6.7c-3.1 0-5.6 2.7-5.6 6 0 .8.1 1.5.4 2.3 0 .1.1.2.1.3.2.6.6 1.1 1 1.6l1.4 2.3h5.4l1.4-2.3c.4-.5.7-1 1-1.6 0-.1.1-.2.1-.3.3-.7.4-1.5.4-2.3 0-3.3-2.5-6-5.6-6zM10.9 9c-.6 0-1.2.2-1.7.5-1.1.7-1.6 1.9-1.7 3.5 0 .3-.3.6-.6.6-.1 0-.3-.1-.4-.2-.1-.1-.2-.3-.2-.4 0-2.7 1.3-4 2.3-4.6.7-.4 1.4-.6 2.2-.7.3 0 .6.3.6.6.1.4-.2.7-.5.7z"
+            , Attributes.transform "translate(.208 .052)"
+            ]
+            []
         ]
+
+
+{-| -}
+baldBulb : Nri.Ui.Svg.V1.Svg
+baldBulb =
+    Nri.Ui.Svg.V1.init "0 0 17 25"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1213,67 +1087,55 @@ bulb =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| `bulb` will be removed in a future version of noredink-ui.
+
+Use the more-specific `baldBulb` instead please.
+
+-}
+bulb : Nri.Ui.Svg.V1.Svg
+bulb =
+    baldBulb
 
 
 {-| -}
 help : Nri.Ui.Svg.V1.Svg
 help =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 25 25"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path [ Attributes.d "M12.5,25 C5.59644063,25 0,19.4035594 0,12.5 C0,5.59644063 5.59644063,0 12.5,0 C19.4035594,0 25,5.59644063 25,12.5 C25,19.4035594 19.4035594,25 12.5,25 Z M12.5,23 C18.2989899,23 23,18.2989899 23,12.5 C23,6.70101013 18.2989899,2 12.5,2 C6.70101013,2 2,6.70101013 2,12.5 C2,18.2989899 6.70101013,23 12.5,23 Z" ] []
         , Svg.path [ Attributes.d "M12.6825,6.6275 C13.3866702,6.6275 14.0095806,6.74395717 14.55125,6.976875 C15.0929194,7.20979283 15.5154151,7.53749789 15.81875,7.96 C16.1220848,8.38250211 16.27375,8.86458063 16.27375,9.40625 C16.27375,9.98041954 16.1329181,10.470623 15.85125,10.876875 C15.5695819,11.283127 15.1579194,11.7408308 14.61625,12.25 C14.1937479,12.6508353 13.8768761,12.9866653 13.665625,13.2575 C13.4543739,13.5283347 13.3216669,13.8262484 13.2675,14.15125 L13.18625,14.6875 L11.74,14.6875 L11.74,13.875 C11.74,13.3116639 11.8402073,12.8458352 12.040625,12.4775 C12.2410427,12.1091648 12.536248,11.6975023 12.92625,11.2425 C13.2079181,10.9174984 13.419166,10.6385428 13.56,10.405625 C13.700834,10.1727072 13.77125,9.91541808 13.77125,9.63375 C13.77125,9.30874838 13.6602094,9.0595842 13.438125,8.88625 C13.2160406,8.7129158 12.8991687,8.62625 12.4875,8.62625 C11.7074961,8.62625 10.9437537,8.85916434 10.19625,9.325 L10.19625,7.29375 C10.9112536,6.84958111 11.7399953,6.6275 12.6825,6.6275 Z M11.17125,18.34375 L11.17125,15.7275 L13.82,15.7275 L13.82,18.34375 L11.17125,18.34375 Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 key : Nri.Ui.Svg.V1.Svg
 key =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 64 71"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 90 95"
         [ Svg.path
-            [ Attributes.d "M61.3 2.8c2.9 2.9 3.4 7.3 1.7 10.7 1.4 2.6 1.5 5.7.1 8.3-2.2 4.4-7.6 6.2-12 4-1.8-.9-3.2-2.5-4.1-4.2L45.6 23l.4 2c.4 1.8-1.1 3.6-2.9 3.6h-2.9c.5 1.1.3 2.6-.6 3.4s-2.3 1.1-3.4.5L14.9 53.9l.7.7c1.2-1.2 2.3-2.4 3.5-3.5 2.4 2.5 5 5.1 7.1 7.2l-3.5 3.5c-.7-.7-1.4-1.4-2.1-2.2l-.7.7c.7.7 1.4 1.4 2.1 2.2-1.4 1.5-3 3-4.2 4.3-.7-.7-1.4-1.4-2.1-2.2l-.7.7c.7.7 1.4 1.4 2.1 2.2L13.6 71c-2.4-2.5-5-5.1-7.1-7.2 1.2-1.2 2.3-2.4 3.5-3.5l-.7-.7-4.2 4.2C4 64.9 2 64.9.8 63.8c-1.1-1.1-1.1-3.2 0-4.3l31-31.3c-.6-1.1-.3-2.6.5-3.4.9-.9 2.3-1.2 3.4-.6v-2.9c0-1.8 1.8-3.3 3.6-2.9l1.9.4 1.3-1.3c-1.6-.9-3-2.2-3.9-3.9-2.2-4.5-.4-9.9 3.9-12.2 2.5-1.3 5.5-1.3 8 0 3.5-2.3 8-1.5 10.8 1.4zM57.1 7c-1.2-1.2-3-1.2-4.2 0-.5.5-1.1.8-1.8.8-.9.1-1.8-.2-2.4-.8-.9-.8-2.2-1-3.3-.5-1.5.8-2.1 2.5-1.3 4.1.8 1.5 2.5 2.1 4 1.4 1.1-.7 2.7-.5 3.7.5 1 .9 1.3 2.6.6 3.8-.8 1.5-.2 3.3 1.3 4.1s3.3.2 4-1.3c.5-1.1.3-2.3-.4-3.2-.9-1-1.1-1.9-1-3 .1-.7.5-1.1.9-1.6 1.1-1.3 1-3-.1-4.3z"
+            [ Attributes.d "M87.4472,78.3498 L44.9472,35.8498 C50.1464,26.6506 48.8456,14.8498 41.0488,7.0488 C31.6504,-2.3496 16.4468,-2.3496 7.0488,7.0488 C-2.3496,16.4472 -2.3496,31.6508 7.0488,41.0488 C14.8496,48.8496 26.6508,50.1504 35.8498,44.9472 L57.1508,66.2482 L50.35,73.049 C49.35,74.049 49.35,75.7482 50.35,76.7482 L55.1508,81.549 C56.1508,82.549 57.85,82.549 58.85,81.549 L65.6508,74.7482 L69.85,78.9474 L63.0492,85.7482 C62.0492,86.7482 62.0492,88.4474 63.0492,89.4474 L67.85,94.2482 C68.85,95.2482 70.5492,95.2482 71.5492,94.2482 L78.35,87.4474 C80.85,89.9474 84.9516,89.9474 87.4516,87.4474 C89.9477,84.9474 89.9477,80.8497 87.447693,78.3497 L87.4472,78.3498 Z M23.4472,23.5488 C20.8456,26.1504 16.5488,26.1504 13.9472,23.5488 C11.3456,20.9472 11.3456,16.6504 13.9472,14.0488 C16.5488,11.4472 20.8456,11.4472 23.4472,14.0488 C26.1464,16.6504 26.1464,20.8496 23.4472,23.5488 Z"
+            , Attributes.fillRule "evenodd"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 lock : Nri.Ui.Svg.V1.Svg
 lock =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 18 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 18 24"
         [ Svg.path
             [ Attributes.d "M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z"
             , Attributes.fillRule "evenodd"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 premiumLock : Nri.Ui.Svg.V1.Svg
 premiumLock =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 19 26"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 19 26"
         [ Svg.g [ Attributes.transform "translate(0.880000, 0.257143)" ]
             [ Svg.path
                 [ Attributes.d "M15.1703507,11.7613357 L15.1703507,7.54281617 C15.1703507,4.09252936 12.4022155,1.28571429 9.00015151,1.28571429 C5.59748152,1.28571429 2.82964933,4.09252936 2.82964933,7.54281617 L2.82964933,11.7613357 L1.947846,11.7613357 C0.872409555,11.7613357 0,12.6451106 0,13.7356938 L0,23.7399276 C0,24.8305108 0.872409555,25.7142857 1.947846,25.7142857 L16.0527601,25.7142857 C17.1281965,25.7142857 18,24.8305108 18,23.7399276 L18,13.7360011 C18,12.6454179 17.1281965,11.7613357 16.0527601,11.7613357 L15.1703507,11.7613357 Z M9.59559603,19.3582355 L9.59559603,21.7044182 C9.59559603,22.0384458 9.32863083,22.3088637 9.00015151,22.3088637 C8.67106614,22.3088637 8.40410094,22.0384458 8.40410094,21.7044182 L8.40410094,19.3582355 C7.73047592,19.1108645 7.24836282,18.4584813 7.24836282,17.689634 C7.24836282,16.7090617 8.03259204,15.9131726 9.00015151,15.9131726 C9.96680191,15.9131726 10.7522432,16.7090617 10.7522432,17.689634 C10.7522432,18.4594032 10.2692211,19.1117864 9.59559603,19.3582355 L9.59559603,19.3582355 Z M12.8337233,11.7613357 L5.16627666,11.7613357 L5.16627666,7.54281617 C5.16627666,5.39913958 6.88624771,3.654944 9.00015151,3.654944 C11.1137523,3.654944 12.8337233,5.39913958 12.8337233,7.54281617 L12.8337233,11.7613357 L12.8337233,11.7613357 Z"
@@ -1295,80 +1157,51 @@ premiumLock =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 badge : Nri.Ui.Svg.V1.Svg
 badge =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 90 100"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 90 100"
         [ Svg.path
             [ Attributes.d "M45,-3.29659982e-05 C54.112,-3.29659982e-05 63.228,2.12 71.52,6.372 L89.56,15.604 C89.8329058,15.7414908 90.0036473,16.0224382 90.0000573,16.328 L90.0000573,53.448 C90.0000573,67.168 82.56,79.728 70.572,86.248 L45.388,99.904 C45.1425223,100.032742 44.8494777,100.032742 44.604,99.904 L19.428,86.252 C7.4275883,79.7081557 -0.0282281283,67.120613 -7.98723275e-05,53.452 L-7.98723275e-05,16.332 C-7.98723275e-05,16.016 0.172,15.736 0.452,15.592 L18.48,6.372 C26.689367,2.17432619 35.7796922,-0.00981983277 45,-3.29659982e-05 Z M45.4440056,17.5137615 C44.9483643,17.2701262 44.3490622,17.4744174 44.1054269,17.9700587 L44.1054269,17.9700587 L36.5945232,33.2499235 C36.450613,33.5426885 36.172946,33.7468542 35.8505893,33.7969308 L35.8505893,33.7969308 L19.2709994,36.3724906 C19.0628617,36.4048238 18.8702484,36.5020537 18.7206297,36.6503135 C18.328328,37.0390522 18.3254396,37.6722106 18.7141783,38.0645124 L18.7141783,38.0645124 L30.6707511,50.130675 C30.8955874,50.3575721 30.9984998,50.6782274 30.947698,50.9935889 L30.947698,50.9935889 L28.2224001,67.9113856 C28.187866,68.1257625 28.2240485,68.3455551 28.32548,68.5375492 C28.5834652,69.0258751 29.1884698,69.2126031 29.6767956,68.954618 L29.6767956,68.954618 L44.532691,61.1061695 C44.8249661,60.951759 45.1746627,60.951759 45.4669378,61.1061695 L45.4669378,61.1061695 L60.3228332,68.954618 C60.5148273,69.0560495 60.7346199,69.092232 60.9489968,69.0576979 C61.4942521,68.9698624 61.8650642,68.4566409 61.7772287,67.9113856 L61.7772287,67.9113856 L59.0519307,50.9935889 C59.001129,50.6782274 59.1040413,50.3575721 59.3288777,50.130675 L59.3288777,50.130675 L71.2854505,38.0645124 C71.4337102,37.9148937 71.5309402,37.7222803 71.5632733,37.5141427 C71.6480513,36.9684036 71.2743685,36.4572686 70.7286294,36.3724906 L70.7286294,36.3724906 L54.1492354,33.7969613 C53.8267697,33.7468678 53.5490314,33.5425827 53.4051639,33.2496738 L53.4051639,33.2496738 L45.9004405,17.9703388 C45.8029585,17.7718691 45.6424449,17.6113054 45.4440056,17.5137615 Z"
             , Attributes.fillRule "evenodd"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 gift : Nri.Ui.Svg.V1.Svg
 gift =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 15 15"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 15 15"
         [ Svg.g
             [ Attributes.stroke "none", Attributes.strokeWidth "1", Attributes.fillRule "evenodd" ]
             [ Svg.path [ Attributes.d "M6.45,8.25 C6.57857143,8.25 6.70714286,8.36020408 6.74125364,8.4861516 L6.75,8.55 L6.75,14.7 C6.75,14.8285714 6.63979592,14.9571429 6.5138484,14.9912536 L6.45,15 L1.5,15 C1.0875,15 0.801041667,14.7479167 0.756163194,14.3592882 L0.75,14.25 L0.75,8.4 C0.75,8.34 0.798,8.28 0.8556,8.2584 L0.9,8.25 L6.45,8.25 Z M14.1,8.25 C14.16,8.25 14.22,8.298 14.2416,8.3556 L14.25,8.4 L14.25,14.25 C14.25,14.6625 13.9979167,14.9489583 13.6092882,14.9938368 L13.5,15 L8.55,15 C8.42142857,15 8.29285714,14.8897959 8.25874636,14.7638484 L8.25,14.7 L8.25,8.55 C8.25,8.42142857 8.36020408,8.29285714 8.4861516,8.25874636 L8.55,8.25 L14.1,8.25 Z M10.5,0 C11.775,0 12.75,0.975 12.75,2.25 C12.75,2.78333333 12.5722222,3.25740741 12.2693416,3.61954733 L12.15,3.75 L14.25,3.75 C14.6625,3.75 14.9489583,4.00208333 14.9938368,4.39071181 L15,4.5 L15,6.6 C15,6.66 14.952,6.72 14.8944,6.7416 L14.85,6.75 L8.55,6.75 C8.42142857,6.75 8.29285714,6.63979592 8.25874636,6.5138484 L8.25,6.45 L8.25,4.05 C8.25,3.92142857 8.13979592,3.79285714 8.0138484,3.75874636 L7.95,3.75 L7.05,3.75 C6.92142857,3.75 6.79285714,3.86020408 6.75874636,3.9861516 L6.75,4.05 L6.75,6.45 C6.75,6.57857143 6.63979592,6.70714286 6.5138484,6.74125364 L6.45,6.75 L0.15,6.75 C0.09,6.75 0.03,6.702 0.0084,6.6444 L0,6.6 L0,4.5 C0,4.0875 0.252083333,3.80104167 0.640711806,3.75616319 L0.75,3.75 L2.85,3.75 C2.475,3.375 2.25,2.85 2.25,2.25 C2.25,0.975 3.225,0 4.5,0 C5.25,0 6.6,0.675 7.5,1.575 C8.4,0.675 9.75,0 10.5,0 Z M4.5,1.5 C4.05,1.5 3.75,1.8 3.75,2.25 C3.75,2.7 4.05,3 4.5,3 C4.5,3 6.45,2.925 6.675,2.85 C6.3,2.4 4.95,1.5 4.5,1.5 Z M10.5,1.5 C10.05,1.5 8.775,2.325 8.325,2.85 C8.55,2.925 10.5,3 10.5,3 C10.95,3 11.25,2.7 11.25,2.25 C11.25,1.8 10.95,1.5 10.5,1.5 Z" ] [] ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 hat : Nri.Ui.Svg.V1.Svg
 hat =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 16"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 16"
         [ Svg.path [ Attributes.d "M10,0.1602 C5.3602,0.1602 0.4398002,1.4602 0.4398002,3.9 C0.4398002,5.26016 1.97964,6.2602 4.1398,6.8796 L4.1398,13.8796 C4.142926,14.29444 4.39526,14.66554 4.77964,14.82022 C8.13504,16.17334 11.88424,16.17334 15.23984,14.82022 C15.62422,14.665532 15.87734,14.29444 15.87968,13.8796 L15.87968,6.86 C18.03988,6.23968 19.57968,5.23968 19.57968,3.8804 C19.56015,1.46 14.63988,0.16 10.00008,0.16 L10,0.1602 Z M10,6.4204 C4.8204,6.4204 1.6398,4.94072 1.6398,3.8806 C1.6398,2.82044 4.8202,1.3602 10,1.3602 C15.1798,1.3602 18.3602,2.83988 18.3602,3.9 C18.3602,4.96012 15.1798,6.4204 10,6.4204 Z" ] []
         , Svg.path [ Attributes.d "M13.5398,2.3398 C12.38356,2.0437 11.1938,1.9023 10,1.92026 C8.80624,1.90229 7.6164,2.0437 6.4602,2.3398 C5.23988,2.67964 4.62036,3.19996 4.62036,3.87964 C4.62036,4.55932 5.24068,5.07964 6.4602,5.41948 L6.4602,5.42026 C7.61644,5.71636 8.8062,5.85776 10,5.8398 C11.19376,5.85777 12.3836,5.71636 13.5398,5.42026 C14.76012,5.08042 15.37964,4.5601 15.37964,3.88042 C15.37964,3.19996 14.7601,2.69996 13.5398,2.3398 Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 keychain : Nri.Ui.Svg.V1.Svg
 keychain =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 89 97"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 89 97"
         [ Svg.path [ Attributes.d "M17.4,58.6v5l3.2,3.2c1.2,1.2,1.2,3.1,0,4.3l-2.7,2.7l2.7,2.7c1.2,1.2,1.2,3.1,0,4.3L17.4,84v2.3 l5,5l5-5V58.6c0-1,0.6-1.9,1.6-2.3c1-0.4,1.9-0.9,2.7-1.4c0.5-0.4,1.1-0.7,1.7-0.7c1.1,0,2.1,0.7,2.4,1.8c0.3,1.1-0.1,2.2-1,2.8 c-0.8,0.5-1.6,1-2.5,1.4v26.6c0,1-0.4,1.9-1.1,2.6L24.7,96h0c-1.3,1.3-3.4,1.3-4.8,0l-6.5-6.5c-0.7-0.7-1.1-1.6-1.1-2.6v-3.2 c0-1.1,0.4-2.1,1.2-2.8l2.1-2.1L13.9,77c-0.8-0.8-1.3-2-1.3-3.2c0-1.2,0.5-2.3,1.3-3.2l1.7-1.7l-2.1-2.1c-0.8-0.8-1.2-1.8-1.2-2.8 v-3.8C5.6,56.9,1,50.2,0.1,42.7c-0.8-7.5,2.3-15,8.2-19.8c1.1-0.8,2.6-0.7,3.5,0.4c0.9,1.1,0.7,2.6-0.3,3.5c-4.8,3.8-7.1,9.9-6.2,16 c0.9,6.1,4.9,11.2,10.6,13.5C16.7,56.7,17.4,57.6,17.4,58.6L17.4,58.6z M74.7,72.2c-1.1,0-2.1-0.4-2.8-1.2l-2.6-2.6 c-0.8-0.8-1.2-1.9-1.2-3v-3.8h-3.1c-2.6,0-4.8-2.1-4.8-4.8v-3.2h-3.7c-1.1,0-2.2-0.4-3-1.2l-3.3-3.3c-7.3,2.5-15.3,1.6-21.7-2.5 c-6.5-4.1-10.8-10.9-11.6-18.6c-0.8-7.6,1.8-15.2,7.2-20.7C29.4,2,37-0.7,44.6,0.2C52.2,1,59.1,5.3,63.2,11.8 c4.1,6.5,5,14.5,2.5,21.7l21.8,21.8c0.7,0.7,1.2,1.8,1.2,2.8v10.5c0,1.9-1.6,3.5-3.5,3.5L74.7,72.2z M73,59.7V65l2.1,2.1h8.6l0-8.6 L61,35.9c-0.7-0.7-0.9-1.8-0.5-2.7c2.5-5.8,2.1-12.4-1.1-17.9c-3.1-5.5-8.6-9.2-14.9-10C38.3,4.4,32,6.5,27.5,11 c-4.5,4.5-6.6,10.7-5.8,17c0.8,6.3,4.5,11.8,10,14.9c5.5,3.1,12.1,3.5,17.9,1.1c0.9-0.4,2-0.2,2.7,0.5l4.2,4.2h5.3v0 c0.8,0,1.6,0.3,2.2,0.9c0.6,0.6,0.9,1.4,0.9,2.2v4.8h4.8C71.6,56.6,73,58,73,59.7L73,59.7z M42.8,15.2c2.6,2.6,3,6.8,1,9.9 c-2.1,3.1-6,4.3-9.5,2.9c-3.4-1.4-5.4-5.1-4.7-8.7c0.7-3.7,3.9-6.3,7.7-6.3C39.3,12.9,41.3,13.7,42.8,15.2z M39.2,18.7L39.2,18.7 c-1.1-1.1-2.9-1.1-4,0c-1.1,1.1-1.1,2.9,0,4c1.1,1.1,2.9,1.1,4,0c0.5-0.5,0.8-1.2,0.8-2C40.1,19.9,39.8,19.2,39.2,18.7L39.2,18.7z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 sprout : Nri.Ui.Svg.V1.Svg
 sprout =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 100 83"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 100 83"
         [ Svg.g [ Attributes.fillRule "nonzero" ]
             [ Svg.path
                 [ Attributes.d "M66.3361328,23.0056641 L66.3361328,22.9205078 C66.3361328,21.8013672 65.146875,21.0789062 64.1560547,21.5994141 C61.0353516,23.2384766 57.9806641,25.1339844 55.1259766,27.3220703 C52.7337891,29.1554687 50.7003906,30.9380859 49.0453125,32.4488281 L49.0351563,29.2617187 C49.0351563,29.1556641 49.0974609,18.5953125 54.4810547,13.2119141 C55.09375,12.5990234 55.09375,11.6056641 54.4810547,10.9927734 C53.8681641,10.3802734 52.8748047,10.3802734 52.2619141,10.9927734 C47.7990234,15.4558594 46.4654297,22.5322266 46.0667969,26.4457031 C44.9107422,25.1599609 43.5933594,23.6900391 42.30625,22.4621094 C37.3503906,17.7333984 31.8285156,14.0056641 26.4798828,11.1158203 C25.4898438,10.5808594 24.2878906,11.3042969 24.2878906,12.4294922 L24.2878906,12.4294922 C24.2878906,12.9541016 24.5646484,13.4380859 25.0142578,13.7083984 C29.8099609,16.5931641 34.9601563,20.1953125 40.0970703,24.690625 C42.3849609,26.6927734 44.6691406,29.5775391 45.9025391,31.0087891 L45.9181641,35.8501953 C45.8878906,36.0291016 45.8878906,36.2123047 45.9199219,36.3910156 L46.0505859,69.3267578 C46.0533203,70.1916016 46.7552734,70.890625 47.6195312,70.890625 C47.6210938,70.890625 47.6230469,70.890625 47.6246094,70.890625 C48.4912109,70.8876953 49.1914062,70.1832031 49.1886719,69.3164062 L49.0591797,36.7457031 C50.8654297,34.9878906 53.5615234,32.4410156 57.0529297,29.7988281 C59.7716797,27.7412109 62.6439453,25.9228516 65.5595703,24.3132812 C66.0369141,24.0498047 66.3361328,23.5507813 66.3361328,23.0056641 Z"
@@ -1407,17 +1240,12 @@ sprout =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 sapling : Nri.Ui.Svg.V1.Svg
 sapling =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 100 191"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 100 191"
         [ Svg.polygon [ Attributes.fill "#D97F4A", Attributes.points "44.4444444 116.260127 55.5555556 116.260127 55.5555556 182.186053 44.4444444 182.186053" ] []
         , Svg.polygon [ Attributes.fill "#D55F05", Attributes.points "50 116.260127 55.5555556 116.260127 55.5555556 182.186053 50 182.186053" ] []
         , Svg.path [ Attributes.d "M87.7777778,57.7777778 C88.4447337,55.2213541 88.8888889,52.6663774 88.8888889,50 C88.8888889,41.3324652 84.6672452,33.1105326 77.7777778,27.8891781 L77.7777778,27.7777778 C77.7777778,12.445023 65.3327548,0 50,0 C34.6672452,0 22.2222222,12.445023 22.2222222,27.7777778 L22.2222222,27.8891781 C15.3327548,33.1105326 11.1111111,41.3324652 11.1111111,50 C11.1111111,52.6663774 11.5552663,55.2213541 12.2222222,57.7777778 C4.33304407,64.8885996 0,73.7774885 0,83.3333333 C0,104.777199 22.445023,122.222222 50,122.222222 C77.554977,122.222222 100,104.777199 100,83.3333333 C100,73.7774885 95.6669559,64.8885996 87.7777778,57.7777778 Z", Attributes.fill "#C3EA21" ] []
@@ -1429,18 +1257,12 @@ sapling =
         , Svg.path [ Attributes.d "M100,184.074074 C100,187.186053 97.5564237,189.62963 94.4444444,189.62963 L5.55555556,189.62963 C2.4435763,189.62963 0,187.186053 0,184.074074 C0,180.962095 2.4435763,178.518519 5.55555556,178.518519 L94.4444444,178.518519 C97.5564237,178.518519 100,180.962095 100,184.074074 Z", Attributes.fill "#C3EA21" ] []
         , Svg.path [ Attributes.d "M100,184.074074 C100,187.186053 97.5564237,189.62963 94.4444444,189.62963 L50,189.62963 L50,178.518519 L94.4444444,178.518519 C97.5564237,178.518519 100,180.962095 100,184.074074 Z", Attributes.fill "#9CDD05" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 tree : Nri.Ui.Svg.V1.Svg
 tree =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 100 100"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 100 100"
         [ Svg.path [ Attributes.d "M44.2554458,76.2957186 C36.1962642,76.2957186 29.6386609,69.7388768 29.6386609,61.6796952 L29.6386609,55.8332857 C29.6386609,54.2174899 30.9468311,52.9100811 32.5618657,52.9100811 C34.1776615,52.9100811 35.4858318,54.2174899 35.4858318,55.8332857 L35.4858318,61.6796952 C35.4858318,66.5156609 39.4194799,70.4493092 44.2554458,70.4493092 C45.8712416,70.4493092 47.1786506,71.7567179 47.1786506,73.3725139 C47.1786506,74.9883097 45.8712416,76.2957186 44.2554458,76.2957186 L44.2554458,76.2957186 Z", Attributes.fill "#D55F05" ] []
         , Svg.path [ Attributes.d "M61.7946739,70.4493092 L55.9482646,70.4493092 C54.3324686,70.4493092 53.0250599,69.1419004 53.0250599,67.5261044 C53.0250599,65.9103087 54.3324686,64.6028997 55.9482646,64.6028997 L61.7946739,64.6028997 C66.6298784,64.6028997 70.5642881,60.6692516 70.5642881,55.8332857 C70.5642881,54.2174899 71.8716969,52.9100811 73.4874928,52.9100811 C75.1032886,52.9100811 76.4106974,54.2174899 76.4106974,55.8332857 C76.4106974,63.8924673 69.8530942,70.4493092 61.7946739,70.4493092 L61.7946739,70.4493092 Z", Attributes.fill "#913F02" ] []
         , Svg.path [ Attributes.d "M58.8714693,55.8332857 L58.8714693,95.7256259 L41.3322411,95.7256259 L41.3322411,55.8332857 C41.3322411,54.1961693 42.6175679,52.9100811 44.2554458,52.9100811 L55.9482646,52.9100811 C57.585381,52.9100811 58.8714693,54.1961693 58.8714693,55.8332857 L58.8714693,55.8332857 Z", Attributes.fill "#D97F4A" ] []
@@ -1461,181 +1283,112 @@ tree =
         , Svg.path [ Attributes.d "M76.4106974,96.9530825 C76.4106974,98.5901989 75.1246092,99.8762872 73.4874928,99.8762872 L26.7154562,99.8762872 C25.0783398,99.8762872 23.7922517,98.5901989 23.7922517,96.9530825 C23.7922517,95.3159659 25.0783398,94.0298778 26.7154562,94.0298778 L73.4874928,94.0298778 C75.1246092,94.0298778 76.4106974,95.3159659 76.4106974,96.9530825 L76.4106974,96.9530825 Z", Attributes.fill "#C3EA21" ] []
         , Svg.path [ Attributes.d "M76.4106974,96.9530825 C76.4106974,98.5901989 75.1246092,99.8762872 73.4874928,99.8762872 L50.1018553,99.8762872 L50.1018553,94.0298778 L73.4874928,94.0298778 C75.1246092,94.0298778 76.4106974,95.3159659 76.4106974,96.9530825 L76.4106974,96.9530825 Z", Attributes.fill "#9CDD05" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 bold : Nri.Ui.Svg.V1.Svg
 bold =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 13.6 13.9"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 13.6 13.9"
         [ Svg.path [ Attributes.d "M12.2,7.5c0.4,0.3,0.8,0.6,1,1.1s0.4,0.9,0.4,1.5c0,0.7-0.1,1.3-0.4,1.8s-0.7,0.9-1.3,1.1c-0.6,0.3-1.3,0.5-2,0.6 s-1.7,0.2-2.7,0.2H0v-0.8c0.2,0,0.5,0,0.8-0.1s0.5-0.1,0.6-0.1c0.2-0.1,0.4-0.2,0.5-0.4S2,12.1,2,11.9V2.1c0-0.2,0-0.4-0.1-0.6 S1.7,1.2,1.4,1.1C1.2,1,1,0.9,0.7,0.9S0.2,0.8,0,0.8V0h7.5c1.9,0,3.3,0.3,4.1,0.8s1.3,1.3,1.3,2.3c0,0.5-0.1,0.9-0.3,1.2 S12.1,5,11.8,5.2c-0.3,0.2-0.7,0.4-1.1,0.6S9.7,6.2,9.2,6.3v0.2c0.5,0.1,1,0.2,1.6,0.3C11.4,7,11.8,7.2,12.2,7.5z M9.1,3.3 c0-0.8-0.2-1.4-0.6-1.8S7.4,0.9,6.5,0.9c-0.1,0-0.3,0-0.5,0s-0.4,0-0.5,0v5.1H6c1.1,0,1.8-0.2,2.3-0.7S9.1,4.2,9.1,3.3z M9.8,10 c0-1-0.3-1.7-0.9-2.2C8.3,7.2,7.5,7,6.4,7C6.3,7,6.2,7,6,7S5.6,7,5.5,7v5.1c0.1,0.2,0.2,0.4,0.5,0.6C6.4,12.9,6.7,13,7.2,13 c0.8,0,1.4-0.3,1.9-0.8C9.5,11.7,9.8,10.9,9.8,10z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 italic : Nri.Ui.Svg.V1.Svg
 italic =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 9.5 13.9"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 9.5 13.9"
         [ Svg.path [ Attributes.d "M9.5,0L9.3,0.6c-0.2,0-0.5,0-0.8,0.1C8.2,0.8,7.9,0.8,7.8,0.9C7.5,1,7.3,1.1,7.2,1.3S7,1.6,7,1.8L4.6,12c0,0,0,0.1,0,0.2\n    c0,0.1,0,0.1,0,0.2c0,0.2,0,0.3,0.1,0.4c0.1,0.1,0.2,0.2,0.4,0.3c0.1,0,0.3,0.1,0.6,0.2s0.6,0.1,0.7,0.1l-0.1,0.6H0l0.1-0.6\n    c0.2,0,0.4,0,0.8-0.1s0.6-0.1,0.7-0.1c0.3-0.1,0.4-0.2,0.6-0.4s0.2-0.4,0.3-0.6L4.8,1.9c0-0.1,0-0.1,0-0.2c0-0.1,0-0.1,0-0.2\n    c0-0.1,0-0.2-0.1-0.3C4.7,1.2,4.6,1.1,4.4,1C4.3,0.9,4,0.8,3.7,0.8S3.2,0.7,3.1,0.6L3.2,0H9.5z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 underline : Nri.Ui.Svg.V1.Svg
 underline =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 17 19"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 17 19"
         [ Svg.rect [ Attributes.x "2", Attributes.y "17", Attributes.width "14.3", Attributes.height "1.4" ] []
         , Svg.path [ Attributes.d "M16.3,0.754320988 C16.1130306,0.773662648 15.8438632,0.817180731 15.4924897,0.884876543 C15.1411162,0.952572355 14.8461603,1.07023236 14.6076132,1.23786008 C14.3626188,1.39904059 14.1901583,1.68916114 14.0902263,2.10823045 C13.9902944,2.52729976 13.9403292,3.1558943 13.9403292,3.99403292 L13.9403292,9.10020576 C13.9403292,10.6024081 13.4310065,11.8112437 12.4123457,12.726749 C11.3936849,13.6422542 10.0462361,14.1 8.36995885,14.1 C6.41645114,14.1 4.90460069,13.658372 3.83436214,12.7751029 C2.76412359,11.8918337 2.22901235,10.6604331 2.22901235,9.0808642 L2.22901235,2.05987654 C2.22901235,1.83422384 2.18549426,1.64081013 2.09845679,1.47962963 C2.01141932,1.31844913 1.84540589,1.17338885 1.60041152,1.04444444 C1.4327838,0.960630582 1.22647585,0.892935786 0.981481481,0.841358025 C0.736487115,0.789780263 0.536626288,0.754321084 0.381893004,0.734979424 L0.381893004,0 L7.57695473,0 L7.57695473,0.734979424 C7.37064369,0.747873864 7.16111217,0.772050577 6.94835391,0.807510288 C6.73559564,0.842969999 6.51961701,0.896158767 6.30041152,0.967078189 C6.05541716,1.04444483 5.89101551,1.1733873 5.80720165,1.35390947 C5.72338778,1.53443163 5.68148148,1.73751602 5.68148148,1.96316872 L5.68148148,8.88744856 C5.68148148,10.247812 5.98127272,11.2374455 6.5808642,11.8563786 C7.18045567,12.4753117 8.05081734,12.7847737 9.19197531,12.7847737 C10.3137916,12.7847737 11.193824,12.4430761 11.8320988,11.7596708 C12.4703736,11.0762654 12.7895062,10.0705142 12.7895062,8.74238683 L12.7895062,4.09074074 C12.7895062,3.26549656 12.7330938,2.64818449 12.6202675,2.23878601 C12.5074411,1.82938753 12.3349806,1.53443163 12.1028807,1.35390947 C11.9352529,1.21207062 11.6435206,1.08312815 11.2276749,0.967078189 C10.8118292,0.851028226 10.5200969,0.780109868 10.3524691,0.754320988 L10.3524691,0 L16.3,0 L16.3,0.754320988 Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 list : Nri.Ui.Svg.V1.Svg
 list =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 16 12.6"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 16 12.6"
         [ Svg.path [ Attributes.d "M1.7,3.4C0.8,3.4,0,2.7,0,1.7S0.8,0,1.7,0s1.7,0.8,1.7,1.7S2.7,3.4,1.7,3.4z M1.7,8C0.8,8,0,7.2,0,6.3s0.8-1.7,1.7-1.7\n    s1.7,0.8,1.7,1.7S2.7,8,1.7,8z M1.7,12.6c-0.9,0-1.7-0.8-1.7-1.7s0.8-1.7,1.7-1.7s1.7,0.8,1.7,1.7S2.7,12.6,1.7,12.6z M16,2.6\n    c0,0.2-0.1,0.3-0.3,0.3H4.9c-0.2,0-0.3-0.1-0.3-0.3V0.9c0-0.2,0.1-0.3,0.3-0.3h10.9c0.2,0,0.3,0.1,0.3,0.3V2.6z M16,7.1\n    c0,0.2-0.1,0.3-0.3,0.3H4.9c-0.2,0-0.3-0.1-0.3-0.3V5.4c0-0.2,0.1-0.3,0.3-0.3h10.9c0.2,0,0.3,0.1,0.3,0.3V7.1z M16,11.7\n    c0,0.2-0.1,0.3-0.3,0.3H4.9c-0.2,0-0.3-0.1-0.3-0.3V10c0-0.2,0.1-0.3,0.3-0.3h10.9c0.2,0,0.3,0.1,0.3,0.3V11.7z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 link : Nri.Ui.Svg.V1.Svg
 link =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 20 20"
+    Nri.Ui.Svg.V1.init "0 0 100 100"
+        [ Svg.path
+            [ Attributes.d "M92.1882,7.8105 C81.7742,-2.6035 64.8872,-2.6035 54.4772,7.8105 L39.5982,22.6855 C40.7779,22.55659 41.9654,22.50191 43.1607,22.50191 C46.9263,22.50191 50.5865,23.09957 54.0557,24.25191 L62.4854,15.82221 C65.3799,12.92381 69.2315,11.33001 73.3294,11.33001 C77.4232,11.33001 81.2747,12.92381 84.1734,15.82221 C87.0679,18.71671 88.6617,22.56051 88.6617,26.66221 C88.6617,30.75601 87.0679,34.60751 84.1734,37.50221 L67.6774,53.99821 C64.779,56.89661 60.9274,58.49041 56.8334,58.49041 C52.7318,58.49041 48.8881,56.89661 45.9894,53.99821 C44.5792,52.59591 43.4816,50.95911 42.7238,49.17791 C40.8449,49.28338 39.0871,50.06463 37.7433,51.40451 L33.3488,55.80291 C34.5519,58.02951 36.0949,60.13101 37.9738,62.01771 C48.3878,72.43171 65.2748,72.43171 75.6888,62.01771 L92.1888,45.51371 C102.5988,35.10371 102.5988,18.22071 92.1888,7.81071 L92.1882,7.8105 Z" ]
+            []
+        , Svg.path
+            [ Attributes.d "M57.0092,77.49 C53.2358,77.49 49.5404,76.88062 45.9932,75.6775 L37.5049,84.1658 C34.6104,87.0642 30.7627,88.658 26.6649,88.658 C22.5711,88.658 18.7235,87.0642 15.8249,84.1658 C12.9265,81.2713 11.3327,77.4236 11.3327,73.3258 C11.3327,69.232 12.9265,65.3805 15.8249,62.4818 L32.3209,45.9858 C35.2193,43.0913 39.0631,41.5014 43.1609,41.5014 C47.2625,41.5014 51.1062,43.0952 54.0049,45.9858 C55.4151,47.396 56.5166,49.0327 57.2783,50.8139 C59.165,50.716244 60.9267,49.92718 62.2666,48.5873 L66.6533,44.1928 C65.4502,41.9584 63.9033,39.8608 62.0205,37.974 C51.6065,27.56 34.7195,27.56 24.3095,37.974 L7.8135,54.478 C-2.6045,64.892 -2.6045,81.771 7.8135,92.189 C18.2275,102.603 35.1065,102.603 45.5205,92.189 L60.3755,77.334 C59.2661,77.43556 58.1489,77.49416 57.02,77.49416 L57.0092,77.49 Z" ]
+            []
         ]
-        [ Svg.path [ Attributes.d "M9.36117647,7.80088235 C9.46457647,7.58718824 9.60244412,7.39188235 9.77017647,7.22414706 L9.96778824,7.02653529 L9.73800882,7.25631471 C9.58405588,7.41716176 9.45767941,7.60099118 9.36117647,7.80090294 L9.36117647,7.80088235 Z" ] []
-        , Svg.path [ Attributes.d "M11.8544118,14.4002941 L7.79205882,18.4626471 C6.66844118,19.5495 5.05538235,19.9631176 3.54794118,19.5506471 C2.03944118,19.1382059 0.861823529,17.9605882 0.449411765,16.4521176 C0.0369705882,14.9447647 0.450560588,13.3318235 1.53741176,12.208 L5.59976471,8.14564706 C5.81001176,7.93425 6.04094118,7.74467647 6.28911765,7.58038235 C6.09265588,8.43170588 6.11793235,9.3175 6.36264706,10.1562059 C6.39941176,10.2756912 6.43847353,10.3859853 6.47983529,10.5100588 L3.16189412,13.8327059 C2.35307059,14.6656471 2.36342353,15.9949412 3.18372324,16.8165294 C4.00519382,17.6368529 5.33445853,17.6471765 6.16754676,16.8383585 L10.2298997,12.7760056 C10.7468997,12.2590056 10.9617526,11.5122115 10.7974585,10.7998879 C10.7549497,10.6137674 10.6894615,10.434535 10.5998468,10.2667997 C10.5492968,10.1737379 10.4918497,10.0852732 10.4275115,10.0002556 C10.2632203,9.80379382 10.1092762,9.59813794 9.96795265,9.38443206 C9.83582912,9.11329088 9.79102324,8.80884382 9.83927618,8.51125559 C9.88523206,8.220585 10.0219497,7.95175559 10.2298938,7.743785 L10.6894526,7.30490265 C11.5695115,7.73804971 12.2806879,8.45034382 12.7115115,9.33154971 C12.7367874,9.38899382 12.7666585,9.44873794 12.791935,9.50618206 C12.8172106,9.56362618 12.8195085,9.57281735 12.8332938,9.607285 C12.8470809,9.64175265 12.8838468,9.73136735 12.9068232,9.80029971 C12.9298015,9.869235 12.9596732,9.95654971 12.9826497,10.0300791 C13.2514909,10.9572262 13.2112791,11.9475791 12.8677615,12.8494615 C12.8126144,12.9976703 12.7482762,13.1435791 12.6747468,13.2837556 C12.6598112,13.3170732 12.6414291,13.3492438 12.6218968,13.3802644 C12.5943232,13.4342615 12.5633026,13.4871115 12.529985,13.5388115 C12.5322829,13.5445559 12.5322829,13.5514494 12.529985,13.5571938 C12.4886262,13.6307232 12.4426703,13.6996585 12.3944144,13.7708879 C12.2347174,13.9972203 12.0543556,14.2086232 11.8544438,14.4004762 L11.8544118,14.4002941 Z" ] []
-        , Svg.path [ Attributes.d "M18.4626471,1.53735294 C17.632,0.709 16.5072353,0.243705882 15.3341176,0.243705882 C14.161,0.243705882 13.0363235,0.709 12.2055882,1.53735294 L8.14529412,5.59970588 C7.56279412,6.18564706 7.15494118,6.92208824 6.96652941,7.72747059 C6.95274265,7.79180882 6.93895588,7.85614706 6.92746765,7.92048529 C6.91597853,7.98482353 6.90678735,8.03767353 6.89989412,8.09511765 C6.89759618,8.11005324 6.89759618,8.12613824 6.89989412,8.14107353 C6.89989412,8.18932647 6.88610706,8.23987941 6.88380941,8.28813235 C6.82636529,8.84763235 6.87921382,9.41404412 7.03776235,9.95404412 C7.05384676,10.0137853 7.07223,10.0712324 7.09290941,10.1286765 C7.11358941,10.1861206 7.12278,10.2182912 7.13886529,10.2619471 L7.15724765,10.3125 C7.55707118,11.3534118 8.33715941,12.2047353 9.34015941,12.6930294 L9.79971824,12.2334706 C10.0674124,11.9669265 10.2144829,11.6027353 10.2087182,11.2247353 C10.2041224,10.8479118 10.0455741,10.4882941 9.76983588,10.2297941 C9.37001235,9.83226471 9.14598294,9.29114706 9.14598294,8.72702941 C9.14598294,8.16291176 9.37001824,7.62179412 9.76983588,7.22426471 L13.8321888,3.16191176 C14.66513,2.35308824 15.9944241,2.36344118 16.8160124,3.18374088 C17.6363359,4.00521147 17.6466594,5.33447618 16.8378415,6.16756441 L13.5175474,9.48785853 C13.5175474,9.51543206 13.5359297,9.54530265 13.5474179,9.57287618 C13.5772885,9.66019382 13.6071591,9.75210559 13.6324356,9.84631441 C13.8748532,10.6838732 13.9001297,11.5696674 13.705965,12.4198438 C13.9541268,12.2555526 14.1850532,12.0659909 14.3953179,11.8545791 L18.4623768,7.794285 C19.2907297,6.96363794 19.7560238,5.83887324 19.7560238,4.66575559 C19.7560238,3.49263794 19.2907297,2.36796147 18.4623768,1.53722618 L18.4626471,1.53735294 Z" ] []
-        , Svg.path [ Attributes.d "M9.20029412,9.19588235 C9.15318824,8.98448529 9.13940294,8.76620588 9.15893529,8.55020588 C9.14055294,8.7662 9.15548853,8.98335294 9.20029412,9.19588235 Z" ] []
-        ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 undo : Nri.Ui.Svg.V1.Svg
 undo =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 18 8"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 18 8"
         [ Svg.path [ Attributes.d "M3.16 3.168C4.83 1.76 6.938.879 9.22.879c4.126 0 7.55 2.64 8.78 6.336l-2.107.705c-.879-2.816-3.513-4.84-6.674-4.84a6.877 6.877 0 0 0-4.478 1.672L7.902 7.92H0V0l3.16 3.168z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 redo : Nri.Ui.Svg.V1.Svg
 redo =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 18 8"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 18 8"
         [ Svg.path [ Attributes.transform "scale(-1,1) translate(-18,0)", Attributes.d "M3.16 3.168C4.83 1.76 6.938.879 9.22.879c4.126 0 7.55 2.64 8.78 6.336l-2.107.705c-.879-2.816-3.513-4.84-6.674-4.84a6.877 6.877 0 0 0-4.478 1.672L7.902 7.92H0V0l3.16 3.168z" ] [] ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 home : Nri.Ui.Svg.V1.Svg
 home =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 20 18"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 20 18"
         [ Svg.g
             [ Attributes.fillRule "evenodd" ]
             [ Svg.path [ Attributes.d "M10.5916711,0.1316206 L10.67853,0.20566 L19.77453,9.411066 C20.1884706,9.82499711 19.9187834,10.5322989 19.3794595,10.6096104 L19.28157,10.616526 L17.30891,10.616526 L17.30891,17.082125 C17.30891,17.4337583 17.0325426,17.7394285 16.6910117,17.7879316 L16.59641,17.794625 L11.93943,17.794625 L11.93943,11.767226 L7.994034,11.767226 L7.994034,17.739825 C7.9524255,17.780925 7.8805005,17.7912 7.82406703,17.7937688 L7.774494,17.794625 L3.007294,17.794625 C2.65566067,17.794625 2.34999053,17.5181635 2.3014874,17.1766169 L2.294794,17.082013 L2.294794,10.616414 L0.7059516,10.616526 C0.0854307467,10.616526 -0.193638248,9.88344717 0.146485604,9.47884123 L0.2129916,9.411066 L9.69259,0.20566 C9.938686,-0.041138 10.3183024,-0.0658178 10.5916711,0.1316206 Z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 arrowPointingRightThick : Nri.Ui.Svg.V1.Svg
 arrowPointingRightThick =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 30 30"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 30 30"
         [ Svg.g
             [ Attributes.fillRule "evenodd" ]
             [ Svg.path [ Attributes.d "M15.0153,0 L30,15 L15.0153,30.0003 L9.6972,24.6822 L9.749948,24.629449 L9.89998116,24.4794159 C10.618401,23.7609967 13.1327192,21.2466827 15.6153,18.7641 L0,18.7641 L0,11.2431 L15.6153,11.2431 L9.6972,5.3181 L15.0153,0 Z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 library : Nri.Ui.Svg.V1.Svg
 library =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 21"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 21"
         [ Svg.g [ Attributes.fillRule "evenodd" ]
             [ Svg.path [ Attributes.d "M4.36725,18.19925 L4.36725,18.6592 L0,18.6592 L0,18.19925 L4.36725,18.19925 Z M4.36725,17.7393 L0,17.7393 L0,3.2608 L4.36725,3.2608 L4.36725,17.7393 Z M4.36725,19.1182 L4.36725,19.34867 C4.36725,19.72952 4.057675,20.03812 3.6778,20.03812 L0.68955,20.03812 C0.3087,20.03812 9.989738e-05,19.72952 9.989738e-05,19.34867 L9.989738e-05,19.1182 L4.36725,19.1182 Z M4.36725,2.34095 L4.36725,2.8009 L0,2.8009 L0,2.34095 L4.36725,2.34095 Z M4.36725,1.88198 L0,1.88198 L0,1.6515 C0,1.27065 0.3086,0.96205 0.68945,0.96205 L3.6777,0.96205 C4.057575,0.96205 4.36715,1.27065 4.36715,1.6515 L4.36725,1.88198 Z M0.919,3.71987 L0.919,6.0187 L3.44725,6.0187 L3.44725,3.71987 L0.919,3.71987 Z M9.423,18.199375 L9.423,18.659325 L5.05675,18.659325 L5.05675,18.199375 L9.423,18.199375 Z M9.423,17.739425 L5.05675,17.739425 L5.05675,3.26092 L9.423,3.26092 L9.423,17.739425 Z M9.423,19.118325 L9.423,19.348795 C9.423,19.729645 9.1144,20.038245 8.73355,20.038245 L5.7463,20.038245 C5.36545,20.038245 5.05685,19.729645 5.05685,19.348795 L5.05685,19.118325 L9.423,19.118325 Z M9.423,2.34107 L9.423,2.80102 L5.05675,2.80102 L5.05675,2.34107 L9.423,2.34107 Z M9.423,1.8821 L5.05675,1.8821 L5.05675,1.65163 C5.05675,1.27078 5.36535,0.96218 5.7462,0.96218 L8.73345,0.96218 C9.1143,0.96218 9.4229,1.27078 9.4229,1.65163 L9.423,1.8821 Z M5.97575,3.72 L5.97575,6.01882 L8.504,6.01882 L8.504,3.72 L5.97575,3.72 Z M14.47975,18.199497 L14.47975,18.659447 L10.1125,18.659447 L10.1125,18.199497 L14.47975,18.199497 Z M14.47975,17.739547 L10.1125,17.739547 L10.1125,3.26105 L14.47975,3.26105 L14.47975,17.739547 Z M14.47975,19.118447 L14.47975,19.348917 C14.47975,19.729767 14.17115,20.038367 13.7903,20.038367 L10.80205,20.038367 C10.4212,20.038367 10.1126,19.729767 10.1126,19.348917 L10.1126,19.118447 L14.47975,19.118447 Z M14.47975,2.3412 L14.47975,2.80115 L10.1125,2.80115 L10.1125,2.3412 L14.47975,2.3412 Z M14.47975,1.88222 L10.1125,1.88222 L10.1125,1.65175 C10.1125,1.2709 10.4211,0.9623 10.80195,0.9623 L13.7902,0.9623 C14.17105,0.9623 14.47965,1.2709 14.47965,1.65175 L14.47975,1.88222 Z M11.0325,3.72012 L11.0325,6.01895 L13.55975,6.01895 L13.55975,3.72012 L11.0325,3.72012 Z M24.56575,16.988622 L24.72298,17.420272 L20.61948,18.914422 L20.46225,18.481797 L24.56575,16.988622 Z M24.40852,16.556972 L20.30502,18.050147 L15.35277,4.44365 L19.45627,2.95047 L24.40852,16.556972 Z M24.8802,17.852872 L24.95832,18.068692 C25.08918,18.426117 24.90461,18.821617 24.54622,18.952492 L21.73872,19.973967 C21.3813,20.10385 20.9858,19.91928 20.85492,19.561867 L20.7768,19.346047 L24.8802,17.852872 Z M19.14195,2.08637 L19.29918,2.519 L15.19568,4.01217 L15.03845,3.58052 L19.14195,2.08637 Z M18.98472,1.65472 L14.88122,3.1479 L14.80212,2.93208 C14.67224,2.57465 14.85681,2.17915 15.21422,2.04828 L18.02172,1.0268 C18.38012,0.89692 18.77562,1.08149 18.90552,1.4389 L18.98472,1.65472 Z M16.37347,4.56197 L17.1596,6.72115 L19.53557,5.8569 L18.74945,3.69675 L16.37347,4.56197 Z" ] [] ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 search : Nri.Ui.Svg.V1.Svg
 search =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 25 25"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.d "M17.3076923,10.5765481 C17.3076923,8.72359894 16.6484159,7.13841054 15.3317383,5.82135785 C14.0146856,4.50468019 12.4294972,3.84540382 10.5765481,3.84540382 C8.72359894,3.84540382 7.13841054,4.50468019 5.82135785,5.82135785 C4.50468019,7.13841054 3.84540382,8.72359894 3.84540382,10.5765481 C3.84540382,12.4294972 4.50468019,14.0146856 5.82135785,15.3317383 C7.13841054,16.6484159 8.72359894,17.3076923 10.5765481,17.3076923 C12.4294972,17.3076923 14.0146856,16.6484159 15.3317383,15.3317383 C16.6484159,14.0146856 17.3076923,12.4294972 17.3076923,10.5765481 L17.3076923,10.5765481 Z M25,23.0780481 C25,23.5981939 24.8094924,24.049337 24.4299772,24.4299772 C24.049337,24.8094924 23.5981939,25 23.0780481,25 C22.5361514,25 22.0861334,24.8094924 21.724619,24.4299772 L16.5707878,19.2911466 C14.7793412,20.5335713 12.7797612,21.1545962 10.5765481,21.1545962 C9.14399076,21.1545962 7.77406096,20.8763351 6.4675087,20.3198128 C5.16095644,19.7644156 4.03441138,19.0128855 3.08637345,18.0667227 C2.14021061,17.1201848 1.38868055,15.9936397 0.833658346,14.6855874 C0.27676107,13.3790352 0,12.0091054 0,10.5765481 C0,9.14399076 0.27676107,7.77406096 0.833658346,6.4675087 C1.38868055,5.16095644 2.14021061,4.03441138 3.08637345,3.08637345 C4.03441138,2.14021061 5.16095644,1.38868055 6.4675087,0.833658346 C7.77406096,0.27676107 9.14399076,0 10.5765481,0 C12.0091054,0 13.3790352,0.27676107 14.6855874,0.833658346 C15.9936397,1.38868055 17.1201848,2.14021061 18.0667227,3.08637345 C19.0128855,4.03441138 19.7644156,5.16095644 20.3198128,6.4675087 C20.8763351,7.77406096 21.1545962,9.14399076 21.1545962,10.5765481 C21.1545962,12.7797612 20.5335713,14.7793412 19.2911466,16.5707878 L24.4449778,21.724619 C24.8154926,22.0951338 25,22.5462769 25,23.0780481 L25,23.0780481 Z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 searchInCicle : Nri.Ui.Svg.V1.Svg
 searchInCicle =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 31 31"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 31 31"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1656,35 +1409,23 @@ searchInCicle =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 speechBalloon : Nri.Ui.Svg.V1.Svg
 speechBalloon =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "6 4 29 27"
-        ]
+    Nri.Ui.Svg.V1.init "6 4 29 27"
         [ Svg.path
             [ Attributes.d "M30.9585749,6 C32.0224016,6 33.0408765,6.41333432 33.7918511,7.14748114 C34.5428257,7.8816806 34.9641248,8.87699427 34.963095,9.91444946 L34.963095,9.91444946 L34.963095,24.1007668 C34.9651747,25.1372481 34.5449288,26.1325354 33.7960843,26.8666822 C33.0462152,27.6008291 32.0287919,28.0151868 30.9671222,28.0172431 L30.9671222,28.0172431 L18.4515368,28.0172431 L13.6140979,32.387221 C12.3933732,33.4894546 11.3928018,33.0637753 11.3928018,31.439208 L11.3928018,31.439208 L11.3928018,28.0173483 L10.0046367,28.0173483 C8.94078298,28.0173483 7.92125653,27.604014 7.17028196,26.8698672 C6.41933434,26.1345885 5.99803348,25.1382483 6.0000069,24.1007931 L6.0000069,24.1007931 L6.0000069,9.91447579 C5.99908841,8.87694163 6.4203859,7.88165428 7.17136048,7.14750746 C7.92236202,6.41336064 8.94086387,6 10.0046367,6 L10.0046367,6 Z M23.6274241,18.9115148 L11.4940908,18.9115148 L11.4940908,20.933737 L23.6274241,20.933737 L23.6274241,18.9115148 Z M28.3333333,13 L11,13 L11,15.0222222 L28.3333333,15.0222222 L28.3333333,13 Z"
             ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 checklist : Nri.Ui.Svg.V1.Svg
 checklist =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.path [ Attributes.d "M11.0772,5.46017143 L25.1094857,5.46017143 C25.8126171,5.46017143 26.3851457,4.88761714 26.3851457,4.18451143 C26.3851457,3.48138 25.8125914,2.90885143 25.1094857,2.90885143 L11.0772,2.90885143 C10.3740686,2.90885143 9.80154,3.48140571 9.80154,4.18451143 C9.80154,4.88764286 10.3740943,5.46017143 11.0772,5.46017143 Z" ] []
         , Svg.path [ Attributes.d "M25.1094857,11.8386 L11.0772,11.8386 C10.3740686,11.8386 9.80154,12.4111543 9.80154,13.11426 C9.80154,13.8173657 10.3740943,14.38992 11.0772,14.38992 L25.1094857,14.38992 C25.8126171,14.38992 26.3851457,13.8173657 26.3851457,13.11426 C26.3851457,12.4111543 25.8125914,11.8386 25.1094857,11.8386 Z" ] []
         , Svg.path [ Attributes.d "M25.1094857,20.7684 L11.0772,20.7684 C10.3740686,20.7684 9.80154,21.3409543 9.80154,22.04406 C9.80154,22.7471914 10.3740943,23.31972 11.0772,23.31972 L25.1094857,23.31972 C25.8126171,23.31972 26.3851457,22.7471657 26.3851457,22.04406 C26.3851457,21.3409286 25.8125914,20.7684 25.1094857,20.7684 Z" ] []
@@ -1692,18 +1433,25 @@ checklist =
         , Svg.path [ Attributes.d "M6.34628571,9.6588 L3.42334286,12.5817429 L3.05169429,12.2100943 C2.55448286,11.7128829 1.74589714,11.7128829 1.24868571,12.2100943 C0.751474286,12.7073057 0.751474286,13.5158914 1.24868571,14.0131029 L2.52434571,15.2887629 C2.77546114,15.5398783 3.10191429,15.6604114 3.42835714,15.6604114 C3.7548,15.6604114 4.08126857,15.5348537 4.33236857,15.2887629 L8.15942571,11.4617057 C8.65663714,10.9644943 8.65663714,10.1559086 8.15942571,9.65869714 C7.65216,9.16148571 6.84858857,9.16148571 6.34636286,9.65869714 L6.34628571,9.6588 Z" ] []
         , Svg.path [ Attributes.d "M6.34628571,1.17308571 L3.42334286,4.09602857 L3.05169429,3.72438 C2.55448286,3.22716857 1.74589714,3.22716857 1.24868571,3.72438 C0.751474286,4.22159143 0.751474286,5.03017714 1.24868571,5.52738857 L2.52434571,6.80304857 C2.77546114,7.054164 3.10191429,7.17469714 3.42835714,7.17469714 C3.7548,7.17469714 4.08126857,7.04913943 4.33236857,6.80304857 L8.15942571,2.97599143 C8.65663714,2.47878 8.65663714,1.67019429 8.15942571,1.17298286 C7.65216,0.675771429 6.84858857,0.675771429 6.34636286,1.17298286 L6.34628571,1.17308571 Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+checklistComplete : Nri.Ui.Svg.V1.Svg
+checklistComplete =
+    Nri.Ui.Svg.V1.init "0 0 27 27"
+        [ Svg.path [ Attributes.d "M11.0772,5.46017143 L25.1094857,5.46017143 C25.8126171,5.46017143 26.3851457,4.88761714 26.3851457,4.18451143 C26.3851457,3.48138 25.8125914,2.90885143 25.1094857,2.90885143 L11.0772,2.90885143 C10.3740686,2.90885143 9.80154,3.48140571 9.80154,4.18451143 C9.80154,4.88764286 10.3740943,5.46017143 11.0772,5.46017143 Z" ] []
+        , Svg.path [ Attributes.d "M25.1094857,11.8386 L11.0772,11.8386 C10.3740686,11.8386 9.80154,12.4111543 9.80154,13.11426 C9.80154,13.8173657 10.3740943,14.38992 11.0772,14.38992 L25.1094857,14.38992 C25.8126171,14.38992 26.3851457,13.8173657 26.3851457,13.11426 C26.3851457,12.4111543 25.8125914,11.8386 25.1094857,11.8386 Z" ] []
+        , Svg.path [ Attributes.d "M25.1094857,20.7684 L11.0772,20.7684 C10.3740686,20.7684 9.80154,21.3409543 9.80154,22.04406 C9.80154,22.7471914 10.3740943,23.31972 11.0772,23.31972 L25.1094857,23.31972 C25.8126171,23.31972 26.3851457,22.7471657 26.3851457,22.04406 C26.3851457,21.3409286 25.8125914,20.7684 25.1094857,20.7684 Z" ] []
+        , Svg.path [ Attributes.d "M6.34628571,18.14451429 L3.42334286,21.06745723 L3.05169429,20.6958086 C2.55448286,20.19859723 1.74589714,20.19859723 1.24868571,20.6958086 C0.751474286,21.19301997 0.751474286,22.00160566 1.24868571,22.4988173 L2.52434571,23.77447723 C2.77546114,24.0255926 3.10191429,24.14612566 3.42835714,24.14612566 C3.7548,24.14612566 4.08126857,24.02056797 4.33236857,23.77447723 L8.15942571,19.94742 C8.65663714,19.4502086 8.65663714,18.64162291 8.15942571,18.14441142 C7.65216,17.64719999 6.84858857,17.64719999 6.34636286,18.14441142 L6.34628571,18.14451429 Z" ] []
+        , Svg.path [ Attributes.d "M6.34628571,9.6588 L3.42334286,12.5817429 L3.05169429,12.2100943 C2.55448286,11.7128829 1.74589714,11.7128829 1.24868571,12.2100943 C0.751474286,12.7073057 0.751474286,13.5158914 1.24868571,14.0131029 L2.52434571,15.2887629 C2.77546114,15.5398783 3.10191429,15.6604114 3.42835714,15.6604114 C3.7548,15.6604114 4.08126857,15.5348537 4.33236857,15.2887629 L8.15942571,11.4617057 C8.65663714,10.9644943 8.65663714,10.1559086 8.15942571,9.65869714 C7.65216,9.16148571 6.84858857,9.16148571 6.34636286,9.65869714 L6.34628571,9.6588 Z" ] []
+        , Svg.path [ Attributes.d "M6.34628571,1.17308571 L3.42334286,4.09602857 L3.05169429,3.72438 C2.55448286,3.22716857 1.74589714,3.22716857 1.24868571,3.72438 C0.751474286,4.22159143 0.751474286,5.03017714 1.24868571,5.52738857 L2.52434571,6.80304857 C2.77546114,7.054164 3.10191429,7.17469714 3.42835714,7.17469714 C3.7548,7.17469714 4.08126857,7.04913943 4.33236857,6.80304857 L8.15942571,2.97599143 C8.65663714,2.47878 8.65663714,1.67019429 8.15942571,1.17298286 C7.65216,0.675771429 6.84858857,0.675771429 6.34636286,1.17298286 L6.34628571,1.17308571 Z" ] []
+        ]
 
 
 {-| -}
 openBook : Nri.Ui.Svg.V1.Svg
 openBook =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 16 13"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 15 12"
         [ Svg.g [ Attributes.transform "translate(0.256349, 0.281480)" ]
             [ Svg.path [ Attributes.d "M5.97967784,7.68594033 L6.3357413,7.774016 L6.3357413,8.297421 C4.90871699,7.91726562 3.51632767,7.87765319 2.08989378,8.17910991 L1.7325363,8.26158 L1.7325363,7.737499 C3.16515353,7.37982238 4.55798757,7.36210421 5.97967784,7.68594033 L5.97967784,7.68594033 Z" ] []
             , Svg.path [ Attributes.d "M5.97967784,6.20834789 L6.3357413,6.296302 L6.3357413,6.820381 C4.90871699,6.43960069 3.51632767,6.40051534 2.08989378,6.70152673 L1.7325363,6.783864 L1.7325363,6.26046 C3.16515353,5.90153631 4.55798757,5.88487164 5.97967784,6.20834789 L5.97967784,6.20834789 Z" ] []
@@ -1719,17 +1467,12 @@ openBook =
             , Svg.path [ Attributes.d "M10.8138713,-6.21724894e-15 C11.9782613,-6.21724894e-15 13.1434813,0.23533 14.2748513,0.70059 C14.3321588,0.723915 14.3746332,0.771585 14.3922886,0.82905375 L14.4013013,0.88925 L14.4013013,1.42077 L14.7021413,1.60877 L14.6034113,10.908484 C14.6034113,10.908484 8.5888713,10.522346 8.5422083,10.672472 C8.4986487,10.8125849 8.3785254,10.9291395 7.64244931,10.9440574 L7.4750943,10.94567 L7.1457693,10.94567 C6.2598923,10.94567 6.1239693,10.820559 6.0752803,10.667729 C6.02877945,10.5201867 1.47385391,10.7840498 0.207572167,10.9956452 L0.0987309,11.015315 L-2.66453526e-15,1.60878 L0.3827464,1.37074 L0.3827464,0.88995 C0.3827464,0.80676 0.4327881,0.73237 0.5092036,0.70059 C1.6412213,0.23601 2.8056993,-6.21724894e-15 3.9708693,-6.21724894e-15 C5.1226223,-6.21724894e-15 6.2728523,0.23059 7.3920283,0.68502 C8.5119213,0.23059 9.6629193,-6.21724894e-15 10.8138713,-6.21724894e-15 Z M10.8130913,0.40835 C9.86394463,0.40835 8.91376686,0.57237963 7.98244941,0.897601468 L7.6341283,1.02711 L7.6341283,9.852136 C8.6768123,9.460595 9.7446113,9.262462 10.8130913,9.262462 C11.7628513,9.262462 12.7125481,9.41901153 13.6437525,9.72879207 L13.9920513,9.852136 L13.9913613,1.02711 C12.9500513,0.61662 11.8808813,0.40835 10.8130913,0.40835 Z M3.9709503,0.40835 C3.02180274,0.40835 2.07161539,0.57237963 1.13981824,0.897601468 L0.7912943,1.02711 L0.7912943,9.852136 C1.8346763,9.460595 2.9024673,9.262462 3.9709503,9.262462 C4.92071386,9.262462 5.86987534,9.41901153 6.80143761,9.72879207 L7.1499153,9.852136 L7.1492193,1.02711 C6.1079183,0.61662 5.0387423,0.40835 3.9709503,0.40835 Z" ] []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 openBooks : Nri.Ui.Svg.V1.Svg
 openBooks =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 27 24"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 27 24"
         [ Svg.g [ Attributes.stroke "none", Attributes.strokeWidth "1", Attributes.fill "none", Attributes.fillRule "evenodd" ]
             [ Svg.g [ Attributes.transform "translate(-86.000000, -746.000000)" ]
                 [ Svg.g [ Attributes.transform "translate(41.000000, 50.000000)" ]
@@ -1787,32 +1530,20 @@ openBooks =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 null : Nri.Ui.Svg.V1.Svg
 null =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 100 100"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 100 100"
         [ Svg.path [ Attributes.d "m50 3.332c11.688 0 22.375 4.293 30.559 11.398l9.5078-9.5234c1.2188-1.2227 3.1719-1.3164 4.4961-0.20703 1.3281 1.1055 1.5898 3.043 0.60547 4.4609l-0.37891 0.46484-9.5117 9.5078h-0.003906c10.391 12.004 13.969 28.465 9.4961 43.699-4.4766 15.234-16.391 27.148-31.621 31.621-15.234 4.4766-31.699 0.89844-43.703-9.4922l-9.5117 9.5312c-1.2188 1.2227-3.1719 1.3164-4.4961 0.20703-1.3281-1.1055-1.5898-3.043-0.60547-4.4609l0.37891-0.46484 9.5117-9.5078h0.003906c-7.8555-9.0625-11.922-20.805-11.352-32.785s5.7305-23.281 14.414-31.559c8.6797-8.2773 20.215-12.891 32.211-12.891zm30.539 20.832-56.375 56.375h0.003907c10.305 8.7227 24.316 11.656 37.258 7.8008 12.938-3.8516 23.062-13.977 26.914-26.914 3.8555-12.941 0.92188-26.953-7.8008-37.258zm-30.539-14.164c-10.223 0-20.062 3.9141-27.488 10.941-7.4297 7.0273-11.883 16.629-12.449 26.84-0.57031 10.207 2.793 20.246 9.3984 28.051l56.375-56.375-0.003907 0.003907c-7.2148-6.1211-16.371-9.4766-25.832-9.4609z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 openQuotationMark : Nri.Ui.Svg.V1.Svg
 openQuotationMark =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 68 51"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 68 51"
         [ Svg.path
             [ Attributes.fill "#004cc9"
             , Attributes.d "M66.62,1.66V9.87a20.09,20.09,0,0,0-11.79,4.06q-5.7,4.08-5.71,10,0,3.42,2.74,3.42a12.47,12.47,0,0,0,2.46-.48,15.65,15.65,0,0,1,3.07-.41,10,10,0,0,1,7.18,3.14,11.09,11.09,0,0,1,3.22,8.28,12.75,12.75,0,0,1-3.42,8.92Q61,50.47,55,50.47a14.1,14.1,0,0,1-11.48-5.36q-4.38-5.37-4.38-14.94,0-13.2,8-20.68A28.86,28.86,0,0,1,66.62,1.66Zm-37.53,0V9.87a19.63,19.63,0,0,0-12,4.13q-5.53,4.14-5.54,9.88c0,2.28.92,3.42,2.74,3.42a12.47,12.47,0,0,0,2.46-.48,15.73,15.73,0,0,1,3.08-.41,10.32,10.32,0,0,1,7.07,3,10.81,10.81,0,0,1,3.32,8.38,12.75,12.75,0,0,1-3.42,8.92q-3.42,3.72-9.37,3.72A14.1,14.1,0,0,1,6,45.11Q1.61,39.74,1.61,30.17q0-13.2,8-20.68A28.82,28.82,0,0,1,29.09,1.66Z"
@@ -1820,18 +1551,12 @@ openQuotationMark =
             []
         , Svg.path [ Attributes.d "M65.62.66V8.87a20.09,20.09,0,0,0-11.79,4.06q-5.7,4.08-5.71,10,0,3.42,2.74,3.42a12.47,12.47,0,0,0,2.46-.48,15.65,15.65,0,0,1,3.07-.41,10,10,0,0,1,7.18,3.14,11.09,11.09,0,0,1,3.22,8.28,12.75,12.75,0,0,1-3.42,8.92Q60,49.47,54,49.47a14.1,14.1,0,0,1-11.48-5.36q-4.38-5.37-4.38-14.94,0-13.2,8-20.68A28.86,28.86,0,0,1,65.62.66ZM28.09.66V8.87a19.63,19.63,0,0,0-12,4.13q-5.53,4.14-5.54,9.88c0,2.28.92,3.42,2.74,3.42a12.47,12.47,0,0,0,2.46-.48,15.73,15.73,0,0,1,3.08-.41,10.32,10.32,0,0,1,7.07,3,10.81,10.81,0,0,1,3.32,8.38,12.75,12.75,0,0,1-3.42,8.92q-3.42,3.72-9.37,3.72A14.1,14.1,0,0,1,5,44.11Q.61,38.74.61,29.17q0-13.2,8-20.68A28.82,28.82,0,0,1,28.09.66Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 closeQuotationMark : Nri.Ui.Svg.V1.Svg
 closeQuotationMark =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 68 51"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 68 51"
         [ Svg.path
             [ Attributes.fill "#004cc9"
             , Attributes.d "M40.09,50.47V42.34a19.49,19.49,0,0,0,12-4.17q5.54-4.17,5.54-9.91c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05,10.77,10.77,0,0,1-3.31-8.37,12.77,12.77,0,0,1,3.41-8.92q3.42-3.72,9.44-3.73A14,14,0,0,1,63.36,7.1Q67.63,12.53,67.64,22q0,13.13-8,20.64A28.82,28.82,0,0,1,40.09,50.47Zm-37.87,0V42.34A20,20,0,0,0,14,38.24q5.7-4.11,5.71-10c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05,10.77,10.77,0,0,1-3.32-8.37,12.63,12.63,0,0,1,3.46-9Q8,1.66,13.91,1.66A14.13,14.13,0,0,1,25.36,7Q29.77,12.4,29.77,22q0,13.19-8.07,20.68A29,29,0,0,1,2.22,50.47Z"
@@ -1839,64 +1564,40 @@ closeQuotationMark =
             []
         , Svg.path [ Attributes.d "M39.09,49.47V41.34a19.49,19.49,0,0,0,12-4.17q5.54-4.17,5.54-9.91c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05,10.77,10.77,0,0,1-3.31-8.37,12.77,12.77,0,0,1,3.41-8.92Q44.76.67,50.78.66A14,14,0,0,1,62.36,6.1Q66.63,11.53,66.64,21q0,13.13-8,20.64A28.82,28.82,0,0,1,39.09,49.47Zm-37.87,0V41.34A20,20,0,0,0,13,37.24q5.7-4.11,5.71-10c0-2.24-.91-3.35-2.74-3.35a13.73,13.73,0,0,0-2.46.41,15.53,15.53,0,0,1-3,.41,10.4,10.4,0,0,1-7.14-3.05A10.77,10.77,0,0,1,.05,13.31a12.63,12.63,0,0,1,3.46-9Q7,.66,12.91.66A14.13,14.13,0,0,1,24.36,6Q28.77,11.4,28.77,21q0,13.19-8.07,20.68A29,29,0,0,1,1.22,49.47Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 mail : Nri.Ui.Svg.V1.Svg
 mail =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        , Attributes.viewBox "0 0 88 63"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 88 63"
         [ Svg.path [ Attributes.d "M78.125,0 L9.375,0 C4.1992,0 0,4.1992 0,9.375 L0,53.125 C0,58.3008 4.1992,62.5 9.375,62.5 L78.125,62.5 C83.3008,62.5 87.5,58.3008 87.5,53.125 L87.5,9.375 C87.5,4.1992 83.3008,0 78.125,0 Z M75.8438,6.25 L45.6558,27.562 C44.4956,28.31591 43.0035,28.31591 41.8433,27.562 L11.6553,6.25 L75.8438,6.25 Z M78.125,56.25 L9.375,56.25 C7.6484,56.25 6.25,54.8516 6.25,53.125 L6.25,10.063 L38.25,32.657 C41.5586,34.95 45.9414,34.95 49.25,32.657 L81.25,10.063 L81.25,53.125 C81.25,53.95312 80.92188,54.75 80.33594,55.3359 C79.75,55.92184 78.95314,56.25 78.12504,56.25 L78.125,56.25 Z" ] []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 highlighter : Nri.Ui.Svg.V1.Svg
 highlighter =
-    Svg.svg
-        [ Attributes.viewBox "0 0 25 25"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 25 25"
         [ Svg.path
             [ Attributes.d "M13.13 17.764l-6.697-6.697L19.828.351l4.018 4.02L13.13 17.763zm-7.352-3.809l-.014-2.218 6.698 6.698-2.22-.013-4.478 2.691-2.679-2.678 2.693-4.48zm-2.693 5.819l1.339 1.34-.67.669H1.077l2.01-2.01zm-2.008 4.851V22.73h24.625v1.895H1.077z" ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 scale : Nri.Ui.Svg.V1.Svg
 scale =
-    Svg.svg
-        [ Attributes.viewBox "0 0 91 87"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 91 87"
         [ Svg.path
             [ Attributes.d "M79.731 29.219a5.886 5.886 0 0 0-5.105-8.816l-23.594-4.704V5.887A5.888 5.888 0 0 0 45.145 0a5.886 5.886 0 0 0-5.887 5.887v9.812l-23.594 4.703a5.888 5.888 0 0 0-5.105 8.817L0 50.489h.004H0c0 8.633 7.023 15.656 15.656 15.656 8.633 0 15.66-7.024 15.66-15.656h-.004.004L20.765 29.223a5.862 5.862 0 0 0 .781-2.93h17.707v54.176h-4.722c-1.622 0-2.946 1.316-2.946 2.922 0 1.605 1.324 2.922 2.946 2.922h21.215c1.62 0 2.945-1.313 2.945-2.922 0-1.606-1.324-2.922-2.945-2.922h-4.72V26.293l17.708-.004c0 1.066.285 2.066.781 2.93L58.964 50.485h.004-.004c0 8.633 7.023 15.656 15.656 15.656 8.633 0 15.66-7.024 15.66-15.656h-.004.004L79.731 29.219zm-54.988 21.27H6.571l9.086-18.31 9.086 18.31zm49.88 0h-9.087l9.086-18.31 9.086 18.31h-9.086z" ]
             []
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 microscope : Nri.Ui.Svg.V1.Svg
 microscope =
-    Svg.svg
-        [ Attributes.viewBox "0 0 71 100"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 71 100"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1909,18 +1610,12 @@ microscope =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 tada : Nri.Ui.Svg.V1.Svg
 tada =
-    Svg.svg
-        [ Attributes.viewBox "0 0 21 21"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.fill "currentcolor"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 21 21"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1941,17 +1636,22 @@ tada =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+count : Nri.Ui.Svg.V1.Svg
+count =
+    Nri.Ui.Svg.V1.init "0 0 75 75"
+        [ Svg.g []
+            [ Svg.path [ Attributes.d "M56.2502,0 L18.7502,0 C13.7775,0 9.008,1.9766 5.4922,5.4922 C1.9766,9.0078 0,13.7774 0,18.7502 L0,56.2502 C0,61.2229 1.9766,65.9924 5.4922,69.5082 C9.0078,73.0238 13.7774,75.0004 18.7502,75.0004 L56.2502,75.0004 C61.2229,75.0004 65.9924,73.0238 69.5082,69.5082 C73.0238,65.9926 75.0004,61.223 75.0004,56.2502 L75.0004,18.7502 C75.0004,13.7775 73.0238,9.008 69.5082,5.4922 C65.9926,1.9766 61.223,0 56.2502,0 Z M68.7502,56.25 C68.7502,59.5664 67.4338,62.7461 65.09,65.0898 C62.7462,67.4335 59.5666,68.75 56.2502,68.75 L18.7502,68.75 C11.8479,68.75 6.2502,63.1523 6.2502,56.25 L6.2502,18.75 C6.2502,11.8477 11.8479,6.25 18.7502,6.25 L56.2502,6.25 C59.5666,6.25 62.7463,7.5664 65.09,9.9102 C67.4337,12.254 68.7502,15.4336 68.7502,18.75 L68.7502,56.25 Z M57.0942,25.312 L52.0942,25.312 L53.1254,20.2495 C53.45352,18.5229 52.32071,16.8589 50.5942,16.5307 C48.86769,16.2025 47.2036,17.33539 46.8754,19.0619 L45.6879,25.3119 L33.9689,25.3119 L34.9689,20.2494 C35.29702,18.5228 34.16421,16.8588 32.4377,16.5306 C30.71119,16.2024 29.0471,17.33529 28.7189,19.0618 L27.5314,25.3118 L21.2814,25.3118 C19.5548,25.3118 18.1564,26.7102 18.1564,28.4368 C18.1564,30.1634 19.5548,31.5618 21.2814,31.5618 L26.2814,31.5618 L23.9689,43.4368 L17.7189,43.4368 C15.9923,43.4368 14.5939,44.8352 14.5939,46.5618 C14.5939,48.2884 15.9923,49.6868 17.7189,49.6868 L22.7189,49.6868 L21.87515,54.7493 C21.71109,55.56571 21.879056,56.4134 22.33999,57.1087 C22.80483,57.80011 23.52749,58.2767 24.34389,58.4368 L25.00014,58.4368 C26.51964,58.464144 27.83604,57.3977 28.12514,55.9056 L29.31264,49.6556 L41.09364,49.6556 L40.09364,54.7181 C39.92958,55.53451 40.097546,56.3822 40.55848,57.0775 C41.02332,57.76891 41.74598,58.2455 42.56238,58.4056 L43.15613,58.4056 C44.67563,58.432944 45.99203,57.3665 46.28113,55.8744 L47.46863,49.6244 L53.71863,49.6244 C55.44523,49.6244 56.84363,48.226 56.84363,46.4994 C56.84363,44.7728 55.44523,43.3744 53.71863,43.3744 L48.71863,43.3744 L51.03113,31.4994 L57.28113,31.4994 C59.00773,31.4994 60.40613,30.101 60.40613,28.3744 C60.40613,26.6478 59.00773,25.2494 57.28113,25.2494 L57.0942,25.312 Z M42.2192,43.437 L30.4692,43.437 L32.7817,31.562 L44.5317,31.562 L42.2192,43.437 Z" ] []
+            ]
+        ]
 
 
 {-| -}
 openInNewTab : Nri.Ui.Svg.V1.Svg
 openInNewTab =
-    Svg.svg
-        [ Attributes.viewBox "0 0 74 74"
-        , Attributes.width "100%"
-        , Attributes.height "100%"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 74 74"
         [ Svg.g
             [ Attributes.fill "currentcolor"
             , Attributes.fillRule "nonzero"
@@ -1966,18 +1666,12 @@ openInNewTab =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
 
 
 {-| -}
 sync : Nri.Ui.Svg.V1.Svg
 sync =
-    Svg.svg
-        [ Attributes.width "100%"
-        , Attributes.height "100%"
-        , Attributes.viewBox "0 0 62 62"
-        , Attributes.version "1.1"
-        ]
+    Nri.Ui.Svg.V1.init "0 0 62 62"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
@@ -1998,4 +1692,387 @@ sync =
                 []
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+
+
+{-| -}
+flagUs : Nri.Ui.Svg.V1.Svg
+flagUs =
+    Nri.Ui.Svg.V1.init "0 0 92 64"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.rect
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.x "7.15778928"
+                , Attributes.y "6.97400533"
+                , Attributes.width "32.1931667"
+                , Attributes.height "20.18306"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M85.9427893,0.0592053258 L6.79778928,0.0552993258 C3.11808928,0.0552993258 0.133689276,3.03969933 0.133689276,6.71549933 L0.133689276,57.1494993 C0.133689276,60.8291993 3.11808928,63.8096993 6.79388928,63.8096993 L85.9388893,63.8096993 C88.8997893,63.8096993 91.3138893,61.3955993 91.3138893,58.4346993 L91.3177953,5.43869933 C91.3177953,2.47389933 88.9036953,0.0597993258 85.9427953,0.0597993258 L85.9427893,0.0592053258 Z M30.9697893,10.4852053 L33.4931893,10.2664553 L34.4814693,7.96175533 C34.5908493,7.74300533 34.7002193,7.63363533 34.9189693,7.63363533 C35.1377193,7.63363533 35.3564693,7.74301533 35.3564693,7.96175533 L36.3447493,10.2664553 L38.8681493,10.4852053 C39.0868993,10.4852053 39.1962693,10.5945853 39.3056493,10.8133253 C39.4150293,11.0320653 39.3056493,11.2508253 39.1962693,11.3602053 L37.3290693,13.0047053 L37.8759493,15.4188053 C37.8759493,15.6375553 37.8759493,15.8563053 37.6571993,15.9656853 C37.4384493,16.0750653 37.2196993,16.0750653 37.1103193,15.9656853 L34.9150193,14.6492853 L32.8291193,15.9656853 C32.7197493,15.9656853 32.6103693,16.0750653 32.6103693,16.0750653 C32.5009993,16.0750653 32.3916193,16.0750653 32.2822493,15.9656853 C32.0634993,15.8563053 32.0634993,15.6375653 32.0634993,15.4188053 L32.6103693,13.0047053 L30.7431693,11.3602053 C30.6337893,11.2508253 30.5244193,11.0320853 30.6337893,10.8133253 C30.6416013,10.7039453 30.7509793,10.4852053 30.9697293,10.4852053 L30.9697893,10.4852053 Z M30.9697893,21.5672053 L33.4931893,21.3484553 L34.4814693,19.0437553 C34.5908493,18.8250053 34.7002193,18.7156353 34.9189693,18.7156353 C35.1377193,18.7156353 35.3564693,18.8250153 35.3564693,19.0437553 L36.3447493,21.3484553 L38.8681493,21.5672053 C39.0868993,21.5672053 39.1962693,21.6765853 39.3056493,21.8953353 C39.4150293,22.1140853 39.3056493,22.3328353 39.1962693,22.4422053 L37.3290693,24.0867053 L37.8759493,26.5008053 C37.8759493,26.7195553 37.8759493,26.9383053 37.6571993,27.0476853 C37.4384493,27.1570653 37.2196993,27.1570653 37.1103193,27.0476853 L35.0244193,25.7312853 L32.9385193,27.0476853 C32.8291393,27.0476853 32.7197693,27.1570653 32.7197693,27.1570653 C32.6103893,27.1570653 32.5010193,27.1570653 32.3916393,27.0476853 C32.1728893,26.9383053 32.1728893,26.7195653 32.1728893,26.5008053 L32.7197693,24.0867053 L30.8525693,22.4422053 C30.7431893,22.3328353 30.6338193,22.1140853 30.7431893,21.8953353 C30.6416293,21.6765853 30.7510023,21.5672053 30.9697493,21.5672053 L30.9697893,21.5672053 Z M19.4467893,10.4852053 L21.9701893,10.2664553 L22.9584693,7.96175533 C23.0678493,7.74300533 23.1772193,7.63363533 23.3959693,7.63363533 C23.6147193,7.63363533 23.8334693,7.74301533 23.8334693,7.96175533 L24.8217493,10.2664553 L27.3451493,10.4852053 C27.5638993,10.4852053 27.6732693,10.5945853 27.7826493,10.8133253 C27.8920193,11.0320753 27.7826493,11.2508253 27.6732693,11.3602053 L25.8060693,13.0047053 L26.3529493,15.4188053 C26.3529493,15.6375553 26.3529493,15.8563053 26.1341993,15.9656853 C26.0248193,16.0750653 25.9154493,16.0750653 25.8060793,16.0750653 C25.6967093,16.0750653 25.5873293,16.0750653 25.5873293,15.9656853 L23.5014293,14.6492853 L21.4155293,15.9656853 C21.3061493,16.0750653 20.9780293,16.0750653 20.8686493,15.9656853 C20.6498993,15.8563053 20.6498993,15.6375653 20.6498993,15.4188053 L21.1967793,13.0047053 L19.3295793,11.3602053 C19.2202093,11.2508253 19.1108293,11.0320853 19.2202093,10.8133253 C19.1186493,10.7039453 19.2280213,10.4852053 19.4467693,10.4852053 L19.4467893,10.4852053 Z M19.4467893,21.5672053 L21.9701893,21.3484553 L22.9584693,19.0437553 C23.0678493,18.8250053 23.1772193,18.7156353 23.3959693,18.7156353 C23.6147193,18.7156353 23.8334693,18.8250153 23.8334693,19.0437553 L24.8217493,21.3484553 L27.3451493,21.5672053 C27.5638993,21.5672053 27.6732693,21.6765853 27.7826493,21.8953353 C27.8920193,22.1140853 27.7826493,22.3328353 27.6732693,22.4422053 L25.8060693,24.0867053 L26.3529493,26.5008053 C26.3529493,26.7195553 26.3529493,26.9383053 26.1341993,27.0476853 C26.0248193,27.1570653 25.8060793,27.1570653 25.5873193,27.0476853 L23.5014193,25.7312853 L21.4155193,27.0476853 C21.3061393,27.0476853 21.1967693,27.1570653 21.1967693,27.1570653 C21.0873893,27.1570653 20.9780193,27.1570653 20.8686493,27.0476853 C20.6498993,26.9383053 20.6498993,26.7195653 20.6498993,26.5008053 L21.1967793,24.0867053 L19.3295793,22.4422053 C19.2202093,22.3328353 19.1108293,22.1140853 19.2202093,21.8953353 C19.1186493,21.6765853 19.2280213,21.5672053 19.4467693,21.5672053 L19.4467893,21.5672053 Z M8.03678928,10.4852053 L10.5601893,10.2664553 L11.5484693,7.96175533 C11.6578493,7.74300533 11.7672193,7.63363533 11.9859693,7.63363533 C12.2047193,7.63363533 12.4234693,7.74301533 12.4234693,7.96175533 L13.4117493,10.2664553 L15.9351493,10.4852053 C16.1538993,10.4852053 16.2632693,10.5945853 16.3726493,10.8133253 C16.4820293,11.0320653 16.3726493,11.2508253 16.2632693,11.3602053 L14.3960693,13.0047053 L14.9429493,15.4188053 C14.9429493,15.6375553 14.9429493,15.8563053 14.7241993,15.9656853 C14.5054493,16.0750653 14.2866993,16.0750653 14.1773193,15.9656853 L11.9820193,14.6492853 L9.89611928,15.9656853 C9.78673928,15.9656853 9.78673928,16.0750653 9.67736928,16.0750653 C9.56799928,16.0750653 9.45861928,16.0750653 9.34924928,15.9656853 C9.23987928,15.8563053 9.13049928,15.6375653 9.13049928,15.4188053 L9.67737928,13.0047053 L7.81017928,11.3602053 C7.70079928,11.2508253 7.59142928,11.0320853 7.70079928,10.8133253 C7.59923928,10.7039453 7.81798928,10.4852053 8.03673928,10.4852053 L8.03678928,10.4852053 Z M8.03678928,21.5672053 L10.5601893,21.3484553 L11.5484693,19.0437553 C11.6578493,18.7156353 12.3179993,18.7156353 12.5367493,19.0437553 L13.5250293,21.3484553 L16.0484293,21.5672053 C16.2671793,21.5672053 16.3765593,21.6765853 16.4859293,21.8953353 C16.5953093,22.1140853 16.4859293,22.3328353 16.3765593,22.4422053 L14.5093593,24.0867053 L15.0562393,26.5008053 C15.0562393,26.7195553 15.0562393,26.9383053 14.8374893,27.0476853 C14.7281093,27.1570653 14.5093693,27.1570653 14.2906093,27.0476853 L12.2047093,25.7312853 L10.1188093,27.0476853 C10.0094293,27.0476853 9.90005928,27.1570653 9.90005928,27.1570653 C9.79067928,27.1570653 9.68130928,27.1570653 9.57193928,27.0476853 C9.35318928,26.9383053 9.35318928,26.7195653 9.35318928,26.5008053 L9.90006928,24.0867053 L8.03286928,22.4422053 C7.92348928,22.3328353 7.81411928,22.1140853 7.92348928,21.8953353 C7.59926928,21.6765853 7.81801928,21.5672053 8.03676928,21.5672053 L8.03678928,21.5672053 Z M84.2987893,56.7902053 L7.15778928,56.7902053 L7.15778928,49.5480053 L84.2947893,49.5480053 L84.2987893,56.7902053 Z M84.2987893,42.6342053 L7.15778928,42.6342053 L7.15778928,35.3920053 L84.2947893,35.3920053 L84.2987893,42.6342053 Z M84.2987893,28.4822053 L46.7717893,28.4822053 L46.7717893,21.2400053 L84.2987893,21.2400053 L84.2987893,28.4822053 Z M84.2987893,14.2162053 L46.7717893,14.2162053 L46.7717893,6.97400533 L84.2987893,6.97400533 L84.2987893,14.2162053 Z"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                []
+            , Svg.rect
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.x "46.7717893"
+                , Attributes.y "6.97400533"
+                , Attributes.width "37.527"
+                , Attributes.height "7.2422"
+                ]
+                []
+            , Svg.rect
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.x "46.7717893"
+                , Attributes.y "21.2400053"
+                , Attributes.width "37.527"
+                , Attributes.height "7.2422"
+                ]
+                []
+            , Svg.rect
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.x "7.15778928"
+                , Attributes.y "35.3920053"
+                , Attributes.width "77.141"
+                , Attributes.height "7.2422"
+                ]
+                []
+            , Svg.rect
+                [ Attributes.fill "#FFFFFF"
+                , Attributes.x "7.15778928"
+                , Attributes.y "49.5480053"
+                , Attributes.width "77.141"
+                , Attributes.height "7.2422"
+                ]
+                []
+            ]
+        ]
+
+
+{-| -}
+school : Nri.Ui.Svg.V1.Svg
+school =
+    Nri.Ui.Svg.V1.init "0 0 90 96"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-0.000000, 0.000000)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M44.8902248,0 L45.0226453,0.0111997236 C45.7218453,0.108799724 46.2218453,0.710379724 46.2218453,1.40959972 L46.2218453,1.40959972 L46.2179353,2.31193972 L53.0187353,2.31193972 C53.7179753,2.31193972 54.3195353,2.91351972 54.3195353,3.61273972 L54.3195353,3.61273972 L54.3234453,8.31193972 C54.3234453,9.01117972 53.7218653,9.61273972 53.0226453,9.61273972 L53.0226453,9.61273972 L46.2218453,9.61273972 L46.2218453,15.4135397 C46.4249653,15.5111997 46.6241853,15.7104197 46.8234053,15.8119797 L46.8234053,15.8119797 L66.7214053,32.8119797 C67.7214053,33.7103797 68.0221853,35.3119797 67.3229653,36.5111797 C66.8229653,37.5111797 65.8229653,38.0111797 64.7213653,38.0111797 L64.7213653,38.0111797 L62.4205653,38.0111797 L62.4205653,48.4091797 L78.6195653,48.4130797 C79.4203653,48.4130797 80.2211253,48.9130597 80.6195653,49.6122797 L80.6195653,49.6122797 L89.6195653,65.3112797 C90.4215253,66.8117397 89.3199253,68.8117397 87.6207253,68.8117397 L87.6207253,68.8117397 L85.8199253,68.8117397 L85.8199253,92.8117427 C85.8199253,94.1125427 84.8199253,95.1125427 83.5191253,95.1125427 L83.5191253,95.1125427 L52.0191253,95.1125427 C51.3199253,95.1125427 50.8199253,94.5149027 50.8199253,93.9133427 L50.8199253,93.9133427 L50.8199253,75.8113397 C50.8199253,75.1121397 50.2222853,74.6121397 49.6207253,74.6121397 L49.6207253,74.6121397 L40.3199253,74.6121397 C39.6207253,74.6121397 39.1207253,75.2097797 39.1207253,75.8113397 L39.1207253,75.8113397 L39.1207253,93.8113437 C39.1207253,94.5105437 38.5230853,95.0105437 37.9215253,95.0105437 L37.9215253,95.0105437 L6.42152527,95.0066377 C5.12072527,95.0066377 4.12072227,94.0066377 4.12072227,92.7058377 L4.12072227,92.7058377 L4.12072227,68.8078397 L2.31992227,68.8078397 C0.519142272,68.8078397 -0.578517728,66.9094397 0.319922272,65.3078397 L0.319922272,65.3078397 L9.31992527,49.6088397 C9.71832527,48.8080797 10.5191453,48.4096397 11.3199253,48.4096397 L11.3199253,48.4096397 L27.3239253,48.4096397 L27.3239253,38.0116397 L25.0231253,38.0116397 C23.9215253,38.0116397 22.9215253,37.4100797 22.4215253,36.5116397 C21.7222853,35.2108397 22.0230853,33.7108797 23.0230853,32.8124397 L23.0230853,32.8124397 L42.9210853,15.8124397 C43.1242053,15.6132197 43.3234253,15.5155597 43.5226453,15.4139997 L43.5226453,15.4139997 L43.5226453,1.31199972 C43.5226453,0.511199724 44.2218653,-0.0903602764 45.0226453,0.0111997236 L44.8902248,0 Z M26.2213653,74.6116797 L16.9205653,74.6116797 C16.2213653,74.6116797 15.7213653,75.2093197 15.7213653,75.8108797 L15.7213653,75.8108797 L15.7213653,82.2092797 C15.7213653,82.9084797 16.3190053,83.4084797 16.9205653,83.4084797 L16.9205653,83.4084797 L26.2213653,83.4084797 C26.9205653,83.4084797 27.4205653,82.8108397 27.4205653,82.2092797 L27.4205653,82.2092797 L27.4205653,75.8108797 C27.4205653,75.1116797 26.8229253,74.6116797 26.2213653,74.6116797 L26.2213653,74.6116797 Z M72.9203653,74.6116797 L63.6195653,74.6116797 C62.9203653,74.6116797 62.4203653,75.2093197 62.4203653,75.8108797 L62.4203653,75.8108797 L62.4203653,82.2092797 C62.4203653,82.9084797 63.0180053,83.4084797 63.6195653,83.4084797 L63.6195653,83.4084797 L72.9203653,83.4084797 C73.6195653,83.4084797 74.1195653,82.8108397 74.1195653,82.2092797 L74.1195653,82.2092797 L74.1195653,75.8108797 C74.1195653,75.1116797 73.5219253,74.6116797 72.9203653,74.6116797 L72.9203653,74.6116797 Z M44.9205653,37.9086797 C40.6197653,37.9086797 37.1197653,41.4086797 37.1197653,45.7094797 C37.1197653,50.0102797 40.6197653,53.5102797 44.9205653,53.5102797 C49.2213653,53.5102797 52.7213653,50.0102797 52.7213653,45.7094797 C52.7213653,41.4086797 49.2213653,37.9086797 44.9205653,37.9086797 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
+
+
+{-| -}
+highSchool : Nri.Ui.Svg.V1.Svg
+highSchool =
+    Nri.Ui.Svg.V1.init "0 0 100 97"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-85.000000, 0.000000)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.g
+                    [ Attributes.transform "translate(85.000000, 0.000000)"
+                    ]
+                    [ Svg.path
+                        [ Attributes.d "M100.0002,87.993255 L100.0002,95.415155 C100.0002,96.325315 99.39473,96.930755 98.4846,96.930755 L1.5156,96.930755 C0.60544,96.930755 0,96.325285 0,95.415155 L0,87.989355 C0,87.231545 0.60547,86.473755 1.5156,86.473755 L7.7265,86.473755 L7.7265,80.563555 C7.7265,79.805745 8.33197,79.047955 9.2421,79.047955 L90.6051,79.047955 C91.51526,79.047955 92.1207,79.805765 92.1207,80.563555 L92.1207,86.473755 L98.484,86.477661 C99.24181,86.477661 100.0002,87.083131 100.0002,87.993261 L100.0002,87.993255 Z"
+                        ]
+                        []
+                    , Svg.path
+                        [ Attributes.d "M94.0902,21.020255 L50.6062,0.114255 C50.15308,-0.038085 49.69604,-0.038085 49.2429,0.114255 L5.9109,21.020255 C5.45778,21.324945 5.00074,21.778065 5.00074,22.383555 L5.00074,30.567155 C5.00074,31.324965 5.60621,32.082755 6.51634,32.082755 L93.33234,32.082755 C94.09015,32.082755 94.84794,31.324945 94.84794,30.567155 L94.84794,22.383555 C95.00028,21.778085 94.54716,21.172655 94.09013,21.020255 L94.0902,21.020255 Z M50.0002,25.567155 C45.758,25.567155 42.2736,22.082755 42.2736,17.840555 C42.2736,13.598355 45.758,10.113955 50.0002,10.113955 C54.2424,10.113955 57.7268,13.598355 57.7268,17.840555 C57.7268,22.082755 54.2424,25.567155 50.0002,25.567155 Z"
+                        ]
+                        []
+                    , Svg.polygon
+                        [ Attributes.points "11.3632 34.962255 24.6952 34.962255 24.6952 75.872255 11.3632 75.872255"
+                        ]
+                        []
+                    , Svg.polygon
+                        [ Attributes.points "43.3322 34.962255 56.6642 34.962255 56.6642 75.872255 43.3322 75.872255"
+                        ]
+                        []
+                    , Svg.polygon
+                        [ Attributes.points "75.4532 34.962255 88.7852 34.962255 88.7852 75.872255 75.4532 75.872255"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+company : Nri.Ui.Svg.V1.Svg
+company =
+    Nri.Ui.Svg.V1.init "0 0 55 67"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-145.000000, -6.701851)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.g
+                    [ Attributes.transform "translate(145.000000, 6.701851)"
+                    ]
+                    [ Svg.polygon
+                        [ Attributes.points "52.082 8.332 2.082 8.332 -3.55271368e-15 0 54.164 0"
+                        ]
+                        []
+                    , Svg.path
+                        [ Attributes.d "M4.164,12.5 L4.164,66.668 L22.914,66.668 L22.914,54.168 L31.246,54.168 L31.246,66.668 L49.996,66.668 L49.999907,12.5 L4.164,12.5 Z M18.75,50 L10.418,50 L10.418,41.668 L18.75,41.668 L18.75,50 Z M18.75,37.5 L10.418,37.5 L10.418,29.168 L18.75,29.168 L18.75,37.5 Z M18.75,25 L10.418,25 L10.418,16.668 L18.75,16.668 L18.75,25 Z M31.25,50 L22.918,50 L22.918,41.668 L31.25,41.668 L31.25,50 Z M31.25,37.5 L22.918,37.5 L22.918,29.168 L31.25,29.168 L31.25,37.5 Z M31.25,25 L22.918,25 L22.918,16.668 L31.25,16.668 L31.25,25 Z M43.75,50 L35.418,50 L35.418,41.668 L43.75,41.668 L43.75,50 Z M43.75,37.5 L35.418,37.5 L35.418,29.168 L43.75,29.168 L43.75,37.5 Z M43.75,25 L35.418,25 L35.418,16.668 L43.75,16.668 L43.75,25 Z"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+homeSchool : Nri.Ui.Svg.V1.Svg
+homeSchool =
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.000000, 0.298149)"
+                , Attributes.fill "currentcolor"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M12.4874712,4.70043931 L21.776929,12.8991923 L19.9024166,24.3999996 L14.4175541,24.3999996 L14.9214384,18.4682781 C14.948748,18.3010516 14.8088535,18.1327283 14.6131982,18.1327283 L14.6131982,18.1327283 L10.3603452,18.1327283 C10.163593,18.1327283 10.0236873,18.2726284 10.052105,18.4682781 L10.052105,18.4682781 L10.5559893,24.3999996 L5.18389077,24.3999996 L3.30937843,12.8991923 L12.4874712,4.70043931 Z M11.6480371,0.33610942 C12.1234926,-0.112036473 12.8514499,-0.112036473 13.3269054,0.33610942 L13.3269054,0.33610942 L24.5750539,10.576646 C25.1073671,11.0247919 25.1346766,11.8357972 24.6592212,12.3396815 C24.2110753,12.8719947 23.40007,12.8993043 22.8961857,12.4238488 L22.8961857,12.4238488 L12.4874824,2.96594458 L2.07877361,12.4509905 C1.82739108,12.6750634 1.5475797,12.7592307 1.2393395,12.7592307 C0.9037897,12.7592307 0.567131849,12.6477538 0.31573812,12.3679425 C-0.13129446,11.8356293 -0.103984534,11.0803624 0.399899785,10.604907 L0.399899785,10.604907 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
+
+
+{-| -}
+globe : Nri.Ui.Svg.V1.Svg
+globe =
+    Nri.Ui.Svg.V1.init "0 0 101 101"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.984790, 0.014361)"
+                ]
+                [ Svg.circle
+                    [ Attributes.fill "#FFFFFF"
+                    , Attributes.cx "50"
+                    , Attributes.cy "50.0016524"
+                    , Attributes.r "45.0475006"
+                    ]
+                    []
+                , Svg.g
+                    [ Attributes.fill "currentcolor"
+                    , Attributes.fillRule "nonzero"
+                    ]
+                    [ Svg.path
+                        [ Attributes.d "M50.0006098,0 C22.413688,0 0,22.413688 0,50.0006098 C0,77.0972817 21.6417273,99.1865754 48.5518116,99.9634142 C49.0234271,100.011051 49.5140916,100.001524 50,100.001524 C50.4859084,100.001524 50.9765729,100.015816 51.4481884,99.9634142 C78.3582727,99.1869169 100,77.0972817 100,50.0006098 C100,22.413688 77.586312,0 49.9993902,0 L50.0006098,0 Z M47.5615556,5.22103928 L47.5615556,23.1712582 L33.499189,23.1712582 C34.2089904,21.1418432 34.9759143,19.1982829 35.8238515,17.4547251 C39.1680386,10.5901291 43.3219917,6.3932487 47.5617995,5.22164904 L47.5615556,5.22103928 Z M52.4396639,5.22103928 C56.6794717,6.39293162 60.8334248,10.5897633 64.1776119,17.4541153 C65.0255613,19.1976731 65.7925097,21.1412334 66.5022744,23.1706484 L52.4399078,23.1706484 L52.4396639,5.22103928 Z M36.9284991,6.82166856 C34.8562787,9.19401456 33.0269881,12.0666106 31.4406273,15.3203088 C30.2735033,17.7213137 29.2207222,20.3651264 28.3155892,23.1710143 L13.7190697,23.1710143 C19.4213344,15.4727497 27.5289943,9.65621532 36.9278894,6.82203442 L36.9284991,6.82166856 Z M63.0727204,6.82166856 C72.4716155,9.65609337 80.5790315,15.4727497 86.28154,23.1706484 L71.6850205,23.1706484 C70.7798998,20.3647605 69.7270698,17.7208259 68.5599824,15.3199429 C66.9736216,12.0662447 65.144331,9.19377066 63.0721106,6.8213027 L63.0727204,6.82166856 Z M10.5952512,28.0487567 L26.944231,28.0487567 C25.477018,33.989195 24.5956658,40.5867145 24.4289565,47.5611898 L4.95432871,47.5611898 C5.33066257,40.4869572 7.33618703,33.8841937 10.5946414,28.0487567 L10.5952512,28.0487567 Z M32.0125855,28.0487567 L47.5615556,28.0487567 L47.5615556,47.5611898 L29.3442603,47.5611898 C29.5252869,40.5012256 30.4732741,33.8695594 32.0119758,28.0487567 L32.0125855,28.0487567 Z M52.4396639,28.0487567 L67.988634,28.0487567 C69.5273113,33.8700472 70.4753717,40.5013476 70.6563495,47.5611898 L52.4390541,47.5611898 L52.4396639,28.0487567 Z M73.0569885,28.0487567 L89.4059684,28.0487567 C92.6644227,33.8844376 94.669935,40.4867133 95.0462811,47.5611898 L75.5716533,47.5611898 C75.4049196,40.5869584 74.5236161,33.989073 73.0563787,28.0487567 L73.0569885,28.0487567 Z M4.95371895,52.439298 L24.4283467,52.439298 C24.5950804,59.4086513 25.48114,66.0016586 26.9436213,71.9517311 L10.5556165,71.9517311 C7.31143063,66.1256845 5.32969914,59.4942621 4.95335309,52.439298 L4.95371895,52.439298 Z M29.3442603,52.439298 L47.5615556,52.439298 L47.5615556,71.9517311 L31.9747802,71.9517311 C30.440859,66.1256845 29.5262137,59.489384 29.3452359,52.439298 L29.3442603,52.439298 Z M52.4396639,52.439298 L70.6569592,52.439298 C70.4759326,59.4896279 69.5612873,66.1260503 68.027415,71.9517311 L52.4406395,71.9517311 L52.4396639,52.439298 Z M75.5728728,52.439298 L95.0475006,52.439298 C94.6711667,59.494506 92.689423,66.1260503 89.4452371,71.9517311 L73.0572324,71.9517311 C74.5196893,66.0017805 75.4057976,59.4088952 75.572507,52.439298 L75.5728728,52.439298 Z M13.6818742,76.8298394 L28.2783936,76.8298394 C29.1882706,79.6690204 30.2601251,82.2939304 31.4416029,84.7187161 C33.0136953,87.9437554 34.8429859,90.8258637 36.8914255,93.1791851 C27.4972866,90.335248 19.3802363,84.5377383 13.6826059,76.8302052 L13.6818742,76.8298394 Z M33.4613837,76.8298394 L47.5615556,76.8298394 L47.5615556,94.7800583 C43.3217478,93.6177027 39.1677947,89.4446274 35.8236076,82.5847876 C34.9613654,80.817449 34.180051,78.8929133 33.4607739,76.8300833 L33.4613837,76.8298394 Z M52.4396639,76.8298394 L66.5398359,76.8298394 C65.82051,78.8925475 65.0392078,80.8170831 64.1770022,82.5845437 C60.832815,89.4443835 56.6788619,93.6174831 52.4390541,94.7798144 L52.4396639,76.8298394 Z M71.7228259,76.8298394 L86.3193454,76.8298394 C80.6218369,84.5376163 72.5045427,90.3348821 63.1105257,93.1788193 C65.1589654,90.8254979 66.988256,87.9433896 68.5603483,84.7183502 C69.7417651,82.2935646 70.8136685,79.6687764 71.7235576,76.8294735 L71.7228259,76.8298394 Z"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+graduateCap : Nri.Ui.Svg.V1.Svg
+graduateCap =
+    Nri.Ui.Svg.V1.init "0 0 101 65"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.984790, 0.051995)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M50.6859316,0.0742163661 C50.2946155,-0.0247387887 49.804342,-0.0247387887 49.4129798,0.0742163661 L1.54170515,14.9535306 C-0.513901715,15.6372168 -0.513901715,18.479912 1.54170515,19.1635406 L12.4087171,22.5910106 L12.4087171,33.6514697 C10.5465574,34.726472 9.27360574,36.7865811 9.27360574,39.03552 C9.27360574,40.2094452 9.5704666,41.2889497 10.1551953,42.1706314 C9.6649218,43.0522325 9.27360574,44.1272117 9.27360574,45.3057427 L9.27360574,61.457433 C9.27360574,64.8849029 21.8050697,64.8849029 21.8050697,61.457433 L21.8050697,45.3057427 C21.8050697,44.1318176 21.5082088,43.0523131 20.9234801,42.1706314 C21.4137536,41.2890418 21.8050697,40.2140511 21.8050697,39.03552 C21.8050697,36.6875546 20.532118,34.7264835 18.6699583,33.6514697 L18.6699583,24.547706 L49.3140684,34.1417663 C49.7053845,34.2407214 50.195658,34.2407214 50.5870202,34.1417663 L98.4582949,19.262452 C100.513902,18.5787658 100.513902,15.7405614 98.4582949,15.052442 L50.6859316,0.0742163661 Z"
+                    ]
+                    []
+                , Svg.path
+                    [ Attributes.d "M48.9264832,40.1108792 L24.9390296,32.6713372 L24.9390296,48.3336521 C24.9390296,54.5992689 36.1973115,57.7343803 50.0019575,57.7343803 C63.8066035,57.7343803 75.0648854,54.6037597 75.0648854,48.3336521 L75.0648854,32.6713372 L51.0774319,40.1108792 C50.3937457,40.3087941 49.6066573,40.3087941 48.8240022,40.1108792 L48.9264832,40.1108792 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
+
+
+{-| -}
+apple : Nri.Ui.Svg.V1.Svg
+apple =
+    Nri.Ui.Svg.V1.init "0 0 88 89"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(-30.100000, -105.000000)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.g
+                    [ Attributes.transform "translate(30.972117, 105.800000)"
+                    ]
+                    [ Svg.path
+                        [ Attributes.d "M79.8396503,26.20726 C76.3787503,20.89476 70.9060503,17.22286 64.6836503,16.02726 C58.4570503,14.83586 52.0156503,16.22648 46.8356503,19.88276 C46.4801803,20.08979 46.1051803,20.26557 45.7145503,20.4062 L45.7145503,15.625 C45.7106443,11.4844 44.0622503,7.5117 41.1325503,4.582 C38.2028503,1.6523 34.2302503,0.0039 30.0895503,8.8817842e-16 C28.3629503,8.8817842e-16 26.9645503,1.3984 26.9645503,3.125 C26.9645503,4.8516 28.3629503,6.25 30.0895503,6.25 C35.2653503,6.25 39.4645503,10.4492 39.4645503,15.625 L39.4645503,19.8906 C34.4489503,16.4961 28.3395503,15.1094 22.3515503,16.0078 C15.9179503,17.1484 10.2265503,20.8633 6.59355033,26.2968 C0.792750325,35.1054 -1.29314967,45.8478 0.784950325,56.1878 C3.92945033,74.2658 17.0859503,87.4998 31.0899503,87.4998 C32.2891503,87.4998 33.4883503,87.402144 34.6758503,87.20683 C37.1094503,86.80449 39.4649503,86.00373 41.6406503,84.83573 C42.6758503,84.26932 43.9297503,84.26932 44.9648503,84.83573 C47.0898503,85.96073 49.3867503,86.73413 51.7617503,87.12483 C67.0317503,89.65213 82.2387503,75.72683 85.6487503,56.11283 C87.7346503,45.76883 85.6448443,35.01883 79.8401503,26.20683 L79.8396503,26.20726 Z M68.9016503,37.80526 C68.3743103,38.18026 67.7414503,38.38338 67.0969503,38.38338 C66.0813503,38.38338 65.1321503,37.89119 64.5461503,37.06698 C63.7531803,35.77398 62.4953503,34.82868 61.0344503,34.42638 C59.3274503,34.14513 58.1711503,32.53968 58.4524503,30.83658 C58.7297903,29.12958 60.3391503,27.97328 62.0422503,28.25458 C65.1750503,28.88349 67.9211503,30.75068 69.6516503,33.43818 C70.1360303,34.11396 70.3313403,34.95768 70.1946203,35.77798 C70.0540003,36.6022 69.5930603,37.33268 68.9134203,37.81318 L68.9016503,37.80526 Z"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+briefcase : Nri.Ui.Svg.V1.Svg
+briefcase =
+    Nri.Ui.Svg.V1.init "0 0 89 82"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.900000, 0.000000)"
+                , Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.g
+                    []
+                    [ Svg.path
+                        [ Attributes.d "M27.1245,43.7495041 L34.3745,43.7495041 C34.3745,40.2964 37.1714,37.4995 40.6245,37.4995 L46.8745,37.4995 C48.5307,37.4995 50.1206,38.15966 51.2925,39.3315 C52.4644,40.50334 53.1245,42.0932 53.1245,43.7495041 L60.3745,43.7495041 C66.7612,43.753406 72.8275,40.9643 76.9835,36.1128 L87.3975,23.9648 C86.87797,19.2304 82.8858,15.6406 78.1241,15.625 L65.6241,15.625 L65.6241,9.375 C65.6241,4.1992 61.4249,3.55271368e-15 56.2491,3.55271368e-15 L31.2491,3.55271368e-15 C26.0733,3.55271368e-15 21.8741,4.1992 21.8741,9.375 L21.8741,15.625 L9.3741,15.625 C4.6124,15.640625 0.6202,19.2305 0.1007,23.9648 L10.5147,36.1128 C14.6709,40.9644 20.7377,43.7534 27.1237,43.7495041 L27.1245,43.7495041 Z M28.12446,9.3745 C28.12446,7.6479 29.5229,6.2495 31.2495,6.2495 L56.2495,6.2495 C57.07762,6.2495 57.8745,6.57762 58.4604,7.16356 C59.04634,7.7495 59.37446,8.54636 59.37446,9.37446 L59.37446,15.62446 L28.12446,15.62446 L28.12446,9.3745 Z"
+                        ]
+                        []
+                    , Svg.path
+                        [ Attributes.d "M81.7295,40.1795 C76.3897,46.4139 68.5845,50.0037 60.3745,49.9998 L53.1245,49.9998 C53.1245,51.656 52.46434,53.2459 51.2925,54.4178 C50.12066,55.5897 48.5308,56.2498 46.8745,56.2498 L40.6245,56.2498 C37.1714,56.2498 34.3745,53.4529 34.3745,49.9998 L27.1245,49.9998 C18.9136,50.003706 11.1085,46.4139 5.7695,40.1795 L0,33.4373 L0,71.8753 C0,77.0511 4.1992,81.2503 9.375,81.2503 L78.125,81.2503 C83.3008,81.2503 87.5,77.0511 87.5,71.8753 L87.5,33.4373 L81.7295,40.1795 Z"
+                        ]
+                        []
+                    , Svg.polygon
+                        [ Attributes.points "40.6245 43.7455 46.8745 43.7455 46.8745 49.9994 40.6245 49.9994"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+
+
+{-| -}
+brain : Nri.Ui.Svg.V1.Svg
+brain =
+    Nri.Ui.Svg.V1.init "0 0 90 82"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "currentcolor"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.000000, -0.000000)"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M47.4940688,57.8734206 C42.4784688,60.9711206 40.6776688,61.7953206 38.5643688,59.6859206 C36.5643688,57.6820206 37.7987488,55.6468206 41.3182688,51.1273206 C44.3260688,47.2679206 48.0721688,42.4593206 46.5291688,36.9123206 C46.2986988,36.0842006 45.4393688,35.6037206 44.6189688,35.8342206 C43.7947488,36.0646906 43.3103688,36.9201206 43.5408688,37.7444206 C44.6619688,41.7835206 41.7205688,45.5647206 38.8728688,49.2174206 C35.8494688,53.1002206 32.4548688,57.4830206 36.0603688,61.5224206 C29.8962688,61.9872606 25.3883688,60.4091206 22.8963688,56.8622206 C19.9940688,52.7255206 20.5682688,46.9599206 22.5838688,43.6282206 C23.0291788,42.8977506 22.7948088,41.9407206 22.0604288,41.4954206 C21.3299588,41.0540106 20.3729288,41.2844806 19.9276288,42.0188606 C19.2010688,43.2219606 18.6307288,44.6516606 18.2596288,46.1946606 C12.4432288,49.5501606 6.80662885,48.9329606 3.09162885,44.4915606 C-0.158371151,40.6048606 -1.29897115,33.9755606 1.90022885,27.9405606 C2.79866885,32.4678606 5.63852885,36.4093606 9.09942885,37.7725606 C11.5916288,38.7569406 14.0252288,38.4288106 16.6033288,38.0811506 C20.9392288,37.4991206 25.8572288,36.8389506 33.1693288,42.2178506 C33.4466688,42.4209706 33.7708888,42.5225406 34.0872988,42.5225406 C34.5638588,42.5225406 35.0326088,42.3037906 35.3372988,41.8897306 C35.8451088,41.2022306 35.6966788,40.2256306 35.0091788,39.7217306 C26.6849788,33.5928306 20.8641788,34.3779306 16.1891788,35.0069306 C13.8375788,35.3233406 11.9821788,35.5733406 10.2399788,34.8858406 C7.90797885,33.9678706 5.28297885,30.7296406 4.77907885,26.3155406 C4.43141885,23.2530406 4.94704885,17.6358406 11.3728788,11.9675406 C11.3260038,13.8894406 11.6033488,15.5105406 11.7674088,16.2800406 C13.2752088,23.3112406 17.8572088,27.8660406 24.6694088,29.1000406 C27.3764088,29.5883206 30.1967088,29.1820716 33.1850088,28.7484806 C38.4623088,27.9828606 43.9190088,27.1937806 49.5010088,31.2953806 C58.0987088,37.6117806 62.7670088,39.8812806 67.7240088,39.8812806 C68.3529188,39.8812806 68.9857088,39.8461246 69.6263088,39.7758106 C70.4778688,39.6859676 71.0951088,38.9203406 71.0052088,38.0649106 C70.9153658,37.2094406 70.1458388,36.5922106 69.2943088,36.6860106 C64.5795088,37.1899206 60.6459088,35.5415106 52.2243088,29.4321106 C53.2868088,26.1235106 55.0876088,24.1313106 56.8415088,22.2133106 C60.1579088,18.5922106 63.2907088,15.1703106 59.4860088,5.11531058 C59.1813188,4.31453058 58.2868088,3.90831058 57.4860088,4.21297058 C56.6813188,4.51766058 56.2790088,5.41217058 56.5836688,6.21297058 C59.7125688,14.4785706 57.6578688,16.7209706 54.5524688,20.1149706 C52.7946688,22.0368706 50.8454688,24.1891706 49.5602688,27.6266706 C43.5914688,24.1149706 37.8572688,24.9313706 32.7442688,25.6696706 C30.0176688,26.0642006 27.4395688,26.4392006 25.2286688,26.0329506 C18.1856688,24.7595506 15.6739688,19.6657506 14.8066688,15.6189506 C14.3808888,13.6384506 14.2988588,11.1462506 14.9551088,8.98615058 C15.0371398,8.82209058 15.0918288,8.64631058 15.1152688,8.46662058 C15.3847988,7.73615058 15.7519888,7.04862058 16.2324688,6.45102058 C17.4590688,4.93152058 19.3379688,4.16582058 21.8105688,4.16582058 C22.8847688,4.16582058 23.5839688,4.45488058 24.1582688,5.11504058 C24.2129568,5.20488458 24.2754588,5.29082058 24.3496788,5.36504058 C24.8613988,6.06426058 25.2871788,7.08384058 25.8105788,8.53304058 C27.1269788,12.1619406 28.9316788,17.1307406 36.8305788,17.4939406 C37.6743288,17.5330036 38.4125788,16.8728506 38.4516788,16.0134406 C38.4907418,15.1579706 37.8305888,14.4314406 36.9711788,14.3923406 C31.1430788,14.1228106 29.9672788,10.8962406 28.7250788,7.47434058 C28.3071088,6.32204058 27.8422688,5.05244058 27.1391788,3.95484058 C27.5727688,2.58374058 29.3657788,0.693140582 32.1586788,0.142340582 C34.8891788,-0.392819418 41.9867788,-0.119379418 49.0336788,13.9703406 C49.3032088,14.5133106 49.8539888,14.8297206 50.4242788,14.8297206 C50.6586588,14.8297206 50.8930288,14.7750326 51.1156888,14.6656606 C51.8852188,14.2828506 52.1937888,13.3492606 51.8109988,12.5836606 C49.6547988,8.27116058 47.4398988,5.11886058 45.2875988,2.81416058 C46.8617988,1.27896058 49.0258988,0.665760582 50.6898988,0.435260582 C55.6039988,-0.240519418 62.0568988,1.52906058 65.6818988,4.54076058 C67.7834988,6.28686058 68.5841988,9.19696058 69.4318988,12.2790606 C70.7013988,16.8845606 72.1349988,22.1032606 78.5256988,23.3690606 C78.6311688,23.3885926 78.7288188,23.4003106 78.8303888,23.4003106 C79.5569488,23.4003106 80.2053888,22.8885906 80.3498888,22.1464106 C80.5178588,21.3065706 79.9709788,20.4902106 79.1271888,20.3222106 C74.8341888,19.4706506 73.7833888,16.3964106 72.4240888,11.4550106 C71.7717488,9.07611058 71.0842888,6.64641058 69.7717888,4.58781058 C71.4319888,4.90031058 73.8655888,5.71281058 76.5920888,7.56831058 C80.9631888,10.5410106 88.0330888,17.7243106 89.2640888,33.4473106 C86.8538888,31.8457106 83.6507888,31.5059106 80.6507888,31.1934106 C75.2484888,30.6348206 70.1467888,30.1036106 67.8847888,23.6192106 C67.6035388,22.8106206 66.7128888,22.3848106 65.9081888,22.6660906 C65.0995988,22.9473406 64.6737888,23.8340906 64.9550688,24.6426906 C67.8652688,32.9903906 74.7753688,33.7051906 80.3300688,34.2832906 C86.1464688,34.8926706 89.9980688,35.2949906 89.9980688,42.4238906 C89.9980688,44.2480906 88.9863688,45.7363906 87.3964688,46.9316906 C86.2128688,45.0488906 84.3066688,44.2207906 82.7011688,43.5371906 C80.5019688,42.5996906 79.3456688,42.0176906 79.1425688,39.9863906 C79.0566318,39.1309206 78.2988188,38.5019906 77.4472688,38.5918906 C76.5917988,38.6739216 75.9706688,39.4356406 76.0527688,40.2871906 C76.4394888,44.2519906 79.2363688,45.4394906 81.4863688,46.3926906 C82.9785688,47.0294106 84.0527688,47.5332906 84.7011688,48.4590906 C81.4199688,49.8926906 77.1816688,50.5762906 73.6701688,50.5801906 C72.3459688,50.4786306 71.0842688,50.4473806 69.8615688,50.4630006 C64.1701688,50.0880006 60.2638688,48.8341006 58.7135688,46.8380006 C57.8893488,45.7794006 57.6940688,44.4591006 58.1159088,42.7989006 C58.3268488,41.9668706 57.8229388,41.1231006 56.9948088,40.9122006 C56.1627788,40.7012606 55.3190088,41.2012606 55.1081088,42.0333006 C54.4440488,44.6427006 54.8346688,46.9005006 56.2643088,48.7442006 C57.2174288,49.9708006 58.6354088,50.9747006 60.5026088,51.7442006 C55.0143088,53.2481006 50.8776088,55.7833006 47.4946088,57.8731006 L47.4940688,57.8734206 Z"
+                    ]
+                    []
+                , Svg.path
+                    [ Attributes.d "M44.7170688,63.0064206 C44.1975388,63.2408006 44.1389488,63.6743906 44.6155088,63.9868906 C48.7171088,66.6821906 53.3616088,68.3930906 54.7605088,80.6238906 C54.8269148,81.1903006 55.3308188,81.6511906 55.9050088,81.6511906 L63.2058088,81.6511906 C63.7761188,81.6511906 64.1589288,81.1980706 64.0690888,80.6316906 C61.0026888,61.2606906 70.9674888,66.9986906 73.2448888,54.7016906 C73.3503588,54.1391906 73.0378588,53.5688906 69.8425888,53.5688906 C60.2097888,53.5688906 53.8695888,57.5883906 49.1315888,60.5141906 C47.5963888,61.4634106 46.1315888,62.3618906 44.7174888,63.0063906 L44.7170688,63.0064206 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
+
+
+{-| -}
+projectorScreen : Nri.Ui.Svg.V1.Svg
+projectorScreen =
+    Nri.Ui.Svg.V1.init "0 0 81 66"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "currentcolor"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M79,0 L2,0 C0.8945,0 0,0.89453 0,2 C0,3.10547 0.89453,4 2,4 L6.5,4 L6.5,40 C6.5,40.53125 6.71094,41.0391 7.08594,41.4141 C7.46094,41.7891 7.96875,42.00004 8.50004,42.00004 L38.50004,42.00004 L38.50004,52.28904 C35.16804,53.28123 33.07034,56.57024 33.57424,60.00784 C34.07424,63.44924 37.02344,66.00004 40.50004,66.00004 C43.97664,66.00004 46.92584,63.44924 47.42584,60.00784 C47.92975,56.57034 45.83204,53.28124 42.50004,52.28904 L42.50004,42.00004 L73.50004,42.00004 C74.03129,42.00004 74.53914,41.7891 74.91414,41.4141 C75.28914,41.0391 75.50008,40.53129 75.50008,40 L75.50008,4 L79.00008,4 C80.10558,4 81.00008,3.10547 81.00008,2 C81.00008,0.89453 80.10555,0 79.00008,0 L79,0 Z M57.5,34 L22.5,34 C21.3945,34 20.5,33.10547 20.5,32 C20.5,30.89453 21.39453,30 22.5,30 L57.5,30 C58.6055,30 59.5,30.89453 59.5,32 C59.5,33.10547 58.60547,34 57.5,34 Z M20.5,23 C20.5,21.8945 21.39453,21 22.5,21 L46.5,21 C47.6055,21 48.5,21.89453 48.5,23 C48.5,24.10547 47.60547,25 46.5,25 L22.5,25 C21.3945,25 20.5,24.10547 20.5,23 Z M57.5,15 L22.5,15 C21.3945,15 20.5,14.10547 20.5,13 C20.5,11.89453 21.39453,11 22.5,11 L57.5,11 C58.6055,11 59.5,11.89453 59.5,13 C59.5,14.10547 58.60547,15 57.5,15 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]
+
+
+{-| -}
+stretch : Nri.Ui.Svg.V1.Svg
+stretch =
+    Nri.Ui.Svg.V1.init "0 0 42 94"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "currentcolor"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.transform "translate(0.906000, 0.105000)"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M12.75,21.43 C12.75,24.9495 9.8945,27.805 6.375,27.805 C2.8555,27.805 3.55271368e-15,24.9495 3.55271368e-15,21.43 C3.55271368e-15,17.9066 2.8555,15.055 6.375,15.055 C9.8945,15.055 12.75,17.9066 12.75,21.43"
+                    ]
+                    []
+                , Svg.path
+                    [ Attributes.d "M40.473,88.676 C40.473,88.676 31.6214,59.864 31.3324,59.543 C33.5863,53.8438 31.281619,27.102 22.684,15.105 C20.0981,11.5034 6.344,0 4.723,0 C2.5121,0 0.723,1.7891 0.723,4 C0.723,5.6953 20.661,17.711 19.063,26.266 C19.063,26.266 13.4068,27.10975 9.4575,30.9105 C2.7778,37.4339 1.9184,65.4065 2.9848,66.6295 C4.4418,68.2897 6.9692,68.4576 8.6293,67.00059 C9.9066,65.88339 8.01602,46.73059 12.2699,40.31259 C14.3207,42.87119 16.4965,46.24619 15.7465,48.35559 C13.1606,55.63289 13.5121,56.24229 14.1684,58.80059 C14.238712,59.07403 6.9614,89.13259 6.9614,89.13259 C6.57077,90.74199 7.55906,92.36309 9.1684,92.75369 L11.7192,93.37088 C13.3286,93.76151 14.9497,92.77322 15.3403,91.16388 L21.5044,65.75388 C22.34424,65.792943 24.3091,65.49216 24.4146,65.47263 L32.2154,91.18363 C32.69587,92.76953 34.3716,93.66413 35.9537,93.18363 L38.4654,92.42191 C40.0592,91.93753 40.9537,90.26171 40.4732,88.67581 L40.473,88.676 Z"
+                    ]
+                    []
+                ]
+            ]
+        ]

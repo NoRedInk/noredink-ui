@@ -1,6 +1,6 @@
 module Nri.Ui.Text.Writing.V1 exposing (footnote)
 
-{-| Text types for writing:
+{-| DEPRECATED: use Nri.Ui.Text.V\*.footnote instead.
 
 @docs footnote
 

@@ -10,6 +10,7 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -18,11 +19,13 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
@@ -136,33 +139,44 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
-        , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
+        , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
                 let
+                    toCode : String -> String
                     toCode buttonCode =
                         moduleName
-                            ++ ".view"
-                            ++ ControlView.codeFromList settings.menuAttributes
-                            ++ ("\n\t{ button = " ++ buttonCode)
-                            ++ "\n\t, entries = []"
-                            ++ "\n\t, isOpen = True"
-                            ++ "\n\t, focusAndToggle = FocusAndToggle"
-                            ++ "\n\t}"
+                            ++ ".view "
+                            ++ Code.list (List.map Tuple.first settings.menuAttributes)
+                            ++ Code.recordMultiline
+                                [ ( "button", buttonCode )
+                                , ( "entries", "[]" )
+                                , ( "isOpen", "True" )
+                                , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
+                                ]
+                                1
                 in
                 [ { sectionName = "Menu.button"
                   , code =
-                        "\n\t\tMenu.button "
-                            ++ ControlView.codeFromListWithIndentLevel 3 settings.buttonAttributes
-                            ++ "\n\t\t\t\"1st Period English with Mx. Trainer\""
+                        Code.newlineWithIndent 2
+                            ++ "Menu.button "
+                            ++ Code.listMultiline
+                                (List.map Tuple.first settings.buttonAttributes)
+                                3
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.string "1st Period English with Mx. Trainer"
                             |> toCode
                   }
                 , { sectionName = "Menu.custom"
                   , code =
-                        "\n\t\tMenu.custom <|"
-                            ++ "\n\t\t\t\\buttonAttributes ->"
-                            ++ "\n\t\t\t\tbutton buttonAttributes [ text \"Custom Menu trigger button\" ]"
+                        Code.newlineWithIndent 2
+                            ++ "Menu.custom <|"
+                            ++ Code.newlineWithIndent 3
+                            ++ "\\buttonAttributes ->"
+                            ++ Code.newlineWithIndent 4
+                            ++ "button buttonAttributes [ text \"Custom Menu trigger button\" ]"
                             |> toCode
                   }
                 ]
@@ -248,6 +262,35 @@ view ellieLinkConfig state =
                             button buttonAttributes [ text "Custom Menu trigger button" ]
                 }
           )
+        , ( "Menu.button (with Menu.disclosure)"
+          , Menu.view
+                (menuAttributes
+                    ++ [ Menu.buttonId "with_controls__button"
+                       , Menu.menuId "with_controls__menu"
+                       , Menu.disclosure { lastId = "login__button" }
+                       ]
+                )
+                { isOpen = isOpen "with_controls"
+                , focusAndToggle = FocusAndToggle "with_controls"
+                , entries =
+                    [ Menu.entry "username-input" <|
+                        \attrs ->
+                            div []
+                                [ TextInput.view "Username"
+                                    [ TextInput.id "username-input"
+                                    ]
+                                , TextInput.view "Password" []
+                                , Button.button "Log in"
+                                    [ Button.primary
+                                    , Button.id "login__button"
+                                    , Button.fillContainerWidth
+                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                                    ]
+                                ]
+                    ]
+                , button = Menu.button defaultButtonAttributes "Log In"
+                }
+          )
         ]
     ]
 
@@ -290,6 +333,7 @@ controlMenuAttributes =
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+        |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )

@@ -16,8 +16,9 @@ type alias SectionExample =
     { name : String
     , fullModuleName : String
     , sectionName : String
-    , mainType : String
-    , extraImports : List String
+    , mainType : Maybe String
+    , extraCode : List String
+    , renderExample : String -> String
     , code : String
     }
 
@@ -80,15 +81,14 @@ generateElmExampleModule config example =
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import Nri.Ui.Svg.V1 as Svg"
     , "import " ++ example.fullModuleName ++ " as " ++ example.name
-    , String.join "\n" example.extraImports
+    , String.join "\n" example.extraCode
     , ""
     , ""
     ]
         ++ maybeErrorMessages
-        ++ [ "main : " ++ example.mainType
-           , "main ="
-           , "    " ++ example.code
-           , "    |> toUnstyled"
+        ++ [ Maybe.map (\type_ -> "main : " ++ type_) example.mainType
+                |> Maybe.withDefault ""
+           , "main =" ++ example.renderExample example.code
            ]
         |> String.join "\n"
         |> String.replace "\t" "    "

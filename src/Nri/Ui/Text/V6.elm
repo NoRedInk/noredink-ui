@@ -1,5 +1,6 @@
 module Nri.Ui.Text.V6 exposing
     ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
+    , footnote
     , ugMediumBody, ugSmallBody
     , plaintext, markdown, html
     , Attribute, noBreak, css, id, custom
@@ -27,12 +28,13 @@ module Nri.Ui.Text.V6 exposing
 
 ## Headings
 
-You're in the wrong place! Headings live in Nri.Ui.Heading.V2.
+You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 
 
 ## Paragraph styles
 
 @docs caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
+@docs footnote
 
 
 ## User-authored content blocks:
@@ -311,6 +313,26 @@ ugSmallBody attributes =
                     , color = gray20
                     , size = 16
                     , lineHeight = 25
+                    , weight = 400
+                    , margin = 0
+                    }
+            )
+            :: attributes
+        )
+
+
+{-| This is a little note or footnote. Please be aware that under the hood, this is only a paragraph tag. If you're actually citing a resource, wrap this in the [`cite` HTML element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/cite).
+-}
+footnote : List (Attribute msg) -> Html msg
+footnote attributes =
+    view
+        (css
+            (Css.important (marginTop (Css.px 5))
+                :: paragraphStyles
+                    { font = Fonts.quizFont
+                    , color = gray45
+                    , size = 13
+                    , lineHeight = 18
                     , weight = 400
                     , margin = 0
                     }

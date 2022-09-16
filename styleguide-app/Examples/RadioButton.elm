@@ -13,29 +13,42 @@ module Examples.RadioButton exposing
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls exposing (premiumDisplay)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Task
 
 
+moduleName : String
+moduleName =
+    "RadioButton"
+
+
+version : Int
+version =
+    4
+
+
 {-| -}
 example : Example State Msg
 example =
-    { name = "RadioButton"
-    , version = 4
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = subscriptions
@@ -98,12 +111,24 @@ view ellieLinkConfig state =
         selectionSettings =
             Control.currentValue state.selectionSettings
     in
-    [ div
-        [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
-        [ Control.view SetSelectionSettings state.selectionSettings |> fromUnstyled
-        , viewExamples selectionSettings state.selectedValue
-        , viewExamplesCode selectionSettings state.selectedValue
-        ]
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetSelectionSettings
+        , settings = state.selectionSettings
+        , mainType = Just "Html msg"
+        , extraCode = []
+        , renderExample = Code.unstyledView
+        , toExampleCode =
+            \_ ->
+                [ { sectionName = "Example"
+                  , code = viewExamplesCode selectionSettings state.selectedValue
+                  }
+                ]
+        }
+    , Heading.h2 [ Heading.plaintext "Example" ]
+    , viewExamples selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
@@ -126,7 +151,7 @@ view ellieLinkConfig state =
     ]
 
 
-viewExamplesCode : SelectionSettings -> Maybe Selection -> Html Msg
+viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
     let
         selectedValueString =
@@ -148,19 +173,7 @@ viewExamplesCode selectionSettings selectedValue =
                 ++ String.join "\n\t, " (List.map Tuple.first settings)
                 ++ "\n\t] "
     in
-    Html.code
-        [ css
-            [ Css.display Css.block
-            , Css.marginLeft (Css.px 20)
-            , Css.flexBasis (Css.px 300)
-            , Css.flexGrow Css.zero
-            ]
-        ]
-        [ Html.pre [ css [ Css.whiteSpace Css.preWrap ] ]
-            [ text
-                ("  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings)))
-            ]
-        ]
+    "  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings))
 
 
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
@@ -281,16 +294,6 @@ controlAttributes =
                 ]
             )
         |> ControlExtra.optionalListItem "disclosure" controlDisclosure
-        |> ControlExtra.optionalListItem "errorIf"
-            (Control.map
-                (\inError ->
-                    ( "RadioButton.errorIf " ++ Debug.toString inError
-                    , RadioButton.errorIf inError
-                    )
-                )
-             <|
-                Control.bool True
-            )
         |> ControlExtra.optionalListItem "errorMessage"
             (Control.map
                 (\message ->

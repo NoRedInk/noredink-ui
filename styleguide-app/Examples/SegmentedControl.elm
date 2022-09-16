@@ -11,10 +11,11 @@ module Examples.SegmentedControl exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
@@ -69,15 +70,16 @@ example =
                 , version = version
                 , update = ChangeOptions
                 , settings = state.optionsControl
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"
                           , code =
                                 [ moduleName ++ ".view "
                                 , "    { focusAndSelect = FocusAndSelectPage"
-                                , "    , options = " ++ ControlView.codeFromList pageOptions
+                                , "    , options = " ++ Code.list (List.map Tuple.first pageOptions)
                                 , "    , selected = \"" ++ Debug.toString state.page ++ "\""
                                 , "    , positioning = " ++ Tuple.first options.positioning
                                 , "    , toUrl = Nothing"
@@ -89,7 +91,7 @@ example =
                           , code =
                                 [ moduleName ++ ".viewRadioGroup"
                                 , "    { onSelect = SelectRadio"
-                                , "    , options = " ++ ControlView.codeFromList radioOptions
+                                , "    , options = " ++ Code.list (List.map Tuple.first radioOptions)
                                 , "    , selected = " ++ Debug.toString state.optionallySelected
                                 , "    , positioning = " ++ Tuple.first options.positioning
                                 , "    , legend = \"SegmentedControls 'viewSelectRadio' example\""
@@ -141,7 +143,7 @@ viewPreview : Html msg
 viewPreview =
     Html.div
         [ Role.img
-        , Widget.hidden True
+        , Aria.hidden True
         , css
             [ Css.displayFlex
             , Css.justifyContent Css.stretch

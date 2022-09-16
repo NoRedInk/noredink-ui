@@ -28,8 +28,8 @@ module ClickableAttributes exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import EventExtras
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
@@ -137,7 +137,7 @@ toLinkAttributes { routeToString, isDisabled } clickableAttributes =
     ( linkTypeName
     , if isDisabled then
         [ Role.link
-        , Widget.disabled True
+        , Aria.disabled True
         ]
 
       else

@@ -8,6 +8,7 @@ module Examples.Switch exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category
+import Code
 import CommonControls
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -56,8 +57,9 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \{ label, attributes } ->
                         [ { sectionName = "Example"
@@ -67,12 +69,13 @@ example =
                                     ++ " \""
                                     ++ label
                                     ++ "\"\t"
-                                    ++ ControlView.codeFromListWithHardcoded
-                                        [ "Switch.selected "
+                                    ++ Code.list
+                                        (("Switch.selected "
                                             ++ Debug.toString state.selected
-                                            ++ "\n-- ,  Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
-                                        ]
-                                        attributes
+                                            ++ Code.commentInline "\n,  Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
+                                         )
+                                            :: List.map Tuple.first attributes
+                                        )
                           }
                         ]
                 }

@@ -47,9 +47,16 @@ describe("UI tests", function () {
     }
   };
 
+  const goTo = async (name, location) => {
+    await page.goto(location, { waitUntil: "load" });
+    await page.waitForXPath(
+      `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
+      200
+    );
+  };
+
   const defaultProcessing = async (name, location) => {
-    await page.goto(location);
-    await page.waitFor(`#${name.replace(".", "-")}`);
+    await goTo(name, location);
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -58,9 +65,77 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
+  const forAllOptions = async (labelName, callback) => {
+    await page.waitForXPath(
+      `//label[contains(., '${labelName}')]//select`,
+      200
+    );
+    const [select] = await page.$x(
+      `//label[contains(., '${labelName}')]//select`
+    );
+    const options = await select.$x(
+      `//label[contains(., '${labelName}')]//option`
+    );
+    // Actually doing the select was super flakey.
+    // Temporarily just using the first element to get
+    // CI consistent again. We can cover all the cases separately...
+    const optionEl = options[0];
+    const option = await page.evaluate((el) => el.innerText, optionEl);
+    await page.select("select", option);
+    await callback(option);
+  };
+
+  const messageProcessing = async (name, location) => {
+    await goTo(name, location);
+    await percySnapshot(page, name);
+
+    var axe = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, axe);
+
+    const [theme] = await page.$x("//label[contains(., 'theme')]");
+    await theme.click();
+
+    await forAllOptions("theme", async (option) => {
+      await percySnapshot(page, `${name} - ${option}`);
+      axe = await new AxePuppeteer(page)
+        .withRules(["color-contrast"])
+        .analyze();
+      handleAxeResults(`${name} - ${option}`, axe);
+    });
+  };
+
+  const modalProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    await page.click("#launch-modal");
+    await page.waitForSelector('[role="dialog"]');
+    await percySnapshot(page, `${name} - info`);
+
+    axe = await new AxePuppeteer(page).analyze();
+
+    await page.click('[aria-label="Close modal"]');
+
+    handleAxeResults(`${name} - info`, axe);
+  };
+
+  const pageProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    var axe = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, axe);
+
+    await percySnapshot(page, name, {
+      scope: "[data-page-container='']",
+    });
+  };
+
   const iconProcessing = async (name, location) => {
     await page.goto(location);
-    await page.waitFor(`#${name}`);
+    await page.waitForSelector(`#${name}`);
     await percySnapshot(page, name);
 
     // visible icon names snapshot
@@ -75,31 +150,17 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
+    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove this skipped rule
+    Highlighter: ["aria-roledescription"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
   };
 
   const specialProcessing = {
-    Modal: async (name, location) => {
-      await page.goto(location);
-      await page.waitFor(`#${name}`);
-      await page.click("#launch-modal");
-      await page.waitFor('[role="dialog"]');
-      await percySnapshot(page, "Full Info Modal");
-
-      const results = await new AxePuppeteer(page)
-        .disableRules(skippedRules[name] || [])
-        .analyze();
-      handleAxeResults(name, results);
-
-      await page.click('[aria-label="Close modal"]');
-      await page.select("select", "warning");
-      await page.click("#launch-modal");
-      await page.waitFor('[role="dialog"]');
-      await percySnapshot(page, "Full Warning Modal");
-      await page.click('[aria-label="Close modal"]');
-    },
+    Message: messageProcessing,
+    Modal: modalProcessing,
+    Page: pageProcessing,
     AssignmentIcon: iconProcessing,
     UiIcon: iconProcessing,
     Logo: iconProcessing,

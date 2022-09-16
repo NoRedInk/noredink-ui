@@ -19,6 +19,7 @@ module Nri.Ui.Switch.V2 exposing
     - REQUIRE label and id always
     - Move custom attributes to the container
     - change disabled to take a bool (which I think is the slighty more common pattern)
+    - Adds `role="switch"`
 
 @docs view
 
@@ -33,16 +34,18 @@ module Nri.Ui.Switch.V2 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
-import Css.Media
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -158,9 +161,9 @@ view { label, id } attrs =
             , Css.position Css.relative
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
-                    [ Global.class "switch-slider"
-                        [ stroke Colors.azure
-                        , Css.property "stroke-width" "3px"
+                    [ Global.class "switch-track"
+                        [ FocusRing.boxShadows []
+                        , Css.borderRadius (Css.px 16)
                         ]
                     ]
                 ]
@@ -214,6 +217,7 @@ viewCheckbox config =
     Html.checkbox config.id
         (Just config.selected)
         [ Attributes.id config.id
+        , Role.switch
         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
@@ -226,7 +230,7 @@ viewCheckbox config =
                 Events.onCheck onCheck
 
             _ ->
-                Widget.disabled True
+                Aria.disabled True
         ]
 
 
@@ -244,19 +248,7 @@ viewSwitch config =
         shadowBoxId =
             config.id ++ "-shadow-box"
     in
-    Svg.svg
-        [ SvgAttributes.width "43"
-        , SvgAttributes.height "32"
-        , SvgAttributes.viewBox "0 0 43 32"
-        , SvgAttributes.css
-            [ Css.zIndex (Css.int 1)
-            , if config.isDisabled then
-                Css.opacity (Css.num 0.4)
-
-              else
-                Css.opacity (Css.num 1)
-            ]
-        ]
+    Nri.Ui.Svg.V1.init "0 0 43 32"
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.id shadowFilterId
@@ -366,7 +358,17 @@ viewSwitch config =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 43)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
+        |> Nri.Ui.Svg.V1.withCss
+            [ Css.zIndex (Css.int 1)
+            , if config.isDisabled then
+                Css.opacity (Css.num 0.4)
+
+              else
+                Css.opacity (Css.num 1)
+            ]
+        |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
 
 stroke : Color -> Style
@@ -376,6 +378,4 @@ stroke color =
 
 transition : String -> Css.Style
 transition transitionRules =
-    Css.Media.withMediaQuery
-        [ "(prefers-reduced-motion: no-preference)" ]
-        [ Css.property "transition" transitionRules ]
+    MediaQuery.anyMotion [ Css.property "transition" transitionRules ]

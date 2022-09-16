@@ -12,121 +12,35 @@ module Examples.Tabs exposing
 
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (fromUnstyled)
+import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
-type alias State =
-    { selected : Id
-    , settings : Control Settings
-    , openTooltip : Maybe Id
-    }
-
-
-init : State
-init =
-    { selected = First
-    , settings = initSettings
-    , openTooltip = Nothing
-    }
-
-
-type alias Settings =
-    { title : Maybe String
-    , alignment : Alignment
-    , customSpacing : Maybe Float
-    , labelledBy : Maybe String
-    }
-
-
-initSettings : Control Settings
-initSettings =
-    Control.record Settings
-        |> Control.field "title" (Control.maybe False (Control.string "Title"))
-        |> Control.field "alignment"
-            (Control.choice
-                [ ( "Left", Control.value Left )
-                , ( "Center", Control.value Center )
-                , ( "Right", Control.value Right )
-                ]
-            )
-        |> Control.field "customSpacing"
-            (Control.maybe False
-                (Control.choice
-                    [ ( "2", Control.value 2 )
-                    , ( "3", Control.value 3 )
-                    , ( "4", Control.value 4 )
-                    , ( "8", Control.value 8 )
-                    , ( "16", Control.value 16 )
-                    ]
-                )
-            )
-        |> Control.field "labelledBy" (Control.maybe False (Control.string "someId"))
-
-
-type Id
-    = First
-    | Second
-    | Third
-    | Fourth
-
-
-type Msg
-    = FocusAndSelectTab { select : Id, focus : Maybe String }
-    | Focused (Result Dom.Error ())
-    | SetSettings (Control Settings)
-    | ToggleTooltip Id Bool
-
-
-update : Msg -> State -> ( State, Cmd Msg )
-update msg model =
-    case msg of
-        FocusAndSelectTab { select, focus } ->
-            ( { model | selected = select }
-            , focus
-                |> Maybe.map (Dom.focus >> Task.attempt Focused)
-                |> Maybe.withDefault Cmd.none
-            )
-
-        Focused error ->
-            ( model, Cmd.none )
-
-        SetSettings settings ->
-            ( { model | settings = settings }, Cmd.none )
-
-        ToggleTooltip id openTooltip ->
-            ( { model
-                | openTooltip =
-                    if openTooltip then
-                        Just id
-
-                    else
-                        Nothing
-              }
-            , Cmd.none
-            )
-
-
-exampleName : String
-exampleName =
+moduleName : String
+moduleName =
     "Tabs"
+
+
+version : Int
+version =
+    7
 
 
 example : Example State Msg
 example =
-    { name = exampleName
-    , version = 7
+    { name = moduleName
+    , version = version
     , categories = [ Layout ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
@@ -190,67 +104,188 @@ example =
             let
                 settings =
                     Control.currentValue model.settings
+
+                tabs =
+                    allTabs model.openTooltip settings.withTooltips
             in
-            [ Control.view SetSettings model.settings |> fromUnstyled
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = SetSettings
+                , settings = model.settings
+                , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
+                , extraCode = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \_ ->
+                        let
+                            code =
+                                [ moduleName ++ ".view"
+                                , "    { title = " ++ Code.maybeString settings.title
+                                , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
+                                , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
+                                , "    , focusAndSelect = identity"
+                                , "    , selected = " ++ String.fromInt model.selected
+                                , "    , tabs = " ++ Code.listMultiline (List.map Tuple.first tabs) 2
+                                , "    }"
+                                ]
+                                    |> String.join "\n"
+                        in
+                        [ { sectionName = "Example"
+                          , code = code
+                          }
+                        ]
+                }
             , Tabs.view
                 { title = settings.title
                 , alignment = settings.alignment
                 , customSpacing = settings.customSpacing
                 , focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = allTabs model.openTooltip settings.labelledBy
+                , tabs = List.map Tuple.second tabs
                 }
             ]
     }
 
 
-allTabs : Maybe Id -> Maybe String -> List (Tab Id Msg)
-allTabs openTooltipId labelledBy =
-    let
-        bulbIcon =
-            UiIcon.bulb
-                |> Svg.withWidth (Css.px 40)
-                |> Svg.withHeight (Css.px 45)
-                |> Svg.withLabel "Bulb"
-                |> Svg.withCss [ Css.padding2 Css.zero (Css.px 6) ]
-                |> Svg.toHtml
-    in
-    [ Tabs.build { id = First, idString = "tab-0" }
-        ([ Tabs.tabString "1"
-         , Tabs.withTooltip
-            [ Tooltip.plaintext "Link Example"
-            , Tooltip.onToggle (ToggleTooltip First)
-            , Tooltip.alignStart (Css.px 75)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just First)
-            ]
-         , Tabs.panelHtml (Html.text "First Panel")
-         ]
-            ++ (case labelledBy of
-                    Nothing ->
-                        []
+allTabs : Maybe Int -> Bool -> List ( String, Tab Int Msg )
+allTabs openTooltipId withTooltips =
+    List.repeat 4 ()
+        |> List.indexedMap (\i _ -> buildTooltip openTooltipId withTooltips i)
 
-                    Just labelledById ->
-                        [ Tabs.labelledBy labelledById ]
+
+buildTooltip : Maybe Int -> Bool -> Int -> ( String, Tab Int Msg )
+buildTooltip openTooltipId withTooltips id =
+    let
+        idString =
+            String.fromInt (id + 1)
+
+        tabIdString =
+            "tab-" ++ idString
+
+        tabName =
+            "Tab " ++ idString
+
+        panelName =
+            "Panel " ++ idString
+    in
+    ( String.join ""
+        [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
+        , "\n\t    [ Tabs.tabString " ++ Code.string tabName
+        , "\n\t    , Tabs.panelHtml (text " ++ Code.string panelName ++ ")"
+        , if withTooltips then
+            String.join "\n\t    "
+                [ "\n\t    , Tabs.withTooltip"
+                , "   [ Tooltip.plaintext " ++ Code.string tabName
+                , "    -- You will need to have a tooltip handler"
+                , "    -- , Tooltip.onToggle ToggleTooltip " ++ ""
+                , "   , Tooltip.open " ++ Code.bool (openTooltipId == Just id)
+                , "   ]"
+                ]
+
+          else
+            ""
+        , "\n\t    ]"
+        ]
+    , Tabs.build { id = id, idString = tabIdString }
+        ([ Tabs.tabString tabName
+         , Tabs.panelHtml (Html.text panelName)
+         ]
+            ++ (if withTooltips then
+                    [ Tabs.withTooltip
+                        [ Tooltip.plaintext tabName
+                        , Tooltip.onToggle (ToggleTooltip id)
+                        , Tooltip.open (openTooltipId == Just id)
+                        ]
+                    ]
+
+                else
+                    []
                )
         )
-    , Tabs.build { id = Second, idString = "tab-1" }
-        [ Tabs.tabString "Second Tab (disabled)"
-        , Tabs.disabled True
-        , Tabs.panelHtml (Html.text "Second Panel")
-        ]
-    , Tabs.build { id = Third, idString = "tab-2" }
-        [ Tabs.tabHtml bulbIcon
-        , Tabs.withTooltip
-            [ Tooltip.plaintext "The Electrifying Third Tab"
-            , Tooltip.onToggle (ToggleTooltip Third)
-            , Tooltip.primaryLabel
-            , Tooltip.open (openTooltipId == Just Third)
-            ]
-        , Tabs.panelHtml (Html.text "Third Panel")
-        ]
-    , Tabs.build { id = Fourth, idString = "tab-3" }
-        [ Tabs.tabString "Fourth Tab"
-        , Tabs.panelHtml (Html.text "Fourth Panel")
-        ]
-    ]
+    )
+
+
+type alias State =
+    { selected : Int
+    , settings : Control Settings
+    , openTooltip : Maybe Int
+    }
+
+
+init : State
+init =
+    { selected = 0
+    , settings = initSettings
+    , openTooltip = Nothing
+    }
+
+
+type alias Settings =
+    { title : Maybe String
+    , alignment : Alignment
+    , customSpacing : Maybe Float
+    , withTooltips : Bool
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "title" (Control.maybe False (Control.string "Title"))
+        |> Control.field "alignment"
+            (Control.choice
+                [ ( "Left", Control.value Left )
+                , ( "Center", Control.value Center )
+                , ( "Right", Control.value Right )
+                ]
+            )
+        |> Control.field "customSpacing"
+            (Control.maybe False
+                (Control.choice
+                    [ ( "2", Control.value 2 )
+                    , ( "3", Control.value 3 )
+                    , ( "4", Control.value 4 )
+                    , ( "8", Control.value 8 )
+                    , ( "16", Control.value 16 )
+                    ]
+                )
+            )
+        |> Control.field "withTooltips" (Control.bool True)
+
+
+type Msg
+    = FocusAndSelectTab { select : Int, focus : Maybe String }
+    | Focused (Result Dom.Error ())
+    | SetSettings (Control Settings)
+    | ToggleTooltip Int Bool
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg model =
+    case msg of
+        FocusAndSelectTab { select, focus } ->
+            ( { model | selected = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
+            )
+
+        Focused error ->
+            ( model, Cmd.none )
+
+        SetSettings settings ->
+            ( { model | settings = settings }, Cmd.none )
+
+        ToggleTooltip id openTooltip ->
+            ( { model
+                | openTooltip =
+                    if openTooltip then
+                        Just id
+
+                    else
+                        Nothing
+              }
+            , Cmd.none
+            )

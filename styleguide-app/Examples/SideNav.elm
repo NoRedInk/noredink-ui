@@ -8,21 +8,22 @@ module Examples.SideNav exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
-import Debug.Control.View as ControlView exposing (codeFromList)
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SideNav.V3 as SideNav
+import Nri.Ui.SideNav.V4 as SideNav
 
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -88,8 +89,9 @@ view ellieLinkConfig state =
         , version = version
         , update = SetControls
         , settings = state.settings
-        , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , mainType = Just "RootHtml.Html msg"
+        , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ navAttributes, entries } ->
                 [ { sectionName = "View"
@@ -100,8 +102,8 @@ view ellieLinkConfig state =
                             , "\n\t, routeToString = identity"
                             , "\n\t, onSkipNav = SkipToContent"
                             , "\n\t}"
-                            , codeFromList navAttributes
-                            , codeFromList entries
+                            , Code.list (List.map Tuple.first navAttributes)
+                            , Code.list (List.map Tuple.first entries)
                             ]
                   }
                 ]
@@ -124,7 +126,7 @@ type alias State =
 
 type alias Settings =
     { currentRoute : String
-    , navAttributes : List ( String, SideNav.NavAttribute )
+    , navAttributes : List ( String, SideNav.NavAttribute Msg )
     , entries : List ( String, SideNav.Entry String Msg )
     }
 
@@ -140,7 +142,7 @@ init =
     }
 
 
-controlNavAttributes : Control (List ( String, SideNav.NavAttribute ))
+controlNavAttributes : Control (List ( String, SideNav.NavAttribute Msg ))
 controlNavAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItemDefaultChecked "navLabel"

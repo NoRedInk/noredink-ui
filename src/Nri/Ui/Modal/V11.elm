@@ -162,7 +162,6 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
@@ -171,6 +170,7 @@ import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
 import Html.Styled.Events exposing (onClick)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
@@ -178,8 +178,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
-import Nri.Ui.SpriteSheet
-import Nri.Ui.Svg.V1
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -520,7 +519,7 @@ view config attrsList model =
                 |> Root.div
                     (List.concat
                         [ [ FocusTrap.toAttribute config.focusTrap ]
-                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 1) ] ]
+                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ] ]
                         ]
                     )
 
@@ -565,7 +564,7 @@ viewModal :
 viewModal config =
     section
         ([ Role.dialog
-         , Widget.modal True
+         , Aria.modal True
          , Aria.labeledBy modalTitleId
          ]
             ++ config.customAttributes
@@ -722,34 +721,31 @@ closeButtonId =
 {-| -}
 viewCloseButton : msg -> Html msg
 viewCloseButton closeModal =
-    button
-        (Widget.label "Close modal"
-            :: onClick closeModal
-            :: Attrs.css
-                [ -- in the upper-right corner of the modal
-                  Css.position Css.absolute
-                , Css.top Css.zero
-                , Css.right Css.zero
+    ClickableSvg.button "Close modal"
+        UiIcon.x
+        [ ClickableSvg.id closeButtonId
+        , ClickableSvg.onClick closeModal
+        , -- TODO: trim down the unnecessary styles
+          ClickableSvg.css
+            [ -- in the upper-right corner of the modal
+              Css.position Css.absolute
+            , Css.top Css.zero
+            , Css.right Css.zero
 
-                -- make appear above lesson content
-                , Css.zIndex (Css.int 10)
-                , Css.backgroundColor (rgba 255 255 255 0.5)
-                , Css.borderRadius (pct 50)
+            -- make appear above lesson content
+            , Css.backgroundColor (rgba 255 255 255 0.5)
+            , Css.borderRadius (pct 50)
 
-                -- make the hitspace extend all the way around x
-                , Css.width (Css.px 60)
-                , Css.height (Css.px 60)
-                , Css.padding (Css.px 20)
+            -- make the hitspace extend all the way around x
+            , Css.width (Css.px 60)
+            , Css.height (Css.px 60)
+            , Css.padding (Css.px 20)
 
-                -- apply button styles
-                , Css.borderWidth Css.zero
-                , Css.cursor Css.pointer
-                , Css.color Colors.azure
-                , Css.hover [ Css.color Colors.azureDark ]
-                , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
-                ]
-            :: Attrs.id closeButtonId
-            :: []
-        )
-        [ Nri.Ui.Svg.V1.toHtml Nri.Ui.SpriteSheet.xSvg
+            -- apply button styles
+            , Css.borderWidth Css.zero
+            , Css.cursor Css.pointer
+            , Css.color Colors.azure
+            , Css.hover [ Css.color Colors.azureDark ]
+            , Css.Transitions.transition [ Css.Transitions.color 0.1 ]
+            ]
         ]

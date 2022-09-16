@@ -9,6 +9,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -22,8 +23,9 @@ import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -133,30 +135,35 @@ update msg model =
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
+    , Heading.h2 [ Heading.plaintext "What type of tooltip should I use?" ]
     , Table.view
         [ Table.string
             { header = "Type"
             , value = .name
             , width = Css.pct 15
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "Usage"
             , view = .usage >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 150
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "About"
             , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
             , width = Css.px 200
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7) ]
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+            , sort = Nothing
             }
         , Table.custom
             { header = Html.text "Example"
             , view = .example
             , width = Css.px 50
             , cellStyles = always [ Css.textAlign Css.center ]
+            , sort = Nothing
             }
         ]
         [ { name = "Tooltip.primaryLabel"
@@ -164,6 +171,7 @@ view ellieLinkConfig model =
 Use when all of the following are true:
 - the tooltip trigger does more than just reveal the tooltip content
 - the content of the tooltip is the same as the name of the tooltip trigger
+- the content of the tooltip doesn't contain interactive elements such as links
 
 Think of this as the "What."
 """
@@ -181,7 +189,8 @@ of ***what*** the tooltip trigger does. The same text is provided to assitive te
           , usage = """
 Use when all of the following are true:
 - the tooltip trigger does more than just reveal the tooltip content
-- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself.
+- the content of the tooltip provides additional information about the functionality of the tooltip trigger itself
+- the content of the tooltip doesn't contain interactive elements such as links
 
 Think of this as the "How."
 """
@@ -201,12 +210,12 @@ Examples:
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
 - the tooltip trigger ***isn't*** a "?" icon
+
+This type may contain interactive elements such as links.
         """
           , description =
                 """
 Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
-
-If clicking the "tooltip trigger" only ever shows you more info (and especially if this info is rich or interactable), use this attribute.
 
 This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
 """
@@ -218,10 +227,13 @@ This behavior is analogous to disclosure behavior, except that it's presented di
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
 - the tooltip trigger ***is*** a "?" icon
+
+This type may contain interactive elements such as links.
+
         """
           , description =
                 """
-This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about. Please see the documentation for `disclosure` to learn more.
+This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about.
 """
           , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
@@ -259,6 +271,7 @@ viewAuxillaryDescriptionToolip openTooltip =
             \eventHandlers ->
                 ClickableText.link "Tooltips & Toggletips"
                     [ ClickableText.custom eventHandlers
+                    , ClickableText.small
                     , ClickableText.icon UiIcon.openInNewTab
                     , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
@@ -310,11 +323,14 @@ viewDisclosureToolip openTooltip =
 
 viewToggleTip : Maybe TooltipId -> Html Msg
 viewToggleTip openTooltip =
-    Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
-        [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
-        , Tooltip.onToggle (ToggleTooltip LearnMore)
-        , Tooltip.open (openTooltip == Just LearnMore)
-        , Tooltip.alignEndForMobile (Css.px 144)
+    Html.span [ css [ Css.displayFlex, Css.alignItems Css.center, Css.justifyContent Css.center ] ]
+        [ Html.text "Mastery"
+        , Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
+            [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
+            , Tooltip.onToggle (ToggleTooltip LearnMore)
+            , Tooltip.open (openTooltip == Just LearnMore)
+            , Tooltip.alignEndForMobile (Css.px 144)
+            ]
         ]
 
 
@@ -456,8 +472,9 @@ viewCustomizableExample ellieLinkConfig controlSettings =
             , version = version
             , update = SetControl
             , settings = controlSettings
-            , mainType = "RootHtml.Html msg"
-            , extraImports = []
+            , mainType = Just "RootHtml.Html msg"
+            , extraCode = [ "import Nri.Ui.ClickableSvg.V2 as ClickableSvg" ]
+            , renderExample = Code.unstyledView
             , toExampleCode =
                 \controls ->
                     [ { sectionName = "Example"

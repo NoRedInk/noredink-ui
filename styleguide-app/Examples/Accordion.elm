@@ -13,6 +13,7 @@ module Examples.Accordion exposing
 import Accessibility.Styled as Html exposing (Html)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (..)
 import Css.Global
@@ -26,6 +27,7 @@ import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -87,7 +89,7 @@ example =
 
 defaultCaret : Bool -> Html msg
 defaultCaret =
-    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
 
 
 {-| -}
@@ -103,8 +105,12 @@ view ellieLinkConfig model =
         , version = version
         , update = UpdateControls
         , settings = model.settings
-        , mainType = "RootHtml.Html String"
-        , extraImports = [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator" ]
+        , mainType = Just "RootHtml.Html String"
+        , extraCode =
+            [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
+            , "import Nri.Ui.Svg.V1 as Svg"
+            ]
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
                 [ { sectionName = "Partial example"
@@ -303,6 +309,11 @@ view ellieLinkConfig model =
                 [ Css.backgroundColor Colors.gray96
                 , Css.borderRadius (Css.px 8)
                 , Css.boxShadow5 Css.zero Css.zero (px 10) zero (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                , Css.pseudoClass "focus-visible"
+                    [ FocusRing.insetBoxShadows
+                        [ "0 0 10px 0 " ++ ColorsExtra.toCssString (ColorsExtra.withAlpha 0.2 Colors.gray20)
+                        ]
+                    ]
                 ]
             ]
         , headerClosedStyles = []
@@ -346,8 +357,8 @@ controlIcon =
     Control.choice
         [ ( "DisclosureIndicator"
           , Control.value
-                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]"
-                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ]
+                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
+                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
                 )
           )
         , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )

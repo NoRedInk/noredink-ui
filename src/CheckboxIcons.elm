@@ -5,6 +5,9 @@ module CheckboxIcons exposing
     , unchecked
     )
 
+import Css
+import Nri.Ui.Colors.Extra exposing (toCssString)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -19,11 +22,7 @@ unchecked idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Svg.svg
-        [ SvgAttributes.width "27px"
-        , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init viewBox
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -67,6 +66,7 @@ unchecked idSuffix =
                 [ checkboxBackground
                     [ SvgAttributes.fill "#EBEBEB"
                     , SvgAttributes.fillRule "evenodd"
+                    , SvgAttributes.stroke (toCssString Colors.gray75)
                     ]
                 , checkboxBackground
                     [ SvgAttributes.fill "black"
@@ -76,7 +76,8 @@ unchecked idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
 
 
 checked : String -> Svg
@@ -88,11 +89,7 @@ checked idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Svg.svg
-        [ SvgAttributes.width "27px"
-        , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init viewBox
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -131,32 +128,32 @@ checked idSuffix =
             , SvgAttributes.fill "none"
             , SvgAttributes.fillRule "evenodd"
             ]
-            [ Svg.g
-                []
-                [ Svg.g []
-                    [ checkboxBackground
-                        [ SvgAttributes.fill "#D4F0FF"
-                        , SvgAttributes.fillRule "evenodd"
-                        ]
-                    , checkboxBackground
-                        [ SvgAttributes.fill "black"
-                        , SvgAttributes.fillOpacity "1"
-                        , SvgAttributes.filter filterUrl
-                        ]
+            [ -- Blue background
+              checkboxBackground
+                [ SvgAttributes.fill "#D4F0FF"
+                , SvgAttributes.fillRule "evenodd"
+                , SvgAttributes.stroke (toCssString Colors.azure)
+                ]
+            , -- the filter (looks like a box shadow inset on the top)
+              checkboxBackground
+                [ SvgAttributes.fill "black"
+                , SvgAttributes.fillOpacity "1"
+                , SvgAttributes.filter filterUrl
+                ]
+            , -- Checkmark
+              Svg.g
+                [ SvgAttributes.transform "translate(3.600000, 3.600000)"
+                , SvgAttributes.fill "#146AFF"
+                ]
+                [ Svg.path
+                    [ SvgAttributes.d "M7.04980639,17.8647896 C6.57427586,17.8647896 6.11539815,17.6816086 5.77123987,17.3513276 L0.571859358,12.3786105 C-0.167340825,11.672716 -0.193245212,10.5014676 0.513574487,9.7631926 C1.21761872,9.02491757 2.38979222,8.99808803 3.12899241,9.70490773 L6.96746745,13.3750043 L16.7917062,2.73292703 C17.4855737,1.98077465 18.6558969,1.93451682 19.4061989,2.62745917 C20.1574262,3.32132667 20.2046091,4.49164987 19.5116668,5.24195193 L8.4097867,17.2689887 C8.07210452,17.6344256 7.60397524,17.8481368 7.10716611,17.8638644 C7.08866297,17.8647896 7.06923468,17.8647896 7.04980639,17.8647896"
                     ]
-                , Svg.g
-                    [ SvgAttributes.transform "translate(3.600000, 3.600000)"
-                    , SvgAttributes.fill "#146AFF"
-                    ]
-                    [ Svg.path
-                        [ SvgAttributes.d "M7.04980639,17.8647896 C6.57427586,17.8647896 6.11539815,17.6816086 5.77123987,17.3513276 L0.571859358,12.3786105 C-0.167340825,11.672716 -0.193245212,10.5014676 0.513574487,9.7631926 C1.21761872,9.02491757 2.38979222,8.99808803 3.12899241,9.70490773 L6.96746745,13.3750043 L16.7917062,2.73292703 C17.4855737,1.98077465 18.6558969,1.93451682 19.4061989,2.62745917 C20.1574262,3.32132667 20.2046091,4.49164987 19.5116668,5.24195193 L8.4097867,17.2689887 C8.07210452,17.6344256 7.60397524,17.8481368 7.10716611,17.8638644 C7.08866297,17.8647896 7.06923468,17.8647896 7.04980639,17.8647896"
-                        ]
-                        []
-                    ]
+                    []
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
 
 
 checkedPartially : String -> Svg
@@ -168,11 +165,7 @@ checkedPartially idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Svg.svg
-        [ SvgAttributes.width "27px"
-        , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init viewBox
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -218,6 +211,7 @@ checkedPartially idSuffix =
                     [ checkboxBackground
                         [ SvgAttributes.fill "#EBEBEB"
                         , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.stroke (toCssString Colors.azure)
                         ]
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
@@ -233,7 +227,13 @@ checkedPartially idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+
+
+viewBox : String
+viewBox =
+    "0 -1 27 29"
 
 
 checkboxBackground attrs =
@@ -242,6 +242,9 @@ checkboxBackground attrs =
          , SvgAttributes.y "0"
          , SvgAttributes.width "27"
          , SvgAttributes.height "27"
+         , SvgAttributes.strokeWidth "1px"
+         , SvgAttributes.strokeLinejoin "round"
+         , SvgAttributes.stroke "none"
          , SvgAttributes.rx "4"
          ]
             ++ attrs
@@ -259,11 +262,7 @@ lockOnInside idSuffix =
         filterUrl =
             "url(#" ++ filterId ++ ")"
     in
-    Svg.svg
-        [ SvgAttributes.width "27px"
-        , SvgAttributes.height "27px"
-        , SvgAttributes.viewBox "0 0 27 27"
-        ]
+    Nri.Ui.Svg.V1.init viewBox
         [ Svg.defs []
             [ Svg.filter
                 [ SvgAttributes.x "-3.7%"
@@ -309,6 +308,7 @@ lockOnInside idSuffix =
                     [ checkboxBackground
                         [ SvgAttributes.fill "#EBEBEB"
                         , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.stroke (toCssString Colors.gray75)
                         ]
                     , checkboxBackground
                         [ SvgAttributes.fill "black"
@@ -345,4 +345,5 @@ lockOnInside idSuffix =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.fromHtml
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)

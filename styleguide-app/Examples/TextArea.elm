@@ -7,40 +7,34 @@ module Examples.TextArea exposing (Msg, State, example)
 -}
 
 import Category exposing (Category(..))
+import Code
 import Css
-import Dict exposing (Dict)
+import Debug.Control as Control exposing (Control)
+import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Checkbox.V5 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
 import Nri.Ui.TextArea.V4 as TextArea
 
 
-{-| -}
-type Msg
-    = InputGiven Id String
-    | ToggleLabel Bool
-    | ToggleAutoResize Bool
-    | ToggleErrorState Bool
+moduleName : String
+moduleName =
+    "TextArea"
 
 
-{-| -}
-type alias State =
-    { textValues : Dict Int String
-    , showLabel : Checkbox.IsSelected
-    , isInError : Checkbox.IsSelected
-    , autoResize : Checkbox.IsSelected
-    }
+version : Int
+version =
+    4
 
 
 {-| -}
 example : Example State Msg
 example =
-    { name = "TextArea"
-    , version = 4
+    { name = moduleName
+    , version = version
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -50,7 +44,7 @@ example =
         [ Html.div [ css [ Css.position Css.relative ] ]
             [ Html.textarea
                 [ css
-                    [ InputStyles.input Standard False
+                    [ InputStyles.input Standard
                     , Css.minHeight (Css.px 100)
                     , Css.maxWidth (Css.px 140)
                     , Css.backgroundColor Colors.white |> Css.important
@@ -71,147 +65,148 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ Heading.h1 [] [ Html.text "Textarea controls" ]
-            , Html.div []
-                [ Checkbox.viewWithLabel
-                    { identifier = "show-textarea-label"
-                    , label = "Show Label"
-                    , setterMsg = ToggleLabel
-                    , selected = state.showLabel
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    }
-                , Checkbox.viewWithLabel
-                    { identifier = "textarea-autoresize"
-                    , label = "Autoresize"
-                    , setterMsg = ToggleAutoResize
-                    , selected = state.autoResize
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    }
-                , Checkbox.viewWithLabel
-                    { identifier = "textarea-isInError"
-                    , label = "Show Error State"
-                    , setterMsg = ToggleErrorState
-                    , selected = state.isInError
-                    , disabled = False
-                    , theme = Checkbox.Square
-                    }
-                ]
-            , TextArea.view
-                { value = Maybe.withDefault "" <| Dict.get 1 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 1
-                , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
-                , label = "TextArea.view"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.SingleLine
+            let
+                settings =
+                    Control.currentValue state.settings
 
-                    else
-                        TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                toExampleCode name =
+                    [ moduleName ++ "." ++ name
+                    , Code.record
+                        [ ( "value", Code.string state.value )
+                        , ( "autofocus", Code.bool False )
+                        , ( "onInput", "identity" )
+                        , ( "onBlur"
+                          , Code.maybe <|
+                                if settings.onBlur then
+                                    Just (Code.string "Neener neener Blur happened")
+
+                                else
+                                    Nothing
+                          )
+                        , ( "isInError", Code.bool settings.isInError )
+                        , ( "label", Code.string settings.label )
+                        , ( "height", Tuple.first settings.height )
+                        , ( "placeholder", Code.string settings.placeholder )
+                        , ( "showLabel", Code.bool settings.showLabel )
+                        ]
+                    ]
+                        |> String.join ""
+            in
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = UpdateControl
+                , settings = state.settings
+                , mainType = Just "RootHtml.Html String"
+                , extraCode = []
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "view"
+                          , code = toExampleCode "view"
+                          }
+                        , { sectionName = "writing"
+                          , code = toExampleCode "writing"
+                          }
+                        ]
                 }
-            , TextArea.writing
-                { value = Maybe.withDefault "" <| Dict.get 2 state.textValues
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , settings.theme
+                { value = state.value
                 , autofocus = False
-                , onInput = InputGiven 2
-                , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
-                , label = "TextArea.writing"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
+                , onInput = UpdateValue
+                , onBlur =
+                    if settings.onBlur then
+                        Just (UpdateValue "Neener neener Blur happened")
 
                     else
-                        TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
-                }
-            , TextArea.contentCreation
-                { value = Maybe.withDefault "" <| Dict.get 3 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 3
-                , onBlur = Nothing
-                , isInError = state.isInError == Checkbox.Selected
-                , label = "TextArea.contentCreation"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
-
-                    else
-                        TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
-                }
-            , TextArea.writing
-                { value = Maybe.withDefault "" <| Dict.get 4 state.textValues
-                , autofocus = False
-                , onInput = InputGiven 4
-                , onBlur = Just (InputGiven 4 "Neener neener Blur happened")
-                , isInError = state.isInError == Checkbox.Selected
-                , label = "TextArea.writing onBlur demonstration"
-                , height =
-                    if state.autoResize == Checkbox.Selected then
-                        TextArea.AutoResize TextArea.DefaultHeight
-
-                    else
-                        TextArea.Fixed
-                , placeholder = "Placeholder"
-                , showLabel = state.showLabel == Checkbox.Selected
+                        Nothing
+                , isInError = settings.isInError
+                , label = settings.label
+                , height = Tuple.second settings.height
+                , placeholder = settings.placeholder
+                , showLabel = settings.showLabel
                 }
             ]
     }
 
 
 {-| -}
+type alias State =
+    { value : String
+    , settings : Control Settings
+    }
+
+
+{-| -}
 init : State
 init =
-    { textValues = Dict.empty
-    , showLabel = Checkbox.Selected
-    , isInError = Checkbox.NotSelected
-    , autoResize = Checkbox.NotSelected
+    { value = ""
+    , settings = initControls
     }
+
+
+type alias Settings =
+    { theme : TextArea.Model Msg -> Html Msg
+    , label : String
+    , showLabel : Bool
+    , placeholder : String
+    , isInError : Bool
+    , onBlur : Bool
+    , height : ( String, TextArea.HeightBehavior )
+    }
+
+
+initControls : Control Settings
+initControls =
+    Control.record Settings
+        |> Control.field "theme"
+            (Control.choice
+                [ ( "view", Control.value TextArea.view )
+                , ( "writing", Control.value TextArea.writing )
+                ]
+            )
+        |> Control.field "label" (Control.string "Introductory paragraph")
+        |> Control.field "showLabel" (Control.bool True)
+        |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
+        |> Control.field "isInError" (Control.bool False)
+        |> Control.field "onBlur" (Control.bool False)
+        |> Control.field "height"
+            (Control.choice
+                [ ( "fixed"
+                  , Control.value ( "TextArea.Fixed", TextArea.Fixed )
+                  )
+                , ( "autoresize default"
+                  , Control.value
+                        ( Code.withParens "TextArea.AutoResize TextArea.DefaultHeight"
+                        , TextArea.AutoResize TextArea.DefaultHeight
+                        )
+                  )
+                , ( "autoresize singleline"
+                  , Control.value
+                        ( Code.withParens "TextArea.AutoResize TextArea.SingleLine"
+                        , TextArea.AutoResize TextArea.SingleLine
+                        )
+                  )
+                ]
+            )
+
+
+{-| -}
+type Msg
+    = UpdateValue String
+    | UpdateControl (Control Settings)
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    let
-        toggle bool =
-            if bool then
-                Checkbox.Selected
-
-            else
-                Checkbox.NotSelected
-    in
     case msg of
-        InputGiven id newValue ->
-            ( { state | textValues = Dict.insert id newValue state.textValues }
+        UpdateValue newValue ->
+            ( { state | value = newValue }
             , Cmd.none
             )
 
-        ToggleLabel bool ->
-            ( { state | showLabel = toggle bool }
-            , Cmd.none
-            )
-
-        ToggleErrorState bool ->
-            ( { state | isInError = toggle bool }
-            , Cmd.none
-            )
-
-        ToggleAutoResize bool ->
-            ( { state | autoResize = toggle bool }
-            , Cmd.none
-            )
-
-
-
--- INTERNAL
-
-
-type alias Id =
-    Int
+        UpdateControl settings ->
+            ( { state | settings = settings }, Cmd.none )

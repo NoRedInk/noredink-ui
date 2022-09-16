@@ -2,10 +2,12 @@ module Examples exposing (Msg, State, all)
 
 import Example exposing (Example)
 import Examples.Accordion as Accordion
+import Examples.AnimatedIcon as AnimatedIcon
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
+import Examples.Carousel as Carousel
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -16,6 +18,7 @@ import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
+import Examples.Highlighter as Highlighter
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
@@ -23,19 +26,20 @@ import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pennant as Pennant
+import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.RadioButton as RadioButton
+import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
 import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
+import Examples.Spacing as Spacing
 import Examples.Sprite as Sprite
-import Examples.Svg as Svg
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
 import Examples.Text as Text
-import Examples.Text.Writing as Writing
 import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
 import Examples.Tooltip as Tooltip
@@ -58,6 +62,25 @@ all =
             (\msg ->
                 case msg of
                     AccordionState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , AnimatedIcon.example
+        |> Example.wrapMsg AnimatedIconMsg
+            (\msg ->
+                case msg of
+                    AnimatedIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState AnimatedIconState
+            (\msg ->
+                case msg of
+                    AnimatedIconState childState ->
                         Just childState
 
                     _ ->
@@ -134,6 +157,25 @@ all =
             (\msg ->
                 case msg of
                     ButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Carousel.example
+        |> Example.wrapMsg CarouselMsg
+            (\msg ->
+                case msg of
+                    CarouselMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CarouselState
+            (\msg ->
+                case msg of
+                    CarouselState childState ->
                         Just childState
 
                     _ ->
@@ -329,6 +371,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Highlighter.example
+        |> Example.wrapMsg HighlighterMsg
+            (\msg ->
+                case msg of
+                    HighlighterMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState HighlighterState
+            (\msg ->
+                case msg of
+                    HighlighterState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Loading.example
         |> Example.wrapMsg LoadingMsg
             (\msg ->
@@ -462,6 +523,25 @@ all =
                     _ ->
                         Nothing
             )
+    , PremiumCheckbox.example
+        |> Example.wrapMsg PremiumCheckboxMsg
+            (\msg ->
+                case msg of
+                    PremiumCheckboxMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState PremiumCheckboxState
+            (\msg ->
+                case msg of
+                    PremiumCheckboxState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , RadioButton.example
         |> Example.wrapMsg RadioButtonMsg
             (\msg ->
@@ -476,6 +556,25 @@ all =
             (\msg ->
                 case msg of
                     RadioButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , RingGauge.example
+        |> Example.wrapMsg RingGaugeMsg
+            (\msg ->
+                case msg of
+                    RingGaugeMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState RingGaugeState
+            (\msg ->
+                case msg of
+                    RingGaugeState childState ->
                         Just childState
 
                     _ ->
@@ -576,6 +675,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Spacing.example
+        |> Example.wrapMsg SpacingMsg
+            (\msg ->
+                case msg of
+                    SpacingMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState SpacingState
+            (\msg ->
+                case msg of
+                    SpacingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Sprite.example
         |> Example.wrapMsg SpriteMsg
             (\msg ->
@@ -590,25 +708,6 @@ all =
             (\msg ->
                 case msg of
                     SpriteState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , Svg.example
-        |> Example.wrapMsg SvgMsg
-            (\msg ->
-                case msg of
-                    SvgMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState SvgState
-            (\msg ->
-                case msg of
-                    SvgState childState ->
                         Just childState
 
                     _ ->
@@ -685,25 +784,6 @@ all =
             (\msg ->
                 case msg of
                     TextState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , Writing.example
-        |> Example.wrapMsg WritingMsg
-            (\msg ->
-                case msg of
-                    WritingMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState WritingState
-            (\msg ->
-                case msg of
-                    WritingState childState ->
                         Just childState
 
                     _ ->
@@ -790,10 +870,12 @@ all =
 
 type State
     = AccordionState Accordion.State
+    | AnimatedIconState AnimatedIcon.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
+    | CarouselState Carousel.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -804,6 +886,7 @@ type State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeadingState Heading.State
+    | HighlighterState Highlighter.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MenuState Menu.State
@@ -811,14 +894,16 @@ type State
     | ModalState Modal.State
     | PageState Page.State
     | PennantState Pennant.State
+    | PremiumCheckboxState PremiumCheckbox.State
     | RadioButtonState RadioButton.State
+    | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
     | ShadowsState Shadows.State
     | SideNavState SideNav.State
     | SortableTableState SortableTable.State
+    | SpacingState Spacing.State
     | SpriteState Sprite.State
-    | SvgState Svg.State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
@@ -827,15 +912,16 @@ type State
     | TextInputState TextInput.State
     | TooltipState Tooltip.State
     | UiIconState UiIcon.State
-    | WritingState Writing.State
 
 
 type Msg
     = AccordionMsg Accordion.Msg
+    | AnimatedIconMsg AnimatedIcon.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
+    | CarouselMsg Carousel.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
@@ -846,6 +932,7 @@ type Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
+    | HighlighterMsg Highlighter.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
@@ -853,14 +940,16 @@ type Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
     | PennantMsg Pennant.Msg
+    | PremiumCheckboxMsg PremiumCheckbox.Msg
     | RadioButtonMsg RadioButton.Msg
+    | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
     | ShadowsMsg Shadows.Msg
     | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
+    | SpacingMsg Spacing.Msg
     | SpriteMsg Sprite.Msg
-    | SvgMsg Svg.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
@@ -869,4 +958,3 @@ type Msg
     | TextInputMsg TextInput.Msg
     | TooltipMsg Tooltip.Msg
     | UiIconMsg UiIcon.Msg
-    | WritingMsg Writing.Msg

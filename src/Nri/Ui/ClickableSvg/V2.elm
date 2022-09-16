@@ -6,9 +6,10 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , exactSize, exactWidth, exactHeight
     , disabled
     , withBorder
-    , primary, secondary, danger, dangerSecondary
+    , primary, secondary, tertiary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , iconForMobile
     , small, medium, large
     )
 
@@ -18,6 +19,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 # Patch changes:
 
     - adds `nriDescription`, `testId`, and `id` helpers
+    - adds `iconForMobile`
 
 
 # Create a button or link
@@ -45,7 +47,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, danger, dangerSecondary
+@docs primary, secondary, tertiary, danger, dangerSecondary
 
 @docs custom, nriDescription, testId, id
 
@@ -53,6 +55,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs iconForMobile
 
 
 ### DEPRECATED
@@ -63,13 +66,14 @@ In practice, we don't use these sizes. Remove them!
 
 -}
 
-import Accessibility.Styled.Widget as Widget
+import Accessibility.Styled.Aria as Aria
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Color, Style)
 import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -247,6 +251,7 @@ withBorder =
 type Theme
     = Primary
     | Secondary
+    | Tertiary
     | Danger
     | DangerSecondary
 
@@ -257,7 +262,9 @@ type alias AppliedTheme =
     , background : Color
     , backgroundHovered : Color
     , includeBorder : Bool
+    , borderColor : Color
     , borderBottom : Color
+    , borderHover : Color
     }
 
 
@@ -268,7 +275,9 @@ disabledTheme =
     , background = Colors.white
     , backgroundHovered = Colors.white
     , includeBorder = True
+    , borderColor = Colors.gray75
     , borderBottom = Colors.gray75
+    , borderHover = Colors.gray75
     }
 
 
@@ -281,7 +290,9 @@ applyTheme theme =
             , background = Colors.azure
             , backgroundHovered = Colors.azureDark
             , includeBorder = False
+            , borderColor = Colors.white
             , borderBottom = Colors.azureDark
+            , borderHover = Colors.azureDark
             }
 
         Secondary ->
@@ -290,7 +301,20 @@ applyTheme theme =
             , background = Colors.white
             , backgroundHovered = Colors.glacier
             , includeBorder = True
+            , borderColor = Colors.azure
             , borderBottom = Colors.azure
+            , borderHover = Colors.azure
+            }
+
+        Tertiary ->
+            { main_ = Colors.gray45
+            , mainHovered = Colors.azure
+            , background = Colors.gray96
+            , backgroundHovered = Colors.glacier
+            , includeBorder = True
+            , borderColor = Colors.gray92
+            , borderBottom = Colors.gray92
+            , borderHover = Colors.azure
             }
 
         Danger ->
@@ -299,7 +323,9 @@ applyTheme theme =
             , background = Colors.red
             , backgroundHovered = Colors.redDark
             , includeBorder = False
+            , borderColor = Colors.white
             , borderBottom = Colors.redDark
+            , borderHover = Colors.redDark
             }
 
         DangerSecondary ->
@@ -308,7 +334,9 @@ applyTheme theme =
             , background = Colors.white
             , backgroundHovered = Colors.redLight
             , includeBorder = True
+            , borderColor = Colors.red
             , borderBottom = Colors.red
+            , borderHover = Colors.red
             }
 
 
@@ -325,6 +353,13 @@ on a white/glacier icon with a blue border.
 secondary : Attribute msg
 secondary =
     set (\attributes -> { attributes | theme = Secondary })
+
+
+{-| Used to de-emphasize elements when not hovered.
+-}
+tertiary : Attribute msg
+tertiary =
+    set (\attributes -> { attributes | theme = Tertiary })
 
 
 {-| White/transparent icon on a red background.
@@ -420,6 +455,12 @@ quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
+{-| -}
+iconForMobile : Svg -> Attribute msg
+iconForMobile icon =
+    set (\config -> { config | iconForMobile = Just icon })
+
+
 
 -- INTERNALS
 
@@ -437,6 +478,7 @@ build label icon =
         { clickableAttributes = ClickableAttributes.init
         , label = label
         , icon = icon
+        , iconForMobile = Nothing
         , disabled = False
         , size = Small
         , width = Nothing
@@ -456,6 +498,7 @@ type alias ButtonOrLinkAttributes msg =
     { clickableAttributes : ClickableAttributes String msg
     , label : String
     , icon : Svg
+    , iconForMobile : Maybe Svg
     , disabled : Bool
     , size : Size
     , width : Maybe Float
@@ -479,16 +522,16 @@ renderButton ((ButtonOrLink config) as button_) =
     in
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
+         , Attributes.class FocusRing.customClass
          , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
-         , Widget.label config.label
+         , Aria.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ config.customAttributes
         )
-        [ renderIcon config theme.includeBorder
-        ]
+        (renderIcons config theme.includeBorder)
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -510,9 +553,10 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Html.a
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
+         , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Widget.disabled config.disabled
-         , Widget.label config.label
+         , Aria.disabled config.disabled
+         , Aria.label config.label
          ]
             ++ (if not config.disabled then
                     extraAttrs
@@ -522,12 +566,11 @@ renderLink ((ButtonOrLink config) as link_) =
                )
             ++ config.customAttributes
         )
-        [ renderIcon config theme.includeBorder
-        ]
+        (renderIcons config theme.includeBorder)
 
 
-renderIcon : ButtonOrLinkAttributes msg -> Bool -> Html msg
-renderIcon config includeBorder =
+renderIcons : ButtonOrLinkAttributes msg -> Bool -> List (Html msg)
+renderIcons config includeBorder =
     let
         size =
             getSize config.size
@@ -556,20 +599,43 @@ renderIcon config includeBorder =
 
             else
                 Maybe.withDefault size config.height
-    in
-    config.icon
-        |> Svg.withCss
+
+        iconStyles =
             [ Css.displayFlex
             , Css.maxWidth (Css.px iconWidth)
             , Css.maxHeight (Css.px iconHeight)
             , Css.height (Css.pct 100)
             , Css.margin Css.auto
             ]
-        |> Svg.toHtml
+
+        hideFor breakpoint =
+            Svg.withCss
+                [ Css.Media.withMedia [ breakpoint ]
+                    [ Css.display Css.none
+                    ]
+                ]
+    in
+    case config.iconForMobile of
+        Just iconForMobile_ ->
+            [ config.icon
+                |> Svg.withCss iconStyles
+                |> hideFor MediaQuery.mobile
+                |> Svg.toHtml
+            , iconForMobile_
+                |> Svg.withCss iconStyles
+                |> hideFor MediaQuery.notMobile
+                |> Svg.toHtml
+            ]
+
+        Nothing ->
+            [ config.icon
+                |> Svg.withCss iconStyles
+                |> Svg.toHtml
+            ]
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
-buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, borderBottom, includeBorder } =
+buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, borderColor, borderBottom, borderHover, includeBorder } =
     let
         cursor =
             if config.disabled then
@@ -600,7 +666,7 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
     , Css.batch <|
         if config.hasBorder then
             [ Css.borderRadius (Css.px 8)
-            , Css.borderColor main_
+            , Css.borderColor borderColor
             , Css.borderBottomColor borderBottom
             , Css.borderStyle Css.solid
             , if includeBorder then
@@ -615,7 +681,7 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             , Css.borderBottomWidth (Css.px bordersAndPadding.bottomBorder)
             , Css.backgroundColor background
             , Css.hover
-                [ Css.borderColor borderBottom
+                [ Css.borderColor borderHover
                 , Css.backgroundColor backgroundHovered
                 ]
             , Css.padding4
@@ -637,6 +703,15 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
     , Css.boxSizing Css.borderBox
     , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
     , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+
+    -- Focus
+    , Css.pseudoClass "focus-visible"
+        (if config.hasBorder then
+            [ Css.outline Css.none, FocusRing.boxShadows [] ]
+
+         else
+            FocusRing.styles
+        )
     ]
 
 

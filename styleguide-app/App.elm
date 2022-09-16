@@ -7,18 +7,21 @@ import Browser.Dom
 import Browser.Navigation exposing (Key)
 import Category exposing (Category)
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
 import Html.Styled.Attributes exposing (..)
 import Http
+import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
-import Nri.Ui.SideNav.V3 as SideNav
+import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
@@ -36,8 +39,11 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , isSideNavOpen : Bool
+    , openTooltip : Maybe TooltipId
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
+    , inputMethod : InputMethod
     }
 
 
@@ -51,8 +57,11 @@ init () url key =
     ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
+      , isSideNavOpen = False
+      , openTooltip = Nothing
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
+      , inputMethod = InputMethod.init
       }
     , Cmd.batch
         [ loadPackage
@@ -62,14 +71,21 @@ init () url key =
     )
 
 
+type TooltipId
+    = SideNavOpenCloseTooltip
+
+
 type Msg
     = UpdateModuleStates String Examples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | ChangeRoute Route
     | SkipToMainContent
+    | ToggleSideNav Bool
+    | ToggleTooltip TooltipId Bool
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
+    | NewInputMethod InputMethod
 
 
 update : Msg -> Model key -> ( Model key, Effect )
@@ -125,6 +141,15 @@ update action model =
             , FocusOn "maincontent"
             )
 
+        ToggleSideNav isOpen ->
+            ( { model | isSideNavOpen = isOpen }, None )
+
+        ToggleTooltip tooltipId True ->
+            ( { model | openTooltip = Just tooltipId }, None )
+
+        ToggleTooltip _ False ->
+            ( { model | openTooltip = Nothing }, None )
+
         LoadedPackages newPackagesResult ->
             let
                 -- Ellie gets really slow to compile if we include all the packages, unfortunately!
@@ -162,6 +187,9 @@ update action model =
         Focused _ ->
             ( model, None )
 
+        NewInputMethod inputMethod ->
+            ( { model | inputMethod = inputMethod }, None )
+
 
 type Effect
     = GoToRoute Route
@@ -196,9 +224,12 @@ perform navigationKey effect =
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
-    Dict.values model.moduleStates
-        |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
-        |> Sub.batch
+    Sub.batch
+        [ Dict.values model.moduleStates
+            |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
+            |> Sub.batch
+        , Sub.map NewInputMethod InputMethod.subscriptions
+        ]
 
 
 view : Model key -> Document Msg
@@ -208,6 +239,8 @@ view model =
             List.map Html.toUnstyled
                 [ view_
                 , Html.map never Sprite.attach
+                , Css.Global.global (InputMethod.styles model.inputMethod)
+                , Css.Global.global [ Css.Global.everything [ Css.boxSizing Css.borderBox ] ]
                 ]
     in
     case model.route of
@@ -280,33 +313,24 @@ viewCategory model category =
         )
 
 
-withSideNav :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
-    -> Html Msg
-    -> Html Msg
+withSideNav : Model key -> Html Msg -> Html Msg
 withSideNav model content =
     Html.div
         [ css
             [ displayFlex
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
             , alignItems flexStart
-            , maxWidth (Css.px 1400)
-            , margin auto
+            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
+            , Spacing.pageBottomWhitespace
             ]
         ]
         [ navigation model
         , Html.main_
-            [ css
-                [ flexGrow (int 1)
-                , margin2 (px 40) zero
-                , Css.minHeight (Css.vh 100)
-                ]
+            [ css [ flexGrow (int 1) ]
             , id "maincontent"
             , Key.tabbable False
             ]
-            [ Html.div [ css [ Css.marginBottom (Css.px 30) ] ]
-                [ Routes.viewBreadCrumbs model.route
-                ]
+            [ Routes.viewBreadCrumbs model.route
             , content
             ]
         ]
@@ -328,15 +352,15 @@ viewPreviews containerId navConfig examples =
             , css
                 [ Css.displayFlex
                 , Css.flexWrap Css.wrap
-                , Css.property "gap" "10px"
+                , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
+                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
+                , Spacing.pageTopWhitespace
                 ]
             ]
 
 
-navigation :
-    { model | route : Route, moduleStates : Dict String (Example Examples.State Examples.Msg) }
-    -> Html Msg
-navigation { moduleStates, route } =
+navigation : Model key -> Html Msg
+navigation { moduleStates, route, isSideNavOpen, openTooltip } =
     let
         examples =
             Dict.values moduleStates
@@ -368,8 +392,16 @@ navigation { moduleStates, route } =
         }
         [ SideNav.navNotMobileCss
             [ VendorPrefixed.value "position" "sticky"
-            , top (px 55)
+            , top (px 8)
             ]
+        , SideNav.collapsible
+            { isOpen = isSideNavOpen
+            , toggle = ToggleSideNav
+            , isTooltipOpen = openTooltip == Just SideNavOpenCloseTooltip
+            , toggleTooltip = ToggleTooltip SideNavOpenCloseTooltip
+            }
+        , SideNav.navLabel "categories"
+        , SideNav.navId "sidenav__categories"
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"

@@ -7,6 +7,7 @@ module Examples.Text exposing (example, State, Msg)
 -}
 
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -15,7 +16,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
 
 
@@ -51,15 +52,15 @@ example =
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
-            [ Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
-            , ControlView.view
+            [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let
@@ -78,20 +79,23 @@ example =
                         , toExampleCode "smallBody"
                         , toExampleCode "smallBodyGray"
                         , toExampleCode "caption"
+                        , toExampleCode "footnote"
                         , toExampleCode "ugMediumBody"
                         , toExampleCode "ugSmallBody"
                         ]
                 }
-            , Heading.h2 [] [ Html.text "Examples" ]
-            , Heading.h3 [] [ Html.text "Paragraph styles" ]
+            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
+            , Heading.h3 [ Heading.plaintext "Paragraph styles" ]
             , viewExamples
                 [ ( "mediumBody", Text.mediumBody )
                 , ( "smallBody", Text.smallBody )
                 , ( "smallBodyGray", Text.smallBodyGray )
                 , ( "caption", Text.caption )
+                , ( "footnote", Text.footnote )
                 ]
                 attributes
-            , Heading.h3 [] [ Html.text "Paragraph styles for user-authored content" ]
+            , Heading.h3 [ Heading.plaintext "Paragraph styles for user-authored content" ]
             , viewExamples
                 [ ( "ugMediumBody", Text.ugMediumBody )
                 , ( "ugSmallBody", Text.ugSmallBody )

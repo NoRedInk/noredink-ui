@@ -32,6 +32,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
@@ -106,9 +107,22 @@ spaHref url =
 
 
 {-| -}
+tabAttributes : List (Html.Attribute msg) -> Attribute id msg
+tabAttributes attrs =
+    Attribute (\tab -> { tab | tabAttributes = tab.tabAttributes ++ attrs })
+
+
+{-| -}
 build : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
 build config attributes =
-    Tab (TabsInternal.fromList config (List.map (\(Attribute f) -> f) attributes))
+    Tab
+        (TabsInternal.fromList config
+            (List.map (\(Attribute f) -> f)
+                (tabAttributes [ Attributes.class FocusRing.customClass ]
+                    :: attributes
+                )
+            )
+        )
 
 
 {-| Determines whether tabs are centered or floating to the left or right.
@@ -271,6 +285,10 @@ tabStyles customSpacing index isSelected =
                 , borderTopColor Colors.azure
                 , borderRightColor Colors.azure
                 , borderLeftColor Colors.azure
+                ]
+            , pseudoClass "focus-visible"
+                [ FocusRing.outerBoxShadow
+                , outline none
                 ]
             ]
 

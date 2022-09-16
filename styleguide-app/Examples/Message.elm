@@ -2,6 +2,7 @@ module Examples.Message exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -9,7 +10,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V3 as Message
 import ViewHelpers exposing (viewExamples)
 
@@ -91,12 +92,12 @@ controlCustomTheme =
         )
         |> Control.field "color"
             (CommonControls.choice "Colors"
-                [ ( "aquaDark", Colors.aquaDark )
+                [ ( "purpleDark", Colors.purpleDark )
                 ]
             )
         |> Control.field "backgroundColor"
             (CommonControls.choice "Colors"
-                [ ( "gray92", Colors.gray92 )
+                [ ( "gray96", Colors.gray96 )
                 ]
             )
 
@@ -157,8 +158,9 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state.control
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         let
@@ -194,8 +196,8 @@ example =
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
                     , Css.paddingTop (Css.px 20)
                     ]
+                , Heading.plaintext "Message.somethingWentWrong"
                 ]
-                [ text "Message.somethingWentWrong" ]
             , Message.somethingWentWrong exampleRailsError
             ]
     }

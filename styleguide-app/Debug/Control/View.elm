@@ -1,14 +1,24 @@
-module Debug.Control.View exposing (codeFromList, codeFromListWithHardcoded, codeFromListWithIndentLevel, view, withIndentLevel)
+module Debug.Control.View exposing (view)
+
+{-|
+
+@docs view
+
+-}
 
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
@@ -19,8 +29,9 @@ view :
     , version : Int
     , update : Control a -> msg
     , settings : Control a
-    , mainType : String
-    , extraImports : List String
+    , mainType : Maybe String
+    , extraCode : List String
+    , renderExample : String -> String
     , toExampleCode : a -> List { sectionName : String, code : String }
     }
     -> Html msg
@@ -31,6 +42,9 @@ view config =
 
         ellieLink =
             EllieLink.view config.ellieLinkConfig
+
+        exampleCodes =
+            config.toExampleCode value
     in
     div
         [ css
@@ -38,21 +52,32 @@ view config =
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
+            , Spacing.pageTopWhitespace
             ]
         ]
-        [ viewSection "Settings" <|
+        [ viewSection "Settings"
+            [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
             [ fromUnstyled (Control.view config.update config.settings) ]
-        , viewExampleCode ellieLink config (config.toExampleCode value)
+        , viewIf
+            (\_ -> viewExampleCode ellieLink config exampleCodes)
+            (not (List.isEmpty exampleCodes))
         ]
 
 
 viewExampleCode :
     (EllieLink.SectionExample -> Html msg)
-    -> { component | name : String, version : Int, mainType : String, extraImports : List String }
+    ->
+        { component
+            | name : String
+            , version : Int
+            , mainType : Maybe String
+            , extraCode : List String
+            , renderExample : String -> String
+        }
     -> List { sectionName : String, code : String }
     -> Html msg
 viewExampleCode ellieLink component values =
-    viewSection "Code Sample" <|
+    viewSection "Code Sample" [] <|
         Text.smallBodyGray
             [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
             ]
@@ -63,16 +88,16 @@ viewExampleCode ellieLink component values =
                         [ summary []
                             [ Heading.h3
                                 [ Heading.css [ Css.display Css.inline ]
-                                , Heading.style Heading.Small
+                                , Heading.plaintext example.sectionName
                                 ]
-                                [ text example.sectionName ]
                             ]
                         , ellieLink
                             { fullModuleName = Example.fullName component
                             , name = component.name
                             , sectionName = example.sectionName
                             , mainType = component.mainType
-                            , extraImports = component.extraImports
+                            , extraCode = component.extraCode
+                            , renderExample = component.renderExample
                             , code = example.code
                             }
                         , code
@@ -89,41 +114,10 @@ viewExampleCode ellieLink component values =
                 values
 
 
-viewSection : String -> List (Html msg) -> Html msg
-viewSection name children =
-    section [ css [ flex (int 1) ] ]
-        (Heading.h2 [ Heading.style Heading.Subhead ] [ text name ]
+viewSection : String -> List Css.Style -> List (Html msg) -> Html msg
+viewSection name styles children =
+    section
+        [ css (flex (int 1) :: styles) ]
+        (Heading.h2 [ Heading.plaintext name ]
             :: children
         )
-
-
-codeFromListWithHardcoded : List String -> List ( String, a ) -> String
-codeFromListWithHardcoded hardcodes elements =
-    List.map (\v -> ( v, () )) hardcodes
-        ++ List.map (Tuple.mapSecond (always ())) elements
-        |> codeFromList
-
-
-codeFromList : List ( String, a ) -> String
-codeFromList =
-    codeFromListWithIndentLevel 1
-
-
-codeFromListWithIndentLevel : Int -> List ( String, a ) -> String
-codeFromListWithIndentLevel indent list =
-    let
-        indents =
-            withIndentLevel indent
-    in
-    "\n"
-        ++ indents
-        ++ "[ "
-        ++ String.join ("\n" ++ indents ++ ", ") (List.map Tuple.first list)
-        ++ "\n"
-        ++ indents
-        ++ "] "
-
-
-withIndentLevel : Int -> String
-withIndentLevel indent =
-    String.repeat indent "    "

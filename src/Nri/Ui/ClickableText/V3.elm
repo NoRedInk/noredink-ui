@@ -96,6 +96,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -479,8 +480,8 @@ defaults =
     , size = Medium
     , label = ""
     , icon = Nothing
-    , customAttributes = []
-    , customStyles = []
+    , customAttributes = [ Attributes.class FocusRing.customClass ]
+    , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
     }
 
 

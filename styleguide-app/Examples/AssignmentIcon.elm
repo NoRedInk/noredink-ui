@@ -6,9 +6,8 @@ module Examples.AssignmentIcon exposing (example, State, Msg)
 
 -}
 
-import Category exposing (Category(..))
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
+import Examples.IconExamples as IconExamples exposing (Group)
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 
 
@@ -25,13 +24,12 @@ type alias Msg =
 {-| -}
 example : Example State Msg
 example =
-    { name = "AssignmentIcon"
+    { moduleName = "AssignmentIcon"
     , version = 2
-    , categories = [ Icons ]
-    , keyboardSupport = []
-    , state = IconExamples.init
-    , update = IconExamples.update
-    , subscriptions = \_ -> Sub.none
+    , label = "Planning Diagnostics"
+    , name = "planningDiagnosticCircled"
+    , icon = AssignmentIcon.planningDiagnosticCircled
+    , renderSvgCode = \name -> "AssignmentIcon." ++ name
     , preview =
         IconExamples.preview
             [ AssignmentIcon.planningDiagnosticCircled
@@ -47,52 +45,60 @@ example =
             , AssignmentIcon.standards
             , AssignmentIcon.writing
             ]
-    , view =
-        \ellieLinkConfig settings ->
-            let
-                viewExampleSection =
-                    IconExamples.view settings
-            in
-            [ IconExamples.viewSettings settings
-            , viewExampleSection "Diagnostic"
-                [ ( "diagnostic", AssignmentIcon.diagnostic )
-                , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled )
-                , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled )
-                ]
-            , viewExampleSection "Practice" <|
-                [ ( "practice", AssignmentIcon.practice )
-                , ( "practiceCircled", AssignmentIcon.practiceCircled )
-                ]
-            , viewExampleSection "Quiz" <|
-                [ ( "quiz", AssignmentIcon.quiz )
-                , ( "quizCircled", AssignmentIcon.quizCircled )
-                , ( "passageQuizCircled", AssignmentIcon.passageQuizCircled )
-                ]
-            , viewExampleSection "Writing" <|
-                [ ( "quickWrite", AssignmentIcon.quickWrite )
-                , ( "guidedDraft", AssignmentIcon.guidedDraft )
-                , ( "peerReview", AssignmentIcon.peerReview )
-                , ( "selfReview", AssignmentIcon.selfReview )
-                ]
-            , viewExampleSection "Writing II" <|
-                [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled )
-                , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled )
-                , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled )
-                , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled )
-                ]
-            , viewExampleSection "Stages" <|
-                [ ( "submitting", AssignmentIcon.submitting )
-                , ( "rating", AssignmentIcon.rating )
-                , ( "revising", AssignmentIcon.revising )
-                ]
-            , viewExampleSection "Start" <|
-                [ ( "startPrimary", AssignmentIcon.startPrimary )
-                , ( "startSecondary", AssignmentIcon.startSecondary )
-                ]
-            , viewExampleSection "Activities" <|
-                [ ( "assessment", AssignmentIcon.assessment )
-                , ( "standards", AssignmentIcon.standards )
-                , ( "writing", AssignmentIcon.writing )
-                ]
-            ]
+    , all = all
     }
+        |> IconExamples.example
+
+
+all : List Group
+all =
+    [ ( "Diagnostic"
+      , [ ( "diagnostic", AssignmentIcon.diagnostic, [] )
+        , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled, [] )
+        , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled, [] )
+        ]
+      )
+    , ( "Practice"
+      , [ ( "practice", AssignmentIcon.practice, [] )
+        , ( "practiceCircled", AssignmentIcon.practiceCircled, [] )
+        ]
+      )
+    , ( "Quiz"
+      , [ ( "quiz", AssignmentIcon.quiz, [] )
+        , ( "quizCircled", AssignmentIcon.quizCircled, [] )
+        , ( "passageQuizCircled", AssignmentIcon.passageQuizCircled, [] )
+        ]
+      )
+    , ( "Writing"
+      , [ ( "quickWrite", AssignmentIcon.quickWrite, [] )
+        , ( "guidedDraft", AssignmentIcon.guidedDraft, [] )
+        , ( "peerReview", AssignmentIcon.peerReview, [] )
+        , ( "selfReview", AssignmentIcon.selfReview, [] )
+        ]
+      )
+    , ( "Writing II"
+      , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
+        , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
+        , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
+        , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
+        ]
+      )
+    , ( "Stages"
+      , [ ( "submitting", AssignmentIcon.submitting, [] )
+        , ( "rating", AssignmentIcon.rating, [] )
+        , ( "revising", AssignmentIcon.revising, [] )
+        ]
+      )
+    , ( "Start"
+      , [ ( "startPrimary", AssignmentIcon.startPrimary, [] )
+        , ( "startSecondary", AssignmentIcon.startSecondary, [] )
+        ]
+      )
+    , ( "Activities"
+      , [ ( "assessment", AssignmentIcon.assessment, [] )
+        , ( "standards", AssignmentIcon.standards, [] )
+        , ( "writing", AssignmentIcon.writing, [] )
+        , ( "modules", AssignmentIcon.modules, [] )
+        ]
+      )
+    ]

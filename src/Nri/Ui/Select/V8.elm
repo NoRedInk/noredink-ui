@@ -1,10 +1,11 @@
 module Nri.Ui.Select.V8 exposing
     ( view, generateId
     , Choice, choices
+    , ChoicesGroup, groupedChoices
     , value
     , Attribute, defaultDisplayText
     , hiddenLabel, visibleLabel
-    , errorIf, errorMessage, guidance
+    , disabled, loading, errorIf, errorMessage, guidance
     , custom, nriDescription, id, testId
     , containerCss, noMargin
     )
@@ -24,6 +25,7 @@ module Nri.Ui.Select.V8 exposing
 ### Input types
 
 @docs Choice, choices
+@docs ChoicesGroup, groupedChoices
 
 
 ### Input content
@@ -35,7 +37,7 @@ module Nri.Ui.Select.V8 exposing
 
 @docs Attribute, defaultDisplayText
 @docs hiddenLabel, visibleLabel
-@docs errorIf, errorMessage, guidance
+@docs disabled, loading, errorIf, errorMessage, guidance
 @docs custom, nriDescription, id, testId
 @docs containerCss, noMargin
 
@@ -80,6 +82,20 @@ If you have an error message to display, use `errorMessage` instead.
 errorIf : Bool -> Attribute value
 errorIf =
     Attribute << InputErrorAndGuidanceInternal.setErrorIf
+
+
+{-| Disables the input
+-}
+disabled : Attribute value
+disabled =
+    Attribute (\config -> { config | disabled = True })
+
+
+{-| Use this while the form the input is a part of is being submitted.
+-}
+loading : Attribute value
+loading =
+    Attribute (\config -> { config | loading = True })
 
 
 {-| If `Just`, the field will be highlighted as having a validation error,
@@ -160,6 +176,26 @@ noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
+{-| Groupings of choices (will be added _after_ isolated choices.)
+-}
+type alias ChoicesGroup value =
+    { label : String
+    , choices : List (Choice value)
+    }
+
+
+{-| -}
+groupedChoices : (value -> String) -> List (ChoicesGroup value) -> Attribute value
+groupedChoices valueToString optgroups =
+    Attribute
+        (\config ->
+            { config
+                | valueToString = Just valueToString
+                , optgroups = optgroups
+            }
+        )
+
+
 {-| A single possible choice.
 -}
 type alias Choice value =
@@ -195,9 +231,12 @@ type alias Config value =
     { id : Maybe String
     , value : Maybe value
     , choices : List (Choice value)
+    , optgroups : List (ChoicesGroup value)
     , valueToString : Maybe (value -> String)
     , defaultDisplayText : Maybe String
     , error : ErrorState
+    , disabled : Bool
+    , loading : Bool
     , guidance : Guidance
     , hideLabel : Bool
     , noMarginTop : Bool
@@ -211,9 +250,12 @@ defaultConfig =
     { id = Nothing
     , value = Nothing
     , choices = []
+    , optgroups = []
     , valueToString = Nothing
     , defaultDisplayText = Nothing
     , error = InputErrorAndGuidanceInternal.noError
+    , disabled = False
+    , loading = False
     , guidance = InputErrorAndGuidanceInternal.noGuidance
     , hideLabel = False
     , noMarginTop = False
@@ -234,10 +276,22 @@ view label attributes =
 
         id_ =
             Maybe.withDefault (generateId label) config.id
+
+        ( opacity, disabled_ ) =
+            case ( config.disabled, config.loading ) of
+                ( False, False ) ->
+                    ( Css.num 1, False )
+
+                ( False, True ) ->
+                    ( Css.num 0.5, True )
+
+                ( True, _ ) ->
+                    ( Css.num 0.4, True )
     in
     Html.div
         [ css
             ([ Css.position Css.relative
+             , Css.opacity opacity
              , if config.noMarginTop then
                 Css.batch []
 
@@ -247,54 +301,60 @@ view label attributes =
                 ++ config.containerCss
             )
         ]
-        [ InputLabelInternal.view
-            { for = id_
-            , label = label
-            , theme = InputStyles.Standard
-            }
-            config
-        , viewSelect
+        [ viewSelect
             { choices = config.choices
+            , optgroups = config.optgroups
             , current = config.value
             , id = id_
             , custom = config.custom
             , valueToString = config.valueToString
             , defaultDisplayText = config.defaultDisplayText
             , isInError = isInError_
+            , disabled = disabled_
             }
+        , InputLabelInternal.view
+            { for = id_
+            , label = label
+            , theme = InputStyles.Standard
+            }
+            config
         , InputErrorAndGuidanceInternal.view id_ config
         ]
 
 
 viewSelect :
     { choices : List (Choice a)
+    , optgroups : List (ChoicesGroup a)
     , current : Maybe a
     , id : String
     , valueToString : Maybe (a -> String)
     , defaultDisplayText : Maybe String
     , isInError : Bool
+    , disabled : Bool
     , custom : List (Html.Attribute Never)
     }
     -> Html a
 viewSelect config =
     let
-        stringChoices =
+        toChoice valueToString choice =
+            { label = choice.label
+            , idAndValue = generateId (valueToString choice.value)
+            , value = choice.value
+            }
+
+        ( optionStringChoices, groupStringChoices ) =
             case config.valueToString of
                 Just valueToString ->
-                    List.map
-                        (\choice ->
-                            { label = choice.label
-                            , idAndValue = generateId (valueToString choice.value)
-                            , value = choice.value
-                            }
-                        )
-                        config.choices
+                    ( List.map (toChoice valueToString) config.choices
+                    , List.concatMap (.choices >> List.map (toChoice valueToString)) config.optgroups
+                    )
 
                 Nothing ->
-                    []
+                    ( [], [] )
 
         valueLookup =
-            stringChoices
+            optionStringChoices
+                ++ groupStringChoices
                 |> List.map (\x -> ( x.idAndValue, x.value ))
                 |> Dict.fromList
 
@@ -327,10 +387,23 @@ viewSelect config =
 
             else
                 config.current
+
+        viewGroupedChoices group =
+            Html.optgroup [ Attributes.attribute "label" group.label ]
+                (case config.valueToString of
+                    Just valueToString ->
+                        List.map
+                            (toChoice valueToString >> viewChoice currentVal)
+                            group.choices
+
+                    Nothing ->
+                        []
+                )
     in
-    stringChoices
-        |> List.map (viewChoice currentVal)
-        |> (++) defaultOption
+    (defaultOption
+        ++ List.map (viewChoice currentVal) optionStringChoices
+        ++ List.map viewGroupedChoices config.optgroups
+    )
         |> Nri.Ui.styled Html.select
             "nri-select-menu"
             [ -- border
@@ -344,7 +417,10 @@ viewSelect config =
                 )
             , Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
-            , Css.focus [ Css.borderColor Colors.azure ]
+            , Css.focus
+                [ Css.borderColor Colors.azure
+                , Css.borderRadius (Css.px 8) |> Css.important
+                ]
 
             -- Font and color
             , Css.color Colors.gray20
@@ -356,7 +432,13 @@ viewSelect config =
             , Css.whiteSpace Css.noWrap
 
             -- Interaction
-            , Css.cursor Css.pointer
+            , Css.cursor
+                (if config.disabled then
+                    Css.default
+
+                 else
+                    Css.pointer
+                )
 
             -- Size and spacing
             , Css.height (Css.px 45)
@@ -369,6 +451,7 @@ viewSelect config =
             ]
             (onSelectHandler
                 :: Attributes.id config.id
+                :: Attributes.disabled config.disabled
                 :: List.map (Attributes.map never) config.custom
             )
 

@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -27,7 +27,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
 @docs readOnlyText
 
 
@@ -265,6 +265,196 @@ search onInput_ =
                 , inputMode = Nothing
                 , autocomplete = Nothing
                 , inputCss = Css.paddingRight (Css.px 30) :: config.inputCss
+            }
+        )
+
+
+{-| An input that allows given-name entry
+-}
+givenName : (String -> msg) -> Attribute String msg
+givenName onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "given-name"
+            }
+        )
+
+
+{-| An input that allows family-name entry
+-}
+familyName : (String -> msg) -> Attribute String msg
+familyName onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "family-name"
+            }
+        )
+
+
+{-| An input that allows organization entry
+-}
+organization : (String -> msg) -> Attribute String msg
+organization onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "organization"
+            }
+        )
+
+
+{-| An input that allows organization-title entry
+-}
+organizationTitle : (String -> msg) -> Attribute String msg
+organizationTitle onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "organization-title"
+            }
+        )
+
+
+{-| An input that allows address-line1 entry
+-}
+addressLine1 : (String -> msg) -> Attribute String msg
+addressLine1 onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "address-line1"
+            }
+        )
+
+
+{-| An input that allows address-level2 entry
+-}
+addressLevel2 : (String -> msg) -> Attribute String msg
+addressLevel2 onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "address-level2"
+            }
+        )
+
+
+{-| An input that allows country-name entry
+-}
+countryName : (String -> msg) -> Attribute String msg
+countryName onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "country-name"
+            }
+        )
+
+
+{-| An input that allows postal-code entry
+-}
+postalCode : (String -> msg) -> Attribute String msg
+postalCode onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "postal-code"
+            }
+        )
+
+
+{-| An input that allows tel entry
+-}
+tel : (String -> msg) -> Attribute String msg
+tel onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "tel"
+                , inputMode = Just "tel"
+                , autocomplete = Just "tel"
+            }
+        )
+
+
+{-| An input that allows sex entry
+-}
+sex : (String -> msg) -> Attribute String msg
+sex onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "sex"
             }
         )
 
@@ -637,7 +827,7 @@ view label attributes =
                 ++ [ Attributes.id idValue
                    , InputErrorAndGuidanceInternal.describedBy idValue config
                    , Attributes.css
-                        [ InputStyles.input config.inputStyle isInError
+                        [ InputStyles.input config.inputStyle
                         , if config.inputStyle == InputStyles.Writing then
                             Css.Global.withClass "override-sass-styles"
                                 [ textAlign center
@@ -669,7 +859,11 @@ view label attributes =
                    , maybeAttr (attribute "inputmode") config.inputMode
                    , maybeAttr (attribute "autocomplete") config.autocomplete
                    , maybeAttr onEnter_ eventsAndValues.onEnter
-                   , class "override-sass-styles"
+                   , class "nri-ui-textinput override-sass-styles custom-focus-ring"
+                   , classList
+                        [ ( InputStyles.inputClass, True )
+                        , ( InputStyles.errorClass, isInError )
+                        ]
                    , Attributes.attribute "aria-invalid" <|
                         if isInError then
                             "true"

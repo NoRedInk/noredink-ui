@@ -8,6 +8,7 @@ module Examples.ClickableText exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -142,8 +143,9 @@ viewExamples ellieLinkConfig (State control) =
         , version = version
         , update = SetState
         , settings = control
-        , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , mainType = Just "RootHtml.Html msg"
+        , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let
@@ -153,7 +155,7 @@ viewExamples ellieLinkConfig (State control) =
                             ++ " \""
                             ++ label
                             ++ "\"\n\t"
-                            ++ ControlView.codeFromList attributes
+                            ++ Code.list (List.map Tuple.first attributes)
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"

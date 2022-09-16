@@ -26,18 +26,18 @@
   },
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "devDependencies": {
-    "@percy/cli": "^1.0.0-beta.73",
-    "@percy/puppeteer": "^2.0.0",
+    "@percy/cli": "^1.4.0",
+    "@percy/puppeteer": "^2.0.2",
     "browserify": "16.2.3",
-    "prettier": "^2.6.2",
-    "puppeteer": "^3.3.0",
-    "request": "^2.88.0"
+    "prettier": "^2.7.1",
+    "puppeteer": "^13.0.1",
+    "request": "^2.88.2",
+    "@axe-core/puppeteer": "^4.4.3",
+    "axe-core": "4.4.3",
+    "expect": "^27.5.1",
+    "mocha": "^9.2.2"
   },
   "dependencies": {
-    "@axe-core/puppeteer": "^4.4.2",
-    "axe-core": "3.5.6",
-    "expect": "^27.4.6",
-    "http-server": "^14.1.0",
-    "mocha": "^9.2.0"
+    "http-server": "^14.1.1"
   }
 }

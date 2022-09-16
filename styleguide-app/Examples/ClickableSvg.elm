@@ -8,6 +8,7 @@ module Examples.ClickableSvg exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -64,8 +65,9 @@ example =
                 , version = version
                 , update = SetControls
                 , settings = state.settings
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = Code.unstyledView
                 , toExampleCode =
                     \{ label, icon, attributes } ->
                         let
@@ -77,7 +79,7 @@ example =
                                     ++ label
                                     ++ "\"\n\t"
                                     ++ Tuple.first icon
-                                    ++ ControlView.codeFromList attributes
+                                    ++ Code.list (List.map Tuple.first attributes)
                         in
                         [ { sectionName = "Button"
                           , code = toCode "button"
@@ -187,6 +189,7 @@ viewExampleTable { label, icon, attributes } =
                 [ ( "primary", ClickableSvg.primary )
                 , ( "secondary", ClickableSvg.secondary )
                 , ( "danger", ClickableSvg.danger )
+                , ( "tertiary", ClickableSvg.tertiary )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
         , Html.tfoot []
@@ -295,4 +298,13 @@ initSettings =
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.notMobileCss
                     }
+                |> ControlExtra.optionalListItem "iconForMobile"
+                    (Control.map
+                        (\( name, icon ) ->
+                            ( "ClickableSvg.iconForMobile " ++ name
+                            , ClickableSvg.iconForMobile icon
+                            )
+                        )
+                        CommonControls.uiIcon
+                    )
             )

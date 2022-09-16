@@ -8,6 +8,7 @@ module Examples.Button exposing (Msg, State, example)
 
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css exposing (middle, verticalAlign)
 import Debug.Control as Control exposing (Control)
@@ -18,7 +19,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
@@ -47,6 +48,14 @@ example =
             [ Button.small
             , Button.fillContainerWidth
             , Button.secondary
+            , Button.css [ Css.marginTop (Css.px 8) ]
+            , Button.custom [ Key.tabbable False ]
+            , Button.icon UiIcon.link
+            ]
+        , Button.link "Tertiary"
+            [ Button.small
+            , Button.fillContainerWidth
+            , Button.tertiary
             , Button.css [ Css.marginTop (Css.px 8) ]
             , Button.custom [ Key.tabbable False ]
             , Button.icon UiIcon.link
@@ -200,8 +209,9 @@ viewButtonExamples ellieLinkConfig state =
         , version = version
         , update = SetDebugControlsState
         , settings = state.debugControlsState
-        , mainType = "RootHtml.Html msg"
-        , extraImports = []
+        , mainType = Just "RootHtml.Html msg"
+        , extraCode = []
+        , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let
@@ -209,10 +219,10 @@ viewButtonExamples ellieLinkConfig state =
                         moduleName
                             ++ "."
                             ++ fName
-                            ++ " \""
-                            ++ label
-                            ++ "\"\t"
-                            ++ ControlView.codeFromList attributes
+                            ++ " "
+                            ++ Code.string label
+                            ++ " "
+                            ++ Code.list (List.map Tuple.first attributes)
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"
@@ -248,6 +258,7 @@ buttons model =
         styles =
             [ ( Button.primary, "primary" )
             , ( Button.secondary, "secondary" )
+            , ( Button.tertiary, "tertiary" )
             , ( Button.danger, "danger" )
             , ( Button.premium, "premium" )
             ]
@@ -297,7 +308,7 @@ buttons model =
 toggleButtons : Set Int -> Html Msg
 toggleButtons pressedToggleButtons =
     div []
-        [ Heading.h3 [] [ text "Button toggle" ]
+        [ Heading.h3 [ Heading.plaintext "Button toggle" ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
                 { onDeselect = ToggleToggleButton 0

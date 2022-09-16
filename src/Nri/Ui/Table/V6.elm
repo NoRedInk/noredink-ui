@@ -1,16 +1,15 @@
-module Nri.Ui.Table.V5 exposing
-    ( Column, custom, string
+module Nri.Ui.Table.V6 exposing
+    ( Column, SortDirection(..), custom, string
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
     )
 
-{-| Upgrading from V4:
+{-| Upgrading from V5:
 
-  - The columns take an additional `cellStyles` property that allow
-    you to specify additional styles such as cell background color
-    or text alignment.
+  - The columns take an additional `sort` property that allows
+    you to specify ARIA sorting
 
-@docs Column, custom, string
+@docs Column, SortDirection, custom, string
 
 @docs view, viewWithoutHeader
 
@@ -31,7 +30,15 @@ import Nri.Ui.Fonts.V1 exposing (baseFont)
 in the table
 -}
 type Column data msg
-    = Column (Html msg) (data -> Html msg) Style (data -> List Style)
+    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection)
+
+
+{-| Which direction is a table column sorted? Only set these on columns that
+actually have an explicit sort!
+-}
+type SortDirection
+    = Ascending
+    | Descending
 
 
 {-| A column that renders some aspect of a value as text
@@ -41,10 +48,11 @@ string :
     , value : data -> String
     , width : LengthOrAuto compatible
     , cellStyles : data -> List Style
+    , sort : Maybe SortDirection
     }
     -> Column data msg
-string { header, value, width, cellStyles } =
-    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles
+string { header, value, width, cellStyles, sort } =
+    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort
 
 
 {-| A column that renders however you want it to
@@ -54,10 +62,11 @@ custom :
     , view : data -> Html msg
     , width : LengthOrAuto compatible
     , cellStyles : data -> List Style
+    , sort : Maybe SortDirection
     }
     -> Column data msg
 custom options =
-    Column options.header options.view (Css.width options.width) options.cellStyles
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort
 
 
 
@@ -86,7 +95,7 @@ viewRow columns data =
 
 
 viewColumn : data -> Column data msg -> Html msg
-viewColumn data (Column _ renderer width cellStyles) =
+viewColumn data (Column _ renderer width cellStyles _) =
     td
         [ css ([ width, verticalAlign middle ] ++ cellStyles data)
         ]
@@ -121,7 +130,7 @@ viewLoadingRow columns index =
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
-viewLoadingColumn rowIndex colIndex (Column _ _ width _) =
+viewLoadingColumn rowIndex colIndex (Column _ _ width _ _) =
     td
         [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
         ]
@@ -169,10 +178,20 @@ tableHeader columns =
 
 
 tableRowHeader : Column data msg -> Html msg
-tableRowHeader (Column header _ width _) =
+tableRowHeader (Column header _ width _ sort) =
     th
         [ Attributes.scope "col"
         , css (width :: headerStyles)
+        , Attributes.attribute "aria-sort" <|
+            case sort of
+                Nothing ->
+                    "none"
+
+                Just Ascending ->
+                    "ascending"
+
+                Just Descending ->
+                    "descending"
         ]
         [ header ]
 

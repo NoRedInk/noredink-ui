@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
 @docs Alignment
 
 
@@ -49,7 +49,6 @@ A togglable menu view and related buttons.
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Accessibility.Styled.Widget as Widget
 import Css exposing (..)
 import Css.Global exposing (descendants)
 import EventExtras exposing (onKeyDownPreventDefault)
@@ -58,12 +57,14 @@ import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
 {-| -}
@@ -105,6 +106,8 @@ type alias MenuConfig msg =
     , buttonId : String
     , menuId : String
     , zIndex : Int
+    , opensOnHover : Bool
+    , purpose : Purpose
     }
 
 
@@ -114,6 +117,11 @@ type alias ButtonConfig =
     , hasBorder : Bool
     , buttonWidth : Maybe Int
     }
+
+
+type Purpose
+    = NavMenu
+    | Disclosure { lastId : String }
 
 
 
@@ -194,6 +202,28 @@ menuZIndex value =
     Attribute <| \config -> { config | zIndex = value }
 
 
+{-| Whether the menu will be opened/closed by mouseEnter and mouseLeave interaction. Defaults to `False`.
+-}
+opensOnHover : Bool -> Attribute msg
+opensOnHover value =
+    Attribute <| \config -> { config | opensOnHover = value }
+
+
+{-| Makes the menu behave as a disclosure.
+
+For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+
+-}
+disclosure : { lastId : String } -> Attribute msg
+disclosure exitFocusManager =
+    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
+
+
 {-| Menu/pulldown configuration:
 
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
@@ -218,6 +248,8 @@ view attributes config =
             , buttonId = ""
             , menuId = ""
             , zIndex = 1
+            , opensOnHover = False
+            , purpose = NavMenu
             }
 
         menuConfig =
@@ -292,7 +324,11 @@ button attributes title =
     StandardButton
         (\menuConfig buttonAttributes ->
             Html.button
-                ([ classList [ ( "ToggleButton", True ), ( "WithBorder", buttonConfig.hasBorder ) ]
+                ([ classList
+                    [ ( "ToggleButton", True )
+                    , ( "WithBorder", buttonConfig.hasBorder )
+                    , ( FocusRing.customClass, True )
+                    ]
                  , css
                     [ Nri.Ui.Fonts.V1.baseFont
                     , fontSize (px 15)
@@ -303,6 +339,10 @@ button attributes title =
                     , height (pct 100)
                     , fontWeight (int 600)
                     , cursor pointer
+                    , pseudoClass "focus-visible"
+                        [ outline none
+                        , FocusRing.boxShadows []
+                        ]
                     , if menuConfig.isDisabled then
                         Css.batch
                             [ opacity (num 0.4)
@@ -356,7 +396,7 @@ viewArrow { isOpen } =
                 [ Css.Global.svg [ display block ]
                 ]
             , property "transform-origin" "center"
-            , property "transition" "transform 0.1s"
+            , property "transition" "transform 0.4s"
             , if isOpen then
                 transform (rotate (deg 180))
 
@@ -407,25 +447,46 @@ viewCustom config =
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: Key.onKeyDown
-                [ Key.escape
+                (Key.escape
                     (config.focusAndToggle
                         { isOpen = False
                         , focus = Just config.buttonId
                         }
                     )
-                , Key.tab
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Nothing
-                        }
-                    )
-                , Key.tabBack
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Nothing
-                        }
-                    )
-                ]
+                    :: (case config.purpose of
+                            NavMenu ->
+                                [ Key.tab
+                                    (config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                    )
+                                , Key.tabBack
+                                    (config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                    )
+                                ]
+
+                            Disclosure { lastId } ->
+                                [ WhenFocusLeaves.toDecoder
+                                    { firstId = config.buttonId
+                                    , lastId = lastId
+                                    , tabBackAction =
+                                        config.focusAndToggle
+                                            { isOpen = False
+                                            , focus = Nothing
+                                            }
+                                    , tabForwardAction =
+                                        config.focusAndToggle
+                                            { isOpen = False
+                                            , focus = Nothing
+                                            }
+                                    }
+                                ]
+                       )
+                )
             :: styleContainer
         )
         [ if config.isOpen then
@@ -443,17 +504,43 @@ viewCustom config =
 
           else
             Html.text ""
-        , div styleInnerContainer
+        , div
+            [ class "InnerContainer"
+            , css
+                [ position relative
+                , if config.isOpen then
+                    zIndex (int <| config.zIndex + 1)
+
+                  else
+                    Css.batch []
+                ]
+            , if not config.isDisabled && config.opensOnHover && config.isOpen then
+                Events.onMouseLeave
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+
+              else
+                AttributesExtra.none
+            ]
             [ let
                 buttonAttributes =
-                    [ Widget.disabled config.isDisabled
-                    , Widget.hasMenuPopUp
-                    , Widget.expanded config.isOpen
+                    [ Aria.disabled config.isDisabled
+                    , case config.purpose of
+                        NavMenu ->
+                            Aria.hasMenuPopUp
+
+                        Disclosure _ ->
+                            AttributesExtra.none
+                    , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      case ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
-                        ( Just firstFocusableElementId, Just lastFocusableElementId ) ->
-                            onKeyDownPreventDefault
+                      -- as long as it's not a Disclosed
+                      case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
+                        ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
+                            Key.onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
                                         { isOpen = True
@@ -470,7 +557,7 @@ viewCustom config =
 
                         _ ->
                             AttributesExtra.none
-                    , Aria.controls config.menuId
+                    , Aria.controls [ config.menuId ]
                     , Attributes.id config.buttonId
                     , if config.isDisabled then
                         AttributesExtra.none
@@ -487,6 +574,16 @@ viewCustom config =
                                         }
                                 }
                             )
+                    , if not config.isDisabled && config.opensOnHover then
+                        Events.onMouseEnter
+                            (config.focusAndToggle
+                                { isOpen = True
+                                , focus = Nothing
+                                }
+                            )
+
+                      else
+                        AttributesExtra.none
                     ]
               in
               case config.button of
@@ -495,25 +592,38 @@ viewCustom config =
 
                 CustomButton customButton ->
                     customButton buttonAttributes
-            , div
-                [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
-                , styleContent contentVisible config
-                , Role.menu
-                , Aria.labelledBy config.buttonId
-                , Attributes.id config.menuId
-                , Widget.hidden (not config.isOpen)
-                , css
-                    [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
-                        |> Maybe.withDefault (Css.batch [])
+            , div [ styleOuterContent contentVisible config ]
+                [ div
+                    [ AttributesExtra.nriDescription "menu-hover-bridge"
+                    , css
+                        [ Css.height (px 10)
+                        ]
                     ]
+                    []
+                , div
+                    [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
+                    , styleContent contentVisible config
+                    , case config.purpose of
+                        NavMenu ->
+                            Role.menu
+
+                        Disclosure _ ->
+                            AttributesExtra.none
+                    , Aria.labelledBy config.buttonId
+                    , Attributes.id config.menuId
+                    , css
+                        [ Maybe.map (\w -> Css.width (Css.px (toFloat w))) config.menuWidth
+                            |> Maybe.withDefault (Css.batch [])
+                        ]
+                    ]
+                    (viewEntries config
+                        { focusAndToggle = config.focusAndToggle
+                        , previousId = Maybe.withDefault "" maybeLastFocusableElementId
+                        , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
+                        }
+                        config.entries
+                    )
                 ]
-                (viewEntries config
-                    { focusAndToggle = config.focusAndToggle
-                    , previousId = Maybe.withDefault "" maybeLastFocusableElementId
-                    , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
-                    }
-                    config.entries
-                )
             ]
         ]
 
@@ -638,14 +748,6 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
 -- STYLES
 
 
-{-| -}
-styleInnerContainer : List (Html.Attribute msg)
-styleInnerContainer =
-    [ class "InnerContainer"
-    , css [ position relative ]
-    ]
-
-
 styleOverlay : MenuConfig msg -> List (Html.Attribute msg)
 styleOverlay config =
     [ class "Overlay"
@@ -750,30 +852,41 @@ styleIconContainer =
     ]
 
 
+styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
+styleOuterContent contentVisible config =
+    css
+        [ position absolute
+        , zIndex (int <| config.zIndex + 1)
+        , case config.alignment of
+            Left ->
+                left zero
+
+            Right ->
+                right zero
+        ]
+
+
 styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)
         , border3 (px 1) solid Colors.gray85
         , minWidth (px 202)
-        , position absolute
         , borderRadius (px 8)
-        , marginTop (px 10)
-        , zIndex (int <| config.zIndex + 1)
         , backgroundColor Colors.white
         , listStyle Css.none
         , Shadows.high
         , before
             [ property "content" "\"\""
             , position absolute
-            , top (px -12)
+            , top (px -2)
             , border3 (px 6) solid transparent
             , borderBottomColor Colors.gray85
             ]
         , after
             [ property "content" "\"\""
             , position absolute
-            , top (px -10)
+            , top (px 1)
             , zIndex (int 2)
             , border3 (px 5) solid transparent
             , borderBottomColor Colors.white
@@ -781,15 +894,13 @@ styleContent contentVisible config =
         , case config.alignment of
             Left ->
                 Css.batch
-                    [ left zero
-                    , before [ left (px 19) ]
+                    [ before [ left (px 19) ]
                     , after [ left (px 20) ]
                     ]
 
             Right ->
                 Css.batch
-                    [ right zero
-                    , before [ right (px 19) ]
+                    [ before [ right (px 19) ]
                     , after [ right (px 20) ]
                     ]
         , if contentVisible then
@@ -803,6 +914,7 @@ styleContent contentVisible config =
 styleContainer : List (Html.Attribute msg)
 styleContainer =
     [ class "Container"
+    , AttributesExtra.nriDescription "Nri-Ui-Menu-V3"
     , css
         [ position relative
         , display inlineBlock

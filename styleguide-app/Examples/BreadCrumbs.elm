@@ -8,6 +8,7 @@ module Examples.BreadCrumbs exposing (example, State, Msg)
 
 import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
@@ -18,9 +19,9 @@ import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.BreadCrumbs.V1 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V2 as Heading
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V5 as Table
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -67,12 +68,18 @@ example =
                 , version = version
                 , update = UpdateControl
                 , settings = state
-                , mainType = "RootHtml.Html msg"
-                , extraImports = []
-                , toExampleCode = \settings -> [ { sectionName = moduleName ++ ".view", code = viewExampleCode settings } ]
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = [ "import Html.Styled.Attributes exposing (href)" ]
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \settings ->
+                        [ { sectionName = moduleName ++ ".view"
+                          , code = viewExampleCode settings
+                          }
+                        ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [] [ text "Example" ]
+                [ Heading.h2 [ Heading.plaintext "Example" ]
                 , viewExample breadCrumbs
                 ]
             , Table.view
@@ -81,18 +88,21 @@ example =
                     , value = .name
                     , width = Css.pct 15
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "About"
                     , value = .about
                     , width = Css.px 200
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 , Table.string
                     { header = "Result"
                     , value = \{ result } -> result breadCrumbs
                     , width = Css.px 50
                     , cellStyles = always []
+                    , sort = Nothing
                     }
                 ]
                 [ { name = "headerId"
@@ -143,14 +153,14 @@ previewArrowRight =
 
 viewExampleCode : Settings -> String
 viewExampleCode settings =
-    String.join ("\n" ++ ControlView.withIndentLevel 1)
-        [ "BreadCrumbs.view"
-        , "{ aTagAttributes = \\route -> [ href route ]"
-        , ", isCurrentRoute = \\route -> route == \"/current/route\""
-        , ", label = \"breadcrumbs\""
-        , "}"
-        , Tuple.first settings.breadCrumbs
-        ]
+    "BreadCrumbs.view"
+        ++ Code.record
+            [ ( "aTagAttributes", "\\route -> [ href route ]" )
+            , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+            , ( "label", Code.string "breadcrumbs" )
+            ]
+        ++ Code.newlineWithIndent 1
+        ++ Tuple.first settings.breadCrumbs
 
 
 viewExample : BreadCrumbs String -> Html msg
@@ -227,31 +237,29 @@ composeBreadCrumbs index icon ( iconStyleStr, iconStyle ) ( textStr, text ) afte
             }
 
         breadCrumbStr =
-            String.join ("\n" ++ ControlView.withIndentLevel 2)
-                [ "{ icon = " ++ Maybe.withDefault "Nothing" (Maybe.map (\( iconStr, _ ) -> "Just " ++ iconStr) icon)
-                , ", iconStyle = " ++ iconStyleStr
-                , ", text = " ++ textStr
-                , ", id = " ++ "\"breadcrumb-id-" ++ String.fromInt index ++ "\""
-                , ", route = " ++ "\"/breadcrumb" ++ String.fromInt index ++ "\""
-                , "}\n"
+            Code.recordMultiline
+                [ ( "icon", Code.maybeString (Maybe.map Tuple.first icon) )
+                , ( "iconStyle", iconStyleStr )
+                , ( "text", textStr )
+                , ( "id", Code.string ("breadcrumb-id-" ++ String.fromInt index) )
+                , ( "route", Code.string ("/breadcrumb" ++ String.fromInt index) )
                 ]
+                2
 
         newBase =
             case maybeBase of
                 Just ( baseStr, base ) ->
                     ( "(BreadCrumbs.after "
                         ++ baseStr
-                        ++ ("\n" ++ ControlView.withIndentLevel 2)
                         ++ breadCrumbStr
-                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                        ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.after base breadCrumb
                     )
 
                 Nothing ->
                     ( "(BreadCrumbs.init "
-                        ++ ("\n" ++ ControlView.withIndentLevel 2)
                         ++ breadCrumbStr
-                        ++ (ControlView.withIndentLevel 1 ++ ")")
+                        ++ (Code.newlineWithIndent 1 ++ ")")
                     , BreadCrumbs.init breadCrumb
                     )
     in
