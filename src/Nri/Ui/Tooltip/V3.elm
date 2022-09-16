@@ -89,7 +89,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
@@ -1048,14 +1048,14 @@ viewTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , Css.Media.withMedia [ MediaQuery.notMobile ]
-                (positionTooltip config.direction config.alignment)
-            , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
-                (positionTooltip mobileDirection mobileAlignment)
-            , Css.Media.withMedia [ MediaQuery.notNarrowMobile, MediaQuery.quizEngineMobile ]
-                (positionTooltip quizEngineMobileDirection quizEngineMobileAlignment)
-            , Css.Media.withMedia [ MediaQuery.narrowMobile ]
-                (positionTooltip narrowMobileDirection narrowMobileAlignment)
+            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
+                positionTooltip config.direction config.alignment
+            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
+                positionTooltip mobileDirection mobileAlignment
+            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
+                positionTooltip quizEngineMobileDirection quizEngineMobileAlignment
+            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
+                positionTooltip narrowMobileDirection narrowMobileAlignment
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -1090,19 +1090,19 @@ viewTooltip tooltipId config =
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
                  , Css.border3 (Css.px 1) Css.solid Colors.navy
-                 , Css.Media.withMedia [ MediaQuery.notMobile ]
+                 , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                     [ positioning config.direction config.alignment
                     , applyTail config.direction
                     ]
-                 , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
+                 , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
                     [ positioning mobileDirection mobileAlignment
                     , applyTail mobileDirection
                     ]
-                 , Css.Media.withMedia [ MediaQuery.notNarrowMobile, MediaQuery.quizEngineMobile ]
+                 , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
                     [ positioning quizEngineMobileDirection quizEngineMobileAlignment
                     , applyTail quizEngineMobileDirection
                     ]
-                 , Css.Media.withMedia [ MediaQuery.narrowMobile ]
+                 , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
                     [ positioning narrowMobileDirection narrowMobileAlignment
                     , applyTail narrowMobileDirection
                     ]
@@ -1140,14 +1140,14 @@ viewTooltip tooltipId config =
                 ++ [ Html.div
                         [ Attributes.css
                             [ Css.position Css.absolute
-                            , Css.Media.withMedia [ MediaQuery.notMobile ]
-                                (hoverAreaForDirection config.direction)
-                            , Css.Media.withMedia [ MediaQuery.notQuizEngineMobile, MediaQuery.mobile ]
-                                (hoverAreaForDirection mobileDirection)
-                            , Css.Media.withMedia [ MediaQuery.notNarrowMobile, MediaQuery.quizEngineMobile ]
-                                (hoverAreaForDirection quizEngineMobileDirection)
-                            , Css.Media.withMedia [ MediaQuery.narrowMobile ]
-                                (hoverAreaForDirection narrowMobileDirection)
+                            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
+                                hoverAreaForDirection config.direction
+                            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
+                                hoverAreaForDirection mobileDirection
+                            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
+                                hoverAreaForDirection quizEngineMobileDirection
+                            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
+                                hoverAreaForDirection narrowMobileDirection
                             ]
                         ]
                         []
