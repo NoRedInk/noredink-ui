@@ -15,6 +15,7 @@ import Css.Animations
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled as Svg
@@ -95,10 +96,12 @@ spinningDots =
 
 circlingCss : List Css.Style
 circlingCss =
-    [ Css.property "animation-duration" "1s"
-    , Css.property "animation-iteration-count" "infinite"
-    , Css.animationName rotateKeyframes
-    , Css.property "animation-timing-function" "linear"
+    [ MediaQuery.anyMotion
+        [ Css.property "animation-duration" "1s"
+        , Css.property "animation-iteration-count" "infinite"
+        , Css.animationName rotateKeyframes
+        , Css.property "animation-timing-function" "linear"
+        ]
     ]
 
 
