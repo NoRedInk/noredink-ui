@@ -277,44 +277,44 @@ viewBreadCrumb :
     -> Html msg
 viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
     let
-        isLink =
-            not (config.isCurrentRoute crumb.route)
-
-        linkAttrs =
-            if isLink then
-                config.aTagAttributes crumb.route
+        content =
+            viewBreadCrumbContent iconConfig crumb
+    in
+    if iconConfig.isLast then
+        heading headingLevel crumb.id <|
+            if config.isCurrentRoute crumb.route then
+                content
 
             else
-                []
-
-        withIconIfPresent =
-            case crumb.icon of
-                Just icon_ ->
-                    [ viewIcon icon_ crumb.iconSize
-                    , viewHeadingWithIcon iconConfig crumb.text
-                    ]
-
-                Nothing ->
-                    [ text crumb.text ]
-    in
-    case ( iconConfig.isLast, isLink ) of
-        ( True, False ) ->
-            heading headingLevel crumb.id withIconIfPresent
-
-        ( True, True ) ->
-            heading headingLevel
-                crumb.id
                 [ Html.Styled.styled Html.Styled.a
                     []
-                    (css commonCss :: linkAttrs)
-                    withIconIfPresent
+                    (css commonCss :: config.aTagAttributes crumb.route)
+                    content
                 ]
 
-        ( False, _ ) ->
-            Html.Styled.styled Html.Styled.a
-                [ fontWeight normal ]
-                (css commonCss :: Attributes.id crumb.id :: linkAttrs)
-                withIconIfPresent
+    else
+        Html.Styled.styled Html.Styled.a
+            [ fontWeight normal ]
+            (css commonCss
+                :: Attributes.id crumb.id
+                :: config.aTagAttributes crumb.route
+            )
+            content
+
+
+viewBreadCrumbContent :
+    { isLast : Bool, isIconOnly : Bool }
+    -> BreadCrumbAttributes route
+    -> List (Html msg)
+viewBreadCrumbContent iconConfig crumb =
+    case crumb.icon of
+        Just icon_ ->
+            [ viewIcon icon_ crumb.iconSize
+            , viewHeadingWithIcon iconConfig crumb.text
+            ]
+
+        Nothing ->
+            [ text crumb.text ]
 
 
 heading :
@@ -331,7 +331,7 @@ heading heading_ id =
         ]
 
 
-viewHeadingWithIcon : { config | isLast : Bool, isIconOnly : Bool } -> String -> Html msg
+viewHeadingWithIcon : { isLast : Bool, isIconOnly : Bool } -> String -> Html msg
 viewHeadingWithIcon { isIconOnly, isLast } title =
     span
         (if isIconOnly then
