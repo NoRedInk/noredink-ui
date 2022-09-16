@@ -4,8 +4,12 @@ module Nri.Ui.Tooltip.V3 exposing
     , plaintext, html
     , withoutTail
     , onTop, onBottom, onLeft, onRight
+    , onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+    , onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
     , onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
     , alignStart, alignMiddle, alignEnd
+    , alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+    , alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
@@ -20,6 +24,10 @@ module Nri.Ui.Tooltip.V3 exposing
 {-| Patch changes:
 
   - defaults mobile-specific alignment and direction to the non-mobile version, rather than top and middle
+  - adds onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+  - adds onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
+  - adds alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+  - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
 
 Changes from V2:
 
@@ -44,10 +52,17 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs Attribute
 @docs plaintext, html
 @docs withoutTail
+
 @docs onTop, onBottom, onLeft, onRight
+@docs onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+@docs onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
 @docs onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
+
 @docs alignStart, alignMiddle, alignEnd
+@docs alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+@docs alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
 @docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
+
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onToggle
@@ -91,6 +106,10 @@ type alias Tooltip msg =
     , alignment : Alignment
     , mobileDirection : Maybe Direction
     , mobileAlignment : Maybe Alignment
+    , quizEngineMobileDirection : Maybe Direction
+    , quizEngineMobileAlignment : Maybe Alignment
+    , narrowMobileDirection : Maybe Direction
+    , narrowMobileAlignment : Maybe Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -114,6 +133,10 @@ buildAttributes =
             , alignment = Middle
             , mobileDirection = Nothing
             , mobileAlignment = Nothing
+            , quizEngineMobileDirection = Nothing
+            , quizEngineMobileAlignment = Nothing
+            , narrowMobileDirection = Nothing
+            , narrowMobileAlignment = Nothing
             , tail = WithTail
             , content = []
             , attributes = []
@@ -257,6 +280,96 @@ alignEndForMobile position =
     withMobileAligment (End position)
 
 
+withQuizEngineMobileAligment : Alignment -> Attribute msg
+withQuizEngineMobileAligment alignment =
+    Attribute (\config -> { config | quizEngineMobileAlignment = Just alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForQuizEngineMobile : Px -> Attribute msg
+alignStartForQuizEngineMobile position =
+    withQuizEngineMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForQuizEngineMobile : Attribute msg
+alignMiddleForQuizEngineMobile =
+    withQuizEngineMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForQuizEngineMobile : Px -> Attribute msg
+alignEndForQuizEngineMobile position =
+    withQuizEngineMobileAligment (End position)
+
+
+withNarrowMobileAligment : Alignment -> Attribute msg
+withNarrowMobileAligment alignment =
+    Attribute (\config -> { config | narrowMobileAlignment = Just alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForNarrowMobile : Px -> Attribute msg
+alignStartForNarrowMobile position =
+    withNarrowMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForNarrowMobile : Attribute msg
+alignMiddleForNarrowMobile =
+    withNarrowMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForNarrowMobile : Px -> Attribute msg
+alignEndForNarrowMobile position =
+    withQuizEngineMobileAligment (End position)
+
+
 {-| Where should this tooltip be positioned relative to the trigger?
 -}
 type Direction
@@ -376,6 +489,118 @@ onBottomForMobile =
 onLeftForMobile : Attribute msg
 onLeftForMobile =
     withPositionForMobile OnLeft
+
+
+withPositionForQuizEngineMobile : Direction -> Attribute msg
+withPositionForQuizEngineMobile direction =
+    Attribute (\config -> { config | quizEngineMobileDirection = Just direction })
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForQuizEngineMobile : Attribute msg
+onTopForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnTop
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForQuizEngineMobile : Attribute msg
+onRightForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnRight
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForQuizEngineMobile : Attribute msg
+onBottomForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnBottom
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForQuizEngineMobile : Attribute msg
+onLeftForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnLeft
+
+
+withPositionForNarrowMobile : Direction -> Attribute msg
+withPositionForNarrowMobile direction =
+    Attribute (\config -> { config | narrowMobileDirection = Just direction })
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForNarrowMobile : Attribute msg
+onTopForNarrowMobile =
+    withPositionForNarrowMobile OnTop
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForNarrowMobile : Attribute msg
+onRightForNarrowMobile =
+    withPositionForNarrowMobile OnRight
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForNarrowMobile : Attribute msg
+onBottomForNarrowMobile =
+    withPositionForNarrowMobile OnBottom
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForNarrowMobile : Attribute msg
+onLeftForNarrowMobile =
+    withPositionForQuizEngineMobile OnLeft
 
 
 {-| Set some custom styles on the tooltip.
