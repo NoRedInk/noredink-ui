@@ -184,7 +184,7 @@ example =
                 ]
                 [ { name = "headerId"
                   , about = "When changing routes in a SPA, moving focus to the heading of the new page orients screenreader users to the new location."
-                  , result = BreadCrumbs.headerId >> Maybe.withDefault ""
+                  , result = BreadCrumbs.headerId
                   }
                 , { name = "toPageTitle"
                   , about = "When changing routes in a SPA, the HTML title of the page should be updated to match the new route."

@@ -155,7 +155,7 @@ initSecondary (BreadCrumbs crumbs) required optional =
 
 
 {-| -}
-headerId : BreadCrumbs route -> Maybe String
+headerId : BreadCrumbs route -> String
 headerId (BreadCrumbs { primary, secondary }) =
     let
         extract (BreadCrumb crumb) =
@@ -165,6 +165,7 @@ headerId (BreadCrumbs { primary, secondary }) =
         ++ List.map extract primary
         |> List.head
         |> Maybe.map .id
+        |> Maybe.withDefault ""
 
 
 {-| Generate an HTML page title using the breadcrumbs, in the form "SubCategory | Category | NoRedInk" for breadCrumbs like:
