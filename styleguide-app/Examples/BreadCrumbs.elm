@@ -59,6 +59,9 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
+                settings =
+                    Control.currentValue state
+
                 createBreadCrumbs ( initializeStr, initialize ) =
                     List.foldl
                         (\crumb acc ->
@@ -99,11 +102,11 @@ example =
                 primaryBreadCrumbs : Maybe ( ( String, String ), BreadCrumbs String )
                 primaryBreadCrumbs =
                     createBreadCrumbs ( "BreadCrumbs.init", BreadCrumbs.init )
-                        (Control.currentValue state).breadCrumbs
+                        settings.breadCrumbs
 
                 breadCrumbs : Maybe ( ( String, String ), BreadCrumbs String )
                 breadCrumbs =
-                    case ( primaryBreadCrumbs, (Control.currentValue state).secondaryBreadCrumbs ) of
+                    case ( primaryBreadCrumbs, settings.secondaryBreadCrumbs ) of
                         ( Just ( ( definitions, lastVar ), primary ), Just secondary ) ->
                             createBreadCrumbs
                                 ( "BreadCrumbs.initSecondary " ++ lastVar
@@ -135,26 +138,26 @@ example =
                             ++ Code.newlines
                             ++ body
                 , toExampleCode =
-                    \settings ->
+                    \_ ->
                         [ { sectionName = moduleName ++ ".view"
                           , code =
-                                Maybe.map (Tuple.first >> viewExampleCode) breadCrumbs
+                                Maybe.map (Tuple.first >> viewExampleCode settings.currentRoute) breadCrumbs
                                     |> Maybe.withDefault ""
                           }
                         , { sectionName = moduleName ++ ".viewSecondary"
                           , code =
-                                Maybe.map (Tuple.first >> viewSecondaryExampleCode) breadCrumbs
+                                Maybe.map (Tuple.first >> viewSecondaryExampleCode settings.currentRoute) breadCrumbs
                                     |> Maybe.withDefault ""
                           }
                         ]
                 }
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
                 [ Heading.h2 [ Heading.plaintext "view Example" ]
-                , viewJust (Tuple.second >> viewExample) breadCrumbs
+                , viewJust (Tuple.second >> viewExample settings.currentRoute) breadCrumbs
                 ]
             , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
                 [ Heading.h2 [ Heading.plaintext "viewSecondary Example" ]
-                , viewJust (Tuple.second >> viewSecondaryExample) breadCrumbs
+                , viewJust (Tuple.second >> viewSecondaryExample settings.currentRoute) breadCrumbs
                 ]
             , Table.view
                 [ Table.string
@@ -221,15 +224,15 @@ previewArrowRight =
         |> Svg.toHtml
 
 
-viewExampleCode : ( String, String ) -> String
-viewExampleCode ( crumbDefinitions, currentCrumb ) =
+viewExampleCode : String -> ( String, String ) -> String
+viewExampleCode currentRoute ( crumbDefinitions, currentCrumb ) =
     crumbDefinitions
         ++ Code.newlines
         ++ (Code.var "view" 1 <|
                 "BreadCrumbs.view"
                     ++ Code.recordMultiline
                         [ ( "aTagAttributes", "\\route -> [ href route ]" )
-                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string currentRoute )
                         , ( "label", Code.string "breadcrumbs" )
                         ]
                         2
@@ -238,25 +241,25 @@ viewExampleCode ( crumbDefinitions, currentCrumb ) =
            )
 
 
-viewExample : BreadCrumbs String -> Html msg
-viewExample breadCrumbs =
+viewExample : String -> BreadCrumbs String -> Html msg
+viewExample currentRoute breadCrumbs =
     BreadCrumbs.view
         { aTagAttributes = \route -> [ href route ]
-        , isCurrentRoute = \route -> route == "/current/route"
+        , isCurrentRoute = \route -> route == currentRoute
         , label = "breadcrumbs example"
         }
         breadCrumbs
 
 
-viewSecondaryExampleCode : ( String, String ) -> String
-viewSecondaryExampleCode ( crumbDefinitions, currentCrumb ) =
+viewSecondaryExampleCode : String -> ( String, String ) -> String
+viewSecondaryExampleCode currentRoute ( crumbDefinitions, currentCrumb ) =
     crumbDefinitions
         ++ Code.newlines
         ++ (Code.var "viewSecondary" 1 <|
                 "BreadCrumbs.view"
                     ++ Code.recordMultiline
                         [ ( "aTagAttributes", "\\route -> [ href route ]" )
-                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string "/current/route" )
+                        , ( "isCurrentRoute", "\\route -> route == " ++ Code.string currentRoute )
                         , ( "label", Code.string "breadcrumbs" )
                         ]
                         2
@@ -265,11 +268,11 @@ viewSecondaryExampleCode ( crumbDefinitions, currentCrumb ) =
            )
 
 
-viewSecondaryExample : BreadCrumbs String -> Html msg
-viewSecondaryExample breadCrumbs =
+viewSecondaryExample : String -> BreadCrumbs String -> Html msg
+viewSecondaryExample currentRoute breadCrumbs =
     BreadCrumbs.viewSecondary
         { aTagAttributes = \route -> [ href route ]
-        , isCurrentRoute = \route -> route == "/current/route"
+        , isCurrentRoute = \route -> route == currentRoute
         , label = "secondary breadcrumbs example"
         }
         breadCrumbs
@@ -288,7 +291,8 @@ update msg state =
 
 
 type alias Settings =
-    { breadCrumbs : List BreadCrumbSetting
+    { currentRoute : String
+    , breadCrumbs : List BreadCrumbSetting
     , secondaryBreadCrumbs : Maybe (List BreadCrumbSetting)
     }
 
@@ -305,6 +309,7 @@ type alias BreadCrumbSetting =
 init : Control Settings
 init =
     Control.record Settings
+        |> Control.field "currentRoute" (Control.string "/breadcrumb-category-1")
         |> Control.field "primary" (controlBreadCrumbs_ "Category" 1)
         |> Control.field "secondary" (Control.maybe False (controlBreadCrumbs_ "SubCategory" 1))
 
