@@ -52,7 +52,6 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Css exposing (..)
-import Css.Global
 import Css.Media as Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)

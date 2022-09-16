@@ -2,7 +2,7 @@ module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, notMobileCss, css_
     , choice
     , icon, iconNotCheckedByDefault, uiIcon
-    , customIcon, customIconNotCheckedByDefault
+    , customIcon
     , color
     , content
     , httpError
@@ -15,7 +15,7 @@ module CommonControls exposing
 @docs css, mobileCss, quizEngineMobileCss, notMobileCss, css_
 @docs choice
 @docs icon, iconNotCheckedByDefault, uiIcon
-@docs customIcon, customIconNotCheckedByDefault
+@docs customIcon
 @docs color
 
 
