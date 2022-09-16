@@ -282,18 +282,7 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
 
         linkAttrs =
             if isLink then
-                css
-                    [ hover
-                        [ Css.Global.descendants
-                            [ Css.Global.class circleIconClass
-                                [ backgroundColor Colors.glacier
-                                , borderColor Colors.azureDark
-                                , color Colors.azure
-                                ]
-                            ]
-                        ]
-                    ]
-                    :: config.aTagAttributes crumb.route
+                config.aTagAttributes crumb.route
 
             else
                 []
@@ -375,11 +364,6 @@ commonCss =
     , textDecoration none
     , color Colors.navy
     ]
-
-
-circleIconClass : String
-circleIconClass =
-    "Nri-BreadCrumb-base-circled-icon"
 
 
 viewIcon : Svg.Svg -> Css.Px -> Html msg
