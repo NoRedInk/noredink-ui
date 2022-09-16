@@ -17,7 +17,11 @@ module Nri.Ui.Tooltip.V3 exposing
     , primaryLabel, auxiliaryDescription, disclosure
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - defaults mobile-specific alignment and direction to the non-mobile version, rather than top and middle
+
+Changes from V2:
 
   - Support `disclosure` pattern for rich-content tooltips
   - render tooltip content in the DOM when closed (now, they're hidden with display:none)
@@ -85,8 +89,8 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , alignment : Alignment
-    , mobileDirection : Direction
-    , mobileAlignment : Alignment
+    , mobileDirection : Maybe Direction
+    , mobileAlignment : Maybe Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -108,8 +112,8 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , alignment = Middle
-            , mobileDirection = OnTop
-            , mobileAlignment = Middle
+            , mobileDirection = Nothing
+            , mobileAlignment = Nothing
             , tail = WithTail
             , content = []
             , attributes = []
@@ -210,7 +214,7 @@ alignEnd position =
 
 withMobileAligment : Alignment -> Attribute msg
 withMobileAligment alignment =
-    Attribute (\config -> { config | mobileAlignment = alignment })
+    Attribute (\config -> { config | mobileAlignment = Just alignment })
 
 
 {-| Put the tail at the "start" of the tooltip when the viewport has a mobile width.
@@ -227,7 +231,7 @@ alignStartForMobile position =
     withMobileAligment (Start position)
 
 
-{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width. This is the default behavior.
+{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width.
 
      __________
     |___  ____|
@@ -320,7 +324,7 @@ onLeft =
 
 withPositionForMobile : Direction -> Attribute msg
 withPositionForMobile direction =
-    Attribute (\config -> { config | mobileDirection = direction })
+    Attribute (\config -> { config | mobileDirection = Just direction })
 
 
 {-| Set the position of the tooltip when the mobile breakpoint applies.
@@ -789,13 +793,20 @@ hoverBridge { isOpen, direction } =
 
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
+    let
+        mobileDirection =
+            Maybe.withDefault config.direction config.mobileDirection
+
+        mobileAlignment =
+            Maybe.withDefault config.alignment config.mobileAlignment
+    in
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
             , Css.Media.withMedia [ MediaQuery.notMobile ]
                 (positionTooltip config.direction config.alignment)
             , Css.Media.withMedia [ MediaQuery.mobile ]
-                (positionTooltip config.mobileDirection config.mobileAlignment)
+                (positionTooltip mobileDirection mobileAlignment)
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -840,10 +851,10 @@ viewTooltip tooltipId config =
                             Css.batch []
                     ]
                  , Css.Media.withMedia [ MediaQuery.mobile ]
-                    [ positioning config.mobileDirection config.mobileAlignment
+                    [ positioning mobileDirection mobileAlignment
                     , case config.tail of
                         WithTail ->
-                            tailForDirection config.mobileDirection
+                            tailForDirection mobileDirection
 
                         WithoutTail ->
                             Css.batch []
@@ -886,7 +897,7 @@ viewTooltip tooltipId config =
                                 [ Css.batch (hoverAreaForDirection config.direction)
                                 ]
                             , Css.Media.withMedia [ MediaQuery.mobile ]
-                                [ Css.batch (hoverAreaForDirection config.mobileDirection)
+                                [ Css.batch (hoverAreaForDirection mobileDirection)
                                 ]
                             ]
                         ]
