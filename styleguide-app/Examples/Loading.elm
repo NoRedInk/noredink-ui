@@ -115,12 +115,8 @@ example =
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
                 Html.div []
-                    [ Loading.spinningPencil
-                        |> Svg.withColor Colors.azure
-                        |> Svg.toHtml
-                    , Text.caption [ Text.plaintext "By default, the spinningPencil is white. Showing as blue for visibility." ]
-                    , Loading.spinningDots
-                        |> Svg.toHtml
+                    [ Svg.toHtml Loading.spinningPencil
+                    , Svg.toHtml Loading.spinningDots
                     ]
 
               else
