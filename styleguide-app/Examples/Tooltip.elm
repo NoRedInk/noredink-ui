@@ -343,7 +343,9 @@ initStaticExampleSettings =
         |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
         |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
         |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalListItem "alignment -- mobile" controlAlignmentForMobile
+        |> ControlExtra.optionalListItem "alignment -- viewport up to 1000px" controlAlignmentForMobile
+        |> ControlExtra.optionalListItem "alignment -- viewport up to 750px" controlAlignmentForQuizEngineMobile
+        |> ControlExtra.optionalListItem "alignment -- viewport up to 500px" controlAlignmentForNarrowMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
@@ -404,53 +406,62 @@ controlDirectionForNarrowMobile =
         ]
 
 
+controlAlignment_ :
+    ( String, Tooltip.Attribute Never )
+    -> List ( String, Css.Px -> Tooltip.Attribute Never )
+    -> Control ( String, Tooltip.Attribute Never )
+controlAlignment_ ( middleName, middleValue ) others =
+    Control.choice
+        (( middleName, Control.value ( "Tooltip." ++ middleName, middleValue ) )
+            :: List.map
+                (\( name, val ) ->
+                    ( name
+                    , Control.map
+                        (\float ->
+                            ( "Tooltip." ++ name ++ " (Css.px " ++ String.fromFloat float ++ ")"
+                            , val (Css.px float)
+                            )
+                        )
+                        (ControlExtra.float 0)
+                    )
+                )
+                others
+        )
+
+
 controlAlignment : Control ( String, Tooltip.Attribute Never )
 controlAlignment =
-    Control.choice
-        [ ( "alignMiddle (default)", Control.value ( "Tooltip.alignMiddle", Tooltip.alignMiddle ) )
-        , ( "alignStart"
-          , Control.map
-                (\float ->
-                    ( "Tooltip.alignStart (Css.px " ++ String.fromFloat float ++ ")"
-                    , Tooltip.alignStart (Css.px float)
-                    )
-                )
-                (ControlExtra.float 0)
-          )
-        , ( "alignEnd"
-          , Control.map
-                (\float ->
-                    ( "Tooltip.alignEnd (Css.px " ++ String.fromFloat float ++ ")"
-                    , Tooltip.alignEnd (Css.px float)
-                    )
-                )
-                (ControlExtra.float 0)
-          )
+    controlAlignment_
+        ( "alignMiddle", Tooltip.alignMiddle )
+        [ ( "alignStart", Tooltip.alignStart )
+        , ( "alignEnd", Tooltip.alignEnd )
         ]
 
 
 controlAlignmentForMobile : Control ( String, Tooltip.Attribute Never )
 controlAlignmentForMobile =
-    Control.choice
-        [ ( "alignMiddleForMobile (default)", Control.value ( "Tooltip.alignMiddleForMobile", Tooltip.alignMiddleForMobile ) )
-        , ( "alignStartForMobile"
-          , Control.map
-                (\float ->
-                    ( "Tooltip.alignStartForMobile (Css.px " ++ String.fromFloat float ++ ")"
-                    , Tooltip.alignStartForMobile (Css.px float)
-                    )
-                )
-                (ControlExtra.float 0)
-          )
-        , ( "alignEndForMobile"
-          , Control.map
-                (\float ->
-                    ( "Tooltip.alignEndForMobile (Css.px " ++ String.fromFloat float ++ ")"
-                    , Tooltip.alignEndForMobile (Css.px float)
-                    )
-                )
-                (ControlExtra.float 0)
-          )
+    controlAlignment_
+        ( "alignMiddleForMobile", Tooltip.alignMiddleForMobile )
+        [ ( "alignStartForMobile", Tooltip.alignStartForMobile )
+        , ( "alignEndForMobile", Tooltip.alignEndForMobile )
+        ]
+
+
+controlAlignmentForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
+controlAlignmentForQuizEngineMobile =
+    controlAlignment_
+        ( "alignMiddleForQuizEngineMobile", Tooltip.alignMiddleForQuizEngineMobile )
+        [ ( "alignStartForQuizEngineMobile", Tooltip.alignStartForQuizEngineMobile )
+        , ( "alignEndForQuizEngineMobile", Tooltip.alignEndForQuizEngineMobile )
+        ]
+
+
+controlAlignmentForNarrowMobile : Control ( String, Tooltip.Attribute Never )
+controlAlignmentForNarrowMobile =
+    controlAlignment_
+        ( "alignMiddleForNarrowMobile", Tooltip.alignMiddleForNarrowMobile )
+        [ ( "alignStartForNarrowMobile", Tooltip.alignStartForNarrowMobile )
+        , ( "alignEndForNarrowMobile", Tooltip.alignEndForNarrowMobile )
         ]
 
 
