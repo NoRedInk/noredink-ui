@@ -339,7 +339,9 @@ initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalListItem "direction" controlDirection
-        |> ControlExtra.optionalListItem "direction -- mobile" controlDirectionForMobile
+        |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile
+        |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
+        |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalListItem "alignment -- mobile" controlAlignmentForMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
@@ -379,6 +381,26 @@ controlDirectionForMobile =
         , ( "onBottomForMobile", Tooltip.onBottomForMobile )
         , ( "onLeftForMobile", Tooltip.onLeftForMobile )
         , ( "onRightForMobile", Tooltip.onRightForMobile )
+        ]
+
+
+controlDirectionForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
+controlDirectionForQuizEngineMobile =
+    CommonControls.choice "Tooltip"
+        [ ( "onTopForQuizEngineMobile", Tooltip.onTopForQuizEngineMobile )
+        , ( "onBottomForQuizEngineMobile", Tooltip.onBottomForQuizEngineMobile )
+        , ( "onLeftForQuizEngineMobile", Tooltip.onLeftForQuizEngineMobile )
+        , ( "onRightForQuizEngineMobile", Tooltip.onRightForQuizEngineMobile )
+        ]
+
+
+controlDirectionForNarrowMobile : Control ( String, Tooltip.Attribute Never )
+controlDirectionForNarrowMobile =
+    CommonControls.choice "Tooltip"
+        [ ( "onTopForNarrowMobile", Tooltip.onTopForNarrowMobile )
+        , ( "onBottomForNarrowMobile", Tooltip.onBottomForNarrowMobile )
+        , ( "onLeftForNarrowMobile", Tooltip.onLeftForNarrowMobile )
+        , ( "onRightForNarrowMobile", Tooltip.onRightForNarrowMobile )
         ]
 
 
