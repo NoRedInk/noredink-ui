@@ -200,7 +200,17 @@ view :
     -> BreadCrumbs route
     -> Html msg
 view config (BreadCrumbs { primary }) =
-    viewBreadCrumbs Html.Styled.h1 config (List.reverse primary)
+    let
+        fontCss =
+            [ fontSize (px 30)
+            , Media.withMedia [ MediaQuery.mobile ] [ fontSize (px 25) ]
+            , color Colors.navy
+            ]
+
+        linkCss =
+            []
+    in
+    viewBreadCrumbs fontCss linkCss Html.Styled.h1 config (List.reverse primary)
         |> navContainer config.label
 
 
@@ -217,7 +227,18 @@ viewSecondary :
     -> BreadCrumbs route
     -> Html msg
 viewSecondary config (BreadCrumbs { secondary }) =
-    viewBreadCrumbs Html.Styled.h2 config (List.reverse secondary)
+    let
+        fontCss =
+            [ fontSize (px 20)
+            , color Colors.navy
+            ]
+
+        linkCss =
+            [ color Colors.azure
+            , hover [ color Colors.azureDark ]
+            ]
+    in
+    viewBreadCrumbs fontCss linkCss Html.Styled.h2 config (List.reverse secondary)
         |> navContainer config.label
 
 
@@ -233,7 +254,9 @@ navContainer label =
 
 
 viewBreadCrumbs :
-    (List (Attribute msg) -> List (Html msg) -> Html msg)
+    List Style
+    -> List Style
+    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
     ->
         { config
             | aTagAttributes : route -> List (Attribute msg)
@@ -241,7 +264,7 @@ viewBreadCrumbs :
         }
     -> List (BreadCrumb route)
     -> List (Html msg)
-viewBreadCrumbs headingLevel config breadCrumbs =
+viewBreadCrumbs fontCss linkCss headingLevel config breadCrumbs =
     let
         breadCrumbCount : Int
         breadCrumbCount =
@@ -249,7 +272,9 @@ viewBreadCrumbs headingLevel config breadCrumbs =
     in
     List.indexedMap
         (\i ->
-            viewBreadCrumb headingLevel
+            viewBreadCrumb fontCss
+                linkCss
+                headingLevel
                 config
                 { isLast = (i + 1) == breadCrumbCount
                 , isIconOnly =
@@ -266,7 +291,9 @@ viewBreadCrumbs headingLevel config breadCrumbs =
 
 
 viewBreadCrumb :
-    (List (Attribute msg) -> List (Html msg) -> Html msg)
+    List Style
+    -> List Style
+    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
     ->
         { config
             | aTagAttributes : route -> List (Attribute msg)
@@ -275,27 +302,42 @@ viewBreadCrumb :
     -> { isLast : Bool, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
-viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
+viewBreadCrumb fontCss linkCss headingLevel config iconConfig (BreadCrumb crumb) =
     let
+        commonCss =
+            [ alignItems center
+            , displayFlex
+            , margin zero
+            , Css.batch fontCss
+            , Fonts.baseFont
+            , textDecoration none
+            ]
+
         content =
             viewBreadCrumbContent iconConfig crumb
     in
     if iconConfig.isLast then
-        heading headingLevel crumb.id <|
-            if config.isCurrentRoute crumb.route then
+        headingLevel
+            [ Aria.currentPage
+            , Attributes.id crumb.id
+            , Attributes.tabindex -1
+            , css (fontWeight bold :: commonCss)
+            ]
+            (if config.isCurrentRoute crumb.route then
                 content
 
-            else
+             else
                 [ Html.Styled.a
-                    (css commonCss
+                    (css (commonCss ++ linkCss)
                         :: config.aTagAttributes crumb.route
                     )
                     content
                 ]
+            )
 
     else
         Html.Styled.a
-            (css (fontWeight normal :: commonCss)
+            (css (commonCss ++ linkCss)
                 :: Attributes.id crumb.id
                 :: config.aTagAttributes crumb.route
             )
@@ -315,20 +357,6 @@ viewBreadCrumbContent iconConfig crumb =
 
         Nothing ->
             [ text crumb.text ]
-
-
-heading :
-    (List (Attribute msg) -> List (Html msg) -> Html msg)
-    -> String
-    -> List (Html msg)
-    -> Html msg
-heading heading_ id =
-    heading_
-        [ Aria.currentPage
-        , Attributes.id id
-        , Attributes.tabindex -1
-        , css (fontWeight bold :: commonCss)
-        ]
 
 
 viewHeadingWithIcon : { isLast : Bool, isIconOnly : Bool } -> String -> Html msg
@@ -351,19 +379,6 @@ viewHeadingWithIcon { isIconOnly, isLast } title =
         )
         [ text title
         ]
-
-
-commonCss : List Style
-commonCss =
-    [ alignItems center
-    , displayFlex
-    , margin zero
-    , fontSize (px 30)
-    , Media.withMedia [ MediaQuery.mobile ] [ fontSize (px 25) ]
-    , Fonts.baseFont
-    , textDecoration none
-    , color Colors.navy
-    ]
 
 
 viewIcon : Svg.Svg -> Css.Px -> Html msg
