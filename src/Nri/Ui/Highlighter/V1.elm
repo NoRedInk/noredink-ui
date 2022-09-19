@@ -662,16 +662,6 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                 , on "mousedown" (Pointer <| Down highlightable.groupIndex)
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-static" ""
-                , Key.onKeyDownPreventDefault
-                    [ Key.right (Keyboard <| MoveRight highlightable.groupIndex)
-                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
-                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
-                    ]
-                , Key.onKeyUpPreventDefault
-                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    ]
                 ]
                 (Just marker)
                 highlightable
