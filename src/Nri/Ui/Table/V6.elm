@@ -151,7 +151,7 @@ stylesLoadingColumn rowIndex colIndex width =
 tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithoutHeader styles columns toRow data =
     table styles
-        [ thead [] [ tr Style.invisible (List.map tableRowHeader columns) ]
+        [ thead [] [ tr Style.invisible (List.map tableColHeader columns) ]
         , tableBody toRow data
         ]
 
@@ -173,12 +173,12 @@ tableHeader : List (Column data msg) -> Html msg
 tableHeader columns =
     thead []
         [ tr [ css headersStyles ]
-            (List.map tableRowHeader columns)
+            (List.map tableColHeader columns)
         ]
 
 
-tableRowHeader : Column data msg -> Html msg
-tableRowHeader (Column header _ width _ sort) =
+tableColHeader : Column data msg -> Html msg
+tableColHeader (Column header _ width _ sort) =
     th
         [ Attributes.scope "col"
         , css (width :: headerStyles)
