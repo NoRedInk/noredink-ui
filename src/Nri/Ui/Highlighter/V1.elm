@@ -1,7 +1,7 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
     , init, update, view, static
-    , Intent, emptyIntent, hasChanged, HasChanged(..)
+    , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
     )
@@ -202,6 +202,7 @@ type PointerMsg
       -- will not have this info!
     | Move (Maybe String) Int
     | Up (Maybe String)
+    | Ignored
 
 
 type KeyboardMsg
@@ -377,6 +378,9 @@ keyboardEventToActions msg model =
 pointerEventToActions : PointerMsg -> Model marker -> List (Action marker)
 pointerEventToActions msg model =
     case msg of
+        Ignored ->
+            []
+
         Move _ eventIndex ->
             case model.mouseDownIndex of
                 Just downIndex ->
