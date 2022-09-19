@@ -302,28 +302,48 @@ update msg model =
                 ( model, Cmd.none )
 
 
-nextInteractive : Int -> List (Highlightable marker) -> Int
-nextInteractive index highlightables =
-    if Maybe.map .type_ (List.Extra.getAt index highlightables) == Just Highlightable.Interactive then
-        index
+nextInteractiveIndex : Int -> List (Highlightable marker) -> Int
+nextInteractiveIndex index highlightables =
+    let
+        isInteractive highlightable =
+            .type_ highlightable == Highlightable.Interactive
 
-    else if index < List.length highlightables - 1 then
-        nextInteractive (index + 1) highlightables
+        interactiveHighlightables =
+            List.filter isInteractive highlightables
+    in
+    List.foldl
+        (\x ( nextIndex, hasIndexMatched ) ->
+            if hasIndexMatched then
+                ( x.groupIndex, False )
 
-    else
-        index
+            else
+                ( nextIndex, x.groupIndex == index )
+        )
+        ( index + 1, False )
+        interactiveHighlightables
+        |> Tuple.first
 
 
-previousInteractive : Int -> List (Highlightable marker) -> Int
-previousInteractive index highlightables =
-    if Maybe.map .type_ (List.Extra.getAt index highlightables) == Just Highlightable.Interactive then
-        index
+previousInteractiveIndex : Int -> List (Highlightable marker) -> Int
+previousInteractiveIndex index highlightables =
+    let
+        isInteractive highlightable =
+            .type_ highlightable == Highlightable.Interactive
 
-    else if index > 0 then
-        previousInteractive (index - 1) highlightables
+        interactiveHighlightables =
+            List.filter isInteractive highlightables
+    in
+    List.foldr
+        (\x ( nextIndex, hasIndexMatched ) ->
+            if hasIndexMatched then
+                ( x.groupIndex, False )
 
-    else
-        index
+            else
+                ( nextIndex, x.groupIndex == index )
+        )
+        ( index - 1, False )
+        interactiveHighlightables
+        |> Tuple.first
 
 
 keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
@@ -331,29 +351,29 @@ keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
             if index > 0 then
-                [ Focus (previousInteractive (index - 1) model.highlightables) ]
+                [ Focus (previousInteractiveIndex index model.highlightables) ]
 
             else
                 []
 
         MoveRight index ->
             if index < (List.length model.highlightables - 1) then
-                [ Focus (nextInteractive (index + 1) model.highlightables) ]
+                [ Focus (nextInteractiveIndex index model.highlightables) ]
 
             else
                 []
 
         SelectionExpandLeft index ->
             if index > 0 then
-                Focus (previousInteractive (index - 1) model.highlightables)
+                Focus (previousInteractiveIndex index model.highlightables)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
-                                [ ExpandSelection (previousInteractive (index - 1) model.highlightables)
-                                , Hint startIndex (previousInteractive (index - 1) model.highlightables)
+                                [ ExpandSelection (previousInteractiveIndex index model.highlightables)
+                                , Hint startIndex (previousInteractiveIndex index model.highlightables)
                                 ]
 
                             Nothing ->
-                                [ StartSelection index, ExpandSelection (previousInteractive (index - 1) model.highlightables), Hint index (previousInteractive (index - 1) model.highlightables) ]
+                                [ StartSelection index, ExpandSelection (previousInteractiveIndex index model.highlightables), Hint index (previousInteractiveIndex index model.highlightables) ]
                        )
 
             else
@@ -361,15 +381,15 @@ keyboardEventToActions msg model =
 
         SelectionExpandRight index ->
             if index < (List.length model.highlightables - 1) then
-                Focus (nextInteractive (index + 1) model.highlightables)
+                Focus (nextInteractiveIndex index model.highlightables)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
-                                [ ExpandSelection (nextInteractive (index + 1) model.highlightables)
-                                , Hint startIndex (nextInteractive (index + 1) model.highlightables)
+                                [ ExpandSelection (nextInteractiveIndex index model.highlightables)
+                                , Hint startIndex (nextInteractiveIndex index model.highlightables)
                                 ]
 
                             Nothing ->
-                                [ StartSelection index, ExpandSelection (nextInteractive (index + 1) model.highlightables), Hint index (nextInteractive (index + 1) model.highlightables) ]
+                                [ StartSelection index, ExpandSelection (nextInteractiveIndex index model.highlightables), Hint index (nextInteractiveIndex (index + 1) model.highlightables) ]
                        )
 
             else
