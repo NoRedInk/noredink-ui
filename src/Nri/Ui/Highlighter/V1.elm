@@ -134,7 +134,7 @@ init config =
     , hasChanged = NotChanged
     , selectionStartIndex = Nothing
     , selectionEndIndex = Nothing
-    , focusIndex = 0
+    , focusIndex = 2
     }
 
 
@@ -302,34 +302,58 @@ update msg model =
                 ( model, Cmd.none )
 
 
+nextInteractive : Int -> List (Highlightable marker) -> Int
+nextInteractive index highlightables =
+    if Maybe.map .type_ (List.Extra.getAt index highlightables) == Just Highlightable.Interactive then
+        index
+
+    else if index < List.length highlightables - 1 then
+        nextInteractive (index + 1) highlightables
+
+    else
+        index
+
+
+previousInteractive : Int -> List (Highlightable marker) -> Int
+previousInteractive index highlightables =
+    if Maybe.map .type_ (List.Extra.getAt index highlightables) == Just Highlightable.Interactive then
+        index
+
+    else if index > 0 then
+        previousInteractive (index - 1) highlightables
+
+    else
+        index
+
+
 keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
 keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
             if index > 0 then
-                [ Focus (index - 1) ]
+                [ Focus (previousInteractive (index - 1) model.highlightables) ]
 
             else
                 []
 
         MoveRight index ->
             if index < (List.length model.highlightables - 1) then
-                [ Focus (index + 1) ]
+                [ Focus (nextInteractive (index + 1) model.highlightables) ]
 
             else
                 []
 
         SelectionExpandLeft index ->
             if index > 0 then
-                Focus (index - 1)
+                Focus (previousInteractive (index - 1) model.highlightables)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
-                                [ ExpandSelection (index - 1)
-                                , Hint startIndex (index - 1)
+                                [ ExpandSelection (previousInteractive (index - 1) model.highlightables)
+                                , Hint startIndex (previousInteractive (index - 1) model.highlightables)
                                 ]
 
                             Nothing ->
-                                [ StartSelection index, ExpandSelection (index - 1), Hint index (index - 1) ]
+                                [ StartSelection index, ExpandSelection (previousInteractive (index - 1) model.highlightables), Hint index (previousInteractive (index - 1) model.highlightables) ]
                        )
 
             else
@@ -337,15 +361,15 @@ keyboardEventToActions msg model =
 
         SelectionExpandRight index ->
             if index < (List.length model.highlightables - 1) then
-                Focus (index + 1)
+                Focus (nextInteractive (index + 1) model.highlightables)
                     :: (case model.selectionStartIndex of
                             Just startIndex ->
-                                [ ExpandSelection (index + 1)
-                                , Hint startIndex (index + 1)
+                                [ ExpandSelection (nextInteractive (index + 1) model.highlightables)
+                                , Hint startIndex (nextInteractive (index + 1) model.highlightables)
                                 ]
 
                             Nothing ->
-                                [ StartSelection index, ExpandSelection (index + 1), Hint index (index + 1) ]
+                                [ StartSelection index, ExpandSelection (nextInteractive (index + 1) model.highlightables), Hint index (nextInteractive (index + 1) model.highlightables) ]
                        )
 
             else
@@ -667,7 +691,11 @@ viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners m
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
+               , if isInteractive then
+                    Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
+
+                 else
+                    AttributesExtra.none
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
                , Key.tabbable (highlightable.groupIndex == focusIndex)
