@@ -101,7 +101,7 @@ type alias Model marker =
     , hasChanged : HasChanged
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
-    , focusIndex : Int
+    , focusIndex : Maybe Int
     }
 
 
@@ -134,7 +134,8 @@ init config =
     , hasChanged = NotChanged
     , selectionStartIndex = Nothing
     , selectionEndIndex = Nothing
-    , focusIndex = 2
+    , focusIndex =
+        List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
     }
 
 
@@ -302,7 +303,7 @@ update msg model =
                 ( model, Cmd.none )
 
 
-nextInteractiveIndex : Int -> List (Highlightable marker) -> Int
+nextInteractiveIndex : Int -> List (Highlightable marker) -> Maybe Int
 nextInteractiveIndex index highlightables =
     let
         isInteractive highlightable =
@@ -312,19 +313,19 @@ nextInteractiveIndex index highlightables =
             List.filter isInteractive highlightables
     in
     List.foldl
-        (\x ( nextIndex, hasIndexMatched ) ->
+        (\x ( maybeNextIndex, hasIndexMatched ) ->
             if hasIndexMatched then
-                ( x.groupIndex, False )
+                ( Just x.groupIndex, False )
 
             else
-                ( nextIndex, x.groupIndex == index )
+                ( maybeNextIndex, x.groupIndex == index )
         )
-        ( index + 1, False )
+        ( Nothing, False )
         interactiveHighlightables
         |> Tuple.first
 
 
-previousInteractiveIndex : Int -> List (Highlightable marker) -> Int
+previousInteractiveIndex : Int -> List (Highlightable marker) -> Maybe Int
 previousInteractiveIndex index highlightables =
     let
         isInteractive highlightable =
@@ -334,14 +335,14 @@ previousInteractiveIndex index highlightables =
             List.filter isInteractive highlightables
     in
     List.foldr
-        (\x ( nextIndex, hasIndexMatched ) ->
+        (\x ( maybeNextIndex, hasIndexMatched ) ->
             if hasIndexMatched then
-                ( x.groupIndex, False )
+                ( Just x.groupIndex, False )
 
             else
-                ( nextIndex, x.groupIndex == index )
+                ( maybeNextIndex, x.groupIndex == index )
         )
-        ( index - 1, False )
+        ( Nothing, False )
         interactiveHighlightables
         |> Tuple.first
 
@@ -350,50 +351,50 @@ keyboardEventToActions : KeyboardMsg -> Model marker -> List (Action marker)
 keyboardEventToActions msg model =
     case msg of
         MoveLeft index ->
-            if index > 0 then
-                [ Focus (previousInteractiveIndex index model.highlightables) ]
+            case previousInteractiveIndex index model.highlightables of
+                Nothing ->
+                    []
 
-            else
-                []
+                Just i ->
+                    [ Focus i ]
 
         MoveRight index ->
-            if index < (List.length model.highlightables - 1) then
-                [ Focus (nextInteractiveIndex index model.highlightables) ]
+            case nextInteractiveIndex index model.highlightables of
+                Nothing ->
+                    []
 
-            else
-                []
+                Just i ->
+                    [ Focus i ]
 
         SelectionExpandLeft index ->
-            if index > 0 then
-                Focus (previousInteractiveIndex index model.highlightables)
-                    :: (case model.selectionStartIndex of
-                            Just startIndex ->
-                                [ ExpandSelection (previousInteractiveIndex index model.highlightables)
-                                , Hint startIndex (previousInteractiveIndex index model.highlightables)
-                                ]
+            case previousInteractiveIndex index model.highlightables of
+                Nothing ->
+                    []
 
-                            Nothing ->
-                                [ StartSelection index, ExpandSelection (previousInteractiveIndex index model.highlightables), Hint index (previousInteractiveIndex index model.highlightables) ]
-                       )
+                Just i ->
+                    Focus i
+                        :: (case model.selectionStartIndex of
+                                Just startIndex ->
+                                    [ ExpandSelection i, Hint startIndex i ]
 
-            else
-                []
+                                Nothing ->
+                                    [ StartSelection index, ExpandSelection i, Hint index i ]
+                           )
 
         SelectionExpandRight index ->
-            if index < (List.length model.highlightables - 1) then
-                Focus (nextInteractiveIndex index model.highlightables)
-                    :: (case model.selectionStartIndex of
-                            Just startIndex ->
-                                [ ExpandSelection (nextInteractiveIndex index model.highlightables)
-                                , Hint startIndex (nextInteractiveIndex index model.highlightables)
-                                ]
+            case previousInteractiveIndex index model.highlightables of
+                Nothing ->
+                    []
 
-                            Nothing ->
-                                [ StartSelection index, ExpandSelection (nextInteractiveIndex index model.highlightables), Hint index (nextInteractiveIndex (index + 1) model.highlightables) ]
-                       )
+                Just i ->
+                    Focus i
+                        :: (case model.selectionStartIndex of
+                                Just startIndex ->
+                                    [ ExpandSelection i, Hint startIndex i ]
 
-            else
-                []
+                                Nothing ->
+                                    [ StartSelection index, ExpandSelection i, Hint index i ]
+                           )
 
         SelectionApplyTool index ->
             case model.marker of
@@ -495,7 +496,7 @@ performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model
 performAction action ( model, cmds ) =
     case action of
         Focus index ->
-            ( { model | focusIndex = index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
+            ( { model | focusIndex = Just index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
 
         Blur index ->
             ( { model | highlightables = Internal.blurAt index model.highlightables }, cmds )
@@ -560,7 +561,7 @@ removeHighlights model =
 
 
 {-| -}
-view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Int, marker : Tool.Tool marker } -> Html (Msg marker)
+view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
     view_ (viewHighlightable config.id config.marker config.focusIndex) config
 
@@ -624,7 +625,7 @@ groupContainer viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
-viewHighlightable : String -> Tool.Tool marker -> Int -> Highlightable marker -> Html (Msg marker)
+viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> Html (Msg marker)
 viewHighlightable highlighterId marker focusIndex highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
@@ -669,10 +670,10 @@ viewHighlightable highlighterId marker focusIndex highlightable =
 
 viewStaticHighlightable : String -> Highlightable marker -> Html msg
 viewStaticHighlightable highlighterId =
-    viewHighlightableSegment False -1 highlighterId [] Nothing
+    viewHighlightableSegment False (Just -1) highlighterId [] Nothing
 
 
-viewHighlightableSegment : Bool -> Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
+viewHighlightableSegment : Bool -> Maybe Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
 viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners maybeTool highlightable =
     let
         whitespaceClass txt =
@@ -708,7 +709,14 @@ viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners m
                     AttributesExtra.none
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
-               , Key.tabbable (highlightable.groupIndex == focusIndex)
+               , Key.tabbable
+                    (case focusIndex of
+                        Nothing ->
+                            False
+
+                        Just i ->
+                            highlightable.groupIndex == i
+                    )
                ]
         )
         [ Html.text highlightable.text ]
