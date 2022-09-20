@@ -856,7 +856,7 @@ secondaryColors =
     { background = Colors.white
     , hoverBackground = Colors.glacier
     , text = Colors.azure
-    , hoverText = Colors.azure
+    , hoverText = Colors.azureDark
     , border = Just <| Colors.azure
     , shadow = Colors.azure
     }
