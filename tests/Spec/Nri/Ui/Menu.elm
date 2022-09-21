@@ -6,6 +6,7 @@ import Json.Encode as Encode
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V3 as Menu
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
+import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -166,36 +167,23 @@ clickMenuButton =
         Event.click
 
 
-pressKey : { targetId : Maybe String, keyCode : Int, shiftKey : Bool } -> ProgramTest model msg effect -> ProgramTest model msg effect
-pressKey { targetId, keyCode, shiftKey } =
-    ProgramTest.simulateDomEvent
-        (Query.find
-            [ Selector.class "Container"
-            ]
-        )
-        (Event.custom
-            "keydown"
-            (Encode.object
-                [ ( "keyCode", Encode.int keyCode )
-                , ( "shiftKey", Encode.bool shiftKey )
-                , ( "target"
-                  , Encode.object
-                        (List.filterMap identity <|
-                            [ targetId
-                                |> Maybe.map (\id -> ( "id", Encode.string id ))
-                            ]
-                        )
-                  )
-                ]
-            )
-        )
+targetDetails : Maybe String -> List ( String, Encode.Value )
+targetDetails targetId =
+    List.filterMap identity <|
+        [ targetId
+            |> Maybe.map (\id -> ( "id", Encode.string id ))
+        ]
 
 
 pressTabKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTabKey { targetId } =
-    pressKey { targetId = targetId, keyCode = 9, shiftKey = False }
+    KeyboardHelpers.pressTabKey
+        { targetDetails = targetDetails targetId }
+        [ Selector.class "Container" ]
 
 
 pressEscKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressEscKey { targetId } =
-    pressKey { targetId = targetId, keyCode = 27, shiftKey = False }
+    KeyboardHelpers.pressEscKey
+        { targetDetails = targetDetails targetId }
+        [ Selector.class "Container" ]
