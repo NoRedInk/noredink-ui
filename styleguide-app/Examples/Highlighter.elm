@@ -227,7 +227,7 @@ initHighlighter settings previousHighlightables =
             if settings.splitOnSentences then
                 let
                     segments =
-                        String.split "." (String.dropRight 1 CommonControls.romeoAndJulietQuotation)
+                        List.filter (\x -> x /= "") (String.split "." (String.trim CommonControls.romeoAndJulietQuotation))
 
                     segmentCount =
                         List.length segments
@@ -238,11 +238,7 @@ initHighlighter settings previousHighlightables =
                             Nothing
                             index
                             ( []
-                            , if (index + 1) == segmentCount then
-                                sentence
-
-                              else
-                                sentence ++ "."
+                            , sentence ++ "."
                             )
                     )
                     segments
