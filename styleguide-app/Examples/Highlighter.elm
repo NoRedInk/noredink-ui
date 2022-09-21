@@ -227,7 +227,7 @@ initHighlighter settings previousHighlightables =
             if settings.splitOnSentences then
                 let
                     segments =
-                        String.split "." CommonControls.romeoAndJulietQuotation
+                        String.split "." (String.dropRight 1 CommonControls.romeoAndJulietQuotation)
 
                     segmentCount =
                         List.length segments
@@ -248,7 +248,7 @@ initHighlighter settings previousHighlightables =
                     segments
 
             else
-                Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+                Highlightable.initFragments Nothing (String.trim CommonControls.romeoAndJulietQuotation)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"

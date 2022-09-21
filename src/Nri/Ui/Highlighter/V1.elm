@@ -382,7 +382,7 @@ keyboardEventToActions msg model =
                            )
 
         SelectionExpandRight index ->
-            case previousInteractiveIndex index model.highlightables of
+            case nextInteractiveIndex index model.highlightables of
                 Nothing ->
                     []
 
