@@ -8,6 +8,7 @@ import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
+import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Query exposing (..)
 import Test.Html.Selector exposing (..)
@@ -24,9 +25,23 @@ keyboardTests : List Test
 keyboardTests =
     [ test "has a focusable element when there is one" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos thrive in indirect light."
+            Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
                 |> ensureFocusOn "Pothos"
+                |> done
+    , test "moves focus right on right arrow key" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> rightArrow
+                |> ensureFocusOn "indirect"
+                |> rightArrow
+                |> ensureFocusOn "light"
+                -- once we're on the final element, pressing right arrow again should
+                -- _not_ wrap the focus. We should stay right where we are!
+                |> rightArrow
+                |> ensureFocusOn "light"
                 |> done
     ]
 
@@ -39,6 +54,12 @@ ensureFocusOn word textContext =
             (findAll [ attribute (Key.tabbable True) ]
                 >> count (Expect.equal 1)
             )
+
+
+rightArrow : TestContext marker -> TestContext marker
+rightArrow =
+    KeyboardHelpers.pressRightArrow { targetDetails = [] }
+        [ attribute (Key.tabbable True) ]
 
 
 marker : Tool ()
