@@ -3,7 +3,6 @@ module Debug.Control.Extra exposing
     , list, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultTrue
     , bool
-    , string
     , rotatedChoice
     )
 
@@ -13,7 +12,6 @@ module Debug.Control.Extra exposing
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultTrue
 @docs bool
-@docs string
 @docs rotatedChoice
 
 -}
@@ -118,12 +116,6 @@ optionalBoolListItemDefaultTrue name f accumulator =
 bool : Bool -> Control ( String, Bool )
 bool default =
     Control.map (\val -> ( Code.bool val, val )) (Control.bool default)
-
-
-{-| -}
-string : String -> Control ( String, String )
-string default =
-    Control.map (\val -> ( Code.string val, val )) (Control.string default)
 
 
 {-| -}
