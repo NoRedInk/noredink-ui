@@ -1,8 +1,7 @@
 module Nri.Ui.Table.V6 exposing
-    ( Column, SortDirection(..), custom, string
+    ( Column, SortDirection(..), custom, string, rowHeader
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
-    , rowHeader
     )
 
 {-| Upgrading from V5:
@@ -10,7 +9,7 @@ module Nri.Ui.Table.V6 exposing
   - The columns take an additional `sort` property that allows
     you to specify ARIA sorting
 
-@docs Column, SortDirection, custom, string
+@docs Column, SortDirection, custom, string, rowHeader
 
 @docs view, viewWithoutHeader
 
