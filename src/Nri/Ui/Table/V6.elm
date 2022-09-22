@@ -52,7 +52,7 @@ cell : CellType -> List (Attribute msg) -> List (Html msg) -> Html msg
 cell cellType attrs =
     case cellType of
         RowHeaderCell ->
-            th (Attributes.scope "col" :: attrs)
+            th (Attributes.scope "row" :: attrs)
 
         DataCell ->
             td attrs
