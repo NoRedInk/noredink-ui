@@ -114,10 +114,10 @@ example =
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
-                div [] [ Svg.toHtml Loading.spinningPencil ]
+                Loading.spinning []
 
               else
-                button "Loading.spinningPencil" ShowSpinners showLoadingFadeIn
+                button "Loading.spinning" ShowSpinners showLoadingFadeIn
             ]
     }
 

@@ -1,11 +1,13 @@
 module Nri.Ui.Loading.V1 exposing
     ( fadeInPage, page
+    , spinning
     , spinningPencil, spinningDots
     )
 
 {-| Loading behaviors
 
 @docs fadeInPage, page
+@docs spinning
 @docs spinningPencil, spinningDots
 
 -}
@@ -63,6 +65,19 @@ loading_ withCss =
             )
         ]
         [ Svg.toHtml spinningPencil
+        ]
+
+
+{-| -}
+spinning : List (Html.Attribute msg) -> Html msg
+spinning attributes =
+    Html.div attributes
+        [ spinningDots
+            |> Svg.withCss [ MediaQuery.anyMotion [ Css.display Css.none ] ]
+            |> Svg.toHtml
+        , spinningPencil
+            |> Svg.withCss [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ]
+            |> Svg.toHtml
         ]
 
 
