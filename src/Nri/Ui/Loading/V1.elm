@@ -99,14 +99,14 @@ spinningDots : Svg
 spinningDots =
     let
         dotColors =
-            [ "#004e95"
-            , "#004cc9"
-            , "#146aff"
-            , "#0af"
-            , "#d4f0ff"
-            , "#eef9ff"
+            [ "#fff"
             , "#f5f5f5"
-            , "#fff"
+            , "#eef9ff"
+            , "#d4f0ff"
+            , "#0af"
+            , "#146aff"
+            , "#004cc9"
+            , "#004e95"
             ]
 
         rotatedColors rotateWith =
@@ -124,7 +124,7 @@ spinningDots =
             Svg.Styled.circle
                 (List.filterMap identity
                     [ Maybe.map SvgAttributes.fill (List.head colors)
-                    , Just (SvgAttributes.css (colorChangeCss colors))
+                    , Just (SvgAttributes.css (colorChangeCss (List.reverse colors)))
                     ]
                     ++ attributes
                 )
