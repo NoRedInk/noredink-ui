@@ -2,6 +2,7 @@ module Nri.Ui.Table.V6 exposing
     ( Column, SortDirection(..), custom, string
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
+    , rowHeader
     )
 
 {-| Upgrading from V5:
