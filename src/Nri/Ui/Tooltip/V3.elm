@@ -4,20 +4,33 @@ module Nri.Ui.Tooltip.V3 exposing
     , plaintext, html
     , withoutTail
     , onTop, onBottom, onLeft, onRight
+    , onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+    , onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
     , onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
     , alignStart, alignMiddle, alignEnd
+    , alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+    , alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onToggle
     , open
-    , css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
     , primaryLabel, auxiliaryDescription, disclosure
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - defaults mobile-specific alignment and direction to the non-mobile version, rather than top and middle
+  - adds onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+  - adds onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
+  - adds alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+  - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
+  - adds narrowMobileCss
+
+Changes from V2:
 
   - Support `disclosure` pattern for rich-content tooltips
   - render tooltip content in the DOM when closed (now, they're hidden with display:none)
@@ -40,15 +53,22 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs Attribute
 @docs plaintext, html
 @docs withoutTail
+
 @docs onTop, onBottom, onLeft, onRight
+@docs onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
+@docs onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
 @docs onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
+
 @docs alignStart, alignMiddle, alignEnd
+@docs alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
+@docs alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
 @docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
+
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
 @docs onToggle
 @docs open
-@docs css, notMobileCss, mobileCss, quizEngineMobileCss, containerCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
 @docs primaryLabel, auxiliaryDescription, disclosure
@@ -70,7 +90,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
@@ -85,8 +105,12 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , alignment : Alignment
-    , mobileDirection : Direction
-    , mobileAlignment : Alignment
+    , mobileDirection : Maybe Direction
+    , mobileAlignment : Maybe Alignment
+    , quizEngineMobileDirection : Maybe Direction
+    , quizEngineMobileAlignment : Maybe Alignment
+    , narrowMobileDirection : Maybe Direction
+    , narrowMobileAlignment : Maybe Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -108,8 +132,12 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , alignment = Middle
-            , mobileDirection = OnTop
-            , mobileAlignment = Middle
+            , mobileDirection = Nothing
+            , mobileAlignment = Nothing
+            , quizEngineMobileDirection = Nothing
+            , quizEngineMobileAlignment = Nothing
+            , narrowMobileDirection = Nothing
+            , narrowMobileAlignment = Nothing
             , tail = WithTail
             , content = []
             , attributes = []
@@ -210,7 +238,7 @@ alignEnd position =
 
 withMobileAligment : Alignment -> Attribute msg
 withMobileAligment alignment =
-    Attribute (\config -> { config | mobileAlignment = alignment })
+    Attribute (\config -> { config | mobileAlignment = Just alignment })
 
 
 {-| Put the tail at the "start" of the tooltip when the viewport has a mobile width.
@@ -227,7 +255,7 @@ alignStartForMobile position =
     withMobileAligment (Start position)
 
 
-{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width. This is the default behavior.
+{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width.
 
      __________
     |___  ____|
@@ -251,6 +279,96 @@ For onLeft & onRight tooltip, this means "bottom".
 alignEndForMobile : Px -> Attribute msg
 alignEndForMobile position =
     withMobileAligment (End position)
+
+
+withQuizEngineMobileAligment : Alignment -> Attribute msg
+withQuizEngineMobileAligment alignment =
+    Attribute (\config -> { config | quizEngineMobileAlignment = Just alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForQuizEngineMobile : Px -> Attribute msg
+alignStartForQuizEngineMobile position =
+    withQuizEngineMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForQuizEngineMobile : Attribute msg
+alignMiddleForQuizEngineMobile =
+    withQuizEngineMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForQuizEngineMobile : Px -> Attribute msg
+alignEndForQuizEngineMobile position =
+    withQuizEngineMobileAligment (End position)
+
+
+withNarrowMobileAligment : Alignment -> Attribute msg
+withNarrowMobileAligment alignment =
+    Attribute (\config -> { config | narrowMobileAlignment = Just alignment })
+
+
+{-| Put the tail at the "start" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+For onTop & onBottom tooltips, this means "left".
+For onLeft & onRight tooltip, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignStartForNarrowMobile : Px -> Attribute msg
+alignStartForNarrowMobile position =
+    withNarrowMobileAligment (Start position)
+
+
+{-| Put the tail at the "middle" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignMiddleForNarrowMobile : Attribute msg
+alignMiddleForNarrowMobile =
+    withNarrowMobileAligment Middle
+
+
+{-| Put the tail at the "end" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
+For onTop & onBottom tooltips, this means "right".
+For onLeft & onRight tooltip, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignEndForNarrowMobile : Px -> Attribute msg
+alignEndForNarrowMobile position =
+    withQuizEngineMobileAligment (End position)
 
 
 {-| Where should this tooltip be positioned relative to the trigger?
@@ -320,7 +438,7 @@ onLeft =
 
 withPositionForMobile : Direction -> Attribute msg
 withPositionForMobile direction =
-    Attribute (\config -> { config | mobileDirection = direction })
+    Attribute (\config -> { config | mobileDirection = Just direction })
 
 
 {-| Set the position of the tooltip when the mobile breakpoint applies.
@@ -374,6 +492,118 @@ onLeftForMobile =
     withPositionForMobile OnLeft
 
 
+withPositionForQuizEngineMobile : Direction -> Attribute msg
+withPositionForQuizEngineMobile direction =
+    Attribute (\config -> { config | quizEngineMobileDirection = Just direction })
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForQuizEngineMobile : Attribute msg
+onTopForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnTop
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForQuizEngineMobile : Attribute msg
+onRightForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnRight
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForQuizEngineMobile : Attribute msg
+onBottomForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnBottom
+
+
+{-| Set the position of the tooltip when the quiz engine breakpoint (750px) applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForQuizEngineMobile : Attribute msg
+onLeftForQuizEngineMobile =
+    withPositionForQuizEngineMobile OnLeft
+
+
+withPositionForNarrowMobile : Direction -> Attribute msg
+withPositionForNarrowMobile direction =
+    Attribute (\config -> { config | narrowMobileDirection = Just direction })
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+     __________
+    |         |
+    |___  ____|
+        \/
+
+-}
+onTopForNarrowMobile : Attribute msg
+onTopForNarrowMobile =
+    withPositionForNarrowMobile OnTop
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+      __________
+     |         |
+    <          |
+     |_________|
+
+-}
+onRightForNarrowMobile : Attribute msg
+onRightForNarrowMobile =
+    withPositionForNarrowMobile OnRight
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+     ___/\_____
+    |         |
+    |_________|
+
+-}
+onBottomForNarrowMobile : Attribute msg
+onBottomForNarrowMobile =
+    withPositionForNarrowMobile OnBottom
+
+
+{-| Set the position of the tooltip when the narrow mobile breakpoint (500px) applies.
+
+      __________
+     |         |
+     |          >
+     |_________|
+
+-}
+onLeftForNarrowMobile : Attribute msg
+onLeftForNarrowMobile =
+    withPositionForQuizEngineMobile OnLeft
+
+
 {-| Set some custom styles on the tooltip.
 -}
 css : List Style -> Attribute msg
@@ -418,6 +648,19 @@ Equivalent to:
 quizEngineMobileCss : List Style -> Attribute msg
 quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+
+
+{-| Set styles that will only apply if the viewport is narrower than NRI's narrow mobile breakpoint.
+
+Equivalent to:
+
+    Tooltip.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.narrowMobile ] styles ]
+
+-}
+narrowMobileCss : List Style -> Attribute msg
+narrowMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.narrowMobile ] styles ]
 
 
 {-| Use this helper to add custom attributes.
@@ -789,13 +1032,44 @@ hoverBridge { isOpen, direction } =
 
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
+    let
+        mobileDirection =
+            Maybe.withDefault config.direction config.mobileDirection
+
+        quizEngineMobileDirection =
+            Maybe.withDefault mobileDirection config.quizEngineMobileDirection
+
+        narrowMobileDirection =
+            Maybe.withDefault quizEngineMobileDirection config.narrowMobileDirection
+
+        mobileAlignment =
+            Maybe.withDefault config.alignment config.mobileAlignment
+
+        quizEngineMobileAlignment =
+            Maybe.withDefault mobileAlignment config.quizEngineMobileAlignment
+
+        narrowMobileAlignment =
+            Maybe.withDefault quizEngineMobileAlignment config.narrowMobileAlignment
+
+        applyTail direction =
+            case config.tail of
+                WithTail ->
+                    tailForDirection direction
+
+                WithoutTail ->
+                    Css.batch []
+    in
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , Css.Media.withMedia [ MediaQuery.notMobile ]
-                (positionTooltip config.direction config.alignment)
-            , Css.Media.withMedia [ MediaQuery.mobile ]
-                (positionTooltip config.mobileDirection config.mobileAlignment)
+            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
+                positionTooltip config.direction config.alignment
+            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
+                positionTooltip mobileDirection mobileAlignment
+            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
+                positionTooltip quizEngineMobileDirection quizEngineMobileAlignment
+            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
+                positionTooltip narrowMobileDirection narrowMobileAlignment
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -830,23 +1104,21 @@ viewTooltip tooltipId config =
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
                  , Css.border3 (Css.px 1) Css.solid Colors.navy
-                 , Css.Media.withMedia [ MediaQuery.notMobile ]
+                 , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                     [ positioning config.direction config.alignment
-                    , case config.tail of
-                        WithTail ->
-                            tailForDirection config.direction
-
-                        WithoutTail ->
-                            Css.batch []
+                    , applyTail config.direction
                     ]
-                 , Css.Media.withMedia [ MediaQuery.mobile ]
-                    [ positioning config.mobileDirection config.mobileAlignment
-                    , case config.tail of
-                        WithTail ->
-                            tailForDirection config.mobileDirection
-
-                        WithoutTail ->
-                            Css.batch []
+                 , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
+                    [ positioning mobileDirection mobileAlignment
+                    , applyTail mobileDirection
+                    ]
+                 , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
+                    [ positioning quizEngineMobileDirection quizEngineMobileAlignment
+                    , applyTail quizEngineMobileDirection
+                    ]
+                 , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
+                    [ positioning narrowMobileDirection narrowMobileAlignment
+                    , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
                  , Css.fontSize (Css.px 16)
@@ -882,12 +1154,14 @@ viewTooltip tooltipId config =
                 ++ [ Html.div
                         [ Attributes.css
                             [ Css.position Css.absolute
-                            , Css.Media.withMedia [ MediaQuery.notMobile ]
-                                [ Css.batch (hoverAreaForDirection config.direction)
-                                ]
-                            , Css.Media.withMedia [ MediaQuery.mobile ]
-                                [ Css.batch (hoverAreaForDirection config.mobileDirection)
-                                ]
+                            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
+                                hoverAreaForDirection config.direction
+                            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
+                                hoverAreaForDirection mobileDirection
+                            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
+                                hoverAreaForDirection quizEngineMobileDirection
+                            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
+                                hoverAreaForDirection narrowMobileDirection
                             ]
                         ]
                         []

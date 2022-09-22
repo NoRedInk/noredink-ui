@@ -17,9 +17,9 @@ import Html.Styled.Attributes as Attributes
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.Svg.V1
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Svg.Styled as Svg
+import Svg.Styled
 import Svg.Styled.Attributes as SvgAttributes
 
 
@@ -62,24 +62,24 @@ loading_ withCss =
                 ++ withCss
             )
         ]
-        [ Nri.Ui.Svg.V1.toHtml spinningPencil
+        [ Svg.toHtml spinningPencil
         ]
 
 
 {-| -}
-spinningPencil : Nri.Ui.Svg.V1.Svg
+spinningPencil : Svg
 spinningPencil =
     UiIcon.edit
-        |> Nri.Ui.Svg.V1.withLabel "Loading..."
-        |> Nri.Ui.Svg.V1.withColor Colors.navy
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 140)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 140)
-        |> Nri.Ui.Svg.V1.withViewBox "-20 -20 140 140"
-        |> Nri.Ui.Svg.V1.withCss circlingCss
+        |> Svg.withLabel "Loading..."
+        |> Svg.withColor Colors.navy
+        |> Svg.withWidth (Css.px 140)
+        |> Svg.withHeight (Css.px 140)
+        |> Svg.withViewBox "-20 -20 140 140"
+        |> Svg.withCss circlingCss
 
 
 {-| -}
-spinningDots : Nri.Ui.Svg.V1.Svg
+spinningDots : Svg
 spinningDots =
     let
         dotColors =
@@ -105,7 +105,7 @@ spinningDots =
                 colors =
                     rotatedColors index
             in
-            Svg.circle
+            Svg.Styled.circle
                 (List.filterMap identity
                     [ Maybe.map SvgAttributes.fill (List.head colors)
                     , Just (SvgAttributes.css (colorChangeCss colors))
@@ -124,9 +124,9 @@ spinningDots =
     , [ SvgAttributes.cx "2.69", SvgAttributes.cy "2.37", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-0.9 2.35) rotate(-41)" ]
     ]
         |> List.indexedMap circle
-        |> Nri.Ui.Svg.V1.init "0 0 12.54 12.54"
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
+        |> Svg.init "0 0 12.54 12.54"
+        |> Svg.withWidth (Css.px 100)
+        |> Svg.withHeight (Css.px 100)
 
 
 circlingCss : List Css.Style

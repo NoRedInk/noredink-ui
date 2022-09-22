@@ -273,10 +273,7 @@ view_ { entries, focus, leftId } =
         lastHeaderId =
             List.head (List.reverse headerIds)
     in
-    div
-        [ Attributes.class accordionClass
-        , Attributes.attribute "aria-live" "polite"
-        ]
+    div [ Attributes.class accordionClass ]
         [ Html.Styled.Keyed.node "div"
             []
             (entries

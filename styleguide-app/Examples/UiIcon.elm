@@ -230,6 +230,7 @@ all =
       )
     , ( "Navigation"
       , [ ( "home", UiIcon.home, [] )
+        , ( "homeInCircle", UiIcon.homeInCircle, [] )
         , ( "library", UiIcon.library, [] )
         ]
       )

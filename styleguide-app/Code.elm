@@ -7,12 +7,13 @@ module Code exposing
     , list, listMultiline
     , tuple
     , record, recordMultiline
-    , newlineWithIndent
+    , newlineWithIndent, newlines
     , withParens
     , anonymousFunction, always
     , caseExpression
     , browserElement, unstyledView
     , fromModule
+    , var
     )
 
 {-|
@@ -25,13 +26,14 @@ module Code exposing
 @docs list, listMultiline
 @docs tuple
 @docs record, recordMultiline
-@docs newlineWithIndent
+@docs newlineWithIndent, newlines
 @docs withParens
 @docs anonymousFunction, always
 @docs caseExpression
 @docs browserElement, unstyledView
 @docs always
 @docs fromModule
+@docs var
 
 -}
 
@@ -146,6 +148,11 @@ pipelineMultiline pipedWith indent =
     newlineWithIndent indent ++ String.join (indents ++ "|> ") pipedWith
 
 
+newlines : String
+newlines =
+    newlineWithIndent 0 ++ newlineWithIndent 0
+
+
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
     "\n" ++ String.repeat indent "    "
@@ -171,7 +178,7 @@ always val =
 
 {-| -}
 caseExpression : String -> List ( String, String ) -> Int -> String
-caseExpression var results indent =
+caseExpression var_ results indent =
     let
         matchIndents =
             newlineWithIndent (indent + 1)
@@ -182,7 +189,7 @@ caseExpression var results indent =
         toCase ( match, result ) =
             match ++ " -> " ++ resultIndents ++ result
     in
-    ((newlineWithIndent indent ++ "case " ++ var ++ " of") :: List.map toCase results)
+    ((newlineWithIndent indent ++ "case " ++ var_ ++ " of") :: List.map toCase results)
         |> String.join matchIndents
 
 
@@ -211,3 +218,9 @@ unstyledView view =
 fromModule : String -> String -> String
 fromModule moduleName name =
     moduleName ++ "." ++ name
+
+
+{-| -}
+var : String -> Int -> String -> String
+var varName indent body =
+    varName ++ " =" ++ newlineWithIndent indent ++ body

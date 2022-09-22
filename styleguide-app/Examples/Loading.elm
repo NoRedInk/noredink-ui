@@ -92,7 +92,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview =
-        [ Loading.spinningDots
+        [ Loading.spinningPencil
             |> Svg.withCss
                 [ Css.property "animation-name" "none" |> Css.important
                 , Css.alignSelf Css.center
@@ -114,13 +114,10 @@ example =
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
-                Html.div []
-                    [ Html.div [] [ Svg.toHtml Loading.spinningPencil ]
-                    , Html.div [] [ Svg.toHtml Loading.spinningDots ]
-                    ]
+                div [] [ Svg.toHtml Loading.spinningPencil ]
 
               else
-                button "Loading.spinningPencil, Loading.spinningDots" ShowSpinners showLoadingFadeIn
+                button "Loading.spinningPencil" ShowSpinners showLoadingFadeIn
             ]
     }
 
