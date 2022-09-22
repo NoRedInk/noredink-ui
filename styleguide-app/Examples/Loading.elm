@@ -17,7 +17,6 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Loading.V1 as Loading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
