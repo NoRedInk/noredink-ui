@@ -114,10 +114,10 @@ example =
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
-                Loading.spinning []
+                Loading.spinning Colors.navy
 
               else
-                button "Loading.spinning" ShowSpinners showLoadingFadeIn
+                button "Loading.spinning Colors.navy" ShowSpinners showLoadingFadeIn
             ]
     }
 
