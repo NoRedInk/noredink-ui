@@ -155,15 +155,17 @@ controlSettings =
 
 
 type alias Datum =
-    { firstName : String
+    { userId : Int
+    , firstName : String
     , lastName : String
     , submitted : Int
     }
 
 
 datumToString : Datum -> String
-datumToString { firstName, lastName, submitted } =
-    ("{ firstName = " ++ str firstName)
+datumToString { userId, firstName, lastName, submitted } =
+    ("{ userId = " ++ String.fromInt userId)
+        ++ (", firstName = " ++ str firstName)
         ++ (", lastName = " ++ str lastName)
         ++ (", submitted = " ++ String.fromInt 10)
         ++ "}"
@@ -176,17 +178,34 @@ str s =
 
 data : List Datum
 data =
-    [ { firstName = "Monique", lastName = "Garcia", submitted = 10 }
-    , { firstName = "Gabriel", lastName = "Smith", submitted = 0 }
-    , { firstName = "Mariah", lastName = "Lopez", submitted = 3 }
-    , { firstName = "Amber", lastName = "Brown", submitted = 15 }
-    , { firstName = "Carlos", lastName = "Martinez", submitted = 8 }
+    [ { userId = 1, firstName = "Monique", lastName = "Garcia", submitted = 10 }
+    , { userId = 2, firstName = "Gabriel", lastName = "Smith", submitted = 0 }
+    , { userId = 3, firstName = "Mariah", lastName = "Lopez", submitted = 3 }
+    , { userId = 4, firstName = "Amber", lastName = "Brown", submitted = 15 }
+    , { userId = 5, firstName = "Carlos", lastName = "Martinez", submitted = 8 }
     ]
 
 
 columnsWithCode : List ( String, Column Datum Msg )
 columnsWithCode =
-    [ ( [ "Table.string"
+    [ ( [ "Table.rowHeader"
+        , "  { header = text \"User ID\""
+        , "  , view = text << String.fromInt << .userId"
+        , "  , width = Css.px 80"
+        , "  , cellStyles = always []"
+        , "  , sort = Nothing"
+        , "  }"
+        ]
+            |> String.join "\n\t  "
+      , Table.rowHeader
+            { header = text "User ID"
+            , view = text << String.fromInt << .userId
+            , width = Css.px 80
+            , cellStyles = always []
+            , sort = Nothing
+            }
+      )
+    , ( [ "Table.string"
         , "  { header = \"First Name\""
         , "  , value = .firstName"
         , "  , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)"
