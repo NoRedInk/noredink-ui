@@ -211,7 +211,7 @@ type KeyboardMsg
     | SelectionExpandLeft Int
     | SelectionExpandRight Int
     | SelectionApplyTool Int
-    | Space Int
+    | ToggleHighlight Int
 
 
 {-| Possible intents or "external effects" that the Highlighter can request (see `perform`).
@@ -404,16 +404,19 @@ keyboardEventToActions msg model =
                 Tool.Eraser _ ->
                     [ Remove, ResetSelection, Focus index ]
 
-        Space index ->
+        ToggleHighlight index ->
             case model.marker of
                 Tool.Marker marker ->
-                    [ Toggle index marker ]
+                    [ Toggle index marker
+                    , Focus index
+                    ]
 
                 Tool.Eraser _ ->
                     [ MouseOver index
                     , Hint index index
                     , MouseUp
                     , Remove
+                    , Focus index
                     ]
 
 
@@ -639,7 +642,7 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                 , on "touchstart" (Pointer <| Down highlightable.groupIndex)
                 , attribute "data-interactive" ""
                 , Key.onKeyDownPreventDefault
-                    [ Key.space (Keyboard <| Space highlightable.groupIndex)
+                    [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
                     , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
                     , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
                     , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
