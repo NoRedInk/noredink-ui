@@ -228,9 +228,6 @@ initHighlighter settings previousHighlightables =
                 let
                     segments =
                         List.filter (\x -> x /= "") (String.split "." (String.trim CommonControls.romeoAndJulietQuotation))
-
-                    segmentCount =
-                        List.length segments
                 in
                 List.indexedMap
                     (\index sentence ->
