@@ -924,8 +924,8 @@ getColorPalette (ButtonOrLink config) =
             , hoverBackground = Colors.glacier
             , text = Colors.azure
             , hoverText = Colors.azureDark
-            , border = Just <| Colors.azure
-            , shadow = Colors.azure
+            , border = Just <| Colors.gray75
+            , shadow = Colors.gray75
             }
 
         Loading ->
