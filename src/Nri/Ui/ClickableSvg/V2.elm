@@ -633,14 +633,41 @@ renderIcons config includeBorder =
                 ]
                 >> Svg.toHtml
     in
-    case ( config.iconForQuizEngineMobile, config.iconForMobile ) of
-        ( Just iconForQuizEngineMobile_, Nothing ) ->
+    case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
+        ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
+            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
+                iconForMobile_
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
+            [ renderUnless [ MediaQuery.narrowMobile ] config.icon
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
             [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             ]
 
-        ( Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
+        ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
                 iconForMobile_
@@ -648,12 +675,12 @@ renderIcons config includeBorder =
                 iconForQuizEngineMobile_
             ]
 
-        ( Nothing, Just iconForMobile_ ) ->
+        ( Nothing, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.notMobile ] iconForMobile_
             ]
 
-        ( Nothing, Nothing ) ->
+        ( Nothing, Nothing, Nothing ) ->
             [ config.icon
                 |> Svg.withCss iconStyles
                 |> Svg.toHtml
