@@ -305,6 +305,24 @@ initSettings =
                             , ClickableSvg.iconForMobile icon
                             )
                         )
-                        CommonControls.uiIcon
+                        (CommonControls.rotatedUiIcon 1)
+                    )
+                |> ControlExtra.optionalListItem "iconForQuizEngineMobile"
+                    (Control.map
+                        (\( name, icon ) ->
+                            ( "ClickableSvg.iconForQuizEngineMobile " ++ name
+                            , ClickableSvg.iconForQuizEngineMobile icon
+                            )
+                        )
+                        (CommonControls.rotatedUiIcon 2)
+                    )
+                |> ControlExtra.optionalListItem "iconForNarrowMobile"
+                    (Control.map
+                        (\( name, icon ) ->
+                            ( "ClickableSvg.iconForNarrowMobile " ++ name
+                            , ClickableSvg.iconForNarrowMobile icon
+                            )
+                        )
+                        (CommonControls.rotatedUiIcon 3)
                     )
             )

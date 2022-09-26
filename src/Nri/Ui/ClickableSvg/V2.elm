@@ -9,7 +9,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , primary, secondary, tertiary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , iconForMobile
+    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , small, medium, large
     )
 
@@ -19,7 +19,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 # Patch changes:
 
     - adds `nriDescription`, `testId`, and `id` helpers
-    - adds `iconForMobile`
+    - adds `iconForMobile`, `iconForQuizEngineMobile`, `iconForNarrowMobile`
 
 
 # Create a button or link
@@ -55,7 +55,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
-@docs iconForMobile
+@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
 
 
 ### DEPRECATED
@@ -461,6 +461,18 @@ iconForMobile icon =
     set (\config -> { config | iconForMobile = Just icon })
 
 
+{-| -}
+iconForQuizEngineMobile : Svg -> Attribute msg
+iconForQuizEngineMobile icon =
+    set (\config -> { config | iconForQuizEngineMobile = Just icon })
+
+
+{-| -}
+iconForNarrowMobile : Svg -> Attribute msg
+iconForNarrowMobile icon =
+    set (\config -> { config | iconForNarrowMobile = Just icon })
+
+
 
 -- INTERNALS
 
@@ -479,6 +491,8 @@ build label icon =
         , label = label
         , icon = icon
         , iconForMobile = Nothing
+        , iconForQuizEngineMobile = Nothing
+        , iconForNarrowMobile = Nothing
         , disabled = False
         , size = Small
         , width = Nothing
@@ -499,6 +513,8 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , icon : Svg
     , iconForMobile : Maybe Svg
+    , iconForQuizEngineMobile : Maybe Svg
+    , iconForNarrowMobile : Maybe Svg
     , disabled : Bool
     , size : Size
     , width : Maybe Float

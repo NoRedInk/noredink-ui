@@ -1,7 +1,8 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, narrowMobileCss, notMobileCss, css_
     , choice
-    , icon, iconNotCheckedByDefault, uiIcon
+    , icon, iconNotCheckedByDefault
+    , uiIcon, rotatedUiIcon
     , customIcon
     , color
     , content
@@ -14,7 +15,8 @@ module CommonControls exposing
 
 @docs css, mobileCss, quizEngineMobileCss, narrowMobileCss, notMobileCss, css_
 @docs choice
-@docs icon, iconNotCheckedByDefault, uiIcon
+@docs icon, iconNotCheckedByDefault
+@docs uiIcon, rotatedUiIcon
 @docs customIcon
 @docs color
 
@@ -268,8 +270,8 @@ customIconNotCheckedByDefault iconList moduleName f =
         )
 
 
-uiIcon : Control ( String, Svg )
-uiIcon =
+uiIcons : List ( String, Svg )
+uiIcons =
     [ ( "arrowLeft", UiIcon.arrowLeft )
     , ( "unarchive", UiIcon.unarchive )
     , ( "share", UiIcon.share )
@@ -281,7 +283,21 @@ uiIcon =
     , ( "library", UiIcon.library )
     , ( "searchInCicle", UiIcon.searchInCicle )
     ]
-        |> choice "UiIcon"
+
+
+uiIcon : Control ( String, Svg )
+uiIcon =
+    choice "UiIcon" uiIcons
+
+
+rotatedUiIcon : Int -> Control ( String, Svg )
+rotatedUiIcon by =
+    uiIcons
+        |> List.map
+            (\( name, value ) ->
+                ( name, Control.value ( "UiIcon." ++ name, value ) )
+            )
+        |> ControlExtra.rotatedChoice by
 
 
 choice : String -> List ( String, value ) -> Control ( String, value )
