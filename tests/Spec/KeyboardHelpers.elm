@@ -31,6 +31,30 @@ pressKey { targetDetails, keyCode, shiftKey } selectors =
         )
 
 
+releaseKey :
+    { targetDetails : List ( String, Encode.Value )
+    , keyCode : Int
+    , shiftKey : Bool
+    }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+releaseKey { targetDetails, keyCode, shiftKey } selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        (Event.custom
+            "keyup"
+            (Encode.object
+                [ ( "keyCode", Encode.int keyCode )
+                , ( "shiftKey", Encode.bool shiftKey )
+                , ( "target"
+                  , Encode.object targetDetails
+                  )
+                ]
+            )
+        )
+
+
 pressTabKey :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -56,3 +80,48 @@ pressRightArrow :
     -> ProgramTest model msg effect
 pressRightArrow { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+
+
+pressLeftArrow :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+pressLeftArrow { targetDetails } =
+    pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+
+
+pressShiftRight :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+pressShiftRight { targetDetails } =
+    pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+
+
+pressShiftLeft :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+pressShiftLeft { targetDetails } =
+    pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+
+
+releaseShiftRight :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+releaseShiftRight { targetDetails } =
+    releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+
+
+releaseShiftLeft :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+releaseShiftLeft { targetDetails } =
+    releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }

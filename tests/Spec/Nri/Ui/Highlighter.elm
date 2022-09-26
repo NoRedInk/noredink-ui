@@ -9,9 +9,10 @@ import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
+import Spec.MouseHelpers as MouseHelpers
 import Test exposing (..)
-import Test.Html.Query exposing (..)
-import Test.Html.Selector exposing (..)
+import Test.Html.Query as Query
+import Test.Html.Selector as Selector
 
 
 spec : Test
@@ -43,23 +44,190 @@ keyboardTests =
                 |> rightArrow
                 |> ensureFocusOn "light"
                 |> done
+    , test "moves focus left on left arrow key" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> rightArrow
+                |> ensureFocusOn "indirect"
+                |> leftArrow
+                |> ensureFocusOn "Pothos"
+                -- once we're on the first element, pressing left arrow again should
+                -- _not_ wrap the focus. We should stay right where we are!
+                |> leftArrow
+                |> ensureFocusOn "Pothos"
+                |> done
+    , test "moves focus right on shift + right arrow" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> shiftRight
+                |> ensureFocusOn "indirect"
+                |> shiftRight
+                |> ensureFocusOn "light"
+                |> shiftRight
+                |> ensureFocusOn "light"
+                |> done
+    , test "moves focus left on shift + left arrow" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> rightArrow
+                |> ensureFocusOn "indirect"
+                |> shiftLeft
+                |> ensureFocusOn "Pothos"
+                |> shiftLeft
+                |> ensureFocusOn "Pothos"
+                |> done
+    , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> shiftRight
+                |> releaseShiftRight
+                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> shiftRight
+                |> releaseShiftRight
+                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> shiftRight
+                |> releaseShiftRight
+                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> done
+    , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> rightArrow
+                |> rightArrow
+                |> shiftLeft
+                |> releaseShiftLeft
+                |> ensureMarked [ "indirect", "", "light" ]
+                |> shiftLeft
+                |> releaseShiftLeft
+                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> shiftLeft
+                |> releaseShiftLeft
+                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> done
+    , test "merges highlights" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> shiftRight
+                |> releaseShiftRight
+                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> ensureFocusOn "indirect"
+                |> rightArrow
+                |> ensureFocusOn "light"
+                |> shiftLeft
+                |> releaseShiftLeft
+                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> done
+    , test "selects element on MouseDown and highlights selected element on MouseUp" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> mouseDown "Pothos"
+                |> mouseUp "Pothos"
+                |> ensureMarked [ "Pothos" ]
+                |> done
+    , test "selects element on MouseDown, expands selection on MouseOver, and highlights selected elements on MouseUp" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> mouseDown "Pothos"
+                |> mouseOver "indirect"
+                |> mouseUp "Pothos"
+                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> done
     ]
 
 
 ensureFocusOn : String -> TestContext marker -> TestContext marker
 ensureFocusOn word textContext =
     textContext
-        |> ensureViewHas [ text word, attribute (Key.tabbable True) ]
         |> ensureView
-            (findAll [ attribute (Key.tabbable True) ]
-                >> count (Expect.equal 1)
+            (Query.find [ Selector.attribute (Key.tabbable True) ]
+                >> Query.has [ Selector.text word ]
+            )
+        |> ensureView
+            (Query.findAll [ Selector.attribute (Key.tabbable True) ]
+                >> Query.count (Expect.equal 1)
+            )
+        -- We only manage focus for interactive elements.
+        -- Static elements should not have explicit tabindex -1 as it is redundant,
+        -- they are never included in the tab sequence
+        |> ensureView
+            (Query.findAll [ Selector.attribute (Key.tabbable False) ]
+                >> Query.count (Expect.equal 2)
+            )
+
+
+ensureMarked : List String -> TestContext marker -> TestContext marker
+ensureMarked words textContext =
+    textContext
+        |> ensureView
+            (Query.find [ Selector.tag "mark" ]
+                >> Query.children [ Selector.tag "span" ]
+                >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
             )
 
 
 rightArrow : TestContext marker -> TestContext marker
 rightArrow =
     KeyboardHelpers.pressRightArrow { targetDetails = [] }
-        [ attribute (Key.tabbable True) ]
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+leftArrow : TestContext marker -> TestContext marker
+leftArrow =
+    KeyboardHelpers.pressLeftArrow { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+shiftRight : TestContext marker -> TestContext marker
+shiftRight =
+    KeyboardHelpers.pressShiftRight { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+shiftLeft : TestContext marker -> TestContext marker
+shiftLeft =
+    KeyboardHelpers.pressShiftLeft { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+releaseShiftRight : TestContext marker -> TestContext marker
+releaseShiftRight =
+    KeyboardHelpers.releaseShiftRight { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+releaseShiftLeft : TestContext marker -> TestContext marker
+releaseShiftLeft =
+    KeyboardHelpers.releaseShiftLeft { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+mouseDown : String -> TestContext marker -> TestContext marker
+mouseDown word =
+    MouseHelpers.cancelableMouseDown [ Selector.containing [ Selector.text word ] ]
+
+
+mouseUp : String -> TestContext marker -> TestContext marker
+mouseUp word =
+    MouseHelpers.cancelableMouseUp [ Selector.containing [ Selector.text word ] ]
+
+
+mouseOver : String -> TestContext marker -> TestContext marker
+mouseOver word =
+    MouseHelpers.cancelableMouseOver [ Selector.containing [ Selector.text word ] ]
 
 
 marker : Tool ()

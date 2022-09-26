@@ -709,14 +709,18 @@ viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners m
                     AttributesExtra.none
                , css (highlightableStyle maybeTool highlightable isInteractive)
                , class "highlighter-highlightable"
-               , Key.tabbable
-                    (case focusIndex of
-                        Nothing ->
-                            False
+               , if isInteractive then
+                    Key.tabbable
+                        (case focusIndex of
+                            Nothing ->
+                                False
 
-                        Just i ->
-                            highlightable.groupIndex == i
-                    )
+                            Just i ->
+                                highlightable.groupIndex == i
+                        )
+
+                 else
+                    AttributesExtra.none
                ]
         )
         [ Html.text highlightable.text ]
