@@ -73,6 +73,15 @@ pressEscKey { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
 
 
+pressSpaceKey :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+pressSpaceKey { targetDetails } =
+    pressKey { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
+
+
 pressRightArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector

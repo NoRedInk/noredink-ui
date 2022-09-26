@@ -146,6 +146,49 @@ keyboardTests =
                 |> mouseUp "Pothos"
                 |> ensureMarked [ "Pothos", "", "indirect" ]
                 |> done
+    , test "Highlights element on Space" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> space
+                |> ensureMarked [ "Pothos" ]
+                |> done
+    , test "Removes highlight from element on MouseUp" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> space
+                |> ensureMarked [ "Pothos" ]
+                |> ensureFocusOn "Pothos"
+                |> mouseDown "Pothos"
+                |> mouseUp "Pothos"
+                |> expectViewHasNot
+                    [ Selector.tag "mark" ]
+    , test "Removes entire highlight from a group of elements on MouseUp" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> shiftRight
+                |> releaseShiftRight
+                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> mouseDown "indirect"
+                |> mouseUp "indirect"
+                |> expectViewHasNot
+                    [ Selector.tag "mark" ]
+    , test "Removes highlight from element on Space" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureFocusOn "Pothos"
+                |> space
+                |> ensureMarked [ "Pothos" ]
+                |> ensureFocusOn "Pothos"
+                |> space
+                |> expectViewHasNot
+                    [ Selector.tag "mark" ]
     ]
 
 
@@ -177,6 +220,12 @@ ensureMarked words textContext =
                 >> Query.children [ Selector.tag "span" ]
                 >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
             )
+
+
+space : TestContext marker -> TestContext marker
+space =
+    KeyboardHelpers.pressSpaceKey { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
 
 
 rightArrow : TestContext marker -> TestContext marker
@@ -217,17 +266,17 @@ releaseShiftLeft =
 
 mouseDown : String -> TestContext marker -> TestContext marker
 mouseDown word =
-    MouseHelpers.cancelableMouseDown [ Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseDown [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 mouseUp : String -> TestContext marker -> TestContext marker
 mouseUp word =
-    MouseHelpers.cancelableMouseUp [ Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseUp [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 mouseOver : String -> TestContext marker -> TestContext marker
 mouseOver word =
-    MouseHelpers.cancelableMouseOver [ Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseOver [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 marker : Tool ()
