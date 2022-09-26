@@ -906,8 +906,8 @@ getColorPalette (ButtonOrLink config) =
             , hoverBackground = Colors.gray92
             , text = Colors.gray45
             , hoverText = Colors.gray45
-            , border = Nothing
-            , shadow = Colors.gray92
+            , border = Just <| Colors.gray75
+            , shadow = Colors.gray75
             }
 
         Error ->
@@ -920,12 +920,12 @@ getColorPalette (ButtonOrLink config) =
             }
 
         Unfulfilled ->
-            { background = Colors.gray92
-            , hoverBackground = Colors.gray92
-            , text = Colors.gray45
-            , hoverText = Colors.gray45
-            , border = Nothing
-            , shadow = Colors.gray92
+            { background = Colors.white
+            , hoverBackground = Colors.glacier
+            , text = Colors.azure
+            , hoverText = Colors.azureDark
+            , border = Just <| Colors.azure
+            , shadow = Colors.azure
             }
 
         Loading ->
