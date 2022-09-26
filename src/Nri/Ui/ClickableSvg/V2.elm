@@ -624,26 +624,36 @@ renderIcons config includeBorder =
             , Css.margin Css.auto
             ]
 
-        hideFor breakpoint =
+        renderUnless breakpoints =
             Svg.withCss
-                [ Css.Media.withMedia [ breakpoint ]
+                [ Css.batch iconStyles
+                , Css.Media.withMedia breakpoints
                     [ Css.display Css.none
                     ]
                 ]
+                >> Svg.toHtml
     in
-    case config.iconForMobile of
-        Just iconForMobile_ ->
-            [ config.icon
-                |> Svg.withCss iconStyles
-                |> hideFor MediaQuery.mobile
-                |> Svg.toHtml
-            , iconForMobile_
-                |> Svg.withCss iconStyles
-                |> hideFor MediaQuery.notMobile
-                |> Svg.toHtml
+    case ( config.iconForQuizEngineMobile, config.iconForMobile ) of
+        ( Just iconForQuizEngineMobile_, Nothing ) ->
+            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
+            , renderUnless [ MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
             ]
 
-        Nothing ->
+        ( Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
+                iconForMobile_
+            , renderUnless [ MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            ]
+
+        ( Nothing, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.notMobile ] iconForMobile_
+            ]
+
+        ( Nothing, Nothing ) ->
             [ config.icon
                 |> Svg.withCss iconStyles
                 |> Svg.toHtml
