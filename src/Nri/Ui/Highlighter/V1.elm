@@ -407,7 +407,7 @@ keyboardEventToActions msg model =
                     [ Remove, ResetSelection, Focus index ]
 
         SelectionReset index ->
-            [ ResetSelection, Hint 0 0, Focus index ]
+            [ ResetSelection, Remove, Focus index ]
 
         ToggleHighlight index ->
             case model.marker of
